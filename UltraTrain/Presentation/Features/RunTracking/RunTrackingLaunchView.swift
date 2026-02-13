@@ -1,28 +1,168 @@
 import SwiftUI
 
 struct RunTrackingLaunchView: View {
+    @State private var viewModel: RunTrackingLaunchViewModel
+    private let locationService: LocationService
+    private let runRepository: any RunRepository
+    private let planRepository: any TrainingPlanRepository
+
+    init(
+        athleteRepository: any AthleteRepository,
+        planRepository: any TrainingPlanRepository,
+        runRepository: any RunRepository,
+        locationService: LocationService
+    ) {
+        _viewModel = State(initialValue: RunTrackingLaunchViewModel(
+            athleteRepository: athleteRepository,
+            planRepository: planRepository,
+            runRepository: runRepository
+        ))
+        self.locationService = locationService
+        self.runRepository = runRepository
+        self.planRepository = planRepository
+    }
+
     var body: some View {
         NavigationStack {
-            VStack(spacing: Theme.Spacing.xl) {
-                Spacer()
-                Image(systemName: "figure.run")
-                    .font(.system(size: 60))
-                    .foregroundStyle(Theme.Colors.primary)
-                Text("Ready to Run?")
-                    .font(.title.bold())
-                Text("Track your run with GPS, pace, and heart rate.")
-                    .font(.subheadline)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-                    .multilineTextAlignment(.center)
-                Button("Start Run") {
-                    // TODO: Launch active run tracking
+            ScrollView {
+                VStack(spacing: Theme.Spacing.lg) {
+                    locationAuthSection
+                    heroSection
+                    if !viewModel.todaysSessions.isEmpty {
+                        SessionPickerView(
+                            sessions: viewModel.todaysSessions,
+                            selectedSession: $viewModel.selectedSession
+                        )
+                        .padding(.horizontal, Theme.Spacing.md)
+                    }
+                    startButton
+                    historyLink
                 }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                Spacer()
+                .padding(.vertical, Theme.Spacing.md)
             }
-            .padding()
             .navigationTitle("Run")
+            .task { await viewModel.load() }
+            .navigationDestination(isPresented: $viewModel.showActiveRun) {
+                if let athlete = viewModel.athlete {
+                    ActiveRunView(
+                        viewModel: ActiveRunViewModel(
+                            locationService: locationService,
+                            runRepository: runRepository,
+                            planRepository: planRepository,
+                            athlete: athlete,
+                            linkedSession: viewModel.selectedSession
+                        )
+                    )
+                }
+            }
         }
+    }
+
+    // MARK: - Location Auth
+
+    @ViewBuilder
+    private var locationAuthSection: some View {
+        switch locationService.authorizationStatus {
+        case .notDetermined:
+            authBanner(
+                message: "Location access is needed to track your runs.",
+                buttonLabel: "Allow Location"
+            ) {
+                locationService.requestWhenInUseAuthorization()
+            }
+        case .denied:
+            authBanner(
+                message: "Location access is denied. Enable it in Settings to track runs.",
+                buttonLabel: "Open Settings"
+            ) {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
+            }
+        case .authorizedWhenInUse, .authorizedAlways:
+            EmptyView()
+        }
+    }
+
+    private func authBanner(
+        message: String,
+        buttonLabel: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        VStack(spacing: Theme.Spacing.sm) {
+            Text(message)
+                .font(.subheadline)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(Theme.Colors.warning)
+            Button(buttonLabel, action: action)
+                .buttonStyle(.bordered)
+        }
+        .padding(Theme.Spacing.md)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .fill(Theme.Colors.warning.opacity(0.1))
+        )
+        .padding(.horizontal, Theme.Spacing.md)
+    }
+
+    // MARK: - Hero
+
+    private var heroSection: some View {
+        VStack(spacing: Theme.Spacing.md) {
+            Image(systemName: "figure.run")
+                .font(.system(size: 60))
+                .foregroundStyle(Theme.Colors.primary)
+            Text("Ready to Run?")
+                .font(.title.bold())
+            Text("Track your run with GPS, pace, and elevation.")
+                .font(.subheadline)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+                .multilineTextAlignment(.center)
+        }
+        .padding(.top, Theme.Spacing.xl)
+    }
+
+    // MARK: - Start
+
+    private var startButton: some View {
+        Button {
+            viewModel.startRun()
+        } label: {
+            Label("Start Run", systemImage: "play.fill")
+                .font(.headline)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, Theme.Spacing.md)
+        }
+        .buttonStyle(.borderedProminent)
+        .controlSize(.large)
+        .padding(.horizontal, Theme.Spacing.md)
+        .disabled(
+            viewModel.athlete == nil
+            || locationService.authorizationStatus == .denied
+            || locationService.authorizationStatus == .notDetermined
+        )
+    }
+
+    // MARK: - History
+
+    private var historyLink: some View {
+        NavigationLink {
+            RunHistoryView(runRepository: runRepository)
+        } label: {
+            HStack {
+                Image(systemName: "clock.arrow.circlepath")
+                Text("Run History")
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+            .padding(Theme.Spacing.md)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                    .fill(Theme.Colors.secondaryBackground)
+            )
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, Theme.Spacing.md)
     }
 }

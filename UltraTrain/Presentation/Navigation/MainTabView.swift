@@ -9,6 +9,8 @@ struct MainTabView: View {
     private let planGenerator: any GenerateTrainingPlanUseCase
     private let nutritionRepository: any NutritionRepository
     private let nutritionGenerator: any GenerateNutritionPlanUseCase
+    private let runRepository: any RunRepository
+    private let locationService: LocationService
 
     init(
         athleteRepository: any AthleteRepository,
@@ -16,7 +18,9 @@ struct MainTabView: View {
         planRepository: any TrainingPlanRepository,
         planGenerator: any GenerateTrainingPlanUseCase,
         nutritionRepository: any NutritionRepository,
-        nutritionGenerator: any GenerateNutritionPlanUseCase
+        nutritionGenerator: any GenerateNutritionPlanUseCase,
+        runRepository: any RunRepository,
+        locationService: LocationService
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -24,6 +28,8 @@ struct MainTabView: View {
         self.planGenerator = planGenerator
         self.nutritionRepository = nutritionRepository
         self.nutritionGenerator = nutritionGenerator
+        self.runRepository = runRepository
+        self.locationService = locationService
     }
 
     var body: some View {
@@ -45,7 +51,12 @@ struct MainTabView: View {
                 }
                 .tag(Tab.plan)
 
-            RunTrackingLaunchView()
+            RunTrackingLaunchView(
+                athleteRepository: athleteRepository,
+                planRepository: planRepository,
+                runRepository: runRepository,
+                locationService: locationService
+            )
                 .tabItem {
                     Label("Run", systemImage: "figure.run")
                 }

@@ -30,6 +30,12 @@ enum AppConfiguration {
         static let recoveryWeekCycle: Int = 3 // recovery every Nth week
     }
 
+    enum RunTracking {
+        static let autoPauseSpeedThreshold: Double = 0.5 // m/s
+        static let autoPauseDelay: TimeInterval = 5.0 // seconds below threshold
+        static let timerInterval: TimeInterval = 1.0
+    }
+
     enum Nutrition {
         static let caloriesPerKgPerHourLow: Double = 4.0
         static let caloriesPerKgPerHourHigh: Double = 6.0

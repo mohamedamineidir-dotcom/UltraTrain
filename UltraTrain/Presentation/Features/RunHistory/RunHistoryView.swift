@@ -1,0 +1,98 @@
+import SwiftUI
+
+struct RunHistoryView: View {
+    @State private var viewModel: RunHistoryViewModel
+
+    init(runRepository: any RunRepository) {
+        _viewModel = State(initialValue: RunHistoryViewModel(runRepository: runRepository))
+    }
+
+    var body: some View {
+        Group {
+            if viewModel.isLoading {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if viewModel.sortedRuns.isEmpty {
+                emptyState
+            } else {
+                runList
+            }
+        }
+        .navigationTitle("Run History")
+        .task { await viewModel.load() }
+    }
+
+    // MARK: - List
+
+    private var runList: some View {
+        List {
+            ForEach(viewModel.sortedRuns) { run in
+                NavigationLink(value: run.id) {
+                    RunHistoryRow(run: run)
+                }
+            }
+            .onDelete { indexSet in
+                let sorted = viewModel.sortedRuns
+                for index in indexSet {
+                    Task { await viewModel.deleteRun(id: sorted[index].id) }
+                }
+            }
+        }
+        .listStyle(.plain)
+        .navigationDestination(for: UUID.self) { runId in
+            if let run = viewModel.runs.first(where: { $0.id == runId }) {
+                RunDetailView(run: run)
+            }
+        }
+    }
+
+    // MARK: - Empty
+
+    private var emptyState: some View {
+        VStack(spacing: Theme.Spacing.md) {
+            Image(systemName: "figure.run.circle")
+                .font(.system(size: 48))
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+            Text("No runs yet")
+                .font(.headline)
+            Text("Your completed runs will appear here.")
+                .font(.subheadline)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+        }
+    }
+}
+
+// MARK: - Row
+
+private struct RunHistoryRow: View {
+    let run: CompletedRun
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+            HStack {
+                Text(run.date, style: .date)
+                    .font(.subheadline.bold())
+                Spacer()
+                Text(RunStatisticsCalculator.formatDuration(run.duration))
+                    .font(.subheadline.monospacedDigit())
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+            HStack(spacing: Theme.Spacing.md) {
+                Label(
+                    String(format: "%.2f km", run.distanceKm),
+                    systemImage: "arrow.left.arrow.right"
+                )
+                Label(run.paceFormatted, systemImage: "speedometer")
+                if run.elevationGainM > 0 {
+                    Label(
+                        String(format: "+%.0f m", run.elevationGainM),
+                        systemImage: "arrow.up.right"
+                    )
+                }
+            }
+            .font(.caption)
+            .foregroundStyle(Theme.Colors.secondaryLabel)
+        }
+        .padding(.vertical, Theme.Spacing.xs)
+    }
+}

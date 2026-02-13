@@ -33,6 +33,10 @@
     <array>
         <string>UIInterfaceOrientationPortrait</string>
     </array>
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>location</string>
+    </array>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>UltraTrain uses your location to track your runs and display your route on the map.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
