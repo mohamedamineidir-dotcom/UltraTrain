@@ -6,12 +6,14 @@ struct SettingsView: View {
     init(
         athleteRepository: any AthleteRepository,
         appSettingsRepository: any AppSettingsRepository,
-        clearAllDataUseCase: any ClearAllDataUseCase
+        clearAllDataUseCase: any ClearAllDataUseCase,
+        healthKitService: any HealthKitServiceProtocol
     ) {
         _viewModel = State(initialValue: SettingsViewModel(
             athleteRepository: athleteRepository,
             appSettingsRepository: appSettingsRepository,
-            clearAllDataUseCase: clearAllDataUseCase
+            clearAllDataUseCase: clearAllDataUseCase,
+            healthKitService: healthKitService
         ))
     }
 
@@ -108,23 +110,83 @@ struct SettingsView: View {
             Label {
                 VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                     Text("Apple Health")
-                    Text("Connect to sync heart rate, workouts, and activity data")
+                    Text(healthKitStatusDescription)
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
             } icon: {
                 Image(systemName: "heart.fill")
-                    .foregroundStyle(.red)
+                    .foregroundStyle(healthKitStatusColor)
             }
 
-            Button("Connect HealthKit") {
-                // HealthKit integration will be wired in a future update
+            switch viewModel.healthKitStatus {
+            case .unavailable:
+                Text("HealthKit is not available on this device.")
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            case .notDetermined:
+                Button {
+                    viewModel.showHealthKitExplanation = true
+                } label: {
+                    if viewModel.isRequestingHealthKit {
+                        ProgressView()
+                    } else {
+                        Text("Connect Apple Health")
+                    }
+                }
+                .disabled(viewModel.isRequestingHealthKit)
+            case .authorized:
+                if let rhr = viewModel.healthKitRestingHR {
+                    LabeledContent("Resting HR", value: "\(rhr) bpm")
+                }
+                if let mhr = viewModel.healthKitMaxHR {
+                    LabeledContent("Max HR (30d)", value: "\(mhr) bpm")
+                }
+                if viewModel.healthKitRestingHR != nil || viewModel.healthKitMaxHR != nil {
+                    Button("Update Profile with Health Data") {
+                        Task { await viewModel.updateAthleteWithHealthKitData() }
+                    }
+                }
+                Button("Refresh Health Data") {
+                    Task { await viewModel.fetchHealthKitData() }
+                }
+            case .denied:
+                Button("Open Settings") {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                }
             }
-            .disabled(true)
         } header: {
             Text("Health")
-        } footer: {
-            Text("HealthKit integration coming soon.")
+        }
+        .alert(
+            "Connect Apple Health",
+            isPresented: $viewModel.showHealthKitExplanation
+        ) {
+            Button("Continue") {
+                Task { await viewModel.requestHealthKitAuthorization() }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("UltraTrain will read your heart rate, resting heart rate, and running workouts from Apple Health to enhance your training insights.")
+        }
+    }
+
+    private var healthKitStatusDescription: String {
+        switch viewModel.healthKitStatus {
+        case .unavailable: "Not available on this device"
+        case .notDetermined: "Connect to sync heart rate and workouts"
+        case .authorized: "Connected"
+        case .denied: "Access denied — enable in iOS Settings"
+        }
+    }
+
+    private var healthKitStatusColor: Color {
+        switch viewModel.healthKitStatus {
+        case .unavailable, .denied: .gray
+        case .notDetermined: .red
+        case .authorized: .green
         }
     }
 

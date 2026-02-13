@@ -34,12 +34,14 @@ struct SettingsViewModelTests {
     private func makeViewModel(
         athleteRepo: MockAthleteRepository = MockAthleteRepository(),
         settingsRepo: MockAppSettingsRepository = MockAppSettingsRepository(),
-        clearUseCase: MockClearAllDataUseCase = MockClearAllDataUseCase()
+        clearUseCase: MockClearAllDataUseCase = MockClearAllDataUseCase(),
+        healthKitService: MockHealthKitService = MockHealthKitService()
     ) -> SettingsViewModel {
         SettingsViewModel(
             athleteRepository: athleteRepo,
             appSettingsRepository: settingsRepo,
-            clearAllDataUseCase: clearUseCase
+            clearAllDataUseCase: clearUseCase,
+            healthKitService: healthKitService
         )
     }
 
@@ -215,5 +217,103 @@ struct SettingsViewModelTests {
 
         #expect(vm.error != nil)
         #expect(vm.didClearData == false)
+    }
+
+    // MARK: - HealthKit Tests
+
+    @Test("Request HealthKit authorization succeeds and fetches data")
+    @MainActor
+    func requestHealthKitAuthorizationSucceeds() async {
+        let hkService = MockHealthKitService()
+        hkService.restingHR = 52
+        hkService.maxHR = 190
+
+        let vm = makeViewModel(healthKitService: hkService)
+        await vm.requestHealthKitAuthorization()
+
+        #expect(hkService.requestAuthorizationCalled == true)
+        #expect(hkService.authorizationStatus == .authorized)
+        #expect(vm.healthKitRestingHR == 52)
+        #expect(vm.healthKitMaxHR == 190)
+        #expect(vm.isRequestingHealthKit == false)
+        #expect(vm.error == nil)
+    }
+
+    @Test("Request HealthKit authorization handles error")
+    @MainActor
+    func requestHealthKitAuthorizationHandlesError() async {
+        let hkService = MockHealthKitService()
+        hkService.shouldThrow = true
+
+        let vm = makeViewModel(healthKitService: hkService)
+        await vm.requestHealthKitAuthorization()
+
+        #expect(hkService.requestAuthorizationCalled == true)
+        #expect(vm.error != nil)
+        #expect(vm.isRequestingHealthKit == false)
+    }
+
+    @Test("Fetch HealthKit data populates HR values")
+    @MainActor
+    func fetchHealthKitDataPopulatesHR() async {
+        let hkService = MockHealthKitService()
+        hkService.restingHR = 48
+        hkService.maxHR = 195
+
+        let vm = makeViewModel(healthKitService: hkService)
+        await vm.fetchHealthKitData()
+
+        #expect(vm.healthKitRestingHR == 48)
+        #expect(vm.healthKitMaxHR == 195)
+    }
+
+    @Test("Update athlete with HealthKit data updates profile")
+    @MainActor
+    func updateAthleteWithHealthKitData() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let settingsRepo = MockAppSettingsRepository()
+        settingsRepo.savedSettings = makeSettings()
+        let hkService = MockHealthKitService()
+        hkService.restingHR = 45
+        hkService.maxHR = 192
+
+        let vm = makeViewModel(
+            athleteRepo: athleteRepo,
+            settingsRepo: settingsRepo,
+            healthKitService: hkService
+        )
+        await vm.load()
+        await vm.fetchHealthKitData()
+        await vm.updateAthleteWithHealthKitData()
+
+        #expect(vm.athlete?.restingHeartRate == 45)
+        #expect(vm.athlete?.maxHeartRate == 192)
+        #expect(athleteRepo.savedAthlete?.restingHeartRate == 45)
+        #expect(athleteRepo.savedAthlete?.maxHeartRate == 192)
+        #expect(vm.error == nil)
+    }
+
+    @Test("Load auto-fetches HealthKit data when authorized")
+    @MainActor
+    func loadAutoFetchesHealthKitWhenAuthorized() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let settingsRepo = MockAppSettingsRepository()
+        settingsRepo.savedSettings = makeSettings()
+        let hkService = MockHealthKitService()
+        hkService.authorizationStatus = .authorized
+        hkService.restingHR = 55
+        hkService.maxHR = 180
+
+        let vm = makeViewModel(
+            athleteRepo: athleteRepo,
+            settingsRepo: settingsRepo,
+            healthKitService: hkService
+        )
+        await vm.load()
+
+        #expect(vm.healthKitRestingHR == 55)
+        #expect(vm.healthKitMaxHR == 180)
     }
 }

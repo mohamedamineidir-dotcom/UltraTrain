@@ -17,6 +17,7 @@ struct UltraTrainApp: App {
     private let finishTimeEstimator: any EstimateFinishTimeUseCase
     private let appSettingsRepository: any AppSettingsRepository
     private let clearAllDataUseCase: any ClearAllDataUseCase
+    private let healthKitService: HealthKitService
 
     init() {
         do {
@@ -53,6 +54,7 @@ struct UltraTrainApp: App {
         finishTimeEstimator = FinishTimeEstimator()
         appSettingsRepository = LocalAppSettingsRepository(modelContainer: modelContainer)
         clearAllDataUseCase = DataCleaner(modelContainer: modelContainer)
+        healthKitService = HealthKitService()
     }
 
     var body: some Scene {
@@ -70,7 +72,8 @@ struct UltraTrainApp: App {
                 fitnessCalculator: fitnessCalculator,
                 finishTimeEstimator: finishTimeEstimator,
                 appSettingsRepository: appSettingsRepository,
-                clearAllDataUseCase: clearAllDataUseCase
+                clearAllDataUseCase: clearAllDataUseCase,
+                healthKitService: healthKitService
             )
         }
     }

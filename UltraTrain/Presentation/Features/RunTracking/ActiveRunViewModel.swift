@@ -16,6 +16,7 @@ final class ActiveRunViewModel {
     // MARK: - Dependencies
 
     private let locationService: LocationService
+    private let healthKitService: any HealthKitServiceProtocol
     private let runRepository: any RunRepository
     private let planRepository: any TrainingPlanRepository
 
@@ -43,18 +44,21 @@ final class ActiveRunViewModel {
 
     private var timerTask: Task<Void, Never>?
     private var locationTask: Task<Void, Never>?
+    private var heartRateTask: Task<Void, Never>?
     private var autoPauseTimer: TimeInterval = 0
 
     // MARK: - Init
 
     init(
         locationService: LocationService,
+        healthKitService: any HealthKitServiceProtocol,
         runRepository: any RunRepository,
         planRepository: any TrainingPlanRepository,
         athlete: Athlete,
         linkedSession: TrainingSession?
     ) {
         self.locationService = locationService
+        self.healthKitService = healthKitService
         self.runRepository = runRepository
         self.planRepository = planRepository
         self.athlete = athlete
@@ -67,6 +71,7 @@ final class ActiveRunViewModel {
         runState = .running
         startTimer()
         startLocationTracking()
+        startHeartRateStreaming()
         Logger.tracking.info("Run started")
     }
 
@@ -90,7 +95,9 @@ final class ActiveRunViewModel {
         runState = .finished
         timerTask?.cancel()
         locationTask?.cancel()
+        heartRateTask?.cancel()
         locationService.stopTracking()
+        healthKitService.stopHeartRateStream()
         showSummary = true
         Logger.tracking.info("Run stopped — \(self.distanceKm) km in \(self.elapsedTime)s")
     }
@@ -192,7 +199,7 @@ final class ActiveRunViewModel {
             longitude: location.coordinate.longitude,
             altitudeM: location.altitude,
             timestamp: location.timestamp,
-            heartRate: nil
+            heartRate: currentHeartRate
         )
 
         trackPoints.append(point)
@@ -212,6 +219,20 @@ final class ActiveRunViewModel {
 
         handleAutoPause(speed: location.speed)
     }
+
+    // MARK: - Heart Rate
+
+    private func startHeartRateStreaming() {
+        let stream = healthKitService.startHeartRateStream()
+        heartRateTask = Task { [weak self] in
+            for await reading in stream {
+                guard !Task.isCancelled else { break }
+                self?.currentHeartRate = reading.beatsPerMinute
+            }
+        }
+    }
+
+    // MARK: - Auto Pause
 
     private func handleAutoPause(speed: CLLocationSpeed) {
         guard runState == .running else { return }

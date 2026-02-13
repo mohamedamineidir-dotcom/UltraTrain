@@ -16,6 +16,7 @@ struct AppRootView: View {
     private let finishTimeEstimator: any EstimateFinishTimeUseCase
     private let appSettingsRepository: any AppSettingsRepository
     private let clearAllDataUseCase: any ClearAllDataUseCase
+    private let healthKitService: any HealthKitServiceProtocol
 
     init(
         athleteRepository: any AthleteRepository,
@@ -30,7 +31,8 @@ struct AppRootView: View {
         fitnessCalculator: any CalculateFitnessUseCase,
         finishTimeEstimator: any EstimateFinishTimeUseCase,
         appSettingsRepository: any AppSettingsRepository,
-        clearAllDataUseCase: any ClearAllDataUseCase
+        clearAllDataUseCase: any ClearAllDataUseCase,
+        healthKitService: any HealthKitServiceProtocol
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -45,6 +47,7 @@ struct AppRootView: View {
         self.finishTimeEstimator = finishTimeEstimator
         self.appSettingsRepository = appSettingsRepository
         self.clearAllDataUseCase = clearAllDataUseCase
+        self.healthKitService = healthKitService
     }
 
     var body: some View {
@@ -66,7 +69,8 @@ struct AppRootView: View {
                     fitnessCalculator: fitnessCalculator,
                     finishTimeEstimator: finishTimeEstimator,
                     appSettingsRepository: appSettingsRepository,
-                    clearAllDataUseCase: clearAllDataUseCase
+                    clearAllDataUseCase: clearAllDataUseCase,
+                    healthKitService: healthKitService
                 )
             case .some(false):
                 OnboardingView(

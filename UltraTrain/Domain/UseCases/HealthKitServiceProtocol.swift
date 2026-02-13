@@ -1,0 +1,35 @@
+import Foundation
+
+enum HealthKitAuthStatus: Sendable, Equatable {
+    case notDetermined
+    case authorized
+    case denied
+    case unavailable
+}
+
+struct HealthKitHeartRateReading: Sendable {
+    let beatsPerMinute: Int
+    let timestamp: Date
+}
+
+struct HealthKitWorkout: Identifiable, Sendable, Equatable {
+    let id: UUID
+    let startDate: Date
+    let endDate: Date
+    let distanceKm: Double
+    let elevationGainM: Double
+    let duration: TimeInterval
+    let averageHeartRate: Int?
+    let maxHeartRate: Int?
+    let source: String
+}
+
+protocol HealthKitServiceProtocol: AnyObject, Sendable {
+    var authorizationStatus: HealthKitAuthStatus { get }
+    func requestAuthorization() async throws
+    func startHeartRateStream() -> AsyncStream<HealthKitHeartRateReading>
+    func stopHeartRateStream()
+    func fetchRestingHeartRate() async throws -> Int?
+    func fetchMaxHeartRate() async throws -> Int?
+    func fetchRunningWorkouts(from startDate: Date, to endDate: Date) async throws -> [HealthKitWorkout]
+}

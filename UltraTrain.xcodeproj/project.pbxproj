@@ -177,6 +177,8 @@
 		93618B3E3E41AB4DCB978C7B /* MockAppSettingsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C64D7D134F014AD14A27BD9 /* MockAppSettingsRepository.swift */; };
 		51CDA8C8BAD8FFF9C0C929ED /* MockClearAllDataUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F79880DBC252EECB1E43C3F /* MockClearAllDataUseCase.swift */; };
 		623CCEFE1285FB4A4043F9A7 /* SettingsViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3709C681939BC7488AD9ED0D /* SettingsViewModelTests.swift */; };
+		F1E2D3C4B5A6F7E8D9C0B1A2 /* HealthKitServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7B8C9D0E1F2 /* HealthKitServiceProtocol.swift */; };
+		2F1E0D9C8B7A6F5E4D3C2B1A /* MockHealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F7A8B9C0D1E2F /* MockHealthKitService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -372,6 +374,8 @@
 		4C64D7D134F014AD14A27BD9 /* MockAppSettingsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAppSettingsRepository.swift; sourceTree = "<group>"; };
 		1F79880DBC252EECB1E43C3F /* MockClearAllDataUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockClearAllDataUseCase.swift; sourceTree = "<group>"; };
 		3709C681939BC7488AD9ED0D /* SettingsViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModelTests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6A7B8C9D0E1F2 /* HealthKitServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitServiceProtocol.swift; sourceTree = "<group>"; };
+		1A2B3C4D5E6F7A8B9C0D1E2F /* MockHealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockHealthKitService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -483,6 +487,7 @@
 				1F79880DBC252EECB1E43C3F /* MockClearAllDataUseCase.swift */,
 				4E3F7CA22C7D4B9089A776F2 /* MockEstimateFinishTimeUseCase.swift */,
 				546F3C658466FD677D9219D6 /* MockFitnessRepository.swift */,
+				1A2B3C4D5E6F7A8B9C0D1E2F /* MockHealthKitService.swift */,
 				67046BD5B89F2ADDC637BD6C /* MockGenerateNutritionPlanUseCase.swift */,
 				916A000623DD89CC57C3BC70 /* MockGenerateTrainingPlanUseCase.swift */,
 				AAA56E78C29B14A176CEB014 /* MockNutritionRepository.swift */,
@@ -619,6 +624,7 @@
 				E49CF74390BFF5A3A84D1697 /* EstimateFinishTimeUseCase.swift */,
 				C75E749F948B7C2701AFB693 /* FinishTimeEstimator.swift */,
 				4168726E4E11688782510E7F /* FitnessCalculator.swift */,
+				A1B2C3D4E5F6A7B8C9D0E1F2 /* HealthKitServiceProtocol.swift */,
 				BDF8EC8B912DEC9FD97724C0 /* GenerateNutritionPlanUseCase.swift */,
 				AD4C000B9B7DFB626C24ED17 /* GenerateTrainingPlanUseCase.swift */,
 				CBDF4777CA3D581A85AB8607 /* IntermediateRaceHandler.swift */,
@@ -1091,6 +1097,7 @@
 			
 				93618B3E3E41AB4DCB978C7B /* MockAppSettingsRepository.swift in Sources */,
 				51CDA8C8BAD8FFF9C0C929ED /* MockClearAllDataUseCase.swift in Sources */,
+				2F1E0D9C8B7A6F5E4D3C2B1A /* MockHealthKitService.swift in Sources */,
 				623CCEFE1285FB4A4043F9A7 /* SettingsViewModelTests.swift in Sources */,);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1147,6 +1154,7 @@
 				8CE9041F815C843863375B61 /* GenerateNutritionPlanUseCase.swift in Sources */,
 				00281AB2049EAD0C4DE7D1B9 /* GenerateTrainingPlanUseCase.swift in Sources */,
 				6B43758CEF0C2C27AD8BF35C /* HealthKitService.swift in Sources */,
+				F1E2D3C4B5A6F7E8D9C0B1A2 /* HealthKitServiceProtocol.swift in Sources */,
 				B4CB8829E14D4EB20124E144 /* Identifiable+UUID.swift in Sources */,
 				1F74EC78F50271F793DA08C2 /* IntermediateRaceHandler.swift in Sources */,
 				A47733DCF4C2788738427936 /* LabeledIntStepper.swift in Sources */,

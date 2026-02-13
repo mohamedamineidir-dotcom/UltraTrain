@@ -8,6 +8,7 @@ struct ProfileView: View {
     private let finishTimeEstimator: any EstimateFinishTimeUseCase
     private let appSettingsRepository: any AppSettingsRepository
     private let clearAllDataUseCase: any ClearAllDataUseCase
+    private let healthKitService: any HealthKitServiceProtocol
 
     init(
         athleteRepository: any AthleteRepository,
@@ -16,7 +17,8 @@ struct ProfileView: View {
         fitnessCalculator: any CalculateFitnessUseCase,
         finishTimeEstimator: any EstimateFinishTimeUseCase,
         appSettingsRepository: any AppSettingsRepository,
-        clearAllDataUseCase: any ClearAllDataUseCase
+        clearAllDataUseCase: any ClearAllDataUseCase,
+        healthKitService: any HealthKitServiceProtocol
     ) {
         _viewModel = State(initialValue: ProfileViewModel(
             athleteRepository: athleteRepository,
@@ -28,6 +30,7 @@ struct ProfileView: View {
         self.finishTimeEstimator = finishTimeEstimator
         self.appSettingsRepository = appSettingsRepository
         self.clearAllDataUseCase = clearAllDataUseCase
+        self.healthKitService = healthKitService
     }
 
     var body: some View {
@@ -54,7 +57,8 @@ struct ProfileView: View {
                         SettingsView(
                             athleteRepository: athleteRepository,
                             appSettingsRepository: appSettingsRepository,
-                            clearAllDataUseCase: clearAllDataUseCase
+                            clearAllDataUseCase: clearAllDataUseCase,
+                            healthKitService: healthKitService
                         )
                     } label: {
                         Image(systemName: "gearshape")

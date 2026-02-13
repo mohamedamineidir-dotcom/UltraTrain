@@ -3,6 +3,7 @@ import SwiftUI
 struct RunTrackingLaunchView: View {
     @State private var viewModel: RunTrackingLaunchViewModel
     private let locationService: LocationService
+    private let healthKitService: any HealthKitServiceProtocol
     private let runRepository: any RunRepository
     private let planRepository: any TrainingPlanRepository
 
@@ -10,7 +11,8 @@ struct RunTrackingLaunchView: View {
         athleteRepository: any AthleteRepository,
         planRepository: any TrainingPlanRepository,
         runRepository: any RunRepository,
-        locationService: LocationService
+        locationService: LocationService,
+        healthKitService: any HealthKitServiceProtocol
     ) {
         _viewModel = State(initialValue: RunTrackingLaunchViewModel(
             athleteRepository: athleteRepository,
@@ -18,6 +20,7 @@ struct RunTrackingLaunchView: View {
             runRepository: runRepository
         ))
         self.locationService = locationService
+        self.healthKitService = healthKitService
         self.runRepository = runRepository
         self.planRepository = planRepository
     }
@@ -47,6 +50,7 @@ struct RunTrackingLaunchView: View {
                     ActiveRunView(
                         viewModel: ActiveRunViewModel(
                             locationService: locationService,
+                            healthKitService: healthKitService,
                             runRepository: runRepository,
                             planRepository: planRepository,
                             athlete: athlete,
