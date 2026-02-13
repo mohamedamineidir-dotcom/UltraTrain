@@ -63,7 +63,10 @@ struct MainTabView: View {
                 }
                 .tag(Tab.nutrition)
 
-            ProfileView()
+            ProfileView(
+                athleteRepository: athleteRepository,
+                raceRepository: raceRepository
+            )
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")
                 }
