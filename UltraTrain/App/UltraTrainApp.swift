@@ -12,6 +12,8 @@ struct UltraTrainApp: App {
     private let nutritionGenerator: any GenerateNutritionPlanUseCase
     private let runRepository: any RunRepository
     private let locationService: LocationService
+    private let fitnessRepository: any FitnessRepository
+    private let fitnessCalculator: any CalculateFitnessUseCase
 
     init() {
         do {
@@ -25,7 +27,8 @@ struct UltraTrainApp: App {
                 NutritionEntrySwiftDataModel.self,
                 NutritionProductSwiftDataModel.self,
                 CompletedRunSwiftDataModel.self,
-                SplitSwiftDataModel.self
+                SplitSwiftDataModel.self,
+                FitnessSnapshotSwiftDataModel.self
             ])
             let config = ModelConfiguration(isStoredInMemoryOnly: false)
             modelContainer = try ModelContainer(for: schema, configurations: config)
@@ -41,6 +44,8 @@ struct UltraTrainApp: App {
         nutritionGenerator = NutritionPlanGenerator()
         runRepository = LocalRunRepository(modelContainer: modelContainer)
         locationService = LocationService()
+        fitnessRepository = LocalFitnessRepository(modelContainer: modelContainer)
+        fitnessCalculator = FitnessCalculator()
     }
 
     var body: some Scene {
@@ -53,7 +58,9 @@ struct UltraTrainApp: App {
                 nutritionRepository: nutritionRepository,
                 nutritionGenerator: nutritionGenerator,
                 runRepository: runRepository,
-                locationService: locationService
+                locationService: locationService,
+                fitnessRepository: fitnessRepository,
+                fitnessCalculator: fitnessCalculator
             )
         }
     }

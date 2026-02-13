@@ -1,6 +1,13 @@
 import Foundation
 import os
 
+enum FitnessStatus: Equatable {
+    case noData
+    case optimal
+    case injuryRisk
+    case detraining
+}
+
 @Observable
 @MainActor
 final class DashboardViewModel {
@@ -8,16 +15,33 @@ final class DashboardViewModel {
     // MARK: - Dependencies
 
     private let planRepository: any TrainingPlanRepository
+    private let runRepository: any RunRepository
+    private let athleteRepository: any AthleteRepository
+    private let fitnessRepository: any FitnessRepository
+    private let fitnessCalculator: any CalculateFitnessUseCase
 
     // MARK: - State
 
     var plan: TrainingPlan?
+    var fitnessSnapshot: FitnessSnapshot?
+    var fitnessHistory: [FitnessSnapshot] = []
     var isLoading = false
+    var fitnessError: String?
 
     // MARK: - Init
 
-    init(planRepository: any TrainingPlanRepository) {
+    init(
+        planRepository: any TrainingPlanRepository,
+        runRepository: any RunRepository,
+        athleteRepository: any AthleteRepository,
+        fitnessRepository: any FitnessRepository,
+        fitnessCalculator: any CalculateFitnessUseCase
+    ) {
         self.planRepository = planRepository
+        self.runRepository = runRepository
+        self.athleteRepository = athleteRepository
+        self.fitnessRepository = fitnessRepository
+        self.fitnessCalculator = fitnessCalculator
     }
 
     // MARK: - Load
@@ -29,10 +53,48 @@ final class DashboardViewModel {
         } catch {
             Logger.training.error("Dashboard failed to load plan: \(error)")
         }
+        await loadFitness()
         isLoading = false
     }
 
-    // MARK: - Computed
+    private func loadFitness() async {
+        do {
+            guard let athlete = try await athleteRepository.getAthlete() else { return }
+            let runs = try await runRepository.getRuns(for: athlete.id)
+            guard !runs.isEmpty else {
+                fitnessSnapshot = nil
+                return
+            }
+            let snapshot = try await fitnessCalculator.execute(runs: runs, asOf: .now)
+            try await fitnessRepository.saveSnapshot(snapshot)
+            fitnessSnapshot = snapshot
+
+            let from = Date.now.adding(days: -28)
+            fitnessHistory = try await fitnessRepository.getSnapshots(from: from, to: .now)
+        } catch {
+            fitnessError = error.localizedDescription
+            Logger.fitness.error("Failed to load fitness: \(error)")
+        }
+    }
+
+    // MARK: - Fitness Computed
+
+    var fitnessStatus: FitnessStatus {
+        guard let snapshot = fitnessSnapshot else { return .noData }
+        let acr = snapshot.acuteToChronicRatio
+        if acr > 1.5 { return .injuryRisk }
+        if acr < 0.8 && snapshot.fitness > 0 { return .detraining }
+        return .optimal
+    }
+
+    var formDescription: String {
+        guard let snapshot = fitnessSnapshot else { return "--" }
+        if snapshot.form > 10 { return "Fresh" }
+        if snapshot.form > -10 { return "Neutral" }
+        return "Fatigued"
+    }
+
+    // MARK: - Plan Computed
 
     var currentWeek: TrainingWeek? {
         plan?.weeks.first { $0.containsToday }

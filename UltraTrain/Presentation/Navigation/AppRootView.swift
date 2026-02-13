@@ -11,6 +11,8 @@ struct AppRootView: View {
     private let nutritionGenerator: any GenerateNutritionPlanUseCase
     private let runRepository: any RunRepository
     private let locationService: LocationService
+    private let fitnessRepository: any FitnessRepository
+    private let fitnessCalculator: any CalculateFitnessUseCase
 
     init(
         athleteRepository: any AthleteRepository,
@@ -20,7 +22,9 @@ struct AppRootView: View {
         nutritionRepository: any NutritionRepository,
         nutritionGenerator: any GenerateNutritionPlanUseCase,
         runRepository: any RunRepository,
-        locationService: LocationService
+        locationService: LocationService,
+        fitnessRepository: any FitnessRepository,
+        fitnessCalculator: any CalculateFitnessUseCase
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -30,6 +34,8 @@ struct AppRootView: View {
         self.nutritionGenerator = nutritionGenerator
         self.runRepository = runRepository
         self.locationService = locationService
+        self.fitnessRepository = fitnessRepository
+        self.fitnessCalculator = fitnessCalculator
     }
 
     var body: some View {
@@ -46,7 +52,9 @@ struct AppRootView: View {
                     nutritionRepository: nutritionRepository,
                     nutritionGenerator: nutritionGenerator,
                     runRepository: runRepository,
-                    locationService: locationService
+                    locationService: locationService,
+                    fitnessRepository: fitnessRepository,
+                    fitnessCalculator: fitnessCalculator
                 )
             case .some(false):
                 OnboardingView(

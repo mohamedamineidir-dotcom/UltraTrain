@@ -11,6 +11,8 @@ struct MainTabView: View {
     private let nutritionGenerator: any GenerateNutritionPlanUseCase
     private let runRepository: any RunRepository
     private let locationService: LocationService
+    private let fitnessRepository: any FitnessRepository
+    private let fitnessCalculator: any CalculateFitnessUseCase
 
     init(
         athleteRepository: any AthleteRepository,
@@ -20,7 +22,9 @@ struct MainTabView: View {
         nutritionRepository: any NutritionRepository,
         nutritionGenerator: any GenerateNutritionPlanUseCase,
         runRepository: any RunRepository,
-        locationService: LocationService
+        locationService: LocationService,
+        fitnessRepository: any FitnessRepository,
+        fitnessCalculator: any CalculateFitnessUseCase
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -30,11 +34,19 @@ struct MainTabView: View {
         self.nutritionGenerator = nutritionGenerator
         self.runRepository = runRepository
         self.locationService = locationService
+        self.fitnessRepository = fitnessRepository
+        self.fitnessCalculator = fitnessCalculator
     }
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            DashboardView(planRepository: planRepository)
+            DashboardView(
+                planRepository: planRepository,
+                runRepository: runRepository,
+                athleteRepository: athleteRepository,
+                fitnessRepository: fitnessRepository,
+                fitnessCalculator: fitnessCalculator
+            )
                 .tabItem {
                     Label("Dashboard", systemImage: "house.fill")
                 }
