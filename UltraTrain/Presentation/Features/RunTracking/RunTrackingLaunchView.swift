@@ -12,12 +12,14 @@ struct RunTrackingLaunchView: View {
         planRepository: any TrainingPlanRepository,
         runRepository: any RunRepository,
         locationService: LocationService,
-        healthKitService: any HealthKitServiceProtocol
+        healthKitService: any HealthKitServiceProtocol,
+        appSettingsRepository: any AppSettingsRepository
     ) {
         _viewModel = State(initialValue: RunTrackingLaunchViewModel(
             athleteRepository: athleteRepository,
             planRepository: planRepository,
-            runRepository: runRepository
+            runRepository: runRepository,
+            appSettingsRepository: appSettingsRepository
         ))
         self.locationService = locationService
         self.healthKitService = healthKitService
@@ -54,7 +56,8 @@ struct RunTrackingLaunchView: View {
                             runRepository: runRepository,
                             planRepository: planRepository,
                             athlete: athlete,
-                            linkedSession: viewModel.selectedSession
+                            linkedSession: viewModel.selectedSession,
+                            autoPauseEnabled: viewModel.autoPauseEnabled
                         )
                     )
                 }

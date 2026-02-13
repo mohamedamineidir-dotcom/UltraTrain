@@ -69,6 +69,10 @@ struct RunSummarySheet: View {
     private var statsSection: some View {
         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: Theme.Spacing.md) {
             summaryTile(label: "Distance", value: "\(viewModel.formattedDistance) km")
+            if viewModel.pausedDuration > 0 {
+                summaryTile(label: "Moving Time", value: viewModel.formattedTime)
+                summaryTile(label: "Total Time", value: viewModel.formattedTotalTime)
+            }
             summaryTile(label: "Avg Pace", value: "\(viewModel.formattedPace) /km")
             summaryTile(label: "Elevation", value: viewModel.formattedElevation)
             summaryTile(

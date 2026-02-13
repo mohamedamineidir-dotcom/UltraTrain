@@ -26,7 +26,8 @@ struct SettingsViewModelTests {
         AppSettings(
             id: UUID(),
             trainingRemindersEnabled: true,
-            nutritionRemindersEnabled: true
+            nutritionRemindersEnabled: true,
+            autoPauseEnabled: true
         )
     }
 
@@ -315,5 +316,23 @@ struct SettingsViewModelTests {
 
         #expect(vm.healthKitRestingHR == 55)
         #expect(vm.healthKitMaxHR == 180)
+    }
+
+    // MARK: - Auto Pause Tests
+
+    @Test("Toggle auto-pause off")
+    @MainActor
+    func toggleAutoPauseOff() async {
+        let settingsRepo = MockAppSettingsRepository()
+        settingsRepo.savedSettings = makeSettings()
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+
+        let vm = makeViewModel(athleteRepo: athleteRepo, settingsRepo: settingsRepo)
+        await vm.load()
+        await vm.updateAutoPause(false)
+
+        #expect(vm.appSettings?.autoPauseEnabled == false)
+        #expect(settingsRepo.savedSettings?.autoPauseEnabled == false)
     }
 }

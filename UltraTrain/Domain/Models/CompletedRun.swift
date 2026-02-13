@@ -15,6 +15,11 @@ struct CompletedRun: Identifiable, Equatable, Sendable {
     var splits: [Split]
     var linkedSessionId: UUID?
     var notes: String?
+    var pausedDuration: TimeInterval
+
+    var totalDuration: TimeInterval {
+        duration + pausedDuration
+    }
 
     var paceFormatted: String {
         let minutes = Int(averagePaceSecondsPerKm) / 60

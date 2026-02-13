@@ -57,7 +57,8 @@ final class SettingsViewModel {
                 let defaults = AppSettings(
                     id: UUID(),
                     trainingRemindersEnabled: true,
-                    nutritionRemindersEnabled: true
+                    nutritionRemindersEnabled: true,
+                    autoPauseEnabled: true
                 )
                 try await appSettingsRepository.saveSettings(defaults)
                 appSettings = defaults
@@ -160,6 +161,21 @@ final class SettingsViewModel {
         } catch {
             self.error = error.localizedDescription
             Logger.settings.error("Failed to update athlete with HealthKit data: \(error)")
+        }
+    }
+
+    // MARK: - Auto Pause
+
+    func updateAutoPause(_ enabled: Bool) async {
+        guard var settings = appSettings else { return }
+        settings.autoPauseEnabled = enabled
+
+        do {
+            try await appSettingsRepository.updateSettings(settings)
+            appSettings = settings
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update auto-pause setting: \(error)")
         }
     }
 

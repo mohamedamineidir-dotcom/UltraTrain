@@ -46,10 +46,20 @@ struct ActiveRunView: View {
     // MARK: - Timer
 
     private var timerDisplay: some View {
-        Text(viewModel.formattedTime)
-            .font(.system(size: 56, weight: .bold, design: .monospaced))
-            .monospacedDigit()
-            .foregroundStyle(timerColor)
+        VStack(spacing: Theme.Spacing.xs) {
+            Text(viewModel.formattedTime)
+                .font(.system(size: 56, weight: .bold, design: .monospaced))
+                .monospacedDigit()
+                .foregroundStyle(timerColor)
+
+            if viewModel.isAutoPaused {
+                Text("Auto-Paused")
+                    .font(.subheadline.bold())
+                    .foregroundStyle(Theme.Colors.warning)
+                    .transition(.opacity)
+            }
+        }
+        .animation(.easeInOut(duration: 0.3), value: viewModel.isAutoPaused)
     }
 
     private var timerColor: Color {

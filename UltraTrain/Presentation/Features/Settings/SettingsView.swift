@@ -23,6 +23,7 @@ struct SettingsView: View {
                 ProgressView()
             } else {
                 unitsSection
+                runTrackingSection
                 notificationsSection
                 healthKitSection
                 dataManagementSection
@@ -76,6 +77,26 @@ struct SettingsView: View {
                         Text(unit.displayName).tag(unit)
                     }
                 }
+            }
+        }
+    }
+
+    // MARK: - Run Tracking Section
+
+    @ViewBuilder
+    private var runTrackingSection: some View {
+        if let settings = viewModel.appSettings {
+            Section {
+                Toggle("Auto-Pause", isOn: Binding(
+                    get: { settings.autoPauseEnabled },
+                    set: { newValue in
+                        Task { await viewModel.updateAutoPause(newValue) }
+                    }
+                ))
+            } header: {
+                Text("Run Tracking")
+            } footer: {
+                Text("Automatically pause and resume your run when you stop and start moving.")
             }
         }
     }

@@ -71,12 +71,14 @@ struct RunTrackingLaunchViewModelTests {
     private func makeViewModel(
         athleteRepo: MockAthleteRepository = MockAthleteRepository(),
         planRepo: MockTrainingPlanRepository = MockTrainingPlanRepository(),
-        runRepo: MockRunRepository = MockRunRepository()
+        runRepo: MockRunRepository = MockRunRepository(),
+        settingsRepo: MockAppSettingsRepository = MockAppSettingsRepository()
     ) -> RunTrackingLaunchViewModel {
         RunTrackingLaunchViewModel(
             athleteRepository: athleteRepo,
             planRepository: planRepo,
-            runRepository: runRepo
+            runRepository: runRepo,
+            appSettingsRepository: settingsRepo
         )
     }
 

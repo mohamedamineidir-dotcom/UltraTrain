@@ -80,7 +80,8 @@ struct MainTabView: View {
                 planRepository: planRepository,
                 runRepository: runRepository,
                 locationService: locationService,
-                healthKitService: healthKitService
+                healthKitService: healthKitService,
+                appSettingsRepository: appSettingsRepository
             )
                 .tabItem {
                     Label("Run", systemImage: "figure.run")

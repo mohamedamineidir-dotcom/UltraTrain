@@ -32,6 +32,7 @@ enum AppConfiguration {
 
     enum RunTracking {
         static let autoPauseSpeedThreshold: Double = 0.5 // m/s
+        static let autoResumeSpeedThreshold: Double = 0.8 // m/s (hysteresis)
         static let autoPauseDelay: TimeInterval = 5.0 // seconds below threshold
         static let timerInterval: TimeInterval = 1.0
     }

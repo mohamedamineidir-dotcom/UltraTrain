@@ -24,11 +24,13 @@ final class ActiveRunViewModel {
 
     let athlete: Athlete
     let linkedSession: TrainingSession?
+    let autoPauseEnabled: Bool
 
     // MARK: - State
 
     var runState: RunState = .notStarted
     var elapsedTime: TimeInterval = 0
+    var pausedDuration: TimeInterval = 0
     var distanceKm: Double = 0
     var elevationGainM: Double = 0
     var elevationLossM: Double = 0
@@ -39,6 +41,7 @@ final class ActiveRunViewModel {
     var error: String?
     var showSummary = false
     var isSaving = false
+    var isAutoPaused = false
 
     // MARK: - Private
 
@@ -46,6 +49,7 @@ final class ActiveRunViewModel {
     private var locationTask: Task<Void, Never>?
     private var heartRateTask: Task<Void, Never>?
     private var autoPauseTimer: TimeInterval = 0
+    private var pauseStartTime: Date?
 
     // MARK: - Init
 
@@ -55,7 +59,8 @@ final class ActiveRunViewModel {
         runRepository: any RunRepository,
         planRepository: any TrainingPlanRepository,
         athlete: Athlete,
-        linkedSession: TrainingSession?
+        linkedSession: TrainingSession?,
+        autoPauseEnabled: Bool
     ) {
         self.locationService = locationService
         self.healthKitService = healthKitService
@@ -63,6 +68,7 @@ final class ActiveRunViewModel {
         self.planRepository = planRepository
         self.athlete = athlete
         self.linkedSession = linkedSession
+        self.autoPauseEnabled = autoPauseEnabled
     }
 
     // MARK: - Controls
@@ -75,23 +81,40 @@ final class ActiveRunViewModel {
         Logger.tracking.info("Run started")
     }
 
-    func pauseRun() {
+    func pauseRun(auto: Bool = false) {
         guard runState == .running else { return }
         runState = .paused
+        isAutoPaused = auto
+        pauseStartTime = Date.now
         timerTask?.cancel()
-        locationService.pauseTracking()
-        Logger.tracking.info("Run paused at \(self.elapsedTime)s")
+        if !auto {
+            locationService.pauseTracking()
+        }
+        Logger.tracking.info("Run \(auto ? "auto-" : "")paused at \(self.elapsedTime)s")
     }
 
     func resumeRun() {
         guard runState == .paused else { return }
+        if let start = pauseStartTime {
+            pausedDuration += Date.now.timeIntervalSince(start)
+        }
+        let wasManuallyPaused = !isAutoPaused
+        pauseStartTime = nil
+        isAutoPaused = false
+        autoPauseTimer = 0
         runState = .running
         startTimer()
-        locationService.resumeTracking()
+        if wasManuallyPaused {
+            locationService.resumeTracking()
+        }
         Logger.tracking.info("Run resumed")
     }
 
     func stopRun() {
+        if let start = pauseStartTime {
+            pausedDuration += Date.now.timeIntervalSince(start)
+            pauseStartTime = nil
+        }
         runState = .finished
         timerTask?.cancel()
         locationTask?.cancel()
@@ -128,7 +151,8 @@ final class ActiveRunViewModel {
             gpsTrack: trackPoints,
             splits: splits,
             linkedSessionId: linkedSession?.id,
-            notes: notes
+            notes: notes,
+            pausedDuration: pausedDuration
         )
 
         do {
@@ -169,6 +193,10 @@ final class ActiveRunViewModel {
         String(format: "+%.0f m", elevationGainM)
     }
 
+    var formattedTotalTime: String {
+        RunStatisticsCalculator.formatDuration(elapsedTime + pausedDuration)
+    }
+
     // MARK: - Timer
 
     private func startTimer() {
@@ -194,6 +222,13 @@ final class ActiveRunViewModel {
     }
 
     private func processLocation(_ location: CLLocation) {
+        if runState == .paused && isAutoPaused {
+            handleAutoResume(speed: location.speed)
+            return
+        }
+
+        guard runState == .running else { return }
+
         let point = TrackPoint(
             latitude: location.coordinate.latitude,
             longitude: location.coordinate.longitude,
@@ -235,16 +270,23 @@ final class ActiveRunViewModel {
     // MARK: - Auto Pause
 
     private func handleAutoPause(speed: CLLocationSpeed) {
-        guard runState == .running else { return }
+        guard autoPauseEnabled, runState == .running else { return }
 
         if speed < AppConfiguration.RunTracking.autoPauseSpeedThreshold && speed >= 0 {
             autoPauseTimer += AppConfiguration.RunTracking.timerInterval
             if autoPauseTimer >= AppConfiguration.RunTracking.autoPauseDelay {
-                pauseRun()
+                pauseRun(auto: true)
                 autoPauseTimer = 0
             }
         } else {
             autoPauseTimer = 0
+        }
+    }
+
+    private func handleAutoResume(speed: CLLocationSpeed) {
+        if speed >= AppConfiguration.RunTracking.autoResumeSpeedThreshold {
+            resumeRun()
+            Logger.tracking.info("Auto-resumed at speed \(speed) m/s")
         }
     }
 }

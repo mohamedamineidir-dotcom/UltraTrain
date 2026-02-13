@@ -45,7 +45,12 @@ struct RunDetailView: View {
             spacing: Theme.Spacing.md
         ) {
             detailTile(label: "Distance", value: String(format: "%.2f km", run.distanceKm))
-            detailTile(label: "Duration", value: RunStatisticsCalculator.formatDuration(run.duration))
+            if run.pausedDuration > 0 {
+                detailTile(label: "Moving Time", value: RunStatisticsCalculator.formatDuration(run.duration))
+                detailTile(label: "Total Time", value: RunStatisticsCalculator.formatDuration(run.totalDuration))
+            } else {
+                detailTile(label: "Duration", value: RunStatisticsCalculator.formatDuration(run.duration))
+            }
             detailTile(label: "Avg Pace", value: run.paceFormatted)
             detailTile(label: "Elevation", value: String(format: "+%.0f / -%.0f m", run.elevationGainM, run.elevationLossM))
             if let avgHR = run.averageHeartRate {

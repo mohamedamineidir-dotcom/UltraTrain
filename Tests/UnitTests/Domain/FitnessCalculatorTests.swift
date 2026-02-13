@@ -27,7 +27,8 @@ struct FitnessCalculatorTests {
             gpsTrack: [],
             splits: [],
             linkedSessionId: nil,
-            notes: nil
+            notes: nil,
+            pausedDuration: 0
         )
     }
 

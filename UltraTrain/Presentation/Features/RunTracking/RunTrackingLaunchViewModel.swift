@@ -10,6 +10,7 @@ final class RunTrackingLaunchViewModel {
     private let athleteRepository: any AthleteRepository
     private let planRepository: any TrainingPlanRepository
     private let runRepository: any RunRepository
+    private let appSettingsRepository: any AppSettingsRepository
 
     // MARK: - State
 
@@ -19,17 +20,20 @@ final class RunTrackingLaunchViewModel {
     var isLoading = false
     var error: String?
     var showActiveRun = false
+    var autoPauseEnabled = true
 
     // MARK: - Init
 
     init(
         athleteRepository: any AthleteRepository,
         planRepository: any TrainingPlanRepository,
-        runRepository: any RunRepository
+        runRepository: any RunRepository,
+        appSettingsRepository: any AppSettingsRepository
     ) {
         self.athleteRepository = athleteRepository
         self.planRepository = planRepository
         self.runRepository = runRepository
+        self.appSettingsRepository = appSettingsRepository
     }
 
     // MARK: - Load
@@ -42,6 +46,9 @@ final class RunTrackingLaunchViewModel {
             athlete = try await athleteRepository.getAthlete()
             if let plan = try await planRepository.getActivePlan() {
                 todaysSessions = extractTodaysSessions(from: plan)
+            }
+            if let settings = try await appSettingsRepository.getSettings() {
+                autoPauseEnabled = settings.autoPauseEnabled
             }
         } catch {
             self.error = error.localizedDescription
