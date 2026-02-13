@@ -3,6 +3,8 @@ import CoreLocation
 
 struct RunDetailView: View {
     let run: CompletedRun
+    let planRepository: any TrainingPlanRepository
+    let athleteRepository: any AthleteRepository
 
     var body: some View {
         ScrollView {
@@ -30,6 +32,9 @@ struct RunDetailView: View {
                     notesSection(notes)
                         .padding(.horizontal, Theme.Spacing.md)
                 }
+
+                analysisLink
+                    .padding(.horizontal, Theme.Spacing.md)
             }
             .padding(.vertical, Theme.Spacing.md)
         }
@@ -126,6 +131,24 @@ struct RunDetailView: View {
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .fill(Theme.Colors.secondaryBackground)
         )
+    }
+
+    // MARK: - Analysis
+
+    private var analysisLink: some View {
+        NavigationLink {
+            RunAnalysisView(
+                run: run,
+                planRepository: planRepository,
+                athleteRepository: athleteRepository
+            )
+        } label: {
+            Label("View Analysis", systemImage: "chart.xyaxis.line")
+                .font(.headline)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, Theme.Spacing.md)
+        }
+        .buttonStyle(.borderedProminent)
     }
 
     // MARK: - Helper

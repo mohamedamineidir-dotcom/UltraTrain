@@ -2,9 +2,17 @@ import SwiftUI
 
 struct RunHistoryView: View {
     @State private var viewModel: RunHistoryViewModel
+    private let planRepository: any TrainingPlanRepository
+    private let athleteRepository: any AthleteRepository
 
-    init(runRepository: any RunRepository) {
+    init(
+        runRepository: any RunRepository,
+        planRepository: any TrainingPlanRepository,
+        athleteRepository: any AthleteRepository
+    ) {
         _viewModel = State(initialValue: RunHistoryViewModel(runRepository: runRepository))
+        self.planRepository = planRepository
+        self.athleteRepository = athleteRepository
     }
 
     var body: some View {
@@ -41,7 +49,11 @@ struct RunHistoryView: View {
         .listStyle(.plain)
         .navigationDestination(for: UUID.self) { runId in
             if let run = viewModel.runs.first(where: { $0.id == runId }) {
-                RunDetailView(run: run)
+                RunDetailView(
+                    run: run,
+                    planRepository: planRepository,
+                    athleteRepository: athleteRepository
+                )
             }
         }
     }

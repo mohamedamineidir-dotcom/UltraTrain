@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RunTrackingLaunchView: View {
     @State private var viewModel: RunTrackingLaunchViewModel
+    private let athleteRepository: any AthleteRepository
     private let locationService: LocationService
     private let healthKitService: any HealthKitServiceProtocol
     private let runRepository: any RunRepository
@@ -21,6 +22,7 @@ struct RunTrackingLaunchView: View {
             runRepository: runRepository,
             appSettingsRepository: appSettingsRepository
         ))
+        self.athleteRepository = athleteRepository
         self.locationService = locationService
         self.healthKitService = healthKitService
         self.runRepository = runRepository
@@ -154,7 +156,11 @@ struct RunTrackingLaunchView: View {
 
     private var historyLink: some View {
         NavigationLink {
-            RunHistoryView(runRepository: runRepository)
+            RunHistoryView(
+                runRepository: runRepository,
+                planRepository: planRepository,
+                athleteRepository: athleteRepository
+            )
         } label: {
             HStack {
                 Image(systemName: "clock.arrow.circlepath")

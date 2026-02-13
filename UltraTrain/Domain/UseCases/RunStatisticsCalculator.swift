@@ -123,4 +123,101 @@ enum RunStatisticsCalculator {
         default: return 5
         }
     }
+
+    // MARK: - Elevation Profile
+
+    static func elevationProfile(from points: [TrackPoint]) -> [ElevationProfilePoint] {
+        guard points.count >= 2 else { return [] }
+
+        var result: [ElevationProfilePoint] = []
+        var cumulativeDistanceM: Double = 0
+        let sampleIntervalM: Double = 50
+
+        result.append(ElevationProfilePoint(
+            distanceKm: 0,
+            altitudeM: points[0].altitudeM
+        ))
+
+        var lastSampledDistance: Double = 0
+
+        for i in 1..<points.count {
+            let segmentM = haversineDistance(
+                lat1: points[i - 1].latitude, lon1: points[i - 1].longitude,
+                lat2: points[i].latitude, lon2: points[i].longitude
+            )
+            cumulativeDistanceM += segmentM
+
+            if cumulativeDistanceM - lastSampledDistance >= sampleIntervalM {
+                result.append(ElevationProfilePoint(
+                    distanceKm: cumulativeDistanceM / 1000,
+                    altitudeM: points[i].altitudeM
+                ))
+                lastSampledDistance = cumulativeDistanceM
+            }
+        }
+
+        let lastPoint = points[points.count - 1]
+        if cumulativeDistanceM - lastSampledDistance > 10 {
+            result.append(ElevationProfilePoint(
+                distanceKm: cumulativeDistanceM / 1000,
+                altitudeM: lastPoint.altitudeM
+            ))
+        }
+
+        return result
+    }
+
+    // MARK: - Heart Rate Zone Distribution
+
+    private static let zoneNames = ["Recovery", "Aerobic", "Tempo", "Threshold", "VO2max"]
+
+    static func heartRateZoneDistribution(
+        from points: [TrackPoint],
+        maxHeartRate: Int
+    ) -> [HeartRateZoneDistribution] {
+        var zoneDurations: [Int: TimeInterval] = [1: 0, 2: 0, 3: 0, 4: 0, 5: 0]
+        var totalDurationWithHR: TimeInterval = 0
+
+        for i in 1..<points.count {
+            guard let hr = points[i].heartRate, points[i - 1].heartRate != nil else { continue }
+            let timeDelta = points[i].timestamp.timeIntervalSince(points[i - 1].timestamp)
+            guard timeDelta > 0, timeDelta < 60 else { continue }
+
+            let zone = heartRateZone(heartRate: hr, maxHeartRate: maxHeartRate)
+            zoneDurations[zone, default: 0] += timeDelta
+            totalDurationWithHR += timeDelta
+        }
+
+        return (1...5).map { zone in
+            let duration = zoneDurations[zone] ?? 0
+            let percentage = totalDurationWithHR > 0 ? (duration / totalDurationWithHR) * 100 : 0
+            return HeartRateZoneDistribution(
+                zone: zone,
+                zoneName: zoneNames[zone - 1],
+                durationSeconds: duration,
+                percentage: percentage
+            )
+        }
+    }
+
+    // MARK: - Plan Comparison
+
+    static func buildPlanComparison(run: CompletedRun, session: TrainingSession) -> PlanComparison {
+        let plannedPace = session.plannedDistanceKm > 0
+            ? session.plannedDuration / session.plannedDistanceKm
+            : 0
+
+        return PlanComparison(
+            plannedDistanceKm: session.plannedDistanceKm,
+            actualDistanceKm: run.distanceKm,
+            plannedElevationGainM: session.plannedElevationGainM,
+            actualElevationGainM: run.elevationGainM,
+            plannedDuration: session.plannedDuration,
+            actualDuration: run.duration,
+            plannedPaceSecondsPerKm: plannedPace,
+            actualPaceSecondsPerKm: run.averagePaceSecondsPerKm,
+            sessionType: session.type,
+            sessionDescription: session.description
+        )
+    }
 }
