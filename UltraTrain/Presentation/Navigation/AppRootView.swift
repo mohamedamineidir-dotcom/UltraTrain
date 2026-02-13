@@ -7,17 +7,23 @@ struct AppRootView: View {
     private let raceRepository: any RaceRepository
     private let planRepository: any TrainingPlanRepository
     private let planGenerator: any GenerateTrainingPlanUseCase
+    private let nutritionRepository: any NutritionRepository
+    private let nutritionGenerator: any GenerateNutritionPlanUseCase
 
     init(
         athleteRepository: any AthleteRepository,
         raceRepository: any RaceRepository,
         planRepository: any TrainingPlanRepository,
-        planGenerator: any GenerateTrainingPlanUseCase
+        planGenerator: any GenerateTrainingPlanUseCase,
+        nutritionRepository: any NutritionRepository,
+        nutritionGenerator: any GenerateNutritionPlanUseCase
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
         self.planRepository = planRepository
         self.planGenerator = planGenerator
+        self.nutritionRepository = nutritionRepository
+        self.nutritionGenerator = nutritionGenerator
     }
 
     var body: some View {
@@ -30,7 +36,9 @@ struct AppRootView: View {
                     athleteRepository: athleteRepository,
                     raceRepository: raceRepository,
                     planRepository: planRepository,
-                    planGenerator: planGenerator
+                    planGenerator: planGenerator,
+                    nutritionRepository: nutritionRepository,
+                    nutritionGenerator: nutritionGenerator
                 )
             case .some(false):
                 OnboardingView(

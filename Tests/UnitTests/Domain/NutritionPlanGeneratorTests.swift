@@ -1,0 +1,226 @@
+import Foundation
+import Testing
+@testable import UltraTrain
+
+@Suite("Nutrition Plan Generator Tests")
+struct NutritionPlanGeneratorTests {
+
+    private func makeAthlete(
+        weightKg: Double = 70,
+        experience: ExperienceLevel = .intermediate
+    ) -> Athlete {
+        Athlete(
+            id: UUID(),
+            firstName: "Test",
+            lastName: "Runner",
+            dateOfBirth: Calendar.current.date(byAdding: .year, value: -30, to: .now)!,
+            weightKg: weightKg,
+            heightCm: 175,
+            restingHeartRate: 55,
+            maxHeartRate: 185,
+            experienceLevel: experience,
+            weeklyVolumeKm: 40,
+            longestRunKm: 25,
+            preferredUnit: .metric
+        )
+    }
+
+    private func makeRace(
+        distanceKm: Double = 100,
+        elevationGainM: Double = 5000
+    ) -> Race {
+        Race(
+            id: UUID(),
+            name: "Test Ultra",
+            date: Date.now.adding(weeks: 16),
+            distanceKm: distanceKm,
+            elevationGainM: elevationGainM,
+            elevationLossM: elevationGainM,
+            priority: .aRace,
+            goalType: .finish,
+            checkpoints: [],
+            terrainDifficulty: .moderate
+        )
+    }
+
+    // MARK: - Calorie Calculations
+
+    @Test("Calories scale with athlete weight")
+    func caloriesScaleWithWeight() {
+        let generator = NutritionPlanGenerator()
+        let light = generator.calculateCaloriesPerHour(weightKg: 55, experience: .intermediate)
+        let heavy = generator.calculateCaloriesPerHour(weightKg: 85, experience: .intermediate)
+        #expect(heavy > light)
+    }
+
+    @Test("Calories increase with experience level")
+    func caloriesIncreaseWithExperience() {
+        let generator = NutritionPlanGenerator()
+        let beginner = generator.calculateCaloriesPerHour(weightKg: 70, experience: .beginner)
+        let elite = generator.calculateCaloriesPerHour(weightKg: 70, experience: .elite)
+        #expect(elite > beginner)
+    }
+
+    @Test("Calories are within expected range for 70kg intermediate")
+    func caloriesInRange() {
+        let generator = NutritionPlanGenerator()
+        let cal = generator.calculateCaloriesPerHour(weightKg: 70, experience: .intermediate)
+        #expect(cal >= 280)
+        #expect(cal <= 350)
+    }
+
+    // MARK: - Hydration
+
+    @Test("Hydration increases with race duration")
+    func hydrationScalesWithDuration() {
+        let generator = NutritionPlanGenerator()
+        let short = generator.calculateHydrationPerHour(durationMinutes: 120)
+        let long = generator.calculateHydrationPerHour(durationMinutes: 720)
+        #expect(long > short)
+    }
+
+    @Test("Hydration stays within configured bounds")
+    func hydrationInBounds() {
+        let generator = NutritionPlanGenerator()
+        let hydration = generator.calculateHydrationPerHour(durationMinutes: 600)
+        #expect(hydration >= AppConfiguration.Nutrition.hydrationMlPerHourLow)
+        #expect(hydration <= AppConfiguration.Nutrition.hydrationMlPerHourHigh)
+    }
+
+    // MARK: - Sodium
+
+    @Test("Sodium is higher for 100km+ races")
+    func sodiumHigherForLongRaces() {
+        let generator = NutritionPlanGenerator()
+        let short = generator.calculateSodiumPerHour(distanceKm: 50)
+        let long = generator.calculateSodiumPerHour(distanceKm: 160)
+        #expect(long > short)
+    }
+
+    // MARK: - Schedule Structure
+
+    @Test("Generated plan has entries for race duration")
+    func planHasEntries() async throws {
+        let generator = NutritionPlanGenerator()
+        let athlete = makeAthlete()
+        let race = makeRace(distanceKm: 100)
+
+        let plan = try await generator.execute(athlete: athlete, race: race, estimatedDuration: 15 * 3600)
+
+        #expect(!plan.entries.isEmpty)
+        #expect(plan.raceId == race.id)
+    }
+
+    @Test("Entries start after 20 minutes")
+    func entriesStartAfter20Min() async throws {
+        let generator = NutritionPlanGenerator()
+        let athlete = makeAthlete()
+        let race = makeRace()
+
+        let plan = try await generator.execute(athlete: athlete, race: race, estimatedDuration: 10 * 3600)
+
+        let firstTiming = plan.entries.min(by: { $0.timingMinutes < $1.timingMinutes })?.timingMinutes ?? 0
+        #expect(firstTiming >= 20)
+    }
+
+    @Test("Caffeine entries appear after 4 hours")
+    func caffeineAfter4Hours() async throws {
+        let generator = NutritionPlanGenerator()
+        let athlete = makeAthlete()
+        let race = makeRace()
+
+        let plan = try await generator.execute(athlete: athlete, race: race, estimatedDuration: 12 * 3600)
+
+        let caffeineEntries = plan.entries.filter { $0.product.caffeinated }
+        #expect(!caffeineEntries.isEmpty)
+        for entry in caffeineEntries {
+            #expect(entry.timingMinutes >= 240)
+        }
+    }
+
+    @Test("Salt capsules included for ultra races")
+    func saltCapsulesForUltra() async throws {
+        let generator = NutritionPlanGenerator()
+        let athlete = makeAthlete()
+        let race = makeRace(distanceKm: 80)
+
+        let plan = try await generator.execute(athlete: athlete, race: race, estimatedDuration: 12 * 3600)
+
+        let saltEntries = plan.entries.filter { $0.product.type == .salt }
+        #expect(!saltEntries.isEmpty)
+    }
+
+    @Test("No salt capsules for non-ultra races")
+    func noSaltForShortRaces() async throws {
+        let generator = NutritionPlanGenerator()
+        let athlete = makeAthlete()
+        let race = makeRace(distanceKm: 42)
+
+        let plan = try await generator.execute(athlete: athlete, race: race, estimatedDuration: 4 * 3600)
+
+        let saltEntries = plan.entries.filter { $0.product.type == .salt }
+        #expect(saltEntries.isEmpty)
+    }
+
+    @Test("Solid food included for long ultras")
+    func solidFoodForLongUltras() async throws {
+        let generator = NutritionPlanGenerator()
+        let athlete = makeAthlete()
+        let race = makeRace(distanceKm: 160)
+
+        let plan = try await generator.execute(athlete: athlete, race: race, estimatedDuration: 24 * 3600)
+
+        let solidEntries = plan.entries.filter { $0.product.type == .bar || $0.product.type == .realFood }
+        #expect(!solidEntries.isEmpty)
+    }
+
+    @Test("Gut training session IDs start empty")
+    func gutTrainingIdsEmpty() async throws {
+        let generator = NutritionPlanGenerator()
+        let athlete = makeAthlete()
+        let race = makeRace()
+
+        let plan = try await generator.execute(athlete: athlete, race: race, estimatedDuration: 10 * 3600)
+
+        #expect(plan.gutTrainingSessionIds.isEmpty)
+    }
+
+    @Test("Throws for race under 1 hour")
+    func throwsForShortRace() async {
+        let generator = NutritionPlanGenerator()
+        let athlete = makeAthlete()
+        let race = makeRace(distanceKm: 5)
+
+        do {
+            _ = try await generator.execute(athlete: athlete, race: race, estimatedDuration: 30 * 60)
+            #expect(Bool(false), "Should have thrown")
+        } catch {
+            #expect(error is DomainError)
+        }
+    }
+
+    @Test("Entries are sorted by timing")
+    func entriesSortedByTiming() async throws {
+        let generator = NutritionPlanGenerator()
+        let athlete = makeAthlete()
+        let race = makeRace()
+
+        let plan = try await generator.execute(athlete: athlete, race: race, estimatedDuration: 10 * 3600)
+
+        for i in 1..<plan.entries.count {
+            #expect(plan.entries[i].timingMinutes >= plan.entries[i - 1].timingMinutes)
+        }
+    }
+
+    @Test("Drink entries appear every hour")
+    func drinkEntriesEveryHour() async throws {
+        let generator = NutritionPlanGenerator()
+        let athlete = makeAthlete()
+        let race = makeRace()
+
+        let plan = try await generator.execute(athlete: athlete, race: race, estimatedDuration: 8 * 3600)
+
+        let drinkEntries = plan.entries.filter { $0.product.type == .drink }
+        #expect(drinkEntries.count >= 6)
+    }
+}

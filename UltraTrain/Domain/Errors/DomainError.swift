@@ -4,6 +4,7 @@ enum DomainError: Error, Equatable, Sendable {
     case athleteNotFound
     case raceNotFound
     case trainingPlanNotFound
+    case nutritionPlanNotFound
     case invalidTrainingPlan(reason: String)
     case insufficientData(reason: String)
     case networkUnavailable
@@ -24,6 +25,8 @@ extension DomainError: LocalizedError {
             return "Race not found."
         case .trainingPlanNotFound:
             return "No active training plan found."
+        case .nutritionPlanNotFound:
+            return "No nutrition plan found for this race."
         case .invalidTrainingPlan(let reason):
             return "Invalid training plan: \(reason)"
         case .insufficientData(let reason):
