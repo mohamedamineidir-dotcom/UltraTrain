@@ -6,13 +6,17 @@ struct ProfileView: View {
     private let runRepository: any RunRepository
     private let fitnessCalculator: any CalculateFitnessUseCase
     private let finishTimeEstimator: any EstimateFinishTimeUseCase
+    private let appSettingsRepository: any AppSettingsRepository
+    private let clearAllDataUseCase: any ClearAllDataUseCase
 
     init(
         athleteRepository: any AthleteRepository,
         raceRepository: any RaceRepository,
         runRepository: any RunRepository,
         fitnessCalculator: any CalculateFitnessUseCase,
-        finishTimeEstimator: any EstimateFinishTimeUseCase
+        finishTimeEstimator: any EstimateFinishTimeUseCase,
+        appSettingsRepository: any AppSettingsRepository,
+        clearAllDataUseCase: any ClearAllDataUseCase
     ) {
         _viewModel = State(initialValue: ProfileViewModel(
             athleteRepository: athleteRepository,
@@ -22,6 +26,8 @@ struct ProfileView: View {
         self.runRepository = runRepository
         self.fitnessCalculator = fitnessCalculator
         self.finishTimeEstimator = finishTimeEstimator
+        self.appSettingsRepository = appSettingsRepository
+        self.clearAllDataUseCase = clearAllDataUseCase
     }
 
     var body: some View {
@@ -32,7 +38,6 @@ struct ProfileView: View {
                 } else {
                     athleteSection
                     racesSection
-                    appInfoSection
                 }
             }
             .navigationTitle("Profile")
@@ -42,6 +47,17 @@ struct ProfileView: View {
                         Button("Edit") {
                             viewModel.showingEditAthlete = true
                         }
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        SettingsView(
+                            athleteRepository: athleteRepository,
+                            appSettingsRepository: appSettingsRepository,
+                            clearAllDataUseCase: clearAllDataUseCase
+                        )
+                    } label: {
+                        Image(systemName: "gearshape")
                     }
                 }
             }
@@ -185,11 +201,4 @@ struct ProfileView: View {
         }
     }
 
-    // MARK: - App Info Section
-
-    private var appInfoSection: some View {
-        Section("App") {
-            LabeledContent("Version", value: "\(AppConfiguration.appVersion) (\(AppConfiguration.buildNumber))")
-        }
-    }
 }

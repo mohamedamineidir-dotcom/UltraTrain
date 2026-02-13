@@ -11,4 +11,5 @@ extension Logger {
     static let nutrition = Logger(subsystem: subsystem, category: "nutrition")
     static let persistence = Logger(subsystem: subsystem, category: "persistence")
     static let fitness = Logger(subsystem: subsystem, category: "fitness")
+    static let settings = Logger(subsystem: subsystem, category: "settings")
 }

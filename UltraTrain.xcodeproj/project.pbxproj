@@ -165,6 +165,18 @@
 		F973DD7B8D45FC115F2AF141 /* OnboardingViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE6AF748468B2756CD24383 /* OnboardingViewModelTests.swift */; };
 		FC1F577072C4AABCB37AD3E8 /* TrainingPlanRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C503BBC3D7A5A67C8636504D /* TrainingPlanRepository.swift */; };
 		FFF3CF99CCF69022E27CDB97 /* EstimateFinishTimeUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49CF74390BFF5A3A84D1697 /* EstimateFinishTimeUseCase.swift */; };
+		1CDFC046A5E7975F858854AA /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919C7660271C73B4635A7D13 /* AppSettings.swift */; };
+		E42EAA6B708D377D344679A5 /* AppSettingsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE89F8360CAC2437CC0207DD /* AppSettingsRepository.swift */; };
+		95D99B62C6B95D258B00E1AF /* ClearAllDataUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0507F5CA636206FBC9B4B85F /* ClearAllDataUseCase.swift */; };
+		E3982A60687C1020D5A2B5CE /* AppSettingsSwiftDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BA7ECFEA3DDB864ED74179 /* AppSettingsSwiftDataModel.swift */; };
+		15E038A38677DC7C053B2D6D /* AppSettingsSwiftDataMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBEFD2C38AB6684D814ACE7F /* AppSettingsSwiftDataMapper.swift */; };
+		E7C2A720E6D3FD105D6C37A1 /* LocalAppSettingsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 909714A3ACE3F00621C485BB /* LocalAppSettingsRepository.swift */; };
+		0ECB0AAB9529A38F7D83976A /* DataCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5AB3FCFF5235335411D7573 /* DataCleaner.swift */; };
+		2EBC73E19DBFF41740A5D49A /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B51F7DA760675C063B5A9435 /* SettingsViewModel.swift */; };
+		5DBDDA30A350738348CDF09F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9276484188C31A8C2E9177C1 /* SettingsView.swift */; };
+		93618B3E3E41AB4DCB978C7B /* MockAppSettingsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C64D7D134F014AD14A27BD9 /* MockAppSettingsRepository.swift */; };
+		51CDA8C8BAD8FFF9C0C929ED /* MockClearAllDataUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F79880DBC252EECB1E43C3F /* MockClearAllDataUseCase.swift */; };
+		623CCEFE1285FB4A4043F9A7 /* SettingsViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3709C681939BC7488AD9ED0D /* SettingsViewModelTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -348,6 +360,18 @@
 		F9F237DD83300A2B4019067C /* OnboardingNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingNavigationBar.swift; sourceTree = "<group>"; };
 		FBE6AF748468B2756CD24383 /* OnboardingViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModelTests.swift; sourceTree = "<group>"; };
 		FE333BE72676CF90BC238F78 /* ActiveRunStatsBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveRunStatsBar.swift; sourceTree = "<group>"; };
+		919C7660271C73B4635A7D13 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		EE89F8360CAC2437CC0207DD /* AppSettingsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsRepository.swift; sourceTree = "<group>"; };
+		0507F5CA636206FBC9B4B85F /* ClearAllDataUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearAllDataUseCase.swift; sourceTree = "<group>"; };
+		A4BA7ECFEA3DDB864ED74179 /* AppSettingsSwiftDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsSwiftDataModel.swift; sourceTree = "<group>"; };
+		CBEFD2C38AB6684D814ACE7F /* AppSettingsSwiftDataMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsSwiftDataMapper.swift; sourceTree = "<group>"; };
+		909714A3ACE3F00621C485BB /* LocalAppSettingsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAppSettingsRepository.swift; sourceTree = "<group>"; };
+		E5AB3FCFF5235335411D7573 /* DataCleaner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCleaner.swift; sourceTree = "<group>"; };
+		B51F7DA760675C063B5A9435 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		9276484188C31A8C2E9177C1 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		4C64D7D134F014AD14A27BD9 /* MockAppSettingsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAppSettingsRepository.swift; sourceTree = "<group>"; };
+		1F79880DBC252EECB1E43C3F /* MockClearAllDataUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockClearAllDataUseCase.swift; sourceTree = "<group>"; };
+		3709C681939BC7488AD9ED0D /* SettingsViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -409,6 +433,7 @@
 		1C6BF66453C1007056ED8B52 /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
+				EE89F8360CAC2437CC0207DD /* AppSettingsRepository.swift */,
 				706469BE0776B6B39FF9E0AC /* AthleteRepository.swift */,
 				6A46B6582EC8ABE04BB2A046 /* FitnessRepository.swift */,
 				DA5BE03844FB7B48638461F3 /* NutritionRepository.swift */,
@@ -452,8 +477,10 @@
 		31ACBBEC0A30DA6F2C667089 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
+				4C64D7D134F014AD14A27BD9 /* MockAppSettingsRepository.swift */,
 				59927CE27A79B9305B7BDBFC /* MockAthleteRepository.swift */,
 				C29010B7C949D4D3C2B86945 /* MockCalculateFitnessUseCase.swift */,
+				1F79880DBC252EECB1E43C3F /* MockClearAllDataUseCase.swift */,
 				4E3F7CA22C7D4B9089A776F2 /* MockEstimateFinishTimeUseCase.swift */,
 				546F3C658466FD677D9219D6 /* MockFitnessRepository.swift */,
 				67046BD5B89F2ADDC637BD6C /* MockGenerateNutritionPlanUseCase.swift */,
@@ -544,6 +571,7 @@
 		513C579D0ADABEC15E3501AE /* Mappers */ = {
 			isa = PBXGroup;
 			children = (
+				CBEFD2C38AB6684D814ACE7F /* AppSettingsSwiftDataMapper.swift */,
 				AFA1254954491DE420B51F77 /* AthleteMapper.swift */,
 				D88D1F3E167790BC5F6828E3 /* AthleteSwiftDataMapper.swift */,
 				33AA0DBAA9EE1B38E896580B /* CompletedRunSwiftDataMapper.swift */,
@@ -558,7 +586,9 @@
 		52D1B561D55FCFB46A330DDB /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
+				E5AB3FCFF5235335411D7573 /* DataCleaner.swift */,
 				F3D94862CB265BE1D6B3B254 /* LocalAthleteRepository.swift */,
+				909714A3ACE3F00621C485BB /* LocalAppSettingsRepository.swift */,
 				73F3E631315BD5843D533F62 /* LocalFitnessRepository.swift */,
 				13D60FA031B922138E9942B1 /* LocalNutritionRepository.swift */,
 				1F37CD41BD729732DA63FC95 /* LocalRaceRepository.swift */,
@@ -584,6 +614,7 @@
 			isa = PBXGroup;
 			children = (
 				CEE12B24CF6FAB7F58915B27 /* CalculateFitnessUseCase.swift */,
+				0507F5CA636206FBC9B4B85F /* ClearAllDataUseCase.swift */,
 				C4508A46ABC4C8D54125BE35 /* DefaultProducts.swift */,
 				E49CF74390BFF5A3A84D1697 /* EstimateFinishTimeUseCase.swift */,
 				C75E749F948B7C2701AFB693 /* FinishTimeEstimator.swift */,
@@ -643,6 +674,7 @@
 		705F5F44289D40D50722F767 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				919C7660271C73B4635A7D13 /* AppSettings.swift */,
 				597E09F47C6833184988091D /* Athlete.swift */,
 				DCCC45B9AD5A92422E8592E7 /* CompletedRun.swift */,
 				DA03634533E1046CAD625F38 /* FinishEstimate.swift */,
@@ -728,6 +760,7 @@
 		A17F0C2E998002C9B119ABC7 /* Local */ = {
 			isa = PBXGroup;
 			children = (
+				A4BA7ECFEA3DDB864ED74179 /* AppSettingsSwiftDataModel.swift */,
 				8D5459E38C808C92E7D3761B /* AthleteSwiftDataModel.swift */,
 				7A5B8BFE32FE45FA0D89F687 /* CompletedRunSwiftDataModel.swift */,
 				EDAAD6E850585DEE1C6B43D5 /* FitnessSnapshotSwiftDataModel.swift */,
@@ -886,6 +919,8 @@
 		FB269DEBAEC1858D619DE830 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				9276484188C31A8C2E9177C1 /* SettingsView.swift */,
+				B51F7DA760675C063B5A9435 /* SettingsViewModel.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -901,6 +936,7 @@
 				603053077D76D0C867BB6569 /* ProgressViewModelTests.swift */,
 				948E519C6335374DEFB6216E /* RunHistoryViewModelTests.swift */,
 				344B00C9093E7B2B7727B532 /* RunTrackingLaunchViewModelTests.swift */,
+				3709C681939BC7488AD9ED0D /* SettingsViewModelTests.swift */,
 				4F3FA2F4BA79A1DAF919089E /* TrainingPlanViewModelTests.swift */,
 			);
 			path = Presentation;
@@ -1052,7 +1088,10 @@
 				45B38482675CD2166141068B /* RunTrackingLaunchViewModelTests.swift in Sources */,
 				8A7A2D4F0CD392B26BE37AED /* TrainingPlanGeneratorTests.swift in Sources */,
 				648EE6E36C8F77E6E4EE0393 /* TrainingPlanViewModelTests.swift in Sources */,
-			);
+			
+				93618B3E3E41AB4DCB978C7B /* MockAppSettingsRepository.swift in Sources */,
+				51CDA8C8BAD8FFF9C0C929ED /* MockClearAllDataUseCase.swift in Sources */,
+				623CCEFE1285FB4A4043F9A7 /* SettingsViewModelTests.swift in Sources */,);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		E1B75458D07BF13221A0BA9E /* Sources */ = {
@@ -1188,7 +1227,16 @@
 				D651D39DE6983011FA0B6E72 /* WeekCardView.swift in Sources */,
 				8233BC1F97256C5B1FE2E642 /* WeekSkeletonBuilder.swift in Sources */,
 				EBA7CB582665AFF6533F5612 /* WelcomeStepView.swift in Sources */,
-			);
+			
+				1CDFC046A5E7975F858854AA /* AppSettings.swift in Sources */,
+				E42EAA6B708D377D344679A5 /* AppSettingsRepository.swift in Sources */,
+				15E038A38677DC7C053B2D6D /* AppSettingsSwiftDataMapper.swift in Sources */,
+				E3982A60687C1020D5A2B5CE /* AppSettingsSwiftDataModel.swift in Sources */,
+				95D99B62C6B95D258B00E1AF /* ClearAllDataUseCase.swift in Sources */,
+				0ECB0AAB9529A38F7D83976A /* DataCleaner.swift in Sources */,
+				E7C2A720E6D3FD105D6C37A1 /* LocalAppSettingsRepository.swift in Sources */,
+				5DBDDA30A350738348CDF09F /* SettingsView.swift in Sources */,
+				2EBC73E19DBFF41740A5D49A /* SettingsViewModel.swift in Sources */,);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */

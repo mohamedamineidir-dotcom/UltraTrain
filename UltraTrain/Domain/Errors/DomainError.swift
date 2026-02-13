@@ -13,6 +13,7 @@ enum DomainError: Error, Equatable, Sendable {
     case persistenceError(message: String)
     case locationUnavailable
     case healthKitUnavailable
+    case settingsNotFound
     case unknown(message: String)
 }
 
@@ -43,6 +44,8 @@ extension DomainError: LocalizedError {
             return "Location services are unavailable."
         case .healthKitUnavailable:
             return "HealthKit is not available on this device."
+        case .settingsNotFound:
+            return "App settings not found."
         case .unknown(let message):
             return "An unexpected error occurred: \(message)"
         }
