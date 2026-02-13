@@ -2,15 +2,26 @@ import SwiftUI
 
 struct ProfileView: View {
     @State private var viewModel: ProfileViewModel
+    private let athleteRepository: any AthleteRepository
+    private let runRepository: any RunRepository
+    private let fitnessCalculator: any CalculateFitnessUseCase
+    private let finishTimeEstimator: any EstimateFinishTimeUseCase
 
     init(
         athleteRepository: any AthleteRepository,
-        raceRepository: any RaceRepository
+        raceRepository: any RaceRepository,
+        runRepository: any RunRepository,
+        fitnessCalculator: any CalculateFitnessUseCase,
+        finishTimeEstimator: any EstimateFinishTimeUseCase
     ) {
         _viewModel = State(initialValue: ProfileViewModel(
             athleteRepository: athleteRepository,
             raceRepository: raceRepository
         ))
+        self.athleteRepository = athleteRepository
+        self.runRepository = runRepository
+        self.fitnessCalculator = fitnessCalculator
+        self.finishTimeEstimator = finishTimeEstimator
     }
 
     var body: some View {
@@ -136,11 +147,23 @@ struct ProfileView: View {
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             } else {
                 ForEach(viewModel.sortedRaces) { race in
-                    RaceRowView(race: race)
-                        .contentShape(Rectangle())
-                        .onTapGesture {
+                    NavigationLink {
+                        FinishEstimationView(
+                            race: race,
+                            finishTimeEstimator: finishTimeEstimator,
+                            athleteRepository: athleteRepository,
+                            runRepository: runRepository,
+                            fitnessCalculator: fitnessCalculator
+                        )
+                    } label: {
+                        RaceRowView(race: race)
+                    }
+                    .swipeActions(edge: .trailing) {
+                        Button("Edit") {
                             viewModel.raceToEdit = race
                         }
+                        .tint(.blue)
+                    }
                 }
                 .onDelete { indexSet in
                     let sorted = viewModel.sortedRaces

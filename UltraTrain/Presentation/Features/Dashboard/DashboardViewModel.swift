@@ -25,6 +25,7 @@ final class DashboardViewModel {
     var plan: TrainingPlan?
     var fitnessSnapshot: FitnessSnapshot?
     var fitnessHistory: [FitnessSnapshot] = []
+    var runCount = 0
     var isLoading = false
     var fitnessError: String?
 
@@ -61,6 +62,7 @@ final class DashboardViewModel {
         do {
             guard let athlete = try await athleteRepository.getAthlete() else { return }
             let runs = try await runRepository.getRuns(for: athlete.id)
+            runCount = runs.count
             guard !runs.isEmpty else {
                 fitnessSnapshot = nil
                 return

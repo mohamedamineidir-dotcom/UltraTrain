@@ -14,6 +14,7 @@ struct UltraTrainApp: App {
     private let locationService: LocationService
     private let fitnessRepository: any FitnessRepository
     private let fitnessCalculator: any CalculateFitnessUseCase
+    private let finishTimeEstimator: any EstimateFinishTimeUseCase
 
     init() {
         do {
@@ -46,6 +47,7 @@ struct UltraTrainApp: App {
         locationService = LocationService()
         fitnessRepository = LocalFitnessRepository(modelContainer: modelContainer)
         fitnessCalculator = FitnessCalculator()
+        finishTimeEstimator = FinishTimeEstimator()
     }
 
     var body: some Scene {
@@ -60,7 +62,8 @@ struct UltraTrainApp: App {
                 runRepository: runRepository,
                 locationService: locationService,
                 fitnessRepository: fitnessRepository,
-                fitnessCalculator: fitnessCalculator
+                fitnessCalculator: fitnessCalculator,
+                finishTimeEstimator: finishTimeEstimator
             )
         }
     }

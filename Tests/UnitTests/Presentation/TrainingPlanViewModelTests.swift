@@ -285,4 +285,111 @@ struct TrainingPlanViewModelTests {
         #expect(progress.total == 1)
         #expect(progress.completed == 0)
     }
+
+    // MARK: - Stale Plan Detection
+
+    @Test("isPlanStale true when B/C races differ from plan")
+    @MainActor
+    func isPlanStaleWhenRacesChanged() {
+        let race = makeRace()
+        let bRace = Race(
+            id: UUID(), name: "B Race",
+            date: Date.now.adding(weeks: 8),
+            distanceKm: 50, elevationGainM: 2000, elevationLossM: 2000,
+            priority: .bRace, goalType: .finish, checkpoints: [],
+            terrainDifficulty: .easy
+        )
+        let plan = makePlan(athlete: makeAthlete(), race: race)
+
+        let vm = makeViewModel()
+        vm.plan = plan
+        vm.races = [race, bRace]
+
+        #expect(vm.isPlanStale == true)
+    }
+
+    @Test("isPlanStale false when races match plan")
+    @MainActor
+    func isPlanStaleWhenMatching() {
+        let race = makeRace()
+        let bRaceId = UUID()
+        let bRace = Race(
+            id: bRaceId, name: "B Race",
+            date: Date.now.adding(weeks: 8),
+            distanceKm: 50, elevationGainM: 2000, elevationLossM: 2000,
+            priority: .bRace, goalType: .finish, checkpoints: [],
+            terrainDifficulty: .easy
+        )
+        var plan = makePlan(athlete: makeAthlete(), race: race)
+        plan.intermediateRaceIds = [bRaceId]
+
+        let vm = makeViewModel()
+        vm.plan = plan
+        vm.races = [race, bRace]
+
+        #expect(vm.isPlanStale == false)
+    }
+
+    @Test("isPlanStale false when no plan exists")
+    @MainActor
+    func isPlanStaleNoPlan() {
+        let vm = makeViewModel()
+        #expect(vm.isPlanStale == false)
+    }
+
+    @Test("Races load alongside plan")
+    @MainActor
+    func racesLoadWithPlan() async {
+        let race = makeRace()
+        let raceRepo = MockRaceRepository()
+        raceRepo.races = [race]
+        let planRepo = MockTrainingPlanRepository()
+        planRepo.activePlan = makePlan(athlete: makeAthlete(), race: race)
+
+        let vm = makeViewModel(planRepo: planRepo, raceRepo: raceRepo)
+        await vm.loadPlan()
+
+        #expect(vm.races.count == 1)
+        #expect(vm.races.first?.id == race.id)
+    }
+
+    @Test("targetRace returns A-race")
+    @MainActor
+    func targetRaceComputed() {
+        let aRace = makeRace()
+        let bRace = Race(
+            id: UUID(), name: "B",
+            date: Date.now.adding(weeks: 8),
+            distanceKm: 30, elevationGainM: 1000, elevationLossM: 1000,
+            priority: .bRace, goalType: .finish, checkpoints: [],
+            terrainDifficulty: .easy
+        )
+
+        let vm = makeViewModel()
+        vm.races = [bRace, aRace]
+
+        #expect(vm.targetRace?.id == aRace.id)
+    }
+
+    @Test("isPlanStale ignores A-race changes")
+    @MainActor
+    func isPlanStaleIgnoresARace() {
+        let race = makeRace()
+        let plan = makePlan(athlete: makeAthlete(), race: race)
+        // Different A-race ID doesn't make plan stale (only intermediate races matter)
+        let differentARace = Race(
+            id: UUID(), name: "Different A",
+            date: Date.now.adding(weeks: 20),
+            distanceKm: 80, elevationGainM: 4000, elevationLossM: 4000,
+            priority: .aRace, goalType: .finish, checkpoints: [],
+            terrainDifficulty: .moderate
+        )
+
+        let vm = makeViewModel()
+        vm.plan = plan
+        vm.races = [differentARace]
+
+        // No intermediate races, plan has no intermediate race IDs — should match
+        #expect(vm.isPlanStale == false)
+    }
 }

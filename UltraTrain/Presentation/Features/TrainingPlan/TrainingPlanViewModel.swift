@@ -15,6 +15,7 @@ final class TrainingPlanViewModel {
     // MARK: - State
 
     var plan: TrainingPlan?
+    var races: [Race] = []
     var isLoading = false
     var isGenerating = false
     var error: String?
@@ -41,6 +42,7 @@ final class TrainingPlanViewModel {
 
         do {
             plan = try await planRepository.getActivePlan()
+            races = try await raceRepository.getRaces()
         } catch {
             self.error = error.localizedDescription
             Logger.training.error("Failed to load plan: \(error)")
@@ -76,6 +78,7 @@ final class TrainingPlanViewModel {
 
             try await planRepository.savePlan(newPlan)
             plan = newPlan
+            races = allRaces
             Logger.training.info("Plan generated: \(newPlan.weeks.count) weeks")
         } catch {
             self.error = error.localizedDescription
@@ -125,5 +128,20 @@ final class TrainingPlanViewModel {
         let activeSessions = week.sessions.filter { $0.type != .rest }
         let completed = activeSessions.filter(\.isCompleted).count
         return (completed, activeSessions.count)
+    }
+
+    var targetRace: Race? {
+        races.first { $0.priority == .aRace }
+    }
+
+    var isPlanStale: Bool {
+        guard let plan, let target = targetRace else { return false }
+        let currentIntermediateIds = races
+            .filter { $0.priority != .aRace && $0.date < target.date }
+            .map(\.id)
+            .sorted { $0.uuidString < $1.uuidString }
+        let planIntermediateIds = plan.intermediateRaceIds
+            .sorted { $0.uuidString < $1.uuidString }
+        return currentIntermediateIds != planIntermediateIds
     }
 }

@@ -13,6 +13,7 @@ struct MainTabView: View {
     private let locationService: LocationService
     private let fitnessRepository: any FitnessRepository
     private let fitnessCalculator: any CalculateFitnessUseCase
+    private let finishTimeEstimator: any EstimateFinishTimeUseCase
 
     init(
         athleteRepository: any AthleteRepository,
@@ -24,7 +25,8 @@ struct MainTabView: View {
         runRepository: any RunRepository,
         locationService: LocationService,
         fitnessRepository: any FitnessRepository,
-        fitnessCalculator: any CalculateFitnessUseCase
+        fitnessCalculator: any CalculateFitnessUseCase,
+        finishTimeEstimator: any EstimateFinishTimeUseCase
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -36,6 +38,7 @@ struct MainTabView: View {
         self.locationService = locationService
         self.fitnessRepository = fitnessRepository
         self.fitnessCalculator = fitnessCalculator
+        self.finishTimeEstimator = finishTimeEstimator
     }
 
     var body: some View {
@@ -88,7 +91,10 @@ struct MainTabView: View {
 
             ProfileView(
                 athleteRepository: athleteRepository,
-                raceRepository: raceRepository
+                raceRepository: raceRepository,
+                runRepository: runRepository,
+                fitnessCalculator: fitnessCalculator,
+                finishTimeEstimator: finishTimeEstimator
             )
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")

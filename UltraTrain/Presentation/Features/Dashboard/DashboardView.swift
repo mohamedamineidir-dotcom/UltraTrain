@@ -2,6 +2,9 @@ import SwiftUI
 
 struct DashboardView: View {
     @State private var viewModel: DashboardViewModel
+    private let planRepository: any TrainingPlanRepository
+    private let runRepository: any RunRepository
+    private let athleteRepository: any AthleteRepository
 
     init(
         planRepository: any TrainingPlanRepository,
@@ -10,6 +13,9 @@ struct DashboardView: View {
         fitnessRepository: any FitnessRepository,
         fitnessCalculator: any CalculateFitnessUseCase
     ) {
+        self.planRepository = planRepository
+        self.runRepository = runRepository
+        self.athleteRepository = athleteRepository
         _viewModel = State(initialValue: DashboardViewModel(
             planRepository: planRepository,
             runRepository: runRepository,
@@ -26,6 +32,7 @@ struct DashboardView: View {
                     nextSessionSection
                     weeklyStatsSection
                     fitnessSection
+                    progressSection
                 }
                 .padding()
             }
@@ -157,6 +164,34 @@ struct DashboardView: View {
         .cardStyle()
     }
 
+    private var progressSection: some View {
+        NavigationLink {
+            TrainingProgressView(
+                runRepository: runRepository,
+                athleteRepository: athleteRepository,
+                planRepository: planRepository
+            )
+        } label: {
+            HStack {
+                VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+                    Text("Training Progress")
+                        .font(.headline)
+                        .foregroundStyle(Theme.Colors.label)
+                    Text("\(viewModel.runCount) runs logged")
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
+                Spacer()
+                Image(systemName: "chart.bar.fill")
+                    .foregroundStyle(Theme.Colors.primary)
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+            .cardStyle()
+        }
+    }
+
     private func acrStatusRow(snapshot: FitnessSnapshot) -> some View {
         HStack(spacing: Theme.Spacing.sm) {
             Image(systemName: acrIcon)
@@ -196,3 +231,61 @@ struct DashboardView: View {
         }
     }
 }
+
+// MARK: - Preview
+
+#if DEBUG
+private struct PreviewPlanRepository: TrainingPlanRepository, @unchecked Sendable {
+    func getActivePlan() async throws -> TrainingPlan? { nil }
+    func getPlan(id: UUID) async throws -> TrainingPlan? { nil }
+    func savePlan(_ plan: TrainingPlan) async throws {}
+    func updatePlan(_ plan: TrainingPlan) async throws {}
+    func updateSession(_ session: TrainingSession) async throws {}
+}
+
+private struct PreviewRunRepository: RunRepository, @unchecked Sendable {
+    func getRuns(for athleteId: UUID) async throws -> [CompletedRun] { [] }
+    func getRun(id: UUID) async throws -> CompletedRun? { nil }
+    func saveRun(_ run: CompletedRun) async throws {}
+    func deleteRun(id: UUID) async throws {}
+    func getRecentRuns(limit: Int) async throws -> [CompletedRun] { [] }
+}
+
+private struct PreviewAthleteRepository: AthleteRepository, @unchecked Sendable {
+    func getAthlete() async throws -> Athlete? { nil }
+    func saveAthlete(_ athlete: Athlete) async throws {}
+    func updateAthlete(_ athlete: Athlete) async throws {}
+}
+
+private struct PreviewFitnessRepository: FitnessRepository, @unchecked Sendable {
+    func getSnapshots(from: Date, to: Date) async throws -> [FitnessSnapshot] { [] }
+    func getLatestSnapshot() async throws -> FitnessSnapshot? { nil }
+    func saveSnapshot(_ snapshot: FitnessSnapshot) async throws {}
+}
+
+private struct PreviewFitnessCalculator: CalculateFitnessUseCase, @unchecked Sendable {
+    func execute(runs: [CompletedRun], asOf date: Date) async throws -> FitnessSnapshot {
+        FitnessSnapshot(
+            id: UUID(),
+            date: date,
+            fitness: 0,
+            fatigue: 0,
+            form: 0,
+            weeklyVolumeKm: 0,
+            weeklyElevationGainM: 0,
+            weeklyDuration: 0,
+            acuteToChronicRatio: 0
+        )
+    }
+}
+
+#Preview("Dashboard") {
+    DashboardView(
+        planRepository: PreviewPlanRepository(),
+        runRepository: PreviewRunRepository(),
+        athleteRepository: PreviewAthleteRepository(),
+        fitnessRepository: PreviewFitnessRepository(),
+        fitnessCalculator: PreviewFitnessCalculator()
+    )
+}
+#endif
