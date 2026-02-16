@@ -1,4 +1,5 @@
 import SwiftUI
+import MapKit
 
 struct RunAnalysisView: View {
     @State private var viewModel: RunAnalysisViewModel
@@ -22,6 +23,10 @@ struct RunAnalysisView: View {
                     ProgressView("Analyzing...")
                         .padding(.top, Theme.Spacing.xl)
                 } else {
+                    if viewModel.hasRouteData {
+                        routeMapSection
+                    }
+
                     if !viewModel.elevationProfile.isEmpty {
                         ElevationProfileChart(dataPoints: viewModel.elevationProfile)
                     }
@@ -44,5 +49,48 @@ struct RunAnalysisView: View {
         .navigationTitle("Run Analysis")
         .navigationBarTitleDisplayMode(.inline)
         .task { await viewModel.load() }
+        .sheet(isPresented: $viewModel.showFullScreenMap) {
+            FullScreenMapView(
+                segments: viewModel.routeSegments,
+                startCoordinate: startCLCoordinate,
+                endCoordinate: endCLCoordinate
+            )
+        }
+    }
+
+    // MARK: - Route Map
+
+    private var routeMapSection: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            HStack {
+                Text("Route")
+                    .font(.headline)
+                Spacer()
+                Button {
+                    viewModel.showFullScreenMap = true
+                } label: {
+                    Label("Expand", systemImage: "arrow.up.left.and.arrow.down.right")
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.primary)
+                }
+            }
+
+            RouteMapView(
+                segments: viewModel.routeSegments,
+                startCoordinate: startCLCoordinate,
+                endCoordinate: endCLCoordinate
+            )
+        }
+        .cardStyle()
+    }
+
+    private var startCLCoordinate: CLLocationCoordinate2D? {
+        guard let coord = viewModel.startCoordinate else { return nil }
+        return CLLocationCoordinate2D(latitude: coord.0, longitude: coord.1)
+    }
+
+    private var endCLCoordinate: CLLocationCoordinate2D? {
+        guard let coord = viewModel.endCoordinate else { return nil }
+        return CLLocationCoordinate2D(latitude: coord.0, longitude: coord.1)
     }
 }

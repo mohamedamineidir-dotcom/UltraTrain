@@ -16,6 +16,8 @@ struct RunSummarySheet: View {
                         RunMapView(
                             coordinates: viewModel.routeCoordinates,
                             showsUserLocation: false,
+                            startCoordinate: viewModel.routeCoordinates.first,
+                            endCoordinate: viewModel.routeCoordinates.last,
                             height: 180
                         )
                         .padding(.horizontal, Theme.Spacing.md)

@@ -139,6 +139,74 @@ struct RunStatisticsCalculatorTests {
         #expect(RunStatisticsCalculator.heartRateZone(heartRate: 190, maxHeartRate: 200) == 5)
     }
 
+    // MARK: - Route Segments
+
+    @Test("Empty track returns empty segments")
+    func routeSegmentsEmpty() {
+        let segments = RunStatisticsCalculator.buildRouteSegments(from: [])
+        #expect(segments.isEmpty)
+    }
+
+    @Test("Short track under 1 km returns 1 segment")
+    func routeSegmentsShortTrack() {
+        // ~500m straight line
+        let points = [
+            makeTrackPoint(lat: 48.8566, lon: 2.3522, seconds: 0),
+            makeTrackPoint(lat: 48.8576, lon: 2.3532, seconds: 60),
+            makeTrackPoint(lat: 48.8586, lon: 2.3542, seconds: 120),
+            makeTrackPoint(lat: 48.8596, lon: 2.3552, seconds: 180),
+        ]
+        let segments = RunStatisticsCalculator.buildRouteSegments(from: points)
+        #expect(segments.count == 1)
+        #expect(segments[0].kilometerNumber == 1)
+        #expect(segments[0].coordinates.count == 4)
+    }
+
+    @Test("Multi-km track returns correct segment count")
+    func routeSegmentsMultiKm() {
+        // Build a track ~3km long: 30 points spaced ~100m apart
+        var points: [TrackPoint] = []
+        let baseLat = 48.8566
+        let baseLon = 2.3522
+        for i in 0..<30 {
+            // ~111m per 0.001 degree lat
+            let lat = baseLat + Double(i) * 0.001
+            points.append(makeTrackPoint(
+                lat: lat, lon: baseLon,
+                seconds: Double(i) * 20
+            ))
+        }
+        let segments = RunStatisticsCalculator.buildRouteSegments(from: points)
+        // ~3.2km → should have 3 full km segments + 1 partial
+        #expect(segments.count >= 3)
+        #expect(segments[0].kilometerNumber == 1)
+        #expect(segments[1].kilometerNumber == 2)
+    }
+
+    @Test("Each segment has valid pace")
+    func routeSegmentsValidPace() {
+        var points: [TrackPoint] = []
+        for i in 0..<20 {
+            let lat = 48.8566 + Double(i) * 0.001
+            points.append(makeTrackPoint(
+                lat: lat, lon: 2.3522,
+                seconds: Double(i) * 30
+            ))
+        }
+        let segments = RunStatisticsCalculator.buildRouteSegments(from: points)
+        for segment in segments {
+            #expect(segment.paceSecondsPerKm >= 0)
+            #expect(!segment.coordinates.isEmpty)
+        }
+    }
+
+    // MARK: - Duration Formatting
+
+    @Test("Duration formatting with minutes")
+    func durationFormattingMinutes() {
+        #expect(RunStatisticsCalculator.formatDuration(125) == "02:05")
+    }
+
     // MARK: - Helpers
 
     private func makeTrackPoint(

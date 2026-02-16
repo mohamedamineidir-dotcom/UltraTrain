@@ -200,6 +200,56 @@ enum RunStatisticsCalculator {
         }
     }
 
+    // MARK: - Route Segments
+
+    static func buildRouteSegments(from points: [TrackPoint]) -> [RouteSegment] {
+        guard points.count >= 2 else { return [] }
+
+        var segments: [RouteSegment] = []
+        var cumulativeDistanceM: Double = 0
+        var segmentStartIndex = 0
+        var currentKm = 1
+
+        for i in 1..<points.count {
+            let distM = haversineDistance(
+                lat1: points[i - 1].latitude, lon1: points[i - 1].longitude,
+                lat2: points[i].latitude, lon2: points[i].longitude
+            )
+            cumulativeDistanceM += distM
+
+            if cumulativeDistanceM >= Double(currentKm) * 1000 {
+                let segmentPoints = Array(points[segmentStartIndex...i])
+                let duration = points[i].timestamp.timeIntervalSince(points[segmentStartIndex].timestamp)
+                let pace = duration > 0 ? duration : 0
+
+                segments.append(RouteSegment(
+                    coordinates: segmentPoints.map { ($0.latitude, $0.longitude) },
+                    paceSecondsPerKm: pace,
+                    kilometerNumber: currentKm
+                ))
+
+                segmentStartIndex = i
+                currentKm += 1
+            }
+        }
+
+        // Final partial segment
+        if segmentStartIndex < points.count - 1 {
+            let segmentPoints = Array(points[segmentStartIndex..<points.count])
+            let duration = points[points.count - 1].timestamp.timeIntervalSince(points[segmentStartIndex].timestamp)
+            let partialDistKm = (cumulativeDistanceM - Double(currentKm - 1) * 1000) / 1000
+            let pace = partialDistKm > 0 ? duration / partialDistKm : 0
+
+            segments.append(RouteSegment(
+                coordinates: segmentPoints.map { ($0.latitude, $0.longitude) },
+                paceSecondsPerKm: pace,
+                kilometerNumber: currentKm
+            ))
+        }
+
+        return segments
+    }
+
     // MARK: - Plan Comparison
 
     static func buildPlanComparison(run: CompletedRun, session: TrainingSession) -> PlanComparison {

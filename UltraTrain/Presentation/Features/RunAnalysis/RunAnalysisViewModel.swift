@@ -15,9 +15,11 @@ final class RunAnalysisViewModel {
     let run: CompletedRun
     var elevationProfile: [ElevationProfilePoint] = []
     var zoneDistribution: [HeartRateZoneDistribution] = []
+    var routeSegments: [RouteSegment] = []
     var planComparison: PlanComparison?
     var isLoading = false
     var error: String?
+    var showFullScreenMap = false
 
     // MARK: - Init
 
@@ -41,6 +43,7 @@ final class RunAnalysisViewModel {
             let athlete = try await athleteRepository.getAthlete()
 
             elevationProfile = RunStatisticsCalculator.elevationProfile(from: run.gpsTrack)
+            routeSegments = RunStatisticsCalculator.buildRouteSegments(from: run.gpsTrack)
 
             let trackHasHR = run.gpsTrack.contains { $0.heartRate != nil }
             if let maxHR = athlete?.maxHeartRate, maxHR > 0, trackHasHR {
@@ -76,5 +79,19 @@ final class RunAnalysisViewModel {
 
     var hasLinkedSession: Bool {
         planComparison != nil
+    }
+
+    var hasRouteData: Bool {
+        run.gpsTrack.count >= 2
+    }
+
+    var startCoordinate: (Double, Double)? {
+        guard let first = run.gpsTrack.first else { return nil }
+        return (first.latitude, first.longitude)
+    }
+
+    var endCoordinate: (Double, Double)? {
+        guard let last = run.gpsTrack.last else { return nil }
+        return (last.latitude, last.longitude)
     }
 }

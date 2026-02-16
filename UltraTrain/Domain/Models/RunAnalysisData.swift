@@ -14,6 +14,17 @@ struct HeartRateZoneDistribution: Identifiable, Equatable, Sendable {
     var percentage: Double
 }
 
+struct RouteSegment: Identifiable, Equatable, Sendable {
+    let id = UUID()
+    var coordinates: [(Double, Double)]
+    var paceSecondsPerKm: Double
+    var kilometerNumber: Int
+
+    static func == (lhs: RouteSegment, rhs: RouteSegment) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
 struct PlanComparison: Equatable, Sendable {
     var plannedDistanceKm: Double
     var actualDistanceKm: Double
