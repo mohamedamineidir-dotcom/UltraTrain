@@ -57,7 +57,7 @@ struct ProgressViewModelTests {
                 intensity: .moderate,
                 description: "Session \(i)",
                 nutritionNotes: nil,
-                isCompleted: i < completedCount,
+                isCompleted: i < completedCount, isSkipped: false,
                 linkedRunId: nil
             ))
         }

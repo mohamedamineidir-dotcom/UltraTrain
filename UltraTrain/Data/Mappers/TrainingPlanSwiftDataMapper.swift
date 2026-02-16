@@ -58,6 +58,7 @@ enum TrainingPlanSwiftDataMapper {
             description: model.sessionDescription,
             nutritionNotes: model.nutritionNotes,
             isCompleted: model.isCompleted,
+            isSkipped: model.isSkipped,
             linkedRunId: model.linkedRunId
         )
     }
@@ -103,6 +104,7 @@ enum TrainingPlanSwiftDataMapper {
             sessionDescription: session.description,
             nutritionNotes: session.nutritionNotes,
             isCompleted: session.isCompleted,
+            isSkipped: session.isSkipped,
             linkedRunId: session.linkedRunId
         )
     }

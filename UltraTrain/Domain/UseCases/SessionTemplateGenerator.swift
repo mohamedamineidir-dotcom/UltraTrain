@@ -50,6 +50,7 @@ enum SessionTemplateGenerator {
                 description: template.description,
                 nutritionNotes: nutritionNotes(duration: estimatedDuration, distance: distance),
                 isCompleted: false,
+                isSkipped: false,
                 linkedRunId: nil
             )
         }

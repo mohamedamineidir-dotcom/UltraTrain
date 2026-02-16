@@ -85,9 +85,11 @@ final class LocalTrainingPlanRepository: TrainingPlanRepository, @unchecked Send
             throw DomainError.trainingPlanNotFound
         }
 
+        existing.date = session.date
         existing.isCompleted = session.isCompleted
+        existing.isSkipped = session.isSkipped
         existing.linkedRunId = session.linkedRunId
         try context.save()
-        Logger.persistence.info("Session updated: \(session.type.rawValue) completed=\(session.isCompleted)")
+        Logger.persistence.info("Session updated: \(session.type.rawValue) completed=\(session.isCompleted) skipped=\(session.isSkipped)")
     }
 }

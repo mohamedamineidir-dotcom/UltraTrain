@@ -7,21 +7,33 @@ struct SessionRowView: View {
     var body: some View {
         HStack(spacing: Theme.Spacing.sm) {
             Button(action: onToggle) {
-                Image(systemName: session.isCompleted ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(session.isCompleted ? Theme.Colors.success : Theme.Colors.secondaryLabel)
+                Image(systemName: statusIcon)
+                    .foregroundStyle(statusColor)
                     .font(.title3)
             }
             .buttonStyle(.plain)
 
             Image(systemName: session.type.icon)
-                .foregroundStyle(session.intensity.color)
+                .foregroundStyle(session.isSkipped ? Theme.Colors.secondaryLabel : session.intensity.color)
                 .frame(width: 24)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(session.type.displayName)
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .strikethrough(session.isCompleted)
+                HStack(spacing: Theme.Spacing.xs) {
+                    Text(session.type.displayName)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .strikethrough(session.isCompleted || session.isSkipped)
+
+                    if session.isSkipped {
+                        Text("Skipped")
+                            .font(.caption2)
+                            .foregroundStyle(.orange)
+                            .padding(.horizontal, 4)
+                            .padding(.vertical, 1)
+                            .background(.orange.opacity(0.15))
+                            .clipShape(Capsule())
+                    }
+                }
 
                 if session.plannedDistanceKm > 0 {
                     Text("\(session.plannedDistanceKm, specifier: "%.1f") km")
@@ -37,7 +49,19 @@ struct SessionRowView: View {
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
         .padding(.vertical, Theme.Spacing.xs)
-        .opacity(session.type == .rest ? 0.5 : 1.0)
+        .opacity(session.type == .rest || session.isSkipped ? 0.5 : 1.0)
+    }
+
+    private var statusIcon: String {
+        if session.isCompleted { return "checkmark.circle.fill" }
+        if session.isSkipped { return "forward.circle.fill" }
+        return "circle"
+    }
+
+    private var statusColor: Color {
+        if session.isCompleted { return Theme.Colors.success }
+        if session.isSkipped { return .orange }
+        return Theme.Colors.secondaryLabel
     }
 }
 

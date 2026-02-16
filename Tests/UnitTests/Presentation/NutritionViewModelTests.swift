@@ -76,7 +76,7 @@ struct NutritionViewModelTests {
             intensity: .easy,
             description: "Long run",
             nutritionNotes: "Practice race nutrition",
-            isCompleted: false,
+            isCompleted: false, isSkipped: false,
             linkedRunId: nil
         )
         let shortSession = TrainingSession(
@@ -89,7 +89,7 @@ struct NutritionViewModelTests {
             intensity: .easy,
             description: "Short long run",
             nutritionNotes: nil,
-            isCompleted: false,
+            isCompleted: false, isSkipped: false,
             linkedRunId: nil
         )
         let week = TrainingWeek(

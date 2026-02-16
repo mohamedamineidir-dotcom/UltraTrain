@@ -7,7 +7,7 @@ final class AppSettingsSwiftDataModel {
     var trainingRemindersEnabled: Bool
     var nutritionRemindersEnabled: Bool
     var autoPauseEnabled: Bool
-    var nutritionAlertSoundEnabled: Bool
+    var nutritionAlertSoundEnabled: Bool = true
 
     init(
         id: UUID,

@@ -96,7 +96,7 @@ struct RunAnalysisViewModelTests {
             intensity: .moderate,
             description: "Long run with hills",
             nutritionNotes: nil,
-            isCompleted: true,
+            isCompleted: true, isSkipped: false,
             linkedRunId: nil
         )
     }

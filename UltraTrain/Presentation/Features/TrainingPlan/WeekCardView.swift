@@ -3,14 +3,40 @@ import SwiftUI
 struct WeekCardView: View {
     let week: TrainingWeek
     let weekIndex: Int
+    let planStartDate: Date
+    let planEndDate: Date
+    let allWeeks: [TrainingWeek]
     let onToggleSession: (Int) -> Void
+    let onSkipSession: (Int) -> Void
+    let onUnskipSession: (Int) -> Void
+    let onRescheduleSession: (Int, Date) -> Void
+    let onSwapSession: (Int, SwapCandidate) -> Void
 
     @State private var isExpanded: Bool
 
-    init(week: TrainingWeek, weekIndex: Int, isCurrentWeek: Bool = false, onToggleSession: @escaping (Int) -> Void) {
+    init(
+        week: TrainingWeek,
+        weekIndex: Int,
+        isCurrentWeek: Bool = false,
+        planStartDate: Date,
+        planEndDate: Date,
+        allWeeks: [TrainingWeek],
+        onToggleSession: @escaping (Int) -> Void,
+        onSkipSession: @escaping (Int) -> Void,
+        onUnskipSession: @escaping (Int) -> Void,
+        onRescheduleSession: @escaping (Int, Date) -> Void,
+        onSwapSession: @escaping (Int, SwapCandidate) -> Void
+    ) {
         self.week = week
         self.weekIndex = weekIndex
+        self.planStartDate = planStartDate
+        self.planEndDate = planEndDate
+        self.allWeeks = allWeeks
         self.onToggleSession = onToggleSession
+        self.onSkipSession = onSkipSession
+        self.onUnskipSession = onUnskipSession
+        self.onRescheduleSession = onRescheduleSession
+        self.onSwapSession = onSwapSession
         _isExpanded = State(initialValue: isCurrentWeek)
     }
 
@@ -74,7 +100,7 @@ struct WeekCardView: View {
                 .padding(.vertical, Theme.Spacing.sm)
 
             ForEach(Array(week.sessions.enumerated()), id: \.element.id) { sessionIndex, session in
-                NavigationLink(destination: SessionDetailView(session: session)) {
+                NavigationLink(destination: sessionDetailView(for: session, at: sessionIndex)) {
                     SessionRowView(session: session) {
                         onToggleSession(sessionIndex)
                     }
@@ -84,8 +110,34 @@ struct WeekCardView: View {
         }
     }
 
+    private func sessionDetailView(for session: TrainingSession, at sessionIndex: Int) -> SessionDetailView {
+        let candidates = buildSwapCandidates(excluding: session)
+        return SessionDetailView(
+            session: session,
+            planStartDate: planStartDate,
+            planEndDate: planEndDate,
+            swapCandidates: candidates,
+            onSkip: { onSkipSession(sessionIndex) },
+            onUnskip: session.isSkipped ? { onUnskipSession(sessionIndex) } : nil,
+            onReschedule: { newDate in onRescheduleSession(sessionIndex, newDate) },
+            onSwap: { candidate in onSwapSession(sessionIndex, candidate) }
+        )
+    }
+
+    private func buildSwapCandidates(excluding session: TrainingSession) -> [SwapCandidate] {
+        var candidates: [SwapCandidate] = []
+        for (wIdx, w) in allWeeks.enumerated() {
+            for (sIdx, s) in w.sessions.enumerated() {
+                if s.id != session.id && !s.isCompleted && !s.isSkipped && s.type != .rest {
+                    candidates.append(SwapCandidate(session: s, weekIndex: wIdx, sessionIndex: sIdx))
+                }
+            }
+        }
+        return candidates
+    }
+
     private var progressText: String {
-        let active = week.sessions.filter { $0.type != .rest }
+        let active = week.sessions.filter { $0.type != .rest && !$0.isSkipped }
         let done = active.filter(\.isCompleted).count
         return "\(done)/\(active.count) done"
     }

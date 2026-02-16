@@ -41,7 +41,7 @@ struct RunTrackingLaunchViewModelTests {
             intensity: .moderate,
             description: "Test run",
             nutritionNotes: nil,
-            isCompleted: completed,
+            isCompleted: completed, isSkipped: false,
             linkedRunId: nil
         )
 

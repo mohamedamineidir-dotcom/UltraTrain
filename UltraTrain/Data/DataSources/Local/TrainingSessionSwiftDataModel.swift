@@ -13,6 +13,7 @@ final class TrainingSessionSwiftDataModel {
     var sessionDescription: String
     var nutritionNotes: String?
     var isCompleted: Bool
+    var isSkipped: Bool = false
     var linkedRunId: UUID?
 
     init(
@@ -26,6 +27,7 @@ final class TrainingSessionSwiftDataModel {
         sessionDescription: String,
         nutritionNotes: String?,
         isCompleted: Bool,
+        isSkipped: Bool,
         linkedRunId: UUID?
     ) {
         self.id = id
@@ -38,6 +40,7 @@ final class TrainingSessionSwiftDataModel {
         self.sessionDescription = sessionDescription
         self.nutritionNotes = nutritionNotes
         self.isCompleted = isCompleted
+        self.isSkipped = isSkipped
         self.linkedRunId = linkedRunId
     }
 }

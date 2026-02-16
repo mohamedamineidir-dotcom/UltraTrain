@@ -38,6 +38,8 @@
 		14311EFE57D4C0AEA9185C95 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1CCC2542B54DC897875EC /* OnboardingView.swift */; };
 		15960C1DCEDE7FBE30615EC1 /* CompletedRunSwiftDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5B8BFE32FE45FA0D89F687 /* CompletedRunSwiftDataModel.swift */; };
 		15D63F9E486E630F79E1FDEA /* SessionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A94682E81D1D2CB2242498 /* SessionDetailView.swift */; };
+		G1G2G3G4G5G6G7G8G9G0G1G2 /* RescheduleDateSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = H1H2H3H4H5H6H7H8H9H0H1H2 /* RescheduleDateSheet.swift */; };
+		G2G3G4G5G6G7G8G9G0G1G2G3 /* SwapSessionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = H2H3H4H5H6H7H8H9H0H1H2H3 /* SwapSessionSheet.swift */; };
 		178CC690F3A24F9B4D41CCD9 /* RunTrackingLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C7C4CDD524764E054F6E06 /* RunTrackingLaunchView.swift */; };
 		1D42A4DFF5099D802B409276 /* RunRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F7F14D217156DBDC20D51E1 /* RunRepository.swift */; };
 		1F74EC78F50271F793DA08C2 /* IntermediateRaceHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDF4777CA3D581A85AB8607 /* IntermediateRaceHandler.swift */; };
@@ -251,6 +253,8 @@
 		27FA280A0955A3EE3380B281 /* RunDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunDetailView.swift; sourceTree = "<group>"; };
 		284A79DEA3033C1F5628795A /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
 		28A94682E81D1D2CB2242498 /* SessionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDetailView.swift; sourceTree = "<group>"; };
+		H1H2H3H4H5H6H7H8H9H0H1H2 /* RescheduleDateSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RescheduleDateSheet.swift; sourceTree = "<group>"; };
+		H2H3H4H5H6H7H8H9H0H1H2H3 /* SwapSessionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapSessionSheet.swift; sourceTree = "<group>"; };
 		28B64E4D97A7A6F1D816DFB5 /* SessionRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionRowView.swift; sourceTree = "<group>"; };
 		2B4C55BCB294F96AC1D20598 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		3057C389AC11E758FBEB5CED /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
@@ -745,7 +749,9 @@
 				4B311A22E1C688E2B19245F1 /* PhaseBadge.swift */,
 				16D997EE803794D8E39D9108 /* RaceCalendarRow.swift */,
 				5D241B91353F0FEAD71F67E7 /* RaceCalendarView.swift */,
+				H1H2H3H4H5H6H7H8H9H0H1H2 /* RescheduleDateSheet.swift */,
 				28A94682E81D1D2CB2242498 /* SessionDetailView.swift */,
+				H2H3H4H5H6H7H8H9H0H1H2H3 /* SwapSessionSheet.swift */,
 				28B64E4D97A7A6F1D816DFB5 /* SessionRowView.swift */,
 				453CAD329AC3587243570540 /* TrainingPlanView.swift */,
 				F5DFB119B3884CFF730EA9E4 /* TrainingPlanViewModel.swift */,
@@ -1265,7 +1271,9 @@
 				178CC690F3A24F9B4D41CCD9 /* RunTrackingLaunchView.swift in Sources */,
 				B3B235351459F70BE9F9007A /* RunTrackingLaunchViewModel.swift in Sources */,
 				949AC1F10C21A844ADCEB983 /* RunningHistoryStepView.swift in Sources */,
+				G1G2G3G4G5G6G7G8G9G0G1G2 /* RescheduleDateSheet.swift in Sources */,
 				15D63F9E486E630F79E1FDEA /* SessionDetailView.swift in Sources */,
+				G2G3G4G5G6G7G8G9G0G1G2G3 /* SwapSessionSheet.swift in Sources */,
 				07A409B71D9076D06D429AD1 /* SessionPickerView.swift in Sources */,
 				2DE7FFA137DFE4D6C79FE28C /* SessionRowView.swift in Sources */,
 				62833E9D7035A2B2C1597491 /* SessionTemplateGenerator.swift in Sources */,

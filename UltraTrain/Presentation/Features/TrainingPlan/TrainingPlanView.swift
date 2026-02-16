@@ -70,15 +70,54 @@ struct TrainingPlanView: View {
                     WeekCardView(
                         week: week,
                         weekIndex: weekIndex,
-                        isCurrentWeek: week.containsToday
-                    ) { sessionIndex in
-                        Task {
-                            await viewModel.toggleSessionCompletion(
-                                weekIndex: weekIndex,
-                                sessionIndex: sessionIndex
-                            )
+                        isCurrentWeek: week.containsToday,
+                        planStartDate: plan.weeks.first?.startDate ?? .now,
+                        planEndDate: plan.weeks.last?.endDate ?? .now,
+                        allWeeks: plan.weeks,
+                        onToggleSession: { sessionIndex in
+                            Task {
+                                await viewModel.toggleSessionCompletion(
+                                    weekIndex: weekIndex,
+                                    sessionIndex: sessionIndex
+                                )
+                            }
+                        },
+                        onSkipSession: { sessionIndex in
+                            Task {
+                                await viewModel.skipSession(
+                                    weekIndex: weekIndex,
+                                    sessionIndex: sessionIndex
+                                )
+                            }
+                        },
+                        onUnskipSession: { sessionIndex in
+                            Task {
+                                await viewModel.unskipSession(
+                                    weekIndex: weekIndex,
+                                    sessionIndex: sessionIndex
+                                )
+                            }
+                        },
+                        onRescheduleSession: { sessionIndex, newDate in
+                            Task {
+                                await viewModel.rescheduleSession(
+                                    weekIndex: weekIndex,
+                                    sessionIndex: sessionIndex,
+                                    to: newDate
+                                )
+                            }
+                        },
+                        onSwapSession: { sessionIndex, candidate in
+                            Task {
+                                await viewModel.swapSessions(
+                                    weekIndexA: weekIndex,
+                                    sessionIndexA: sessionIndex,
+                                    weekIndexB: candidate.weekIndex,
+                                    sessionIndexB: candidate.sessionIndex
+                                )
+                            }
                         }
-                    }
+                    )
                 }
             }
             .padding()

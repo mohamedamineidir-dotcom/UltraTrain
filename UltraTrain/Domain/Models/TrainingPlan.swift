@@ -51,6 +51,7 @@ struct TrainingSession: Identifiable, Equatable, Sendable {
     var description: String
     var nutritionNotes: String?
     var isCompleted: Bool
+    var isSkipped: Bool
     var linkedRunId: UUID?
 }
 

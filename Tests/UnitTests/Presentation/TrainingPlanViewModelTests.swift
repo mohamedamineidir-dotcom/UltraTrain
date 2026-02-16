@@ -55,7 +55,7 @@ struct TrainingPlanViewModelTests {
                     intensity: .easy,
                     description: "Rest day",
                     nutritionNotes: nil,
-                    isCompleted: false,
+                    isCompleted: false, isSkipped: false,
                     linkedRunId: nil
                 ),
                 TrainingSession(
@@ -68,7 +68,7 @@ struct TrainingPlanViewModelTests {
                     intensity: .moderate,
                     description: "Tempo run",
                     nutritionNotes: nil,
-                    isCompleted: false,
+                    isCompleted: false, isSkipped: false,
                     linkedRunId: nil
                 )
             ],
