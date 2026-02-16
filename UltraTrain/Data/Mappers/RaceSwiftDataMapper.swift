@@ -7,6 +7,18 @@ enum RaceSwiftDataMapper {
               let goal = parseGoal(typeRaw: model.goalTypeRaw, value: model.goalValue) else {
             return nil
         }
+        let checkpoints = model.checkpointModels
+            .map { cp in
+                Checkpoint(
+                    id: cp.id,
+                    name: cp.name,
+                    distanceFromStartKm: cp.distanceFromStartKm,
+                    elevationM: cp.elevationM,
+                    hasAidStation: cp.hasAidStation
+                )
+            }
+            .sorted { $0.distanceFromStartKm < $1.distanceFromStartKm }
+
         return Race(
             id: model.id,
             name: model.name,
@@ -16,13 +28,22 @@ enum RaceSwiftDataMapper {
             elevationLossM: model.elevationLossM,
             priority: priority,
             goalType: goal,
-            checkpoints: [],
+            checkpoints: checkpoints,
             terrainDifficulty: terrain
         )
     }
 
     static func toSwiftData(_ race: Race) -> RaceSwiftDataModel {
         let (goalTypeRaw, goalValue) = encodeGoal(race.goalType)
+        let checkpointModels = race.checkpoints.map { cp in
+            CheckpointSwiftDataModel(
+                id: cp.id,
+                name: cp.name,
+                distanceFromStartKm: cp.distanceFromStartKm,
+                elevationM: cp.elevationM,
+                hasAidStation: cp.hasAidStation
+            )
+        }
         return RaceSwiftDataModel(
             id: race.id,
             name: race.name,
@@ -33,7 +54,8 @@ enum RaceSwiftDataMapper {
             priorityRaw: race.priority.rawValue,
             goalTypeRaw: goalTypeRaw,
             goalValue: goalValue,
-            terrainDifficultyRaw: race.terrainDifficulty.rawValue
+            terrainDifficultyRaw: race.terrainDifficulty.rawValue,
+            checkpointModels: checkpointModels
         )
     }
 

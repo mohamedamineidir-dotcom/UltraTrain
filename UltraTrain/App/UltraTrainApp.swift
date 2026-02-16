@@ -26,6 +26,7 @@ struct UltraTrainApp: App {
             let schema = Schema([
                 AthleteSwiftDataModel.self,
                 RaceSwiftDataModel.self,
+                CheckpointSwiftDataModel.self,
                 TrainingPlanSwiftDataModel.self,
                 TrainingWeekSwiftDataModel.self,
                 TrainingSessionSwiftDataModel.self,

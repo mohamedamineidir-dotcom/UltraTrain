@@ -26,6 +26,9 @@ struct EditRaceSheet: View {
     @State private var targetTimeMinutes: Int
     @State private var targetRanking: Int
     @State private var terrainDifficulty: TerrainDifficulty
+    @State private var checkpoints: [Checkpoint]
+    @State private var showAddCheckpoint = false
+    @State private var editingCheckpoint: Checkpoint?
 
     private let existingId: UUID?
 
@@ -46,6 +49,7 @@ struct EditRaceSheet: View {
             _targetTimeMinutes = State(initialValue: 0)
             _targetRanking = State(initialValue: 50)
             _terrainDifficulty = State(initialValue: .moderate)
+            _checkpoints = State(initialValue: [])
         case .edit(let race):
             existingId = race.id
             _name = State(initialValue: race.name)
@@ -55,6 +59,7 @@ struct EditRaceSheet: View {
             _elevationLossM = State(initialValue: race.elevationLossM)
             _priority = State(initialValue: race.priority)
             _terrainDifficulty = State(initialValue: race.terrainDifficulty)
+            _checkpoints = State(initialValue: race.checkpoints)
             switch race.goalType {
             case .finish:
                 _goalType = State(initialValue: .finish)
@@ -83,6 +88,7 @@ struct EditRaceSheet: View {
                 prioritySection
                 goalSection
                 terrainSection
+                checkpointsSection
             }
             .navigationTitle(mode.isAdd ? "Add Race" : "Edit Race")
             .navigationBarTitleDisplayMode(.inline)
@@ -93,6 +99,18 @@ struct EditRaceSheet: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Save") { save() }
                         .disabled(!isValid)
+                }
+            }
+            .sheet(isPresented: $showAddCheckpoint) {
+                EditCheckpointSheet(raceDistanceKm: distanceKm) { cp in
+                    checkpoints.append(cp)
+                }
+            }
+            .sheet(item: $editingCheckpoint) { cp in
+                EditCheckpointSheet(checkpoint: cp, raceDistanceKm: distanceKm) { updated in
+                    if let index = checkpoints.firstIndex(where: { $0.id == updated.id }) {
+                        checkpoints[index] = updated
+                    }
                 }
             }
         }
@@ -161,6 +179,63 @@ struct EditRaceSheet: View {
         }
     }
 
+    private var checkpointsSection: some View {
+        Section {
+            if checkpoints.isEmpty {
+                Text("No checkpoints added yet")
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            } else {
+                ForEach(sortedCheckpoints) { cp in
+                    Button {
+                        editingCheckpoint = cp
+                    } label: {
+                        HStack(spacing: Theme.Spacing.sm) {
+                            if cp.hasAidStation {
+                                Image(systemName: "cross.circle.fill")
+                                    .foregroundStyle(Theme.Colors.success)
+                            } else {
+                                Image(systemName: "mappin.circle.fill")
+                                    .foregroundStyle(Theme.Colors.primary)
+                            }
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(cp.name)
+                                    .foregroundStyle(Theme.Colors.label)
+                                Text("\(cp.distanceFromStartKm, specifier: "%.0f") km  ·  \(cp.elevationM, specifier: "%.0f") m")
+                                    .font(.caption)
+                                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundStyle(Theme.Colors.secondaryLabel)
+                        }
+                    }
+                }
+                .onDelete { offsets in
+                    let sorted = sortedCheckpoints
+                    for offset in offsets {
+                        let cpToRemove = sorted[offset]
+                        checkpoints.removeAll { $0.id == cpToRemove.id }
+                    }
+                }
+            }
+
+            Button {
+                showAddCheckpoint = true
+            } label: {
+                Label("Add Checkpoint", systemImage: "plus.circle")
+            }
+        } header: {
+            Text("Checkpoints")
+        } footer: {
+            Text("Add aid stations and key waypoints to get predicted split times.")
+        }
+    }
+
+    private var sortedCheckpoints: [Checkpoint] {
+        checkpoints.sorted { $0.distanceFromStartKm < $1.distanceFromStartKm }
+    }
+
     // MARK: - Validation & Save
 
     private var isValid: Bool {
@@ -191,7 +266,7 @@ struct EditRaceSheet: View {
             elevationLossM: elevationLossM,
             priority: priority,
             goalType: buildGoal(),
-            checkpoints: [],
+            checkpoints: checkpoints,
             terrainDifficulty: terrainDifficulty
         )
         onSave(race)
