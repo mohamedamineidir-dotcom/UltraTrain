@@ -19,6 +19,24 @@ struct WeeklyVolume: Identifiable, Equatable {
     }
 }
 
+struct WeeklyAdherence: Identifiable, Equatable {
+    let id: Date
+    var weekStartDate: Date
+    var weekNumber: Int
+    var completed: Int
+    var total: Int
+    var percent: Double
+
+    init(weekStartDate: Date, weekNumber: Int, completed: Int, total: Int) {
+        self.id = weekStartDate
+        self.weekStartDate = weekStartDate
+        self.weekNumber = weekNumber
+        self.completed = completed
+        self.total = total
+        self.percent = total > 0 ? Double(completed) / Double(total) * 100 : 0
+    }
+}
+
 @Observable
 @MainActor
 final class ProgressViewModel {
@@ -32,6 +50,7 @@ final class ProgressViewModel {
     // MARK: - State
 
     var weeklyVolumes: [WeeklyVolume] = []
+    var weeklyAdherence: [WeeklyAdherence] = []
     var planAdherence: (completed: Int, total: Int) = (0, 0)
     var totalRuns = 0
     var isLoading = false
@@ -67,6 +86,7 @@ final class ProgressViewModel {
 
             if let plan = try await planRepository.getActivePlan() {
                 planAdherence = computeAdherence(plan: plan)
+                weeklyAdherence = computeWeeklyAdherence(plan: plan)
             }
         } catch {
             self.error = error.localizedDescription
@@ -125,5 +145,21 @@ final class ProgressViewModel {
         let active = allSessions.filter { $0.type != .rest }
         let completed = active.filter(\.isCompleted).count
         return (completed, active.count)
+    }
+
+    private func computeWeeklyAdherence(plan: TrainingPlan) -> [WeeklyAdherence] {
+        let now = Date.now
+        return plan.weeks
+            .filter { $0.startDate <= now }
+            .map { week in
+                let active = week.sessions.filter { $0.type != .rest }
+                let completed = active.filter(\.isCompleted).count
+                return WeeklyAdherence(
+                    weekStartDate: week.startDate,
+                    weekNumber: week.weekNumber,
+                    completed: completed,
+                    total: active.count
+                )
+            }
     }
 }

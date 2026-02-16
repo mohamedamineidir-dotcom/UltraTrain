@@ -82,6 +82,48 @@ struct ProgressViewModelTests {
         )
     }
 
+    private func makeMultiWeekPlan() -> TrainingPlan {
+        let weeks = (0..<4).map { i -> TrainingWeek in
+            let weekStart = Date.now.adding(weeks: -(3 - i)).startOfWeek
+            let sessions: [TrainingSession] = (0..<5).map { j in
+                let isRest = j == 4
+                return TrainingSession(
+                    id: UUID(),
+                    date: weekStart.adding(days: j),
+                    type: isRest ? .rest : .tempo,
+                    plannedDistanceKm: 10,
+                    plannedElevationGainM: 200,
+                    plannedDuration: 3600,
+                    intensity: .moderate,
+                    description: "W\(i+1)S\(j+1)",
+                    nutritionNotes: nil,
+                    isCompleted: j < (i + 1),
+                    isSkipped: false,
+                    linkedRunId: nil
+                )
+            }
+            return TrainingWeek(
+                id: UUID(),
+                weekNumber: i + 1,
+                startDate: weekStart,
+                endDate: weekStart.adding(days: 7),
+                phase: .base,
+                sessions: sessions,
+                isRecoveryWeek: false,
+                targetVolumeKm: 40,
+                targetElevationGainM: 800
+            )
+        }
+        return TrainingPlan(
+            id: UUID(),
+            athleteId: athleteId,
+            targetRaceId: UUID(),
+            createdAt: .now,
+            weeks: weeks,
+            intermediateRaceIds: []
+        )
+    }
+
     @MainActor
     private func makeViewModel(
         runRepo: MockRunRepository = MockRunRepository(),
@@ -188,5 +230,139 @@ struct ProgressViewModelTests {
 
         #expect(vm.totalRuns == 3)
         #expect(vm.averageWeeklyKm > 0)
+    }
+
+    // MARK: - Weekly Adherence Trend
+
+    @Test("Weekly adherence computed for multi-week plan")
+    @MainActor
+    func weeklyAdherenceMultiWeek() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let planRepo = MockTrainingPlanRepository()
+        planRepo.activePlan = makeMultiWeekPlan()
+
+        let vm = makeViewModel(athleteRepo: athleteRepo, planRepo: planRepo)
+        await vm.load()
+
+        // 4 weeks, all in the past or current → 4 data points
+        #expect(vm.weeklyAdherence.count == 4)
+        // Week 1: 1 of 4 active completed (rest excluded) = 25%
+        #expect(vm.weeklyAdherence[0].completed == 1)
+        #expect(vm.weeklyAdherence[0].total == 4)
+        #expect(vm.weeklyAdherence[0].percent == 25)
+        // Week 4: 4 of 4 active completed = 100%
+        #expect(vm.weeklyAdherence[3].completed == 4)
+        #expect(vm.weeklyAdherence[3].percent == 100)
+    }
+
+    @Test("Future weeks excluded from adherence trend")
+    @MainActor
+    func futureWeeksExcluded() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let futureWeek = TrainingWeek(
+            id: UUID(),
+            weekNumber: 1,
+            startDate: Date.now.adding(weeks: 2).startOfWeek,
+            endDate: Date.now.adding(weeks: 2).startOfWeek.adding(days: 7),
+            phase: .base,
+            sessions: [TrainingSession(
+                id: UUID(),
+                date: Date.now.adding(weeks: 2),
+                type: .tempo,
+                plannedDistanceKm: 10,
+                plannedElevationGainM: 200,
+                plannedDuration: 3600,
+                intensity: .moderate,
+                description: "Future",
+                nutritionNotes: nil,
+                isCompleted: false,
+                isSkipped: false,
+                linkedRunId: nil
+            )],
+            isRecoveryWeek: false,
+            targetVolumeKm: 40,
+            targetElevationGainM: 800
+        )
+        let plan = TrainingPlan(
+            id: UUID(),
+            athleteId: athleteId,
+            targetRaceId: UUID(),
+            createdAt: .now,
+            weeks: [futureWeek],
+            intermediateRaceIds: []
+        )
+        let planRepo = MockTrainingPlanRepository()
+        planRepo.activePlan = plan
+
+        let vm = makeViewModel(athleteRepo: athleteRepo, planRepo: planRepo)
+        await vm.load()
+
+        #expect(vm.weeklyAdherence.isEmpty)
+    }
+
+    @Test("No plan gives empty adherence trend")
+    @MainActor
+    func noPlanEmptyAdherenceTrend() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+
+        let vm = makeViewModel(athleteRepo: athleteRepo)
+        await vm.load()
+
+        #expect(vm.weeklyAdherence.isEmpty)
+    }
+
+    @Test("Rest sessions excluded from adherence counts")
+    @MainActor
+    func restSessionsExcluded() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let weekStart = Date.now.startOfWeek
+        let sessions = [
+            TrainingSession(
+                id: UUID(), date: weekStart, type: .tempo,
+                plannedDistanceKm: 10, plannedElevationGainM: 200,
+                plannedDuration: 3600, intensity: .moderate,
+                description: "Tempo", nutritionNotes: nil,
+                isCompleted: true, isSkipped: false, linkedRunId: nil
+            ),
+            TrainingSession(
+                id: UUID(), date: weekStart.adding(days: 1), type: .rest,
+                plannedDistanceKm: 0, plannedElevationGainM: 0,
+                plannedDuration: 0, intensity: .easy,
+                description: "Rest", nutritionNotes: nil,
+                isCompleted: false, isSkipped: false, linkedRunId: nil
+            ),
+            TrainingSession(
+                id: UUID(), date: weekStart.adding(days: 2), type: .longRun,
+                plannedDistanceKm: 20, plannedElevationGainM: 500,
+                plannedDuration: 7200, intensity: .moderate,
+                description: "Long Run", nutritionNotes: nil,
+                isCompleted: false, isSkipped: false, linkedRunId: nil
+            ),
+        ]
+        let week = TrainingWeek(
+            id: UUID(), weekNumber: 1, startDate: weekStart,
+            endDate: weekStart.adding(days: 7), phase: .base,
+            sessions: sessions, isRecoveryWeek: false,
+            targetVolumeKm: 30, targetElevationGainM: 700
+        )
+        let plan = TrainingPlan(
+            id: UUID(), athleteId: athleteId, targetRaceId: UUID(),
+            createdAt: .now, weeks: [week], intermediateRaceIds: []
+        )
+        let planRepo = MockTrainingPlanRepository()
+        planRepo.activePlan = plan
+
+        let vm = makeViewModel(athleteRepo: athleteRepo, planRepo: planRepo)
+        await vm.load()
+
+        #expect(vm.weeklyAdherence.count == 1)
+        // 1 completed out of 2 active (rest excluded) = 50%
+        #expect(vm.weeklyAdherence[0].total == 2)
+        #expect(vm.weeklyAdherence[0].completed == 1)
+        #expect(vm.weeklyAdherence[0].percent == 50)
     }
 }

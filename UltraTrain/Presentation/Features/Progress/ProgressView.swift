@@ -153,6 +153,10 @@ struct TrainingProgressView: View {
                 Text("Generate a training plan to track adherence")
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
+
+            if viewModel.weeklyAdherence.count >= 2 {
+                AdherenceTrendChartView(weeklyAdherence: viewModel.weeklyAdherence)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .cardStyle()
