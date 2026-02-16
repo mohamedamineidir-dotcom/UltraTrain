@@ -54,7 +54,8 @@ struct DashboardViewModelTests {
             weeklyVolumeKm: 40,
             weeklyElevationGainM: 800,
             weeklyDuration: 14400,
-            acuteToChronicRatio: acr
+            acuteToChronicRatio: acr,
+            monotony: 0
         )
     }
 
@@ -204,7 +205,8 @@ struct DashboardViewModelTests {
             id: UUID(), date: .now,
             fitness: 50, fatigue: 30, form: 20,
             weeklyVolumeKm: 0, weeklyElevationGainM: 0,
-            weeklyDuration: 0, acuteToChronicRatio: 0.6
+            weeklyDuration: 0, acuteToChronicRatio: 0.6,
+            monotony: 0
         )
         #expect(vm.formDescription == "Fresh")
     }
@@ -217,7 +219,8 @@ struct DashboardViewModelTests {
             id: UUID(), date: .now,
             fitness: 30, fatigue: 50, form: -20,
             weeklyVolumeKm: 0, weeklyElevationGainM: 0,
-            weeklyDuration: 0, acuteToChronicRatio: 1.67
+            weeklyDuration: 0, acuteToChronicRatio: 1.67,
+            monotony: 0
         )
         #expect(vm.formDescription == "Fatigued")
     }

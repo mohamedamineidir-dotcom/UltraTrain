@@ -10,4 +10,5 @@ struct FitnessSnapshot: Identifiable, Equatable, Sendable {
     var weeklyElevationGainM: Double
     var weeklyDuration: TimeInterval
     var acuteToChronicRatio: Double
+    var monotony: Double             // mean daily load / stddev — high (>2.0) = injury risk
 }

@@ -194,6 +194,16 @@
 		623CCEFE1285FB4A4043F9A7 /* SettingsViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3709C681939BC7488AD9ED0D /* SettingsViewModelTests.swift */; };
 		F1E2D3C4B5A6F7E8D9C0B1A2 /* HealthKitServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7B8C9D0E1F2 /* HealthKitServiceProtocol.swift */; };
 		2F1E0D9C8B7A6F5E4D3C2B1A /* MockHealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F7A8B9C0D1E2F /* MockHealthKitService.swift */; };
+		E3FA7DB2190782D4CD9EB9BE /* TrainingLoadSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA718073B917AF48959291A3 /* TrainingLoadSummary.swift */; };
+		0B5D4F401DCF46DF64873763 /* CalculateTrainingLoadUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3655F8167946BB0A49CE210 /* CalculateTrainingLoadUseCase.swift */; };
+		DF9839CBB634DD79DE528699 /* TrainingLoadCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC7596CCB3782FC9B9D6AB4 /* TrainingLoadCalculator.swift */; };
+		76FDA12F0847B6C404116D9A /* TrainingLoadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FD02621305C0F49DDE65E3 /* TrainingLoadViewModel.swift */; };
+		7A33AFA28865CE2F3E1534BC /* TrainingLoadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56229C2D7EE4B365191306F1 /* TrainingLoadView.swift */; };
+		0DED8815DEDA03EA7BEE1866 /* WeeklyLoadChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB8F73D504A0E3A25567FBFA /* WeeklyLoadChartView.swift */; };
+		ECCD06FE8DC5A31DF1C1E9A4 /* ACRTrendChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36F7C5DB73536A2EBD832486 /* ACRTrendChartView.swift */; };
+D436CC24DB978B7B52252AFE /* TrainingLoadCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E135AA74626DE03B3703C6CF /* TrainingLoadCalculatorTests.swift */; };
+6B7ED04F92B35FD917A8C635 /* MockCalculateTrainingLoadUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28C5E30BC83E8000C32C487 /* MockCalculateTrainingLoadUseCase.swift */; };
+7B5581A49E111DCB215DD13D /* TrainingLoadViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD568AF8FDE34FB8B863838D /* TrainingLoadViewModelTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -406,6 +416,16 @@
 		3709C681939BC7488AD9ED0D /* SettingsViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModelTests.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F6A7B8C9D0E1F2 /* HealthKitServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitServiceProtocol.swift; sourceTree = "<group>"; };
 		1A2B3C4D5E6F7A8B9C0D1E2F /* MockHealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockHealthKitService.swift; sourceTree = "<group>"; };
+		CA718073B917AF48959291A3 /* TrainingLoadSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingLoadSummary.swift; sourceTree = "<group>"; };
+		C3655F8167946BB0A49CE210 /* CalculateTrainingLoadUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculateTrainingLoadUseCase.swift; sourceTree = "<group>"; };
+		1CC7596CCB3782FC9B9D6AB4 /* TrainingLoadCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingLoadCalculator.swift; sourceTree = "<group>"; };
+		49FD02621305C0F49DDE65E3 /* TrainingLoadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingLoadViewModel.swift; sourceTree = "<group>"; };
+		56229C2D7EE4B365191306F1 /* TrainingLoadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingLoadView.swift; sourceTree = "<group>"; };
+		CB8F73D504A0E3A25567FBFA /* WeeklyLoadChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyLoadChartView.swift; sourceTree = "<group>"; };
+		36F7C5DB73536A2EBD832486 /* ACRTrendChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRTrendChartView.swift; sourceTree = "<group>"; };
+E135AA74626DE03B3703C6CF /* TrainingLoadCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingLoadCalculatorTests.swift; sourceTree = "<group>"; };
+B28C5E30BC83E8000C32C487 /* MockCalculateTrainingLoadUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCalculateTrainingLoadUseCase.swift; sourceTree = "<group>"; };
+CD568AF8FDE34FB8B863838D /* TrainingLoadViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingLoadViewModelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -482,6 +502,9 @@
 		211A783DAA7160A45484CD40 /* Progress */ = {
 			isa = PBXGroup;
 			children = (
+				49FD02621305C0F49DDE65E3 /* TrainingLoadViewModel.swift */,
+				56229C2D7EE4B365191306F1 /* TrainingLoadView.swift */,
+				8A281B7C1EBD7E0EF23020A0 /* Components */,
 				284A79DEA3033C1F5628795A /* ProgressView.swift */,
 				F9804C9D0622BA6ABBEA6CC7 /* ProgressViewModel.swift */,
 			);
@@ -515,6 +538,7 @@
 				4C64D7D134F014AD14A27BD9 /* MockAppSettingsRepository.swift */,
 				59927CE27A79B9305B7BDBFC /* MockAthleteRepository.swift */,
 				C29010B7C949D4D3C2B86945 /* MockCalculateFitnessUseCase.swift */,
+				B28C5E30BC83E8000C32C487 /* MockCalculateTrainingLoadUseCase.swift */,
 				1F79880DBC252EECB1E43C3F /* MockClearAllDataUseCase.swift */,
 				4E3F7CA22C7D4B9089A776F2 /* MockEstimateFinishTimeUseCase.swift */,
 				546F3C658466FD677D9219D6 /* MockFitnessRepository.swift */,
@@ -656,6 +680,8 @@
 		5B982A12245E33C5BD49C8DD /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
+				C3655F8167946BB0A49CE210 /* CalculateTrainingLoadUseCase.swift */,
+				1CC7596CCB3782FC9B9D6AB4 /* TrainingLoadCalculator.swift */,
 				CEE12B24CF6FAB7F58915B27 /* CalculateFitnessUseCase.swift */,
 				0507F5CA636206FBC9B4B85F /* ClearAllDataUseCase.swift */,
 				C4508A46ABC4C8D54125BE35 /* DefaultProducts.swift */,
@@ -719,6 +745,7 @@
 		705F5F44289D40D50722F767 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				CA718073B917AF48959291A3 /* TrainingLoadSummary.swift */,
 				919C7660271C73B4635A7D13 /* AppSettings.swift */,
 				597E09F47C6833184988091D /* Athlete.swift */,
 				DCCC45B9AD5A92422E8592E7 /* CompletedRun.swift */,
@@ -946,6 +973,7 @@
 				38CB342D9E3727D3A1009997 /* PhaseDistributorTests.swift */,
 				5D07A5D502159366130E271A /* RunStatisticsCalculatorTests.swift */,
 				7B9FB3584C537F0590E48F82 /* TrainingPlanGeneratorTests.swift */,
+				E135AA74626DE03B3703C6CF /* TrainingLoadCalculatorTests.swift */,
 			);
 			path = Domain;
 			sourceTree = "<group>";
@@ -988,9 +1016,19 @@
 				948E519C6335374DEFB6216E /* RunHistoryViewModelTests.swift */,
 				344B00C9093E7B2B7727B532 /* RunTrackingLaunchViewModelTests.swift */,
 				3709C681939BC7488AD9ED0D /* SettingsViewModelTests.swift */,
+				CD568AF8FDE34FB8B863838D /* TrainingLoadViewModelTests.swift */,
 				4F3FA2F4BA79A1DAF919089E /* TrainingPlanViewModelTests.swift */,
 			);
 			path = Presentation;
+			sourceTree = "<group>";
+		};
+		8A281B7C1EBD7E0EF23020A0 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				CB8F73D504A0E3A25567FBFA /* WeeklyLoadChartView.swift */,
+				36F7C5DB73536A2EBD832486 /* ACRTrendChartView.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1145,13 +1183,24 @@
 				93618B3E3E41AB4DCB978C7B /* MockAppSettingsRepository.swift in Sources */,
 				51CDA8C8BAD8FFF9C0C929ED /* MockClearAllDataUseCase.swift in Sources */,
 				2F1E0D9C8B7A6F5E4D3C2B1A /* MockHealthKitService.swift in Sources */,
-				623CCEFE1285FB4A4043F9A7 /* SettingsViewModelTests.swift in Sources */,);
+				623CCEFE1285FB4A4043F9A7 /* SettingsViewModelTests.swift in Sources */,
+				D436CC24DB978B7B52252AFE /* TrainingLoadCalculatorTests.swift in Sources */,
+				6B7ED04F92B35FD917A8C635 /* MockCalculateTrainingLoadUseCase.swift in Sources */,
+				7B5581A49E111DCB215DD13D /* TrainingLoadViewModelTests.swift in Sources */,
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		E1B75458D07BF13221A0BA9E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3FA7DB2190782D4CD9EB9BE /* TrainingLoadSummary.swift in Sources */,
+				0B5D4F401DCF46DF64873763 /* CalculateTrainingLoadUseCase.swift in Sources */,
+				DF9839CBB634DD79DE528699 /* TrainingLoadCalculator.swift in Sources */,
+				76FDA12F0847B6C404116D9A /* TrainingLoadViewModel.swift in Sources */,
+				7A33AFA28865CE2F3E1534BC /* TrainingLoadView.swift in Sources */,
+				0DED8815DEDA03EA7BEE1866 /* WeeklyLoadChartView.swift in Sources */,
+				ECCD06FE8DC5A31DF1C1E9A4 /* ACRTrendChartView.swift in Sources */,
 				7A12CB2765AB5DAD86C0296C /* APIClient.swift in Sources */,
 				C1413E313C618103CE7DDFF6 /* APIError.swift in Sources */,
 				109B7B66EDDA1C2A688CF94A /* ActiveRunStatsBar.swift in Sources */,

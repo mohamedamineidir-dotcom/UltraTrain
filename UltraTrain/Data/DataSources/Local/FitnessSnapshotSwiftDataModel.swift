@@ -12,6 +12,7 @@ final class FitnessSnapshotSwiftDataModel {
     var weeklyElevationGainM: Double
     var weeklyDuration: Double
     var acuteToChronicRatio: Double
+    var monotony: Double = 0
 
     init(
         id: UUID,
@@ -22,7 +23,8 @@ final class FitnessSnapshotSwiftDataModel {
         weeklyVolumeKm: Double,
         weeklyElevationGainM: Double,
         weeklyDuration: Double,
-        acuteToChronicRatio: Double
+        acuteToChronicRatio: Double,
+        monotony: Double
     ) {
         self.id = id
         self.date = date
@@ -33,5 +35,6 @@ final class FitnessSnapshotSwiftDataModel {
         self.weeklyElevationGainM = weeklyElevationGainM
         self.weeklyDuration = weeklyDuration
         self.acuteToChronicRatio = acuteToChronicRatio
+        self.monotony = monotony
     }
 }

@@ -76,7 +76,8 @@ struct FinishTimeEstimatorTests {
             weeklyVolumeKm: 40,
             weeklyElevationGainM: 800,
             weeklyDuration: 14400,
-            acuteToChronicRatio: 1.0
+            acuteToChronicRatio: 1.0,
+            monotony: 0
         )
     }
 

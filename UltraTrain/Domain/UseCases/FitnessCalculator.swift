@@ -25,6 +25,7 @@ struct FitnessCalculator: CalculateFitnessUseCase, Sendable {
         let acr = ctl > 0 ? atl / ctl : 0
 
         let weeklyStats = calculateWeeklyStats(runs: sortedRuns, asOf: date)
+        let monotony = calculateMonotony(dailyLoads: dailyLoads)
 
         return FitnessSnapshot(
             id: UUID(),
@@ -35,7 +36,8 @@ struct FitnessCalculator: CalculateFitnessUseCase, Sendable {
             weeklyVolumeKm: weeklyStats.volumeKm,
             weeklyElevationGainM: weeklyStats.elevationM,
             weeklyDuration: weeklyStats.duration,
-            acuteToChronicRatio: acr
+            acuteToChronicRatio: acr,
+            monotony: monotony
         )
     }
 
@@ -93,6 +95,22 @@ struct FitnessCalculator: CalculateFitnessUseCase, Sendable {
         return (volume, elevation, duration)
     }
 
+    // MARK: - Monotony
+
+    private func calculateMonotony(dailyLoads: [Double]) -> Double {
+        let last7 = Array(dailyLoads.suffix(7))
+        guard !last7.isEmpty else { return 0 }
+
+        let mean = last7.reduce(0.0, +) / Double(last7.count)
+        guard mean > 0 else { return 0 }
+
+        let variance = last7.reduce(0.0) { $0 + ($1 - mean) * ($1 - mean) } / Double(last7.count)
+        let stddev = variance.squareRoot()
+        guard stddev > 0 else { return 10.0 } // Perfect monotony: identical daily loads
+
+        return min(mean / stddev, 10.0)
+    }
+
     // MARK: - Empty
 
     private func emptySnapshot(date: Date) -> FitnessSnapshot {
@@ -105,7 +123,8 @@ struct FitnessCalculator: CalculateFitnessUseCase, Sendable {
             weeklyVolumeKm: 0,
             weeklyElevationGainM: 0,
             weeklyDuration: 0,
-            acuteToChronicRatio: 0
+            acuteToChronicRatio: 0,
+            monotony: 0
         )
     }
 }

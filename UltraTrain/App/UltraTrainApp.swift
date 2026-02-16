@@ -19,6 +19,7 @@ struct UltraTrainApp: App {
     private let clearAllDataUseCase: any ClearAllDataUseCase
     private let healthKitService: HealthKitService
     private let hapticService: HapticService
+    private let trainingLoadCalculator: TrainingLoadCalculator
 
     init() {
         do {
@@ -57,6 +58,7 @@ struct UltraTrainApp: App {
         clearAllDataUseCase = DataCleaner(modelContainer: modelContainer)
         healthKitService = HealthKitService()
         hapticService = HapticService()
+        trainingLoadCalculator = TrainingLoadCalculator()
     }
 
     var body: some Scene {
@@ -76,7 +78,8 @@ struct UltraTrainApp: App {
                 appSettingsRepository: appSettingsRepository,
                 clearAllDataUseCase: clearAllDataUseCase,
                 healthKitService: healthKitService,
-                hapticService: hapticService
+                hapticService: hapticService,
+                trainingLoadCalculator: trainingLoadCalculator
             )
         }
     }

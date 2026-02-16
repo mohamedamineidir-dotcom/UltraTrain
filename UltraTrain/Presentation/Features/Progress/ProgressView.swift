@@ -3,12 +3,21 @@ import Charts
 
 struct TrainingProgressView: View {
     @State private var viewModel: ProgressViewModel
+    private let runRepository: any RunRepository
+    private let athleteRepository: any AthleteRepository
+    private let planRepository: any TrainingPlanRepository
+    private let trainingLoadCalculator: any CalculateTrainingLoadUseCase
 
     init(
         runRepository: any RunRepository,
         athleteRepository: any AthleteRepository,
-        planRepository: any TrainingPlanRepository
+        planRepository: any TrainingPlanRepository,
+        trainingLoadCalculator: any CalculateTrainingLoadUseCase
     ) {
+        self.runRepository = runRepository
+        self.athleteRepository = athleteRepository
+        self.planRepository = planRepository
+        self.trainingLoadCalculator = trainingLoadCalculator
         _viewModel = State(initialValue: ProgressViewModel(
             runRepository: runRepository,
             athleteRepository: athleteRepository,
@@ -23,6 +32,7 @@ struct TrainingProgressView: View {
                     ProgressView("Loading...")
                         .padding(.top, Theme.Spacing.xl)
                 } else {
+                    trainingLoadLink
                     volumeChartSection
                     elevationChartSection
                     adherenceSection
@@ -34,6 +44,37 @@ struct TrainingProgressView: View {
         .navigationTitle("Training Progress")
         .task {
             await viewModel.load()
+        }
+    }
+
+    // MARK: - Training Load Link
+
+    private var trainingLoadLink: some View {
+        NavigationLink {
+            TrainingLoadView(
+                trainingLoadCalculator: trainingLoadCalculator,
+                runRepository: runRepository,
+                athleteRepository: athleteRepository,
+                planRepository: planRepository
+            )
+        } label: {
+            HStack {
+                VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+                    Text("Training Load")
+                        .font(.headline)
+                        .foregroundStyle(Theme.Colors.label)
+                    Text("Effort trends, injury risk & monotony")
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
+                Spacer()
+                Image(systemName: "chart.line.uptrend.xyaxis")
+                    .foregroundStyle(Theme.Colors.primary)
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+            .cardStyle()
         }
     }
 

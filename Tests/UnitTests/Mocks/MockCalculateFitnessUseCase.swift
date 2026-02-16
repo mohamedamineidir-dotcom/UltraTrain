@@ -16,7 +16,8 @@ final class MockCalculateFitnessUseCase: CalculateFitnessUseCase, @unchecked Sen
             weeklyVolumeKm: 0,
             weeklyElevationGainM: 0,
             weeklyDuration: 0,
-            acuteToChronicRatio: 0
+            acuteToChronicRatio: 0,
+            monotony: 0
         )
     }
 }

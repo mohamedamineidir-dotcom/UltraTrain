@@ -5,17 +5,20 @@ struct DashboardView: View {
     private let planRepository: any TrainingPlanRepository
     private let runRepository: any RunRepository
     private let athleteRepository: any AthleteRepository
+    private let trainingLoadCalculator: any CalculateTrainingLoadUseCase
 
     init(
         planRepository: any TrainingPlanRepository,
         runRepository: any RunRepository,
         athleteRepository: any AthleteRepository,
         fitnessRepository: any FitnessRepository,
-        fitnessCalculator: any CalculateFitnessUseCase
+        fitnessCalculator: any CalculateFitnessUseCase,
+        trainingLoadCalculator: any CalculateTrainingLoadUseCase
     ) {
         self.planRepository = planRepository
         self.runRepository = runRepository
         self.athleteRepository = athleteRepository
+        self.trainingLoadCalculator = trainingLoadCalculator
         _viewModel = State(initialValue: DashboardViewModel(
             planRepository: planRepository,
             runRepository: runRepository,
@@ -169,7 +172,8 @@ struct DashboardView: View {
             TrainingProgressView(
                 runRepository: runRepository,
                 athleteRepository: athleteRepository,
-                planRepository: planRepository
+                planRepository: planRepository,
+                trainingLoadCalculator: trainingLoadCalculator
             )
         } label: {
             HStack {
@@ -274,7 +278,17 @@ private struct PreviewFitnessCalculator: CalculateFitnessUseCase, @unchecked Sen
             weeklyVolumeKm: 0,
             weeklyElevationGainM: 0,
             weeklyDuration: 0,
-            acuteToChronicRatio: 0
+            acuteToChronicRatio: 0,
+            monotony: 0
+        )
+    }
+}
+
+private struct PreviewTrainingLoadCalculator: CalculateTrainingLoadUseCase, @unchecked Sendable {
+    func execute(runs: [CompletedRun], plan: TrainingPlan?, asOf date: Date) async throws -> TrainingLoadSummary {
+        TrainingLoadSummary(
+            currentWeekLoad: WeeklyLoadData(weekStartDate: date.startOfWeek),
+            weeklyHistory: [], acrTrend: [], monotony: 0, monotonyLevel: .low
         )
     }
 }
@@ -285,7 +299,8 @@ private struct PreviewFitnessCalculator: CalculateFitnessUseCase, @unchecked Sen
         runRepository: PreviewRunRepository(),
         athleteRepository: PreviewAthleteRepository(),
         fitnessRepository: PreviewFitnessRepository(),
-        fitnessCalculator: PreviewFitnessCalculator()
+        fitnessCalculator: PreviewFitnessCalculator(),
+        trainingLoadCalculator: PreviewTrainingLoadCalculator()
     )
 }
 #endif

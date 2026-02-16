@@ -12,7 +12,8 @@ enum FitnessSnapshotSwiftDataMapper {
             weeklyVolumeKm: model.weeklyVolumeKm,
             weeklyElevationGainM: model.weeklyElevationGainM,
             weeklyDuration: model.weeklyDuration,
-            acuteToChronicRatio: model.acuteToChronicRatio
+            acuteToChronicRatio: model.acuteToChronicRatio,
+            monotony: model.monotony
         )
     }
 
@@ -26,7 +27,8 @@ enum FitnessSnapshotSwiftDataMapper {
             weeklyVolumeKm: snapshot.weeklyVolumeKm,
             weeklyElevationGainM: snapshot.weeklyElevationGainM,
             weeklyDuration: snapshot.weeklyDuration,
-            acuteToChronicRatio: snapshot.acuteToChronicRatio
+            acuteToChronicRatio: snapshot.acuteToChronicRatio,
+            monotony: snapshot.monotony
         )
     }
 }

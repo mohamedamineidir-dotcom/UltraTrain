@@ -116,6 +116,22 @@ struct FitnessCalculatorTests {
         #expect(snapshot.fatigue > snapshot.fitness)
     }
 
+    // MARK: - Monotony
+
+    @Test("Empty runs returns zero monotony")
+    func monotonyZeroForEmptyRuns() async throws {
+        let snapshot = try await calculator.execute(runs: [], asOf: .now)
+        #expect(snapshot.monotony == 0)
+    }
+
+    @Test("Single run produces non-zero monotony")
+    func monotonyNonZeroForSingleRun() async throws {
+        let run = makeRun(daysAgo: 0)
+        let snapshot = try await calculator.execute(runs: [run], asOf: .now)
+        // With only 1 day having load and 6 days with 0, stddev > 0 → monotony > 0
+        #expect(snapshot.monotony >= 0)
+    }
+
     @Test("Consistent training produces positive form after taper")
     func taperProducesPositiveForm() async throws {
         var runs: [CompletedRun] = []

@@ -18,6 +18,7 @@ struct MainTabView: View {
     private let clearAllDataUseCase: any ClearAllDataUseCase
     private let healthKitService: any HealthKitServiceProtocol
     private let hapticService: any HapticServiceProtocol
+    private let trainingLoadCalculator: any CalculateTrainingLoadUseCase
 
     init(
         athleteRepository: any AthleteRepository,
@@ -34,7 +35,8 @@ struct MainTabView: View {
         appSettingsRepository: any AppSettingsRepository,
         clearAllDataUseCase: any ClearAllDataUseCase,
         healthKitService: any HealthKitServiceProtocol,
-        hapticService: any HapticServiceProtocol
+        hapticService: any HapticServiceProtocol,
+        trainingLoadCalculator: any CalculateTrainingLoadUseCase
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -51,6 +53,7 @@ struct MainTabView: View {
         self.clearAllDataUseCase = clearAllDataUseCase
         self.healthKitService = healthKitService
         self.hapticService = hapticService
+        self.trainingLoadCalculator = trainingLoadCalculator
     }
 
     var body: some View {
@@ -60,7 +63,8 @@ struct MainTabView: View {
                 runRepository: runRepository,
                 athleteRepository: athleteRepository,
                 fitnessRepository: fitnessRepository,
-                fitnessCalculator: fitnessCalculator
+                fitnessCalculator: fitnessCalculator,
+                trainingLoadCalculator: trainingLoadCalculator
             )
                 .tabItem {
                     Label("Dashboard", systemImage: "house.fill")
