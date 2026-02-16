@@ -20,6 +20,7 @@ final class ActiveRunViewModel {
     private let runRepository: any RunRepository
     private let planRepository: any TrainingPlanRepository
     private let nutritionRepository: any NutritionRepository
+    private let hapticService: any HapticServiceProtocol
 
     // MARK: - Config
 
@@ -27,6 +28,7 @@ final class ActiveRunViewModel {
     let linkedSession: TrainingSession?
     let autoPauseEnabled: Bool
     let nutritionRemindersEnabled: Bool
+    let nutritionAlertSoundEnabled: Bool
     let raceId: UUID?
 
     // MARK: - State
@@ -64,10 +66,12 @@ final class ActiveRunViewModel {
         runRepository: any RunRepository,
         planRepository: any TrainingPlanRepository,
         nutritionRepository: any NutritionRepository,
+        hapticService: any HapticServiceProtocol,
         athlete: Athlete,
         linkedSession: TrainingSession?,
         autoPauseEnabled: Bool,
         nutritionRemindersEnabled: Bool,
+        nutritionAlertSoundEnabled: Bool,
         raceId: UUID?
     ) {
         self.locationService = locationService
@@ -75,10 +79,12 @@ final class ActiveRunViewModel {
         self.runRepository = runRepository
         self.planRepository = planRepository
         self.nutritionRepository = nutritionRepository
+        self.hapticService = hapticService
         self.athlete = athlete
         self.linkedSession = linkedSession
         self.autoPauseEnabled = autoPauseEnabled
         self.nutritionRemindersEnabled = nutritionRemindersEnabled
+        self.nutritionAlertSoundEnabled = nutritionAlertSoundEnabled
         self.raceId = raceId
     }
 
@@ -87,6 +93,7 @@ final class ActiveRunViewModel {
     func startRun() {
         runState = .running
         loadNutritionReminders()
+        if nutritionAlertSoundEnabled { hapticService.prepareHaptics() }
         startTimer()
         startLocationTracking()
         startHeartRateStreaming()
@@ -321,6 +328,9 @@ final class ActiveRunViewModel {
             in: nutritionReminders, at: elapsedTime
         ) {
             activeReminder = next
+            if nutritionAlertSoundEnabled {
+                hapticService.playNutritionAlert()
+            }
         }
     }
 

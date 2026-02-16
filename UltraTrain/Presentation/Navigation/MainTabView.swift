@@ -17,6 +17,7 @@ struct MainTabView: View {
     private let appSettingsRepository: any AppSettingsRepository
     private let clearAllDataUseCase: any ClearAllDataUseCase
     private let healthKitService: any HealthKitServiceProtocol
+    private let hapticService: any HapticServiceProtocol
 
     init(
         athleteRepository: any AthleteRepository,
@@ -32,7 +33,8 @@ struct MainTabView: View {
         finishTimeEstimator: any EstimateFinishTimeUseCase,
         appSettingsRepository: any AppSettingsRepository,
         clearAllDataUseCase: any ClearAllDataUseCase,
-        healthKitService: any HealthKitServiceProtocol
+        healthKitService: any HealthKitServiceProtocol,
+        hapticService: any HapticServiceProtocol
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -48,6 +50,7 @@ struct MainTabView: View {
         self.appSettingsRepository = appSettingsRepository
         self.clearAllDataUseCase = clearAllDataUseCase
         self.healthKitService = healthKitService
+        self.hapticService = hapticService
     }
 
     var body: some View {
@@ -82,7 +85,8 @@ struct MainTabView: View {
                 locationService: locationService,
                 healthKitService: healthKitService,
                 appSettingsRepository: appSettingsRepository,
-                nutritionRepository: nutritionRepository
+                nutritionRepository: nutritionRepository,
+                hapticService: hapticService
             )
                 .tabItem {
                     Label("Run", systemImage: "figure.run")

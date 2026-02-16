@@ -6,7 +6,8 @@ enum AppSettingsSwiftDataMapper {
             id: model.id,
             trainingRemindersEnabled: model.trainingRemindersEnabled,
             nutritionRemindersEnabled: model.nutritionRemindersEnabled,
-            autoPauseEnabled: model.autoPauseEnabled
+            autoPauseEnabled: model.autoPauseEnabled,
+            nutritionAlertSoundEnabled: model.nutritionAlertSoundEnabled
         )
     }
 
@@ -15,7 +16,8 @@ enum AppSettingsSwiftDataMapper {
             id: settings.id,
             trainingRemindersEnabled: settings.trainingRemindersEnabled,
             nutritionRemindersEnabled: settings.nutritionRemindersEnabled,
-            autoPauseEnabled: settings.autoPauseEnabled
+            autoPauseEnabled: settings.autoPauseEnabled,
+            nutritionAlertSoundEnabled: settings.nutritionAlertSoundEnabled
         )
     }
 }

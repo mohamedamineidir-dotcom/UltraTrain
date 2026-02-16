@@ -40,6 +40,8 @@ final class LocalAppSettingsRepository: AppSettingsRepository, @unchecked Sendab
 
         existing.trainingRemindersEnabled = settings.trainingRemindersEnabled
         existing.nutritionRemindersEnabled = settings.nutritionRemindersEnabled
+        existing.autoPauseEnabled = settings.autoPauseEnabled
+        existing.nutritionAlertSoundEnabled = settings.nutritionAlertSoundEnabled
 
         try context.save()
         Logger.persistence.info("App settings updated")

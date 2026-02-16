@@ -5,4 +5,5 @@ struct AppSettings: Identifiable, Equatable, Sendable {
     var trainingRemindersEnabled: Bool
     var nutritionRemindersEnabled: Bool
     var autoPauseEnabled: Bool
+    var nutritionAlertSoundEnabled: Bool
 }

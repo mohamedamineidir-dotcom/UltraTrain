@@ -120,6 +120,15 @@ struct SettingsView: View {
                         Task { await viewModel.updateNutritionReminders(newValue) }
                     }
                 ))
+
+                if settings.nutritionRemindersEnabled {
+                    Toggle("Sound & Haptic Alerts", isOn: Binding(
+                        get: { settings.nutritionAlertSoundEnabled },
+                        set: { newValue in
+                            Task { await viewModel.updateNutritionAlertSound(newValue) }
+                        }
+                    ))
+                }
             }
         }
     }

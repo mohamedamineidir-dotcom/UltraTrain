@@ -27,7 +27,8 @@ struct SettingsViewModelTests {
             id: UUID(),
             trainingRemindersEnabled: true,
             nutritionRemindersEnabled: true,
-            autoPauseEnabled: true
+            autoPauseEnabled: true,
+            nutritionAlertSoundEnabled: true
         )
     }
 

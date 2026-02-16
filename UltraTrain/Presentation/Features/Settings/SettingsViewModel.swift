@@ -58,7 +58,8 @@ final class SettingsViewModel {
                     id: UUID(),
                     trainingRemindersEnabled: true,
                     nutritionRemindersEnabled: true,
-                    autoPauseEnabled: true
+                    autoPauseEnabled: true,
+                    nutritionAlertSoundEnabled: true
                 )
                 try await appSettingsRepository.saveSettings(defaults)
                 appSettings = defaults
@@ -115,6 +116,19 @@ final class SettingsViewModel {
         } catch {
             self.error = error.localizedDescription
             Logger.settings.error("Failed to update nutrition reminders: \(error)")
+        }
+    }
+
+    func updateNutritionAlertSound(_ enabled: Bool) async {
+        guard var settings = appSettings else { return }
+        settings.nutritionAlertSoundEnabled = enabled
+
+        do {
+            try await appSettingsRepository.updateSettings(settings)
+            appSettings = settings
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update nutrition alert sound: \(error)")
         }
     }
 

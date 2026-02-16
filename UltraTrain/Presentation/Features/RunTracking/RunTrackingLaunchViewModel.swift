@@ -22,6 +22,7 @@ final class RunTrackingLaunchViewModel {
     var showActiveRun = false
     var autoPauseEnabled = true
     var nutritionRemindersEnabled = false
+    var nutritionAlertSoundEnabled = true
     var raceId: UUID?
 
     // MARK: - Init
@@ -53,6 +54,7 @@ final class RunTrackingLaunchViewModel {
             if let settings = try await appSettingsRepository.getSettings() {
                 autoPauseEnabled = settings.autoPauseEnabled
                 nutritionRemindersEnabled = settings.nutritionRemindersEnabled
+                nutritionAlertSoundEnabled = settings.nutritionAlertSoundEnabled
             }
         } catch {
             self.error = error.localizedDescription
