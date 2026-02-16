@@ -20,6 +20,7 @@ struct UltraTrainApp: App {
     private let healthKitService: HealthKitService
     private let hapticService: HapticService
     private let trainingLoadCalculator: TrainingLoadCalculator
+    private let sessionNutritionAdvisor: any SessionNutritionAdvisor
 
     init() {
         do {
@@ -60,6 +61,7 @@ struct UltraTrainApp: App {
         healthKitService = HealthKitService()
         hapticService = HapticService()
         trainingLoadCalculator = TrainingLoadCalculator()
+        sessionNutritionAdvisor = DefaultSessionNutritionAdvisor()
     }
 
     var body: some Scene {
@@ -80,7 +82,8 @@ struct UltraTrainApp: App {
                 clearAllDataUseCase: clearAllDataUseCase,
                 healthKitService: healthKitService,
                 hapticService: hapticService,
-                trainingLoadCalculator: trainingLoadCalculator
+                trainingLoadCalculator: trainingLoadCalculator,
+                sessionNutritionAdvisor: sessionNutritionAdvisor
             )
         }
     }

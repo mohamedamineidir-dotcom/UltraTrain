@@ -5,6 +5,8 @@ struct SessionDetailView: View {
     let planStartDate: Date
     let planEndDate: Date
     let swapCandidates: [SwapCandidate]
+    let athlete: Athlete?
+    let nutritionAdvisor: any SessionNutritionAdvisor
     var onSkip: (() -> Void)?
     var onUnskip: (() -> Void)?
     var onReschedule: ((Date) -> Void)?
@@ -26,7 +28,14 @@ struct SessionDetailView: View {
                 statsSection
                 descriptionSection
 
-                if let notes = session.nutritionNotes {
+                if let athlete,
+                   let advice = nutritionAdvisor.advise(
+                    for: session,
+                    athleteWeightKg: athlete.weightKg,
+                    experienceLevel: athlete.experienceLevel
+                   ) {
+                    SessionNutritionSection(advice: advice)
+                } else if let notes = session.nutritionNotes {
                     nutritionSection(notes)
                 }
 
