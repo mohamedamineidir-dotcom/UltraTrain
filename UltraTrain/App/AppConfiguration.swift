@@ -44,4 +44,11 @@ enum AppConfiguration {
         static let hydrationMlPerHourHigh: Int = 800
         static let sodiumMgPerHour: Int = 600
     }
+
+    enum NutritionReminders {
+        static let hydrationIntervalSeconds: TimeInterval = 1200  // 20 min
+        static let fuelIntervalSeconds: TimeInterval = 2700       // 45 min
+        static let autoDismissSeconds: TimeInterval = 15
+        static let maxScheduleDuration: TimeInterval = 43200      // 12 hours
+    }
 }

@@ -7,6 +7,7 @@ struct RunTrackingLaunchView: View {
     private let healthKitService: any HealthKitServiceProtocol
     private let runRepository: any RunRepository
     private let planRepository: any TrainingPlanRepository
+    private let nutritionRepository: any NutritionRepository
 
     init(
         athleteRepository: any AthleteRepository,
@@ -14,7 +15,8 @@ struct RunTrackingLaunchView: View {
         runRepository: any RunRepository,
         locationService: LocationService,
         healthKitService: any HealthKitServiceProtocol,
-        appSettingsRepository: any AppSettingsRepository
+        appSettingsRepository: any AppSettingsRepository,
+        nutritionRepository: any NutritionRepository
     ) {
         _viewModel = State(initialValue: RunTrackingLaunchViewModel(
             athleteRepository: athleteRepository,
@@ -27,6 +29,7 @@ struct RunTrackingLaunchView: View {
         self.healthKitService = healthKitService
         self.runRepository = runRepository
         self.planRepository = planRepository
+        self.nutritionRepository = nutritionRepository
     }
 
     var body: some View {
@@ -57,9 +60,12 @@ struct RunTrackingLaunchView: View {
                             healthKitService: healthKitService,
                             runRepository: runRepository,
                             planRepository: planRepository,
+                            nutritionRepository: nutritionRepository,
                             athlete: athlete,
                             linkedSession: viewModel.selectedSession,
-                            autoPauseEnabled: viewModel.autoPauseEnabled
+                            autoPauseEnabled: viewModel.autoPauseEnabled,
+                            nutritionRemindersEnabled: viewModel.nutritionRemindersEnabled,
+                            raceId: viewModel.raceId
                         )
                     )
                 }

@@ -15,6 +15,10 @@
 		A6A7A8A9A0A1A2A3A4A5A6A7 /* HeartRateZoneChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B7B8B9B0B1B2B3B4B5B6B7 /* HeartRateZoneChart.swift */; };
 		A7A8A9A0A1A2A3A4A5A6A7A8 /* PlanComparisonCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7B8B9B0B1B2B3B4B5B6B7B8 /* PlanComparisonCard.swift */; };
 		A8A9A0A1A2A3A4A5A6A7A8A9 /* RunAnalysisViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B9B0B1B2B3B4B5B6B7B8B9 /* RunAnalysisViewModelTests.swift */; };
+		C1C2C3C4C5C6C7C8C9C0C1C2 /* NutritionReminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D2D3D4D5D6D7D8D9D0D1D2 /* NutritionReminder.swift */; };
+		C2C3C4C5C6C7C8C9C0C1C2C3 /* NutritionReminderScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D3D4D5D6D7D8D9D0D1D2D3 /* NutritionReminderScheduler.swift */; };
+		C3C4C5C6C7C8C9C0C1C2C3C4 /* NutritionReminderBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D4D5D6D7D8D9D0D1D2D3D4 /* NutritionReminderBanner.swift */; };
+		C4C5C6C7C8C9C0C1C2C3C4C5 /* NutritionReminderSchedulerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D5D6D7D8D9D0D1D2D3D4D5 /* NutritionReminderSchedulerTests.swift */; };
 		00281AB2049EAD0C4DE7D1B9 /* GenerateTrainingPlanUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4C000B9B7DFB626C24ED17 /* GenerateTrainingPlanUseCase.swift */; };
 		006632A379E571673A9F12E9 /* NutritionPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = E729F57B5B5349A3F3684D86 /* NutritionPlan.swift */; };
 		0074C8FC724091675FB84EAF /* Logger+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E813F94D4567DE4B5097C0 /* Logger+App.swift */; };
@@ -215,6 +219,10 @@
 		B6B7B8B9B0B1B2B3B4B5B6B7 /* HeartRateZoneChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartRateZoneChart.swift; sourceTree = "<group>"; };
 		B7B8B9B0B1B2B3B4B5B6B7B8 /* PlanComparisonCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanComparisonCard.swift; sourceTree = "<group>"; };
 		B8B9B0B1B2B3B4B5B6B7B8B9 /* RunAnalysisViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunAnalysisViewModelTests.swift; sourceTree = "<group>"; };
+		D1D2D3D4D5D6D7D8D9D0D1D2 /* NutritionReminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionReminder.swift; sourceTree = "<group>"; };
+		D2D3D4D5D6D7D8D9D0D1D2D3 /* NutritionReminderScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionReminderScheduler.swift; sourceTree = "<group>"; };
+		D3D4D5D6D7D8D9D0D1D2D3D4 /* NutritionReminderBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionReminderBanner.swift; sourceTree = "<group>"; };
+		D4D5D6D7D8D9D0D1D2D3D4D5 /* NutritionReminderSchedulerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionReminderSchedulerTests.swift; sourceTree = "<group>"; };
 		00CD1F9FD35300BB3A71A0EE /* FitnessTrendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitnessTrendView.swift; sourceTree = "<group>"; };
 		019E0FBBC83421CEE919B190 /* OnboardingProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingProgressBar.swift; sourceTree = "<group>"; };
 		03E1CCC2542B54DC897875EC /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -441,6 +449,7 @@
 				FE333BE72676CF90BC238F78 /* ActiveRunStatsBar.swift */,
 				900621CEECEEBC4178332EB4 /* ActiveRunView.swift */,
 				CABACF379E57A0309585574E /* ActiveRunViewModel.swift */,
+				D3D4D5D6D7D8D9D0D1D2D3D4 /* NutritionReminderBanner.swift */,
 				C2292F7573DDA5CF6461EA07 /* RunMapView.swift */,
 				780F576F96A959380057E873 /* RunSummarySheet.swift */,
 				D7C7C4CDD524764E054F6E06 /* RunTrackingLaunchView.swift */,
@@ -651,6 +660,7 @@
 				AD4C000B9B7DFB626C24ED17 /* GenerateTrainingPlanUseCase.swift */,
 				CBDF4777CA3D581A85AB8607 /* IntermediateRaceHandler.swift */,
 				87E0E83292388153E20DFE3C /* NutritionPlanGenerator.swift */,
+				D2D3D4D5D6D7D8D9D0D1D2D3 /* NutritionReminderScheduler.swift */,
 				3DA9AF684023B4C3D98AF9DF /* PhaseDistributor.swift */,
 				BA378F1C00BCED82729EEB07 /* RunStatisticsCalculator.swift */,
 				8A78382A126F660DD0577C02 /* SessionTemplateGenerator.swift */,
@@ -709,6 +719,7 @@
 				B1B2B3B4B5B6B7B8B9B0B1B2 /* RunAnalysisData.swift */,
 				F7E66D75551B3D1881C4659D /* FitnessSnapshot.swift */,
 				E729F57B5B5349A3F3684D86 /* NutritionPlan.swift */,
+				D1D2D3D4D5D6D7D8D9D0D1D2 /* NutritionReminder.swift */,
 				EAE081E1806B295FBAD1D8DF /* Race.swift */,
 				0DCB23430B650183659AC636 /* TrainingPlan.swift */,
 			);
@@ -922,6 +933,7 @@
 				8FFB2DC4DD6BB8F3F0667FA7 /* FinishTimeEstimatorTests.swift */,
 				F658CBE74CFB91A52E033E8B /* FitnessCalculatorTests.swift */,
 				1C6FE1EB86F8E05A8FA48093 /* NutritionPlanGeneratorTests.swift */,
+				D4D5D6D7D8D9D0D1D2D3D4D5 /* NutritionReminderSchedulerTests.swift */,
 				38CB342D9E3727D3A1009997 /* PhaseDistributorTests.swift */,
 				5D07A5D502159366130E271A /* RunStatisticsCalculatorTests.swift */,
 				7B9FB3584C537F0590E48F82 /* TrainingPlanGeneratorTests.swift */,
@@ -1108,6 +1120,7 @@
 				F67BF764A6D273C03F1F03F6 /* MockRunRepository.swift in Sources */,
 				E1EDCBBF7161DE09131DD423 /* MockTrainingPlanRepository.swift in Sources */,
 				42D74DE3C98D42EF3EC16AF5 /* NutritionPlanGeneratorTests.swift in Sources */,
+				C4C5C6C7C8C9C0C1C2C3C4C5 /* NutritionReminderSchedulerTests.swift in Sources */,
 				5A2BD97A83264D81D7D3C29E /* NutritionViewModelTests.swift in Sources */,
 				F973DD7B8D45FC115F2AF141 /* OnboardingViewModelTests.swift in Sources */,
 				D0F6B2D1D72D856CDCEBA16F /* PhaseDistributorTests.swift in Sources */,
@@ -1201,6 +1214,9 @@
 				7327400F1551F70DA52ACEEA /* NutritionPlanSwiftDataMapper.swift in Sources */,
 				B6FB4E51C1178F76EDCCEB94 /* NutritionPlanSwiftDataModel.swift in Sources */,
 				DCE8AAC16F7489444C90611E /* NutritionProductSwiftDataModel.swift in Sources */,
+				C1C2C3C4C5C6C7C8C9C0C1C2 /* NutritionReminder.swift in Sources */,
+				C2C3C4C5C6C7C8C9C0C1C2C3 /* NutritionReminderScheduler.swift in Sources */,
+				C3C4C5C6C7C8C9C0C1C2C3C4 /* NutritionReminderBanner.swift in Sources */,
 				6F869AC75A053FE197C6DE7B /* NutritionRepository.swift in Sources */,
 				E86E2DA4693CC96D445DB89C /* NutritionScheduleView.swift in Sources */,
 				7B97470EAC3E86010C983952 /* NutritionSummaryCard.swift in Sources */,

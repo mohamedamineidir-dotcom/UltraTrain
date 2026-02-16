@@ -19,12 +19,15 @@ final class ActiveRunViewModel {
     private let healthKitService: any HealthKitServiceProtocol
     private let runRepository: any RunRepository
     private let planRepository: any TrainingPlanRepository
+    private let nutritionRepository: any NutritionRepository
 
     // MARK: - Config
 
     let athlete: Athlete
     let linkedSession: TrainingSession?
     let autoPauseEnabled: Bool
+    let nutritionRemindersEnabled: Bool
+    let raceId: UUID?
 
     // MARK: - State
 
@@ -42,6 +45,8 @@ final class ActiveRunViewModel {
     var showSummary = false
     var isSaving = false
     var isAutoPaused = false
+    var nutritionReminders: [NutritionReminder] = []
+    var activeReminder: NutritionReminder?
 
     // MARK: - Private
 
@@ -58,23 +63,30 @@ final class ActiveRunViewModel {
         healthKitService: any HealthKitServiceProtocol,
         runRepository: any RunRepository,
         planRepository: any TrainingPlanRepository,
+        nutritionRepository: any NutritionRepository,
         athlete: Athlete,
         linkedSession: TrainingSession?,
-        autoPauseEnabled: Bool
+        autoPauseEnabled: Bool,
+        nutritionRemindersEnabled: Bool,
+        raceId: UUID?
     ) {
         self.locationService = locationService
         self.healthKitService = healthKitService
         self.runRepository = runRepository
         self.planRepository = planRepository
+        self.nutritionRepository = nutritionRepository
         self.athlete = athlete
         self.linkedSession = linkedSession
         self.autoPauseEnabled = autoPauseEnabled
+        self.nutritionRemindersEnabled = nutritionRemindersEnabled
+        self.raceId = raceId
     }
 
     // MARK: - Controls
 
     func startRun() {
         runState = .running
+        loadNutritionReminders()
         startTimer()
         startLocationTracking()
         startHeartRateStreaming()
@@ -205,6 +217,7 @@ final class ActiveRunViewModel {
                 try? await Task.sleep(for: .seconds(AppConfiguration.RunTracking.timerInterval))
                 guard !Task.isCancelled else { break }
                 self?.elapsedTime += AppConfiguration.RunTracking.timerInterval
+                self?.checkNutritionReminders()
             }
         }
     }
@@ -264,6 +277,50 @@ final class ActiveRunViewModel {
                 guard !Task.isCancelled else { break }
                 self?.currentHeartRate = reading.beatsPerMinute
             }
+        }
+    }
+
+    // MARK: - Nutrition Reminders
+
+    func dismissReminder() {
+        guard let current = activeReminder,
+              let index = nutritionReminders.firstIndex(where: { $0.id == current.id }) else {
+            return
+        }
+        nutritionReminders[index].isDismissed = true
+        activeReminder = nil
+    }
+
+    private func loadNutritionReminders() {
+        guard nutritionRemindersEnabled else { return }
+
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                let plan = try await self.nutritionRepository.getNutritionPlan(for: self.raceId ?? UUID())
+                let isGutTraining = plan?.gutTrainingSessionIds.contains(
+                    self.linkedSession?.id ?? UUID()
+                ) ?? false
+
+                if isGutTraining, let plan {
+                    self.nutritionReminders = NutritionReminderScheduler.buildGutTrainingSchedule(from: plan)
+                } else {
+                    self.nutritionReminders = NutritionReminderScheduler.buildDefaultSchedule()
+                }
+                Logger.nutrition.info("Loaded \(self.nutritionReminders.count) nutrition reminders")
+            } catch {
+                self.nutritionReminders = NutritionReminderScheduler.buildDefaultSchedule()
+                Logger.nutrition.error("Failed to load nutrition plan, using defaults: \(error)")
+            }
+        }
+    }
+
+    private func checkNutritionReminders() {
+        guard activeReminder == nil, !nutritionReminders.isEmpty else { return }
+        if let next = NutritionReminderScheduler.nextDueReminder(
+            in: nutritionReminders, at: elapsedTime
+        ) {
+            activeReminder = next
         }
     }
 

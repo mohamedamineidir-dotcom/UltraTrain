@@ -30,6 +30,14 @@ struct ActiveRunView: View {
                 .padding(.horizontal, Theme.Spacing.xl)
                 .padding(.bottom, Theme.Spacing.xl)
         }
+        .overlay(alignment: .top) {
+            if let reminder = viewModel.activeReminder {
+                NutritionReminderBanner(reminder: reminder) {
+                    viewModel.dismissReminder()
+                }
+            }
+        }
+        .animation(.easeInOut(duration: 0.3), value: viewModel.activeReminder)
         .navigationBarBackButtonHidden()
         .onAppear {
             if viewModel.runState == .notStarted {

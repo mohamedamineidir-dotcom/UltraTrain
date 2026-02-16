@@ -21,6 +21,8 @@ final class RunTrackingLaunchViewModel {
     var error: String?
     var showActiveRun = false
     var autoPauseEnabled = true
+    var nutritionRemindersEnabled = false
+    var raceId: UUID?
 
     // MARK: - Init
 
@@ -46,9 +48,11 @@ final class RunTrackingLaunchViewModel {
             athlete = try await athleteRepository.getAthlete()
             if let plan = try await planRepository.getActivePlan() {
                 todaysSessions = extractTodaysSessions(from: plan)
+                raceId = plan.targetRaceId
             }
             if let settings = try await appSettingsRepository.getSettings() {
                 autoPauseEnabled = settings.autoPauseEnabled
+                nutritionRemindersEnabled = settings.nutritionRemindersEnabled
             }
         } catch {
             self.error = error.localizedDescription
