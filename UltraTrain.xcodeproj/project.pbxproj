@@ -202,6 +202,7 @@
 		0DED8815DEDA03EA7BEE1866 /* WeeklyLoadChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB8F73D504A0E3A25567FBFA /* WeeklyLoadChartView.swift */; };
 		ECCD06FE8DC5A31DF1C1E9A4 /* ACRTrendChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36F7C5DB73536A2EBD832486 /* ACRTrendChartView.swift */; };
 		520FAD70B0566592B402E1AF /* AdherenceTrendChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839895C610B920EF6118B3C2 /* AdherenceTrendChartView.swift */; };
+		6383669EE9211F4F2E965865 /* FitnessTrendChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDAA5B9DC43782114B7583B6 /* FitnessTrendChartView.swift */; };
 D436CC24DB978B7B52252AFE /* TrainingLoadCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E135AA74626DE03B3703C6CF /* TrainingLoadCalculatorTests.swift */; };
 6B7ED04F92B35FD917A8C635 /* MockCalculateTrainingLoadUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28C5E30BC83E8000C32C487 /* MockCalculateTrainingLoadUseCase.swift */; };
 7B5581A49E111DCB215DD13D /* TrainingLoadViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD568AF8FDE34FB8B863838D /* TrainingLoadViewModelTests.swift */; };
@@ -427,6 +428,7 @@ D436CC24DB978B7B52252AFE /* TrainingLoadCalculatorTests.swift in Sources */ = {i
 		CB8F73D504A0E3A25567FBFA /* WeeklyLoadChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyLoadChartView.swift; sourceTree = "<group>"; };
 		36F7C5DB73536A2EBD832486 /* ACRTrendChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRTrendChartView.swift; sourceTree = "<group>"; };
 		839895C610B920EF6118B3C2 /* AdherenceTrendChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdherenceTrendChartView.swift; sourceTree = "<group>"; };
+		CDAA5B9DC43782114B7583B6 /* FitnessTrendChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitnessTrendChartView.swift; sourceTree = "<group>"; };
 E135AA74626DE03B3703C6CF /* TrainingLoadCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingLoadCalculatorTests.swift; sourceTree = "<group>"; };
 B28C5E30BC83E8000C32C487 /* MockCalculateTrainingLoadUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCalculateTrainingLoadUseCase.swift; sourceTree = "<group>"; };
 CD568AF8FDE34FB8B863838D /* TrainingLoadViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingLoadViewModelTests.swift; sourceTree = "<group>"; };
@@ -1035,6 +1037,7 @@ CD568AF8FDE34FB8B863838D /* TrainingLoadViewModelTests.swift */ = {isa = PBXFile
 				CB8F73D504A0E3A25567FBFA /* WeeklyLoadChartView.swift */,
 				36F7C5DB73536A2EBD832486 /* ACRTrendChartView.swift */,
 				839895C610B920EF6118B3C2 /* AdherenceTrendChartView.swift */,
+				CDAA5B9DC43782114B7583B6 /* FitnessTrendChartView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1219,6 +1222,7 @@ CD568AF8FDE34FB8B863838D /* TrainingLoadViewModelTests.swift */ = {isa = PBXFile
 				0DED8815DEDA03EA7BEE1866 /* WeeklyLoadChartView.swift in Sources */,
 				ECCD06FE8DC5A31DF1C1E9A4 /* ACRTrendChartView.swift in Sources */,
 				520FAD70B0566592B402E1AF /* AdherenceTrendChartView.swift in Sources */,
+				6383669EE9211F4F2E965865 /* FitnessTrendChartView.swift in Sources */,
 				7A12CB2765AB5DAD86C0296C /* APIClient.swift in Sources */,
 				C1413E313C618103CE7DDFF6 /* APIError.swift in Sources */,
 				109B7B66EDDA1C2A688CF94A /* ActiveRunStatsBar.swift in Sources */,

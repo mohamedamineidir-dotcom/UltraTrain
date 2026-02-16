@@ -5,6 +5,8 @@ struct DashboardView: View {
     private let planRepository: any TrainingPlanRepository
     private let runRepository: any RunRepository
     private let athleteRepository: any AthleteRepository
+    private let fitnessRepository: any FitnessRepository
+    private let fitnessCalculator: any CalculateFitnessUseCase
     private let trainingLoadCalculator: any CalculateTrainingLoadUseCase
 
     init(
@@ -18,6 +20,8 @@ struct DashboardView: View {
         self.planRepository = planRepository
         self.runRepository = runRepository
         self.athleteRepository = athleteRepository
+        self.fitnessRepository = fitnessRepository
+        self.fitnessCalculator = fitnessCalculator
         self.trainingLoadCalculator = trainingLoadCalculator
         _viewModel = State(initialValue: DashboardViewModel(
             planRepository: planRepository,
@@ -173,6 +177,8 @@ struct DashboardView: View {
                 runRepository: runRepository,
                 athleteRepository: athleteRepository,
                 planRepository: planRepository,
+                fitnessCalculator: fitnessCalculator,
+                fitnessRepository: fitnessRepository,
                 trainingLoadCalculator: trainingLoadCalculator
             )
         } label: {

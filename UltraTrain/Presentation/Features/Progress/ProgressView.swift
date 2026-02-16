@@ -12,6 +12,8 @@ struct TrainingProgressView: View {
         runRepository: any RunRepository,
         athleteRepository: any AthleteRepository,
         planRepository: any TrainingPlanRepository,
+        fitnessCalculator: any CalculateFitnessUseCase,
+        fitnessRepository: any FitnessRepository,
         trainingLoadCalculator: any CalculateTrainingLoadUseCase
     ) {
         self.runRepository = runRepository
@@ -21,7 +23,9 @@ struct TrainingProgressView: View {
         _viewModel = State(initialValue: ProgressViewModel(
             runRepository: runRepository,
             athleteRepository: athleteRepository,
-            planRepository: planRepository
+            planRepository: planRepository,
+            fitnessCalculator: fitnessCalculator,
+            fitnessRepository: fitnessRepository
         ))
     }
 
@@ -33,6 +37,7 @@ struct TrainingProgressView: View {
                         .padding(.top, Theme.Spacing.xl)
                 } else {
                     trainingLoadLink
+                    fitnessSection
                     volumeChartSection
                     elevationChartSection
                     adherenceSection
@@ -76,6 +81,35 @@ struct TrainingProgressView: View {
             }
             .cardStyle()
         }
+    }
+
+    // MARK: - Fitness Section
+
+    private var fitnessSection: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            if viewModel.fitnessSnapshots.count >= 2 {
+                FitnessTrendChartView(snapshots: viewModel.fitnessSnapshots)
+
+                if viewModel.formStatus != .noData {
+                    HStack(spacing: Theme.Spacing.sm) {
+                        Image(systemName: viewModel.formIcon)
+                            .foregroundStyle(viewModel.formColor)
+                        Text("Form: \(viewModel.formLabel)")
+                            .font(.subheadline)
+                        Spacer()
+                        if let snapshot = viewModel.currentFitnessSnapshot {
+                            Text(String(format: "%+.0f TSB", snapshot.form))
+                                .font(.caption.bold().monospacedDigit())
+                                .foregroundStyle(viewModel.formColor)
+                        }
+                    }
+                }
+            } else {
+                Text("Complete some runs to see your fitness trend")
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+        }
+        .cardStyle()
     }
 
     // MARK: - Volume Chart

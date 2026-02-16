@@ -11,6 +11,7 @@ struct FitnessTrendView: View {
                 if snapshots.count >= 2 {
                     chartSection
                 }
+                formStatusBanner
                 currentStatsSection
                 weeklyVolumeSection
             }
@@ -23,63 +24,39 @@ struct FitnessTrendView: View {
     // MARK: - Chart
 
     private var chartSection: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("28-Day Trend")
-                .font(.headline)
+        FitnessTrendChartView(snapshots: snapshots)
+            .cardStyle()
+    }
 
-            Chart {
-                ForEach(snapshots) { snapshot in
-                    LineMark(
-                        x: .value("Date", snapshot.date),
-                        y: .value("Load", snapshot.fitness),
-                        series: .value("Metric", "Fitness")
-                    )
-                    .foregroundStyle(.blue)
+    // MARK: - Form Status Banner
 
-                    LineMark(
-                        x: .value("Date", snapshot.date),
-                        y: .value("Load", snapshot.fatigue),
-                        series: .value("Metric", "Fatigue")
-                    )
-                    .foregroundStyle(.red)
+    @ViewBuilder
+    private var formStatusBanner: some View {
+        if let snapshot = currentSnapshot {
+            let status = formStatus(for: snapshot.form)
+            HStack(spacing: Theme.Spacing.sm) {
+                Image(systemName: status.icon)
+                    .foregroundStyle(status.color)
 
-                    LineMark(
-                        x: .value("Date", snapshot.date),
-                        y: .value("Load", snapshot.form),
-                        series: .value("Metric", "Form")
-                    )
-                    .foregroundStyle(.green)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(status.label)
+                        .font(.subheadline.bold())
+                    Text(status.explanation)
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
+
+                Spacer()
+
+                Text(String(format: "%+.0f", snapshot.form))
+                    .font(.title3.bold().monospacedDigit())
+                    .foregroundStyle(status.color)
             }
-            .chartForegroundStyleScale([
-                "Fitness": .blue,
-                "Fatigue": .red,
-                "Form": .green
-            ])
-            .chartYAxisLabel("Load")
-            .frame(height: 250)
-
-            legendRow
-        }
-        .cardStyle()
-    }
-
-    private var legendRow: some View {
-        HStack(spacing: Theme.Spacing.md) {
-            legendDot(color: .blue, label: "CTL (Fitness)")
-            legendDot(color: .red, label: "ATL (Fatigue)")
-            legendDot(color: .green, label: "TSB (Form)")
-        }
-        .font(.caption)
-    }
-
-    private func legendDot(color: Color, label: String) -> some View {
-        HStack(spacing: Theme.Spacing.xs) {
-            Circle()
-                .fill(color)
-                .frame(width: 8, height: 8)
-            Text(label)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
+            .padding(Theme.Spacing.md)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                    .fill(status.color.opacity(0.1))
+            )
         }
     }
 
@@ -152,6 +129,40 @@ struct FitnessTrendView: View {
                     )
                 }
             }
+        }
+    }
+
+    // MARK: - Form Status Helpers
+
+    private func formStatus(for tsb: Double) -> (label: String, icon: String, color: Color, explanation: String) {
+        if tsb > 15 {
+            return (
+                "Race Ready",
+                "checkmark.seal.fill",
+                Theme.Colors.success,
+                "Fitness is high and fatigue is low. Great time for a race or hard effort."
+            )
+        } else if tsb > 0 {
+            return (
+                "Fresh",
+                "arrow.up.circle.fill",
+                Theme.Colors.success,
+                "You're recovering well. Good form for quality sessions."
+            )
+        } else if tsb > -15 {
+            return (
+                "Building",
+                "minus.circle.fill",
+                Theme.Colors.warning,
+                "Normal training fatigue. Stay consistent."
+            )
+        } else {
+            return (
+                "Fatigued",
+                "arrow.down.circle.fill",
+                Theme.Colors.danger,
+                "Heavy fatigue accumulation. Consider extra recovery."
+            )
         }
     }
 

@@ -128,12 +128,16 @@ struct ProgressViewModelTests {
     private func makeViewModel(
         runRepo: MockRunRepository = MockRunRepository(),
         athleteRepo: MockAthleteRepository = MockAthleteRepository(),
-        planRepo: MockTrainingPlanRepository = MockTrainingPlanRepository()
+        planRepo: MockTrainingPlanRepository = MockTrainingPlanRepository(),
+        fitnessCalc: MockCalculateFitnessUseCase = MockCalculateFitnessUseCase(),
+        fitnessRepo: MockFitnessRepository = MockFitnessRepository()
     ) -> ProgressViewModel {
         ProgressViewModel(
             runRepository: runRepo,
             athleteRepository: athleteRepo,
-            planRepository: planRepo
+            planRepository: planRepo,
+            fitnessCalculator: fitnessCalc,
+            fitnessRepository: fitnessRepo
         )
     }
 
@@ -364,5 +368,97 @@ struct ProgressViewModelTests {
         #expect(vm.weeklyAdherence[0].total == 2)
         #expect(vm.weeklyAdherence[0].completed == 1)
         #expect(vm.weeklyAdherence[0].percent == 50)
+    }
+
+    // MARK: - Fitness / Form Status
+
+    @Test("Fitness snapshots loaded when runs exist")
+    @MainActor
+    func fitnessSnapshotsLoaded() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let runRepo = MockRunRepository()
+        runRepo.runs = [makeRun(daysAgo: 0), makeRun(daysAgo: 3)]
+        let fitnessCalc = MockCalculateFitnessUseCase()
+        fitnessCalc.resultSnapshot = FitnessSnapshot(
+            id: UUID(), date: .now, fitness: 40, fatigue: 30, form: 10,
+            weeklyVolumeKm: 20, weeklyElevationGainM: 400, weeklyDuration: 7200,
+            acuteToChronicRatio: 0.75, monotony: 1.5
+        )
+
+        let vm = makeViewModel(
+            runRepo: runRepo, athleteRepo: athleteRepo,
+            fitnessCalc: fitnessCalc
+        )
+        await vm.load()
+
+        #expect(vm.currentFitnessSnapshot != nil)
+        #expect(vm.currentFitnessSnapshot?.fitness == 40)
+        #expect(vm.currentFitnessSnapshot?.form == 10)
+    }
+
+    @Test("Form status returns correct values for TSB ranges")
+    @MainActor
+    func formStatusValues() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let runRepo = MockRunRepository()
+        runRepo.runs = [makeRun(daysAgo: 0)]
+
+        // TSB = 20 → raceReady
+        let fitnessCalc = MockCalculateFitnessUseCase()
+        fitnessCalc.resultSnapshot = FitnessSnapshot(
+            id: UUID(), date: .now, fitness: 50, fatigue: 30, form: 20,
+            weeklyVolumeKm: 10, weeklyElevationGainM: 200, weeklyDuration: 3600,
+            acuteToChronicRatio: 0.6, monotony: 1.0
+        )
+
+        let vm = makeViewModel(
+            runRepo: runRepo, athleteRepo: athleteRepo,
+            fitnessCalc: fitnessCalc
+        )
+        await vm.load()
+        #expect(vm.formStatus == .raceReady)
+
+        // TSB = 5 → fresh
+        fitnessCalc.resultSnapshot = FitnessSnapshot(
+            id: UUID(), date: .now, fitness: 40, fatigue: 35, form: 5,
+            weeklyVolumeKm: 10, weeklyElevationGainM: 200, weeklyDuration: 3600,
+            acuteToChronicRatio: 0.88, monotony: 1.0
+        )
+        await vm.load()
+        #expect(vm.formStatus == .fresh)
+
+        // TSB = -10 → building
+        fitnessCalc.resultSnapshot = FitnessSnapshot(
+            id: UUID(), date: .now, fitness: 30, fatigue: 40, form: -10,
+            weeklyVolumeKm: 10, weeklyElevationGainM: 200, weeklyDuration: 3600,
+            acuteToChronicRatio: 1.33, monotony: 1.0
+        )
+        await vm.load()
+        #expect(vm.formStatus == .building)
+
+        // TSB = -20 → fatigued
+        fitnessCalc.resultSnapshot = FitnessSnapshot(
+            id: UUID(), date: .now, fitness: 30, fatigue: 50, form: -20,
+            weeklyVolumeKm: 10, weeklyElevationGainM: 200, weeklyDuration: 3600,
+            acuteToChronicRatio: 1.67, monotony: 1.0
+        )
+        await vm.load()
+        #expect(vm.formStatus == .fatigued)
+    }
+
+    @Test("Fitness snapshots empty when no runs")
+    @MainActor
+    func fitnessEmptyNoRuns() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+
+        let vm = makeViewModel(athleteRepo: athleteRepo)
+        await vm.load()
+
+        #expect(vm.currentFitnessSnapshot == nil)
+        #expect(vm.fitnessSnapshots.isEmpty)
+        #expect(vm.formStatus == .noData)
     }
 }

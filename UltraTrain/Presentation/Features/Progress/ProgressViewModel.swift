@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 import os
 
 struct WeeklyVolume: Identifiable, Equatable {
@@ -37,6 +38,14 @@ struct WeeklyAdherence: Identifiable, Equatable {
     }
 }
 
+enum FormStatus: Equatable {
+    case raceReady
+    case fresh
+    case building
+    case fatigued
+    case noData
+}
+
 @Observable
 @MainActor
 final class ProgressViewModel {
@@ -46,6 +55,8 @@ final class ProgressViewModel {
     private let runRepository: any RunRepository
     private let athleteRepository: any AthleteRepository
     private let planRepository: any TrainingPlanRepository
+    private let fitnessCalculator: any CalculateFitnessUseCase
+    private let fitnessRepository: any FitnessRepository
 
     // MARK: - State
 
@@ -53,6 +64,8 @@ final class ProgressViewModel {
     var weeklyAdherence: [WeeklyAdherence] = []
     var planAdherence: (completed: Int, total: Int) = (0, 0)
     var totalRuns = 0
+    var fitnessSnapshots: [FitnessSnapshot] = []
+    var currentFitnessSnapshot: FitnessSnapshot?
     var isLoading = false
     var error: String?
 
@@ -61,11 +74,15 @@ final class ProgressViewModel {
     init(
         runRepository: any RunRepository,
         athleteRepository: any AthleteRepository,
-        planRepository: any TrainingPlanRepository
+        planRepository: any TrainingPlanRepository,
+        fitnessCalculator: any CalculateFitnessUseCase,
+        fitnessRepository: any FitnessRepository
     ) {
         self.runRepository = runRepository
         self.athleteRepository = athleteRepository
         self.planRepository = planRepository
+        self.fitnessCalculator = fitnessCalculator
+        self.fitnessRepository = fitnessRepository
     }
 
     // MARK: - Load
@@ -87,6 +104,14 @@ final class ProgressViewModel {
             if let plan = try await planRepository.getActivePlan() {
                 planAdherence = computeAdherence(plan: plan)
                 weeklyAdherence = computeWeeklyAdherence(plan: plan)
+            }
+
+            if !runs.isEmpty {
+                let snapshot = try await fitnessCalculator.execute(runs: runs, asOf: .now)
+                try await fitnessRepository.saveSnapshot(snapshot)
+                currentFitnessSnapshot = snapshot
+                let from = Date.now.adding(days: -28)
+                fitnessSnapshots = try await fitnessRepository.getSnapshots(from: from, to: .now)
             }
         } catch {
             self.error = error.localizedDescription
@@ -115,6 +140,43 @@ final class ProgressViewModel {
     var adherencePercent: Double {
         guard planAdherence.total > 0 else { return 0 }
         return Double(planAdherence.completed) / Double(planAdherence.total) * 100
+    }
+
+    var formStatus: FormStatus {
+        guard let snapshot = currentFitnessSnapshot else { return .noData }
+        if snapshot.form > 15 { return .raceReady }
+        if snapshot.form > 0 { return .fresh }
+        if snapshot.form > -15 { return .building }
+        return .fatigued
+    }
+
+    var formLabel: String {
+        switch formStatus {
+        case .raceReady: "Race Ready"
+        case .fresh: "Fresh"
+        case .building: "Building"
+        case .fatigued: "Fatigued"
+        case .noData: "--"
+        }
+    }
+
+    var formIcon: String {
+        switch formStatus {
+        case .raceReady: "checkmark.seal.fill"
+        case .fresh: "arrow.up.circle.fill"
+        case .building: "minus.circle.fill"
+        case .fatigued: "arrow.down.circle.fill"
+        case .noData: "minus.circle"
+        }
+    }
+
+    var formColor: Color {
+        switch formStatus {
+        case .raceReady, .fresh: Theme.Colors.success
+        case .building: Theme.Colors.warning
+        case .fatigued: Theme.Colors.danger
+        case .noData: Theme.Colors.secondaryLabel
+        }
     }
 
     // MARK: - Private
