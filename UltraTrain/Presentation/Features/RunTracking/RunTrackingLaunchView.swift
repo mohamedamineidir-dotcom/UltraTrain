@@ -13,6 +13,11 @@ struct RunTrackingLaunchView: View {
     private let hapticService: any HapticServiceProtocol
     private let connectivityService: PhoneConnectivityService?
     private let widgetDataWriter: WidgetDataWriter?
+    private let exportService: any ExportServiceProtocol
+    private let runImportUseCase: any RunImportUseCase
+    private let stravaUploadService: (any StravaUploadServiceProtocol)?
+    private let stravaImportService: (any StravaImportServiceProtocol)?
+    private let stravaAuthService: any StravaAuthServiceProtocol
 
     init(
         athleteRepository: any AthleteRepository,
@@ -25,7 +30,12 @@ struct RunTrackingLaunchView: View {
         nutritionRepository: any NutritionRepository,
         hapticService: any HapticServiceProtocol,
         connectivityService: PhoneConnectivityService? = nil,
-        widgetDataWriter: WidgetDataWriter? = nil
+        widgetDataWriter: WidgetDataWriter? = nil,
+        exportService: any ExportServiceProtocol,
+        runImportUseCase: any RunImportUseCase,
+        stravaUploadService: (any StravaUploadServiceProtocol)? = nil,
+        stravaImportService: (any StravaImportServiceProtocol)? = nil,
+        stravaAuthService: any StravaAuthServiceProtocol
     ) {
         _viewModel = State(initialValue: RunTrackingLaunchViewModel(
             athleteRepository: athleteRepository,
@@ -44,6 +54,11 @@ struct RunTrackingLaunchView: View {
         self.hapticService = hapticService
         self.connectivityService = connectivityService
         self.widgetDataWriter = widgetDataWriter
+        self.exportService = exportService
+        self.runImportUseCase = runImportUseCase
+        self.stravaUploadService = stravaUploadService
+        self.stravaImportService = stravaImportService
+        self.stravaAuthService = stravaAuthService
     }
 
     var body: some View {
@@ -82,13 +97,16 @@ struct RunTrackingLaunchView: View {
                             hapticService: hapticService,
                             connectivityService: connectivityService,
                             widgetDataWriter: widgetDataWriter,
+                            stravaUploadService: stravaUploadService,
                             athlete: athlete,
                             linkedSession: viewModel.selectedSession,
                             autoPauseEnabled: viewModel.autoPauseEnabled,
                             nutritionRemindersEnabled: viewModel.nutritionRemindersEnabled,
                             nutritionAlertSoundEnabled: viewModel.nutritionAlertSoundEnabled,
+                            stravaAutoUploadEnabled: viewModel.stravaAutoUploadEnabled,
                             raceId: viewModel.raceId
-                        )
+                        ),
+                        exportService: exportService
                     )
                 }
             }
@@ -217,7 +235,12 @@ struct RunTrackingLaunchView: View {
                 runRepository: runRepository,
                 planRepository: planRepository,
                 athleteRepository: athleteRepository,
-                raceRepository: raceRepository
+                raceRepository: raceRepository,
+                exportService: exportService,
+                runImportUseCase: runImportUseCase,
+                stravaUploadService: stravaUploadService,
+                stravaImportService: stravaImportService,
+                stravaConnected: stravaAuthService.isConnected()
             )
         } label: {
             HStack {

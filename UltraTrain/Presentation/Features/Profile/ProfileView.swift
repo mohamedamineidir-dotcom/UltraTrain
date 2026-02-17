@@ -9,6 +9,8 @@ struct ProfileView: View {
     private let appSettingsRepository: any AppSettingsRepository
     private let clearAllDataUseCase: any ClearAllDataUseCase
     private let healthKitService: any HealthKitServiceProtocol
+    private let exportService: any ExportServiceProtocol
+    private let stravaAuthService: any StravaAuthServiceProtocol
 
     init(
         athleteRepository: any AthleteRepository,
@@ -19,7 +21,9 @@ struct ProfileView: View {
         appSettingsRepository: any AppSettingsRepository,
         clearAllDataUseCase: any ClearAllDataUseCase,
         healthKitService: any HealthKitServiceProtocol,
-        widgetDataWriter: WidgetDataWriter
+        widgetDataWriter: WidgetDataWriter,
+        exportService: any ExportServiceProtocol,
+        stravaAuthService: any StravaAuthServiceProtocol
     ) {
         _viewModel = State(initialValue: ProfileViewModel(
             athleteRepository: athleteRepository,
@@ -33,6 +37,8 @@ struct ProfileView: View {
         self.appSettingsRepository = appSettingsRepository
         self.clearAllDataUseCase = clearAllDataUseCase
         self.healthKitService = healthKitService
+        self.exportService = exportService
+        self.stravaAuthService = stravaAuthService
     }
 
     var body: some View {
@@ -60,7 +66,10 @@ struct ProfileView: View {
                             athleteRepository: athleteRepository,
                             appSettingsRepository: appSettingsRepository,
                             clearAllDataUseCase: clearAllDataUseCase,
-                            healthKitService: healthKitService
+                            healthKitService: healthKitService,
+                            exportService: exportService,
+                            runRepository: runRepository,
+                            stravaAuthService: stravaAuthService
                         )
                     } label: {
                         Image(systemName: "gearshape")

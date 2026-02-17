@@ -6,6 +6,15 @@ struct RunDetailView: View {
     let planRepository: any TrainingPlanRepository
     let athleteRepository: any AthleteRepository
     let raceRepository: any RaceRepository
+    let exportService: any ExportServiceProtocol
+    let stravaUploadService: (any StravaUploadServiceProtocol)?
+    let stravaConnected: Bool
+
+    @State private var showingExportOptions = false
+    @State private var exportFileURL: URL?
+    @State private var showingShareSheet = false
+    @State private var isExporting = false
+    @State private var stravaUploadStatus: StravaUploadStatus = .idle
 
     var body: some View {
         ScrollView {
@@ -36,11 +45,64 @@ struct RunDetailView: View {
 
                 analysisLink
                     .padding(.horizontal, Theme.Spacing.md)
+
+                if stravaConnected && !run.gpsTrack.isEmpty {
+                    stravaUploadSection
+                        .padding(.horizontal, Theme.Spacing.md)
+                }
             }
             .padding(.vertical, Theme.Spacing.md)
         }
         .navigationTitle(run.date.formatted(date: .abbreviated, time: .shortened))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    showingExportOptions = true
+                } label: {
+                    Image(systemName: "square.and.arrow.up")
+                }
+                .disabled(isExporting)
+            }
+        }
+        .confirmationDialog("Export Run", isPresented: $showingExportOptions) {
+            Button("Export as GPX") {
+                Task { await exportGPX() }
+            }
+            Button("Export Track Points (CSV)") {
+                Task { await exportTrackCSV() }
+            }
+            Button("Cancel", role: .cancel) {}
+        }
+        .sheet(isPresented: $showingShareSheet) {
+            if let url = exportFileURL {
+                ShareSheet(activityItems: [url])
+            }
+        }
+    }
+
+    // MARK: - Export
+
+    private func exportGPX() async {
+        isExporting = true
+        do {
+            exportFileURL = try await exportService.exportRunAsGPX(run)
+            showingShareSheet = true
+        } catch {
+            // Error handled silently — file just won't share
+        }
+        isExporting = false
+    }
+
+    private func exportTrackCSV() async {
+        isExporting = true
+        do {
+            exportFileURL = try await exportService.exportRunTrackAsCSV(run)
+            showingShareSheet = true
+        } catch {
+            // Error handled silently
+        }
+        isExporting = false
     }
 
     // MARK: - Stats Grid
@@ -151,6 +213,81 @@ struct RunDetailView: View {
                 .padding(.vertical, Theme.Spacing.md)
         }
         .buttonStyle(.borderedProminent)
+    }
+
+    // MARK: - Strava Upload
+
+    @ViewBuilder
+    private var stravaUploadSection: some View {
+        switch stravaUploadStatus {
+        case .idle:
+            Button {
+                uploadToStrava()
+            } label: {
+                Label("Upload to Strava", systemImage: "arrow.up.circle.fill")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, Theme.Spacing.sm)
+            }
+            .buttonStyle(.bordered)
+            .tint(.orange)
+        case .uploading, .processing:
+            HStack(spacing: Theme.Spacing.sm) {
+                ProgressView()
+                Text("Uploading to Strava...")
+                    .font(.subheadline)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(Theme.Spacing.md)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                    .fill(Color.orange.opacity(0.1))
+            )
+        case .success:
+            HStack(spacing: Theme.Spacing.sm) {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundStyle(.green)
+                Text("Uploaded to Strava")
+                    .font(.subheadline.bold())
+            }
+            .frame(maxWidth: .infinity)
+            .padding(Theme.Spacing.md)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                    .fill(Color.green.opacity(0.1))
+            )
+        case .failed(let reason):
+            VStack(spacing: Theme.Spacing.xs) {
+                HStack(spacing: Theme.Spacing.sm) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundStyle(Theme.Colors.warning)
+                    Text("Upload failed: \(reason)")
+                        .font(.caption)
+                }
+                Button("Retry") { uploadToStrava() }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(Theme.Spacing.md)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                    .fill(Theme.Colors.warning.opacity(0.1))
+            )
+        }
+    }
+
+    private func uploadToStrava() {
+        guard let service = stravaUploadService else { return }
+        stravaUploadStatus = .uploading
+        Task {
+            do {
+                let activityId = try await service.uploadRun(run)
+                stravaUploadStatus = .success(activityId: activityId)
+            } catch {
+                stravaUploadStatus = .failed(reason: error.localizedDescription)
+            }
+        }
     }
 
     // MARK: - Helper

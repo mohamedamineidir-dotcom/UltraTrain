@@ -26,6 +26,7 @@ final class ActiveRunViewModel {
     private let connectivityService: PhoneConnectivityService?
     private let liveActivityService: any LiveActivityServiceProtocol
     private let widgetDataWriter: WidgetDataWriter
+    private let stravaUploadService: (any StravaUploadServiceProtocol)?
 
     // MARK: - Config
 
@@ -35,6 +36,7 @@ final class ActiveRunViewModel {
     let nutritionRemindersEnabled: Bool
     let nutritionAlertSoundEnabled: Bool
     let raceId: UUID?
+    let stravaAutoUploadEnabled: Bool
 
     // MARK: - State
 
@@ -51,10 +53,12 @@ final class ActiveRunViewModel {
     var error: String?
     var showSummary = false
     var isSaving = false
+    var lastSavedRun: CompletedRun?
     var isAutoPaused = false
     var nutritionReminders: [NutritionReminder] = []
     var activeReminder: NutritionReminder?
     var resolvedCheckpointLocations: [(checkpoint: Checkpoint, coordinate: CLLocationCoordinate2D)] = []
+    var stravaUploadStatus: StravaUploadStatus = .idle
 
     // MARK: - Private
 
@@ -80,11 +84,13 @@ final class ActiveRunViewModel {
         connectivityService: PhoneConnectivityService? = nil,
         liveActivityService: any LiveActivityServiceProtocol = LiveActivityService(),
         widgetDataWriter: WidgetDataWriter? = nil,
+        stravaUploadService: (any StravaUploadServiceProtocol)? = nil,
         athlete: Athlete,
         linkedSession: TrainingSession?,
         autoPauseEnabled: Bool,
         nutritionRemindersEnabled: Bool,
         nutritionAlertSoundEnabled: Bool,
+        stravaAutoUploadEnabled: Bool = false,
         raceId: UUID?
     ) {
         self.locationService = locationService
@@ -101,11 +107,13 @@ final class ActiveRunViewModel {
             runRepository: runRepository,
             raceRepository: raceRepository
         )
+        self.stravaUploadService = stravaUploadService
         self.athlete = athlete
         self.linkedSession = linkedSession
         self.autoPauseEnabled = autoPauseEnabled
         self.nutritionRemindersEnabled = nutritionRemindersEnabled
         self.nutritionAlertSoundEnabled = nutritionAlertSoundEnabled
+        self.stravaAutoUploadEnabled = stravaAutoUploadEnabled
         self.raceId = raceId
     }
 
@@ -215,8 +223,10 @@ final class ActiveRunViewModel {
             if let raceId {
                 try await linkRunToRace(run: run, raceId: raceId)
             }
+            lastSavedRun = run
             Logger.tracking.info("Run saved: \(run.id)")
             await widgetDataWriter.writeAll()
+            autoUploadToStrava(run)
         } catch {
             self.error = error.localizedDescription
             Logger.tracking.error("Failed to save run: \(error)")
@@ -224,8 +234,41 @@ final class ActiveRunViewModel {
         isSaving = false
     }
 
+    func uploadToStrava() {
+        guard let run = lastSavedRun, let service = stravaUploadService else { return }
+        stravaUploadStatus = .uploading
+        Task { [weak self] in
+            do {
+                let activityId = try await service.uploadRun(run)
+                self?.stravaUploadStatus = .success(activityId: activityId)
+            } catch {
+                self?.stravaUploadStatus = .failed(reason: error.localizedDescription)
+                Logger.strava.error("Strava upload failed: \(error)")
+            }
+        }
+    }
+
     func discardRun() {
         Logger.tracking.info("Run discarded")
+    }
+
+    // MARK: - Strava Auto-Upload
+
+    private func autoUploadToStrava(_ run: CompletedRun) {
+        guard stravaAutoUploadEnabled,
+              let service = stravaUploadService,
+              !run.gpsTrack.isEmpty else { return }
+        stravaUploadStatus = .uploading
+        Task { [weak self] in
+            do {
+                let activityId = try await service.uploadRun(run)
+                self?.stravaUploadStatus = .success(activityId: activityId)
+                Logger.strava.info("Auto-uploaded run to Strava: activity \(activityId)")
+            } catch {
+                self?.stravaUploadStatus = .failed(reason: error.localizedDescription)
+                Logger.strava.error("Auto-upload to Strava failed: \(error)")
+            }
+        }
     }
 
     // MARK: - Computed

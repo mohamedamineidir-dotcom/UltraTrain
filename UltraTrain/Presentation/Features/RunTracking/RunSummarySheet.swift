@@ -2,10 +2,14 @@ import SwiftUI
 
 struct RunSummarySheet: View {
     @Bindable var viewModel: ActiveRunViewModel
+    let exportService: any ExportServiceProtocol
     let onDismiss: () -> Void
 
     @ScaledMetric(relativeTo: .largeTitle) private var headerIconSize: CGFloat = 48
     @State private var notes = ""
+    @State private var didSave = false
+    @State private var exportFileURL: URL?
+    @State private var showingShareSheet = false
 
     var body: some View {
         NavigationStack {
@@ -23,7 +27,12 @@ struct RunSummarySheet: View {
                         )
                         .padding(.horizontal, Theme.Spacing.md)
                     }
-                    notesSection
+                    if didSave {
+                        stravaUploadBanner
+                        shareButton
+                    } else {
+                        notesSection
+                    }
                     linkedSessionBanner
                 }
                 .padding(.vertical, Theme.Spacing.md)
@@ -32,26 +41,37 @@ struct RunSummarySheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Discard") {
-                        viewModel.discardRun()
-                        onDismiss()
-                    }
-                    .foregroundStyle(Theme.Colors.danger)
-                    .accessibilityIdentifier("runTracking.discardButton")
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        Task {
-                            await viewModel.saveRun(notes: notes.isEmpty ? nil : notes)
+                    if didSave {
+                        Button("Done") { onDismiss() }
+                    } else {
+                        Button("Discard") {
+                            viewModel.discardRun()
                             onDismiss()
                         }
+                        .foregroundStyle(Theme.Colors.danger)
+                        .accessibilityIdentifier("runTracking.discardButton")
                     }
-                    .bold()
-                    .disabled(viewModel.isSaving)
-                    .accessibilityIdentifier("runTracking.saveButton")
+                }
+                if !didSave {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Save") {
+                            Task {
+                                await viewModel.saveRun(notes: notes.isEmpty ? nil : notes)
+                                didSave = true
+                            }
+                        }
+                        .bold()
+                        .disabled(viewModel.isSaving)
+                        .accessibilityIdentifier("runTracking.saveButton")
+                    }
                 }
             }
             .interactiveDismissDisabled()
+            .sheet(isPresented: $showingShareSheet) {
+                if let url = exportFileURL {
+                    ShareSheet(activityItems: [url])
+                }
+            }
         }
     }
 
@@ -63,7 +83,7 @@ struct RunSummarySheet: View {
                 .font(.system(size: headerIconSize))
                 .foregroundStyle(Theme.Colors.success)
                 .accessibilityHidden(true)
-            Text("Great Run!")
+            Text(didSave ? "Run Saved!" : "Great Run!")
                 .font(.title2.bold())
             Text(viewModel.formattedTime)
                 .font(.title3.monospacedDigit())
@@ -100,6 +120,19 @@ struct RunSummarySheet: View {
         .padding(.horizontal, Theme.Spacing.md)
     }
 
+    private var shareButton: some View {
+        Button {
+            Task { await exportAndShare() }
+        } label: {
+            Label("Share as GPX", systemImage: "square.and.arrow.up")
+                .font(.headline)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, Theme.Spacing.sm)
+        }
+        .buttonStyle(.bordered)
+        .padding(.horizontal, Theme.Spacing.md)
+    }
+
     @ViewBuilder
     private var linkedSessionBanner: some View {
         if let session = viewModel.linkedSession {
@@ -128,7 +161,68 @@ struct RunSummarySheet: View {
         }
     }
 
-    // MARK: - Helper
+    // MARK: - Strava Upload
+
+    @ViewBuilder
+    private var stravaUploadBanner: some View {
+        switch viewModel.stravaUploadStatus {
+        case .idle:
+            EmptyView()
+        case .uploading, .processing:
+            HStack(spacing: Theme.Spacing.sm) {
+                ProgressView()
+                Text("Uploading to Strava...")
+                    .font(.subheadline)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(Theme.Spacing.md)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                    .fill(Color.orange.opacity(0.1))
+            )
+            .padding(.horizontal, Theme.Spacing.md)
+        case .success:
+            HStack(spacing: Theme.Spacing.sm) {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundStyle(.green)
+                Text("Uploaded to Strava")
+                    .font(.subheadline.bold())
+            }
+            .frame(maxWidth: .infinity)
+            .padding(Theme.Spacing.md)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                    .fill(Color.green.opacity(0.1))
+            )
+            .padding(.horizontal, Theme.Spacing.md)
+        case .failed(let reason):
+            VStack(spacing: Theme.Spacing.xs) {
+                HStack(spacing: Theme.Spacing.sm) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundStyle(Theme.Colors.warning)
+                    Text("Strava upload failed")
+                        .font(.subheadline.bold())
+                }
+                Text(reason)
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                Button("Retry") {
+                    viewModel.uploadToStrava()
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(Theme.Spacing.md)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                    .fill(Theme.Colors.warning.opacity(0.1))
+            )
+            .padding(.horizontal, Theme.Spacing.md)
+        }
+    }
+
+    // MARK: - Helpers
 
     private func summaryTile(label: String, value: String) -> some View {
         VStack(spacing: Theme.Spacing.xs) {
@@ -146,5 +240,15 @@ struct RunSummarySheet: View {
         )
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(label), \(value)")
+    }
+
+    private func exportAndShare() async {
+        guard let run = viewModel.lastSavedRun else { return }
+        do {
+            exportFileURL = try await exportService.exportRunAsGPX(run)
+            showingShareSheet = true
+        } catch {
+            // Export failed silently
+        }
     }
 }

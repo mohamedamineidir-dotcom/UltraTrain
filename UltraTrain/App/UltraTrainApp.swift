@@ -23,6 +23,11 @@ struct UltraTrainApp: App {
     private let sessionNutritionAdvisor: any SessionNutritionAdvisor
     private let widgetDataWriter: WidgetDataWriter
     private let connectivityService: PhoneConnectivityService
+    private let exportService: ExportService
+    private let runImportUseCase: DefaultRunImportUseCase
+    private let stravaAuthService: StravaAuthService
+    private let stravaUploadService: StravaUploadService
+    private let stravaImportService: StravaImportService
 
     init() {
         let isUITesting = ProcessInfo.processInfo.arguments.contains("-UITestMode")
@@ -80,6 +85,17 @@ struct UltraTrainApp: App {
         )
         connectivityService = PhoneConnectivityService()
         connectivityService.activate()
+        exportService = ExportService()
+        runImportUseCase = DefaultRunImportUseCase(
+            gpxParser: GPXParser(),
+            runRepository: runRepository
+        )
+        stravaAuthService = StravaAuthService()
+        stravaUploadService = StravaUploadService(authService: stravaAuthService)
+        stravaImportService = StravaImportService(
+            authService: stravaAuthService,
+            runRepository: runRepository
+        )
     }
 
     var body: some Scene {
@@ -103,7 +119,12 @@ struct UltraTrainApp: App {
                 trainingLoadCalculator: trainingLoadCalculator,
                 sessionNutritionAdvisor: sessionNutritionAdvisor,
                 connectivityService: connectivityService,
-                widgetDataWriter: widgetDataWriter
+                widgetDataWriter: widgetDataWriter,
+                exportService: exportService,
+                runImportUseCase: runImportUseCase,
+                stravaAuthService: stravaAuthService,
+                stravaUploadService: stravaUploadService,
+                stravaImportService: stravaImportService
             )
         }
     }

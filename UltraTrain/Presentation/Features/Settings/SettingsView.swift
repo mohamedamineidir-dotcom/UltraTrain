@@ -3,17 +3,25 @@ import SwiftUI
 struct SettingsView: View {
     @State private var viewModel: SettingsViewModel
 
+    @State private var showingShareSheet = false
+
     init(
         athleteRepository: any AthleteRepository,
         appSettingsRepository: any AppSettingsRepository,
         clearAllDataUseCase: any ClearAllDataUseCase,
-        healthKitService: any HealthKitServiceProtocol
+        healthKitService: any HealthKitServiceProtocol,
+        exportService: any ExportServiceProtocol,
+        runRepository: any RunRepository,
+        stravaAuthService: any StravaAuthServiceProtocol
     ) {
         _viewModel = State(initialValue: SettingsViewModel(
             athleteRepository: athleteRepository,
             appSettingsRepository: appSettingsRepository,
             clearAllDataUseCase: clearAllDataUseCase,
-            healthKitService: healthKitService
+            healthKitService: healthKitService,
+            exportService: exportService,
+            runRepository: runRepository,
+            stravaAuthService: stravaAuthService
         ))
     }
 
@@ -26,6 +34,7 @@ struct SettingsView: View {
                 runTrackingSection
                 notificationsSection
                 healthKitSection
+                stravaSection
                 dataManagementSection
                 aboutSection
             }
@@ -58,6 +67,13 @@ struct SettingsView: View {
             Button("OK") {}
         } message: {
             Text("All data has been cleared. Please restart the app to begin fresh.")
+        }
+        .sheet(isPresented: $showingShareSheet, onDismiss: {
+            viewModel.exportedFileURL = nil
+        }) {
+            if let url = viewModel.exportedFileURL {
+                ShareSheet(activityItems: [url])
+            }
         }
     }
 
@@ -220,16 +236,97 @@ struct SettingsView: View {
         }
     }
 
+    // MARK: - Strava Section
+
+    private var stravaSection: some View {
+        Section {
+            Label {
+                VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+                    Text("Strava")
+                    Text(stravaStatusDescription)
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
+            } icon: {
+                Image(systemName: "arrow.triangle.2.circlepath")
+                    .foregroundStyle(stravaStatusColor)
+            }
+
+            switch viewModel.stravaStatus {
+            case .disconnected, .error:
+                Button {
+                    Task { await viewModel.connectStrava() }
+                } label: {
+                    if viewModel.isConnectingStrava {
+                        ProgressView()
+                    } else {
+                        Text("Connect to Strava")
+                            .foregroundStyle(Color.orange)
+                    }
+                }
+                .disabled(viewModel.isConnectingStrava)
+
+            case .connecting:
+                ProgressView("Connecting...")
+
+            case .connected:
+                if let settings = viewModel.appSettings {
+                    Toggle("Auto-Upload Runs", isOn: Binding(
+                        get: { settings.stravaAutoUploadEnabled },
+                        set: { newValue in
+                            Task { await viewModel.updateStravaAutoUpload(newValue) }
+                        }
+                    ))
+                }
+                Button(role: .destructive) {
+                    Task { await viewModel.disconnectStrava() }
+                } label: {
+                    Text("Disconnect Strava")
+                }
+            }
+        } header: {
+            Text("Connected Services")
+        }
+    }
+
+    private var stravaStatusDescription: String {
+        switch viewModel.stravaStatus {
+        case .disconnected: "Not connected"
+        case .connecting: "Connecting..."
+        case .connected(let name): "Connected as \(name)"
+        case .error(let msg): "Error: \(msg)"
+        }
+    }
+
+    private var stravaStatusColor: Color {
+        switch viewModel.stravaStatus {
+        case .disconnected, .error: .gray
+        case .connecting: .orange
+        case .connected: .orange
+        }
+    }
+
     // MARK: - Data Management Section
 
     private var dataManagementSection: some View {
         Section("Data") {
-            Label {
-                Text("Export Training Data")
-            } icon: {
-                Image(systemName: "square.and.arrow.up")
+            Button {
+                Task { await viewModel.exportAllRunsAsCSV() }
+            } label: {
+                HStack {
+                    Label("Export Training Data", systemImage: "square.and.arrow.up")
+                    Spacer()
+                    if viewModel.isExporting {
+                        ProgressView()
+                    }
+                }
             }
-            .foregroundStyle(Theme.Colors.secondaryLabel)
+            .disabled(viewModel.isExporting)
+            .onChange(of: viewModel.exportedFileURL) {
+                if viewModel.exportedFileURL != nil {
+                    showingShareSheet = true
+                }
+            }
 
             Button(role: .destructive) {
                 viewModel.showingClearDataConfirmation = true

@@ -8,18 +8,24 @@ final class AppSettingsSwiftDataModel {
     var nutritionRemindersEnabled: Bool
     var autoPauseEnabled: Bool
     var nutritionAlertSoundEnabled: Bool = true
+    var stravaAutoUploadEnabled: Bool = false
+    var stravaConnected: Bool = false
 
     init(
         id: UUID,
         trainingRemindersEnabled: Bool,
         nutritionRemindersEnabled: Bool,
         autoPauseEnabled: Bool,
-        nutritionAlertSoundEnabled: Bool
+        nutritionAlertSoundEnabled: Bool,
+        stravaAutoUploadEnabled: Bool = false,
+        stravaConnected: Bool = false
     ) {
         self.id = id
         self.trainingRemindersEnabled = trainingRemindersEnabled
         self.nutritionRemindersEnabled = nutritionRemindersEnabled
         self.autoPauseEnabled = autoPauseEnabled
         self.nutritionAlertSoundEnabled = nutritionAlertSoundEnabled
+        self.stravaAutoUploadEnabled = stravaAutoUploadEnabled
+        self.stravaConnected = stravaConnected
     }
 }

@@ -22,6 +22,11 @@ struct AppRootView: View {
     private let sessionNutritionAdvisor: any SessionNutritionAdvisor
     private let connectivityService: PhoneConnectivityService?
     private let widgetDataWriter: WidgetDataWriter
+    private let exportService: any ExportServiceProtocol
+    private let runImportUseCase: any RunImportUseCase
+    private let stravaAuthService: any StravaAuthServiceProtocol
+    private let stravaUploadService: (any StravaUploadServiceProtocol)?
+    private let stravaImportService: (any StravaImportServiceProtocol)?
 
     init(
         athleteRepository: any AthleteRepository,
@@ -42,7 +47,12 @@ struct AppRootView: View {
         trainingLoadCalculator: any CalculateTrainingLoadUseCase,
         sessionNutritionAdvisor: any SessionNutritionAdvisor,
         connectivityService: PhoneConnectivityService? = nil,
-        widgetDataWriter: WidgetDataWriter
+        widgetDataWriter: WidgetDataWriter,
+        exportService: any ExportServiceProtocol,
+        runImportUseCase: any RunImportUseCase,
+        stravaAuthService: any StravaAuthServiceProtocol,
+        stravaUploadService: (any StravaUploadServiceProtocol)? = nil,
+        stravaImportService: (any StravaImportServiceProtocol)? = nil
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -63,6 +73,11 @@ struct AppRootView: View {
         self.sessionNutritionAdvisor = sessionNutritionAdvisor
         self.connectivityService = connectivityService
         self.widgetDataWriter = widgetDataWriter
+        self.exportService = exportService
+        self.runImportUseCase = runImportUseCase
+        self.stravaAuthService = stravaAuthService
+        self.stravaUploadService = stravaUploadService
+        self.stravaImportService = stravaImportService
     }
 
     var body: some View {
@@ -90,7 +105,12 @@ struct AppRootView: View {
                     trainingLoadCalculator: trainingLoadCalculator,
                     sessionNutritionAdvisor: sessionNutritionAdvisor,
                     connectivityService: connectivityService,
-                    widgetDataWriter: widgetDataWriter
+                    widgetDataWriter: widgetDataWriter,
+                    exportService: exportService,
+                    runImportUseCase: runImportUseCase,
+                    stravaAuthService: stravaAuthService,
+                    stravaUploadService: stravaUploadService,
+                    stravaImportService: stravaImportService
                 )
             case .some(false):
                 OnboardingView(

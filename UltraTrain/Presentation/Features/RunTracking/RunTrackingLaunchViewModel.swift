@@ -26,6 +26,7 @@ final class RunTrackingLaunchViewModel {
     var nutritionAlertSoundEnabled = true
     var raceId: UUID?
     var todaysRace: Race?
+    var stravaAutoUploadEnabled = false
 
     // MARK: - Init
 
@@ -65,6 +66,7 @@ final class RunTrackingLaunchViewModel {
                 autoPauseEnabled = settings.autoPauseEnabled
                 nutritionRemindersEnabled = settings.nutritionRemindersEnabled
                 nutritionAlertSoundEnabled = settings.nutritionAlertSoundEnabled
+                stravaAutoUploadEnabled = settings.stravaAutoUploadEnabled
             }
         } catch {
             self.error = error.localizedDescription

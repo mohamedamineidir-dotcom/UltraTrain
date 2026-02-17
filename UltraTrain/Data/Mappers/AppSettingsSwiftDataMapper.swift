@@ -7,7 +7,9 @@ enum AppSettingsSwiftDataMapper {
             trainingRemindersEnabled: model.trainingRemindersEnabled,
             nutritionRemindersEnabled: model.nutritionRemindersEnabled,
             autoPauseEnabled: model.autoPauseEnabled,
-            nutritionAlertSoundEnabled: model.nutritionAlertSoundEnabled
+            nutritionAlertSoundEnabled: model.nutritionAlertSoundEnabled,
+            stravaAutoUploadEnabled: model.stravaAutoUploadEnabled,
+            stravaConnected: model.stravaConnected
         )
     }
 
@@ -17,7 +19,9 @@ enum AppSettingsSwiftDataMapper {
             trainingRemindersEnabled: settings.trainingRemindersEnabled,
             nutritionRemindersEnabled: settings.nutritionRemindersEnabled,
             autoPauseEnabled: settings.autoPauseEnabled,
-            nutritionAlertSoundEnabled: settings.nutritionAlertSoundEnabled
+            nutritionAlertSoundEnabled: settings.nutritionAlertSoundEnabled,
+            stravaAutoUploadEnabled: settings.stravaAutoUploadEnabled,
+            stravaConnected: settings.stravaConnected
         )
     }
 }

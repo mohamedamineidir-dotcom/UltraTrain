@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ActiveRunView: View {
     @Bindable var viewModel: ActiveRunViewModel
+    let exportService: any ExportServiceProtocol
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ScaledMetric(relativeTo: .largeTitle) private var timerFontSize: CGFloat = 56
@@ -50,7 +51,7 @@ struct ActiveRunView: View {
             }
         }
         .sheet(isPresented: $viewModel.showSummary) {
-            RunSummarySheet(viewModel: viewModel) {
+            RunSummarySheet(viewModel: viewModel, exportService: exportService) {
                 dismiss()
             }
         }

@@ -59,4 +59,14 @@ enum AppConfiguration {
         static let autoDismissSeconds: TimeInterval = 15
         static let maxScheduleDuration: TimeInterval = 43200      // 12 hours
     }
+
+    enum Strava {
+        static let clientId: String = Bundle.main.infoDictionary?["STRAVA_CLIENT_ID"] as? String ?? ""
+        static let clientSecret: String = Bundle.main.infoDictionary?["STRAVA_CLIENT_SECRET"] as? String ?? ""
+        static let callbackURLScheme = "ultratrain"
+        static let authorizeURL = "https://www.strava.com/oauth/mobile/authorize"
+        static let tokenURL = "https://www.strava.com/oauth/token"
+        static let apiBaseURL = "https://www.strava.com/api/v3"
+        static let requiredScopes = "read,activity:read_all,activity:write"
+    }
 }

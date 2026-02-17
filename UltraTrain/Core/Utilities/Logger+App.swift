@@ -18,4 +18,7 @@ extension Logger {
     static let watch = Logger(subsystem: subsystem, category: "watch")
     static let liveActivity = Logger(subsystem: subsystem, category: "liveActivity")
     static let widget = Logger(subsystem: subsystem, category: "widget")
+    static let export = Logger(subsystem: subsystem, category: "export")
+    static let importData = Logger(subsystem: subsystem, category: "import")
+    static let strava = Logger(subsystem: subsystem, category: "strava")
 }

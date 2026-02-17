@@ -22,6 +22,11 @@ struct MainTabView: View {
     private let sessionNutritionAdvisor: any SessionNutritionAdvisor
     private let connectivityService: PhoneConnectivityService?
     private let widgetDataWriter: WidgetDataWriter
+    private let exportService: any ExportServiceProtocol
+    private let runImportUseCase: any RunImportUseCase
+    private let stravaAuthService: any StravaAuthServiceProtocol
+    private let stravaUploadService: (any StravaUploadServiceProtocol)?
+    private let stravaImportService: (any StravaImportServiceProtocol)?
 
     init(
         athleteRepository: any AthleteRepository,
@@ -42,7 +47,12 @@ struct MainTabView: View {
         trainingLoadCalculator: any CalculateTrainingLoadUseCase,
         sessionNutritionAdvisor: any SessionNutritionAdvisor,
         connectivityService: PhoneConnectivityService? = nil,
-        widgetDataWriter: WidgetDataWriter
+        widgetDataWriter: WidgetDataWriter,
+        exportService: any ExportServiceProtocol,
+        runImportUseCase: any RunImportUseCase,
+        stravaAuthService: any StravaAuthServiceProtocol,
+        stravaUploadService: (any StravaUploadServiceProtocol)? = nil,
+        stravaImportService: (any StravaImportServiceProtocol)? = nil
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -63,6 +73,11 @@ struct MainTabView: View {
         self.sessionNutritionAdvisor = sessionNutritionAdvisor
         self.connectivityService = connectivityService
         self.widgetDataWriter = widgetDataWriter
+        self.exportService = exportService
+        self.runImportUseCase = runImportUseCase
+        self.stravaAuthService = stravaAuthService
+        self.stravaUploadService = stravaUploadService
+        self.stravaImportService = stravaImportService
     }
 
     var body: some View {
@@ -105,7 +120,12 @@ struct MainTabView: View {
                 nutritionRepository: nutritionRepository,
                 hapticService: hapticService,
                 connectivityService: connectivityService,
-                widgetDataWriter: widgetDataWriter
+                widgetDataWriter: widgetDataWriter,
+                exportService: exportService,
+                runImportUseCase: runImportUseCase,
+                stravaUploadService: stravaUploadService,
+                stravaImportService: stravaImportService,
+                stravaAuthService: stravaAuthService
             )
                 .tabItem {
                     Label("Run", systemImage: "figure.run")
@@ -133,7 +153,9 @@ struct MainTabView: View {
                 appSettingsRepository: appSettingsRepository,
                 clearAllDataUseCase: clearAllDataUseCase,
                 healthKitService: healthKitService,
-                widgetDataWriter: widgetDataWriter
+                widgetDataWriter: widgetDataWriter,
+                exportService: exportService,
+                stravaAuthService: stravaAuthService
             )
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")

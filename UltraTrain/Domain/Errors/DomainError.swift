@@ -14,6 +14,12 @@ enum DomainError: Error, Equatable, Sendable {
     case locationUnavailable
     case healthKitUnavailable
     case settingsNotFound
+    case exportFailed(reason: String)
+    case importFailed(reason: String)
+    case gpxParsingFailed(reason: String)
+    case stravaAuthFailed(reason: String)
+    case stravaUploadFailed(reason: String)
+    case stravaImportFailed(reason: String)
     case unknown(message: String)
 }
 
@@ -46,6 +52,18 @@ extension DomainError: LocalizedError {
             return "HealthKit is not available on this device."
         case .settingsNotFound:
             return "App settings not found."
+        case .exportFailed(let reason):
+            return "Export failed: \(reason)"
+        case .importFailed(let reason):
+            return "Import failed: \(reason)"
+        case .gpxParsingFailed(let reason):
+            return "Failed to parse GPX file: \(reason)"
+        case .stravaAuthFailed(let reason):
+            return "Strava authentication failed: \(reason)"
+        case .stravaUploadFailed(let reason):
+            return "Failed to upload to Strava: \(reason)"
+        case .stravaImportFailed(let reason):
+            return "Failed to import from Strava: \(reason)"
         case .unknown(let message):
             return "An unexpected error occurred: \(message)"
         }
