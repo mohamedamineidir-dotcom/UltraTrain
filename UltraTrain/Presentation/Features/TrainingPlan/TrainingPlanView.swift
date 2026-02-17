@@ -9,7 +9,8 @@ struct TrainingPlanView: View {
         raceRepository: any RaceRepository,
         planGenerator: any GenerateTrainingPlanUseCase,
         nutritionRepository: any NutritionRepository,
-        sessionNutritionAdvisor: any SessionNutritionAdvisor
+        sessionNutritionAdvisor: any SessionNutritionAdvisor,
+        widgetDataWriter: WidgetDataWriter
     ) {
         _viewModel = State(initialValue: TrainingPlanViewModel(
             planRepository: planRepository,
@@ -17,7 +18,8 @@ struct TrainingPlanView: View {
             raceRepository: raceRepository,
             planGenerator: planGenerator,
             nutritionRepository: nutritionRepository,
-            nutritionAdvisor: sessionNutritionAdvisor
+            nutritionAdvisor: sessionNutritionAdvisor,
+            widgetDataWriter: widgetDataWriter
         ))
     }
 

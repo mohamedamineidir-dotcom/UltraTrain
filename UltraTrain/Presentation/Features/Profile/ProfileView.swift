@@ -18,11 +18,13 @@ struct ProfileView: View {
         finishTimeEstimator: any EstimateFinishTimeUseCase,
         appSettingsRepository: any AppSettingsRepository,
         clearAllDataUseCase: any ClearAllDataUseCase,
-        healthKitService: any HealthKitServiceProtocol
+        healthKitService: any HealthKitServiceProtocol,
+        widgetDataWriter: WidgetDataWriter
     ) {
         _viewModel = State(initialValue: ProfileViewModel(
             athleteRepository: athleteRepository,
-            raceRepository: raceRepository
+            raceRepository: raceRepository,
+            widgetDataWriter: widgetDataWriter
         ))
         self.athleteRepository = athleteRepository
         self.runRepository = runRepository

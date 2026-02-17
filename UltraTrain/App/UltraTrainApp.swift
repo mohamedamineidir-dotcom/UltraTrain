@@ -21,6 +21,7 @@ struct UltraTrainApp: App {
     private let hapticService: HapticService
     private let trainingLoadCalculator: TrainingLoadCalculator
     private let sessionNutritionAdvisor: any SessionNutritionAdvisor
+    private let widgetDataWriter: WidgetDataWriter
     private let connectivityService: PhoneConnectivityService
 
     init() {
@@ -72,6 +73,11 @@ struct UltraTrainApp: App {
         hapticService = HapticService()
         trainingLoadCalculator = TrainingLoadCalculator()
         sessionNutritionAdvisor = DefaultSessionNutritionAdvisor()
+        widgetDataWriter = WidgetDataWriter(
+            planRepository: planRepository,
+            runRepository: runRepository,
+            raceRepository: raceRepository
+        )
         connectivityService = PhoneConnectivityService()
         connectivityService.activate()
     }
@@ -96,7 +102,8 @@ struct UltraTrainApp: App {
                 hapticService: hapticService,
                 trainingLoadCalculator: trainingLoadCalculator,
                 sessionNutritionAdvisor: sessionNutritionAdvisor,
-                connectivityService: connectivityService
+                connectivityService: connectivityService,
+                widgetDataWriter: widgetDataWriter
             )
         }
     }

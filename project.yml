@@ -48,6 +48,8 @@ targets:
       properties:
         com.apple.developer.healthkit: true
         com.apple.developer.healthkit.access: []
+        com.apple.security.application-groups:
+          - group.com.ultratrain.shared
     postCompileScripts: []
 
   UltraTrainWatch:
@@ -96,6 +98,11 @@ targets:
         CODE_SIGN_STYLE: Automatic
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
+    entitlements:
+      path: UltraTrainWidgets/Resources/UltraTrainWidgets.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.ultratrain.shared
 
   UltraTrainTests:
     type: bundle.unit-test

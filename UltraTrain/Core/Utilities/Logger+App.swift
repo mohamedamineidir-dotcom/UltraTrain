@@ -17,4 +17,5 @@ extension Logger {
     static let haptic = Logger(subsystem: subsystem, category: "haptic")
     static let watch = Logger(subsystem: subsystem, category: "watch")
     static let liveActivity = Logger(subsystem: subsystem, category: "liveActivity")
+    static let widget = Logger(subsystem: subsystem, category: "widget")
 }

@@ -21,6 +21,7 @@ struct MainTabView: View {
     private let trainingLoadCalculator: any CalculateTrainingLoadUseCase
     private let sessionNutritionAdvisor: any SessionNutritionAdvisor
     private let connectivityService: PhoneConnectivityService?
+    private let widgetDataWriter: WidgetDataWriter
 
     init(
         athleteRepository: any AthleteRepository,
@@ -40,7 +41,8 @@ struct MainTabView: View {
         hapticService: any HapticServiceProtocol,
         trainingLoadCalculator: any CalculateTrainingLoadUseCase,
         sessionNutritionAdvisor: any SessionNutritionAdvisor,
-        connectivityService: PhoneConnectivityService? = nil
+        connectivityService: PhoneConnectivityService? = nil,
+        widgetDataWriter: WidgetDataWriter
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -60,6 +62,7 @@ struct MainTabView: View {
         self.trainingLoadCalculator = trainingLoadCalculator
         self.sessionNutritionAdvisor = sessionNutritionAdvisor
         self.connectivityService = connectivityService
+        self.widgetDataWriter = widgetDataWriter
     }
 
     var body: some View {
@@ -83,7 +86,8 @@ struct MainTabView: View {
                 raceRepository: raceRepository,
                 planGenerator: planGenerator,
                 nutritionRepository: nutritionRepository,
-                sessionNutritionAdvisor: sessionNutritionAdvisor
+                sessionNutritionAdvisor: sessionNutritionAdvisor,
+                widgetDataWriter: widgetDataWriter
             )
                 .tabItem {
                     Label("Plan", systemImage: "calendar")
@@ -100,7 +104,8 @@ struct MainTabView: View {
                 appSettingsRepository: appSettingsRepository,
                 nutritionRepository: nutritionRepository,
                 hapticService: hapticService,
-                connectivityService: connectivityService
+                connectivityService: connectivityService,
+                widgetDataWriter: widgetDataWriter
             )
                 .tabItem {
                     Label("Run", systemImage: "figure.run")
@@ -127,7 +132,8 @@ struct MainTabView: View {
                 finishTimeEstimator: finishTimeEstimator,
                 appSettingsRepository: appSettingsRepository,
                 clearAllDataUseCase: clearAllDataUseCase,
-                healthKitService: healthKitService
+                healthKitService: healthKitService,
+                widgetDataWriter: widgetDataWriter
             )
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")

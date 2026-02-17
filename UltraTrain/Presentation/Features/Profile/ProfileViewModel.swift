@@ -9,6 +9,7 @@ final class ProfileViewModel {
 
     private let athleteRepository: any AthleteRepository
     private let raceRepository: any RaceRepository
+    private let widgetDataWriter: WidgetDataWriter
 
     // MARK: - State
 
@@ -24,10 +25,12 @@ final class ProfileViewModel {
 
     init(
         athleteRepository: any AthleteRepository,
-        raceRepository: any RaceRepository
+        raceRepository: any RaceRepository,
+        widgetDataWriter: WidgetDataWriter
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
+        self.widgetDataWriter = widgetDataWriter
     }
 
     // MARK: - Load
@@ -65,6 +68,7 @@ final class ProfileViewModel {
         do {
             try await raceRepository.saveRace(race)
             races.append(race)
+            await updateWidgets()
         } catch {
             self.error = error.localizedDescription
             Logger.app.error("Failed to add race: \(error)")
@@ -77,6 +81,7 @@ final class ProfileViewModel {
             if let index = races.firstIndex(where: { $0.id == race.id }) {
                 races[index] = race
             }
+            await updateWidgets()
         } catch {
             self.error = error.localizedDescription
             Logger.app.error("Failed to update race: \(error)")
@@ -87,10 +92,16 @@ final class ProfileViewModel {
         do {
             try await raceRepository.deleteRace(id: id)
             races.removeAll { $0.id == id }
+            await updateWidgets()
         } catch {
             self.error = error.localizedDescription
             Logger.app.error("Failed to delete race: \(error)")
         }
+    }
+
+    private func updateWidgets() async {
+        await widgetDataWriter.writeRaceCountdown()
+        widgetDataWriter.reloadWidgets()
     }
 
     // MARK: - Computed

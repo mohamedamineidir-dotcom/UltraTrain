@@ -46,9 +46,16 @@ struct ProfileViewModelTests {
         athleteRepo: MockAthleteRepository = MockAthleteRepository(),
         raceRepo: MockRaceRepository = MockRaceRepository()
     ) -> ProfileViewModel {
-        ProfileViewModel(
+        let writer = WidgetDataWriter(
+            planRepository: MockTrainingPlanRepository(),
+            runRepository: MockRunRepository(),
+            raceRepository: raceRepo,
+            defaults: UserDefaults(suiteName: "test.profile.\(UUID().uuidString)")
+        )
+        return ProfileViewModel(
             athleteRepository: athleteRepo,
-            raceRepository: raceRepo
+            raceRepository: raceRepo,
+            widgetDataWriter: writer
         )
     }
 

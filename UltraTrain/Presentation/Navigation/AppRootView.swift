@@ -21,6 +21,7 @@ struct AppRootView: View {
     private let trainingLoadCalculator: any CalculateTrainingLoadUseCase
     private let sessionNutritionAdvisor: any SessionNutritionAdvisor
     private let connectivityService: PhoneConnectivityService?
+    private let widgetDataWriter: WidgetDataWriter
 
     init(
         athleteRepository: any AthleteRepository,
@@ -40,7 +41,8 @@ struct AppRootView: View {
         hapticService: any HapticServiceProtocol,
         trainingLoadCalculator: any CalculateTrainingLoadUseCase,
         sessionNutritionAdvisor: any SessionNutritionAdvisor,
-        connectivityService: PhoneConnectivityService? = nil
+        connectivityService: PhoneConnectivityService? = nil,
+        widgetDataWriter: WidgetDataWriter
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -60,6 +62,7 @@ struct AppRootView: View {
         self.trainingLoadCalculator = trainingLoadCalculator
         self.sessionNutritionAdvisor = sessionNutritionAdvisor
         self.connectivityService = connectivityService
+        self.widgetDataWriter = widgetDataWriter
     }
 
     var body: some View {
@@ -86,7 +89,8 @@ struct AppRootView: View {
                     hapticService: hapticService,
                     trainingLoadCalculator: trainingLoadCalculator,
                     sessionNutritionAdvisor: sessionNutritionAdvisor,
-                    connectivityService: connectivityService
+                    connectivityService: connectivityService,
+                    widgetDataWriter: widgetDataWriter
                 )
             case .some(false):
                 OnboardingView(
@@ -98,6 +102,7 @@ struct AppRootView: View {
         }
         .task {
             await checkOnboardingStatus()
+            await widgetDataWriter.writeAll()
         }
     }
 

@@ -5,5 +5,9 @@ import WidgetKit
 struct UltraTrainWidgets: WidgetBundle {
     var body: some Widget {
         RunActivityLiveActivity()
+        NextSessionWidget()
+        RaceCountdownWidget()
+        WeeklyProgressWidget()
+        LastRunWidget()
     }
 }

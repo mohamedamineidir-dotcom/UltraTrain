@@ -13,6 +13,7 @@ final class TrainingPlanViewModel {
     private let planGenerator: any GenerateTrainingPlanUseCase
     private let nutritionRepository: any NutritionRepository
     let nutritionAdvisor: any SessionNutritionAdvisor
+    private let widgetDataWriter: WidgetDataWriter
 
     // MARK: - State
 
@@ -33,7 +34,8 @@ final class TrainingPlanViewModel {
         raceRepository: any RaceRepository,
         planGenerator: any GenerateTrainingPlanUseCase,
         nutritionRepository: any NutritionRepository,
-        nutritionAdvisor: any SessionNutritionAdvisor
+        nutritionAdvisor: any SessionNutritionAdvisor,
+        widgetDataWriter: WidgetDataWriter
     ) {
         self.planRepository = planRepository
         self.athleteRepository = athleteRepository
@@ -41,6 +43,7 @@ final class TrainingPlanViewModel {
         self.planGenerator = planGenerator
         self.nutritionRepository = nutritionRepository
         self.nutritionAdvisor = nutritionAdvisor
+        self.widgetDataWriter = widgetDataWriter
     }
 
     // MARK: - Load
@@ -116,6 +119,7 @@ final class TrainingPlanViewModel {
             self.athlete = athlete
             races = allRaces
             Logger.training.info("Plan generated: \(newPlan.weeks.count) weeks")
+            await updateWidgets()
         } catch {
             self.error = error.localizedDescription
             Logger.training.error("Failed to generate plan: \(error)")
@@ -138,6 +142,7 @@ final class TrainingPlanViewModel {
         do {
             try await planRepository.updateSession(session)
             plan = currentPlan
+            await updateWidgets()
         } catch {
             self.error = error.localizedDescription
             Logger.training.error("Failed to update session: \(error)")
@@ -315,6 +320,12 @@ final class TrainingPlanViewModel {
                     )
                 }
         }
+    }
+
+    private func updateWidgets() async {
+        await widgetDataWriter.writeNextSession()
+        await widgetDataWriter.writeWeeklyProgress()
+        widgetDataWriter.reloadWidgets()
     }
 
     private func restoreProgress(_ progress: [SessionProgress], into plan: inout TrainingPlan) {

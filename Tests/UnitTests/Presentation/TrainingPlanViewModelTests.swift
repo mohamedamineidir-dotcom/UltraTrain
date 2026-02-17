@@ -94,13 +94,21 @@ struct TrainingPlanViewModelTests {
         raceRepo: MockRaceRepository = MockRaceRepository(),
         generator: MockGenerateTrainingPlanUseCase = MockGenerateTrainingPlanUseCase()
     ) -> TrainingPlanViewModel {
-        TrainingPlanViewModel(
+        let runRepo = MockRunRepository()
+        let writer = WidgetDataWriter(
+            planRepository: planRepo,
+            runRepository: runRepo,
+            raceRepository: raceRepo,
+            defaults: UserDefaults(suiteName: "test.trainingplan.\(UUID().uuidString)")
+        )
+        return TrainingPlanViewModel(
             planRepository: planRepo,
             athleteRepository: athleteRepo,
             raceRepository: raceRepo,
             planGenerator: generator,
             nutritionRepository: MockNutritionRepository(),
-            nutritionAdvisor: DefaultSessionNutritionAdvisor()
+            nutritionAdvisor: DefaultSessionNutritionAdvisor(),
+            widgetDataWriter: writer
         )
     }
 

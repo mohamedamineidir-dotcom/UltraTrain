@@ -25,6 +25,7 @@ final class ActiveRunViewModel {
     private let hapticService: any HapticServiceProtocol
     private let connectivityService: PhoneConnectivityService?
     private let liveActivityService: any LiveActivityServiceProtocol
+    private let widgetDataWriter: WidgetDataWriter
 
     // MARK: - Config
 
@@ -78,6 +79,7 @@ final class ActiveRunViewModel {
         hapticService: any HapticServiceProtocol,
         connectivityService: PhoneConnectivityService? = nil,
         liveActivityService: any LiveActivityServiceProtocol = LiveActivityService(),
+        widgetDataWriter: WidgetDataWriter? = nil,
         athlete: Athlete,
         linkedSession: TrainingSession?,
         autoPauseEnabled: Bool,
@@ -94,6 +96,11 @@ final class ActiveRunViewModel {
         self.hapticService = hapticService
         self.connectivityService = connectivityService
         self.liveActivityService = liveActivityService
+        self.widgetDataWriter = widgetDataWriter ?? WidgetDataWriter(
+            planRepository: planRepository,
+            runRepository: runRepository,
+            raceRepository: raceRepository
+        )
         self.athlete = athlete
         self.linkedSession = linkedSession
         self.autoPauseEnabled = autoPauseEnabled
@@ -209,6 +216,7 @@ final class ActiveRunViewModel {
                 try await linkRunToRace(run: run, raceId: raceId)
             }
             Logger.tracking.info("Run saved: \(run.id)")
+            await widgetDataWriter.writeAll()
         } catch {
             self.error = error.localizedDescription
             Logger.tracking.error("Failed to save run: \(error)")

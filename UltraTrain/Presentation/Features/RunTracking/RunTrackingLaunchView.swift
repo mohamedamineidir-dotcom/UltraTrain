@@ -11,6 +11,7 @@ struct RunTrackingLaunchView: View {
     private let nutritionRepository: any NutritionRepository
     private let hapticService: any HapticServiceProtocol
     private let connectivityService: PhoneConnectivityService?
+    private let widgetDataWriter: WidgetDataWriter?
 
     init(
         athleteRepository: any AthleteRepository,
@@ -22,7 +23,8 @@ struct RunTrackingLaunchView: View {
         appSettingsRepository: any AppSettingsRepository,
         nutritionRepository: any NutritionRepository,
         hapticService: any HapticServiceProtocol,
-        connectivityService: PhoneConnectivityService? = nil
+        connectivityService: PhoneConnectivityService? = nil,
+        widgetDataWriter: WidgetDataWriter? = nil
     ) {
         _viewModel = State(initialValue: RunTrackingLaunchViewModel(
             athleteRepository: athleteRepository,
@@ -40,6 +42,7 @@ struct RunTrackingLaunchView: View {
         self.nutritionRepository = nutritionRepository
         self.hapticService = hapticService
         self.connectivityService = connectivityService
+        self.widgetDataWriter = widgetDataWriter
     }
 
     var body: some View {
@@ -77,6 +80,7 @@ struct RunTrackingLaunchView: View {
                             nutritionRepository: nutritionRepository,
                             hapticService: hapticService,
                             connectivityService: connectivityService,
+                            widgetDataWriter: widgetDataWriter,
                             athlete: athlete,
                             linkedSession: viewModel.selectedSession,
                             autoPauseEnabled: viewModel.autoPauseEnabled,
