@@ -16,6 +16,7 @@ final class CompletedRunSwiftDataModel {
     var gpsTrackData: Data
     @Relationship(deleteRule: .cascade) var splits: [SplitSwiftDataModel]
     var linkedSessionId: UUID?
+    var linkedRaceId: UUID?
     var notes: String?
     var pausedDuration: Double
 
@@ -33,6 +34,7 @@ final class CompletedRunSwiftDataModel {
         gpsTrackData: Data,
         splits: [SplitSwiftDataModel],
         linkedSessionId: UUID?,
+        linkedRaceId: UUID?,
         notes: String?,
         pausedDuration: Double
     ) {
@@ -49,6 +51,7 @@ final class CompletedRunSwiftDataModel {
         self.gpsTrackData = gpsTrackData
         self.splits = splits
         self.linkedSessionId = linkedSessionId
+        self.linkedRaceId = linkedRaceId
         self.notes = notes
         self.pausedDuration = pausedDuration
     }

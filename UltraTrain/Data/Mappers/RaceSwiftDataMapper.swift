@@ -29,7 +29,9 @@ enum RaceSwiftDataMapper {
             priority: priority,
             goalType: goal,
             checkpoints: checkpoints,
-            terrainDifficulty: terrain
+            terrainDifficulty: terrain,
+            actualFinishTime: model.actualFinishTime,
+            linkedRunId: model.linkedRunId
         )
     }
 
@@ -55,7 +57,9 @@ enum RaceSwiftDataMapper {
             goalTypeRaw: goalTypeRaw,
             goalValue: goalValue,
             terrainDifficultyRaw: race.terrainDifficulty.rawValue,
-            checkpointModels: checkpointModels
+            checkpointModels: checkpointModels,
+            actualFinishTime: race.actualFinishTime,
+            linkedRunId: race.linkedRunId
         )
     }
 

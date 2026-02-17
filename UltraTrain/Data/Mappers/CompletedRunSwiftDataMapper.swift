@@ -32,6 +32,7 @@ enum CompletedRunSwiftDataMapper {
             gpsTrackData: trackData,
             splits: splitModels,
             linkedSessionId: run.linkedSessionId,
+            linkedRaceId: run.linkedRaceId,
             notes: run.notes,
             pausedDuration: run.pausedDuration
         )
@@ -59,6 +60,7 @@ enum CompletedRunSwiftDataMapper {
             gpsTrack: trackPoints,
             splits: splits,
             linkedSessionId: model.linkedSessionId,
+            linkedRaceId: model.linkedRaceId,
             notes: model.notes,
             pausedDuration: model.pausedDuration
         )

@@ -10,6 +10,7 @@ final class RunTrackingLaunchViewModel {
     private let athleteRepository: any AthleteRepository
     private let planRepository: any TrainingPlanRepository
     private let runRepository: any RunRepository
+    private let raceRepository: any RaceRepository
     private let appSettingsRepository: any AppSettingsRepository
 
     // MARK: - State
@@ -24,6 +25,7 @@ final class RunTrackingLaunchViewModel {
     var nutritionRemindersEnabled = false
     var nutritionAlertSoundEnabled = true
     var raceId: UUID?
+    var todaysRace: Race?
 
     // MARK: - Init
 
@@ -31,11 +33,13 @@ final class RunTrackingLaunchViewModel {
         athleteRepository: any AthleteRepository,
         planRepository: any TrainingPlanRepository,
         runRepository: any RunRepository,
+        raceRepository: any RaceRepository,
         appSettingsRepository: any AppSettingsRepository
     ) {
         self.athleteRepository = athleteRepository
         self.planRepository = planRepository
         self.runRepository = runRepository
+        self.raceRepository = raceRepository
         self.appSettingsRepository = appSettingsRepository
     }
 
@@ -49,8 +53,14 @@ final class RunTrackingLaunchViewModel {
             athlete = try await athleteRepository.getAthlete()
             if let plan = try await planRepository.getActivePlan() {
                 todaysSessions = extractTodaysSessions(from: plan)
-                raceId = plan.targetRaceId
             }
+
+            // Detect today's race for race-run linking
+            let allRaces = try await raceRepository.getRaces()
+            let calendar = Calendar.current
+            todaysRace = allRaces.first { calendar.isDate($0.date, inSameDayAs: Date.now) }
+            raceId = todaysRace?.id
+
             if let settings = try await appSettingsRepository.getSettings() {
                 autoPauseEnabled = settings.autoPauseEnabled
                 nutritionRemindersEnabled = settings.nutritionRemindersEnabled

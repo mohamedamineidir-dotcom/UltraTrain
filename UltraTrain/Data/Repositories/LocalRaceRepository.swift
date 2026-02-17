@@ -57,6 +57,8 @@ final class LocalRaceRepository: RaceRepository, @unchecked Sendable {
         existing.elevationLossM = race.elevationLossM
         existing.priorityRaw = race.priority.rawValue
         existing.terrainDifficultyRaw = race.terrainDifficulty.rawValue
+        existing.actualFinishTime = race.actualFinishTime
+        existing.linkedRunId = race.linkedRunId
 
         let (goalTypeRaw, goalValue) = encodeGoal(race.goalType)
         existing.goalTypeRaw = goalTypeRaw

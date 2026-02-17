@@ -19,6 +19,7 @@ final class ActiveRunViewModel {
     private let healthKitService: any HealthKitServiceProtocol
     private let runRepository: any RunRepository
     private let planRepository: any TrainingPlanRepository
+    private let raceRepository: any RaceRepository
     private let nutritionRepository: any NutritionRepository
     private let hapticService: any HapticServiceProtocol
 
@@ -65,6 +66,7 @@ final class ActiveRunViewModel {
         healthKitService: any HealthKitServiceProtocol,
         runRepository: any RunRepository,
         planRepository: any TrainingPlanRepository,
+        raceRepository: any RaceRepository,
         nutritionRepository: any NutritionRepository,
         hapticService: any HapticServiceProtocol,
         athlete: Athlete,
@@ -78,6 +80,7 @@ final class ActiveRunViewModel {
         self.healthKitService = healthKitService
         self.runRepository = runRepository
         self.planRepository = planRepository
+        self.raceRepository = raceRepository
         self.nutritionRepository = nutritionRepository
         self.hapticService = hapticService
         self.athlete = athlete
@@ -170,6 +173,7 @@ final class ActiveRunViewModel {
             gpsTrack: trackPoints,
             splits: splits,
             linkedSessionId: linkedSession?.id,
+            linkedRaceId: raceId,
             notes: notes,
             pausedDuration: pausedDuration
         )
@@ -181,6 +185,9 @@ final class ActiveRunViewModel {
                 updated.isCompleted = true
                 updated.linkedRunId = run.id
                 try await planRepository.updateSession(updated)
+            }
+            if let raceId {
+                try await linkRunToRace(run: run, raceId: raceId)
             }
             Logger.tracking.info("Run saved: \(run.id)")
         } catch {
@@ -332,6 +339,16 @@ final class ActiveRunViewModel {
                 hapticService.playNutritionAlert()
             }
         }
+    }
+
+    // MARK: - Race Linking
+
+    private func linkRunToRace(run: CompletedRun, raceId: UUID) async throws {
+        guard var race = try await raceRepository.getRace(id: raceId) else { return }
+        race.actualFinishTime = run.duration
+        race.linkedRunId = run.id
+        try await raceRepository.updateRace(race)
+        Logger.tracking.info("Linked run \(run.id) to race \(race.name)")
     }
 
     // MARK: - Auto Pause

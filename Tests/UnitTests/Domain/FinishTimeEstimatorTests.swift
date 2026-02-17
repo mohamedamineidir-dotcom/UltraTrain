@@ -45,7 +45,8 @@ struct FinishTimeEstimatorTests {
     private func makeRun(
         distanceKm: Double = 15,
         elevationGainM: Double = 500,
-        duration: TimeInterval = 5400
+        duration: TimeInterval = 5400,
+        linkedRaceId: UUID? = nil
     ) -> CompletedRun {
         CompletedRun(
             id: UUID(),
@@ -61,6 +62,7 @@ struct FinishTimeEstimatorTests {
             gpsTrack: [],
             splits: [],
             linkedSessionId: nil,
+            linkedRaceId: linkedRaceId,
             notes: nil,
             pausedDuration: 0
         )
@@ -232,5 +234,92 @@ struct FinishTimeEstimatorTests {
             recentRuns: runs, currentFitness: fitness
         )
         #expect(estimate.confidencePercent <= 95)
+    }
+
+    // MARK: - Race Feedback
+
+    @Test("Race-linked run produces higher confidence than training-only runs")
+    func raceLinkedHigherConfidence() async throws {
+        let race = makeRace()
+        let raceId = UUID()
+        let trainingRuns = [makeRun()]
+        let raceRuns = [makeRun(linkedRaceId: raceId)]
+
+        let trainingEstimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: trainingRuns, currentFitness: nil
+        )
+        let raceEstimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: raceRuns, currentFitness: nil
+        )
+        #expect(raceEstimate.confidencePercent > trainingEstimate.confidencePercent)
+    }
+
+    @Test("Race-linked runs weight more heavily in prediction")
+    func raceRunsWeightedHeavier() async throws {
+        let race = makeRace()
+        let raceId = UUID()
+        let fastRaceRun = makeRun(duration: 4000, linkedRaceId: raceId)
+        let slowRun = makeRun(duration: 7000)
+
+        let mixedRuns = [fastRaceRun, slowRun]
+        let mixedEstimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: mixedRuns, currentFitness: nil
+        )
+
+        let fastTrainingRun = makeRun(duration: 4000)
+        let unweightedRuns = [fastTrainingRun, slowRun]
+        let unweightedEstimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: unweightedRuns, currentFitness: nil
+        )
+        #expect(mixedEstimate.expectedTime < unweightedEstimate.expectedTime)
+    }
+
+    @Test("raceResultsUsed counts correctly")
+    func raceResultsUsedCount() async throws {
+        let race = makeRace()
+        let raceId1 = UUID()
+        let raceId2 = UUID()
+        let runs = [
+            makeRun(linkedRaceId: raceId1),
+            makeRun(linkedRaceId: raceId2),
+            makeRun()
+        ]
+
+        let estimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: nil
+        )
+        #expect(estimate.raceResultsUsed == 2)
+    }
+
+    @Test("No race-linked runs sets raceResultsUsed to zero")
+    func noRaceResultsUsed() async throws {
+        let race = makeRace()
+        let runs = [makeRun(), makeRun()]
+
+        let estimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: nil
+        )
+        #expect(estimate.raceResultsUsed == 0)
+    }
+
+    @Test("Single race run with no training runs produces valid estimate")
+    func singleRaceRunOnly() async throws {
+        let race = makeRace()
+        let raceId = UUID()
+        let runs = [makeRun(linkedRaceId: raceId)]
+
+        let estimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: nil
+        )
+        #expect(estimate.expectedTime > 0)
+        #expect(estimate.raceResultsUsed == 1)
+        #expect(estimate.confidencePercent > 40)
     }
 }

@@ -10,7 +10,18 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         recentRuns: [CompletedRun],
         currentFitness: FitnessSnapshot?
     ) async throws -> FinishEstimate {
-        let paces = recentRuns.compactMap { pacePerEffectiveKm(for: $0) }
+        let raceLinkedRuns = recentRuns.filter { $0.linkedRaceId != nil }
+        let raceResultsUsed = raceLinkedRuns.count
+
+        var paces: [Double] = []
+        for run in recentRuns {
+            guard let pace = pacePerEffectiveKm(for: run) else { continue }
+            if run.linkedRaceId != nil {
+                paces.append(contentsOf: [pace, pace, pace])
+            } else {
+                paces.append(pace)
+            }
+        }
         guard !paces.isEmpty else {
             throw DomainError.insufficientData(reason: "At least one completed run is needed to estimate finish time")
         }
@@ -38,7 +49,8 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         let confidence = calculateConfidence(
             runs: recentRuns,
             fitness: currentFitness,
-            race: race
+            race: race,
+            hasRaceResults: raceResultsUsed > 0
         )
 
         return FinishEstimate(
@@ -50,7 +62,8 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
             expectedTime: expectedTime,
             conservativeTime: conservativeTime,
             checkpointSplits: splits,
-            confidencePercent: confidence
+            confidencePercent: confidence,
+            raceResultsUsed: raceResultsUsed
         )
     }
 
@@ -138,7 +151,8 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
     private func calculateConfidence(
         runs: [CompletedRun],
         fitness: FitnessSnapshot?,
-        race: Race
+        race: Race,
+        hasRaceResults: Bool
     ) -> Double {
         var confidence = 40.0
         if runs.count > 5 { confidence += 10 }
@@ -146,6 +160,7 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         if fitness != nil { confidence += 10 }
         if runs.contains(where: { $0.distanceKm >= race.distanceKm * 0.5 }) { confidence += 15 }
         if runs.contains(where: { $0.elevationGainM >= 500 }) { confidence += 10 }
+        if hasRaceResults { confidence += 15 }
         return min(confidence, 95)
     }
 }

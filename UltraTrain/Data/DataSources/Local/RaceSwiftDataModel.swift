@@ -14,6 +14,8 @@ final class RaceSwiftDataModel {
     var goalValue: Double?
     var terrainDifficultyRaw: String
     @Relationship(deleteRule: .cascade) var checkpointModels: [CheckpointSwiftDataModel]
+    var actualFinishTime: Double?
+    var linkedRunId: UUID?
 
     init(
         id: UUID,
@@ -26,7 +28,9 @@ final class RaceSwiftDataModel {
         goalTypeRaw: String,
         goalValue: Double?,
         terrainDifficultyRaw: String,
-        checkpointModels: [CheckpointSwiftDataModel] = []
+        checkpointModels: [CheckpointSwiftDataModel] = [],
+        actualFinishTime: Double? = nil,
+        linkedRunId: UUID? = nil
     ) {
         self.id = id
         self.name = name
@@ -39,5 +43,7 @@ final class RaceSwiftDataModel {
         self.goalValue = goalValue
         self.terrainDifficultyRaw = terrainDifficultyRaw
         self.checkpointModels = checkpointModels
+        self.actualFinishTime = actualFinishTime
+        self.linkedRunId = linkedRunId
     }
 }

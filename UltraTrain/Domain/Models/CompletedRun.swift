@@ -14,6 +14,7 @@ struct CompletedRun: Identifiable, Equatable, Sendable {
     var gpsTrack: [TrackPoint]
     var splits: [Split]
     var linkedSessionId: UUID?
+    var linkedRaceId: UUID?
     var notes: String?
     var pausedDuration: TimeInterval
 

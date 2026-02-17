@@ -11,6 +11,8 @@ struct Race: Identifiable, Equatable, Sendable {
     var goalType: RaceGoal
     var checkpoints: [Checkpoint]
     var terrainDifficulty: TerrainDifficulty
+    var actualFinishTime: TimeInterval?
+    var linkedRunId: UUID?
 
     var effectiveDistanceKm: Double {
         distanceKm + (elevationGainM / 100.0)

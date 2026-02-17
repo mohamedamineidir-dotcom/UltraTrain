@@ -90,6 +90,7 @@ struct MainTabView: View {
                 athleteRepository: athleteRepository,
                 planRepository: planRepository,
                 runRepository: runRepository,
+                raceRepository: raceRepository,
                 locationService: locationService,
                 healthKitService: healthKitService,
                 appSettingsRepository: appSettingsRepository,

@@ -69,7 +69,8 @@ struct FinishEstimationViewModelTests {
             expectedTime: 32400,
             conservativeTime: 36000,
             checkpointSplits: [],
-            confidencePercent: 60
+            confidencePercent: 60,
+            raceResultsUsed: 0
         )
     }
 

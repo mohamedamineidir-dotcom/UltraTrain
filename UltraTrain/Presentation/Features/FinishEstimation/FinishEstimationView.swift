@@ -29,6 +29,9 @@ struct FinishEstimationView: View {
                     raceHeader
                     scenarioCards(estimate)
                     confidenceSection(estimate)
+                    if estimate.raceResultsUsed > 0 {
+                        raceCalibrationBadge(count: estimate.raceResultsUsed)
+                    }
                     if !estimate.checkpointSplits.isEmpty {
                         checkpointSplitsSection(estimate)
                     }
@@ -150,6 +153,23 @@ struct FinishEstimationView: View {
         if percent >= 70 { return "Strong prediction — good training data available" }
         if percent >= 50 { return "Moderate prediction — more training data would improve accuracy" }
         return "Low confidence — keep training to improve prediction accuracy"
+    }
+
+    // MARK: - Race Calibration Badge
+
+    private func raceCalibrationBadge(count: Int) -> some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            Image(systemName: "checkmark.seal.fill")
+                .foregroundStyle(Theme.Colors.success)
+            Text("Calibrated from \(count) race result\(count == 1 ? "" : "s")")
+                .font(.subheadline)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(Theme.Spacing.md)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .fill(Theme.Colors.success.opacity(0.1))
+        )
     }
 
     // MARK: - Checkpoint Splits

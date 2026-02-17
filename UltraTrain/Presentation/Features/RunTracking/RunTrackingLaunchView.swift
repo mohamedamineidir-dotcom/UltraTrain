@@ -7,6 +7,7 @@ struct RunTrackingLaunchView: View {
     private let healthKitService: any HealthKitServiceProtocol
     private let runRepository: any RunRepository
     private let planRepository: any TrainingPlanRepository
+    private let raceRepository: any RaceRepository
     private let nutritionRepository: any NutritionRepository
     private let hapticService: any HapticServiceProtocol
 
@@ -14,6 +15,7 @@ struct RunTrackingLaunchView: View {
         athleteRepository: any AthleteRepository,
         planRepository: any TrainingPlanRepository,
         runRepository: any RunRepository,
+        raceRepository: any RaceRepository,
         locationService: LocationService,
         healthKitService: any HealthKitServiceProtocol,
         appSettingsRepository: any AppSettingsRepository,
@@ -24,6 +26,7 @@ struct RunTrackingLaunchView: View {
             athleteRepository: athleteRepository,
             planRepository: planRepository,
             runRepository: runRepository,
+            raceRepository: raceRepository,
             appSettingsRepository: appSettingsRepository
         ))
         self.athleteRepository = athleteRepository
@@ -31,6 +34,7 @@ struct RunTrackingLaunchView: View {
         self.healthKitService = healthKitService
         self.runRepository = runRepository
         self.planRepository = planRepository
+        self.raceRepository = raceRepository
         self.nutritionRepository = nutritionRepository
         self.hapticService = hapticService
     }
@@ -41,6 +45,9 @@ struct RunTrackingLaunchView: View {
                 VStack(spacing: Theme.Spacing.lg) {
                     locationAuthSection
                     heroSection
+                    if let race = viewModel.todaysRace {
+                        raceDayBanner(race: race)
+                    }
                     if !viewModel.todaysSessions.isEmpty {
                         SessionPickerView(
                             sessions: viewModel.todaysSessions,
@@ -63,6 +70,7 @@ struct RunTrackingLaunchView: View {
                             healthKitService: healthKitService,
                             runRepository: runRepository,
                             planRepository: planRepository,
+                            raceRepository: raceRepository,
                             nutritionRepository: nutritionRepository,
                             hapticService: hapticService,
                             athlete: athlete,
@@ -161,6 +169,32 @@ struct RunTrackingLaunchView: View {
             || locationService.authorizationStatus == .denied
             || locationService.authorizationStatus == .notDetermined
         )
+    }
+
+    // MARK: - History
+
+    // MARK: - Race Day Banner
+
+    private func raceDayBanner(race: Race) -> some View {
+        VStack(spacing: Theme.Spacing.xs) {
+            HStack(spacing: Theme.Spacing.sm) {
+                Image(systemName: "flag.checkered")
+                    .font(.title3)
+                Text("Race Day: \(race.name)")
+                    .font(.headline)
+            }
+            Text("This run will be linked to your race for finish time calibration.")
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(Theme.Spacing.md)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .fill(Theme.Colors.primary.opacity(0.1))
+        )
+        .padding(.horizontal, Theme.Spacing.md)
     }
 
     // MARK: - History
