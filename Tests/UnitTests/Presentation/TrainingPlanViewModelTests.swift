@@ -393,4 +393,258 @@ struct TrainingPlanViewModelTests {
         // No intermediate races, plan has no intermediate race IDs — should match
         #expect(vm.isPlanStale == false)
     }
+
+    // MARK: - Refresh Races
+
+    @Test("Refresh races updates races without affecting plan")
+    @MainActor
+    func refreshRacesUpdatesList() async {
+        let race = makeRace()
+        let plan = makePlan(athlete: makeAthlete(), race: race)
+        let raceRepo = MockRaceRepository()
+        raceRepo.races = [race]
+        let planRepo = MockTrainingPlanRepository()
+        planRepo.activePlan = plan
+
+        let vm = makeViewModel(planRepo: planRepo, raceRepo: raceRepo)
+        await vm.loadPlan()
+
+        // Add a B-race to the repository
+        let bRace = Race(
+            id: UUID(), name: "B Race",
+            date: Date.now.adding(weeks: 8),
+            distanceKm: 50, elevationGainM: 2000, elevationLossM: 2000,
+            priority: .bRace, goalType: .finish, checkpoints: [],
+            terrainDifficulty: .easy
+        )
+        raceRepo.races.append(bRace)
+
+        await vm.refreshRaces()
+
+        #expect(vm.races.count == 2)
+        #expect(vm.plan?.id == plan.id) // Plan unchanged
+    }
+
+    @Test("isPlanStale true after refreshRaces detects new B-race")
+    @MainActor
+    func isPlanStaleAfterRefresh() async {
+        let race = makeRace()
+        let plan = makePlan(athlete: makeAthlete(), race: race)
+        let raceRepo = MockRaceRepository()
+        raceRepo.races = [race]
+
+        let vm = makeViewModel(raceRepo: raceRepo)
+        vm.plan = plan
+        vm.races = [race]
+        #expect(vm.isPlanStale == false)
+
+        // Add B-race to repo and refresh
+        let bRace = Race(
+            id: UUID(), name: "B Race",
+            date: Date.now.adding(weeks: 8),
+            distanceKm: 50, elevationGainM: 2000, elevationLossM: 2000,
+            priority: .bRace, goalType: .finish, checkpoints: [],
+            terrainDifficulty: .easy
+        )
+        raceRepo.races.append(bRace)
+        await vm.refreshRaces()
+
+        #expect(vm.isPlanStale == true)
+    }
+
+    // MARK: - Race Change Summary
+
+    @Test("raceChangeSummary returns added races")
+    @MainActor
+    func raceChangeSummaryAdded() {
+        let race = makeRace()
+        let plan = makePlan(athlete: makeAthlete(), race: race)
+        let bRace = Race(
+            id: UUID(), name: "Trail 50K",
+            date: Date.now.adding(weeks: 8),
+            distanceKm: 50, elevationGainM: 2000, elevationLossM: 2000,
+            priority: .bRace, goalType: .finish, checkpoints: [],
+            terrainDifficulty: .easy
+        )
+
+        let vm = makeViewModel()
+        vm.plan = plan
+        vm.races = [race, bRace]
+
+        let summary = vm.raceChangeSummary
+        #expect(summary.added.count == 1)
+        #expect(summary.added.first?.name == "Trail 50K")
+        #expect(summary.removed.isEmpty)
+    }
+
+    @Test("raceChangeSummary returns removed race IDs")
+    @MainActor
+    func raceChangeSummaryRemoved() {
+        let race = makeRace()
+        let removedId = UUID()
+        var plan = makePlan(athlete: makeAthlete(), race: race)
+        plan.intermediateRaceIds = [removedId]
+
+        let vm = makeViewModel()
+        vm.plan = plan
+        vm.races = [race] // No intermediate races anymore
+
+        let summary = vm.raceChangeSummary
+        #expect(summary.added.isEmpty)
+        #expect(summary.removed.count == 1)
+        #expect(summary.removed.first == removedId)
+    }
+
+    @Test("raceChangeSummary empty when no changes")
+    @MainActor
+    func raceChangeSummaryEmpty() {
+        let race = makeRace()
+        let bRaceId = UUID()
+        let bRace = Race(
+            id: bRaceId, name: "B Race",
+            date: Date.now.adding(weeks: 8),
+            distanceKm: 50, elevationGainM: 2000, elevationLossM: 2000,
+            priority: .bRace, goalType: .finish, checkpoints: [],
+            terrainDifficulty: .easy
+        )
+        var plan = makePlan(athlete: makeAthlete(), race: race)
+        plan.intermediateRaceIds = [bRaceId]
+
+        let vm = makeViewModel()
+        vm.plan = plan
+        vm.races = [race, bRace]
+
+        let summary = vm.raceChangeSummary
+        #expect(summary.added.isEmpty)
+        #expect(summary.removed.isEmpty)
+    }
+
+    // MARK: - Progress Preservation
+
+    @Test("Generate plan preserves completed session status")
+    @MainActor
+    func generatePlanPreservesCompleted() async {
+        let athlete = makeAthlete()
+        let race = makeRace()
+        var plan = makePlan(athlete: athlete, race: race)
+        // Mark the tempo session (index 1) as completed
+        plan.weeks[0].sessions[1].isCompleted = true
+
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = athlete
+        let raceRepo = MockRaceRepository()
+        raceRepo.races = [race]
+        let planRepo = MockTrainingPlanRepository()
+        let generator = MockGenerateTrainingPlanUseCase()
+        // Generator returns a plan with same structure (same week number, session types, dates)
+        generator.result = makePlan(athlete: athlete, race: race)
+
+        let vm = makeViewModel(
+            planRepo: planRepo,
+            athleteRepo: athleteRepo,
+            raceRepo: raceRepo,
+            generator: generator
+        )
+        vm.plan = plan
+
+        await vm.generatePlan()
+
+        // The tempo session should still be completed after regeneration
+        #expect(vm.plan?.weeks[0].sessions[1].isCompleted == true)
+    }
+
+    @Test("Generate plan preserves skipped session status")
+    @MainActor
+    func generatePlanPreservesSkipped() async {
+        let athlete = makeAthlete()
+        let race = makeRace()
+        var plan = makePlan(athlete: athlete, race: race)
+        // Mark the tempo session (index 1) as skipped
+        plan.weeks[0].sessions[1].isSkipped = true
+
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = athlete
+        let raceRepo = MockRaceRepository()
+        raceRepo.races = [race]
+        let planRepo = MockTrainingPlanRepository()
+        let generator = MockGenerateTrainingPlanUseCase()
+        generator.result = makePlan(athlete: athlete, race: race)
+
+        let vm = makeViewModel(
+            planRepo: planRepo,
+            athleteRepo: athleteRepo,
+            raceRepo: raceRepo,
+            generator: generator
+        )
+        vm.plan = plan
+
+        await vm.generatePlan()
+
+        #expect(vm.plan?.weeks[0].sessions[1].isSkipped == true)
+    }
+
+    @Test("Generate plan does not preserve status for non-matching sessions")
+    @MainActor
+    func generatePlanNoPreserveNonMatching() async {
+        let athlete = makeAthlete()
+        let race = makeRace()
+        var plan = makePlan(athlete: athlete, race: race)
+        // Mark the rest session (index 0) as completed
+        plan.weeks[0].sessions[0].isCompleted = true
+
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = athlete
+        let raceRepo = MockRaceRepository()
+        raceRepo.races = [race]
+        let planRepo = MockTrainingPlanRepository()
+        let generator = MockGenerateTrainingPlanUseCase()
+
+        // Generator returns a plan with different session types (only tempo, no rest)
+        let differentWeek = TrainingWeek(
+            id: UUID(),
+            weekNumber: 1,
+            startDate: Date.now.startOfWeek,
+            endDate: Date.now.startOfWeek.adding(days: 6),
+            phase: .base,
+            sessions: [
+                TrainingSession(
+                    id: UUID(),
+                    date: Date.now.startOfDay.adding(days: 1),
+                    type: .intervals,
+                    plannedDistanceKm: 8,
+                    plannedElevationGainM: 100,
+                    plannedDuration: 3600,
+                    intensity: .hard,
+                    description: "Intervals",
+                    nutritionNotes: nil,
+                    isCompleted: false, isSkipped: false,
+                    linkedRunId: nil
+                )
+            ],
+            isRecoveryWeek: false,
+            targetVolumeKm: 40,
+            targetElevationGainM: 800
+        )
+        generator.result = TrainingPlan(
+            id: UUID(),
+            athleteId: athlete.id,
+            targetRaceId: race.id,
+            createdAt: .now,
+            weeks: [differentWeek],
+            intermediateRaceIds: []
+        )
+
+        let vm = makeViewModel(
+            planRepo: planRepo,
+            athleteRepo: athleteRepo,
+            raceRepo: raceRepo,
+            generator: generator
+        )
+        vm.plan = plan
+
+        await vm.generatePlan()
+
+        // The intervals session should NOT be completed (no matching old session)
+        #expect(vm.plan?.weeks[0].sessions[0].isCompleted == false)
+    }
 }

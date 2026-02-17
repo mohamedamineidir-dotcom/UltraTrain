@@ -48,6 +48,9 @@ struct TrainingPlanView: View {
             .task {
                 await viewModel.loadPlan()
             }
+            .onAppear {
+                Task { await viewModel.refreshRaces() }
+            }
             .alert("Error", isPresented: .init(
                 get: { viewModel.error != nil },
                 set: { if !$0 { viewModel.error = nil } }
@@ -55,6 +58,18 @@ struct TrainingPlanView: View {
                 Button("OK") { viewModel.error = nil }
             } message: {
                 Text(viewModel.error ?? "")
+            }
+            .confirmationDialog(
+                "Update Training Plan",
+                isPresented: $viewModel.showRegenerateConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("Update Plan") {
+                    Task { await viewModel.generatePlan() }
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(regenerateDialogMessage)
             }
         }
     }
@@ -164,13 +179,13 @@ struct TrainingPlanView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Plan may be outdated")
                     .font(.subheadline.bold())
-                Text("Your races have changed since this plan was generated.")
+                Text(staleBannerDescription)
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
             Spacer()
-            Button("Regenerate") {
-                Task { await viewModel.generatePlan() }
+            Button("Update Plan") {
+                viewModel.showRegenerateConfirmation = true
             }
             .font(.caption.bold())
             .buttonStyle(.borderedProminent)
@@ -179,6 +194,38 @@ struct TrainingPlanView: View {
         .padding(Theme.Spacing.sm)
         .background(Theme.Colors.warning.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+
+    private var staleBannerDescription: String {
+        let summary = viewModel.raceChangeSummary
+        var parts: [String] = []
+        if !summary.added.isEmpty {
+            let names = summary.added.map(\.name).joined(separator: ", ")
+            parts.append("Added: \(names)")
+        }
+        if !summary.removed.isEmpty {
+            let count = summary.removed.count
+            parts.append("Removed: \(count) race\(count == 1 ? "" : "s")")
+        }
+        if parts.isEmpty {
+            return "Your races have changed since this plan was generated."
+        }
+        return parts.joined(separator: ". ") + "."
+    }
+
+    private var regenerateDialogMessage: String {
+        let summary = viewModel.raceChangeSummary
+        var lines: [String] = ["Your race schedule has changed."]
+        if !summary.added.isEmpty {
+            let names = summary.added.map(\.name).joined(separator: ", ")
+            lines.append("Added: \(names)")
+        }
+        if !summary.removed.isEmpty {
+            let count = summary.removed.count
+            lines.append("Removed: \(count) race\(count == 1 ? "" : "s")")
+        }
+        lines.append("The plan will be regenerated with taper and recovery adjustments. Completed sessions will be preserved where possible.")
+        return lines.joined(separator: "\n")
     }
 
     private var emptyState: some View {
