@@ -3,6 +3,7 @@ import Charts
 
 struct WeeklyLoadChartView: View {
     let weeklyHistory: [WeeklyLoadData]
+    @State private var selectedDate: Date?
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
@@ -44,9 +45,56 @@ struct WeeklyLoadChartView: View {
                         .frame(width: 5, height: 5)
                 }
             }
+
+            if let selectedDate, let week = nearestWeek(to: selectedDate) {
+                RuleMark(x: .value("Selected", week.weekStartDate, unit: .weekOfYear))
+                    .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.5))
+                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+            }
         }
         .chartYAxisLabel("Effort Load")
         .frame(height: 200)
+        .chartOverlay { proxy in
+            GeometryReader { geo in
+                Rectangle()
+                    .fill(.clear)
+                    .contentShape(Rectangle())
+                    .gesture(
+                        DragGesture(minimumDistance: 0)
+                            .onChanged { drag in
+                                let x = drag.location.x - geo[proxy.plotFrame!].origin.x
+                                if let date: Date = proxy.value(atX: x) {
+                                    selectedDate = date
+                                }
+                            }
+                            .onEnded { _ in
+                                selectedDate = nil
+                            }
+                    )
+            }
+        }
+        .chartBackground { proxy in
+            GeometryReader { geo in
+                if let selectedDate, let week = nearestWeek(to: selectedDate) {
+                    let plotFrame = geo[proxy.plotFrame!]
+                    if let xPos = proxy.position(forX: week.weekStartDate) {
+                        let cardWidth: CGFloat = 120
+                        let clampedX = min(max(xPos, cardWidth / 2), plotFrame.width - cardWidth / 2)
+                        let planned = week.plannedLoad > 0 ? String(format: " / %.0f planned", week.plannedLoad) : ""
+                        ChartAnnotationCard(
+                            title: week.weekStartDate.formatted(.dateTime.month(.abbreviated).day()),
+                            value: String(format: "%.0f load", week.actualLoad),
+                            subtitle: planned.isEmpty ? nil : String(format: "%.0f planned", week.plannedLoad)
+                        )
+                        .offset(x: clampedX, y: -8)
+                    }
+                }
+            }
+        }
+    }
+
+    private func nearestWeek(to date: Date) -> WeeklyLoadData? {
+        weeklyHistory.min { abs($0.weekStartDate.timeIntervalSince(date)) < abs($1.weekStartDate.timeIntervalSince(date)) }
     }
 
     private var legend: some View {

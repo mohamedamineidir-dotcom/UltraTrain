@@ -66,6 +66,8 @@ final class ProgressViewModel {
     var totalRuns = 0
     var fitnessSnapshots: [FitnessSnapshot] = []
     var currentFitnessSnapshot: FitnessSnapshot?
+    var runTrendPoints: [RunTrendPoint] = []
+    var personalRecords: [PersonalRecord] = []
     var isLoading = false
     var error: String?
 
@@ -100,6 +102,8 @@ final class ProgressViewModel {
             let runs = try await runRepository.getRuns(for: athlete.id)
             totalRuns = runs.count
             weeklyVolumes = computeWeeklyVolumes(from: runs)
+            runTrendPoints = computeRunTrends(from: runs)
+            personalRecords = computePersonalRecords(from: runs)
 
             if let plan = try await planRepository.getActivePlan() {
                 planAdherence = computeAdherence(plan: plan)
@@ -223,5 +227,66 @@ final class ProgressViewModel {
                     total: active.count
                 )
             }
+    }
+
+    func computeRunTrends(from runs: [CompletedRun]) -> [RunTrendPoint] {
+        let sorted = runs.sorted { $0.date < $1.date }
+        return sorted.enumerated().map { index, run in
+            let windowStart = max(0, index - 4)
+            let window = Array(sorted[windowStart...index])
+
+            let avgPace = window.reduce(0.0) { $0 + $1.averagePaceSecondsPerKm } / Double(window.count)
+
+            let hrWindow = window.compactMap(\.averageHeartRate)
+            let avgHR: Double? = hrWindow.isEmpty ? nil : Double(hrWindow.reduce(0, +)) / Double(hrWindow.count)
+
+            return RunTrendPoint(
+                id: run.id,
+                date: run.date,
+                distanceKm: run.distanceKm,
+                elevationGainM: run.elevationGainM,
+                duration: run.duration,
+                averagePaceSecondsPerKm: run.averagePaceSecondsPerKm,
+                averageHeartRate: run.averageHeartRate,
+                rollingAveragePace: window.count >= 2 ? avgPace : nil,
+                rollingAverageHR: (hrWindow.count >= 2) ? avgHR : nil
+            )
+        }
+    }
+
+    func computePersonalRecords(from runs: [CompletedRun]) -> [PersonalRecord] {
+        guard !runs.isEmpty else { return [] }
+        var records: [PersonalRecord] = []
+
+        if let longest = runs.max(by: { $0.distanceKm < $1.distanceKm }) {
+            records.append(PersonalRecord(
+                id: UUID(), type: .longestDistance,
+                value: longest.distanceKm, date: longest.date, runId: longest.id
+            ))
+        }
+
+        if let mostElev = runs.max(by: { $0.elevationGainM < $1.elevationGainM }) {
+            records.append(PersonalRecord(
+                id: UUID(), type: .mostElevation,
+                value: mostElev.elevationGainM, date: mostElev.date, runId: mostElev.id
+            ))
+        }
+
+        let runsWithPace = runs.filter { $0.averagePaceSecondsPerKm > 0 }
+        if let fastest = runsWithPace.min(by: { $0.averagePaceSecondsPerKm < $1.averagePaceSecondsPerKm }) {
+            records.append(PersonalRecord(
+                id: UUID(), type: .fastestPace,
+                value: fastest.averagePaceSecondsPerKm, date: fastest.date, runId: fastest.id
+            ))
+        }
+
+        if let longestDur = runs.max(by: { $0.duration < $1.duration }) {
+            records.append(PersonalRecord(
+                id: UUID(), type: .longestDuration,
+                value: longestDur.duration, date: longestDur.date, runId: longestDur.id
+            ))
+        }
+
+        return records
     }
 }

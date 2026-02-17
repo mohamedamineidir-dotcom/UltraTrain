@@ -40,8 +40,13 @@ struct TrainingProgressView: View {
                     fitnessSection
                     volumeChartSection
                     elevationChartSection
+                    durationChartSection
+                    cumulativeVolumeSection
                     adherenceSection
                     summarySection
+                    paceTrendSection
+                    heartRateTrendSection
+                    personalRecordsSection
                 }
             }
             .padding()
@@ -210,6 +215,26 @@ struct TrainingProgressView: View {
         return "Falling behind. Focus on key sessions."
     }
 
+    // MARK: - Duration Chart
+
+    @ViewBuilder
+    private var durationChartSection: some View {
+        if viewModel.weeklyVolumes.contains(where: { $0.duration > 0 }) {
+            WeeklyDurationChartView(weeklyVolumes: viewModel.weeklyVolumes)
+                .cardStyle()
+        }
+    }
+
+    // MARK: - Cumulative Volume
+
+    @ViewBuilder
+    private var cumulativeVolumeSection: some View {
+        if viewModel.weeklyVolumes.contains(where: { $0.distanceKm > 0 }) {
+            CumulativeVolumeChartView(weeklyVolumes: viewModel.weeklyVolumes)
+                .cardStyle()
+        }
+    }
+
     // MARK: - Summary
 
     private var summarySection: some View {
@@ -242,6 +267,37 @@ struct TrainingProgressView: View {
                     unit: "km"
                 )
             }
+        }
+    }
+
+    // MARK: - Pace Trend
+
+    @ViewBuilder
+    private var paceTrendSection: some View {
+        if viewModel.runTrendPoints.count >= 3 {
+            PaceTrendChartView(trendPoints: viewModel.runTrendPoints)
+                .cardStyle()
+        }
+    }
+
+    // MARK: - Heart Rate Trend
+
+    @ViewBuilder
+    private var heartRateTrendSection: some View {
+        let pointsWithHR = viewModel.runTrendPoints.filter { $0.averageHeartRate != nil }
+        if pointsWithHR.count >= 3 {
+            HeartRateTrendChartView(trendPoints: viewModel.runTrendPoints)
+                .cardStyle()
+        }
+    }
+
+    // MARK: - Personal Records
+
+    @ViewBuilder
+    private var personalRecordsSection: some View {
+        if !viewModel.personalRecords.isEmpty {
+            PersonalRecordsSection(records: viewModel.personalRecords)
+                .cardStyle()
         }
     }
 }

@@ -3,6 +3,7 @@ import Charts
 
 struct AdherenceTrendChartView: View {
     let weeklyAdherence: [WeeklyAdherence]
+    @State private var selectedDate: Date?
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
@@ -45,9 +46,55 @@ struct AdherenceTrendChartView: View {
                 .foregroundStyle(Theme.Colors.primary)
                 .symbolSize(30)
             }
+
+            if let selectedDate, let week = nearestWeek(to: selectedDate) {
+                RuleMark(x: .value("Selected", week.weekStartDate, unit: .weekOfYear))
+                    .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.5))
+                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+            }
         }
         .chartYScale(domain: 0...100)
         .chartYAxisLabel("%")
         .frame(height: 200)
+        .chartOverlay { proxy in
+            GeometryReader { geo in
+                Rectangle()
+                    .fill(.clear)
+                    .contentShape(Rectangle())
+                    .gesture(
+                        DragGesture(minimumDistance: 0)
+                            .onChanged { drag in
+                                let x = drag.location.x - geo[proxy.plotFrame!].origin.x
+                                if let date: Date = proxy.value(atX: x) {
+                                    selectedDate = date
+                                }
+                            }
+                            .onEnded { _ in
+                                selectedDate = nil
+                            }
+                    )
+            }
+        }
+        .chartBackground { proxy in
+            GeometryReader { geo in
+                if let selectedDate, let week = nearestWeek(to: selectedDate) {
+                    let plotFrame = geo[proxy.plotFrame!]
+                    if let xPos = proxy.position(forX: week.weekStartDate) {
+                        let cardWidth: CGFloat = 120
+                        let clampedX = min(max(xPos, cardWidth / 2), plotFrame.width - cardWidth / 2)
+                        ChartAnnotationCard(
+                            title: "Week \(week.weekNumber)",
+                            value: String(format: "%.0f%%", week.percent),
+                            subtitle: "\(week.completed)/\(week.total) sessions"
+                        )
+                        .offset(x: clampedX, y: -8)
+                    }
+                }
+            }
+        }
+    }
+
+    private func nearestWeek(to date: Date) -> WeeklyAdherence? {
+        weeklyAdherence.min { abs($0.weekStartDate.timeIntervalSince(date)) < abs($1.weekStartDate.timeIntervalSince(date)) }
     }
 }

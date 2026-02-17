@@ -3,6 +3,7 @@ import Charts
 
 struct FitnessTrendChartView: View {
     let snapshots: [FitnessSnapshot]
+    @State private var selectedDate: Date?
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
@@ -80,6 +81,12 @@ struct FitnessTrendChartView: View {
                 .foregroundStyle(Theme.Colors.success)
                 .lineStyle(StrokeStyle(lineWidth: 2))
             }
+
+            if let selectedDate, let snapshot = nearestSnapshot(to: selectedDate) {
+                RuleMark(x: .value("Selected", snapshot.date))
+                    .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.5))
+                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+            }
         }
         .chartForegroundStyleScale([
             "Fitness": Theme.Colors.zone2,
@@ -88,6 +95,46 @@ struct FitnessTrendChartView: View {
         ])
         .chartYAxisLabel("Load")
         .frame(height: 220)
+        .chartOverlay { proxy in
+            GeometryReader { geo in
+                Rectangle()
+                    .fill(.clear)
+                    .contentShape(Rectangle())
+                    .gesture(
+                        DragGesture(minimumDistance: 0)
+                            .onChanged { drag in
+                                let x = drag.location.x - geo[proxy.plotFrame!].origin.x
+                                if let date: Date = proxy.value(atX: x) {
+                                    selectedDate = date
+                                }
+                            }
+                            .onEnded { _ in
+                                selectedDate = nil
+                            }
+                    )
+            }
+        }
+        .chartBackground { proxy in
+            GeometryReader { geo in
+                if let selectedDate, let snapshot = nearestSnapshot(to: selectedDate) {
+                    let plotFrame = geo[proxy.plotFrame!]
+                    if let xPos = proxy.position(forX: snapshot.date) {
+                        let cardWidth: CGFloat = 130
+                        let clampedX = min(max(xPos, cardWidth / 2), plotFrame.width - cardWidth / 2)
+                        ChartAnnotationCard(
+                            title: snapshot.date.formatted(.dateTime.month(.abbreviated).day()),
+                            value: String(format: "CTL %.0f  ATL %.0f", snapshot.fitness, snapshot.fatigue),
+                            subtitle: String(format: "Form %+.0f", snapshot.form)
+                        )
+                        .offset(x: clampedX, y: -8)
+                    }
+                }
+            }
+        }
+    }
+
+    private func nearestSnapshot(to date: Date) -> FitnessSnapshot? {
+        snapshots.min { abs($0.date.timeIntervalSince(date)) < abs($1.date.timeIntervalSince(date)) }
     }
 
     // MARK: - Legend

@@ -3,6 +3,7 @@ import Charts
 
 struct ACRTrendChartView: View {
     let dataPoints: [ACRDataPoint]
+    @State private var selectedDate: Date?
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
@@ -65,10 +66,63 @@ struct ACRTrendChartView: View {
                 .foregroundStyle(Theme.Colors.primary)
                 .lineStyle(StrokeStyle(lineWidth: 2))
             }
+
+            if let selectedDate, let point = nearestPoint(to: selectedDate) {
+                RuleMark(x: .value("Selected", point.date))
+                    .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.5))
+                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+            }
         }
         .chartYScale(domain: 0...maxYValue)
         .chartYAxisLabel("ACR")
         .frame(height: 200)
+        .chartOverlay { proxy in
+            GeometryReader { geo in
+                Rectangle()
+                    .fill(.clear)
+                    .contentShape(Rectangle())
+                    .gesture(
+                        DragGesture(minimumDistance: 0)
+                            .onChanged { drag in
+                                let x = drag.location.x - geo[proxy.plotFrame!].origin.x
+                                if let date: Date = proxy.value(atX: x) {
+                                    selectedDate = date
+                                }
+                            }
+                            .onEnded { _ in
+                                selectedDate = nil
+                            }
+                    )
+            }
+        }
+        .chartBackground { proxy in
+            GeometryReader { geo in
+                if let selectedDate, let point = nearestPoint(to: selectedDate) {
+                    let plotFrame = geo[proxy.plotFrame!]
+                    if let xPos = proxy.position(forX: point.date) {
+                        let cardWidth: CGFloat = 120
+                        let clampedX = min(max(xPos, cardWidth / 2), plotFrame.width - cardWidth / 2)
+                        ChartAnnotationCard(
+                            title: point.date.formatted(.dateTime.month(.abbreviated).day()),
+                            value: String(format: "ACR: %.2f", point.value),
+                            subtitle: acrZoneLabel(point.value)
+                        )
+                        .offset(x: clampedX, y: -8)
+                    }
+                }
+            }
+        }
+    }
+
+    private func nearestPoint(to date: Date) -> ACRDataPoint? {
+        dataPoints.min { abs($0.date.timeIntervalSince(date)) < abs($1.date.timeIntervalSince(date)) }
+    }
+
+    private func acrZoneLabel(_ value: Double) -> String {
+        if value > 1.5 { return "Injury Risk" }
+        if value > 1.3 { return "Caution" }
+        if value >= 0.8 { return "Optimal" }
+        return "Detraining"
     }
 
     private var maxYValue: Double {
