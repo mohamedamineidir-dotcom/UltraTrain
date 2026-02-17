@@ -127,12 +127,14 @@ struct RunAnalysisViewModelTests {
     private func makeViewModel(
         run: CompletedRun,
         athleteRepo: MockAthleteRepository = MockAthleteRepository(),
-        planRepo: MockTrainingPlanRepository = MockTrainingPlanRepository()
+        planRepo: MockTrainingPlanRepository = MockTrainingPlanRepository(),
+        raceRepo: MockRaceRepository = MockRaceRepository()
     ) -> RunAnalysisViewModel {
         RunAnalysisViewModel(
             run: run,
             planRepository: planRepo,
-            athleteRepository: athleteRepo
+            athleteRepository: athleteRepo,
+            raceRepository: raceRepo
         )
     }
 

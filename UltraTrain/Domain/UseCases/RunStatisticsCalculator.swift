@@ -250,6 +250,68 @@ enum RunStatisticsCalculator {
         return segments
     }
 
+    // MARK: - Elevation Segments
+
+    static func buildElevationSegments(from points: [TrackPoint]) -> [ElevationSegment] {
+        guard points.count >= 2 else { return [] }
+
+        var segments: [ElevationSegment] = []
+        var cumulativeDistanceM: Double = 0
+        var segmentStartIndex = 0
+        var currentKm = 1
+
+        for i in 1..<points.count {
+            let distM = haversineDistance(
+                lat1: points[i - 1].latitude, lon1: points[i - 1].longitude,
+                lat2: points[i].latitude, lon2: points[i].longitude
+            )
+            cumulativeDistanceM += distM
+
+            if cumulativeDistanceM >= Double(currentKm) * 1000 {
+                let segmentPoints = Array(points[segmentStartIndex...i])
+                let elevationChange = points[i].altitudeM - points[segmentStartIndex].altitudeM
+                let horizontalDistM = segmentDistanceM(segmentPoints)
+                let gradient = horizontalDistM > 0 ? (elevationChange / horizontalDistM) * 100 : 0
+
+                segments.append(ElevationSegment(
+                    coordinates: segmentPoints.map { ($0.latitude, $0.longitude) },
+                    averageGradient: gradient,
+                    kilometerNumber: currentKm
+                ))
+
+                segmentStartIndex = i
+                currentKm += 1
+            }
+        }
+
+        if segmentStartIndex < points.count - 1 {
+            let segmentPoints = Array(points[segmentStartIndex..<points.count])
+            let elevationChange = points[points.count - 1].altitudeM - points[segmentStartIndex].altitudeM
+            let horizontalDistM = segmentDistanceM(segmentPoints)
+            let gradient = horizontalDistM > 0 ? (elevationChange / horizontalDistM) * 100 : 0
+
+            segments.append(ElevationSegment(
+                coordinates: segmentPoints.map { ($0.latitude, $0.longitude) },
+                averageGradient: gradient,
+                kilometerNumber: currentKm
+            ))
+        }
+
+        return segments
+    }
+
+    private static func segmentDistanceM(_ points: [TrackPoint]) -> Double {
+        guard points.count >= 2 else { return 0 }
+        var total: Double = 0
+        for i in 1..<points.count {
+            total += haversineDistance(
+                lat1: points[i - 1].latitude, lon1: points[i - 1].longitude,
+                lat2: points[i].latitude, lon2: points[i].longitude
+            )
+        }
+        return total
+    }
+
     // MARK: - Plan Comparison
 
     static func buildPlanComparison(run: CompletedRun, session: TrainingSession) -> PlanComparison {

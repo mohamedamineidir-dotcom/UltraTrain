@@ -7,12 +7,14 @@ struct RunAnalysisView: View {
     init(
         run: CompletedRun,
         planRepository: any TrainingPlanRepository,
-        athleteRepository: any AthleteRepository
+        athleteRepository: any AthleteRepository,
+        raceRepository: any RaceRepository
     ) {
         _viewModel = State(initialValue: RunAnalysisViewModel(
             run: run,
             planRepository: planRepository,
-            athleteRepository: athleteRepository
+            athleteRepository: athleteRepository,
+            raceRepository: raceRepository
         ))
     }
 
@@ -53,7 +55,10 @@ struct RunAnalysisView: View {
             FullScreenMapView(
                 segments: viewModel.routeSegments,
                 startCoordinate: startCLCoordinate,
-                endCoordinate: endCLCoordinate
+                endCoordinate: endCLCoordinate,
+                checkpointLocations: viewModel.checkpointLocations,
+                coloringMode: viewModel.routeColoringMode,
+                elevationSegments: viewModel.elevationSegments
             )
         }
     }
@@ -75,10 +80,19 @@ struct RunAnalysisView: View {
                 }
             }
 
+            Picker("Coloring", selection: $viewModel.routeColoringMode) {
+                Text("Pace").tag(RouteColoringMode.pace)
+                Text("Elevation").tag(RouteColoringMode.elevation)
+            }
+            .pickerStyle(.segmented)
+
             RouteMapView(
                 segments: viewModel.routeSegments,
                 startCoordinate: startCLCoordinate,
-                endCoordinate: endCLCoordinate
+                endCoordinate: endCLCoordinate,
+                checkpointLocations: viewModel.checkpointLocations,
+                coloringMode: viewModel.routeColoringMode,
+                elevationSegments: viewModel.elevationSegments
             )
         }
         .cardStyle()

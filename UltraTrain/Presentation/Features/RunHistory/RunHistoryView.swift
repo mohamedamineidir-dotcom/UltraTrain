@@ -4,15 +4,18 @@ struct RunHistoryView: View {
     @State private var viewModel: RunHistoryViewModel
     private let planRepository: any TrainingPlanRepository
     private let athleteRepository: any AthleteRepository
+    private let raceRepository: any RaceRepository
 
     init(
         runRepository: any RunRepository,
         planRepository: any TrainingPlanRepository,
-        athleteRepository: any AthleteRepository
+        athleteRepository: any AthleteRepository,
+        raceRepository: any RaceRepository
     ) {
         _viewModel = State(initialValue: RunHistoryViewModel(runRepository: runRepository))
         self.planRepository = planRepository
         self.athleteRepository = athleteRepository
+        self.raceRepository = raceRepository
     }
 
     var body: some View {
@@ -52,7 +55,8 @@ struct RunHistoryView: View {
                 RunDetailView(
                     run: run,
                     planRepository: planRepository,
-                    athleteRepository: athleteRepository
+                    athleteRepository: athleteRepository,
+                    raceRepository: raceRepository
                 )
             }
         }

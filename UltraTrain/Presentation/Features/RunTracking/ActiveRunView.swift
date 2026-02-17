@@ -6,7 +6,10 @@ struct ActiveRunView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            RunMapView(coordinates: viewModel.routeCoordinates)
+            RunMapView(
+                coordinates: viewModel.routeCoordinates,
+                checkpointLocations: viewModel.resolvedCheckpointLocations
+            )
                 .padding(.horizontal, Theme.Spacing.md)
                 .padding(.top, Theme.Spacing.sm)
 

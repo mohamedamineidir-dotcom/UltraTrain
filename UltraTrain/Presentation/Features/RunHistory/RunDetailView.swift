@@ -5,6 +5,7 @@ struct RunDetailView: View {
     let run: CompletedRun
     let planRepository: any TrainingPlanRepository
     let athleteRepository: any AthleteRepository
+    let raceRepository: any RaceRepository
 
     var body: some View {
         ScrollView {
@@ -140,7 +141,8 @@ struct RunDetailView: View {
             RunAnalysisView(
                 run: run,
                 planRepository: planRepository,
-                athleteRepository: athleteRepository
+                athleteRepository: athleteRepository,
+                raceRepository: raceRepository
             )
         } label: {
             Label("View Analysis", systemImage: "chart.xyaxis.line")

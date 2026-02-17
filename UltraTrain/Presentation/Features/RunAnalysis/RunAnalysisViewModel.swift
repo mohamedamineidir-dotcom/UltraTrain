@@ -1,3 +1,4 @@
+import CoreLocation
 import Foundation
 import os
 
@@ -9,6 +10,7 @@ final class RunAnalysisViewModel {
 
     private let planRepository: any TrainingPlanRepository
     private let athleteRepository: any AthleteRepository
+    private let raceRepository: any RaceRepository
 
     // MARK: - State
 
@@ -16,7 +18,10 @@ final class RunAnalysisViewModel {
     var elevationProfile: [ElevationProfilePoint] = []
     var zoneDistribution: [HeartRateZoneDistribution] = []
     var routeSegments: [RouteSegment] = []
+    var elevationSegments: [ElevationSegment] = []
+    var routeColoringMode: RouteColoringMode = .pace
     var planComparison: PlanComparison?
+    var checkpointLocations: [(checkpoint: Checkpoint, coordinate: CLLocationCoordinate2D)] = []
     var isLoading = false
     var error: String?
     var showFullScreenMap = false
@@ -26,11 +31,13 @@ final class RunAnalysisViewModel {
     init(
         run: CompletedRun,
         planRepository: any TrainingPlanRepository,
-        athleteRepository: any AthleteRepository
+        athleteRepository: any AthleteRepository,
+        raceRepository: any RaceRepository
     ) {
         self.run = run
         self.planRepository = planRepository
         self.athleteRepository = athleteRepository
+        self.raceRepository = raceRepository
     }
 
     // MARK: - Load
@@ -44,6 +51,7 @@ final class RunAnalysisViewModel {
 
             elevationProfile = RunStatisticsCalculator.elevationProfile(from: run.gpsTrack)
             routeSegments = RunStatisticsCalculator.buildRouteSegments(from: run.gpsTrack)
+            elevationSegments = RunStatisticsCalculator.buildElevationSegments(from: run.gpsTrack)
 
             let trackHasHR = run.gpsTrack.contains { $0.heartRate != nil }
             if let maxHR = athlete?.maxHeartRate, maxHR > 0, trackHasHR {
@@ -62,6 +70,15 @@ final class RunAnalysisViewModel {
                         session: session
                     )
                 }
+            }
+
+            if let raceId = run.linkedRaceId,
+               let race = try await raceRepository.getRace(id: raceId),
+               !race.checkpoints.isEmpty {
+                checkpointLocations = CheckpointLocationResolver.resolveLocations(
+                    checkpoints: race.checkpoints,
+                    along: run.gpsTrack
+                )
             }
         } catch {
             self.error = error.localizedDescription

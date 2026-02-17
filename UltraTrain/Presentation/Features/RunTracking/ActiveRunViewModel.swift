@@ -53,12 +53,15 @@ final class ActiveRunViewModel {
     var isAutoPaused = false
     var nutritionReminders: [NutritionReminder] = []
     var activeReminder: NutritionReminder?
+    var resolvedCheckpointLocations: [(checkpoint: Checkpoint, coordinate: CLLocationCoordinate2D)] = []
 
     // MARK: - Private
 
     private var timerTask: Task<Void, Never>?
     private var locationTask: Task<Void, Never>?
     private var heartRateTask: Task<Void, Never>?
+    private var raceCheckpoints: [Checkpoint] = []
+    private var lastCheckpointResolveKm: Int = 0
     private var autoPauseTimer: TimeInterval = 0
     private var pauseStartTime: Date?
     private var lastLiveActivityUpdate: TimeInterval = 0
@@ -104,6 +107,7 @@ final class ActiveRunViewModel {
     func startRun() {
         runState = .running
         loadNutritionReminders()
+        loadRaceCheckpoints()
         setupWatchCommandHandler()
         if nutritionAlertSoundEnabled { hapticService.prepareHaptics() }
         startTimer()
@@ -296,6 +300,7 @@ final class ActiveRunViewModel {
             currentPace = RunStatisticsCalculator.formatPace(pace)
         }
 
+        updateCheckpointLocations()
         handleAutoPause(speed: location.speed)
     }
 
@@ -356,6 +361,34 @@ final class ActiveRunViewModel {
                 hapticService.playNutritionAlert()
             }
         }
+    }
+
+    // MARK: - Race Checkpoints
+
+    private func loadRaceCheckpoints() {
+        guard let raceId else { return }
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                if let race = try await self.raceRepository.getRace(id: raceId) {
+                    self.raceCheckpoints = race.checkpoints
+                    Logger.tracking.info("Loaded \(race.checkpoints.count) checkpoints for race \(race.name)")
+                }
+            } catch {
+                Logger.tracking.error("Failed to load race checkpoints: \(error)")
+            }
+        }
+    }
+
+    private func updateCheckpointLocations() {
+        guard !raceCheckpoints.isEmpty else { return }
+        let currentKm = Int(distanceKm)
+        guard currentKm > lastCheckpointResolveKm else { return }
+        lastCheckpointResolveKm = currentKm
+        resolvedCheckpointLocations = CheckpointLocationResolver.resolveLocations(
+            checkpoints: raceCheckpoints,
+            along: trackPoints
+        )
     }
 
     // MARK: - Race Linking

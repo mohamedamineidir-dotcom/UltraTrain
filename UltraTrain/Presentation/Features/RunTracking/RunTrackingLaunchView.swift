@@ -209,7 +209,8 @@ struct RunTrackingLaunchView: View {
             RunHistoryView(
                 runRepository: runRepository,
                 planRepository: planRepository,
-                athleteRepository: athleteRepository
+                athleteRepository: athleteRepository,
+                raceRepository: raceRepository
             )
         } label: {
             HStack {
