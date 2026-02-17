@@ -15,6 +15,23 @@ struct ProductLibraryView: View {
     var body: some View {
         NavigationStack {
             List {
+                Section("Preferences") {
+                    Toggle("Avoid Caffeine", isOn: Binding(
+                        get: { viewModel.preferences.avoidCaffeine },
+                        set: { newValue in
+                            viewModel.preferences.avoidCaffeine = newValue
+                            Task { await viewModel.savePreferences() }
+                        }
+                    ))
+                    Toggle("Prefer Real Food", isOn: Binding(
+                        get: { viewModel.preferences.preferRealFood },
+                        set: { newValue in
+                            viewModel.preferences.preferRealFood = newValue
+                            Task { await viewModel.savePreferences() }
+                        }
+                    ))
+                }
+
                 ForEach(groupedProducts, id: \.type) { group in
                     Section(group.type.displayName) {
                         ForEach(group.products) { product in
@@ -44,12 +61,15 @@ struct ProductLibraryView: View {
     }
 
     private func productRow(_ product: NutritionProduct) -> some View {
-        HStack {
+        let excluded = viewModel.isProductExcluded(product.id)
+        return HStack {
             Image(systemName: product.type.icon)
-                .foregroundStyle(product.type.color)
+                .foregroundStyle(excluded ? Theme.Colors.secondaryLabel : product.type.color)
             VStack(alignment: .leading) {
                 Text(product.name)
                     .font(.subheadline)
+                    .strikethrough(excluded)
+                    .foregroundStyle(excluded ? Theme.Colors.secondaryLabel : Theme.Colors.label)
                 HStack(spacing: Theme.Spacing.sm) {
                     Text("\(product.caloriesPerServing) kcal")
                     Text("\(product.carbsGramsPerServing, specifier: "%.0f")g carbs")
@@ -64,6 +84,13 @@ struct ProductLibraryView: View {
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.warning)
             }
+            Button {
+                Task { await viewModel.toggleProductExclusion(product.id) }
+            } label: {
+                Image(systemName: excluded ? "xmark.circle.fill" : "checkmark.circle.fill")
+                    .foregroundStyle(excluded ? .red : .green)
+            }
+            .buttonStyle(.plain)
         }
     }
 }

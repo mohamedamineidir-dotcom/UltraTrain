@@ -17,6 +17,7 @@ final class NutritionViewModel {
 
     var plan: NutritionPlan?
     var products: [NutritionProduct] = []
+    var preferences: NutritionPreferences = .default
     var isLoading = false
     var isGenerating = false
     var error: String?
@@ -54,6 +55,7 @@ final class NutritionViewModel {
 
             plan = try await nutritionRepository.getNutritionPlan(for: targetRace.id)
             products = try await nutritionRepository.getProducts()
+            preferences = try await nutritionRepository.getNutritionPreferences()
 
             if products.isEmpty {
                 for product in DefaultProducts.all {
@@ -88,10 +90,14 @@ final class NutritionViewModel {
 
             let estimatedDuration = estimateDuration(race: targetRace, athlete: athlete)
 
+            let currentPreferences = try await nutritionRepository.getNutritionPreferences()
+            preferences = currentPreferences
+
             var newPlan = try await nutritionGenerator.execute(
                 athlete: athlete,
                 race: targetRace,
-                estimatedDuration: estimatedDuration
+                estimatedDuration: estimatedDuration,
+                preferences: currentPreferences
             )
 
             let trainingPlan = try await planRepository.getActivePlan()
@@ -122,6 +128,30 @@ final class NutritionViewModel {
         } catch {
             self.error = error.localizedDescription
         }
+    }
+
+    // MARK: - Preferences
+
+    func savePreferences() async {
+        do {
+            try await nutritionRepository.saveNutritionPreferences(preferences)
+        } catch {
+            self.error = error.localizedDescription
+            Logger.nutrition.error("Failed to save nutrition preferences: \(error)")
+        }
+    }
+
+    func toggleProductExclusion(_ productId: UUID) async {
+        if preferences.excludedProductIds.contains(productId) {
+            preferences.excludedProductIds.remove(productId)
+        } else {
+            preferences.excludedProductIds.insert(productId)
+        }
+        await savePreferences()
+    }
+
+    func isProductExcluded(_ productId: UUID) -> Bool {
+        preferences.excludedProductIds.contains(productId)
     }
 
     // MARK: - Computed

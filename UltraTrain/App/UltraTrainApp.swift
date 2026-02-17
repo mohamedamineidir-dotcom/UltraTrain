@@ -37,7 +37,8 @@ struct UltraTrainApp: App {
                 CompletedRunSwiftDataModel.self,
                 SplitSwiftDataModel.self,
                 FitnessSnapshotSwiftDataModel.self,
-                AppSettingsSwiftDataModel.self
+                AppSettingsSwiftDataModel.self,
+                NutritionPreferencesSwiftDataModel.self
             ])
             let config = ModelConfiguration(isStoredInMemoryOnly: false)
             modelContainer = try ModelContainer(for: schema, configurations: config)

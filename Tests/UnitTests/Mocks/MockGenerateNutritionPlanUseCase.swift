@@ -9,7 +9,8 @@ final class MockGenerateNutritionPlanUseCase: GenerateNutritionPlanUseCase, @unc
     func execute(
         athlete: Athlete,
         race: Race,
-        estimatedDuration: TimeInterval
+        estimatedDuration: TimeInterval,
+        preferences: NutritionPreferences
     ) async throws -> NutritionPlan {
         executeCallCount += 1
         if shouldThrow {

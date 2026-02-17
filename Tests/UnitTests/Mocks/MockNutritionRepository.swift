@@ -5,6 +5,7 @@ final class MockNutritionRepository: NutritionRepository, @unchecked Sendable {
     var savedPlan: NutritionPlan?
     var plans: [UUID: NutritionPlan] = [:]
     var savedProducts: [NutritionProduct] = []
+    var savedPreferences: NutritionPreferences?
     var shouldThrow = false
 
     func getNutritionPlan(for raceId: UUID) async throws -> NutritionPlan? {
@@ -32,5 +33,15 @@ final class MockNutritionRepository: NutritionRepository, @unchecked Sendable {
     func saveProduct(_ product: NutritionProduct) async throws {
         if shouldThrow { throw DomainError.persistenceError(message: "Mock error") }
         savedProducts.append(product)
+    }
+
+    func getNutritionPreferences() async throws -> NutritionPreferences {
+        if shouldThrow { throw DomainError.persistenceError(message: "Mock error") }
+        return savedPreferences ?? .default
+    }
+
+    func saveNutritionPreferences(_ preferences: NutritionPreferences) async throws {
+        if shouldThrow { throw DomainError.persistenceError(message: "Mock error") }
+        savedPreferences = preferences
     }
 }

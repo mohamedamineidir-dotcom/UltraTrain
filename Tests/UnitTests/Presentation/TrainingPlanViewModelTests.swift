@@ -99,6 +99,7 @@ struct TrainingPlanViewModelTests {
             athleteRepository: athleteRepo,
             raceRepository: raceRepo,
             planGenerator: generator,
+            nutritionRepository: MockNutritionRepository(),
             nutritionAdvisor: DefaultSessionNutritionAdvisor()
         )
     }

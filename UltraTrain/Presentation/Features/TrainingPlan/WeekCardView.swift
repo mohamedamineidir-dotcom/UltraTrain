@@ -8,6 +8,7 @@ struct WeekCardView: View {
     let allWeeks: [TrainingWeek]
     let athlete: Athlete?
     let nutritionAdvisor: any SessionNutritionAdvisor
+    let nutritionPreferences: NutritionPreferences
     let onToggleSession: (Int) -> Void
     let onSkipSession: (Int) -> Void
     let onUnskipSession: (Int) -> Void
@@ -25,6 +26,7 @@ struct WeekCardView: View {
         allWeeks: [TrainingWeek],
         athlete: Athlete?,
         nutritionAdvisor: any SessionNutritionAdvisor,
+        nutritionPreferences: NutritionPreferences,
         onToggleSession: @escaping (Int) -> Void,
         onSkipSession: @escaping (Int) -> Void,
         onUnskipSession: @escaping (Int) -> Void,
@@ -38,6 +40,7 @@ struct WeekCardView: View {
         self.allWeeks = allWeeks
         self.athlete = athlete
         self.nutritionAdvisor = nutritionAdvisor
+        self.nutritionPreferences = nutritionPreferences
         self.onToggleSession = onToggleSession
         self.onSkipSession = onSkipSession
         self.onUnskipSession = onUnskipSession
@@ -125,6 +128,7 @@ struct WeekCardView: View {
             swapCandidates: candidates,
             athlete: athlete,
             nutritionAdvisor: nutritionAdvisor,
+            nutritionPreferences: nutritionPreferences,
             onSkip: { onSkipSession(sessionIndex) },
             onUnskip: session.isSkipped ? { onUnskipSession(sessionIndex) } : nil,
             onReschedule: { newDate in onRescheduleSession(sessionIndex, newDate) },

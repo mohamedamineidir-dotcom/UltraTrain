@@ -5,7 +5,8 @@ struct NutritionPlanGenerator: GenerateNutritionPlanUseCase {
     func execute(
         athlete: Athlete,
         race: Race,
-        estimatedDuration: TimeInterval
+        estimatedDuration: TimeInterval,
+        preferences: NutritionPreferences
     ) async throws -> NutritionPlan {
         let durationMinutes = Int(estimatedDuration / 60)
 
@@ -28,7 +29,8 @@ struct NutritionPlanGenerator: GenerateNutritionPlanUseCase {
         let entries = buildSchedule(
             durationMinutes: durationMinutes,
             isUltra: isUltra,
-            isLongUltra: isLongUltra
+            isLongUltra: isLongUltra,
+            preferences: preferences
         )
 
         return NutritionPlan(
@@ -70,7 +72,8 @@ struct NutritionPlanGenerator: GenerateNutritionPlanUseCase {
     func buildSchedule(
         durationMinutes: Int,
         isUltra: Bool,
-        isLongUltra: Bool
+        isLongUltra: Bool,
+        preferences: NutritionPreferences
     ) -> [NutritionEntry] {
         var entries: [NutritionEntry] = []
         let intervalMinutes = 20
@@ -78,62 +81,98 @@ struct NutritionPlanGenerator: GenerateNutritionPlanUseCase {
         let endMinute = durationMinutes - 20
 
         guard endMinute > startMinute else {
-            entries.append(makeEntry(
-                product: DefaultProducts.gel,
-                timingMinutes: 30,
-                notes: "Take with water"
-            ))
+            if let gel = resolve(DefaultProducts.gel, preferences: preferences) {
+                entries.append(makeEntry(product: gel, timingMinutes: 30, notes: "Take with water"))
+            }
             return entries
         }
 
+        let realFoodInterval = preferences.preferRealFood && isLongUltra ? 40 : 60
         var gelChewToggle = false
 
         for minute in stride(from: startMinute, through: endMinute, by: intervalMinutes) {
-            let useCaffeine = minute >= 240
+            let useCaffeine = minute >= 240 && !preferences.avoidCaffeine
 
             // Primary calorie source: gel or chew every 20 min
-            let product: NutritionProduct
+            let desired: NutritionProduct
             if gelChewToggle {
-                product = useCaffeine ? DefaultProducts.caffeineChew : DefaultProducts.chew
+                desired = useCaffeine ? DefaultProducts.caffeineChew : DefaultProducts.chew
             } else {
-                product = useCaffeine ? DefaultProducts.caffeineGel : DefaultProducts.gel
+                desired = useCaffeine ? DefaultProducts.caffeineGel : DefaultProducts.gel
             }
             gelChewToggle.toggle()
 
-            let notes = useCaffeine ? "Caffeinated — take with water" : "Take with water"
-            entries.append(makeEntry(product: product, timingMinutes: minute, notes: notes))
+            if let product = resolve(desired, preferences: preferences) {
+                let notes = product.caffeinated ? "Caffeinated — take with water" : "Take with water"
+                entries.append(makeEntry(product: product, timingMinutes: minute, notes: notes))
+            }
 
-            // Every 60 min: solid food for long ultras
-            if isLongUltra && minute % 60 == 0 && minute > 0 {
+            // Solid food for long ultras
+            if isLongUltra && minute % realFoodInterval == 0 && minute > 0 {
                 let solidProduct = minute % 120 == 0 ? DefaultProducts.bar : DefaultProducts.realFood
-                entries.append(makeEntry(
-                    product: solidProduct,
-                    timingMinutes: minute,
-                    notes: "Eat at aid station if possible"
-                ))
+                if let resolved = resolve(solidProduct, preferences: preferences) {
+                    entries.append(makeEntry(
+                        product: resolved,
+                        timingMinutes: minute,
+                        notes: "Eat at aid station if possible"
+                    ))
+                }
             }
 
             // Electrolyte drink every 60 min
             if minute % 60 == 0 {
-                entries.append(makeEntry(
-                    product: DefaultProducts.drink,
-                    timingMinutes: minute,
-                    notes: "Mix with 500ml water"
-                ))
+                if let drink = resolve(DefaultProducts.drink, preferences: preferences) {
+                    entries.append(makeEntry(
+                        product: drink,
+                        timingMinutes: minute,
+                        notes: "Mix with 500ml water"
+                    ))
+                }
             }
 
             // Salt capsule every 60 min for ultras
             if isUltra && minute % 60 == 0 {
-                entries.append(makeEntry(
-                    product: DefaultProducts.saltCapsule,
-                    timingMinutes: minute,
-                    notes: "Take with water"
-                ))
+                if let salt = resolve(DefaultProducts.saltCapsule, preferences: preferences) {
+                    entries.append(makeEntry(
+                        product: salt,
+                        timingMinutes: minute,
+                        notes: "Take with water"
+                    ))
+                }
             }
         }
 
         entries.sort { $0.timingMinutes < $1.timingMinutes }
         return entries
+    }
+
+    private func resolve(
+        _ product: NutritionProduct,
+        preferences: NutritionPreferences
+    ) -> NutritionProduct? {
+        if preferences.avoidCaffeine && product.caffeinated {
+            return fallbackNonCaffeinated(for: product)
+        }
+        if preferences.excludedProductIds.contains(product.id) {
+            return fallbackSameType(for: product, preferences: preferences)
+        }
+        return product
+    }
+
+    private func fallbackNonCaffeinated(for product: NutritionProduct) -> NutritionProduct? {
+        DefaultProducts.all.first { $0.type == product.type && !$0.caffeinated }
+    }
+
+    private func fallbackSameType(
+        for product: NutritionProduct,
+        preferences: NutritionPreferences
+    ) -> NutritionProduct? {
+        DefaultProducts.all.first {
+            $0.type == product.type
+            && $0.id != product.id
+            && !preferences.excludedProductIds.contains($0.id)
+            && (!preferences.avoidCaffeine || !$0.caffeinated)
+        }
     }
 
     private func makeEntry(

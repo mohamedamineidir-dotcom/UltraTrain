@@ -11,6 +11,7 @@ final class TrainingPlanViewModel {
     private let athleteRepository: any AthleteRepository
     private let raceRepository: any RaceRepository
     private let planGenerator: any GenerateTrainingPlanUseCase
+    private let nutritionRepository: any NutritionRepository
     let nutritionAdvisor: any SessionNutritionAdvisor
 
     // MARK: - State
@@ -18,6 +19,7 @@ final class TrainingPlanViewModel {
     var plan: TrainingPlan?
     var races: [Race] = []
     var athlete: Athlete?
+    var nutritionPreferences: NutritionPreferences = .default
     var isLoading = false
     var isGenerating = false
     var error: String?
@@ -30,12 +32,14 @@ final class TrainingPlanViewModel {
         athleteRepository: any AthleteRepository,
         raceRepository: any RaceRepository,
         planGenerator: any GenerateTrainingPlanUseCase,
+        nutritionRepository: any NutritionRepository,
         nutritionAdvisor: any SessionNutritionAdvisor
     ) {
         self.planRepository = planRepository
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
         self.planGenerator = planGenerator
+        self.nutritionRepository = nutritionRepository
         self.nutritionAdvisor = nutritionAdvisor
     }
 
@@ -49,6 +53,7 @@ final class TrainingPlanViewModel {
             plan = try await planRepository.getActivePlan()
             races = try await raceRepository.getRaces()
             athlete = try await athleteRepository.getAthlete()
+            nutritionPreferences = try await nutritionRepository.getNutritionPreferences()
         } catch {
             self.error = error.localizedDescription
             Logger.training.error("Failed to load plan: \(error)")

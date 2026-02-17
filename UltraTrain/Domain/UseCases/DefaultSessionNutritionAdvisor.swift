@@ -5,7 +5,8 @@ struct DefaultSessionNutritionAdvisor: SessionNutritionAdvisor {
     func advise(
         for session: TrainingSession,
         athleteWeightKg: Double,
-        experienceLevel: ExperienceLevel
+        experienceLevel: ExperienceLevel,
+        preferences: NutritionPreferences
     ) -> SessionNutritionAdvice? {
         guard session.type != .rest else { return nil }
 
@@ -19,7 +20,8 @@ struct DefaultSessionNutritionAdvisor: SessionNutritionAdvisor {
                 session: session,
                 weightKg: athleteWeightKg,
                 experience: experienceLevel,
-                durationHours: durationHours
+                durationHours: durationHours,
+                preferences: preferences
             ),
             postRun: buildPostRun(
                 session: session,
@@ -71,7 +73,8 @@ struct DefaultSessionNutritionAdvisor: SessionNutritionAdvisor {
         session: TrainingSession,
         weightKg: Double,
         experience: ExperienceLevel,
-        durationHours: Double
+        durationHours: Double,
+        preferences: NutritionPreferences
     ) -> DuringRunAdvice? {
         let durationMinutes = session.plannedDuration / 60
         guard durationMinutes > 45 else { return nil }
@@ -81,17 +84,38 @@ struct DefaultSessionNutritionAdvisor: SessionNutritionAdvisor {
         let carbsPerHour = calsPerHour / 4
         let hydration = durationHours >= 2 ? 600 : 400
 
-        var products: [ProductSuggestion] = [
-            ProductSuggestion(product: DefaultProducts.gel, frequencyDescription: "1 every 30-45 min"),
-            ProductSuggestion(product: DefaultProducts.drink, frequencyDescription: "Sip regularly")
-        ]
+        var products: [ProductSuggestion] = []
 
-        if durationHours >= 2 {
-            products.append(ProductSuggestion(product: DefaultProducts.bar, frequencyDescription: "Half every 60 min"))
+        if !preferences.excludedProductIds.contains(DefaultProducts.gel.id) {
+            products.append(ProductSuggestion(
+                product: DefaultProducts.gel,
+                frequencyDescription: "1 every 30-45 min"
+            ))
         }
 
-        if durationHours >= 3 {
-            products.append(ProductSuggestion(product: DefaultProducts.saltCapsule, frequencyDescription: "1 every 60 min"))
+        if !preferences.excludedProductIds.contains(DefaultProducts.drink.id) {
+            products.append(ProductSuggestion(
+                product: DefaultProducts.drink,
+                frequencyDescription: "Sip regularly"
+            ))
+        }
+
+        if durationHours >= 2 && !preferences.excludedProductIds.contains(DefaultProducts.bar.id) {
+            products.append(ProductSuggestion(
+                product: DefaultProducts.bar,
+                frequencyDescription: "Half every 60 min"
+            ))
+        }
+
+        if durationHours >= 3 && !preferences.excludedProductIds.contains(DefaultProducts.saltCapsule.id) {
+            products.append(ProductSuggestion(
+                product: DefaultProducts.saltCapsule,
+                frequencyDescription: "1 every 60 min"
+            ))
+        }
+
+        if preferences.avoidCaffeine {
+            products.removeAll { $0.product.caffeinated }
         }
 
         let notes: String? = isGutTrainingSession(session, durationHours: durationHours)

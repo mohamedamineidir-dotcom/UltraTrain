@@ -79,6 +79,7 @@ struct MainTabView: View {
                 athleteRepository: athleteRepository,
                 raceRepository: raceRepository,
                 planGenerator: planGenerator,
+                nutritionRepository: nutritionRepository,
                 sessionNutritionAdvisor: sessionNutritionAdvisor
             )
                 .tabItem {

@@ -35,7 +35,7 @@ struct SessionNutritionAdvisorTests {
     @Test("Rest sessions return nil")
     func restReturnsNil() {
         let session = makeSession(type: .rest, durationSeconds: 0)
-        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate)
+        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate, preferences: .default)
         #expect(advice == nil)
     }
 
@@ -44,7 +44,7 @@ struct SessionNutritionAdvisorTests {
     @Test("Long run gets high-carb pre-run advice")
     func longRunPreRun() {
         let session = makeSession(type: .longRun, durationSeconds: 3 * 3600)
-        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate)
+        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate, preferences: .default)
         #expect(advice?.preRun != nil)
         #expect(advice!.preRun!.carbsGrams >= 80)
         #expect(advice!.preRun!.hydrationMl >= 400)
@@ -53,7 +53,7 @@ struct SessionNutritionAdvisorTests {
     @Test("Recovery gets light pre-run advice")
     func recoveryPreRun() {
         let session = makeSession(type: .recovery, intensity: .easy, durationSeconds: 40 * 60)
-        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate)
+        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate, preferences: .default)
         #expect(advice?.preRun != nil)
         #expect(advice!.preRun!.carbsGrams <= 30)
     }
@@ -61,7 +61,7 @@ struct SessionNutritionAdvisorTests {
     @Test("Hard intervals gets avoid notes")
     func hardIntervalsAvoidNotes() {
         let session = makeSession(type: .intervals, intensity: .hard, durationSeconds: 75 * 60)
-        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .advanced)
+        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .advanced, preferences: .default)
         #expect(advice?.preRun?.avoidNotes != nil)
     }
 
@@ -70,14 +70,14 @@ struct SessionNutritionAdvisorTests {
     @Test("Short session has no during-run advice")
     func shortNoDuring() {
         let session = makeSession(type: .recovery, intensity: .easy, durationSeconds: 30 * 60)
-        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate)
+        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate, preferences: .default)
         #expect(advice?.duringRun == nil)
     }
 
     @Test("Session over 45 min gets during-run advice")
     func mediumGetsDuring() {
         let session = makeSession(type: .tempo, intensity: .moderate, durationSeconds: 75 * 60)
-        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate)
+        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate, preferences: .default)
         #expect(advice?.duringRun != nil)
         #expect(advice!.duringRun!.caloriesPerHour > 0)
         #expect(advice!.duringRun!.hydrationMlPerHour > 0)
@@ -86,30 +86,30 @@ struct SessionNutritionAdvisorTests {
     @Test("Calories scale with athlete weight")
     func caloriesScaleWithWeight() {
         let session = makeSession(type: .longRun, durationSeconds: 2 * 3600)
-        let light = advisor.advise(for: session, athleteWeightKg: 55, experienceLevel: .intermediate)
-        let heavy = advisor.advise(for: session, athleteWeightKg: 85, experienceLevel: .intermediate)
+        let light = advisor.advise(for: session, athleteWeightKg: 55, experienceLevel: .intermediate, preferences: .default)
+        let heavy = advisor.advise(for: session, athleteWeightKg: 85, experienceLevel: .intermediate, preferences: .default)
         #expect(heavy!.duringRun!.caloriesPerHour > light!.duringRun!.caloriesPerHour)
     }
 
     @Test("Calories increase with experience level")
     func caloriesScaleWithExperience() {
         let session = makeSession(type: .longRun, durationSeconds: 2 * 3600)
-        let beginner = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .beginner)
-        let elite = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .elite)
+        let beginner = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .beginner, preferences: .default)
+        let elite = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .elite, preferences: .default)
         #expect(elite!.duringRun!.caloriesPerHour > beginner!.duringRun!.caloriesPerHour)
     }
 
     @Test("Long session includes product suggestions")
     func longSessionProducts() {
         let session = makeSession(type: .longRun, durationSeconds: 3 * 3600)
-        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate)
+        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate, preferences: .default)
         #expect(!advice!.duringRun!.suggestedProducts.isEmpty)
     }
 
     @Test("Very long session includes bar and salt")
     func veryLongSessionBarAndSalt() {
         let session = makeSession(type: .longRun, distanceKm: 40, durationSeconds: 4 * 3600)
-        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate)
+        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate, preferences: .default)
         let types = advice!.duringRun!.suggestedProducts.map(\.product.type)
         #expect(types.contains(.bar))
         #expect(types.contains(.salt))
@@ -120,21 +120,21 @@ struct SessionNutritionAdvisorTests {
     @Test("Long run over 2h recommends gut training")
     func gutTrainingLongRun() {
         let session = makeSession(type: .longRun, durationSeconds: 2.5 * 3600)
-        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate)
+        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate, preferences: .default)
         #expect(advice!.isGutTrainingRecommended)
     }
 
     @Test("Short session does not recommend gut training")
     func noGutTrainingShort() {
         let session = makeSession(type: .tempo, durationSeconds: 60 * 60)
-        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate)
+        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate, preferences: .default)
         #expect(!advice!.isGutTrainingRecommended)
     }
 
     @Test("Back-to-back over 2h recommends gut training")
     func gutTrainingBackToBack() {
         let session = makeSession(type: .backToBack, durationSeconds: 2.5 * 3600)
-        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate)
+        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate, preferences: .default)
         #expect(advice!.isGutTrainingRecommended)
     }
 
@@ -143,28 +143,49 @@ struct SessionNutritionAdvisorTests {
     @Test("Hard intervals gets high priority recovery")
     func hardHighPriority() {
         let session = makeSession(type: .intervals, intensity: .hard, durationSeconds: 75 * 60)
-        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate)
+        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate, preferences: .default)
         #expect(advice?.postRun.priority == .high)
     }
 
     @Test("Recovery session gets low priority")
     func recoveryLowPriority() {
         let session = makeSession(type: .recovery, intensity: .easy, durationSeconds: 40 * 60)
-        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate)
+        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate, preferences: .default)
         #expect(advice?.postRun.priority == .low)
     }
 
     @Test("Tempo session gets moderate priority")
     func tempoModeratePriority() {
         let session = makeSession(type: .tempo, intensity: .moderate, durationSeconds: 60 * 60)
-        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate)
+        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate, preferences: .default)
         #expect(advice?.postRun.priority == .moderate)
     }
 
     @Test("Post-run has meal suggestions")
     func postRunMealSuggestions() {
         let session = makeSession(type: .tempo, intensity: .moderate, durationSeconds: 90 * 60)
-        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate)
+        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate, preferences: .default)
         #expect(!advice!.postRun.mealSuggestions.isEmpty)
+    }
+
+    // MARK: - Preferences
+
+    @Test("Avoid caffeine removes caffeinated products from suggestions")
+    func avoidCaffeineFiltersProducts() {
+        let session = makeSession(type: .longRun, durationSeconds: 3 * 3600)
+        let prefs = NutritionPreferences(avoidCaffeine: true, preferRealFood: false, excludedProductIds: [])
+        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate, preferences: prefs)
+        let caffeinated = advice?.duringRun?.suggestedProducts.filter { $0.product.caffeinated } ?? []
+        #expect(caffeinated.isEmpty)
+    }
+
+    @Test("Excluded product is omitted from suggestions")
+    func excludedProductOmitted() {
+        let session = makeSession(type: .longRun, durationSeconds: 3 * 3600)
+        let gelId = DefaultProducts.gel.id
+        let prefs = NutritionPreferences(avoidCaffeine: false, preferRealFood: false, excludedProductIds: [gelId])
+        let advice = advisor.advise(for: session, athleteWeightKg: 70, experienceLevel: .intermediate, preferences: prefs)
+        let hasGel = advice?.duringRun?.suggestedProducts.contains { $0.product.id == gelId } ?? false
+        #expect(!hasGel)
     }
 }

@@ -76,4 +76,25 @@ final class LocalNutritionRepository: NutritionRepository, @unchecked Sendable {
         try context.save()
         Logger.nutrition.info("Product saved: \(product.name)")
     }
+
+    func getNutritionPreferences() async throws -> NutritionPreferences {
+        let context = ModelContext(modelContainer)
+        let descriptor = FetchDescriptor<NutritionPreferencesSwiftDataModel>()
+        guard let model = try context.fetch(descriptor).first else {
+            return .default
+        }
+        return NutritionPreferencesMapper.toDomain(model)
+    }
+
+    func saveNutritionPreferences(_ preferences: NutritionPreferences) async throws {
+        let context = ModelContext(modelContainer)
+        let existing = FetchDescriptor<NutritionPreferencesSwiftDataModel>()
+        for old in try context.fetch(existing) {
+            context.delete(old)
+        }
+        let model = NutritionPreferencesMapper.toSwiftData(preferences)
+        context.insert(model)
+        try context.save()
+        Logger.nutrition.info("Nutrition preferences saved")
+    }
 }

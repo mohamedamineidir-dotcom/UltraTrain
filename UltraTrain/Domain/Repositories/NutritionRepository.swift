@@ -6,4 +6,6 @@ protocol NutritionRepository: Sendable {
     func updateNutritionPlan(_ plan: NutritionPlan) async throws
     func getProducts() async throws -> [NutritionProduct]
     func saveProduct(_ product: NutritionProduct) async throws
+    func getNutritionPreferences() async throws -> NutritionPreferences
+    func saveNutritionPreferences(_ preferences: NutritionPreferences) async throws
 }

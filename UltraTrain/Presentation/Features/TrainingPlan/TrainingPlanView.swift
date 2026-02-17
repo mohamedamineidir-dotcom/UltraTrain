@@ -8,6 +8,7 @@ struct TrainingPlanView: View {
         athleteRepository: any AthleteRepository,
         raceRepository: any RaceRepository,
         planGenerator: any GenerateTrainingPlanUseCase,
+        nutritionRepository: any NutritionRepository,
         sessionNutritionAdvisor: any SessionNutritionAdvisor
     ) {
         _viewModel = State(initialValue: TrainingPlanViewModel(
@@ -15,6 +16,7 @@ struct TrainingPlanView: View {
             athleteRepository: athleteRepository,
             raceRepository: raceRepository,
             planGenerator: planGenerator,
+            nutritionRepository: nutritionRepository,
             nutritionAdvisor: sessionNutritionAdvisor
         ))
     }
@@ -93,6 +95,7 @@ struct TrainingPlanView: View {
                         allWeeks: plan.weeks,
                         athlete: viewModel.athlete,
                         nutritionAdvisor: viewModel.nutritionAdvisor,
+                        nutritionPreferences: viewModel.nutritionPreferences,
                         onToggleSession: { sessionIndex in
                             Task {
                                 await viewModel.toggleSessionCompletion(
