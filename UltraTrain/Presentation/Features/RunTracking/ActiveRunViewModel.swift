@@ -1,5 +1,6 @@
-import Foundation
+import ActivityKit
 import CoreLocation
+import Foundation
 import os
 
 enum RunState: Equatable {
@@ -23,6 +24,7 @@ final class ActiveRunViewModel {
     private let nutritionRepository: any NutritionRepository
     private let hapticService: any HapticServiceProtocol
     private let connectivityService: PhoneConnectivityService?
+    private let liveActivityService: any LiveActivityServiceProtocol
 
     // MARK: - Config
 
@@ -59,6 +61,7 @@ final class ActiveRunViewModel {
     private var heartRateTask: Task<Void, Never>?
     private var autoPauseTimer: TimeInterval = 0
     private var pauseStartTime: Date?
+    private var lastLiveActivityUpdate: TimeInterval = 0
 
     // MARK: - Init
 
@@ -71,6 +74,7 @@ final class ActiveRunViewModel {
         nutritionRepository: any NutritionRepository,
         hapticService: any HapticServiceProtocol,
         connectivityService: PhoneConnectivityService? = nil,
+        liveActivityService: any LiveActivityServiceProtocol = LiveActivityService(),
         athlete: Athlete,
         linkedSession: TrainingSession?,
         autoPauseEnabled: Bool,
@@ -86,6 +90,7 @@ final class ActiveRunViewModel {
         self.nutritionRepository = nutritionRepository
         self.hapticService = hapticService
         self.connectivityService = connectivityService
+        self.liveActivityService = liveActivityService
         self.athlete = athlete
         self.linkedSession = linkedSession
         self.autoPauseEnabled = autoPauseEnabled
@@ -105,6 +110,7 @@ final class ActiveRunViewModel {
         startLocationTracking()
         startHeartRateStreaming()
         sendWatchUpdate()
+        startLiveActivity()
         Logger.tracking.info("Run started")
     }
 
@@ -117,6 +123,7 @@ final class ActiveRunViewModel {
         if !auto {
             locationService.pauseTracking()
         }
+        updateLiveActivityImmediately()
         Logger.tracking.info("Run \(auto ? "auto-" : "")paused at \(self.elapsedTime)s")
     }
 
@@ -134,6 +141,7 @@ final class ActiveRunViewModel {
         if wasManuallyPaused {
             locationService.resumeTracking()
         }
+        updateLiveActivityImmediately()
         Logger.tracking.info("Run resumed")
     }
 
@@ -149,6 +157,7 @@ final class ActiveRunViewModel {
         locationService.stopTracking()
         healthKitService.stopHeartRateStream()
         sendWatchUpdate()
+        endLiveActivity()
         showSummary = true
         Logger.tracking.info("Run stopped — \(self.distanceKm) km in \(self.elapsedTime)s")
     }
@@ -239,6 +248,7 @@ final class ActiveRunViewModel {
                 self?.elapsedTime += AppConfiguration.RunTracking.timerInterval
                 self?.checkNutritionReminders()
                 self?.sendWatchUpdate()
+                self?.updateLiveActivityIfNeeded()
             }
         }
     }
@@ -397,6 +407,61 @@ final class ActiveRunViewModel {
 
     private func sendWatchUpdate() {
         connectivityService?.sendRunUpdate(buildWatchRunData())
+    }
+
+    // MARK: - Live Activity
+
+    private func startLiveActivity() {
+        let attributes = RunActivityAttributes(
+            startTime: Date.now,
+            linkedSessionName: linkedSession?.description
+        )
+        liveActivityService.startActivity(
+            attributes: attributes,
+            state: buildLiveActivityState()
+        )
+    }
+
+    private func updateLiveActivityIfNeeded() {
+        let now = elapsedTime
+        guard now - lastLiveActivityUpdate >= AppConfiguration.LiveActivity.updateIntervalSeconds else { return }
+        lastLiveActivityUpdate = now
+        liveActivityService.updateActivity(state: buildLiveActivityState())
+    }
+
+    private func updateLiveActivityImmediately() {
+        lastLiveActivityUpdate = elapsedTime
+        liveActivityService.updateActivity(state: buildLiveActivityState())
+    }
+
+    private func endLiveActivity() {
+        liveActivityService.endActivity(state: buildLiveActivityState())
+    }
+
+    private func buildLiveActivityState() -> RunActivityAttributes.ContentState {
+        let stateString: String = switch runState {
+        case .notStarted: "notStarted"
+        case .running: "running"
+        case .paused: isAutoPaused ? "autoPaused" : "paused"
+        case .finished: "finished"
+        }
+
+        let isPaused = runState == .paused || runState == .finished
+        let timerStartDate = isPaused ? Date.now : Date.now.addingTimeInterval(-elapsedTime)
+
+        return RunActivityAttributes.ContentState(
+            elapsedTime: elapsedTime,
+            distanceKm: distanceKm,
+            currentHeartRate: currentHeartRate,
+            elevationGainM: elevationGainM,
+            runState: stateString,
+            isAutoPaused: isAutoPaused,
+            formattedDistance: formattedDistance,
+            formattedElevation: formattedElevation,
+            formattedPace: currentPace,
+            timerStartDate: timerStartDate,
+            isPaused: isPaused
+        )
     }
 
     private func buildWatchRunData() -> WatchRunData {

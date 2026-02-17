@@ -45,5 +45,7 @@
     <string>UltraTrain reads your heart rate, workout, and activity data to track your training progress and fitness.</string>
     <key>NSHealthUpdateUsageDescription</key>
     <string>UltraTrain saves your completed runs as workouts in Apple Health.</string>
+    <key>NSSupportsLiveActivities</key>
+    <true/>
 </dict>
 </plist>

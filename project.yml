@@ -28,6 +28,8 @@ targets:
     dependencies:
       - target: UltraTrainWatch
         embed: true
+      - target: UltraTrainWidgets
+        embed: true
       - sdk: WatchConnectivity.framework
     settings:
       base:
@@ -71,6 +73,29 @@ targets:
         CURRENT_PROJECT_VERSION: 1
         CODE_SIGN_STYLE: Automatic
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+
+  UltraTrainWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: UltraTrainWidgets
+        excludes:
+          - "**/.DS_Store"
+      - path: UltraTrain/Shared
+        excludes:
+          - "**/.DS_Store"
+    resources:
+      - path: UltraTrainWidgets/Resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ultratrain.app.widgets
+        INFOPLIST_FILE: UltraTrainWidgets/Resources/Info.plist
+        GENERATE_INFOPLIST_FILE: false
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: 1
+        CODE_SIGN_STYLE: Automatic
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
 
   UltraTrainTests:
     type: bundle.unit-test

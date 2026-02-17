@@ -49,6 +49,10 @@ enum AppConfiguration {
         static let updateInterval: TimeInterval = 1.0
     }
 
+    enum LiveActivity {
+        static let updateIntervalSeconds: TimeInterval = 4.0
+    }
+
     enum NutritionReminders {
         static let hydrationIntervalSeconds: TimeInterval = 1200  // 20 min
         static let fuelIntervalSeconds: TimeInterval = 2700       // 45 min
