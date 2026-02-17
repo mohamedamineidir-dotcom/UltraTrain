@@ -694,6 +694,7 @@
 		A1B2C3D4E5F6A7B8C9D0E1F2 /* WidgetData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetData.swift; sourceTree = "<group>"; };
 		D1E2F3A4B5C6D7E8F9A0B1C2 /* WidgetDataKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataKeys.swift; sourceTree = "<group>"; };
 		A2B3C4D5E6F7A8B9C0D1E2F3 /* WidgetDataReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataReader.swift; sourceTree = "<group>"; };
+		AACC55EE77FF99001122AABB /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1165,6 +1166,7 @@
 		6DDCCF70956072DF40F7B550 = {
 			isa = PBXGroup;
 			children = (
+				AACC55EE77FF99001122AABB /* Secrets.xcconfig */,
 				4D7718F9F73027927CFC3399 /* UITests */,
 				50A0218E70FDB129CA7BBEE0 /* UltraTrain */,
 				644965A28A38CFFFBA0C94EB /* UltraTrainWatch */,
@@ -2109,6 +2111,7 @@
 		};
 		3C3D2CFBE2DF62D2204055A8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = AACC55EE77FF99001122AABB /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -2166,6 +2169,7 @@
 		};
 		56A983F468957BC6E11D8DE4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = AACC55EE77FF99001122AABB /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

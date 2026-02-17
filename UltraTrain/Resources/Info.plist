@@ -47,5 +47,20 @@
     <string>UltraTrain saves your completed runs as workouts in Apple Health.</string>
     <key>NSSupportsLiveActivities</key>
     <true/>
+    <key>STRAVA_CLIENT_ID</key>
+    <string>$(STRAVA_CLIENT_ID)</string>
+    <key>STRAVA_CLIENT_SECRET</key>
+    <string>$(STRAVA_CLIENT_SECRET)</string>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>com.ultratrain.strava</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>ultratrain</string>
+            </array>
+        </dict>
+    </array>
 </dict>
 </plist>
