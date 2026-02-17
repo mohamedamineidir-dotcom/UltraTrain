@@ -36,6 +36,7 @@ struct RunSummarySheet: View {
                         onDismiss()
                     }
                     .foregroundStyle(Theme.Colors.danger)
+                    .accessibilityIdentifier("runTracking.discardButton")
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
@@ -46,6 +47,7 @@ struct RunSummarySheet: View {
                     }
                     .bold()
                     .disabled(viewModel.isSaving)
+                    .accessibilityIdentifier("runTracking.saveButton")
                 }
             }
             .interactiveDismissDisabled()

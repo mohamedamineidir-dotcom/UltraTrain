@@ -19,6 +19,7 @@ struct OnboardingNavigationBar: View {
                     }
                 }
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .accessibilityIdentifier("onboarding.backButton")
             }
 
             Spacer()
@@ -34,6 +35,7 @@ struct OnboardingNavigationBar: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(!viewModel.canAdvance)
+                .accessibilityIdentifier("onboarding.nextButton")
             }
         }
         .padding(.horizontal, Theme.Spacing.md)

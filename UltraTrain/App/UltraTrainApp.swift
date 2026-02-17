@@ -23,6 +23,8 @@ struct UltraTrainApp: App {
     private let sessionNutritionAdvisor: any SessionNutritionAdvisor
 
     init() {
+        let isUITesting = ProcessInfo.processInfo.arguments.contains("-UITestMode")
+
         do {
             let schema = Schema([
                 AthleteSwiftDataModel.self,
@@ -40,11 +42,17 @@ struct UltraTrainApp: App {
                 AppSettingsSwiftDataModel.self,
                 NutritionPreferencesSwiftDataModel.self
             ])
-            let config = ModelConfiguration(isStoredInMemoryOnly: false)
+            let config = ModelConfiguration(isStoredInMemoryOnly: isUITesting)
             modelContainer = try ModelContainer(for: schema, configurations: config)
         } catch {
             fatalError("Failed to create ModelContainer: \(error)")
         }
+
+        #if DEBUG
+        if isUITesting && ProcessInfo.processInfo.arguments.contains("-UITestSkipOnboarding") {
+            UITestDataSeeder.seed(into: modelContainer)
+        }
+        #endif
 
         athleteRepository = LocalAthleteRepository(modelContainer: modelContainer)
         raceRepository = LocalRaceRepository(modelContainer: modelContainer)

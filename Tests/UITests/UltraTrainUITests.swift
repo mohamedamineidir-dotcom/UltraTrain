@@ -6,9 +6,8 @@ final class UltraTrainUITests: XCTestCase {
     }
 
     @MainActor
-    func testAppLaunches() throws {
-        let app = XCUIApplication()
-        app.launch()
-        XCTAssertTrue(app.staticTexts["Welcome to UltraTrain"].exists)
+    func testAppLaunchesWithTestData() throws {
+        let app = XCUIApplication.launchWithTestData()
+        XCTAssertTrue(app.tabBars.buttons["Dashboard"].waitForExistence(timeout: 5))
     }
 }

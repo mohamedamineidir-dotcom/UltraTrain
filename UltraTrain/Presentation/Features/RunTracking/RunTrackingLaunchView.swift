@@ -169,6 +169,7 @@ struct RunTrackingLaunchView: View {
             || locationService.authorizationStatus == .denied
             || locationService.authorizationStatus == .notDetermined
         )
+        .accessibilityIdentifier("runTracking.startButton")
     }
 
     // MARK: - History

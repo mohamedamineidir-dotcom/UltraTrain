@@ -34,9 +34,11 @@ struct PhysicalDataStepView: View {
             TextField("First Name", text: $viewModel.firstName)
                 .textContentType(.givenName)
                 .autocorrectionDisabled()
+                .accessibilityIdentifier("onboarding.firstNameField")
             TextField("Last Name", text: $viewModel.lastName)
                 .textContentType(.familyName)
                 .autocorrectionDisabled()
+                .accessibilityIdentifier("onboarding.lastNameField")
         }
         .textFieldStyle(.roundedBorder)
         .cardStyle()

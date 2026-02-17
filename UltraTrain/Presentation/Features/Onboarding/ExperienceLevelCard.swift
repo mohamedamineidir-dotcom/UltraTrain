@@ -39,6 +39,7 @@ struct ExperienceLevelCard: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("onboarding.experienceCard.\(level.rawValue)")
     }
 
     private var iconName: String {

@@ -59,6 +59,7 @@ struct ActiveRunView: View {
                 .font(.system(size: 56, weight: .bold, design: .monospaced))
                 .monospacedDigit()
                 .foregroundStyle(timerColor)
+                .accessibilityIdentifier("runTracking.timerDisplay")
 
             if viewModel.isAutoPaused {
                 Text("Auto-Paused")
@@ -91,7 +92,8 @@ struct ActiveRunView: View {
                 controlButton(
                     icon: "pause.fill",
                     label: "Pause",
-                    color: Theme.Colors.warning
+                    color: Theme.Colors.warning,
+                    accessibilityID: "runTracking.pauseButton"
                 ) {
                     viewModel.pauseRun()
                 }
@@ -102,14 +104,16 @@ struct ActiveRunView: View {
                 controlButton(
                     icon: "play.fill",
                     label: "Resume",
-                    color: Theme.Colors.success
+                    color: Theme.Colors.success,
+                    accessibilityID: "runTracking.resumeButton"
                 ) {
                     viewModel.resumeRun()
                 }
                 controlButton(
                     icon: "stop.fill",
                     label: "Stop",
-                    color: Theme.Colors.danger
+                    color: Theme.Colors.danger,
+                    accessibilityID: "runTracking.stopButton"
                 ) {
                     viewModel.stopRun()
                 }
@@ -124,6 +128,7 @@ struct ActiveRunView: View {
         icon: String,
         label: String,
         color: Color,
+        accessibilityID: String,
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
@@ -139,5 +144,6 @@ struct ActiveRunView: View {
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
         }
+        .accessibilityIdentifier(accessibilityID)
     }
 }

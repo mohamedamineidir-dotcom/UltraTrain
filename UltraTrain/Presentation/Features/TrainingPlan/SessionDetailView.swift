@@ -97,6 +97,7 @@ struct SessionDetailView: View {
                 .background(session.isSkipped ? Color.gray : session.intensity.color)
                 .clipShape(Capsule())
         }
+        .accessibilityIdentifier("trainingPlan.sessionDetail.header")
     }
 
     // MARK: - Skipped Banner

@@ -34,6 +34,7 @@ struct RaceGoalStepView: View {
             TextField("Race Name (e.g. UTMB, Diagonale des Fous)", text: $viewModel.raceName)
                 .textFieldStyle(.roundedBorder)
                 .autocorrectionDisabled()
+                .accessibilityIdentifier("onboarding.raceNameField")
             DatePicker(
                 "Race Date",
                 selection: $viewModel.raceDate,

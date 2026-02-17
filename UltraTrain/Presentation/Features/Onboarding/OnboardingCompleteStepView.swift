@@ -99,6 +99,7 @@ struct OnboardingCompleteStepView: View {
         .controlSize(.large)
         .disabled(viewModel.isSaving)
         .padding(.top, Theme.Spacing.md)
+        .accessibilityIdentifier("onboarding.getStartedButton")
     }
 }
 

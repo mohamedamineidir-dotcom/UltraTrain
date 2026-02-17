@@ -24,12 +24,21 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
 
     private let locationManager = CLLocationManager()
     private var locationContinuation: AsyncStream<CLLocation>.Continuation?
+    #if DEBUG
+    private let isUITestMode = ProcessInfo.processInfo.arguments.contains("-UITestMode")
+    #endif
 
     // MARK: - Init
 
     override init() {
         super.init()
         locationManager.delegate = self
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-UITestMode") {
+            authorizationStatus = .authorizedWhenInUse
+            return
+        }
+        #endif
         updateAuthStatus()
     }
 
@@ -121,6 +130,9 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
 
     nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         Task { @MainActor in
+            #if DEBUG
+            if self.isUITestMode { return }
+            #endif
             self.updateAuthStatus()
         }
     }

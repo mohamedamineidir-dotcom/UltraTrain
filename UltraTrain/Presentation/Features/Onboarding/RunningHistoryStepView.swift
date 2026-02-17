@@ -42,6 +42,7 @@ struct RunningHistoryStepView: View {
         }
         .tint(Theme.Colors.primary)
         .cardStyle()
+        .accessibilityIdentifier("onboarding.newRunnerToggle")
     }
 
     private var weeklyVolumeSection: some View {

@@ -57,6 +57,7 @@ struct WeekCardView: View {
             }
         }
         .cardStyle()
+        .accessibilityIdentifier("trainingPlan.weekCard.\(week.weekNumber)")
     }
 
     private var headerButton: some View {
@@ -115,6 +116,7 @@ struct WeekCardView: View {
                     }
                 }
                 .buttonStyle(.plain)
+                .accessibilityIdentifier("trainingPlan.sessionRow.\(sessionIndex)")
             }
         }
     }

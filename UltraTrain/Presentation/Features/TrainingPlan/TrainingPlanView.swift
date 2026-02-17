@@ -249,6 +249,8 @@ struct TrainingPlanView: View {
             }
             .buttonStyle(.borderedProminent)
             .disabled(viewModel.isGenerating)
+            .accessibilityIdentifier("trainingPlan.generateButton")
         }
+        .accessibilityIdentifier("trainingPlan.emptyState")
     }
 }
