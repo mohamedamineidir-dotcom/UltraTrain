@@ -45,6 +45,10 @@ enum AppConfiguration {
         static let sodiumMgPerHour: Int = 600
     }
 
+    enum WatchConnectivity {
+        static let updateInterval: TimeInterval = 1.0
+    }
+
     enum NutritionReminders {
         static let hydrationIntervalSeconds: TimeInterval = 1200  // 20 min
         static let fuelIntervalSeconds: TimeInterval = 2700       // 45 min

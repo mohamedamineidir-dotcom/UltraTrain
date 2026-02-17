@@ -21,6 +21,7 @@ struct UltraTrainApp: App {
     private let hapticService: HapticService
     private let trainingLoadCalculator: TrainingLoadCalculator
     private let sessionNutritionAdvisor: any SessionNutritionAdvisor
+    private let connectivityService: PhoneConnectivityService
 
     init() {
         let isUITesting = ProcessInfo.processInfo.arguments.contains("-UITestMode")
@@ -71,6 +72,8 @@ struct UltraTrainApp: App {
         hapticService = HapticService()
         trainingLoadCalculator = TrainingLoadCalculator()
         sessionNutritionAdvisor = DefaultSessionNutritionAdvisor()
+        connectivityService = PhoneConnectivityService()
+        connectivityService.activate()
     }
 
     var body: some Scene {
@@ -92,7 +95,8 @@ struct UltraTrainApp: App {
                 healthKitService: healthKitService,
                 hapticService: hapticService,
                 trainingLoadCalculator: trainingLoadCalculator,
-                sessionNutritionAdvisor: sessionNutritionAdvisor
+                sessionNutritionAdvisor: sessionNutritionAdvisor,
+                connectivityService: connectivityService
             )
         }
     }

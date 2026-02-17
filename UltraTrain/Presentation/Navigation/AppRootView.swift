@@ -20,6 +20,7 @@ struct AppRootView: View {
     private let hapticService: any HapticServiceProtocol
     private let trainingLoadCalculator: any CalculateTrainingLoadUseCase
     private let sessionNutritionAdvisor: any SessionNutritionAdvisor
+    private let connectivityService: PhoneConnectivityService?
 
     init(
         athleteRepository: any AthleteRepository,
@@ -38,7 +39,8 @@ struct AppRootView: View {
         healthKitService: any HealthKitServiceProtocol,
         hapticService: any HapticServiceProtocol,
         trainingLoadCalculator: any CalculateTrainingLoadUseCase,
-        sessionNutritionAdvisor: any SessionNutritionAdvisor
+        sessionNutritionAdvisor: any SessionNutritionAdvisor,
+        connectivityService: PhoneConnectivityService? = nil
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -57,6 +59,7 @@ struct AppRootView: View {
         self.hapticService = hapticService
         self.trainingLoadCalculator = trainingLoadCalculator
         self.sessionNutritionAdvisor = sessionNutritionAdvisor
+        self.connectivityService = connectivityService
     }
 
     var body: some View {
@@ -82,7 +85,8 @@ struct AppRootView: View {
                     healthKitService: healthKitService,
                     hapticService: hapticService,
                     trainingLoadCalculator: trainingLoadCalculator,
-                    sessionNutritionAdvisor: sessionNutritionAdvisor
+                    sessionNutritionAdvisor: sessionNutritionAdvisor,
+                    connectivityService: connectivityService
                 )
             case .some(false):
                 OnboardingView(

@@ -22,6 +22,7 @@ final class ActiveRunViewModel {
     private let raceRepository: any RaceRepository
     private let nutritionRepository: any NutritionRepository
     private let hapticService: any HapticServiceProtocol
+    private let connectivityService: PhoneConnectivityService?
 
     // MARK: - Config
 
@@ -69,6 +70,7 @@ final class ActiveRunViewModel {
         raceRepository: any RaceRepository,
         nutritionRepository: any NutritionRepository,
         hapticService: any HapticServiceProtocol,
+        connectivityService: PhoneConnectivityService? = nil,
         athlete: Athlete,
         linkedSession: TrainingSession?,
         autoPauseEnabled: Bool,
@@ -83,6 +85,7 @@ final class ActiveRunViewModel {
         self.raceRepository = raceRepository
         self.nutritionRepository = nutritionRepository
         self.hapticService = hapticService
+        self.connectivityService = connectivityService
         self.athlete = athlete
         self.linkedSession = linkedSession
         self.autoPauseEnabled = autoPauseEnabled
@@ -96,10 +99,12 @@ final class ActiveRunViewModel {
     func startRun() {
         runState = .running
         loadNutritionReminders()
+        setupWatchCommandHandler()
         if nutritionAlertSoundEnabled { hapticService.prepareHaptics() }
         startTimer()
         startLocationTracking()
         startHeartRateStreaming()
+        sendWatchUpdate()
         Logger.tracking.info("Run started")
     }
 
@@ -143,6 +148,7 @@ final class ActiveRunViewModel {
         heartRateTask?.cancel()
         locationService.stopTracking()
         healthKitService.stopHeartRateStream()
+        sendWatchUpdate()
         showSummary = true
         Logger.tracking.info("Run stopped — \(self.distanceKm) km in \(self.elapsedTime)s")
     }
@@ -232,6 +238,7 @@ final class ActiveRunViewModel {
                 guard !Task.isCancelled else { break }
                 self?.elapsedTime += AppConfiguration.RunTracking.timerInterval
                 self?.checkNutritionReminders()
+                self?.sendWatchUpdate()
             }
         }
     }
@@ -372,5 +379,47 @@ final class ActiveRunViewModel {
             resumeRun()
             Logger.tracking.info("Auto-resumed at speed \(speed) m/s")
         }
+    }
+
+    // MARK: - Watch Connectivity
+
+    private func setupWatchCommandHandler() {
+        connectivityService?.commandHandler = { [weak self] command in
+            guard let self else { return }
+            switch command {
+            case .pause: self.pauseRun()
+            case .resume: self.resumeRun()
+            case .stop: self.stopRun()
+            case .dismissReminder: self.dismissReminder()
+            }
+        }
+    }
+
+    private func sendWatchUpdate() {
+        connectivityService?.sendRunUpdate(buildWatchRunData())
+    }
+
+    private func buildWatchRunData() -> WatchRunData {
+        let stateString: String = switch runState {
+        case .notStarted: "notStarted"
+        case .running: "running"
+        case .paused: isAutoPaused ? "autoPaused" : "paused"
+        case .finished: "finished"
+        }
+
+        return WatchRunData(
+            runState: stateString,
+            elapsedTime: elapsedTime,
+            distanceKm: distanceKm,
+            currentPace: currentPace,
+            currentHeartRate: currentHeartRate,
+            elevationGainM: elevationGainM,
+            formattedTime: formattedTime,
+            formattedDistance: formattedDistance,
+            formattedElevation: formattedElevation,
+            isAutoPaused: isAutoPaused,
+            activeReminderMessage: activeReminder?.message,
+            activeReminderType: activeReminder?.type.rawValue
+        )
     }
 }
