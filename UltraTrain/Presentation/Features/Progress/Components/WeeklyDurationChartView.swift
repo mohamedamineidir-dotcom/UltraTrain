@@ -12,6 +12,15 @@ struct WeeklyDurationChartView: View {
 
             chart
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(chartSummary)
+    }
+
+    private var chartSummary: String {
+        let totalHours = weeklyVolumes.reduce(0.0) { $0 + $1.duration } / 3600
+        guard let latest = weeklyVolumes.last else { return "Weekly duration chart, no data" }
+        let latestHours = latest.duration / 3600
+        return "Weekly duration chart. \(weeklyVolumes.count) weeks. Latest week \(String(format: "%.1f", latestHours)) hours. Total \(String(format: "%.0f", totalHours)) hours."
     }
 
     // MARK: - Chart

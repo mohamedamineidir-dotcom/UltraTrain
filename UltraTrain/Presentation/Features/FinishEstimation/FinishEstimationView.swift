@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct FinishEstimationView: View {
+    @ScaledMetric(relativeTo: .largeTitle) private var errorIconSize: CGFloat = 48
     @State private var viewModel: FinishEstimationViewModel
 
     init(
@@ -161,6 +162,7 @@ struct FinishEstimationView: View {
         HStack(spacing: Theme.Spacing.sm) {
             Image(systemName: "checkmark.seal.fill")
                 .foregroundStyle(Theme.Colors.success)
+                .accessibilityHidden(true)
             Text("Calibrated from \(count) race result\(count == 1 ? "" : "s")")
                 .font(.subheadline)
         }
@@ -228,8 +230,9 @@ struct FinishEstimationView: View {
     private func errorSection(_ message: String) -> some View {
         VStack(spacing: Theme.Spacing.md) {
             Image(systemName: "figure.run.circle")
-                .font(.system(size: 48))
+                .font(.system(size: errorIconSize))
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .accessibilityHidden(true)
             Text(message)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
                 .multilineTextAlignment(.center)

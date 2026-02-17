@@ -35,5 +35,18 @@ struct LabeledStepper: View {
             .buttonStyle(.plain)
             .foregroundStyle(Theme.Colors.primary)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(label)
+        .accessibilityValue("\(value, specifier: step >= 1 ? "%.0f" : "%.1f") \(unit)")
+        .accessibilityAdjustableAction { direction in
+            switch direction {
+            case .increment:
+                value = min(range.upperBound, value + step)
+            case .decrement:
+                value = max(range.lowerBound, value - step)
+            @unknown default:
+                break
+            }
+        }
     }
 }

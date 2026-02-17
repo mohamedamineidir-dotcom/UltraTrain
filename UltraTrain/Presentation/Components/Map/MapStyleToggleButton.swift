@@ -2,20 +2,28 @@ import SwiftUI
 
 struct MapStyleToggleButton: View {
     @Binding var style: MapStylePreference
+    @ScaledMetric(relativeTo: .body) private var iconSize: CGFloat = 16
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         Button {
-            withAnimation(.easeInOut(duration: 0.2)) {
+            if reduceMotion {
                 style = nextStyle
+            } else {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    style = nextStyle
+                }
             }
         } label: {
             Image(systemName: iconName)
-                .font(.system(size: 14, weight: .medium))
+                .font(.system(size: iconSize, weight: .medium))
                 .foregroundStyle(.primary)
-                .frame(width: 32, height: 32)
+                .frame(width: 44, height: 44)
                 .background(.ultraThinMaterial)
                 .clipShape(Circle())
         }
+        .accessibilityLabel("Map style")
+        .accessibilityValue(accessibilityStyleName)
     }
 
     private var nextStyle: MapStylePreference {
@@ -31,6 +39,14 @@ struct MapStyleToggleButton: View {
         case .standard: "map"
         case .satellite: "globe.americas"
         case .hybrid: "square.stack.3d.up"
+        }
+    }
+
+    private var accessibilityStyleName: String {
+        switch style {
+        case .standard: "Standard"
+        case .satellite: "Satellite"
+        case .hybrid: "Hybrid"
         }
     }
 }

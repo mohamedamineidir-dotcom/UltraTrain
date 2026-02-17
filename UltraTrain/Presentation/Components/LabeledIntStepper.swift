@@ -34,5 +34,18 @@ struct LabeledIntStepper: View {
             .buttonStyle(.plain)
             .foregroundStyle(Theme.Colors.primary)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(label)
+        .accessibilityValue("\(value) \(unit)")
+        .accessibilityAdjustableAction { direction in
+            switch direction {
+            case .increment:
+                value = min(range.upperBound, value + 1)
+            case .decrement:
+                value = max(range.lowerBound, value - 1)
+            @unknown default:
+                break
+            }
+        }
     }
 }

@@ -37,5 +37,15 @@ struct ElevationProfileChart: View {
             .frame(height: 200)
         }
         .cardStyle()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(chartSummary)
+    }
+
+    private var chartSummary: String {
+        guard !dataPoints.isEmpty else { return "Elevation profile chart, no data" }
+        let minAlt = dataPoints.map(\.altitudeM).min() ?? 0
+        let maxAlt = dataPoints.map(\.altitudeM).max() ?? 0
+        let totalDist = dataPoints.last?.distanceKm ?? 0
+        return "Elevation profile chart. \(String(format: "%.1f", totalDist)) km. Altitude range \(Int(minAlt)) to \(Int(maxAlt)) meters."
     }
 }

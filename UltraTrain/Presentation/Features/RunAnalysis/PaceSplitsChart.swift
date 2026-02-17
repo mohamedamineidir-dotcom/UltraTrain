@@ -36,6 +36,18 @@ struct PaceSplitsChart: View {
             legendRow
         }
         .cardStyle()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(chartSummary)
+    }
+
+    private var chartSummary: String {
+        guard !splits.isEmpty else { return "Pace splits chart, no data" }
+        let avg = RunStatisticsCalculator.formatPace(averagePace)
+        let fastest = splits.min(by: { $0.duration < $1.duration })
+        let slowest = splits.max(by: { $0.duration < $1.duration })
+        let fastestPace = fastest.map { RunStatisticsCalculator.formatPace($0.duration) } ?? "--"
+        let slowestPace = slowest.map { RunStatisticsCalculator.formatPace($0.duration) } ?? "--"
+        return "Pace splits chart. \(splits.count) kilometers. Average \(avg) per km. Fastest \(fastestPace), slowest \(slowestPace)."
     }
 
     // MARK: - Helpers

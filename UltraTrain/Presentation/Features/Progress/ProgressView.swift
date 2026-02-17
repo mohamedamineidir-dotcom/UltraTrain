@@ -80,9 +80,11 @@ struct TrainingProgressView: View {
                 Spacer()
                 Image(systemName: "chart.line.uptrend.xyaxis")
                     .foregroundStyle(Theme.Colors.primary)
+                    .accessibilityHidden(true)
                 Image(systemName: "chevron.right")
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .accessibilityHidden(true)
             }
             .cardStyle()
         }
@@ -136,6 +138,8 @@ struct TrainingProgressView: View {
             .frame(height: 180)
         }
         .cardStyle()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Weekly distance chart. Total \(String(format: "%.0f", viewModel.totalDistanceKm)) km over \(viewModel.weeklyVolumes.count) weeks.")
     }
 
     // MARK: - Elevation Chart
@@ -157,6 +161,8 @@ struct TrainingProgressView: View {
             .frame(height: 180)
         }
         .cardStyle()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Weekly elevation chart. Total \(String(format: "%.0f", viewModel.totalElevationGainM)) meters of elevation gain.")
     }
 
     // MARK: - Adherence

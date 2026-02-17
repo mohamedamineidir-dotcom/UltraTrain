@@ -18,6 +18,19 @@ struct PaceTrendChartView: View {
                 legend
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(chartSummary)
+    }
+
+    private var chartSummary: String {
+        guard let latest = trendPoints.last else { return "Pace trend chart, no data" }
+        let pace = RunStatisticsCalculator.formatPace(latest.averagePaceSecondsPerKm)
+        if trendPoints.count >= 2 {
+            let first = trendPoints.first!
+            let improving = latest.averagePaceSecondsPerKm < first.averagePaceSecondsPerKm
+            return "Pace trend chart. \(trendPoints.count) runs. Latest pace \(pace) per km, \(improving ? "improving" : "declining")."
+        }
+        return "Pace trend chart. \(trendPoints.count) runs. Latest pace \(pace) per km."
     }
 
     // MARK: - Chart

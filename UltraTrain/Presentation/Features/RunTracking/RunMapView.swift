@@ -10,6 +10,7 @@ struct RunMapView: View {
     var height: CGFloat = 200
 
     @AppStorage("preferredMapStyle") private var mapStyleRaw = MapStylePreference.standard.rawValue
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var isFollowing = true
 
@@ -74,11 +75,16 @@ struct RunMapView: View {
         }
         .onChange(of: coordinates.count) {
             guard isFollowing, let last = coordinates.last else { return }
-            withAnimation(.easeInOut(duration: 0.3)) {
-                cameraPosition = .camera(MapCamera(
-                    centerCoordinate: last,
-                    distance: 800
-                ))
+            let newPosition = MapCameraPosition.camera(MapCamera(
+                centerCoordinate: last,
+                distance: 800
+            ))
+            if reduceMotion {
+                cameraPosition = newPosition
+            } else {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    cameraPosition = newPosition
+                }
             }
         }
         .overlay(alignment: .topTrailing) {
@@ -93,18 +99,23 @@ struct RunMapView: View {
                 MapRecenterButton {
                     guard let last = coordinates.last else { return }
                     isFollowing = true
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        cameraPosition = .camera(MapCamera(
-                            centerCoordinate: last,
-                            distance: 800
-                        ))
+                    let newPosition = MapCameraPosition.camera(MapCamera(
+                        centerCoordinate: last,
+                        distance: 800
+                    ))
+                    if reduceMotion {
+                        cameraPosition = newPosition
+                    } else {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            cameraPosition = newPosition
+                        }
                     }
                 }
                 .padding(Theme.Spacing.sm)
                 .transition(.opacity)
             }
         }
-        .animation(.easeInOut(duration: 0.2), value: isFollowing)
+        .animation(reduceMotion ? .none : .easeInOut(duration: 0.2), value: isFollowing)
         .frame(height: height)
         .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
     }

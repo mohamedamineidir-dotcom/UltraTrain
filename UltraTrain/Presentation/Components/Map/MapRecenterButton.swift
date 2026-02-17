@@ -7,15 +7,17 @@ struct MapRecenterButton: View {
         Button(action: action) {
             HStack(spacing: Theme.Spacing.xs) {
                 Image(systemName: "location.fill")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.caption)
+                    .accessibilityHidden(true)
                 Text("Re-center")
                     .font(.caption2.bold())
             }
             .foregroundStyle(.primary)
             .padding(.horizontal, Theme.Spacing.sm)
-            .padding(.vertical, Theme.Spacing.xs + 2)
+            .frame(minHeight: 44)
             .background(.ultraThinMaterial)
             .clipShape(Capsule())
         }
+        .accessibilityLabel("Re-center map")
     }
 }

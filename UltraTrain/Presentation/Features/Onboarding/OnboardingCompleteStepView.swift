@@ -3,6 +3,7 @@ import SwiftUI
 struct OnboardingCompleteStepView: View {
     let viewModel: OnboardingViewModel
     var onComplete: () -> Void
+    @ScaledMetric(relativeTo: .largeTitle) private var checkmarkSize: CGFloat = 60
 
     var body: some View {
         ScrollView {
@@ -10,8 +11,9 @@ struct OnboardingCompleteStepView: View {
                 Spacer(minLength: Theme.Spacing.xl)
 
                 Image(systemName: "checkmark.seal.fill")
-                    .font(.system(size: 60))
+                    .font(.system(size: checkmarkSize))
                     .foregroundStyle(Theme.Colors.success)
+                    .accessibilityHidden(true)
 
                 Text("You're All Set!")
                     .font(.title.bold())
@@ -63,6 +65,7 @@ struct OnboardingCompleteStepView: View {
             Image(systemName: "heart.circle")
                 .font(.title)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .accessibilityHidden(true)
             Text("HealthKit Integration")
                 .font(.headline)
                 .foregroundStyle(Theme.Colors.secondaryLabel)

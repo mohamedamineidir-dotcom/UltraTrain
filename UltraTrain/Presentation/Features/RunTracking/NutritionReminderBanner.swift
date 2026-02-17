@@ -3,12 +3,14 @@ import SwiftUI
 struct NutritionReminderBanner: View {
     let reminder: NutritionReminder
     let onDismiss: () -> Void
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         HStack(spacing: Theme.Spacing.sm) {
             Image(systemName: iconName)
                 .font(.title3)
                 .foregroundStyle(iconColor)
+                .accessibilityHidden(true)
 
             Text(reminder.message)
                 .font(.subheadline.bold())
@@ -25,6 +27,7 @@ struct NutritionReminderBanner: View {
                     .foregroundStyle(Theme.Colors.secondaryLabel)
                     .padding(Theme.Spacing.xs)
             }
+            .accessibilityLabel("Dismiss")
         }
         .padding(Theme.Spacing.md)
         .background(
@@ -34,7 +37,10 @@ struct NutritionReminderBanner: View {
         )
         .padding(.horizontal, Theme.Spacing.md)
         .padding(.top, Theme.Spacing.sm)
-        .transition(.move(edge: .top).combined(with: .opacity))
+        .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
+        .onAppear {
+            AccessibilityNotification.Announcement(reminder.message).post()
+        }
         .task {
             try? await Task.sleep(for: .seconds(AppConfiguration.NutritionReminders.autoDismissSeconds))
             onDismiss()

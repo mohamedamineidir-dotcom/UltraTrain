@@ -61,6 +61,7 @@ struct DashboardView: View {
                         .font(.title2)
                         .foregroundStyle(session.intensity.color)
                         .frame(width: 40)
+                        .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(session.type.displayName)
@@ -127,6 +128,7 @@ struct DashboardView: View {
             if let weeksLeft = viewModel.weeksUntilRace {
                 HStack {
                     Image(systemName: "flag.checkered")
+                        .accessibilityHidden(true)
                     Text("\(weeksLeft) weeks until race day")
                         .font(.caption)
                 }
@@ -194,9 +196,11 @@ struct DashboardView: View {
                 Spacer()
                 Image(systemName: "chart.bar.fill")
                     .foregroundStyle(Theme.Colors.primary)
+                    .accessibilityHidden(true)
                 Image(systemName: "chevron.right")
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .accessibilityHidden(true)
             }
             .cardStyle()
         }
@@ -206,6 +210,7 @@ struct DashboardView: View {
         HStack(spacing: Theme.Spacing.sm) {
             Image(systemName: acrIcon)
                 .foregroundStyle(acrColor)
+                .accessibilityHidden(true)
             Text("ACR: \(snapshot.acuteToChronicRatio, specifier: "%.2f")")
                 .font(.caption)
             Text(acrLabel)

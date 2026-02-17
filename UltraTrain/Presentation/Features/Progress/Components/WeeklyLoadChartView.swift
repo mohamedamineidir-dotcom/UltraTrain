@@ -19,6 +19,14 @@ struct WeeklyLoadChartView: View {
             }
         }
         .cardStyle()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(chartSummary)
+    }
+
+    private var chartSummary: String {
+        guard let latest = weeklyHistory.last else { return "Weekly training load chart, no data" }
+        let avg = weeklyHistory.isEmpty ? 0 : weeklyHistory.map(\.actualLoad).reduce(0, +) / Double(weeklyHistory.count)
+        return "Weekly training load chart. \(weeklyHistory.count) weeks. Latest week load \(Int(latest.actualLoad)). Average \(Int(avg))."
     }
 
     private var chart: some View {

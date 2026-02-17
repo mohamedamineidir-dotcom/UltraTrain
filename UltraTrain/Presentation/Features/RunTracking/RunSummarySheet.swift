@@ -4,6 +4,7 @@ struct RunSummarySheet: View {
     @Bindable var viewModel: ActiveRunViewModel
     let onDismiss: () -> Void
 
+    @ScaledMetric(relativeTo: .largeTitle) private var headerIconSize: CGFloat = 48
     @State private var notes = ""
 
     var body: some View {
@@ -59,8 +60,9 @@ struct RunSummarySheet: View {
     private var headerSection: some View {
         VStack(spacing: Theme.Spacing.xs) {
             Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 48))
+                .font(.system(size: headerIconSize))
                 .foregroundStyle(Theme.Colors.success)
+                .accessibilityHidden(true)
             Text("Great Run!")
                 .font(.title2.bold())
             Text(viewModel.formattedTime)
@@ -104,6 +106,7 @@ struct RunSummarySheet: View {
             HStack(spacing: Theme.Spacing.sm) {
                 Image(systemName: "link.circle.fill")
                     .foregroundStyle(Theme.Colors.primary)
+                    .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Linked Session")
                         .font(.caption.bold())
@@ -114,6 +117,7 @@ struct RunSummarySheet: View {
                 Spacer()
                 Image(systemName: "checkmark")
                     .foregroundStyle(Theme.Colors.success)
+                    .accessibilityHidden(true)
             }
             .padding(Theme.Spacing.md)
             .background(
@@ -140,5 +144,7 @@ struct RunSummarySheet: View {
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .fill(Theme.Colors.secondaryBackground)
         )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label), \(value)")
     }
 }

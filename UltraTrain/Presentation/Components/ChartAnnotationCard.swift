@@ -32,5 +32,6 @@ struct ChartAnnotationCard: View {
                 .fill(.ultraThinMaterial)
                 .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
         }
+        .accessibilityHidden(true)
     }
 }

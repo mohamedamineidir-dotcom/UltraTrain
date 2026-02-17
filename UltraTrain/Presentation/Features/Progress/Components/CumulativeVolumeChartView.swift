@@ -20,6 +20,13 @@ struct CumulativeVolumeChartView: View {
 
             chart
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(chartSummary)
+    }
+
+    private var chartSummary: String {
+        let total = cumulativeData.last?.cumulativeKm ?? 0
+        return "Cumulative volume chart. \(weeklyVolumes.count) weeks. Total \(String(format: "%.0f", total)) km."
     }
 
     // MARK: - Chart

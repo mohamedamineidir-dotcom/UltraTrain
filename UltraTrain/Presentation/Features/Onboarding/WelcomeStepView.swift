@@ -1,13 +1,16 @@
 import SwiftUI
 
 struct WelcomeStepView: View {
+    @ScaledMetric(relativeTo: .largeTitle) private var heroIconSize: CGFloat = 80
+
     var body: some View {
         VStack(spacing: Theme.Spacing.lg) {
             Spacer()
 
             Image(systemName: "figure.run.circle.fill")
-                .font(.system(size: 80))
+                .font(.system(size: heroIconSize))
                 .foregroundStyle(Theme.Colors.primary)
+                .accessibilityHidden(true)
 
             Text("Welcome to UltraTrain")
                 .font(.largeTitle.bold())

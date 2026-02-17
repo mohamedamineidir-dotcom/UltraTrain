@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct RunTrackingLaunchView: View {
+    @ScaledMetric(relativeTo: .largeTitle) private var heroIconSize: CGFloat = 60
     @State private var viewModel: RunTrackingLaunchViewModel
     private let athleteRepository: any AthleteRepository
     private let locationService: LocationService
@@ -146,8 +147,9 @@ struct RunTrackingLaunchView: View {
     private var heroSection: some View {
         VStack(spacing: Theme.Spacing.md) {
             Image(systemName: "figure.run")
-                .font(.system(size: 60))
+                .font(.system(size: heroIconSize))
                 .foregroundStyle(Theme.Colors.primary)
+                .accessibilityHidden(true)
             Text("Ready to Run?")
                 .font(.title.bold())
             Text("Track your run with GPS, pace, and elevation.")
@@ -189,6 +191,7 @@ struct RunTrackingLaunchView: View {
             HStack(spacing: Theme.Spacing.sm) {
                 Image(systemName: "flag.checkered")
                     .font(.title3)
+                    .accessibilityHidden(true)
                 Text("Race Day: \(race.name)")
                     .font(.headline)
             }
@@ -219,10 +222,12 @@ struct RunTrackingLaunchView: View {
         } label: {
             HStack {
                 Image(systemName: "clock.arrow.circlepath")
+                    .accessibilityHidden(true)
                 Text("Run History")
                 Spacer()
                 Image(systemName: "chevron.right")
                     .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .accessibilityHidden(true)
             }
             .padding(Theme.Spacing.md)
             .background(

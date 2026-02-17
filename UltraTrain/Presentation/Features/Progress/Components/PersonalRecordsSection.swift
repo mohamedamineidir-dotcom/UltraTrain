@@ -44,6 +44,8 @@ struct PersonalRecordsSection: View {
             RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
                 .fill(Theme.Colors.secondaryBackground)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label(for: record.type)), \(formattedValue(for: record)), \(record.date.formatted(.dateTime.month(.abbreviated).day().year()))")
     }
 
     // MARK: - Helpers

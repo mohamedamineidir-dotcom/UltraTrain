@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct RunHistoryView: View {
+    @ScaledMetric(relativeTo: .largeTitle) private var emptyIconSize: CGFloat = 48
     @State private var viewModel: RunHistoryViewModel
     private let planRepository: any TrainingPlanRepository
     private let athleteRepository: any AthleteRepository
@@ -67,8 +68,9 @@ struct RunHistoryView: View {
     private var emptyState: some View {
         VStack(spacing: Theme.Spacing.md) {
             Image(systemName: "figure.run.circle")
-                .font(.system(size: 48))
+                .font(.system(size: emptyIconSize))
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .accessibilityHidden(true)
             Text("No runs yet")
                 .font(.headline)
             Text("Your completed runs will appear here.")

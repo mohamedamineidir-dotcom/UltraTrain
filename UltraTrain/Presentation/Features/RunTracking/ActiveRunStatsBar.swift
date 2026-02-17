@@ -50,5 +50,7 @@ private struct StatTile: View {
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .fill(Theme.Colors.secondaryBackground)
         )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(unit.isEmpty ? "\(label), \(value)" : "\(label), \(value) \(unit)")
     }
 }

@@ -5,6 +5,12 @@ struct CheckpointAnnotationView: View {
     let distanceKm: Double
     let hasAidStation: Bool
 
+    @ScaledMetric(relativeTo: .caption2) private var nameFontSize: CGFloat = 9
+    @ScaledMetric(relativeTo: .caption2) private var distanceFontSize: CGFloat = 8
+
+    private var clampedNameSize: CGFloat { min(nameFontSize, 14) }
+    private var clampedDistanceSize: CGFloat { min(distanceFontSize, 12) }
+
     var body: some View {
         VStack(spacing: 2) {
             Image(systemName: hasAidStation ? "cross.circle.fill" : "mappin.circle.fill")
@@ -13,16 +19,18 @@ struct CheckpointAnnotationView: View {
                 .background(Circle().fill(.white).padding(-1))
 
             Text(name)
-                .font(.system(size: 9, weight: .semibold))
+                .font(.system(size: clampedNameSize, weight: .semibold))
                 .foregroundStyle(Theme.Colors.label)
                 .lineLimit(1)
 
             Text(String(format: "%.1f km", distanceKm))
-                .font(.system(size: 8))
+                .font(.system(size: clampedDistanceSize))
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
         .padding(2)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 4))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(name), \(String(format: "%.1f", distanceKm)) km\(hasAidStation ? ", aid station" : "")")
     }
 }

@@ -12,6 +12,13 @@ struct AdherenceTrendChartView: View {
 
             chart
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(chartSummary)
+    }
+
+    private var chartSummary: String {
+        guard let latest = weeklyAdherence.last else { return "Weekly adherence trend, no data" }
+        return "Weekly adherence trend. \(weeklyAdherence.count) weeks. Latest week \(Int(latest.percent))%, \(latest.completed) of \(latest.total) sessions."
     }
 
     private var chart: some View {

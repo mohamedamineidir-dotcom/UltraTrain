@@ -18,6 +18,13 @@ struct FitnessTrendChartView: View {
                 legend
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(chartSummary)
+    }
+
+    private var chartSummary: String {
+        guard let latest = snapshots.last else { return "Fitness trend chart, no data" }
+        return "Fitness trend chart. Latest fitness \(Int(latest.fitness)), fatigue \(Int(latest.fatigue)), form \(Int(latest.form)). \(snapshots.count) data points."
     }
 
     // MARK: - Chart

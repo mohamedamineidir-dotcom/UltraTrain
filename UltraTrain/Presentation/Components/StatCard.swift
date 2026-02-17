@@ -22,10 +22,25 @@ struct StatCard: View {
                     Image(systemName: trend.iconName)
                         .font(.caption)
                         .foregroundStyle(trend.color)
+                        .accessibilityHidden(true)
                 }
             }
         }
         .cardStyle()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilityDescription)
+    }
+
+    private var accessibilityDescription: String {
+        var desc = "\(title), \(value) \(unit)"
+        if let trend {
+            switch trend {
+            case .up: desc += ", trending up"
+            case .down: desc += ", trending down"
+            case .stable: desc += ", stable"
+            }
+        }
+        return desc
     }
 }
 

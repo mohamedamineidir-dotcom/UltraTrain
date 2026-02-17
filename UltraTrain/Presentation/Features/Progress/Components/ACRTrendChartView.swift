@@ -19,6 +19,13 @@ struct ACRTrendChartView: View {
             }
         }
         .cardStyle()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(chartSummary)
+    }
+
+    private var chartSummary: String {
+        guard let latest = dataPoints.last else { return "Acute to chronic ratio chart, no data" }
+        return "Acute to chronic ratio chart. Latest ACR \(String(format: "%.2f", latest.value)), \(acrZoneLabel(latest.value)). \(dataPoints.count) data points."
     }
 
     private var chart: some View {

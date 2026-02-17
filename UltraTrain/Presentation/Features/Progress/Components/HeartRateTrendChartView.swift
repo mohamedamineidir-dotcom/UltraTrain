@@ -22,6 +22,13 @@ struct HeartRateTrendChartView: View {
                 legend
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(chartSummary)
+    }
+
+    private var chartSummary: String {
+        guard let latest = pointsWithHR.last else { return "Heart rate trend chart, no data" }
+        return "Heart rate trend chart. \(pointsWithHR.count) runs with heart rate data. Latest average \(latest.averageHeartRate!) bpm."
     }
 
     // MARK: - Chart

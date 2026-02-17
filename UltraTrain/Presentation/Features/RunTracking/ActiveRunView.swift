@@ -3,6 +3,8 @@ import SwiftUI
 struct ActiveRunView: View {
     @Bindable var viewModel: ActiveRunViewModel
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @ScaledMetric(relativeTo: .largeTitle) private var timerFontSize: CGFloat = 56
 
     var body: some View {
         VStack(spacing: 0) {
@@ -40,7 +42,7 @@ struct ActiveRunView: View {
                 }
             }
         }
-        .animation(.easeInOut(duration: 0.3), value: viewModel.activeReminder)
+        .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.activeReminder)
         .navigationBarBackButtonHidden()
         .onAppear {
             if viewModel.runState == .notStarted {
@@ -59,10 +61,11 @@ struct ActiveRunView: View {
     private var timerDisplay: some View {
         VStack(spacing: Theme.Spacing.xs) {
             Text(viewModel.formattedTime)
-                .font(.system(size: 56, weight: .bold, design: .monospaced))
+                .font(.system(size: timerFontSize, weight: .bold, design: .monospaced))
                 .monospacedDigit()
                 .foregroundStyle(timerColor)
                 .accessibilityIdentifier("runTracking.timerDisplay")
+                .accessibilityLabel("Elapsed time, \(viewModel.formattedTime)")
 
             if viewModel.isAutoPaused {
                 Text("Auto-Paused")
@@ -71,7 +74,7 @@ struct ActiveRunView: View {
                     .transition(.opacity)
             }
         }
-        .animation(.easeInOut(duration: 0.3), value: viewModel.isAutoPaused)
+        .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.isAutoPaused)
     }
 
     private var timerColor: Color {
@@ -147,6 +150,9 @@ struct ActiveRunView: View {
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(label)
+        .accessibilityAddTraits(.isButton)
         .accessibilityIdentifier(accessibilityID)
     }
 }
