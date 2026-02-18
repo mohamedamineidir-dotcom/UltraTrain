@@ -2,23 +2,60 @@ import SwiftUI
 
 struct WatchContentView: View {
     let connectivityService: WatchConnectivityService
+    let watchRunViewModel: WatchRunViewModel
 
-    private var isRunActive: Bool {
+    @State private var showRunSummary = false
+
+    private var isPhoneRunActive: Bool {
         guard let data = connectivityService.runData else { return false }
         return data.runState != "notStarted" && data.runState != "finished"
     }
 
+    private var isWatchRunActive: Bool {
+        watchRunViewModel.runState == .running || watchRunViewModel.runState == .paused
+    }
+
     var body: some View {
-        if let data = connectivityService.runData, isRunActive {
-            WatchActiveRunView(
-                runData: data,
-                onPause: { connectivityService.sendCommand(.pause) },
-                onResume: { connectivityService.sendCommand(.resume) },
-                onStop: { connectivityService.sendCommand(.stop) },
-                onDismissReminder: { connectivityService.sendCommand(.dismissReminder) }
+        Group {
+            if let data = connectivityService.runData, isPhoneRunActive {
+                WatchActiveRunView(
+                    runData: data,
+                    onPause: { connectivityService.sendCommand(.pause) },
+                    onResume: { connectivityService.sendCommand(.resume) },
+                    onStop: { connectivityService.sendCommand(.stop) },
+                    onDismissReminder: { connectivityService.sendCommand(.dismissReminder) }
+                )
+            } else if isWatchRunActive {
+                WatchStandaloneRunView(
+                    viewModel: watchRunViewModel,
+                    onStop: {
+                        Task {
+                            await watchRunViewModel.stopRun()
+                            showRunSummary = true
+                        }
+                    }
+                )
+            } else {
+                WatchHomeView(
+                    sessionData: connectivityService.sessionData,
+                    isPhoneReachable: connectivityService.isPhoneReachable,
+                    onStartRun: {
+                        watchRunViewModel.linkedSession = connectivityService.sessionData
+                        Task {
+                            await watchRunViewModel.startRun()
+                        }
+                    }
+                )
+            }
+        }
+        .sheet(isPresented: $showRunSummary) {
+            WatchRunSummaryView(
+                viewModel: watchRunViewModel,
+                onDone: {
+                    watchRunViewModel.syncCompletedRun()
+                    showRunSummary = false
+                }
             )
-        } else {
-            WatchIdleView(isPhoneReachable: connectivityService.isPhoneReachable)
         }
     }
 }

@@ -23,7 +23,7 @@ struct WatchMessageCoderTests {
         )
 
         let encoded = WatchMessageCoder.encode(data)
-        let decoded = WatchMessageCoder.decode(encoded)
+        let decoded = WatchMessageCoder.decodeRunData(encoded)
 
         #expect(decoded != nil)
         #expect(decoded?.runState == "running")
@@ -56,7 +56,7 @@ struct WatchMessageCoderTests {
             activeReminderType: "hydration"
         )
 
-        let decoded = WatchMessageCoder.decode(WatchMessageCoder.encode(data))
+        let decoded = WatchMessageCoder.decodeRunData(WatchMessageCoder.encode(data))
 
         #expect(decoded?.activeReminderMessage == "Time to drink!")
         #expect(decoded?.activeReminderType == "hydration")
@@ -78,7 +78,7 @@ struct WatchMessageCoderTests {
             activeReminderType: nil
         )
 
-        let decoded = WatchMessageCoder.decode(WatchMessageCoder.encode(data))
+        let decoded = WatchMessageCoder.decodeRunData(WatchMessageCoder.encode(data))
 
         #expect(decoded?.runState == "autoPaused")
         #expect(decoded?.isAutoPaused == true)
@@ -87,17 +87,17 @@ struct WatchMessageCoderTests {
 
     @Test func decodeRunData_withCorruptedData_returnsNil() {
         let corrupted: [String: Any] = ["runData": Data([0xFF, 0xFE])]
-        #expect(WatchMessageCoder.decode(corrupted) == nil)
+        #expect(WatchMessageCoder.decodeRunData(corrupted) == nil)
     }
 
     @Test func decodeRunData_withMissingKey_returnsNil() {
         let empty: [String: Any] = ["wrong": "key"]
-        #expect(WatchMessageCoder.decode(empty) == nil)
+        #expect(WatchMessageCoder.decodeRunData(empty) == nil)
     }
 
     @Test func decodeRunData_withWrongType_returnsNil() {
         let wrongType: [String: Any] = ["runData": "not data"]
-        #expect(WatchMessageCoder.decode(wrongType) == nil)
+        #expect(WatchMessageCoder.decodeRunData(wrongType) == nil)
     }
 
     // MARK: - WatchCommand Encode/Decode
@@ -170,7 +170,7 @@ struct WatchMessageCoderTests {
             activeReminderType: nil
         )
 
-        let decoded = WatchMessageCoder.decode(WatchMessageCoder.encode(data))
+        let decoded = WatchMessageCoder.decodeRunData(WatchMessageCoder.encode(data))
         #expect(decoded?.runState == state)
     }
 }

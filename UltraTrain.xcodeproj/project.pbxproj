@@ -332,6 +332,36 @@
 		C2D3E4F5A6B7C8D9E0F1A2B3 /* WidgetDataReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B3C4D5E6F7A8B9C0D1E2F3 /* WidgetDataReader.swift */; };
 		79725D353B8F9265EC2B5F7C /* NotificationServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE195CAF38EAB16FD26C8875 /* NotificationServiceProtocol.swift */; };
 		4EAFD22E93D01A303D1AED16 /* MockNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3ADCD2D98C0E947C0920CDF /* MockNotificationService.swift */; };
+		E534BA8903530EFC95290155 /* WatchTrackPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778FE72F02A7A63490DFF2D3 /* WatchTrackPoint.swift */; };
+		543A06CACF23144D12AA749B /* WatchTrackPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778FE72F02A7A63490DFF2D3 /* WatchTrackPoint.swift */; };
+		D834CF1215CFDB86637C463E /* WatchSplit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D975698E97D35FAAB1B252C /* WatchSplit.swift */; };
+		2B574D6E27BBBB915E1CC74C /* WatchSplit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D975698E97D35FAAB1B252C /* WatchSplit.swift */; };
+		F87C7F13FD94AA86089A49CB /* WatchSessionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A833AA8283DBD624C070743 /* WatchSessionData.swift */; };
+		1A69F3F3EBD6F38ECE29C882 /* WatchSessionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A833AA8283DBD624C070743 /* WatchSessionData.swift */; };
+		60E0210ECF4C3E59A7118F34 /* WatchCompletedRunData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AE59B47D7E045856EDF68F4 /* WatchCompletedRunData.swift */; };
+		3A3DF9A4914F631853912563 /* WatchCompletedRunData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AE59B47D7E045856EDF68F4 /* WatchCompletedRunData.swift */; };
+		13EDE7083D7B085D547ACFE5 /* WatchNutritionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0561BB45013F795690D6A9F /* WatchNutritionModels.swift */; };
+		21094E3F4AAC17AF88764C78 /* WatchNutritionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0561BB45013F795690D6A9F /* WatchNutritionModels.swift */; };
+		9F80BA2310485D6751287834 /* WatchConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8074C109CC606CB814A0279 /* WatchConfiguration.swift */; };
+		A719C7BF0AA2A59CF3CA95E2 /* WatchConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8074C109CC606CB814A0279 /* WatchConfiguration.swift */; };
+		3AD934CB805522BE041F7519 /* WatchNutritionReminderScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52779AC3B134B17425089C1E /* WatchNutritionReminderScheduler.swift */; };
+		D5F5BAD0B0EE56DF0BF21212 /* WatchNutritionReminderScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52779AC3B134B17425089C1E /* WatchNutritionReminderScheduler.swift */; };
+		8051B2AB170A6A196F4890F7 /* WatchRunCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89E674ADB378708C146E9C8F /* WatchRunCalculator.swift */; };
+		075985B3B0645FB341947ABA /* WatchRunCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89E674ADB378708C146E9C8F /* WatchRunCalculator.swift */; };
+		AAFACDA0E333D36780368904 /* WatchComplicationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E92915E468034C32094B31 /* WatchComplicationData.swift */; };
+		004CF6AAFD2E803AA1ADE143 /* WatchComplicationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E92915E468034C32094B31 /* WatchComplicationData.swift */; };
+		8B15D3E545B0F0EB4EF2A0A5 /* WatchLocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE1F29F269C1BDF933C92B54 /* WatchLocationService.swift */; };
+		DE0A108BAA55D232B2EA3FAD /* WatchHealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A128E61D8ED4ABFD5ABD005 /* WatchHealthKitService.swift */; };
+		3CEF3D8531A4A4805C5CAECF /* WatchRunViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FE71ADD75D2D0E91355515 /* WatchRunViewModel.swift */; };
+		EE5B88CA1D8E44F1D6F76FFB /* WatchHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD7353B79D74F0E89FC89436 /* WatchHomeView.swift */; };
+		F0BE5CDF26DD3FC50DE4F346 /* WatchStandaloneRunView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B4BF6A60E5285BE55125D3C /* WatchStandaloneRunView.swift */; };
+		0F44E4CA63F74450B7B05EC5 /* WatchRunSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD0D7AEA8D7855DD2EA6786 /* WatchRunSummaryView.swift */; };
+		9D4ADDF19FD0B878314D2788 /* WatchRunImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B9A88FA5C398CF400E83176 /* WatchRunImportService.swift */; };
+		9BC1A8F1F42052B21D299975 /* WatchTrackPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778FE72F02A7A63490DFF2D3 /* WatchTrackPoint.swift */; };
+		5DF74D73FE326FF3FDCD6CAD /* WatchSplit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D975698E97D35FAAB1B252C /* WatchSplit.swift */; };
+		0894091F41DD8CE39466D928 /* WatchSessionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A833AA8283DBD624C070743 /* WatchSessionData.swift */; };
+		1D71FBBAE8151A3339BE04D0 /* WatchCompletedRunData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AE59B47D7E045856EDF68F4 /* WatchCompletedRunData.swift */; };
+		3D4581BA314D2FC876E235EB /* WatchComplicationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E92915E468034C32094B31 /* WatchComplicationData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -711,6 +741,22 @@
 		AACC55EE77FF99001122AABB /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		CE195CAF38EAB16FD26C8875 /* NotificationServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationServiceProtocol.swift; sourceTree = "<group>"; };
 		B3ADCD2D98C0E947C0920CDF /* MockNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNotificationService.swift; sourceTree = "<group>"; };
+		778FE72F02A7A63490DFF2D3 /* WatchTrackPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchTrackPoint.swift; sourceTree = "<group>"; };
+		1D975698E97D35FAAB1B252C /* WatchSplit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSplit.swift; sourceTree = "<group>"; };
+		2A833AA8283DBD624C070743 /* WatchSessionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionData.swift; sourceTree = "<group>"; };
+		5AE59B47D7E045856EDF68F4 /* WatchCompletedRunData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchCompletedRunData.swift; sourceTree = "<group>"; };
+		D0561BB45013F795690D6A9F /* WatchNutritionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchNutritionModels.swift; sourceTree = "<group>"; };
+		B8074C109CC606CB814A0279 /* WatchConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchConfiguration.swift; sourceTree = "<group>"; };
+		52779AC3B134B17425089C1E /* WatchNutritionReminderScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchNutritionReminderScheduler.swift; sourceTree = "<group>"; };
+		89E674ADB378708C146E9C8F /* WatchRunCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchRunCalculator.swift; sourceTree = "<group>"; };
+		D2E92915E468034C32094B31 /* WatchComplicationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchComplicationData.swift; sourceTree = "<group>"; };
+		DE1F29F269C1BDF933C92B54 /* WatchLocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchLocationService.swift; sourceTree = "<group>"; };
+		4A128E61D8ED4ABFD5ABD005 /* WatchHealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchHealthKitService.swift; sourceTree = "<group>"; };
+		94FE71ADD75D2D0E91355515 /* WatchRunViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchRunViewModel.swift; sourceTree = "<group>"; };
+		DD7353B79D74F0E89FC89436 /* WatchHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchHomeView.swift; sourceTree = "<group>"; };
+		2B4BF6A60E5285BE55125D3C /* WatchStandaloneRunView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchStandaloneRunView.swift; sourceTree = "<group>"; };
+		AAD0D7AEA8D7855DD2EA6786 /* WatchRunSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchRunSummaryView.swift; sourceTree = "<group>"; };
+		7B9A88FA5C398CF400E83176 /* WatchRunImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchRunImportService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -778,6 +824,15 @@
 				A1B2C3D4E5F6A7B8C9D0E1F2 /* WidgetData.swift */,
 				D1E2F3A4B5C6D7E8F9A0B1C2 /* WidgetDataKeys.swift */,
 				A2B3C4D5E6F7A8B9C0D1E2F3 /* WidgetDataReader.swift */,
+				5AE59B47D7E045856EDF68F4 /* WatchCompletedRunData.swift */,
+				D2E92915E468034C32094B31 /* WatchComplicationData.swift */,
+				B8074C109CC606CB814A0279 /* WatchConfiguration.swift */,
+				D0561BB45013F795690D6A9F /* WatchNutritionModels.swift */,
+				52779AC3B134B17425089C1E /* WatchNutritionReminderScheduler.swift */,
+				89E674ADB378708C146E9C8F /* WatchRunCalculator.swift */,
+				2A833AA8283DBD624C070743 /* WatchSessionData.swift */,
+				1D975698E97D35FAAB1B252C /* WatchSplit.swift */,
+				778FE72F02A7A63490DFF2D3 /* WatchTrackPoint.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -1088,6 +1143,7 @@
 				6835133C2E79A4761E97804E /* NotificationService.swift */,
 				EBBF8647BF4D7567663C12D3 /* PhoneConnectivityService.swift */,
 				0218FCE1B648A8C7BAFC8138 /* WidgetDataWriter.swift */,
+				7B9A88FA5C398CF400E83176 /* WatchRunImportService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1321,6 +1377,10 @@
 				C6EB5A11922CB7737ACFF081 /* WatchContentView.swift */,
 				67DD46B2B2ED60046AB9CAC6 /* WatchIdleView.swift */,
 				F5F4AFA8A7AA350512C5CA93 /* WatchNutritionBanner.swift */,
+				DD7353B79D74F0E89FC89436 /* WatchHomeView.swift */,
+				94FE71ADD75D2D0E91355515 /* WatchRunViewModel.swift */,
+				AAD0D7AEA8D7855DD2EA6786 /* WatchRunSummaryView.swift */,
+				2B4BF6A60E5285BE55125D3C /* WatchStandaloneRunView.swift */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -1418,6 +1478,8 @@
 			children = (
 				3355E868FE89C402FDC0F44D /* Logger+Watch.swift */,
 				6ECA7A42DD7DA1D5016F467F /* WatchConnectivityService.swift */,
+				4A128E61D8ED4ABFD5ABD005 /* WatchHealthKitService.swift */,
+				DE1F29F269C1BDF933C92B54 /* WatchLocationService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -2053,6 +2115,16 @@
 				B1C2D3E4F5A6B7C8D9E0F1A2 /* WidgetData.swift in Sources */,
 				E1F2A3B4C5D6E7F8A9B0C1D2 /* WidgetDataKeys.swift in Sources */,
 				B2C3D4E5F6A7B8C9D0E1F2A3 /* WidgetDataReader.swift in Sources */,
+				60E0210ECF4C3E59A7118F34 /* WatchCompletedRunData.swift in Sources */,
+				AAFACDA0E333D36780368904 /* WatchComplicationData.swift in Sources */,
+				9F80BA2310485D6751287834 /* WatchConfiguration.swift in Sources */,
+				13EDE7083D7B085D547ACFE5 /* WatchNutritionModels.swift in Sources */,
+				3AD934CB805522BE041F7519 /* WatchNutritionReminderScheduler.swift in Sources */,
+				8051B2AB170A6A196F4890F7 /* WatchRunCalculator.swift in Sources */,
+				F87C7F13FD94AA86089A49CB /* WatchSessionData.swift in Sources */,
+				D834CF1215CFDB86637C463E /* WatchSplit.swift in Sources */,
+				E534BA8903530EFC95290155 /* WatchTrackPoint.swift in Sources */,
+				9D4ADDF19FD0B878314D2788 /* WatchRunImportService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2071,6 +2143,21 @@
 				91F5EBC6FD6E1C6F94E8FDC1 /* WatchMessageCoder.swift in Sources */,
 				F95C5A6BEA19DE1C6C98017D /* WatchNutritionBanner.swift in Sources */,
 				1DD984F8E2D5F91ACB9BA18C /* WatchRunData.swift in Sources */,
+				3A3DF9A4914F631853912563 /* WatchCompletedRunData.swift in Sources */,
+				004CF6AAFD2E803AA1ADE143 /* WatchComplicationData.swift in Sources */,
+				A719C7BF0AA2A59CF3CA95E2 /* WatchConfiguration.swift in Sources */,
+				21094E3F4AAC17AF88764C78 /* WatchNutritionModels.swift in Sources */,
+				D5F5BAD0B0EE56DF0BF21212 /* WatchNutritionReminderScheduler.swift in Sources */,
+				075985B3B0645FB341947ABA /* WatchRunCalculator.swift in Sources */,
+				1A69F3F3EBD6F38ECE29C882 /* WatchSessionData.swift in Sources */,
+				2B574D6E27BBBB915E1CC74C /* WatchSplit.swift in Sources */,
+				543A06CACF23144D12AA749B /* WatchTrackPoint.swift in Sources */,
+				DE0A108BAA55D232B2EA3FAD /* WatchHealthKitService.swift in Sources */,
+				EE5B88CA1D8E44F1D6F76FFB /* WatchHomeView.swift in Sources */,
+				8B15D3E545B0F0EB4EF2A0A5 /* WatchLocationService.swift in Sources */,
+				3CEF3D8531A4A4805C5CAECF /* WatchRunViewModel.swift in Sources */,
+				0F44E4CA63F74450B7B05EC5 /* WatchRunSummaryView.swift in Sources */,
+				F0BE5CDF26DD3FC50DE4F346 /* WatchStandaloneRunView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2096,6 +2183,11 @@
 				C2D3E4F5A6B7C8D9E0F1A2B3 /* WidgetDataReader.swift in Sources */,
 				7754C674934AC290B9B5FF94 /* WeeklyProgressWidget.swift in Sources */,
 				B5A081513D7DAAE14056E8FC /* WeeklyProgressWidgetView.swift in Sources */,
+				9BC1A8F1F42052B21D299975 /* WatchTrackPoint.swift in Sources */,
+				5DF74D73FE326FF3FDCD6CAD /* WatchSplit.swift in Sources */,
+				0894091F41DD8CE39466D928 /* WatchSessionData.swift in Sources */,
+				1D71FBBAE8151A3339BE04D0 /* WatchCompletedRunData.swift in Sources */,
+				3D4581BA314D2FC876E235EB /* WatchComplicationData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

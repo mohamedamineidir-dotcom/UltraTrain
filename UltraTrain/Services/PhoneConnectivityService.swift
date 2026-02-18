@@ -10,10 +10,14 @@ final class PhoneConnectivityService: NSObject, @unchecked Sendable {
 
     var isWatchReachable = false
     var commandHandler: (@MainActor @Sendable (WatchCommand) -> Void)?
+    var completedRunHandler: (@MainActor @Sendable (WatchCompletedRunData) -> Void)?
 
     // MARK: - Private
 
     private var session: WCSession?
+    private var currentRunData: WatchRunData?
+    private var currentSessionData: WatchSessionData?
+    private var currentComplicationData: WatchComplicationData?
 
     // MARK: - Init
 
@@ -38,8 +42,33 @@ final class PhoneConnectivityService: NSObject, @unchecked Sendable {
     // MARK: - Send Run Update
 
     func sendRunUpdate(_ data: WatchRunData) {
+        currentRunData = data
+        sendApplicationContext()
+    }
+
+    // MARK: - Send Session Data
+
+    func sendSessionData(_ data: WatchSessionData?) {
+        currentSessionData = data
+        sendApplicationContext()
+    }
+
+    // MARK: - Send Complication Data
+
+    func sendComplicationData(_ data: WatchComplicationData) {
+        currentComplicationData = data
+        sendApplicationContext()
+    }
+
+    // MARK: - Private
+
+    private func sendApplicationContext() {
         guard let session, session.activationState == .activated else { return }
-        let context = WatchMessageCoder.encode(data)
+        let context = WatchMessageCoder.mergeApplicationContext(
+            runData: currentRunData,
+            sessionData: currentSessionData,
+            complicationData: currentComplicationData
+        )
         guard !context.isEmpty else { return }
         do {
             try session.updateApplicationContext(context)
@@ -97,6 +126,20 @@ extension PhoneConnectivityService: WCSessionDelegate {
         Logger.watch.info("Received command from Watch: \(command.rawValue)")
         Task { @MainActor in
             self.commandHandler?(command)
+        }
+    }
+
+    nonisolated func session(
+        _ session: WCSession,
+        didReceiveUserInfo userInfo: [String: Any] = [:]
+    ) {
+        guard let completedRun = WatchMessageCoder.decodeCompletedRun(userInfo) else {
+            Logger.watch.warning("Received unknown userInfo from Watch")
+            return
+        }
+        Logger.watch.info("Received completed run from Watch: \(completedRun.runId)")
+        Task { @MainActor in
+            self.completedRunHandler?(completedRun)
         }
     }
 }

@@ -9,6 +9,8 @@ final class WatchConnectivityService: NSObject, @unchecked Sendable {
     // MARK: - State
 
     var runData: WatchRunData?
+    var sessionData: WatchSessionData?
+    var complicationData: WatchComplicationData?
     var isPhoneReachable = false
 
     // MARK: - Private
@@ -34,6 +36,15 @@ final class WatchConnectivityService: NSObject, @unchecked Sendable {
         session.sendMessage(message, replyHandler: nil) { error in
             Logger.watch.error("Failed to send command \(command.rawValue): \(error)")
         }
+    }
+
+    // MARK: - Send Completed Run
+
+    func sendCompletedRun(_ data: WatchCompletedRunData) {
+        let userInfo = WatchMessageCoder.encodeCompletedRun(data)
+        guard !userInfo.isEmpty else { return }
+        session.transferUserInfo(userInfo)
+        Logger.watch.info("Queued completed run for transfer: \(data.runId)")
     }
 }
 
@@ -61,12 +72,21 @@ extension WatchConnectivityService: WCSessionDelegate {
         _ session: WCSession,
         didReceiveApplicationContext applicationContext: [String: Any]
     ) {
-        guard let data = WatchMessageCoder.decode(applicationContext) else {
-            Logger.watch.warning("Failed to decode application context")
-            return
-        }
+        let decodedRunData = WatchMessageCoder.decodeRunData(applicationContext)
+        let decodedSessionData = WatchMessageCoder.decodeSessionData(applicationContext)
+        let decodedComplicationData = WatchMessageCoder.decodeComplicationData(applicationContext)
+
         Task { @MainActor in
-            self.runData = data
+            if let decodedRunData {
+                self.runData = decodedRunData
+            }
+            if let decodedSessionData {
+                self.sessionData = decodedSessionData
+            }
+            if let decodedComplicationData {
+                self.complicationData = decodedComplicationData
+            }
+            Logger.watch.info("Received application context — run: \(decodedRunData != nil), session: \(decodedSessionData != nil), complication: \(decodedComplicationData != nil)")
         }
     }
 

@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import os
 
 @main
 struct UltraTrainApp: App {
@@ -30,6 +31,7 @@ struct UltraTrainApp: App {
     private let stravaImportService: StravaImportService
     private let notificationService: NotificationService
     private let biometricAuthService: BiometricAuthService
+    private let watchRunImportService: WatchRunImportService
 
     init() {
         let isUITesting = ProcessInfo.processInfo.arguments.contains("-UITestMode")
@@ -100,6 +102,24 @@ struct UltraTrainApp: App {
         )
         notificationService = NotificationService()
         biometricAuthService = BiometricAuthService()
+        watchRunImportService = WatchRunImportService(
+            runRepository: runRepository,
+            planRepository: planRepository,
+            widgetDataWriter: widgetDataWriter
+        )
+        connectivityService.completedRunHandler = { [watchRunImportService, athleteRepository] runData in
+            Task {
+                do {
+                    guard let athlete = try await athleteRepository.getAthlete() else {
+                        Logger.watch.warning("Cannot import watch run — no athlete profile")
+                        return
+                    }
+                    try await watchRunImportService.importWatchRun(runData, athleteId: athlete.id)
+                } catch {
+                    Logger.watch.error("Failed to import watch run: \(error)")
+                }
+            }
+        }
     }
 
     var body: some Scene {
