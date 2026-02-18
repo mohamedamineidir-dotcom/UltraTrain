@@ -3,32 +3,34 @@ import SwiftData
 
 @Model
 final class AthleteSwiftDataModel {
-    @Attribute(.unique) var id: UUID
-    var firstName: String
-    var lastName: String
-    var dateOfBirth: Date
-    var weightKg: Double
-    var heightCm: Double
-    var restingHeartRate: Int
-    var maxHeartRate: Int
-    var experienceLevelRaw: String
-    var weeklyVolumeKm: Double
-    var longestRunKm: Double
-    var preferredUnitRaw: String
+    var id: UUID = UUID()
+    var firstName: String = ""
+    var lastName: String = ""
+    var dateOfBirth: Date = Date.distantPast
+    var weightKg: Double = 0
+    var heightCm: Double = 0
+    var restingHeartRate: Int = 60
+    var maxHeartRate: Int = 180
+    var experienceLevelRaw: String = "beginner"
+    var weeklyVolumeKm: Double = 0
+    var longestRunKm: Double = 0
+    var preferredUnitRaw: String = "metric"
+    var updatedAt: Date = Date()
 
     init(
-        id: UUID,
-        firstName: String,
-        lastName: String,
-        dateOfBirth: Date,
-        weightKg: Double,
-        heightCm: Double,
-        restingHeartRate: Int,
-        maxHeartRate: Int,
-        experienceLevelRaw: String,
-        weeklyVolumeKm: Double,
-        longestRunKm: Double,
-        preferredUnitRaw: String
+        id: UUID = UUID(),
+        firstName: String = "",
+        lastName: String = "",
+        dateOfBirth: Date = Date.distantPast,
+        weightKg: Double = 0,
+        heightCm: Double = 0,
+        restingHeartRate: Int = 60,
+        maxHeartRate: Int = 180,
+        experienceLevelRaw: String = "beginner",
+        weeklyVolumeKm: Double = 0,
+        longestRunKm: Double = 0,
+        preferredUnitRaw: String = "metric",
+        updatedAt: Date = Date()
     ) {
         self.id = id
         self.firstName = firstName
@@ -42,5 +44,6 @@ final class AthleteSwiftDataModel {
         self.weeklyVolumeKm = weeklyVolumeKm
         self.longestRunKm = longestRunKm
         self.preferredUnitRaw = preferredUnitRaw
+        self.updatedAt = updatedAt
     }
 }

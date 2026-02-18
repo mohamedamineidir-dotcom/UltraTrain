@@ -3,26 +3,28 @@ import SwiftData
 
 @Model
 final class AppSettingsSwiftDataModel {
-    @Attribute(.unique) var id: UUID
-    var trainingRemindersEnabled: Bool
-    var nutritionRemindersEnabled: Bool
-    var autoPauseEnabled: Bool
+    var id: UUID = UUID()
+    var trainingRemindersEnabled: Bool = true
+    var nutritionRemindersEnabled: Bool = true
+    var autoPauseEnabled: Bool = true
     var nutritionAlertSoundEnabled: Bool = true
     var stravaAutoUploadEnabled: Bool = false
     var stravaConnected: Bool = false
     var raceCountdownEnabled: Bool = true
     var biometricLockEnabled: Bool = false
+    var updatedAt: Date = Date()
 
     init(
-        id: UUID,
-        trainingRemindersEnabled: Bool,
-        nutritionRemindersEnabled: Bool,
-        autoPauseEnabled: Bool,
-        nutritionAlertSoundEnabled: Bool,
+        id: UUID = UUID(),
+        trainingRemindersEnabled: Bool = true,
+        nutritionRemindersEnabled: Bool = true,
+        autoPauseEnabled: Bool = true,
+        nutritionAlertSoundEnabled: Bool = true,
         stravaAutoUploadEnabled: Bool = false,
         stravaConnected: Bool = false,
         raceCountdownEnabled: Bool = true,
-        biometricLockEnabled: Bool = false
+        biometricLockEnabled: Bool = false,
+        updatedAt: Date = Date()
     ) {
         self.id = id
         self.trainingRemindersEnabled = trainingRemindersEnabled
@@ -33,5 +35,6 @@ final class AppSettingsSwiftDataModel {
         self.stravaConnected = stravaConnected
         self.raceCountdownEnabled = raceCountdownEnabled
         self.biometricLockEnabled = biometricLockEnabled
+        self.updatedAt = updatedAt
     }
 }

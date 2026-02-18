@@ -35,6 +35,8 @@ final class SettingsViewModel {
     var exportedFileURL: URL?
     var stravaStatus: StravaConnectionStatus = .disconnected
     var isConnectingStrava = false
+    var iCloudSyncEnabled = UserDefaults.standard.bool(forKey: "iCloudSyncEnabled")
+    var showRestartAlert = false
 
     var healthKitStatus: HealthKitAuthStatus {
         healthKitService.authorizationStatus
@@ -379,6 +381,15 @@ final class SettingsViewModel {
             self.error = error.localizedDescription
             Logger.strava.error("Failed to update Strava auto-upload: \(error)")
         }
+    }
+
+    // MARK: - iCloud Sync
+
+    func toggleiCloudSync(_ enabled: Bool) {
+        UserDefaults.standard.set(enabled, forKey: "iCloudSyncEnabled")
+        iCloudSyncEnabled = enabled
+        showRestartAlert = true
+        Logger.cloudKit.info("iCloud sync toggled to \(enabled). Restart required.")
     }
 
     // MARK: - Clear Data

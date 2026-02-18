@@ -44,6 +44,7 @@ struct SettingsView: View {
                 notificationsSection
                 healthKitSection
                 stravaSection
+                iCloudSection
                 dataManagementSection
                 aboutSection
             }
@@ -345,6 +346,46 @@ struct SettingsView: View {
         case .disconnected, .error: .gray
         case .connecting: .orange
         case .connected: .orange
+        }
+    }
+
+    // MARK: - iCloud Section
+
+    private var iCloudSection: some View {
+        Section {
+            Toggle("iCloud Sync", isOn: Binding(
+                get: { viewModel.iCloudSyncEnabled },
+                set: { newValue in viewModel.toggleiCloudSync(newValue) }
+            ))
+
+            if viewModel.iCloudSyncEnabled {
+                Label {
+                    Text("Data syncs automatically across your devices.")
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                } icon: {
+                    Image(systemName: "checkmark.icloud.fill")
+                        .foregroundStyle(.green)
+                }
+            } else {
+                Label {
+                    Text("Enable to sync training data across iPhone and iPad.")
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                } icon: {
+                    Image(systemName: "icloud.slash")
+                        .foregroundStyle(.gray)
+                }
+            }
+        } header: {
+            Text("iCloud")
+        } footer: {
+            Text("Changing this setting requires an app restart to take effect.")
+        }
+        .alert("Restart Required", isPresented: $viewModel.showRestartAlert) {
+            Button("OK") {}
+        } message: {
+            Text("Please close and reopen UltraTrain for the iCloud sync change to take effect.")
         }
     }
 

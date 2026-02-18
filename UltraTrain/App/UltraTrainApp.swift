@@ -32,9 +32,11 @@ struct UltraTrainApp: App {
     private let notificationService: NotificationService
     private let biometricAuthService: BiometricAuthService
     private let watchRunImportService: WatchRunImportService
+    private let cloudKitSyncMonitor: CloudKitSyncMonitor?
 
     init() {
         let isUITesting = ProcessInfo.processInfo.arguments.contains("-UITestMode")
+        let iCloudEnabled = UserDefaults.standard.bool(forKey: "iCloudSyncEnabled")
 
         do {
             let schema = Schema([
@@ -53,7 +55,16 @@ struct UltraTrainApp: App {
                 AppSettingsSwiftDataModel.self,
                 NutritionPreferencesSwiftDataModel.self
             ])
-            let config = ModelConfiguration(isStoredInMemoryOnly: isUITesting)
+            let config: ModelConfiguration
+            if isUITesting {
+                config = ModelConfiguration(isStoredInMemoryOnly: true)
+            } else if iCloudEnabled {
+                config = ModelConfiguration(
+                    cloudKitDatabase: .private("iCloud.com.ultratrain.app")
+                )
+            } else {
+                config = ModelConfiguration(cloudKitDatabase: .none)
+            }
             modelContainer = try ModelContainer(for: schema, configurations: config)
         } catch {
             fatalError("Failed to create ModelContainer: \(error)")
@@ -108,6 +119,19 @@ struct UltraTrainApp: App {
             planRepository: planRepository,
             widgetDataWriter: widgetDataWriter
         )
+        if iCloudEnabled {
+            let monitor = CloudKitSyncMonitor()
+            monitor.startMonitoring(modelContainer: modelContainer)
+            cloudKitSyncMonitor = monitor
+            let container = modelContainer
+            Task {
+                try? await Task.sleep(for: .seconds(3))
+                await CloudKitDeduplicationService.deduplicateIfNeeded(modelContainer: container)
+            }
+        } else {
+            cloudKitSyncMonitor = nil
+        }
+
         connectivityService.completedRunHandler = { [watchRunImportService, athleteRepository] runData in
             Task {
                 do {

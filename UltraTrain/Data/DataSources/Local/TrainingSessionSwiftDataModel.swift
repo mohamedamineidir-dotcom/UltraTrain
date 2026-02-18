@@ -3,32 +3,35 @@ import SwiftData
 
 @Model
 final class TrainingSessionSwiftDataModel {
-    @Attribute(.unique) var id: UUID
-    var date: Date
-    var typeRaw: String
-    var plannedDistanceKm: Double
-    var plannedElevationGainM: Double
-    var plannedDuration: Double
-    var intensityRaw: String
-    var sessionDescription: String
+    var id: UUID = UUID()
+    var date: Date = Date()
+    var typeRaw: String = "easy"
+    var plannedDistanceKm: Double = 0
+    var plannedElevationGainM: Double = 0
+    var plannedDuration: Double = 0
+    var intensityRaw: String = "low"
+    var sessionDescription: String = ""
     var nutritionNotes: String?
-    var isCompleted: Bool
+    var isCompleted: Bool = false
     var isSkipped: Bool = false
     var linkedRunId: UUID?
+    var week: TrainingWeekSwiftDataModel?
+    var updatedAt: Date = Date()
 
     init(
-        id: UUID,
-        date: Date,
-        typeRaw: String,
-        plannedDistanceKm: Double,
-        plannedElevationGainM: Double,
-        plannedDuration: Double,
-        intensityRaw: String,
-        sessionDescription: String,
-        nutritionNotes: String?,
-        isCompleted: Bool,
-        isSkipped: Bool,
-        linkedRunId: UUID?
+        id: UUID = UUID(),
+        date: Date = Date(),
+        typeRaw: String = "easy",
+        plannedDistanceKm: Double = 0,
+        plannedElevationGainM: Double = 0,
+        plannedDuration: Double = 0,
+        intensityRaw: String = "low",
+        sessionDescription: String = "",
+        nutritionNotes: String? = nil,
+        isCompleted: Bool = false,
+        isSkipped: Bool = false,
+        linkedRunId: UUID? = nil,
+        updatedAt: Date = Date()
     ) {
         self.id = id
         self.date = date
@@ -42,5 +45,6 @@ final class TrainingSessionSwiftDataModel {
         self.isCompleted = isCompleted
         self.isSkipped = isSkipped
         self.linkedRunId = linkedRunId
+        self.updatedAt = updatedAt
     }
 }

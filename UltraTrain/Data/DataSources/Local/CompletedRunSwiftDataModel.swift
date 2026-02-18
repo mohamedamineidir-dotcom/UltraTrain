@@ -3,40 +3,43 @@ import SwiftData
 
 @Model
 final class CompletedRunSwiftDataModel {
-    @Attribute(.unique) var id: UUID
-    var athleteId: UUID
-    var date: Date
-    var distanceKm: Double
-    var elevationGainM: Double
-    var elevationLossM: Double
-    var duration: Double
+    var id: UUID = UUID()
+    var athleteId: UUID = UUID()
+    var date: Date = Date()
+    var distanceKm: Double = 0
+    var elevationGainM: Double = 0
+    var elevationLossM: Double = 0
+    var duration: Double = 0
     var averageHeartRate: Int?
     var maxHeartRate: Int?
-    var averagePaceSecondsPerKm: Double
-    var gpsTrackData: Data
-    @Relationship(deleteRule: .cascade) var splits: [SplitSwiftDataModel]
+    var averagePaceSecondsPerKm: Double = 0
+    @Attribute(.externalStorage) var gpsTrackData: Data = Data()
+    @Relationship(deleteRule: .cascade, inverse: \SplitSwiftDataModel.run)
+    var splits: [SplitSwiftDataModel] = []
     var linkedSessionId: UUID?
     var linkedRaceId: UUID?
     var notes: String?
-    var pausedDuration: Double
+    var pausedDuration: Double = 0
+    var updatedAt: Date = Date()
 
     init(
-        id: UUID,
-        athleteId: UUID,
-        date: Date,
-        distanceKm: Double,
-        elevationGainM: Double,
-        elevationLossM: Double,
-        duration: Double,
-        averageHeartRate: Int?,
-        maxHeartRate: Int?,
-        averagePaceSecondsPerKm: Double,
-        gpsTrackData: Data,
-        splits: [SplitSwiftDataModel],
-        linkedSessionId: UUID?,
-        linkedRaceId: UUID?,
-        notes: String?,
-        pausedDuration: Double
+        id: UUID = UUID(),
+        athleteId: UUID = UUID(),
+        date: Date = Date(),
+        distanceKm: Double = 0,
+        elevationGainM: Double = 0,
+        elevationLossM: Double = 0,
+        duration: Double = 0,
+        averageHeartRate: Int? = nil,
+        maxHeartRate: Int? = nil,
+        averagePaceSecondsPerKm: Double = 0,
+        gpsTrackData: Data = Data(),
+        splits: [SplitSwiftDataModel] = [],
+        linkedSessionId: UUID? = nil,
+        linkedRaceId: UUID? = nil,
+        notes: String? = nil,
+        pausedDuration: Double = 0,
+        updatedAt: Date = Date()
     ) {
         self.id = id
         self.athleteId = athleteId
@@ -54,5 +57,6 @@ final class CompletedRunSwiftDataModel {
         self.linkedRaceId = linkedRaceId
         self.notes = notes
         self.pausedDuration = pausedDuration
+        self.updatedAt = updatedAt
     }
 }

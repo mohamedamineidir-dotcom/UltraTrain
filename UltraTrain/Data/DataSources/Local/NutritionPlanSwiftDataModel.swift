@@ -3,22 +3,25 @@ import SwiftData
 
 @Model
 final class NutritionPlanSwiftDataModel {
-    @Attribute(.unique) var id: UUID
-    var raceId: UUID
-    var caloriesPerHour: Int
-    var hydrationMlPerHour: Int
-    var sodiumMgPerHour: Int
-    @Relationship(deleteRule: .cascade) var entries: [NutritionEntrySwiftDataModel]
-    var gutTrainingSessionIds: [UUID]
+    var id: UUID = UUID()
+    var raceId: UUID = UUID()
+    var caloriesPerHour: Int = 0
+    var hydrationMlPerHour: Int = 0
+    var sodiumMgPerHour: Int = 0
+    @Relationship(deleteRule: .cascade, inverse: \NutritionEntrySwiftDataModel.nutritionPlan)
+    var entries: [NutritionEntrySwiftDataModel] = []
+    var gutTrainingSessionIds: [UUID] = []
+    var updatedAt: Date = Date()
 
     init(
-        id: UUID,
-        raceId: UUID,
-        caloriesPerHour: Int,
-        hydrationMlPerHour: Int,
-        sodiumMgPerHour: Int,
-        entries: [NutritionEntrySwiftDataModel],
-        gutTrainingSessionIds: [UUID]
+        id: UUID = UUID(),
+        raceId: UUID = UUID(),
+        caloriesPerHour: Int = 0,
+        hydrationMlPerHour: Int = 0,
+        sodiumMgPerHour: Int = 0,
+        entries: [NutritionEntrySwiftDataModel] = [],
+        gutTrainingSessionIds: [UUID] = [],
+        updatedAt: Date = Date()
     ) {
         self.id = id
         self.raceId = raceId
@@ -27,5 +30,6 @@ final class NutritionPlanSwiftDataModel {
         self.sodiumMgPerHour = sodiumMgPerHour
         self.entries = entries
         self.gutTrainingSessionIds = gutTrainingSessionIds
+        self.updatedAt = updatedAt
     }
 }

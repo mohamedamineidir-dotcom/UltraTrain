@@ -36,6 +36,7 @@
     <key>UIBackgroundModes</key>
     <array>
         <string>location</string>
+        <string>remote-notification</string>
     </array>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>UltraTrain uses your location to track your runs and display your route on the map.</string>

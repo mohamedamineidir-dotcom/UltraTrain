@@ -50,6 +50,11 @@ targets:
         com.apple.developer.healthkit.access: []
         com.apple.security.application-groups:
           - group.com.ultratrain.shared
+        com.apple.developer.icloud-services:
+          - CloudDocuments
+        com.apple.developer.icloud-container-identifiers:
+          - iCloud.com.ultratrain.app
+        aps-environment: development
     postCompileScripts: []
 
   UltraTrainWatch:

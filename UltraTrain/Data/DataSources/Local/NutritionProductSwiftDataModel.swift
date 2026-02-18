@@ -3,22 +3,24 @@ import SwiftData
 
 @Model
 final class NutritionProductSwiftDataModel {
-    @Attribute(.unique) var id: UUID
-    var name: String
-    var typeRaw: String
-    var caloriesPerServing: Int
-    var carbsGramsPerServing: Double
-    var sodiumMgPerServing: Int
-    var caffeinated: Bool
+    var id: UUID = UUID()
+    var name: String = ""
+    var typeRaw: String = "gel"
+    var caloriesPerServing: Int = 0
+    var carbsGramsPerServing: Double = 0
+    var sodiumMgPerServing: Int = 0
+    var caffeinated: Bool = false
+    var updatedAt: Date = Date()
 
     init(
-        id: UUID,
-        name: String,
-        typeRaw: String,
-        caloriesPerServing: Int,
-        carbsGramsPerServing: Double,
-        sodiumMgPerServing: Int,
-        caffeinated: Bool
+        id: UUID = UUID(),
+        name: String = "",
+        typeRaw: String = "gel",
+        caloriesPerServing: Int = 0,
+        carbsGramsPerServing: Double = 0,
+        sodiumMgPerServing: Int = 0,
+        caffeinated: Bool = false,
+        updatedAt: Date = Date()
     ) {
         self.id = id
         self.name = name
@@ -27,5 +29,6 @@ final class NutritionProductSwiftDataModel {
         self.carbsGramsPerServing = carbsGramsPerServing
         self.sodiumMgPerServing = sodiumMgPerServing
         self.caffeinated = caffeinated
+        self.updatedAt = updatedAt
     }
 }

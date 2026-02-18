@@ -3,34 +3,37 @@ import SwiftData
 
 @Model
 final class RaceSwiftDataModel {
-    @Attribute(.unique) var id: UUID
-    var name: String
-    var date: Date
-    var distanceKm: Double
-    var elevationGainM: Double
-    var elevationLossM: Double
-    var priorityRaw: String
-    var goalTypeRaw: String
+    var id: UUID = UUID()
+    var name: String = ""
+    var date: Date = Date()
+    var distanceKm: Double = 0
+    var elevationGainM: Double = 0
+    var elevationLossM: Double = 0
+    var priorityRaw: String = "A"
+    var goalTypeRaw: String = "finish"
     var goalValue: Double?
-    var terrainDifficultyRaw: String
-    @Relationship(deleteRule: .cascade) var checkpointModels: [CheckpointSwiftDataModel]
+    var terrainDifficultyRaw: String = "moderate"
+    @Relationship(deleteRule: .cascade, inverse: \CheckpointSwiftDataModel.race)
+    var checkpointModels: [CheckpointSwiftDataModel] = []
     var actualFinishTime: Double?
     var linkedRunId: UUID?
+    var updatedAt: Date = Date()
 
     init(
-        id: UUID,
-        name: String,
-        date: Date,
-        distanceKm: Double,
-        elevationGainM: Double,
-        elevationLossM: Double,
-        priorityRaw: String,
-        goalTypeRaw: String,
-        goalValue: Double?,
-        terrainDifficultyRaw: String,
+        id: UUID = UUID(),
+        name: String = "",
+        date: Date = Date(),
+        distanceKm: Double = 0,
+        elevationGainM: Double = 0,
+        elevationLossM: Double = 0,
+        priorityRaw: String = "A",
+        goalTypeRaw: String = "finish",
+        goalValue: Double? = nil,
+        terrainDifficultyRaw: String = "moderate",
         checkpointModels: [CheckpointSwiftDataModel] = [],
         actualFinishTime: Double? = nil,
-        linkedRunId: UUID? = nil
+        linkedRunId: UUID? = nil,
+        updatedAt: Date = Date()
     ) {
         self.id = id
         self.name = name
@@ -45,5 +48,6 @@ final class RaceSwiftDataModel {
         self.checkpointModels = checkpointModels
         self.actualFinishTime = actualFinishTime
         self.linkedRunId = linkedRunId
+        self.updatedAt = updatedAt
     }
 }

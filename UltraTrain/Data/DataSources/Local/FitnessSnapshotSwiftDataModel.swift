@@ -3,28 +3,30 @@ import SwiftData
 
 @Model
 final class FitnessSnapshotSwiftDataModel {
-    @Attribute(.unique) var id: UUID
-    var date: Date
-    var fitness: Double
-    var fatigue: Double
-    var form: Double
-    var weeklyVolumeKm: Double
-    var weeklyElevationGainM: Double
-    var weeklyDuration: Double
-    var acuteToChronicRatio: Double
+    var id: UUID = UUID()
+    var date: Date = Date()
+    var fitness: Double = 0
+    var fatigue: Double = 0
+    var form: Double = 0
+    var weeklyVolumeKm: Double = 0
+    var weeklyElevationGainM: Double = 0
+    var weeklyDuration: Double = 0
+    var acuteToChronicRatio: Double = 0
     var monotony: Double = 0
+    var updatedAt: Date = Date()
 
     init(
-        id: UUID,
-        date: Date,
-        fitness: Double,
-        fatigue: Double,
-        form: Double,
-        weeklyVolumeKm: Double,
-        weeklyElevationGainM: Double,
-        weeklyDuration: Double,
-        acuteToChronicRatio: Double,
-        monotony: Double
+        id: UUID = UUID(),
+        date: Date = Date(),
+        fitness: Double = 0,
+        fatigue: Double = 0,
+        form: Double = 0,
+        weeklyVolumeKm: Double = 0,
+        weeklyElevationGainM: Double = 0,
+        weeklyDuration: Double = 0,
+        acuteToChronicRatio: Double = 0,
+        monotony: Double = 0,
+        updatedAt: Date = Date()
     ) {
         self.id = id
         self.date = date
@@ -36,5 +38,6 @@ final class FitnessSnapshotSwiftDataModel {
         self.weeklyDuration = weeklyDuration
         self.acuteToChronicRatio = acuteToChronicRatio
         self.monotony = monotony
+        self.updatedAt = updatedAt
     }
 }
