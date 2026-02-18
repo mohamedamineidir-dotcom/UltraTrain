@@ -1,5 +1,6 @@
 import Foundation
 import WatchConnectivity
+import WidgetKit
 import os
 
 @Observable
@@ -85,6 +86,9 @@ extension WatchConnectivityService: WCSessionDelegate {
             }
             if let decodedComplicationData {
                 self.complicationData = decodedComplicationData
+                WatchComplicationDataStore.write(decodedComplicationData)
+                WidgetCenter.shared.reloadTimelines(ofKind: "WatchNextSessionComplication")
+                WidgetCenter.shared.reloadTimelines(ofKind: "WatchRaceCountdownComplication")
             }
             Logger.watch.info("Received application context — run: \(decodedRunData != nil), session: \(decodedSessionData != nil), complication: \(decodedComplicationData != nil)")
         }

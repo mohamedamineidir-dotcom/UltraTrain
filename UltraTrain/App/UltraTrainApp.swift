@@ -82,13 +82,14 @@ struct UltraTrainApp: App {
         hapticService = HapticService()
         trainingLoadCalculator = TrainingLoadCalculator()
         sessionNutritionAdvisor = DefaultSessionNutritionAdvisor()
+        connectivityService = PhoneConnectivityService()
+        connectivityService.activate()
         widgetDataWriter = WidgetDataWriter(
             planRepository: planRepository,
             runRepository: runRepository,
-            raceRepository: raceRepository
+            raceRepository: raceRepository,
+            connectivityService: connectivityService
         )
-        connectivityService = PhoneConnectivityService()
-        connectivityService.activate()
         exportService = ExportService()
         runImportUseCase = DefaultRunImportUseCase(
             gpxParser: GPXParser(),

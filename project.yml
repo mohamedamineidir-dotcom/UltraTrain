@@ -66,6 +66,8 @@ targets:
       - path: UltraTrainWatch/Resources
     dependencies:
       - sdk: WatchConnectivity.framework
+      - target: UltraTrainWatchWidgets
+        embed: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.ultratrain.app.watchkitapp
@@ -75,6 +77,11 @@ targets:
         CURRENT_PROJECT_VERSION: 1
         CODE_SIGN_STYLE: Automatic
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    entitlements:
+      path: UltraTrainWatch/Resources/UltraTrainWatch.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.ultratrain.watchshared
 
   UltraTrainWidgets:
     type: app-extension
@@ -103,6 +110,34 @@ targets:
       properties:
         com.apple.security.application-groups:
           - group.com.ultratrain.shared
+
+  UltraTrainWatchWidgets:
+    type: app-extension
+    platform: watchOS
+    sources:
+      - path: UltraTrainWatchWidgets
+        excludes:
+          - "**/.DS_Store"
+      - path: UltraTrain/Shared
+        excludes:
+          - "**/.DS_Store"
+    resources:
+      - path: UltraTrainWatchWidgets/Resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ultratrain.app.watchkitapp.widgets
+        INFOPLIST_FILE: UltraTrainWatchWidgets/Resources/Info.plist
+        GENERATE_INFOPLIST_FILE: false
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: 1
+        CODE_SIGN_STYLE: Automatic
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
+    entitlements:
+      path: UltraTrainWatchWidgets/Resources/UltraTrainWatchWidgets.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.ultratrain.watchshared
 
   UltraTrainTests:
     type: bundle.unit-test

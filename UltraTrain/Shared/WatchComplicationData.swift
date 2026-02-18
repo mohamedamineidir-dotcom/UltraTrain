@@ -2,6 +2,7 @@ import Foundation
 
 struct WatchComplicationData: Codable, Sendable {
     var nextSessionType: String?
+    var nextSessionIcon: String?
     var nextSessionDistanceKm: Double?
     var nextSessionDate: Date?
     var raceCountdownDays: Int?

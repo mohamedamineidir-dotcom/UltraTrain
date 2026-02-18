@@ -7,17 +7,20 @@ final class WidgetDataWriter: @unchecked Sendable {
     private let planRepository: any TrainingPlanRepository
     private let runRepository: any RunRepository
     private let raceRepository: any RaceRepository
+    private let connectivityService: PhoneConnectivityService?
     private let defaults: UserDefaults?
 
     init(
         planRepository: any TrainingPlanRepository,
         runRepository: any RunRepository,
         raceRepository: any RaceRepository,
+        connectivityService: PhoneConnectivityService? = nil,
         defaults: UserDefaults? = UserDefaults(suiteName: WidgetDataKeys.suiteName)
     ) {
         self.planRepository = planRepository
         self.runRepository = runRepository
         self.raceRepository = raceRepository
+        self.connectivityService = connectivityService
         self.defaults = defaults
     }
 
@@ -26,6 +29,7 @@ final class WidgetDataWriter: @unchecked Sendable {
         await writeRaceCountdown()
         await writeWeeklyProgress()
         await writeLastRun()
+        await sendComplicationDataToWatch()
         reloadWidgets()
     }
 
@@ -155,6 +159,49 @@ final class WidgetDataWriter: @unchecked Sendable {
 
     func reloadWidgets() {
         WidgetCenter.shared.reloadAllTimelines()
+    }
+
+    // MARK: - Watch Complication
+
+    func sendComplicationDataToWatch() async {
+        guard connectivityService != nil else { return }
+
+        do {
+            var data = WatchComplicationData()
+
+            if let plan = try await planRepository.getActivePlan() {
+                let today = Calendar.current.startOfDay(for: .now)
+                let session = plan.weeks
+                    .flatMap(\.sessions)
+                    .filter { !$0.isCompleted && !$0.isSkipped && $0.type != .rest }
+                    .filter { $0.date >= today }
+                    .sorted { $0.date < $1.date }
+                    .first
+
+                if let session {
+                    data.nextSessionType = displayName(for: session.type)
+                    data.nextSessionIcon = iconName(for: session.type)
+                    data.nextSessionDistanceKm = session.plannedDistanceKm
+                    data.nextSessionDate = session.date
+                }
+            }
+
+            let races = try await raceRepository.getRaces()
+            let now = Date.now
+            if let aRace = races
+                .filter({ $0.priority == .aRace && $0.date > now })
+                .sorted(by: { $0.date < $1.date })
+                .first {
+                data.raceCountdownDays = Calendar.current.dateComponents(
+                    [.day], from: now, to: aRace.date
+                ).day
+                data.raceName = aRace.name
+            }
+
+            await connectivityService?.sendComplicationData(data)
+        } catch {
+            Logger.widget.error("Failed to send complication data to watch: \(error)")
+        }
     }
 
     // MARK: - Private
