@@ -42,6 +42,10 @@ final class LocalAppSettingsRepository: AppSettingsRepository, @unchecked Sendab
         existing.nutritionRemindersEnabled = settings.nutritionRemindersEnabled
         existing.autoPauseEnabled = settings.autoPauseEnabled
         existing.nutritionAlertSoundEnabled = settings.nutritionAlertSoundEnabled
+        existing.stravaAutoUploadEnabled = settings.stravaAutoUploadEnabled
+        existing.stravaConnected = settings.stravaConnected
+        existing.raceCountdownEnabled = settings.raceCountdownEnabled
+        existing.biometricLockEnabled = settings.biometricLockEnabled
 
         try context.save()
         Logger.persistence.info("App settings updated")

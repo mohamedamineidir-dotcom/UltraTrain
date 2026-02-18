@@ -30,7 +30,9 @@ struct SettingsViewModelTests {
             autoPauseEnabled: true,
             nutritionAlertSoundEnabled: true,
             stravaAutoUploadEnabled: false,
-            stravaConnected: false
+            stravaConnected: false,
+            raceCountdownEnabled: true,
+            biometricLockEnabled: false
         )
     }
 
@@ -42,7 +44,11 @@ struct SettingsViewModelTests {
         healthKitService: MockHealthKitService = MockHealthKitService(),
         exportService: MockExportService = MockExportService(),
         runRepository: MockRunRepository = MockRunRepository(),
-        stravaAuthService: MockStravaAuthService = MockStravaAuthService()
+        stravaAuthService: MockStravaAuthService = MockStravaAuthService(),
+        notificationService: MockNotificationService = MockNotificationService(),
+        planRepository: MockTrainingPlanRepository = MockTrainingPlanRepository(),
+        raceRepository: MockRaceRepository = MockRaceRepository(),
+        biometricAuthService: MockBiometricAuthService = MockBiometricAuthService()
     ) -> SettingsViewModel {
         SettingsViewModel(
             athleteRepository: athleteRepo,
@@ -51,7 +57,11 @@ struct SettingsViewModelTests {
             healthKitService: healthKitService,
             exportService: exportService,
             runRepository: runRepository,
-            stravaAuthService: stravaAuthService
+            stravaAuthService: stravaAuthService,
+            notificationService: notificationService,
+            planRepository: planRepository,
+            raceRepository: raceRepository,
+            biometricAuthService: biometricAuthService
         )
     }
 

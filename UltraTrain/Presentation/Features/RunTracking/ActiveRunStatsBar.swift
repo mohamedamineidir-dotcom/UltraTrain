@@ -25,6 +25,7 @@ struct ActiveRunStatsBar: View {
 }
 
 private struct StatTile: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let label: String
     let value: String
     let unit: String
@@ -37,6 +38,7 @@ private struct StatTile: View {
             HStack(alignment: .lastTextBaseline, spacing: 2) {
                 Text(value)
                     .font(.title2.bold().monospacedDigit())
+                    .contentTransition(reduceMotion ? .identity : .numericText())
                 if !unit.isEmpty {
                     Text(unit)
                         .font(.caption2)

@@ -3,6 +3,7 @@ import SwiftUI
 struct ProfileView: View {
     @State private var viewModel: ProfileViewModel
     private let athleteRepository: any AthleteRepository
+    private let raceRepository: any RaceRepository
     private let runRepository: any RunRepository
     private let fitnessCalculator: any CalculateFitnessUseCase
     private let finishTimeEstimator: any EstimateFinishTimeUseCase
@@ -11,6 +12,9 @@ struct ProfileView: View {
     private let healthKitService: any HealthKitServiceProtocol
     private let exportService: any ExportServiceProtocol
     private let stravaAuthService: any StravaAuthServiceProtocol
+    private let notificationService: any NotificationServiceProtocol
+    private let planRepository: any TrainingPlanRepository
+    private let biometricAuthService: any BiometricAuthServiceProtocol
 
     init(
         athleteRepository: any AthleteRepository,
@@ -23,7 +27,10 @@ struct ProfileView: View {
         healthKitService: any HealthKitServiceProtocol,
         widgetDataWriter: WidgetDataWriter,
         exportService: any ExportServiceProtocol,
-        stravaAuthService: any StravaAuthServiceProtocol
+        stravaAuthService: any StravaAuthServiceProtocol,
+        notificationService: any NotificationServiceProtocol,
+        planRepository: any TrainingPlanRepository,
+        biometricAuthService: any BiometricAuthServiceProtocol
     ) {
         _viewModel = State(initialValue: ProfileViewModel(
             athleteRepository: athleteRepository,
@@ -31,6 +38,7 @@ struct ProfileView: View {
             widgetDataWriter: widgetDataWriter
         ))
         self.athleteRepository = athleteRepository
+        self.raceRepository = raceRepository
         self.runRepository = runRepository
         self.fitnessCalculator = fitnessCalculator
         self.finishTimeEstimator = finishTimeEstimator
@@ -39,6 +47,9 @@ struct ProfileView: View {
         self.healthKitService = healthKitService
         self.exportService = exportService
         self.stravaAuthService = stravaAuthService
+        self.notificationService = notificationService
+        self.planRepository = planRepository
+        self.biometricAuthService = biometricAuthService
     }
 
     var body: some View {
@@ -69,7 +80,11 @@ struct ProfileView: View {
                             healthKitService: healthKitService,
                             exportService: exportService,
                             runRepository: runRepository,
-                            stravaAuthService: stravaAuthService
+                            stravaAuthService: stravaAuthService,
+                            notificationService: notificationService,
+                            planRepository: planRepository,
+                            raceRepository: raceRepository,
+                            biometricAuthService: biometricAuthService
                         )
                     } label: {
                         Image(systemName: "gearshape")

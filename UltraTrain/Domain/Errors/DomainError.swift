@@ -20,6 +20,8 @@ enum DomainError: Error, Equatable, Sendable {
     case stravaAuthFailed(reason: String)
     case stravaUploadFailed(reason: String)
     case stravaImportFailed(reason: String)
+    case biometricFailed(reason: String)
+    case notificationDenied
     case unknown(message: String)
 }
 
@@ -64,6 +66,10 @@ extension DomainError: LocalizedError {
             return "Failed to upload to Strava: \(reason)"
         case .stravaImportFailed(let reason):
             return "Failed to import from Strava: \(reason)"
+        case .biometricFailed(let reason):
+            return "Biometric authentication failed: \(reason)"
+        case .notificationDenied:
+            return "Notification permission was denied. Enable in iOS Settings."
         case .unknown(let message):
             return "An unexpected error occurred: \(message)"
         }

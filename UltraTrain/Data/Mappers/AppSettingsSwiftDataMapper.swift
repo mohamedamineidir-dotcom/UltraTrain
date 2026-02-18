@@ -9,7 +9,9 @@ enum AppSettingsSwiftDataMapper {
             autoPauseEnabled: model.autoPauseEnabled,
             nutritionAlertSoundEnabled: model.nutritionAlertSoundEnabled,
             stravaAutoUploadEnabled: model.stravaAutoUploadEnabled,
-            stravaConnected: model.stravaConnected
+            stravaConnected: model.stravaConnected,
+            raceCountdownEnabled: model.raceCountdownEnabled,
+            biometricLockEnabled: model.biometricLockEnabled
         )
     }
 
@@ -21,7 +23,9 @@ enum AppSettingsSwiftDataMapper {
             autoPauseEnabled: settings.autoPauseEnabled,
             nutritionAlertSoundEnabled: settings.nutritionAlertSoundEnabled,
             stravaAutoUploadEnabled: settings.stravaAutoUploadEnabled,
-            stravaConnected: settings.stravaConnected
+            stravaConnected: settings.stravaConnected,
+            raceCountdownEnabled: settings.raceCountdownEnabled,
+            biometricLockEnabled: settings.biometricLockEnabled
         )
     }
 }

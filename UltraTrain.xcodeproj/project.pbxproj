@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6B7471C25C4E5243FA0E6B13 /* BiometricAuthServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3965EAC8272B810B1DAC22EA /* BiometricAuthServiceProtocol.swift */; };
+		5DA1E2ED243A8D22DD998D62 /* BiometricAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C45FB81DBFB21D605295DB4 /* BiometricAuthService.swift */; };
+		4D5D36CD9EE6BDC0662BE292 /* AppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF821065B5EED155181AA3BF /* AppLockView.swift */; };
+		6AB198293D1BD9DEB30CDF73 /* Animation+Ultra.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF121F48F39FE87276ED1138 /* Animation+Ultra.swift */; };
+		A427136CCD71B1D550104D93 /* MockBiometricAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E38F73152BBC76E3EBC22F /* MockBiometricAuthService.swift */; };
 		F317C5F205B45E50271F2DCE /* ACRTrendChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5DC53A9D00DA577A9D5AD8C /* ACRTrendChartView.swift */; };
 		109B7B66EDDA1C2A688CF94A /* ActiveRunStatsBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE333BE72676CF90BC238F78 /* ActiveRunStatsBar.swift */; };
 		F7EC7C855B931F7D08B8BCA2 /* ActiveRunView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900621CEECEEBC4178332EB4 /* ActiveRunView.swift */; };
@@ -135,6 +140,7 @@
 		F62DAEBE7554EF0122EF98EB /* MockGenerateNutritionPlanUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67046BD5B89F2ADDC637BD6C /* MockGenerateNutritionPlanUseCase.swift */; };
 		A2B3C4D5E6F7081929A3B4C5 /* CSVExporterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C4D5E6F708192A39B4C5D6 /* CSVExporterTests.swift */; };
 		54CF65529326CCDFAC97C210 /* MockGenerateTrainingPlanUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916A000623DD89CC57C3BC70 /* MockGenerateTrainingPlanUseCase.swift */; };
+		23B6B74AE0A0D8EEDE45B1B9 /* MockHapticService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6A2B363F46EC7D6B364B35 /* MockHapticService.swift */; };
 		E6F70819A2B3C4D5E6F78190 /* MockExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F708192AB3C4D5E6F7819023 /* MockExportService.swift */; };
 		BB1188992244AABB00CCDDEE /* MockRunImportUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2299AA3355BBCC11DDEEFF /* MockRunImportUseCase.swift */; };
 		2223999900001111CCCC3334 /* MockStravaAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3334AAAA1111222200004445 /* MockStravaAuthService.swift */; };
@@ -324,6 +330,8 @@
 		F1A2B3C4D5E6F7A8B9C0D1E2 /* WidgetDataKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E2F3A4B5C6D7E8F9A0B1C2 /* WidgetDataKeys.swift */; };
 		B2C3D4E5F6A7B8C9D0E1F2A3 /* WidgetDataReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B3C4D5E6F7A8B9C0D1E2F3 /* WidgetDataReader.swift */; };
 		C2D3E4F5A6B7C8D9E0F1A2B3 /* WidgetDataReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B3C4D5E6F7A8B9C0D1E2F3 /* WidgetDataReader.swift */; };
+		79725D353B8F9265EC2B5F7C /* NotificationServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE195CAF38EAB16FD26C8875 /* NotificationServiceProtocol.swift */; };
+		4EAFD22E93D01A303D1AED16 /* MockNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3ADCD2D98C0E947C0920CDF /* MockNotificationService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -383,6 +391,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3965EAC8272B810B1DAC22EA /* BiometricAuthServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricAuthServiceProtocol.swift; sourceTree = "<group>"; };
+		2C45FB81DBFB21D605295DB4 /* BiometricAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricAuthService.swift; sourceTree = "<group>"; };
+		EF821065B5EED155181AA3BF /* AppLockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockView.swift; sourceTree = "<group>"; };
+		BF121F48F39FE87276ED1138 /* Animation+Ultra.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Animation+Ultra.swift"; sourceTree = "<group>"; };
+		42E38F73152BBC76E3EBC22F /* MockBiometricAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockBiometricAuthService.swift; sourceTree = "<group>"; };
 		E5DC53A9D00DA577A9D5AD8C /* ACRTrendChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRTrendChartView.swift; sourceTree = "<group>"; };
 		FE333BE72676CF90BC238F78 /* ActiveRunStatsBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveRunStatsBar.swift; sourceTree = "<group>"; };
 		900621CEECEEBC4178332EB4 /* ActiveRunView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveRunView.swift; sourceTree = "<group>"; };
@@ -513,6 +526,7 @@
 		546F3C658466FD677D9219D6 /* MockFitnessRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFitnessRepository.swift; sourceTree = "<group>"; };
 		67046BD5B89F2ADDC637BD6C /* MockGenerateNutritionPlanUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockGenerateNutritionPlanUseCase.swift; sourceTree = "<group>"; };
 		916A000623DD89CC57C3BC70 /* MockGenerateTrainingPlanUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockGenerateTrainingPlanUseCase.swift; sourceTree = "<group>"; };
+		AF6A2B363F46EC7D6B364B35 /* MockHapticService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockHapticService.swift; sourceTree = "<group>"; };
 		F708192AB3C4D5E6F7819023 /* MockExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockExportService.swift; sourceTree = "<group>"; };
 		CC2299AA3355BBCC11DDEEFF /* MockRunImportUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRunImportUseCase.swift; sourceTree = "<group>"; };
 		3334AAAA1111222200004445 /* MockStravaAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockStravaAuthService.swift; sourceTree = "<group>"; };
@@ -695,6 +709,8 @@
 		D1E2F3A4B5C6D7E8F9A0B1C2 /* WidgetDataKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataKeys.swift; sourceTree = "<group>"; };
 		A2B3C4D5E6F7A8B9C0D1E2F3 /* WidgetDataReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataReader.swift; sourceTree = "<group>"; };
 		AACC55EE77FF99001122AABB /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
+		CE195CAF38EAB16FD26C8875 /* NotificationServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationServiceProtocol.swift; sourceTree = "<group>"; };
+		B3ADCD2D98C0E947C0920CDF /* MockNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNotificationService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -739,6 +755,7 @@
 		027263DE1795F759E517D991 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				EF821065B5EED155181AA3BF /* AppLockView.swift */,
 				89CA87CF2CED164DED1401C4 /* ChartAnnotationCard.swift */,
 				44AA1122CCDD33EE44FF5500 /* DocumentPicker.swift */,
 				88623DF1C979FBA8AFCD1161 /* ErrorBannerView.swift */,
@@ -856,6 +873,7 @@
 		31662AF3683F0AABBD3552EB /* Theme */ = {
 			isa = PBXGroup;
 			children = (
+				BF121F48F39FE87276ED1138 /* Animation+Ultra.swift */,
 				913D3F8835FB63018374E396 /* CardModifier.swift */,
 				C31DCA000DB563D940A7B2BC /* Theme.swift */,
 			);
@@ -865,6 +883,7 @@
 		31ACBBEC0A30DA6F2C667089 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
+				42E38F73152BBC76E3EBC22F /* MockBiometricAuthService.swift */,
 				FBAACFB5F4D0F8E636C8B334 /* MockAppSettingsRepository.swift */,
 				59927CE27A79B9305B7BDBFC /* MockAthleteRepository.swift */,
 				C29010B7C949D4D3C2B86945 /* MockCalculateFitnessUseCase.swift */,
@@ -874,6 +893,7 @@
 				546F3C658466FD677D9219D6 /* MockFitnessRepository.swift */,
 				67046BD5B89F2ADDC637BD6C /* MockGenerateNutritionPlanUseCase.swift */,
 				916A000623DD89CC57C3BC70 /* MockGenerateTrainingPlanUseCase.swift */,
+				AF6A2B363F46EC7D6B364B35 /* MockHapticService.swift */,
 				F708192AB3C4D5E6F7819023 /* MockExportService.swift */,
 				CC2299AA3355BBCC11DDEEFF /* MockRunImportUseCase.swift */,
 				3334AAAA1111222200004445 /* MockStravaAuthService.swift */,
@@ -881,6 +901,7 @@
 				E5E6E7E8F9F0A1A2B3B4C5C6 /* MockStravaUploadService.swift */,
 				6D1F5DFC3C65D0DD2EBADB64 /* MockHealthKitService.swift */,
 				F1814003BF24A6AF10BE6C06 /* MockLiveActivityService.swift */,
+				B3ADCD2D98C0E947C0920CDF /* MockNotificationService.swift */,
 				AAA56E78C29B14A176CEB014 /* MockNutritionRepository.swift */,
 				9C190FC146F038CE26CD2385 /* MockRaceRepository.swift */,
 				883F648ABD3BA81758A3D1F2 /* MockRunRepository.swift */,
@@ -1054,6 +1075,7 @@
 			isa = PBXGroup;
 			children = (
 				2095A3E3D099A11D5CC3385C /* AnalyticsService.swift */,
+				2C45FB81DBFB21D605295DB4 /* BiometricAuthService.swift */,
 				42F309856820F792FE7452E9 /* ElevationService.swift */,
 				0718293A4B5C6D79E8F9A0B1 /* ExportService.swift */,
 				6E4535E0BB060C0EA83A4AF3 /* HapticService.swift */,
@@ -1073,6 +1095,7 @@
 		5B982A12245E33C5BD49C8DD /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
+				3965EAC8272B810B1DAC22EA /* BiometricAuthServiceProtocol.swift */,
 				CEE12B24CF6FAB7F58915B27 /* CalculateFitnessUseCase.swift */,
 				9F1E0F11D0D0C3148FD4B944 /* CalculateTrainingLoadUseCase.swift */,
 				94ACBB6B8EFF04F17A739A8A /* ClearAllDataUseCase.swift */,
@@ -1090,6 +1113,7 @@
 				DD44EE55FF66778899AABB00 /* GPXParser.swift */,
 				7BFC2F7A775B0037FBF0033D /* HealthKitServiceProtocol.swift */,
 				CBDF4777CA3D581A85AB8607 /* IntermediateRaceHandler.swift */,
+				CE195CAF38EAB16FD26C8875 /* NotificationServiceProtocol.swift */,
 				87E0E83292388153E20DFE3C /* NutritionPlanGenerator.swift */,
 				D38384D149C494F1E9E16DAA /* NutritionReminderScheduler.swift */,
 				3DA9AF684023B4C3D98AF9DF /* PhaseDistributor.swift */,
@@ -1739,6 +1763,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A427136CCD71B1D550104D93 /* MockBiometricAuthService.swift in Sources */,
 				58EA1D3B6E4DE15ED676696F /* AthleteTests.swift in Sources */,
 				846A32C3BB81E3C29B621792 /* CheckpointLocationResolverTests.swift in Sources */,
 				8B01B690049F3BAB5C71CED4 /* DashboardViewModelTests.swift in Sources */,
@@ -1761,6 +1786,7 @@
 				BB260DDF10E76DD79CF28E30 /* MockFitnessRepository.swift in Sources */,
 				F62DAEBE7554EF0122EF98EB /* MockGenerateNutritionPlanUseCase.swift in Sources */,
 				54CF65529326CCDFAC97C210 /* MockGenerateTrainingPlanUseCase.swift in Sources */,
+				23B6B74AE0A0D8EEDE45B1B9 /* MockHapticService.swift in Sources */,
 				E6F70819A2B3C4D5E6F78190 /* MockExportService.swift in Sources */,
 				BB1188992244AABB00CCDDEE /* MockRunImportUseCase.swift in Sources */,
 				2223999900001111CCCC3334 /* MockStravaAuthService.swift in Sources */,
@@ -1768,6 +1794,7 @@
 				F6F7F8F9A0A1B2B3C4C5D6D7 /* MockStravaUploadService.swift in Sources */,
 				D8F7D43ACCE36589E5608F62 /* MockHealthKitService.swift in Sources */,
 				1067534DF65B20C58B99E999 /* MockLiveActivityService.swift in Sources */,
+				4EAFD22E93D01A303D1AED16 /* MockNotificationService.swift in Sources */,
 				540E3FF7710B873C569C5530 /* MockNutritionRepository.swift in Sources */,
 				ADFF1DEA42EE9EAA44094F93 /* MockRaceRepository.swift in Sources */,
 				F67BF764A6D273C03F1F03F6 /* MockRunRepository.swift in Sources */,
@@ -1801,6 +1828,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6AB198293D1BD9DEB30CDF73 /* Animation+Ultra.swift in Sources */,
+				4D5D36CD9EE6BDC0662BE292 /* AppLockView.swift in Sources */,
+				5DA1E2ED243A8D22DD998D62 /* BiometricAuthService.swift in Sources */,
+				6B7471C25C4E5243FA0E6B13 /* BiometricAuthServiceProtocol.swift in Sources */,
 				F317C5F205B45E50271F2DCE /* ACRTrendChartView.swift in Sources */,
 				109B7B66EDDA1C2A688CF94A /* ActiveRunStatsBar.swift in Sources */,
 				F7EC7C855B931F7D08B8BCA2 /* ActiveRunView.swift in Sources */,
@@ -1905,6 +1936,7 @@
 				0024D7B525D10550533197FC /* MapStyleResolver.swift in Sources */,
 				07EDD291659262B0E533E4ED /* MapStyleToggleButton.swift in Sources */,
 				DFB62C222C74570454DA686F /* NotificationService.swift in Sources */,
+				79725D353B8F9265EC2B5F7C /* NotificationServiceProtocol.swift in Sources */,
 				989C8B80835B8F409082948D /* NutritionEntryRow.swift in Sources */,
 				E0A921E46EA1BA18C3C38802 /* NutritionEntrySwiftDataModel.swift in Sources */,
 				006632A379E571673A9F12E9 /* NutritionPlan.swift in Sources */,

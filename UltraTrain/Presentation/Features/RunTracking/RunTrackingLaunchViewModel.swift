@@ -12,6 +12,7 @@ final class RunTrackingLaunchViewModel {
     private let runRepository: any RunRepository
     private let raceRepository: any RaceRepository
     private let appSettingsRepository: any AppSettingsRepository
+    private let hapticService: any HapticServiceProtocol
 
     // MARK: - State
 
@@ -35,13 +36,15 @@ final class RunTrackingLaunchViewModel {
         planRepository: any TrainingPlanRepository,
         runRepository: any RunRepository,
         raceRepository: any RaceRepository,
-        appSettingsRepository: any AppSettingsRepository
+        appSettingsRepository: any AppSettingsRepository,
+        hapticService: any HapticServiceProtocol
     ) {
         self.athleteRepository = athleteRepository
         self.planRepository = planRepository
         self.runRepository = runRepository
         self.raceRepository = raceRepository
         self.appSettingsRepository = appSettingsRepository
+        self.hapticService = hapticService
     }
 
     // MARK: - Load
@@ -83,6 +86,7 @@ final class RunTrackingLaunchViewModel {
     }
 
     func startRun() {
+        hapticService.playButtonTap()
         showActiveRun = true
     }
 

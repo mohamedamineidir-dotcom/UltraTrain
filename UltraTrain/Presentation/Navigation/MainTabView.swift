@@ -27,6 +27,8 @@ struct MainTabView: View {
     private let stravaAuthService: any StravaAuthServiceProtocol
     private let stravaUploadService: (any StravaUploadServiceProtocol)?
     private let stravaImportService: (any StravaImportServiceProtocol)?
+    private let notificationService: any NotificationServiceProtocol
+    private let biometricAuthService: any BiometricAuthServiceProtocol
 
     init(
         athleteRepository: any AthleteRepository,
@@ -52,7 +54,9 @@ struct MainTabView: View {
         runImportUseCase: any RunImportUseCase,
         stravaAuthService: any StravaAuthServiceProtocol,
         stravaUploadService: (any StravaUploadServiceProtocol)? = nil,
-        stravaImportService: (any StravaImportServiceProtocol)? = nil
+        stravaImportService: (any StravaImportServiceProtocol)? = nil,
+        notificationService: any NotificationServiceProtocol,
+        biometricAuthService: any BiometricAuthServiceProtocol
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -78,6 +82,8 @@ struct MainTabView: View {
         self.stravaAuthService = stravaAuthService
         self.stravaUploadService = stravaUploadService
         self.stravaImportService = stravaImportService
+        self.notificationService = notificationService
+        self.biometricAuthService = biometricAuthService
     }
 
     var body: some View {
@@ -155,7 +161,10 @@ struct MainTabView: View {
                 healthKitService: healthKitService,
                 widgetDataWriter: widgetDataWriter,
                 exportService: exportService,
-                stravaAuthService: stravaAuthService
+                stravaAuthService: stravaAuthService,
+                notificationService: notificationService,
+                planRepository: planRepository,
+                biometricAuthService: biometricAuthService
             )
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")

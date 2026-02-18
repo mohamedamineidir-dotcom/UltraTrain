@@ -12,7 +12,11 @@ struct SettingsView: View {
         healthKitService: any HealthKitServiceProtocol,
         exportService: any ExportServiceProtocol,
         runRepository: any RunRepository,
-        stravaAuthService: any StravaAuthServiceProtocol
+        stravaAuthService: any StravaAuthServiceProtocol,
+        notificationService: any NotificationServiceProtocol,
+        planRepository: any TrainingPlanRepository,
+        raceRepository: any RaceRepository,
+        biometricAuthService: any BiometricAuthServiceProtocol
     ) {
         _viewModel = State(initialValue: SettingsViewModel(
             athleteRepository: athleteRepository,
@@ -21,7 +25,11 @@ struct SettingsView: View {
             healthKitService: healthKitService,
             exportService: exportService,
             runRepository: runRepository,
-            stravaAuthService: stravaAuthService
+            stravaAuthService: stravaAuthService,
+            notificationService: notificationService,
+            planRepository: planRepository,
+            raceRepository: raceRepository,
+            biometricAuthService: biometricAuthService
         ))
     }
 
@@ -32,6 +40,7 @@ struct SettingsView: View {
             } else {
                 unitsSection
                 runTrackingSection
+                securitySection
                 notificationsSection
                 healthKitSection
                 stravaSection
@@ -117,6 +126,32 @@ struct SettingsView: View {
         }
     }
 
+    // MARK: - Security Section
+
+    @ViewBuilder
+    private var securitySection: some View {
+        if let settings = viewModel.appSettings, viewModel.isBiometricAvailable {
+            Section {
+                Toggle(isOn: Binding(
+                    get: { settings.biometricLockEnabled },
+                    set: { newValue in
+                        Task { await viewModel.updateBiometricLock(newValue) }
+                    }
+                )) {
+                    Label {
+                        Text(viewModel.biometricTypeLabel)
+                    } icon: {
+                        Image(systemName: viewModel.biometricIconName)
+                    }
+                }
+            } header: {
+                Text("Security")
+            } footer: {
+                Text("Require \(viewModel.biometricTypeLabel) to open UltraTrain.")
+            }
+        }
+    }
+
     // MARK: - Notifications Section
 
     @ViewBuilder
@@ -145,6 +180,13 @@ struct SettingsView: View {
                         }
                     ))
                 }
+
+                Toggle("Race Countdown", isOn: Binding(
+                    get: { settings.raceCountdownEnabled },
+                    set: { newValue in
+                        Task { await viewModel.updateRaceCountdown(newValue) }
+                    }
+                ))
             }
         }
     }

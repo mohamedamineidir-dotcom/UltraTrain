@@ -10,6 +10,8 @@ final class AppSettingsSwiftDataModel {
     var nutritionAlertSoundEnabled: Bool = true
     var stravaAutoUploadEnabled: Bool = false
     var stravaConnected: Bool = false
+    var raceCountdownEnabled: Bool = true
+    var biometricLockEnabled: Bool = false
 
     init(
         id: UUID,
@@ -18,7 +20,9 @@ final class AppSettingsSwiftDataModel {
         autoPauseEnabled: Bool,
         nutritionAlertSoundEnabled: Bool,
         stravaAutoUploadEnabled: Bool = false,
-        stravaConnected: Bool = false
+        stravaConnected: Bool = false,
+        raceCountdownEnabled: Bool = true,
+        biometricLockEnabled: Bool = false
     ) {
         self.id = id
         self.trainingRemindersEnabled = trainingRemindersEnabled
@@ -27,5 +31,7 @@ final class AppSettingsSwiftDataModel {
         self.nutritionAlertSoundEnabled = nutritionAlertSoundEnabled
         self.stravaAutoUploadEnabled = stravaAutoUploadEnabled
         self.stravaConnected = stravaConnected
+        self.raceCountdownEnabled = raceCountdownEnabled
+        self.biometricLockEnabled = biometricLockEnabled
     }
 }

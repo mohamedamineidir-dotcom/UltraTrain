@@ -21,4 +21,6 @@ extension Logger {
     static let export = Logger(subsystem: subsystem, category: "export")
     static let importData = Logger(subsystem: subsystem, category: "import")
     static let strava = Logger(subsystem: subsystem, category: "strava")
+    static let notification = Logger(subsystem: subsystem, category: "notification")
+    static let biometric = Logger(subsystem: subsystem, category: "biometric")
 }

@@ -42,7 +42,8 @@ struct RunTrackingLaunchView: View {
             planRepository: planRepository,
             runRepository: runRepository,
             raceRepository: raceRepository,
-            appSettingsRepository: appSettingsRepository
+            appSettingsRepository: appSettingsRepository,
+            hapticService: hapticService
         ))
         self.athleteRepository = athleteRepository
         self.locationService = locationService

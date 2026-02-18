@@ -14,6 +14,10 @@ final class SettingsViewModel {
     private let exportService: any ExportServiceProtocol
     private let runRepository: any RunRepository
     private let stravaAuthService: any StravaAuthServiceProtocol
+    private let notificationService: any NotificationServiceProtocol
+    private let planRepository: any TrainingPlanRepository
+    private let raceRepository: any RaceRepository
+    private let biometricAuthService: any BiometricAuthServiceProtocol
 
     // MARK: - State
 
@@ -36,6 +40,28 @@ final class SettingsViewModel {
         healthKitService.authorizationStatus
     }
 
+    // MARK: - Biometric Computed Properties
+
+    var biometricTypeLabel: String {
+        switch biometricAuthService.availableBiometricType {
+        case .faceID: "Face ID"
+        case .touchID: "Touch ID"
+        case .none: "Biometric Lock"
+        }
+    }
+
+    var biometricIconName: String {
+        switch biometricAuthService.availableBiometricType {
+        case .faceID: "faceid"
+        case .touchID: "touchid"
+        case .none: "lock.fill"
+        }
+    }
+
+    var isBiometricAvailable: Bool {
+        biometricAuthService.availableBiometricType != .none
+    }
+
     // MARK: - Init
 
     init(
@@ -45,7 +71,11 @@ final class SettingsViewModel {
         healthKitService: any HealthKitServiceProtocol,
         exportService: any ExportServiceProtocol,
         runRepository: any RunRepository,
-        stravaAuthService: any StravaAuthServiceProtocol
+        stravaAuthService: any StravaAuthServiceProtocol,
+        notificationService: any NotificationServiceProtocol,
+        planRepository: any TrainingPlanRepository,
+        raceRepository: any RaceRepository,
+        biometricAuthService: any BiometricAuthServiceProtocol
     ) {
         self.athleteRepository = athleteRepository
         self.appSettingsRepository = appSettingsRepository
@@ -54,6 +84,10 @@ final class SettingsViewModel {
         self.exportService = exportService
         self.runRepository = runRepository
         self.stravaAuthService = stravaAuthService
+        self.notificationService = notificationService
+        self.planRepository = planRepository
+        self.raceRepository = raceRepository
+        self.biometricAuthService = biometricAuthService
     }
 
     // MARK: - Load
@@ -74,7 +108,9 @@ final class SettingsViewModel {
                     autoPauseEnabled: true,
                     nutritionAlertSoundEnabled: true,
                     stravaAutoUploadEnabled: false,
-                    stravaConnected: false
+                    stravaConnected: false,
+                    raceCountdownEnabled: true,
+                    biometricLockEnabled: false
                 )
                 try await appSettingsRepository.saveSettings(defaults)
                 appSettings = defaults
@@ -116,6 +152,17 @@ final class SettingsViewModel {
         do {
             try await appSettingsRepository.updateSettings(settings)
             appSettings = settings
+
+            if enabled {
+                _ = try await notificationService.requestAuthorization()
+                if let plan = try await planRepository.getActivePlan() {
+                    let sessions = plan.weeks.flatMap(\.sessions)
+                    let races = try await raceRepository.getRaces()
+                    await notificationService.rescheduleAll(sessions: sessions, races: races)
+                }
+            } else {
+                await notificationService.cancelNotifications(withIdentifierPrefix: "training-")
+            }
         } catch {
             self.error = error.localizedDescription
             Logger.settings.error("Failed to update training reminders: \(error)")
@@ -145,6 +192,60 @@ final class SettingsViewModel {
         } catch {
             self.error = error.localizedDescription
             Logger.settings.error("Failed to update nutrition alert sound: \(error)")
+        }
+    }
+
+    func updateRaceCountdown(_ enabled: Bool) async {
+        guard var settings = appSettings else { return }
+        settings.raceCountdownEnabled = enabled
+
+        do {
+            try await appSettingsRepository.updateSettings(settings)
+            appSettings = settings
+
+            if enabled {
+                _ = try await notificationService.requestAuthorization()
+                let races = try await raceRepository.getRaces()
+                for race in races {
+                    await notificationService.scheduleRaceCountdown(for: race)
+                }
+            } else {
+                await notificationService.cancelNotifications(withIdentifierPrefix: "race-")
+            }
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update race countdown: \(error)")
+        }
+    }
+
+    // MARK: - Biometric Lock
+
+    func updateBiometricLock(_ enabled: Bool) async {
+        guard var settings = appSettings else { return }
+
+        if enabled {
+            do {
+                let success = try await biometricAuthService.authenticate(
+                    reason: "Verify your identity to enable app lock"
+                )
+                guard success else {
+                    self.error = "Authentication failed. Please try again."
+                    return
+                }
+            } catch {
+                self.error = error.localizedDescription
+                Logger.biometric.error("Failed to verify biometrics: \(error)")
+                return
+            }
+        }
+
+        settings.biometricLockEnabled = enabled
+        do {
+            try await appSettingsRepository.updateSettings(settings)
+            appSettings = settings
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update biometric lock: \(error)")
         }
     }
 

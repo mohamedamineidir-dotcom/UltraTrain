@@ -45,6 +45,8 @@
     <string>UltraTrain reads your heart rate, workout, and activity data to track your training progress and fitness.</string>
     <key>NSHealthUpdateUsageDescription</key>
     <string>UltraTrain saves your completed runs as workouts in Apple Health.</string>
+    <key>NSFaceIDUsageDescription</key>
+    <string>UltraTrain uses Face ID to protect your training and health data.</string>
     <key>NSSupportsLiveActivities</key>
     <true/>
     <key>STRAVA_CLIENT_ID</key>

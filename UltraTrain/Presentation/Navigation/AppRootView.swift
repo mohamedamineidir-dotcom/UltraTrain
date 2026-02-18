@@ -2,7 +2,10 @@ import SwiftUI
 import os
 
 struct AppRootView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @State private var hasCompletedOnboarding: Bool?
+    @State private var isUnlocked = false
+    @State private var needsBiometricLock = false
     private let athleteRepository: any AthleteRepository
     private let raceRepository: any RaceRepository
     private let planRepository: any TrainingPlanRepository
@@ -27,6 +30,8 @@ struct AppRootView: View {
     private let stravaAuthService: any StravaAuthServiceProtocol
     private let stravaUploadService: (any StravaUploadServiceProtocol)?
     private let stravaImportService: (any StravaImportServiceProtocol)?
+    private let notificationService: any NotificationServiceProtocol
+    private let biometricAuthService: any BiometricAuthServiceProtocol
 
     init(
         athleteRepository: any AthleteRepository,
@@ -52,7 +57,9 @@ struct AppRootView: View {
         runImportUseCase: any RunImportUseCase,
         stravaAuthService: any StravaAuthServiceProtocol,
         stravaUploadService: (any StravaUploadServiceProtocol)? = nil,
-        stravaImportService: (any StravaImportServiceProtocol)? = nil
+        stravaImportService: (any StravaImportServiceProtocol)? = nil,
+        notificationService: any NotificationServiceProtocol,
+        biometricAuthService: any BiometricAuthServiceProtocol
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -78,51 +85,77 @@ struct AppRootView: View {
         self.stravaAuthService = stravaAuthService
         self.stravaUploadService = stravaUploadService
         self.stravaImportService = stravaImportService
+        self.notificationService = notificationService
+        self.biometricAuthService = biometricAuthService
     }
 
     var body: some View {
         Group {
-            switch hasCompletedOnboarding {
-            case .none:
-                ProgressView("Loading...")
-            case .some(true):
-                MainTabView(
-                    athleteRepository: athleteRepository,
-                    raceRepository: raceRepository,
-                    planRepository: planRepository,
-                    planGenerator: planGenerator,
-                    nutritionRepository: nutritionRepository,
-                    nutritionGenerator: nutritionGenerator,
-                    runRepository: runRepository,
-                    locationService: locationService,
-                    fitnessRepository: fitnessRepository,
-                    fitnessCalculator: fitnessCalculator,
-                    finishTimeEstimator: finishTimeEstimator,
-                    appSettingsRepository: appSettingsRepository,
-                    clearAllDataUseCase: clearAllDataUseCase,
-                    healthKitService: healthKitService,
-                    hapticService: hapticService,
-                    trainingLoadCalculator: trainingLoadCalculator,
-                    sessionNutritionAdvisor: sessionNutritionAdvisor,
-                    connectivityService: connectivityService,
-                    widgetDataWriter: widgetDataWriter,
-                    exportService: exportService,
-                    runImportUseCase: runImportUseCase,
-                    stravaAuthService: stravaAuthService,
-                    stravaUploadService: stravaUploadService,
-                    stravaImportService: stravaImportService
-                )
-            case .some(false):
-                OnboardingView(
-                    athleteRepository: athleteRepository,
-                    raceRepository: raceRepository,
-                    onComplete: { hasCompletedOnboarding = true }
-                )
+            if needsBiometricLock && !isUnlocked {
+                AppLockView(biometricService: biometricAuthService) {
+                    isUnlocked = true
+                }
+            } else {
+                switch hasCompletedOnboarding {
+                case .none:
+                    ProgressView("Loading...")
+                case .some(true):
+                    MainTabView(
+                        athleteRepository: athleteRepository,
+                        raceRepository: raceRepository,
+                        planRepository: planRepository,
+                        planGenerator: planGenerator,
+                        nutritionRepository: nutritionRepository,
+                        nutritionGenerator: nutritionGenerator,
+                        runRepository: runRepository,
+                        locationService: locationService,
+                        fitnessRepository: fitnessRepository,
+                        fitnessCalculator: fitnessCalculator,
+                        finishTimeEstimator: finishTimeEstimator,
+                        appSettingsRepository: appSettingsRepository,
+                        clearAllDataUseCase: clearAllDataUseCase,
+                        healthKitService: healthKitService,
+                        hapticService: hapticService,
+                        trainingLoadCalculator: trainingLoadCalculator,
+                        sessionNutritionAdvisor: sessionNutritionAdvisor,
+                        connectivityService: connectivityService,
+                        widgetDataWriter: widgetDataWriter,
+                        exportService: exportService,
+                        runImportUseCase: runImportUseCase,
+                        stravaAuthService: stravaAuthService,
+                        stravaUploadService: stravaUploadService,
+                        stravaImportService: stravaImportService,
+                        notificationService: notificationService,
+                        biometricAuthService: biometricAuthService
+                    )
+                case .some(false):
+                    OnboardingView(
+                        athleteRepository: athleteRepository,
+                        raceRepository: raceRepository,
+                        onComplete: { hasCompletedOnboarding = true }
+                    )
+                }
             }
         }
         .task {
+            await checkBiometricLockSetting()
             await checkOnboardingStatus()
             await widgetDataWriter.writeAll()
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .background && needsBiometricLock {
+                isUnlocked = false
+            }
+        }
+    }
+
+    private func checkBiometricLockSetting() async {
+        do {
+            if let settings = try await appSettingsRepository.getSettings() {
+                needsBiometricLock = settings.biometricLockEnabled
+            }
+        } catch {
+            Logger.app.error("Failed to check biometric lock setting: \(error)")
         }
     }
 

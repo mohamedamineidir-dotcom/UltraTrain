@@ -141,6 +141,7 @@ final class ActiveRunViewModel {
         timerTask?.cancel()
         if !auto {
             locationService.pauseTracking()
+            hapticService.playSelection()
         }
         updateLiveActivityImmediately()
         Logger.tracking.info("Run \(auto ? "auto-" : "")paused at \(self.elapsedTime)s")
@@ -160,6 +161,7 @@ final class ActiveRunViewModel {
         if wasManuallyPaused {
             locationService.resumeTracking()
         }
+        hapticService.playSelection()
         updateLiveActivityImmediately()
         Logger.tracking.info("Run resumed")
     }
@@ -224,10 +226,12 @@ final class ActiveRunViewModel {
                 try await linkRunToRace(run: run, raceId: raceId)
             }
             lastSavedRun = run
+            hapticService.playSuccess()
             Logger.tracking.info("Run saved: \(run.id)")
             await widgetDataWriter.writeAll()
             autoUploadToStrava(run)
         } catch {
+            hapticService.playError()
             self.error = error.localizedDescription
             Logger.tracking.error("Failed to save run: \(error)")
         }

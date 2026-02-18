@@ -8,4 +8,6 @@ struct AppSettings: Identifiable, Equatable, Sendable {
     var nutritionAlertSoundEnabled: Bool
     var stravaAutoUploadEnabled: Bool
     var stravaConnected: Bool
+    var raceCountdownEnabled: Bool
+    var biometricLockEnabled: Bool
 }
