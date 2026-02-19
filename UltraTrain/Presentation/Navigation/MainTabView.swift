@@ -29,6 +29,7 @@ struct MainTabView: View {
     private let stravaImportService: (any StravaImportServiceProtocol)?
     private let notificationService: any NotificationServiceProtocol
     private let biometricAuthService: any BiometricAuthServiceProtocol
+    private let gearRepository: any GearRepository
 
     init(
         athleteRepository: any AthleteRepository,
@@ -56,7 +57,8 @@ struct MainTabView: View {
         stravaUploadService: (any StravaUploadServiceProtocol)? = nil,
         stravaImportService: (any StravaImportServiceProtocol)? = nil,
         notificationService: any NotificationServiceProtocol,
-        biometricAuthService: any BiometricAuthServiceProtocol
+        biometricAuthService: any BiometricAuthServiceProtocol,
+        gearRepository: any GearRepository
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -84,6 +86,7 @@ struct MainTabView: View {
         self.stravaImportService = stravaImportService
         self.notificationService = notificationService
         self.biometricAuthService = biometricAuthService
+        self.gearRepository = gearRepository
     }
 
     var body: some View {
@@ -131,7 +134,8 @@ struct MainTabView: View {
                 runImportUseCase: runImportUseCase,
                 stravaUploadService: stravaUploadService,
                 stravaImportService: stravaImportService,
-                stravaAuthService: stravaAuthService
+                stravaAuthService: stravaAuthService,
+                gearRepository: gearRepository
             )
                 .tabItem {
                     Label("Run", systemImage: "figure.run")
@@ -164,7 +168,8 @@ struct MainTabView: View {
                 stravaAuthService: stravaAuthService,
                 notificationService: notificationService,
                 planRepository: planRepository,
-                biometricAuthService: biometricAuthService
+                biometricAuthService: biometricAuthService,
+                gearRepository: gearRepository
             )
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")

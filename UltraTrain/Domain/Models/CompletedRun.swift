@@ -17,6 +17,7 @@ struct CompletedRun: Identifiable, Equatable, Sendable {
     var linkedRaceId: UUID?
     var notes: String?
     var pausedDuration: TimeInterval
+    var gearIds: [UUID] = []
 
     var totalDuration: TimeInterval {
         duration + pausedDuration

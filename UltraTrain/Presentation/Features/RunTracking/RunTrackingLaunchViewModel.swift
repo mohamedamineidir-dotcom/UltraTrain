@@ -13,6 +13,7 @@ final class RunTrackingLaunchViewModel {
     private let raceRepository: any RaceRepository
     private let appSettingsRepository: any AppSettingsRepository
     private let hapticService: any HapticServiceProtocol
+    private let gearRepository: any GearRepository
 
     // MARK: - State
 
@@ -28,6 +29,8 @@ final class RunTrackingLaunchViewModel {
     var raceId: UUID?
     var todaysRace: Race?
     var stravaAutoUploadEnabled = false
+    var activeGear: [GearItem] = []
+    var selectedGearIds: Set<UUID> = []
 
     // MARK: - Init
 
@@ -37,7 +40,8 @@ final class RunTrackingLaunchViewModel {
         runRepository: any RunRepository,
         raceRepository: any RaceRepository,
         appSettingsRepository: any AppSettingsRepository,
-        hapticService: any HapticServiceProtocol
+        hapticService: any HapticServiceProtocol,
+        gearRepository: any GearRepository
     ) {
         self.athleteRepository = athleteRepository
         self.planRepository = planRepository
@@ -45,6 +49,7 @@ final class RunTrackingLaunchViewModel {
         self.raceRepository = raceRepository
         self.appSettingsRepository = appSettingsRepository
         self.hapticService = hapticService
+        self.gearRepository = gearRepository
     }
 
     // MARK: - Load
@@ -71,6 +76,9 @@ final class RunTrackingLaunchViewModel {
                 nutritionAlertSoundEnabled = settings.nutritionAlertSoundEnabled
                 stravaAutoUploadEnabled = settings.stravaAutoUploadEnabled
             }
+
+            activeGear = try await gearRepository.getActiveGear(ofType: nil)
+            restoreLastUsedGear()
         } catch {
             self.error = error.localizedDescription
             Logger.tracking.error("Failed to load run launch data: \(error)")
@@ -87,10 +95,27 @@ final class RunTrackingLaunchViewModel {
 
     func startRun() {
         hapticService.playButtonTap()
+        saveLastUsedGear()
         showActiveRun = true
     }
 
     // MARK: - Private
+
+    private static let lastUsedGearKey = "lastUsedGearIds"
+
+    private func saveLastUsedGear() {
+        let ids = selectedGearIds.map(\.uuidString)
+        UserDefaults.standard.set(ids, forKey: Self.lastUsedGearKey)
+    }
+
+    private func restoreLastUsedGear() {
+        guard let stored = UserDefaults.standard.stringArray(forKey: Self.lastUsedGearKey) else { return }
+        let activeIds = Set(activeGear.map(\.id))
+        let restoredIds = stored.compactMap(UUID.init).filter { activeIds.contains($0) }
+        if !restoredIds.isEmpty {
+            selectedGearIds = Set(restoredIds)
+        }
+    }
 
     private func extractTodaysSessions(from plan: TrainingPlan) -> [TrainingSession] {
         let calendar = Calendar.current

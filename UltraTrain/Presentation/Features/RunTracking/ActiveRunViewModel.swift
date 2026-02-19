@@ -27,6 +27,7 @@ final class ActiveRunViewModel {
     private let liveActivityService: any LiveActivityServiceProtocol
     private let widgetDataWriter: WidgetDataWriter
     private let stravaUploadService: (any StravaUploadServiceProtocol)?
+    private let gearRepository: any GearRepository
 
     // MARK: - Config
 
@@ -37,6 +38,7 @@ final class ActiveRunViewModel {
     let nutritionAlertSoundEnabled: Bool
     let raceId: UUID?
     let stravaAutoUploadEnabled: Bool
+    let selectedGearIds: [UUID]
 
     // MARK: - State
 
@@ -85,13 +87,15 @@ final class ActiveRunViewModel {
         liveActivityService: any LiveActivityServiceProtocol = LiveActivityService(),
         widgetDataWriter: WidgetDataWriter? = nil,
         stravaUploadService: (any StravaUploadServiceProtocol)? = nil,
+        gearRepository: any GearRepository,
         athlete: Athlete,
         linkedSession: TrainingSession?,
         autoPauseEnabled: Bool,
         nutritionRemindersEnabled: Bool,
         nutritionAlertSoundEnabled: Bool,
         stravaAutoUploadEnabled: Bool = false,
-        raceId: UUID?
+        raceId: UUID?,
+        selectedGearIds: [UUID] = []
     ) {
         self.locationService = locationService
         self.healthKitService = healthKitService
@@ -108,6 +112,7 @@ final class ActiveRunViewModel {
             raceRepository: raceRepository
         )
         self.stravaUploadService = stravaUploadService
+        self.gearRepository = gearRepository
         self.athlete = athlete
         self.linkedSession = linkedSession
         self.autoPauseEnabled = autoPauseEnabled
@@ -115,6 +120,7 @@ final class ActiveRunViewModel {
         self.nutritionAlertSoundEnabled = nutritionAlertSoundEnabled
         self.stravaAutoUploadEnabled = stravaAutoUploadEnabled
         self.raceId = raceId
+        self.selectedGearIds = selectedGearIds
     }
 
     // MARK: - Controls
@@ -211,7 +217,8 @@ final class ActiveRunViewModel {
             linkedSessionId: linkedSession?.id,
             linkedRaceId: raceId,
             notes: notes,
-            pausedDuration: pausedDuration
+            pausedDuration: pausedDuration,
+            gearIds: selectedGearIds
         )
 
         do {
@@ -224,6 +231,13 @@ final class ActiveRunViewModel {
             }
             if let raceId {
                 try await linkRunToRace(run: run, raceId: raceId)
+            }
+            if !selectedGearIds.isEmpty {
+                try await gearRepository.updateGearMileage(
+                    gearIds: selectedGearIds,
+                    distanceKm: distanceKm,
+                    duration: elapsedTime
+                )
             }
             lastSavedRun = run
             hapticService.playSuccess()

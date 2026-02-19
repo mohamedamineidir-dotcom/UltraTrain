@@ -18,6 +18,7 @@ struct RunTrackingLaunchView: View {
     private let stravaUploadService: (any StravaUploadServiceProtocol)?
     private let stravaImportService: (any StravaImportServiceProtocol)?
     private let stravaAuthService: any StravaAuthServiceProtocol
+    private let gearRepository: any GearRepository
 
     init(
         athleteRepository: any AthleteRepository,
@@ -35,7 +36,8 @@ struct RunTrackingLaunchView: View {
         runImportUseCase: any RunImportUseCase,
         stravaUploadService: (any StravaUploadServiceProtocol)? = nil,
         stravaImportService: (any StravaImportServiceProtocol)? = nil,
-        stravaAuthService: any StravaAuthServiceProtocol
+        stravaAuthService: any StravaAuthServiceProtocol,
+        gearRepository: any GearRepository
     ) {
         _viewModel = State(initialValue: RunTrackingLaunchViewModel(
             athleteRepository: athleteRepository,
@@ -43,7 +45,8 @@ struct RunTrackingLaunchView: View {
             runRepository: runRepository,
             raceRepository: raceRepository,
             appSettingsRepository: appSettingsRepository,
-            hapticService: hapticService
+            hapticService: hapticService,
+            gearRepository: gearRepository
         ))
         self.athleteRepository = athleteRepository
         self.locationService = locationService
@@ -60,6 +63,7 @@ struct RunTrackingLaunchView: View {
         self.stravaUploadService = stravaUploadService
         self.stravaImportService = stravaImportService
         self.stravaAuthService = stravaAuthService
+        self.gearRepository = gearRepository
     }
 
     var body: some View {
@@ -77,6 +81,12 @@ struct RunTrackingLaunchView: View {
                             selectedSession: $viewModel.selectedSession
                         )
                         .padding(.horizontal, Theme.Spacing.md)
+                    }
+                    if !viewModel.activeGear.isEmpty {
+                        GearPickerView(
+                            gearItems: viewModel.activeGear,
+                            selectedGearIds: $viewModel.selectedGearIds
+                        )
                     }
                     startButton
                     historyLink
@@ -99,13 +109,15 @@ struct RunTrackingLaunchView: View {
                             connectivityService: connectivityService,
                             widgetDataWriter: widgetDataWriter,
                             stravaUploadService: stravaUploadService,
+                            gearRepository: gearRepository,
                             athlete: athlete,
                             linkedSession: viewModel.selectedSession,
                             autoPauseEnabled: viewModel.autoPauseEnabled,
                             nutritionRemindersEnabled: viewModel.nutritionRemindersEnabled,
                             nutritionAlertSoundEnabled: viewModel.nutritionAlertSoundEnabled,
                             stravaAutoUploadEnabled: viewModel.stravaAutoUploadEnabled,
-                            raceId: viewModel.raceId
+                            raceId: viewModel.raceId,
+                            selectedGearIds: Array(viewModel.selectedGearIds)
                         ),
                         exportService: exportService
                     )

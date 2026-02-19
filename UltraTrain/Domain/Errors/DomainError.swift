@@ -22,6 +22,7 @@ enum DomainError: Error, Equatable, Sendable {
     case stravaImportFailed(reason: String)
     case biometricFailed(reason: String)
     case notificationDenied
+    case gearNotFound
     case iCloudAccountUnavailable
     case iCloudSyncFailed(reason: String)
     case unknown(message: String)
@@ -72,6 +73,8 @@ extension DomainError: LocalizedError {
             return "Biometric authentication failed: \(reason)"
         case .notificationDenied:
             return "Notification permission was denied. Enable in iOS Settings."
+        case .gearNotFound:
+            return "Gear item not found."
         case .iCloudAccountUnavailable:
             return "iCloud account is not available. Sign in to iCloud in iOS Settings."
         case .iCloudSyncFailed(let reason):

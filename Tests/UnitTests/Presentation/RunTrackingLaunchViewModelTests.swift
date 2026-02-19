@@ -74,7 +74,8 @@ struct RunTrackingLaunchViewModelTests {
         runRepo: MockRunRepository = MockRunRepository(),
         raceRepo: MockRaceRepository = MockRaceRepository(),
         settingsRepo: MockAppSettingsRepository = MockAppSettingsRepository(),
-        hapticService: MockHapticService = MockHapticService()
+        hapticService: MockHapticService = MockHapticService(),
+        gearRepo: MockGearRepository = MockGearRepository()
     ) -> RunTrackingLaunchViewModel {
         RunTrackingLaunchViewModel(
             athleteRepository: athleteRepo,
@@ -82,7 +83,8 @@ struct RunTrackingLaunchViewModelTests {
             runRepository: runRepo,
             raceRepository: raceRepo,
             appSettingsRepository: settingsRepo,
-            hapticService: hapticService
+            hapticService: hapticService,
+            gearRepository: gearRepo
         )
     }
 

@@ -15,6 +15,7 @@ struct ProfileView: View {
     private let notificationService: any NotificationServiceProtocol
     private let planRepository: any TrainingPlanRepository
     private let biometricAuthService: any BiometricAuthServiceProtocol
+    private let gearRepository: any GearRepository
 
     init(
         athleteRepository: any AthleteRepository,
@@ -30,7 +31,8 @@ struct ProfileView: View {
         stravaAuthService: any StravaAuthServiceProtocol,
         notificationService: any NotificationServiceProtocol,
         planRepository: any TrainingPlanRepository,
-        biometricAuthService: any BiometricAuthServiceProtocol
+        biometricAuthService: any BiometricAuthServiceProtocol,
+        gearRepository: any GearRepository
     ) {
         _viewModel = State(initialValue: ProfileViewModel(
             athleteRepository: athleteRepository,
@@ -50,6 +52,7 @@ struct ProfileView: View {
         self.notificationService = notificationService
         self.planRepository = planRepository
         self.biometricAuthService = biometricAuthService
+        self.gearRepository = gearRepository
     }
 
     var body: some View {
@@ -60,6 +63,7 @@ struct ProfileView: View {
                 } else {
                     athleteSection
                     racesSection
+                    gearSection
                 }
             }
             .navigationTitle("Profile")
@@ -227,6 +231,21 @@ struct ProfileView: View {
                 } label: {
                     Image(systemName: "plus.circle.fill")
                 }
+            }
+        }
+    }
+
+    // MARK: - Gear Section
+
+    private var gearSection: some View {
+        Section {
+            NavigationLink {
+                GearListView(
+                    gearRepository: gearRepository,
+                    runRepository: runRepository
+                )
+            } label: {
+                Label("Gear", systemImage: "shoe.fill")
             }
         }
     }

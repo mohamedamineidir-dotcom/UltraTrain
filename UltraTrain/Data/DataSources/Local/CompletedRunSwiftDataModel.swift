@@ -20,6 +20,7 @@ final class CompletedRunSwiftDataModel {
     var linkedRaceId: UUID?
     var notes: String?
     var pausedDuration: Double = 0
+    var gearIds: [UUID] = []
     var updatedAt: Date = Date()
 
     init(
@@ -39,6 +40,7 @@ final class CompletedRunSwiftDataModel {
         linkedRaceId: UUID? = nil,
         notes: String? = nil,
         pausedDuration: Double = 0,
+        gearIds: [UUID] = [],
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -57,6 +59,7 @@ final class CompletedRunSwiftDataModel {
         self.linkedRaceId = linkedRaceId
         self.notes = notes
         self.pausedDuration = pausedDuration
+        self.gearIds = gearIds
         self.updatedAt = updatedAt
     }
 }
