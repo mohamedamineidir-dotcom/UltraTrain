@@ -32,6 +32,7 @@ struct UltraTrainApp: App {
     private let notificationService: NotificationService
     private let biometricAuthService: BiometricAuthService
     private let watchRunImportService: WatchRunImportService
+    private let gearRepository: any GearRepository
     private let cloudKitSyncMonitor: CloudKitSyncMonitor?
 
     init() {
@@ -53,11 +54,12 @@ struct UltraTrainApp: App {
                 SplitSwiftDataModel.self,
                 FitnessSnapshotSwiftDataModel.self,
                 AppSettingsSwiftDataModel.self,
-                NutritionPreferencesSwiftDataModel.self
+                NutritionPreferencesSwiftDataModel.self,
+                GearItemSwiftDataModel.self
             ])
             let config: ModelConfiguration
             if isUITesting {
-                config = ModelConfiguration(isStoredInMemoryOnly: true)
+                config = ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
             } else if iCloudEnabled {
                 config = ModelConfiguration(
                     cloudKitDatabase: .private("iCloud.com.ultratrain.app")
@@ -114,6 +116,7 @@ struct UltraTrainApp: App {
         )
         notificationService = NotificationService()
         biometricAuthService = BiometricAuthService()
+        gearRepository = LocalGearRepository(modelContainer: modelContainer)
         watchRunImportService = WatchRunImportService(
             runRepository: runRepository,
             planRepository: planRepository,
@@ -175,7 +178,8 @@ struct UltraTrainApp: App {
                 stravaUploadService: stravaUploadService,
                 stravaImportService: stravaImportService,
                 notificationService: notificationService,
-                biometricAuthService: biometricAuthService
+                biometricAuthService: biometricAuthService,
+                gearRepository: gearRepository
             )
         }
     }

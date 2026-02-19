@@ -32,6 +32,7 @@ struct AppRootView: View {
     private let stravaImportService: (any StravaImportServiceProtocol)?
     private let notificationService: any NotificationServiceProtocol
     private let biometricAuthService: any BiometricAuthServiceProtocol
+    private let gearRepository: any GearRepository
 
     init(
         athleteRepository: any AthleteRepository,
@@ -59,7 +60,8 @@ struct AppRootView: View {
         stravaUploadService: (any StravaUploadServiceProtocol)? = nil,
         stravaImportService: (any StravaImportServiceProtocol)? = nil,
         notificationService: any NotificationServiceProtocol,
-        biometricAuthService: any BiometricAuthServiceProtocol
+        biometricAuthService: any BiometricAuthServiceProtocol,
+        gearRepository: any GearRepository
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -87,6 +89,7 @@ struct AppRootView: View {
         self.stravaImportService = stravaImportService
         self.notificationService = notificationService
         self.biometricAuthService = biometricAuthService
+        self.gearRepository = gearRepository
     }
 
     var body: some View {
@@ -126,7 +129,8 @@ struct AppRootView: View {
                         stravaUploadService: stravaUploadService,
                         stravaImportService: stravaImportService,
                         notificationService: notificationService,
-                        biometricAuthService: biometricAuthService
+                        biometricAuthService: biometricAuthService,
+                        gearRepository: gearRepository
                     )
                 case .some(false):
                     OnboardingView(
@@ -138,6 +142,12 @@ struct AppRootView: View {
             }
         }
         .task {
+            #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("-UITestSkipOnboarding") {
+                hasCompletedOnboarding = true
+                return
+            }
+            #endif
             await checkBiometricLockSetting()
             await checkOnboardingStatus()
             await widgetDataWriter.writeAll()
