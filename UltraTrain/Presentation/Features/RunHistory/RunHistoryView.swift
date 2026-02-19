@@ -7,6 +7,7 @@ struct RunHistoryView: View {
     @State private var showingDocumentPicker = false
     @State private var importFileURL: URL?
     @State private var showingStravaImport = false
+    private let runRepository: any RunRepository
     private let planRepository: any TrainingPlanRepository
     private let athleteRepository: any AthleteRepository
     private let raceRepository: any RaceRepository
@@ -28,6 +29,7 @@ struct RunHistoryView: View {
         stravaConnected: Bool = false
     ) {
         _viewModel = State(initialValue: RunHistoryViewModel(runRepository: runRepository))
+        self.runRepository = runRepository
         self.planRepository = planRepository
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -127,6 +129,7 @@ struct RunHistoryView: View {
                     planRepository: planRepository,
                     athleteRepository: athleteRepository,
                     raceRepository: raceRepository,
+                    runRepository: runRepository,
                     exportService: exportService,
                     stravaUploadService: stravaUploadService,
                     stravaConnected: stravaConnected

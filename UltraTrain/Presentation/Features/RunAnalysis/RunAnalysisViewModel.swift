@@ -11,6 +11,7 @@ final class RunAnalysisViewModel {
     private let planRepository: any TrainingPlanRepository
     private let athleteRepository: any AthleteRepository
     private let raceRepository: any RaceRepository
+    private let runRepository: any RunRepository
 
     // MARK: - State
 
@@ -22,6 +23,9 @@ final class RunAnalysisViewModel {
     var routeColoringMode: RouteColoringMode = .pace
     var planComparison: PlanComparison?
     var checkpointLocations: [(checkpoint: Checkpoint, coordinate: CLLocationCoordinate2D)] = []
+    var advancedMetrics: AdvancedRunMetrics?
+    var historicalComparison: HistoricalComparison?
+    var nutritionAnalysis: NutritionAnalysis?
     var isLoading = false
     var error: String?
     var showFullScreenMap = false
@@ -32,12 +36,14 @@ final class RunAnalysisViewModel {
         run: CompletedRun,
         planRepository: any TrainingPlanRepository,
         athleteRepository: any AthleteRepository,
-        raceRepository: any RaceRepository
+        raceRepository: any RaceRepository,
+        runRepository: any RunRepository
     ) {
         self.run = run
         self.planRepository = planRepository
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
+        self.runRepository = runRepository
     }
 
     // MARK: - Load
@@ -80,6 +86,23 @@ final class RunAnalysisViewModel {
                     along: run.gpsTrack
                 )
             }
+
+            advancedMetrics = AdvancedRunMetricsCalculator.calculate(
+                run: run,
+                athleteWeightKg: athlete?.weightKg,
+                maxHeartRate: athlete?.maxHeartRate
+            )
+
+            let recentRuns = try await runRepository.getRecentRuns(limit: 20)
+            let otherRuns = recentRuns.filter { $0.id != run.id }
+            if !otherRuns.isEmpty {
+                historicalComparison = HistoricalComparisonCalculator.compare(
+                    run: run,
+                    recentRuns: otherRuns
+                )
+            }
+
+            nutritionAnalysis = NutritionAnalysisCalculator.analyze(run: run)
         } catch {
             self.error = error.localizedDescription
             Logger.analysis.error("Failed to load run analysis: \(error)")
@@ -97,6 +120,12 @@ final class RunAnalysisViewModel {
     var hasLinkedSession: Bool {
         planComparison != nil
     }
+
+    var hasAdvancedMetrics: Bool { advancedMetrics != nil }
+
+    var hasHistoricalComparison: Bool { historicalComparison != nil }
+
+    var hasNutritionAnalysis: Bool { nutritionAnalysis != nil }
 
     var hasRouteData: Bool {
         run.gpsTrack.count >= 2

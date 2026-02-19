@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 import os
 
 final class ExportService: ExportServiceProtocol, @unchecked Sendable {
@@ -23,6 +24,49 @@ final class ExportService: ExportServiceProtocol, @unchecked Sendable {
         let content = csvExporter.exportTrackPointsToCSV(run)
         let filename = "UltraTrain_Track_\(dateString(run.date)).csv"
         return try writeToTempFile(content: content, filename: filename)
+    }
+
+    @MainActor
+    func exportRunAsPDF(
+        _ run: CompletedRun,
+        metrics: AdvancedRunMetrics?,
+        comparison: HistoricalComparison?,
+        nutritionAnalysis: NutritionAnalysis?
+    ) async throws -> URL {
+        let reportView = RunReportView(
+            run: run,
+            metrics: metrics,
+            comparison: comparison,
+            nutritionAnalysis: nutritionAnalysis
+        )
+
+        let renderer = ImageRenderer(content: reportView)
+        renderer.proposedSize = ProposedViewSize(width: 612, height: 792)
+        renderer.scale = 2.0
+
+        cleanupOldTempFiles()
+
+        let tempDir = fileManager.temporaryDirectory.appendingPathComponent("UltraTrainExport", isDirectory: true)
+        try fileManager.createDirectory(at: tempDir, withIntermediateDirectories: true)
+
+        let filename = "UltraTrain_Report_\(dateString(run.date)).pdf"
+        let fileURL = tempDir.appendingPathComponent(filename)
+
+        renderer.render { size, context in
+            var box = CGRect(origin: .zero, size: CGSize(width: 612, height: 792))
+            guard let pdf = CGContext(fileURL as CFURL, mediaBox: &box, nil) else { return }
+            pdf.beginPDFPage(nil)
+            context(pdf)
+            pdf.endPDFPage()
+            pdf.closePDF()
+        }
+
+        guard fileManager.fileExists(atPath: fileURL.path) else {
+            throw DomainError.exportFailed(reason: "PDF file was not created")
+        }
+
+        Logger.export.info("Exported PDF: \(filename)")
+        return fileURL
     }
 
     // MARK: - Private

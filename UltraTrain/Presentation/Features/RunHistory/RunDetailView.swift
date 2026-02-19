@@ -6,6 +6,7 @@ struct RunDetailView: View {
     let planRepository: any TrainingPlanRepository
     let athleteRepository: any AthleteRepository
     let raceRepository: any RaceRepository
+    let runRepository: any RunRepository
     let exportService: any ExportServiceProtocol
     let stravaUploadService: (any StravaUploadServiceProtocol)?
     let stravaConnected: Bool
@@ -72,6 +73,9 @@ struct RunDetailView: View {
             Button("Export Track Points (CSV)") {
                 Task { await exportTrackCSV() }
             }
+            Button("Export as PDF Report") {
+                Task { await exportPDF() }
+            }
             Button("Cancel", role: .cancel) {}
         }
         .sheet(isPresented: $showingShareSheet) {
@@ -98,6 +102,33 @@ struct RunDetailView: View {
         isExporting = true
         do {
             exportFileURL = try await exportService.exportRunTrackAsCSV(run)
+            showingShareSheet = true
+        } catch {
+            // Error handled silently
+        }
+        isExporting = false
+    }
+
+    private func exportPDF() async {
+        isExporting = true
+        do {
+            let athlete = try await athleteRepository.getAthlete()
+            let metrics = AdvancedRunMetricsCalculator.calculate(
+                run: run,
+                athleteWeightKg: athlete?.weightKg,
+                maxHeartRate: athlete?.maxHeartRate
+            )
+            let recentRuns = try await runRepository.getRecentRuns(limit: 20)
+            let otherRuns = recentRuns.filter { $0.id != run.id }
+            let comparison = otherRuns.isEmpty ? nil : HistoricalComparisonCalculator.compare(run: run, recentRuns: otherRuns)
+            let nutrition = NutritionAnalysisCalculator.analyze(run: run)
+
+            exportFileURL = try await exportService.exportRunAsPDF(
+                run,
+                metrics: metrics,
+                comparison: comparison,
+                nutritionAnalysis: nutrition
+            )
             showingShareSheet = true
         } catch {
             // Error handled silently
@@ -204,7 +235,8 @@ struct RunDetailView: View {
                 run: run,
                 planRepository: planRepository,
                 athleteRepository: athleteRepository,
-                raceRepository: raceRepository
+                raceRepository: raceRepository,
+                runRepository: runRepository
             )
         } label: {
             Label("View Analysis", systemImage: "chart.xyaxis.line")

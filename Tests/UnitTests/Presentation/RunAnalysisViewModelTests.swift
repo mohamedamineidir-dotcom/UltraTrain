@@ -128,13 +128,15 @@ struct RunAnalysisViewModelTests {
         run: CompletedRun,
         athleteRepo: MockAthleteRepository = MockAthleteRepository(),
         planRepo: MockTrainingPlanRepository = MockTrainingPlanRepository(),
-        raceRepo: MockRaceRepository = MockRaceRepository()
+        raceRepo: MockRaceRepository = MockRaceRepository(),
+        runRepo: MockRunRepository = MockRunRepository()
     ) -> RunAnalysisViewModel {
         RunAnalysisViewModel(
             run: run,
             planRepository: planRepo,
             athleteRepository: athleteRepo,
-            raceRepository: raceRepo
+            raceRepository: raceRepo,
+            runRepository: runRepo
         )
     }
 
@@ -282,5 +284,86 @@ struct RunAnalysisViewModelTests {
 
         #expect(vm.error != nil)
         #expect(vm.isLoading == false)
+    }
+
+    // MARK: - Advanced Metrics
+
+    @Test("Load computes advanced metrics when athlete exists")
+    @MainActor
+    func loadAdvancedMetrics() async {
+        let run = makeRun()
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+
+        let vm = makeViewModel(run: run, athleteRepo: athleteRepo)
+        await vm.load()
+
+        #expect(vm.hasAdvancedMetrics)
+        #expect(vm.advancedMetrics!.estimatedCalories > 0)
+        #expect(vm.advancedMetrics!.averageGradientAdjustedPace > 0)
+    }
+
+    // MARK: - Historical Comparison
+
+    @Test("Load computes historical comparison when recent runs exist")
+    @MainActor
+    func loadHistoricalComparison() async {
+        let run = makeRun()
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let runRepo = MockRunRepository()
+        let otherRun = CompletedRun(
+            id: UUID(),
+            athleteId: run.athleteId,
+            date: Date.now.addingTimeInterval(-86400),
+            distanceKm: 8,
+            elevationGainM: 200,
+            elevationLossM: 200,
+            duration: 3000,
+            averageHeartRate: 150,
+            maxHeartRate: 175,
+            averagePaceSecondsPerKm: 375,
+            gpsTrack: [],
+            splits: makeSplits(count: 8),
+            linkedSessionId: nil,
+            notes: nil,
+            pausedDuration: 0
+        )
+        runRepo.runs = [run, otherRun]
+
+        let vm = makeViewModel(run: run, athleteRepo: athleteRepo, runRepo: runRepo)
+        await vm.load()
+
+        #expect(vm.hasHistoricalComparison)
+    }
+
+    @Test("Load has no comparison when no other runs")
+    @MainActor
+    func loadNoHistoricalComparison() async {
+        let run = makeRun()
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let runRepo = MockRunRepository()
+        runRepo.runs = [run]
+
+        let vm = makeViewModel(run: run, athleteRepo: athleteRepo, runRepo: runRepo)
+        await vm.load()
+
+        #expect(!vm.hasHistoricalComparison)
+    }
+
+    // MARK: - Nutrition Analysis
+
+    @Test("Load has no nutrition analysis when no intake log")
+    @MainActor
+    func loadNoNutritionAnalysis() async {
+        let run = makeRun()
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+
+        let vm = makeViewModel(run: run, athleteRepo: athleteRepo)
+        await vm.load()
+
+        #expect(!vm.hasNutritionAnalysis)
     }
 }
