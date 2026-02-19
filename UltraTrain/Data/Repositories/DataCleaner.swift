@@ -24,6 +24,7 @@ final class DataCleaner: ClearAllDataUseCase, @unchecked Sendable {
         try context.delete(model: SplitSwiftDataModel.self)
         try context.delete(model: FitnessSnapshotSwiftDataModel.self)
         try context.delete(model: AppSettingsSwiftDataModel.self)
+        try context.delete(model: GearItemSwiftDataModel.self)
 
         try context.save()
         Logger.persistence.info("All data cleared successfully")

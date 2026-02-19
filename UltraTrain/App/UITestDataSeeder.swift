@@ -14,6 +14,7 @@ enum UITestDataSeeder {
         seedRace(id: raceId, into: context)
         seedTrainingPlan(athleteId: athleteId, raceId: raceId, into: context)
         seedAppSettings(into: context)
+        seedGear(into: context)
 
         try? context.save()
     }
@@ -126,6 +127,37 @@ enum UITestDataSeeder {
                 linkedRunId: nil
             )
         }
+    }
+
+    // MARK: - Gear
+
+    private static func seedGear(into context: ModelContext) {
+        let shoes = GearItemSwiftDataModel(
+            id: UUID(),
+            name: "Speedgoat 5",
+            brand: "HOKA",
+            typeRaw: "trailShoes",
+            purchaseDate: Calendar.current.date(byAdding: .month, value: -3, to: .now)!,
+            maxDistanceKm: 800,
+            totalDistanceKm: 210,
+            totalDuration: 72000,
+            isRetired: false,
+            notes: nil
+        )
+        let poles = GearItemSwiftDataModel(
+            id: UUID(),
+            name: "Trail Running Poles",
+            brand: "Black Diamond",
+            typeRaw: "poles",
+            purchaseDate: Calendar.current.date(byAdding: .month, value: -6, to: .now)!,
+            maxDistanceKm: 2000,
+            totalDistanceKm: 450,
+            totalDuration: 162000,
+            isRetired: false,
+            notes: nil
+        )
+        context.insert(shoes)
+        context.insert(poles)
     }
 
     // MARK: - App Settings
