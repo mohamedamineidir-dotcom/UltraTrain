@@ -51,6 +51,10 @@ struct DashboardView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: Theme.Spacing.md) {
+                    if !viewModel.injuryRiskAlerts.isEmpty {
+                        InjuryRiskAlertBanner(alerts: viewModel.injuryRiskAlerts)
+                    }
+
                     DashboardNextSessionCard(
                         session: viewModel.nextSession,
                         hasPlan: viewModel.plan != nil,

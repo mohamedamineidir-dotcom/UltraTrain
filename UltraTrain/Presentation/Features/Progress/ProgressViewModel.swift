@@ -64,7 +64,7 @@ final class ProgressViewModel {
 
             let runs = try await runRepository.getRuns(for: athlete.id)
             totalRuns = runs.count
-            weeklyVolumes = computeWeeklyVolumes(from: runs)
+            weeklyVolumes = WeeklyVolumeCalculator.compute(from: runs)
             runTrendPoints = computeRunTrends(from: runs)
             personalRecords = computePersonalRecords(from: runs)
 
@@ -172,27 +172,6 @@ final class ProgressViewModel {
     }
 
     // MARK: - Private
-
-    private func computeWeeklyVolumes(from runs: [CompletedRun]) -> [WeeklyVolume] {
-        let calendar = Calendar.current
-        let now = Date.now
-        var volumes: [WeeklyVolume] = []
-
-        for weeksAgo in (0..<8).reversed() {
-            let weekStart = calendar.startOfDay(for: now.adding(weeks: -weeksAgo)).startOfWeek
-            let weekEnd = weekStart.adding(days: 7)
-            let weekRuns = runs.filter { $0.date >= weekStart && $0.date < weekEnd }
-
-            volumes.append(WeeklyVolume(
-                weekStartDate: weekStart,
-                distanceKm: weekRuns.reduce(0) { $0 + $1.distanceKm },
-                elevationGainM: weekRuns.reduce(0) { $0 + $1.elevationGainM },
-                duration: weekRuns.reduce(0) { $0 + $1.duration },
-                runCount: weekRuns.count
-            ))
-        }
-        return volumes
-    }
 
     private func computeAdherence(plan: TrainingPlan) -> (completed: Int, total: Int) {
         let allSessions = plan.weeks.flatMap(\.sessions)

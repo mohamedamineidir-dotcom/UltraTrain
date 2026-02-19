@@ -186,4 +186,83 @@ struct DashboardViewModelEnhancedTests {
         #expect(recent.count >= 14 && recent.count <= 15) // ~14 days window
         #expect(recent.count < 28) // definitely filtered
     }
+
+    // MARK: - Injury Risk Alerts
+
+    @Test("High ACR triggers injury risk alert on dashboard")
+    func highACRAlert() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = Athlete(
+            id: UUID(), firstName: "Test", lastName: "Runner",
+            dateOfBirth: .now.adding(days: -10000), weightKg: 70, heightCm: 175,
+            restingHeartRate: 55, maxHeartRate: 185, experienceLevel: .intermediate,
+            weeklyVolumeKm: 40, longestRunKm: 25, preferredUnit: .metric
+        )
+        let runRepo = MockRunRepository()
+        let athleteId = athleteRepo.savedAthlete!.id
+        runRepo.runs = [makeRun(athleteId: athleteId)]
+
+        let fitnessCalc = MockCalculateFitnessUseCase()
+        fitnessCalc.resultSnapshot = FitnessSnapshot(
+            id: UUID(), date: .now, fitness: 40, fatigue: 65, form: -25,
+            weeklyVolumeKm: 80, weeklyElevationGainM: 2000, weeklyDuration: 25000,
+            acuteToChronicRatio: 1.6, monotony: 1.2
+        )
+
+        let vm = DashboardViewModel(
+            planRepository: MockTrainingPlanRepository(),
+            runRepository: runRepo,
+            athleteRepository: athleteRepo,
+            fitnessRepository: MockFitnessRepository(),
+            fitnessCalculator: fitnessCalc,
+            raceRepository: MockRaceRepository(),
+            finishTimeEstimator: MockEstimateFinishTimeUseCase(),
+            finishEstimateRepository: MockFinishEstimateRepository()
+        )
+        await vm.load()
+
+        #expect(!vm.injuryRiskAlerts.isEmpty)
+        #expect(vm.injuryRiskAlerts.contains { $0.type == .highACR })
+    }
+
+    @Test("Safe metrics produce no alerts")
+    func safeMetricsNoAlerts() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = Athlete(
+            id: UUID(), firstName: "Test", lastName: "Runner",
+            dateOfBirth: .now.adding(days: -10000), weightKg: 70, heightCm: 175,
+            restingHeartRate: 55, maxHeartRate: 185, experienceLevel: .intermediate,
+            weeklyVolumeKm: 40, longestRunKm: 25, preferredUnit: .metric
+        )
+        let runRepo = MockRunRepository()
+        runRepo.runs = [makeRun(athleteId: athleteRepo.savedAthlete!.id)]
+
+        let fitnessCalc = MockCalculateFitnessUseCase()
+        fitnessCalc.resultSnapshot = FitnessSnapshot(
+            id: UUID(), date: .now, fitness: 40, fatigue: 35, form: 5,
+            weeklyVolumeKm: 50, weeklyElevationGainM: 1000, weeklyDuration: 18000,
+            acuteToChronicRatio: 1.0, monotony: 1.0
+        )
+
+        let vm = DashboardViewModel(
+            planRepository: MockTrainingPlanRepository(),
+            runRepository: runRepo,
+            athleteRepository: athleteRepo,
+            fitnessRepository: MockFitnessRepository(),
+            fitnessCalculator: fitnessCalc,
+            raceRepository: MockRaceRepository(),
+            finishTimeEstimator: MockEstimateFinishTimeUseCase(),
+            finishEstimateRepository: MockFinishEstimateRepository()
+        )
+        await vm.load()
+
+        #expect(vm.injuryRiskAlerts.isEmpty)
+    }
+
+    @Test("No runs produce no alerts")
+    func noRunsNoAlerts() async {
+        let vm = makeVM()
+        await vm.load()
+        #expect(vm.injuryRiskAlerts.isEmpty)
+    }
 }

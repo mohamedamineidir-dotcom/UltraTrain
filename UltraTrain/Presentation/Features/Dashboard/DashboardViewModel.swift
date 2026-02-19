@@ -35,6 +35,7 @@ final class DashboardViewModel {
     var aRace: Race?
     var lastRun: CompletedRun?
     var upcomingRaces: [Race] = []
+    var injuryRiskAlerts: [InjuryRiskAlert] = []
 
     // MARK: - Init
 
@@ -89,6 +90,13 @@ final class DashboardViewModel {
             let snapshot = try await fitnessCalculator.execute(runs: runs, asOf: .now)
             try await fitnessRepository.saveSnapshot(snapshot)
             fitnessSnapshot = snapshot
+
+            let volumes = WeeklyVolumeCalculator.compute(from: runs, weekCount: 3)
+            injuryRiskAlerts = InjuryRiskCalculator.assess(
+                weeklyVolumes: volumes,
+                currentACR: snapshot.acuteToChronicRatio,
+                monotony: snapshot.monotony
+            )
 
             let from = Date.now.adding(days: -28)
             fitnessHistory = try await fitnessRepository.getSnapshots(from: from, to: .now)
