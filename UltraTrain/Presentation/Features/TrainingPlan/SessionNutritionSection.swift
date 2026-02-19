@@ -69,7 +69,7 @@ struct SessionNutritionSection: View {
                 sectionHeader(title: "During Run", icon: "bolt.fill", color: .blue)
                 Spacer()
                 if advice.isGutTrainingRecommended {
-                    gutTrainingBadge
+                    GutTrainingBadge()
                 }
             }
 
@@ -182,17 +182,4 @@ struct SessionNutritionSection: View {
             .clipShape(Capsule())
     }
 
-    private var gutTrainingBadge: some View {
-        HStack(spacing: 2) {
-            Image(systemName: "stomach")
-                .font(.caption2)
-            Text("Gut Training")
-                .font(.caption2.bold())
-        }
-        .foregroundStyle(Theme.Colors.primary)
-        .padding(.horizontal, Theme.Spacing.xs)
-        .padding(.vertical, 2)
-        .background(Theme.Colors.primary.opacity(0.12))
-        .clipShape(Capsule())
-    }
 }

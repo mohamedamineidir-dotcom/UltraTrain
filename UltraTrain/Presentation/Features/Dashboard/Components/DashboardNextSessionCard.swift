@@ -50,6 +50,9 @@ struct DashboardNextSessionCard: View {
                             .font(.caption)
                             .foregroundStyle(Theme.Colors.secondaryLabel)
                     }
+                    if session.isGutTrainingRecommended {
+                        GutTrainingBadge()
+                    }
                 }
 
                 Spacer()

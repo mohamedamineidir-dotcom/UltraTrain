@@ -165,6 +165,7 @@
 		540E3FF7710B873C569C5530 /* MockNutritionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA56E78C29B14A176CEB014 /* MockNutritionRepository.swift */; };
 		5469594227B8B1998A5E53F6 /* WatchRunCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13FB2814B66CD1A369650C5E /* WatchRunCalculator.swift */; };
 		54CF65529326CCDFAC97C210 /* MockGenerateTrainingPlanUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916A000623DD89CC57C3BC70 /* MockGenerateTrainingPlanUseCase.swift */; };
+		5515F32CEBE94EDFB630E8DC /* GutTrainingBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66007B0AEF09C88910CB69B5 /* GutTrainingBadge.swift */; };
 		5588FEDF884FEE82FE4480BB /* RaceCourseElevationChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BB4EA9BF0D4CF9F6889D73B /* RaceCourseElevationChart.swift */; };
 		55D39D73A90208ED3EE0BAE7 /* ImportRunView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0285B0B80ECAE7BBDC643154 /* ImportRunView.swift */; };
 		562518C547D4CFE8BADBA6B9 /* HistoricalComparisonSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4897A84EC13BB5D376B5D82 /* HistoricalComparisonSection.swift */; };
@@ -366,6 +367,7 @@
 		BD0671DD71363149A5C605A8 /* TrainingPlanGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526C93048F1BFE5706778F1A /* TrainingPlanGenerator.swift */; };
 		BD0887AED32B07C9651290EA /* CompletedRunSwiftDataMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33AA0DBAA9EE1B38E896580B /* CompletedRunSwiftDataMapper.swift */; };
 		BD9915DCFE61C9881EF74488 /* HeartRateTrendChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DE1D7498CD42A168E8C0E7C /* HeartRateTrendChartView.swift */; };
+		BDE3F22A3BA135154932318D /* GutTrainingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED7EB460FD62488862EC317 /* GutTrainingTests.swift */; };
 		BDFE6F8EC55F25302C11D488 /* WatchTrackPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34D07E68BFA56EF9B5D11326 /* WatchTrackPoint.swift */; };
 		BE54E7CFE33FE8A605AAE848 /* RunHistorySummaryHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74C402BDC4BCD55911800998 /* RunHistorySummaryHeader.swift */; };
 		BE6324CA97A1912EEDB06946 /* DashboardViewModelEnhancedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4148B2AFDF236383F9B2932F /* DashboardViewModelEnhancedTests.swift */; };
@@ -792,6 +794,7 @@
 		63B52870A7332174AAB89455 /* MapStyleToggleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyleToggleButton.swift; sourceTree = "<group>"; };
 		648437056D400468A264080A /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		64C2B36466FBA09D5382C4D9 /* UltraTrainWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = UltraTrainWatch.entitlements; sourceTree = "<group>"; };
+		66007B0AEF09C88910CB69B5 /* GutTrainingBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GutTrainingBadge.swift; sourceTree = "<group>"; };
 		67046BD5B89F2ADDC637BD6C /* MockGenerateNutritionPlanUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockGenerateNutritionPlanUseCase.swift; sourceTree = "<group>"; };
 		671D222390109CC9DB1A7480 /* ActiveRunViewModelStravaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveRunViewModelStravaTests.swift; sourceTree = "<group>"; };
 		672C14F81B72FD3D5FB913E7 /* ExperienceLevelCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceLevelCard.swift; sourceTree = "<group>"; };
@@ -957,6 +960,7 @@
 		BCA98081E235699A7D9F6FB7 /* RunTrendPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunTrendPoint.swift; sourceTree = "<group>"; };
 		BCE48A68D910A9061955BB3D /* GearListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GearListView.swift; sourceTree = "<group>"; };
 		BDF8EC8B912DEC9FD97724C0 /* GenerateNutritionPlanUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateNutritionPlanUseCase.swift; sourceTree = "<group>"; };
+		BED7EB460FD62488862EC317 /* GutTrainingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GutTrainingTests.swift; sourceTree = "<group>"; };
 		BF6C36CB23CF14E30CAE0423 /* NutritionIntakeSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionIntakeSummary.swift; sourceTree = "<group>"; };
 		BFBCCEC8738D294F3E7B8433 /* DashboardFinishEstimateCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardFinishEstimateCard.swift; sourceTree = "<group>"; };
 		C00FD37FB919FE3E65C133A6 /* WatchNextSessionComplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchNextSessionComplication.swift; sourceTree = "<group>"; };
@@ -1136,6 +1140,7 @@
 				5EC4543E5545FA2F93A20660 /* ChartAnnotationCard.swift */,
 				F1E1F5EC0FA6B945898AF4EF /* DocumentPicker.swift */,
 				88623DF1C979FBA8AFCD1161 /* ErrorBannerView.swift */,
+				66007B0AEF09C88910CB69B5 /* GutTrainingBadge.swift */,
 				E9C2B18A5FA6AE40DFB06602 /* LabeledIntStepper.swift */,
 				7EEA3C15AA1ABE6591930902 /* LabeledStepper.swift */,
 				648437056D400468A264080A /* ShareSheet.swift */,
@@ -2083,6 +2088,7 @@
 				0D6F416C7FBF8989A1517A72 /* GPXExporterTests.swift */,
 				B15FD671155E640EEFF30F5B /* GPXParserTests.swift */,
 				510160A739C1241D26E97A57 /* GradientCategoryTests.swift */,
+				BED7EB460FD62488862EC317 /* GutTrainingTests.swift */,
 				8E51AEE05895F063C4C45CA0 /* HistoricalComparisonCalculatorTests.swift */,
 				EC31CFD1A92DD8AED6306EE8 /* InjuryRiskCalculatorTests.swift */,
 				F11B204D27092A7FC5A367D4 /* NutritionAnalysisCalculatorTests.swift */,
@@ -2444,6 +2450,7 @@
 				0F1AE7DA527E826F791B2580 /* GearItemTests.swift in Sources */,
 				224315A651149B7C8B44BC6C /* GearListViewModelTests.swift in Sources */,
 				DD9704806FB4699B4940C4BE /* GradientCategoryTests.swift in Sources */,
+				BDE3F22A3BA135154932318D /* GutTrainingTests.swift in Sources */,
 				F4E6D1E9CA5B9A83C3DA0B48 /* HistoricalComparisonCalculatorTests.swift in Sources */,
 				AF638C94C0C6E4EB8AFC07BB /* InjuryRiskCalculatorTests.swift in Sources */,
 				F4CC5B9879D001BFE7C43477 /* LiveActivityServiceTests.swift in Sources */,
@@ -2633,6 +2640,7 @@
 				00281AB2049EAD0C4DE7D1B9 /* GenerateTrainingPlanUseCase.swift in Sources */,
 				483F71F7C2DA1DA93F4517F6 /* GradientCategory.swift in Sources */,
 				CB9CA6443B7CFEF8FA42A2E7 /* GradientColorHelper.swift in Sources */,
+				5515F32CEBE94EDFB630E8DC /* GutTrainingBadge.swift in Sources */,
 				9DAE26298EDD75EC29D792AF /* HapticService.swift in Sources */,
 				6B43758CEF0C2C27AD8BF35C /* HealthKitService.swift in Sources */,
 				2B87B3593819B1C8E0500A16 /* HealthKitServiceProtocol.swift in Sources */,

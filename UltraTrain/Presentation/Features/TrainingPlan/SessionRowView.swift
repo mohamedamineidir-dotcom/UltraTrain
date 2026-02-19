@@ -33,6 +33,10 @@ struct SessionRowView: View {
                             .background(.orange.opacity(0.15))
                             .clipShape(Capsule())
                     }
+
+                    if session.isGutTrainingRecommended && !session.isSkipped {
+                        GutTrainingBadge()
+                    }
                 }
 
                 if session.plannedDistanceKm > 0 {

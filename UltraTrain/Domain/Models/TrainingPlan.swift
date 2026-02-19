@@ -53,6 +53,10 @@ struct TrainingSession: Identifiable, Equatable, Sendable {
     var isCompleted: Bool
     var isSkipped: Bool
     var linkedRunId: UUID?
+
+    var isGutTrainingRecommended: Bool {
+        (type == .longRun || type == .backToBack) && plannedDuration >= 7200
+    }
 }
 
 enum SessionType: String, CaseIterable, Sendable {

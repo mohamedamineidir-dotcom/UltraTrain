@@ -93,6 +93,9 @@ struct RunTrackingLaunchView: View {
                         )
                         .padding(.horizontal, Theme.Spacing.md)
                     }
+                    if viewModel.selectedSession?.isGutTrainingRecommended == true {
+                        gutTrainingBanner
+                    }
                     if !viewModel.activeGear.isEmpty {
                         GearPickerView(
                             gearItems: viewModel.activeGear,
@@ -172,24 +175,13 @@ struct RunTrackingLaunchView: View {
         }
     }
 
-    private func authBanner(
-        message: String,
-        buttonLabel: String,
-        action: @escaping () -> Void
-    ) -> some View {
+    private func authBanner(message: String, buttonLabel: String, action: @escaping () -> Void) -> some View {
         VStack(spacing: Theme.Spacing.sm) {
-            Text(message)
-                .font(.subheadline)
-                .multilineTextAlignment(.center)
-                .foregroundStyle(Theme.Colors.warning)
-            Button(buttonLabel, action: action)
-                .buttonStyle(.bordered)
+            Text(message).font(.subheadline).multilineTextAlignment(.center).foregroundStyle(Theme.Colors.warning)
+            Button(buttonLabel, action: action).buttonStyle(.bordered)
         }
         .padding(Theme.Spacing.md)
-        .background(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                .fill(Theme.Colors.warning.opacity(0.1))
-        )
+        .background(RoundedRectangle(cornerRadius: Theme.CornerRadius.md).fill(Theme.Colors.warning.opacity(0.1)))
         .padding(.horizontal, Theme.Spacing.md)
     }
 
@@ -238,25 +230,34 @@ struct RunTrackingLaunchView: View {
     // MARK: - Race Day Banner
 
     private func raceDayBanner(race: Race) -> some View {
-        VStack(spacing: Theme.Spacing.xs) {
-            HStack(spacing: Theme.Spacing.sm) {
-                Image(systemName: "flag.checkered")
-                    .font(.title3)
-                    .accessibilityHidden(true)
-                Text("Race Day: \(race.name)")
-                    .font(.headline)
+        HStack(spacing: Theme.Spacing.sm) {
+            Image(systemName: "flag.checkered").font(.title3).accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Race Day: \(race.name)").font(.subheadline.bold())
+                Text("This run will be linked to your race for finish time calibration.")
+                    .font(.caption).foregroundStyle(Theme.Colors.secondaryLabel)
             }
-            Text("This run will be linked to your race for finish time calibration.")
-                .font(.caption)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
-                .multilineTextAlignment(.center)
+            Spacer()
         }
-        .frame(maxWidth: .infinity)
         .padding(Theme.Spacing.md)
-        .background(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                .fill(Theme.Colors.primary.opacity(0.1))
-        )
+        .background(RoundedRectangle(cornerRadius: Theme.CornerRadius.md).fill(Theme.Colors.primary.opacity(0.1)))
+        .padding(.horizontal, Theme.Spacing.md)
+    }
+
+    // MARK: - Gut Training
+
+    private var gutTrainingBanner: some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            Image(systemName: "fork.knife").font(.title3).accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Gut Training Session").font(.subheadline.bold())
+                Text("Practice your race-day nutrition during this run.")
+                    .font(.caption).foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+            Spacer()
+        }
+        .padding(Theme.Spacing.md)
+        .background(RoundedRectangle(cornerRadius: Theme.CornerRadius.md).fill(Theme.Colors.primary.opacity(0.08)))
         .padding(.horizontal, Theme.Spacing.md)
     }
 
