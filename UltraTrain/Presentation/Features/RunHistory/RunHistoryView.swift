@@ -14,6 +14,7 @@ struct RunHistoryView: View {
     private let exportService: any ExportServiceProtocol
     private let runImportUseCase: any RunImportUseCase
     private let stravaUploadService: (any StravaUploadServiceProtocol)?
+    private let stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)?
     private let stravaImportService: (any StravaImportServiceProtocol)?
     private let stravaConnected: Bool
 
@@ -25,6 +26,7 @@ struct RunHistoryView: View {
         exportService: any ExportServiceProtocol,
         runImportUseCase: any RunImportUseCase,
         stravaUploadService: (any StravaUploadServiceProtocol)? = nil,
+        stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)? = nil,
         stravaImportService: (any StravaImportServiceProtocol)? = nil,
         stravaConnected: Bool = false
     ) {
@@ -36,6 +38,7 @@ struct RunHistoryView: View {
         self.exportService = exportService
         self.runImportUseCase = runImportUseCase
         self.stravaUploadService = stravaUploadService
+        self.stravaUploadQueueService = stravaUploadQueueService
         self.stravaImportService = stravaImportService
         self.stravaConnected = stravaConnected
     }
@@ -131,7 +134,7 @@ struct RunHistoryView: View {
                     raceRepository: raceRepository,
                     runRepository: runRepository,
                     exportService: exportService,
-                    stravaUploadService: stravaUploadService,
+                    stravaUploadQueueService: stravaUploadQueueService,
                     stravaConnected: stravaConnected
                 )
             }

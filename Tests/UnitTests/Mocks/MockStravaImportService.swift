@@ -38,7 +38,9 @@ final class MockStravaImportService: StravaImportServiceProtocol, @unchecked Sen
             linkedSessionId: nil,
             linkedRaceId: nil,
             notes: "Imported from Strava: \(activity.name)",
-            pausedDuration: 0
+            pausedDuration: 0,
+            stravaActivityId: activity.id,
+            isStravaImport: true
         )
     }
 }

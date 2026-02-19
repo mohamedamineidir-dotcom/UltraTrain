@@ -96,7 +96,9 @@ final class StravaImportService: StravaImportServiceProtocol {
             linkedSessionId: nil,
             linkedRaceId: nil,
             notes: "Imported from Strava: \(activity.name)",
-            pausedDuration: 0
+            pausedDuration: 0,
+            stravaActivityId: activity.id,
+            isStravaImport: true
         )
 
         try await runRepository.saveRun(run)
@@ -170,6 +172,7 @@ final class StravaImportService: StravaImportServiceProtocol {
 
     private func isDuplicate(dto: StravaActivityDTO, existingRuns: [CompletedRun]) -> Bool {
         existingRuns.contains { run in
+            if run.stravaActivityId == dto.id { return true }
             let timeDiff = abs(run.date.timeIntervalSince(dto.startDate))
             let distanceDiff = abs(run.distanceKm - dto.distance / 1000.0)
             return timeDiff < 3600 && distanceDiff < 0.5

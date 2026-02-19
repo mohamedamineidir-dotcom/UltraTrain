@@ -13,6 +13,7 @@ struct SettingsView: View {
         exportService: any ExportServiceProtocol,
         runRepository: any RunRepository,
         stravaAuthService: any StravaAuthServiceProtocol,
+        stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)? = nil,
         notificationService: any NotificationServiceProtocol,
         planRepository: any TrainingPlanRepository,
         raceRepository: any RaceRepository,
@@ -26,6 +27,7 @@ struct SettingsView: View {
             exportService: exportService,
             runRepository: runRepository,
             stravaAuthService: stravaAuthService,
+            stravaUploadQueueService: stravaUploadQueueService,
             notificationService: notificationService,
             planRepository: planRepository,
             raceRepository: raceRepository,
@@ -361,6 +363,12 @@ struct SettingsView: View {
                             Task { await viewModel.updateStravaAutoUpload(newValue) }
                         }
                     ))
+                }
+                if viewModel.stravaQueuePendingCount > 0 {
+                    LabeledContent(
+                        "Pending Uploads",
+                        value: "\(viewModel.stravaQueuePendingCount)"
+                    )
                 }
                 Button(role: .destructive) {
                     Task { await viewModel.disconnectStrava() }

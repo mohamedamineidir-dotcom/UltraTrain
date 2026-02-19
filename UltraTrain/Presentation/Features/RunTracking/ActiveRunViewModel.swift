@@ -26,7 +26,7 @@ final class ActiveRunViewModel {
     private let connectivityService: PhoneConnectivityService?
     private let liveActivityService: any LiveActivityServiceProtocol
     private let widgetDataWriter: WidgetDataWriter
-    private let stravaUploadService: (any StravaUploadServiceProtocol)?
+    private let stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)?
     private let gearRepository: any GearRepository
 
     // MARK: - Config
@@ -93,7 +93,7 @@ final class ActiveRunViewModel {
         connectivityService: PhoneConnectivityService? = nil,
         liveActivityService: any LiveActivityServiceProtocol = LiveActivityService(),
         widgetDataWriter: WidgetDataWriter? = nil,
-        stravaUploadService: (any StravaUploadServiceProtocol)? = nil,
+        stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)? = nil,
         gearRepository: any GearRepository,
         athlete: Athlete,
         linkedSession: TrainingSession?,
@@ -122,7 +122,7 @@ final class ActiveRunViewModel {
             runRepository: runRepository,
             raceRepository: raceRepository
         )
-        self.stravaUploadService = stravaUploadService
+        self.stravaUploadQueueService = stravaUploadQueueService
         self.gearRepository = gearRepository
         self.athlete = athlete
         self.linkedSession = linkedSession
@@ -269,12 +269,18 @@ final class ActiveRunViewModel {
     }
 
     func uploadToStrava() {
-        guard let run = lastSavedRun, let service = stravaUploadService else { return }
+        guard let run = lastSavedRun, let queueService = stravaUploadQueueService else { return }
         stravaUploadStatus = .uploading
         Task { [weak self] in
             do {
-                let activityId = try await service.uploadRun(run)
-                self?.stravaUploadStatus = .success(activityId: activityId)
+                try await queueService.enqueueUpload(runId: run.id)
+                await queueService.processQueue()
+                if let status = await queueService.getQueueStatus(forRunId: run.id),
+                   status == .completed {
+                    self?.stravaUploadStatus = .success(activityId: 0)
+                } else {
+                    self?.stravaUploadStatus = .idle
+                }
             } catch {
                 self?.stravaUploadStatus = .failed(reason: error.localizedDescription)
                 Logger.strava.error("Strava upload failed: \(error)")
@@ -290,14 +296,20 @@ final class ActiveRunViewModel {
 
     private func autoUploadToStrava(_ run: CompletedRun) {
         guard stravaAutoUploadEnabled,
-              let service = stravaUploadService,
+              let queueService = stravaUploadQueueService,
               !run.gpsTrack.isEmpty else { return }
         stravaUploadStatus = .uploading
         Task { [weak self] in
             do {
-                let activityId = try await service.uploadRun(run)
-                self?.stravaUploadStatus = .success(activityId: activityId)
-                Logger.strava.info("Auto-uploaded run to Strava: activity \(activityId)")
+                try await queueService.enqueueUpload(runId: run.id)
+                await queueService.processQueue()
+                if let status = await queueService.getQueueStatus(forRunId: run.id),
+                   status == .completed {
+                    self?.stravaUploadStatus = .success(activityId: 0)
+                } else {
+                    self?.stravaUploadStatus = .idle
+                }
+                Logger.strava.info("Auto-upload queued for run \(run.id)")
             } catch {
                 self?.stravaUploadStatus = .failed(reason: error.localizedDescription)
                 Logger.strava.error("Auto-upload to Strava failed: \(error)")

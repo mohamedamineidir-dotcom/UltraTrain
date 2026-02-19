@@ -12,6 +12,7 @@ struct ProfileView: View {
     private let healthKitService: any HealthKitServiceProtocol
     private let exportService: any ExportServiceProtocol
     private let stravaAuthService: any StravaAuthServiceProtocol
+    private let stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)?
     private let notificationService: any NotificationServiceProtocol
     private let planRepository: any TrainingPlanRepository
     private let biometricAuthService: any BiometricAuthServiceProtocol
@@ -29,6 +30,7 @@ struct ProfileView: View {
         widgetDataWriter: WidgetDataWriter,
         exportService: any ExportServiceProtocol,
         stravaAuthService: any StravaAuthServiceProtocol,
+        stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)? = nil,
         notificationService: any NotificationServiceProtocol,
         planRepository: any TrainingPlanRepository,
         biometricAuthService: any BiometricAuthServiceProtocol,
@@ -49,6 +51,7 @@ struct ProfileView: View {
         self.healthKitService = healthKitService
         self.exportService = exportService
         self.stravaAuthService = stravaAuthService
+        self.stravaUploadQueueService = stravaUploadQueueService
         self.notificationService = notificationService
         self.planRepository = planRepository
         self.biometricAuthService = biometricAuthService
@@ -85,6 +88,7 @@ struct ProfileView: View {
                             exportService: exportService,
                             runRepository: runRepository,
                             stravaAuthService: stravaAuthService,
+                            stravaUploadQueueService: stravaUploadQueueService,
                             notificationService: notificationService,
                             planRepository: planRepository,
                             raceRepository: raceRepository,

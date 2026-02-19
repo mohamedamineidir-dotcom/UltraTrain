@@ -45,7 +45,9 @@ enum CompletedRunSwiftDataMapper {
             notes: run.notes,
             pausedDuration: run.pausedDuration,
             gearIds: run.gearIds,
-            nutritionIntakeData: intakeData
+            nutritionIntakeData: intakeData,
+            stravaActivityId: run.stravaActivityId,
+            isStravaImport: run.isStravaImport
         )
     }
 
@@ -77,7 +79,9 @@ enum CompletedRunSwiftDataMapper {
             notes: model.notes,
             pausedDuration: model.pausedDuration,
             gearIds: model.gearIds,
-            nutritionIntakeLog: intakeLog
+            nutritionIntakeLog: intakeLog,
+            stravaActivityId: model.stravaActivityId,
+            isStravaImport: model.isStravaImport
         )
     }
 

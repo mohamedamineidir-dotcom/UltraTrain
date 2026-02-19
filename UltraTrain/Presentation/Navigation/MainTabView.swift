@@ -26,6 +26,7 @@ struct MainTabView: View {
     private let runImportUseCase: any RunImportUseCase
     private let stravaAuthService: any StravaAuthServiceProtocol
     private let stravaUploadService: (any StravaUploadServiceProtocol)?
+    private let stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)?
     private let stravaImportService: (any StravaImportServiceProtocol)?
     private let notificationService: any NotificationServiceProtocol
     private let biometricAuthService: any BiometricAuthServiceProtocol
@@ -56,6 +57,7 @@ struct MainTabView: View {
         runImportUseCase: any RunImportUseCase,
         stravaAuthService: any StravaAuthServiceProtocol,
         stravaUploadService: (any StravaUploadServiceProtocol)? = nil,
+        stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)? = nil,
         stravaImportService: (any StravaImportServiceProtocol)? = nil,
         notificationService: any NotificationServiceProtocol,
         biometricAuthService: any BiometricAuthServiceProtocol,
@@ -85,6 +87,7 @@ struct MainTabView: View {
         self.runImportUseCase = runImportUseCase
         self.stravaAuthService = stravaAuthService
         self.stravaUploadService = stravaUploadService
+        self.stravaUploadQueueService = stravaUploadQueueService
         self.stravaImportService = stravaImportService
         self.notificationService = notificationService
         self.biometricAuthService = biometricAuthService
@@ -139,6 +142,7 @@ struct MainTabView: View {
                 exportService: exportService,
                 runImportUseCase: runImportUseCase,
                 stravaUploadService: stravaUploadService,
+                stravaUploadQueueService: stravaUploadQueueService,
                 stravaImportService: stravaImportService,
                 stravaAuthService: stravaAuthService,
                 gearRepository: gearRepository,
@@ -174,6 +178,7 @@ struct MainTabView: View {
                 widgetDataWriter: widgetDataWriter,
                 exportService: exportService,
                 stravaAuthService: stravaAuthService,
+                stravaUploadQueueService: stravaUploadQueueService,
                 notificationService: notificationService,
                 planRepository: planRepository,
                 biometricAuthService: biometricAuthService,

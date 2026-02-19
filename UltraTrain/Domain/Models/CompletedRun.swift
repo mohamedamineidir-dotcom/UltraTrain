@@ -19,6 +19,8 @@ struct CompletedRun: Identifiable, Equatable, Sendable {
     var pausedDuration: TimeInterval
     var gearIds: [UUID] = []
     var nutritionIntakeLog: [NutritionIntakeEntry] = []
+    var stravaActivityId: Int? = nil
+    var isStravaImport: Bool = false
 
     var totalDuration: TimeInterval {
         duration + pausedDuration

@@ -29,6 +29,7 @@ struct AppRootView: View {
     private let runImportUseCase: any RunImportUseCase
     private let stravaAuthService: any StravaAuthServiceProtocol
     private let stravaUploadService: (any StravaUploadServiceProtocol)?
+    private let stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)?
     private let stravaImportService: (any StravaImportServiceProtocol)?
     private let notificationService: any NotificationServiceProtocol
     private let biometricAuthService: any BiometricAuthServiceProtocol
@@ -59,6 +60,7 @@ struct AppRootView: View {
         runImportUseCase: any RunImportUseCase,
         stravaAuthService: any StravaAuthServiceProtocol,
         stravaUploadService: (any StravaUploadServiceProtocol)? = nil,
+        stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)? = nil,
         stravaImportService: (any StravaImportServiceProtocol)? = nil,
         notificationService: any NotificationServiceProtocol,
         biometricAuthService: any BiometricAuthServiceProtocol,
@@ -88,6 +90,7 @@ struct AppRootView: View {
         self.runImportUseCase = runImportUseCase
         self.stravaAuthService = stravaAuthService
         self.stravaUploadService = stravaUploadService
+        self.stravaUploadQueueService = stravaUploadQueueService
         self.stravaImportService = stravaImportService
         self.notificationService = notificationService
         self.biometricAuthService = biometricAuthService
@@ -130,6 +133,7 @@ struct AppRootView: View {
                         runImportUseCase: runImportUseCase,
                         stravaAuthService: stravaAuthService,
                         stravaUploadService: stravaUploadService,
+                        stravaUploadQueueService: stravaUploadQueueService,
                         stravaImportService: stravaImportService,
                         notificationService: notificationService,
                         biometricAuthService: biometricAuthService,

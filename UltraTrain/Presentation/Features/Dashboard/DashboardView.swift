@@ -346,6 +346,7 @@ private struct PreviewRunRepository: RunRepository, @unchecked Sendable {
     func getRun(id: UUID) async throws -> CompletedRun? { nil }
     func saveRun(_ run: CompletedRun) async throws {}
     func deleteRun(id: UUID) async throws {}
+    func updateRun(_ run: CompletedRun) async throws {}
     func getRecentRuns(limit: Int) async throws -> [CompletedRun] { [] }
 }
 

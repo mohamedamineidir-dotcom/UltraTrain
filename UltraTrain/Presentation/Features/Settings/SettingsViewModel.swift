@@ -14,6 +14,7 @@ final class SettingsViewModel {
     private let exportService: any ExportServiceProtocol
     private let runRepository: any RunRepository
     private let stravaAuthService: any StravaAuthServiceProtocol
+    private let stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)?
     private let notificationService: any NotificationServiceProtocol
     private let planRepository: any TrainingPlanRepository
     private let raceRepository: any RaceRepository
@@ -35,6 +36,7 @@ final class SettingsViewModel {
     var exportedFileURL: URL?
     var stravaStatus: StravaConnectionStatus = .disconnected
     var isConnectingStrava = false
+    var stravaQueuePendingCount = 0
     var iCloudSyncEnabled = UserDefaults.standard.bool(forKey: "iCloudSyncEnabled")
     var showRestartAlert = false
 
@@ -74,6 +76,7 @@ final class SettingsViewModel {
         exportService: any ExportServiceProtocol,
         runRepository: any RunRepository,
         stravaAuthService: any StravaAuthServiceProtocol,
+        stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)? = nil,
         notificationService: any NotificationServiceProtocol,
         planRepository: any TrainingPlanRepository,
         raceRepository: any RaceRepository,
@@ -86,6 +89,7 @@ final class SettingsViewModel {
         self.exportService = exportService
         self.runRepository = runRepository
         self.stravaAuthService = stravaAuthService
+        self.stravaUploadQueueService = stravaUploadQueueService
         self.notificationService = notificationService
         self.planRepository = planRepository
         self.raceRepository = raceRepository
@@ -131,6 +135,7 @@ final class SettingsViewModel {
         }
 
         loadStravaStatus()
+        await loadStravaQueueCount()
         isLoading = false
     }
 
@@ -389,6 +394,10 @@ final class SettingsViewModel {
 
     func loadStravaStatus() {
         stravaStatus = stravaAuthService.getConnectionStatus()
+    }
+
+    func loadStravaQueueCount() async {
+        stravaQueuePendingCount = await stravaUploadQueueService?.getPendingCount() ?? 0
     }
 
     func connectStrava() async {

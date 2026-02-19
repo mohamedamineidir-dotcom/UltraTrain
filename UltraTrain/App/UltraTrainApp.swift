@@ -34,6 +34,8 @@ struct UltraTrainApp: App {
     private let watchRunImportService: WatchRunImportService
     private let gearRepository: any GearRepository
     private let finishEstimateRepository: any FinishEstimateRepository
+    private let stravaUploadQueueRepository: any StravaUploadQueueRepository
+    private let stravaUploadQueueService: StravaUploadQueueService
     private let cloudKitSyncMonitor: CloudKitSyncMonitor?
 
     init() {
@@ -57,7 +59,8 @@ struct UltraTrainApp: App {
                 AppSettingsSwiftDataModel.self,
                 NutritionPreferencesSwiftDataModel.self,
                 GearItemSwiftDataModel.self,
-                FinishEstimateSwiftDataModel.self
+                FinishEstimateSwiftDataModel.self,
+                StravaUploadQueueSwiftDataModel.self
             ])
             let config: ModelConfiguration
             if isUITesting {
@@ -120,6 +123,12 @@ struct UltraTrainApp: App {
         biometricAuthService = BiometricAuthService()
         gearRepository = LocalGearRepository(modelContainer: modelContainer)
         finishEstimateRepository = LocalFinishEstimateRepository(modelContainer: modelContainer)
+        stravaUploadQueueRepository = LocalStravaUploadQueueRepository(modelContainer: modelContainer)
+        stravaUploadQueueService = StravaUploadQueueService(
+            queueRepository: stravaUploadQueueRepository,
+            runRepository: runRepository,
+            uploadService: stravaUploadService
+        )
         watchRunImportService = WatchRunImportService(
             runRepository: runRepository,
             planRepository: planRepository,
@@ -137,6 +146,9 @@ struct UltraTrainApp: App {
         } else {
             cloudKitSyncMonitor = nil
         }
+
+        let queueService = stravaUploadQueueService
+        Task { await queueService.processQueue() }
 
         connectivityService.completedRunHandler = { [watchRunImportService, athleteRepository] runData in
             Task {
@@ -179,6 +191,7 @@ struct UltraTrainApp: App {
                 runImportUseCase: runImportUseCase,
                 stravaAuthService: stravaAuthService,
                 stravaUploadService: stravaUploadService,
+                stravaUploadQueueService: stravaUploadQueueService,
                 stravaImportService: stravaImportService,
                 notificationService: notificationService,
                 biometricAuthService: biometricAuthService,

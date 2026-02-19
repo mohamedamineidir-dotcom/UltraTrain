@@ -16,6 +16,7 @@ struct RunTrackingLaunchView: View {
     private let exportService: any ExportServiceProtocol
     private let runImportUseCase: any RunImportUseCase
     private let stravaUploadService: (any StravaUploadServiceProtocol)?
+    private let stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)?
     private let stravaImportService: (any StravaImportServiceProtocol)?
     private let stravaAuthService: any StravaAuthServiceProtocol
     private let gearRepository: any GearRepository
@@ -37,6 +38,7 @@ struct RunTrackingLaunchView: View {
         exportService: any ExportServiceProtocol,
         runImportUseCase: any RunImportUseCase,
         stravaUploadService: (any StravaUploadServiceProtocol)? = nil,
+        stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)? = nil,
         stravaImportService: (any StravaImportServiceProtocol)? = nil,
         stravaAuthService: any StravaAuthServiceProtocol,
         gearRepository: any GearRepository,
@@ -67,6 +69,7 @@ struct RunTrackingLaunchView: View {
         self.exportService = exportService
         self.runImportUseCase = runImportUseCase
         self.stravaUploadService = stravaUploadService
+        self.stravaUploadQueueService = stravaUploadQueueService
         self.stravaImportService = stravaImportService
         self.stravaAuthService = stravaAuthService
         self.gearRepository = gearRepository
@@ -121,7 +124,7 @@ struct RunTrackingLaunchView: View {
                             hapticService: hapticService,
                             connectivityService: connectivityService,
                             widgetDataWriter: widgetDataWriter,
-                            stravaUploadService: stravaUploadService,
+                            stravaUploadQueueService: stravaUploadQueueService,
                             gearRepository: gearRepository,
                             athlete: athlete,
                             linkedSession: viewModel.selectedSession,
@@ -269,6 +272,7 @@ struct RunTrackingLaunchView: View {
                 exportService: exportService,
                 runImportUseCase: runImportUseCase,
                 stravaUploadService: stravaUploadService,
+                stravaUploadQueueService: stravaUploadQueueService,
                 stravaImportService: stravaImportService,
                 stravaConnected: stravaAuthService.isConnected()
             )
