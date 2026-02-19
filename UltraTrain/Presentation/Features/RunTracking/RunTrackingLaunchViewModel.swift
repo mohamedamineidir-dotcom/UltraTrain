@@ -72,6 +72,9 @@ final class RunTrackingLaunchViewModel {
             athlete = try await athleteRepository.getAthlete()
             if let plan = try await planRepository.getActivePlan() {
                 todaysSessions = extractTodaysSessions(from: plan)
+                if todaysSessions.count == 1 {
+                    selectedSession = todaysSessions.first
+                }
             }
 
             // Detect today's race for race-run linking

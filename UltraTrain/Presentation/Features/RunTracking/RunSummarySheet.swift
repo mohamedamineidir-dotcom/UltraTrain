@@ -37,6 +37,7 @@ struct RunSummarySheet: View {
                         notesSection
                     }
                     linkedSessionBanner
+                    autoMatchBanner
                 }
                 .padding(.vertical, Theme.Spacing.md)
             }
@@ -147,6 +148,34 @@ struct RunSummarySheet: View {
                     Text("Linked Session")
                         .font(.caption.bold())
                     Text("\(session.type.rawValue.capitalized) — \(String(format: "%.1f km", session.plannedDistanceKm))")
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
+                Spacer()
+                Image(systemName: "checkmark")
+                    .foregroundStyle(Theme.Colors.success)
+                    .accessibilityHidden(true)
+            }
+            .padding(Theme.Spacing.md)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                    .fill(Theme.Colors.primary.opacity(0.08))
+            )
+            .padding(.horizontal, Theme.Spacing.md)
+        }
+    }
+
+    @ViewBuilder
+    private var autoMatchBanner: some View {
+        if didSave, let match = viewModel.autoMatchedSession, viewModel.linkedSession == nil {
+            HStack(spacing: Theme.Spacing.sm) {
+                Image(systemName: "sparkles")
+                    .foregroundStyle(Theme.Colors.primary)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Auto-Linked to Session")
+                        .font(.caption.bold())
+                    Text("\(match.session.type.rawValue.capitalized) — \(String(format: "%.1f km", match.session.plannedDistanceKm))")
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }

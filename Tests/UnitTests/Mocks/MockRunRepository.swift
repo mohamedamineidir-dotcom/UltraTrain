@@ -6,6 +6,7 @@ final class MockRunRepository: RunRepository, @unchecked Sendable {
     var runs: [CompletedRun] = []
     var deletedId: UUID?
     var updatedRun: CompletedRun?
+    var linkedSessionUpdate: (runId: UUID, sessionId: UUID)?
     var shouldThrow = false
 
     func getRuns(for athleteId: UUID) async throws -> [CompletedRun] {
@@ -36,6 +37,11 @@ final class MockRunRepository: RunRepository, @unchecked Sendable {
         if let index = runs.firstIndex(where: { $0.id == run.id }) {
             runs[index] = run
         }
+    }
+
+    func updateLinkedSession(runId: UUID, sessionId: UUID) async throws {
+        if shouldThrow { throw DomainError.persistenceError(message: "Mock error") }
+        linkedSessionUpdate = (runId, sessionId)
     }
 
     func getRecentRuns(limit: Int) async throws -> [CompletedRun] {

@@ -7,4 +7,5 @@ protocol RunRepository: Sendable {
     func deleteRun(id: UUID) async throws
     func getRecentRuns(limit: Int) async throws -> [CompletedRun]
     func updateRun(_ run: CompletedRun) async throws
+    func updateLinkedSession(runId: UUID, sessionId: UUID) async throws
 }

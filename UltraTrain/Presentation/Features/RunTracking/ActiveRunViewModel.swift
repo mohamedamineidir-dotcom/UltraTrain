@@ -66,6 +66,7 @@ final class ActiveRunViewModel {
     var resolvedCheckpointLocations: [(checkpoint: Checkpoint, coordinate: CLLocationCoordinate2D)] = []
     var stravaUploadStatus: StravaUploadStatus = .idle
     var nutritionIntakeLog: [NutritionIntakeEntry] = []
+    var autoMatchedSession: SessionMatcher.MatchResult?
 
     // MARK: - Private
 
@@ -244,6 +245,8 @@ final class ActiveRunViewModel {
                 updated.isCompleted = true
                 updated.linkedRunId = run.id
                 try await planRepository.updateSession(updated)
+            } else {
+                await autoMatchSession(run: run)
             }
             if let raceId {
                 try await linkRunToRace(run: run, raceId: raceId)
@@ -290,6 +293,31 @@ final class ActiveRunViewModel {
 
     func discardRun() {
         Logger.tracking.info("Run discarded")
+    }
+
+    // MARK: - Auto-Match Session
+
+    private func autoMatchSession(run: CompletedRun) async {
+        do {
+            guard let plan = try await planRepository.getActivePlan() else { return }
+            let allSessions = plan.weeks.flatMap(\.sessions)
+            guard let match = SessionMatcher.findMatch(
+                runDate: run.date,
+                distanceKm: run.distanceKm,
+                duration: run.duration,
+                candidates: allSessions
+            ) else { return }
+
+            var updated = match.session
+            updated.isCompleted = true
+            updated.linkedRunId = run.id
+            try await planRepository.updateSession(updated)
+            try await runRepository.updateLinkedSession(runId: run.id, sessionId: match.session.id)
+            autoMatchedSession = match
+            Logger.tracking.info("Auto-matched run to session \(match.session.id) (confidence: \(match.confidence))")
+        } catch {
+            Logger.tracking.debug("Auto-match failed: \(error)")
+        }
     }
 
     // MARK: - Strava Auto-Upload

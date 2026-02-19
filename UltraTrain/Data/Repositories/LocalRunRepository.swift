@@ -69,6 +69,22 @@ final class LocalRunRepository: RunRepository, @unchecked Sendable {
         Logger.tracking.info("Run updated: \(run.id)")
     }
 
+    func updateLinkedSession(runId: UUID, sessionId: UUID) async throws {
+        let context = ModelContext(modelContainer)
+        let targetId = runId
+        var descriptor = FetchDescriptor<CompletedRunSwiftDataModel>(
+            predicate: #Predicate { $0.id == targetId }
+        )
+        descriptor.fetchLimit = 1
+        guard let model = try context.fetch(descriptor).first else {
+            throw DomainError.persistenceError(message: "Run not found for linking")
+        }
+        model.linkedSessionId = sessionId
+        model.updatedAt = Date()
+        try context.save()
+        Logger.tracking.info("Run \(runId) linked to session \(sessionId)")
+    }
+
     func getRecentRuns(limit: Int) async throws -> [CompletedRun] {
         let context = ModelContext(modelContainer)
         var descriptor = FetchDescriptor<CompletedRunSwiftDataModel>(

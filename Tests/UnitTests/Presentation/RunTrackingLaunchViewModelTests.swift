@@ -223,6 +223,59 @@ struct RunTrackingLaunchViewModelTests {
         #expect(vm.smartRemindersEnabled == true)
     }
 
+    // MARK: - Auto-Select Session
+
+    @Test("Single today session is auto-selected")
+    @MainActor
+    func singleSessionAutoSelected() async {
+        let athlete = makeAthlete()
+        let plan = makePlanWithTodaySession()
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = athlete
+        let planRepo = MockTrainingPlanRepository()
+        planRepo.activePlan = plan
+
+        let vm = makeViewModel(athleteRepo: athleteRepo, planRepo: planRepo)
+        await vm.load()
+
+        #expect(vm.selectedSession != nil)
+        #expect(vm.selectedSession?.id == plan.weeks[0].sessions[0].id)
+    }
+
+    @Test("Multiple today sessions are not auto-selected")
+    @MainActor
+    func multipleSessionsNotAutoSelected() async {
+        let today = Date.now
+        let calendar = Calendar.current
+        let weekStart = calendar.date(byAdding: .day, value: -1, to: today)!
+        let weekEnd = calendar.date(byAdding: .day, value: 5, to: today)!
+        let s1 = TrainingSession(
+            id: UUID(), date: today, type: .longRun, plannedDistanceKm: 15,
+            plannedElevationGainM: 500, plannedDuration: 5400, intensity: .moderate,
+            description: "Morning", nutritionNotes: nil,
+            isCompleted: false, isSkipped: false, linkedRunId: nil)
+        let s2 = TrainingSession(
+            id: UUID(), date: today, type: .tempo, plannedDistanceKm: 8,
+            plannedElevationGainM: 100, plannedDuration: 2400, intensity: .hard,
+            description: "Evening", nutritionNotes: nil,
+            isCompleted: false, isSkipped: false, linkedRunId: nil)
+        let week = TrainingWeek(
+            id: UUID(), weekNumber: 1, startDate: weekStart, endDate: weekEnd,
+            phase: .build, sessions: [s1, s2],
+            isRecoveryWeek: false, targetVolumeKm: 50, targetElevationGainM: 1500)
+        let plan = TrainingPlan(
+            id: UUID(), athleteId: UUID(), targetRaceId: UUID(),
+            createdAt: Date.now, weeks: [week], intermediateRaceIds: [])
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let planRepo = MockTrainingPlanRepository()
+        planRepo.activePlan = plan
+        let vm = makeViewModel(athleteRepo: athleteRepo, planRepo: planRepo)
+        await vm.load()
+        #expect(vm.selectedSession == nil)
+        #expect(vm.todaysSessions.count == 2)
+    }
+
     @Test("Load uses default nutrition intervals when no settings")
     @MainActor
     func loadUsesDefaultNutritionIntervals() async {

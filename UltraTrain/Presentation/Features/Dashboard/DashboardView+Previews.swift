@@ -15,6 +15,7 @@ private struct PreviewRunRepository: RunRepository, @unchecked Sendable {
     func saveRun(_ run: CompletedRun) async throws {}
     func deleteRun(id: UUID) async throws {}
     func updateRun(_ run: CompletedRun) async throws {}
+    func updateLinkedSession(runId: UUID, sessionId: UUID) async throws {}
     func getRecentRuns(limit: Int) async throws -> [CompletedRun] { [] }
 }
 
