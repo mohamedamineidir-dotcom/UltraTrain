@@ -71,7 +71,7 @@ final class StravaImportService: StravaImportServiceProtocol {
 
         let splits = RunStatisticsCalculator.buildSplits(from: trackPoints)
         let distanceKm = RunStatisticsCalculator.totalDistanceKm(trackPoints)
-        let elevation = RunStatisticsCalculator.elevationChanges(trackPoints)
+        let elevation = ElevationCalculator.elevationChanges(trackPoints)
         let heartRates = trackPoints.compactMap(\.heartRate)
         let avgHR = heartRates.isEmpty ? nil : heartRates.reduce(0, +) / heartRates.count
         let maxHR = heartRates.max()

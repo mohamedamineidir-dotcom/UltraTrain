@@ -32,7 +32,19 @@ struct RunAnalysisView: View {
                     }
 
                     if !viewModel.elevationProfile.isEmpty {
-                        ElevationProfileChart(dataPoints: viewModel.elevationProfile)
+                        ElevationProfileChart(
+                            dataPoints: viewModel.elevationProfile,
+                            elevationSegments: viewModel.elevationSegments,
+                            checkpointDistances: viewModel.checkpointDistanceNames
+                        )
+                    }
+
+                    if viewModel.hasRouteData, !viewModel.elevationProfile.isEmpty {
+                        InteractiveElevationMapView(
+                            elevationProfile: viewModel.elevationProfile,
+                            trackPoints: viewModel.run.gpsTrack,
+                            checkpointDistances: viewModel.checkpointDistanceNames
+                        )
                     }
 
                     if !viewModel.run.splits.isEmpty {

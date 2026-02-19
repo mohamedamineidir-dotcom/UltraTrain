@@ -55,9 +55,9 @@ final class RunAnalysisViewModel {
         do {
             let athlete = try await athleteRepository.getAthlete()
 
-            elevationProfile = RunStatisticsCalculator.elevationProfile(from: run.gpsTrack)
+            elevationProfile = ElevationCalculator.elevationProfile(from: run.gpsTrack)
             routeSegments = RunStatisticsCalculator.buildRouteSegments(from: run.gpsTrack)
-            elevationSegments = RunStatisticsCalculator.buildElevationSegments(from: run.gpsTrack)
+            elevationSegments = ElevationCalculator.buildElevationSegments(from: run.gpsTrack)
 
             let trackHasHR = run.gpsTrack.contains { $0.heartRate != nil }
             if let maxHR = athlete?.maxHeartRate, maxHR > 0, trackHasHR {
@@ -129,6 +129,10 @@ final class RunAnalysisViewModel {
 
     var hasRouteData: Bool {
         run.gpsTrack.count >= 2
+    }
+
+    var checkpointDistanceNames: [(name: String, distanceKm: Double)] {
+        checkpointLocations.map { (name: $0.checkpoint.name, distanceKm: $0.checkpoint.distanceFromStartKm) }
     }
 
     var startCoordinate: (Double, Double)? {

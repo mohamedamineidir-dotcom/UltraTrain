@@ -386,7 +386,7 @@ final class ActiveRunViewModel {
         routeCoordinates.append(location.coordinate)
 
         distanceKm = RunStatisticsCalculator.totalDistanceKm(trackPoints)
-        let elevation = RunStatisticsCalculator.elevationChanges(trackPoints)
+        let elevation = ElevationCalculator.elevationChanges(trackPoints)
         elevationGainM = elevation.gainM
         elevationLossM = elevation.lossM
 

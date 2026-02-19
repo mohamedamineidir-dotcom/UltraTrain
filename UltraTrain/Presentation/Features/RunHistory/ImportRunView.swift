@@ -66,7 +66,7 @@ struct ImportRunView: View {
     private func statsSection(_ result: GPXParseResult) -> some View {
         let points = result.trackPoints
         let distance = RunStatisticsCalculator.totalDistanceKm(points)
-        let elevation = RunStatisticsCalculator.elevationChanges(points)
+        let elevation = ElevationCalculator.elevationChanges(points)
         let duration = (points.last?.timestamp ?? .now)
             .timeIntervalSince(points.first?.timestamp ?? .now)
         let pace = RunStatisticsCalculator.averagePace(

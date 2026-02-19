@@ -27,14 +27,14 @@ struct ElevationSegmentBuilderTests {
 
     @Test("Empty track returns empty segments")
     func emptyTrack() {
-        let result = RunStatisticsCalculator.buildElevationSegments(from: [])
+        let result = ElevationCalculator.buildElevationSegments(from: [])
         #expect(result.isEmpty)
     }
 
     @Test("Single point track returns empty segments")
     func singlePoint() {
         let points = makeTrackPoints(count: 1)
-        let result = RunStatisticsCalculator.buildElevationSegments(from: points)
+        let result = ElevationCalculator.buildElevationSegments(from: points)
         #expect(result.isEmpty)
     }
 
@@ -42,7 +42,7 @@ struct ElevationSegmentBuilderTests {
     func shortTrack() {
         // 5 points, each ~111m apart = ~444m total — not enough for a full km
         let points = makeTrackPoints(count: 5)
-        let result = RunStatisticsCalculator.buildElevationSegments(from: points)
+        let result = ElevationCalculator.buildElevationSegments(from: points)
         // Should have 1 partial segment
         #expect(result.count == 1)
         #expect(result[0].kilometerNumber == 1)
@@ -54,7 +54,7 @@ struct ElevationSegmentBuilderTests {
     func flatTrack() {
         // 20 points = ~2.1km, flat altitude
         let points = makeTrackPoints(count: 20) { _ in 500.0 }
-        let result = RunStatisticsCalculator.buildElevationSegments(from: points)
+        let result = ElevationCalculator.buildElevationSegments(from: points)
 
         #expect(result.count >= 2)
         for segment in result {
@@ -69,7 +69,7 @@ struct ElevationSegmentBuilderTests {
         // Each point ~111m apart, altitude increases by 20m per point
         // Gradient = 20m / 111m * 100 ≈ 18%
         let points = makeTrackPoints(count: 20) { i in 500.0 + Double(i) * 20.0 }
-        let result = RunStatisticsCalculator.buildElevationSegments(from: points)
+        let result = ElevationCalculator.buildElevationSegments(from: points)
 
         #expect(!result.isEmpty)
         for segment in result {
@@ -82,7 +82,7 @@ struct ElevationSegmentBuilderTests {
     @Test("Downhill track produces negative gradients")
     func downhillTrack() {
         let points = makeTrackPoints(count: 20) { i in 1000.0 - Double(i) * 20.0 }
-        let result = RunStatisticsCalculator.buildElevationSegments(from: points)
+        let result = ElevationCalculator.buildElevationSegments(from: points)
 
         #expect(!result.isEmpty)
         for segment in result {
@@ -108,7 +108,7 @@ struct ElevationSegmentBuilderTests {
             }
         }
 
-        let result = RunStatisticsCalculator.buildElevationSegments(from: points)
+        let result = ElevationCalculator.buildElevationSegments(from: points)
         #expect(result.count >= 2)
 
         // First segment should be uphill
@@ -122,7 +122,7 @@ struct ElevationSegmentBuilderTests {
     @Test("Segments have sequential kilometer numbers")
     func kilometerNumbers() {
         let points = makeTrackPoints(count: 30)
-        let result = RunStatisticsCalculator.buildElevationSegments(from: points)
+        let result = ElevationCalculator.buildElevationSegments(from: points)
 
         for (index, segment) in result.enumerated() {
             #expect(segment.kilometerNumber == index + 1)
@@ -134,7 +134,7 @@ struct ElevationSegmentBuilderTests {
     @Test("Each segment has at least 2 coordinates")
     func segmentCoordinates() {
         let points = makeTrackPoints(count: 20)
-        let result = RunStatisticsCalculator.buildElevationSegments(from: points)
+        let result = ElevationCalculator.buildElevationSegments(from: points)
 
         for segment in result {
             #expect(segment.coordinates.count >= 2)

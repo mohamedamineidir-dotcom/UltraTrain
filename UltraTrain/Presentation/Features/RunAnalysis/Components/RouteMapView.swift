@@ -94,11 +94,6 @@ struct RouteMapView: View {
     // MARK: - Elevation Color
 
     private func elevationColor(for segment: ElevationSegment) -> Color {
-        let gradient = segment.averageGradient
-        if gradient > 15 { return .red }
-        if gradient > 5 { return .orange }
-        if gradient > -5 { return .green }
-        if gradient > -15 { return .cyan }
-        return .blue
+        GradientColorHelper.color(forGradient: segment.averageGradient)
     }
 }

@@ -15,6 +15,7 @@ struct RunDetailView: View {
     @State private var exportFileURL: URL?
     @State private var showingShareSheet = false
     @State private var isExporting = false
+    @State private var elevationProfile: [ElevationProfilePoint] = []
 
     var body: some View {
         ScrollView {
@@ -32,6 +33,15 @@ struct RunDetailView: View {
 
                 statsGrid
                     .padding(.horizontal, Theme.Spacing.md)
+
+                if !elevationProfile.isEmpty {
+                    CompactElevationCard(
+                        profile: elevationProfile,
+                        elevationGainM: run.elevationGainM,
+                        elevationLossM: run.elevationLossM
+                    )
+                    .padding(.horizontal, Theme.Spacing.md)
+                }
 
                 if !run.splits.isEmpty {
                     splitsSection
@@ -82,6 +92,11 @@ struct RunDetailView: View {
         .sheet(isPresented: $showingShareSheet) {
             if let url = exportFileURL {
                 ShareSheet(activityItems: [url])
+            }
+        }
+        .task {
+            if run.gpsTrack.count >= 2 {
+                elevationProfile = ElevationCalculator.elevationProfile(from: run.gpsTrack)
             }
         }
     }

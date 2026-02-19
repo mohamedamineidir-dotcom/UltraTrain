@@ -23,7 +23,7 @@ final class DefaultRunImportUseCase: RunImportUseCase {
 
         let points = parseResult.trackPoints
         let distanceKm = RunStatisticsCalculator.totalDistanceKm(points)
-        let elevation = RunStatisticsCalculator.elevationChanges(points)
+        let elevation = ElevationCalculator.elevationChanges(points)
         let splits = RunStatisticsCalculator.buildSplits(from: points)
 
         let duration = points.last!.timestamp.timeIntervalSince(points.first!.timestamp)

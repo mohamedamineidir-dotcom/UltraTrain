@@ -70,7 +70,7 @@ struct RunStatisticsCalculatorTests {
             makeTrackPoint(lat: 0, lon: 0, altitude: 150),
             makeTrackPoint(lat: 0, lon: 0, altitude: 200),
         ]
-        let (gain, loss) = RunStatisticsCalculator.elevationChanges(points)
+        let (gain, loss) = ElevationCalculator.elevationChanges(points)
         #expect(gain == 100)
         #expect(loss == 0)
     }
@@ -82,7 +82,7 @@ struct RunStatisticsCalculatorTests {
             makeTrackPoint(lat: 0, lon: 0, altitude: 200),
             makeTrackPoint(lat: 0, lon: 0, altitude: 100),
         ]
-        let (gain, loss) = RunStatisticsCalculator.elevationChanges(points)
+        let (gain, loss) = ElevationCalculator.elevationChanges(points)
         #expect(gain == 0)
         #expect(loss == 200)
     }
@@ -95,7 +95,7 @@ struct RunStatisticsCalculatorTests {
             makeTrackPoint(lat: 0, lon: 0, altitude: 150), // -50
             makeTrackPoint(lat: 0, lon: 0, altitude: 250), // +100
         ]
-        let (gain, loss) = RunStatisticsCalculator.elevationChanges(points)
+        let (gain, loss) = ElevationCalculator.elevationChanges(points)
         #expect(gain == 200)
         #expect(loss == 50)
     }
