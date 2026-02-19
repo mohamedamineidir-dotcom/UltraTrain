@@ -2,6 +2,8 @@ import SwiftUI
 
 struct TrainingPlanView: View {
     @State private var viewModel: TrainingPlanViewModel
+    private let raceRepository: any RaceRepository
+    private let planRepository: any TrainingPlanRepository
 
     init(
         planRepository: any TrainingPlanRepository,
@@ -12,6 +14,8 @@ struct TrainingPlanView: View {
         sessionNutritionAdvisor: any SessionNutritionAdvisor,
         widgetDataWriter: WidgetDataWriter
     ) {
+        self.raceRepository = raceRepository
+        self.planRepository = planRepository
         _viewModel = State(initialValue: TrainingPlanViewModel(
             planRepository: planRepository,
             athleteRepository: athleteRepository,
@@ -38,13 +42,24 @@ struct TrainingPlanView: View {
             .toolbar {
                 if viewModel.plan != nil {
                     ToolbarItem(placement: .topBarTrailing) {
-                        NavigationLink {
-                            RaceCalendarView(
-                                plan: viewModel.plan!,
-                                races: viewModel.races
-                            )
-                        } label: {
-                            Image(systemName: "calendar")
+                        HStack(spacing: Theme.Spacing.sm) {
+                            NavigationLink {
+                                RaceCalendarView(
+                                    plan: viewModel.plan!,
+                                    races: viewModel.races
+                                )
+                            } label: {
+                                Image(systemName: "list.bullet")
+                            }
+
+                            NavigationLink {
+                                RaceCalendarGridView(
+                                    raceRepository: raceRepository,
+                                    planRepository: planRepository
+                                )
+                            } label: {
+                                Image(systemName: "calendar")
+                            }
                         }
                     }
                 }
