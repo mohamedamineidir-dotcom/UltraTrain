@@ -12,6 +12,10 @@ final class AppSettingsSwiftDataModel {
     var stravaConnected: Bool = false
     var raceCountdownEnabled: Bool = true
     var biometricLockEnabled: Bool = false
+    var hydrationIntervalSeconds: Double = 1200
+    var fuelIntervalSeconds: Double = 2700
+    var electrolyteIntervalSeconds: Double = 0
+    var smartRemindersEnabled: Bool = false
     var updatedAt: Date = Date()
 
     init(
@@ -24,6 +28,10 @@ final class AppSettingsSwiftDataModel {
         stravaConnected: Bool = false,
         raceCountdownEnabled: Bool = true,
         biometricLockEnabled: Bool = false,
+        hydrationIntervalSeconds: Double = 1200,
+        fuelIntervalSeconds: Double = 2700,
+        electrolyteIntervalSeconds: Double = 0,
+        smartRemindersEnabled: Bool = false,
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -35,6 +43,10 @@ final class AppSettingsSwiftDataModel {
         self.stravaConnected = stravaConnected
         self.raceCountdownEnabled = raceCountdownEnabled
         self.biometricLockEnabled = biometricLockEnabled
+        self.hydrationIntervalSeconds = hydrationIntervalSeconds
+        self.fuelIntervalSeconds = fuelIntervalSeconds
+        self.electrolyteIntervalSeconds = electrolyteIntervalSeconds
+        self.smartRemindersEnabled = smartRemindersEnabled
         self.updatedAt = updatedAt
     }
 }

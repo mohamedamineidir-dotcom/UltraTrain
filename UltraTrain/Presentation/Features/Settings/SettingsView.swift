@@ -180,6 +180,47 @@ struct SettingsView: View {
                             Task { await viewModel.updateNutritionAlertSound(newValue) }
                         }
                     ))
+
+                    NutritionIntervalPicker(
+                        label: "Hydration Interval",
+                        valueMinutes: Binding(
+                            get: { Int(settings.hydrationIntervalSeconds / 60) },
+                            set: { newMin in
+                                Task { await viewModel.updateHydrationInterval(TimeInterval(newMin * 60)) }
+                            }
+                        ),
+                        range: Array(stride(from: 10, through: 60, by: 5))
+                    )
+
+                    NutritionIntervalPicker(
+                        label: "Fuel Interval",
+                        valueMinutes: Binding(
+                            get: { Int(settings.fuelIntervalSeconds / 60) },
+                            set: { newMin in
+                                Task { await viewModel.updateFuelInterval(TimeInterval(newMin * 60)) }
+                            }
+                        ),
+                        range: Array(stride(from: 15, through: 90, by: 5))
+                    )
+
+                    NutritionIntervalPicker(
+                        label: "Electrolyte Interval",
+                        valueMinutes: Binding(
+                            get: { Int(settings.electrolyteIntervalSeconds / 60) },
+                            set: { newMin in
+                                Task { await viewModel.updateElectrolyteInterval(TimeInterval(newMin * 60)) }
+                            }
+                        ),
+                        range: Array(stride(from: 15, through: 120, by: 15)),
+                        allowOff: true
+                    )
+
+                    Toggle("Smart Reminders", isOn: Binding(
+                        get: { settings.smartRemindersEnabled },
+                        set: { newValue in
+                            Task { await viewModel.updateSmartReminders(newValue) }
+                        }
+                    ))
                 }
 
                 Toggle("Race Countdown", isOn: Binding(

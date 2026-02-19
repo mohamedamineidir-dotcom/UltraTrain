@@ -18,6 +18,7 @@ struct CompletedRun: Identifiable, Equatable, Sendable {
     var notes: String?
     var pausedDuration: TimeInterval
     var gearIds: [UUID] = []
+    var nutritionIntakeLog: [NutritionIntakeEntry] = []
 
     var totalDuration: TimeInterval {
         duration + pausedDuration

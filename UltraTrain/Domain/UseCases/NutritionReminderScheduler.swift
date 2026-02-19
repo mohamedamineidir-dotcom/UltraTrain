@@ -24,30 +24,43 @@ enum NutritionReminderScheduler {
     // MARK: - Default Schedule
 
     static func buildDefaultSchedule(
+        hydrationIntervalSeconds: TimeInterval = AppConfiguration.NutritionReminders.hydrationIntervalSeconds,
+        fuelIntervalSeconds: TimeInterval = AppConfiguration.NutritionReminders.fuelIntervalSeconds,
+        electrolyteIntervalSeconds: TimeInterval = 0,
         maxDurationSeconds: TimeInterval = AppConfiguration.NutritionReminders.maxScheduleDuration
     ) -> [NutritionReminder] {
         var reminders: [NutritionReminder] = []
 
-        let hydrationInterval = AppConfiguration.NutritionReminders.hydrationIntervalSeconds
-        var time = hydrationInterval
+        var time = hydrationIntervalSeconds
         while time <= maxDurationSeconds {
             reminders.append(NutritionReminder(
                 triggerTimeSeconds: time,
                 message: "Time to hydrate — drink water or electrolytes",
                 type: .hydration
             ))
-            time += hydrationInterval
+            time += hydrationIntervalSeconds
         }
 
-        let fuelInterval = AppConfiguration.NutritionReminders.fuelIntervalSeconds
-        time = fuelInterval
+        time = fuelIntervalSeconds
         while time <= maxDurationSeconds {
             reminders.append(NutritionReminder(
                 triggerTimeSeconds: time,
                 message: "Time to fuel — take a gel or snack",
                 type: .fuel
             ))
-            time += fuelInterval
+            time += fuelIntervalSeconds
+        }
+
+        if electrolyteIntervalSeconds > 0 {
+            time = electrolyteIntervalSeconds
+            while time <= maxDurationSeconds {
+                reminders.append(NutritionReminder(
+                    triggerTimeSeconds: time,
+                    message: "Time for electrolytes — take salt tabs or electrolyte drink",
+                    type: .electrolyte
+                ))
+                time += electrolyteIntervalSeconds
+            }
         }
 
         return reminders.sorted { $0.triggerTimeSeconds < $1.triggerTimeSeconds }

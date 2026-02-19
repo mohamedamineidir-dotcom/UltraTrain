@@ -10,4 +10,8 @@ struct AppSettings: Identifiable, Equatable, Sendable {
     var stravaConnected: Bool
     var raceCountdownEnabled: Bool
     var biometricLockEnabled: Bool
+    var hydrationIntervalSeconds: TimeInterval
+    var fuelIntervalSeconds: TimeInterval
+    var electrolyteIntervalSeconds: TimeInterval
+    var smartRemindersEnabled: Bool
 }

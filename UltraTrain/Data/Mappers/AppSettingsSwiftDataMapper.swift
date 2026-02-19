@@ -11,7 +11,11 @@ enum AppSettingsSwiftDataMapper {
             stravaAutoUploadEnabled: model.stravaAutoUploadEnabled,
             stravaConnected: model.stravaConnected,
             raceCountdownEnabled: model.raceCountdownEnabled,
-            biometricLockEnabled: model.biometricLockEnabled
+            biometricLockEnabled: model.biometricLockEnabled,
+            hydrationIntervalSeconds: model.hydrationIntervalSeconds,
+            fuelIntervalSeconds: model.fuelIntervalSeconds,
+            electrolyteIntervalSeconds: model.electrolyteIntervalSeconds,
+            smartRemindersEnabled: model.smartRemindersEnabled
         )
     }
 
@@ -25,7 +29,11 @@ enum AppSettingsSwiftDataMapper {
             stravaAutoUploadEnabled: settings.stravaAutoUploadEnabled,
             stravaConnected: settings.stravaConnected,
             raceCountdownEnabled: settings.raceCountdownEnabled,
-            biometricLockEnabled: settings.biometricLockEnabled
+            biometricLockEnabled: settings.biometricLockEnabled,
+            hydrationIntervalSeconds: settings.hydrationIntervalSeconds,
+            fuelIntervalSeconds: settings.fuelIntervalSeconds,
+            electrolyteIntervalSeconds: settings.electrolyteIntervalSeconds,
+            smartRemindersEnabled: settings.smartRemindersEnabled
         )
     }
 }

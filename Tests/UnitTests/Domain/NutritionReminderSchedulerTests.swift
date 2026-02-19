@@ -175,4 +175,73 @@ struct NutritionReminderSchedulerTests {
 
         #expect(result == nil)
     }
+
+    // MARK: - Custom Intervals
+
+    @Test("buildDefaultSchedule with custom hydration interval")
+    func customHydrationInterval() {
+        let reminders = NutritionReminderScheduler.buildDefaultSchedule(
+            hydrationIntervalSeconds: 900,
+            maxDurationSeconds: 2700
+        )
+        let hydration = reminders.filter { $0.type == .hydration }
+
+        // 15, 30, 45 min = 900, 1800, 2700 seconds
+        #expect(hydration.count == 3)
+        #expect(hydration[0].triggerTimeSeconds == 900)
+        #expect(hydration[1].triggerTimeSeconds == 1800)
+        #expect(hydration[2].triggerTimeSeconds == 2700)
+    }
+
+    @Test("buildDefaultSchedule with custom fuel interval")
+    func customFuelInterval() {
+        let reminders = NutritionReminderScheduler.buildDefaultSchedule(
+            fuelIntervalSeconds: 1800,
+            maxDurationSeconds: 5400
+        )
+        let fuel = reminders.filter { $0.type == .fuel }
+
+        // 30, 60, 90 min = 1800, 3600, 5400
+        #expect(fuel.count == 3)
+        #expect(fuel[0].triggerTimeSeconds == 1800)
+        #expect(fuel[1].triggerTimeSeconds == 3600)
+        #expect(fuel[2].triggerTimeSeconds == 5400)
+    }
+
+    @Test("buildDefaultSchedule with electrolyte interval generates reminders")
+    func electrolyteInterval() {
+        let reminders = NutritionReminderScheduler.buildDefaultSchedule(
+            electrolyteIntervalSeconds: 1800,
+            maxDurationSeconds: 5400
+        )
+        let electrolyte = reminders.filter { $0.type == .electrolyte }
+
+        #expect(electrolyte.count == 3)
+        #expect(electrolyte[0].triggerTimeSeconds == 1800)
+        #expect(electrolyte[1].triggerTimeSeconds == 3600)
+        #expect(electrolyte[2].triggerTimeSeconds == 5400)
+    }
+
+    @Test("buildDefaultSchedule with zero electrolyte interval generates no electrolyte reminders")
+    func zeroElectrolyteInterval() {
+        let reminders = NutritionReminderScheduler.buildDefaultSchedule(
+            electrolyteIntervalSeconds: 0,
+            maxDurationSeconds: 7200
+        )
+        let electrolyte = reminders.filter { $0.type == .electrolyte }
+
+        #expect(electrolyte.isEmpty)
+    }
+
+    @Test("buildDefaultSchedule with no params produces same results as before")
+    func backwardCompatibility() {
+        let reminders = NutritionReminderScheduler.buildDefaultSchedule(maxDurationSeconds: 3600)
+        let hydration = reminders.filter { $0.type == .hydration }
+        let fuel = reminders.filter { $0.type == .fuel }
+        let electrolyte = reminders.filter { $0.type == .electrolyte }
+
+        #expect(hydration.count == 3)
+        #expect(fuel.count == 1)
+        #expect(electrolyte.isEmpty)
+    }
 }

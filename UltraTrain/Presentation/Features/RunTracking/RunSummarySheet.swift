@@ -27,6 +27,9 @@ struct RunSummarySheet: View {
                         )
                         .padding(.horizontal, Theme.Spacing.md)
                     }
+                    if !viewModel.nutritionIntakeLog.isEmpty {
+                        NutritionIntakeSummaryView(summary: viewModel.nutritionSummary)
+                    }
                     if didSave {
                         stravaUploadBanner
                         shareButton

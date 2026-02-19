@@ -2,7 +2,9 @@ import SwiftUI
 
 struct NutritionReminderBanner: View {
     let reminder: NutritionReminder
-    let onDismiss: () -> Void
+    let onTaken: () -> Void
+    let onSkipped: () -> Void
+    let onAutoDismiss: () -> Void
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
@@ -20,14 +22,28 @@ struct NutritionReminderBanner: View {
             Spacer()
 
             Button {
-                onDismiss()
+                onTaken()
+            } label: {
+                Image(systemName: "checkmark")
+                    .font(.caption.bold())
+                    .foregroundStyle(.white)
+                    .padding(Theme.Spacing.xs)
+                    .background(Theme.Colors.success)
+                    .clipShape(Circle())
+            }
+            .accessibilityLabel("Taken")
+
+            Button {
+                onSkipped()
             } label: {
                 Image(systemName: "xmark")
                     .font(.caption.bold())
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .foregroundStyle(.white)
                     .padding(Theme.Spacing.xs)
+                    .background(Theme.Colors.secondaryLabel)
+                    .clipShape(Circle())
             }
-            .accessibilityLabel("Dismiss")
+            .accessibilityLabel("Skip")
         }
         .padding(Theme.Spacing.md)
         .background(
@@ -43,7 +59,7 @@ struct NutritionReminderBanner: View {
         }
         .task {
             try? await Task.sleep(for: .seconds(AppConfiguration.NutritionReminders.autoDismissSeconds))
-            onDismiss()
+            onAutoDismiss()
         }
     }
 

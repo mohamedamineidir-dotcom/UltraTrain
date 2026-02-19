@@ -12,11 +12,20 @@ enum CompletedRunSwiftDataMapper {
         let heartRate: Int?
     }
 
+    private struct CodableIntakeEntry: Codable {
+        let id: UUID
+        let reminderType: String
+        let status: String
+        let elapsedTimeSeconds: TimeInterval
+        let message: String
+    }
+
     // MARK: - Domain -> SwiftData
 
     static func toSwiftData(_ run: CompletedRun) -> CompletedRunSwiftDataModel {
         let trackData = encodeTrackPoints(run.gpsTrack)
         let splitModels = run.splits.map { splitToSwiftData($0) }
+        let intakeData = encodeIntakeEntries(run.nutritionIntakeLog)
 
         return CompletedRunSwiftDataModel(
             id: run.id,
@@ -35,7 +44,8 @@ enum CompletedRunSwiftDataMapper {
             linkedRaceId: run.linkedRaceId,
             notes: run.notes,
             pausedDuration: run.pausedDuration,
-            gearIds: run.gearIds
+            gearIds: run.gearIds,
+            nutritionIntakeData: intakeData
         )
     }
 
@@ -46,6 +56,8 @@ enum CompletedRunSwiftDataMapper {
         let splits = model.splits
             .map { splitToDomain($0) }
             .sorted { $0.kilometerNumber < $1.kilometerNumber }
+
+        let intakeLog = decodeIntakeEntries(model.nutritionIntakeData)
 
         return CompletedRun(
             id: model.id,
@@ -64,7 +76,8 @@ enum CompletedRunSwiftDataMapper {
             linkedRaceId: model.linkedRaceId,
             notes: model.notes,
             pausedDuration: model.pausedDuration,
-            gearIds: model.gearIds
+            gearIds: model.gearIds,
+            nutritionIntakeLog: intakeLog
         )
     }
 
@@ -116,6 +129,40 @@ enum CompletedRunSwiftDataMapper {
                 altitudeM: point.altitudeM,
                 timestamp: point.timestamp,
                 heartRate: point.heartRate
+            )
+        }
+    }
+
+    // MARK: - IntakeEntry JSON
+
+    private static func encodeIntakeEntries(_ entries: [NutritionIntakeEntry]) -> Data {
+        let codable = entries.map { entry in
+            CodableIntakeEntry(
+                id: entry.id,
+                reminderType: entry.reminderType.rawValue,
+                status: entry.status.rawValue,
+                elapsedTimeSeconds: entry.elapsedTimeSeconds,
+                message: entry.message
+            )
+        }
+        return (try? JSONEncoder().encode(codable)) ?? Data()
+    }
+
+    private static func decodeIntakeEntries(_ data: Data) -> [NutritionIntakeEntry] {
+        guard let codable = try? JSONDecoder().decode([CodableIntakeEntry].self, from: data) else {
+            return []
+        }
+        return codable.compactMap { entry in
+            guard let type = NutritionReminderType(rawValue: entry.reminderType),
+                  let status = NutritionIntakeStatus(rawValue: entry.status) else {
+                return nil
+            }
+            return NutritionIntakeEntry(
+                id: entry.id,
+                reminderType: type,
+                status: status,
+                elapsedTimeSeconds: entry.elapsedTimeSeconds,
+                message: entry.message
             )
         }
     }

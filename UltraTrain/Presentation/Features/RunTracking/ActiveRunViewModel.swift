@@ -36,6 +36,10 @@ final class ActiveRunViewModel {
     let autoPauseEnabled: Bool
     let nutritionRemindersEnabled: Bool
     let nutritionAlertSoundEnabled: Bool
+    let hydrationIntervalSeconds: TimeInterval
+    let fuelIntervalSeconds: TimeInterval
+    let electrolyteIntervalSeconds: TimeInterval
+    let smartRemindersEnabled: Bool
     let raceId: UUID?
     let stravaAutoUploadEnabled: Bool
     let selectedGearIds: [UUID]
@@ -61,6 +65,7 @@ final class ActiveRunViewModel {
     var activeReminder: NutritionReminder?
     var resolvedCheckpointLocations: [(checkpoint: Checkpoint, coordinate: CLLocationCoordinate2D)] = []
     var stravaUploadStatus: StravaUploadStatus = .idle
+    var nutritionIntakeLog: [NutritionIntakeEntry] = []
 
     // MARK: - Private
 
@@ -72,6 +77,8 @@ final class ActiveRunViewModel {
     private var autoPauseTimer: TimeInterval = 0
     private var pauseStartTime: Date?
     private var lastLiveActivityUpdate: TimeInterval = 0
+    private var lastReminderShownTime: [NutritionReminderType: TimeInterval] = [:]
+    private var runningAveragePace: Double = 0
 
     // MARK: - Init
 
@@ -93,6 +100,10 @@ final class ActiveRunViewModel {
         autoPauseEnabled: Bool,
         nutritionRemindersEnabled: Bool,
         nutritionAlertSoundEnabled: Bool,
+        hydrationIntervalSeconds: TimeInterval = 1200,
+        fuelIntervalSeconds: TimeInterval = 2700,
+        electrolyteIntervalSeconds: TimeInterval = 0,
+        smartRemindersEnabled: Bool = false,
         stravaAutoUploadEnabled: Bool = false,
         raceId: UUID?,
         selectedGearIds: [UUID] = []
@@ -118,6 +129,10 @@ final class ActiveRunViewModel {
         self.autoPauseEnabled = autoPauseEnabled
         self.nutritionRemindersEnabled = nutritionRemindersEnabled
         self.nutritionAlertSoundEnabled = nutritionAlertSoundEnabled
+        self.hydrationIntervalSeconds = hydrationIntervalSeconds
+        self.fuelIntervalSeconds = fuelIntervalSeconds
+        self.electrolyteIntervalSeconds = electrolyteIntervalSeconds
+        self.smartRemindersEnabled = smartRemindersEnabled
         self.stravaAutoUploadEnabled = stravaAutoUploadEnabled
         self.raceId = raceId
         self.selectedGearIds = selectedGearIds
@@ -218,7 +233,8 @@ final class ActiveRunViewModel {
             linkedRaceId: raceId,
             notes: notes,
             pausedDuration: pausedDuration,
-            gearIds: selectedGearIds
+            gearIds: selectedGearIds,
+            nutritionIntakeLog: nutritionIntakeLog
         )
 
         do {
@@ -367,6 +383,7 @@ final class ActiveRunViewModel {
                 distanceKm: distanceKm, duration: elapsedTime
             )
             currentPace = RunStatisticsCalculator.formatPace(pace)
+            runningAveragePace = pace
         }
 
         updateCheckpointLocations()
@@ -388,11 +405,41 @@ final class ActiveRunViewModel {
     // MARK: - Nutrition Reminders
 
     func dismissReminder() {
-        guard let current = activeReminder,
-              let index = nutritionReminders.firstIndex(where: { $0.id == current.id }) else {
-            return
+        guard let current = activeReminder else { return }
+        logIntakeEntry(for: current, status: .pending)
+        markReminderDismissed(current)
+    }
+
+    func markReminderTaken() {
+        guard let current = activeReminder else { return }
+        logIntakeEntry(for: current, status: .taken)
+        markReminderDismissed(current)
+    }
+
+    func markReminderSkipped() {
+        guard let current = activeReminder else { return }
+        logIntakeEntry(for: current, status: .skipped)
+        markReminderDismissed(current)
+    }
+
+    var nutritionSummary: NutritionIntakeSummary {
+        NutritionIntakeSummary(entries: nutritionIntakeLog)
+    }
+
+    private func logIntakeEntry(for reminder: NutritionReminder, status: NutritionIntakeStatus) {
+        let entry = NutritionIntakeEntry(
+            reminderType: reminder.type,
+            status: status,
+            elapsedTimeSeconds: elapsedTime,
+            message: reminder.message
+        )
+        nutritionIntakeLog.append(entry)
+    }
+
+    private func markReminderDismissed(_ reminder: NutritionReminder) {
+        if let index = nutritionReminders.firstIndex(where: { $0.id == reminder.id }) {
+            nutritionReminders[index].isDismissed = true
         }
-        nutritionReminders[index].isDismissed = true
         activeReminder = nil
     }
 
@@ -410,11 +457,19 @@ final class ActiveRunViewModel {
                 if isGutTraining, let plan {
                     self.nutritionReminders = NutritionReminderScheduler.buildGutTrainingSchedule(from: plan)
                 } else {
-                    self.nutritionReminders = NutritionReminderScheduler.buildDefaultSchedule()
+                    self.nutritionReminders = NutritionReminderScheduler.buildDefaultSchedule(
+                        hydrationIntervalSeconds: self.hydrationIntervalSeconds,
+                        fuelIntervalSeconds: self.fuelIntervalSeconds,
+                        electrolyteIntervalSeconds: self.electrolyteIntervalSeconds
+                    )
                 }
                 Logger.nutrition.info("Loaded \(self.nutritionReminders.count) nutrition reminders")
             } catch {
-                self.nutritionReminders = NutritionReminderScheduler.buildDefaultSchedule()
+                self.nutritionReminders = NutritionReminderScheduler.buildDefaultSchedule(
+                    hydrationIntervalSeconds: self.hydrationIntervalSeconds,
+                    fuelIntervalSeconds: self.fuelIntervalSeconds,
+                    electrolyteIntervalSeconds: self.electrolyteIntervalSeconds
+                )
                 Logger.nutrition.error("Failed to load nutrition plan, using defaults: \(error)")
             }
         }
@@ -425,11 +480,37 @@ final class ActiveRunViewModel {
         if let next = NutritionReminderScheduler.nextDueReminder(
             in: nutritionReminders, at: elapsedTime
         ) {
+            if smartRemindersEnabled {
+                let adjustedTime = adjustedTriggerTime(for: next)
+                guard elapsedTime >= adjustedTime else { return }
+            }
             activeReminder = next
+            lastReminderShownTime[next.type] = elapsedTime
             if nutritionAlertSoundEnabled {
                 hapticService.playNutritionAlert()
             }
         }
+    }
+
+    private func adjustedTriggerTime(for reminder: NutritionReminder) -> TimeInterval {
+        let conditions = AdaptiveReminderAdjuster.RunConditions(
+            currentHeartRate: currentHeartRate,
+            maxHeartRate: athlete.maxHeartRate,
+            elapsedDistanceKm: distanceKm,
+            currentPaceSecondsPerKm: currentPaceValue(),
+            averagePaceSecondsPerKm: runningAveragePace > 0 ? runningAveragePace : nil
+        )
+        let multiplier = AdaptiveReminderAdjuster.intervalMultiplier(
+            for: reminder.type, conditions: conditions
+        )
+        let baseInterval = reminder.triggerTimeSeconds - (lastReminderShownTime[reminder.type] ?? 0)
+        let adjustedInterval = baseInterval * multiplier
+        return (lastReminderShownTime[reminder.type] ?? 0) + adjustedInterval
+    }
+
+    private func currentPaceValue() -> Double? {
+        guard distanceKm > 0 else { return nil }
+        return elapsedTime / distanceKm
     }
 
     // MARK: - Race Checkpoints

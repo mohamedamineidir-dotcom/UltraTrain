@@ -38,9 +38,12 @@ struct ActiveRunView: View {
         }
         .overlay(alignment: .top) {
             if let reminder = viewModel.activeReminder {
-                NutritionReminderBanner(reminder: reminder) {
-                    viewModel.dismissReminder()
-                }
+                NutritionReminderBanner(
+                    reminder: reminder,
+                    onTaken: { viewModel.markReminderTaken() },
+                    onSkipped: { viewModel.markReminderSkipped() },
+                    onAutoDismiss: { viewModel.dismissReminder() }
+                )
             }
         }
         .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.activeReminder)

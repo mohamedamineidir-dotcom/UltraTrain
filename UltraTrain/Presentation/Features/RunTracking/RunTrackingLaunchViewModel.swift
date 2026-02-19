@@ -29,6 +29,10 @@ final class RunTrackingLaunchViewModel {
     var raceId: UUID?
     var todaysRace: Race?
     var stravaAutoUploadEnabled = false
+    var hydrationIntervalSeconds: TimeInterval = 1200
+    var fuelIntervalSeconds: TimeInterval = 2700
+    var electrolyteIntervalSeconds: TimeInterval = 0
+    var smartRemindersEnabled = false
     var activeGear: [GearItem] = []
     var selectedGearIds: Set<UUID> = []
 
@@ -75,6 +79,10 @@ final class RunTrackingLaunchViewModel {
                 nutritionRemindersEnabled = settings.nutritionRemindersEnabled
                 nutritionAlertSoundEnabled = settings.nutritionAlertSoundEnabled
                 stravaAutoUploadEnabled = settings.stravaAutoUploadEnabled
+                hydrationIntervalSeconds = settings.hydrationIntervalSeconds
+                fuelIntervalSeconds = settings.fuelIntervalSeconds
+                electrolyteIntervalSeconds = settings.electrolyteIntervalSeconds
+                smartRemindersEnabled = settings.smartRemindersEnabled
             }
 
             activeGear = try await gearRepository.getActiveGear(ofType: nil)

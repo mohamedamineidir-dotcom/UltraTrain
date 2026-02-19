@@ -32,7 +32,11 @@ struct SettingsViewModelTests {
             stravaAutoUploadEnabled: false,
             stravaConnected: false,
             raceCountdownEnabled: true,
-            biometricLockEnabled: false
+            biometricLockEnabled: false,
+            hydrationIntervalSeconds: 1200,
+            fuelIntervalSeconds: 2700,
+            electrolyteIntervalSeconds: 0,
+            smartRemindersEnabled: false
         )
     }
 
@@ -353,5 +357,88 @@ struct SettingsViewModelTests {
 
         #expect(vm.appSettings?.autoPauseEnabled == false)
         #expect(settingsRepo.savedSettings?.autoPauseEnabled == false)
+    }
+
+    // MARK: - Nutrition Interval Tests
+
+    @Test("Update hydration interval")
+    @MainActor
+    func updateHydrationInterval() async {
+        let settingsRepo = MockAppSettingsRepository()
+        settingsRepo.savedSettings = makeSettings()
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+
+        let vm = makeViewModel(athleteRepo: athleteRepo, settingsRepo: settingsRepo)
+        await vm.load()
+        await vm.updateHydrationInterval(900)
+
+        #expect(vm.appSettings?.hydrationIntervalSeconds == 900)
+        #expect(settingsRepo.savedSettings?.hydrationIntervalSeconds == 900)
+    }
+
+    @Test("Update fuel interval")
+    @MainActor
+    func updateFuelInterval() async {
+        let settingsRepo = MockAppSettingsRepository()
+        settingsRepo.savedSettings = makeSettings()
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+
+        let vm = makeViewModel(athleteRepo: athleteRepo, settingsRepo: settingsRepo)
+        await vm.load()
+        await vm.updateFuelInterval(1800)
+
+        #expect(vm.appSettings?.fuelIntervalSeconds == 1800)
+        #expect(settingsRepo.savedSettings?.fuelIntervalSeconds == 1800)
+    }
+
+    @Test("Update electrolyte interval")
+    @MainActor
+    func updateElectrolyteInterval() async {
+        let settingsRepo = MockAppSettingsRepository()
+        settingsRepo.savedSettings = makeSettings()
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+
+        let vm = makeViewModel(athleteRepo: athleteRepo, settingsRepo: settingsRepo)
+        await vm.load()
+        await vm.updateElectrolyteInterval(1800)
+
+        #expect(vm.appSettings?.electrolyteIntervalSeconds == 1800)
+        #expect(settingsRepo.savedSettings?.electrolyteIntervalSeconds == 1800)
+    }
+
+    @Test("Update smart reminders toggle")
+    @MainActor
+    func updateSmartReminders() async {
+        let settingsRepo = MockAppSettingsRepository()
+        settingsRepo.savedSettings = makeSettings()
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+
+        let vm = makeViewModel(athleteRepo: athleteRepo, settingsRepo: settingsRepo)
+        await vm.load()
+        await vm.updateSmartReminders(true)
+
+        #expect(vm.appSettings?.smartRemindersEnabled == true)
+        #expect(settingsRepo.savedSettings?.smartRemindersEnabled == true)
+    }
+
+    @Test("Update nutrition interval handles error")
+    @MainActor
+    func updateNutritionIntervalHandlesError() async {
+        let settingsRepo = MockAppSettingsRepository()
+        settingsRepo.savedSettings = makeSettings()
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+
+        let vm = makeViewModel(athleteRepo: athleteRepo, settingsRepo: settingsRepo)
+        await vm.load()
+
+        settingsRepo.shouldThrow = true
+        await vm.updateHydrationInterval(900)
+
+        #expect(vm.error != nil)
     }
 }

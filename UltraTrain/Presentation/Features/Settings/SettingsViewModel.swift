@@ -112,7 +112,11 @@ final class SettingsViewModel {
                     stravaAutoUploadEnabled: false,
                     stravaConnected: false,
                     raceCountdownEnabled: true,
-                    biometricLockEnabled: false
+                    biometricLockEnabled: false,
+                    hydrationIntervalSeconds: 1200,
+                    fuelIntervalSeconds: 2700,
+                    electrolyteIntervalSeconds: 0,
+                    smartRemindersEnabled: false
                 )
                 try await appSettingsRepository.saveSettings(defaults)
                 appSettings = defaults
@@ -217,6 +221,56 @@ final class SettingsViewModel {
         } catch {
             self.error = error.localizedDescription
             Logger.settings.error("Failed to update race countdown: \(error)")
+        }
+    }
+
+    // MARK: - Nutrition Interval Settings
+
+    func updateHydrationInterval(_ seconds: TimeInterval) async {
+        guard var settings = appSettings else { return }
+        settings.hydrationIntervalSeconds = seconds
+        do {
+            try await appSettingsRepository.updateSettings(settings)
+            appSettings = settings
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update hydration interval: \(error)")
+        }
+    }
+
+    func updateFuelInterval(_ seconds: TimeInterval) async {
+        guard var settings = appSettings else { return }
+        settings.fuelIntervalSeconds = seconds
+        do {
+            try await appSettingsRepository.updateSettings(settings)
+            appSettings = settings
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update fuel interval: \(error)")
+        }
+    }
+
+    func updateElectrolyteInterval(_ seconds: TimeInterval) async {
+        guard var settings = appSettings else { return }
+        settings.electrolyteIntervalSeconds = seconds
+        do {
+            try await appSettingsRepository.updateSettings(settings)
+            appSettings = settings
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update electrolyte interval: \(error)")
+        }
+    }
+
+    func updateSmartReminders(_ enabled: Bool) async {
+        guard var settings = appSettings else { return }
+        settings.smartRemindersEnabled = enabled
+        do {
+            try await appSettingsRepository.updateSettings(settings)
+            appSettings = settings
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update smart reminders: \(error)")
         }
     }
 

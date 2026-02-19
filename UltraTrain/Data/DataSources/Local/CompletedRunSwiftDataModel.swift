@@ -21,6 +21,7 @@ final class CompletedRunSwiftDataModel {
     var notes: String?
     var pausedDuration: Double = 0
     var gearIds: [UUID] = []
+    @Attribute(.externalStorage) var nutritionIntakeData: Data = Data()
     var updatedAt: Date = Date()
 
     init(
@@ -41,6 +42,7 @@ final class CompletedRunSwiftDataModel {
         notes: String? = nil,
         pausedDuration: Double = 0,
         gearIds: [UUID] = [],
+        nutritionIntakeData: Data = Data(),
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -60,6 +62,7 @@ final class CompletedRunSwiftDataModel {
         self.notes = notes
         self.pausedDuration = pausedDuration
         self.gearIds = gearIds
+        self.nutritionIntakeData = nutritionIntakeData
         self.updatedAt = updatedAt
     }
 }

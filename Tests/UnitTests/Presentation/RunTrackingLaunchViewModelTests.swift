@@ -185,4 +185,52 @@ struct RunTrackingLaunchViewModelTests {
         vm.startRun()
         #expect(vm.showActiveRun == true)
     }
+
+    // MARK: - Nutrition Settings
+
+    @Test("Load fetches nutrition interval settings")
+    @MainActor
+    func loadFetchesNutritionSettings() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let settingsRepo = MockAppSettingsRepository()
+        settingsRepo.savedSettings = AppSettings(
+            id: UUID(),
+            trainingRemindersEnabled: true,
+            nutritionRemindersEnabled: true,
+            autoPauseEnabled: true,
+            nutritionAlertSoundEnabled: true,
+            stravaAutoUploadEnabled: false,
+            stravaConnected: false,
+            raceCountdownEnabled: true,
+            biometricLockEnabled: false,
+            hydrationIntervalSeconds: 900,
+            fuelIntervalSeconds: 1800,
+            electrolyteIntervalSeconds: 3600,
+            smartRemindersEnabled: true
+        )
+
+        let vm = makeViewModel(athleteRepo: athleteRepo, settingsRepo: settingsRepo)
+        await vm.load()
+
+        #expect(vm.hydrationIntervalSeconds == 900)
+        #expect(vm.fuelIntervalSeconds == 1800)
+        #expect(vm.electrolyteIntervalSeconds == 3600)
+        #expect(vm.smartRemindersEnabled == true)
+    }
+
+    @Test("Load uses default nutrition intervals when no settings")
+    @MainActor
+    func loadUsesDefaultNutritionIntervals() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+
+        let vm = makeViewModel(athleteRepo: athleteRepo)
+        await vm.load()
+
+        #expect(vm.hydrationIntervalSeconds == 1200)
+        #expect(vm.fuelIntervalSeconds == 2700)
+        #expect(vm.electrolyteIntervalSeconds == 0)
+        #expect(vm.smartRemindersEnabled == false)
+    }
 }
