@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct RaceRowView: View {
+    @Environment(\.unitPreference) private var units
     let race: Race
 
     var body: some View {
@@ -14,8 +15,8 @@ struct RaceRowView: View {
             HStack(spacing: Theme.Spacing.md) {
                 Label(race.date.formatted(date: .abbreviated, time: .omitted),
                       systemImage: "calendar")
-                Label("\(Int(race.distanceKm)) km", systemImage: "point.topleft.down.to.point.bottomright.curvepath")
-                Label("\(Int(race.elevationGainM)) D+", systemImage: "arrow.up.right")
+                Label(UnitFormatter.formatDistance(race.distanceKm, unit: units, decimals: 0), systemImage: "point.topleft.down.to.point.bottomright.curvepath")
+                Label("\(UnitFormatter.formatElevation(race.elevationGainM, unit: units)) D+", systemImage: "arrow.up.right")
             }
             .font(.caption)
             .foregroundStyle(Theme.Colors.secondaryLabel)

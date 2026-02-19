@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct WeekCardView: View {
+    @Environment(\.unitPreference) private var units
     let week: TrainingWeek
     let weekIndex: Int
     let planStartDate: Date
@@ -85,8 +86,8 @@ struct WeekCardView: View {
                     }
 
                     HStack(spacing: Theme.Spacing.md) {
-                        Label("\(week.targetVolumeKm, specifier: "%.0f") km", systemImage: "figure.run")
-                        Label("\(week.targetElevationGainM, specifier: "%.0f") m", systemImage: "mountain.2.fill")
+                        Label(UnitFormatter.formatDistance(week.targetVolumeKm, unit: units, decimals: 0), systemImage: "figure.run")
+                        Label("\(UnitFormatter.formatElevation(week.targetElevationGainM, unit: units))", systemImage: "mountain.2.fill")
                         Text(progressText)
                     }
                     .font(.caption)

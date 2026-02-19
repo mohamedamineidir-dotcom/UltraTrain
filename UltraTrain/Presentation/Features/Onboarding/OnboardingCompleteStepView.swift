@@ -45,7 +45,7 @@ struct OnboardingCompleteStepView: View {
             )
             SummaryRow(
                 label: "Weekly Volume",
-                value: viewModel.isNewRunner ? "Just starting" : "\(Int(viewModel.weeklyVolumeKm)) km"
+                value: viewModel.isNewRunner ? "Just starting" : UnitFormatter.formatDistance(viewModel.weeklyVolumeKm, unit: viewModel.preferredUnit, decimals: 0)
             )
 
             Divider()
@@ -53,7 +53,7 @@ struct OnboardingCompleteStepView: View {
             SummaryRow(label: "Race", value: viewModel.raceName)
             SummaryRow(
                 label: "Distance",
-                value: "\(Int(viewModel.raceDistanceKm)) km / D+ \(Int(viewModel.raceElevationGainM)) m"
+                value: "\(UnitFormatter.formatDistance(viewModel.raceDistanceKm, unit: viewModel.preferredUnit, decimals: 0)) / D+ \(UnitFormatter.formatElevation(viewModel.raceElevationGainM, unit: viewModel.preferredUnit))"
             )
             SummaryRow(label: "Goal", value: viewModel.raceGoalType.displayName)
         }

@@ -3,6 +3,8 @@ import Charts
 import MapKit
 
 struct InteractiveElevationMapView: View {
+    @Environment(\.unitPreference) private var units
+
     let elevationProfile: [ElevationProfilePoint]
     let trackPoints: [TrackPoint]
     var checkpointDistances: [(name: String, distanceKm: Double)] = []
@@ -32,8 +34,8 @@ struct InteractiveElevationMapView: View {
         Chart {
             ForEach(elevationProfile) { point in
                 AreaMark(
-                    x: .value("Distance", point.distanceKm),
-                    y: .value("Altitude", point.altitudeM)
+                    x: .value("Distance", UnitFormatter.distanceValue(point.distanceKm, unit: units)),
+                    y: .value("Altitude", UnitFormatter.elevationValue(point.altitudeM, unit: units))
                 )
                 .foregroundStyle(
                     .linearGradient(
@@ -47,34 +49,34 @@ struct InteractiveElevationMapView: View {
                 )
 
                 LineMark(
-                    x: .value("Distance", point.distanceKm),
-                    y: .value("Altitude", point.altitudeM)
+                    x: .value("Distance", UnitFormatter.distanceValue(point.distanceKm, unit: units)),
+                    y: .value("Altitude", UnitFormatter.elevationValue(point.altitudeM, unit: units))
                 )
                 .foregroundStyle(Theme.Colors.primary)
                 .lineStyle(StrokeStyle(lineWidth: 2))
             }
 
             ForEach(Array(checkpointDistances.enumerated()), id: \.offset) { _, cp in
-                RuleMark(x: .value("CP", cp.distanceKm))
+                RuleMark(x: .value("CP", UnitFormatter.distanceValue(cp.distanceKm, unit: units)))
                     .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.3))
                     .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 2]))
             }
 
             if let dist = selectedDistanceKm {
-                RuleMark(x: .value("Selected", dist))
+                RuleMark(x: .value("Selected", UnitFormatter.distanceValue(dist, unit: units)))
                     .foregroundStyle(Theme.Colors.danger)
                     .lineStyle(StrokeStyle(lineWidth: 1.5))
                     .annotation(position: .top, spacing: 4) {
                         if let alt = selectedAltitudeM {
                             ChartAnnotationCard(
-                                title: String(format: "%.1f km", dist),
-                                value: "\(Int(alt)) m"
+                                title: UnitFormatter.formatDistance(dist, unit: units),
+                                value: UnitFormatter.formatElevation(alt, unit: units)
                             )
                         }
                     }
             }
         }
-        .chartXAxisLabel("Distance (km)")
+        .chartXAxisLabel("Distance (\(UnitFormatter.distanceLabel(units)))")
         .chartYAxis(.hidden)
         .chartOverlay { proxy in
             GeometryReader { geometry in
@@ -132,8 +134,9 @@ struct InteractiveElevationMapView: View {
         let plotFrame = geometry[proxy.plotFrame!]
         let xPosition = value.location.x - plotFrame.origin.x
 
-        guard let distanceKm: Double = proxy.value(atX: xPosition) else { return }
+        guard let displayDistance: Double = proxy.value(atX: xPosition) else { return }
 
+        let distanceKm = UnitFormatter.distanceToKm(displayDistance, unit: units)
         let clampedDistance = max(0, min(distanceKm, elevationProfile.last?.distanceKm ?? 0))
         selectedDistanceKm = clampedDistance
 

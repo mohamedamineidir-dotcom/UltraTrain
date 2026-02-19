@@ -2,6 +2,7 @@ import SwiftUI
 import Charts
 
 struct TrainingProgressView: View {
+    @Environment(\.unitPreference) private var units
     @State private var viewModel: ProgressViewModel
     private let runRepository: any RunRepository
     private let athleteRepository: any AthleteRepository
@@ -165,17 +166,17 @@ struct TrainingProgressView: View {
             Chart(viewModel.weeklyVolumes) { week in
                 BarMark(
                     x: .value("Week", week.weekStartDate, unit: .weekOfYear),
-                    y: .value("Distance", week.distanceKm)
+                    y: .value("Distance", UnitFormatter.distanceValue(week.distanceKm, unit: units))
                 )
                 .foregroundStyle(Theme.Colors.primary.gradient)
                 .cornerRadius(4)
             }
-            .chartYAxisLabel("km")
+            .chartYAxisLabel(UnitFormatter.distanceLabel(units))
             .frame(height: 180)
         }
         .cardStyle()
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Weekly distance chart. Total \(String(format: "%.0f", viewModel.totalDistanceKm)) km over \(viewModel.weeklyVolumes.count) weeks.")
+        .accessibilityLabel("Weekly distance chart. Total \(UnitFormatter.formatDistance(viewModel.totalDistanceKm, unit: units, decimals: 0)) over \(viewModel.weeklyVolumes.count) weeks.")
     }
 
     // MARK: - Elevation Chart
@@ -188,17 +189,17 @@ struct TrainingProgressView: View {
             Chart(viewModel.weeklyVolumes) { week in
                 BarMark(
                     x: .value("Week", week.weekStartDate, unit: .weekOfYear),
-                    y: .value("Elevation", week.elevationGainM)
+                    y: .value("Elevation", UnitFormatter.elevationValue(week.elevationGainM, unit: units))
                 )
                 .foregroundStyle(Theme.Colors.success.gradient)
                 .cornerRadius(4)
             }
-            .chartYAxisLabel("m D+")
+            .chartYAxisLabel(UnitFormatter.elevationLabel(units))
             .frame(height: 180)
         }
         .cardStyle()
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Weekly elevation chart. Total \(String(format: "%.0f", viewModel.totalElevationGainM)) meters of elevation gain.")
+        .accessibilityLabel("Weekly elevation chart. Total \(UnitFormatter.formatElevation(viewModel.totalElevationGainM, unit: units)) of elevation gain.")
     }
 
     // MARK: - Duration Chart

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @Environment(\.unitPreference) private var units
     @State private var viewModel: ProfileViewModel
     private let athleteRepository: any AthleteRepository
     private let raceRepository: any RaceRepository
@@ -163,16 +164,32 @@ struct ProfileView: View {
     private func athleteStatsGrid(_ athlete: Athlete) -> some View {
         Grid(alignment: .leading, horizontalSpacing: Theme.Spacing.lg, verticalSpacing: Theme.Spacing.sm) {
             GridRow {
-                statItem(label: "Weight", value: String(format: "%.1f", athlete.weightKg), unit: "kg")
-                statItem(label: "Height", value: String(format: "%.0f", athlete.heightCm), unit: "cm")
+                statItem(
+                    label: "Weight",
+                    value: String(format: "%.1f", UnitFormatter.weightValue(athlete.weightKg, unit: units)),
+                    unit: UnitFormatter.weightLabel(units)
+                )
+                statItem(
+                    label: "Height",
+                    value: UnitFormatter.formatHeight(athlete.heightCm, unit: units),
+                    unit: ""
+                )
             }
             GridRow {
                 statItem(label: "Resting HR", value: "\(athlete.restingHeartRate)", unit: "bpm")
                 statItem(label: "Max HR", value: "\(athlete.maxHeartRate)", unit: "bpm")
             }
             GridRow {
-                statItem(label: "Weekly Vol", value: String(format: "%.0f", athlete.weeklyVolumeKm), unit: "km")
-                statItem(label: "Longest Run", value: String(format: "%.0f", athlete.longestRunKm), unit: "km")
+                statItem(
+                    label: "Weekly Vol",
+                    value: String(format: "%.0f", UnitFormatter.distanceValue(athlete.weeklyVolumeKm, unit: units)),
+                    unit: UnitFormatter.distanceLabel(units)
+                )
+                statItem(
+                    label: "Longest Run",
+                    value: String(format: "%.0f", UnitFormatter.distanceValue(athlete.longestRunKm, unit: units)),
+                    unit: UnitFormatter.distanceLabel(units)
+                )
             }
         }
     }

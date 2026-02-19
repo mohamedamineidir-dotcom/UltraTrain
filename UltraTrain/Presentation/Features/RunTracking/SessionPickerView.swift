@@ -27,6 +27,7 @@ struct SessionPickerView: View {
 }
 
 private struct SessionPickerRow: View {
+    @Environment(\.unitPreference) private var units
     let session: TrainingSession
     let isSelected: Bool
 
@@ -42,12 +43,12 @@ private struct SessionPickerRow: View {
 
                 HStack(spacing: Theme.Spacing.sm) {
                     Label(
-                        String(format: "%.1f km", session.plannedDistanceKm),
+                        UnitFormatter.formatDistance(session.plannedDistanceKm, unit: units),
                         systemImage: "arrow.left.arrow.right"
                     )
                     if session.plannedElevationGainM > 0 {
                         Label(
-                            String(format: "+%.0f m", session.plannedElevationGainM),
+                            "+\(UnitFormatter.formatElevation(session.plannedElevationGainM, unit: units))",
                             systemImage: "arrow.up.right"
                         )
                     }

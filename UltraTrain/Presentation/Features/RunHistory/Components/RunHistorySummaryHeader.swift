@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct RunHistorySummaryHeader: View {
+    @Environment(\.unitPreference) private var units
     let runCount: Int
     let totalDistanceKm: Double
     let totalElevationM: Double
@@ -12,13 +13,13 @@ struct RunHistorySummaryHeader: View {
             Divider().frame(height: 32)
             summaryItem(
                 title: "Distance",
-                value: String(format: "%.1f km", totalDistanceKm),
+                value: UnitFormatter.formatDistance(totalDistanceKm, unit: units),
                 icon: "arrow.left.arrow.right"
             )
             Divider().frame(height: 32)
             summaryItem(
                 title: "D+",
-                value: String(format: "%.0f m", totalElevationM),
+                value: UnitFormatter.formatElevation(totalElevationM, unit: units),
                 icon: "arrow.up.right"
             )
             Divider().frame(height: 32)

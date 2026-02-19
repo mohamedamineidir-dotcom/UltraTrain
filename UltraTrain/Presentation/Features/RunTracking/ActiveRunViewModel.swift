@@ -356,11 +356,12 @@ final class ActiveRunViewModel {
     }
 
     var formattedDistance: String {
-        String(format: "%.2f", distanceKm)
+        String(format: "%.2f", UnitFormatter.distanceValue(distanceKm, unit: athlete.preferredUnit))
     }
 
     var formattedElevation: String {
-        String(format: "+%.0f m", elevationGainM)
+        let value = UnitFormatter.elevationValue(elevationGainM, unit: athlete.preferredUnit)
+        return String(format: "+%.0f %@", value, UnitFormatter.elevationShortLabel(athlete.preferredUnit))
     }
 
     var formattedTotalTime: String {
@@ -422,7 +423,7 @@ final class ActiveRunViewModel {
             let pace = RunStatisticsCalculator.averagePace(
                 distanceKm: distanceKm, duration: elapsedTime
             )
-            currentPace = RunStatisticsCalculator.formatPace(pace)
+            currentPace = RunStatisticsCalculator.formatPace(pace, unit: athlete.preferredUnit)
             runningAveragePace = pace
         }
 

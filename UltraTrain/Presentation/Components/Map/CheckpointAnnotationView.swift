@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct CheckpointAnnotationView: View {
+    @Environment(\.unitPreference) private var units
     let name: String
     let distanceKm: Double
     let hasAidStation: Bool
@@ -23,7 +24,7 @@ struct CheckpointAnnotationView: View {
                 .foregroundStyle(Theme.Colors.label)
                 .lineLimit(1)
 
-            Text(String(format: "%.1f km", distanceKm))
+            Text(UnitFormatter.formatDistance(distanceKm, unit: units))
                 .font(.system(size: clampedDistanceSize))
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
@@ -31,6 +32,6 @@ struct CheckpointAnnotationView: View {
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 4))
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(name), \(String(format: "%.1f", distanceKm)) km\(hasAidStation ? ", aid station" : "")")
+        .accessibilityLabel("\(name), \(UnitFormatter.formatDistance(distanceKm, unit: units))\(hasAidStation ? ", aid station" : "")")
     }
 }

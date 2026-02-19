@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct CalendarDayDetailSheet: View {
+    @Environment(\.unitPreference) private var units
     let date: Date
     let phase: TrainingPhase?
     let sessions: [TrainingSession]
@@ -86,7 +87,7 @@ struct CalendarDayDetailSheet: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(session.type.displayName)
                     .font(.subheadline.bold())
-                Text(String(format: "%.1f km · %.0f m D+", session.plannedDistanceKm, session.plannedElevationGainM))
+                Text("\(UnitFormatter.formatDistance(session.plannedDistanceKm, unit: units)) · \(UnitFormatter.formatElevation(session.plannedElevationGainM, unit: units)) D+")
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }

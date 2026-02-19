@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct PlanComparisonCard: View {
+    @Environment(\.unitPreference) private var units
+
     let comparison: PlanComparison
 
     var body: some View {
@@ -18,8 +20,8 @@ struct PlanComparisonCard: View {
 
             comparisonRow(
                 label: "Distance",
-                planned: String(format: "%.1f km", comparison.plannedDistanceKm),
-                actual: String(format: "%.1f km", comparison.actualDistanceKm),
+                planned: UnitFormatter.formatDistance(comparison.plannedDistanceKm, unit: units),
+                actual: UnitFormatter.formatDistance(comparison.actualDistanceKm, unit: units),
                 targetMet: comparison.actualDistanceKm >= comparison.plannedDistanceKm * 0.9
             )
 
@@ -27,8 +29,8 @@ struct PlanComparisonCard: View {
 
             comparisonRow(
                 label: "Elevation",
-                planned: String(format: "%.0f m", comparison.plannedElevationGainM),
-                actual: String(format: "%.0f m", comparison.actualElevationGainM),
+                planned: UnitFormatter.formatElevation(comparison.plannedElevationGainM, unit: units),
+                actual: UnitFormatter.formatElevation(comparison.actualElevationGainM, unit: units),
                 targetMet: comparison.actualElevationGainM >= comparison.plannedElevationGainM * 0.9
             )
 
@@ -45,8 +47,8 @@ struct PlanComparisonCard: View {
 
             comparisonRow(
                 label: "Pace",
-                planned: RunStatisticsCalculator.formatPace(comparison.plannedPaceSecondsPerKm),
-                actual: RunStatisticsCalculator.formatPace(comparison.actualPaceSecondsPerKm),
+                planned: RunStatisticsCalculator.formatPace(comparison.plannedPaceSecondsPerKm, unit: units),
+                actual: RunStatisticsCalculator.formatPace(comparison.actualPaceSecondsPerKm, unit: units),
                 targetMet: comparison.actualPaceSecondsPerKm <= comparison.plannedPaceSecondsPerKm * 1.1
             )
         }

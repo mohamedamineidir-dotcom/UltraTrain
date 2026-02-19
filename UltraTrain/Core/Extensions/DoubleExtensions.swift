@@ -13,4 +13,12 @@ extension Double {
     var elevationFormatted: String {
         String(format: "%.0f m", self)
     }
+
+    func distanceFormatted(_ unit: UnitPreference) -> String {
+        UnitFormatter.formatDistance(self, unit: unit)
+    }
+
+    func elevationFormatted(_ unit: UnitPreference) -> String {
+        UnitFormatter.formatElevation(self, unit: unit)
+    }
 }

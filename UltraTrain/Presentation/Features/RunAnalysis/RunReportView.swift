@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct RunReportView: View {
+    @Environment(\.unitPreference) private var units
+
     let run: CompletedRun
     let metrics: AdvancedRunMetrics?
     let comparison: HistoricalComparison?
@@ -52,10 +54,10 @@ struct RunReportView: View {
 
     private var statsSection: some View {
         HStack(spacing: 24) {
-            reportStat("Distance", String(format: "%.2f km", run.distanceKm))
+            reportStat("Distance", UnitFormatter.formatDistance(run.distanceKm, unit: units, decimals: 2))
             reportStat("Duration", RunStatisticsCalculator.formatDuration(run.duration))
-            reportStat("Avg Pace", run.paceFormatted)
-            reportStat("Elevation", String(format: "+%.0f / -%.0f m", run.elevationGainM, run.elevationLossM))
+            reportStat("Avg Pace", RunStatisticsCalculator.formatPace(run.averagePaceSecondsPerKm, unit: units) + " " + UnitFormatter.paceLabel(units))
+            reportStat("Elevation", "+\(UnitFormatter.formatElevation(run.elevationGainM, unit: units)) / -\(UnitFormatter.formatElevation(run.elevationLossM, unit: units))")
             if let hr = run.averageHeartRate {
                 reportStat("Avg HR", "\(hr) bpm")
             }
@@ -80,7 +82,7 @@ struct RunReportView: View {
                 .font(.headline)
             HStack(spacing: 24) {
                 reportStat("Pace Variability", String(format: "%.1f%%", metrics.paceVariabilityIndex * 100))
-                reportStat("GAP", RunStatisticsCalculator.formatPace(metrics.averageGradientAdjustedPace) + " /km")
+                reportStat("GAP", RunStatisticsCalculator.formatPace(metrics.averageGradientAdjustedPace, unit: units) + " " + UnitFormatter.paceLabel(units))
                 reportStat("Calories", String(format: "%.0f kcal", metrics.estimatedCalories))
                 reportStat("Training Effect", String(format: "%.1f / 5", metrics.trainingEffectScore))
                 if let eff = metrics.climbingEfficiency {
@@ -99,13 +101,13 @@ struct RunReportView: View {
             let displaySplits = Array(run.splits.prefix(20))
             ForEach(displaySplits) { split in
                 HStack {
-                    Text("KM \(split.kilometerNumber)")
+                    Text("\(UnitFormatter.distanceLabel(units).uppercased()) \(split.kilometerNumber)")
                         .font(.caption.bold())
                         .frame(width: 50, alignment: .leading)
-                    Text(RunStatisticsCalculator.formatPace(split.duration))
+                    Text(RunStatisticsCalculator.formatPace(split.duration, unit: units))
                         .font(.caption.monospacedDigit())
                     if split.elevationChangeM != 0 {
-                        Text(String(format: "%+.0f m", split.elevationChangeM))
+                        Text(String(format: "%+.0f %@", UnitFormatter.elevationValue(split.elevationChangeM, unit: units), UnitFormatter.elevationShortLabel(units)))
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                     }

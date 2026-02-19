@@ -4,11 +4,12 @@ enum HistoricalComparisonCalculator {
 
     static func compare(
         run: CompletedRun,
-        recentRuns: [CompletedRun]
+        recentRuns: [CompletedRun],
+        unit: UnitPreference = .metric
     ) -> HistoricalComparison {
         let splitPRs = findSplitPRs(run: run, recentRuns: recentRuns)
         let trend = calculatePaceTrend(run: run, recentRuns: recentRuns)
-        let badges = calculateBadges(run: run, recentRuns: recentRuns)
+        let badges = calculateBadges(run: run, recentRuns: recentRuns, unit: unit)
 
         return HistoricalComparison(
             splitPRs: splitPRs,
@@ -71,7 +72,8 @@ enum HistoricalComparisonCalculator {
 
     static func calculateBadges(
         run: CompletedRun,
-        recentRuns: [CompletedRun]
+        recentRuns: [CompletedRun],
+        unit: UnitPreference = .metric
     ) -> [ImprovementBadge] {
         var badges: [ImprovementBadge] = []
 
@@ -80,7 +82,7 @@ enum HistoricalComparisonCalculator {
             badges.append(ImprovementBadge(
                 id: UUID(),
                 title: "Longest Run",
-                description: String(format: "%.1f km — your longest run yet", run.distanceKm),
+                description: "\(UnitFormatter.formatDistance(run.distanceKm, unit: unit)) — your longest run yet",
                 icon: "road.lanes"
             ))
         }
@@ -90,7 +92,7 @@ enum HistoricalComparisonCalculator {
             badges.append(ImprovementBadge(
                 id: UUID(),
                 title: "Most Elevation",
-                description: String(format: "+%.0f m — your most climbing ever", run.elevationGainM),
+                description: "+\(UnitFormatter.formatElevation(run.elevationGainM, unit: unit)) — your most climbing ever",
                 icon: "mountain.2.fill"
             ))
         }
@@ -100,7 +102,7 @@ enum HistoricalComparisonCalculator {
             badges.append(ImprovementBadge(
                 id: UUID(),
                 title: "Fastest Pace",
-                description: "\(RunStatisticsCalculator.formatPace(run.averagePaceSecondsPerKm)) /km — a new personal best",
+                description: "\(RunStatisticsCalculator.formatPace(run.averagePaceSecondsPerKm, unit: unit)) \(UnitFormatter.paceLabel(unit)) — a new personal best",
                 icon: "bolt.fill"
             ))
         }

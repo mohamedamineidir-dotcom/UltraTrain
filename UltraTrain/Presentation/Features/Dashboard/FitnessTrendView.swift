@@ -2,6 +2,7 @@ import SwiftUI
 import Charts
 
 struct FitnessTrendView: View {
+    @Environment(\.unitPreference) private var units
     let snapshots: [FitnessSnapshot]
     let currentSnapshot: FitnessSnapshot?
 
@@ -114,13 +115,13 @@ struct FitnessTrendView: View {
                 HStack(spacing: Theme.Spacing.md) {
                     StatCard(
                         title: "Volume",
-                        value: String(format: "%.1f", snapshot.weeklyVolumeKm),
-                        unit: "km"
+                        value: String(format: "%.1f", UnitFormatter.distanceValue(snapshot.weeklyVolumeKm, unit: units)),
+                        unit: UnitFormatter.distanceLabel(units)
                     )
                     StatCard(
                         title: "Elevation",
-                        value: String(format: "%.0f", snapshot.weeklyElevationGainM),
-                        unit: "m D+"
+                        value: String(format: "%.0f", UnitFormatter.elevationValue(snapshot.weeklyElevationGainM, unit: units)),
+                        unit: UnitFormatter.elevationLabel(units)
                     )
                     StatCard(
                         title: "Duration",

@@ -2,6 +2,7 @@ import SwiftUI
 import Charts
 
 struct CumulativeVolumeChartView: View {
+    @Environment(\.unitPreference) private var units
     let weeklyVolumes: [WeeklyVolume]
     @State private var selectedDate: Date?
 
@@ -26,7 +27,7 @@ struct CumulativeVolumeChartView: View {
 
     private var chartSummary: String {
         let total = cumulativeData.last?.cumulativeKm ?? 0
-        return "Cumulative volume chart. \(weeklyVolumes.count) weeks. Total \(String(format: "%.0f", total)) km."
+        return "Cumulative volume chart. \(weeklyVolumes.count) weeks. Total \(UnitFormatter.formatDistance(total, unit: units, decimals: 0))."
     }
 
     // MARK: - Chart
@@ -37,7 +38,7 @@ struct CumulativeVolumeChartView: View {
             ForEach(Array(data.enumerated()), id: \.offset) { _, item in
                 AreaMark(
                     x: .value("Week", item.date, unit: .weekOfYear),
-                    y: .value("Cumulative", item.cumulativeKm)
+                    y: .value("Cumulative", UnitFormatter.distanceValue(item.cumulativeKm, unit: units))
                 )
                 .foregroundStyle(
                     LinearGradient(
@@ -49,7 +50,7 @@ struct CumulativeVolumeChartView: View {
 
                 LineMark(
                     x: .value("Week", item.date, unit: .weekOfYear),
-                    y: .value("Cumulative", item.cumulativeKm)
+                    y: .value("Cumulative", UnitFormatter.distanceValue(item.cumulativeKm, unit: units))
                 )
                 .foregroundStyle(Theme.Colors.primary)
                 .lineStyle(StrokeStyle(lineWidth: 2))
@@ -61,7 +62,7 @@ struct CumulativeVolumeChartView: View {
                     .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
             }
         }
-        .chartYAxisLabel("km")
+        .chartYAxisLabel(UnitFormatter.distanceLabel(units))
         .frame(height: 180)
         .chartOverlay { proxy in
             GeometryReader { geo in
@@ -90,7 +91,7 @@ struct CumulativeVolumeChartView: View {
                     if let xPos = proxy.position(forX: item.date) {
                         ChartAnnotationCard(
                             title: item.date.formatted(.dateTime.month(.abbreviated).day()),
-                            value: String(format: "%.0f km total", item.cumulativeKm)
+                            value: "\(UnitFormatter.formatDistance(item.cumulativeKm, unit: units, decimals: 0)) total"
                         )
                         .offset(
                             x: annotationX(xPos: xPos, plotWidth: plotFrame.width),

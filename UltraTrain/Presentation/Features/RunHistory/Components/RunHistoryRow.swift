@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct RunHistoryRow: View {
+    @Environment(\.unitPreference) private var units
     let run: CompletedRun
 
     var body: some View {
@@ -15,13 +16,16 @@ struct RunHistoryRow: View {
             }
             HStack(spacing: Theme.Spacing.md) {
                 Label(
-                    String(format: "%.2f km", run.distanceKm),
+                    UnitFormatter.formatDistance(run.distanceKm, unit: units, decimals: 2),
                     systemImage: "arrow.left.arrow.right"
                 )
-                Label(run.paceFormatted, systemImage: "speedometer")
+                Label(
+                    RunStatisticsCalculator.formatPace(run.averagePaceSecondsPerKm, unit: units) + " " + UnitFormatter.paceLabel(units),
+                    systemImage: "speedometer"
+                )
                 if run.elevationGainM > 0 {
                     Label(
-                        String(format: "+%.0f m", run.elevationGainM),
+                        "+" + UnitFormatter.formatElevation(run.elevationGainM, unit: units),
                         systemImage: "arrow.up.right"
                     )
                 }

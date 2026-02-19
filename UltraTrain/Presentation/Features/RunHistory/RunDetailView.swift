@@ -2,6 +2,7 @@ import SwiftUI
 import CoreLocation
 
 struct RunDetailView: View {
+    @Environment(\.unitPreference) private var units
     let run: CompletedRun
     let planRepository: any TrainingPlanRepository
     let athleteRepository: any AthleteRepository
@@ -159,15 +160,15 @@ struct RunDetailView: View {
             columns: [GridItem(.flexible()), GridItem(.flexible())],
             spacing: Theme.Spacing.md
         ) {
-            detailTile(label: "Distance", value: String(format: "%.2f km", run.distanceKm))
+            detailTile(label: "Distance", value: UnitFormatter.formatDistance(run.distanceKm, unit: units, decimals: 2))
             if run.pausedDuration > 0 {
                 detailTile(label: "Moving Time", value: RunStatisticsCalculator.formatDuration(run.duration))
                 detailTile(label: "Total Time", value: RunStatisticsCalculator.formatDuration(run.totalDuration))
             } else {
                 detailTile(label: "Duration", value: RunStatisticsCalculator.formatDuration(run.duration))
             }
-            detailTile(label: "Avg Pace", value: run.paceFormatted)
-            detailTile(label: "Elevation", value: String(format: "+%.0f / -%.0f m", run.elevationGainM, run.elevationLossM))
+            detailTile(label: "Avg Pace", value: RunStatisticsCalculator.formatPace(run.averagePaceSecondsPerKm, unit: units) + " " + UnitFormatter.paceLabel(units))
+            detailTile(label: "Elevation", value: "+" + UnitFormatter.formatElevation(run.elevationGainM, unit: units) + " / -" + UnitFormatter.formatElevation(run.elevationLossM, unit: units))
             if let avgHR = run.averageHeartRate {
                 detailTile(label: "Avg HR", value: "\(avgHR) bpm")
             }
@@ -186,17 +187,17 @@ struct RunDetailView: View {
 
             ForEach(run.splits) { split in
                 HStack {
-                    Text("KM \(split.kilometerNumber)")
+                    Text("\(UnitFormatter.distanceLabel(units).uppercased()) \(split.kilometerNumber)")
                         .font(.subheadline.bold())
                         .frame(width: 50, alignment: .leading)
 
-                    Text(RunStatisticsCalculator.formatPace(split.duration))
+                    Text(RunStatisticsCalculator.formatPace(split.duration, unit: units))
                         .font(.subheadline.monospacedDigit())
 
                     Spacer()
 
                     if split.elevationChangeM != 0 {
-                        Text(String(format: "%+.0f m", split.elevationChangeM))
+                        Text(String(format: "%+.0f %@", UnitFormatter.elevationValue(split.elevationChangeM, unit: units), UnitFormatter.elevationShortLabel(units)))
                             .font(.caption)
                             .foregroundStyle(
                                 split.elevationChangeM > 0

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct RaceDetailCard: View {
+    @Environment(\.unitPreference) private var units
     let race: Race
     let onEdit: () -> Void
     let onDelete: () -> Void
@@ -51,9 +52,9 @@ struct RaceDetailCard: View {
 
     private var stats: some View {
         HStack(spacing: Theme.Spacing.lg) {
-            statItem("Distance", value: String(format: "%.0f km", race.distanceKm))
-            statItem("D+", value: String(format: "%.0f m", race.elevationGainM))
-            statItem("D-", value: String(format: "%.0f m", race.elevationLossM))
+            statItem("Distance", value: UnitFormatter.formatDistance(race.distanceKm, unit: units, decimals: 0))
+            statItem("D+", value: UnitFormatter.formatElevation(race.elevationGainM, unit: units))
+            statItem("D-", value: UnitFormatter.formatElevation(race.elevationLossM, unit: units))
             statItem("Terrain", value: race.terrainDifficulty.rawValue.capitalized)
         }
     }

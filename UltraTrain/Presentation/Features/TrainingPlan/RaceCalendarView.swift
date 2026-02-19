@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct RaceCalendarView: View {
+    @Environment(\.unitPreference) private var units
     let plan: TrainingPlan
     let races: [Race]
 
@@ -133,8 +134,8 @@ struct RaceCalendarView: View {
             let totalKm = plan.weeks.reduce(0.0) { $0 + $1.targetVolumeKm }
             let totalElev = plan.weeks.reduce(0.0) { $0 + $1.targetElevationGainM }
             HStack(spacing: Theme.Spacing.md) {
-                Label(String(format: "%.0f km total", totalKm), systemImage: "figure.run")
-                Label(String(format: "%.0f m D+", totalElev), systemImage: "mountain.2")
+                Label("\(UnitFormatter.formatDistance(totalKm, unit: units, decimals: 0)) total", systemImage: "figure.run")
+                Label("\(UnitFormatter.formatElevation(totalElev, unit: units)) D+", systemImage: "mountain.2")
             }
             .font(.caption)
             .foregroundStyle(Theme.Colors.secondaryLabel)

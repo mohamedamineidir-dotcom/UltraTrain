@@ -2,6 +2,7 @@ import SwiftUI
 import Charts
 
 struct CompactElevationCard: View {
+    @Environment(\.unitPreference) private var units
     let profile: [ElevationProfilePoint]
     let elevationGainM: Double
     let elevationLossM: Double
@@ -14,12 +15,12 @@ struct CompactElevationCard: View {
                 Spacer()
                 HStack(spacing: Theme.Spacing.sm) {
                     Label(
-                        String(format: "+%.0f m", elevationGainM),
+                        "+" + UnitFormatter.formatElevation(elevationGainM, unit: units),
                         systemImage: "arrow.up.right"
                     )
                     .foregroundStyle(Theme.Colors.danger)
                     Label(
-                        String(format: "-%.0f m", elevationLossM),
+                        "-" + UnitFormatter.formatElevation(elevationLossM, unit: units),
                         systemImage: "arrow.down.right"
                     )
                     .foregroundStyle(Theme.Colors.success)

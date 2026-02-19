@@ -2,6 +2,8 @@ import SwiftUI
 import Charts
 
 struct ElevationProfileChart: View {
+    @Environment(\.unitPreference) private var units
+
     let dataPoints: [ElevationProfilePoint]
     var elevationSegments: [ElevationSegment] = []
     var checkpointDistances: [(name: String, distanceKm: Double)] = []
@@ -45,8 +47,8 @@ struct ElevationProfileChart: View {
 
             extremeAnnotations
         }
-        .chartXAxisLabel("Distance (km)")
-        .chartYAxisLabel("Altitude (m)")
+        .chartXAxisLabel("Distance (\(UnitFormatter.distanceLabel(units)))")
+        .chartYAxisLabel("Altitude (\(UnitFormatter.elevationShortLabel(units)))")
     }
 
     // MARK: - Default Marks
@@ -55,8 +57,8 @@ struct ElevationProfileChart: View {
     private var defaultMarks: some ChartContent {
         ForEach(dataPoints) { point in
             AreaMark(
-                x: .value("Distance", point.distanceKm),
-                y: .value("Altitude", point.altitudeM)
+                x: .value("Distance", UnitFormatter.distanceValue(point.distanceKm, unit: units)),
+                y: .value("Altitude", UnitFormatter.elevationValue(point.altitudeM, unit: units))
             )
             .foregroundStyle(
                 .linearGradient(
@@ -70,8 +72,8 @@ struct ElevationProfileChart: View {
             )
 
             LineMark(
-                x: .value("Distance", point.distanceKm),
-                y: .value("Altitude", point.altitudeM)
+                x: .value("Distance", UnitFormatter.distanceValue(point.distanceKm, unit: units)),
+                y: .value("Altitude", UnitFormatter.elevationValue(point.altitudeM, unit: units))
             )
             .foregroundStyle(Theme.Colors.success)
             .lineStyle(StrokeStyle(lineWidth: 2))
@@ -87,9 +89,9 @@ struct ElevationProfileChart: View {
             let midDistKm = Double(segment.kilometerNumber) - 0.5
 
             BarMark(
-                x: .value("Distance", midDistKm),
-                yStart: .value("Base", altitudeRange.lowerBound),
-                yEnd: .value("Top", altitudeAtKm(segment.kilometerNumber)),
+                x: .value("Distance", UnitFormatter.distanceValue(midDistKm, unit: units)),
+                yStart: .value("Base", UnitFormatter.elevationValue(altitudeRange.lowerBound, unit: units)),
+                yEnd: .value("Top", UnitFormatter.elevationValue(altitudeAtKm(segment.kilometerNumber), unit: units)),
                 width: .ratio(0.95)
             )
             .foregroundStyle(color.opacity(0.3))
@@ -97,8 +99,8 @@ struct ElevationProfileChart: View {
 
         ForEach(dataPoints) { point in
             LineMark(
-                x: .value("Distance", point.distanceKm),
-                y: .value("Altitude", point.altitudeM)
+                x: .value("Distance", UnitFormatter.distanceValue(point.distanceKm, unit: units)),
+                y: .value("Altitude", UnitFormatter.elevationValue(point.altitudeM, unit: units))
             )
             .foregroundStyle(Theme.Colors.label.opacity(0.8))
             .lineStyle(StrokeStyle(lineWidth: 2))
@@ -110,7 +112,7 @@ struct ElevationProfileChart: View {
     @ChartContentBuilder
     private var checkpointRules: some ChartContent {
         ForEach(Array(checkpointDistances.enumerated()), id: \.offset) { _, cp in
-            RuleMark(x: .value("CP", cp.distanceKm))
+            RuleMark(x: .value("CP", UnitFormatter.distanceValue(cp.distanceKm, unit: units)))
                 .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.4))
                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
                 .annotation(position: .top, spacing: 2) {
@@ -127,25 +129,25 @@ struct ElevationProfileChart: View {
     private var extremeAnnotations: some ChartContent {
         if let ext = extremes, dataPoints.count >= 4 {
             PointMark(
-                x: .value("Distance", ext.highest.distanceKm),
-                y: .value("Altitude", ext.highest.altitudeM)
+                x: .value("Distance", UnitFormatter.distanceValue(ext.highest.distanceKm, unit: units)),
+                y: .value("Altitude", UnitFormatter.elevationValue(ext.highest.altitudeM, unit: units))
             )
             .foregroundStyle(Theme.Colors.danger)
             .symbolSize(30)
             .annotation(position: .top, spacing: 2) {
-                Text("\(Int(ext.highest.altitudeM))m")
+                Text(UnitFormatter.formatElevation(ext.highest.altitudeM, unit: units))
                     .font(.system(size: 8).bold())
                     .foregroundStyle(Theme.Colors.danger)
             }
 
             PointMark(
-                x: .value("Distance", ext.lowest.distanceKm),
-                y: .value("Altitude", ext.lowest.altitudeM)
+                x: .value("Distance", UnitFormatter.distanceValue(ext.lowest.distanceKm, unit: units)),
+                y: .value("Altitude", UnitFormatter.elevationValue(ext.lowest.altitudeM, unit: units))
             )
             .foregroundStyle(Theme.Colors.success)
             .symbolSize(30)
             .annotation(position: .bottom, spacing: 2) {
-                Text("\(Int(ext.lowest.altitudeM))m")
+                Text(UnitFormatter.formatElevation(ext.lowest.altitudeM, unit: units))
                     .font(.system(size: 8).bold())
                     .foregroundStyle(Theme.Colors.success)
             }
@@ -205,6 +207,9 @@ struct ElevationProfileChart: View {
         let minAlt = dataPoints.map(\.altitudeM).min() ?? 0
         let maxAlt = dataPoints.map(\.altitudeM).max() ?? 0
         let totalDist = dataPoints.last?.distanceKm ?? 0
-        return "Elevation profile chart. \(String(format: "%.1f", totalDist)) km. Altitude range \(Int(minAlt)) to \(Int(maxAlt)) meters."
+        let distStr = UnitFormatter.formatDistance(totalDist, unit: units)
+        let minStr = UnitFormatter.formatElevation(minAlt, unit: units)
+        let maxStr = UnitFormatter.formatElevation(maxAlt, unit: units)
+        return "Elevation profile chart. \(distStr). Altitude range \(minStr) to \(maxStr)."
     }
 }

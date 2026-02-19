@@ -2,6 +2,7 @@ import SwiftUI
 import Charts
 
 struct RaceCourseElevationChart: View {
+    @Environment(\.unitPreference) private var units
     let checkpoints: [Checkpoint]
 
     private var profilePoints: [ElevationProfilePoint] {
@@ -35,8 +36,8 @@ struct RaceCourseElevationChart: View {
         Chart {
             ForEach(profilePoints) { point in
                 AreaMark(
-                    x: .value("Distance", point.distanceKm),
-                    y: .value("Altitude", point.altitudeM)
+                    x: .value("Distance", UnitFormatter.distanceValue(point.distanceKm, unit: units)),
+                    y: .value("Altitude", UnitFormatter.elevationValue(point.altitudeM, unit: units))
                 )
                 .foregroundStyle(
                     .linearGradient(
@@ -50,15 +51,15 @@ struct RaceCourseElevationChart: View {
                 )
 
                 LineMark(
-                    x: .value("Distance", point.distanceKm),
-                    y: .value("Altitude", point.altitudeM)
+                    x: .value("Distance", UnitFormatter.distanceValue(point.distanceKm, unit: units)),
+                    y: .value("Altitude", UnitFormatter.elevationValue(point.altitudeM, unit: units))
                 )
                 .foregroundStyle(Theme.Colors.primary)
                 .lineStyle(StrokeStyle(lineWidth: 2))
             }
 
             ForEach(checkpoints) { cp in
-                RuleMark(x: .value("CP", cp.distanceFromStartKm))
+                RuleMark(x: .value("CP", UnitFormatter.distanceValue(cp.distanceFromStartKm, unit: units)))
                     .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.4))
                     .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
                     .annotation(position: .top, spacing: 2) {
@@ -66,8 +67,8 @@ struct RaceCourseElevationChart: View {
                     }
             }
         }
-        .chartXAxisLabel("Distance (km)")
-        .chartYAxisLabel("Altitude (m)")
+        .chartXAxisLabel("Distance (\(UnitFormatter.distanceLabel(units)))")
+        .chartYAxisLabel("Altitude (\(UnitFormatter.elevationShortLabel(units)))")
     }
 
     // MARK: - Checkpoint Annotation
@@ -91,13 +92,13 @@ struct RaceCourseElevationChart: View {
     private var elevationBadges: some View {
         HStack(spacing: Theme.Spacing.sm) {
             Label(
-                String(format: "+%.0f m", elevationChanges.gainM),
+                "+\(UnitFormatter.formatElevation(elevationChanges.gainM, unit: units))",
                 systemImage: "arrow.up.right"
             )
             .foregroundStyle(Theme.Colors.danger)
 
             Label(
-                String(format: "-%.0f m", elevationChanges.lossM),
+                "-\(UnitFormatter.formatElevation(elevationChanges.lossM, unit: units))",
                 systemImage: "arrow.down.right"
             )
             .foregroundStyle(Theme.Colors.success)
@@ -111,6 +112,6 @@ struct RaceCourseElevationChart: View {
         let gain = elevationChanges.gainM
         let loss = elevationChanges.lossM
         let dist = checkpoints.last?.distanceFromStartKm ?? 0
-        return "Course elevation profile. \(String(format: "%.0f", dist)) km with \(Int(gain)) meters gain and \(Int(loss)) meters loss."
+        return "Course elevation profile. \(UnitFormatter.formatDistance(dist, unit: units, decimals: 0)) with \(UnitFormatter.formatElevation(gain, unit: units)) gain and \(UnitFormatter.formatElevation(loss, unit: units)) loss."
     }
 }

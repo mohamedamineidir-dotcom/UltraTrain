@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct FinishEstimationView: View {
+    @Environment(\.unitPreference) private var units
     @ScaledMetric(relativeTo: .largeTitle) private var errorIconSize: CGFloat = 48
     @State private var viewModel: FinishEstimationViewModel
 
@@ -59,11 +60,11 @@ struct FinishEstimationView: View {
                 .font(.title2.bold())
             HStack(spacing: Theme.Spacing.md) {
                 Label(
-                    String(format: "%.0f km", viewModel.race.distanceKm),
+                    UnitFormatter.formatDistance(viewModel.race.distanceKm, unit: units, decimals: 0),
                     systemImage: "point.topleft.down.to.point.bottomright.curvepath"
                 )
                 Label(
-                    String(format: "%.0f m D+", viewModel.race.elevationGainM),
+                    "\(UnitFormatter.formatElevation(viewModel.race.elevationGainM, unit: units)) D+",
                     systemImage: "mountain.2"
                 )
                 Label(

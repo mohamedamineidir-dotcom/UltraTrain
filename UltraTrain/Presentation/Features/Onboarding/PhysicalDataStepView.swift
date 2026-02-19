@@ -66,21 +66,41 @@ struct PhysicalDataStepView: View {
                 .font(.headline)
             LabeledStepper(
                 label: "Weight",
-                value: $viewModel.weightKg,
-                range: 30...200,
-                step: 0.5,
-                unit: "kg"
+                value: weightBinding,
+                range: isImperial ? 66...440 : 30...200,
+                step: isImperial ? 1 : 0.5,
+                unit: UnitFormatter.weightLabel(viewModel.preferredUnit)
             )
             Divider()
             LabeledStepper(
                 label: "Height",
-                value: $viewModel.heightCm,
-                range: 100...250,
+                value: heightBinding,
+                range: isImperial ? 39...98 : 100...250,
                 step: 1,
-                unit: "cm"
+                unit: isImperial ? "in" : "cm"
             )
         }
         .cardStyle()
+    }
+
+    private var isImperial: Bool { viewModel.preferredUnit == .imperial }
+
+    private var weightBinding: Binding<Double> {
+        isImperial
+            ? Binding(
+                get: { UnitFormatter.weightValue(viewModel.weightKg, unit: .imperial) },
+                set: { viewModel.weightKg = UnitFormatter.weightToKg($0, unit: .imperial) }
+            )
+            : $viewModel.weightKg
+    }
+
+    private var heightBinding: Binding<Double> {
+        isImperial
+            ? Binding(
+                get: { (viewModel.heightCm / 2.54).rounded() },
+                set: { viewModel.heightCm = $0 * 2.54 }
+            )
+            : $viewModel.heightCm
     }
 
     private var heartRateSection: some View {

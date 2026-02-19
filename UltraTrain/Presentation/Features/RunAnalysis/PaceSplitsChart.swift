@@ -2,11 +2,13 @@ import SwiftUI
 import Charts
 
 struct PaceSplitsChart: View {
+    @Environment(\.unitPreference) private var units
+
     let splits: [Split]
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("Pace per Kilometer")
+            Text("Pace per \(UnitFormatter.distanceLabel(units).capitalized)")
                 .font(.headline)
 
             Chart(splits) { split in
@@ -17,7 +19,7 @@ struct PaceSplitsChart: View {
                 .foregroundStyle(barColor(for: split))
                 .cornerRadius(4)
             }
-            .chartXAxisLabel("Kilometer")
+            .chartXAxisLabel(UnitFormatter.distanceLabel(units).capitalized)
             .chartXAxis {
                 AxisMarks(values: .automatic(desiredCount: min(splits.count, 10)))
             }
@@ -26,7 +28,7 @@ struct PaceSplitsChart: View {
                     AxisGridLine()
                     AxisValueLabel {
                         if let seconds = value.as(Double.self) {
-                            Text(RunStatisticsCalculator.formatPace(seconds))
+                            Text(RunStatisticsCalculator.formatPace(seconds, unit: units))
                         }
                     }
                 }
@@ -42,12 +44,13 @@ struct PaceSplitsChart: View {
 
     private var chartSummary: String {
         guard !splits.isEmpty else { return "Pace splits chart, no data" }
-        let avg = RunStatisticsCalculator.formatPace(averagePace)
+        let avg = RunStatisticsCalculator.formatPace(averagePace, unit: units)
         let fastest = splits.min(by: { $0.duration < $1.duration })
         let slowest = splits.max(by: { $0.duration < $1.duration })
-        let fastestPace = fastest.map { RunStatisticsCalculator.formatPace($0.duration) } ?? "--"
-        let slowestPace = slowest.map { RunStatisticsCalculator.formatPace($0.duration) } ?? "--"
-        return "Pace splits chart. \(splits.count) kilometers. Average \(avg) per km. Fastest \(fastestPace), slowest \(slowestPace)."
+        let fastestPace = fastest.map { RunStatisticsCalculator.formatPace($0.duration, unit: units) } ?? "--"
+        let slowestPace = slowest.map { RunStatisticsCalculator.formatPace($0.duration, unit: units) } ?? "--"
+        let unitLabel = UnitFormatter.paceLabel(units)
+        return "Pace splits chart. \(splits.count) splits. Average \(avg)\(unitLabel). Fastest \(fastestPace), slowest \(slowestPace)."
     }
 
     // MARK: - Helpers

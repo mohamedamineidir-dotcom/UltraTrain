@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct GearRowView: View {
+    @Environment(\.unitPreference) private var units
     let item: GearItem
 
     var body: some View {
@@ -27,7 +28,7 @@ struct GearRowView: View {
                 ProgressView(value: item.usagePercentage)
                     .tint(progressColor)
 
-                Text("\(String(format: "%.0f", item.totalDistanceKm)) / \(String(format: "%.0f", item.maxDistanceKm)) km")
+                Text("\(UnitFormatter.formatDistance(item.totalDistanceKm, unit: units, decimals: 0)) / \(UnitFormatter.formatDistance(item.maxDistanceKm, unit: units, decimals: 0))")
                     .font(.caption2)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }

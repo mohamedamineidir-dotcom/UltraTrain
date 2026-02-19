@@ -45,18 +45,24 @@ struct RunningHistoryStepView: View {
         .accessibilityIdentifier("onboarding.newRunnerToggle")
     }
 
+    private var isImperial: Bool { viewModel.preferredUnit == .imperial }
+
     private var weeklyVolumeSection: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             Text("Average weekly distance")
                 .font(.headline)
-            Text("How many km do you typically run per week?")
+            Text("How many \(UnitFormatter.distanceLabel(viewModel.preferredUnit)) do you typically run per week?")
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
 
             HStack {
-                Slider(value: $viewModel.weeklyVolumeKm, in: 5...200, step: 5)
-                    .tint(Theme.Colors.primary)
-                Text("\(Int(viewModel.weeklyVolumeKm)) km")
+                Slider(
+                    value: weeklyVolumeBinding,
+                    in: isImperial ? 3...124 : 5...200,
+                    step: isImperial ? 3 : 5
+                )
+                .tint(Theme.Colors.primary)
+                Text("\(Int(UnitFormatter.distanceValue(viewModel.weeklyVolumeKm, unit: viewModel.preferredUnit))) \(UnitFormatter.distanceLabel(viewModel.preferredUnit))")
                     .font(.body.monospacedDigit().bold())
                     .frame(width: 65, alignment: .trailing)
             }
@@ -73,13 +79,35 @@ struct RunningHistoryStepView: View {
                 .foregroundStyle(Theme.Colors.secondaryLabel)
 
             HStack {
-                Slider(value: $viewModel.longestRunKm, in: 5...300, step: 5)
-                    .tint(Theme.Colors.primary)
-                Text("\(Int(viewModel.longestRunKm)) km")
+                Slider(
+                    value: longestRunBinding,
+                    in: isImperial ? 3...186 : 5...300,
+                    step: isImperial ? 3 : 5
+                )
+                .tint(Theme.Colors.primary)
+                Text("\(Int(UnitFormatter.distanceValue(viewModel.longestRunKm, unit: viewModel.preferredUnit))) \(UnitFormatter.distanceLabel(viewModel.preferredUnit))")
                     .font(.body.monospacedDigit().bold())
                     .frame(width: 65, alignment: .trailing)
             }
         }
         .cardStyle()
+    }
+
+    private var weeklyVolumeBinding: Binding<Double> {
+        isImperial
+            ? Binding(
+                get: { UnitFormatter.distanceValue(viewModel.weeklyVolumeKm, unit: .imperial) },
+                set: { viewModel.weeklyVolumeKm = UnitFormatter.distanceToKm($0, unit: .imperial) }
+            )
+            : $viewModel.weeklyVolumeKm
+    }
+
+    private var longestRunBinding: Binding<Double> {
+        isImperial
+            ? Binding(
+                get: { UnitFormatter.distanceValue(viewModel.longestRunKm, unit: .imperial) },
+                set: { viewModel.longestRunKm = UnitFormatter.distanceToKm($0, unit: .imperial) }
+            )
+            : $viewModel.longestRunKm
     }
 }

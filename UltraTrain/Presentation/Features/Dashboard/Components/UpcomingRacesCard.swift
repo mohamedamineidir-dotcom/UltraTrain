@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct UpcomingRacesCard: View {
+    @Environment(\.unitPreference) private var units
     let races: [Race]
 
     var body: some View {
@@ -28,7 +29,7 @@ struct UpcomingRacesCard: View {
                 Text(race.name)
                     .font(.subheadline.bold())
                     .lineLimit(1)
-                Text(String(format: "%.0f km · %.0f m D+", race.distanceKm, race.elevationGainM))
+                Text("\(UnitFormatter.formatDistance(race.distanceKm, unit: units, decimals: 0)) · \(UnitFormatter.formatElevation(race.elevationGainM, unit: units)) D+")
                     .font(.caption2)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }

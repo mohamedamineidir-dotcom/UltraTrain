@@ -118,20 +118,69 @@ struct EditRaceSheet: View {
 
     // MARK: - Sections
 
+    @Environment(\.unitPreference) private var units
+
+    private var isImperial: Bool { units == .imperial }
+
     private var raceInfoSection: some View {
         Section("Race Info") {
             TextField("Race Name", text: $name)
                 .autocorrectionDisabled()
             DatePicker("Race Date", selection: $date, in: Date.now..., displayedComponents: .date)
-            LabeledStepper(label: "Distance", value: $distanceKm, range: 1...500, step: 5, unit: "km")
+            LabeledStepper(
+                label: "Distance",
+                value: distanceBinding,
+                range: isImperial ? 1...310 : 1...500,
+                step: isImperial ? 3 : 5,
+                unit: UnitFormatter.distanceLabel(units)
+            )
         }
     }
 
     private var elevationSection: some View {
         Section("Elevation") {
-            LabeledStepper(label: "D+ (gain)", value: $elevationGainM, range: 0...20000, step: 100, unit: "m")
-            LabeledStepper(label: "D- (loss)", value: $elevationLossM, range: 0...20000, step: 100, unit: "m")
+            LabeledStepper(
+                label: "D+ (gain)",
+                value: elevationGainBinding,
+                range: isImperial ? 0...65600 : 0...20000,
+                step: isImperial ? 300 : 100,
+                unit: UnitFormatter.elevationShortLabel(units)
+            )
+            LabeledStepper(
+                label: "D- (loss)",
+                value: elevationLossBinding,
+                range: isImperial ? 0...65600 : 0...20000,
+                step: isImperial ? 300 : 100,
+                unit: UnitFormatter.elevationShortLabel(units)
+            )
         }
+    }
+
+    private var distanceBinding: Binding<Double> {
+        isImperial
+            ? Binding(
+                get: { UnitFormatter.distanceValue(distanceKm, unit: .imperial) },
+                set: { distanceKm = UnitFormatter.distanceToKm($0, unit: .imperial) }
+            )
+            : $distanceKm
+    }
+
+    private var elevationGainBinding: Binding<Double> {
+        isImperial
+            ? Binding(
+                get: { UnitFormatter.elevationValue(elevationGainM, unit: .imperial) },
+                set: { elevationGainM = UnitFormatter.elevationToMeters($0, unit: .imperial) }
+            )
+            : $elevationGainM
+    }
+
+    private var elevationLossBinding: Binding<Double> {
+        isImperial
+            ? Binding(
+                get: { UnitFormatter.elevationValue(elevationLossM, unit: .imperial) },
+                set: { elevationLossM = UnitFormatter.elevationToMeters($0, unit: .imperial) }
+            )
+            : $elevationLossM
     }
 
     private var prioritySection: some View {
@@ -200,7 +249,7 @@ struct EditRaceSheet: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(cp.name)
                                     .foregroundStyle(Theme.Colors.label)
-                                Text("\(cp.distanceFromStartKm, specifier: "%.0f") km  ·  \(cp.elevationM, specifier: "%.0f") m")
+                                Text("\(UnitFormatter.formatDistance(cp.distanceFromStartKm, unit: units, decimals: 0))  ·  \(UnitFormatter.formatElevation(cp.elevationM, unit: units))")
                                     .font(.caption)
                                     .foregroundStyle(Theme.Colors.secondaryLabel)
                             }

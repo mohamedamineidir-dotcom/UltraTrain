@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct LastRunCard: View {
+    @Environment(\.unitPreference) private var units
     let lastRun: CompletedRun?
 
     var body: some View {
@@ -10,8 +11,8 @@ struct LastRunCard: View {
                     .font(.headline)
 
                 HStack(spacing: Theme.Spacing.md) {
-                    statColumn(value: String(format: "%.1f", run.distanceKm), label: "km")
-                    statColumn(value: run.paceFormatted, label: "pace")
+                    statColumn(value: String(format: "%.1f", UnitFormatter.distanceValue(run.distanceKm, unit: units)), label: UnitFormatter.distanceLabel(units))
+                    statColumn(value: RunStatisticsCalculator.formatPace(run.averagePaceSecondsPerKm, unit: units), label: "pace")
                     statColumn(value: formattedDuration(run.duration), label: "time")
                 }
 

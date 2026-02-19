@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct DashboardNextSessionCard: View {
+    @Environment(\.unitPreference) private var units
     let session: TrainingSession?
     let hasPlan: Bool
     let currentPhase: TrainingPhase?
@@ -46,7 +47,7 @@ struct DashboardNextSessionCard: View {
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                     if session.plannedDistanceKm > 0 {
-                        Text("\(session.plannedDistanceKm, specifier: "%.1f") km")
+                        Text(UnitFormatter.formatDistance(session.plannedDistanceKm, unit: units))
                             .font(.caption)
                             .foregroundStyle(Theme.Colors.secondaryLabel)
                     }

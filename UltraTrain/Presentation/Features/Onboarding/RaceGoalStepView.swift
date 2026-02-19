@@ -27,6 +27,8 @@ struct RaceGoalStepView: View {
         }
     }
 
+    private var isImperial: Bool { viewModel.preferredUnit == .imperial }
+
     private var raceInfoSection: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             Text("Race Info")
@@ -43,10 +45,10 @@ struct RaceGoalStepView: View {
             )
             LabeledStepper(
                 label: "Distance",
-                value: $viewModel.raceDistanceKm,
-                range: 1...500,
-                step: 5,
-                unit: "km"
+                value: distanceBinding,
+                range: isImperial ? 1...310 : 1...500,
+                step: isImperial ? 3 : 5,
+                unit: UnitFormatter.distanceLabel(viewModel.preferredUnit)
             )
         }
         .cardStyle()
@@ -58,21 +60,48 @@ struct RaceGoalStepView: View {
                 .font(.headline)
             LabeledStepper(
                 label: "D+ (gain)",
-                value: $viewModel.raceElevationGainM,
-                range: 0...20000,
-                step: 100,
-                unit: "m"
+                value: elevationGainBinding,
+                range: isImperial ? 0...65600 : 0...20000,
+                step: isImperial ? 300 : 100,
+                unit: UnitFormatter.elevationShortLabel(viewModel.preferredUnit)
             )
             Divider()
             LabeledStepper(
                 label: "D- (loss)",
-                value: $viewModel.raceElevationLossM,
-                range: 0...20000,
-                step: 100,
-                unit: "m"
+                value: elevationLossBinding,
+                range: isImperial ? 0...65600 : 0...20000,
+                step: isImperial ? 300 : 100,
+                unit: UnitFormatter.elevationShortLabel(viewModel.preferredUnit)
             )
         }
         .cardStyle()
+    }
+
+    private var distanceBinding: Binding<Double> {
+        isImperial
+            ? Binding(
+                get: { UnitFormatter.distanceValue(viewModel.raceDistanceKm, unit: .imperial) },
+                set: { viewModel.raceDistanceKm = UnitFormatter.distanceToKm($0, unit: .imperial) }
+            )
+            : $viewModel.raceDistanceKm
+    }
+
+    private var elevationGainBinding: Binding<Double> {
+        isImperial
+            ? Binding(
+                get: { UnitFormatter.elevationValue(viewModel.raceElevationGainM, unit: .imperial) },
+                set: { viewModel.raceElevationGainM = UnitFormatter.elevationToMeters($0, unit: .imperial) }
+            )
+            : $viewModel.raceElevationGainM
+    }
+
+    private var elevationLossBinding: Binding<Double> {
+        isImperial
+            ? Binding(
+                get: { UnitFormatter.elevationValue(viewModel.raceElevationLossM, unit: .imperial) },
+                set: { viewModel.raceElevationLossM = UnitFormatter.elevationToMeters($0, unit: .imperial) }
+            )
+            : $viewModel.raceElevationLossM
     }
 
     private var goalTypeSection: some View {

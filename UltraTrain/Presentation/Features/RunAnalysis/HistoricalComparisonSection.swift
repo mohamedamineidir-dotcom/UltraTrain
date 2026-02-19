@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct HistoricalComparisonSection: View {
+    @Environment(\.unitPreference) private var units
+
     let comparison: HistoricalComparison
 
     var body: some View {
@@ -82,9 +84,9 @@ struct HistoricalComparisonSection: View {
                             Image(systemName: "trophy.fill")
                                 .font(.caption)
                                 .foregroundStyle(Theme.Colors.warning)
-                            Text("KM \(pr.kilometerNumber)")
+                            Text("\(UnitFormatter.distanceLabel(units).uppercased()) \(pr.kilometerNumber)")
                                 .font(.caption2.bold())
-                            Text(RunStatisticsCalculator.formatPace(pr.currentPace))
+                            Text(RunStatisticsCalculator.formatPace(pr.currentPace, unit: units))
                                 .font(.caption2.monospacedDigit())
                                 .foregroundStyle(Theme.Colors.success)
                         }

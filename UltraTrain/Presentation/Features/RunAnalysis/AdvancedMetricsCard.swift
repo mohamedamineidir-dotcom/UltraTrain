@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct AdvancedMetricsCard: View {
+    @Environment(\.unitPreference) private var units
+
     let metrics: AdvancedRunMetrics
 
     var body: some View {
@@ -20,7 +22,7 @@ struct AdvancedMetricsCard: View {
 
                 metricTile(
                     label: "GAP",
-                    value: RunStatisticsCalculator.formatPace(metrics.averageGradientAdjustedPace) + " /km",
+                    value: RunStatisticsCalculator.formatPace(metrics.averageGradientAdjustedPace, unit: units) + " " + UnitFormatter.paceLabel(units),
                     color: Theme.Colors.primary
                 )
 

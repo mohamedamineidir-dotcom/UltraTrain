@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct RunSummarySheet: View {
+    @Environment(\.unitPreference) private var units
     @Bindable var viewModel: ActiveRunViewModel
     let exportService: any ExportServiceProtocol
     let onDismiss: () -> Void
@@ -98,12 +99,12 @@ struct RunSummarySheet: View {
 
     private var statsSection: some View {
         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: Theme.Spacing.md) {
-            summaryTile(label: "Distance", value: "\(viewModel.formattedDistance) km")
+            summaryTile(label: "Distance", value: "\(viewModel.formattedDistance) \(UnitFormatter.distanceLabel(units))")
             if viewModel.pausedDuration > 0 {
                 summaryTile(label: "Moving Time", value: viewModel.formattedTime)
                 summaryTile(label: "Total Time", value: viewModel.formattedTotalTime)
             }
-            summaryTile(label: "Avg Pace", value: "\(viewModel.formattedPace) /km")
+            summaryTile(label: "Avg Pace", value: "\(viewModel.formattedPace) \(UnitFormatter.paceLabel(units))")
             summaryTile(label: "Elevation", value: viewModel.formattedElevation)
             summaryTile(
                 label: "Heart Rate",
@@ -147,7 +148,7 @@ struct RunSummarySheet: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Linked Session")
                         .font(.caption.bold())
-                    Text("\(session.type.rawValue.capitalized) — \(String(format: "%.1f km", session.plannedDistanceKm))")
+                    Text("\(session.type.rawValue.capitalized) — \(UnitFormatter.formatDistance(session.plannedDistanceKm, unit: units))")
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
@@ -175,7 +176,7 @@ struct RunSummarySheet: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Auto-Linked to Session")
                         .font(.caption.bold())
-                    Text("\(match.session.type.rawValue.capitalized) — \(String(format: "%.1f km", match.session.plannedDistanceKm))")
+                    Text("\(match.session.type.rawValue.capitalized) — \(UnitFormatter.formatDistance(match.session.plannedDistanceKm, unit: units))")
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }

@@ -2,6 +2,7 @@ import SwiftUI
 import Charts
 
 struct HeartRateTrendChartView: View {
+    @Environment(\.unitPreference) private var units
     let trendPoints: [RunTrendPoint]
     @State private var selectedDate: Date?
 
@@ -89,7 +90,7 @@ struct HeartRateTrendChartView: View {
                         ChartAnnotationCard(
                             title: point.date.formatted(.dateTime.month(.abbreviated).day()),
                             value: "\(point.averageHeartRate!) bpm",
-                            subtitle: RunStatisticsCalculator.formatPace(point.averagePaceSecondsPerKm) + " /km"
+                            subtitle: RunStatisticsCalculator.formatPace(point.averagePaceSecondsPerKm, unit: units) + " " + UnitFormatter.paceLabel(units)
                         )
                         .offset(
                             x: annotationX(xPos: xPos, plotWidth: plotFrame.width),

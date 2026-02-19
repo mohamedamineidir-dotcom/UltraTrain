@@ -6,6 +6,7 @@ struct AppRootView: View {
     @State private var hasCompletedOnboarding: Bool?
     @State private var isUnlocked = false
     @State private var needsBiometricLock = false
+    @State private var unitPreference: UnitPreference = .metric
     private let athleteRepository: any AthleteRepository
     private let raceRepository: any RaceRepository
     private let planRepository: any TrainingPlanRepository
@@ -152,6 +153,7 @@ struct AppRootView: View {
                 }
             }
         }
+        .environment(\.unitPreference, unitPreference)
         .task {
             #if DEBUG
             if ProcessInfo.processInfo.arguments.contains("-UITestSkipOnboarding") {
@@ -161,11 +163,15 @@ struct AppRootView: View {
             #endif
             await checkBiometricLockSetting()
             await checkOnboardingStatus()
+            await loadUnitPreference()
             await widgetDataWriter.writeAll()
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
-                Task { await pendingActionProcessor?.processPendingActions() }
+                Task {
+                    await pendingActionProcessor?.processPendingActions()
+                    await loadUnitPreference()
+                }
             }
             if newPhase == .background && needsBiometricLock {
                 isUnlocked = false
@@ -190,6 +196,16 @@ struct AppRootView: View {
         } catch {
             Logger.app.error("Failed to check onboarding status: \(error)")
             hasCompletedOnboarding = false
+        }
+    }
+
+    private func loadUnitPreference() async {
+        do {
+            if let athlete = try await athleteRepository.getAthlete() {
+                unitPreference = athlete.preferredUnit
+            }
+        } catch {
+            Logger.app.error("Failed to load unit preference: \(error)")
         }
     }
 }

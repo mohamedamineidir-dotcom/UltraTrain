@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct GearDetailView: View {
+    @Environment(\.unitPreference) private var units
     @State private var item: GearItem
     @State private var recentRuns: [CompletedRun] = []
     @State private var isLoading = false
@@ -68,10 +69,10 @@ struct GearDetailView: View {
                     .tint(progressColor)
 
                 HStack {
-                    Text("\(String(format: "%.1f", item.totalDistanceKm)) km used")
+                    Text("\(UnitFormatter.formatDistance(item.totalDistanceKm, unit: units)) used")
                         .font(.subheadline.bold())
                     Spacer()
-                    Text("\(String(format: "%.0f", item.remainingKm)) km remaining")
+                    Text("\(UnitFormatter.formatDistance(item.remainingKm, unit: units, decimals: 0)) remaining")
                         .font(.subheadline)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
@@ -97,7 +98,7 @@ struct GearDetailView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(run.date.formatted(date: .abbreviated, time: .omitted))
                             .font(.subheadline)
-                        Text("\(String(format: "%.1f", run.distanceKm)) km")
+                        Text(UnitFormatter.formatDistance(run.distanceKm, unit: units))
                             .font(.caption)
                             .foregroundStyle(Theme.Colors.secondaryLabel)
                     }

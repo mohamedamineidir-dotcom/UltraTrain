@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ActiveRunStatsBar: View {
+    @Environment(\.unitPreference) private var units
     let distance: String
     let pace: String
     let elevation: String
@@ -8,8 +9,8 @@ struct ActiveRunStatsBar: View {
 
     var body: some View {
         LazyVGrid(columns: columns, spacing: Theme.Spacing.md) {
-            StatTile(label: "Distance", value: distance, unit: "km")
-            StatTile(label: "Pace", value: pace, unit: "/km")
+            StatTile(label: "Distance", value: distance, unit: UnitFormatter.distanceLabel(units))
+            StatTile(label: "Pace", value: pace, unit: UnitFormatter.paceLabel(units))
             StatTile(label: "Elevation", value: elevation, unit: "")
             StatTile(
                 label: "Heart Rate",

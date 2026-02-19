@@ -134,6 +134,7 @@ struct StravaImportView: View {
 // MARK: - Row
 
 private struct StravaActivityRow: View {
+    @Environment(\.unitPreference) private var units
     let activity: StravaActivity
     let isImporting: Bool
     let onImport: () -> Void
@@ -146,7 +147,7 @@ private struct StravaActivityRow: View {
                     .lineLimit(1)
                 HStack(spacing: Theme.Spacing.md) {
                     Text(activity.startDate, style: .date)
-                    Text(String(format: "%.1f km", activity.distanceKm))
+                    Text(UnitFormatter.formatDistance(activity.distanceKm, unit: units))
                     Text(activity.formattedDuration)
                 }
                 .font(.caption)
@@ -155,7 +156,7 @@ private struct StravaActivityRow: View {
                 if activity.totalElevationGain > 0 {
                     HStack(spacing: Theme.Spacing.md) {
                         Label(
-                            String(format: "+%.0f m", activity.totalElevationGain),
+                            "+" + UnitFormatter.formatElevation(activity.totalElevationGain, unit: units),
                             systemImage: "arrow.up.right"
                         )
                         if let avgHR = activity.averageHeartRate {

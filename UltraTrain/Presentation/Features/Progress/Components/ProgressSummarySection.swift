@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ProgressSummarySection: View {
+    @Environment(\.unitPreference) private var units
     let totalDistanceKm: Double
     let totalElevationGainM: Double
     let totalRuns: Int
@@ -17,13 +18,13 @@ struct ProgressSummarySection: View {
             ) {
                 StatCard(
                     title: "Total Distance",
-                    value: String(format: "%.0f", totalDistanceKm),
-                    unit: "km"
+                    value: String(format: "%.0f", UnitFormatter.distanceValue(totalDistanceKm, unit: units)),
+                    unit: UnitFormatter.distanceLabel(units)
                 )
                 StatCard(
                     title: "Total Elevation",
-                    value: String(format: "%.0f", totalElevationGainM),
-                    unit: "m D+"
+                    value: String(format: "%.0f", UnitFormatter.elevationValue(totalElevationGainM, unit: units)),
+                    unit: UnitFormatter.elevationLabel(units)
                 )
                 StatCard(
                     title: "Total Runs",
@@ -32,8 +33,8 @@ struct ProgressSummarySection: View {
                 )
                 StatCard(
                     title: "Avg/Week",
-                    value: String(format: "%.1f", averageWeeklyKm),
-                    unit: "km"
+                    value: String(format: "%.1f", UnitFormatter.distanceValue(averageWeeklyKm, unit: units)),
+                    unit: UnitFormatter.distanceLabel(units)
                 )
             }
         }

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SessionDetailView: View {
+    @Environment(\.unitPreference) private var units
     let session: TrainingSession
     let planStartDate: Date
     let planEndDate: Date
@@ -129,15 +130,15 @@ struct SessionDetailView: View {
             if session.plannedDistanceKm > 0 {
                 StatCard(
                     title: "Distance",
-                    value: String(format: "%.1f", session.plannedDistanceKm),
-                    unit: "km"
+                    value: String(format: "%.1f", UnitFormatter.distanceValue(session.plannedDistanceKm, unit: units)),
+                    unit: UnitFormatter.distanceLabel(units)
                 )
             }
             if session.plannedElevationGainM > 0 {
                 StatCard(
                     title: "Elevation",
-                    value: String(format: "%.0f", session.plannedElevationGainM),
-                    unit: "m D+"
+                    value: String(format: "%.0f", UnitFormatter.elevationValue(session.plannedElevationGainM, unit: units)),
+                    unit: UnitFormatter.elevationLabel(units)
                 )
             }
             if session.plannedDuration > 0 {

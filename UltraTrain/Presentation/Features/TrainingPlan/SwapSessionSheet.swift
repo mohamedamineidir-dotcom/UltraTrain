@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SwapSessionSheet: View {
+    @Environment(\.unitPreference) private var units
     let currentSession: TrainingSession
     let availableSessions: [SwapCandidate]
     let onSwap: (SwapCandidate) -> Void
@@ -55,7 +56,7 @@ struct SwapSessionSheet: View {
 
                 HStack(spacing: Theme.Spacing.sm) {
                     if candidate.session.plannedDistanceKm > 0 {
-                        Text("\(candidate.session.plannedDistanceKm, specifier: "%.1f") km")
+                        Text(UnitFormatter.formatDistance(candidate.session.plannedDistanceKm, unit: units))
                     }
                     Text(candidate.session.date.formatted(.dateTime.weekday(.wide).month().day()))
                 }

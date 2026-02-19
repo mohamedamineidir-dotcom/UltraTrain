@@ -36,6 +36,10 @@ struct EditCheckpointSheet: View {
         }
     }
 
+    @Environment(\.unitPreference) private var units
+
+    private var isImperial: Bool { units == .imperial }
+
     var body: some View {
         NavigationStack {
             Form {
@@ -44,17 +48,17 @@ struct EditCheckpointSheet: View {
                         .autocorrectionDisabled()
                     LabeledStepper(
                         label: "Distance from start",
-                        value: $distanceKm,
-                        range: 1...max(1, raceDistanceKm),
+                        value: cpDistanceBinding,
+                        range: 1...max(1, isImperial ? UnitFormatter.distanceValue(raceDistanceKm, unit: .imperial) : raceDistanceKm),
                         step: 1,
-                        unit: "km"
+                        unit: UnitFormatter.distanceLabel(units)
                     )
                     LabeledStepper(
                         label: "Elevation",
-                        value: $elevationM,
-                        range: 0...5000,
-                        step: 50,
-                        unit: "m"
+                        value: cpElevationBinding,
+                        range: isImperial ? 0...16400 : 0...5000,
+                        step: isImperial ? 150 : 50,
+                        unit: UnitFormatter.elevationShortLabel(units)
                     )
                 }
 
@@ -74,6 +78,24 @@ struct EditCheckpointSheet: View {
                 }
             }
         }
+    }
+
+    private var cpDistanceBinding: Binding<Double> {
+        isImperial
+            ? Binding(
+                get: { UnitFormatter.distanceValue(distanceKm, unit: .imperial) },
+                set: { distanceKm = UnitFormatter.distanceToKm($0, unit: .imperial) }
+            )
+            : $distanceKm
+    }
+
+    private var cpElevationBinding: Binding<Double> {
+        isImperial
+            ? Binding(
+                get: { UnitFormatter.elevationValue(elevationM, unit: .imperial) },
+                set: { elevationM = UnitFormatter.elevationToMeters($0, unit: .imperial) }
+            )
+            : $elevationM
     }
 
     private var isValid: Bool {

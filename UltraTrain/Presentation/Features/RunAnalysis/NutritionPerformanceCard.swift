@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct NutritionPerformanceCard: View {
+    @Environment(\.unitPreference) private var units
+
     let analysis: NutritionAnalysis
 
     var body: some View {
@@ -73,7 +75,7 @@ struct NutritionPerformanceCard: View {
                 Text("Before First Intake")
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
-                Text(RunStatisticsCalculator.formatPace(impact.averagePaceBeforeFirstIntake) + " /km")
+                Text(RunStatisticsCalculator.formatPace(impact.averagePaceBeforeFirstIntake, unit: units) + " " + UnitFormatter.paceLabel(units))
                     .font(.subheadline.monospacedDigit())
             }
 
@@ -88,7 +90,7 @@ struct NutritionPerformanceCard: View {
                 Text("After Last Intake")
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
-                Text(RunStatisticsCalculator.formatPace(impact.averagePaceAfterLastIntake) + " /km")
+                Text(RunStatisticsCalculator.formatPace(impact.averagePaceAfterLastIntake, unit: units) + " " + UnitFormatter.paceLabel(units))
                     .font(.subheadline.monospacedDigit())
             }
 

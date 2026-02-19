@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct PersonalRecordsSection: View {
+    @Environment(\.unitPreference) private var units
     let records: [PersonalRecord]
 
     var body: some View {
@@ -80,11 +81,11 @@ struct PersonalRecordsSection: View {
     private func formattedValue(for record: PersonalRecord) -> String {
         switch record.type {
         case .longestDistance:
-            return String(format: "%.1f km", record.value)
+            return UnitFormatter.formatDistance(record.value, unit: units)
         case .mostElevation:
-            return String(format: "%.0f m", record.value)
+            return UnitFormatter.formatElevation(record.value, unit: units)
         case .fastestPace:
-            return RunStatisticsCalculator.formatPace(record.value) + " /km"
+            return RunStatisticsCalculator.formatPace(record.value, unit: units) + " " + UnitFormatter.paceLabel(units)
         case .longestDuration:
             let hours = Int(record.value) / 3600
             let minutes = (Int(record.value) % 3600) / 60

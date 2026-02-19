@@ -22,4 +22,11 @@ extension TimeInterval {
         let seconds = Int(self) % 60
         return String(format: "%d:%02d /km", minutes, seconds)
     }
+
+    func formattedPace(_ unit: UnitPreference) -> String {
+        let converted = UnitFormatter.paceValue(self, unit: unit)
+        let minutes = Int(converted) / 60
+        let seconds = Int(converted) % 60
+        return String(format: "%d:%02d %@", minutes, seconds, UnitFormatter.paceLabel(unit))
+    }
 }

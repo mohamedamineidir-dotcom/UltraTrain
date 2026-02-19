@@ -44,6 +44,10 @@ enum RunStatisticsCalculator {
         return String(format: "%d:%02d", minutes, seconds)
     }
 
+    static func formatPace(_ secondsPerKm: Double, unit: UnitPreference) -> String {
+        UnitFormatter.formatPace(secondsPerKm, unit: unit)
+    }
+
     static func formatDuration(_ duration: TimeInterval) -> String {
         let hours = Int(duration) / 3600
         let minutes = (Int(duration) % 3600) / 60

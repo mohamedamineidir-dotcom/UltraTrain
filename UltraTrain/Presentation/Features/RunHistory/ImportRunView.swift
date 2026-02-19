@@ -2,6 +2,7 @@ import SwiftUI
 import MapKit
 
 struct ImportRunView: View {
+    @Environment(\.unitPreference) private var units
     let fileURL: URL
     let athleteId: UUID
     let runImportUseCase: any RunImportUseCase
@@ -93,7 +94,7 @@ struct ImportRunView: View {
                 GridRow {
                     statItem(
                         label: "Distance",
-                        value: String(format: "%.2f km", distance)
+                        value: UnitFormatter.formatDistance(distance, unit: units, decimals: 2)
                     )
                     statItem(
                         label: "Duration",
@@ -103,11 +104,11 @@ struct ImportRunView: View {
                 GridRow {
                     statItem(
                         label: "Avg Pace",
-                        value: "\(RunStatisticsCalculator.formatPace(pace)) /km"
+                        value: RunStatisticsCalculator.formatPace(pace, unit: units) + " " + UnitFormatter.paceLabel(units)
                     )
                     statItem(
                         label: "Elevation",
-                        value: String(format: "+%.0fm / -%.0fm", elevation.gainM, elevation.lossM)
+                        value: "+" + UnitFormatter.formatElevation(elevation.gainM, unit: units) + " / -" + UnitFormatter.formatElevation(elevation.lossM, unit: units)
                     )
                 }
                 if !heartRates.isEmpty {
@@ -160,9 +161,7 @@ struct ImportRunView: View {
                         .foregroundStyle(Theme.Colors.success)
                     Text("Run imported successfully!")
                         .font(.headline)
-                    Text(String(format: "%.2f km — %@",
-                                run.distanceKm,
-                                RunStatisticsCalculator.formatDuration(run.duration)))
+                    Text("\(UnitFormatter.formatDistance(run.distanceKm, unit: units, decimals: 2)) — \(RunStatisticsCalculator.formatDuration(run.duration))")
                         .font(.subheadline)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                     Button("Done") { dismiss() }

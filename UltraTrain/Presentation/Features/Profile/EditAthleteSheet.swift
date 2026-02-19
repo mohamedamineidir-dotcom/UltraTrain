@@ -83,11 +83,43 @@ struct EditAthleteSheet: View {
         }
     }
 
+    private var isImperial: Bool { preferredUnit == .imperial }
+
     private var bodyMetricsSection: some View {
         Section("Body Metrics") {
-            LabeledStepper(label: "Weight", value: $weightKg, range: 30...200, step: 0.5, unit: "kg")
-            LabeledStepper(label: "Height", value: $heightCm, range: 100...250, step: 1, unit: "cm")
+            LabeledStepper(
+                label: "Weight",
+                value: weightBinding,
+                range: isImperial ? 66...440 : 30...200,
+                step: isImperial ? 1 : 0.5,
+                unit: UnitFormatter.weightLabel(preferredUnit)
+            )
+            LabeledStepper(
+                label: "Height",
+                value: heightBinding,
+                range: isImperial ? 39...98 : 100...250,
+                step: 1,
+                unit: isImperial ? "in" : "cm"
+            )
         }
+    }
+
+    private var weightBinding: Binding<Double> {
+        isImperial
+            ? Binding(
+                get: { UnitFormatter.weightValue(weightKg, unit: .imperial) },
+                set: { weightKg = UnitFormatter.weightToKg($0, unit: .imperial) }
+            )
+            : $weightKg
+    }
+
+    private var heightBinding: Binding<Double> {
+        isImperial
+            ? Binding(
+                get: { (heightCm / 2.54).rounded() },
+                set: { heightCm = $0 * 2.54 }
+            )
+            : $heightCm
     }
 
     private var heartRateSection: some View {
@@ -115,9 +147,39 @@ struct EditAthleteSheet: View {
 
     private var runningHistorySection: some View {
         Section("Running History") {
-            LabeledStepper(label: "Weekly Volume", value: $weeklyVolumeKm, range: 0...200, step: 5, unit: "km")
-            LabeledStepper(label: "Longest Run", value: $longestRunKm, range: 0...300, step: 5, unit: "km")
+            LabeledStepper(
+                label: "Weekly Volume",
+                value: weeklyVolumeBinding,
+                range: isImperial ? 0...124 : 0...200,
+                step: isImperial ? 3 : 5,
+                unit: UnitFormatter.distanceLabel(preferredUnit)
+            )
+            LabeledStepper(
+                label: "Longest Run",
+                value: longestRunBinding,
+                range: isImperial ? 0...186 : 0...300,
+                step: isImperial ? 3 : 5,
+                unit: UnitFormatter.distanceLabel(preferredUnit)
+            )
         }
+    }
+
+    private var weeklyVolumeBinding: Binding<Double> {
+        isImperial
+            ? Binding(
+                get: { UnitFormatter.distanceValue(weeklyVolumeKm, unit: .imperial) },
+                set: { weeklyVolumeKm = UnitFormatter.distanceToKm($0, unit: .imperial) }
+            )
+            : $weeklyVolumeKm
+    }
+
+    private var longestRunBinding: Binding<Double> {
+        isImperial
+            ? Binding(
+                get: { UnitFormatter.distanceValue(longestRunKm, unit: .imperial) },
+                set: { longestRunKm = UnitFormatter.distanceToKm($0, unit: .imperial) }
+            )
+            : $longestRunKm
     }
 
     private var unitSection: some View {

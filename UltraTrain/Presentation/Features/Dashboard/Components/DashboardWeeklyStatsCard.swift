@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct DashboardWeeklyStatsCard: View {
+    @Environment(\.unitPreference) private var units
     let progress: (completed: Int, total: Int)
     let distanceKm: Double
     let elevationM: Double
@@ -30,13 +31,13 @@ struct DashboardWeeklyStatsCard: View {
                     HStack(spacing: Theme.Spacing.md) {
                         StatCard(
                             title: "Distance",
-                            value: String(format: "%.1f", distanceKm),
-                            unit: "km"
+                            value: String(format: "%.1f", UnitFormatter.distanceValue(distanceKm, unit: units)),
+                            unit: UnitFormatter.distanceLabel(units)
                         )
                         StatCard(
                             title: "Elevation",
-                            value: String(format: "%.0f", elevationM),
-                            unit: "m D+"
+                            value: String(format: "%.0f", UnitFormatter.elevationValue(elevationM, unit: units)),
+                            unit: UnitFormatter.elevationLabel(units)
                         )
                     }
                 }
@@ -47,7 +48,7 @@ struct DashboardWeeklyStatsCard: View {
                     Image(systemName: "target")
                         .font(.caption2)
                         .accessibilityHidden(true)
-                    Text("Target: \(String(format: "%.0f", targetDistanceKm)) km · \(String(format: "%.0f", targetElevationM)) m D+")
+                    Text("Target: \(UnitFormatter.formatDistance(targetDistanceKm, unit: units, decimals: 0)) · \(UnitFormatter.formatElevation(targetElevationM, unit: units)) D+")
                         .font(.caption)
                 }
                 .foregroundStyle(Theme.Colors.secondaryLabel)

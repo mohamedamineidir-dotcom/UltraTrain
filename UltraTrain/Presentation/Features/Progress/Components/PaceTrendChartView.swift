@@ -2,6 +2,7 @@ import SwiftUI
 import Charts
 
 struct PaceTrendChartView: View {
+    @Environment(\.unitPreference) private var units
     let trendPoints: [RunTrendPoint]
     @State private var selectedDate: Date?
 
@@ -24,13 +25,14 @@ struct PaceTrendChartView: View {
 
     private var chartSummary: String {
         guard let latest = trendPoints.last else { return "Pace trend chart, no data" }
-        let pace = RunStatisticsCalculator.formatPace(latest.averagePaceSecondsPerKm)
+        let pace = RunStatisticsCalculator.formatPace(latest.averagePaceSecondsPerKm, unit: units)
+        let paceUnit = UnitFormatter.paceLabel(units)
         if trendPoints.count >= 2 {
             let first = trendPoints.first!
             let improving = latest.averagePaceSecondsPerKm < first.averagePaceSecondsPerKm
-            return "Pace trend chart. \(trendPoints.count) runs. Latest pace \(pace) per km, \(improving ? "improving" : "declining")."
+            return "Pace trend chart. \(trendPoints.count) runs. Latest pace \(pace) \(paceUnit), \(improving ? "improving" : "declining")."
         }
-        return "Pace trend chart. \(trendPoints.count) runs. Latest pace \(pace) per km."
+        return "Pace trend chart. \(trendPoints.count) runs. Latest pace \(pace) \(paceUnit)."
     }
 
     // MARK: - Chart
@@ -40,7 +42,7 @@ struct PaceTrendChartView: View {
             ForEach(trendPoints) { point in
                 PointMark(
                     x: .value("Date", point.date),
-                    y: .value("Pace", point.averagePaceSecondsPerKm)
+                    y: .value("Pace", UnitFormatter.paceValue(point.averagePaceSecondsPerKm, unit: units))
                 )
                 .foregroundStyle(Theme.Colors.primary.opacity(0.5))
                 .symbolSize(30)
@@ -49,7 +51,7 @@ struct PaceTrendChartView: View {
             ForEach(trendPoints.filter { $0.rollingAveragePace != nil }) { point in
                 LineMark(
                     x: .value("Date", point.date),
-                    y: .value("Avg Pace", point.rollingAveragePace!)
+                    y: .value("Avg Pace", UnitFormatter.paceValue(point.rollingAveragePace!, unit: units))
                 )
                 .foregroundStyle(Theme.Colors.primary)
                 .lineStyle(StrokeStyle(lineWidth: 2))
@@ -67,7 +69,7 @@ struct PaceTrendChartView: View {
                 AxisGridLine()
                 AxisValueLabel {
                     if let seconds = value.as(Double.self) {
-                        Text(RunStatisticsCalculator.formatPace(seconds))
+                        Text(paceStringFromConverted(seconds))
                     }
                 }
             }
@@ -99,8 +101,8 @@ struct PaceTrendChartView: View {
                     if let xPos = proxy.position(forX: point.date) {
                         ChartAnnotationCard(
                             title: point.date.formatted(.dateTime.month(.abbreviated).day()),
-                            value: RunStatisticsCalculator.formatPace(point.averagePaceSecondsPerKm) + " /km",
-                            subtitle: String(format: "%.1f km", point.distanceKm)
+                            value: RunStatisticsCalculator.formatPace(point.averagePaceSecondsPerKm, unit: units) + " " + UnitFormatter.paceLabel(units),
+                            subtitle: UnitFormatter.formatDistance(point.distanceKm, unit: units)
                         )
                         .offset(
                             x: annotationX(xPos: xPos, plotWidth: plotFrame.width),
@@ -143,5 +145,12 @@ struct PaceTrendChartView: View {
         let cardWidth: CGFloat = 100
         let clampedX = min(max(xPos, cardWidth / 2), plotWidth - cardWidth / 2)
         return clampedX
+    }
+
+    private func paceStringFromConverted(_ convertedSeconds: Double) -> String {
+        guard convertedSeconds > 0, convertedSeconds.isFinite else { return "--:--" }
+        let minutes = Int(convertedSeconds) / 60
+        let seconds = Int(convertedSeconds) % 60
+        return String(format: "%d:%02d", minutes, seconds)
     }
 }
