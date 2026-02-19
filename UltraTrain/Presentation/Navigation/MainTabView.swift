@@ -98,6 +98,7 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             DashboardView(
+                selectedTab: $selectedTab,
                 planRepository: planRepository,
                 runRepository: runRepository,
                 athleteRepository: athleteRepository,

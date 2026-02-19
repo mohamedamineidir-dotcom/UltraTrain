@@ -33,6 +33,8 @@ final class DashboardViewModel {
     var fitnessError: String?
     var finishEstimate: FinishEstimate?
     var aRace: Race?
+    var lastRun: CompletedRun?
+    var upcomingRaces: [Race] = []
 
     // MARK: - Init
 
@@ -65,8 +67,13 @@ final class DashboardViewModel {
         } catch {
             Logger.training.error("Dashboard failed to load plan: \(error)")
         }
-        await loadFitness()
-        await loadFinishEstimate()
+
+        async let fitnessTask: () = loadFitness()
+        async let estimateTask: () = loadFinishEstimate()
+        async let lastRunTask: () = loadLastRun()
+        async let racesTask: () = loadUpcomingRaces()
+        _ = await (fitnessTask, estimateTask, lastRunTask, racesTask)
+
         isLoading = false
     }
 
@@ -91,6 +98,30 @@ final class DashboardViewModel {
         }
     }
 
+    private func loadLastRun() async {
+        do {
+            let recent = try await runRepository.getRecentRuns(limit: 1)
+            lastRun = recent.first
+        } catch {
+            Logger.training.debug("Dashboard: could not load last run: \(error)")
+        }
+    }
+
+    private func loadUpcomingRaces() async {
+        do {
+            let allRaces = try await raceRepository.getRaces()
+            let today = Date.now.startOfDay
+            upcomingRaces = Array(
+                allRaces
+                    .filter { $0.date >= today }
+                    .sorted { $0.date < $1.date }
+                    .prefix(3)
+            )
+        } catch {
+            Logger.training.debug("Dashboard: could not load races: \(error)")
+        }
+    }
+
     // MARK: - Fitness Computed
 
     var fitnessStatus: FitnessStatus {
@@ -108,10 +139,19 @@ final class DashboardViewModel {
         return "Fatigued"
     }
 
+    var recentFormHistory: [FitnessSnapshot] {
+        let cutoff = Date.now.adding(days: -14)
+        return fitnessHistory.filter { $0.date >= cutoff }
+    }
+
     // MARK: - Plan Computed
 
     var currentWeek: TrainingWeek? {
         plan?.weeks.first { $0.containsToday }
+    }
+
+    var currentPhase: TrainingPhase? {
+        currentWeek?.phase
     }
 
     var nextSession: TrainingSession? {
@@ -138,6 +178,14 @@ final class DashboardViewModel {
     var weeklyElevationM: Double {
         guard let week = currentWeek else { return 0 }
         return week.sessions.filter(\.isCompleted).reduce(0) { $0 + $1.plannedElevationGainM }
+    }
+
+    var weeklyTargetDistanceKm: Double {
+        currentWeek?.targetVolumeKm ?? 0
+    }
+
+    var weeklyTargetElevationM: Double {
+        currentWeek?.targetElevationGainM ?? 0
     }
 
     var weeksUntilRace: Int? {
