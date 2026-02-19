@@ -4,11 +4,18 @@ import WidgetKit
 struct RaceCountdownWidgetView: View {
     let entry: RaceCountdownEntry
 
+    @Environment(\.widgetFamily) private var family
+
     var body: some View {
-        if let race = entry.race {
-            raceView(race)
-        } else {
-            emptyView
+        switch family {
+        case .accessoryCircular, .accessoryInline:
+            RaceCountdownLockScreenView(entry: entry)
+        default:
+            if let race = entry.race {
+                raceView(race)
+            } else {
+                emptyView
+            }
         }
     }
 

@@ -7,6 +7,7 @@ final class WidgetDataWriter: @unchecked Sendable {
     private let planRepository: any TrainingPlanRepository
     private let runRepository: any RunRepository
     private let raceRepository: any RaceRepository
+    private let fitnessRepository: (any FitnessRepository)?
     private let connectivityService: PhoneConnectivityService?
     private let defaults: UserDefaults?
 
@@ -14,12 +15,14 @@ final class WidgetDataWriter: @unchecked Sendable {
         planRepository: any TrainingPlanRepository,
         runRepository: any RunRepository,
         raceRepository: any RaceRepository,
+        fitnessRepository: (any FitnessRepository)? = nil,
         connectivityService: PhoneConnectivityService? = nil,
         defaults: UserDefaults? = UserDefaults(suiteName: WidgetDataKeys.suiteName)
     ) {
         self.planRepository = planRepository
         self.runRepository = runRepository
         self.raceRepository = raceRepository
+        self.fitnessRepository = fitnessRepository
         self.connectivityService = connectivityService
         self.defaults = defaults
     }
@@ -29,6 +32,7 @@ final class WidgetDataWriter: @unchecked Sendable {
         await writeRaceCountdown()
         await writeWeeklyProgress()
         await writeLastRun()
+        await writeFitnessData()
         await sendComplicationDataToWatch()
         reloadWidgets()
     }
@@ -54,6 +58,7 @@ final class WidgetDataWriter: @unchecked Sendable {
             }
 
             let data = WidgetSessionData(
+                sessionId: session.id,
                 sessionType: session.type.rawValue,
                 sessionIcon: iconName(for: session.type),
                 displayName: displayName(for: session.type),
@@ -154,6 +159,37 @@ final class WidgetDataWriter: @unchecked Sendable {
             write(data, key: WidgetDataKeys.lastRun)
         } catch {
             Logger.widget.error("Failed to write last run: \(error)")
+        }
+    }
+
+    func writeFitnessData() async {
+        guard let fitnessRepository else {
+            clear(key: WidgetDataKeys.fitnessData)
+            return
+        }
+
+        do {
+            guard let snapshot = try await fitnessRepository.getLatestSnapshot() else {
+                clear(key: WidgetDataKeys.fitnessData)
+                return
+            }
+
+            let to = Date.now
+            let from = Calendar.current.date(byAdding: .day, value: -14, to: to) ?? to
+            let history = try await fitnessRepository.getSnapshots(from: from, to: to)
+            let trendPoints = history
+                .sorted { $0.date < $1.date }
+                .map { WidgetFitnessPoint(date: $0.date, form: $0.form) }
+
+            let data = WidgetFitnessData(
+                form: snapshot.form,
+                fitness: snapshot.fitness,
+                fatigue: snapshot.fatigue,
+                trend: trendPoints
+            )
+            write(data, key: WidgetDataKeys.fitnessData)
+        } catch {
+            Logger.widget.error("Failed to write fitness data: \(error)")
         }
     }
 

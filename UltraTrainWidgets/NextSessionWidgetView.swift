@@ -1,3 +1,4 @@
+import AppIntents
 import SwiftUI
 import WidgetKit
 
@@ -7,15 +8,20 @@ struct NextSessionWidgetView: View {
     @Environment(\.widgetFamily) private var family
 
     var body: some View {
-        if let session = entry.session {
-            switch family {
-            case .systemSmall:
-                smallView(session)
-            default:
-                mediumView(session)
+        switch family {
+        case .accessoryCircular, .accessoryRectangular:
+            NextSessionLockScreenView(entry: entry)
+        default:
+            if let session = entry.session {
+                switch family {
+                case .systemSmall:
+                    smallView(session)
+                default:
+                    mediumView(session)
+                }
+            } else {
+                emptyView
             }
-        } else {
-            emptyView
         }
     }
 
@@ -53,39 +59,55 @@ struct NextSessionWidgetView: View {
     // MARK: - Medium
 
     private func mediumView(_ session: WidgetSessionData) -> some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(spacing: 4) {
-                    Image(systemName: session.sessionIcon)
-                        .font(.subheadline)
-                        .foregroundStyle(.orange)
-                    Text(session.displayName)
-                        .font(.subheadline.bold())
-                        .foregroundStyle(.orange)
-                }
+        VStack(spacing: 6) {
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 4) {
+                        Image(systemName: session.sessionIcon)
+                            .font(.subheadline)
+                            .foregroundStyle(.orange)
+                        Text(session.displayName)
+                            .font(.subheadline.bold())
+                            .foregroundStyle(.orange)
+                    }
 
-                Text(session.description)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(2)
+                    Text(session.description)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
+
+                    Spacer(minLength: 0)
+                }
 
                 Spacer(minLength: 0)
 
+                VStack(alignment: .trailing, spacing: 4) {
+                    statRow("ruler", formatDistance(session.plannedDistanceKm))
+                    statRow("mountain.2.fill", formatElevation(session.plannedElevationGainM))
+                    statRow("clock", formatDuration(session.plannedDuration))
+
+                    Spacer(minLength: 0)
+                }
+            }
+
+            HStack(spacing: 8) {
                 Text(formatDate(session.date))
                     .font(.caption2)
                     .foregroundStyle(.secondary)
-            }
 
-            Spacer(minLength: 0)
+                Spacer()
 
-            VStack(alignment: .trailing, spacing: 6) {
-                statRow("ruler", formatDistance(session.plannedDistanceKm))
-                statRow("mountain.2.fill", formatElevation(session.plannedElevationGainM))
-                statRow("clock", formatDuration(session.plannedDuration))
+                Button(intent: MarkSessionCompleteIntent(sessionId: session.sessionId)) {
+                    Label("Done", systemImage: "checkmark.circle.fill")
+                        .font(.caption2.bold())
+                }
+                .tint(.green)
 
-                Spacer(minLength: 0)
-
-                intensityBadge(session.intensity)
+                Button(intent: SkipSessionIntent(sessionId: session.sessionId)) {
+                    Label("Skip", systemImage: "forward.fill")
+                        .font(.caption2.bold())
+                }
+                .tint(.orange)
             }
         }
     }

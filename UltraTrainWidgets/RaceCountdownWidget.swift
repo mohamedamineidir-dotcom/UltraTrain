@@ -49,6 +49,6 @@ struct RaceCountdownWidget: Widget {
         }
         .configurationDisplayName("Race Countdown")
         .description("Days until your A-race with plan progress.")
-        .supportedFamilies([.systemSmall])
+        .supportedFamilies([.systemSmall, .accessoryCircular, .accessoryInline])
     }
 }

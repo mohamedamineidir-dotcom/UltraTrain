@@ -12,6 +12,7 @@ struct NextSessionProvider: TimelineProvider {
         NextSessionEntry(
             date: .now,
             session: WidgetSessionData(
+                sessionId: UUID(),
                 sessionType: "longRun",
                 sessionIcon: "figure.run",
                 displayName: "Long Run",
@@ -53,6 +54,6 @@ struct NextSessionWidget: Widget {
         }
         .configurationDisplayName("Next Session")
         .description("See your next training session at a glance.")
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .supportedFamilies([.systemSmall, .systemMedium, .accessoryCircular, .accessoryRectangular])
     }
 }

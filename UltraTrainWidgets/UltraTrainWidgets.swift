@@ -9,5 +9,7 @@ struct UltraTrainWidgets: WidgetBundle {
         RaceCountdownWidget()
         WeeklyProgressWidget()
         LastRunWidget()
+        FitnessFormWidget()
+        FitnessTrendWidget()
     }
 }

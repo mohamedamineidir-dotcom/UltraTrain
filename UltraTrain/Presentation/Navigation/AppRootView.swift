@@ -35,6 +35,7 @@ struct AppRootView: View {
     private let biometricAuthService: any BiometricAuthServiceProtocol
     private let gearRepository: any GearRepository
     private let finishEstimateRepository: any FinishEstimateRepository
+    private let pendingActionProcessor: WidgetPendingActionProcessor?
 
     init(
         athleteRepository: any AthleteRepository,
@@ -65,7 +66,8 @@ struct AppRootView: View {
         notificationService: any NotificationServiceProtocol,
         biometricAuthService: any BiometricAuthServiceProtocol,
         gearRepository: any GearRepository,
-        finishEstimateRepository: any FinishEstimateRepository
+        finishEstimateRepository: any FinishEstimateRepository,
+        pendingActionProcessor: WidgetPendingActionProcessor? = nil
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -96,6 +98,7 @@ struct AppRootView: View {
         self.biometricAuthService = biometricAuthService
         self.gearRepository = gearRepository
         self.finishEstimateRepository = finishEstimateRepository
+        self.pendingActionProcessor = pendingActionProcessor
     }
 
     var body: some View {
@@ -161,6 +164,9 @@ struct AppRootView: View {
             await widgetDataWriter.writeAll()
         }
         .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                Task { await pendingActionProcessor?.processPendingActions() }
+            }
             if newPhase == .background && needsBiometricLock {
                 isUnlocked = false
             }

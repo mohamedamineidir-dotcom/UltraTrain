@@ -4,11 +4,18 @@ import WidgetKit
 struct WeeklyProgressWidgetView: View {
     let entry: WeeklyProgressEntry
 
+    @Environment(\.widgetFamily) private var family
+
     var body: some View {
-        if let progress = entry.progress {
-            progressView(progress)
-        } else {
-            emptyView
+        switch family {
+        case .accessoryCircular, .accessoryRectangular:
+            WeeklyProgressLockScreenView(entry: entry)
+        default:
+            if let progress = entry.progress {
+                progressView(progress)
+            } else {
+                emptyView
+            }
         }
     }
 

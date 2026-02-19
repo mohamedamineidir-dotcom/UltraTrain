@@ -50,6 +50,6 @@ struct WeeklyProgressWidget: Widget {
         }
         .configurationDisplayName("Weekly Progress")
         .description("Track your training volume this week.")
-        .supportedFamilies([.systemMedium])
+        .supportedFamilies([.systemMedium, .accessoryCircular, .accessoryRectangular])
     }
 }

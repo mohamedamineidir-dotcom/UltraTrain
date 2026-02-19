@@ -36,6 +36,7 @@ struct UltraTrainApp: App {
     private let finishEstimateRepository: any FinishEstimateRepository
     private let stravaUploadQueueRepository: any StravaUploadQueueRepository
     private let stravaUploadQueueService: StravaUploadQueueService
+    private let pendingActionProcessor: WidgetPendingActionProcessor
     private let cloudKitSyncMonitor: CloudKitSyncMonitor?
 
     init() {
@@ -106,7 +107,12 @@ struct UltraTrainApp: App {
             planRepository: planRepository,
             runRepository: runRepository,
             raceRepository: raceRepository,
+            fitnessRepository: fitnessRepository,
             connectivityService: connectivityService
+        )
+        pendingActionProcessor = WidgetPendingActionProcessor(
+            planRepository: planRepository,
+            widgetDataWriter: widgetDataWriter
         )
         exportService = ExportService()
         runImportUseCase = DefaultRunImportUseCase(
@@ -196,7 +202,8 @@ struct UltraTrainApp: App {
                 notificationService: notificationService,
                 biometricAuthService: biometricAuthService,
                 gearRepository: gearRepository,
-                finishEstimateRepository: finishEstimateRepository
+                finishEstimateRepository: finishEstimateRepository,
+                pendingActionProcessor: pendingActionProcessor
             )
         }
     }

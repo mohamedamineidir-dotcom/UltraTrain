@@ -1,6 +1,7 @@
 import Foundation
 
 struct WidgetSessionData: Codable, Sendable {
+    let sessionId: UUID
     let sessionType: String
     let sessionIcon: String
     let displayName: String
@@ -36,4 +37,22 @@ struct WidgetLastRunData: Codable, Sendable {
     let duration: TimeInterval
     let averagePaceSecondsPerKm: Double
     let averageHeartRate: Int?
+}
+
+struct WidgetFitnessData: Codable, Sendable {
+    let form: Double
+    let fitness: Double
+    let fatigue: Double
+    let trend: [WidgetFitnessPoint]
+}
+
+struct WidgetFitnessPoint: Codable, Sendable {
+    let date: Date
+    let form: Double
+}
+
+struct WidgetPendingAction: Codable, Sendable {
+    let sessionId: UUID
+    let action: String
+    let timestamp: Date
 }

@@ -20,6 +20,7 @@ struct WidgetDataReaderTests {
     func roundTripNextSession() {
         let defaults = testDefaults()
         let session = WidgetSessionData(
+            sessionId: UUID(),
             sessionType: "longRun",
             sessionIcon: "figure.run",
             displayName: "Long Run",
