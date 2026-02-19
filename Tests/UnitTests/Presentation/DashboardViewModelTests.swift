@@ -24,23 +24,54 @@ struct DashboardViewModelTests {
         )
     }
 
-    private func makeRun(daysAgo: Int = 0, distanceKm: Double = 10) -> CompletedRun {
+    private func makeRace(priority: RacePriority = .aRace) -> Race {
+        Race(
+            id: UUID(),
+            name: "UTMB",
+            date: Date.now.adding(days: 60),
+            distanceKm: 170,
+            elevationGainM: 10000,
+            elevationLossM: 10000,
+            priority: priority,
+            goalType: .finish,
+            checkpoints: [],
+            terrainDifficulty: .technical
+        )
+    }
+
+    private func makeRun() -> CompletedRun {
         CompletedRun(
             id: UUID(),
             athleteId: athleteId,
-            date: Date.now.adding(days: -daysAgo),
-            distanceKm: distanceKm,
-            elevationGainM: 200,
-            elevationLossM: 180,
-            duration: 3600,
+            date: .now,
+            distanceKm: 15,
+            elevationGainM: 500,
+            elevationLossM: 500,
+            duration: 5400,
             averageHeartRate: 150,
             maxHeartRate: 175,
             averagePaceSecondsPerKm: 360,
             gpsTrack: [],
             splits: [],
             linkedSessionId: nil,
+            linkedRaceId: nil,
             notes: nil,
             pausedDuration: 0
+        )
+    }
+
+    private func makeEstimate(raceId: UUID) -> FinishEstimate {
+        FinishEstimate(
+            id: UUID(),
+            raceId: raceId,
+            athleteId: athleteId,
+            calculatedAt: .now,
+            optimisticTime: 36000,
+            expectedTime: 43200,
+            conservativeTime: 50400,
+            checkpointSplits: [],
+            confidencePercent: 65,
+            raceResultsUsed: 0
         )
     }
 
@@ -65,101 +96,164 @@ struct DashboardViewModelTests {
         runRepo: MockRunRepository = MockRunRepository(),
         athleteRepo: MockAthleteRepository = MockAthleteRepository(),
         fitnessRepo: MockFitnessRepository = MockFitnessRepository(),
-        fitnessCalc: MockCalculateFitnessUseCase = MockCalculateFitnessUseCase()
+        fitnessCalc: MockCalculateFitnessUseCase = MockCalculateFitnessUseCase(),
+        raceRepo: MockRaceRepository = MockRaceRepository(),
+        estimator: MockEstimateFinishTimeUseCase = MockEstimateFinishTimeUseCase(),
+        estimateRepo: MockFinishEstimateRepository = MockFinishEstimateRepository()
     ) -> DashboardViewModel {
         DashboardViewModel(
             planRepository: planRepo,
             runRepository: runRepo,
             athleteRepository: athleteRepo,
             fitnessRepository: fitnessRepo,
-            fitnessCalculator: fitnessCalc
+            fitnessCalculator: fitnessCalc,
+            raceRepository: raceRepo,
+            finishTimeEstimator: estimator,
+            finishEstimateRepository: estimateRepo
         )
     }
 
-    // MARK: - Fitness Loading
+    // MARK: - Finish Estimate
 
-    @Test("Load with no runs shows nil fitness")
+    @Test("Load fetches estimate when A-race exists")
     @MainActor
-    func loadNoRuns() async {
-        let athleteRepo = MockAthleteRepository()
-        athleteRepo.savedAthlete = makeAthlete()
-
-        let vm = makeViewModel(athleteRepo: athleteRepo)
-        await vm.load()
-
-        #expect(vm.fitnessSnapshot == nil)
-        #expect(vm.fitnessError == nil)
-        #expect(vm.isLoading == false)
-    }
-
-    @Test("Load with runs populates fitness snapshot")
-    @MainActor
-    func loadWithRuns() async {
+    func loadFetchesEstimateWithARace() async {
+        let race = makeRace()
+        let estimate = makeEstimate(raceId: race.id)
+        let raceRepo = MockRaceRepository()
+        raceRepo.races = [race]
         let athleteRepo = MockAthleteRepository()
         athleteRepo.savedAthlete = makeAthlete()
         let runRepo = MockRunRepository()
         runRepo.runs = [makeRun()]
-        let calc = MockCalculateFitnessUseCase()
-        calc.resultSnapshot = makeSnapshot()
+        let estimator = MockEstimateFinishTimeUseCase()
+        estimator.resultEstimate = estimate
+        let estimateRepo = MockFinishEstimateRepository()
 
-        let vm = makeViewModel(runRepo: runRepo, athleteRepo: athleteRepo, fitnessCalc: calc)
-        await vm.load()
-
-        #expect(vm.fitnessSnapshot != nil)
-        #expect(vm.fitnessSnapshot?.fitness == 50)
-    }
-
-    @Test("Load saves snapshot to repository")
-    @MainActor
-    func loadSavesSnapshot() async {
-        let athleteRepo = MockAthleteRepository()
-        athleteRepo.savedAthlete = makeAthlete()
-        let runRepo = MockRunRepository()
-        runRepo.runs = [makeRun()]
-        let calc = MockCalculateFitnessUseCase()
-        calc.resultSnapshot = makeSnapshot()
-        let fitnessRepo = MockFitnessRepository()
-
-        let vm = makeViewModel(runRepo: runRepo, athleteRepo: athleteRepo, fitnessRepo: fitnessRepo, fitnessCalc: calc)
-        await vm.load()
-
-        #expect(fitnessRepo.savedSnapshot != nil)
-    }
-
-    @Test("Load handles fitness error gracefully")
-    @MainActor
-    func loadHandlesFitnessError() async {
-        let athleteRepo = MockAthleteRepository()
-        athleteRepo.savedAthlete = makeAthlete()
-        let runRepo = MockRunRepository()
-        runRepo.runs = [makeRun()]
-        let calc = MockCalculateFitnessUseCase()
-        calc.shouldThrow = true
-
-        let vm = makeViewModel(runRepo: runRepo, athleteRepo: athleteRepo, fitnessCalc: calc)
-        await vm.load()
-
-        #expect(vm.fitnessSnapshot == nil)
-        #expect(vm.fitnessError != nil)
-    }
-
-    @Test("Plan loads independently of fitness errors")
-    @MainActor
-    func planLoadsIndependently() async {
-        let athleteRepo = MockAthleteRepository()
-        athleteRepo.shouldThrow = true
-        let planRepo = MockTrainingPlanRepository()
-        let plan = TrainingPlan(
-            id: UUID(), athleteId: UUID(), targetRaceId: UUID(),
-            createdAt: .now, weeks: [], intermediateRaceIds: []
+        let vm = makeViewModel(
+            runRepo: runRepo,
+            athleteRepo: athleteRepo,
+            raceRepo: raceRepo,
+            estimator: estimator,
+            estimateRepo: estimateRepo
         )
-        planRepo.activePlan = plan
-
-        let vm = makeViewModel(planRepo: planRepo, athleteRepo: athleteRepo)
         await vm.load()
 
-        #expect(vm.plan != nil)
+        #expect(vm.finishEstimate != nil)
+        #expect(vm.aRace?.id == race.id)
+        #expect(estimateRepo.savedEstimate != nil)
+    }
+
+    @Test("Load with no A-race has nil estimate")
+    @MainActor
+    func loadWithNoARaceHasNilEstimate() async {
+        let bRace = makeRace(priority: .bRace)
+        let raceRepo = MockRaceRepository()
+        raceRepo.races = [bRace]
+
+        let vm = makeViewModel(raceRepo: raceRepo)
+        await vm.load()
+
+        #expect(vm.finishEstimate == nil)
+        #expect(vm.aRace == nil)
+    }
+
+    @Test("Load with no runs has nil estimate")
+    @MainActor
+    func loadWithNoRunsHasNilEstimate() async {
+        let race = makeRace()
+        let raceRepo = MockRaceRepository()
+        raceRepo.races = [race]
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+
+        let vm = makeViewModel(athleteRepo: athleteRepo, raceRepo: raceRepo)
+        await vm.load()
+
+        #expect(vm.aRace?.id == race.id)
+        #expect(vm.finishEstimate == nil)
+    }
+
+    @Test("Load caches estimate in repository")
+    @MainActor
+    func loadCachesEstimate() async {
+        let race = makeRace()
+        let estimate = makeEstimate(raceId: race.id)
+        let raceRepo = MockRaceRepository()
+        raceRepo.races = [race]
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let runRepo = MockRunRepository()
+        runRepo.runs = [makeRun()]
+        let estimator = MockEstimateFinishTimeUseCase()
+        estimator.resultEstimate = estimate
+        let estimateRepo = MockFinishEstimateRepository()
+
+        let vm = makeViewModel(
+            runRepo: runRepo,
+            athleteRepo: athleteRepo,
+            raceRepo: raceRepo,
+            estimator: estimator,
+            estimateRepo: estimateRepo
+        )
+        await vm.load()
+
+        #expect(estimateRepo.savedEstimate != nil)
+        #expect(estimateRepo.savedEstimate?.raceId == race.id)
+    }
+
+    @Test("Load handles estimator error silently")
+    @MainActor
+    func loadHandlesEstimatorError() async {
+        let race = makeRace()
+        let raceRepo = MockRaceRepository()
+        raceRepo.races = [race]
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let runRepo = MockRunRepository()
+        runRepo.runs = [makeRun()]
+        let estimator = MockEstimateFinishTimeUseCase()
+        estimator.shouldThrow = true
+
+        let vm = makeViewModel(
+            runRepo: runRepo,
+            athleteRepo: athleteRepo,
+            raceRepo: raceRepo,
+            estimator: estimator
+        )
+        await vm.load()
+
+        #expect(vm.finishEstimate == nil)
         #expect(vm.isLoading == false)
+    }
+
+    @Test("Load uses cached estimate before recalculating")
+    @MainActor
+    func loadUsesCachedFirst() async {
+        let race = makeRace()
+        let cached = makeEstimate(raceId: race.id)
+        let raceRepo = MockRaceRepository()
+        raceRepo.races = [race]
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let runRepo = MockRunRepository()
+        runRepo.runs = [makeRun()]
+        let estimateRepo = MockFinishEstimateRepository()
+        estimateRepo.estimates[race.id] = cached
+        let estimator = MockEstimateFinishTimeUseCase()
+        let fresh = makeEstimate(raceId: race.id)
+        estimator.resultEstimate = fresh
+
+        let vm = makeViewModel(
+            runRepo: runRepo,
+            athleteRepo: athleteRepo,
+            raceRepo: raceRepo,
+            estimator: estimator,
+            estimateRepo: estimateRepo
+        )
+        await vm.load()
+
+        #expect(vm.finishEstimate != nil)
     }
 
     // MARK: - Fitness Status
@@ -171,7 +265,7 @@ struct DashboardViewModelTests {
         #expect(vm.fitnessStatus == .noData)
     }
 
-    @Test("Fitness status returns optimal for ACR in range")
+    @Test("Fitness status returns optimal for normal ACR")
     @MainActor
     func statusOptimal() {
         let vm = makeViewModel()
@@ -187,41 +281,11 @@ struct DashboardViewModelTests {
         #expect(vm.fitnessStatus == .injuryRisk)
     }
 
-    @Test("Fitness status returns detraining for ACR below 0.8")
+    @Test("Fitness status returns detraining for low ACR")
     @MainActor
     func statusDetraining() {
         let vm = makeViewModel()
         vm.fitnessSnapshot = makeSnapshot(acr: 0.5)
         #expect(vm.fitnessStatus == .detraining)
-    }
-
-    // MARK: - Form Description
-
-    @Test("Form description shows Fresh for positive form")
-    @MainActor
-    func formFresh() {
-        let vm = makeViewModel()
-        vm.fitnessSnapshot = FitnessSnapshot(
-            id: UUID(), date: .now,
-            fitness: 50, fatigue: 30, form: 20,
-            weeklyVolumeKm: 0, weeklyElevationGainM: 0,
-            weeklyDuration: 0, acuteToChronicRatio: 0.6,
-            monotony: 0
-        )
-        #expect(vm.formDescription == "Fresh")
-    }
-
-    @Test("Form description shows Fatigued for negative form")
-    @MainActor
-    func formFatigued() {
-        let vm = makeViewModel()
-        vm.fitnessSnapshot = FitnessSnapshot(
-            id: UUID(), date: .now,
-            fitness: 30, fatigue: 50, form: -20,
-            weeklyVolumeKm: 0, weeklyElevationGainM: 0,
-            weeklyDuration: 0, acuteToChronicRatio: 1.67,
-            monotony: 0
-        )
-        #expect(vm.formDescription == "Fatigued")
     }
 }

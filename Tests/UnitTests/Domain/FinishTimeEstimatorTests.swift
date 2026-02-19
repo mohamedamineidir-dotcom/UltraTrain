@@ -322,4 +322,178 @@ struct FinishTimeEstimatorTests {
         #expect(estimate.raceResultsUsed == 1)
         #expect(estimate.confidencePercent > 40)
     }
+
+    // MARK: - Distance Weighting
+
+    @Test("Run closer to race distance has more influence")
+    func distanceWeighting() async throws {
+        let race = makeRace(distanceKm: 50, elevationGainM: 3000)
+        let longRun = makeRun(distanceKm: 40, elevationGainM: 2000, duration: 18000)
+        let shortRun = makeRun(distanceKm: 5, elevationGainM: 100, duration: 1500)
+
+        let longOnlyEstimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: [longRun], currentFitness: nil
+        )
+        let mixedEstimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: [longRun, shortRun], currentFitness: nil
+        )
+        let diff = abs(longOnlyEstimate.expectedTime - mixedEstimate.expectedTime)
+        let percentDiff = diff / longOnlyEstimate.expectedTime
+        #expect(percentDiff < 0.15)
+    }
+
+    // MARK: - Continuous Form
+
+    @Test("Small positive form gives slightly faster than neutral")
+    func continuousFormSmallPositive() async throws {
+        let race = makeRace()
+        let runs = [makeRun()]
+        let slightlyFresh = makeFitness(form: 5)
+
+        let neutralEstimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: nil
+        )
+        let freshEstimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: slightlyFresh
+        )
+        #expect(freshEstimate.expectedTime < neutralEstimate.expectedTime)
+    }
+
+    // MARK: - Descent Penalty
+
+    @Test("High descent ratio increases time")
+    func descentPenaltyApplied() async throws {
+        let flatRace = makeRace(distanceKm: 50, elevationGainM: 1000)
+        let steepDescentRace = Race(
+            id: UUID(),
+            name: "Steep Race",
+            date: Date.now.adding(days: 60),
+            distanceKm: 50,
+            elevationGainM: 1000,
+            elevationLossM: 3000,
+            priority: .aRace,
+            goalType: .finish,
+            checkpoints: [],
+            terrainDifficulty: .easy
+        )
+        let runs = [makeRun()]
+
+        let flatEstimate = try await estimator.execute(
+            athlete: athlete, race: flatRace,
+            recentRuns: runs, currentFitness: nil
+        )
+        let steepEstimate = try await estimator.execute(
+            athlete: athlete, race: steepDescentRace,
+            recentRuns: runs, currentFitness: nil
+        )
+        #expect(steepEstimate.expectedTime > flatEstimate.expectedTime)
+    }
+
+    @Test("No descent penalty when ratio is low")
+    func noDescentPenaltyLowRatio() async throws {
+        let race = makeRace(distanceKm: 50, elevationGainM: 1000)
+        let runs = [makeRun()]
+
+        let estimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: nil
+        )
+        #expect(estimate.expectedTime > 0)
+    }
+
+    // MARK: - Ultra Fatigue
+
+    @Test("Beginner on ultra is slower than advanced")
+    func ultraFatigueBeginnerSlower() async throws {
+        let race = makeRace(distanceKm: 120, elevationGainM: 6000)
+        let runs = [makeRun()]
+
+        let beginnerAthlete = Athlete(
+            id: UUID(), firstName: "Test", lastName: "Runner",
+            dateOfBirth: Calendar.current.date(byAdding: .year, value: -30, to: .now)!,
+            weightKg: 70, heightCm: 175, restingHeartRate: 50, maxHeartRate: 185,
+            experienceLevel: .beginner, weeklyVolumeKm: 50,
+            longestRunKm: 30, preferredUnit: .metric
+        )
+        let advancedAthlete = Athlete(
+            id: UUID(), firstName: "Test", lastName: "Runner",
+            dateOfBirth: Calendar.current.date(byAdding: .year, value: -30, to: .now)!,
+            weightKg: 70, heightCm: 175, restingHeartRate: 50, maxHeartRate: 185,
+            experienceLevel: .advanced, weeklyVolumeKm: 50,
+            longestRunKm: 30, preferredUnit: .metric
+        )
+
+        let beginnerEstimate = try await estimator.execute(
+            athlete: beginnerAthlete, race: race,
+            recentRuns: runs, currentFitness: nil
+        )
+        let advancedEstimate = try await estimator.execute(
+            athlete: advancedAthlete, race: race,
+            recentRuns: runs, currentFitness: nil
+        )
+        #expect(beginnerEstimate.expectedTime > advancedEstimate.expectedTime)
+    }
+
+    @Test("Ultra fatigue has no effect under 60km")
+    func ultraFatigueNoEffectShortRace() async throws {
+        let race = makeRace(distanceKm: 40, elevationGainM: 2000)
+        let runs = [makeRun()]
+
+        let beginnerAthlete = Athlete(
+            id: UUID(), firstName: "Test", lastName: "Runner",
+            dateOfBirth: Calendar.current.date(byAdding: .year, value: -30, to: .now)!,
+            weightKg: 70, heightCm: 175, restingHeartRate: 50, maxHeartRate: 185,
+            experienceLevel: .beginner, weeklyVolumeKm: 50,
+            longestRunKm: 30, preferredUnit: .metric
+        )
+        let eliteAthlete = Athlete(
+            id: UUID(), firstName: "Test", lastName: "Runner",
+            dateOfBirth: Calendar.current.date(byAdding: .year, value: -30, to: .now)!,
+            weightKg: 70, heightCm: 175, restingHeartRate: 50, maxHeartRate: 185,
+            experienceLevel: .elite, weeklyVolumeKm: 50,
+            longestRunKm: 30, preferredUnit: .metric
+        )
+
+        let beginnerEstimate = try await estimator.execute(
+            athlete: beginnerAthlete, race: race,
+            recentRuns: runs, currentFitness: nil
+        )
+        let eliteEstimate = try await estimator.execute(
+            athlete: eliteAthlete, race: race,
+            recentRuns: runs, currentFitness: nil
+        )
+        #expect(beginnerEstimate.expectedTime == eliteEstimate.expectedTime)
+    }
+
+    @Test("Elite has no ultra fatigue penalty even on long races")
+    func eliteNoUltraPenalty() async throws {
+        let shortRace = makeRace(distanceKm: 50, elevationGainM: 3000)
+        let longRace = makeRace(distanceKm: 150, elevationGainM: 9000)
+        let runs = [makeRun()]
+
+        let eliteAthlete = Athlete(
+            id: UUID(), firstName: "Test", lastName: "Runner",
+            dateOfBirth: Calendar.current.date(byAdding: .year, value: -30, to: .now)!,
+            weightKg: 70, heightCm: 175, restingHeartRate: 50, maxHeartRate: 185,
+            experienceLevel: .elite, weeklyVolumeKm: 80,
+            longestRunKm: 60, preferredUnit: .metric
+        )
+
+        let shortEstimate = try await estimator.execute(
+            athlete: eliteAthlete, race: shortRace,
+            recentRuns: runs, currentFitness: nil
+        )
+        let longEstimate = try await estimator.execute(
+            athlete: eliteAthlete, race: longRace,
+            recentRuns: runs, currentFitness: nil
+        )
+        let ratio = longEstimate.expectedTime / shortEstimate.expectedTime
+        let effectiveRatio = longRace.effectiveDistanceKm / shortRace.effectiveDistanceKm
+        let tolerance = 0.05
+        #expect(abs(ratio - effectiveRatio) / effectiveRatio < tolerance)
+    }
 }

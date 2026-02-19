@@ -30,6 +30,7 @@ struct MainTabView: View {
     private let notificationService: any NotificationServiceProtocol
     private let biometricAuthService: any BiometricAuthServiceProtocol
     private let gearRepository: any GearRepository
+    private let finishEstimateRepository: any FinishEstimateRepository
 
     init(
         athleteRepository: any AthleteRepository,
@@ -58,7 +59,8 @@ struct MainTabView: View {
         stravaImportService: (any StravaImportServiceProtocol)? = nil,
         notificationService: any NotificationServiceProtocol,
         biometricAuthService: any BiometricAuthServiceProtocol,
-        gearRepository: any GearRepository
+        gearRepository: any GearRepository,
+        finishEstimateRepository: any FinishEstimateRepository
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -87,6 +89,7 @@ struct MainTabView: View {
         self.notificationService = notificationService
         self.biometricAuthService = biometricAuthService
         self.gearRepository = gearRepository
+        self.finishEstimateRepository = finishEstimateRepository
     }
 
     var body: some View {
@@ -97,7 +100,10 @@ struct MainTabView: View {
                 athleteRepository: athleteRepository,
                 fitnessRepository: fitnessRepository,
                 fitnessCalculator: fitnessCalculator,
-                trainingLoadCalculator: trainingLoadCalculator
+                trainingLoadCalculator: trainingLoadCalculator,
+                raceRepository: raceRepository,
+                finishTimeEstimator: finishTimeEstimator,
+                finishEstimateRepository: finishEstimateRepository
             )
                 .tabItem {
                     Label("Dashboard", systemImage: "house.fill")
@@ -135,7 +141,9 @@ struct MainTabView: View {
                 stravaUploadService: stravaUploadService,
                 stravaImportService: stravaImportService,
                 stravaAuthService: stravaAuthService,
-                gearRepository: gearRepository
+                gearRepository: gearRepository,
+                finishTimeEstimator: finishTimeEstimator,
+                finishEstimateRepository: finishEstimateRepository
             )
                 .tabItem {
                     Label("Run", systemImage: "figure.run")

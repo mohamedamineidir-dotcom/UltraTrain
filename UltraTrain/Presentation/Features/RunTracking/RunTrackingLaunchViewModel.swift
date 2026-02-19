@@ -14,6 +14,8 @@ final class RunTrackingLaunchViewModel {
     private let appSettingsRepository: any AppSettingsRepository
     private let hapticService: any HapticServiceProtocol
     private let gearRepository: any GearRepository
+    private let finishTimeEstimator: any EstimateFinishTimeUseCase
+    private let finishEstimateRepository: any FinishEstimateRepository
 
     // MARK: - State
 
@@ -45,7 +47,9 @@ final class RunTrackingLaunchViewModel {
         raceRepository: any RaceRepository,
         appSettingsRepository: any AppSettingsRepository,
         hapticService: any HapticServiceProtocol,
-        gearRepository: any GearRepository
+        gearRepository: any GearRepository,
+        finishTimeEstimator: any EstimateFinishTimeUseCase,
+        finishEstimateRepository: any FinishEstimateRepository
     ) {
         self.athleteRepository = athleteRepository
         self.planRepository = planRepository
@@ -54,6 +58,8 @@ final class RunTrackingLaunchViewModel {
         self.appSettingsRepository = appSettingsRepository
         self.hapticService = hapticService
         self.gearRepository = gearRepository
+        self.finishTimeEstimator = finishTimeEstimator
+        self.finishEstimateRepository = finishEstimateRepository
     }
 
     // MARK: - Load
@@ -122,6 +128,32 @@ final class RunTrackingLaunchViewModel {
         let restoredIds = stored.compactMap(UUID.init).filter { activeIds.contains($0) }
         if !restoredIds.isEmpty {
             selectedGearIds = Set(restoredIds)
+        }
+    }
+
+    func onRunSaved() {
+        Task {
+            await recalculateEstimateIfNeeded()
+        }
+    }
+
+    private func recalculateEstimateIfNeeded() async {
+        do {
+            let races = try await raceRepository.getRaces()
+            guard let aRace = races.first(where: { $0.priority == .aRace }) else { return }
+            guard let athlete = try await athleteRepository.getAthlete() else { return }
+            let runs = try await runRepository.getRuns(for: athlete.id)
+            guard !runs.isEmpty else { return }
+
+            let estimate = try await finishTimeEstimator.execute(
+                athlete: athlete,
+                race: aRace,
+                recentRuns: runs,
+                currentFitness: nil
+            )
+            try await finishEstimateRepository.saveEstimate(estimate)
+        } catch {
+            Logger.training.debug("Auto-recalculation skipped: \(error)")
         }
     }
 

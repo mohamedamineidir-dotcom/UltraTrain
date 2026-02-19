@@ -12,32 +12,36 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
     ) async throws -> FinishEstimate {
         let raceLinkedRuns = recentRuns.filter { $0.linkedRaceId != nil }
         let raceResultsUsed = raceLinkedRuns.count
+        let raceEffectiveKm = race.effectiveDistanceKm
 
-        var paces: [Double] = []
+        var weightedPaces: [(pace: Double, weight: Double)] = []
         for run in recentRuns {
             guard let pace = pacePerEffectiveKm(for: run) else { continue }
-            if run.linkedRaceId != nil {
-                paces.append(contentsOf: [pace, pace, pace])
-            } else {
-                paces.append(pace)
-            }
+            let runEffectiveKm = run.distanceKm + (run.elevationGainM / 100.0)
+            let distanceWeight = 1.0 / (1.0 + abs(runEffectiveKm - raceEffectiveKm) / max(raceEffectiveKm, 1))
+            let raceBonus: Double = run.linkedRaceId != nil ? 3.0 : 1.0
+            weightedPaces.append((pace, distanceWeight * raceBonus))
         }
-        guard !paces.isEmpty else {
+        guard !weightedPaces.isEmpty else {
             throw DomainError.insufficientData(reason: "At least one completed run is needed to estimate finish time")
         }
 
-        let sortedPaces = paces.sorted()
-        let pace25 = percentile(sortedPaces, p: 0.25)
-        let medianPace = percentile(sortedPaces, p: 0.50)
-        let pace75 = percentile(sortedPaces, p: 0.75)
+        let pace25 = weightedPercentile(weightedPaces, p: 0.25)
+        let medianPace = weightedPercentile(weightedPaces, p: 0.50)
+        let pace75 = weightedPercentile(weightedPaces, p: 0.75)
 
         let terrain = terrainMultiplier(race.terrainDifficulty)
+        let descent = descentPenalty(race)
         let form = formMultiplier(currentFitness)
-        let effectiveKm = race.effectiveDistanceKm
+        let ultra = ultraFatigueMultiplier(
+            experienceLevel: athlete.experienceLevel,
+            raceDistanceKm: race.distanceKm
+        )
+        let effectiveKm = raceEffectiveKm
 
-        let optimisticTime = effectiveKm * pace25 * terrain * 0.97
-        let expectedTime = effectiveKm * medianPace * terrain * form
-        let conservativeTime = effectiveKm * pace75 * terrain * 1.05
+        let optimisticTime = effectiveKm * pace25 * terrain * descent * ultra * 0.97
+        let expectedTime = effectiveKm * medianPace * terrain * descent * form * ultra
+        let conservativeTime = effectiveKm * pace75 * terrain * descent * ultra * 1.05
 
         let splits = calculateCheckpointSplits(
             race: race,
@@ -75,14 +79,36 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         return run.duration / effectiveKm
     }
 
-    private func percentile(_ sorted: [Double], p: Double) -> Double {
-        guard !sorted.isEmpty else { return 0 }
-        if sorted.count == 1 { return sorted[0] }
-        let index = p * Double(sorted.count - 1)
-        let lower = Int(index)
-        let upper = min(lower + 1, sorted.count - 1)
-        let fraction = index - Double(lower)
-        return sorted[lower] + fraction * (sorted[upper] - sorted[lower])
+    private func weightedPercentile(
+        _ weightedPaces: [(pace: Double, weight: Double)],
+        p: Double
+    ) -> Double {
+        guard !weightedPaces.isEmpty else { return 0 }
+        if weightedPaces.count == 1 { return weightedPaces[0].pace }
+        let sorted = weightedPaces.sorted { $0.pace < $1.pace }
+        let totalWeight = sorted.reduce(0.0) { $0 + $1.weight }
+        guard totalWeight > 0 else { return sorted[0].pace }
+
+        var centers: [(pace: Double, position: Double)] = []
+        var cumulative = 0.0
+        for entry in sorted {
+            let center = (cumulative + entry.weight / 2.0) / totalWeight
+            centers.append((entry.pace, center))
+            cumulative += entry.weight
+        }
+
+        if p <= centers.first!.position { return centers.first!.pace }
+        if p >= centers.last!.position { return centers.last!.pace }
+
+        for i in 1..<centers.count {
+            if p <= centers[i].position {
+                let prev = centers[i - 1]
+                let curr = centers[i]
+                let fraction = (p - prev.position) / (curr.position - prev.position)
+                return prev.pace + fraction * (curr.pace - prev.pace)
+            }
+        }
+        return centers.last!.pace
     }
 
     // MARK: - Adjustments
@@ -98,9 +124,28 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
 
     private func formMultiplier(_ fitness: FitnessSnapshot?) -> Double {
         guard let fitness else { return 1.0 }
-        if fitness.form > 10 { return 0.97 }
-        if fitness.form < -10 { return 1.05 }
-        return 1.0
+        return max(0.95, min(1.05, 1.0 - fitness.form * 0.003))
+    }
+
+    private func descentPenalty(_ race: Race) -> Double {
+        let descentRatio = race.elevationLossM / max(race.distanceKm, 1)
+        guard descentRatio > 30 else { return 1.0 }
+        return min(1.10, 1.0 + (descentRatio - 30) * 0.002)
+    }
+
+    private func ultraFatigueMultiplier(
+        experienceLevel: ExperienceLevel,
+        raceDistanceKm: Double
+    ) -> Double {
+        guard raceDistanceKm > 60 else { return 1.0 }
+        let distanceFactor = min(1.0, (raceDistanceKm - 60) / 90.0)
+        let levelPenalty: Double = switch experienceLevel {
+        case .beginner: 0.15
+        case .intermediate: 0.08
+        case .advanced: 0.03
+        case .elite: 0.0
+        }
+        return 1.0 + distanceFactor * levelPenalty
     }
 
     // MARK: - Checkpoint Splits

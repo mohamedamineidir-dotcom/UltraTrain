@@ -8,6 +8,8 @@ struct DashboardView: View {
     private let fitnessRepository: any FitnessRepository
     private let fitnessCalculator: any CalculateFitnessUseCase
     private let trainingLoadCalculator: any CalculateTrainingLoadUseCase
+    private let raceRepository: any RaceRepository
+    private let finishTimeEstimator: any EstimateFinishTimeUseCase
 
     init(
         planRepository: any TrainingPlanRepository,
@@ -15,7 +17,10 @@ struct DashboardView: View {
         athleteRepository: any AthleteRepository,
         fitnessRepository: any FitnessRepository,
         fitnessCalculator: any CalculateFitnessUseCase,
-        trainingLoadCalculator: any CalculateTrainingLoadUseCase
+        trainingLoadCalculator: any CalculateTrainingLoadUseCase,
+        raceRepository: any RaceRepository,
+        finishTimeEstimator: any EstimateFinishTimeUseCase,
+        finishEstimateRepository: any FinishEstimateRepository
     ) {
         self.planRepository = planRepository
         self.runRepository = runRepository
@@ -23,12 +28,17 @@ struct DashboardView: View {
         self.fitnessRepository = fitnessRepository
         self.fitnessCalculator = fitnessCalculator
         self.trainingLoadCalculator = trainingLoadCalculator
+        self.raceRepository = raceRepository
+        self.finishTimeEstimator = finishTimeEstimator
         _viewModel = State(initialValue: DashboardViewModel(
             planRepository: planRepository,
             runRepository: runRepository,
             athleteRepository: athleteRepository,
             fitnessRepository: fitnessRepository,
-            fitnessCalculator: fitnessCalculator
+            fitnessCalculator: fitnessCalculator,
+            raceRepository: raceRepository,
+            finishTimeEstimator: finishTimeEstimator,
+            finishEstimateRepository: finishEstimateRepository
         ))
     }
 
@@ -38,6 +48,7 @@ struct DashboardView: View {
                 VStack(spacing: Theme.Spacing.md) {
                     nextSessionSection
                     weeklyStatsSection
+                    finishEstimateSection
                     fitnessSection
                     progressSection
                 }
@@ -133,6 +144,77 @@ struct DashboardView: View {
                         .font(.caption)
                 }
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var finishEstimateSection: some View {
+        if let estimate = viewModel.finishEstimate, let race = viewModel.aRace {
+            NavigationLink {
+                FinishEstimationView(
+                    race: race,
+                    finishTimeEstimator: finishTimeEstimator,
+                    athleteRepository: athleteRepository,
+                    runRepository: runRepository,
+                    fitnessCalculator: fitnessCalculator
+                )
+            } label: {
+                VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                    HStack {
+                        Text("Race Estimate")
+                            .font(.headline)
+                            .foregroundStyle(Theme.Colors.label)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
+                            .accessibilityHidden(true)
+                    }
+
+                    Text(race.name)
+                        .font(.subheadline)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+
+                    HStack(spacing: Theme.Spacing.md) {
+                        VStack(spacing: 2) {
+                            Text(FinishEstimate.formatDuration(estimate.optimisticTime))
+                                .font(.caption)
+                                .foregroundStyle(Theme.Colors.success)
+                            Text("Best")
+                                .font(.caption2)
+                                .foregroundStyle(Theme.Colors.secondaryLabel)
+                        }
+
+                        VStack(spacing: 2) {
+                            Text(estimate.expectedTimeFormatted)
+                                .font(.title2.bold())
+                                .foregroundStyle(Theme.Colors.primary)
+                            Text("Expected")
+                                .font(.caption2)
+                                .foregroundStyle(Theme.Colors.secondaryLabel)
+                        }
+
+                        VStack(spacing: 2) {
+                            Text(FinishEstimate.formatDuration(estimate.conservativeTime))
+                                .font(.caption)
+                                .foregroundStyle(Theme.Colors.warning)
+                            Text("Safe")
+                                .font(.caption2)
+                                .foregroundStyle(Theme.Colors.secondaryLabel)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+
+                    HStack(spacing: Theme.Spacing.xs) {
+                        ProgressView(value: estimate.confidencePercent, total: 100)
+                            .tint(Theme.Colors.primary)
+                        Text("\(Int(estimate.confidencePercent))%")
+                            .font(.caption2)
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
+                    }
+                }
+                .cardStyle()
             }
         }
     }
@@ -304,6 +386,29 @@ private struct PreviewTrainingLoadCalculator: CalculateTrainingLoadUseCase, @unc
     }
 }
 
+private struct PreviewRaceRepository: RaceRepository, @unchecked Sendable {
+    func getRaces() async throws -> [Race] { [] }
+    func getRace(id: UUID) async throws -> Race? { nil }
+    func saveRace(_ race: Race) async throws {}
+    func updateRace(_ race: Race) async throws {}
+    func deleteRace(id: UUID) async throws {}
+}
+
+private struct PreviewFinishTimeEstimator: EstimateFinishTimeUseCase, @unchecked Sendable {
+    func execute(athlete: Athlete, race: Race, recentRuns: [CompletedRun], currentFitness: FitnessSnapshot?) async throws -> FinishEstimate {
+        FinishEstimate(
+            id: UUID(), raceId: race.id, athleteId: athlete.id, calculatedAt: .now,
+            optimisticTime: 0, expectedTime: 0, conservativeTime: 0,
+            checkpointSplits: [], confidencePercent: 0, raceResultsUsed: 0
+        )
+    }
+}
+
+private struct PreviewFinishEstimateRepository: FinishEstimateRepository, @unchecked Sendable {
+    func getEstimate(for raceId: UUID) async throws -> FinishEstimate? { nil }
+    func saveEstimate(_ estimate: FinishEstimate) async throws {}
+}
+
 #Preview("Dashboard") {
     DashboardView(
         planRepository: PreviewPlanRepository(),
@@ -311,7 +416,10 @@ private struct PreviewTrainingLoadCalculator: CalculateTrainingLoadUseCase, @unc
         athleteRepository: PreviewAthleteRepository(),
         fitnessRepository: PreviewFitnessRepository(),
         fitnessCalculator: PreviewFitnessCalculator(),
-        trainingLoadCalculator: PreviewTrainingLoadCalculator()
+        trainingLoadCalculator: PreviewTrainingLoadCalculator(),
+        raceRepository: PreviewRaceRepository(),
+        finishTimeEstimator: PreviewFinishTimeEstimator(),
+        finishEstimateRepository: PreviewFinishEstimateRepository()
     )
 }
 #endif

@@ -19,6 +19,9 @@ final class DashboardViewModel {
     private let athleteRepository: any AthleteRepository
     private let fitnessRepository: any FitnessRepository
     private let fitnessCalculator: any CalculateFitnessUseCase
+    private let raceRepository: any RaceRepository
+    private let finishTimeEstimator: any EstimateFinishTimeUseCase
+    private let finishEstimateRepository: any FinishEstimateRepository
 
     // MARK: - State
 
@@ -28,6 +31,8 @@ final class DashboardViewModel {
     var runCount = 0
     var isLoading = false
     var fitnessError: String?
+    var finishEstimate: FinishEstimate?
+    var aRace: Race?
 
     // MARK: - Init
 
@@ -36,13 +41,19 @@ final class DashboardViewModel {
         runRepository: any RunRepository,
         athleteRepository: any AthleteRepository,
         fitnessRepository: any FitnessRepository,
-        fitnessCalculator: any CalculateFitnessUseCase
+        fitnessCalculator: any CalculateFitnessUseCase,
+        raceRepository: any RaceRepository,
+        finishTimeEstimator: any EstimateFinishTimeUseCase,
+        finishEstimateRepository: any FinishEstimateRepository
     ) {
         self.planRepository = planRepository
         self.runRepository = runRepository
         self.athleteRepository = athleteRepository
         self.fitnessRepository = fitnessRepository
         self.fitnessCalculator = fitnessCalculator
+        self.raceRepository = raceRepository
+        self.finishTimeEstimator = finishTimeEstimator
+        self.finishEstimateRepository = finishEstimateRepository
     }
 
     // MARK: - Load
@@ -55,6 +66,7 @@ final class DashboardViewModel {
             Logger.training.error("Dashboard failed to load plan: \(error)")
         }
         await loadFitness()
+        await loadFinishEstimate()
         isLoading = false
     }
 
@@ -133,5 +145,41 @@ final class DashboardViewModel {
         let lastWeek = plan.weeks.last
         guard let raceEnd = lastWeek?.endDate else { return nil }
         return Date.now.weeksBetween(raceEnd)
+    }
+
+    // MARK: - Finish Estimate
+
+    private func loadFinishEstimate() async {
+        do {
+            let races = try await raceRepository.getRaces()
+            guard let race = races.first(where: { $0.priority == .aRace }) else { return }
+            aRace = race
+
+            if let cached = try await finishEstimateRepository.getEstimate(for: race.id) {
+                finishEstimate = cached
+            }
+
+            guard let athlete = try await athleteRepository.getAthlete() else { return }
+            let runs = try await runRepository.getRuns(for: athlete.id)
+            guard !runs.isEmpty else { return }
+
+            var fitness: FitnessSnapshot?
+            do {
+                fitness = try await fitnessCalculator.execute(runs: runs, asOf: .now)
+            } catch {
+                Logger.fitness.warning("Could not calculate fitness for dashboard estimate: \(error)")
+            }
+
+            let estimate = try await finishTimeEstimator.execute(
+                athlete: athlete,
+                race: race,
+                recentRuns: runs,
+                currentFitness: fitness
+            )
+            finishEstimate = estimate
+            try await finishEstimateRepository.saveEstimate(estimate)
+        } catch {
+            Logger.training.debug("Dashboard finish estimate unavailable: \(error)")
+        }
     }
 }

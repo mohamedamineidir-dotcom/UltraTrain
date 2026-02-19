@@ -33,6 +33,7 @@ struct AppRootView: View {
     private let notificationService: any NotificationServiceProtocol
     private let biometricAuthService: any BiometricAuthServiceProtocol
     private let gearRepository: any GearRepository
+    private let finishEstimateRepository: any FinishEstimateRepository
 
     init(
         athleteRepository: any AthleteRepository,
@@ -61,7 +62,8 @@ struct AppRootView: View {
         stravaImportService: (any StravaImportServiceProtocol)? = nil,
         notificationService: any NotificationServiceProtocol,
         biometricAuthService: any BiometricAuthServiceProtocol,
-        gearRepository: any GearRepository
+        gearRepository: any GearRepository,
+        finishEstimateRepository: any FinishEstimateRepository
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -90,6 +92,7 @@ struct AppRootView: View {
         self.notificationService = notificationService
         self.biometricAuthService = biometricAuthService
         self.gearRepository = gearRepository
+        self.finishEstimateRepository = finishEstimateRepository
     }
 
     var body: some View {
@@ -130,7 +133,8 @@ struct AppRootView: View {
                         stravaImportService: stravaImportService,
                         notificationService: notificationService,
                         biometricAuthService: biometricAuthService,
-                        gearRepository: gearRepository
+                        gearRepository: gearRepository,
+                        finishEstimateRepository: finishEstimateRepository
                     )
                 case .some(false):
                     OnboardingView(

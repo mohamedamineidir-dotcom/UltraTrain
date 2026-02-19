@@ -19,6 +19,8 @@ struct RunTrackingLaunchView: View {
     private let stravaImportService: (any StravaImportServiceProtocol)?
     private let stravaAuthService: any StravaAuthServiceProtocol
     private let gearRepository: any GearRepository
+    private let finishTimeEstimator: any EstimateFinishTimeUseCase
+    private let finishEstimateRepository: any FinishEstimateRepository
 
     init(
         athleteRepository: any AthleteRepository,
@@ -37,7 +39,9 @@ struct RunTrackingLaunchView: View {
         stravaUploadService: (any StravaUploadServiceProtocol)? = nil,
         stravaImportService: (any StravaImportServiceProtocol)? = nil,
         stravaAuthService: any StravaAuthServiceProtocol,
-        gearRepository: any GearRepository
+        gearRepository: any GearRepository,
+        finishTimeEstimator: any EstimateFinishTimeUseCase,
+        finishEstimateRepository: any FinishEstimateRepository
     ) {
         _viewModel = State(initialValue: RunTrackingLaunchViewModel(
             athleteRepository: athleteRepository,
@@ -46,7 +50,9 @@ struct RunTrackingLaunchView: View {
             raceRepository: raceRepository,
             appSettingsRepository: appSettingsRepository,
             hapticService: hapticService,
-            gearRepository: gearRepository
+            gearRepository: gearRepository,
+            finishTimeEstimator: finishTimeEstimator,
+            finishEstimateRepository: finishEstimateRepository
         ))
         self.athleteRepository = athleteRepository
         self.locationService = locationService
@@ -64,6 +70,8 @@ struct RunTrackingLaunchView: View {
         self.stravaImportService = stravaImportService
         self.stravaAuthService = stravaAuthService
         self.gearRepository = gearRepository
+        self.finishTimeEstimator = finishTimeEstimator
+        self.finishEstimateRepository = finishEstimateRepository
     }
 
     var body: some View {
@@ -95,6 +103,11 @@ struct RunTrackingLaunchView: View {
             }
             .navigationTitle("Run")
             .task { await viewModel.load() }
+            .onChange(of: viewModel.showActiveRun) { _, isShowing in
+                if !isShowing {
+                    viewModel.onRunSaved()
+                }
+            }
             .navigationDestination(isPresented: $viewModel.showActiveRun) {
                 if let athlete = viewModel.athlete {
                     ActiveRunView(
