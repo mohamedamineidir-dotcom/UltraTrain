@@ -24,6 +24,9 @@ struct TrainingLoadView: View {
                     ProgressView("Loading...")
                         .padding(.top, Theme.Spacing.xl)
                 } else if let summary = viewModel.summary {
+                    if !viewModel.injuryRiskAlerts.isEmpty {
+                        InjuryRiskAlertBanner(alerts: viewModel.injuryRiskAlerts)
+                    }
                     currentWeekSection(summary)
                     WeeklyLoadChartView(weeklyHistory: summary.weeklyHistory)
                     acrSection(summary)

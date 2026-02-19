@@ -2,50 +2,6 @@ import Foundation
 import SwiftUI
 import os
 
-struct WeeklyVolume: Identifiable, Equatable {
-    let id: Date
-    var weekStartDate: Date
-    var distanceKm: Double
-    var elevationGainM: Double
-    var duration: TimeInterval
-    var runCount: Int
-
-    init(weekStartDate: Date, distanceKm: Double = 0, elevationGainM: Double = 0, duration: TimeInterval = 0, runCount: Int = 0) {
-        self.id = weekStartDate
-        self.weekStartDate = weekStartDate
-        self.distanceKm = distanceKm
-        self.elevationGainM = elevationGainM
-        self.duration = duration
-        self.runCount = runCount
-    }
-}
-
-struct WeeklyAdherence: Identifiable, Equatable {
-    let id: Date
-    var weekStartDate: Date
-    var weekNumber: Int
-    var completed: Int
-    var total: Int
-    var percent: Double
-
-    init(weekStartDate: Date, weekNumber: Int, completed: Int, total: Int) {
-        self.id = weekStartDate
-        self.weekStartDate = weekStartDate
-        self.weekNumber = weekNumber
-        self.completed = completed
-        self.total = total
-        self.percent = total > 0 ? Double(completed) / Double(total) * 100 : 0
-    }
-}
-
-enum FormStatus: Equatable {
-    case raceReady
-    case fresh
-    case building
-    case fatigued
-    case noData
-}
-
 @Observable
 @MainActor
 final class ProgressViewModel {
@@ -55,6 +11,7 @@ final class ProgressViewModel {
     private let runRepository: any RunRepository
     private let athleteRepository: any AthleteRepository
     private let planRepository: any TrainingPlanRepository
+    private let raceRepository: any RaceRepository
     private let fitnessCalculator: any CalculateFitnessUseCase
     private let fitnessRepository: any FitnessRepository
 
@@ -68,6 +25,10 @@ final class ProgressViewModel {
     var currentFitnessSnapshot: FitnessSnapshot?
     var runTrendPoints: [RunTrendPoint] = []
     var personalRecords: [PersonalRecord] = []
+    var phaseBlocks: [PhaseBlock] = []
+    var injuryRiskAlerts: [InjuryRiskAlert] = []
+    var raceReadiness: RaceReadinessForecast?
+    var sessionTypeStats: [SessionTypeStats] = []
     var isLoading = false
     var error: String?
 
@@ -77,12 +38,14 @@ final class ProgressViewModel {
         runRepository: any RunRepository,
         athleteRepository: any AthleteRepository,
         planRepository: any TrainingPlanRepository,
+        raceRepository: any RaceRepository,
         fitnessCalculator: any CalculateFitnessUseCase,
         fitnessRepository: any FitnessRepository
     ) {
         self.runRepository = runRepository
         self.athleteRepository = athleteRepository
         self.planRepository = planRepository
+        self.raceRepository = raceRepository
         self.fitnessCalculator = fitnessCalculator
         self.fitnessRepository = fitnessRepository
     }
@@ -105,9 +68,12 @@ final class ProgressViewModel {
             runTrendPoints = computeRunTrends(from: runs)
             personalRecords = computePersonalRecords(from: runs)
 
-            if let plan = try await planRepository.getActivePlan() {
+            let plan = try await planRepository.getActivePlan()
+            if let plan {
                 planAdherence = computeAdherence(plan: plan)
                 weeklyAdherence = computeWeeklyAdherence(plan: plan)
+                phaseBlocks = PhaseVisualizationCalculator.computePhaseBlocks(from: plan)
+                sessionTypeStats = SessionTypeBreakdownCalculator.compute(from: plan)
             }
 
             if !runs.isEmpty {
@@ -116,6 +82,24 @@ final class ProgressViewModel {
                 currentFitnessSnapshot = snapshot
                 let from = Date.now.adding(days: -28)
                 fitnessSnapshots = try await fitnessRepository.getSnapshots(from: from, to: .now)
+
+                injuryRiskAlerts = InjuryRiskCalculator.assess(
+                    weeklyVolumes: weeklyVolumes,
+                    currentACR: snapshot.acuteToChronicRatio,
+                    monotony: snapshot.monotony
+                )
+
+                if let plan {
+                    let races = try await raceRepository.getRaces()
+                    if let aRace = races.first(where: { $0.priority == .aRace && $0.date > Date.now }) {
+                        raceReadiness = RaceReadinessCalculator.forecast(
+                            currentFitness: snapshot.fitness,
+                            currentFatigue: snapshot.fatigue,
+                            plannedWeeks: plan.weeks,
+                            race: aRace
+                        )
+                    }
+                }
             }
         } catch {
             self.error = error.localizedDescription
@@ -183,6 +167,10 @@ final class ProgressViewModel {
         }
     }
 
+    var currentPhase: TrainingPhase? {
+        phaseBlocks.first(where: \.isCurrentPhase)?.phase
+    }
+
     // MARK: - Private
 
     private func computeWeeklyVolumes(from runs: [CompletedRun]) -> [WeeklyVolume] {
@@ -234,9 +222,7 @@ final class ProgressViewModel {
         return sorted.enumerated().map { index, run in
             let windowStart = max(0, index - 4)
             let window = Array(sorted[windowStart...index])
-
             let avgPace = window.reduce(0.0) { $0 + $1.averagePaceSecondsPerKm } / Double(window.count)
-
             let hrWindow = window.compactMap(\.averageHeartRate)
             let avgHR: Double? = hrWindow.isEmpty ? nil : Double(hrWindow.reduce(0, +)) / Double(hrWindow.count)
 
@@ -264,14 +250,12 @@ final class ProgressViewModel {
                 value: longest.distanceKm, date: longest.date, runId: longest.id
             ))
         }
-
         if let mostElev = runs.max(by: { $0.elevationGainM < $1.elevationGainM }) {
             records.append(PersonalRecord(
                 id: UUID(), type: .mostElevation,
                 value: mostElev.elevationGainM, date: mostElev.date, runId: mostElev.id
             ))
         }
-
         let runsWithPace = runs.filter { $0.averagePaceSecondsPerKm > 0 }
         if let fastest = runsWithPace.min(by: { $0.averagePaceSecondsPerKm < $1.averagePaceSecondsPerKm }) {
             records.append(PersonalRecord(
@@ -279,14 +263,12 @@ final class ProgressViewModel {
                 value: fastest.averagePaceSecondsPerKm, date: fastest.date, runId: fastest.id
             ))
         }
-
         if let longestDur = runs.max(by: { $0.duration < $1.duration }) {
             records.append(PersonalRecord(
                 id: UUID(), type: .longestDuration,
                 value: longestDur.duration, date: longestDur.date, runId: longestDur.id
             ))
         }
-
         return records
     }
 }

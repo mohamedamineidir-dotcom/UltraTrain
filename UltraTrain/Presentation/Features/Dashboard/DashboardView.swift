@@ -261,6 +261,7 @@ struct DashboardView: View {
                 runRepository: runRepository,
                 athleteRepository: athleteRepository,
                 planRepository: planRepository,
+                raceRepository: raceRepository,
                 fitnessCalculator: fitnessCalculator,
                 fitnessRepository: fitnessRepository,
                 trainingLoadCalculator: trainingLoadCalculator

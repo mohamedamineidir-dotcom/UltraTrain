@@ -15,6 +15,7 @@ final class TrainingLoadViewModel {
     // MARK: - State
 
     var summary: TrainingLoadSummary?
+    var injuryRiskAlerts: [InjuryRiskAlert] = []
     var isLoading = false
     var error: String?
 
@@ -51,6 +52,15 @@ final class TrainingLoadViewModel {
                 plan: plan,
                 asOf: .now
             )
+
+            if let summary {
+                let volumes = computeWeeklyVolumes(from: runs)
+                injuryRiskAlerts = InjuryRiskCalculator.assess(
+                    weeklyVolumes: volumes,
+                    currentACR: summary.acrTrend.last?.value ?? 0,
+                    monotony: summary.monotony
+                )
+            }
         } catch {
             self.error = error.localizedDescription
             Logger.training.error("Failed to load training load: \(error)")
@@ -116,5 +126,28 @@ final class TrainingLoadViewModel {
         case .high:
             return "Training is too repetitive. Vary your session types and intensities."
         }
+    }
+
+    // MARK: - Private
+
+    private func computeWeeklyVolumes(from runs: [CompletedRun]) -> [WeeklyVolume] {
+        let calendar = Calendar.current
+        let now = Date.now
+        var volumes: [WeeklyVolume] = []
+
+        for weeksAgo in (0..<8).reversed() {
+            let weekStart = calendar.startOfDay(for: now.adding(weeks: -weeksAgo)).startOfWeek
+            let weekEnd = weekStart.adding(days: 7)
+            let weekRuns = runs.filter { $0.date >= weekStart && $0.date < weekEnd }
+
+            volumes.append(WeeklyVolume(
+                weekStartDate: weekStart,
+                distanceKm: weekRuns.reduce(0) { $0 + $1.distanceKm },
+                elevationGainM: weekRuns.reduce(0) { $0 + $1.elevationGainM },
+                duration: weekRuns.reduce(0) { $0 + $1.duration },
+                runCount: weekRuns.count
+            ))
+        }
+        return volumes
     }
 }

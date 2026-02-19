@@ -219,4 +219,40 @@ struct TrainingLoadViewModelTests {
 
         #expect(vm.monotonyDescription.contains("repetitive"))
     }
+
+    // MARK: - Injury Risk Alerts
+
+    @Test("Load computes injury risk alerts when ACR is high")
+    @MainActor
+    func injuryRiskAlertsHighACR() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let runRepo = MockRunRepository()
+        runRepo.runs = [makeRun(daysAgo: 0)]
+        let calc = MockCalculateTrainingLoadUseCase()
+        calc.resultSummary = makeSummary(monotony: 2.5, acr: 1.7)
+
+        let vm = makeViewModel(calc: calc, runRepo: runRepo, athleteRepo: athleteRepo)
+        await vm.load()
+
+        #expect(!vm.injuryRiskAlerts.isEmpty)
+        let criticalAlerts = vm.injuryRiskAlerts.filter { $0.severity == .critical }
+        #expect(!criticalAlerts.isEmpty)
+    }
+
+    @Test("No alerts when values are normal")
+    @MainActor
+    func noAlertsNormalValues() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let runRepo = MockRunRepository()
+        runRepo.runs = [makeRun(daysAgo: 0), makeRun(daysAgo: 1)]
+        let calc = MockCalculateTrainingLoadUseCase()
+        calc.resultSummary = makeSummary(monotony: 1.2, acr: 1.0)
+
+        let vm = makeViewModel(calc: calc, runRepo: runRepo, athleteRepo: athleteRepo)
+        await vm.load()
+
+        #expect(vm.injuryRiskAlerts.isEmpty)
+    }
 }

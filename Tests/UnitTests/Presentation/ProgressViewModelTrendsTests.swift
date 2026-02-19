@@ -57,6 +57,7 @@ struct ProgressViewModelTrendsTests {
         runRepo: MockRunRepository = MockRunRepository(),
         athleteRepo: MockAthleteRepository = MockAthleteRepository(),
         planRepo: MockTrainingPlanRepository = MockTrainingPlanRepository(),
+        raceRepo: MockRaceRepository = MockRaceRepository(),
         fitnessCalc: MockCalculateFitnessUseCase = MockCalculateFitnessUseCase(),
         fitnessRepo: MockFitnessRepository = MockFitnessRepository()
     ) -> ProgressViewModel {
@@ -64,6 +65,7 @@ struct ProgressViewModelTrendsTests {
             runRepository: runRepo,
             athleteRepository: athleteRepo,
             planRepository: planRepo,
+            raceRepository: raceRepo,
             fitnessCalculator: fitnessCalc,
             fitnessRepository: fitnessRepo
         )

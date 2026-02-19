@@ -129,6 +129,7 @@ struct ProgressViewModelTests {
         runRepo: MockRunRepository = MockRunRepository(),
         athleteRepo: MockAthleteRepository = MockAthleteRepository(),
         planRepo: MockTrainingPlanRepository = MockTrainingPlanRepository(),
+        raceRepo: MockRaceRepository = MockRaceRepository(),
         fitnessCalc: MockCalculateFitnessUseCase = MockCalculateFitnessUseCase(),
         fitnessRepo: MockFitnessRepository = MockFitnessRepository()
     ) -> ProgressViewModel {
@@ -136,6 +137,7 @@ struct ProgressViewModelTests {
             runRepository: runRepo,
             athleteRepository: athleteRepo,
             planRepository: planRepo,
+            raceRepository: raceRepo,
             fitnessCalculator: fitnessCalc,
             fitnessRepository: fitnessRepo
         )
@@ -460,5 +462,110 @@ struct ProgressViewModelTests {
         #expect(vm.currentFitnessSnapshot == nil)
         #expect(vm.fitnessSnapshots.isEmpty)
         #expect(vm.formStatus == .noData)
+    }
+
+    // MARK: - Phase Blocks
+
+    @Test("Load computes phase blocks when plan exists")
+    @MainActor
+    func phaseBlocksFromPlan() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let planRepo = MockTrainingPlanRepository()
+        let weeks = [
+            TrainingWeek(id: UUID(), weekNumber: 1, startDate: Date.now.adding(weeks: -2).startOfWeek, endDate: Date.now.adding(weeks: -2).startOfWeek.adding(days: 6), phase: .base, sessions: [], isRecoveryWeek: false, targetVolumeKm: 40, targetElevationGainM: 800),
+            TrainingWeek(id: UUID(), weekNumber: 2, startDate: Date.now.adding(weeks: -1).startOfWeek, endDate: Date.now.adding(weeks: -1).startOfWeek.adding(days: 6), phase: .build, sessions: [], isRecoveryWeek: false, targetVolumeKm: 50, targetElevationGainM: 1000),
+        ]
+        planRepo.activePlan = TrainingPlan(id: UUID(), athleteId: athleteId, targetRaceId: UUID(), createdAt: .now, weeks: weeks, intermediateRaceIds: [])
+
+        let vm = makeViewModel(athleteRepo: athleteRepo, planRepo: planRepo)
+        await vm.load()
+
+        #expect(vm.phaseBlocks.count == 2)
+        #expect(vm.phaseBlocks[0].phase == .base)
+        #expect(vm.phaseBlocks[1].phase == .build)
+    }
+
+    // MARK: - Injury Risk Alerts
+
+    @Test("Load computes injury risk alerts from fitness snapshot")
+    @MainActor
+    func injuryRiskAlerts() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let runRepo = MockRunRepository()
+        runRepo.runs = [makeRun(daysAgo: 0)]
+        let fitnessCalc = MockCalculateFitnessUseCase()
+        fitnessCalc.resultSnapshot = FitnessSnapshot(
+            id: UUID(), date: .now, fitness: 30, fatigue: 50, form: -20,
+            weeklyVolumeKm: 10, weeklyElevationGainM: 200, weeklyDuration: 3600,
+            acuteToChronicRatio: 1.7, monotony: 2.5
+        )
+
+        let vm = makeViewModel(runRepo: runRepo, athleteRepo: athleteRepo, fitnessCalc: fitnessCalc)
+        await vm.load()
+
+        #expect(!vm.injuryRiskAlerts.isEmpty)
+        let criticalAlerts = vm.injuryRiskAlerts.filter { $0.severity == .critical }
+        #expect(!criticalAlerts.isEmpty)
+    }
+
+    // MARK: - Race Readiness
+
+    @Test("Load computes race readiness when A-race and fitness exist")
+    @MainActor
+    func raceReadiness() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let runRepo = MockRunRepository()
+        runRepo.runs = [makeRun(daysAgo: 0)]
+        let fitnessCalc = MockCalculateFitnessUseCase()
+        fitnessCalc.resultSnapshot = FitnessSnapshot(
+            id: UUID(), date: .now, fitness: 50, fatigue: 40, form: 10,
+            weeklyVolumeKm: 40, weeklyElevationGainM: 800, weeklyDuration: 14400,
+            acuteToChronicRatio: 0.8, monotony: 1.2
+        )
+        let planRepo = MockTrainingPlanRepository()
+        planRepo.activePlan = makePlan(completedCount: 2, totalCount: 5)
+        let raceRepo = MockRaceRepository()
+        raceRepo.races = [Race(
+            id: UUID(), name: "UTMB", date: Date.now.adding(days: 42),
+            distanceKm: 171, elevationGainM: 10000, elevationLossM: 10000,
+            priority: .aRace, goalType: .finish, checkpoints: [], terrainDifficulty: .technical
+        )]
+
+        let vm = makeViewModel(runRepo: runRepo, athleteRepo: athleteRepo, planRepo: planRepo, raceRepo: raceRepo, fitnessCalc: fitnessCalc)
+        await vm.load()
+
+        #expect(vm.raceReadiness != nil)
+        #expect(vm.raceReadiness?.raceName == "UTMB")
+        #expect(vm.raceReadiness!.daysUntilRace >= 41 && vm.raceReadiness!.daysUntilRace <= 42)
+    }
+
+    // MARK: - Session Type Stats
+
+    @Test("Load computes session type stats from plan")
+    @MainActor
+    func sessionTypeStats() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let weekStart = Date.now.startOfWeek
+        let sessions = [
+            TrainingSession(id: UUID(), date: weekStart, type: .longRun, plannedDistanceKm: 20, plannedElevationGainM: 500, plannedDuration: 7200, intensity: .moderate, description: "Long", isCompleted: false, isSkipped: false),
+            TrainingSession(id: UUID(), date: weekStart.adding(days: 1), type: .tempo, plannedDistanceKm: 10, plannedElevationGainM: 100, plannedDuration: 3600, intensity: .hard, description: "Tempo", isCompleted: false, isSkipped: false),
+            TrainingSession(id: UUID(), date: weekStart.adding(days: 2), type: .longRun, plannedDistanceKm: 15, plannedElevationGainM: 300, plannedDuration: 5400, intensity: .moderate, description: "Long 2", isCompleted: false, isSkipped: false),
+            TrainingSession(id: UUID(), date: weekStart.adding(days: 3), type: .rest, plannedDistanceKm: 0, plannedElevationGainM: 0, plannedDuration: 0, intensity: .easy, description: "Rest", isCompleted: false, isSkipped: false),
+        ]
+        let week = TrainingWeek(id: UUID(), weekNumber: 1, startDate: weekStart, endDate: weekStart.adding(days: 6), phase: .build, sessions: sessions, isRecoveryWeek: false, targetVolumeKm: 45, targetElevationGainM: 900)
+        let plan = TrainingPlan(id: UUID(), athleteId: athleteId, targetRaceId: UUID(), createdAt: .now, weeks: [week], intermediateRaceIds: [])
+        let planRepo = MockTrainingPlanRepository()
+        planRepo.activePlan = plan
+
+        let vm = makeViewModel(athleteRepo: athleteRepo, planRepo: planRepo)
+        await vm.load()
+
+        #expect(vm.sessionTypeStats.count == 2)
+        let longRunStats = vm.sessionTypeStats.first { $0.sessionType == .longRun }
+        #expect(longRunStats?.count == 2)
     }
 }

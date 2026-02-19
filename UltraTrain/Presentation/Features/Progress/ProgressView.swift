@@ -12,6 +12,7 @@ struct TrainingProgressView: View {
         runRepository: any RunRepository,
         athleteRepository: any AthleteRepository,
         planRepository: any TrainingPlanRepository,
+        raceRepository: any RaceRepository,
         fitnessCalculator: any CalculateFitnessUseCase,
         fitnessRepository: any FitnessRepository,
         trainingLoadCalculator: any CalculateTrainingLoadUseCase
@@ -24,6 +25,7 @@ struct TrainingProgressView: View {
             runRepository: runRepository,
             athleteRepository: athleteRepository,
             planRepository: planRepository,
+            raceRepository: raceRepository,
             fitnessCalculator: fitnessCalculator,
             fitnessRepository: fitnessRepository
         ))
@@ -37,11 +39,15 @@ struct TrainingProgressView: View {
                         .padding(.top, Theme.Spacing.xl)
                 } else {
                     trainingLoadLink
+                    injuryRiskSection
+                    phaseTimelineSection
                     fitnessSection
+                    raceReadinessSection
                     volumeChartSection
                     elevationChartSection
                     durationChartSection
                     cumulativeVolumeSection
+                    sessionTypeSection
                     adherenceSection
                     summarySection
                     paceTrendSection
@@ -90,6 +96,26 @@ struct TrainingProgressView: View {
         }
     }
 
+    // MARK: - Injury Risk Alerts
+
+    @ViewBuilder
+    private var injuryRiskSection: some View {
+        let critical = viewModel.injuryRiskAlerts.filter { $0.severity == .critical }
+        if !critical.isEmpty {
+            InjuryRiskAlertBanner(alerts: critical)
+        }
+    }
+
+    // MARK: - Phase Timeline
+
+    @ViewBuilder
+    private var phaseTimelineSection: some View {
+        if !viewModel.phaseBlocks.isEmpty {
+            PhaseTimelineView(blocks: viewModel.phaseBlocks)
+                .cardStyle()
+        }
+    }
+
     // MARK: - Fitness Section
 
     private var fitnessSection: some View {
@@ -117,6 +143,16 @@ struct TrainingProgressView: View {
             }
         }
         .cardStyle()
+    }
+
+    // MARK: - Race Readiness
+
+    @ViewBuilder
+    private var raceReadinessSection: some View {
+        if let forecast = viewModel.raceReadiness {
+            RaceReadinessCard(forecast: forecast)
+                .cardStyle()
+        }
     }
 
     // MARK: - Volume Chart
@@ -165,62 +201,6 @@ struct TrainingProgressView: View {
         .accessibilityLabel("Weekly elevation chart. Total \(String(format: "%.0f", viewModel.totalElevationGainM)) meters of elevation gain.")
     }
 
-    // MARK: - Adherence
-
-    private var adherenceSection: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("Plan Adherence")
-                .font(.headline)
-
-            if viewModel.planAdherence.total > 0 {
-                HStack(spacing: Theme.Spacing.lg) {
-                    ZStack {
-                        Circle()
-                            .stroke(Theme.Colors.secondaryLabel.opacity(0.2), lineWidth: 8)
-                        Circle()
-                            .trim(from: 0, to: viewModel.adherencePercent / 100)
-                            .stroke(adherenceColor, style: StrokeStyle(lineWidth: 8, lineCap: .round))
-                            .rotationEffect(.degrees(-90))
-                        Text(String(format: "%.0f%%", viewModel.adherencePercent))
-                            .font(.title3.bold().monospacedDigit())
-                    }
-                    .frame(width: 80, height: 80)
-
-                    VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-                        Text("\(viewModel.planAdherence.completed) of \(viewModel.planAdherence.total) sessions")
-                            .font(.subheadline)
-                        Text(adherenceMessage)
-                            .font(.caption)
-                            .foregroundStyle(Theme.Colors.secondaryLabel)
-                    }
-                }
-            } else {
-                Text("Generate a training plan to track adherence")
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-            }
-
-            if viewModel.weeklyAdherence.count >= 2 {
-                AdherenceTrendChartView(weeklyAdherence: viewModel.weeklyAdherence)
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .cardStyle()
-    }
-
-    private var adherenceColor: Color {
-        let pct = viewModel.adherencePercent
-        if pct >= 80 { return Theme.Colors.success }
-        if pct >= 50 { return Theme.Colors.warning }
-        return Theme.Colors.danger
-    }
-
-    private var adherenceMessage: String {
-        let pct = viewModel.adherencePercent
-        if pct >= 80 { return "Great consistency! Keep it up." }
-        if pct >= 50 { return "Good progress. Try to complete more sessions." }
-        return "Falling behind. Focus on key sessions."
-    }
-
     // MARK: - Duration Chart
 
     @ViewBuilder
@@ -241,39 +221,36 @@ struct TrainingProgressView: View {
         }
     }
 
+    // MARK: - Session Type Breakdown
+
+    @ViewBuilder
+    private var sessionTypeSection: some View {
+        if !viewModel.sessionTypeStats.isEmpty {
+            SessionTypeBreakdownChart(stats: viewModel.sessionTypeStats)
+                .cardStyle()
+        }
+    }
+
+    // MARK: - Adherence
+
+    private var adherenceSection: some View {
+        ProgressAdherenceSection(
+            adherencePercent: viewModel.adherencePercent,
+            completed: viewModel.planAdherence.completed,
+            total: viewModel.planAdherence.total,
+            weeklyAdherence: viewModel.weeklyAdherence
+        )
+    }
+
     // MARK: - Summary
 
     private var summarySection: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("8-Week Summary")
-                .font(.headline)
-
-            LazyVGrid(
-                columns: [GridItem(.flexible()), GridItem(.flexible())],
-                spacing: Theme.Spacing.md
-            ) {
-                StatCard(
-                    title: "Total Distance",
-                    value: String(format: "%.0f", viewModel.totalDistanceKm),
-                    unit: "km"
-                )
-                StatCard(
-                    title: "Total Elevation",
-                    value: String(format: "%.0f", viewModel.totalElevationGainM),
-                    unit: "m D+"
-                )
-                StatCard(
-                    title: "Total Runs",
-                    value: "\(viewModel.totalRuns)",
-                    unit: "runs"
-                )
-                StatCard(
-                    title: "Avg/Week",
-                    value: String(format: "%.1f", viewModel.averageWeeklyKm),
-                    unit: "km"
-                )
-            }
-        }
+        ProgressSummarySection(
+            totalDistanceKm: viewModel.totalDistanceKm,
+            totalElevationGainM: viewModel.totalElevationGainM,
+            totalRuns: viewModel.totalRuns,
+            averageWeeklyKm: viewModel.averageWeeklyKm
+        )
     }
 
     // MARK: - Pace Trend
