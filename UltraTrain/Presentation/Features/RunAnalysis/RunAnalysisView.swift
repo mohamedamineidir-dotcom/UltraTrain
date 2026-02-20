@@ -151,7 +151,11 @@ struct RunAnalysisView: View {
                 endCoordinate: endCLCoordinate,
                 checkpointLocations: viewModel.checkpointLocations,
                 coloringMode: viewModel.routeColoringMode,
-                elevationSegments: viewModel.elevationSegments
+                elevationSegments: viewModel.elevationSegments,
+                heartRateSegments: viewModel.heartRateSegments,
+                distanceMarkers: viewModel.distanceMarkers,
+                segmentDetails: viewModel.segmentDetails,
+                selectedSegment: $viewModel.selectedSegment
             )
         }
     }
@@ -176,6 +180,9 @@ struct RunAnalysisView: View {
             Picker("Coloring", selection: $viewModel.routeColoringMode) {
                 Text("Pace").tag(RouteColoringMode.pace)
                 Text("Elevation").tag(RouteColoringMode.elevation)
+                if viewModel.hasHeartRateData {
+                    Text("HR").tag(RouteColoringMode.heartRate)
+                }
             }
             .pickerStyle(.segmented)
 
@@ -185,7 +192,11 @@ struct RunAnalysisView: View {
                 endCoordinate: endCLCoordinate,
                 checkpointLocations: viewModel.checkpointLocations,
                 coloringMode: viewModel.routeColoringMode,
-                elevationSegments: viewModel.elevationSegments
+                elevationSegments: viewModel.elevationSegments,
+                heartRateSegments: viewModel.heartRateSegments,
+                distanceMarkers: viewModel.distanceMarkers,
+                segmentDetails: viewModel.segmentDetails,
+                selectedSegment: $viewModel.selectedSegment
             )
         }
         .cardStyle()

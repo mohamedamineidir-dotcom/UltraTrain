@@ -22,6 +22,10 @@ final class RunAnalysisViewModel {
     var zoneDistribution: [HeartRateZoneDistribution] = []
     var routeSegments: [RouteSegment] = []
     var elevationSegments: [ElevationSegment] = []
+    var heartRateSegments: [HeartRateSegment] = []
+    var distanceMarkers: [(km: Int, coordinate: (Double, Double))] = []
+    var segmentDetails: [SegmentDetail] = []
+    var selectedSegment: SegmentDetail?
     var routeColoringMode: RouteColoringMode = .pace
     var planComparison: PlanComparison?
     var checkpointLocations: [(checkpoint: Checkpoint, coordinate: CLLocationCoordinate2D)] = []
@@ -74,9 +78,20 @@ final class RunAnalysisViewModel {
             routeSegments = RunStatisticsCalculator.buildRouteSegments(from: run.gpsTrack)
             elevationSegments = ElevationCalculator.buildElevationSegments(from: run.gpsTrack)
 
+            distanceMarkers = RunStatisticsCalculator.buildDistanceMarkers(from: run.gpsTrack)
+            segmentDetails = RunStatisticsCalculator.buildSegmentDetails(
+                from: run.gpsTrack,
+                splits: run.splits,
+                maxHeartRate: athlete?.maxHeartRate
+            )
+
             let trackHasHR = run.gpsTrack.contains { $0.heartRate != nil }
             if let maxHR = athlete?.maxHeartRate, maxHR > 0, trackHasHR {
                 zoneDistribution = RunStatisticsCalculator.heartRateZoneDistribution(
+                    from: run.gpsTrack,
+                    maxHeartRate: maxHR
+                )
+                heartRateSegments = RunStatisticsCalculator.buildHeartRateSegments(
                     from: run.gpsTrack,
                     maxHeartRate: maxHR
                 )
