@@ -38,7 +38,7 @@ struct FinishEstimationView: View {
                         raceCalibrationBadge(count: estimate.raceResultsUsed)
                     }
                     if !estimate.checkpointSplits.isEmpty {
-                        checkpointSplitsSection(estimate)
+                        CheckpointSplitsCard(race: viewModel.race, estimate: estimate)
                     }
                 } else if let error = viewModel.error {
                     errorSection(error)
@@ -176,57 +176,6 @@ struct FinishEstimationView: View {
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .fill(Theme.Colors.success.opacity(0.1))
         )
-    }
-
-    // MARK: - Checkpoint Splits
-
-    private func checkpointSplitsSection(_ estimate: FinishEstimate) -> some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("Checkpoint Splits")
-                .font(.headline)
-
-            splitsHeaderRow
-
-            ForEach(estimate.checkpointSplits) { split in
-                splitRow(split)
-                if split.id != estimate.checkpointSplits.last?.id {
-                    Divider()
-                }
-            }
-        }
-        .cardStyle()
-    }
-
-    private var splitsHeaderRow: some View {
-        HStack {
-            Text("Checkpoint")
-                .frame(maxWidth: .infinity, alignment: .leading)
-            Text("Best")
-                .frame(width: 60, alignment: .trailing)
-            Text("Expected")
-                .frame(width: 70, alignment: .trailing)
-            Text("Worst")
-                .frame(width: 60, alignment: .trailing)
-        }
-        .font(.caption.bold())
-        .foregroundStyle(Theme.Colors.secondaryLabel)
-    }
-
-    private func splitRow(_ split: CheckpointSplit) -> some View {
-        HStack {
-            Text(split.checkpointName)
-                .font(.caption)
-                .lineLimit(1)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            Text(FinishEstimate.formatDuration(split.optimisticTime))
-                .frame(width: 60, alignment: .trailing)
-            Text(FinishEstimate.formatDuration(split.expectedTime))
-                .frame(width: 70, alignment: .trailing)
-                .fontWeight(.medium)
-            Text(FinishEstimate.formatDuration(split.conservativeTime))
-                .frame(width: 60, alignment: .trailing)
-        }
-        .font(.caption.monospacedDigit())
     }
 
     // MARK: - Error

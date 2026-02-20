@@ -202,6 +202,84 @@ struct FinishTimeEstimatorTests {
         }
     }
 
+    @Test("Checkpoint splits include segment distance")
+    func checkpointSplitsSegmentDistance() async throws {
+        let checkpoints = [
+            Checkpoint(id: UUID(), name: "CP1", distanceFromStartKm: 10, elevationM: 500, hasAidStation: true),
+            Checkpoint(id: UUID(), name: "CP2", distanceFromStartKm: 25, elevationM: 1200, hasAidStation: false),
+            Checkpoint(id: UUID(), name: "CP3", distanceFromStartKm: 40, elevationM: 800, hasAidStation: true)
+        ]
+        let race = makeRace(checkpoints: checkpoints)
+        let runs = [makeRun()]
+
+        let estimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: nil
+        )
+        #expect(estimate.checkpointSplits[0].segmentDistanceKm == 10)
+        #expect(estimate.checkpointSplits[1].segmentDistanceKm == 15)
+        #expect(estimate.checkpointSplits[2].segmentDistanceKm == 15)
+        #expect(estimate.checkpointSplits[0].distanceFromStartKm == 10)
+        #expect(estimate.checkpointSplits[1].distanceFromStartKm == 25)
+        #expect(estimate.checkpointSplits[2].distanceFromStartKm == 40)
+    }
+
+    @Test("Checkpoint splits include segment elevation gain")
+    func checkpointSplitsElevationGain() async throws {
+        let checkpoints = [
+            Checkpoint(id: UUID(), name: "CP1", distanceFromStartKm: 10, elevationM: 500, hasAidStation: true),
+            Checkpoint(id: UUID(), name: "CP2", distanceFromStartKm: 25, elevationM: 1200, hasAidStation: false),
+            Checkpoint(id: UUID(), name: "CP3", distanceFromStartKm: 40, elevationM: 800, hasAidStation: false)
+        ]
+        let race = makeRace(checkpoints: checkpoints)
+        let runs = [makeRun()]
+
+        let estimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: nil
+        )
+        #expect(estimate.checkpointSplits[0].segmentElevationGainM == 500)
+        #expect(estimate.checkpointSplits[1].segmentElevationGainM == 700)
+        // CP3 drops from 1200 to 800 — no gain
+        #expect(estimate.checkpointSplits[2].segmentElevationGainM == 0)
+    }
+
+    @Test("Checkpoint splits include aid station flag")
+    func checkpointSplitsAidStation() async throws {
+        let checkpoints = [
+            Checkpoint(id: UUID(), name: "CP1", distanceFromStartKm: 10, elevationM: 500, hasAidStation: true),
+            Checkpoint(id: UUID(), name: "CP2", distanceFromStartKm: 25, elevationM: 1200, hasAidStation: false)
+        ]
+        let race = makeRace(checkpoints: checkpoints)
+        let runs = [makeRun()]
+
+        let estimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: nil
+        )
+        #expect(estimate.checkpointSplits[0].hasAidStation == true)
+        #expect(estimate.checkpointSplits[1].hasAidStation == false)
+    }
+
+    @Test("Segment distances sum to total checkpoint distance")
+    func segmentDistancesSumCorrectly() async throws {
+        let checkpoints = [
+            Checkpoint(id: UUID(), name: "CP1", distanceFromStartKm: 12, elevationM: 600, hasAidStation: true),
+            Checkpoint(id: UUID(), name: "CP2", distanceFromStartKm: 28, elevationM: 1400, hasAidStation: true),
+            Checkpoint(id: UUID(), name: "CP3", distanceFromStartKm: 45, elevationM: 2500, hasAidStation: false)
+        ]
+        let race = makeRace(checkpoints: checkpoints)
+        let runs = [makeRun()]
+
+        let estimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: nil
+        )
+        let totalSegmentDistance = estimate.checkpointSplits.reduce(0.0) { $0 + $1.segmentDistanceKm }
+        let lastCheckpointDistance = checkpoints.last!.distanceFromStartKm
+        #expect(abs(totalSegmentDistance - lastCheckpointDistance) < 0.001)
+    }
+
     // MARK: - Confidence
 
     @Test("Confidence increases with more runs")

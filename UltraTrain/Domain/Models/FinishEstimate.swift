@@ -27,6 +27,10 @@ struct CheckpointSplit: Identifiable, Equatable, Sendable {
     let id: UUID
     var checkpointId: UUID
     var checkpointName: String
+    var distanceFromStartKm: Double
+    var segmentDistanceKm: Double
+    var segmentElevationGainM: Double
+    var hasAidStation: Bool
     var optimisticTime: TimeInterval
     var expectedTime: TimeInterval
     var conservativeTime: TimeInterval

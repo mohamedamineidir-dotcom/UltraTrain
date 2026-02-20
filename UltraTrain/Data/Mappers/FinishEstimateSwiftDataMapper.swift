@@ -38,6 +38,10 @@ enum FinishEstimateSwiftDataMapper {
         let id: UUID
         let checkpointId: UUID
         let checkpointName: String
+        var distanceFromStartKm: Double?
+        var segmentDistanceKm: Double?
+        var segmentElevationGainM: Double?
+        var hasAidStation: Bool?
         let optimisticTime: Double
         let expectedTime: Double
         let conservativeTime: Double
@@ -49,6 +53,10 @@ enum FinishEstimateSwiftDataMapper {
                 id: split.id,
                 checkpointId: split.checkpointId,
                 checkpointName: split.checkpointName,
+                distanceFromStartKm: split.distanceFromStartKm,
+                segmentDistanceKm: split.segmentDistanceKm,
+                segmentElevationGainM: split.segmentElevationGainM,
+                hasAidStation: split.hasAidStation,
                 optimisticTime: split.optimisticTime,
                 expectedTime: split.expectedTime,
                 conservativeTime: split.conservativeTime
@@ -67,6 +75,10 @@ enum FinishEstimateSwiftDataMapper {
                 id: split.id,
                 checkpointId: split.checkpointId,
                 checkpointName: split.checkpointName,
+                distanceFromStartKm: split.distanceFromStartKm ?? 0,
+                segmentDistanceKm: split.segmentDistanceKm ?? 0,
+                segmentElevationGainM: split.segmentElevationGainM ?? 0,
+                hasAidStation: split.hasAidStation ?? false,
                 optimisticTime: split.optimisticTime,
                 expectedTime: split.expectedTime,
                 conservativeTime: split.conservativeTime

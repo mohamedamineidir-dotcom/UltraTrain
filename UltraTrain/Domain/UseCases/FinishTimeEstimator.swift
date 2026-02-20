@@ -159,7 +159,7 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         guard !race.checkpoints.isEmpty else { return [] }
 
         let sortedCheckpoints = race.checkpoints.sorted { $0.distanceFromStartKm < $1.distanceFromStartKm }
-        var segments: [(effort: Double, checkpoint: Checkpoint)] = []
+        var segments: [(effort: Double, elevationGain: Double, checkpoint: Checkpoint)] = []
         var previousDistanceKm = 0.0
         var previousElevationM = 0.0
 
@@ -168,7 +168,7 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
             let elevationChange = checkpoint.elevationM - previousElevationM
             let elevationGain = max(0, elevationChange)
             let effort = segmentDistance + (elevationGain / 100.0)
-            segments.append((effort, checkpoint))
+            segments.append((effort, elevationGain, checkpoint))
             previousDistanceKm = checkpoint.distanceFromStartKm
             previousElevationM = checkpoint.elevationM
         }
@@ -177,13 +177,20 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         guard totalEffort > 0 else { return [] }
 
         var cumulativeEffort = 0.0
+        var prevDistKm = 0.0
         return segments.map { segment in
             cumulativeEffort += segment.effort
             let fraction = cumulativeEffort / totalEffort
+            let segmentDistance = segment.checkpoint.distanceFromStartKm - prevDistKm
+            prevDistKm = segment.checkpoint.distanceFromStartKm
             return CheckpointSplit(
                 id: UUID(),
                 checkpointId: segment.checkpoint.id,
                 checkpointName: segment.checkpoint.name,
+                distanceFromStartKm: segment.checkpoint.distanceFromStartKm,
+                segmentDistanceKm: segmentDistance,
+                segmentElevationGainM: segment.elevationGain,
+                hasAidStation: segment.checkpoint.hasAidStation,
                 optimisticTime: optimistic * fraction,
                 expectedTime: expected * fraction,
                 conservativeTime: conservative * fraction
