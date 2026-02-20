@@ -13,6 +13,8 @@ final class RaceDayPlanViewModel {
     private let fitnessCalculator: any CalculateFitnessUseCase
     private let nutritionRepository: any NutritionRepository
     private let nutritionGenerator: any GenerateNutritionPlanUseCase
+    private let raceRepository: any RaceRepository
+    private let finishEstimateRepository: any FinishEstimateRepository
 
     // MARK: - State
 
@@ -32,7 +34,9 @@ final class RaceDayPlanViewModel {
         runRepository: any RunRepository,
         fitnessCalculator: any CalculateFitnessUseCase,
         nutritionRepository: any NutritionRepository,
-        nutritionGenerator: any GenerateNutritionPlanUseCase
+        nutritionGenerator: any GenerateNutritionPlanUseCase,
+        raceRepository: any RaceRepository,
+        finishEstimateRepository: any FinishEstimateRepository
     ) {
         self.race = race
         self.finishTimeEstimator = finishTimeEstimator
@@ -41,6 +45,8 @@ final class RaceDayPlanViewModel {
         self.fitnessCalculator = fitnessCalculator
         self.nutritionRepository = nutritionRepository
         self.nutritionGenerator = nutritionGenerator
+        self.raceRepository = raceRepository
+        self.finishEstimateRepository = finishEstimateRepository
     }
 
     // MARK: - Load
@@ -70,11 +76,13 @@ final class RaceDayPlanViewModel {
                 Logger.fitness.warning("Could not calculate fitness for race day plan: \(error)")
             }
 
+            let calibrations = await buildCalibrations()
             let finishEstimate = try await finishTimeEstimator.execute(
                 athlete: athlete,
                 race: race,
                 recentRuns: runs,
-                currentFitness: fitness
+                currentFitness: fitness,
+                pastRaceCalibrations: calibrations
             )
             estimate = finishEstimate
 
@@ -101,6 +109,28 @@ final class RaceDayPlanViewModel {
         }
 
         isLoading = false
+    }
+
+    // MARK: - Calibration
+
+    private func buildCalibrations() async -> [RaceCalibration] {
+        do {
+            let allRaces = try await raceRepository.getRaces()
+            var calibrations: [RaceCalibration] = []
+            for race in allRaces where race.actualFinishTime != nil {
+                guard let saved = try await finishEstimateRepository.getEstimate(for: race.id) else { continue }
+                calibrations.append(RaceCalibration(
+                    raceId: race.id,
+                    predictedTime: saved.expectedTime,
+                    actualTime: race.actualFinishTime!,
+                    raceDistanceKm: race.distanceKm,
+                    raceElevationGainM: race.elevationGainM
+                ))
+            }
+            return calibrations
+        } catch {
+            return []
+        }
     }
 
     // MARK: - Build Segments

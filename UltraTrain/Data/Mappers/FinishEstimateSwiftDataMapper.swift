@@ -13,7 +13,8 @@ enum FinishEstimateSwiftDataMapper {
             conservativeTime: model.conservativeTime,
             checkpointSplits: decodeSplits(model.checkpointSplitsData),
             confidencePercent: model.confidencePercent,
-            raceResultsUsed: model.raceResultsUsed
+            raceResultsUsed: model.raceResultsUsed,
+            calibrationFactor: model.calibrationFactor
         )
     }
 
@@ -28,7 +29,8 @@ enum FinishEstimateSwiftDataMapper {
             conservativeTime: estimate.conservativeTime,
             checkpointSplitsData: encodeSplits(estimate.checkpointSplits),
             confidencePercent: estimate.confidencePercent,
-            raceResultsUsed: estimate.raceResultsUsed
+            raceResultsUsed: estimate.raceResultsUsed,
+            calibrationFactor: estimate.calibrationFactor
         )
     }
 

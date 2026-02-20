@@ -178,6 +178,7 @@ struct MainTabView: View {
                 runRepository: runRepository,
                 fitnessCalculator: fitnessCalculator,
                 finishTimeEstimator: finishTimeEstimator,
+                finishEstimateRepository: finishEstimateRepository,
                 appSettingsRepository: appSettingsRepository,
                 clearAllDataUseCase: clearAllDataUseCase,
                 healthKitService: healthKitService,

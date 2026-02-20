@@ -66,7 +66,7 @@ private struct PreviewRaceRepository: RaceRepository, @unchecked Sendable {
 }
 
 private struct PreviewFinishTimeEstimator: EstimateFinishTimeUseCase, @unchecked Sendable {
-    func execute(athlete: Athlete, race: Race, recentRuns: [CompletedRun], currentFitness: FitnessSnapshot?) async throws -> FinishEstimate {
+    func execute(athlete: Athlete, race: Race, recentRuns: [CompletedRun], currentFitness: FitnessSnapshot?, pastRaceCalibrations: [RaceCalibration]) async throws -> FinishEstimate {
         FinishEstimate(
             id: UUID(), raceId: race.id, athleteId: athlete.id, calculatedAt: .now,
             optimisticTime: 0, expectedTime: 0, conservativeTime: 0,

@@ -4,13 +4,16 @@ import Foundation
 final class MockEstimateFinishTimeUseCase: EstimateFinishTimeUseCase, @unchecked Sendable {
     var resultEstimate: FinishEstimate?
     var shouldThrow = false
+    var lastCalibrations: [RaceCalibration] = []
 
     func execute(
         athlete: Athlete,
         race: Race,
         recentRuns: [CompletedRun],
-        currentFitness: FitnessSnapshot?
+        currentFitness: FitnessSnapshot?,
+        pastRaceCalibrations: [RaceCalibration]
     ) async throws -> FinishEstimate {
+        lastCalibrations = pastRaceCalibrations
         if shouldThrow {
             throw DomainError.insufficientData(reason: "Mock error")
         }

@@ -11,6 +11,7 @@ struct FinishEstimate: Identifiable, Equatable, Sendable {
     var checkpointSplits: [CheckpointSplit]
     var confidencePercent: Double
     var raceResultsUsed: Int
+    var calibrationFactor: Double = 1.0
 
     var expectedTimeFormatted: String {
         Self.formatDuration(expectedTime)

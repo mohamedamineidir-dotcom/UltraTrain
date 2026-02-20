@@ -13,6 +13,7 @@ struct DashboardView: View {
     private let trainingLoadCalculator: any CalculateTrainingLoadUseCase
     private let raceRepository: any RaceRepository
     private let finishTimeEstimator: any EstimateFinishTimeUseCase
+    private let finishEstimateRepository: any FinishEstimateRepository
     private let nutritionRepository: any NutritionRepository
     private let nutritionGenerator: any GenerateNutritionPlanUseCase
 
@@ -39,6 +40,7 @@ struct DashboardView: View {
         self.trainingLoadCalculator = trainingLoadCalculator
         self.raceRepository = raceRepository
         self.finishTimeEstimator = finishTimeEstimator
+        self.finishEstimateRepository = finishEstimateRepository
         self.nutritionRepository = nutritionRepository
         self.nutritionGenerator = nutritionGenerator
         _viewModel = State(initialValue: DashboardViewModel(
@@ -115,7 +117,9 @@ struct DashboardView: View {
                     runRepository: runRepository,
                     fitnessCalculator: fitnessCalculator,
                     nutritionRepository: nutritionRepository,
-                    nutritionGenerator: nutritionGenerator
+                    nutritionGenerator: nutritionGenerator,
+                    raceRepository: raceRepository,
+                    finishEstimateRepository: finishEstimateRepository
                 )
             } label: {
                 DashboardFinishEstimateCard(estimate: estimate, race: race)

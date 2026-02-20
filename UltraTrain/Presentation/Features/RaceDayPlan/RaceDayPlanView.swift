@@ -11,7 +11,9 @@ struct RaceDayPlanView: View {
         runRepository: any RunRepository,
         fitnessCalculator: any CalculateFitnessUseCase,
         nutritionRepository: any NutritionRepository,
-        nutritionGenerator: any GenerateNutritionPlanUseCase
+        nutritionGenerator: any GenerateNutritionPlanUseCase,
+        raceRepository: any RaceRepository,
+        finishEstimateRepository: any FinishEstimateRepository
     ) {
         _viewModel = State(initialValue: RaceDayPlanViewModel(
             race: race,
@@ -20,7 +22,9 @@ struct RaceDayPlanView: View {
             runRepository: runRepository,
             fitnessCalculator: fitnessCalculator,
             nutritionRepository: nutritionRepository,
-            nutritionGenerator: nutritionGenerator
+            nutritionGenerator: nutritionGenerator,
+            raceRepository: raceRepository,
+            finishEstimateRepository: finishEstimateRepository
         ))
     }
 

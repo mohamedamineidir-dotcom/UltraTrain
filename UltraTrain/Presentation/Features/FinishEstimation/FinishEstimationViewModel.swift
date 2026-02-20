@@ -11,6 +11,8 @@ final class FinishEstimationViewModel {
     private let athleteRepository: any AthleteRepository
     private let runRepository: any RunRepository
     private let fitnessCalculator: any CalculateFitnessUseCase
+    private let raceRepository: any RaceRepository
+    private let finishEstimateRepository: any FinishEstimateRepository
 
     // MARK: - State
 
@@ -26,13 +28,17 @@ final class FinishEstimationViewModel {
         finishTimeEstimator: any EstimateFinishTimeUseCase,
         athleteRepository: any AthleteRepository,
         runRepository: any RunRepository,
-        fitnessCalculator: any CalculateFitnessUseCase
+        fitnessCalculator: any CalculateFitnessUseCase,
+        raceRepository: any RaceRepository,
+        finishEstimateRepository: any FinishEstimateRepository
     ) {
         self.race = race
         self.finishTimeEstimator = finishTimeEstimator
         self.athleteRepository = athleteRepository
         self.runRepository = runRepository
         self.fitnessCalculator = fitnessCalculator
+        self.raceRepository = raceRepository
+        self.finishEstimateRepository = finishEstimateRepository
     }
 
     // MARK: - Load
@@ -62,11 +68,13 @@ final class FinishEstimationViewModel {
                 Logger.fitness.warning("Could not calculate fitness for estimation: \(error)")
             }
 
+            let calibrations = await buildCalibrations()
             estimate = try await finishTimeEstimator.execute(
                 athlete: athlete,
                 race: race,
                 recentRuns: runs,
-                currentFitness: fitness
+                currentFitness: fitness,
+                pastRaceCalibrations: calibrations
             )
         } catch {
             self.error = error.localizedDescription
@@ -74,5 +82,27 @@ final class FinishEstimationViewModel {
         }
 
         isLoading = false
+    }
+
+    // MARK: - Calibration
+
+    private func buildCalibrations() async -> [RaceCalibration] {
+        do {
+            let allRaces = try await raceRepository.getRaces()
+            var calibrations: [RaceCalibration] = []
+            for race in allRaces where race.actualFinishTime != nil {
+                guard let saved = try await finishEstimateRepository.getEstimate(for: race.id) else { continue }
+                calibrations.append(RaceCalibration(
+                    raceId: race.id,
+                    predictedTime: saved.expectedTime,
+                    actualTime: race.actualFinishTime!,
+                    raceDistanceKm: race.distanceKm,
+                    raceElevationGainM: race.elevationGainM
+                ))
+            }
+            return calibrations
+        } catch {
+            return []
+        }
     }
 }

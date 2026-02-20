@@ -76,7 +76,7 @@ struct RaceDayPlanViewModelTests {
 
     private func makeDeps(
         nutritionPlan: NutritionPlan? = nil
-    ) -> (MockAthleteRepository, MockRunRepository, MockEstimateFinishTimeUseCase, MockCalculateFitnessUseCase, MockNutritionRepository, MockGenerateNutritionPlanUseCase) {
+    ) -> (MockAthleteRepository, MockRunRepository, MockEstimateFinishTimeUseCase, MockCalculateFitnessUseCase, MockNutritionRepository, MockGenerateNutritionPlanUseCase, MockRaceRepository, MockFinishEstimateRepository) {
         let athleteRepo = MockAthleteRepository()
         athleteRepo.savedAthlete = athlete
 
@@ -127,8 +127,10 @@ struct RaceDayPlanViewModelTests {
         }
 
         let nutritionGen = MockGenerateNutritionPlanUseCase()
+        let raceRepo = MockRaceRepository()
+        let estimateRepo = MockFinishEstimateRepository()
 
-        return (athleteRepo, runRepo, estimator, fitnessCalc, nutritionRepo, nutritionGen)
+        return (athleteRepo, runRepo, estimator, fitnessCalc, nutritionRepo, nutritionGen, raceRepo, estimateRepo)
     }
 
     // MARK: - Tests
@@ -136,7 +138,7 @@ struct RaceDayPlanViewModelTests {
     @Test("Segments are built from checkpoint splits")
     @MainActor
     func segmentsBuiltFromSplits() async {
-        let (athleteRepo, runRepo, estimator, fitnessCalc, nutritionRepo, nutritionGen) = makeDeps()
+        let (athleteRepo, runRepo, estimator, fitnessCalc, nutritionRepo, nutritionGen, raceRepo, estimateRepo) = makeDeps()
 
         let vm = RaceDayPlanViewModel(
             race: race,
@@ -145,7 +147,9 @@ struct RaceDayPlanViewModelTests {
             runRepository: runRepo,
             fitnessCalculator: fitnessCalc,
             nutritionRepository: nutritionRepo,
-            nutritionGenerator: nutritionGen
+            nutritionGenerator: nutritionGen,
+            raceRepository: raceRepo,
+            finishEstimateRepository: estimateRepo
         )
 
         await vm.load()
@@ -178,7 +182,7 @@ struct RaceDayPlanViewModelTests {
             gutTrainingSessionIds: []
         )
 
-        let (athleteRepo, runRepo, estimator, fitnessCalc, nutritionRepo, nutritionGen) = makeDeps(nutritionPlan: plan)
+        let (athleteRepo, runRepo, estimator, fitnessCalc, nutritionRepo, nutritionGen, raceRepo, estimateRepo) = makeDeps(nutritionPlan: plan)
 
         let vm = RaceDayPlanViewModel(
             race: race,
@@ -187,7 +191,9 @@ struct RaceDayPlanViewModelTests {
             runRepository: runRepo,
             fitnessCalculator: fitnessCalc,
             nutritionRepository: nutritionRepo,
-            nutritionGenerator: nutritionGen
+            nutritionGenerator: nutritionGen,
+            raceRepository: raceRepo,
+            finishEstimateRepository: estimateRepo
         )
 
         await vm.load()
@@ -216,7 +222,7 @@ struct RaceDayPlanViewModelTests {
             gutTrainingSessionIds: []
         )
 
-        let (athleteRepo, runRepo, estimator, fitnessCalc, nutritionRepo, nutritionGen) = makeDeps(nutritionPlan: plan)
+        let (athleteRepo, runRepo, estimator, fitnessCalc, nutritionRepo, nutritionGen, raceRepo, estimateRepo) = makeDeps(nutritionPlan: plan)
 
         let vm = RaceDayPlanViewModel(
             race: race,
@@ -225,7 +231,9 @@ struct RaceDayPlanViewModelTests {
             runRepository: runRepo,
             fitnessCalculator: fitnessCalc,
             nutritionRepository: nutritionRepo,
-            nutritionGenerator: nutritionGen
+            nutritionGenerator: nutritionGen,
+            raceRepository: raceRepo,
+            finishEstimateRepository: estimateRepo
         )
 
         await vm.load()
@@ -239,7 +247,7 @@ struct RaceDayPlanViewModelTests {
     @Test("Empty nutrition plan produces segments with no entries")
     @MainActor
     func emptyNutritionPlan() async {
-        let (athleteRepo, runRepo, estimator, fitnessCalc, nutritionRepo, nutritionGen) = makeDeps()
+        let (athleteRepo, runRepo, estimator, fitnessCalc, nutritionRepo, nutritionGen, raceRepo, estimateRepo) = makeDeps()
 
         let vm = RaceDayPlanViewModel(
             race: race,
@@ -248,7 +256,9 @@ struct RaceDayPlanViewModelTests {
             runRepository: runRepo,
             fitnessCalculator: fitnessCalc,
             nutritionRepository: nutritionRepo,
-            nutritionGenerator: nutritionGen
+            nutritionGenerator: nutritionGen,
+            raceRepository: raceRepo,
+            finishEstimateRepository: estimateRepo
         )
 
         await vm.load()
@@ -290,7 +300,9 @@ struct RaceDayPlanViewModelTests {
             runRepository: runRepo,
             fitnessCalculator: MockCalculateFitnessUseCase(),
             nutritionRepository: MockNutritionRepository(),
-            nutritionGenerator: MockGenerateNutritionPlanUseCase()
+            nutritionGenerator: MockGenerateNutritionPlanUseCase(),
+            raceRepository: MockRaceRepository(),
+            finishEstimateRepository: MockFinishEstimateRepository()
         )
 
         await vm.load()
@@ -301,7 +313,7 @@ struct RaceDayPlanViewModelTests {
     @Test("Arrival time is race date plus expected cumulative time")
     @MainActor
     func arrivalTimeCalculation() async {
-        let (athleteRepo, runRepo, estimator, fitnessCalc, nutritionRepo, nutritionGen) = makeDeps()
+        let (athleteRepo, runRepo, estimator, fitnessCalc, nutritionRepo, nutritionGen, raceRepo, estimateRepo) = makeDeps()
 
         let vm = RaceDayPlanViewModel(
             race: race,
@@ -310,7 +322,9 @@ struct RaceDayPlanViewModelTests {
             runRepository: runRepo,
             fitnessCalculator: fitnessCalc,
             nutritionRepository: nutritionRepo,
-            nutritionGenerator: nutritionGen
+            nutritionGenerator: nutritionGen,
+            raceRepository: raceRepo,
+            finishEstimateRepository: estimateRepo
         )
 
         await vm.load()

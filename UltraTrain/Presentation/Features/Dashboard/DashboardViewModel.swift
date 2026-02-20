@@ -203,6 +203,28 @@ final class DashboardViewModel {
         return Date.now.weeksBetween(raceEnd)
     }
 
+    // MARK: - Calibration
+
+    private func buildCalibrations() async -> [RaceCalibration] {
+        do {
+            let allRaces = try await raceRepository.getRaces()
+            var calibrations: [RaceCalibration] = []
+            for race in allRaces where race.actualFinishTime != nil {
+                guard let saved = try await finishEstimateRepository.getEstimate(for: race.id) else { continue }
+                calibrations.append(RaceCalibration(
+                    raceId: race.id,
+                    predictedTime: saved.expectedTime,
+                    actualTime: race.actualFinishTime!,
+                    raceDistanceKm: race.distanceKm,
+                    raceElevationGainM: race.elevationGainM
+                ))
+            }
+            return calibrations
+        } catch {
+            return []
+        }
+    }
+
     // MARK: - Finish Estimate
 
     private func loadFinishEstimate() async {
@@ -226,11 +248,13 @@ final class DashboardViewModel {
                 Logger.fitness.warning("Could not calculate fitness for dashboard estimate: \(error)")
             }
 
+            let calibrations = await buildCalibrations()
             let estimate = try await finishTimeEstimator.execute(
                 athlete: athlete,
                 race: race,
                 recentRuns: runs,
-                currentFitness: fitness
+                currentFitness: fitness,
+                pastRaceCalibrations: calibrations
             )
             finishEstimate = estimate
             try await finishEstimateRepository.saveEstimate(estimate)

@@ -547,6 +547,134 @@ struct FinishTimeEstimatorTests {
         #expect(beginnerEstimate.expectedTime == eliteEstimate.expectedTime)
     }
 
+    // MARK: - Calibration
+
+    @Test("No calibrations returns factor of 1.0")
+    func noCalibrationDefaultFactor() async throws {
+        let race = makeRace()
+        let runs = [makeRun()]
+        let estimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: nil,
+            pastRaceCalibrations: []
+        )
+        #expect(estimate.calibrationFactor == 1.0)
+    }
+
+    @Test("Calibration reduces time when runner was faster")
+    func calibrationReducesTimeWhenFaster() async throws {
+        let race = makeRace()
+        let runs = [makeRun()]
+
+        let calibration = RaceCalibration(
+            raceId: UUID(),
+            predictedTime: 28800,
+            actualTime: 25920,  // 10% faster
+            raceDistanceKm: 50,
+            raceElevationGainM: 3000
+        )
+
+        let uncalibrated = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: nil,
+            pastRaceCalibrations: []
+        )
+        let calibrated = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: nil,
+            pastRaceCalibrations: [calibration]
+        )
+
+        #expect(calibrated.expectedTime < uncalibrated.expectedTime)
+        #expect(calibrated.calibrationFactor < 1.0)
+    }
+
+    @Test("Calibration increases time when runner was slower")
+    func calibrationIncreasesTimeWhenSlower() async throws {
+        let race = makeRace()
+        let runs = [makeRun()]
+
+        let calibration = RaceCalibration(
+            raceId: UUID(),
+            predictedTime: 28800,
+            actualTime: 31680,  // 10% slower
+            raceDistanceKm: 50,
+            raceElevationGainM: 3000
+        )
+
+        let uncalibrated = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: nil,
+            pastRaceCalibrations: []
+        )
+        let calibrated = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: nil,
+            pastRaceCalibrations: [calibration]
+        )
+
+        #expect(calibrated.expectedTime > uncalibrated.expectedTime)
+        #expect(calibrated.calibrationFactor > 1.0)
+    }
+
+    @Test("Calibration weighted by race similarity")
+    func calibrationWeightedBySimilarity() async throws {
+        let race = makeRace(distanceKm: 50, elevationGainM: 3000)
+        let runs = [makeRun()]
+
+        // Similar race: 50km — should dominate
+        let similar = RaceCalibration(
+            raceId: UUID(),
+            predictedTime: 28800,
+            actualTime: 25920,  // 10% faster
+            raceDistanceKm: 50,
+            raceElevationGainM: 3000
+        )
+        // Dissimilar race: 10km — should have less weight
+        let dissimilar = RaceCalibration(
+            raceId: UUID(),
+            predictedTime: 3600,
+            actualTime: 3960,  // 10% slower
+            raceDistanceKm: 10,
+            raceElevationGainM: 200
+        )
+
+        let estimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: nil,
+            pastRaceCalibrations: [similar, dissimilar]
+        )
+
+        // Similar race says faster (factor < 1), dissimilar says slower (factor > 1)
+        // Because the similar race has higher weight, the overall factor should be < 1
+        #expect(estimate.calibrationFactor < 1.0)
+    }
+
+    @Test("calibrationFactor stored in returned FinishEstimate")
+    func calibrationFactorStoredInEstimate() async throws {
+        let race = makeRace()
+        let runs = [makeRun()]
+
+        let calibration = RaceCalibration(
+            raceId: UUID(),
+            predictedTime: 28800,
+            actualTime: 25920,
+            raceDistanceKm: 50,
+            raceElevationGainM: 3000
+        )
+
+        let estimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: nil,
+            pastRaceCalibrations: [calibration]
+        )
+
+        let expectedFactor = 25920.0 / 28800.0  // 0.9
+        #expect(abs(estimate.calibrationFactor - expectedFactor) < 0.01)
+    }
+
+    // MARK: - Ultra Fatigue (cont.)
+
     @Test("Elite has no ultra fatigue penalty even on long races")
     func eliteNoUltraPenalty() async throws {
         let shortRace = makeRace(distanceKm: 50, elevationGainM: 3000)

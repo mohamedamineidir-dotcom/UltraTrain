@@ -80,7 +80,9 @@ struct FinishEstimationViewModelTests {
         estimator: MockEstimateFinishTimeUseCase = MockEstimateFinishTimeUseCase(),
         athleteRepo: MockAthleteRepository = MockAthleteRepository(),
         runRepo: MockRunRepository = MockRunRepository(),
-        fitnessCalc: MockCalculateFitnessUseCase = MockCalculateFitnessUseCase()
+        fitnessCalc: MockCalculateFitnessUseCase = MockCalculateFitnessUseCase(),
+        raceRepo: MockRaceRepository = MockRaceRepository(),
+        estimateRepo: MockFinishEstimateRepository = MockFinishEstimateRepository()
     ) -> FinishEstimationViewModel {
         let r = race ?? makeRace()
         return FinishEstimationViewModel(
@@ -88,7 +90,9 @@ struct FinishEstimationViewModelTests {
             finishTimeEstimator: estimator,
             athleteRepository: athleteRepo,
             runRepository: runRepo,
-            fitnessCalculator: fitnessCalc
+            fitnessCalculator: fitnessCalc,
+            raceRepository: raceRepo,
+            finishEstimateRepository: estimateRepo
         )
     }
 

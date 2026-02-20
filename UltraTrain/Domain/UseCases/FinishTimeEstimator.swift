@@ -8,7 +8,8 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         athlete: Athlete,
         race: Race,
         recentRuns: [CompletedRun],
-        currentFitness: FitnessSnapshot?
+        currentFitness: FitnessSnapshot?,
+        pastRaceCalibrations: [RaceCalibration]
     ) async throws -> FinishEstimate {
         let raceLinkedRuns = recentRuns.filter { $0.linkedRaceId != nil }
         let raceResultsUsed = raceLinkedRuns.count
@@ -39,9 +40,14 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         )
         let effectiveKm = raceEffectiveKm
 
-        let optimisticTime = effectiveKm * pace25 * terrain * descent * ultra * 0.97
-        let expectedTime = effectiveKm * medianPace * terrain * descent * form * ultra
-        let conservativeTime = effectiveKm * pace75 * terrain * descent * ultra * 1.05
+        let calibration = computeCalibrationFactor(
+            calibrations: pastRaceCalibrations,
+            targetRace: race
+        )
+
+        let optimisticTime = effectiveKm * pace25 * terrain * descent * ultra * 0.97 * calibration
+        let expectedTime = effectiveKm * medianPace * terrain * descent * form * ultra * calibration
+        let conservativeTime = effectiveKm * pace75 * terrain * descent * ultra * 1.05 * calibration
 
         let splits = calculateCheckpointSplits(
             race: race,
@@ -67,7 +73,8 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
             conservativeTime: conservativeTime,
             checkpointSplits: splits,
             confidencePercent: confidence,
-            raceResultsUsed: raceResultsUsed
+            raceResultsUsed: raceResultsUsed,
+            calibrationFactor: calibration
         )
     }
 
@@ -196,6 +203,31 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
                 conservativeTime: conservative * fraction
             )
         }
+    }
+
+    // MARK: - Calibration
+
+    private func computeCalibrationFactor(
+        calibrations: [RaceCalibration],
+        targetRace: Race
+    ) -> Double {
+        guard !calibrations.isEmpty else { return 1.0 }
+
+        let targetEffectiveKm = targetRace.effectiveDistanceKm
+        var totalWeight = 0.0
+        var weightedSum = 0.0
+
+        for cal in calibrations {
+            guard cal.predictedTime > 0 else { continue }
+            let ratio = cal.actualTime / cal.predictedTime
+            let calEffectiveKm = cal.raceDistanceKm + (cal.raceElevationGainM / 100.0)
+            let similarity = 1.0 / (1.0 + abs(calEffectiveKm - targetEffectiveKm) / max(targetEffectiveKm, 1))
+            weightedSum += ratio * similarity
+            totalWeight += similarity
+        }
+
+        guard totalWeight > 0 else { return 1.0 }
+        return weightedSum / totalWeight
     }
 
     // MARK: - Confidence

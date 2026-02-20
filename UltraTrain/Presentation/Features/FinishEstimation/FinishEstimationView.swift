@@ -12,6 +12,8 @@ struct FinishEstimationView: View {
     private let fitnessCalculator: any CalculateFitnessUseCase
     private let nutritionRepository: any NutritionRepository
     private let nutritionGenerator: any GenerateNutritionPlanUseCase
+    private let raceRepository: any RaceRepository
+    private let finishEstimateRepository: any FinishEstimateRepository
 
     init(
         race: Race,
@@ -20,7 +22,9 @@ struct FinishEstimationView: View {
         runRepository: any RunRepository,
         fitnessCalculator: any CalculateFitnessUseCase,
         nutritionRepository: any NutritionRepository,
-        nutritionGenerator: any GenerateNutritionPlanUseCase
+        nutritionGenerator: any GenerateNutritionPlanUseCase,
+        raceRepository: any RaceRepository,
+        finishEstimateRepository: any FinishEstimateRepository
     ) {
         self.race = race
         self.finishTimeEstimator = finishTimeEstimator
@@ -29,12 +33,16 @@ struct FinishEstimationView: View {
         self.fitnessCalculator = fitnessCalculator
         self.nutritionRepository = nutritionRepository
         self.nutritionGenerator = nutritionGenerator
+        self.raceRepository = raceRepository
+        self.finishEstimateRepository = finishEstimateRepository
         _viewModel = State(initialValue: FinishEstimationViewModel(
             race: race,
             finishTimeEstimator: finishTimeEstimator,
             athleteRepository: athleteRepository,
             runRepository: runRepository,
-            fitnessCalculator: fitnessCalculator
+            fitnessCalculator: fitnessCalculator,
+            raceRepository: raceRepository,
+            finishEstimateRepository: finishEstimateRepository
         ))
     }
 
@@ -52,7 +60,7 @@ struct FinishEstimationView: View {
                     scenarioCards(estimate)
                     confidenceSection(estimate)
                     if estimate.raceResultsUsed > 0 {
-                        raceCalibrationBadge(count: estimate.raceResultsUsed)
+                        raceCalibrationBadge(estimate: estimate)
                     }
                     if !estimate.checkpointSplits.isEmpty {
                         CheckpointSplitsCard(race: viewModel.race, estimate: estimate)
@@ -180,13 +188,27 @@ struct FinishEstimationView: View {
 
     // MARK: - Race Calibration Badge
 
-    private func raceCalibrationBadge(count: Int) -> some View {
-        HStack(spacing: Theme.Spacing.sm) {
-            Image(systemName: "checkmark.seal.fill")
-                .foregroundStyle(Theme.Colors.success)
-                .accessibilityHidden(true)
-            Text("Calibrated from \(count) race result\(count == 1 ? "" : "s")")
-                .font(.subheadline)
+    private func raceCalibrationBadge(estimate: FinishEstimate) -> some View {
+        let count = estimate.raceResultsUsed
+        let factor = estimate.calibrationFactor
+        let accuracy = (1.0 - abs(1.0 - factor)) * 100
+
+        return VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+            HStack(spacing: Theme.Spacing.sm) {
+                Image(systemName: "checkmark.seal.fill")
+                    .foregroundStyle(Theme.Colors.success)
+                    .accessibilityHidden(true)
+                Text("Calibrated from \(count) race result\(count == 1 ? "" : "s")")
+                    .font(.subheadline)
+            }
+            if factor != 1.0 {
+                Text(String(format: "Avg. accuracy: %.0f%%", accuracy))
+                    .font(.caption.bold())
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                Text(calibrationDescription(factor))
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(Theme.Spacing.md)
@@ -194,6 +216,13 @@ struct FinishEstimationView: View {
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .fill(Theme.Colors.success.opacity(0.1))
         )
+    }
+
+    private func calibrationDescription(_ factor: Double) -> String {
+        if factor < 1.0 {
+            return "Model adjusted down — you're faster than predicted"
+        }
+        return "Model adjusted up — you're slower than predicted"
     }
 
     // MARK: - Race Day Plan Link
@@ -207,7 +236,9 @@ struct FinishEstimationView: View {
                 runRepository: runRepository,
                 fitnessCalculator: fitnessCalculator,
                 nutritionRepository: nutritionRepository,
-                nutritionGenerator: nutritionGenerator
+                nutritionGenerator: nutritionGenerator,
+                raceRepository: raceRepository,
+                finishEstimateRepository: finishEstimateRepository
             )
         } label: {
             HStack {

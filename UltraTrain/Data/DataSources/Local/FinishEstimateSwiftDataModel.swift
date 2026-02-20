@@ -13,6 +13,7 @@ final class FinishEstimateSwiftDataModel {
     @Attribute(.externalStorage) var checkpointSplitsData: Data = Data()
     var confidencePercent: Double = 0
     var raceResultsUsed: Int = 0
+    var calibrationFactor: Double = 1.0
 
     init(
         id: UUID = UUID(),
@@ -24,7 +25,8 @@ final class FinishEstimateSwiftDataModel {
         conservativeTime: Double = 0,
         checkpointSplitsData: Data = Data(),
         confidencePercent: Double = 0,
-        raceResultsUsed: Int = 0
+        raceResultsUsed: Int = 0,
+        calibrationFactor: Double = 1.0
     ) {
         self.id = id
         self.raceId = raceId
@@ -36,5 +38,6 @@ final class FinishEstimateSwiftDataModel {
         self.checkpointSplitsData = checkpointSplitsData
         self.confidencePercent = confidencePercent
         self.raceResultsUsed = raceResultsUsed
+        self.calibrationFactor = calibrationFactor
     }
 }

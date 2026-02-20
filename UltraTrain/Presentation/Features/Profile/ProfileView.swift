@@ -8,6 +8,7 @@ struct ProfileView: View {
     private let runRepository: any RunRepository
     private let fitnessCalculator: any CalculateFitnessUseCase
     private let finishTimeEstimator: any EstimateFinishTimeUseCase
+    private let finishEstimateRepository: any FinishEstimateRepository
     private let appSettingsRepository: any AppSettingsRepository
     private let clearAllDataUseCase: any ClearAllDataUseCase
     private let healthKitService: any HealthKitServiceProtocol
@@ -27,6 +28,7 @@ struct ProfileView: View {
         runRepository: any RunRepository,
         fitnessCalculator: any CalculateFitnessUseCase,
         finishTimeEstimator: any EstimateFinishTimeUseCase,
+        finishEstimateRepository: any FinishEstimateRepository,
         appSettingsRepository: any AppSettingsRepository,
         clearAllDataUseCase: any ClearAllDataUseCase,
         healthKitService: any HealthKitServiceProtocol,
@@ -54,6 +56,7 @@ struct ProfileView: View {
         self.runRepository = runRepository
         self.fitnessCalculator = fitnessCalculator
         self.finishTimeEstimator = finishTimeEstimator
+        self.finishEstimateRepository = finishEstimateRepository
         self.appSettingsRepository = appSettingsRepository
         self.clearAllDataUseCase = clearAllDataUseCase
         self.healthKitService = healthKitService
@@ -254,7 +257,9 @@ struct ProfileView: View {
                             runRepository: runRepository,
                             fitnessCalculator: fitnessCalculator,
                             nutritionRepository: nutritionRepository,
-                            nutritionGenerator: nutritionGenerator
+                            nutritionGenerator: nutritionGenerator,
+                            raceRepository: raceRepository,
+                            finishEstimateRepository: finishEstimateRepository
                         )
                     } label: {
                         RaceRowView(race: race)
