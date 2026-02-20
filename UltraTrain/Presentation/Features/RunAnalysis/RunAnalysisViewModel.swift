@@ -12,6 +12,7 @@ final class RunAnalysisViewModel {
     private let athleteRepository: any AthleteRepository
     private let raceRepository: any RaceRepository
     private let runRepository: any RunRepository
+    private let finishEstimateRepository: any FinishEstimateRepository
 
     // MARK: - State
 
@@ -26,6 +27,7 @@ final class RunAnalysisViewModel {
     var advancedMetrics: AdvancedRunMetrics?
     var historicalComparison: HistoricalComparison?
     var nutritionAnalysis: NutritionAnalysis?
+    var racePerformance: RacePerformanceComparison?
     var isLoading = false
     var error: String?
     var showFullScreenMap = false
@@ -37,13 +39,15 @@ final class RunAnalysisViewModel {
         planRepository: any TrainingPlanRepository,
         athleteRepository: any AthleteRepository,
         raceRepository: any RaceRepository,
-        runRepository: any RunRepository
+        runRepository: any RunRepository,
+        finishEstimateRepository: any FinishEstimateRepository
     ) {
         self.run = run
         self.planRepository = planRepository
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
         self.runRepository = runRepository
+        self.finishEstimateRepository = finishEstimateRepository
     }
 
     // MARK: - Load
@@ -85,6 +89,42 @@ final class RunAnalysisViewModel {
                     checkpoints: race.checkpoints,
                     along: run.gpsTrack
                 )
+
+                if let estimate = try await finishEstimateRepository.getEstimate(for: raceId),
+                   !estimate.checkpointSplits.isEmpty,
+                   run.gpsTrack.count >= 2,
+                   let runStart = run.gpsTrack.first?.timestamp {
+
+                    let timestamps = CheckpointLocationResolver.resolveTimestamps(
+                        checkpoints: race.checkpoints,
+                        along: run.gpsTrack
+                    )
+
+                    let comparisons = estimate.checkpointSplits.compactMap { split -> CheckpointComparison? in
+                        guard let match = timestamps.first(where: { $0.checkpoint.id == split.checkpointId }) else {
+                            return nil
+                        }
+                        let actualSeconds = match.timestamp.timeIntervalSince(runStart)
+                        return CheckpointComparison(
+                            id: split.id,
+                            checkpointName: split.checkpointName,
+                            distanceFromStartKm: split.distanceFromStartKm,
+                            hasAidStation: split.hasAidStation,
+                            predictedTime: split.expectedTime,
+                            actualTime: actualSeconds,
+                            delta: actualSeconds - split.expectedTime
+                        )
+                    }
+
+                    if !comparisons.isEmpty {
+                        racePerformance = RacePerformanceComparison(
+                            checkpointComparisons: comparisons,
+                            predictedFinishTime: estimate.expectedTime,
+                            actualFinishTime: run.duration,
+                            finishDelta: run.duration - estimate.expectedTime
+                        )
+                    }
+                }
             }
 
             advancedMetrics = AdvancedRunMetricsCalculator.calculate(
@@ -126,6 +166,8 @@ final class RunAnalysisViewModel {
     var hasHistoricalComparison: Bool { historicalComparison != nil }
 
     var hasNutritionAnalysis: Bool { nutritionAnalysis != nil }
+
+    var hasRacePerformance: Bool { racePerformance != nil }
 
     var hasRouteData: Bool {
         run.gpsTrack.count >= 2

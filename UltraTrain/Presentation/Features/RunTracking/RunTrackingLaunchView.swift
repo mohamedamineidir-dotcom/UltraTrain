@@ -276,7 +276,8 @@ struct RunTrackingLaunchView: View {
                 stravaUploadService: stravaUploadService,
                 stravaUploadQueueService: stravaUploadQueueService,
                 stravaImportService: stravaImportService,
-                stravaConnected: stravaAuthService.isConnected()
+                stravaConnected: stravaAuthService.isConnected(),
+                finishEstimateRepository: finishEstimateRepository
             )
         } label: {
             HStack {

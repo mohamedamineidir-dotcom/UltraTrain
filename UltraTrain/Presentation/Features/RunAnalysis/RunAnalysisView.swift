@@ -9,14 +9,16 @@ struct RunAnalysisView: View {
         planRepository: any TrainingPlanRepository,
         athleteRepository: any AthleteRepository,
         raceRepository: any RaceRepository,
-        runRepository: any RunRepository
+        runRepository: any RunRepository,
+        finishEstimateRepository: any FinishEstimateRepository
     ) {
         _viewModel = State(initialValue: RunAnalysisViewModel(
             run: run,
             planRepository: planRepository,
             athleteRepository: athleteRepository,
             raceRepository: raceRepository,
-            runRepository: runRepository
+            runRepository: runRepository,
+            finishEstimateRepository: finishEstimateRepository
         ))
     }
 
@@ -57,6 +59,10 @@ struct RunAnalysisView: View {
 
                     if let comparison = viewModel.planComparison {
                         PlanComparisonCard(comparison: comparison)
+                    }
+
+                    if let performance = viewModel.racePerformance {
+                        RacePerformanceCard(performance: performance)
                     }
 
                     if viewModel.hasAdvancedMetrics {

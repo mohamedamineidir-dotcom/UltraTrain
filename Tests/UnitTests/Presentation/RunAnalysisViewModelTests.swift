@@ -130,14 +130,16 @@ struct RunAnalysisViewModelTests {
         athleteRepo: MockAthleteRepository = MockAthleteRepository(),
         planRepo: MockTrainingPlanRepository = MockTrainingPlanRepository(),
         raceRepo: MockRaceRepository = MockRaceRepository(),
-        runRepo: MockRunRepository = MockRunRepository()
+        runRepo: MockRunRepository = MockRunRepository(),
+        estimateRepo: MockFinishEstimateRepository = MockFinishEstimateRepository()
     ) -> RunAnalysisViewModel {
         RunAnalysisViewModel(
             run: run,
             planRepository: planRepo,
             athleteRepository: athleteRepo,
             raceRepository: raceRepo,
-            runRepository: runRepo
+            runRepository: runRepo,
+            finishEstimateRepository: estimateRepo
         )
     }
 

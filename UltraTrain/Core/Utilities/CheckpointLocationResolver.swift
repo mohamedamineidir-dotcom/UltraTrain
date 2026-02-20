@@ -47,4 +47,46 @@ enum CheckpointLocationResolver {
 
         return results
     }
+
+    static func resolveTimestamps(
+        checkpoints: [Checkpoint],
+        along trackPoints: [TrackPoint]
+    ) -> [(checkpoint: Checkpoint, timestamp: Date)] {
+        guard !checkpoints.isEmpty, trackPoints.count >= 2 else { return [] }
+
+        let sorted = checkpoints.sorted { $0.distanceFromStartKm < $1.distanceFromStartKm }
+        var results: [(Checkpoint, Date)] = []
+
+        for checkpoint in sorted {
+            let targetM = checkpoint.distanceFromStartKm * 1000
+            var resolved = false
+
+            var runningDistance: Double = 0
+            for i in 1..<trackPoints.count {
+                let prev = trackPoints[i - 1]
+                let curr = trackPoints[i]
+                let segmentM = RunStatisticsCalculator.haversineDistance(
+                    lat1: prev.latitude, lon1: prev.longitude,
+                    lat2: curr.latitude, lon2: curr.longitude
+                )
+                runningDistance += segmentM
+
+                if runningDistance >= targetM {
+                    let overshoot = runningDistance - targetM
+                    let fraction = segmentM > 0 ? (segmentM - overshoot) / segmentM : 0
+                    let time = prev.timestamp.timeIntervalSince1970 +
+                        (curr.timestamp.timeIntervalSince1970 - prev.timestamp.timeIntervalSince1970) * fraction
+                    results.append((checkpoint, Date(timeIntervalSince1970: time)))
+                    resolved = true
+                    break
+                }
+            }
+
+            if !resolved, let last = trackPoints.last {
+                results.append((checkpoint, last.timestamp))
+            }
+        }
+
+        return results
+    }
 }

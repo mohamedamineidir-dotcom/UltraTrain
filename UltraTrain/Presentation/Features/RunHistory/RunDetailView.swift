@@ -11,6 +11,7 @@ struct RunDetailView: View {
     let exportService: any ExportServiceProtocol
     let stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)?
     let stravaConnected: Bool
+    let finishEstimateRepository: any FinishEstimateRepository
 
     @State private var showingExportOptions = false
     @State private var exportFileURL: URL?
@@ -253,7 +254,8 @@ struct RunDetailView: View {
                 planRepository: planRepository,
                 athleteRepository: athleteRepository,
                 raceRepository: raceRepository,
-                runRepository: runRepository
+                runRepository: runRepository,
+                finishEstimateRepository: finishEstimateRepository
             )
         } label: {
             Label("View Analysis", systemImage: "chart.xyaxis.line")

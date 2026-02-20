@@ -17,6 +17,7 @@ struct RunHistoryView: View {
     private let stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)?
     private let stravaImportService: (any StravaImportServiceProtocol)?
     private let stravaConnected: Bool
+    private let finishEstimateRepository: any FinishEstimateRepository
 
     init(
         runRepository: any RunRepository,
@@ -28,7 +29,8 @@ struct RunHistoryView: View {
         stravaUploadService: (any StravaUploadServiceProtocol)? = nil,
         stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)? = nil,
         stravaImportService: (any StravaImportServiceProtocol)? = nil,
-        stravaConnected: Bool = false
+        stravaConnected: Bool = false,
+        finishEstimateRepository: any FinishEstimateRepository
     ) {
         _viewModel = State(initialValue: RunHistoryViewModel(runRepository: runRepository))
         self.runRepository = runRepository
@@ -41,6 +43,7 @@ struct RunHistoryView: View {
         self.stravaUploadQueueService = stravaUploadQueueService
         self.stravaImportService = stravaImportService
         self.stravaConnected = stravaConnected
+        self.finishEstimateRepository = finishEstimateRepository
     }
 
     var body: some View {
@@ -149,7 +152,8 @@ struct RunHistoryView: View {
                     runRepository: runRepository,
                     exportService: exportService,
                     stravaUploadQueueService: stravaUploadQueueService,
-                    stravaConnected: stravaConnected
+                    stravaConnected: stravaConnected,
+                    finishEstimateRepository: finishEstimateRepository
                 )
             }
         }
