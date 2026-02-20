@@ -25,4 +25,5 @@ extension Logger {
     static let biometric = Logger(subsystem: subsystem, category: "biometric")
     static let cloudKit = Logger(subsystem: subsystem, category: "cloudKit")
     static let gear = Logger(subsystem: subsystem, category: "gear")
+    static let liveRace = Logger(subsystem: subsystem, category: "liveRace")
 }

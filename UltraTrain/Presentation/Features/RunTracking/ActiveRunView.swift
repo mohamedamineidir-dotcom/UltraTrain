@@ -30,6 +30,17 @@ struct ActiveRunView: View {
             )
             .padding(.horizontal, Theme.Spacing.md)
 
+            if viewModel.isRaceModeActive {
+                LiveSplitPanel(
+                    checkpoints: viewModel.liveCheckpointStates,
+                    nextCheckpoint: viewModel.nextCheckpoint,
+                    distanceToNext: viewModel.distanceToNextCheckpointKm,
+                    projectedFinish: viewModel.projectedFinishTime
+                )
+                .padding(.horizontal, Theme.Spacing.md)
+                .padding(.top, Theme.Spacing.sm)
+            }
+
             Spacer()
 
             controls
@@ -47,6 +58,16 @@ struct ActiveRunView: View {
             }
         }
         .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.activeReminder)
+        .overlay(alignment: .top) {
+            if let crossing = viewModel.activeCrossingBanner {
+                CheckpointCrossingBanner(
+                    checkpoint: crossing,
+                    onDismiss: { viewModel.dismissCrossingBanner() }
+                )
+                .padding(.top, viewModel.activeReminder != nil ? 80 : 0)
+            }
+        }
+        .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.activeCrossingBanner)
         .navigationBarBackButtonHidden()
         .onAppear {
             if viewModel.runState == .notStarted {

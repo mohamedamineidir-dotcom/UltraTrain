@@ -60,6 +60,7 @@ struct ActiveRunViewModelStravaTests {
             hapticService: MockHapticService(),
             stravaUploadQueueService: queueService,
             gearRepository: MockGearRepository(),
+            finishEstimateRepository: MockFinishEstimateRepository(),
             athlete: makeAthlete(),
             linkedSession: nil,
             autoPauseEnabled: false,

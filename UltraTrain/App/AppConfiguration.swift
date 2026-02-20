@@ -60,6 +60,10 @@ enum AppConfiguration {
         static let maxScheduleDuration: TimeInterval = 43200      // 12 hours
     }
 
+    enum LiveRace {
+        static let crossingBannerDismissSeconds: TimeInterval = 8
+    }
+
     enum Strava {
         static let clientId: String = Bundle.main.infoDictionary?["STRAVA_CLIENT_ID"] as? String ?? ""
         static let clientSecret: String = Bundle.main.infoDictionary?["STRAVA_CLIENT_SECRET"] as? String ?? ""

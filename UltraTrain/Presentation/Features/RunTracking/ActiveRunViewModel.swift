@@ -28,6 +28,7 @@ final class ActiveRunViewModel {
     private let widgetDataWriter: WidgetDataWriter
     private let stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)?
     private let gearRepository: any GearRepository
+    private let finishEstimateRepository: any FinishEstimateRepository
 
     // MARK: - Config
 
@@ -68,6 +69,8 @@ final class ActiveRunViewModel {
     var stravaUploadStatus: StravaUploadStatus = .idle
     var nutritionIntakeLog: [NutritionIntakeEntry] = []
     var autoMatchedSession: SessionMatcher.MatchResult?
+    var liveCheckpointStates: [LiveCheckpointState] = []
+    var activeCrossingBanner: LiveCheckpointState?
 
     // MARK: - Private
 
@@ -81,6 +84,9 @@ final class ActiveRunViewModel {
     private var lastLiveActivityUpdate: TimeInterval = 0
     private var lastReminderShownTime: [NutritionReminderType: TimeInterval] = [:]
     private var runningAveragePace: Double = 0
+    private var lastCrossedCheckpointIndex: Int = -1
+    private var crossingBannerTask: Task<Void, Never>?
+    var raceDistanceKm: Double = 0
 
     // MARK: - Init
 
@@ -97,6 +103,7 @@ final class ActiveRunViewModel {
         widgetDataWriter: WidgetDataWriter? = nil,
         stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)? = nil,
         gearRepository: any GearRepository,
+        finishEstimateRepository: any FinishEstimateRepository,
         athlete: Athlete,
         linkedSession: TrainingSession?,
         autoPauseEnabled: Bool,
@@ -127,6 +134,7 @@ final class ActiveRunViewModel {
         )
         self.stravaUploadQueueService = stravaUploadQueueService
         self.gearRepository = gearRepository
+        self.finishEstimateRepository = finishEstimateRepository
         self.athlete = athlete
         self.linkedSession = linkedSession
         self.autoPauseEnabled = autoPauseEnabled
@@ -384,6 +392,32 @@ final class ActiveRunViewModel {
         RunStatisticsCalculator.formatDuration(elapsedTime + pausedDuration)
     }
 
+    // MARK: - Live Race
+
+    var isRaceModeActive: Bool {
+        raceId != nil && !liveCheckpointStates.isEmpty
+    }
+
+    var nextCheckpoint: LiveCheckpointState? {
+        liveCheckpointStates.first { !$0.isCrossed }
+    }
+
+    var distanceToNextCheckpointKm: Double? {
+        guard let next = nextCheckpoint else { return nil }
+        return max(0, next.distanceFromStartKm - distanceKm)
+    }
+
+    var projectedFinishTime: TimeInterval? {
+        guard distanceKm > 0.5, raceDistanceKm > 0 else { return nil }
+        let remainingKm = max(0, raceDistanceKm - distanceKm)
+        let pacePerKm = elapsedTime / distanceKm
+        return elapsedTime + (remainingKm * pacePerKm)
+    }
+
+    func dismissCrossingBanner() {
+        activeCrossingBanner = nil
+    }
+
     // MARK: - Timer
 
     private func startTimer() {
@@ -444,6 +478,7 @@ final class ActiveRunViewModel {
         }
 
         updateCheckpointLocations()
+        detectCheckpointCrossings()
         handleAutoPause(speed: location.speed)
     }
 
@@ -579,11 +614,34 @@ final class ActiveRunViewModel {
             do {
                 if let race = try await self.raceRepository.getRace(id: raceId) {
                     self.raceCheckpoints = race.checkpoints
+                    self.raceDistanceKm = race.distanceKm
                     Logger.tracking.info("Loaded \(race.checkpoints.count) checkpoints for race \(race.name)")
+                    await self.loadFinishEstimate(raceId: raceId)
                 }
             } catch {
                 Logger.tracking.error("Failed to load race checkpoints: \(error)")
             }
+        }
+    }
+
+    private func loadFinishEstimate(raceId: UUID) async {
+        do {
+            guard let estimate = try await finishEstimateRepository.getEstimate(for: raceId) else {
+                Logger.liveRace.info("No saved estimate for race \(raceId) — live splits unavailable")
+                return
+            }
+            liveCheckpointStates = estimate.checkpointSplits.map { split in
+                LiveCheckpointState(
+                    id: split.checkpointId,
+                    checkpointName: split.checkpointName,
+                    distanceFromStartKm: split.distanceFromStartKm,
+                    hasAidStation: split.hasAidStation,
+                    predictedTime: split.expectedTime
+                )
+            }
+            Logger.liveRace.info("Loaded \(self.liveCheckpointStates.count) live checkpoint states")
+        } catch {
+            Logger.liveRace.error("Failed to load finish estimate: \(error)")
         }
     }
 
@@ -596,6 +654,34 @@ final class ActiveRunViewModel {
             checkpoints: raceCheckpoints,
             along: trackPoints
         )
+    }
+
+    // MARK: - Live Checkpoint Detection
+
+    func detectCheckpointCrossings() {
+        guard !liveCheckpointStates.isEmpty else { return }
+
+        for i in 0..<liveCheckpointStates.count {
+            guard !liveCheckpointStates[i].isCrossed else { continue }
+            guard distanceKm >= liveCheckpointStates[i].distanceFromStartKm else { break }
+
+            liveCheckpointStates[i].actualTime = elapsedTime
+            lastCrossedCheckpointIndex = i
+            showCrossingBanner(for: liveCheckpointStates[i])
+            Logger.liveRace.info("Crossed checkpoint \(self.liveCheckpointStates[i].checkpointName) at \(self.elapsedTime)s")
+        }
+    }
+
+    private func showCrossingBanner(for checkpoint: LiveCheckpointState) {
+        crossingBannerTask?.cancel()
+        activeCrossingBanner = checkpoint
+        hapticService.playSuccess()
+
+        crossingBannerTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(AppConfiguration.LiveRace.crossingBannerDismissSeconds))
+            guard !Task.isCancelled else { return }
+            self?.activeCrossingBanner = nil
+        }
     }
 
     // MARK: - Race Linking

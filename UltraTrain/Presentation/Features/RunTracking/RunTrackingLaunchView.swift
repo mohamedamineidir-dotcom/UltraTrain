@@ -129,6 +129,7 @@ struct RunTrackingLaunchView: View {
                             widgetDataWriter: widgetDataWriter,
                             stravaUploadQueueService: stravaUploadQueueService,
                             gearRepository: gearRepository,
+                            finishEstimateRepository: finishEstimateRepository,
                             athlete: athlete,
                             linkedSession: viewModel.selectedSession,
                             autoPauseEnabled: viewModel.autoPauseEnabled,
