@@ -170,6 +170,16 @@ struct TrainingPlanView: View {
                                     sessionIndexB: candidate.sessionIndex
                                 )
                             }
+                        },
+                        onReorderSession: { sourceWeekIndex, sourceSessionIndex, target in
+                            Task {
+                                await viewModel.swapSessions(
+                                    weekIndexA: sourceWeekIndex,
+                                    sessionIndexA: sourceSessionIndex,
+                                    weekIndexB: target.weekIndex,
+                                    sessionIndexB: target.sessionIndex
+                                )
+                            }
                         }
                     )
                 }

@@ -18,6 +18,7 @@ struct DashboardView: View {
     private let nutritionGenerator: any GenerateNutritionPlanUseCase
     private let healthKitService: any HealthKitServiceProtocol
     private let recoveryRepository: any RecoveryRepository
+    private let checklistRepository: any RacePrepChecklistRepository
     private let weatherService: (any WeatherServiceProtocol)?
     private let locationService: LocationService
 
@@ -36,6 +37,7 @@ struct DashboardView: View {
         nutritionGenerator: any GenerateNutritionPlanUseCase,
         healthKitService: any HealthKitServiceProtocol,
         recoveryRepository: any RecoveryRepository,
+        checklistRepository: any RacePrepChecklistRepository,
         weatherService: (any WeatherServiceProtocol)? = nil,
         locationService: LocationService
     ) {
@@ -53,6 +55,7 @@ struct DashboardView: View {
         self.nutritionGenerator = nutritionGenerator
         self.healthKitService = healthKitService
         self.recoveryRepository = recoveryRepository
+        self.checklistRepository = checklistRepository
         self.weatherService = weatherService
         self.locationService = locationService
         _viewModel = State(initialValue: DashboardViewModel(
@@ -153,7 +156,8 @@ struct DashboardView: View {
                     raceRepository: raceRepository,
                     finishEstimateRepository: finishEstimateRepository,
                     weatherService: weatherService,
-                    locationService: locationService
+                    locationService: locationService,
+                    checklistRepository: checklistRepository
                 )
             } label: {
                 DashboardFinishEstimateCard(estimate: estimate, race: race)

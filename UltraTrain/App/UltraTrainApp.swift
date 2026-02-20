@@ -41,6 +41,7 @@ struct UltraTrainApp: App {
     private let healthKitImportService: HealthKitImportService
     private let weatherService: AppleWeatherKitService
     private let recoveryRepository: any RecoveryRepository
+    private let checklistRepository: any RacePrepChecklistRepository
     private let cloudKitSyncMonitor: CloudKitSyncMonitor?
 
     init() {
@@ -66,7 +67,9 @@ struct UltraTrainApp: App {
                 GearItemSwiftDataModel.self,
                 FinishEstimateSwiftDataModel.self,
                 StravaUploadQueueSwiftDataModel.self,
-                RecoverySnapshotSwiftDataModel.self
+                RecoverySnapshotSwiftDataModel.self,
+                RacePrepChecklistSwiftDataModel.self,
+                ChecklistItemSwiftDataModel.self
             ])
             let config: ModelConfiguration
             if isUITesting {
@@ -146,6 +149,7 @@ struct UltraTrainApp: App {
         finishEstimateRepository = LocalFinishEstimateRepository(modelContainer: modelContainer)
         stravaUploadQueueRepository = LocalStravaUploadQueueRepository(modelContainer: modelContainer)
         recoveryRepository = LocalRecoveryRepository(modelContainer: modelContainer)
+        checklistRepository = LocalRacePrepChecklistRepository(modelContainer: modelContainer)
         stravaUploadQueueService = StravaUploadQueueService(
             queueRepository: stravaUploadQueueRepository,
             runRepository: runRepository,
@@ -223,7 +227,8 @@ struct UltraTrainApp: App {
                 pendingActionProcessor: pendingActionProcessor,
                 healthKitImportService: healthKitImportService,
                 weatherService: weatherService,
-                recoveryRepository: recoveryRepository
+                recoveryRepository: recoveryRepository,
+                checklistRepository: checklistRepository
             )
         }
     }

@@ -15,8 +15,11 @@ struct WeekCardView: View {
     let onUnskipSession: (Int) -> Void
     let onRescheduleSession: (Int, Date) -> Void
     let onSwapSession: (Int, SwapCandidate) -> Void
+    let onReorderSession: (Int, Int, SwapCandidate) -> Void
 
     @State private var isExpanded: Bool
+    @State private var contextRescheduleItem: ContextSheetItem?
+    @State private var contextSwapItem: ContextSheetItem?
 
     init(
         week: TrainingWeek,
@@ -32,7 +35,8 @@ struct WeekCardView: View {
         onSkipSession: @escaping (Int) -> Void,
         onUnskipSession: @escaping (Int) -> Void,
         onRescheduleSession: @escaping (Int, Date) -> Void,
-        onSwapSession: @escaping (Int, SwapCandidate) -> Void
+        onSwapSession: @escaping (Int, SwapCandidate) -> Void,
+        onReorderSession: @escaping (Int, Int, SwapCandidate) -> Void
     ) {
         self.week = week
         self.weekIndex = weekIndex
@@ -47,6 +51,7 @@ struct WeekCardView: View {
         self.onUnskipSession = onUnskipSession
         self.onRescheduleSession = onRescheduleSession
         self.onSwapSession = onSwapSession
+        self.onReorderSession = onReorderSession
         _isExpanded = State(initialValue: isCurrentWeek)
     }
 
@@ -117,7 +122,60 @@ struct WeekCardView: View {
                     }
                 }
                 .buttonStyle(.plain)
+                .contextMenu { sessionContextMenu(for: session, at: sessionIndex) }
+                .draggable(SessionDragData(
+                    sessionId: session.id,
+                    weekIndex: weekIndex,
+                    sessionIndex: sessionIndex
+                ))
+                .dropDestination(for: SessionDragData.self) { items, _ in
+                    guard let source = items.first, source.sessionId != session.id else { return false }
+                    let target = SwapCandidate(session: session, weekIndex: weekIndex, sessionIndex: sessionIndex)
+                    onReorderSession(source.weekIndex, source.sessionIndex, target)
+                    return true
+                }
                 .accessibilityIdentifier("trainingPlan.sessionRow.\(sessionIndex)")
+            }
+        }
+        .sheet(item: $contextRescheduleItem) { item in
+            RescheduleDateSheet(
+                currentDate: item.session.date,
+                planStartDate: planStartDate,
+                planEndDate: planEndDate,
+                onReschedule: { newDate in onRescheduleSession(item.sessionIndex, newDate) }
+            )
+        }
+        .sheet(item: $contextSwapItem) { item in
+            SwapSessionSheet(
+                currentSession: item.session,
+                availableSessions: buildSwapCandidates(excluding: item.session),
+                onSwap: { candidate in onSwapSession(item.sessionIndex, candidate) }
+            )
+        }
+    }
+
+    @ViewBuilder
+    private func sessionContextMenu(for session: TrainingSession, at index: Int) -> some View {
+        if !session.isCompleted && !session.isSkipped {
+            Button { onToggleSession(index) } label: {
+                Label("Mark Complete", systemImage: "checkmark.circle")
+            }
+            Button { onSkipSession(index) } label: {
+                Label("Skip Session", systemImage: "forward.fill")
+            }
+            Button { contextRescheduleItem = ContextSheetItem(sessionIndex: index, session: session) } label: {
+                Label("Reschedule", systemImage: "calendar")
+            }
+            Button { contextSwapItem = ContextSheetItem(sessionIndex: index, session: session) } label: {
+                Label("Swap", systemImage: "arrow.triangle.swap")
+            }
+        } else if session.isSkipped {
+            Button { onUnskipSession(index) } label: {
+                Label("Unskip", systemImage: "arrow.uturn.backward")
+            }
+        } else if session.isCompleted {
+            Button { onToggleSession(index) } label: {
+                Label("Mark Incomplete", systemImage: "xmark.circle")
             }
         }
     }
@@ -156,4 +214,10 @@ struct WeekCardView: View {
         let done = active.filter(\.isCompleted).count
         return "\(done)/\(active.count) done"
     }
+}
+
+private struct ContextSheetItem: Identifiable {
+    let id = UUID()
+    let sessionIndex: Int
+    let session: TrainingSession
 }

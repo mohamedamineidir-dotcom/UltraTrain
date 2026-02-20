@@ -29,4 +29,5 @@ extension Logger {
     static let weather = Logger(subsystem: subsystem, category: "weather")
     static let pacing = Logger(subsystem: subsystem, category: "pacing")
     static let recovery = Logger(subsystem: subsystem, category: "recovery")
+    static let checklist = Logger(subsystem: subsystem, category: "checklist")
 }

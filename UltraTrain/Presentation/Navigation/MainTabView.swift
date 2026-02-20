@@ -36,6 +36,7 @@ struct MainTabView: View {
     private let healthKitImportService: (any HealthKitImportServiceProtocol)?
     private let weatherService: (any WeatherServiceProtocol)?
     private let recoveryRepository: any RecoveryRepository
+    private let checklistRepository: any RacePrepChecklistRepository
 
     init(
         athleteRepository: any AthleteRepository,
@@ -70,7 +71,8 @@ struct MainTabView: View {
         planAutoAdjustmentService: any PlanAutoAdjustmentService,
         healthKitImportService: (any HealthKitImportServiceProtocol)? = nil,
         weatherService: (any WeatherServiceProtocol)? = nil,
-        recoveryRepository: any RecoveryRepository
+        recoveryRepository: any RecoveryRepository,
+        checklistRepository: any RacePrepChecklistRepository
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -105,6 +107,7 @@ struct MainTabView: View {
         self.healthKitImportService = healthKitImportService
         self.weatherService = weatherService
         self.recoveryRepository = recoveryRepository
+        self.checklistRepository = checklistRepository
     }
 
     var body: some View {
@@ -124,6 +127,7 @@ struct MainTabView: View {
                 nutritionGenerator: nutritionGenerator,
                 healthKitService: healthKitService,
                 recoveryRepository: recoveryRepository,
+                checklistRepository: checklistRepository,
                 weatherService: weatherService,
                 locationService: locationService
             )
@@ -210,7 +214,8 @@ struct MainTabView: View {
                 nutritionGenerator: nutritionGenerator,
                 healthKitImportService: healthKitImportService,
                 weatherService: weatherService,
-                locationService: locationService
+                locationService: locationService,
+                checklistRepository: checklistRepository
             )
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")

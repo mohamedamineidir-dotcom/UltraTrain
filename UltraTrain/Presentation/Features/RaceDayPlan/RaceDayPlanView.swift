@@ -3,6 +3,8 @@ import SwiftUI
 struct RaceDayPlanView: View {
     @Environment(\.unitPreference) private var units
     @State private var viewModel: RaceDayPlanViewModel
+    private let race: Race
+    private let checklistRepository: any RacePrepChecklistRepository
 
     init(
         race: Race,
@@ -15,8 +17,11 @@ struct RaceDayPlanView: View {
         raceRepository: any RaceRepository,
         finishEstimateRepository: any FinishEstimateRepository,
         weatherService: (any WeatherServiceProtocol)? = nil,
-        locationService: LocationService? = nil
+        locationService: LocationService? = nil,
+        checklistRepository: any RacePrepChecklistRepository
     ) {
+        self.race = race
+        self.checklistRepository = checklistRepository
         _viewModel = State(initialValue: RaceDayPlanViewModel(
             race: race,
             finishTimeEstimator: finishTimeEstimator,
@@ -49,6 +54,7 @@ struct RaceDayPlanView: View {
                     if let plan = viewModel.nutritionPlan, let estimate = viewModel.estimate {
                         summaryCard(estimate: estimate, plan: plan)
                     }
+                    checklistLink
                     if let pacing = viewModel.pacingResult, !pacing.segmentPacings.isEmpty {
                         PacingSummaryCard(
                             pacingResult: pacing,
@@ -202,6 +208,29 @@ struct RaceDayPlanView: View {
                 .foregroundStyle(color)
         }
         .frame(maxWidth: .infinity)
+    }
+
+    // MARK: - Checklist Link
+
+    private var checklistLink: some View {
+        NavigationLink {
+            RacePrepChecklistView(race: race, repository: checklistRepository)
+        } label: {
+            HStack {
+                Image(systemName: "checklist")
+                    .foregroundStyle(Theme.Colors.primary)
+                Text("Race Prep Checklist")
+                    .font(.subheadline.bold())
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+            .padding(Theme.Spacing.md)
+            .background(Theme.Colors.primary.opacity(0.1))
+            .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Error

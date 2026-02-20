@@ -117,6 +117,12 @@ private struct PreviewRecoveryRepository: RecoveryRepository, @unchecked Sendabl
     func saveSnapshot(_ snapshot: RecoverySnapshot) async throws {}
 }
 
+private struct PreviewChecklistRepository: RacePrepChecklistRepository, @unchecked Sendable {
+    func getChecklist(for raceId: UUID) async throws -> RacePrepChecklist? { nil }
+    func saveChecklist(_ checklist: RacePrepChecklist) async throws {}
+    func deleteChecklist(for raceId: UUID) async throws {}
+}
+
 #Preview("Dashboard") {
     DashboardView(
         selectedTab: .constant(.dashboard),
@@ -133,6 +139,7 @@ private struct PreviewRecoveryRepository: RecoveryRepository, @unchecked Sendabl
         nutritionGenerator: PreviewNutritionGenerator(),
         healthKitService: PreviewHealthKitService(),
         recoveryRepository: PreviewRecoveryRepository(),
+        checklistRepository: PreviewChecklistRepository(),
         locationService: LocationService()
     )
 }

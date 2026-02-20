@@ -16,6 +16,7 @@ struct FinishEstimationView: View {
     private let finishEstimateRepository: any FinishEstimateRepository
     private let weatherService: (any WeatherServiceProtocol)?
     private let locationService: LocationService?
+    private let checklistRepository: any RacePrepChecklistRepository
 
     init(
         race: Race,
@@ -28,7 +29,8 @@ struct FinishEstimationView: View {
         raceRepository: any RaceRepository,
         finishEstimateRepository: any FinishEstimateRepository,
         weatherService: (any WeatherServiceProtocol)? = nil,
-        locationService: LocationService? = nil
+        locationService: LocationService? = nil,
+        checklistRepository: any RacePrepChecklistRepository
     ) {
         self.race = race
         self.finishTimeEstimator = finishTimeEstimator
@@ -41,6 +43,7 @@ struct FinishEstimationView: View {
         self.finishEstimateRepository = finishEstimateRepository
         self.weatherService = weatherService
         self.locationService = locationService
+        self.checklistRepository = checklistRepository
         _viewModel = State(initialValue: FinishEstimationViewModel(
             race: race,
             finishTimeEstimator: finishTimeEstimator,
@@ -253,7 +256,8 @@ struct FinishEstimationView: View {
                 raceRepository: raceRepository,
                 finishEstimateRepository: finishEstimateRepository,
                 weatherService: weatherService,
-                locationService: locationService
+                locationService: locationService,
+                checklistRepository: checklistRepository
             )
         } label: {
             HStack {

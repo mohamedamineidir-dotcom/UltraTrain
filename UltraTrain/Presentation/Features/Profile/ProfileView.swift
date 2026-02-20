@@ -24,6 +24,7 @@ struct ProfileView: View {
     private let healthKitImportService: (any HealthKitImportServiceProtocol)?
     private let weatherService: (any WeatherServiceProtocol)?
     private let locationService: LocationService?
+    private let checklistRepository: any RacePrepChecklistRepository
 
     init(
         athleteRepository: any AthleteRepository,
@@ -48,7 +49,8 @@ struct ProfileView: View {
         nutritionGenerator: any GenerateNutritionPlanUseCase,
         healthKitImportService: (any HealthKitImportServiceProtocol)? = nil,
         weatherService: (any WeatherServiceProtocol)? = nil,
-        locationService: LocationService? = nil
+        locationService: LocationService? = nil,
+        checklistRepository: any RacePrepChecklistRepository
     ) {
         _viewModel = State(initialValue: ProfileViewModel(
             athleteRepository: athleteRepository,
@@ -78,6 +80,7 @@ struct ProfileView: View {
         self.healthKitImportService = healthKitImportService
         self.weatherService = weatherService
         self.locationService = locationService
+        self.checklistRepository = checklistRepository
     }
 
     var body: some View {
@@ -271,7 +274,8 @@ struct ProfileView: View {
                             raceRepository: raceRepository,
                             finishEstimateRepository: finishEstimateRepository,
                             weatherService: weatherService,
-                            locationService: locationService
+                            locationService: locationService,
+                            checklistRepository: checklistRepository
                         )
                     } label: {
                         RaceRowView(race: race)
