@@ -6,6 +6,7 @@ final class MockExportService: ExportServiceProtocol, @unchecked Sendable {
     var exportRunsAsCSVCalled = false
     var exportRunTrackAsCSVCalled = false
     var exportRunAsPDFCalled = false
+    var exportRunAsShareImageCalled = false
     var shouldThrow = false
 
     func exportRunAsGPX(_ run: CompletedRun) async throws -> URL {
@@ -36,5 +37,18 @@ final class MockExportService: ExportServiceProtocol, @unchecked Sendable {
         exportRunAsPDFCalled = true
         if shouldThrow { throw DomainError.exportFailed(reason: "Mock error") }
         return URL(fileURLWithPath: "/tmp/mock_report.pdf")
+    }
+
+    @MainActor
+    func exportRunAsShareImage(
+        _ run: CompletedRun,
+        elevationProfile: [ElevationProfilePoint],
+        metrics: AdvancedRunMetrics?,
+        badges: [ImprovementBadge],
+        unitPreference: UnitPreference
+    ) async throws -> URL {
+        exportRunAsShareImageCalled = true
+        if shouldThrow { throw DomainError.exportFailed(reason: "Mock error") }
+        return URL(fileURLWithPath: "/tmp/mock_share.png")
     }
 }

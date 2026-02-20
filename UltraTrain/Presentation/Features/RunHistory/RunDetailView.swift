@@ -255,7 +255,8 @@ struct RunDetailView: View {
                 athleteRepository: athleteRepository,
                 raceRepository: raceRepository,
                 runRepository: runRepository,
-                finishEstimateRepository: finishEstimateRepository
+                finishEstimateRepository: finishEstimateRepository,
+                exportService: exportService
             )
         } label: {
             Label("View Analysis", systemImage: "chart.xyaxis.line")

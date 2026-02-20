@@ -120,7 +120,8 @@ struct RacePerformanceComparisonTests {
             athleteRepository: athleteRepo,
             raceRepository: raceRepo,
             runRepository: runRepo,
-            finishEstimateRepository: estimateRepo
+            finishEstimateRepository: estimateRepo,
+            exportService: MockExportService()
         )
 
         await vm.load()
@@ -145,7 +146,8 @@ struct RacePerformanceComparisonTests {
             athleteRepository: athleteRepo,
             raceRepository: raceRepo,
             runRepository: runRepo,
-            finishEstimateRepository: estimateRepo
+            finishEstimateRepository: estimateRepo,
+            exportService: MockExportService()
         )
 
         await vm.load()
@@ -173,7 +175,8 @@ struct RacePerformanceComparisonTests {
             athleteRepository: athleteRepo,
             raceRepository: raceRepo,
             runRepository: runRepo,
-            finishEstimateRepository: estimateRepo
+            finishEstimateRepository: estimateRepo,
+            exportService: MockExportService()
         )
 
         await vm.load()
@@ -201,7 +204,8 @@ struct RacePerformanceComparisonTests {
             athleteRepository: athleteRepo,
             raceRepository: raceRepo,
             runRepository: runRepo,
-            finishEstimateRepository: estimateRepo
+            finishEstimateRepository: estimateRepo,
+            exportService: MockExportService()
         )
 
         await vm.load()
@@ -236,7 +240,8 @@ struct RacePerformanceComparisonTests {
             athleteRepository: athleteRepo,
             raceRepository: raceRepo,
             runRepository: runRepo,
-            finishEstimateRepository: estimateRepo
+            finishEstimateRepository: estimateRepo,
+            exportService: MockExportService()
         )
 
         await vm.load()
@@ -256,7 +261,8 @@ struct RacePerformanceComparisonTests {
             athleteRepository: athleteRepo,
             raceRepository: raceRepo,
             runRepository: runRepo,
-            finishEstimateRepository: estimateRepo
+            finishEstimateRepository: estimateRepo,
+            exportService: MockExportService()
         )
 
         await vm.load()

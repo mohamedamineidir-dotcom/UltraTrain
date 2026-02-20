@@ -69,6 +69,44 @@ final class ExportService: ExportServiceProtocol, @unchecked Sendable {
         return fileURL
     }
 
+    @MainActor
+    func exportRunAsShareImage(
+        _ run: CompletedRun,
+        elevationProfile: [ElevationProfilePoint],
+        metrics: AdvancedRunMetrics?,
+        badges: [ImprovementBadge],
+        unitPreference: UnitPreference
+    ) async throws -> URL {
+        let cardView = RunShareCardView(
+            run: run,
+            elevationProfile: elevationProfile,
+            advancedMetrics: metrics,
+            badges: badges,
+            unitPreference: unitPreference
+        )
+
+        let renderer = ImageRenderer(content: cardView)
+        renderer.proposedSize = ProposedViewSize(width: 1080, height: 1350)
+        renderer.scale = 1.0
+
+        cleanupOldTempFiles()
+
+        let tempDir = fileManager.temporaryDirectory.appendingPathComponent("UltraTrainExport", isDirectory: true)
+        try fileManager.createDirectory(at: tempDir, withIntermediateDirectories: true)
+
+        let filename = "UltraTrain_Share_\(dateString(run.date)).png"
+        let fileURL = tempDir.appendingPathComponent(filename)
+
+        guard let uiImage = renderer.uiImage,
+              let pngData = uiImage.pngData() else {
+            throw DomainError.exportFailed(reason: "Failed to render share card image")
+        }
+
+        try pngData.write(to: fileURL, options: .atomic)
+        Logger.export.info("Exported share image: \(filename)")
+        return fileURL
+    }
+
     // MARK: - Private
 
     private func writeToTempFile(content: String, filename: String) throws -> URL {

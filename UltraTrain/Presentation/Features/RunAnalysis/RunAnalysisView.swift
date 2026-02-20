@@ -2,6 +2,7 @@ import SwiftUI
 import MapKit
 
 struct RunAnalysisView: View {
+    @Environment(\.unitPreference) private var units
     @State private var viewModel: RunAnalysisViewModel
 
     init(
@@ -10,7 +11,8 @@ struct RunAnalysisView: View {
         athleteRepository: any AthleteRepository,
         raceRepository: any RaceRepository,
         runRepository: any RunRepository,
-        finishEstimateRepository: any FinishEstimateRepository
+        finishEstimateRepository: any FinishEstimateRepository,
+        exportService: any ExportServiceProtocol
     ) {
         _viewModel = State(initialValue: RunAnalysisViewModel(
             run: run,
@@ -18,7 +20,8 @@ struct RunAnalysisView: View {
             athleteRepository: athleteRepository,
             raceRepository: raceRepository,
             runRepository: runRepository,
-            finishEstimateRepository: finishEstimateRepository
+            finishEstimateRepository: finishEstimateRepository,
+            exportService: exportService
         ))
     }
 
@@ -94,6 +97,52 @@ struct RunAnalysisView: View {
         }
         .navigationTitle("Run Analysis")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    viewModel.showingExportOptions = true
+                } label: {
+                    Image(systemName: "square.and.arrow.up")
+                }
+                .disabled(viewModel.isExporting || viewModel.isLoading)
+            }
+        }
+        .confirmationDialog("Share & Export", isPresented: $viewModel.showingExportOptions) {
+            Button("Share as Image") {
+                Task { await viewModel.exportAsShareImage(unitPreference: units) }
+            }
+            Button("Export as GPX") {
+                Task { await viewModel.exportAsGPX() }
+            }
+            Button("Export Track Points (CSV)") {
+                Task { await viewModel.exportAsTrackCSV() }
+            }
+            Button("Export as PDF Report") {
+                Task { await viewModel.exportAsPDF() }
+            }
+            Button("Cancel", role: .cancel) {}
+        }
+        .sheet(isPresented: $viewModel.showingShareSheet) {
+            if let url = viewModel.exportFileURL {
+                ShareSheet(activityItems: [url])
+            }
+        }
+        .alert("Export Error", isPresented: .init(
+            get: { viewModel.exportError != nil },
+            set: { if !$0 { viewModel.exportError = nil } }
+        )) {
+            Button("OK") { viewModel.exportError = nil }
+        } message: {
+            Text(viewModel.exportError ?? "")
+        }
+        .overlay {
+            if viewModel.isExporting {
+                ProgressView("Exporting...")
+                    .padding(Theme.Spacing.lg)
+                    .background(.ultraThinMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
+            }
+        }
         .task { await viewModel.load() }
         .sheet(isPresented: $viewModel.showFullScreenMap) {
             FullScreenMapView(

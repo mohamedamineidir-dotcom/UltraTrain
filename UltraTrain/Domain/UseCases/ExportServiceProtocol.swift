@@ -10,4 +10,11 @@ protocol ExportServiceProtocol: Sendable {
         comparison: HistoricalComparison?,
         nutritionAnalysis: NutritionAnalysis?
     ) async throws -> URL
+    @MainActor func exportRunAsShareImage(
+        _ run: CompletedRun,
+        elevationProfile: [ElevationProfilePoint],
+        metrics: AdvancedRunMetrics?,
+        badges: [ImprovementBadge],
+        unitPreference: UnitPreference
+    ) async throws -> URL
 }
