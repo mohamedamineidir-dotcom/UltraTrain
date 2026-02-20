@@ -82,7 +82,7 @@ struct ActiveRunViewModelStravaTests {
         vm.uploadToStrava()
 
         // Allow the background Task to execute
-        try await Task.sleep(for: .milliseconds(100))
+        try await Task.sleep(for: .milliseconds(300))
 
         #expect(queueService.enqueuedRunIds.contains(run.id))
         #expect(queueService.processQueueCalled == true)

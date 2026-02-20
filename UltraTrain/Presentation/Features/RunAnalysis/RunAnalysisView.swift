@@ -41,6 +41,14 @@ struct RunAnalysisView: View {
                         )
                     }
 
+                    if !viewModel.elevationProfile.isEmpty, !viewModel.run.splits.isEmpty {
+                        ElevationPaceChart(
+                            elevationProfile: viewModel.elevationProfile,
+                            splits: viewModel.run.splits,
+                            checkpointDistances: viewModel.checkpointDistanceNames
+                        )
+                    }
+
                     if viewModel.hasRouteData, !viewModel.elevationProfile.isEmpty {
                         InteractiveElevationMapView(
                             elevationProfile: viewModel.elevationProfile,

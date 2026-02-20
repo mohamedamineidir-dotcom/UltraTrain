@@ -55,7 +55,14 @@ struct FinishEstimationView: View {
                 } else if let estimate = viewModel.estimate {
                     raceHeader
                     if !viewModel.race.checkpoints.isEmpty {
-                        RaceCourseElevationChart(checkpoints: viewModel.race.checkpoints)
+                        if !estimate.checkpointSplits.isEmpty {
+                            RaceCoursePaceChart(
+                                checkpoints: viewModel.race.checkpoints,
+                                checkpointSplits: estimate.checkpointSplits
+                            )
+                        } else {
+                            RaceCourseElevationChart(checkpoints: viewModel.race.checkpoints)
+                        }
                     }
                     scenarioCards(estimate)
                     confidenceSection(estimate)
