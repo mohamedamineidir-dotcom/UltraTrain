@@ -4,7 +4,7 @@ import Foundation
 final class MockTrainingPlanRepository: TrainingPlanRepository, @unchecked Sendable {
     var activePlan: TrainingPlan?
     var plans: [UUID: TrainingPlan] = [:]
-    var updatedSession: TrainingSession?
+    var updatedSessions: [TrainingSession] = []
     var shouldThrow = false
 
     func getActivePlan() async throws -> TrainingPlan? {
@@ -31,6 +31,6 @@ final class MockTrainingPlanRepository: TrainingPlanRepository, @unchecked Senda
 
     func updateSession(_ session: TrainingSession) async throws {
         if shouldThrow { throw DomainError.persistenceError(message: "Mock error") }
-        updatedSession = session
+        updatedSessions.append(session)
     }
 }

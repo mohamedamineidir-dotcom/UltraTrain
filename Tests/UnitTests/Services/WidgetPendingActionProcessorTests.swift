@@ -87,9 +87,9 @@ struct WidgetPendingActionProcessorTests {
 
         await processor.processPendingActions()
 
-        #expect(planRepo.updatedSession != nil)
-        #expect(planRepo.updatedSession?.isCompleted == true)
-        #expect(planRepo.updatedSession?.isSkipped == false)
+        #expect(planRepo.updatedSessions.last != nil)
+        #expect(planRepo.updatedSessions.last?.isCompleted == true)
+        #expect(planRepo.updatedSessions.last?.isSkipped == false)
 
         clearPendingAction()
     }
@@ -118,9 +118,9 @@ struct WidgetPendingActionProcessorTests {
 
         await processor.processPendingActions()
 
-        #expect(planRepo.updatedSession != nil)
-        #expect(planRepo.updatedSession?.isSkipped == true)
-        #expect(planRepo.updatedSession?.isCompleted == false)
+        #expect(planRepo.updatedSessions.last != nil)
+        #expect(planRepo.updatedSessions.last?.isSkipped == true)
+        #expect(planRepo.updatedSessions.last?.isCompleted == false)
 
         clearPendingAction()
     }
@@ -143,7 +143,7 @@ struct WidgetPendingActionProcessorTests {
 
         await processor.processPendingActions()
 
-        #expect(planRepo.updatedSession == nil)
+        #expect(planRepo.updatedSessions.last == nil)
     }
 
     @Test("Clears action after processing")

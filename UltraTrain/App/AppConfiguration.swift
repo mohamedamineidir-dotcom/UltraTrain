@@ -28,6 +28,10 @@ enum AppConfiguration {
         static let maxWeeklyVolumeIncreasePercent: Double = 10.0
         static let recoveryWeekVolumeReductionPercent: Double = 35.0
         static let recoveryWeekCycle: Int = 3 // recovery every Nth week
+        static let lowAdherenceThreshold: Double = 0.5
+        static let lowAdherenceVolumeReductionPercent: Double = 20.0
+        static let extendedGapDays: Int = 7
+        static let staleMissedSessionThreshold: Int = 3
     }
 
     enum RunTracking {

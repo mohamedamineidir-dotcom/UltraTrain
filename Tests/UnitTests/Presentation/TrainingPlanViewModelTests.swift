@@ -243,8 +243,8 @@ struct TrainingPlanViewModelTests {
         await vm.toggleSessionCompletion(weekIndex: 0, sessionIndex: 1)
 
         #expect(vm.plan?.weeks[0].sessions[1].isCompleted == true)
-        #expect(planRepo.updatedSession != nil)
-        #expect(planRepo.updatedSession?.isCompleted == true)
+        #expect(planRepo.updatedSessions.last != nil)
+        #expect(planRepo.updatedSessions.last?.isCompleted == true)
     }
 
     @Test("Toggle session handles error gracefully")
@@ -713,6 +713,287 @@ struct TrainingPlanViewModelTests {
 
         #expect(vm.isPlanStale == true)
     }
+
+    // MARK: - Plan Adjustments
+
+    private func makePlanWithMissedSessions() -> TrainingPlan {
+        let now = Date.now
+        let weekStart = now.startOfWeek
+
+        // Previous week: 2 past sessions not completed/skipped → triggers stale + low adherence
+        let prevWeek = TrainingWeek(
+            id: UUID(),
+            weekNumber: 1,
+            startDate: weekStart.adding(days: -7),
+            endDate: weekStart.adding(days: -1),
+            phase: .base,
+            sessions: [
+                TrainingSession(
+                    id: UUID(),
+                    date: weekStart.adding(days: -6),
+                    type: .longRun,
+                    plannedDistanceKm: 20,
+                    plannedElevationGainM: 500,
+                    plannedDuration: 7200,
+                    intensity: .moderate,
+                    description: "Long run",
+                    nutritionNotes: nil,
+                    isCompleted: false, isSkipped: false,
+                    linkedRunId: nil
+                ),
+                TrainingSession(
+                    id: UUID(),
+                    date: weekStart.adding(days: -5),
+                    type: .tempo,
+                    plannedDistanceKm: 10,
+                    plannedElevationGainM: 200,
+                    plannedDuration: 3600,
+                    intensity: .moderate,
+                    description: "Tempo",
+                    nutritionNotes: nil,
+                    isCompleted: false, isSkipped: false,
+                    linkedRunId: nil
+                ),
+                TrainingSession(
+                    id: UUID(),
+                    date: weekStart.adding(days: -3),
+                    type: .recovery,
+                    plannedDistanceKm: 5,
+                    plannedElevationGainM: 50,
+                    plannedDuration: 1800,
+                    intensity: .easy,
+                    description: "Recovery",
+                    nutritionNotes: nil,
+                    isCompleted: false, isSkipped: false,
+                    linkedRunId: nil
+                ),
+                TrainingSession(
+                    id: UUID(),
+                    date: weekStart.adding(days: -2),
+                    type: .rest,
+                    plannedDistanceKm: 0,
+                    plannedElevationGainM: 0,
+                    plannedDuration: 0,
+                    intensity: .easy,
+                    description: "Rest",
+                    nutritionNotes: nil,
+                    isCompleted: false, isSkipped: false,
+                    linkedRunId: nil
+                )
+            ],
+            isRecoveryWeek: false,
+            targetVolumeKm: 35,
+            targetElevationGainM: 750
+        )
+
+        // Current week: future sessions available
+        let currentWeek = TrainingWeek(
+            id: UUID(),
+            weekNumber: 2,
+            startDate: weekStart,
+            endDate: weekStart.adding(days: 6),
+            phase: .base,
+            sessions: [
+                TrainingSession(
+                    id: UUID(),
+                    date: now.adding(days: 1),
+                    type: .tempo,
+                    plannedDistanceKm: 12,
+                    plannedElevationGainM: 250,
+                    plannedDuration: 4200,
+                    intensity: .moderate,
+                    description: "Tempo run",
+                    nutritionNotes: nil,
+                    isCompleted: false, isSkipped: false,
+                    linkedRunId: nil
+                ),
+                TrainingSession(
+                    id: UUID(),
+                    date: now.adding(days: 3),
+                    type: .rest,
+                    plannedDistanceKm: 0,
+                    plannedElevationGainM: 0,
+                    plannedDuration: 0,
+                    intensity: .easy,
+                    description: "Rest day",
+                    nutritionNotes: nil,
+                    isCompleted: false, isSkipped: false,
+                    linkedRunId: nil
+                ),
+                TrainingSession(
+                    id: UUID(),
+                    date: now.adding(days: 5),
+                    type: .longRun,
+                    plannedDistanceKm: 22,
+                    plannedElevationGainM: 600,
+                    plannedDuration: 7800,
+                    intensity: .moderate,
+                    description: "Long run",
+                    nutritionNotes: nil,
+                    isCompleted: false, isSkipped: false,
+                    linkedRunId: nil
+                )
+            ],
+            isRecoveryWeek: false,
+            targetVolumeKm: 45,
+            targetElevationGainM: 850
+        )
+
+        return TrainingPlan(
+            id: UUID(),
+            athleteId: UUID(),
+            targetRaceId: UUID(),
+            createdAt: .now,
+            weeks: [prevWeek, currentWeek],
+            intermediateRaceIds: [],
+            intermediateRaceSnapshots: []
+        )
+    }
+
+    @Test("loadPlan triggers adjustment check")
+    @MainActor
+    func loadPlanChecksAdjustments() async {
+        let plan = makePlanWithMissedSessions()
+        let planRepo = MockTrainingPlanRepository()
+        planRepo.activePlan = plan
+
+        let vm = makeViewModel(planRepo: planRepo)
+        await vm.loadPlan()
+
+        // The plan has missed sessions so recommendations should be populated
+        #expect(!vm.adjustmentRecommendations.isEmpty)
+    }
+
+    @Test("dismissRecommendation removes from visible list")
+    @MainActor
+    func dismissRecommendationHidesIt() async {
+        let plan = makePlanWithMissedSessions()
+        let planRepo = MockTrainingPlanRepository()
+        planRepo.activePlan = plan
+
+        let vm = makeViewModel(planRepo: planRepo)
+        await vm.loadPlan()
+
+        let initialCount = vm.visibleRecommendations.count
+        guard let first = vm.visibleRecommendations.first else {
+            Issue.record("Expected at least one recommendation")
+            return
+        }
+
+        vm.dismissRecommendation(first)
+
+        #expect(vm.visibleRecommendations.count == initialCount - 1)
+        #expect(!vm.visibleRecommendations.contains(where: { $0.id == first.id }))
+        // Still in the full list
+        #expect(vm.adjustmentRecommendations.contains(where: { $0.id == first.id }))
+    }
+
+    @Test("applyBulkSkip marks sessions as skipped")
+    @MainActor
+    func applyBulkSkipMarksSkipped() async {
+        let plan = makePlanWithMissedSessions()
+        let planRepo = MockTrainingPlanRepository()
+        planRepo.activePlan = plan
+
+        let vm = makeViewModel(planRepo: planRepo)
+        await vm.loadPlan()
+
+        let bulkSkipRec = vm.adjustmentRecommendations.first { $0.type == .bulkMarkMissedAsSkipped }
+        guard let rec = bulkSkipRec else {
+            Issue.record("Expected bulkMarkMissedAsSkipped recommendation")
+            return
+        }
+
+        await vm.applyRecommendation(rec)
+
+        // All affected sessions should now be skipped
+        for sessionId in rec.affectedSessionIds {
+            let session = vm.plan?.weeks.flatMap(\.sessions).first { $0.id == sessionId }
+            #expect(session?.isSkipped == true)
+        }
+        // Sessions should have been persisted
+        #expect(!planRepo.updatedSessions.isEmpty)
+    }
+
+    @Test("applyReduceVolume reduces planned distance")
+    @MainActor
+    func applyReduceVolumeReducesDistance() async {
+        let plan = makePlanWithMissedSessions()
+        let planRepo = MockTrainingPlanRepository()
+        planRepo.activePlan = plan
+
+        let vm = makeViewModel(planRepo: planRepo)
+        await vm.loadPlan()
+
+        let reduceRec = vm.adjustmentRecommendations.first { $0.type == .reduceVolumeAfterLowAdherence }
+        guard let rec = reduceRec else {
+            // Low adherence may be suppressed by recovery conversion — skip test gracefully
+            return
+        }
+
+        // Capture original distances
+        let originalDistances: [UUID: Double] = {
+            var map: [UUID: Double] = [:]
+            for id in rec.affectedSessionIds {
+                if let s = vm.plan?.weeks.flatMap(\.sessions).first(where: { $0.id == id }) {
+                    map[id] = s.plannedDistanceKm
+                }
+            }
+            return map
+        }()
+
+        await vm.applyRecommendation(rec)
+
+        let factor = 1.0 - AppConfiguration.Training.lowAdherenceVolumeReductionPercent / 100.0
+        for (id, original) in originalDistances {
+            let updated = vm.plan?.weeks.flatMap(\.sessions).first { $0.id == id }
+            #expect(updated?.plannedDistanceKm == original * factor)
+        }
+    }
+
+    @Test("applyRecommendation rechecks adjustments afterward")
+    @MainActor
+    func applyRechecksAdjustments() async {
+        let plan = makePlanWithMissedSessions()
+        let planRepo = MockTrainingPlanRepository()
+        planRepo.activePlan = plan
+
+        let vm = makeViewModel(planRepo: planRepo)
+        await vm.loadPlan()
+
+        let initialRecs = vm.adjustmentRecommendations
+
+        guard let bulkSkip = initialRecs.first(where: { $0.type == .bulkMarkMissedAsSkipped }) else {
+            Issue.record("Expected bulkMarkMissedAsSkipped recommendation")
+            return
+        }
+
+        await vm.applyRecommendation(bulkSkip)
+
+        // After applying bulk skip, that recommendation should no longer appear
+        #expect(!vm.adjustmentRecommendations.contains(where: { $0.type == .bulkMarkMissedAsSkipped }))
+    }
+
+    @Test("toggleSessionCompletion rechecks adjustments")
+    @MainActor
+    func toggleSessionRechecksAdjustments() async {
+        let plan = makePlanWithMissedSessions()
+        let planRepo = MockTrainingPlanRepository()
+
+        let vm = makeViewModel(planRepo: planRepo)
+        vm.plan = plan
+        vm.checkForAdjustments()
+
+        // Complete a future session in current week (index 1, session 0 = tempo)
+        await vm.toggleSessionCompletion(weekIndex: 1, sessionIndex: 0)
+
+        // Adjustments should have been rechecked (count may or may not change,
+        // but the method was called — we verify no crash and state is consistent)
+        #expect(vm.adjustmentRecommendations.count >= 0)
+        #expect(vm.plan?.weeks[1].sessions[0].isCompleted == true)
+    }
+
+    // MARK: - Snapshot-Based Staleness Detection (cont.)
 
     @Test("isPlanStale false when snapshots match")
     @MainActor

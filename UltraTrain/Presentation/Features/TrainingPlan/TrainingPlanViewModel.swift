@@ -25,6 +25,9 @@ final class TrainingPlanViewModel {
     var isGenerating = false
     var error: String?
     var showRegenerateConfirmation = false
+    var adjustmentRecommendations: [PlanAdjustmentRecommendation] = []
+    private var dismissedRecommendationIds: Set<UUID> = []
+    var isApplyingAdjustment = false
 
     // MARK: - Init
 
@@ -63,6 +66,7 @@ final class TrainingPlanViewModel {
         }
 
         isLoading = false
+        checkForAdjustments()
     }
 
     // MARK: - Refresh Races
@@ -120,6 +124,7 @@ final class TrainingPlanViewModel {
             races = allRaces
             Logger.training.info("Plan generated: \(newPlan.weeks.count) weeks")
             await updateWidgets()
+            checkForAdjustments()
         } catch {
             self.error = error.localizedDescription
             Logger.training.error("Failed to generate plan: \(error)")
@@ -143,6 +148,7 @@ final class TrainingPlanViewModel {
             try await planRepository.updateSession(session)
             plan = currentPlan
             await updateWidgets()
+            checkForAdjustments()
         } catch {
             self.error = error.localizedDescription
             Logger.training.error("Failed to update session: \(error)")
@@ -163,6 +169,7 @@ final class TrainingPlanViewModel {
         do {
             try await planRepository.updateSession(session)
             plan = currentPlan
+            checkForAdjustments()
         } catch {
             self.error = error.localizedDescription
             Logger.training.error("Failed to skip session: \(error)")
@@ -181,6 +188,7 @@ final class TrainingPlanViewModel {
         do {
             try await planRepository.updateSession(session)
             plan = currentPlan
+            checkForAdjustments()
         } catch {
             self.error = error.localizedDescription
             Logger.training.error("Failed to unskip session: \(error)")
@@ -303,6 +311,128 @@ final class TrainingPlanViewModel {
         let added = currentIntermediates.filter { !planIds.contains($0.id) }
         let removed = plan.intermediateRaceIds.filter { !currentIds.contains($0) }
         return (added, removed)
+    }
+
+    // MARK: - Plan Adjustments
+
+    var visibleRecommendations: [PlanAdjustmentRecommendation] {
+        adjustmentRecommendations.filter { !dismissedRecommendationIds.contains($0.id) }
+    }
+
+    func checkForAdjustments() {
+        guard let plan else {
+            adjustmentRecommendations = []
+            return
+        }
+        adjustmentRecommendations = PlanAdjustmentCalculator.analyze(plan: plan)
+        let currentIds = Set(adjustmentRecommendations.map(\.id))
+        dismissedRecommendationIds = dismissedRecommendationIds.intersection(currentIds)
+    }
+
+    func dismissRecommendation(_ recommendation: PlanAdjustmentRecommendation) {
+        dismissedRecommendationIds.insert(recommendation.id)
+    }
+
+    func applyRecommendation(_ recommendation: PlanAdjustmentRecommendation) async {
+        guard var currentPlan = plan else { return }
+        isApplyingAdjustment = true
+
+        do {
+            switch recommendation.type {
+            case .rescheduleKeySession:
+                try await applyReschedule(recommendation, plan: &currentPlan)
+            case .reduceVolumeAfterLowAdherence:
+                let factor = 1.0 - AppConfiguration.Training.lowAdherenceVolumeReductionPercent / 100.0
+                try await applyVolumeReduction(recommendation, plan: &currentPlan, factor: factor)
+            case .convertToRecoveryWeek:
+                let factor = 1.0 - AppConfiguration.Training.recoveryWeekVolumeReductionPercent / 100.0
+                try await applyVolumeReduction(recommendation, plan: &currentPlan, factor: factor)
+                if let cwi = currentPlan.currentWeekIndex {
+                    currentPlan.weeks[cwi].isRecoveryWeek = true
+                    try await planRepository.updatePlan(currentPlan)
+                }
+            case .bulkMarkMissedAsSkipped:
+                try await applyBulkSkip(recommendation, plan: &currentPlan)
+            }
+
+            plan = currentPlan
+            checkForAdjustments()
+            await updateWidgets()
+        } catch {
+            self.error = error.localizedDescription
+            Logger.training.error("Failed to apply adjustment: \(error)")
+        }
+
+        isApplyingAdjustment = false
+    }
+
+    private func applyReschedule(
+        _ rec: PlanAdjustmentRecommendation,
+        plan: inout TrainingPlan
+    ) async throws {
+        guard rec.affectedSessionIds.count == 2 else { return }
+        let missedId = rec.affectedSessionIds[0]
+        let restSlotId = rec.affectedSessionIds[1]
+
+        guard let (mwi, msi) = findSession(id: missedId, in: plan),
+              let (rwi, rsi) = findSession(id: restSlotId, in: plan) else { return }
+
+        let newDate = plan.weeks[rwi].sessions[rsi].date
+        plan.weeks[mwi].sessions[msi].date = newDate
+
+        plan.weeks[mwi].sessions.sort { $0.date < $1.date }
+        if mwi != rwi {
+            plan.weeks[rwi].sessions.sort { $0.date < $1.date }
+        }
+
+        // Find the updated index after sort
+        if let updatedIdx = plan.weeks[mwi].sessions.firstIndex(where: { $0.id == missedId }) {
+            try await planRepository.updateSession(plan.weeks[mwi].sessions[updatedIdx])
+        }
+    }
+
+    private func applyVolumeReduction(
+        _ rec: PlanAdjustmentRecommendation,
+        plan: inout TrainingPlan,
+        factor: Double
+    ) async throws {
+        let affectedIds = Set(rec.affectedSessionIds)
+
+        for wi in plan.weeks.indices {
+            for si in plan.weeks[wi].sessions.indices {
+                let session = plan.weeks[wi].sessions[si]
+                guard affectedIds.contains(session.id) else { continue }
+
+                plan.weeks[wi].sessions[si].plannedDistanceKm *= factor
+                plan.weeks[wi].sessions[si].plannedElevationGainM *= factor
+                plan.weeks[wi].sessions[si].plannedDuration *= factor
+                try await planRepository.updateSession(plan.weeks[wi].sessions[si])
+            }
+        }
+    }
+
+    private func applyBulkSkip(
+        _ rec: PlanAdjustmentRecommendation,
+        plan: inout TrainingPlan
+    ) async throws {
+        let affectedIds = Set(rec.affectedSessionIds)
+
+        for wi in plan.weeks.indices {
+            for si in plan.weeks[wi].sessions.indices {
+                guard affectedIds.contains(plan.weeks[wi].sessions[si].id) else { continue }
+                plan.weeks[wi].sessions[si].isSkipped = true
+                try await planRepository.updateSession(plan.weeks[wi].sessions[si])
+            }
+        }
+    }
+
+    private func findSession(id: UUID, in plan: TrainingPlan) -> (weekIndex: Int, sessionIndex: Int)? {
+        for (wi, week) in plan.weeks.enumerated() {
+            for (si, session) in week.sessions.enumerated() {
+                if session.id == id { return (wi, si) }
+            }
+        }
+        return nil
     }
 
     // MARK: - Progress Preservation

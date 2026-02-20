@@ -89,6 +89,9 @@ final class LocalTrainingPlanRepository: TrainingPlanRepository, @unchecked Send
         existing.isCompleted = session.isCompleted
         existing.isSkipped = session.isSkipped
         existing.linkedRunId = session.linkedRunId
+        existing.plannedDistanceKm = session.plannedDistanceKm
+        existing.plannedElevationGainM = session.plannedElevationGainM
+        existing.plannedDuration = session.plannedDuration
         try context.save()
         Logger.persistence.info("Session updated: \(session.type.rawValue) completed=\(session.isCompleted) skipped=\(session.isSkipped)")
     }

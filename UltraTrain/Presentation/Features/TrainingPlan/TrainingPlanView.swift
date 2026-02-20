@@ -100,6 +100,19 @@ struct TrainingPlanView: View {
                     stalePlanBanner
                 }
 
+                if !viewModel.visibleRecommendations.isEmpty {
+                    PlanAdjustmentBanner(
+                        recommendations: viewModel.visibleRecommendations,
+                        isApplying: viewModel.isApplyingAdjustment,
+                        onApply: { rec in
+                            Task { await viewModel.applyRecommendation(rec) }
+                        },
+                        onDismiss: { rec in
+                            viewModel.dismissRecommendation(rec)
+                        }
+                    )
+                }
+
                 planHeader(plan)
 
                 ForEach(Array(plan.weeks.enumerated()), id: \.element.id) { weekIndex, week in
