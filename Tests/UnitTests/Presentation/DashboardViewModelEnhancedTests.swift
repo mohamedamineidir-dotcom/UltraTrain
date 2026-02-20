@@ -97,7 +97,9 @@ struct DashboardViewModelEnhancedTests {
             fitnessCalculator: MockCalculateFitnessUseCase(),
             raceRepository: raceRepo,
             finishTimeEstimator: MockEstimateFinishTimeUseCase(),
-            finishEstimateRepository: MockFinishEstimateRepository()
+            finishEstimateRepository: MockFinishEstimateRepository(),
+            healthKitService: MockHealthKitService(),
+            recoveryRepository: MockRecoveryRepository()
         )
     }
 
@@ -218,7 +220,9 @@ struct DashboardViewModelEnhancedTests {
             fitnessCalculator: fitnessCalc,
             raceRepository: MockRaceRepository(),
             finishTimeEstimator: MockEstimateFinishTimeUseCase(),
-            finishEstimateRepository: MockFinishEstimateRepository()
+            finishEstimateRepository: MockFinishEstimateRepository(),
+            healthKitService: MockHealthKitService(),
+            recoveryRepository: MockRecoveryRepository()
         )
         await vm.load()
 
@@ -253,7 +257,9 @@ struct DashboardViewModelEnhancedTests {
             fitnessCalculator: fitnessCalc,
             raceRepository: MockRaceRepository(),
             finishTimeEstimator: MockEstimateFinishTimeUseCase(),
-            finishEstimateRepository: MockFinishEstimateRepository()
+            finishEstimateRepository: MockFinishEstimateRepository(),
+            healthKitService: MockHealthKitService(),
+            recoveryRepository: MockRecoveryRepository()
         )
         await vm.load()
 

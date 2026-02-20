@@ -35,6 +35,7 @@ struct MainTabView: View {
     private let planAutoAdjustmentService: any PlanAutoAdjustmentService
     private let healthKitImportService: (any HealthKitImportServiceProtocol)?
     private let weatherService: (any WeatherServiceProtocol)?
+    private let recoveryRepository: any RecoveryRepository
 
     init(
         athleteRepository: any AthleteRepository,
@@ -68,7 +69,8 @@ struct MainTabView: View {
         finishEstimateRepository: any FinishEstimateRepository,
         planAutoAdjustmentService: any PlanAutoAdjustmentService,
         healthKitImportService: (any HealthKitImportServiceProtocol)? = nil,
-        weatherService: (any WeatherServiceProtocol)? = nil
+        weatherService: (any WeatherServiceProtocol)? = nil,
+        recoveryRepository: any RecoveryRepository
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -102,6 +104,7 @@ struct MainTabView: View {
         self.planAutoAdjustmentService = planAutoAdjustmentService
         self.healthKitImportService = healthKitImportService
         self.weatherService = weatherService
+        self.recoveryRepository = recoveryRepository
     }
 
     var body: some View {
@@ -119,6 +122,8 @@ struct MainTabView: View {
                 finishEstimateRepository: finishEstimateRepository,
                 nutritionRepository: nutritionRepository,
                 nutritionGenerator: nutritionGenerator,
+                healthKitService: healthKitService,
+                recoveryRepository: recoveryRepository,
                 weatherService: weatherService,
                 locationService: locationService
             )

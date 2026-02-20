@@ -27,6 +27,8 @@ final class RaceDayPlanViewModel {
     var isLoading = false
     var error: String?
     var raceDayForecast: DailyWeatherForecast?
+    var pacingResult: RacePacingCalculator.PacingResult?
+    var aidStationDwellSeconds: TimeInterval = AppConfiguration.PacingStrategy.defaultAidStationDwellSeconds
 
     // MARK: - Init
 
@@ -105,10 +107,19 @@ final class RaceDayPlanViewModel {
             }
             nutritionPlan = plan
 
+            let pacingInput = RacePacingCalculator.Input(
+                checkpointSplits: finishEstimate.checkpointSplits,
+                defaultAidStationDwellSeconds: aidStationDwellSeconds,
+                aidStationDwellOverrides: [:]
+            )
+            let pacing = RacePacingCalculator.calculate(pacingInput)
+            pacingResult = pacing
+
             segments = buildSegments(
                 splits: finishEstimate.checkpointSplits,
                 entries: plan?.entries ?? [],
-                plan: plan
+                plan: plan,
+                pacing: pacing
             )
         } catch {
             self.error = error.localizedDescription
@@ -169,7 +180,8 @@ final class RaceDayPlanViewModel {
     func buildSegments(
         splits: [CheckpointSplit],
         entries: [NutritionEntry],
-        plan: NutritionPlan?
+        plan: NutritionPlan?,
+        pacing: RacePacingCalculator.PacingResult? = nil
     ) -> [RaceDaySegment] {
         guard !splits.isEmpty else { return [] }
 
@@ -198,6 +210,8 @@ final class RaceDayPlanViewModel {
             let segmentDuration = split.expectedTime - previousExpectedTime
             let arrivalTime = race.date.addingTimeInterval(split.expectedTime)
 
+            let segPacing = pacing?.segmentPacings.first { $0.checkpointId == split.checkpointId }
+
             result.append(RaceDaySegment(
                 id: UUID(),
                 checkpointName: split.checkpointName,
@@ -211,12 +225,37 @@ final class RaceDayPlanViewModel {
                 nutritionEntries: segmentEntries,
                 cumulativeCalories: cumulativeCalories,
                 cumulativeHydrationMl: cumulativeHydrationMl,
-                cumulativeSodiumMg: cumulativeSodiumMg
+                cumulativeSodiumMg: cumulativeSodiumMg,
+                targetPaceSecondsPerKm: segPacing?.targetPaceSecondsPerKm ?? 0,
+                conservativePaceSecondsPerKm: segPacing?.conservativePaceSecondsPerKm ?? 0,
+                aggressivePaceSecondsPerKm: segPacing?.aggressivePaceSecondsPerKm ?? 0,
+                pacingZone: segPacing?.pacingZone ?? .moderate,
+                aidStationDwellTime: segPacing?.aidStationDwellTime ?? 0
             ))
 
             previousExpectedTime = split.expectedTime
         }
 
         return result
+    }
+
+    // MARK: - Dwell Time
+
+    func updateDwellTime(_ seconds: TimeInterval) {
+        aidStationDwellSeconds = seconds
+        guard let estimate else { return }
+        let input = RacePacingCalculator.Input(
+            checkpointSplits: estimate.checkpointSplits,
+            defaultAidStationDwellSeconds: seconds,
+            aidStationDwellOverrides: [:]
+        )
+        let pacing = RacePacingCalculator.calculate(input)
+        pacingResult = pacing
+        segments = buildSegments(
+            splits: estimate.checkpointSplits,
+            entries: nutritionPlan?.entries ?? [],
+            plan: nutritionPlan,
+            pacing: pacing
+        )
     }
 }

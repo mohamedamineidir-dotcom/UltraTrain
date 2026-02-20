@@ -74,7 +74,9 @@ struct DashboardCoachingTests {
             fitnessCalculator: fitnessCalc,
             raceRepository: MockRaceRepository(),
             finishTimeEstimator: MockEstimateFinishTimeUseCase(),
-            finishEstimateRepository: MockFinishEstimateRepository()
+            finishEstimateRepository: MockFinishEstimateRepository(),
+            healthKitService: MockHealthKitService(),
+            recoveryRepository: MockRecoveryRepository()
         )
     }
 

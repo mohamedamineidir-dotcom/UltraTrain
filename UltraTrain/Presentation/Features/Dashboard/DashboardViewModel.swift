@@ -22,6 +22,8 @@ final class DashboardViewModel {
     private let raceRepository: any RaceRepository
     private let finishTimeEstimator: any EstimateFinishTimeUseCase
     private let finishEstimateRepository: any FinishEstimateRepository
+    private let healthKitService: any HealthKitServiceProtocol
+    private let recoveryRepository: any RecoveryRepository
     private let weatherService: (any WeatherServiceProtocol)?
     private let locationService: LocationService?
 
@@ -41,6 +43,8 @@ final class DashboardViewModel {
     var coachingInsights: [CoachingInsight] = []
     var currentWeather: WeatherSnapshot?
     var sessionForecast: WeatherSnapshot?
+    var recoveryScore: RecoveryScore?
+    var sleepHistory: [SleepEntry] = []
 
     // MARK: - Init
 
@@ -53,6 +57,8 @@ final class DashboardViewModel {
         raceRepository: any RaceRepository,
         finishTimeEstimator: any EstimateFinishTimeUseCase,
         finishEstimateRepository: any FinishEstimateRepository,
+        healthKitService: any HealthKitServiceProtocol,
+        recoveryRepository: any RecoveryRepository,
         weatherService: (any WeatherServiceProtocol)? = nil,
         locationService: LocationService? = nil
     ) {
@@ -64,6 +70,8 @@ final class DashboardViewModel {
         self.raceRepository = raceRepository
         self.finishTimeEstimator = finishTimeEstimator
         self.finishEstimateRepository = finishEstimateRepository
+        self.healthKitService = healthKitService
+        self.recoveryRepository = recoveryRepository
         self.weatherService = weatherService
         self.locationService = locationService
     }
@@ -84,6 +92,8 @@ final class DashboardViewModel {
         async let racesTask: () = loadUpcomingRaces()
         async let weatherTask: () = loadWeather()
         _ = await (fitnessTask, estimateTask, lastRunTask, racesTask, weatherTask)
+
+        await loadRecovery()
 
         isLoading = false
     }
@@ -113,7 +123,8 @@ final class DashboardViewModel {
                 plan: plan,
                 weeklyVolumes: volumes,
                 nextRace: upcomingRaces.first,
-                adherencePercent: adherencePercent
+                adherencePercent: adherencePercent,
+                recoveryScore: recoveryScore
             )
 
             let from = Date.now.adding(days: -28)
@@ -173,6 +184,52 @@ final class DashboardViewModel {
             sessionForecast = forecast.last
         } catch {
             Logger.weather.debug("Dashboard: could not load session forecast: \(error)")
+        }
+    }
+
+    // MARK: - Recovery
+
+    private func loadRecovery() async {
+        do {
+            let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date.now) ?? Date.now
+            let sleepEntries = try await healthKitService.fetchSleepData(from: yesterday, to: .now)
+            let lastNight = sleepEntries.last
+
+            let sevenDaysAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date.now) ?? Date.now
+            let history = try await healthKitService.fetchSleepData(from: sevenDaysAgo, to: .now)
+            sleepHistory = history
+
+            let currentHR = try await healthKitService.fetchRestingHeartRate()
+            let athlete = try await athleteRepository.getAthlete()
+            let baselineHR = athlete?.restingHeartRate
+
+            let score = RecoveryScoreCalculator.calculate(
+                lastNightSleep: lastNight,
+                sleepHistory: history,
+                currentRestingHR: currentHR,
+                baselineRestingHR: baselineHR,
+                fitnessSnapshot: fitnessSnapshot
+            )
+            recoveryScore = score
+
+            let snapshot = RecoverySnapshot(
+                id: UUID(),
+                date: .now,
+                recoveryScore: score,
+                sleepEntry: lastNight,
+                restingHeartRate: currentHR
+            )
+            try await recoveryRepository.saveSnapshot(snapshot)
+        } catch {
+            Logger.recovery.debug("Dashboard: could not load recovery data: \(error)")
+            let score = RecoveryScoreCalculator.calculate(
+                lastNightSleep: nil,
+                sleepHistory: [],
+                currentRestingHR: nil,
+                baselineRestingHR: nil,
+                fitnessSnapshot: fitnessSnapshot
+            )
+            recoveryScore = score
         }
     }
 

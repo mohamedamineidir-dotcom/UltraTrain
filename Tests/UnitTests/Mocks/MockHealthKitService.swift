@@ -14,6 +14,7 @@ final class MockHealthKitService: HealthKitServiceProtocol, @unchecked Sendable 
     var bodyWeight: Double?
     var saveWorkoutCalled = false
     var savedRun: CompletedRun?
+    var sleepEntries: [SleepEntry] = []
 
     func requestAuthorization() async throws {
         requestAuthorizationCalled = true
@@ -62,5 +63,10 @@ final class MockHealthKitService: HealthKitServiceProtocol, @unchecked Sendable 
     func fetchBodyWeight() async throws -> Double? {
         if shouldThrow { throw DomainError.healthKitUnavailable }
         return bodyWeight
+    }
+
+    func fetchSleepData(from startDate: Date, to endDate: Date) async throws -> [SleepEntry] {
+        if shouldThrow { throw DomainError.healthKitUnavailable }
+        return sleepEntries.filter { $0.date >= startDate && $0.date <= endDate }
     }
 }

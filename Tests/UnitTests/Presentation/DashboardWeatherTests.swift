@@ -59,6 +59,8 @@ struct DashboardWeatherTests {
             raceRepository: raceRepo,
             finishTimeEstimator: MockEstimateFinishTimeUseCase(),
             finishEstimateRepository: MockFinishEstimateRepository(),
+            healthKitService: MockHealthKitService(),
+            recoveryRepository: MockRecoveryRepository(),
             weatherService: weatherService
         )
     }

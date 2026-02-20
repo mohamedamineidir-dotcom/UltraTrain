@@ -96,6 +96,27 @@ private struct PreviewNutritionGenerator: GenerateNutritionPlanUseCase, @uncheck
     }
 }
 
+private final class PreviewHealthKitService: HealthKitServiceProtocol, @unchecked Sendable {
+    var authorizationStatus: HealthKitAuthStatus = .notDetermined
+    func requestAuthorization() async throws {}
+    func startHeartRateStream() -> AsyncStream<HealthKitHeartRateReading> {
+        AsyncStream { $0.finish() }
+    }
+    func stopHeartRateStream() {}
+    func fetchRestingHeartRate() async throws -> Int? { nil }
+    func fetchMaxHeartRate() async throws -> Int? { nil }
+    func fetchRunningWorkouts(from: Date, to: Date) async throws -> [HealthKitWorkout] { [] }
+    func saveWorkout(run: CompletedRun) async throws {}
+    func fetchBodyWeight() async throws -> Double? { nil }
+    func fetchSleepData(from: Date, to: Date) async throws -> [SleepEntry] { [] }
+}
+
+private struct PreviewRecoveryRepository: RecoveryRepository, @unchecked Sendable {
+    func getSnapshots(from: Date, to: Date) async throws -> [RecoverySnapshot] { [] }
+    func getLatestSnapshot() async throws -> RecoverySnapshot? { nil }
+    func saveSnapshot(_ snapshot: RecoverySnapshot) async throws {}
+}
+
 #Preview("Dashboard") {
     DashboardView(
         selectedTab: .constant(.dashboard),
@@ -110,6 +131,8 @@ private struct PreviewNutritionGenerator: GenerateNutritionPlanUseCase, @uncheck
         finishEstimateRepository: PreviewFinishEstimateRepository(),
         nutritionRepository: PreviewNutritionRepository(),
         nutritionGenerator: PreviewNutritionGenerator(),
+        healthKitService: PreviewHealthKitService(),
+        recoveryRepository: PreviewRecoveryRepository(),
         locationService: LocationService()
     )
 }

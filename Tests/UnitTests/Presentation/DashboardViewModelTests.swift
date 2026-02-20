@@ -109,7 +109,9 @@ struct DashboardViewModelTests {
             fitnessCalculator: fitnessCalc,
             raceRepository: raceRepo,
             finishTimeEstimator: estimator,
-            finishEstimateRepository: estimateRepo
+            finishEstimateRepository: estimateRepo,
+            healthKitService: MockHealthKitService(),
+            recoveryRepository: MockRecoveryRepository()
         )
     }
 

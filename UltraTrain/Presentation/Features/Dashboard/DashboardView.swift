@@ -16,6 +16,8 @@ struct DashboardView: View {
     private let finishEstimateRepository: any FinishEstimateRepository
     private let nutritionRepository: any NutritionRepository
     private let nutritionGenerator: any GenerateNutritionPlanUseCase
+    private let healthKitService: any HealthKitServiceProtocol
+    private let recoveryRepository: any RecoveryRepository
     private let weatherService: (any WeatherServiceProtocol)?
     private let locationService: LocationService
 
@@ -32,6 +34,8 @@ struct DashboardView: View {
         finishEstimateRepository: any FinishEstimateRepository,
         nutritionRepository: any NutritionRepository,
         nutritionGenerator: any GenerateNutritionPlanUseCase,
+        healthKitService: any HealthKitServiceProtocol,
+        recoveryRepository: any RecoveryRepository,
         weatherService: (any WeatherServiceProtocol)? = nil,
         locationService: LocationService
     ) {
@@ -47,6 +51,8 @@ struct DashboardView: View {
         self.finishEstimateRepository = finishEstimateRepository
         self.nutritionRepository = nutritionRepository
         self.nutritionGenerator = nutritionGenerator
+        self.healthKitService = healthKitService
+        self.recoveryRepository = recoveryRepository
         self.weatherService = weatherService
         self.locationService = locationService
         _viewModel = State(initialValue: DashboardViewModel(
@@ -58,6 +64,8 @@ struct DashboardView: View {
             raceRepository: raceRepository,
             finishTimeEstimator: finishTimeEstimator,
             finishEstimateRepository: finishEstimateRepository,
+            healthKitService: healthKitService,
+            recoveryRepository: recoveryRepository,
             weatherService: weatherService,
             locationService: locationService
         ))
@@ -96,6 +104,11 @@ struct DashboardView: View {
                         targetDistanceKm: viewModel.weeklyTargetDistanceKm,
                         targetElevationM: viewModel.weeklyTargetElevationM,
                         weeksUntilRace: viewModel.weeksUntilRace
+                    )
+
+                    DashboardRecoveryCard(
+                        recoveryScore: viewModel.recoveryScore,
+                        sleepHistory: viewModel.sleepHistory
                     )
 
                     LastRunCard(lastRun: viewModel.lastRun)

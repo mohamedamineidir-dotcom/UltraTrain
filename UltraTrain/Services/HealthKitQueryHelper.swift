@@ -156,6 +156,39 @@ enum HealthKitQueryHelper {
         types.insert(HKQuantityType(.activeEnergyBurned))
         types.insert(HKQuantityType(.bodyMass))
         types.insert(HKWorkoutType.workoutType())
+        types.insert(HKCategoryType(.sleepAnalysis))
         return types
+    }
+
+    // MARK: - Sleep Samples
+
+    static func fetchSleepSamples(
+        store: HKHealthStore,
+        from startDate: Date,
+        to endDate: Date
+    ) async throws -> [HKCategorySample] {
+        let sleepType = HKCategoryType(.sleepAnalysis)
+        let predicate = HKQuery.predicateForSamples(
+            withStart: startDate, end: endDate, options: .strictEndDate
+        )
+        let sortDescriptor = NSSortDescriptor(
+            key: HKSampleSortIdentifierStartDate, ascending: true
+        )
+
+        return try await withCheckedThrowingContinuation { continuation in
+            let query = HKSampleQuery(
+                sampleType: sleepType,
+                predicate: predicate,
+                limit: HKObjectQueryNoLimit,
+                sortDescriptors: [sortDescriptor]
+            ) { _, samples, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume(returning: samples as? [HKCategorySample] ?? [])
+            }
+            store.execute(query)
+        }
     }
 }

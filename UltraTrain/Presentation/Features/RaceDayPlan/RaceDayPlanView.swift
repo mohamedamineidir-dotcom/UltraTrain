@@ -49,6 +49,13 @@ struct RaceDayPlanView: View {
                     if let plan = viewModel.nutritionPlan, let estimate = viewModel.estimate {
                         summaryCard(estimate: estimate, plan: plan)
                     }
+                    if let pacing = viewModel.pacingResult, !pacing.segmentPacings.isEmpty {
+                        PacingSummaryCard(
+                            pacingResult: pacing,
+                            aidStationDwellSeconds: viewModel.aidStationDwellSeconds,
+                            onDwellTimeChanged: { viewModel.updateDwellTime($0) }
+                        )
+                    }
                     startBanner
                     segmentCards
                     finishBanner

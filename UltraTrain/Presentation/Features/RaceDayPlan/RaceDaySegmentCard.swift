@@ -8,6 +8,13 @@ struct RaceDaySegmentCard: View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             headerRow
             statsRow
+            if segment.targetPaceSecondsPerKm > 0 {
+                Divider()
+                pacingSection
+            }
+            if segment.hasAidStation && segment.aidStationDwellTime > 0 {
+                dwellTimeRow
+            }
             if !segment.nutritionEntries.isEmpty {
                 Divider()
                 nutritionSection
@@ -65,6 +72,43 @@ struct RaceDaySegmentCard: View {
         }
         .font(.caption)
         .foregroundStyle(Theme.Colors.secondaryLabel)
+    }
+
+    // MARK: - Pacing
+
+    private var pacingSection: some View {
+        HStack(spacing: Theme.Spacing.md) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Target Pace")
+                    .font(.caption2)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                Text(UnitFormatter.formatPace(segment.targetPaceSecondsPerKm, unit: units))
+                    .font(.subheadline.bold().monospacedDigit())
+            }
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Range")
+                    .font(.caption2)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                Text("\(UnitFormatter.formatPace(segment.aggressivePaceSecondsPerKm, unit: units)) – \(UnitFormatter.formatPace(segment.conservativePaceSecondsPerKm, unit: units))")
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+
+            Spacer()
+            PacingZoneIndicator(zone: segment.pacingZone)
+        }
+    }
+
+    private var dwellTimeRow: some View {
+        HStack(spacing: Theme.Spacing.xs) {
+            Image(systemName: "pause.circle.fill")
+                .foregroundStyle(Theme.Colors.primary)
+                .font(.caption)
+            Text("Aid station stop: \(Int(segment.aidStationDwellTime / 60)) min")
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+        }
     }
 
     // MARK: - Nutrition

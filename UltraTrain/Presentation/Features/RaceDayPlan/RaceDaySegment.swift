@@ -14,4 +14,9 @@ struct RaceDaySegment: Identifiable, Sendable {
     let cumulativeCalories: Int
     let cumulativeHydrationMl: Int
     let cumulativeSodiumMg: Int
+    let targetPaceSecondsPerKm: Double
+    let conservativePaceSecondsPerKm: Double
+    let aggressivePaceSecondsPerKm: Double
+    let pacingZone: RacePacingCalculator.PacingZone
+    let aidStationDwellTime: TimeInterval
 }

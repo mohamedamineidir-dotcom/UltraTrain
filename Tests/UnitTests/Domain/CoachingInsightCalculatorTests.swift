@@ -311,4 +311,56 @@ struct CoachingInsightCalculatorTests {
         let raceWeek = results.first { $0.type == .raceWeek }
         #expect(raceWeek?.category == .guidance)
     }
+
+    // MARK: - Sleep / Recovery Insights
+
+    private func makeRecoveryScore(
+        overall: Int,
+        sleepQuality: Int = 60,
+        status: RecoveryStatus = .moderate
+    ) -> RecoveryScore {
+        RecoveryScore(
+            id: UUID(),
+            date: .now,
+            overallScore: overall,
+            sleepQualityScore: sleepQuality,
+            sleepConsistencyScore: 60,
+            restingHRScore: 60,
+            trainingLoadBalanceScore: 60,
+            recommendation: "Test",
+            status: status
+        )
+    }
+
+    @Test("Low recovery score triggers poorSleepRecovery insight")
+    func poorSleepRecoveryInsight() {
+        let recovery = makeRecoveryScore(overall: 25, sleepQuality: 25, status: .poor)
+        let results = CoachingInsightCalculator.generate(
+            fitness: makeSnapshot(), plan: nil, weeklyVolumes: [],
+            nextRace: nil, adherencePercent: nil, recoveryScore: recovery
+        )
+        #expect(results.contains { $0.type == .poorSleepRecovery })
+        #expect(results.first(where: { $0.type == .poorSleepRecovery })?.category == .warning)
+    }
+
+    @Test("Low sleep quality but decent overall triggers sleepDeficit insight")
+    func sleepDeficitInsight() {
+        let recovery = makeRecoveryScore(overall: 55, sleepQuality: 30, status: .moderate)
+        let results = CoachingInsightCalculator.generate(
+            fitness: makeSnapshot(), plan: nil, weeklyVolumes: [],
+            nextRace: nil, adherencePercent: nil, recoveryScore: recovery
+        )
+        #expect(results.contains { $0.type == .sleepDeficit })
+    }
+
+    @Test("High recovery score triggers goodRecovery insight")
+    func goodRecoveryInsight() {
+        let recovery = makeRecoveryScore(overall: 85, sleepQuality: 85, status: .excellent)
+        let results = CoachingInsightCalculator.generate(
+            fitness: makeSnapshot(), plan: nil, weeklyVolumes: [],
+            nextRace: nil, adherencePercent: nil, recoveryScore: recovery
+        )
+        #expect(results.contains { $0.type == .goodRecovery })
+        #expect(results.first(where: { $0.type == .goodRecovery })?.category == .positive)
+    }
 }

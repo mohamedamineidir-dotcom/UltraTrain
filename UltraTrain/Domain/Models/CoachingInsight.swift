@@ -20,6 +20,9 @@ enum CoachingInsightType: String, Sendable {
     case volumeOnTrack
     case longRunReminder
     case detrainingRisk
+    case poorSleepRecovery
+    case sleepDeficit
+    case goodRecovery
 }
 
 enum InsightCategory: String, Sendable {

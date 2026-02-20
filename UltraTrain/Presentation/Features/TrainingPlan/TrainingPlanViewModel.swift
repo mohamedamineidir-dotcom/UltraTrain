@@ -371,6 +371,10 @@ final class TrainingPlanViewModel {
                 try await applyVolumeReduction(recommendation, plan: &currentPlan, factor: factor)
             case .swapToRecovery:
                 try await applySwapToRecovery(recommendation, plan: &currentPlan)
+            case .reduceLoadLowRecovery:
+                try await applyVolumeReduction(recommendation, plan: &currentPlan, factor: 0.80)
+            case .swapToRecoveryLowRecovery:
+                try await applySwapToRecovery(recommendation, plan: &currentPlan)
             }
 
             plan = currentPlan

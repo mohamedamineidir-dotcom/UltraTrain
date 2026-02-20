@@ -28,4 +28,5 @@ extension Logger {
     static let liveRace = Logger(subsystem: subsystem, category: "liveRace")
     static let weather = Logger(subsystem: subsystem, category: "weather")
     static let pacing = Logger(subsystem: subsystem, category: "pacing")
+    static let recovery = Logger(subsystem: subsystem, category: "recovery")
 }

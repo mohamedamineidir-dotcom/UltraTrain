@@ -85,6 +85,23 @@ enum AppConfiguration {
         static let autoDismissSeconds: TimeInterval = 8
     }
 
+    enum PacingStrategy {
+        static let defaultAidStationDwellSeconds: TimeInterval = 300
+        static let easyGradientThresholdMPerKm: Double = 20.0
+        static let hardGradientThresholdMPerKm: Double = 60.0
+    }
+
+    enum Recovery {
+        static let targetSleepHoursLow: Double = 7.0
+        static let targetSleepHoursHigh: Double = 9.0
+        static let lowRecoveryThreshold: Int = 40
+        static let criticalRecoveryThreshold: Int = 20
+        static let sleepQualityWeight: Double = 0.35
+        static let sleepConsistencyWeight: Double = 0.15
+        static let restingHRWeight: Double = 0.25
+        static let trainingLoadWeight: Double = 0.25
+    }
+
     enum Strava {
         static let clientId: String = Bundle.main.infoDictionary?["STRAVA_CLIENT_ID"] as? String ?? ""
         static let clientSecret: String = Bundle.main.infoDictionary?["STRAVA_CLIENT_SECRET"] as? String ?? ""

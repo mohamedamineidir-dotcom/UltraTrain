@@ -550,4 +550,73 @@ struct PlanAdjustmentCalculatorTests {
         #expect(fatigueRecs.count == 1)
         #expect(swapRecs.count == 1)
     }
+
+    // MARK: - Low Recovery Score
+
+    private func makeRecoveryScore(overall: Int, status: RecoveryStatus = .moderate) -> RecoveryScore {
+        RecoveryScore(
+            id: UUID(),
+            date: now,
+            overallScore: overall,
+            sleepQualityScore: overall,
+            sleepConsistencyScore: overall,
+            restingHRScore: overall,
+            trainingLoadBalanceScore: overall,
+            recommendation: "Test",
+            status: status
+        )
+    }
+
+    @Test("Critical recovery with hard session triggers swap to recovery")
+    func criticalRecoverySwapsHardSession() {
+        let sessions = [
+            makeSession(daysFromNow: -1, type: .recovery, isCompleted: true),
+            makeSession(daysFromNow: 1, type: .intervals)
+        ]
+        let week = makeWeek(daysOffset: -2, sessions: sessions)
+        let plan = makePlan(weeks: [week])
+        let recovery = makeRecoveryScore(overall: 15, status: .critical)
+
+        let results = PlanAdjustmentCalculator.analyze(plan: plan, now: now, recoveryScore: recovery)
+
+        let swapRecs = results.filter { $0.type == .swapToRecoveryLowRecovery }
+        #expect(swapRecs.count == 1)
+        #expect(swapRecs[0].severity == .urgent)
+    }
+
+    @Test("Poor recovery triggers load reduction")
+    func poorRecoveryReducesLoad() {
+        let sessions = [
+            makeSession(daysFromNow: -1, type: .recovery, isCompleted: true),
+            makeSession(daysFromNow: 1, type: .tempo),
+            makeSession(daysFromNow: 3, type: .longRun)
+        ]
+        let week = makeWeek(daysOffset: -2, sessions: sessions)
+        let plan = makePlan(weeks: [week])
+        let recovery = makeRecoveryScore(overall: 30, status: .poor)
+
+        let results = PlanAdjustmentCalculator.analyze(plan: plan, now: now, recoveryScore: recovery)
+
+        let reduceRecs = results.filter { $0.type == .reduceLoadLowRecovery }
+        #expect(reduceRecs.count == 1)
+        #expect(reduceRecs[0].severity == .recommended)
+    }
+
+    @Test("Moderate recovery produces no recovery-based adjustment")
+    func moderateRecoveryNoAdjustment() {
+        let sessions = [
+            makeSession(daysFromNow: -1, type: .recovery, isCompleted: true),
+            makeSession(daysFromNow: 1, type: .tempo)
+        ]
+        let week = makeWeek(daysOffset: -2, sessions: sessions)
+        let plan = makePlan(weeks: [week])
+        let recovery = makeRecoveryScore(overall: 55, status: .moderate)
+
+        let results = PlanAdjustmentCalculator.analyze(plan: plan, now: now, recoveryScore: recovery)
+
+        let recoveryRecs = results.filter {
+            $0.type == .reduceLoadLowRecovery || $0.type == .swapToRecoveryLowRecovery
+        }
+        #expect(recoveryRecs.isEmpty)
+    }
 }

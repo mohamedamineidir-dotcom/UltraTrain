@@ -72,6 +72,8 @@ struct PlanAdjustmentBanner: View {
         case .bulkMarkMissedAsSkipped: "checklist"
         case .reduceFatigueLoad: "heart.text.square.fill"
         case .swapToRecovery: "arrow.triangle.2.circlepath.circle.fill"
+        case .reduceLoadLowRecovery: "moon.zzz.fill"
+        case .swapToRecoveryLowRecovery: "moon.zzz.fill"
         }
     }
 

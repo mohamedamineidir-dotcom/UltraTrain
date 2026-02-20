@@ -9,7 +9,8 @@ enum CoachingInsightCalculator {
         plan: TrainingPlan?,
         weeklyVolumes: [WeeklyVolume],
         nextRace: Race?,
-        adherencePercent: Double?
+        adherencePercent: Double?,
+        recoveryScore: RecoveryScore? = nil
     ) -> [CoachingInsight] {
         var insights: [CoachingInsight] = []
 
@@ -145,6 +146,39 @@ enum CoachingInsightCalculator {
                     title: "Long Run Ahead",
                     message: "Your long run is still ahead this week. Plan your route and nutrition in advance.",
                     icon: "figure.run"
+                ))
+            }
+        }
+
+        // 11. Sleep / Recovery
+        if let recovery = recoveryScore {
+            if recovery.overallScore < AppConfiguration.Recovery.lowRecoveryThreshold {
+                insights.append(CoachingInsight(
+                    id: UUID(),
+                    type: .poorSleepRecovery,
+                    category: .warning,
+                    title: "Low Recovery",
+                    message: "Recovery score is \(recovery.overallScore)/100. \(recovery.recommendation)",
+                    icon: "moon.zzz.fill"
+                ))
+            } else if recovery.sleepQualityScore < AppConfiguration.Recovery.lowRecoveryThreshold
+                        && recovery.overallScore >= AppConfiguration.Recovery.lowRecoveryThreshold {
+                insights.append(CoachingInsight(
+                    id: UUID(),
+                    type: .sleepDeficit,
+                    category: .warning,
+                    title: "Sleep Deficit",
+                    message: "Sleep quality is low. Prioritize an earlier bedtime and avoid screens before bed.",
+                    icon: "bed.double.fill"
+                ))
+            } else if recovery.overallScore >= 80 {
+                insights.append(CoachingInsight(
+                    id: UUID(),
+                    type: .goodRecovery,
+                    category: .positive,
+                    title: "Well Recovered",
+                    message: "Recovery score is \(recovery.overallScore)/100. Great day for a quality session.",
+                    icon: "battery.100.bolt"
                 ))
             }
         }
