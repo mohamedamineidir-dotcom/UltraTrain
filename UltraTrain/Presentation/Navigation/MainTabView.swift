@@ -110,7 +110,9 @@ struct MainTabView: View {
                 trainingLoadCalculator: trainingLoadCalculator,
                 raceRepository: raceRepository,
                 finishTimeEstimator: finishTimeEstimator,
-                finishEstimateRepository: finishEstimateRepository
+                finishEstimateRepository: finishEstimateRepository,
+                nutritionRepository: nutritionRepository,
+                nutritionGenerator: nutritionGenerator
             )
                 .tabItem {
                     Label("Dashboard", systemImage: "house.fill")
@@ -187,7 +189,9 @@ struct MainTabView: View {
                 planRepository: planRepository,
                 biometricAuthService: biometricAuthService,
                 gearRepository: gearRepository,
-                planAutoAdjustmentService: planAutoAdjustmentService
+                planAutoAdjustmentService: planAutoAdjustmentService,
+                nutritionRepository: nutritionRepository,
+                nutritionGenerator: nutritionGenerator
             )
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")

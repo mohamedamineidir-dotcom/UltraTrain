@@ -18,6 +18,8 @@ struct ProfileView: View {
     private let planRepository: any TrainingPlanRepository
     private let biometricAuthService: any BiometricAuthServiceProtocol
     private let gearRepository: any GearRepository
+    private let nutritionRepository: any NutritionRepository
+    private let nutritionGenerator: any GenerateNutritionPlanUseCase
 
     init(
         athleteRepository: any AthleteRepository,
@@ -36,7 +38,9 @@ struct ProfileView: View {
         planRepository: any TrainingPlanRepository,
         biometricAuthService: any BiometricAuthServiceProtocol,
         gearRepository: any GearRepository,
-        planAutoAdjustmentService: any PlanAutoAdjustmentService
+        planAutoAdjustmentService: any PlanAutoAdjustmentService,
+        nutritionRepository: any NutritionRepository,
+        nutritionGenerator: any GenerateNutritionPlanUseCase
     ) {
         _viewModel = State(initialValue: ProfileViewModel(
             athleteRepository: athleteRepository,
@@ -60,6 +64,8 @@ struct ProfileView: View {
         self.planRepository = planRepository
         self.biometricAuthService = biometricAuthService
         self.gearRepository = gearRepository
+        self.nutritionRepository = nutritionRepository
+        self.nutritionGenerator = nutritionGenerator
     }
 
     var body: some View {
@@ -246,7 +252,9 @@ struct ProfileView: View {
                             finishTimeEstimator: finishTimeEstimator,
                             athleteRepository: athleteRepository,
                             runRepository: runRepository,
-                            fitnessCalculator: fitnessCalculator
+                            fitnessCalculator: fitnessCalculator,
+                            nutritionRepository: nutritionRepository,
+                            nutritionGenerator: nutritionGenerator
                         )
                     } label: {
                         RaceRowView(race: race)

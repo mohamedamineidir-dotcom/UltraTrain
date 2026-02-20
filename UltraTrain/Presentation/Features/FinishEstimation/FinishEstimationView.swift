@@ -5,13 +5,30 @@ struct FinishEstimationView: View {
     @ScaledMetric(relativeTo: .largeTitle) private var errorIconSize: CGFloat = 48
     @State private var viewModel: FinishEstimationViewModel
 
+    private let race: Race
+    private let finishTimeEstimator: any EstimateFinishTimeUseCase
+    private let athleteRepository: any AthleteRepository
+    private let runRepository: any RunRepository
+    private let fitnessCalculator: any CalculateFitnessUseCase
+    private let nutritionRepository: any NutritionRepository
+    private let nutritionGenerator: any GenerateNutritionPlanUseCase
+
     init(
         race: Race,
         finishTimeEstimator: any EstimateFinishTimeUseCase,
         athleteRepository: any AthleteRepository,
         runRepository: any RunRepository,
-        fitnessCalculator: any CalculateFitnessUseCase
+        fitnessCalculator: any CalculateFitnessUseCase,
+        nutritionRepository: any NutritionRepository,
+        nutritionGenerator: any GenerateNutritionPlanUseCase
     ) {
+        self.race = race
+        self.finishTimeEstimator = finishTimeEstimator
+        self.athleteRepository = athleteRepository
+        self.runRepository = runRepository
+        self.fitnessCalculator = fitnessCalculator
+        self.nutritionRepository = nutritionRepository
+        self.nutritionGenerator = nutritionGenerator
         _viewModel = State(initialValue: FinishEstimationViewModel(
             race: race,
             finishTimeEstimator: finishTimeEstimator,
@@ -40,6 +57,7 @@ struct FinishEstimationView: View {
                     if !estimate.checkpointSplits.isEmpty {
                         CheckpointSplitsCard(race: viewModel.race, estimate: estimate)
                     }
+                    raceDayPlanLink
                 } else if let error = viewModel.error {
                     errorSection(error)
                 }
@@ -176,6 +194,37 @@ struct FinishEstimationView: View {
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .fill(Theme.Colors.success.opacity(0.1))
         )
+    }
+
+    // MARK: - Race Day Plan Link
+
+    private var raceDayPlanLink: some View {
+        NavigationLink {
+            RaceDayPlanView(
+                race: race,
+                finishTimeEstimator: finishTimeEstimator,
+                athleteRepository: athleteRepository,
+                runRepository: runRepository,
+                fitnessCalculator: fitnessCalculator,
+                nutritionRepository: nutritionRepository,
+                nutritionGenerator: nutritionGenerator
+            )
+        } label: {
+            HStack {
+                Image(systemName: "map.fill")
+                    .foregroundStyle(Theme.Colors.primary)
+                Text("Race Day Plan")
+                    .font(.subheadline.bold())
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+            .padding(Theme.Spacing.md)
+            .background(Theme.Colors.primary.opacity(0.1))
+            .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Error

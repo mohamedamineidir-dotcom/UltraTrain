@@ -13,6 +13,8 @@ struct DashboardView: View {
     private let trainingLoadCalculator: any CalculateTrainingLoadUseCase
     private let raceRepository: any RaceRepository
     private let finishTimeEstimator: any EstimateFinishTimeUseCase
+    private let nutritionRepository: any NutritionRepository
+    private let nutritionGenerator: any GenerateNutritionPlanUseCase
 
     init(
         selectedTab: Binding<Tab>,
@@ -24,7 +26,9 @@ struct DashboardView: View {
         trainingLoadCalculator: any CalculateTrainingLoadUseCase,
         raceRepository: any RaceRepository,
         finishTimeEstimator: any EstimateFinishTimeUseCase,
-        finishEstimateRepository: any FinishEstimateRepository
+        finishEstimateRepository: any FinishEstimateRepository,
+        nutritionRepository: any NutritionRepository,
+        nutritionGenerator: any GenerateNutritionPlanUseCase
     ) {
         _selectedTab = selectedTab
         self.planRepository = planRepository
@@ -35,6 +39,8 @@ struct DashboardView: View {
         self.trainingLoadCalculator = trainingLoadCalculator
         self.raceRepository = raceRepository
         self.finishTimeEstimator = finishTimeEstimator
+        self.nutritionRepository = nutritionRepository
+        self.nutritionGenerator = nutritionGenerator
         _viewModel = State(initialValue: DashboardViewModel(
             planRepository: planRepository,
             runRepository: runRepository,
@@ -107,7 +113,9 @@ struct DashboardView: View {
                     finishTimeEstimator: finishTimeEstimator,
                     athleteRepository: athleteRepository,
                     runRepository: runRepository,
-                    fitnessCalculator: fitnessCalculator
+                    fitnessCalculator: fitnessCalculator,
+                    nutritionRepository: nutritionRepository,
+                    nutritionGenerator: nutritionGenerator
                 )
             } label: {
                 DashboardFinishEstimateCard(estimate: estimate, race: race)

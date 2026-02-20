@@ -80,6 +80,22 @@ private struct PreviewFinishEstimateRepository: FinishEstimateRepository, @unche
     func saveEstimate(_ estimate: FinishEstimate) async throws {}
 }
 
+private struct PreviewNutritionRepository: NutritionRepository, @unchecked Sendable {
+    func getNutritionPlan(for raceId: UUID) async throws -> NutritionPlan? { nil }
+    func saveNutritionPlan(_ plan: NutritionPlan) async throws {}
+    func updateNutritionPlan(_ plan: NutritionPlan) async throws {}
+    func getProducts() async throws -> [NutritionProduct] { [] }
+    func saveProduct(_ product: NutritionProduct) async throws {}
+    func getNutritionPreferences() async throws -> NutritionPreferences { .default }
+    func saveNutritionPreferences(_ preferences: NutritionPreferences) async throws {}
+}
+
+private struct PreviewNutritionGenerator: GenerateNutritionPlanUseCase, @unchecked Sendable {
+    func execute(athlete: Athlete, race: Race, estimatedDuration: TimeInterval, preferences: NutritionPreferences) async throws -> NutritionPlan {
+        NutritionPlan(id: UUID(), raceId: race.id, caloriesPerHour: 0, hydrationMlPerHour: 0, sodiumMgPerHour: 0, entries: [], gutTrainingSessionIds: [])
+    }
+}
+
 #Preview("Dashboard") {
     DashboardView(
         selectedTab: .constant(.dashboard),
@@ -91,7 +107,9 @@ private struct PreviewFinishEstimateRepository: FinishEstimateRepository, @unche
         trainingLoadCalculator: PreviewTrainingLoadCalculator(),
         raceRepository: PreviewRaceRepository(),
         finishTimeEstimator: PreviewFinishTimeEstimator(),
-        finishEstimateRepository: PreviewFinishEstimateRepository()
+        finishEstimateRepository: PreviewFinishEstimateRepository(),
+        nutritionRepository: PreviewNutritionRepository(),
+        nutritionGenerator: PreviewNutritionGenerator()
     )
 }
 #endif
