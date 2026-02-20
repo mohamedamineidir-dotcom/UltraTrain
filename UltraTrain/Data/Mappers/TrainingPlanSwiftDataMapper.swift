@@ -11,13 +11,21 @@ enum TrainingPlanSwiftDataMapper {
 
         guard weeks.count == model.weeks.count else { return nil }
 
+        let snapshots: [RaceSnapshot]
+        if let data = model.intermediateRaceSnapshotsData {
+            snapshots = (try? JSONDecoder().decode([RaceSnapshot].self, from: data)) ?? []
+        } else {
+            snapshots = []
+        }
+
         return TrainingPlan(
             id: model.id,
             athleteId: model.athleteId,
             targetRaceId: model.targetRaceId,
             createdAt: model.createdAt,
             weeks: weeks,
-            intermediateRaceIds: model.intermediateRaceIds
+            intermediateRaceIds: model.intermediateRaceIds,
+            intermediateRaceSnapshots: snapshots
         )
     }
 
@@ -67,13 +75,15 @@ enum TrainingPlanSwiftDataMapper {
 
     static func toSwiftData(_ plan: TrainingPlan) -> TrainingPlanSwiftDataModel {
         let weekModels = plan.weeks.map { weekToSwiftData($0) }
+        let snapshotsData = try? JSONEncoder().encode(plan.intermediateRaceSnapshots)
         return TrainingPlanSwiftDataModel(
             id: plan.id,
             athleteId: plan.athleteId,
             targetRaceId: plan.targetRaceId,
             createdAt: plan.createdAt,
             weeks: weekModels,
-            intermediateRaceIds: plan.intermediateRaceIds
+            intermediateRaceIds: plan.intermediateRaceIds,
+            intermediateRaceSnapshotsData: snapshotsData
         )
     }
 

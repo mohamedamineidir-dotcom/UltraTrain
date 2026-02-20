@@ -63,7 +63,8 @@ struct RunTrackingLaunchViewModelTests {
             targetRaceId: UUID(),
             createdAt: Date.now,
             weeks: [week],
-            intermediateRaceIds: []
+            intermediateRaceIds: [],
+            intermediateRaceSnapshots: []
         )
     }
 
@@ -266,7 +267,7 @@ struct RunTrackingLaunchViewModelTests {
             isRecoveryWeek: false, targetVolumeKm: 50, targetElevationGainM: 1500)
         let plan = TrainingPlan(
             id: UUID(), athleteId: UUID(), targetRaceId: UUID(),
-            createdAt: Date.now, weeks: [week], intermediateRaceIds: [])
+            createdAt: Date.now, weeks: [week], intermediateRaceIds: [], intermediateRaceSnapshots: [])
         let athleteRepo = MockAthleteRepository()
         athleteRepo.savedAthlete = makeAthlete()
         let planRepo = MockTrainingPlanRepository()

@@ -19,7 +19,7 @@ struct Race: Identifiable, Equatable, Sendable {
     }
 }
 
-enum RacePriority: String, CaseIterable, Sendable {
+enum RacePriority: String, CaseIterable, Codable, Sendable {
     case aRace
     case bRace
     case cRace

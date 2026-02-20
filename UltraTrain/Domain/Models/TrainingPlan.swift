@@ -1,5 +1,11 @@
 import Foundation
 
+struct RaceSnapshot: Codable, Equatable, Sendable {
+    let id: UUID
+    let date: Date
+    let priority: RacePriority
+}
+
 struct TrainingPlan: Identifiable, Equatable, Sendable {
     let id: UUID
     var athleteId: UUID
@@ -7,6 +13,7 @@ struct TrainingPlan: Identifiable, Equatable, Sendable {
     var createdAt: Date
     var weeks: [TrainingWeek]
     var intermediateRaceIds: [UUID]
+    var intermediateRaceSnapshots: [RaceSnapshot]
 
     var totalWeeks: Int { weeks.count }
     var currentWeekIndex: Int? {

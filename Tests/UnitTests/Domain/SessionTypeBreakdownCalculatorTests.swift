@@ -40,7 +40,8 @@ struct SessionTypeBreakdownCalculatorTests {
             targetRaceId: UUID(),
             createdAt: Date.now,
             weeks: [week],
-            intermediateRaceIds: []
+            intermediateRaceIds: [],
+            intermediateRaceSnapshots: []
         )
     }
 

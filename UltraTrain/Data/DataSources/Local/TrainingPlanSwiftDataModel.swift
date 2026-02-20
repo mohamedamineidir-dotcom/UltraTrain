@@ -10,6 +10,7 @@ final class TrainingPlanSwiftDataModel {
     @Relationship(deleteRule: .cascade, inverse: \TrainingWeekSwiftDataModel.plan)
     var weeks: [TrainingWeekSwiftDataModel] = []
     var intermediateRaceIds: [UUID] = []
+    var intermediateRaceSnapshotsData: Data?
     var updatedAt: Date = Date()
 
     init(
@@ -19,6 +20,7 @@ final class TrainingPlanSwiftDataModel {
         createdAt: Date = Date(),
         weeks: [TrainingWeekSwiftDataModel] = [],
         intermediateRaceIds: [UUID] = [],
+        intermediateRaceSnapshotsData: Data? = nil,
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -27,6 +29,7 @@ final class TrainingPlanSwiftDataModel {
         self.createdAt = createdAt
         self.weeks = weeks
         self.intermediateRaceIds = intermediateRaceIds
+        self.intermediateRaceSnapshotsData = intermediateRaceSnapshotsData
         self.updatedAt = updatedAt
     }
 }

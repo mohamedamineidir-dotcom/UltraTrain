@@ -32,6 +32,7 @@ struct MainTabView: View {
     private let biometricAuthService: any BiometricAuthServiceProtocol
     private let gearRepository: any GearRepository
     private let finishEstimateRepository: any FinishEstimateRepository
+    private let planAutoAdjustmentService: any PlanAutoAdjustmentService
 
     init(
         athleteRepository: any AthleteRepository,
@@ -62,7 +63,8 @@ struct MainTabView: View {
         notificationService: any NotificationServiceProtocol,
         biometricAuthService: any BiometricAuthServiceProtocol,
         gearRepository: any GearRepository,
-        finishEstimateRepository: any FinishEstimateRepository
+        finishEstimateRepository: any FinishEstimateRepository,
+        planAutoAdjustmentService: any PlanAutoAdjustmentService
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -93,6 +95,7 @@ struct MainTabView: View {
         self.biometricAuthService = biometricAuthService
         self.gearRepository = gearRepository
         self.finishEstimateRepository = finishEstimateRepository
+        self.planAutoAdjustmentService = planAutoAdjustmentService
     }
 
     var body: some View {
@@ -183,7 +186,8 @@ struct MainTabView: View {
                 notificationService: notificationService,
                 planRepository: planRepository,
                 biometricAuthService: biometricAuthService,
-                gearRepository: gearRepository
+                gearRepository: gearRepository,
+                planAutoAdjustmentService: planAutoAdjustmentService
             )
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")

@@ -78,7 +78,8 @@ struct ProgressViewModelTests {
             targetRaceId: UUID(),
             createdAt: .now,
             weeks: [week],
-            intermediateRaceIds: []
+            intermediateRaceIds: [],
+            intermediateRaceSnapshots: []
         )
     }
 
@@ -120,7 +121,8 @@ struct ProgressViewModelTests {
             targetRaceId: UUID(),
             createdAt: .now,
             weeks: weeks,
-            intermediateRaceIds: []
+            intermediateRaceIds: [],
+            intermediateRaceSnapshots: []
         )
     }
 
@@ -297,7 +299,8 @@ struct ProgressViewModelTests {
             targetRaceId: UUID(),
             createdAt: .now,
             weeks: [futureWeek],
-            intermediateRaceIds: []
+            intermediateRaceIds: [],
+            intermediateRaceSnapshots: []
         )
         let planRepo = MockTrainingPlanRepository()
         planRepo.activePlan = plan
@@ -357,7 +360,7 @@ struct ProgressViewModelTests {
         )
         let plan = TrainingPlan(
             id: UUID(), athleteId: athleteId, targetRaceId: UUID(),
-            createdAt: .now, weeks: [week], intermediateRaceIds: []
+            createdAt: .now, weeks: [week], intermediateRaceIds: [], intermediateRaceSnapshots: []
         )
         let planRepo = MockTrainingPlanRepository()
         planRepo.activePlan = plan
@@ -476,7 +479,7 @@ struct ProgressViewModelTests {
             TrainingWeek(id: UUID(), weekNumber: 1, startDate: Date.now.adding(weeks: -2).startOfWeek, endDate: Date.now.adding(weeks: -2).startOfWeek.adding(days: 6), phase: .base, sessions: [], isRecoveryWeek: false, targetVolumeKm: 40, targetElevationGainM: 800),
             TrainingWeek(id: UUID(), weekNumber: 2, startDate: Date.now.adding(weeks: -1).startOfWeek, endDate: Date.now.adding(weeks: -1).startOfWeek.adding(days: 6), phase: .build, sessions: [], isRecoveryWeek: false, targetVolumeKm: 50, targetElevationGainM: 1000),
         ]
-        planRepo.activePlan = TrainingPlan(id: UUID(), athleteId: athleteId, targetRaceId: UUID(), createdAt: .now, weeks: weeks, intermediateRaceIds: [])
+        planRepo.activePlan = TrainingPlan(id: UUID(), athleteId: athleteId, targetRaceId: UUID(), createdAt: .now, weeks: weeks, intermediateRaceIds: [], intermediateRaceSnapshots: [])
 
         let vm = makeViewModel(athleteRepo: athleteRepo, planRepo: planRepo)
         await vm.load()
@@ -557,7 +560,7 @@ struct ProgressViewModelTests {
             TrainingSession(id: UUID(), date: weekStart.adding(days: 3), type: .rest, plannedDistanceKm: 0, plannedElevationGainM: 0, plannedDuration: 0, intensity: .easy, description: "Rest", isCompleted: false, isSkipped: false),
         ]
         let week = TrainingWeek(id: UUID(), weekNumber: 1, startDate: weekStart, endDate: weekStart.adding(days: 6), phase: .build, sessions: sessions, isRecoveryWeek: false, targetVolumeKm: 45, targetElevationGainM: 900)
-        let plan = TrainingPlan(id: UUID(), athleteId: athleteId, targetRaceId: UUID(), createdAt: .now, weeks: [week], intermediateRaceIds: [])
+        let plan = TrainingPlan(id: UUID(), athleteId: athleteId, targetRaceId: UUID(), createdAt: .now, weeks: [week], intermediateRaceIds: [], intermediateRaceSnapshots: [])
         let planRepo = MockTrainingPlanRepository()
         planRepo.activePlan = plan
 

@@ -184,26 +184,49 @@ enum SessionTemplateGenerator {
         switch behavior {
         case .miniTaper:
             return taperTemplates()
-        case .raceWeek:
-            return [
-                SessionTemplate(dayOffset: 0, type: .rest, intensity: .easy, volumeFraction: 0,
-                               description: "Rest before race. Stay off your feet."),
-                SessionTemplate(dayOffset: 1, type: .recovery, intensity: .easy, volumeFraction: 0.08,
-                               description: "Short shakeout run. 15-20 min at easy pace."),
-                SessionTemplate(dayOffset: 2, type: .rest, intensity: .easy, volumeFraction: 0,
-                               description: "Rest day. Carb-load and hydrate."),
-                SessionTemplate(dayOffset: 3, type: .rest, intensity: .easy, volumeFraction: 0,
-                               description: "Rest day. Final race prep and gear check."),
-                SessionTemplate(dayOffset: 4, type: .rest, intensity: .easy, volumeFraction: 0,
-                               description: "Rest day. Visualize your race plan."),
-                SessionTemplate(dayOffset: 5, type: .rest, intensity: .maxEffort, volumeFraction: 0,
-                               description: "RACE DAY! Execute your plan. Trust your training."),
-                SessionTemplate(dayOffset: 6, type: .rest, intensity: .easy, volumeFraction: 0,
-                               description: "Post-race recovery. Walk, stretch, refuel.")
-            ]
+        case .raceWeek(let priority):
+            return priority == .cRace ? cRaceWeekTemplates() : bRaceWeekTemplates()
         case .postRaceRecovery:
             return recoveryTemplates()
         }
+    }
+
+    private static func bRaceWeekTemplates() -> [SessionTemplate] {
+        [
+            SessionTemplate(dayOffset: 0, type: .rest, intensity: .easy, volumeFraction: 0,
+                           description: "Rest before race. Stay off your feet."),
+            SessionTemplate(dayOffset: 1, type: .recovery, intensity: .easy, volumeFraction: 0.08,
+                           description: "Short shakeout run. 15-20 min at easy pace."),
+            SessionTemplate(dayOffset: 2, type: .rest, intensity: .easy, volumeFraction: 0,
+                           description: "Rest day. Carb-load and hydrate."),
+            SessionTemplate(dayOffset: 3, type: .rest, intensity: .easy, volumeFraction: 0,
+                           description: "Rest day. Final race prep and gear check."),
+            SessionTemplate(dayOffset: 4, type: .rest, intensity: .easy, volumeFraction: 0,
+                           description: "Rest day. Visualize your race plan."),
+            SessionTemplate(dayOffset: 5, type: .rest, intensity: .maxEffort, volumeFraction: 0,
+                           description: "RACE DAY! Execute your plan. Trust your training."),
+            SessionTemplate(dayOffset: 6, type: .rest, intensity: .easy, volumeFraction: 0,
+                           description: "Post-race recovery. Walk, stretch, refuel.")
+        ]
+    }
+
+    private static func cRaceWeekTemplates() -> [SessionTemplate] {
+        [
+            SessionTemplate(dayOffset: 0, type: .rest, intensity: .easy, volumeFraction: 0,
+                           description: "Rest day. Easy start to race week."),
+            SessionTemplate(dayOffset: 1, type: .recovery, intensity: .easy, volumeFraction: 0.10,
+                           description: "Easy run at conversational pace. Keep it short."),
+            SessionTemplate(dayOffset: 2, type: .rest, intensity: .easy, volumeFraction: 0,
+                           description: "Rest day. Light stretching."),
+            SessionTemplate(dayOffset: 3, type: .tempo, intensity: .moderate, volumeFraction: 0.12,
+                           description: "Short tempo effort. Stay sharp but save energy for race."),
+            SessionTemplate(dayOffset: 4, type: .rest, intensity: .easy, volumeFraction: 0,
+                           description: "Rest day. Prepare race gear and nutrition."),
+            SessionTemplate(dayOffset: 5, type: .rest, intensity: .maxEffort, volumeFraction: 0,
+                           description: "RACE DAY! Use this as a hard training effort."),
+            SessionTemplate(dayOffset: 6, type: .recovery, intensity: .easy, volumeFraction: 0.08,
+                           description: "Easy recovery run. Shake out race-day legs.")
+        ]
     }
 
     // MARK: - Helpers

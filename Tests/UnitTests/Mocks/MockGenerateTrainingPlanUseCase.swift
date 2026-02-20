@@ -25,7 +25,8 @@ final class MockGenerateTrainingPlanUseCase: GenerateTrainingPlanUseCase, @unche
             targetRaceId: targetRace.id,
             createdAt: .now,
             weeks: [],
-            intermediateRaceIds: intermediateRaces.map(\.id)
+            intermediateRaceIds: intermediateRaces.map(\.id),
+            intermediateRaceSnapshots: []
         )
     }
 }

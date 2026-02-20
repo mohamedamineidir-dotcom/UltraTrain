@@ -60,12 +60,16 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 weekNumber: skeleton.weekNumber,
                 startDate: skeleton.startDate,
                 endDate: skeleton.endDate,
-                phase: override?.behavior == .raceWeek ? .race : skeleton.phase,
+                phase: override?.behavior.isRaceWeek == true ? .race : skeleton.phase,
                 sessions: sessions,
                 isRecoveryWeek: skeleton.isRecoveryWeek || override?.behavior == .postRaceRecovery,
                 targetVolumeKm: volume.targetVolumeKm,
                 targetElevationGainM: volume.targetElevationGainM
             )
+        }
+
+        let snapshots = intermediateRaces.map { race in
+            RaceSnapshot(id: race.id, date: race.date, priority: race.priority)
         }
 
         return TrainingPlan(
@@ -74,7 +78,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             targetRaceId: targetRace.id,
             createdAt: .now,
             weeks: weeks,
-            intermediateRaceIds: intermediateRaces.map(\.id)
+            intermediateRaceIds: intermediateRaces.map(\.id),
+            intermediateRaceSnapshots: snapshots
         )
     }
 }

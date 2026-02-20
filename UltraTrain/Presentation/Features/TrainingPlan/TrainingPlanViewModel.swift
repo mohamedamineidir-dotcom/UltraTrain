@@ -95,7 +95,7 @@ final class TrainingPlanViewModel {
             let intermediateRaces = allRaces.filter { $0.priority != .aRace && $0.date < targetRace.date }
 
             // Snapshot old session progress before regenerating
-            let oldProgress = snapshotProgress()
+            let oldProgress = plan.map { PlanProgressPreserver.snapshot($0) } ?? []
 
             var newPlan = try await planGenerator.execute(
                 athlete: athlete,
@@ -104,7 +104,7 @@ final class TrainingPlanViewModel {
             )
 
             // Restore progress from old plan to matching sessions
-            restoreProgress(oldProgress, into: &newPlan)
+            PlanProgressPreserver.restore(oldProgress, into: &newPlan)
 
             try await planRepository.savePlan(newPlan)
 
@@ -272,13 +272,26 @@ final class TrainingPlanViewModel {
 
     var isPlanStale: Bool {
         guard let plan, let target = targetRace else { return false }
-        let currentIntermediateIds = races
+        let currentIntermediates = races
             .filter { $0.priority != .aRace && $0.date < target.date }
+
+        // Use snapshots for comparison when available (detects date + priority changes)
+        if !plan.intermediateRaceSnapshots.isEmpty {
+            let currentSnapshots = currentIntermediates
+                .map { RaceSnapshot(id: $0.id, date: $0.date, priority: $0.priority) }
+                .sorted { $0.id.uuidString < $1.id.uuidString }
+            let planSnapshots = plan.intermediateRaceSnapshots
+                .sorted { $0.id.uuidString < $1.id.uuidString }
+            return currentSnapshots != planSnapshots
+        }
+
+        // Fallback for old plans without snapshots — UUID-only comparison
+        let currentIds = currentIntermediates
             .map(\.id)
             .sorted { $0.uuidString < $1.uuidString }
-        let planIntermediateIds = plan.intermediateRaceIds
+        let planIds = plan.intermediateRaceIds
             .sorted { $0.uuidString < $1.uuidString }
-        return currentIntermediateIds != planIntermediateIds
+        return currentIds != planIds
     }
 
     var raceChangeSummary: (added: [Race], removed: [UUID]) {
@@ -294,55 +307,10 @@ final class TrainingPlanViewModel {
 
     // MARK: - Progress Preservation
 
-    private struct SessionProgress {
-        let weekNumber: Int
-        let type: SessionType
-        let dayOfWeek: Int
-        let isCompleted: Bool
-        let isSkipped: Bool
-        let linkedRunId: UUID?
-    }
-
-    private func snapshotProgress() -> [SessionProgress] {
-        guard let plan else { return [] }
-        let calendar = Calendar.current
-        return plan.weeks.flatMap { week in
-            week.sessions
-                .filter { $0.isCompleted || $0.isSkipped || $0.linkedRunId != nil }
-                .map { session in
-                    SessionProgress(
-                        weekNumber: week.weekNumber,
-                        type: session.type,
-                        dayOfWeek: calendar.component(.weekday, from: session.date),
-                        isCompleted: session.isCompleted,
-                        isSkipped: session.isSkipped,
-                        linkedRunId: session.linkedRunId
-                    )
-                }
-        }
-    }
-
     private func updateWidgets() async {
         await widgetDataWriter.writeNextSession()
         await widgetDataWriter.writeWeeklyProgress()
         widgetDataWriter.reloadWidgets()
     }
 
-    private func restoreProgress(_ progress: [SessionProgress], into plan: inout TrainingPlan) {
-        let calendar = Calendar.current
-        for weekIndex in plan.weeks.indices {
-            let weekNumber = plan.weeks[weekIndex].weekNumber
-            for sessionIndex in plan.weeks[weekIndex].sessions.indices {
-                let session = plan.weeks[weekIndex].sessions[sessionIndex]
-                let dayOfWeek = calendar.component(.weekday, from: session.date)
-                if let match = progress.first(where: {
-                    $0.weekNumber == weekNumber && $0.type == session.type && $0.dayOfWeek == dayOfWeek
-                }) {
-                    plan.weeks[weekIndex].sessions[sessionIndex].isCompleted = match.isCompleted
-                    plan.weeks[weekIndex].sessions[sessionIndex].isSkipped = match.isSkipped
-                    plan.weeks[weekIndex].sessions[sessionIndex].linkedRunId = match.linkedRunId
-                }
-            }
-        }
-    }
 }

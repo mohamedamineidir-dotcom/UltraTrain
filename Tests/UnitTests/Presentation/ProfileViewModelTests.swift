@@ -41,22 +41,65 @@ struct ProfileViewModelTests {
         )
     }
 
+    private func makePlan(for athlete: Athlete, targetRace: Race) -> TrainingPlan {
+        let weekStart = Date.now.startOfWeek
+        let session = TrainingSession(
+            id: UUID(),
+            date: weekStart,
+            type: .longRun,
+            plannedDistanceKm: 20,
+            plannedElevationGainM: 500,
+            plannedDuration: 7200,
+            intensity: .moderate,
+            description: "Long run",
+            nutritionNotes: nil,
+            isCompleted: false,
+            isSkipped: false,
+            linkedRunId: nil
+        )
+        let week = TrainingWeek(
+            id: UUID(),
+            weekNumber: 1,
+            startDate: weekStart,
+            endDate: weekStart.adding(days: 6),
+            phase: .base,
+            sessions: [session],
+            isRecoveryWeek: false,
+            targetVolumeKm: 40,
+            targetElevationGainM: 1000
+        )
+        return TrainingPlan(
+            id: UUID(),
+            athleteId: athlete.id,
+            targetRaceId: targetRace.id,
+            createdAt: .now,
+            weeks: [week],
+            intermediateRaceIds: [],
+            intermediateRaceSnapshots: []
+        )
+    }
+
     @MainActor
     private func makeViewModel(
         athleteRepo: MockAthleteRepository = MockAthleteRepository(),
-        raceRepo: MockRaceRepository = MockRaceRepository()
-    ) -> ProfileViewModel {
+        raceRepo: MockRaceRepository = MockRaceRepository(),
+        planRepo: MockTrainingPlanRepository = MockTrainingPlanRepository(),
+        adjustmentService: MockPlanAutoAdjustmentService = MockPlanAutoAdjustmentService()
+    ) -> (vm: ProfileViewModel, adjustmentService: MockPlanAutoAdjustmentService) {
         let writer = WidgetDataWriter(
-            planRepository: MockTrainingPlanRepository(),
+            planRepository: planRepo,
             runRepository: MockRunRepository(),
             raceRepository: raceRepo,
             defaults: UserDefaults(suiteName: "test.profile.\(UUID().uuidString)")
         )
-        return ProfileViewModel(
+        let vm = ProfileViewModel(
             athleteRepository: athleteRepo,
             raceRepository: raceRepo,
+            planRepository: planRepo,
+            planAutoAdjustmentService: adjustmentService,
             widgetDataWriter: writer
         )
+        return (vm, adjustmentService)
     }
 
     // MARK: - Load
@@ -72,7 +115,7 @@ struct ProfileViewModelTests {
         let raceRepo = MockRaceRepository()
         raceRepo.races = [race]
 
-        let vm = makeViewModel(athleteRepo: athleteRepo, raceRepo: raceRepo)
+        let (vm, _) = makeViewModel(athleteRepo: athleteRepo, raceRepo: raceRepo)
         await vm.load()
 
         #expect(vm.athlete != nil)
@@ -85,7 +128,7 @@ struct ProfileViewModelTests {
     @Test("Load handles nil athlete")
     @MainActor
     func loadHandlesNilAthlete() async {
-        let vm = makeViewModel()
+        let (vm, _) = makeViewModel()
         await vm.load()
 
         #expect(vm.athlete == nil)
@@ -99,7 +142,7 @@ struct ProfileViewModelTests {
         let athleteRepo = MockAthleteRepository()
         athleteRepo.shouldThrow = true
 
-        let vm = makeViewModel(athleteRepo: athleteRepo)
+        let (vm, _) = makeViewModel(athleteRepo: athleteRepo)
         await vm.load()
 
         #expect(vm.athlete == nil)
@@ -116,7 +159,7 @@ struct ProfileViewModelTests {
         let athleteRepo = MockAthleteRepository()
         athleteRepo.savedAthlete = athlete
 
-        let vm = makeViewModel(athleteRepo: athleteRepo)
+        let (vm, _) = makeViewModel(athleteRepo: athleteRepo)
         vm.athlete = athlete
 
         var updated = athlete
@@ -136,7 +179,7 @@ struct ProfileViewModelTests {
         let athleteRepo = MockAthleteRepository()
         athleteRepo.shouldThrow = true
 
-        let vm = makeViewModel(athleteRepo: athleteRepo)
+        let (vm, _) = makeViewModel(athleteRepo: athleteRepo)
         vm.athlete = athlete
 
         var updated = athlete
@@ -155,7 +198,7 @@ struct ProfileViewModelTests {
         let race = makeRace(name: "New Race", priority: .bRace)
         let raceRepo = MockRaceRepository()
 
-        let vm = makeViewModel(raceRepo: raceRepo)
+        let (vm, _) = makeViewModel(raceRepo: raceRepo)
         await vm.addRace(race)
 
         #expect(vm.races.count == 1)
@@ -171,7 +214,7 @@ struct ProfileViewModelTests {
         let raceRepo = MockRaceRepository()
         raceRepo.shouldThrow = true
 
-        let vm = makeViewModel(raceRepo: raceRepo)
+        let (vm, _) = makeViewModel(raceRepo: raceRepo)
         await vm.addRace(race)
 
         #expect(vm.races.isEmpty)
@@ -187,7 +230,7 @@ struct ProfileViewModelTests {
         let raceRepo = MockRaceRepository()
         raceRepo.races = [race]
 
-        let vm = makeViewModel(raceRepo: raceRepo)
+        let (vm, _) = makeViewModel(raceRepo: raceRepo)
         vm.races = [race]
 
         var updated = race
@@ -206,7 +249,7 @@ struct ProfileViewModelTests {
         let raceRepo = MockRaceRepository()
         raceRepo.shouldThrow = true
 
-        let vm = makeViewModel(raceRepo: raceRepo)
+        let (vm, _) = makeViewModel(raceRepo: raceRepo)
         vm.races = [race]
 
         var updated = race
@@ -226,7 +269,7 @@ struct ProfileViewModelTests {
         let race = makeRace()
         let raceRepo = MockRaceRepository()
 
-        let vm = makeViewModel(raceRepo: raceRepo)
+        let (vm, _) = makeViewModel(raceRepo: raceRepo)
         vm.races = [race]
 
         await vm.deleteRace(id: race.id)
@@ -242,7 +285,7 @@ struct ProfileViewModelTests {
         let raceRepo = MockRaceRepository()
         raceRepo.shouldThrow = true
 
-        let vm = makeViewModel(raceRepo: raceRepo)
+        let (vm, _) = makeViewModel(raceRepo: raceRepo)
         vm.races = [race]
 
         await vm.deleteRace(id: race.id)
@@ -260,7 +303,7 @@ struct ProfileViewModelTests {
         let mid = makeRace(name: "Mid", date: Date.now.adding(weeks: 12))
         let late = makeRace(name: "Late", date: Date.now.adding(weeks: 20))
 
-        let vm = makeViewModel()
+        let (vm, _) = makeViewModel()
         vm.races = [late, early, mid]
 
         let sorted = vm.sortedRaces
@@ -275,7 +318,7 @@ struct ProfileViewModelTests {
         let bRace = makeRace(name: "B Race", priority: .bRace)
         let aRace = makeRace(name: "A Race", priority: .aRace)
 
-        let vm = makeViewModel()
+        let (vm, _) = makeViewModel()
         vm.races = [bRace, aRace]
 
         #expect(vm.aRace?.name == "A Race")
@@ -284,7 +327,142 @@ struct ProfileViewModelTests {
     @Test("aRace returns nil when none")
     @MainActor
     func aRaceReturnsNil() {
-        let vm = makeViewModel()
+        let (vm, _) = makeViewModel()
         #expect(vm.aRace == nil)
+    }
+
+    // MARK: - Plan Auto-Adjustment
+
+    @Test("Add race triggers plan auto-adjustment")
+    @MainActor
+    func addRaceTriggersAutoAdjustment() async {
+        let athlete = makeAthlete()
+        let aRace = makeRace(name: "A Race", priority: .aRace)
+
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = athlete
+
+        let raceRepo = MockRaceRepository()
+        raceRepo.races = [aRace]
+
+        let planRepo = MockTrainingPlanRepository()
+        planRepo.activePlan = makePlan(for: athlete, targetRace: aRace)
+
+        let adjustmentService = MockPlanAutoAdjustmentService()
+        let adjustedPlan = makePlan(for: athlete, targetRace: aRace)
+        adjustmentService.adjustedPlan = adjustedPlan
+
+        let (vm, service) = makeViewModel(
+            athleteRepo: athleteRepo,
+            raceRepo: raceRepo,
+            planRepo: planRepo,
+            adjustmentService: adjustmentService
+        )
+        vm.races = [aRace]
+
+        let bRace = makeRace(name: "B Race", priority: .bRace)
+        await vm.addRace(bRace)
+
+        #expect(service.adjustCallCount == 1)
+    }
+
+    @Test("Update race triggers plan auto-adjustment")
+    @MainActor
+    func updateRaceTriggersAutoAdjustment() async {
+        let athlete = makeAthlete()
+        let aRace = makeRace(name: "A Race", priority: .aRace)
+        let bRace = makeRace(name: "B Race", priority: .bRace)
+
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = athlete
+
+        let raceRepo = MockRaceRepository()
+        raceRepo.races = [aRace, bRace]
+
+        let planRepo = MockTrainingPlanRepository()
+        planRepo.activePlan = makePlan(for: athlete, targetRace: aRace)
+
+        let adjustmentService = MockPlanAutoAdjustmentService()
+        adjustmentService.adjustedPlan = makePlan(for: athlete, targetRace: aRace)
+
+        let (vm, service) = makeViewModel(
+            athleteRepo: athleteRepo,
+            raceRepo: raceRepo,
+            planRepo: planRepo,
+            adjustmentService: adjustmentService
+        )
+        vm.races = [aRace, bRace]
+
+        var updatedBRace = bRace
+        updatedBRace.distanceKm = 60
+        await vm.updateRace(updatedBRace)
+
+        #expect(service.adjustCallCount == 1)
+    }
+
+    @Test("Delete race triggers plan auto-adjustment")
+    @MainActor
+    func deleteRaceTriggersAutoAdjustment() async {
+        let athlete = makeAthlete()
+        let aRace = makeRace(name: "A Race", priority: .aRace)
+        let bRace = makeRace(name: "B Race", priority: .bRace)
+
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = athlete
+
+        let raceRepo = MockRaceRepository()
+        raceRepo.races = [aRace, bRace]
+
+        let planRepo = MockTrainingPlanRepository()
+        planRepo.activePlan = makePlan(for: athlete, targetRace: aRace)
+
+        let adjustmentService = MockPlanAutoAdjustmentService()
+        adjustmentService.adjustedPlan = makePlan(for: athlete, targetRace: aRace)
+
+        let (vm, service) = makeViewModel(
+            athleteRepo: athleteRepo,
+            raceRepo: raceRepo,
+            planRepo: planRepo,
+            adjustmentService: adjustmentService
+        )
+        vm.races = [aRace, bRace]
+
+        await vm.deleteRace(id: bRace.id)
+
+        #expect(service.adjustCallCount == 1)
+    }
+
+    @Test("planWasAutoAdjusted is set when adjustment happens")
+    @MainActor
+    func planWasAutoAdjustedIsSet() async {
+        let athlete = makeAthlete()
+        let aRace = makeRace(name: "A Race", priority: .aRace)
+
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = athlete
+
+        let raceRepo = MockRaceRepository()
+        raceRepo.races = [aRace]
+
+        let planRepo = MockTrainingPlanRepository()
+        planRepo.activePlan = makePlan(for: athlete, targetRace: aRace)
+
+        let adjustmentService = MockPlanAutoAdjustmentService()
+        adjustmentService.adjustedPlan = makePlan(for: athlete, targetRace: aRace)
+
+        let (vm, _) = makeViewModel(
+            athleteRepo: athleteRepo,
+            raceRepo: raceRepo,
+            planRepo: planRepo,
+            adjustmentService: adjustmentService
+        )
+        vm.races = [aRace]
+
+        #expect(vm.planWasAutoAdjusted == false)
+
+        let bRace = makeRace(name: "B Race", priority: .bRace)
+        await vm.addRace(bRace)
+
+        #expect(vm.planWasAutoAdjusted == true)
     }
 }

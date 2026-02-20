@@ -46,7 +46,8 @@ struct WidgetPendingActionProcessorTests {
             targetRaceId: UUID(),
             createdAt: .now,
             weeks: [week],
-            intermediateRaceIds: []
+            intermediateRaceIds: [],
+            intermediateRaceSnapshots: []
         )
     }
 

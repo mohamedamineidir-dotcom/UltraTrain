@@ -10,8 +10,13 @@ enum IntermediateRaceHandler {
 
     enum Behavior: Equatable, Sendable {
         case miniTaper
-        case raceWeek
+        case raceWeek(priority: RacePriority)
         case postRaceRecovery
+
+        var isRaceWeek: Bool {
+            if case .raceWeek = self { return true }
+            return false
+        }
     }
 
     static func overrides(
@@ -29,29 +34,32 @@ enum IntermediateRaceHandler {
                 race.date >= $0.startDate && race.date <= $0.endDate
             }) else { continue }
 
-            // Mini-taper the week before race (if it exists)
-            if let taperWeek = skeletons.first(where: { $0.weekNumber == raceWeek.weekNumber - 1 }) {
-                overrides.append(RaceWeekOverride(
-                    weekNumber: taperWeek.weekNumber,
-                    raceId: race.id,
-                    behavior: .miniTaper
-                ))
+            // B-races get full treatment: taper + race week + recovery
+            // C-races get only the race week override (lighter treatment)
+            if race.priority == .bRace {
+                if let taperWeek = skeletons.first(where: { $0.weekNumber == raceWeek.weekNumber - 1 }) {
+                    overrides.append(RaceWeekOverride(
+                        weekNumber: taperWeek.weekNumber,
+                        raceId: race.id,
+                        behavior: .miniTaper
+                    ))
+                }
             }
 
-            // Race week itself
             overrides.append(RaceWeekOverride(
                 weekNumber: raceWeek.weekNumber,
                 raceId: race.id,
-                behavior: .raceWeek
+                behavior: .raceWeek(priority: race.priority)
             ))
 
-            // Recovery week after (if it exists)
-            if let recoveryWeek = skeletons.first(where: { $0.weekNumber == raceWeek.weekNumber + 1 }) {
-                overrides.append(RaceWeekOverride(
-                    weekNumber: recoveryWeek.weekNumber,
-                    raceId: race.id,
-                    behavior: .postRaceRecovery
-                ))
+            if race.priority == .bRace {
+                if let recoveryWeek = skeletons.first(where: { $0.weekNumber == raceWeek.weekNumber + 1 }) {
+                    overrides.append(RaceWeekOverride(
+                        weekNumber: recoveryWeek.weekNumber,
+                        raceId: race.id,
+                        behavior: .postRaceRecovery
+                    ))
+                }
             }
         }
         return overrides

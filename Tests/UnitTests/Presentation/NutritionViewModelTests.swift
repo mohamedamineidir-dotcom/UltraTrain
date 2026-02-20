@@ -109,7 +109,8 @@ struct NutritionViewModelTests {
             targetRaceId: race.id,
             createdAt: .now,
             weeks: [week],
-            intermediateRaceIds: []
+            intermediateRaceIds: [],
+            intermediateRaceSnapshots: []
         )
     }
 

@@ -53,7 +53,8 @@ struct TrainingLoadCalculatorTests {
             targetRaceId: UUID(),
             createdAt: .now,
             weeks: weeks,
-            intermediateRaceIds: []
+            intermediateRaceIds: [],
+            intermediateRaceSnapshots: []
         )
     }
 

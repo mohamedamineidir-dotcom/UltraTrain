@@ -33,7 +33,8 @@ struct PhaseVisualizationCalculatorTests {
             targetRaceId: UUID(),
             createdAt: Date.now,
             weeks: weeks,
-            intermediateRaceIds: []
+            intermediateRaceIds: [],
+            intermediateRaceSnapshots: []
         )
     }
 

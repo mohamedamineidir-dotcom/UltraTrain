@@ -83,7 +83,8 @@ struct TrainingPlanViewModelTests {
             targetRaceId: race.id,
             createdAt: .now,
             weeks: [week],
-            intermediateRaceIds: []
+            intermediateRaceIds: [],
+            intermediateRaceSnapshots: []
         )
     }
 
@@ -640,7 +641,8 @@ struct TrainingPlanViewModelTests {
             targetRaceId: race.id,
             createdAt: .now,
             weeks: [differentWeek],
-            intermediateRaceIds: []
+            intermediateRaceIds: [],
+            intermediateRaceSnapshots: []
         )
 
         let vm = makeViewModel(
@@ -655,5 +657,86 @@ struct TrainingPlanViewModelTests {
 
         // The intervals session should NOT be completed (no matching old session)
         #expect(vm.plan?.weeks[0].sessions[0].isCompleted == false)
+    }
+
+    // MARK: - Snapshot-Based Staleness Detection
+
+    @Test("isPlanStale detects date change via snapshots")
+    @MainActor
+    func isPlanStaleDetectsDateChange() {
+        let race = makeRace()
+        let bRaceId = UUID()
+        let originalDate = Date.now.adding(weeks: 8)
+        let bRace = Race(
+            id: bRaceId, name: "B Race",
+            date: originalDate.adding(weeks: 1), // date moved 1 week later
+            distanceKm: 50, elevationGainM: 2000, elevationLossM: 2000,
+            priority: .bRace, goalType: .finish, checkpoints: [],
+            terrainDifficulty: .easy
+        )
+        var plan = makePlan(athlete: makeAthlete(), race: race)
+        plan.intermediateRaceIds = [bRaceId]
+        plan.intermediateRaceSnapshots = [
+            RaceSnapshot(id: bRaceId, date: originalDate, priority: .bRace)
+        ]
+
+        let vm = makeViewModel()
+        vm.plan = plan
+        vm.races = [race, bRace]
+
+        #expect(vm.isPlanStale == true)
+    }
+
+    @Test("isPlanStale detects priority change via snapshots")
+    @MainActor
+    func isPlanStaleDetectsPriorityChange() {
+        let race = makeRace()
+        let raceId = UUID()
+        let raceDate = Date.now.adding(weeks: 8)
+        let intermediateRace = Race(
+            id: raceId, name: "Race",
+            date: raceDate,
+            distanceKm: 50, elevationGainM: 2000, elevationLossM: 2000,
+            priority: .cRace, // changed from bRace to cRace
+            goalType: .finish, checkpoints: [],
+            terrainDifficulty: .easy
+        )
+        var plan = makePlan(athlete: makeAthlete(), race: race)
+        plan.intermediateRaceIds = [raceId]
+        plan.intermediateRaceSnapshots = [
+            RaceSnapshot(id: raceId, date: raceDate, priority: .bRace)
+        ]
+
+        let vm = makeViewModel()
+        vm.plan = plan
+        vm.races = [race, intermediateRace]
+
+        #expect(vm.isPlanStale == true)
+    }
+
+    @Test("isPlanStale false when snapshots match")
+    @MainActor
+    func isPlanStaleSnapshotsMatch() {
+        let race = makeRace()
+        let bRaceId = UUID()
+        let bRaceDate = Date.now.adding(weeks: 8)
+        let bRace = Race(
+            id: bRaceId, name: "B Race",
+            date: bRaceDate,
+            distanceKm: 50, elevationGainM: 2000, elevationLossM: 2000,
+            priority: .bRace, goalType: .finish, checkpoints: [],
+            terrainDifficulty: .easy
+        )
+        var plan = makePlan(athlete: makeAthlete(), race: race)
+        plan.intermediateRaceIds = [bRaceId]
+        plan.intermediateRaceSnapshots = [
+            RaceSnapshot(id: bRaceId, date: bRaceDate, priority: .bRace)
+        ]
+
+        let vm = makeViewModel()
+        vm.plan = plan
+        vm.races = [race, bRace]
+
+        #expect(vm.isPlanStale == false)
     }
 }

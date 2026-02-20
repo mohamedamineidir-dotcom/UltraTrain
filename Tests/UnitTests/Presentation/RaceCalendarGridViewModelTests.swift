@@ -62,7 +62,8 @@ struct RaceCalendarGridViewModelTests {
             targetRaceId: UUID(),
             createdAt: .now,
             weeks: [week],
-            intermediateRaceIds: []
+            intermediateRaceIds: [],
+            intermediateRaceSnapshots: []
         )
     }
 

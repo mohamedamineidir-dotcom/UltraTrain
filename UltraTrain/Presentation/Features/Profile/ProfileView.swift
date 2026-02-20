@@ -35,11 +35,14 @@ struct ProfileView: View {
         notificationService: any NotificationServiceProtocol,
         planRepository: any TrainingPlanRepository,
         biometricAuthService: any BiometricAuthServiceProtocol,
-        gearRepository: any GearRepository
+        gearRepository: any GearRepository,
+        planAutoAdjustmentService: any PlanAutoAdjustmentService
     ) {
         _viewModel = State(initialValue: ProfileViewModel(
             athleteRepository: athleteRepository,
             raceRepository: raceRepository,
+            planRepository: planRepository,
+            planAutoAdjustmentService: planAutoAdjustmentService,
             widgetDataWriter: widgetDataWriter
         ))
         self.athleteRepository = athleteRepository
@@ -121,6 +124,25 @@ struct ProfileView: View {
                     }
                 }
             }
+            .overlay(alignment: .bottom) {
+                if viewModel.planWasAutoAdjusted {
+                    Text("Training plan updated")
+                        .font(.subheadline.bold())
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, Theme.Spacing.md)
+                        .padding(.vertical, Theme.Spacing.sm)
+                        .background(Theme.Colors.primary, in: Capsule())
+                        .padding(.bottom, Theme.Spacing.md)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                        .onAppear {
+                            Task {
+                                try? await Task.sleep(for: .seconds(3))
+                                withAnimation { viewModel.planWasAutoAdjusted = false }
+                            }
+                        }
+                }
+            }
+            .animation(.easeInOut, value: viewModel.planWasAutoAdjusted)
             .sheet(isPresented: $viewModel.showingAddRace) {
                 EditRaceSheet(mode: .add) { newRace in
                     Task { await viewModel.addRace(newRace) }
