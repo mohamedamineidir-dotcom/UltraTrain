@@ -38,6 +38,7 @@ final class DashboardViewModel {
     var lastRun: CompletedRun?
     var upcomingRaces: [Race] = []
     var injuryRiskAlerts: [InjuryRiskAlert] = []
+    var coachingInsights: [CoachingInsight] = []
     var currentWeather: WeatherSnapshot?
     var sessionForecast: WeatherSnapshot?
 
@@ -105,6 +106,14 @@ final class DashboardViewModel {
                 weeklyVolumes: volumes,
                 currentACR: snapshot.acuteToChronicRatio,
                 monotony: snapshot.monotony
+            )
+
+            coachingInsights = CoachingInsightCalculator.generate(
+                fitness: snapshot,
+                plan: plan,
+                weeklyVolumes: volumes,
+                nextRace: upcomingRaces.first,
+                adherencePercent: adherencePercent
             )
 
             let from = Date.now.adding(days: -28)
@@ -231,6 +240,12 @@ final class DashboardViewModel {
 
     var weeklyTargetElevationM: Double {
         currentWeek?.targetElevationGainM ?? 0
+    }
+
+    var adherencePercent: Double? {
+        let progress = weeklyProgress
+        guard progress.total > 0 else { return nil }
+        return Double(progress.completed) / Double(progress.total)
     }
 
     var weeksUntilRace: Int? {

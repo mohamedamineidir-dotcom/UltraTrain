@@ -71,6 +71,10 @@ struct DashboardView: View {
                         InjuryRiskAlertBanner(alerts: viewModel.injuryRiskAlerts)
                     }
 
+                    if !viewModel.coachingInsights.isEmpty {
+                        CoachingInsightCard(insights: viewModel.coachingInsights)
+                    }
+
                     DashboardNextSessionCard(
                         session: viewModel.nextSession,
                         hasPlan: viewModel.plan != nil,
