@@ -314,6 +314,7 @@ final class HealthKitService: @preconcurrency HealthKitServiceProtocol, @uncheck
 
         return HealthKitWorkout(
             id: UUID(),
+            originalUUID: workout.uuid.uuidString,
             startDate: workout.startDate,
             endDate: workout.endDate,
             distanceKm: distanceKm,
@@ -335,6 +336,7 @@ final class HealthKitService: @preconcurrency HealthKitServiceProtocol, @uncheck
 
         return HealthKitWorkout(
             id: UUID(),
+            originalUUID: workout.uuid.uuidString,
             startDate: workout.startDate,
             endDate: workout.endDate,
             distanceKm: distanceKm,

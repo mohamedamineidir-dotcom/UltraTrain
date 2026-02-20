@@ -47,7 +47,9 @@ enum CompletedRunSwiftDataMapper {
             gearIds: run.gearIds,
             nutritionIntakeData: intakeData,
             stravaActivityId: run.stravaActivityId,
-            isStravaImport: run.isStravaImport
+            isStravaImport: run.isStravaImport,
+            isHealthKitImport: run.isHealthKitImport,
+            healthKitWorkoutUUID: run.healthKitWorkoutUUID
         )
     }
 
@@ -81,7 +83,9 @@ enum CompletedRunSwiftDataMapper {
             gearIds: model.gearIds,
             nutritionIntakeLog: intakeLog,
             stravaActivityId: model.stravaActivityId,
-            isStravaImport: model.isStravaImport
+            isStravaImport: model.isStravaImport,
+            isHealthKitImport: model.isHealthKitImport,
+            healthKitWorkoutUUID: model.healthKitWorkoutUUID
         )
     }
 

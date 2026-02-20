@@ -15,4 +15,5 @@ struct AppSettings: Identifiable, Equatable, Sendable {
     var electrolyteIntervalSeconds: TimeInterval
     var smartRemindersEnabled: Bool
     var saveToHealthEnabled: Bool
+    var healthKitAutoImportEnabled: Bool
 }

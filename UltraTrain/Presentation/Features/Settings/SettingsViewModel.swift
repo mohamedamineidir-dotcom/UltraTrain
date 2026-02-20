@@ -19,6 +19,7 @@ final class SettingsViewModel {
     private let planRepository: any TrainingPlanRepository
     private let raceRepository: any RaceRepository
     private let biometricAuthService: any BiometricAuthServiceProtocol
+    private let healthKitImportService: (any HealthKitImportServiceProtocol)?
 
     // MARK: - State
 
@@ -40,6 +41,8 @@ final class SettingsViewModel {
     var stravaQueuePendingCount = 0
     var iCloudSyncEnabled = UserDefaults.standard.bool(forKey: "iCloudSyncEnabled")
     var showRestartAlert = false
+    var isImportingFromHealth = false
+    var lastImportResult: HealthKitImportResult?
 
     var healthKitStatus: HealthKitAuthStatus {
         healthKitService.authorizationStatus
@@ -81,7 +84,8 @@ final class SettingsViewModel {
         notificationService: any NotificationServiceProtocol,
         planRepository: any TrainingPlanRepository,
         raceRepository: any RaceRepository,
-        biometricAuthService: any BiometricAuthServiceProtocol
+        biometricAuthService: any BiometricAuthServiceProtocol,
+        healthKitImportService: (any HealthKitImportServiceProtocol)? = nil
     ) {
         self.athleteRepository = athleteRepository
         self.appSettingsRepository = appSettingsRepository
@@ -95,6 +99,7 @@ final class SettingsViewModel {
         self.planRepository = planRepository
         self.raceRepository = raceRepository
         self.biometricAuthService = biometricAuthService
+        self.healthKitImportService = healthKitImportService
     }
 
     // MARK: - Load
@@ -122,7 +127,8 @@ final class SettingsViewModel {
                     fuelIntervalSeconds: 2700,
                     electrolyteIntervalSeconds: 0,
                     smartRemindersEnabled: false,
-                    saveToHealthEnabled: false
+                    saveToHealthEnabled: false,
+                    healthKitAutoImportEnabled: false
                 )
                 try await appSettingsRepository.saveSettings(defaults)
                 appSettings = defaults
@@ -134,6 +140,9 @@ final class SettingsViewModel {
 
         if healthKitStatus == .authorized {
             await fetchHealthKitData()
+            if appSettings?.healthKitAutoImportEnabled == true {
+                await importFromHealthKit()
+            }
         }
 
         loadStravaStatus()
@@ -373,6 +382,34 @@ final class SettingsViewModel {
             self.error = error.localizedDescription
             Logger.settings.error("Failed to update save-to-health setting: \(error)")
         }
+    }
+
+    // MARK: - HealthKit Import
+
+    func updateHealthKitAutoImport(_ enabled: Bool) async {
+        guard var settings = appSettings else { return }
+        settings.healthKitAutoImportEnabled = enabled
+        do {
+            try await appSettingsRepository.updateSettings(settings)
+            appSettings = settings
+            if enabled {
+                await importFromHealthKit()
+            }
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update HealthKit auto-import: \(error)")
+        }
+    }
+
+    func importFromHealthKit() async {
+        guard let athlete, let importService = healthKitImportService else { return }
+        isImportingFromHealth = true
+        do {
+            lastImportResult = try await importService.importNewWorkouts(athleteId: athlete.id)
+        } catch {
+            Logger.healthKit.error("HealthKit import failed: \(error)")
+        }
+        isImportingFromHealth = false
     }
 
     // MARK: - Auto Pause

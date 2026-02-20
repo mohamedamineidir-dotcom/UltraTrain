@@ -63,6 +63,8 @@ final class LocalRunRepository: RunRepository, @unchecked Sendable {
         }
         model.stravaActivityId = run.stravaActivityId
         model.isStravaImport = run.isStravaImport
+        model.isHealthKitImport = run.isHealthKitImport
+        model.healthKitWorkoutUUID = run.healthKitWorkoutUUID
         model.notes = run.notes
         model.updatedAt = Date()
         try context.save()

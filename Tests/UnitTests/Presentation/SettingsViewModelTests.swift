@@ -37,7 +37,8 @@ struct SettingsViewModelTests {
             fuelIntervalSeconds: 2700,
             electrolyteIntervalSeconds: 0,
             smartRemindersEnabled: false,
-            saveToHealthEnabled: false
+            saveToHealthEnabled: false,
+            healthKitAutoImportEnabled: false
         )
     }
 
@@ -53,7 +54,8 @@ struct SettingsViewModelTests {
         notificationService: MockNotificationService = MockNotificationService(),
         planRepository: MockTrainingPlanRepository = MockTrainingPlanRepository(),
         raceRepository: MockRaceRepository = MockRaceRepository(),
-        biometricAuthService: MockBiometricAuthService = MockBiometricAuthService()
+        biometricAuthService: MockBiometricAuthService = MockBiometricAuthService(),
+        healthKitImportService: MockHealthKitImportService? = nil
     ) -> SettingsViewModel {
         SettingsViewModel(
             athleteRepository: athleteRepo,
@@ -66,7 +68,8 @@ struct SettingsViewModelTests {
             notificationService: notificationService,
             planRepository: planRepository,
             raceRepository: raceRepository,
-            biometricAuthService: biometricAuthService
+            biometricAuthService: biometricAuthService,
+            healthKitImportService: healthKitImportService
         )
     }
 
@@ -499,5 +502,99 @@ struct SettingsViewModelTests {
         await vm.updateHydrationInterval(900)
 
         #expect(vm.error != nil)
+    }
+
+    // MARK: - HealthKit Auto-Import Tests
+
+    @Test("Load triggers import when HealthKit authorized and auto-import enabled")
+    @MainActor
+    func loadTriggersImportWhenAuthorizedAndEnabled() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let settingsRepo = MockAppSettingsRepository()
+        var settings = makeSettings()
+        settings.healthKitAutoImportEnabled = true
+        settingsRepo.savedSettings = settings
+        let hkService = MockHealthKitService()
+        hkService.authorizationStatus = .authorized
+        hkService.restingHR = 50
+        hkService.maxHR = 185
+        let importService = MockHealthKitImportService()
+        importService.result = HealthKitImportResult(importedCount: 2, skippedCount: 1, matchedSessionCount: 1)
+
+        let vm = makeViewModel(
+            athleteRepo: athleteRepo,
+            settingsRepo: settingsRepo,
+            healthKitService: hkService,
+            healthKitImportService: importService
+        )
+        await vm.load()
+
+        #expect(importService.importCalled == true)
+        #expect(vm.lastImportResult?.importedCount == 2)
+    }
+
+    @Test("Enable auto-import triggers immediate import")
+    @MainActor
+    func enableAutoImportTriggersImport() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let settingsRepo = MockAppSettingsRepository()
+        settingsRepo.savedSettings = makeSettings()
+        let hkService = MockHealthKitService()
+        hkService.authorizationStatus = .authorized
+        hkService.restingHR = 50
+        hkService.maxHR = 185
+        let importService = MockHealthKitImportService()
+        importService.result = HealthKitImportResult(importedCount: 1, skippedCount: 0, matchedSessionCount: 0)
+
+        let vm = makeViewModel(
+            athleteRepo: athleteRepo,
+            settingsRepo: settingsRepo,
+            healthKitService: hkService,
+            healthKitImportService: importService
+        )
+        await vm.load()
+
+        // Reset after load (load didn't trigger import since autoImport was false)
+        importService.importCalled = false
+
+        await vm.updateHealthKitAutoImport(true)
+
+        #expect(vm.appSettings?.healthKitAutoImportEnabled == true)
+        #expect(importService.importCalled == true)
+        #expect(vm.lastImportResult?.importedCount == 1)
+    }
+
+    @Test("Disable auto-import saves setting without importing")
+    @MainActor
+    func disableAutoImportNoImport() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let settingsRepo = MockAppSettingsRepository()
+        var settings = makeSettings()
+        settings.healthKitAutoImportEnabled = true
+        settingsRepo.savedSettings = settings
+        let hkService = MockHealthKitService()
+        hkService.authorizationStatus = .authorized
+        hkService.restingHR = 50
+        hkService.maxHR = 185
+        let importService = MockHealthKitImportService()
+
+        let vm = makeViewModel(
+            athleteRepo: athleteRepo,
+            settingsRepo: settingsRepo,
+            healthKitService: hkService,
+            healthKitImportService: importService
+        )
+        await vm.load()
+
+        // Reset after load
+        importService.importCalled = false
+
+        await vm.updateHealthKitAutoImport(false)
+
+        #expect(vm.appSettings?.healthKitAutoImportEnabled == false)
+        #expect(importService.importCalled == false)
     }
 }

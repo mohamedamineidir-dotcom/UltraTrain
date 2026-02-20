@@ -17,6 +17,7 @@ final class AppSettingsSwiftDataModel {
     var electrolyteIntervalSeconds: Double = 0
     var smartRemindersEnabled: Bool = false
     var saveToHealthEnabled: Bool = false
+    var healthKitAutoImportEnabled: Bool = false
     var updatedAt: Date = Date()
 
     init(
@@ -34,6 +35,7 @@ final class AppSettingsSwiftDataModel {
         electrolyteIntervalSeconds: Double = 0,
         smartRemindersEnabled: Bool = false,
         saveToHealthEnabled: Bool = false,
+        healthKitAutoImportEnabled: Bool = false,
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -50,6 +52,7 @@ final class AppSettingsSwiftDataModel {
         self.electrolyteIntervalSeconds = electrolyteIntervalSeconds
         self.smartRemindersEnabled = smartRemindersEnabled
         self.saveToHealthEnabled = saveToHealthEnabled
+        self.healthKitAutoImportEnabled = healthKitAutoImportEnabled
         self.updatedAt = updatedAt
     }
 }

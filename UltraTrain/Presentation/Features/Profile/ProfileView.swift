@@ -21,6 +21,7 @@ struct ProfileView: View {
     private let gearRepository: any GearRepository
     private let nutritionRepository: any NutritionRepository
     private let nutritionGenerator: any GenerateNutritionPlanUseCase
+    private let healthKitImportService: (any HealthKitImportServiceProtocol)?
 
     init(
         athleteRepository: any AthleteRepository,
@@ -42,7 +43,8 @@ struct ProfileView: View {
         gearRepository: any GearRepository,
         planAutoAdjustmentService: any PlanAutoAdjustmentService,
         nutritionRepository: any NutritionRepository,
-        nutritionGenerator: any GenerateNutritionPlanUseCase
+        nutritionGenerator: any GenerateNutritionPlanUseCase,
+        healthKitImportService: (any HealthKitImportServiceProtocol)? = nil
     ) {
         _viewModel = State(initialValue: ProfileViewModel(
             athleteRepository: athleteRepository,
@@ -69,6 +71,7 @@ struct ProfileView: View {
         self.gearRepository = gearRepository
         self.nutritionRepository = nutritionRepository
         self.nutritionGenerator = nutritionGenerator
+        self.healthKitImportService = healthKitImportService
     }
 
     var body: some View {
@@ -105,7 +108,8 @@ struct ProfileView: View {
                             notificationService: notificationService,
                             planRepository: planRepository,
                             raceRepository: raceRepository,
-                            biometricAuthService: biometricAuthService
+                            biometricAuthService: biometricAuthService,
+                            healthKitImportService: healthKitImportService
                         )
                     } label: {
                         Image(systemName: "gearshape")

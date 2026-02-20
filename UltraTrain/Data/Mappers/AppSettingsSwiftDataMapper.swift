@@ -16,7 +16,8 @@ enum AppSettingsSwiftDataMapper {
             fuelIntervalSeconds: model.fuelIntervalSeconds,
             electrolyteIntervalSeconds: model.electrolyteIntervalSeconds,
             smartRemindersEnabled: model.smartRemindersEnabled,
-            saveToHealthEnabled: model.saveToHealthEnabled
+            saveToHealthEnabled: model.saveToHealthEnabled,
+            healthKitAutoImportEnabled: model.healthKitAutoImportEnabled
         )
     }
 
@@ -35,7 +36,8 @@ enum AppSettingsSwiftDataMapper {
             fuelIntervalSeconds: settings.fuelIntervalSeconds,
             electrolyteIntervalSeconds: settings.electrolyteIntervalSeconds,
             smartRemindersEnabled: settings.smartRemindersEnabled,
-            saveToHealthEnabled: settings.saveToHealthEnabled
+            saveToHealthEnabled: settings.saveToHealthEnabled,
+            healthKitAutoImportEnabled: settings.healthKitAutoImportEnabled
         )
     }
 }

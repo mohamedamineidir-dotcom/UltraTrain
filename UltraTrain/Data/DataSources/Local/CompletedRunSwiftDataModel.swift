@@ -24,6 +24,8 @@ final class CompletedRunSwiftDataModel {
     @Attribute(.externalStorage) var nutritionIntakeData: Data = Data()
     var stravaActivityId: Int?
     var isStravaImport: Bool = false
+    var isHealthKitImport: Bool = false
+    var healthKitWorkoutUUID: String?
     var updatedAt: Date = Date()
 
     init(
@@ -47,6 +49,8 @@ final class CompletedRunSwiftDataModel {
         nutritionIntakeData: Data = Data(),
         stravaActivityId: Int? = nil,
         isStravaImport: Bool = false,
+        isHealthKitImport: Bool = false,
+        healthKitWorkoutUUID: String? = nil,
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -69,6 +73,8 @@ final class CompletedRunSwiftDataModel {
         self.nutritionIntakeData = nutritionIntakeData
         self.stravaActivityId = stravaActivityId
         self.isStravaImport = isStravaImport
+        self.isHealthKitImport = isHealthKitImport
+        self.healthKitWorkoutUUID = healthKitWorkoutUUID
         self.updatedAt = updatedAt
     }
 }

@@ -213,7 +213,8 @@ struct RunTrackingLaunchViewModelTests {
             fuelIntervalSeconds: 1800,
             electrolyteIntervalSeconds: 3600,
             smartRemindersEnabled: true,
-            saveToHealthEnabled: false
+            saveToHealthEnabled: false,
+            healthKitAutoImportEnabled: false
         )
 
         let vm = makeViewModel(athleteRepo: athleteRepo, settingsRepo: settingsRepo)
@@ -313,7 +314,8 @@ struct RunTrackingLaunchViewModelTests {
             fuelIntervalSeconds: 2700,
             electrolyteIntervalSeconds: 0,
             smartRemindersEnabled: false,
-            saveToHealthEnabled: true
+            saveToHealthEnabled: true,
+            healthKitAutoImportEnabled: false
         )
 
         let vm = makeViewModel(athleteRepo: athleteRepo, settingsRepo: settingsRepo)

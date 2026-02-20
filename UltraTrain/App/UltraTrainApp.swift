@@ -38,6 +38,7 @@ struct UltraTrainApp: App {
     private let stravaUploadQueueService: StravaUploadQueueService
     private let pendingActionProcessor: WidgetPendingActionProcessor
     private let planAutoAdjustmentService: DefaultPlanAutoAdjustmentService
+    private let healthKitImportService: HealthKitImportService
     private let cloudKitSyncMonitor: CloudKitSyncMonitor?
 
     init() {
@@ -132,6 +133,11 @@ struct UltraTrainApp: App {
             planGenerator: planGenerator,
             planRepository: planRepository
         )
+        healthKitImportService = HealthKitImportService(
+            healthKitService: healthKitService,
+            runRepository: runRepository,
+            planRepository: planRepository
+        )
         gearRepository = LocalGearRepository(modelContainer: modelContainer)
         finishEstimateRepository = LocalFinishEstimateRepository(modelContainer: modelContainer)
         stravaUploadQueueRepository = LocalStravaUploadQueueRepository(modelContainer: modelContainer)
@@ -209,7 +215,8 @@ struct UltraTrainApp: App {
                 gearRepository: gearRepository,
                 finishEstimateRepository: finishEstimateRepository,
                 planAutoAdjustmentService: planAutoAdjustmentService,
-                pendingActionProcessor: pendingActionProcessor
+                pendingActionProcessor: pendingActionProcessor,
+                healthKitImportService: healthKitImportService
             )
         }
     }

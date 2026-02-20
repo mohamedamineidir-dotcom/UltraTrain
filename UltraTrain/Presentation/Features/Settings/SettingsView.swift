@@ -17,7 +17,8 @@ struct SettingsView: View {
         notificationService: any NotificationServiceProtocol,
         planRepository: any TrainingPlanRepository,
         raceRepository: any RaceRepository,
-        biometricAuthService: any BiometricAuthServiceProtocol
+        biometricAuthService: any BiometricAuthServiceProtocol,
+        healthKitImportService: (any HealthKitImportServiceProtocol)? = nil
     ) {
         _viewModel = State(initialValue: SettingsViewModel(
             athleteRepository: athleteRepository,
@@ -31,7 +32,8 @@ struct SettingsView: View {
             notificationService: notificationService,
             planRepository: planRepository,
             raceRepository: raceRepository,
-            biometricAuthService: biometricAuthService
+            biometricAuthService: biometricAuthService,
+            healthKitImportService: healthKitImportService
         ))
     }
 
@@ -289,6 +291,27 @@ struct SettingsView: View {
                             Task { await viewModel.updateSaveToHealth(newValue) }
                         }
                     ))
+                    Toggle("Auto-import from Apple Health", isOn: Binding(
+                        get: { settings.healthKitAutoImportEnabled },
+                        set: { newValue in
+                            Task { await viewModel.updateHealthKitAutoImport(newValue) }
+                        }
+                    ))
+                    if settings.healthKitAutoImportEnabled {
+                        if viewModel.isImportingFromHealth {
+                            HStack(spacing: Theme.Spacing.sm) {
+                                ProgressView()
+                                    .controlSize(.small)
+                                Text("Importing workouts...")
+                                    .font(.caption)
+                                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                            }
+                        } else if let result = viewModel.lastImportResult {
+                            Text(importResultText(result))
+                                .font(.caption)
+                                .foregroundStyle(Theme.Colors.secondaryLabel)
+                        }
+                    }
                 }
                 Button("Refresh Health Data") {
                     Task { await viewModel.fetchHealthKitData() }
@@ -337,6 +360,17 @@ struct SettingsView: View {
         case .notDetermined: .red
         case .authorized: .green
         }
+    }
+
+    private func importResultText(_ result: HealthKitImportResult) -> String {
+        if result.importedCount == 0 {
+            return "All runs up to date"
+        }
+        var text = "Imported \(result.importedCount) run\(result.importedCount == 1 ? "" : "s")"
+        if result.matchedSessionCount > 0 {
+            text += ", \(result.matchedSessionCount) matched to plan"
+        }
+        return text
     }
 
     // MARK: - Strava Section

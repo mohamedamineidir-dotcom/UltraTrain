@@ -50,7 +50,7 @@ final class MockHealthKitService: HealthKitServiceProtocol, @unchecked Sendable 
         to endDate: Date
     ) async throws -> [HealthKitWorkout] {
         if shouldThrow { throw DomainError.healthKitUnavailable }
-        return workouts
+        return workouts.filter { $0.startDate >= startDate && $0.startDate <= endDate }
     }
 
     func saveWorkout(run: CompletedRun) async throws {

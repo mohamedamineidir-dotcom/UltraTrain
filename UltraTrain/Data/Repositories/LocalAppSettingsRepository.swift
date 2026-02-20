@@ -50,6 +50,8 @@ final class LocalAppSettingsRepository: AppSettingsRepository, @unchecked Sendab
         existing.fuelIntervalSeconds = settings.fuelIntervalSeconds
         existing.electrolyteIntervalSeconds = settings.electrolyteIntervalSeconds
         existing.smartRemindersEnabled = settings.smartRemindersEnabled
+        existing.saveToHealthEnabled = settings.saveToHealthEnabled
+        existing.healthKitAutoImportEnabled = settings.healthKitAutoImportEnabled
 
         try context.save()
         Logger.persistence.info("App settings updated")

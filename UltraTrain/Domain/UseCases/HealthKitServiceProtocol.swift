@@ -14,6 +14,7 @@ struct HealthKitHeartRateReading: Sendable {
 
 struct HealthKitWorkout: Identifiable, Sendable, Equatable {
     let id: UUID
+    let originalUUID: String
     let startDate: Date
     let endDate: Date
     let distanceKm: Double

@@ -38,6 +38,7 @@ struct AppRootView: View {
     private let finishEstimateRepository: any FinishEstimateRepository
     private let planAutoAdjustmentService: any PlanAutoAdjustmentService
     private let pendingActionProcessor: WidgetPendingActionProcessor?
+    private let healthKitImportService: (any HealthKitImportServiceProtocol)?
 
     init(
         athleteRepository: any AthleteRepository,
@@ -70,7 +71,8 @@ struct AppRootView: View {
         gearRepository: any GearRepository,
         finishEstimateRepository: any FinishEstimateRepository,
         planAutoAdjustmentService: any PlanAutoAdjustmentService,
-        pendingActionProcessor: WidgetPendingActionProcessor? = nil
+        pendingActionProcessor: WidgetPendingActionProcessor? = nil,
+        healthKitImportService: (any HealthKitImportServiceProtocol)? = nil
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -103,6 +105,7 @@ struct AppRootView: View {
         self.finishEstimateRepository = finishEstimateRepository
         self.planAutoAdjustmentService = planAutoAdjustmentService
         self.pendingActionProcessor = pendingActionProcessor
+        self.healthKitImportService = healthKitImportService
     }
 
     var body: some View {
@@ -146,7 +149,8 @@ struct AppRootView: View {
                         biometricAuthService: biometricAuthService,
                         gearRepository: gearRepository,
                         finishEstimateRepository: finishEstimateRepository,
-                        planAutoAdjustmentService: planAutoAdjustmentService
+                        planAutoAdjustmentService: planAutoAdjustmentService,
+                        healthKitImportService: healthKitImportService
                     )
                 case .some(false):
                     OnboardingView(
