@@ -55,6 +55,64 @@ struct WeeklyVolumeCalculatorTests {
         #expect(lastWeek.runCount == 1)
     }
 
+    // MARK: - Planned Targets
+
+    private func makePlan(
+        weekStart: Date,
+        targetVolumeKm: Double = 50,
+        targetElevationGainM: Double = 1200
+    ) -> TrainingPlan {
+        let week = TrainingWeek(
+            id: UUID(),
+            weekNumber: 1,
+            startDate: weekStart,
+            endDate: weekStart.adding(days: 7),
+            phase: .base,
+            sessions: [],
+            isRecoveryWeek: false,
+            targetVolumeKm: targetVolumeKm,
+            targetElevationGainM: targetElevationGainM
+        )
+        return TrainingPlan(
+            id: UUID(),
+            athleteId: UUID(),
+            targetRaceId: UUID(),
+            createdAt: .now,
+            weeks: [week],
+            intermediateRaceIds: [],
+            intermediateRaceSnapshots: []
+        )
+    }
+
+    @Test("Plan with matching week populates planned targets")
+    func plannedTargetsFromPlan() {
+        let weekStart = Date.now.startOfWeek
+        let plan = makePlan(weekStart: weekStart, targetVolumeKm: 50, targetElevationGainM: 1200)
+
+        let volumes = WeeklyVolumeCalculator.compute(from: [], plan: plan, weekCount: 2)
+        let currentWeek = volumes.last!
+        #expect(currentWeek.plannedDistanceKm == 50)
+        #expect(currentWeek.plannedElevationGainM == 1200)
+    }
+
+    @Test("No plan means zero planned targets")
+    func noPlanZeroPlanned() {
+        let volumes = WeeklyVolumeCalculator.compute(from: [], plan: nil, weekCount: 2)
+        #expect(volumes.allSatisfy { $0.plannedDistanceKm == 0 })
+        #expect(volumes.allSatisfy { $0.plannedElevationGainM == 0 })
+    }
+
+    @Test("Non-matching plan week dates produce zero planned")
+    func unmatchedWeekZeroPlanned() {
+        let futureStart = Date.now.adding(weeks: 10).startOfWeek
+        let plan = makePlan(weekStart: futureStart)
+
+        let volumes = WeeklyVolumeCalculator.compute(from: [], plan: plan, weekCount: 4)
+        #expect(volumes.allSatisfy { $0.plannedDistanceKm == 0 })
+    }
+
+    // MARK: - Grouping
+
     @Test("Runs grouped into correct weeks")
     func runsGroupedCorrectly() {
         let thisWeek = makeRun(date: .now, distanceKm: 10)

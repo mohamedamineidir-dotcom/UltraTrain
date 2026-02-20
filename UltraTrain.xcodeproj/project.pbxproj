@@ -430,6 +430,7 @@
 		CAFF8FDC12C0A0A8EAF91506 /* MockStravaAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF52EE3FC717006D1412885 /* MockStravaAuthService.swift */; };
 		CB9CA6443B7CFEF8FA42A2E7 /* GradientColorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFAAD18DFA4740544F756942 /* GradientColorHelper.swift */; };
 		CBC4F4954B5AA20B804515DA /* WidgetDataWriterFitnessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92030788010EEF0A5EACF665 /* WidgetDataWriterFitnessTests.swift */; };
+		CBD53DCD55DF822FBD60902F /* WeeklyDistanceChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DCEA18A386BF871BCCDA29 /* WeeklyDistanceChartView.swift */; };
 		CCB6AAA07CBAE6EF984A7E0D /* Logger+Watch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3355E868FE89C402FDC0F44D /* Logger+Watch.swift */; };
 		CD87A26B0CDE99A905370D59 /* ElevationSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA783E37979BB86E1C85BB1 /* ElevationSegment.swift */; };
 		CFEC1482322B302FEBF45E30 /* RunActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397BBCC3BDE62A3F5296BD1 /* RunActivityAttributes.swift */; };
@@ -565,6 +566,7 @@
 		FB6DEF38C4A6E89D92A768D1 /* WidgetPendingActionProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1F9E002DFD12E3A5B527F38 /* WidgetPendingActionProcessor.swift */; };
 		FC1F577072C4AABCB37AD3E8 /* TrainingPlanRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C503BBC3D7A5A67C8636504D /* TrainingPlanRepository.swift */; };
 		FCA320D8472A6F3416E2088B /* SessionMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A427C63C8438824DDE13BAE0 /* SessionMatcher.swift */; };
+		FCC6B663BD737C907EEBF9BC /* WeeklyElevationChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2ADC57A850F8B36EF48717 /* WeeklyElevationChartView.swift */; };
 		FDA560BDCCC059F5B62F19CF /* WatchMessageCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5E86B58A373F909B4DE6A5 /* WatchMessageCoder.swift */; };
 		FE174E47D563E309B2B64609 /* RunImportUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2862D903FC759C44AC2FCCD7 /* RunImportUseCase.swift */; };
 		FE294BC735D2F8EE2D68F06D /* NutritionAnalysisCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11B204D27092A7FC5A367D4 /* NutritionAnalysisCalculatorTests.swift */; };
@@ -694,6 +696,7 @@
 		1812FDB1D45CCB2B59F40CB9 /* SessionTypeBreakdownChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTypeBreakdownChart.swift; sourceTree = "<group>"; };
 		190491FA746DEA44532C5280 /* DateExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtensions.swift; sourceTree = "<group>"; };
 		1A79966C06228CD0519ED61E /* CheckpointTimestampResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckpointTimestampResolverTests.swift; sourceTree = "<group>"; };
+		1B2ADC57A850F8B36EF48717 /* WeeklyElevationChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyElevationChartView.swift; sourceTree = "<group>"; };
 		1B6FA0F980CC680B840C5321 /* NutritionEntrySwiftDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionEntrySwiftDataModel.swift; sourceTree = "<group>"; };
 		1C6FE1EB86F8E05A8FA48093 /* NutritionPlanGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionPlanGeneratorTests.swift; sourceTree = "<group>"; };
 		1CC0A1AAD75DCAE3D0336BE6 /* RunAnalysisViewModelExportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunAnalysisViewModelExportTests.swift; sourceTree = "<group>"; };
@@ -988,6 +991,7 @@
 		A3A508CE90A2BAF78ED7FAA1 /* RaceSwiftDataMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceSwiftDataMapper.swift; sourceTree = "<group>"; };
 		A3D5814ADFDE806878C4C1D0 /* StravaImportServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StravaImportServiceProtocol.swift; sourceTree = "<group>"; };
 		A427C63C8438824DDE13BAE0 /* SessionMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionMatcher.swift; sourceTree = "<group>"; };
+		A4DCEA18A386BF871BCCDA29 /* WeeklyDistanceChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyDistanceChartView.swift; sourceTree = "<group>"; };
 		A69C28F2C2B17529ABDC6F82 /* MockFinishEstimateRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFinishEstimateRepository.swift; sourceTree = "<group>"; };
 		A6DF66D3DAB88DA8AF52E56C /* MockStravaUploadQueueRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockStravaUploadQueueRepository.swift; sourceTree = "<group>"; };
 		A80BB5B3B6B2D87151F3D7CA /* RaceDaySegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceDaySegment.swift; sourceTree = "<group>"; };
@@ -2123,7 +2127,9 @@
 				ED95C5766CCC317FB2C92394 /* ProgressSummarySection.swift */,
 				792689F2724DFD9EB325C7BA /* RaceReadinessCard.swift */,
 				1812FDB1D45CCB2B59F40CB9 /* SessionTypeBreakdownChart.swift */,
+				A4DCEA18A386BF871BCCDA29 /* WeeklyDistanceChartView.swift */,
 				4AFC0FC88997AC78B23060AF /* WeeklyDurationChartView.swift */,
+				1B2ADC57A850F8B36EF48717 /* WeeklyElevationChartView.swift */,
 				777E7467743C43E061B67933 /* WeeklyLoadChartView.swift */,
 			);
 			path = Components;
@@ -3014,7 +3020,9 @@
 				F860DF3A2B2C49BF70926C70 /* WatchTrackPoint.swift in Sources */,
 				D651D39DE6983011FA0B6E72 /* WeekCardView.swift in Sources */,
 				8233BC1F97256C5B1FE2E642 /* WeekSkeletonBuilder.swift in Sources */,
+				CBD53DCD55DF822FBD60902F /* WeeklyDistanceChartView.swift in Sources */,
 				13EA5EFF915E7EE7229ADA57 /* WeeklyDurationChartView.swift in Sources */,
+				FCC6B663BD737C907EEBF9BC /* WeeklyElevationChartView.swift in Sources */,
 				64BDD0D31692C64089C326A3 /* WeeklyLoadChartView.swift in Sources */,
 				5BECD7331F46E26728BCDB8A /* WeeklyProgressRing.swift in Sources */,
 				3439AB12536874C47A0419D4 /* WeeklyVolumeCalculator.swift in Sources */,

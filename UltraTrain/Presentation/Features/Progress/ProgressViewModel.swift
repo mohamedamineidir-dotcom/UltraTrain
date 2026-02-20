@@ -64,11 +64,11 @@ final class ProgressViewModel {
 
             let runs = try await runRepository.getRuns(for: athlete.id)
             totalRuns = runs.count
-            weeklyVolumes = WeeklyVolumeCalculator.compute(from: runs)
             runTrendPoints = computeRunTrends(from: runs)
             personalRecords = computePersonalRecords(from: runs)
 
             let plan = try await planRepository.getActivePlan()
+            weeklyVolumes = WeeklyVolumeCalculator.compute(from: runs, plan: plan)
             if let plan {
                 planAdherence = computeAdherence(plan: plan)
                 weeklyAdherence = computeWeeklyAdherence(plan: plan)
@@ -169,6 +169,56 @@ final class ProgressViewModel {
 
     var currentPhase: TrainingPhase? {
         phaseBlocks.first(where: \.isCurrentPhase)?.phase
+    }
+
+    // MARK: - This Week Summary
+
+    var currentWeekVolume: WeeklyVolume? {
+        weeklyVolumes.last
+    }
+
+    var previousWeekVolume: WeeklyVolume? {
+        guard weeklyVolumes.count >= 2 else { return nil }
+        return weeklyVolumes[weeklyVolumes.count - 2]
+    }
+
+    var currentWeekDistanceFormatted: String {
+        guard let week = currentWeekVolume else { return "0" }
+        return String(format: "%.1f", week.distanceKm)
+    }
+
+    var currentWeekElevationFormatted: String {
+        guard let week = currentWeekVolume else { return "0" }
+        return String(format: "%.0f", week.elevationGainM)
+    }
+
+    var currentWeekDurationFormatted: String {
+        guard let duration = currentWeekVolume?.duration else { return "0h" }
+        let hours = Int(duration) / 3600
+        let minutes = (Int(duration) % 3600) / 60
+        if hours > 0 { return "\(hours)h\(String(format: "%02d", minutes))m" }
+        return "\(minutes)m"
+    }
+
+    var distanceTrend: TrendDirection {
+        computeTrend(current: currentWeekVolume?.distanceKm, previous: previousWeekVolume?.distanceKm)
+    }
+
+    var elevationTrend: TrendDirection {
+        computeTrend(current: currentWeekVolume?.elevationGainM, previous: previousWeekVolume?.elevationGainM)
+    }
+
+    var durationTrend: TrendDirection {
+        computeTrend(current: currentWeekVolume?.duration, previous: previousWeekVolume?.duration)
+    }
+
+    private func computeTrend(current: Double?, previous: Double?) -> TrendDirection {
+        guard let current, let previous, previous > 0 else {
+            return (current ?? 0) > 0 ? .up : .stable
+        }
+        if current > previous * 1.05 { return .up }
+        if current < previous * 0.95 { return .down }
+        return .stable
     }
 
     // MARK: - Private

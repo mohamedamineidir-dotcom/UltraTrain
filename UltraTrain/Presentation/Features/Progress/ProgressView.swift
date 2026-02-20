@@ -1,5 +1,4 @@
 import SwiftUI
-import Charts
 
 struct TrainingProgressView: View {
     @Environment(\.unitPreference) private var units
@@ -40,6 +39,7 @@ struct TrainingProgressView: View {
                         .padding(.top, Theme.Spacing.xl)
                 } else {
                     trainingLoadLink
+                    thisWeekSection
                     injuryRiskSection
                     phaseTimelineSection
                     fitnessSection
@@ -94,6 +94,36 @@ struct TrainingProgressView: View {
                     .accessibilityHidden(true)
             }
             .cardStyle()
+        }
+    }
+
+    // MARK: - This Week
+
+    private var thisWeekSection: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            Text("This Week")
+                .font(.headline)
+
+            HStack(spacing: Theme.Spacing.md) {
+                StatCard(
+                    title: "Distance",
+                    value: viewModel.currentWeekDistanceFormatted,
+                    unit: "km",
+                    trend: viewModel.distanceTrend
+                )
+                StatCard(
+                    title: "Elevation",
+                    value: viewModel.currentWeekElevationFormatted,
+                    unit: "m D+",
+                    trend: viewModel.elevationTrend
+                )
+                StatCard(
+                    title: "Duration",
+                    value: viewModel.currentWeekDurationFormatted,
+                    unit: "",
+                    trend: viewModel.durationTrend
+                )
+            }
         }
     }
 
@@ -159,47 +189,15 @@ struct TrainingProgressView: View {
     // MARK: - Volume Chart
 
     private var volumeChartSection: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("Weekly Distance")
-                .font(.headline)
-
-            Chart(viewModel.weeklyVolumes) { week in
-                BarMark(
-                    x: .value("Week", week.weekStartDate, unit: .weekOfYear),
-                    y: .value("Distance", UnitFormatter.distanceValue(week.distanceKm, unit: units))
-                )
-                .foregroundStyle(Theme.Colors.primary.gradient)
-                .cornerRadius(4)
-            }
-            .chartYAxisLabel(UnitFormatter.distanceLabel(units))
-            .frame(height: 180)
-        }
-        .cardStyle()
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Weekly distance chart. Total \(UnitFormatter.formatDistance(viewModel.totalDistanceKm, unit: units, decimals: 0)) over \(viewModel.weeklyVolumes.count) weeks.")
+        WeeklyDistanceChartView(weeklyVolumes: viewModel.weeklyVolumes)
+            .cardStyle()
     }
 
     // MARK: - Elevation Chart
 
     private var elevationChartSection: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("Weekly Elevation")
-                .font(.headline)
-
-            Chart(viewModel.weeklyVolumes) { week in
-                BarMark(
-                    x: .value("Week", week.weekStartDate, unit: .weekOfYear),
-                    y: .value("Elevation", UnitFormatter.elevationValue(week.elevationGainM, unit: units))
-                )
-                .foregroundStyle(Theme.Colors.success.gradient)
-                .cornerRadius(4)
-            }
-            .chartYAxisLabel(UnitFormatter.elevationLabel(units))
-            .frame(height: 180)
-        }
-        .cardStyle()
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Weekly elevation chart. Total \(UnitFormatter.formatElevation(viewModel.totalElevationGainM, unit: units)) of elevation gain.")
+        WeeklyElevationChartView(weeklyVolumes: viewModel.weeklyVolumes)
+            .cardStyle()
     }
 
     // MARK: - Duration Chart

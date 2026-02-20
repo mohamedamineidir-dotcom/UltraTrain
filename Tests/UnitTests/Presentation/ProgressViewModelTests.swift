@@ -547,6 +547,88 @@ struct ProgressViewModelTests {
 
     // MARK: - Session Type Stats
 
+    // MARK: - This Week Summary & Trends
+
+    @Test("Distance trend up when current exceeds previous by >5%")
+    @MainActor
+    func distanceTrendUp() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let runRepo = MockRunRepository()
+        runRepo.runs = [
+            makeRun(daysAgo: 0, distanceKm: 20),
+            makeRun(daysAgo: 7, distanceKm: 10)
+        ]
+
+        let vm = makeViewModel(runRepo: runRepo, athleteRepo: athleteRepo)
+        await vm.load()
+
+        #expect(vm.distanceTrend == .up)
+    }
+
+    @Test("Distance trend down when current less than previous by >5%")
+    @MainActor
+    func distanceTrendDown() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let runRepo = MockRunRepository()
+        runRepo.runs = [
+            makeRun(daysAgo: 0, distanceKm: 5),
+            makeRun(daysAgo: 7, distanceKm: 20)
+        ]
+
+        let vm = makeViewModel(runRepo: runRepo, athleteRepo: athleteRepo)
+        await vm.load()
+
+        #expect(vm.distanceTrend == .down)
+    }
+
+    @Test("Trends stable with no data")
+    @MainActor
+    func trendsStableNoData() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+
+        let vm = makeViewModel(athleteRepo: athleteRepo)
+        await vm.load()
+
+        #expect(vm.distanceTrend == .stable)
+        #expect(vm.elevationTrend == .stable)
+        #expect(vm.durationTrend == .stable)
+    }
+
+    @Test("Current week duration formatted correctly")
+    @MainActor
+    func currentWeekDurationFormat() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let runRepo = MockRunRepository()
+        runRepo.runs = [makeRun(daysAgo: 0, distanceKm: 10)] // 3600s duration
+
+        let vm = makeViewModel(runRepo: runRepo, athleteRepo: athleteRepo)
+        await vm.load()
+
+        #expect(vm.currentWeekDurationFormatted == "1h00m")
+    }
+
+    @Test("Weekly volumes include planned data when plan exists")
+    @MainActor
+    func weeklyVolumesIncludePlanned() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let planRepo = MockTrainingPlanRepository()
+        planRepo.activePlan = makePlan(completedCount: 2, totalCount: 5)
+
+        let vm = makeViewModel(athleteRepo: athleteRepo, planRepo: planRepo)
+        await vm.load()
+
+        let currentWeek = vm.weeklyVolumes.last!
+        #expect(currentWeek.plannedDistanceKm == 40)
+        #expect(currentWeek.plannedElevationGainM == 800)
+    }
+
+    // MARK: - Session Type Stats
+
     @Test("Load computes session type stats from plan")
     @MainActor
     func sessionTypeStats() async {
