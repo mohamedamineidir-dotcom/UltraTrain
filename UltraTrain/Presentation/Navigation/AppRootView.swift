@@ -7,6 +7,7 @@ struct AppRootView: View {
     @State private var isUnlocked = false
     @State private var needsBiometricLock = false
     @State private var unitPreference: UnitPreference = .metric
+    @State private var lastAutoImportDate: Date?
     private let athleteRepository: any AthleteRepository
     private let raceRepository: any RaceRepository
     private let planRepository: any TrainingPlanRepository
@@ -174,12 +175,14 @@ struct AppRootView: View {
             await checkOnboardingStatus()
             await loadUnitPreference()
             await widgetDataWriter.writeAll()
+            await performAutoImportIfNeeded()
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
                 Task {
                     await pendingActionProcessor?.processPendingActions()
                     await loadUnitPreference()
+                    await performAutoImportIfNeeded()
                 }
             }
             if newPhase == .background && needsBiometricLock {
@@ -206,6 +209,18 @@ struct AppRootView: View {
             Logger.app.error("Failed to check onboarding status: \(error)")
             hasCompletedOnboarding = false
         }
+    }
+
+    private func performAutoImportIfNeeded() async {
+        guard let importService = healthKitImportService else { return }
+        let importer = BackgroundAutoImporter(
+            healthKitService: healthKitService,
+            appSettingsRepository: appSettingsRepository,
+            athleteRepository: athleteRepository,
+            importService: importService
+        )
+        let check = await importer.importIfNeeded(lastImportDate: lastAutoImportDate)
+        lastAutoImportDate = check.importDate
     }
 
     private func loadUnitPreference() async {
