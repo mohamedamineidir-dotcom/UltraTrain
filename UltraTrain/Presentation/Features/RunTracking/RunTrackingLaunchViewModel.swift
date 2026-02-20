@@ -37,6 +37,7 @@ final class RunTrackingLaunchViewModel {
     var smartRemindersEnabled = false
     var activeGear: [GearItem] = []
     var selectedGearIds: Set<UUID> = []
+    var saveToHealthEnabled = false
 
     // MARK: - Init
 
@@ -92,6 +93,7 @@ final class RunTrackingLaunchViewModel {
                 fuelIntervalSeconds = settings.fuelIntervalSeconds
                 electrolyteIntervalSeconds = settings.electrolyteIntervalSeconds
                 smartRemindersEnabled = settings.smartRemindersEnabled
+                saveToHealthEnabled = settings.saveToHealthEnabled
             }
 
             activeGear = try await gearRepository.getActiveGear(ofType: nil)

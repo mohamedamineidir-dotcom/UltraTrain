@@ -30,6 +30,7 @@ final class SettingsViewModel {
     var didClearData = false
     var healthKitRestingHR: Int?
     var healthKitMaxHR: Int?
+    var healthKitBodyWeight: Double?
     var isRequestingHealthKit = false
     var showHealthKitExplanation = false
     var isExporting = false
@@ -120,7 +121,8 @@ final class SettingsViewModel {
                     hydrationIntervalSeconds: 1200,
                     fuelIntervalSeconds: 2700,
                     electrolyteIntervalSeconds: 0,
-                    smartRemindersEnabled: false
+                    smartRemindersEnabled: false,
+                    saveToHealthEnabled: false
                 )
                 try await appSettingsRepository.saveSettings(defaults)
                 appSettings = defaults
@@ -328,6 +330,7 @@ final class SettingsViewModel {
         do {
             healthKitRestingHR = try await healthKitService.fetchRestingHeartRate()
             healthKitMaxHR = try await healthKitService.fetchMaxHeartRate()
+            healthKitBodyWeight = try await healthKitService.fetchBodyWeight()
         } catch {
             Logger.settings.error("Failed to fetch HealthKit data: \(error)")
         }
@@ -345,6 +348,10 @@ final class SettingsViewModel {
             athlete.maxHeartRate = mhr
             changed = true
         }
+        if let weight = healthKitBodyWeight {
+            athlete.weightKg = weight
+            changed = true
+        }
 
         guard changed else { return }
         do {
@@ -353,6 +360,18 @@ final class SettingsViewModel {
         } catch {
             self.error = error.localizedDescription
             Logger.settings.error("Failed to update athlete with HealthKit data: \(error)")
+        }
+    }
+
+    func updateSaveToHealth(_ enabled: Bool) async {
+        guard var settings = appSettings else { return }
+        settings.saveToHealthEnabled = enabled
+        do {
+            try await appSettingsRepository.updateSettings(settings)
+            appSettings = settings
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update save-to-health setting: \(error)")
         }
     }
 

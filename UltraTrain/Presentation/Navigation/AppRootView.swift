@@ -148,6 +148,7 @@ struct AppRootView: View {
                     OnboardingView(
                         athleteRepository: athleteRepository,
                         raceRepository: raceRepository,
+                        healthKitService: healthKitService,
                         onComplete: { hasCompletedOnboarding = true }
                     )
                 }

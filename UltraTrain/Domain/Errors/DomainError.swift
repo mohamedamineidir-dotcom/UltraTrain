@@ -13,6 +13,7 @@ enum DomainError: Error, Equatable, Sendable {
     case persistenceError(message: String)
     case locationUnavailable
     case healthKitUnavailable
+    case healthKitWriteDenied
     case settingsNotFound
     case exportFailed(reason: String)
     case importFailed(reason: String)
@@ -55,6 +56,8 @@ extension DomainError: LocalizedError {
             return "Location services are unavailable."
         case .healthKitUnavailable:
             return "HealthKit is not available on this device."
+        case .healthKitWriteDenied:
+            return "Cannot save workouts to Apple Health. Please allow write access in the Health app."
         case .settingsNotFound:
             return "App settings not found."
         case .exportFailed(let reason):

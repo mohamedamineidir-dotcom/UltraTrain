@@ -35,9 +35,10 @@ final class HealthKitService: @preconcurrency HealthKitServiceProtocol, @uncheck
             throw DomainError.healthKitUnavailable
         }
 
-        let readTypes = readTypes()
+        let readTypes = HealthKitQueryHelper.readTypes()
+        let writeTypes = HealthKitQueryHelper.writeTypes()
 
-        try await healthStore.requestAuthorization(toShare: [], read: readTypes)
+        try await healthStore.requestAuthorization(toShare: writeTypes, read: readTypes)
         checkAuthorizationStatus()
         Logger.healthKit.info("HealthKit authorization requested")
     }
@@ -134,6 +135,31 @@ final class HealthKitService: @preconcurrency HealthKitServiceProtocol, @uncheck
         }
     }
 
+    // MARK: - Body Weight
+
+    func fetchBodyWeight() async throws -> Double? {
+        guard let healthStore else {
+            throw DomainError.healthKitUnavailable
+        }
+        return try await HealthKitQueryHelper.fetchBodyWeight(store: healthStore)
+    }
+
+    // MARK: - Save Workout
+
+    func saveWorkout(run: CompletedRun) async throws {
+        guard let healthStore else {
+            throw DomainError.healthKitUnavailable
+        }
+
+        let workoutType = HKWorkoutType.workoutType()
+        let status = healthStore.authorizationStatus(for: workoutType)
+        guard status == .sharingAuthorized else {
+            throw DomainError.healthKitWriteDenied
+        }
+
+        try await HealthKitQueryHelper.saveWorkout(store: healthStore, run: run)
+    }
+
     // MARK: - Workout Import
 
     func fetchRunningWorkouts(
@@ -158,7 +184,7 @@ final class HealthKitService: @preconcurrency HealthKitServiceProtocol, @uncheck
             key: HKSampleSortIdentifierStartDate, ascending: false
         )
 
-        return try await withCheckedThrowingContinuation { continuation in
+        let hkWorkouts: [HKWorkout] = try await withCheckedThrowingContinuation { continuation in
             let query = HKSampleQuery(
                 sampleType: workoutType,
                 predicate: predicate,
@@ -169,36 +195,29 @@ final class HealthKitService: @preconcurrency HealthKitServiceProtocol, @uncheck
                     continuation.resume(throwing: error)
                     return
                 }
-
-                let workouts = (samples as? [HKWorkout] ?? []).map { workout in
-                    self.mapWorkout(workout)
-                }
-                continuation.resume(returning: workouts)
+                continuation.resume(returning: samples as? [HKWorkout] ?? [])
             }
             healthStore.execute(query)
         }
+
+        var results: [HealthKitWorkout] = []
+        for workout in hkWorkouts {
+            let mapped = await mapWorkout(workout)
+            results.append(mapped)
+        }
+        return results
     }
 
     // MARK: - Private
 
-    private func readTypes() -> Set<HKObjectType> {
-        var types: Set<HKObjectType> = []
-        types.insert(HKQuantityType(.heartRate))
-        types.insert(HKQuantityType(.restingHeartRate))
-        types.insert(HKQuantityType(.distanceWalkingRunning))
-        types.insert(HKQuantityType(.activeEnergyBurned))
-        types.insert(HKWorkoutType.workoutType())
-        return types
-    }
-
     private func checkAuthorizationStatus() {
-        guard healthStore != nil else {
+        guard let healthStore else {
             authorizationStatus = .unavailable
             return
         }
 
         let heartRateType = HKQuantityType(.heartRate)
-        let status = healthStore!.authorizationStatus(for: heartRateType)
+        let status = healthStore.authorizationStatus(for: heartRateType)
 
         authorizationStatus = switch status {
         case .notDetermined: .notDetermined
@@ -261,7 +280,11 @@ final class HealthKitService: @preconcurrency HealthKitServiceProtocol, @uncheck
         }
     }
 
-    private nonisolated func mapWorkout(_ workout: HKWorkout) -> HealthKitWorkout {
+    private func mapWorkout(_ workout: HKWorkout) async -> HealthKitWorkout {
+        guard let healthStore else {
+            return makeBasicWorkout(workout)
+        }
+
         let distanceKm: Double
         if let distance = workout.totalDistance {
             distanceKm = distance.doubleValue(for: .meterUnit(with: .kilo))
@@ -269,7 +292,46 @@ final class HealthKitService: @preconcurrency HealthKitServiceProtocol, @uncheck
             distanceKm = 0
         }
 
+        let elevationGainM = HealthKitQueryHelper.fetchElevationGain(
+            store: healthStore, workout: workout
+        )
+
+        var averageHR: Int?
+        var maxHR: Int?
+        do {
+            let hrStats = try await HealthKitQueryHelper.fetchHeartRateStats(
+                store: healthStore,
+                startDate: workout.startDate,
+                endDate: workout.endDate
+            )
+            averageHR = hrStats.average
+            maxHR = hrStats.max
+        } catch {
+            Logger.healthKit.error("Failed to fetch HR stats for workout: \(error)")
+        }
+
         let source = workout.sourceRevision.source.name
+
+        return HealthKitWorkout(
+            id: UUID(),
+            startDate: workout.startDate,
+            endDate: workout.endDate,
+            distanceKm: distanceKm,
+            elevationGainM: elevationGainM,
+            duration: workout.duration,
+            averageHeartRate: averageHR,
+            maxHeartRate: maxHR,
+            source: source
+        )
+    }
+
+    private nonisolated func makeBasicWorkout(_ workout: HKWorkout) -> HealthKitWorkout {
+        let distanceKm: Double
+        if let distance = workout.totalDistance {
+            distanceKm = distance.doubleValue(for: .meterUnit(with: .kilo))
+        } else {
+            distanceKm = 0
+        }
 
         return HealthKitWorkout(
             id: UUID(),
@@ -280,7 +342,7 @@ final class HealthKitService: @preconcurrency HealthKitServiceProtocol, @uncheck
             duration: workout.duration,
             averageHeartRate: nil,
             maxHeartRate: nil,
-            source: source
+            source: workout.sourceRevision.source.name
         )
     }
 }

@@ -32,4 +32,6 @@ protocol HealthKitServiceProtocol: AnyObject, Sendable {
     func fetchRestingHeartRate() async throws -> Int?
     func fetchMaxHeartRate() async throws -> Int?
     func fetchRunningWorkouts(from startDate: Date, to endDate: Date) async throws -> [HealthKitWorkout]
+    func saveWorkout(run: CompletedRun) async throws
+    func fetchBodyWeight() async throws -> Double?
 }

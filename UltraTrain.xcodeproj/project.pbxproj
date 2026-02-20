@@ -13,6 +13,7 @@
 		00D52E54EC2E8FD88052885B /* MapStyleResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86752A042DEFD5B6E85D2C32 /* MapStyleResolver.swift */; };
 		02254FF20CA61ECF2275D228 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D6C6B912DABCC6F887B9734 /* Assets.xcassets */; };
 		02C5CE0A3B1968AEB9DD57DC /* RunImportUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF02E4091BB04AC9E655FD97 /* RunImportUseCaseTests.swift */; };
+		02D0059CE14726D7CA6DCD32 /* HealthKitQueryHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C18CB88A3B58229A130B78A7 /* HealthKitQueryHelper.swift */; };
 		02FB8DD5BD48320A9026F222 /* AdaptiveReminderAdjuster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 899BD6DE3C5C18477A8C586C /* AdaptiveReminderAdjuster.swift */; };
 		0324F83BCD8D8EABA606EDE3 /* UltraTrainWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF20DF8ABC1A15555D32DF71 /* UltraTrainWatchApp.swift */; };
 		0415F183BA2288A876B6214B /* MockBiometricAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023C46F9936920A22944F7DD /* MockBiometricAuthService.swift */; };
@@ -973,6 +974,7 @@
 		C062CE70759FEC59AE56C420 /* AppSettingsSwiftDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsSwiftDataModel.swift; sourceTree = "<group>"; };
 		C09820BC007EC66C971849EA /* WatchRunImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchRunImportService.swift; sourceTree = "<group>"; };
 		C1596075498103C092D76FC5 /* MockRunImportUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRunImportUseCase.swift; sourceTree = "<group>"; };
+		C18CB88A3B58229A130B78A7 /* HealthKitQueryHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitQueryHelper.swift; sourceTree = "<group>"; };
 		C1C4B2CFE15003FFB969BFC3 /* MapRecenterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapRecenterButton.swift; sourceTree = "<group>"; };
 		C2292F7573DDA5CF6461EA07 /* RunMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunMapView.swift; sourceTree = "<group>"; };
 		C29010B7C949D4D3C2B86945 /* MockCalculateFitnessUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCalculateFitnessUseCase.swift; sourceTree = "<group>"; };
@@ -1535,6 +1537,7 @@
 				42F309856820F792FE7452E9 /* ElevationService.swift */,
 				26AEBE3D9405411186D20156 /* ExportService.swift */,
 				6E4535E0BB060C0EA83A4AF3 /* HapticService.swift */,
+				C18CB88A3B58229A130B78A7 /* HealthKitQueryHelper.swift */,
 				171BC54BD2430AA946B61CE5 /* HealthKitService.swift */,
 				8ACA3A19AF725B9D6D7577C1 /* LiveActivityService.swift */,
 				2B4C55BCB294F96AC1D20598 /* LocationService.swift */,
@@ -2653,6 +2656,7 @@
 				CB9CA6443B7CFEF8FA42A2E7 /* GradientColorHelper.swift in Sources */,
 				5515F32CEBE94EDFB630E8DC /* GutTrainingBadge.swift in Sources */,
 				9DAE26298EDD75EC29D792AF /* HapticService.swift in Sources */,
+				02D0059CE14726D7CA6DCD32 /* HealthKitQueryHelper.swift in Sources */,
 				6B43758CEF0C2C27AD8BF35C /* HealthKitService.swift in Sources */,
 				2B87B3593819B1C8E0500A16 /* HealthKitServiceProtocol.swift in Sources */,
 				BD9915DCFE61C9881EF74488 /* HeartRateTrendChartView.swift in Sources */,

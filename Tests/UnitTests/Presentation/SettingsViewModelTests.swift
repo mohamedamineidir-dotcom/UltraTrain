@@ -36,7 +36,8 @@ struct SettingsViewModelTests {
             hydrationIntervalSeconds: 1200,
             fuelIntervalSeconds: 2700,
             electrolyteIntervalSeconds: 0,
-            smartRemindersEnabled: false
+            smartRemindersEnabled: false,
+            saveToHealthEnabled: false
         )
     }
 
@@ -423,6 +424,64 @@ struct SettingsViewModelTests {
 
         #expect(vm.appSettings?.smartRemindersEnabled == true)
         #expect(settingsRepo.savedSettings?.smartRemindersEnabled == true)
+    }
+
+    // MARK: - HealthKit Body Weight Tests
+
+    @Test("Fetch HealthKit data includes body weight")
+    @MainActor
+    func fetchHealthKitDataIncludesBodyWeight() async {
+        let hkService = MockHealthKitService()
+        hkService.restingHR = 50
+        hkService.maxHR = 185
+        hkService.bodyWeight = 72.5
+
+        let vm = makeViewModel(healthKitService: hkService)
+        await vm.fetchHealthKitData()
+
+        #expect(vm.healthKitBodyWeight == 72.5)
+        #expect(vm.healthKitRestingHR == 50)
+    }
+
+    @Test("Update athlete with HealthKit data includes body weight")
+    @MainActor
+    func updateAthleteWithHealthKitDataIncludesWeight() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let settingsRepo = MockAppSettingsRepository()
+        settingsRepo.savedSettings = makeSettings()
+        let hkService = MockHealthKitService()
+        hkService.bodyWeight = 68.0
+
+        let vm = makeViewModel(
+            athleteRepo: athleteRepo,
+            settingsRepo: settingsRepo,
+            healthKitService: hkService
+        )
+        await vm.load()
+        await vm.fetchHealthKitData()
+        await vm.updateAthleteWithHealthKitData()
+
+        #expect(vm.athlete?.weightKg == 68.0)
+        #expect(athleteRepo.savedAthlete?.weightKg == 68.0)
+    }
+
+    @Test("Toggle save-to-health setting")
+    @MainActor
+    func toggleSaveToHealth() async {
+        let settingsRepo = MockAppSettingsRepository()
+        settingsRepo.savedSettings = makeSettings()
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+
+        let vm = makeViewModel(athleteRepo: athleteRepo, settingsRepo: settingsRepo)
+        await vm.load()
+        #expect(vm.appSettings?.saveToHealthEnabled == false)
+
+        await vm.updateSaveToHealth(true)
+
+        #expect(vm.appSettings?.saveToHealthEnabled == true)
+        #expect(settingsRepo.savedSettings?.saveToHealthEnabled == true)
     }
 
     @Test("Update nutrition interval handles error")

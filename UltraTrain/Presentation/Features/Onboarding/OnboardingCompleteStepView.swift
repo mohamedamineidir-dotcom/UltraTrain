@@ -1,9 +1,13 @@
 import SwiftUI
+import os
 
 struct OnboardingCompleteStepView: View {
     let viewModel: OnboardingViewModel
     var onComplete: () -> Void
+    let healthKitService: (any HealthKitServiceProtocol)?
     @ScaledMetric(relativeTo: .largeTitle) private var checkmarkSize: CGFloat = 60
+    @State private var isRequestingHealthKit = false
+    @State private var healthKitConnected = false
 
     var body: some View {
         ScrollView {
@@ -19,7 +23,7 @@ struct OnboardingCompleteStepView: View {
                     .font(.title.bold())
 
                 summarySection
-                healthKitPlaceholder
+                healthKitCard
 
                 if let error = viewModel.error {
                     ErrorBannerView(message: error) {
@@ -60,23 +64,62 @@ struct OnboardingCompleteStepView: View {
         .cardStyle()
     }
 
-    private var healthKitPlaceholder: some View {
-        VStack(spacing: Theme.Spacing.sm) {
-            Image(systemName: "heart.circle")
-                .font(.title)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
-                .accessibilityHidden(true)
-            Text("HealthKit Integration")
-                .font(.headline)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
-            Text("Coming soon — auto-import heart rate and activity data.")
-                .font(.caption)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
-                .multilineTextAlignment(.center)
+    @ViewBuilder
+    private var healthKitCard: some View {
+        if let service = healthKitService, service.authorizationStatus != .unavailable {
+            VStack(spacing: Theme.Spacing.sm) {
+                if healthKitConnected {
+                    Image(systemName: "heart.circle.fill")
+                        .font(.title)
+                        .foregroundStyle(Theme.Colors.success)
+                        .accessibilityHidden(true)
+                    Text("Apple Health Connected")
+                        .font(.headline)
+                        .foregroundStyle(Theme.Colors.success)
+                    Text("Heart rate, body weight, and workouts will sync automatically.")
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                        .multilineTextAlignment(.center)
+                } else {
+                    Image(systemName: "heart.circle")
+                        .font(.title)
+                        .foregroundStyle(Theme.Colors.primary)
+                        .accessibilityHidden(true)
+                    Text("Connect Apple Health")
+                        .font(.headline)
+                    Text("Sync heart rate, body weight, and running workouts.")
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                        .multilineTextAlignment(.center)
+                    Button {
+                        Task { await connectHealthKit() }
+                    } label: {
+                        if isRequestingHealthKit {
+                            ProgressView()
+                        } else {
+                            Text("Connect")
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.small)
+                    .disabled(isRequestingHealthKit)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .cardStyle()
         }
-        .frame(maxWidth: .infinity)
-        .cardStyle()
-        .opacity(0.6)
+    }
+
+    private func connectHealthKit() async {
+        guard let service = healthKitService else { return }
+        isRequestingHealthKit = true
+        do {
+            try await service.requestAuthorization()
+            healthKitConnected = true
+        } catch {
+            Logger.healthKit.error("HealthKit onboarding auth failed: \(error)")
+        }
+        isRequestingHealthKit = false
     }
 
     private var getStartedButton: some View {

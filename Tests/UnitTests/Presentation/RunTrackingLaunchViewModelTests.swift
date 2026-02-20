@@ -211,7 +211,8 @@ struct RunTrackingLaunchViewModelTests {
             hydrationIntervalSeconds: 900,
             fuelIntervalSeconds: 1800,
             electrolyteIntervalSeconds: 3600,
-            smartRemindersEnabled: true
+            smartRemindersEnabled: true,
+            saveToHealthEnabled: false
         )
 
         let vm = makeViewModel(athleteRepo: athleteRepo, settingsRepo: settingsRepo)
@@ -289,5 +290,34 @@ struct RunTrackingLaunchViewModelTests {
         #expect(vm.fuelIntervalSeconds == 2700)
         #expect(vm.electrolyteIntervalSeconds == 0)
         #expect(vm.smartRemindersEnabled == false)
+    }
+
+    @Test("Load fetches saveToHealthEnabled from settings")
+    @MainActor
+    func loadFetchesSaveToHealthEnabled() async {
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let settingsRepo = MockAppSettingsRepository()
+        settingsRepo.savedSettings = AppSettings(
+            id: UUID(),
+            trainingRemindersEnabled: true,
+            nutritionRemindersEnabled: true,
+            autoPauseEnabled: true,
+            nutritionAlertSoundEnabled: true,
+            stravaAutoUploadEnabled: false,
+            stravaConnected: false,
+            raceCountdownEnabled: true,
+            biometricLockEnabled: false,
+            hydrationIntervalSeconds: 1200,
+            fuelIntervalSeconds: 2700,
+            electrolyteIntervalSeconds: 0,
+            smartRemindersEnabled: false,
+            saveToHealthEnabled: true
+        )
+
+        let vm = makeViewModel(athleteRepo: athleteRepo, settingsRepo: settingsRepo)
+        await vm.load()
+
+        #expect(vm.saveToHealthEnabled == true)
     }
 }

@@ -139,6 +139,7 @@ struct RunTrackingLaunchView: View {
                             electrolyteIntervalSeconds: viewModel.electrolyteIntervalSeconds,
                             smartRemindersEnabled: viewModel.smartRemindersEnabled,
                             stravaAutoUploadEnabled: viewModel.stravaAutoUploadEnabled,
+                            saveToHealthEnabled: viewModel.saveToHealthEnabled,
                             raceId: viewModel.raceId,
                             selectedGearIds: Array(viewModel.selectedGearIds)
                         ),

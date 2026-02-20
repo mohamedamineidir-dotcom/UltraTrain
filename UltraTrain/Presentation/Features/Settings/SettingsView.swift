@@ -274,10 +274,21 @@ struct SettingsView: View {
                 if let mhr = viewModel.healthKitMaxHR {
                     LabeledContent("Max HR (30d)", value: "\(mhr) bpm")
                 }
-                if viewModel.healthKitRestingHR != nil || viewModel.healthKitMaxHR != nil {
+                if let weight = viewModel.healthKitBodyWeight {
+                    LabeledContent("Body Weight", value: bodyWeightFormatted(weight))
+                }
+                if viewModel.healthKitRestingHR != nil || viewModel.healthKitMaxHR != nil || viewModel.healthKitBodyWeight != nil {
                     Button("Update Profile with Health Data") {
                         Task { await viewModel.updateAthleteWithHealthKitData() }
                     }
+                }
+                if let settings = viewModel.appSettings {
+                    Toggle("Save Runs to Apple Health", isOn: Binding(
+                        get: { settings.saveToHealthEnabled },
+                        set: { newValue in
+                            Task { await viewModel.updateSaveToHealth(newValue) }
+                        }
+                    ))
                 }
                 Button("Refresh Health Data") {
                     Task { await viewModel.fetchHealthKitData() }
@@ -301,8 +312,14 @@ struct SettingsView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("UltraTrain will read your heart rate, resting heart rate, and running workouts from Apple Health to enhance your training insights.")
+            Text("UltraTrain will read your heart rate, body weight, and running workouts from Apple Health, and can save completed runs back to Health.")
         }
+    }
+
+    @Environment(\.unitPreference) private var units
+
+    private func bodyWeightFormatted(_ kg: Double) -> String {
+        UnitFormatter.formatWeight(kg, unit: units)
     }
 
     private var healthKitStatusDescription: String {

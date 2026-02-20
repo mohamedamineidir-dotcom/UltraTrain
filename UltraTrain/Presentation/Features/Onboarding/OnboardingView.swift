@@ -3,16 +3,19 @@ import SwiftUI
 struct OnboardingView: View {
     @State private var viewModel: OnboardingViewModel
     var onComplete: () -> Void
+    private let healthKitService: (any HealthKitServiceProtocol)?
 
     init(
         athleteRepository: any AthleteRepository,
         raceRepository: any RaceRepository,
+        healthKitService: (any HealthKitServiceProtocol)? = nil,
         onComplete: @escaping () -> Void
     ) {
         _viewModel = State(initialValue: OnboardingViewModel(
             athleteRepository: athleteRepository,
             raceRepository: raceRepository
         ))
+        self.healthKitService = healthKitService
         self.onComplete = onComplete
     }
 
@@ -35,7 +38,8 @@ struct OnboardingView: View {
                     case 4: RaceGoalStepView(viewModel: viewModel)
                     case 5: OnboardingCompleteStepView(
                         viewModel: viewModel,
-                        onComplete: onComplete
+                        onComplete: onComplete,
+                        healthKitService: healthKitService
                     )
                     default: EmptyView()
                     }

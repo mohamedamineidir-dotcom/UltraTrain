@@ -14,4 +14,5 @@ struct AppSettings: Identifiable, Equatable, Sendable {
     var fuelIntervalSeconds: TimeInterval
     var electrolyteIntervalSeconds: TimeInterval
     var smartRemindersEnabled: Bool
+    var saveToHealthEnabled: Bool
 }

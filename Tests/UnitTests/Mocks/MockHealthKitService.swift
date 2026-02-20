@@ -11,6 +11,9 @@ final class MockHealthKitService: HealthKitServiceProtocol, @unchecked Sendable 
     var maxHR: Int?
     var workouts: [HealthKitWorkout] = []
     var heartRateReadings: [HealthKitHeartRateReading] = []
+    var bodyWeight: Double?
+    var saveWorkoutCalled = false
+    var savedRun: CompletedRun?
 
     func requestAuthorization() async throws {
         requestAuthorizationCalled = true
@@ -48,5 +51,16 @@ final class MockHealthKitService: HealthKitServiceProtocol, @unchecked Sendable 
     ) async throws -> [HealthKitWorkout] {
         if shouldThrow { throw DomainError.healthKitUnavailable }
         return workouts
+    }
+
+    func saveWorkout(run: CompletedRun) async throws {
+        if shouldThrow { throw DomainError.healthKitWriteDenied }
+        saveWorkoutCalled = true
+        savedRun = run
+    }
+
+    func fetchBodyWeight() async throws -> Double? {
+        if shouldThrow { throw DomainError.healthKitUnavailable }
+        return bodyWeight
     }
 }

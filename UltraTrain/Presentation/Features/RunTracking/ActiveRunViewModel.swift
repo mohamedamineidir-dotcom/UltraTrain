@@ -42,6 +42,7 @@ final class ActiveRunViewModel {
     let smartRemindersEnabled: Bool
     let raceId: UUID?
     let stravaAutoUploadEnabled: Bool
+    let saveToHealthEnabled: Bool
     let selectedGearIds: [UUID]
 
     // MARK: - State
@@ -106,6 +107,7 @@ final class ActiveRunViewModel {
         electrolyteIntervalSeconds: TimeInterval = 0,
         smartRemindersEnabled: Bool = false,
         stravaAutoUploadEnabled: Bool = false,
+        saveToHealthEnabled: Bool = false,
         raceId: UUID?,
         selectedGearIds: [UUID] = []
     ) {
@@ -135,6 +137,7 @@ final class ActiveRunViewModel {
         self.electrolyteIntervalSeconds = electrolyteIntervalSeconds
         self.smartRemindersEnabled = smartRemindersEnabled
         self.stravaAutoUploadEnabled = stravaAutoUploadEnabled
+        self.saveToHealthEnabled = saveToHealthEnabled
         self.raceId = raceId
         self.selectedGearIds = selectedGearIds
     }
@@ -263,6 +266,7 @@ final class ActiveRunViewModel {
             Logger.tracking.info("Run saved: \(run.id)")
             await widgetDataWriter.writeAll()
             autoUploadToStrava(run)
+            await saveWorkoutToHealth(run)
         } catch {
             hapticService.playError()
             self.error = error.localizedDescription
@@ -342,6 +346,18 @@ final class ActiveRunViewModel {
                 self?.stravaUploadStatus = .failed(reason: error.localizedDescription)
                 Logger.strava.error("Auto-upload to Strava failed: \(error)")
             }
+        }
+    }
+
+    // MARK: - HealthKit Save
+
+    private func saveWorkoutToHealth(_ run: CompletedRun) async {
+        guard saveToHealthEnabled else { return }
+        do {
+            try await healthKitService.saveWorkout(run: run)
+            Logger.healthKit.info("Workout saved to Apple Health for run \(run.id)")
+        } catch {
+            Logger.healthKit.error("Failed to save workout to Apple Health: \(error)")
         }
     }
 
