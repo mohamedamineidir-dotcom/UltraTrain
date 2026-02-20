@@ -7,6 +7,7 @@ struct RunHistoryView: View {
     @State private var showingDocumentPicker = false
     @State private var importFileURL: URL?
     @State private var showingStravaImport = false
+    @State private var showingFilterSheet = false
     private let runRepository: any RunRepository
     private let planRepository: any TrainingPlanRepository
     private let athleteRepository: any AthleteRepository
@@ -18,6 +19,7 @@ struct RunHistoryView: View {
     private let stravaImportService: (any StravaImportServiceProtocol)?
     private let stravaConnected: Bool
     private let finishEstimateRepository: any FinishEstimateRepository
+    private let gearRepository: (any GearRepository)?
 
     init(
         runRepository: any RunRepository,
@@ -30,9 +32,14 @@ struct RunHistoryView: View {
         stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)? = nil,
         stravaImportService: (any StravaImportServiceProtocol)? = nil,
         stravaConnected: Bool = false,
-        finishEstimateRepository: any FinishEstimateRepository
+        finishEstimateRepository: any FinishEstimateRepository,
+        gearRepository: (any GearRepository)? = nil
     ) {
-        _viewModel = State(initialValue: RunHistoryViewModel(runRepository: runRepository))
+        _viewModel = State(initialValue: RunHistoryViewModel(
+            runRepository: runRepository,
+            planRepository: planRepository,
+            gearRepository: gearRepository
+        ))
         self.runRepository = runRepository
         self.planRepository = planRepository
         self.athleteRepository = athleteRepository
@@ -44,6 +51,7 @@ struct RunHistoryView: View {
         self.stravaImportService = stravaImportService
         self.stravaConnected = stravaConnected
         self.finishEstimateRepository = finishEstimateRepository
+        self.gearRepository = gearRepository
     }
 
     var body: some View {
@@ -63,7 +71,14 @@ struct RunHistoryView: View {
         .searchable(text: $viewModel.searchText, prompt: "Search notes")
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
-                sortMenu
+                HStack(spacing: Theme.Spacing.sm) {
+                    sortMenu
+                    RunHistoryFilterBadge(
+                        activeCount: viewModel.activeFilterCount
+                    ) {
+                        showingFilterSheet = true
+                    }
+                }
             }
             ToolbarItem(placement: .topBarTrailing) {
                 importMenu
@@ -98,6 +113,13 @@ struct RunHistoryView: View {
                     Task { await viewModel.load() }
                 }
             }
+        }
+        .sheet(isPresented: $showingFilterSheet) {
+            RunHistoryFilterSheet(
+                filter: $viewModel.advancedFilter,
+                availableSessionTypes: viewModel.availableSessionTypes,
+                availableGear: viewModel.availableGear
+            )
         }
         .task { await viewModel.load() }
     }

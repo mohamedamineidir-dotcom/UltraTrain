@@ -289,7 +289,8 @@ struct RunTrackingLaunchView: View {
                 stravaUploadQueueService: stravaUploadQueueService,
                 stravaImportService: stravaImportService,
                 stravaConnected: stravaAuthService.isConnected(),
-                finishEstimateRepository: finishEstimateRepository
+                finishEstimateRepository: finishEstimateRepository,
+                gearRepository: gearRepository
             )
         } label: {
             HStack {
