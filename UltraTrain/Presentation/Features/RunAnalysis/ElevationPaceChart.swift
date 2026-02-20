@@ -8,6 +8,8 @@ struct ElevationPaceChart: View {
     let splits: [Split]
     var checkpointDistances: [(name: String, distanceKm: Double)] = []
 
+    @State private var selectedDistance: Double?
+
     private var overlayData: (
         elevation: [ElevationPaceOverlayCalculator.OverlayDataPoint],
         pace: [ElevationPaceOverlayCalculator.PaceOverlayPoint]
@@ -50,6 +52,7 @@ struct ElevationPaceChart: View {
             elevationMarks
             paceMarks
             checkpointRules
+            selectionMark
         }
         .chartYScale(domain: 0...1)
         .chartXAxisLabel("Distance (\(UnitFormatter.distanceLabel(units)))")
@@ -72,6 +75,22 @@ struct ElevationPaceChart: View {
                             .font(.system(size: 8))
                     }
                 }
+            }
+        }
+        .chartOverlay { proxy in
+            GeometryReader { geometry in
+                Rectangle()
+                    .fill(.clear)
+                    .contentShape(Rectangle())
+                    .gesture(
+                        DragGesture(minimumDistance: 0)
+                            .onChanged { value in
+                                handleDrag(value: value, proxy: proxy, geometry: geometry)
+                            }
+                            .onEnded { _ in
+                                selectedDistance = nil
+                            }
+                    )
             }
         }
     }
@@ -153,6 +172,47 @@ struct ElevationPaceChart: View {
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
         }
+    }
+
+    // MARK: - Selection
+
+    @ChartContentBuilder
+    private var selectionMark: some ChartContent {
+        if let distKm = selectedDistance {
+            let data = overlayData
+            let nearestElev = data.elevation.min(by: {
+                abs($0.distanceKm - distKm) < abs($1.distanceKm - distKm)
+            })
+            let nearestPace = data.pace.min(by: {
+                abs($0.distanceKm - distKm) < abs($1.distanceKm - distKm)
+            })
+
+            RuleMark(x: .value("Selected", UnitFormatter.distanceValue(distKm, unit: units)))
+                .foregroundStyle(Theme.Colors.danger)
+                .lineStyle(StrokeStyle(lineWidth: 1.5))
+                .annotation(position: .top, spacing: 4) {
+                    ChartAnnotationCard(
+                        title: UnitFormatter.formatDistance(distKm, unit: units),
+                        value: nearestElev.map { UnitFormatter.formatElevation($0.altitudeM, unit: units) } ?? "--",
+                        subtitle: nearestPace.map {
+                            RunStatisticsCalculator.formatPace($0.paceSecondsPerKm, unit: units) + " " + UnitFormatter.paceLabel(units)
+                        }
+                    )
+                }
+        }
+    }
+
+    private func handleDrag(
+        value: DragGesture.Value,
+        proxy: ChartProxy,
+        geometry: GeometryProxy
+    ) {
+        let plotFrame = geometry[proxy.plotFrame!]
+        let xPosition = value.location.x - plotFrame.origin.x
+        guard let displayDistance: Double = proxy.value(atX: xPosition) else { return }
+        let distKm = UnitFormatter.distanceToKm(displayDistance, unit: units)
+        let maxDist = elevationProfile.last?.distanceKm ?? 0
+        selectedDistance = max(0, min(distKm, maxDist))
     }
 
     // MARK: - Helpers

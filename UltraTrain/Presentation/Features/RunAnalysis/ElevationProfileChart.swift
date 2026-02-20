@@ -8,6 +8,8 @@ struct ElevationProfileChart: View {
     var elevationSegments: [ElevationSegment] = []
     var checkpointDistances: [(name: String, distanceKm: Double)] = []
 
+    @State private var selectedDistance: Double?
+
     private var extremes: (highest: ElevationProfilePoint, lowest: ElevationProfilePoint)? {
         ElevationCalculator.elevationExtremes(from: dataPoints)
     }
@@ -46,9 +48,27 @@ struct ElevationProfileChart: View {
             checkpointRules
 
             extremeAnnotations
+
+            selectionMark
         }
         .chartXAxisLabel("Distance (\(UnitFormatter.distanceLabel(units)))")
         .chartYAxisLabel("Altitude (\(UnitFormatter.elevationShortLabel(units)))")
+        .chartOverlay { proxy in
+            GeometryReader { geometry in
+                Rectangle()
+                    .fill(.clear)
+                    .contentShape(Rectangle())
+                    .gesture(
+                        DragGesture(minimumDistance: 0)
+                            .onChanged { value in
+                                handleDrag(value: value, proxy: proxy, geometry: geometry)
+                            }
+                            .onEnded { _ in
+                                selectedDistance = nil
+                            }
+                    )
+            }
+        }
     }
 
     // MARK: - Default Marks
@@ -152,6 +172,56 @@ struct ElevationProfileChart: View {
                     .foregroundStyle(Theme.Colors.success)
             }
         }
+    }
+
+    // MARK: - Selection
+
+    @ChartContentBuilder
+    private var selectionMark: some ChartContent {
+        if let distKm = selectedDistance,
+           let point = nearestPoint(at: distKm) {
+            RuleMark(x: .value("Selected", UnitFormatter.distanceValue(distKm, unit: units)))
+                .foregroundStyle(Theme.Colors.danger)
+                .lineStyle(StrokeStyle(lineWidth: 1.5))
+                .annotation(position: .top, spacing: 4) {
+                    ChartAnnotationCard(
+                        title: UnitFormatter.formatDistance(distKm, unit: units),
+                        value: UnitFormatter.formatElevation(point.altitudeM, unit: units),
+                        subtitle: gradeLabel(at: distKm)
+                    )
+                }
+        }
+    }
+
+    private func handleDrag(
+        value: DragGesture.Value,
+        proxy: ChartProxy,
+        geometry: GeometryProxy
+    ) {
+        let plotFrame = geometry[proxy.plotFrame!]
+        let xPosition = value.location.x - plotFrame.origin.x
+        guard let displayDistance: Double = proxy.value(atX: xPosition) else { return }
+        let distKm = UnitFormatter.distanceToKm(displayDistance, unit: units)
+        let clamped = max(0, min(distKm, dataPoints.last?.distanceKm ?? 0))
+        selectedDistance = clamped
+    }
+
+    private func nearestPoint(at distKm: Double) -> ElevationProfilePoint? {
+        dataPoints.min(by: {
+            abs($0.distanceKm - distKm) < abs($1.distanceKm - distKm)
+        })
+    }
+
+    private func gradeLabel(at distKm: Double) -> String? {
+        guard dataPoints.count >= 2 else { return nil }
+        guard let idx = dataPoints.firstIndex(where: { $0.distanceKm >= distKm }),
+              idx > 0 else { return nil }
+        let prev = dataPoints[idx - 1]
+        let curr = dataPoints[idx]
+        let horizM = (curr.distanceKm - prev.distanceKm) * 1000
+        guard horizM > 0 else { return nil }
+        let grade = (curr.altitudeM - prev.altitudeM) / horizM * 100
+        return String(format: "Grade: %+.1f%%", grade)
     }
 
     // MARK: - Helpers
