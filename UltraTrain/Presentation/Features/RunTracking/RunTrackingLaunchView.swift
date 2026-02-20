@@ -22,6 +22,7 @@ struct RunTrackingLaunchView: View {
     private let gearRepository: any GearRepository
     private let finishTimeEstimator: any EstimateFinishTimeUseCase
     private let finishEstimateRepository: any FinishEstimateRepository
+    private let weatherService: (any WeatherServiceProtocol)?
 
     init(
         athleteRepository: any AthleteRepository,
@@ -43,7 +44,8 @@ struct RunTrackingLaunchView: View {
         stravaAuthService: any StravaAuthServiceProtocol,
         gearRepository: any GearRepository,
         finishTimeEstimator: any EstimateFinishTimeUseCase,
-        finishEstimateRepository: any FinishEstimateRepository
+        finishEstimateRepository: any FinishEstimateRepository,
+        weatherService: (any WeatherServiceProtocol)? = nil
     ) {
         _viewModel = State(initialValue: RunTrackingLaunchViewModel(
             athleteRepository: athleteRepository,
@@ -54,7 +56,9 @@ struct RunTrackingLaunchView: View {
             hapticService: hapticService,
             gearRepository: gearRepository,
             finishTimeEstimator: finishTimeEstimator,
-            finishEstimateRepository: finishEstimateRepository
+            finishEstimateRepository: finishEstimateRepository,
+            weatherService: weatherService,
+            locationService: locationService
         ))
         self.athleteRepository = athleteRepository
         self.locationService = locationService
@@ -75,6 +79,7 @@ struct RunTrackingLaunchView: View {
         self.gearRepository = gearRepository
         self.finishTimeEstimator = finishTimeEstimator
         self.finishEstimateRepository = finishEstimateRepository
+        self.weatherService = weatherService
     }
 
     var body: some View {
@@ -83,6 +88,11 @@ struct RunTrackingLaunchView: View {
                 VStack(spacing: Theme.Spacing.lg) {
                     locationAuthSection
                     heroSection
+                    PreRunWeatherCard(
+                        weather: viewModel.preRunWeather,
+                        isLoading: viewModel.isLoading
+                    )
+                    .padding(.horizontal, Theme.Spacing.md)
                     if let race = viewModel.todaysRace {
                         raceDayBanner(race: race)
                     }
@@ -130,6 +140,7 @@ struct RunTrackingLaunchView: View {
                             stravaUploadQueueService: stravaUploadQueueService,
                             gearRepository: gearRepository,
                             finishEstimateRepository: finishEstimateRepository,
+                            weatherService: weatherService,
                             athlete: athlete,
                             linkedSession: viewModel.selectedSession,
                             autoPauseEnabled: viewModel.autoPauseEnabled,

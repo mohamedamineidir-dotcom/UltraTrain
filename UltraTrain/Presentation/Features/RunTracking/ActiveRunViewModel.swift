@@ -29,6 +29,7 @@ final class ActiveRunViewModel {
     private let stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)?
     private let gearRepository: any GearRepository
     private let finishEstimateRepository: any FinishEstimateRepository
+    private let weatherService: (any WeatherServiceProtocol)?
 
     // MARK: - Config
 
@@ -71,6 +72,7 @@ final class ActiveRunViewModel {
     var autoMatchedSession: SessionMatcher.MatchResult?
     var liveCheckpointStates: [LiveCheckpointState] = []
     var activeCrossingBanner: LiveCheckpointState?
+    private(set) var weatherAtStart: WeatherSnapshot?
 
     // MARK: - Private
 
@@ -104,6 +106,7 @@ final class ActiveRunViewModel {
         stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)? = nil,
         gearRepository: any GearRepository,
         finishEstimateRepository: any FinishEstimateRepository,
+        weatherService: (any WeatherServiceProtocol)? = nil,
         athlete: Athlete,
         linkedSession: TrainingSession?,
         autoPauseEnabled: Bool,
@@ -135,6 +138,7 @@ final class ActiveRunViewModel {
         self.stravaUploadQueueService = stravaUploadQueueService
         self.gearRepository = gearRepository
         self.finishEstimateRepository = finishEstimateRepository
+        self.weatherService = weatherService
         self.athlete = athlete
         self.linkedSession = linkedSession
         self.autoPauseEnabled = autoPauseEnabled
@@ -157,6 +161,7 @@ final class ActiveRunViewModel {
         loadNutritionReminders()
         loadRaceCheckpoints()
         setupWatchCommandHandler()
+        captureWeatherAtStart()
         if nutritionAlertSoundEnabled { hapticService.prepareHaptics() }
         startTimer()
         startLocationTracking()
@@ -246,7 +251,8 @@ final class ActiveRunViewModel {
             notes: notes,
             pausedDuration: pausedDuration,
             gearIds: selectedGearIds,
-            nutritionIntakeLog: nutritionIntakeLog
+            nutritionIntakeLog: nutritionIntakeLog,
+            weatherAtStart: weatherAtStart
         )
 
         do {
@@ -692,6 +698,25 @@ final class ActiveRunViewModel {
         race.linkedRunId = run.id
         try await raceRepository.updateRace(race)
         Logger.tracking.info("Linked run \(run.id) to race \(race.name)")
+    }
+
+    // MARK: - Weather Capture
+
+    private func captureWeatherAtStart() {
+        guard let weatherService else { return }
+        Task { [weak self] in
+            guard let location = self?.locationService.currentLocation else { return }
+            do {
+                let weather = try await weatherService.currentWeather(
+                    latitude: location.coordinate.latitude,
+                    longitude: location.coordinate.longitude
+                )
+                self?.weatherAtStart = weather
+                Logger.weather.info("Captured weather at run start: \(weather.condition.displayName) \(Int(weather.temperatureCelsius))°C")
+            } catch {
+                Logger.weather.debug("Could not capture weather at run start: \(error)")
+            }
+        }
     }
 
     // MARK: - Auto Pause

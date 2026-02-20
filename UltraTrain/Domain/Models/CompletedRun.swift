@@ -23,6 +23,7 @@ struct CompletedRun: Identifiable, Equatable, Sendable {
     var isStravaImport: Bool = false
     var isHealthKitImport: Bool = false
     var healthKitWorkoutUUID: String? = nil
+    var weatherAtStart: WeatherSnapshot? = nil
 
     var totalDuration: TimeInterval {
         duration + pausedDuration

@@ -16,6 +16,8 @@ struct DashboardView: View {
     private let finishEstimateRepository: any FinishEstimateRepository
     private let nutritionRepository: any NutritionRepository
     private let nutritionGenerator: any GenerateNutritionPlanUseCase
+    private let weatherService: (any WeatherServiceProtocol)?
+    private let locationService: LocationService
 
     init(
         selectedTab: Binding<Tab>,
@@ -29,7 +31,9 @@ struct DashboardView: View {
         finishTimeEstimator: any EstimateFinishTimeUseCase,
         finishEstimateRepository: any FinishEstimateRepository,
         nutritionRepository: any NutritionRepository,
-        nutritionGenerator: any GenerateNutritionPlanUseCase
+        nutritionGenerator: any GenerateNutritionPlanUseCase,
+        weatherService: (any WeatherServiceProtocol)? = nil,
+        locationService: LocationService
     ) {
         _selectedTab = selectedTab
         self.planRepository = planRepository
@@ -43,6 +47,8 @@ struct DashboardView: View {
         self.finishEstimateRepository = finishEstimateRepository
         self.nutritionRepository = nutritionRepository
         self.nutritionGenerator = nutritionGenerator
+        self.weatherService = weatherService
+        self.locationService = locationService
         _viewModel = State(initialValue: DashboardViewModel(
             planRepository: planRepository,
             runRepository: runRepository,
@@ -51,7 +57,9 @@ struct DashboardView: View {
             fitnessCalculator: fitnessCalculator,
             raceRepository: raceRepository,
             finishTimeEstimator: finishTimeEstimator,
-            finishEstimateRepository: finishEstimateRepository
+            finishEstimateRepository: finishEstimateRepository,
+            weatherService: weatherService,
+            locationService: locationService
         ))
     }
 
@@ -68,6 +76,13 @@ struct DashboardView: View {
                         hasPlan: viewModel.plan != nil,
                         currentPhase: viewModel.currentPhase,
                         onStartRun: { selectedTab = .run }
+                    )
+
+                    DashboardWeatherCard(
+                        currentWeather: viewModel.currentWeather,
+                        sessionForecast: viewModel.sessionForecast,
+                        sessionDate: viewModel.nextSession?.date,
+                        isLoading: viewModel.isLoading
                     )
 
                     DashboardWeeklyStatsCard(
@@ -119,7 +134,9 @@ struct DashboardView: View {
                     nutritionRepository: nutritionRepository,
                     nutritionGenerator: nutritionGenerator,
                     raceRepository: raceRepository,
-                    finishEstimateRepository: finishEstimateRepository
+                    finishEstimateRepository: finishEstimateRepository,
+                    weatherService: weatherService,
+                    locationService: locationService
                 )
             } label: {
                 DashboardFinishEstimateCard(estimate: estimate, race: race)

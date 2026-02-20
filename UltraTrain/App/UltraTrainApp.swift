@@ -39,6 +39,7 @@ struct UltraTrainApp: App {
     private let pendingActionProcessor: WidgetPendingActionProcessor
     private let planAutoAdjustmentService: DefaultPlanAutoAdjustmentService
     private let healthKitImportService: HealthKitImportService
+    private let weatherService: AppleWeatherKitService
     private let cloudKitSyncMonitor: CloudKitSyncMonitor?
 
     init() {
@@ -133,6 +134,7 @@ struct UltraTrainApp: App {
             planGenerator: planGenerator,
             planRepository: planRepository
         )
+        weatherService = AppleWeatherKitService()
         healthKitImportService = HealthKitImportService(
             healthKitService: healthKitService,
             runRepository: runRepository,
@@ -216,7 +218,8 @@ struct UltraTrainApp: App {
                 finishEstimateRepository: finishEstimateRepository,
                 planAutoAdjustmentService: planAutoAdjustmentService,
                 pendingActionProcessor: pendingActionProcessor,
-                healthKitImportService: healthKitImportService
+                healthKitImportService: healthKitImportService,
+                weatherService: weatherService
             )
         }
     }

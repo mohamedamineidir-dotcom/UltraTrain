@@ -13,7 +13,9 @@ struct RaceDayPlanView: View {
         nutritionRepository: any NutritionRepository,
         nutritionGenerator: any GenerateNutritionPlanUseCase,
         raceRepository: any RaceRepository,
-        finishEstimateRepository: any FinishEstimateRepository
+        finishEstimateRepository: any FinishEstimateRepository,
+        weatherService: (any WeatherServiceProtocol)? = nil,
+        locationService: LocationService? = nil
     ) {
         _viewModel = State(initialValue: RaceDayPlanViewModel(
             race: race,
@@ -24,7 +26,9 @@ struct RaceDayPlanView: View {
             nutritionRepository: nutritionRepository,
             nutritionGenerator: nutritionGenerator,
             raceRepository: raceRepository,
-            finishEstimateRepository: finishEstimateRepository
+            finishEstimateRepository: finishEstimateRepository,
+            weatherService: weatherService,
+            locationService: locationService
         ))
     }
 
@@ -36,6 +40,12 @@ struct RaceDayPlanView: View {
                         .padding(.top, Theme.Spacing.xl)
                 } else if !viewModel.segments.isEmpty {
                     raceHeader
+                    RaceDayWeatherCard(
+                        forecast: viewModel.raceDayForecast,
+                        raceDate: viewModel.race.date,
+                        isAvailable: viewModel.forecastAvailable,
+                        isLoading: viewModel.isLoading
+                    )
                     if let plan = viewModel.nutritionPlan, let estimate = viewModel.estimate {
                         summaryCard(estimate: estimate, plan: plan)
                     }

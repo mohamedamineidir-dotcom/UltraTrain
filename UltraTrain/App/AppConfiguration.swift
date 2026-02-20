@@ -68,6 +68,14 @@ enum AppConfiguration {
         static let crossingBannerDismissSeconds: TimeInterval = 8
     }
 
+    enum Weather {
+        static let currentCacheTTL: TimeInterval = 900
+        static let hourlyCacheTTL: TimeInterval = 1800
+        static let dailyCacheTTL: TimeInterval = 3600
+        static let maxForecastDays: Int = 10
+        static let sessionForecastHoursAhead: Int = 48
+    }
+
     enum Strava {
         static let clientId: String = Bundle.main.infoDictionary?["STRAVA_CLIENT_ID"] as? String ?? ""
         static let clientSecret: String = Bundle.main.infoDictionary?["STRAVA_CLIENT_SECRET"] as? String ?? ""

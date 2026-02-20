@@ -26,6 +26,7 @@ final class CompletedRunSwiftDataModel {
     var isStravaImport: Bool = false
     var isHealthKitImport: Bool = false
     var healthKitWorkoutUUID: String?
+    var weatherData: Data = Data()
     var updatedAt: Date = Date()
 
     init(
@@ -51,6 +52,7 @@ final class CompletedRunSwiftDataModel {
         isStravaImport: Bool = false,
         isHealthKitImport: Bool = false,
         healthKitWorkoutUUID: String? = nil,
+        weatherData: Data = Data(),
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -75,6 +77,7 @@ final class CompletedRunSwiftDataModel {
         self.isStravaImport = isStravaImport
         self.isHealthKitImport = isHealthKitImport
         self.healthKitWorkoutUUID = healthKitWorkoutUUID
+        self.weatherData = weatherData
         self.updatedAt = updatedAt
     }
 }

@@ -20,12 +20,28 @@ enum CompletedRunSwiftDataMapper {
         let message: String
     }
 
+    private struct CodableWeatherSnapshot: Codable {
+        let temperatureCelsius: Double
+        let apparentTemperatureCelsius: Double
+        let humidity: Double
+        let windSpeedKmh: Double
+        let windDirectionDegrees: Double
+        let condition: String
+        let uvIndex: Int
+        let precipitationChance: Double
+        let symbolName: String
+        let capturedAt: Date
+        let locationLatitude: Double
+        let locationLongitude: Double
+    }
+
     // MARK: - Domain -> SwiftData
 
     static func toSwiftData(_ run: CompletedRun) -> CompletedRunSwiftDataModel {
         let trackData = encodeTrackPoints(run.gpsTrack)
         let splitModels = run.splits.map { splitToSwiftData($0) }
         let intakeData = encodeIntakeEntries(run.nutritionIntakeLog)
+        let weatherData = encodeWeather(run.weatherAtStart)
 
         return CompletedRunSwiftDataModel(
             id: run.id,
@@ -49,7 +65,8 @@ enum CompletedRunSwiftDataMapper {
             stravaActivityId: run.stravaActivityId,
             isStravaImport: run.isStravaImport,
             isHealthKitImport: run.isHealthKitImport,
-            healthKitWorkoutUUID: run.healthKitWorkoutUUID
+            healthKitWorkoutUUID: run.healthKitWorkoutUUID,
+            weatherData: weatherData
         )
     }
 
@@ -62,6 +79,7 @@ enum CompletedRunSwiftDataMapper {
             .sorted { $0.kilometerNumber < $1.kilometerNumber }
 
         let intakeLog = decodeIntakeEntries(model.nutritionIntakeData)
+        let weather = decodeWeather(model.weatherData)
 
         return CompletedRun(
             id: model.id,
@@ -85,7 +103,8 @@ enum CompletedRunSwiftDataMapper {
             stravaActivityId: model.stravaActivityId,
             isStravaImport: model.isStravaImport,
             isHealthKitImport: model.isHealthKitImport,
-            healthKitWorkoutUUID: model.healthKitWorkoutUUID
+            healthKitWorkoutUUID: model.healthKitWorkoutUUID,
+            weatherAtStart: weather
         )
     }
 
@@ -173,5 +192,47 @@ enum CompletedRunSwiftDataMapper {
                 message: entry.message
             )
         }
+    }
+
+    // MARK: - Weather JSON
+
+    private static func encodeWeather(_ snapshot: WeatherSnapshot?) -> Data {
+        guard let snapshot else { return Data() }
+        let codable = CodableWeatherSnapshot(
+            temperatureCelsius: snapshot.temperatureCelsius,
+            apparentTemperatureCelsius: snapshot.apparentTemperatureCelsius,
+            humidity: snapshot.humidity,
+            windSpeedKmh: snapshot.windSpeedKmh,
+            windDirectionDegrees: snapshot.windDirectionDegrees,
+            condition: snapshot.condition.rawValue,
+            uvIndex: snapshot.uvIndex,
+            precipitationChance: snapshot.precipitationChance,
+            symbolName: snapshot.symbolName,
+            capturedAt: snapshot.capturedAt,
+            locationLatitude: snapshot.locationLatitude,
+            locationLongitude: snapshot.locationLongitude
+        )
+        return (try? JSONEncoder().encode(codable)) ?? Data()
+    }
+
+    private static func decodeWeather(_ data: Data) -> WeatherSnapshot? {
+        guard !data.isEmpty,
+              let codable = try? JSONDecoder().decode(CodableWeatherSnapshot.self, from: data) else {
+            return nil
+        }
+        return WeatherSnapshot(
+            temperatureCelsius: codable.temperatureCelsius,
+            apparentTemperatureCelsius: codable.apparentTemperatureCelsius,
+            humidity: codable.humidity,
+            windSpeedKmh: codable.windSpeedKmh,
+            windDirectionDegrees: codable.windDirectionDegrees,
+            condition: WeatherConditionType(rawValue: codable.condition) ?? .unknown,
+            uvIndex: codable.uvIndex,
+            precipitationChance: codable.precipitationChance,
+            symbolName: codable.symbolName,
+            capturedAt: codable.capturedAt,
+            locationLatitude: codable.locationLatitude,
+            locationLongitude: codable.locationLongitude
+        )
     }
 }

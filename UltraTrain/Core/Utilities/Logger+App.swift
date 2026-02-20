@@ -26,4 +26,5 @@ extension Logger {
     static let cloudKit = Logger(subsystem: subsystem, category: "cloudKit")
     static let gear = Logger(subsystem: subsystem, category: "gear")
     static let liveRace = Logger(subsystem: subsystem, category: "liveRace")
+    static let weather = Logger(subsystem: subsystem, category: "weather")
 }

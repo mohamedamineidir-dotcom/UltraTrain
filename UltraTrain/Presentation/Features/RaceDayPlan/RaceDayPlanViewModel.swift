@@ -15,6 +15,8 @@ final class RaceDayPlanViewModel {
     private let nutritionGenerator: any GenerateNutritionPlanUseCase
     private let raceRepository: any RaceRepository
     private let finishEstimateRepository: any FinishEstimateRepository
+    private let weatherService: (any WeatherServiceProtocol)?
+    private let locationService: LocationService?
 
     // MARK: - State
 
@@ -24,6 +26,7 @@ final class RaceDayPlanViewModel {
     var segments: [RaceDaySegment] = []
     var isLoading = false
     var error: String?
+    var raceDayForecast: DailyWeatherForecast?
 
     // MARK: - Init
 
@@ -36,7 +39,9 @@ final class RaceDayPlanViewModel {
         nutritionRepository: any NutritionRepository,
         nutritionGenerator: any GenerateNutritionPlanUseCase,
         raceRepository: any RaceRepository,
-        finishEstimateRepository: any FinishEstimateRepository
+        finishEstimateRepository: any FinishEstimateRepository,
+        weatherService: (any WeatherServiceProtocol)? = nil,
+        locationService: LocationService? = nil
     ) {
         self.race = race
         self.finishTimeEstimator = finishTimeEstimator
@@ -47,6 +52,8 @@ final class RaceDayPlanViewModel {
         self.nutritionGenerator = nutritionGenerator
         self.raceRepository = raceRepository
         self.finishEstimateRepository = finishEstimateRepository
+        self.weatherService = weatherService
+        self.locationService = locationService
     }
 
     // MARK: - Load
@@ -108,7 +115,31 @@ final class RaceDayPlanViewModel {
             Logger.training.error("Failed to build race day plan: \(error)")
         }
 
+        await loadRaceDayWeather()
         isLoading = false
+    }
+
+    // MARK: - Weather
+
+    var forecastAvailable: Bool {
+        let daysUntilRace = Calendar.current.dateComponents([.day], from: Date.now, to: race.date).day ?? Int.max
+        return daysUntilRace <= AppConfiguration.Weather.maxForecastDays && daysUntilRace >= 0
+    }
+
+    private func loadRaceDayWeather() async {
+        guard forecastAvailable, let weatherService, let locationService else { return }
+        guard let location = locationService.currentLocation else { return }
+        do {
+            let forecasts = try await weatherService.dailyForecast(
+                latitude: location.coordinate.latitude,
+                longitude: location.coordinate.longitude,
+                days: AppConfiguration.Weather.maxForecastDays
+            )
+            let calendar = Calendar.current
+            raceDayForecast = forecasts.first { calendar.isDate($0.date, inSameDayAs: race.date) }
+        } catch {
+            Logger.weather.debug("Race day plan: could not load forecast: \(error)")
+        }
     }
 
     // MARK: - Calibration

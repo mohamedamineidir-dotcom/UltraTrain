@@ -34,6 +34,7 @@ struct MainTabView: View {
     private let finishEstimateRepository: any FinishEstimateRepository
     private let planAutoAdjustmentService: any PlanAutoAdjustmentService
     private let healthKitImportService: (any HealthKitImportServiceProtocol)?
+    private let weatherService: (any WeatherServiceProtocol)?
 
     init(
         athleteRepository: any AthleteRepository,
@@ -66,7 +67,8 @@ struct MainTabView: View {
         gearRepository: any GearRepository,
         finishEstimateRepository: any FinishEstimateRepository,
         planAutoAdjustmentService: any PlanAutoAdjustmentService,
-        healthKitImportService: (any HealthKitImportServiceProtocol)? = nil
+        healthKitImportService: (any HealthKitImportServiceProtocol)? = nil,
+        weatherService: (any WeatherServiceProtocol)? = nil
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -99,6 +101,7 @@ struct MainTabView: View {
         self.finishEstimateRepository = finishEstimateRepository
         self.planAutoAdjustmentService = planAutoAdjustmentService
         self.healthKitImportService = healthKitImportService
+        self.weatherService = weatherService
     }
 
     var body: some View {
@@ -115,7 +118,9 @@ struct MainTabView: View {
                 finishTimeEstimator: finishTimeEstimator,
                 finishEstimateRepository: finishEstimateRepository,
                 nutritionRepository: nutritionRepository,
-                nutritionGenerator: nutritionGenerator
+                nutritionGenerator: nutritionGenerator,
+                weatherService: weatherService,
+                locationService: locationService
             )
                 .tabItem {
                     Label("Dashboard", systemImage: "house.fill")
@@ -156,7 +161,8 @@ struct MainTabView: View {
                 stravaAuthService: stravaAuthService,
                 gearRepository: gearRepository,
                 finishTimeEstimator: finishTimeEstimator,
-                finishEstimateRepository: finishEstimateRepository
+                finishEstimateRepository: finishEstimateRepository,
+                weatherService: weatherService
             )
                 .tabItem {
                     Label("Run", systemImage: "figure.run")
@@ -196,7 +202,9 @@ struct MainTabView: View {
                 planAutoAdjustmentService: planAutoAdjustmentService,
                 nutritionRepository: nutritionRepository,
                 nutritionGenerator: nutritionGenerator,
-                healthKitImportService: healthKitImportService
+                healthKitImportService: healthKitImportService,
+                weatherService: weatherService,
+                locationService: locationService
             )
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")

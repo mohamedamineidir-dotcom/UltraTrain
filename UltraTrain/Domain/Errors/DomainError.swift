@@ -26,6 +26,7 @@ enum DomainError: Error, Equatable, Sendable {
     case gearNotFound
     case iCloudAccountUnavailable
     case iCloudSyncFailed(reason: String)
+    case weatherUnavailable(reason: String)
     case unknown(message: String)
 }
 
@@ -82,6 +83,8 @@ extension DomainError: LocalizedError {
             return "iCloud account is not available. Sign in to iCloud in iOS Settings."
         case .iCloudSyncFailed(let reason):
             return "iCloud sync failed: \(reason)"
+        case .weatherUnavailable(let reason):
+            return "Weather data unavailable: \(reason)"
         case .unknown(let message):
             return "An unexpected error occurred: \(message)"
         }

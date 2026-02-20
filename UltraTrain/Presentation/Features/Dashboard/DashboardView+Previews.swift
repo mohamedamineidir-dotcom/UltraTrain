@@ -109,7 +109,8 @@ private struct PreviewNutritionGenerator: GenerateNutritionPlanUseCase, @uncheck
         finishTimeEstimator: PreviewFinishTimeEstimator(),
         finishEstimateRepository: PreviewFinishEstimateRepository(),
         nutritionRepository: PreviewNutritionRepository(),
-        nutritionGenerator: PreviewNutritionGenerator()
+        nutritionGenerator: PreviewNutritionGenerator(),
+        locationService: LocationService()
     )
 }
 #endif

@@ -14,6 +14,8 @@ struct FinishEstimationView: View {
     private let nutritionGenerator: any GenerateNutritionPlanUseCase
     private let raceRepository: any RaceRepository
     private let finishEstimateRepository: any FinishEstimateRepository
+    private let weatherService: (any WeatherServiceProtocol)?
+    private let locationService: LocationService?
 
     init(
         race: Race,
@@ -24,7 +26,9 @@ struct FinishEstimationView: View {
         nutritionRepository: any NutritionRepository,
         nutritionGenerator: any GenerateNutritionPlanUseCase,
         raceRepository: any RaceRepository,
-        finishEstimateRepository: any FinishEstimateRepository
+        finishEstimateRepository: any FinishEstimateRepository,
+        weatherService: (any WeatherServiceProtocol)? = nil,
+        locationService: LocationService? = nil
     ) {
         self.race = race
         self.finishTimeEstimator = finishTimeEstimator
@@ -35,6 +39,8 @@ struct FinishEstimationView: View {
         self.nutritionGenerator = nutritionGenerator
         self.raceRepository = raceRepository
         self.finishEstimateRepository = finishEstimateRepository
+        self.weatherService = weatherService
+        self.locationService = locationService
         _viewModel = State(initialValue: FinishEstimationViewModel(
             race: race,
             finishTimeEstimator: finishTimeEstimator,
@@ -245,7 +251,9 @@ struct FinishEstimationView: View {
                 nutritionRepository: nutritionRepository,
                 nutritionGenerator: nutritionGenerator,
                 raceRepository: raceRepository,
-                finishEstimateRepository: finishEstimateRepository
+                finishEstimateRepository: finishEstimateRepository,
+                weatherService: weatherService,
+                locationService: locationService
             )
         } label: {
             HStack {

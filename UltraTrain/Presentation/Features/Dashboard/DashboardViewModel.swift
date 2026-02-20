@@ -22,6 +22,8 @@ final class DashboardViewModel {
     private let raceRepository: any RaceRepository
     private let finishTimeEstimator: any EstimateFinishTimeUseCase
     private let finishEstimateRepository: any FinishEstimateRepository
+    private let weatherService: (any WeatherServiceProtocol)?
+    private let locationService: LocationService?
 
     // MARK: - State
 
@@ -36,6 +38,8 @@ final class DashboardViewModel {
     var lastRun: CompletedRun?
     var upcomingRaces: [Race] = []
     var injuryRiskAlerts: [InjuryRiskAlert] = []
+    var currentWeather: WeatherSnapshot?
+    var sessionForecast: WeatherSnapshot?
 
     // MARK: - Init
 
@@ -47,7 +51,9 @@ final class DashboardViewModel {
         fitnessCalculator: any CalculateFitnessUseCase,
         raceRepository: any RaceRepository,
         finishTimeEstimator: any EstimateFinishTimeUseCase,
-        finishEstimateRepository: any FinishEstimateRepository
+        finishEstimateRepository: any FinishEstimateRepository,
+        weatherService: (any WeatherServiceProtocol)? = nil,
+        locationService: LocationService? = nil
     ) {
         self.planRepository = planRepository
         self.runRepository = runRepository
@@ -57,6 +63,8 @@ final class DashboardViewModel {
         self.raceRepository = raceRepository
         self.finishTimeEstimator = finishTimeEstimator
         self.finishEstimateRepository = finishEstimateRepository
+        self.weatherService = weatherService
+        self.locationService = locationService
     }
 
     // MARK: - Load
@@ -73,7 +81,8 @@ final class DashboardViewModel {
         async let estimateTask: () = loadFinishEstimate()
         async let lastRunTask: () = loadLastRun()
         async let racesTask: () = loadUpcomingRaces()
-        _ = await (fitnessTask, estimateTask, lastRunTask, racesTask)
+        async let weatherTask: () = loadWeather()
+        _ = await (fitnessTask, estimateTask, lastRunTask, racesTask, weatherTask)
 
         isLoading = false
     }
@@ -127,6 +136,34 @@ final class DashboardViewModel {
             )
         } catch {
             Logger.training.debug("Dashboard: could not load races: \(error)")
+        }
+    }
+
+    // MARK: - Weather
+
+    private func loadWeather() async {
+        guard let weatherService, let locationService else { return }
+        guard let location = locationService.currentLocation else { return }
+        let lat = location.coordinate.latitude
+        let lon = location.coordinate.longitude
+
+        do {
+            currentWeather = try await weatherService.currentWeather(latitude: lat, longitude: lon)
+        } catch {
+            Logger.weather.debug("Dashboard: could not load current weather: \(error)")
+        }
+
+        guard let session = nextSession,
+              abs(session.date.timeIntervalSinceNow) < Double(AppConfiguration.Weather.sessionForecastHoursAhead) * 3600 else {
+            return
+        }
+
+        do {
+            let hours = max(1, Int(session.date.timeIntervalSinceNow / 3600) + 1)
+            let forecast = try await weatherService.hourlyForecast(latitude: lat, longitude: lon, hours: hours)
+            sessionForecast = forecast.last
+        } catch {
+            Logger.weather.debug("Dashboard: could not load session forecast: \(error)")
         }
     }
 

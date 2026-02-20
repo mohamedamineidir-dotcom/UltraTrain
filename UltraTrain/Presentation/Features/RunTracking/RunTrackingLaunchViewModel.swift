@@ -16,6 +16,8 @@ final class RunTrackingLaunchViewModel {
     private let gearRepository: any GearRepository
     private let finishTimeEstimator: any EstimateFinishTimeUseCase
     private let finishEstimateRepository: any FinishEstimateRepository
+    private let weatherService: (any WeatherServiceProtocol)?
+    private let locationService: LocationService?
 
     // MARK: - State
 
@@ -38,6 +40,7 @@ final class RunTrackingLaunchViewModel {
     var activeGear: [GearItem] = []
     var selectedGearIds: Set<UUID> = []
     var saveToHealthEnabled = false
+    var preRunWeather: WeatherSnapshot?
 
     // MARK: - Init
 
@@ -50,7 +53,9 @@ final class RunTrackingLaunchViewModel {
         hapticService: any HapticServiceProtocol,
         gearRepository: any GearRepository,
         finishTimeEstimator: any EstimateFinishTimeUseCase,
-        finishEstimateRepository: any FinishEstimateRepository
+        finishEstimateRepository: any FinishEstimateRepository,
+        weatherService: (any WeatherServiceProtocol)? = nil,
+        locationService: LocationService? = nil
     ) {
         self.athleteRepository = athleteRepository
         self.planRepository = planRepository
@@ -61,6 +66,8 @@ final class RunTrackingLaunchViewModel {
         self.gearRepository = gearRepository
         self.finishTimeEstimator = finishTimeEstimator
         self.finishEstimateRepository = finishEstimateRepository
+        self.weatherService = weatherService
+        self.locationService = locationService
     }
 
     // MARK: - Load
@@ -104,6 +111,22 @@ final class RunTrackingLaunchViewModel {
         }
 
         isLoading = false
+        await loadWeather()
+    }
+
+    // MARK: - Weather
+
+    private func loadWeather() async {
+        guard let weatherService, let locationService else { return }
+        guard let location = locationService.currentLocation else { return }
+        do {
+            preRunWeather = try await weatherService.currentWeather(
+                latitude: location.coordinate.latitude,
+                longitude: location.coordinate.longitude
+            )
+        } catch {
+            Logger.weather.debug("Pre-run: could not load weather: \(error)")
+        }
     }
 
     // MARK: - Session Selection

@@ -22,6 +22,8 @@ struct ProfileView: View {
     private let nutritionRepository: any NutritionRepository
     private let nutritionGenerator: any GenerateNutritionPlanUseCase
     private let healthKitImportService: (any HealthKitImportServiceProtocol)?
+    private let weatherService: (any WeatherServiceProtocol)?
+    private let locationService: LocationService?
 
     init(
         athleteRepository: any AthleteRepository,
@@ -44,7 +46,9 @@ struct ProfileView: View {
         planAutoAdjustmentService: any PlanAutoAdjustmentService,
         nutritionRepository: any NutritionRepository,
         nutritionGenerator: any GenerateNutritionPlanUseCase,
-        healthKitImportService: (any HealthKitImportServiceProtocol)? = nil
+        healthKitImportService: (any HealthKitImportServiceProtocol)? = nil,
+        weatherService: (any WeatherServiceProtocol)? = nil,
+        locationService: LocationService? = nil
     ) {
         _viewModel = State(initialValue: ProfileViewModel(
             athleteRepository: athleteRepository,
@@ -72,6 +76,8 @@ struct ProfileView: View {
         self.nutritionRepository = nutritionRepository
         self.nutritionGenerator = nutritionGenerator
         self.healthKitImportService = healthKitImportService
+        self.weatherService = weatherService
+        self.locationService = locationService
     }
 
     var body: some View {
@@ -263,7 +269,9 @@ struct ProfileView: View {
                             nutritionRepository: nutritionRepository,
                             nutritionGenerator: nutritionGenerator,
                             raceRepository: raceRepository,
-                            finishEstimateRepository: finishEstimateRepository
+                            finishEstimateRepository: finishEstimateRepository,
+                            weatherService: weatherService,
+                            locationService: locationService
                         )
                     } label: {
                         RaceRowView(race: race)
