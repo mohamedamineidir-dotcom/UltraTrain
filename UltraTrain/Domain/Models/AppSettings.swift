@@ -16,4 +16,5 @@ struct AppSettings: Identifiable, Equatable, Sendable {
     var smartRemindersEnabled: Bool
     var saveToHealthEnabled: Bool
     var healthKitAutoImportEnabled: Bool
+    var pacingAlertsEnabled: Bool
 }

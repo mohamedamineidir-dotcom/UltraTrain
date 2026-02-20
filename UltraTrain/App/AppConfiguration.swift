@@ -76,6 +76,15 @@ enum AppConfiguration {
         static let sessionForecastHoursAhead: Int = 48
     }
 
+    enum PacingAlerts {
+        static let minDistanceKm: Double = 0.5
+        static let cooldownSeconds: TimeInterval = 60
+        static let minorDeviationPercent: Double = 10.0
+        static let majorDeviationPercent: Double = 20.0
+        static let onPaceBandPercent: Double = 5.0
+        static let autoDismissSeconds: TimeInterval = 8
+    }
+
     enum Strava {
         static let clientId: String = Bundle.main.infoDictionary?["STRAVA_CLIENT_ID"] as? String ?? ""
         static let clientSecret: String = Bundle.main.infoDictionary?["STRAVA_CLIENT_SECRET"] as? String ?? ""

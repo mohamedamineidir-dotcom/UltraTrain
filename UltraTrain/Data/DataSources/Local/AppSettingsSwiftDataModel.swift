@@ -18,6 +18,7 @@ final class AppSettingsSwiftDataModel {
     var smartRemindersEnabled: Bool = false
     var saveToHealthEnabled: Bool = false
     var healthKitAutoImportEnabled: Bool = false
+    var pacingAlertsEnabled: Bool = true
     var updatedAt: Date = Date()
 
     init(
@@ -36,6 +37,7 @@ final class AppSettingsSwiftDataModel {
         smartRemindersEnabled: Bool = false,
         saveToHealthEnabled: Bool = false,
         healthKitAutoImportEnabled: Bool = false,
+        pacingAlertsEnabled: Bool = true,
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -53,6 +55,7 @@ final class AppSettingsSwiftDataModel {
         self.smartRemindersEnabled = smartRemindersEnabled
         self.saveToHealthEnabled = saveToHealthEnabled
         self.healthKitAutoImportEnabled = healthKitAutoImportEnabled
+        self.pacingAlertsEnabled = pacingAlertsEnabled
         self.updatedAt = updatedAt
     }
 }

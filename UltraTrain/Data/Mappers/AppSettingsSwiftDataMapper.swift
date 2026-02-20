@@ -17,7 +17,8 @@ enum AppSettingsSwiftDataMapper {
             electrolyteIntervalSeconds: model.electrolyteIntervalSeconds,
             smartRemindersEnabled: model.smartRemindersEnabled,
             saveToHealthEnabled: model.saveToHealthEnabled,
-            healthKitAutoImportEnabled: model.healthKitAutoImportEnabled
+            healthKitAutoImportEnabled: model.healthKitAutoImportEnabled,
+            pacingAlertsEnabled: model.pacingAlertsEnabled
         )
     }
 
@@ -37,7 +38,8 @@ enum AppSettingsSwiftDataMapper {
             electrolyteIntervalSeconds: settings.electrolyteIntervalSeconds,
             smartRemindersEnabled: settings.smartRemindersEnabled,
             saveToHealthEnabled: settings.saveToHealthEnabled,
-            healthKitAutoImportEnabled: settings.healthKitAutoImportEnabled
+            healthKitAutoImportEnabled: settings.healthKitAutoImportEnabled,
+            pacingAlertsEnabled: settings.pacingAlertsEnabled
         )
     }
 }

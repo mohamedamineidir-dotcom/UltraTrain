@@ -40,6 +40,7 @@ final class RunTrackingLaunchViewModel {
     var activeGear: [GearItem] = []
     var selectedGearIds: Set<UUID> = []
     var saveToHealthEnabled = false
+    var pacingAlertsEnabled = true
     var preRunWeather: WeatherSnapshot?
 
     // MARK: - Init
@@ -101,6 +102,7 @@ final class RunTrackingLaunchViewModel {
                 electrolyteIntervalSeconds = settings.electrolyteIntervalSeconds
                 smartRemindersEnabled = settings.smartRemindersEnabled
                 saveToHealthEnabled = settings.saveToHealthEnabled
+                pacingAlertsEnabled = settings.pacingAlertsEnabled
             }
 
             activeGear = try await gearRepository.getActiveGear(ofType: nil)

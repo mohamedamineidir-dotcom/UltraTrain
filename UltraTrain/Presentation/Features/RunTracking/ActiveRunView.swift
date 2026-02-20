@@ -68,6 +68,16 @@ struct ActiveRunView: View {
             }
         }
         .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.activeCrossingBanner)
+        .overlay(alignment: .top) {
+            if let alert = viewModel.activePacingAlert {
+                PacingAlertBanner(
+                    alert: alert,
+                    onDismiss: { viewModel.dismissPacingAlert() }
+                )
+                .padding(.top, pacingBannerOffset)
+            }
+        }
+        .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.activePacingAlert)
         .navigationBarBackButtonHidden()
         .onAppear {
             if viewModel.runState == .notStarted {
@@ -100,6 +110,13 @@ struct ActiveRunView: View {
             }
         }
         .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.isAutoPaused)
+    }
+
+    private var pacingBannerOffset: CGFloat {
+        var offset: CGFloat = 0
+        if viewModel.activeReminder != nil { offset += 80 }
+        if viewModel.activeCrossingBanner != nil { offset += 80 }
+        return offset
     }
 
     private var timerColor: Color {

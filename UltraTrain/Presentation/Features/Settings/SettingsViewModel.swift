@@ -128,7 +128,8 @@ final class SettingsViewModel {
                     electrolyteIntervalSeconds: 0,
                     smartRemindersEnabled: false,
                     saveToHealthEnabled: false,
-                    healthKitAutoImportEnabled: false
+                    healthKitAutoImportEnabled: false,
+                    pacingAlertsEnabled: true
                 )
                 try await appSettingsRepository.saveSettings(defaults)
                 appSettings = defaults
@@ -424,6 +425,21 @@ final class SettingsViewModel {
         } catch {
             self.error = error.localizedDescription
             Logger.settings.error("Failed to update auto-pause setting: \(error)")
+        }
+    }
+
+    // MARK: - Pacing Alerts
+
+    func updatePacingAlerts(_ enabled: Bool) async {
+        guard var settings = appSettings else { return }
+        settings.pacingAlertsEnabled = enabled
+
+        do {
+            try await appSettingsRepository.updateSettings(settings)
+            appSettings = settings
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update pacing alerts setting: \(error)")
         }
     }
 

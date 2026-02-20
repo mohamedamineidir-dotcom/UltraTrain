@@ -123,10 +123,17 @@ struct SettingsView: View {
                         Task { await viewModel.updateAutoPause(newValue) }
                     }
                 ))
+
+                Toggle("Pacing Alerts", isOn: Binding(
+                    get: { settings.pacingAlertsEnabled },
+                    set: { newValue in
+                        Task { await viewModel.updatePacingAlerts(newValue) }
+                    }
+                ))
             } header: {
                 Text("Run Tracking")
             } footer: {
-                Text("Automatically pause and resume your run when you stop and start moving.")
+                Text("Auto-Pause pauses your run when you stop moving. Pacing Alerts notify you when your pace deviates from the planned session target.")
             }
         }
     }

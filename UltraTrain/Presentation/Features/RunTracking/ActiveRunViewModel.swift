@@ -45,6 +45,7 @@ final class ActiveRunViewModel {
     let raceId: UUID?
     let stravaAutoUploadEnabled: Bool
     let saveToHealthEnabled: Bool
+    let pacingAlertsEnabled: Bool
     let selectedGearIds: [UUID]
 
     // MARK: - State
@@ -72,6 +73,7 @@ final class ActiveRunViewModel {
     var autoMatchedSession: SessionMatcher.MatchResult?
     var liveCheckpointStates: [LiveCheckpointState] = []
     var activeCrossingBanner: LiveCheckpointState?
+    var activePacingAlert: PacingAlert?
     private(set) var weatherAtStart: WeatherSnapshot?
 
     // MARK: - Private
@@ -88,6 +90,9 @@ final class ActiveRunViewModel {
     private var runningAveragePace: Double = 0
     private var lastCrossedCheckpointIndex: Int = -1
     private var crossingBannerTask: Task<Void, Never>?
+    private var pacingAlertTask: Task<Void, Never>?
+    private var lastPacingAlertTime: TimeInterval = -.infinity
+    private var lastPacingAlertType: PacingAlertType?
     var raceDistanceKm: Double = 0
 
     // MARK: - Init
@@ -118,6 +123,7 @@ final class ActiveRunViewModel {
         smartRemindersEnabled: Bool = false,
         stravaAutoUploadEnabled: Bool = false,
         saveToHealthEnabled: Bool = false,
+        pacingAlertsEnabled: Bool = true,
         raceId: UUID?,
         selectedGearIds: [UUID] = []
     ) {
@@ -150,6 +156,7 @@ final class ActiveRunViewModel {
         self.smartRemindersEnabled = smartRemindersEnabled
         self.stravaAutoUploadEnabled = stravaAutoUploadEnabled
         self.saveToHealthEnabled = saveToHealthEnabled
+        self.pacingAlertsEnabled = pacingAlertsEnabled
         self.raceId = raceId
         self.selectedGearIds = selectedGearIds
     }
@@ -433,6 +440,7 @@ final class ActiveRunViewModel {
                 guard !Task.isCancelled else { break }
                 self?.elapsedTime += AppConfiguration.RunTracking.timerInterval
                 self?.checkNutritionReminders()
+                self?.checkPacingAlert()
                 self?.sendWatchUpdate()
                 self?.updateLiveActivityIfNeeded()
             }
@@ -609,6 +617,50 @@ final class ActiveRunViewModel {
     private func currentPaceValue() -> Double? {
         guard distanceKm > 0 else { return nil }
         return elapsedTime / distanceKm
+    }
+
+    // MARK: - Pacing Alerts
+
+    func dismissPacingAlert() {
+        activePacingAlert = nil
+    }
+
+    private func checkPacingAlert() {
+        guard pacingAlertsEnabled, activePacingAlert == nil else { return }
+        guard let session = linkedSession,
+              session.plannedDistanceKm > 0,
+              session.plannedDuration > 0 else { return }
+
+        let plannedPace = session.plannedDuration / session.plannedDistanceKm
+        let timeSinceLastAlert = elapsedTime - lastPacingAlertTime
+
+        let input = PacingAlertCalculator.Input(
+            currentPaceSecondsPerKm: runningAveragePace,
+            plannedPaceSecondsPerKm: plannedPace,
+            distanceKm: distanceKm,
+            elapsedTimeSinceLastAlert: timeSinceLastAlert,
+            previousAlertType: lastPacingAlertType
+        )
+
+        guard let alert = PacingAlertCalculator.evaluate(input) else { return }
+        activePacingAlert = alert
+        lastPacingAlertTime = elapsedTime
+        lastPacingAlertType = alert.type
+
+        switch alert.severity {
+        case .major: hapticService.playPacingAlertMajor()
+        case .minor: hapticService.playPacingAlertMinor()
+        case .positive: hapticService.playSuccess()
+        }
+
+        pacingAlertTask?.cancel()
+        pacingAlertTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(AppConfiguration.PacingAlerts.autoDismissSeconds))
+            guard !Task.isCancelled else { return }
+            self?.activePacingAlert = nil
+        }
+
+        Logger.pacing.info("\(alert.type.rawValue) alert: \(alert.message)")
     }
 
     // MARK: - Race Checkpoints

@@ -40,7 +40,8 @@ struct BackgroundAutoImporterTests {
             electrolyteIntervalSeconds: 0,
             smartRemindersEnabled: false,
             saveToHealthEnabled: false,
-            healthKitAutoImportEnabled: autoImportEnabled
+            healthKitAutoImportEnabled: autoImportEnabled,
+            pacingAlertsEnabled: true
         )
     }
 

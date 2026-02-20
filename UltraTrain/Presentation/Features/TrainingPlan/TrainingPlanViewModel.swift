@@ -13,6 +13,7 @@ final class TrainingPlanViewModel {
     private let planGenerator: any GenerateTrainingPlanUseCase
     private let nutritionRepository: any NutritionRepository
     let nutritionAdvisor: any SessionNutritionAdvisor
+    private let fitnessRepository: any FitnessRepository
     private let widgetDataWriter: WidgetDataWriter
 
     // MARK: - State
@@ -38,6 +39,7 @@ final class TrainingPlanViewModel {
         planGenerator: any GenerateTrainingPlanUseCase,
         nutritionRepository: any NutritionRepository,
         nutritionAdvisor: any SessionNutritionAdvisor,
+        fitnessRepository: any FitnessRepository,
         widgetDataWriter: WidgetDataWriter
     ) {
         self.planRepository = planRepository
@@ -46,6 +48,7 @@ final class TrainingPlanViewModel {
         self.planGenerator = planGenerator
         self.nutritionRepository = nutritionRepository
         self.nutritionAdvisor = nutritionAdvisor
+        self.fitnessRepository = fitnessRepository
         self.widgetDataWriter = widgetDataWriter
     }
 
@@ -327,6 +330,15 @@ final class TrainingPlanViewModel {
         adjustmentRecommendations = PlanAdjustmentCalculator.analyze(plan: plan)
         let currentIds = Set(adjustmentRecommendations.map(\.id))
         dismissedRecommendationIds = dismissedRecommendationIds.intersection(currentIds)
+
+        Task {
+            guard let snapshot = try? await fitnessRepository.getLatestSnapshot() else { return }
+            adjustmentRecommendations = PlanAdjustmentCalculator.analyze(
+                plan: plan, fitnessSnapshot: snapshot
+            )
+            let updatedIds = Set(adjustmentRecommendations.map(\.id))
+            dismissedRecommendationIds = dismissedRecommendationIds.intersection(updatedIds)
+        }
     }
 
     func dismissRecommendation(_ recommendation: PlanAdjustmentRecommendation) {
@@ -353,6 +365,12 @@ final class TrainingPlanViewModel {
                 }
             case .bulkMarkMissedAsSkipped:
                 try await applyBulkSkip(recommendation, plan: &currentPlan)
+            case .reduceFatigueLoad:
+                let isSevere = recommendation.severity == .urgent
+                let factor = isSevere ? 0.75 : 0.85
+                try await applyVolumeReduction(recommendation, plan: &currentPlan, factor: factor)
+            case .swapToRecovery:
+                try await applySwapToRecovery(recommendation, plan: &currentPlan)
             }
 
             plan = currentPlan
@@ -424,6 +442,22 @@ final class TrainingPlanViewModel {
                 try await planRepository.updateSession(plan.weeks[wi].sessions[si])
             }
         }
+    }
+
+    private func applySwapToRecovery(
+        _ rec: PlanAdjustmentRecommendation,
+        plan: inout TrainingPlan
+    ) async throws {
+        guard let sessionId = rec.affectedSessionIds.first,
+              let (wi, si) = findSession(id: sessionId, in: plan) else { return }
+
+        plan.weeks[wi].sessions[si].type = .recovery
+        plan.weeks[wi].sessions[si].intensity = .easy
+        plan.weeks[wi].sessions[si].plannedDistanceKm *= 0.5
+        plan.weeks[wi].sessions[si].plannedElevationGainM = 0
+        plan.weeks[wi].sessions[si].plannedDuration *= 0.5
+        plan.weeks[wi].sessions[si].description = "Recovery run (auto-adjusted due to high fatigue)"
+        try await planRepository.updateSession(plan.weeks[wi].sessions[si])
     }
 
     private func findSession(id: UUID, in plan: TrainingPlan) -> (weekIndex: Int, sessionIndex: Int)? {

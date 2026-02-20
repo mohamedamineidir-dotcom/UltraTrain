@@ -10,6 +10,8 @@ protocol HapticServiceProtocol: Sendable {
     func playError()
     func playSelection()
     func playButtonTap()
+    func playPacingAlertMinor()
+    func playPacingAlertMajor()
 }
 
 @MainActor
@@ -52,5 +54,13 @@ final class HapticService: HapticServiceProtocol {
 
     func playButtonTap() {
         softImpactGenerator.impactOccurred()
+    }
+
+    func playPacingAlertMinor() {
+        selectionGenerator.selectionChanged()
+    }
+
+    func playPacingAlertMajor() {
+        heavyImpactGenerator.impactOccurred()
     }
 }

@@ -70,6 +70,8 @@ struct PlanAdjustmentBanner: View {
         case .reduceVolumeAfterLowAdherence: "arrow.down.right.circle.fill"
         case .convertToRecoveryWeek: "bed.double.fill"
         case .bulkMarkMissedAsSkipped: "checklist"
+        case .reduceFatigueLoad: "heart.text.square.fill"
+        case .swapToRecovery: "arrow.triangle.2.circlepath.circle.fill"
         }
     }
 

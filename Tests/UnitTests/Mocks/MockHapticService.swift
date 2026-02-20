@@ -9,6 +9,8 @@ final class MockHapticService: HapticServiceProtocol {
     var playErrorCalled = false
     var playSelectionCalled = false
     var playButtonTapCalled = false
+    var playPacingAlertMinorCalled = false
+    var playPacingAlertMajorCalled = false
 
     func prepareHaptics() { prepareHapticsCalled = true }
     func playNutritionAlert() { playNutritionAlertCalled = true }
@@ -16,4 +18,6 @@ final class MockHapticService: HapticServiceProtocol {
     func playError() { playErrorCalled = true }
     func playSelection() { playSelectionCalled = true }
     func playButtonTap() { playButtonTapCalled = true }
+    func playPacingAlertMinor() { playPacingAlertMinorCalled = true }
+    func playPacingAlertMajor() { playPacingAlertMajorCalled = true }
 }

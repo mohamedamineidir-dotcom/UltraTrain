@@ -15,6 +15,8 @@ enum PlanAdjustmentType: String, Sendable {
     case reduceVolumeAfterLowAdherence
     case convertToRecoveryWeek
     case bulkMarkMissedAsSkipped
+    case reduceFatigueLoad
+    case swapToRecovery
 }
 
 enum AdjustmentSeverity: String, Comparable, Sendable {

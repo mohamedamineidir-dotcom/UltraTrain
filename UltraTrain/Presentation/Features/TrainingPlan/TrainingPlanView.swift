@@ -12,6 +12,7 @@ struct TrainingPlanView: View {
         planGenerator: any GenerateTrainingPlanUseCase,
         nutritionRepository: any NutritionRepository,
         sessionNutritionAdvisor: any SessionNutritionAdvisor,
+        fitnessRepository: any FitnessRepository,
         widgetDataWriter: WidgetDataWriter
     ) {
         self.raceRepository = raceRepository
@@ -23,6 +24,7 @@ struct TrainingPlanView: View {
             planGenerator: planGenerator,
             nutritionRepository: nutritionRepository,
             nutritionAdvisor: sessionNutritionAdvisor,
+            fitnessRepository: fitnessRepository,
             widgetDataWriter: widgetDataWriter
         ))
     }

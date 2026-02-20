@@ -134,6 +134,7 @@ struct MainTabView: View {
                 planGenerator: planGenerator,
                 nutritionRepository: nutritionRepository,
                 sessionNutritionAdvisor: sessionNutritionAdvisor,
+                fitnessRepository: fitnessRepository,
                 widgetDataWriter: widgetDataWriter
             )
                 .tabItem {

@@ -109,6 +109,7 @@ struct TrainingPlanViewModelTests {
             planGenerator: generator,
             nutritionRepository: MockNutritionRepository(),
             nutritionAdvisor: DefaultSessionNutritionAdvisor(),
+            fitnessRepository: MockFitnessRepository(),
             widgetDataWriter: writer
         )
     }

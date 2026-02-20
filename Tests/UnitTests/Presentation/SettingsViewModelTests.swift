@@ -38,7 +38,8 @@ struct SettingsViewModelTests {
             electrolyteIntervalSeconds: 0,
             smartRemindersEnabled: false,
             saveToHealthEnabled: false,
-            healthKitAutoImportEnabled: false
+            healthKitAutoImportEnabled: false,
+            pacingAlertsEnabled: true
         )
     }
 

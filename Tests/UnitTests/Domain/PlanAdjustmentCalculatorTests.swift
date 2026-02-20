@@ -393,4 +393,161 @@ struct PlanAdjustmentCalculatorTests {
         // First should be higher severity than last
         #expect(results.first!.severity >= results.last!.severity)
     }
+
+    // MARK: - Fatigue Load (Autoregulation)
+
+    private func makeSnapshot(
+        form: Double = 0,
+        acuteToChronicRatio: Double = 1.0
+    ) -> FitnessSnapshot {
+        FitnessSnapshot(
+            id: UUID(),
+            date: now,
+            fitness: 50,
+            fatigue: 50 - form,
+            form: form,
+            weeklyVolumeKm: 60,
+            weeklyElevationGainM: 1500,
+            weeklyDuration: 18000,
+            acuteToChronicRatio: acuteToChronicRatio,
+            monotony: 1.2
+        )
+    }
+
+    @Test("Low form triggers fatigue load reduction")
+    func lowFormTriggersFatigueReduction() {
+        let sessions = [
+            makeSession(daysFromNow: -1, type: .recovery, isCompleted: true),
+            makeSession(daysFromNow: 1, type: .tempo),
+            makeSession(daysFromNow: 3, type: .longRun)
+        ]
+        let week = makeWeek(daysOffset: -2, sessions: sessions)
+        let plan = makePlan(weeks: [week])
+        let snapshot = makeSnapshot(form: -20)
+
+        let results = PlanAdjustmentCalculator.analyze(plan: plan, now: now, fitnessSnapshot: snapshot)
+
+        let fatigueRecs = results.filter { $0.type == .reduceFatigueLoad }
+        #expect(fatigueRecs.count == 1)
+        #expect(fatigueRecs[0].severity == .recommended)
+    }
+
+    @Test("High ACR > 1.3 triggers fatigue load reduction")
+    func highAcrTriggersFatigueReduction() {
+        let sessions = [
+            makeSession(daysFromNow: -1, type: .recovery, isCompleted: true),
+            makeSession(daysFromNow: 1, type: .intervals)
+        ]
+        let week = makeWeek(daysOffset: -2, sessions: sessions)
+        let plan = makePlan(weeks: [week])
+        let snapshot = makeSnapshot(form: 0, acuteToChronicRatio: 1.4)
+
+        let results = PlanAdjustmentCalculator.analyze(plan: plan, now: now, fitnessSnapshot: snapshot)
+
+        let fatigueRecs = results.filter { $0.type == .reduceFatigueLoad }
+        #expect(fatigueRecs.count == 1)
+    }
+
+    @Test("Severe fatigue produces urgent severity")
+    func severeFatigueIsUrgent() {
+        let sessions = [
+            makeSession(daysFromNow: -1, type: .recovery, isCompleted: true),
+            makeSession(daysFromNow: 1, type: .tempo)
+        ]
+        let week = makeWeek(daysOffset: -2, sessions: sessions)
+        let plan = makePlan(weeks: [week])
+        let snapshot = makeSnapshot(form: -30)
+
+        let results = PlanAdjustmentCalculator.analyze(plan: plan, now: now, fitnessSnapshot: snapshot)
+
+        let fatigueRecs = results.filter { $0.type == .reduceFatigueLoad }
+        #expect(fatigueRecs.count == 1)
+        #expect(fatigueRecs[0].severity == .urgent)
+    }
+
+    @Test("No fatigue recommendation without snapshot")
+    func noFatigueWithoutSnapshot() {
+        let sessions = [
+            makeSession(daysFromNow: -1, type: .recovery, isCompleted: true),
+            makeSession(daysFromNow: 1, type: .tempo)
+        ]
+        let week = makeWeek(daysOffset: -2, sessions: sessions)
+        let plan = makePlan(weeks: [week])
+
+        let results = PlanAdjustmentCalculator.analyze(plan: plan, now: now, fitnessSnapshot: nil)
+
+        let fatigueRecs = results.filter { $0.type == .reduceFatigueLoad }
+        #expect(fatigueRecs.isEmpty)
+    }
+
+    // MARK: - Swap to Recovery (Autoregulation)
+
+    @Test("ACR > 1.5 with hard session triggers swap to recovery")
+    func highAcrWithHardSessionTriggersSwap() {
+        let sessions = [
+            makeSession(daysFromNow: -1, type: .recovery, isCompleted: true),
+            makeSession(daysFromNow: 1, type: .intervals)
+        ]
+        let week = makeWeek(daysOffset: -2, sessions: sessions)
+        let plan = makePlan(weeks: [week])
+        let snapshot = makeSnapshot(form: -30, acuteToChronicRatio: 1.6)
+
+        let results = PlanAdjustmentCalculator.analyze(plan: plan, now: now, fitnessSnapshot: snapshot)
+
+        let swapRecs = results.filter { $0.type == .swapToRecovery }
+        #expect(swapRecs.count == 1)
+        #expect(swapRecs[0].severity == .urgent)
+    }
+
+    @Test("ACR > 1.5 with only easy sessions does not trigger swap")
+    func highAcrEasySessionsNoSwap() {
+        let sessions = [
+            makeSession(daysFromNow: -1, type: .recovery, isCompleted: true),
+            makeSession(daysFromNow: 1, type: .recovery),
+            makeSession(daysFromNow: 2, type: .longRun) // longRun is not in hard types
+        ]
+        let week = makeWeek(daysOffset: -2, sessions: sessions)
+        let plan = makePlan(weeks: [week])
+        let snapshot = makeSnapshot(form: -30, acuteToChronicRatio: 1.6)
+
+        let results = PlanAdjustmentCalculator.analyze(plan: plan, now: now, fitnessSnapshot: snapshot)
+
+        let swapRecs = results.filter { $0.type == .swapToRecovery }
+        #expect(swapRecs.isEmpty)
+    }
+
+    @Test("ACR <= 1.5 does not trigger swap")
+    func normalAcrNoSwap() {
+        let sessions = [
+            makeSession(daysFromNow: -1, type: .recovery, isCompleted: true),
+            makeSession(daysFromNow: 1, type: .intervals)
+        ]
+        let week = makeWeek(daysOffset: -2, sessions: sessions)
+        let plan = makePlan(weeks: [week])
+        let snapshot = makeSnapshot(form: 0, acuteToChronicRatio: 1.3)
+
+        let results = PlanAdjustmentCalculator.analyze(plan: plan, now: now, fitnessSnapshot: snapshot)
+
+        let swapRecs = results.filter { $0.type == .swapToRecovery }
+        #expect(swapRecs.isEmpty)
+    }
+
+    @Test("Both fatigue load and swap can coexist")
+    func fatigueAndSwapCoexist() {
+        let sessions = [
+            makeSession(daysFromNow: -1, type: .recovery, isCompleted: true),
+            makeSession(daysFromNow: 1, type: .tempo),
+            makeSession(daysFromNow: 3, type: .longRun)
+        ]
+        let week = makeWeek(daysOffset: -2, sessions: sessions)
+        let plan = makePlan(weeks: [week])
+        let snapshot = makeSnapshot(form: -30, acuteToChronicRatio: 1.6)
+
+        let results = PlanAdjustmentCalculator.analyze(plan: plan, now: now, fitnessSnapshot: snapshot)
+
+        let fatigueRecs = results.filter { $0.type == .reduceFatigueLoad }
+        let swapRecs = results.filter { $0.type == .swapToRecovery }
+        #expect(fatigueRecs.count == 1)
+        #expect(swapRecs.count == 1)
+    }
 }
