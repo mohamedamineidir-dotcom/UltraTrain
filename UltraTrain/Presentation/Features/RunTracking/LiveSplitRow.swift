@@ -31,6 +31,27 @@ struct LiveSplitRow: View {
         .padding(.horizontal, Theme.Spacing.sm)
         .background(isNext ? Theme.Colors.primary.opacity(0.08) : .clear)
         .clipShape(RoundedRectangle(cornerRadius: 4))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilityDescription)
+    }
+
+    private var accessibilityDescription: String {
+        let predicted = formatTime(checkpoint.predictedTime)
+        if checkpoint.isCrossed, let actual = checkpoint.actualTime {
+            let actualStr = formatTime(actual)
+            let deltaStr = accessibilityDelta
+            return "\(checkpoint.checkpointName). Predicted \(predicted). Actual \(actualStr). \(deltaStr)"
+        }
+        if isNext {
+            return "\(checkpoint.checkpointName). Predicted \(predicted). Next checkpoint"
+        }
+        return "\(checkpoint.checkpointName). Predicted \(predicted)"
+    }
+
+    private var accessibilityDelta: String {
+        guard let delta = checkpoint.delta else { return "" }
+        let time = formatTime(abs(delta))
+        return delta < 0 ? "Ahead by \(time)" : "Behind by \(time)"
     }
 
     private var textColor: Color {

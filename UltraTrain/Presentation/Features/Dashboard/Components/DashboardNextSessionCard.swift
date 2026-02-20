@@ -67,6 +67,8 @@ struct DashboardNextSessionCard: View {
                     .background(session.intensity.color)
                     .clipShape(Capsule())
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(sessionAccessibilityLabel(session))
 
             Button(action: onStartRun) {
                 Label("Start Run", systemImage: "figure.run")
@@ -75,6 +77,19 @@ struct DashboardNextSessionCard: View {
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.small)
+            .accessibilityHint("Starts GPS tracking for this session")
         }
+        .accessibilityElement(children: .contain)
+    }
+
+    private func sessionAccessibilityLabel(_ session: TrainingSession) -> String {
+        var label = "\(session.type.displayName), \(session.date.formatted(.dateTime.weekday(.wide).month().day())), \(session.intensity.displayName) intensity"
+        if session.plannedDistanceKm > 0 {
+            label += ", \(AccessibilityFormatters.distance(session.plannedDistanceKm, unit: units))"
+        }
+        if session.isGutTrainingRecommended {
+            label += ", gut training recommended"
+        }
+        return label
     }
 }

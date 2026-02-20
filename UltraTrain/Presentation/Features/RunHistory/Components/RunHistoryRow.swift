@@ -34,5 +34,22 @@ struct RunHistoryRow: View {
             .foregroundStyle(Theme.Colors.secondaryLabel)
         }
         .padding(.vertical, Theme.Spacing.xs)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilityDescription)
+    }
+
+    private var accessibilityDescription: String {
+        let date = run.date.formatted(.dateTime.month().day().year())
+        let dist = AccessibilityFormatters.distance(run.distanceKm, unit: units)
+        let pace = AccessibilityFormatters.pace(
+            RunStatisticsCalculator.formatPace(run.averagePaceSecondsPerKm, unit: units),
+            unit: units
+        )
+        let dur = AccessibilityFormatters.duration(run.duration)
+        var label = "\(date). \(dist), pace \(pace), \(dur)"
+        if run.elevationGainM > 0 {
+            label += ", \(AccessibilityFormatters.elevation(run.elevationGainM, unit: units))"
+        }
+        return label
     }
 }

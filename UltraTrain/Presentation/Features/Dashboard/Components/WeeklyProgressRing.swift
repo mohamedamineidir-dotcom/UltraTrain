@@ -34,7 +34,7 @@ struct WeeklyProgressRing: View {
         }
         .frame(width: 60, height: 60)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(Int(progress * 100)) percent of weekly distance target")
+        .accessibilityLabel("\(Int(progress * 100)) percent of weekly distance target, \(String(format: "%.1f", actual)) of \(String(format: "%.1f", target)) kilometers")
     }
 
     private var progressColor: Color {

@@ -52,6 +52,15 @@ struct DashboardFinishEstimateCard: View {
             }
         }
         .cardStyle()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilityDescription)
+    }
+
+    private var accessibilityDescription: String {
+        let best = FinishEstimate.formatDuration(estimate.optimisticTime)
+        let expected = estimate.expectedTimeFormatted
+        let safe = FinishEstimate.formatDuration(estimate.conservativeTime)
+        return "Race estimate for \(race.name). Best case \(best). Expected \(expected). Safe case \(safe). Confidence \(Int(estimate.confidencePercent)) percent."
     }
 
     private func scenarioColumn(time: String, label: String, color: Color, font: Font) -> some View {

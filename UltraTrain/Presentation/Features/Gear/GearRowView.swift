@@ -10,6 +10,7 @@ struct GearRowView: View {
                 .font(.title3)
                 .foregroundStyle(iconColor)
                 .frame(width: 32)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                 HStack {
@@ -34,6 +35,22 @@ struct GearRowView: View {
             }
         }
         .padding(.vertical, Theme.Spacing.xs)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilityDescription)
+    }
+
+    private var accessibilityDescription: String {
+        let used = UnitFormatter.formatDistance(item.totalDistanceKm, unit: units, decimals: 0)
+        let max = UnitFormatter.formatDistance(item.maxDistanceKm, unit: units, decimals: 0)
+        let percent = Int(item.usagePercentage * 100)
+        var label = "\(item.name) by \(item.brand). \(used) of \(max). \(percent) percent worn"
+        if item.needsReplacement {
+            label += ". Needs replacement"
+        }
+        if item.isRetired {
+            label += ". Retired"
+        }
+        return label
     }
 
     private var iconName: String {

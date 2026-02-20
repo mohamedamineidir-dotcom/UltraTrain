@@ -12,5 +12,7 @@ struct GutTrainingBadge: View {
         .padding(.vertical, 2)
         .background(Theme.Colors.primary.opacity(0.12))
         .clipShape(Capsule())
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Gut training recommended")
     }
 }

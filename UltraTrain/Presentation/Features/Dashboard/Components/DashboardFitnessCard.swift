@@ -53,6 +53,7 @@ struct DashboardFitnessCard: View {
                 .font(.caption.bold())
                 .foregroundStyle(acrColor)
         }
+        .accessibilityElement(children: .combine)
     }
 
     private var acrIcon: String {

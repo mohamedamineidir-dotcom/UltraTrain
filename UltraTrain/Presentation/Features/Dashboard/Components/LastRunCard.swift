@@ -22,7 +22,20 @@ struct LastRunCard: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .cardStyle()
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(accessibilityDescription(for: run))
         }
+    }
+
+    private func accessibilityDescription(for run: CompletedRun) -> String {
+        let dist = AccessibilityFormatters.distance(run.distanceKm, unit: units)
+        let pace = AccessibilityFormatters.pace(
+            RunStatisticsCalculator.formatPace(run.averagePaceSecondsPerKm, unit: units),
+            unit: units
+        )
+        let dur = AccessibilityFormatters.duration(run.duration)
+        let when = relativeDateString(run.date)
+        return "Last run, \(when). \(dist), pace \(pace), duration \(dur)"
     }
 
     private func statColumn(value: String, label: String) -> some View {

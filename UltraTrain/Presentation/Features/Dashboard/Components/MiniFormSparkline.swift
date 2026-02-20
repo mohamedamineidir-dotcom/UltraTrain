@@ -34,7 +34,16 @@ struct MiniFormSparkline: View {
         .chartYAxis(.hidden)
         .chartLegend(.hidden)
         .frame(height: 60)
-        .accessibilityLabel("Fitness form trend sparkline")
+        .accessibilityLabel(chartAccessibilityLabel)
+    }
+
+    private var chartAccessibilityLabel: String {
+        guard let last = snapshots.last, let first = snapshots.first else {
+            return "Fitness form trend"
+        }
+        let days = Calendar.current.dateComponents([.day], from: first.date, to: last.date).day ?? 0
+        let trend = last.form > first.form ? "improving" : (last.form < first.form ? "declining" : "stable")
+        return "Form trend: currently at \(Int(last.form)), \(trend) over \(days) days"
     }
 
     private var lineColor: Color {

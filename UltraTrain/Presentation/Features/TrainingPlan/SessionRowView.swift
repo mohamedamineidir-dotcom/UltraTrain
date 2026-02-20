@@ -13,10 +13,13 @@ struct SessionRowView: View {
                     .font(.title3)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel(statusAccessibilityLabel)
+            .accessibilityHint("Double-tap to toggle completion")
 
             Image(systemName: session.type.icon)
                 .foregroundStyle(session.isSkipped ? Theme.Colors.secondaryLabel : session.intensity.color)
                 .frame(width: 24)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: Theme.Spacing.xs) {
@@ -61,6 +64,12 @@ struct SessionRowView: View {
         if session.isCompleted { return "checkmark.circle.fill" }
         if session.isSkipped { return "forward.circle.fill" }
         return "circle"
+    }
+
+    private var statusAccessibilityLabel: String {
+        if session.isCompleted { return "\(session.type.displayName), completed" }
+        if session.isSkipped { return "\(session.type.displayName), skipped" }
+        return "Mark \(session.type.displayName) as completed"
     }
 
     private var statusColor: Color {
