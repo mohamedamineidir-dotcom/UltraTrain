@@ -5,6 +5,8 @@ struct TrainingPlanView: View {
     private let raceRepository: any RaceRepository
     private let planRepository: any TrainingPlanRepository
     private let workoutRecipeRepository: any WorkoutRecipeRepository
+    private let runRepository: any RunRepository
+    private let athleteRepository: any AthleteRepository
 
     init(
         planRepository: any TrainingPlanRepository,
@@ -15,11 +17,14 @@ struct TrainingPlanView: View {
         sessionNutritionAdvisor: any SessionNutritionAdvisor,
         fitnessRepository: any FitnessRepository,
         widgetDataWriter: WidgetDataWriter,
-        workoutRecipeRepository: any WorkoutRecipeRepository
+        workoutRecipeRepository: any WorkoutRecipeRepository,
+        runRepository: any RunRepository
     ) {
         self.raceRepository = raceRepository
         self.planRepository = planRepository
         self.workoutRecipeRepository = workoutRecipeRepository
+        self.runRepository = runRepository
+        self.athleteRepository = athleteRepository
         _viewModel = State(initialValue: TrainingPlanViewModel(
             planRepository: planRepository,
             athleteRepository: athleteRepository,
@@ -55,6 +60,16 @@ struct TrainingPlanView: View {
                                 )
                             } label: {
                                 Image(systemName: "book.fill")
+                            }
+
+                            NavigationLink {
+                                TrainingCalendarView(
+                                    planRepository: planRepository,
+                                    runRepository: runRepository,
+                                    athleteRepository: athleteRepository
+                                )
+                            } label: {
+                                Image(systemName: "calendar.badge.checkmark")
                             }
 
                             NavigationLink {

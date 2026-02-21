@@ -152,7 +152,8 @@ struct MainTabView: View {
                 sessionNutritionAdvisor: sessionNutritionAdvisor,
                 fitnessRepository: fitnessRepository,
                 widgetDataWriter: widgetDataWriter,
-                workoutRecipeRepository: workoutRecipeRepository
+                workoutRecipeRepository: workoutRecipeRepository,
+                runRepository: runRepository
             )
                 .tabItem {
                     Label("Plan", systemImage: "calendar")

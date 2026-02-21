@@ -270,34 +270,6 @@ final class ProgressViewModel {
     }
 
     func computePersonalRecords(from runs: [CompletedRun]) -> [PersonalRecord] {
-        guard !runs.isEmpty else { return [] }
-        var records: [PersonalRecord] = []
-
-        if let longest = runs.max(by: { $0.distanceKm < $1.distanceKm }) {
-            records.append(PersonalRecord(
-                id: UUID(), type: .longestDistance,
-                value: longest.distanceKm, date: longest.date, runId: longest.id
-            ))
-        }
-        if let mostElev = runs.max(by: { $0.elevationGainM < $1.elevationGainM }) {
-            records.append(PersonalRecord(
-                id: UUID(), type: .mostElevation,
-                value: mostElev.elevationGainM, date: mostElev.date, runId: mostElev.id
-            ))
-        }
-        let runsWithPace = runs.filter { $0.averagePaceSecondsPerKm > 0 }
-        if let fastest = runsWithPace.min(by: { $0.averagePaceSecondsPerKm < $1.averagePaceSecondsPerKm }) {
-            records.append(PersonalRecord(
-                id: UUID(), type: .fastestPace,
-                value: fastest.averagePaceSecondsPerKm, date: fastest.date, runId: fastest.id
-            ))
-        }
-        if let longestDur = runs.max(by: { $0.duration < $1.duration }) {
-            records.append(PersonalRecord(
-                id: UUID(), type: .longestDuration,
-                value: longestDur.duration, date: longestDur.date, runId: longestDur.id
-            ))
-        }
-        return records
+        PersonalRecordCalculator.computeAll(from: runs)
     }
 }

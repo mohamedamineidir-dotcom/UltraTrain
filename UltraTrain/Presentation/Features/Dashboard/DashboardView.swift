@@ -136,6 +136,15 @@ struct DashboardView: View {
                     }
                     .buttonStyle(.plain)
 
+                    if !viewModel.personalRecords.isEmpty {
+                        NavigationLink {
+                            PersonalRecordsWallView(records: viewModel.personalRecords)
+                        } label: {
+                            DashboardPersonalRecordsCard(records: viewModel.personalRecords)
+                        }
+                        .buttonStyle(.plain)
+                    }
+
                     LastRunCard(lastRun: viewModel.lastRun)
 
                     finishEstimateSection

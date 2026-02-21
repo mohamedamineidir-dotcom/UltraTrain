@@ -49,6 +49,7 @@ final class DashboardViewModel {
     var weeklyZoneDistribution: [HeartRateZoneDistribution] = []
     var currentStreak: Int = 0
     var nearestChallengeProgress: ChallengeProgressCalculator.ChallengeProgress?
+    var personalRecords: [PersonalRecord] = []
 
     // MARK: - Init
 
@@ -110,6 +111,7 @@ final class DashboardViewModel {
             guard let athlete = try await athleteRepository.getAthlete() else { return }
             let runs = try await runRepository.getRuns(for: athlete.id)
             runCount = runs.count
+            personalRecords = PersonalRecordCalculator.computeAll(from: runs)
             guard !runs.isEmpty else {
                 fitnessSnapshot = nil
                 return

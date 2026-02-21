@@ -172,7 +172,8 @@ struct ProgressViewModelTrendsTests {
 
         let records = vm.computePersonalRecords(from: runs)
 
-        #expect(records.count == 4)
+        // 4 original records + fastest10K (10 km run falls in 9.0-11.0 bracket)
+        #expect(records.count == 5)
 
         let distance = records.first { $0.type == .longestDistance }
         #expect(distance?.value == 30)
@@ -213,7 +214,8 @@ struct ProgressViewModelTrendsTests {
         await vm.load()
 
         #expect(vm.runTrendPoints.count == 3)
-        #expect(vm.personalRecords.count == 4)
+        // 4 original records + fastest10K (10 km) + fastestHalf (20 km falls in 18.99-23.21)
+        #expect(vm.personalRecords.count == 6)
         #expect(vm.runTrendPoints[0].date < vm.runTrendPoints[1].date)
     }
 }

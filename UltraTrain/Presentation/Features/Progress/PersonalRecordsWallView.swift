@@ -1,60 +1,76 @@
 import SwiftUI
 
-struct PersonalRecordsSection: View {
+struct PersonalRecordsWallView: View {
     @Environment(\.unitPreference) private var units
     let records: [PersonalRecord]
-    var onSeeAll: (() -> Void)?
+
+    private var overallRecords: [PersonalRecord] {
+        let overallTypes: Set<PersonalRecordType> = [
+            .longestDistance, .mostElevation, .fastestPace, .longestDuration
+        ]
+        return records.filter { overallTypes.contains($0.type) }
+    }
+
+    private var distanceRecords: [PersonalRecord] {
+        let distanceTypes: Set<PersonalRecordType> = [
+            .fastest5K, .fastest10K, .fastestHalf, .fastestMarathon, .fastest50K, .fastest100K
+        ]
+        return records.filter { distanceTypes.contains($0.type) }
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            HStack {
-                Text("Personal Records")
-                    .font(.headline)
-                Spacer()
-                if let onSeeAll, !records.isEmpty {
-                    Button("See All") { onSeeAll() }
-                        .font(.subheadline)
-                }
-            }
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: Theme.Spacing.sm) {
-                    ForEach(records) { record in
-                        recordCard(record)
+        List {
+            if !overallRecords.isEmpty {
+                Section("Overall Records") {
+                    ForEach(overallRecords) { record in
+                        recordRow(record)
                     }
                 }
             }
+
+            if !distanceRecords.isEmpty {
+                Section("Distance Records") {
+                    ForEach(distanceRecords) { record in
+                        recordRow(record)
+                    }
+                }
+            }
+
+            if records.isEmpty {
+                ContentUnavailableView(
+                    "No Records Yet",
+                    systemImage: "trophy",
+                    description: Text("Complete some runs to start setting personal records.")
+                )
+            }
         }
+        .navigationTitle("Personal Records")
+        .navigationBarTitleDisplayMode(.large)
     }
 
-    // MARK: - Record Card
+    // MARK: - Record Row
 
-    private func recordCard(_ record: PersonalRecord) -> some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+    private func recordRow(_ record: PersonalRecord) -> some View {
+        HStack(spacing: Theme.Spacing.md) {
             Image(systemName: iconName(for: record.type))
-                .font(.title3)
+                .font(.title2)
                 .foregroundStyle(iconColor(for: record.type))
+                .frame(width: 32)
 
-            Text(label(for: record.type))
-                .font(.caption)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(label(for: record.type))
+                    .font(.subheadline.bold())
+
+                Text(record.date.formatted(.dateTime.month(.abbreviated).day().year()))
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+
+            Spacer()
 
             Text(formattedValue(for: record))
                 .font(.title3.bold().monospacedDigit())
-                .foregroundStyle(Theme.Colors.label)
-
-            Text(record.date.formatted(.dateTime.month(.abbreviated).day().year()))
-                .font(.caption2)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
         }
-        .frame(width: 120, alignment: .leading)
-        .padding(Theme.Spacing.sm)
-        .background {
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
-                .fill(Theme.Colors.secondaryBackground)
-        }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(label(for: record.type)), \(formattedValue(for: record)), \(record.date.formatted(.dateTime.month(.abbreviated).day().year()))")
     }
 
     // MARK: - Helpers

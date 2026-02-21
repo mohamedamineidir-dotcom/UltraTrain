@@ -5,6 +5,12 @@ enum PersonalRecordType: String, Sendable {
     case mostElevation
     case fastestPace
     case longestDuration
+    case fastest5K
+    case fastest10K
+    case fastestHalf
+    case fastestMarathon
+    case fastest50K
+    case fastest100K
 }
 
 struct PersonalRecord: Identifiable, Equatable, Sendable {
