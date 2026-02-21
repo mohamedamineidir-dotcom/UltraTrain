@@ -128,10 +128,21 @@ struct DashboardView: View {
                         distribution: viewModel.weeklyZoneDistribution
                     )
 
-                    DashboardRecoveryCard(
-                        recoveryScore: viewModel.recoveryScore,
-                        sleepHistory: viewModel.sleepHistory
-                    )
+                    NavigationLink {
+                        MorningReadinessView(
+                            healthKitService: healthKitService,
+                            recoveryRepository: recoveryRepository,
+                            fitnessCalculator: fitnessCalculator
+                        )
+                    } label: {
+                        DashboardRecoveryCard(
+                            recoveryScore: viewModel.recoveryScore,
+                            sleepHistory: viewModel.sleepHistory,
+                            readinessScore: viewModel.readinessScore,
+                            hrvTrend: viewModel.hrvTrend
+                        )
+                    }
+                    .buttonStyle(.plain)
 
                     NavigationLink {
                         ChallengesView(

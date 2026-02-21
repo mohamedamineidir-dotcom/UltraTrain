@@ -32,4 +32,5 @@ extension Logger {
     static let checklist = Logger(subsystem: subsystem, category: "checklist")
     static let challenges = Logger(subsystem: subsystem, category: "challenges")
     static let workouts = Logger(subsystem: subsystem, category: "workouts")
+    static let voiceCoaching = Logger(subsystem: subsystem, category: "voiceCoaching")
 }

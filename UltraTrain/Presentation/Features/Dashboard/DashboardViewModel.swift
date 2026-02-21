@@ -46,6 +46,8 @@ final class DashboardViewModel {
     var currentWeather: WeatherSnapshot?
     var sessionForecast: WeatherSnapshot?
     var recoveryScore: RecoveryScore?
+    var readinessScore: ReadinessScore?
+    var hrvTrend: HRVAnalyzer.HRVTrend?
     var sleepHistory: [SleepEntry] = []
     var weeklyZoneDistribution: [HeartRateZoneDistribution] = []
     var currentStreak: Int = 0
@@ -139,7 +141,9 @@ final class DashboardViewModel {
                 weeklyVolumes: volumes,
                 nextRace: upcomingRaces.first,
                 adherencePercent: adherencePercent,
-                recoveryScore: recoveryScore
+                recoveryScore: recoveryScore,
+                hrvTrend: hrvTrend,
+                readinessScore: readinessScore
             )
 
             let weekResult = WeeklyZoneDistributionCalculator.calculate(
@@ -226,21 +230,47 @@ final class DashboardViewModel {
             let athlete = try await athleteRepository.getAthlete()
             let baselineHR = athlete?.restingHeartRate
 
+            // Fetch HRV data
+            let thirtyDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: Date.now) ?? Date.now
+            let hrvReadings = try await healthKitService.fetchHRVData(from: thirtyDaysAgo, to: .now)
+            let computedHRVTrend = HRVAnalyzer.analyze(readings: hrvReadings)
+            hrvTrend = computedHRVTrend
+
+            let computedHRVScore: Int?
+            if let trend = computedHRVTrend {
+                computedHRVScore = HRVAnalyzer.hrvScore(trend: trend)
+            } else {
+                computedHRVScore = nil
+            }
+
             let score = RecoveryScoreCalculator.calculate(
                 lastNightSleep: lastNight,
                 sleepHistory: history,
                 currentRestingHR: currentHR,
                 baselineRestingHR: baselineHR,
-                fitnessSnapshot: fitnessSnapshot
+                fitnessSnapshot: fitnessSnapshot,
+                hrvScore: computedHRVScore
             )
             recoveryScore = score
 
+            // Compute readiness score
+            if let trend = computedHRVTrend {
+                readinessScore = ReadinessCalculator.calculate(
+                    recoveryScore: score,
+                    hrvTrend: trend,
+                    fitnessSnapshot: fitnessSnapshot
+                )
+            }
+
+            let latestHRV = hrvReadings.sorted(by: { $0.date > $1.date }).first
             let snapshot = RecoverySnapshot(
                 id: UUID(),
                 date: .now,
                 recoveryScore: score,
                 sleepEntry: lastNight,
-                restingHeartRate: currentHR
+                restingHeartRate: currentHR,
+                hrvReading: latestHRV,
+                readinessScore: readinessScore
             )
             try await recoveryRepository.saveSnapshot(snapshot)
         } catch {

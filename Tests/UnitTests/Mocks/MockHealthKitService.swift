@@ -15,6 +15,7 @@ final class MockHealthKitService: HealthKitServiceProtocol, @unchecked Sendable 
     var saveWorkoutCalled = false
     var savedRun: CompletedRun?
     var sleepEntries: [SleepEntry] = []
+    var hrvReadings: [HRVReading] = []
 
     func requestAuthorization() async throws {
         requestAuthorizationCalled = true
@@ -68,5 +69,10 @@ final class MockHealthKitService: HealthKitServiceProtocol, @unchecked Sendable 
     func fetchSleepData(from startDate: Date, to endDate: Date) async throws -> [SleepEntry] {
         if shouldThrow { throw DomainError.healthKitUnavailable }
         return sleepEntries.filter { $0.date >= startDate && $0.date <= endDate }
+    }
+
+    func fetchHRVData(from startDate: Date, to endDate: Date) async throws -> [HRVReading] {
+        if shouldThrow { throw DomainError.healthKitUnavailable }
+        return hrvReadings.filter { $0.date >= startDate && $0.date <= endDate }
     }
 }

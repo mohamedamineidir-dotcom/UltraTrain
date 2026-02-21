@@ -157,6 +157,7 @@ enum HealthKitQueryHelper {
         types.insert(HKQuantityType(.bodyMass))
         types.insert(HKWorkoutType.workoutType())
         types.insert(HKCategoryType(.sleepAnalysis))
+        types.insert(HKQuantityType(.heartRateVariabilitySDNN))
         return types
     }
 

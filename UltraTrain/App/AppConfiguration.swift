@@ -146,4 +146,11 @@ enum AppConfiguration {
         static let apiBaseURL = "https://www.strava.com/api/v3"
         static let requiredScopes = "read,activity:read_all,activity:write"
     }
+
+    enum VoiceCoaching {
+        static let defaultSpeechRate: Float = 0.5
+        static let maxQueueSize = 3
+        static let distanceSplitKm: Double = 1.0
+        static let defaultTimeSplitMinutes = 5
+    }
 }

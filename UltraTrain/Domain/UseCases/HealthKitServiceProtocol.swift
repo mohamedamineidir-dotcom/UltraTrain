@@ -36,4 +36,5 @@ protocol HealthKitServiceProtocol: AnyObject, Sendable {
     func saveWorkout(run: CompletedRun) async throws
     func fetchBodyWeight() async throws -> Double?
     func fetchSleepData(from startDate: Date, to endDate: Date) async throws -> [SleepEntry]
+    func fetchHRVData(from startDate: Date, to endDate: Date) async throws -> [HRVReading]
 }

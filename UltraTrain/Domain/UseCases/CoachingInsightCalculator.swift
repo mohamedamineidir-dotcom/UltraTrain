@@ -10,7 +10,9 @@ enum CoachingInsightCalculator {
         weeklyVolumes: [WeeklyVolume],
         nextRace: Race?,
         adherencePercent: Double?,
-        recoveryScore: RecoveryScore? = nil
+        recoveryScore: RecoveryScore? = nil,
+        hrvTrend: HRVAnalyzer.HRVTrend? = nil,
+        readinessScore: ReadinessScore? = nil
     ) -> [CoachingInsight] {
         var insights: [CoachingInsight] = []
 
@@ -181,6 +183,56 @@ enum CoachingInsightCalculator {
                     icon: "battery.100.bolt"
                 ))
             }
+        }
+
+        // 12. HRV declining
+        if let trend = hrvTrend, trend.trend == .declining, trend.isSignificantChange {
+            insights.append(CoachingInsight(
+                id: UUID(),
+                type: .hrvDeclining,
+                category: .warning,
+                title: "HRV Declining",
+                message: "Heart rate variability has dropped significantly. Consider reducing training intensity.",
+                icon: "heart.text.square"
+            ))
+        }
+
+        // 13. HRV improving
+        if let trend = hrvTrend, trend.trend == .improving, trend.isSignificantChange {
+            insights.append(CoachingInsight(
+                id: UUID(),
+                type: .hrvImproving,
+                category: .positive,
+                title: "HRV Improving",
+                message: "Your HRV trend is positive — your body is adapting well to training.",
+                icon: "heart.text.square"
+            ))
+        }
+
+        // 14. Ready for quality session
+        if let readiness = readinessScore,
+           readiness.status == .primed || readiness.status == .ready {
+            insights.append(CoachingInsight(
+                id: UUID(),
+                type: .readyForQualitySession,
+                category: .positive,
+                title: "Ready for Quality Work",
+                message: "Readiness is high. \(readiness.sessionRecommendation.displayText).",
+                icon: "bolt.heart.fill"
+            ))
+        }
+
+        // 15. Session too intense for readiness
+        if let readiness = readinessScore,
+           (readiness.status == .fatigued || readiness.status == .needsRest) {
+            insights.append(CoachingInsight(
+                id: UUID(),
+                type: .sessionTooIntenseForReadiness,
+                category: .warning,
+                title: "Low Readiness",
+                message: "\(readiness.sessionRecommendation.displayText). Your body needs more recovery.",
+                icon: "exclamationmark.triangle"
+            ))
         }
 
         return Array(insights.prefix(maxInsights))

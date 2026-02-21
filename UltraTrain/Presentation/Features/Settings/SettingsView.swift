@@ -130,6 +130,22 @@ struct SettingsView: View {
                         Task { await viewModel.updatePacingAlerts(newValue) }
                     }
                 ))
+
+                NavigationLink {
+                    VoiceCoachingSettingsView(
+                        config: $viewModel.settings.voiceCoachingConfig,
+                        onConfigChanged: { config in
+                            Task { await viewModel.updateVoiceCoachingConfig(config) }
+                        }
+                    )
+                } label: {
+                    HStack {
+                        Label("Voice Coaching", systemImage: "speaker.wave.2")
+                        Spacer()
+                        Text(viewModel.settings.voiceCoachingConfig.enabled ? "On" : "Off")
+                            .foregroundStyle(.secondary)
+                    }
+                }
             } header: {
                 Text("Run Tracking")
             } footer: {

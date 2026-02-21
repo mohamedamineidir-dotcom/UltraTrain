@@ -70,6 +70,33 @@ final class SettingsViewModel {
         biometricAuthService.availableBiometricType != .none
     }
 
+    var settings: AppSettings {
+        get {
+            appSettings ?? AppSettings(
+                id: UUID(),
+                trainingRemindersEnabled: true,
+                nutritionRemindersEnabled: true,
+                autoPauseEnabled: true,
+                nutritionAlertSoundEnabled: true,
+                stravaAutoUploadEnabled: false,
+                stravaConnected: false,
+                raceCountdownEnabled: true,
+                biometricLockEnabled: false,
+                hydrationIntervalSeconds: 1200,
+                fuelIntervalSeconds: 2700,
+                electrolyteIntervalSeconds: 0,
+                smartRemindersEnabled: false,
+                saveToHealthEnabled: false,
+                healthKitAutoImportEnabled: false,
+                pacingAlertsEnabled: true,
+                voiceCoachingConfig: VoiceCoachingConfig()
+            )
+        }
+        set {
+            appSettings = newValue
+        }
+    }
+
     // MARK: - Init
 
     init(
@@ -129,7 +156,8 @@ final class SettingsViewModel {
                     smartRemindersEnabled: false,
                     saveToHealthEnabled: false,
                     healthKitAutoImportEnabled: false,
-                    pacingAlertsEnabled: true
+                    pacingAlertsEnabled: true,
+                    voiceCoachingConfig: VoiceCoachingConfig()
                 )
                 try await appSettingsRepository.saveSettings(defaults)
                 appSettings = defaults
@@ -425,6 +453,25 @@ final class SettingsViewModel {
         } catch {
             self.error = error.localizedDescription
             Logger.settings.error("Failed to update auto-pause setting: \(error)")
+        }
+    }
+
+    // MARK: - Voice Coaching
+
+    func updateVoiceCoachingConfig(_ config: VoiceCoachingConfig) async {
+        settings.voiceCoachingConfig = config
+        await saveSettings()
+    }
+
+    private func saveSettings() async {
+        guard var current = appSettings else { return }
+        current = settings
+        do {
+            try await appSettingsRepository.updateSettings(current)
+            appSettings = current
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to save settings: \(error)")
         }
     }
 

@@ -6,4 +6,6 @@ struct RecoverySnapshot: Identifiable, Equatable, Sendable {
     var recoveryScore: RecoveryScore
     var sleepEntry: SleepEntry?
     var restingHeartRate: Int?
+    var hrvReading: HRVReading?
+    var readinessScore: ReadinessScore?
 }

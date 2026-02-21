@@ -9,7 +9,8 @@ enum RecoveryScoreCalculator {
         sleepHistory: [SleepEntry],
         currentRestingHR: Int?,
         baselineRestingHR: Int?,
-        fitnessSnapshot: FitnessSnapshot?
+        fitnessSnapshot: FitnessSnapshot?,
+        hrvScore: Int? = nil
     ) -> RecoveryScore {
         let hasSleepData = lastNightSleep != nil
 
@@ -19,7 +20,16 @@ enum RecoveryScoreCalculator {
         let loadBalance = calculateTrainingLoadBalanceScore(fitnessSnapshot)
 
         let overall: Int
-        if hasSleepData {
+        if let hrvScore, hasSleepData {
+            // When HRV available with sleep data: sleep 30%, consistency 10%, resting HR 20%, load 20%, HRV 20%
+            overall = Int(
+                Double(sleepQuality) * 0.30
+                + Double(sleepConsistency) * 0.10
+                + Double(hrScore) * 0.20
+                + Double(loadBalance) * 0.20
+                + Double(hrvScore) * 0.20
+            )
+        } else if hasSleepData {
             overall = Int(
                 Double(sleepQuality) * AppConfiguration.Recovery.sleepQualityWeight
                 + Double(sleepConsistency) * AppConfiguration.Recovery.sleepConsistencyWeight
@@ -49,7 +59,8 @@ enum RecoveryScoreCalculator {
             restingHRScore: hrScore,
             trainingLoadBalanceScore: loadBalance,
             recommendation: recommendation,
-            status: status
+            status: status,
+            hrvScore: hrvScore ?? 0
         )
     }
 

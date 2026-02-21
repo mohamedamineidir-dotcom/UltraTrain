@@ -272,4 +272,63 @@ struct RecoveryScoreCalculatorTests {
 
         #expect(score.recommendation.lowercased().contains("low") || score.recommendation.lowercased().contains("rest") || score.recommendation.lowercased().contains("recovery"))
     }
+
+    // MARK: - HRV Integration
+
+    @Test("HRV component included when provided")
+    func hrvComponentIncluded() {
+        let sleep = makeSleepEntry(hours: 8, deepPercent: 0.20, efficiency: 0.90)
+        let history = makeSleepHistory(count: 7, hours: 8)
+
+        let scoreWithHRV = RecoveryScoreCalculator.calculate(
+            lastNightSleep: sleep,
+            sleepHistory: history,
+            currentRestingHR: 50,
+            baselineRestingHR: 50,
+            fitnessSnapshot: makeSnapshot(form: 10),
+            hrvScore: 90
+        )
+
+        #expect(scoreWithHRV.hrvScore == 90)
+    }
+
+    @Test("HRV rebalances weights when present")
+    func hrvRebalancesWeights() {
+        let sleep = makeSleepEntry(hours: 8, deepPercent: 0.20, efficiency: 0.90)
+        let history = makeSleepHistory(count: 7, hours: 8)
+
+        let withoutHRV = RecoveryScoreCalculator.calculate(
+            lastNightSleep: sleep,
+            sleepHistory: history,
+            currentRestingHR: 50,
+            baselineRestingHR: 50,
+            fitnessSnapshot: makeSnapshot(form: 10)
+        )
+
+        let withHRV = RecoveryScoreCalculator.calculate(
+            lastNightSleep: sleep,
+            sleepHistory: history,
+            currentRestingHR: 50,
+            baselineRestingHR: 50,
+            fitnessSnapshot: makeSnapshot(form: 10),
+            hrvScore: 90
+        )
+
+        #expect(withHRV.overallScore != withoutHRV.overallScore)
+        #expect(withHRV.hrvScore == 90)
+        #expect(withoutHRV.hrvScore == 0)
+    }
+
+    @Test("HRV score defaults to 0 when unavailable")
+    func hrvDefaultsToZero() {
+        let score = RecoveryScoreCalculator.calculate(
+            lastNightSleep: makeSleepEntry(),
+            sleepHistory: makeSleepHistory(),
+            currentRestingHR: 50,
+            baselineRestingHR: 50,
+            fitnessSnapshot: makeSnapshot()
+        )
+
+        #expect(score.hrvScore == 0)
+    }
 }

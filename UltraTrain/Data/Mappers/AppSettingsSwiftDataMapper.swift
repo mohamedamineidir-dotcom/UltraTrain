@@ -2,7 +2,14 @@ import Foundation
 
 enum AppSettingsSwiftDataMapper {
     static func toDomain(_ model: AppSettingsSwiftDataModel) -> AppSettings {
-        AppSettings(
+        let voiceCoachingConfig: VoiceCoachingConfig
+        if let data = model.voiceCoachingConfigData {
+            voiceCoachingConfig = (try? JSONDecoder().decode(VoiceCoachingConfig.self, from: data)) ?? VoiceCoachingConfig()
+        } else {
+            voiceCoachingConfig = VoiceCoachingConfig()
+        }
+
+        return AppSettings(
             id: model.id,
             trainingRemindersEnabled: model.trainingRemindersEnabled,
             nutritionRemindersEnabled: model.nutritionRemindersEnabled,
@@ -18,12 +25,13 @@ enum AppSettingsSwiftDataMapper {
             smartRemindersEnabled: model.smartRemindersEnabled,
             saveToHealthEnabled: model.saveToHealthEnabled,
             healthKitAutoImportEnabled: model.healthKitAutoImportEnabled,
-            pacingAlertsEnabled: model.pacingAlertsEnabled
+            pacingAlertsEnabled: model.pacingAlertsEnabled,
+            voiceCoachingConfig: voiceCoachingConfig
         )
     }
 
     static func toSwiftData(_ settings: AppSettings) -> AppSettingsSwiftDataModel {
-        AppSettingsSwiftDataModel(
+        let model = AppSettingsSwiftDataModel(
             id: settings.id,
             trainingRemindersEnabled: settings.trainingRemindersEnabled,
             nutritionRemindersEnabled: settings.nutritionRemindersEnabled,
@@ -41,5 +49,7 @@ enum AppSettingsSwiftDataMapper {
             healthKitAutoImportEnabled: settings.healthKitAutoImportEnabled,
             pacingAlertsEnabled: settings.pacingAlertsEnabled
         )
+        model.voiceCoachingConfigData = try? JSONEncoder().encode(settings.voiceCoachingConfig)
+        return model
     }
 }

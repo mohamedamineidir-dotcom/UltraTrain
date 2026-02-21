@@ -208,6 +208,47 @@ final class HealthKitService: @preconcurrency HealthKitServiceProtocol, @uncheck
         return results
     }
 
+    // MARK: - HRV
+
+    func fetchHRVData(from startDate: Date, to endDate: Date) async throws -> [HRVReading] {
+        guard let healthStore else {
+            throw DomainError.healthKitUnavailable
+        }
+
+        let hrvType = HKQuantityType(.heartRateVariabilitySDNN)
+        let predicate = HKQuery.predicateForSamples(
+            withStart: startDate, end: endDate, options: .strictEndDate
+        )
+        let sortDescriptor = NSSortDescriptor(
+            key: HKSampleSortIdentifierStartDate, ascending: true
+        )
+
+        let samples: [HKQuantitySample] = try await withCheckedThrowingContinuation { continuation in
+            let query = HKSampleQuery(
+                sampleType: hrvType,
+                predicate: predicate,
+                limit: HKObjectQueryNoLimit,
+                sortDescriptors: [sortDescriptor]
+            ) { _, samples, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume(returning: samples as? [HKQuantitySample] ?? [])
+            }
+            healthStore.execute(query)
+        }
+
+        return samples.map { sample in
+            let sdnn = sample.quantity.doubleValue(for: .secondUnit(with: .milli))
+            return HRVReading(
+                date: sample.startDate,
+                sdnnMs: sdnn,
+                source: sample.sourceRevision.source.name
+            )
+        }
+    }
+
     // MARK: - Sleep
 
     func fetchSleepData(from startDate: Date, to endDate: Date) async throws -> [SleepEntry] {

@@ -154,7 +154,8 @@ struct RunTrackingLaunchView: View {
                             saveToHealthEnabled: viewModel.saveToHealthEnabled,
                             pacingAlertsEnabled: viewModel.pacingAlertsEnabled,
                             raceId: viewModel.raceId,
-                            selectedGearIds: Array(viewModel.selectedGearIds)
+                            selectedGearIds: Array(viewModel.selectedGearIds),
+                            voiceCoachingConfig: viewModel.voiceCoachingConfig
                         ),
                         exportService: exportService
                     )

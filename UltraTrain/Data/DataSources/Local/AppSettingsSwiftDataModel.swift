@@ -19,6 +19,7 @@ final class AppSettingsSwiftDataModel {
     var saveToHealthEnabled: Bool = false
     var healthKitAutoImportEnabled: Bool = false
     var pacingAlertsEnabled: Bool = true
+    var voiceCoachingConfigData: Data?
     var updatedAt: Date = Date()
 
     init(
@@ -38,6 +39,7 @@ final class AppSettingsSwiftDataModel {
         saveToHealthEnabled: Bool = false,
         healthKitAutoImportEnabled: Bool = false,
         pacingAlertsEnabled: Bool = true,
+        voiceCoachingConfigData: Data? = nil,
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -56,6 +58,7 @@ final class AppSettingsSwiftDataModel {
         self.saveToHealthEnabled = saveToHealthEnabled
         self.healthKitAutoImportEnabled = healthKitAutoImportEnabled
         self.pacingAlertsEnabled = pacingAlertsEnabled
+        self.voiceCoachingConfigData = voiceCoachingConfigData
         self.updatedAt = updatedAt
     }
 }

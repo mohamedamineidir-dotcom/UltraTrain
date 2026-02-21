@@ -17,6 +17,8 @@ final class RecoverySnapshotSwiftDataModel {
     var remSleepDuration: Double = 0
     var sleepEfficiency: Double = 0
     var restingHeartRate: Int = 0
+    var hrvSdnnMs: Double?
+    var readinessScoreData: Data?
     var updatedAt: Date = Date()
 
     init(
@@ -34,6 +36,8 @@ final class RecoverySnapshotSwiftDataModel {
         remSleepDuration: Double = 0,
         sleepEfficiency: Double = 0,
         restingHeartRate: Int = 0,
+        hrvSdnnMs: Double? = nil,
+        readinessScoreData: Data? = nil,
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -50,6 +54,8 @@ final class RecoverySnapshotSwiftDataModel {
         self.remSleepDuration = remSleepDuration
         self.sleepEfficiency = sleepEfficiency
         self.restingHeartRate = restingHeartRate
+        self.hrvSdnnMs = hrvSdnnMs
+        self.readinessScoreData = readinessScoreData
         self.updatedAt = updatedAt
     }
 }

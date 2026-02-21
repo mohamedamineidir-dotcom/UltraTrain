@@ -109,6 +109,7 @@ private final class PreviewHealthKitService: HealthKitServiceProtocol, @unchecke
     func saveWorkout(run: CompletedRun) async throws {}
     func fetchBodyWeight() async throws -> Double? { nil }
     func fetchSleepData(from: Date, to: Date) async throws -> [SleepEntry] { [] }
+    func fetchHRVData(from: Date, to: Date) async throws -> [HRVReading] { [] }
 }
 
 private struct PreviewRecoveryRepository: RecoveryRepository, @unchecked Sendable {

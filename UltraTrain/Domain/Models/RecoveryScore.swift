@@ -10,6 +10,7 @@ struct RecoveryScore: Identifiable, Equatable, Sendable {
     var trainingLoadBalanceScore: Int
     var recommendation: String
     var status: RecoveryStatus
+    var hrvScore: Int = 0
 }
 
 enum RecoveryStatus: String, Sendable, Equatable {

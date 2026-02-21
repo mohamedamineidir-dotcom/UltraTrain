@@ -3,6 +3,8 @@ import SwiftUI
 struct DashboardRecoveryCard: View {
     let recoveryScore: RecoveryScore?
     let sleepHistory: [SleepEntry]
+    var readinessScore: ReadinessScore?
+    var hrvTrend: HRVAnalyzer.HRVTrend?
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
@@ -37,6 +39,19 @@ struct DashboardRecoveryCard: View {
         Text(score.recommendation)
             .font(.caption)
             .foregroundStyle(Theme.Colors.secondaryLabel)
+
+        if let readiness = readinessScore {
+            ReadinessBadge(score: readiness.overallScore, status: readiness.status)
+            SessionSuggestionCard(recommendation: readiness.sessionRecommendation)
+        }
+
+        if let trend = hrvTrend {
+            HRVIndicator(
+                currentHRV: trend.currentHRV,
+                trend: trend.trend,
+                sevenDayAverage: trend.sevenDayAverage
+            )
+        }
 
         if sleepHistory.count >= 2 {
             SleepHistoryBars(entries: sleepHistory)

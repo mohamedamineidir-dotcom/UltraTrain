@@ -30,6 +30,7 @@ final class ActiveRunViewModel {
     let nutritionHandler: NutritionReminderHandler
     let racePacingHandler: RacePacingHandler
     let connectivityHandler: ConnectivityHandler
+    let voiceCoachingHandler: VoiceCoachingHandler
 
     // MARK: - Config
 
@@ -105,7 +106,9 @@ final class ActiveRunViewModel {
         saveToHealthEnabled: Bool = false,
         pacingAlertsEnabled: Bool = true,
         raceId: UUID?,
-        selectedGearIds: [UUID] = []
+        selectedGearIds: [UUID] = [],
+        voiceCoachingService: (any VoiceCoachingServiceProtocol)? = nil,
+        voiceCoachingConfig: VoiceCoachingConfig = VoiceCoachingConfig()
     ) {
         self.locationService = locationService
         self.healthKitService = healthKitService
@@ -153,6 +156,11 @@ final class ActiveRunViewModel {
             stravaUploadQueueService: stravaUploadQueueService,
             stravaAutoUploadEnabled: stravaAutoUploadEnabled
         )
+
+        self.voiceCoachingHandler = VoiceCoachingHandler(
+            voiceService: voiceCoachingService ?? VoiceCoachingService(speechRate: voiceCoachingConfig.speechRate),
+            config: voiceCoachingConfig
+        )
     }
 
     // MARK: - Controls
@@ -175,6 +183,7 @@ final class ActiveRunViewModel {
         startHeartRateStreaming()
         connectivityHandler.sendWatchUpdate(snapshot: buildSnapshot())
         connectivityHandler.startLiveActivity(snapshot: buildSnapshot())
+        voiceCoachingHandler.announceRunState(.runStarted)
         Logger.tracking.info("Run started")
     }
 
@@ -189,6 +198,7 @@ final class ActiveRunViewModel {
             hapticService.playSelection()
         }
         connectivityHandler.updateLiveActivityImmediately(snapshot: buildSnapshot())
+        voiceCoachingHandler.announceRunState(auto ? .autoPaused : .runPaused)
         Logger.tracking.info("Run \(auto ? "auto-" : "")paused at \(self.elapsedTime)s")
     }
 
@@ -206,6 +216,7 @@ final class ActiveRunViewModel {
         if wasManuallyPaused { locationService.resumeTracking() }
         hapticService.playSelection()
         connectivityHandler.updateLiveActivityImmediately(snapshot: buildSnapshot())
+        voiceCoachingHandler.announceRunState(.runResumed)
         Logger.tracking.info("Run resumed")
     }
 
@@ -222,6 +233,7 @@ final class ActiveRunViewModel {
         healthKitService.stopHeartRateStream()
         connectivityHandler.sendWatchUpdate(snapshot: buildSnapshot())
         connectivityHandler.endLiveActivity(snapshot: buildSnapshot())
+        voiceCoachingHandler.stopSpeaking()
         showSummary = true
         Logger.tracking.info("Run stopped — \(self.distanceKm) km in \(self.elapsedTime)s")
     }
@@ -362,6 +374,7 @@ final class ActiveRunViewModel {
                 self.nutritionHandler.tick(context: context)
                 let pacingContext = self.buildPacingContext()
                 self.racePacingHandler.checkPacingAlert(context: pacingContext, linkedSession: self.linkedSession)
+                self.voiceCoachingHandler.tick(snapshot: self.buildVoiceSnapshot())
                 self.connectivityHandler.sendWatchUpdate(snapshot: self.buildSnapshot())
                 self.connectivityHandler.updateLiveActivityIfNeeded(snapshot: self.buildSnapshot())
             }
@@ -529,6 +542,19 @@ final class ActiveRunViewModel {
             activeReminderMessage: nutritionHandler.activeReminder?.message,
             activeReminderType: nutritionHandler.activeReminder?.type.rawValue,
             linkedSessionName: linkedSession?.description
+        )
+    }
+
+    private func buildVoiceSnapshot() -> VoiceCueBuilder.RunSnapshot {
+        VoiceCueBuilder.RunSnapshot(
+            distanceKm: distanceKm,
+            elapsedTime: elapsedTime,
+            currentPace: runningAveragePace > 0 ? runningAveragePace : nil,
+            elevationGainM: elevationGainM,
+            currentHeartRate: currentHeartRate,
+            currentZoneName: liveZoneState?.currentZoneName,
+            previousZoneName: nil,
+            isMetric: athlete.preferredUnit == .metric
         )
     }
 }
