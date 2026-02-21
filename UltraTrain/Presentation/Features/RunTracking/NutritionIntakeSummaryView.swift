@@ -14,6 +14,17 @@ struct NutritionIntakeSummaryView: View {
                 intakeColumn(icon: "leaf.fill", color: .green, label: "Electrolyte", count: summary.electrolyteTakenCount)
             }
 
+            if totalCalories > 0 {
+                HStack(spacing: Theme.Spacing.xs) {
+                    Image(systemName: "flame.fill")
+                        .foregroundStyle(.orange)
+                        .accessibilityHidden(true)
+                    Text("~\(totalCalories) kcal consumed")
+                        .foregroundStyle(Theme.Colors.label)
+                }
+                .font(.caption)
+            }
+
             HStack(spacing: Theme.Spacing.lg) {
                 statusLabel(count: summary.takenCount, label: "Taken", color: Theme.Colors.success)
                 statusLabel(count: summary.skippedCount, label: "Skipped", color: Theme.Colors.danger)
@@ -28,6 +39,13 @@ struct NutritionIntakeSummaryView: View {
                 .fill(Theme.Colors.secondaryBackground)
         )
         .padding(.horizontal, Theme.Spacing.md)
+    }
+
+    private var totalCalories: Int {
+        summary.entries
+            .filter { $0.status == .taken }
+            .compactMap(\.caloriesConsumed)
+            .reduce(0, +)
     }
 
     private func intakeColumn(icon: String, color: Color, label: String, count: Int) -> some View {

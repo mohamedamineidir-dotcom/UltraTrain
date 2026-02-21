@@ -155,4 +155,44 @@ struct NutritionAnalysisCalculatorTests {
         #expect(result!.adherencePercent > 0)
         #expect(result!.totalCaloriesConsumed == 25)
     }
+
+    // MARK: - Product-Based Calories
+
+    @Test("Uses product calorie data when available")
+    func usesProductCalories() {
+        let log = [
+            NutritionIntakeEntry(
+                reminderType: .fuel,
+                status: .taken,
+                elapsedTimeSeconds: 1200,
+                message: "Energy Gel",
+                caloriesConsumed: 100
+            ),
+            NutritionIntakeEntry(
+                reminderType: .fuel,
+                status: .taken,
+                elapsedTimeSeconds: 2400,
+                message: "Energy Bar",
+                caloriesConsumed: 200
+            )
+        ]
+        let calories = NutritionAnalysisCalculator.estimateTotalCalories(log: log)
+        #expect(calories == 300)
+    }
+
+    @Test("Falls back to heuristic when no product data")
+    func fallsBackToHeuristic() {
+        let log = [
+            NutritionIntakeEntry(
+                reminderType: .fuel,
+                status: .taken,
+                elapsedTimeSeconds: 1200,
+                message: "Fuel",
+                caloriesConsumed: 100
+            ),
+            makeEntry(type: .fuel, status: .taken, elapsed: 2400)
+        ]
+        let calories = NutritionAnalysisCalculator.estimateTotalCalories(log: log)
+        #expect(calories == 125)
+    }
 }

@@ -74,6 +74,10 @@ final class ActiveRunViewModel {
     var liveCheckpointStates: [LiveCheckpointState] = []
     var activeCrossingBanner: LiveCheckpointState?
     var activePacingAlert: PacingAlert?
+    var racePacingGuidance: RacePacingGuidance?
+    var raceSegmentPacings: [TerrainAdaptivePacingCalculator.AdaptiveSegmentPacing] = []
+    var favoriteProducts: [NutritionProduct] = []
+    var liveNutritionTotals: LiveNutritionTracker.Totals?
     private(set) var weatherAtStart: WeatherSnapshot?
 
     // MARK: - Private
@@ -93,6 +97,11 @@ final class ActiveRunViewModel {
     private var pacingAlertTask: Task<Void, Never>?
     private var lastPacingAlertTime: TimeInterval = -.infinity
     private var lastPacingAlertType: PacingAlertType?
+    private var lastRacePacingAlertTime: TimeInterval = -.infinity
+    private var lastRacePacingAlertType: PacingAlertType?
+    private var raceCheckpointSplits: [CheckpointSplit] = []
+    private var raceExpectedFinishTime: TimeInterval = 0
+    private var nutritionTotalsTickCounter: Int = 0
     var raceDistanceKm: Double = 0
 
     // MARK: - Init
@@ -166,6 +175,7 @@ final class ActiveRunViewModel {
     func startRun() {
         runState = .running
         loadNutritionReminders()
+        loadFavoriteProducts()
         loadRaceCheckpoints()
         setupWatchCommandHandler()
         captureWeatherAtStart()
@@ -431,6 +441,9 @@ final class ActiveRunViewModel {
     }
 
     var projectedFinishTime: TimeInterval? {
+        if let guidance = racePacingGuidance {
+            return guidance.projectedFinishTime
+        }
         guard distanceKm > 0.5, raceDistanceKm > 0 else { return nil }
         let remainingKm = max(0, raceDistanceKm - distanceKm)
         let pacePerKm = elapsedTime / distanceKm
@@ -451,6 +464,11 @@ final class ActiveRunViewModel {
                 self?.elapsedTime += AppConfiguration.RunTracking.timerInterval
                 self?.checkNutritionReminders()
                 self?.checkPacingAlert()
+                self?.nutritionTotalsTickCounter += 1
+                if self?.nutritionTotalsTickCounter ?? 0 >= 30 {
+                    self?.nutritionTotalsTickCounter = 0
+                    self?.updateNutritionTotals()
+                }
                 self?.sendWatchUpdate()
                 self?.updateLiveActivityIfNeeded()
             }
@@ -503,6 +521,7 @@ final class ActiveRunViewModel {
 
         updateCheckpointLocations()
         detectCheckpointCrossings()
+        updateRacePacingGuidance()
         handleAutoPause(speed: location.speed)
     }
 
@@ -530,6 +549,7 @@ final class ActiveRunViewModel {
         guard let current = activeReminder else { return }
         logIntakeEntry(for: current, status: .taken)
         markReminderDismissed(current)
+        updateNutritionTotals()
     }
 
     func markReminderSkipped() {
@@ -637,6 +657,24 @@ final class ActiveRunViewModel {
 
     private func checkPacingAlert() {
         guard pacingAlertsEnabled, activePacingAlert == nil else { return }
+
+        if isRaceModeActive, let guidance = racePacingGuidance {
+            let timeSinceLastAlert = elapsedTime - lastRacePacingAlertTime
+            let input = RacePacingAlertCalculator.Input(
+                currentPaceSecondsPerKm: runningAveragePace,
+                segmentTargetPaceSecondsPerKm: guidance.targetPaceSecondsPerKm,
+                segmentName: guidance.currentSegmentName,
+                distanceKm: distanceKm,
+                elapsedTimeSinceLastAlert: timeSinceLastAlert,
+                previousAlertType: lastRacePacingAlertType
+            )
+            guard let alert = RacePacingAlertCalculator.evaluate(input) else { return }
+            lastRacePacingAlertTime = elapsedTime
+            lastRacePacingAlertType = alert.type
+            showPacingAlert(alert)
+            return
+        }
+
         guard let session = linkedSession,
               session.plannedDistanceKm > 0,
               session.plannedDuration > 0 else { return }
@@ -653,9 +691,13 @@ final class ActiveRunViewModel {
         )
 
         guard let alert = PacingAlertCalculator.evaluate(input) else { return }
-        activePacingAlert = alert
         lastPacingAlertTime = elapsedTime
         lastPacingAlertType = alert.type
+        showPacingAlert(alert)
+    }
+
+    private func showPacingAlert(_ alert: PacingAlert) {
+        activePacingAlert = alert
 
         switch alert.severity {
         case .major: hapticService.playPacingAlertMajor()
@@ -707,7 +749,21 @@ final class ActiveRunViewModel {
                     predictedTime: split.expectedTime
                 )
             }
-            Logger.liveRace.info("Loaded \(self.liveCheckpointStates.count) live checkpoint states")
+            raceCheckpointSplits = estimate.checkpointSplits
+            raceExpectedFinishTime = estimate.expectedTime
+
+            let runs = try await runRepository.getRuns(for: athlete.id)
+            let adaptiveInput = TerrainAdaptivePacingCalculator.AdaptiveInput(
+                checkpointSplits: estimate.checkpointSplits,
+                defaultAidStationDwellSeconds: AppConfiguration.PacingStrategy.defaultAidStationDwellSeconds,
+                aidStationDwellOverrides: [:],
+                pacingMode: .pace,
+                athlete: athlete,
+                recentRuns: runs
+            )
+            let result = TerrainAdaptivePacingCalculator.calculate(adaptiveInput)
+            raceSegmentPacings = result.segmentPacings
+            Logger.liveRace.info("Loaded \(self.liveCheckpointStates.count) live checkpoint states with adaptive pacing")
         } catch {
             Logger.liveRace.error("Failed to load finish estimate: \(error)")
         }
@@ -736,6 +792,7 @@ final class ActiveRunViewModel {
             liveCheckpointStates[i].actualTime = elapsedTime
             lastCrossedCheckpointIndex = i
             showCrossingBanner(for: liveCheckpointStates[i])
+            recalculateRemainingPacing(crossedIndex: i)
             Logger.liveRace.info("Crossed checkpoint \(self.liveCheckpointStates[i].checkpointName) at \(self.elapsedTime)s")
         }
     }
@@ -749,6 +806,138 @@ final class ActiveRunViewModel {
             try? await Task.sleep(for: .seconds(AppConfiguration.LiveRace.crossingBannerDismissSeconds))
             guard !Task.isCancelled else { return }
             self?.activeCrossingBanner = nil
+        }
+    }
+
+    // MARK: - Race Pacing Guidance
+
+    private func updateRacePacingGuidance() {
+        guard isRaceModeActive, !raceSegmentPacings.isEmpty else { return }
+        guard distanceKm >= AppConfiguration.LiveRace.guidanceUpdateMinDistanceKm else { return }
+        guard runningAveragePace > 0 else { return }
+
+        let segmentIndex = liveCheckpointStates.firstIndex { !$0.isCrossed } ?? liveCheckpointStates.count - 1
+        guard segmentIndex < raceSegmentPacings.count else { return }
+
+        let checkpoint = liveCheckpointStates[segmentIndex]
+        let pacing = raceSegmentPacings[segmentIndex]
+        let previousCheckpointDistance = segmentIndex > 0
+            ? liveCheckpointStates[segmentIndex - 1].distanceFromStartKm : 0
+        let segmentRemainingKm = max(0, checkpoint.distanceFromStartKm - distanceKm)
+
+        let previousCheckpointTime = segmentIndex > 0
+            ? (liveCheckpointStates[segmentIndex - 1].actualTime ?? liveCheckpointStates[segmentIndex - 1].predictedTime)
+            : 0
+        let segmentTargetDuration = pacing.targetPaceSecondsPerKm
+            * (checkpoint.distanceFromStartKm - previousCheckpointDistance)
+        let elapsedInSegment = elapsedTime - previousCheckpointTime
+        let timeBudgetRemaining = max(0, segmentTargetDuration - elapsedInSegment)
+
+        let projectedFinish = calculateTerrainAwareProjection(
+            currentSegmentIndex: segmentIndex,
+            elapsedTime: elapsedTime,
+            distanceKm: distanceKm
+        )
+
+        let scenario: FinishScenario
+        if projectedFinish < raceExpectedFinishTime * 0.98 {
+            scenario = .aheadOfPlan
+        } else if projectedFinish > raceExpectedFinishTime * 1.02 {
+            scenario = .behindPlan
+        } else {
+            scenario = .onPlan
+        }
+
+        racePacingGuidance = RacePacingGuidance(
+            currentSegmentIndex: segmentIndex,
+            currentSegmentName: checkpoint.checkpointName,
+            targetPaceSecondsPerKm: pacing.targetPaceSecondsPerKm,
+            currentPaceSecondsPerKm: runningAveragePace,
+            pacingZone: pacing.pacingZone,
+            segmentTimeBudgetRemaining: timeBudgetRemaining,
+            segmentDistanceRemainingKm: segmentRemainingKm,
+            projectedFinishTime: projectedFinish,
+            projectedFinishScenario: scenario
+        )
+    }
+
+    private func calculateTerrainAwareProjection(
+        currentSegmentIndex: Int,
+        elapsedTime: TimeInterval,
+        distanceKm: Double
+    ) -> TimeInterval {
+        var projected = elapsedTime
+        for i in currentSegmentIndex..<raceSegmentPacings.count {
+            let pacing = raceSegmentPacings[i]
+            let checkpoint = liveCheckpointStates[i]
+            let segmentStartKm = i > 0 ? liveCheckpointStates[i - 1].distanceFromStartKm : 0
+            let segmentDistanceKm = checkpoint.distanceFromStartKm - segmentStartKm
+
+            if i == currentSegmentIndex {
+                let remainingKm = max(0, checkpoint.distanceFromStartKm - distanceKm)
+                projected += remainingKm * pacing.targetPaceSecondsPerKm
+            } else {
+                projected += segmentDistanceKm * pacing.targetPaceSecondsPerKm
+            }
+            projected += pacing.aidStationDwellTime
+        }
+        return projected
+    }
+
+    private func recalculateRemainingPacing(crossedIndex: Int) {
+        guard !raceSegmentPacings.isEmpty,
+              !raceCheckpointSplits.isEmpty else { return }
+        let state = liveCheckpointStates[crossedIndex]
+        guard let actual = state.actualTime, state.predictedTime > 0 else { return }
+        let deltaPercent = abs(actual - state.predictedTime) / state.predictedTime * 100
+        guard deltaPercent >= AppConfiguration.LiveRace.recalculationDeltaThresholdPercent else { return }
+
+        let input = RacePacingRecalculator.Input(
+            segmentPacings: raceSegmentPacings,
+            checkpointSplits: raceCheckpointSplits,
+            crossedCheckpointIndex: crossedIndex,
+            actualTimeAtCrossing: actual,
+            predictedTimeAtCrossing: state.predictedTime,
+            targetFinishTime: raceExpectedFinishTime
+        )
+        let result = RacePacingRecalculator.recalculate(input)
+        raceSegmentPacings = result.updatedPacings
+        Logger.liveRace.info("Recalculated pacing after checkpoint \(crossedIndex), new finish: \(result.recalculatedFinishTime)s")
+    }
+
+    // MARK: - Nutrition Quick-Tap
+
+    func logNutritionProduct(_ product: NutritionProduct, quantity: Int = 1) {
+        let entry = LiveNutritionTracker.buildManualEntry(
+            product: product, elapsedTime: elapsedTime, quantity: quantity
+        )
+        nutritionIntakeLog.append(entry)
+        hapticService.playSelection()
+        updateNutritionTotals()
+    }
+
+    private func updateNutritionTotals() {
+        liveNutritionTotals = LiveNutritionTracker.calculateTotals(
+            from: nutritionIntakeLog, elapsedTime: elapsedTime
+        )
+    }
+
+    private func loadFavoriteProducts() {
+        guard nutritionRemindersEnabled else { return }
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                let prefs = try await self.nutritionRepository.getNutritionPreferences()
+                let allProducts = try await self.nutritionRepository.getProducts()
+                let favoriteIds = prefs.favoriteProductIds
+                var favorites = favoriteIds.compactMap { fid in allProducts.first { $0.id == fid } }
+                if favorites.isEmpty {
+                    favorites = Array(allProducts.prefix(4))
+                }
+                self.favoriteProducts = favorites
+            } catch {
+                Logger.nutrition.debug("Could not load favorite products: \(error)")
+            }
         }
     }
 

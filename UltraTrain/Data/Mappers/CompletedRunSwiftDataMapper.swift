@@ -18,6 +18,12 @@ enum CompletedRunSwiftDataMapper {
         let status: String
         let elapsedTimeSeconds: TimeInterval
         let message: String
+        let productId: UUID?
+        let productName: String?
+        let caloriesConsumed: Int?
+        let carbsGramsConsumed: Double?
+        let sodiumMgConsumed: Int?
+        let isManualEntry: Bool?
     }
 
     private struct CodableWeatherSnapshot: Codable {
@@ -177,7 +183,13 @@ enum CompletedRunSwiftDataMapper {
                 reminderType: entry.reminderType.rawValue,
                 status: entry.status.rawValue,
                 elapsedTimeSeconds: entry.elapsedTimeSeconds,
-                message: entry.message
+                message: entry.message,
+                productId: entry.productId,
+                productName: entry.productName,
+                caloriesConsumed: entry.caloriesConsumed,
+                carbsGramsConsumed: entry.carbsGramsConsumed,
+                sodiumMgConsumed: entry.sodiumMgConsumed,
+                isManualEntry: entry.isManualEntry ? true : nil
             )
         }
         return (try? JSONEncoder().encode(codable)) ?? Data()
@@ -197,7 +209,13 @@ enum CompletedRunSwiftDataMapper {
                 reminderType: type,
                 status: status,
                 elapsedTimeSeconds: entry.elapsedTimeSeconds,
-                message: entry.message
+                message: entry.message,
+                productId: entry.productId,
+                productName: entry.productName,
+                caloriesConsumed: entry.caloriesConsumed,
+                carbsGramsConsumed: entry.carbsGramsConsumed,
+                sodiumMgConsumed: entry.sodiumMgConsumed,
+                isManualEntry: entry.isManualEntry ?? false
             )
         }
     }

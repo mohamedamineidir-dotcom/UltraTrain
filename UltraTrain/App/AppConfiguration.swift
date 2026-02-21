@@ -66,6 +66,8 @@ enum AppConfiguration {
 
     enum LiveRace {
         static let crossingBannerDismissSeconds: TimeInterval = 8
+        static let recalculationDeltaThresholdPercent: Double = 3.0
+        static let guidanceUpdateMinDistanceKm: Double = 0.3
     }
 
     enum Weather {

@@ -89,10 +89,14 @@ enum NutritionAnalysisCalculator {
     static func estimateTotalCalories(log: [NutritionIntakeEntry]) -> Double {
         var calories: Double = 0
         for entry in log where entry.status == .taken {
-            switch entry.reminderType {
-            case .fuel: calories += 25
-            case .hydration: calories += 0
-            case .electrolyte: calories += 5
+            if let productCalories = entry.caloriesConsumed {
+                calories += Double(productCalories)
+            } else {
+                switch entry.reminderType {
+                case .fuel: calories += 25
+                case .hydration: calories += 0
+                case .electrolyte: calories += 5
+                }
             }
         }
         return calories

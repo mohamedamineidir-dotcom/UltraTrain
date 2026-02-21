@@ -30,15 +30,32 @@ struct ActiveRunView: View {
             )
             .padding(.horizontal, Theme.Spacing.md)
 
+            if viewModel.nutritionRemindersEnabled, !viewModel.favoriteProducts.isEmpty {
+                NutritionQuickTapBar(
+                    products: viewModel.favoriteProducts,
+                    totals: viewModel.liveNutritionTotals,
+                    onProductTapped: { viewModel.logNutritionProduct($0) }
+                )
+                .padding(.horizontal, Theme.Spacing.md)
+                .padding(.top, Theme.Spacing.xs)
+            }
+
             if viewModel.isRaceModeActive {
                 LiveSplitPanel(
                     checkpoints: viewModel.liveCheckpointStates,
+                    segmentPacings: viewModel.raceSegmentPacings,
                     nextCheckpoint: viewModel.nextCheckpoint,
                     distanceToNext: viewModel.distanceToNextCheckpointKm,
                     projectedFinish: viewModel.projectedFinishTime
                 )
                 .padding(.horizontal, Theme.Spacing.md)
                 .padding(.top, Theme.Spacing.sm)
+
+                if let guidance = viewModel.racePacingGuidance {
+                    RacePacingGuidancePanel(guidance: guidance)
+                        .padding(.horizontal, Theme.Spacing.md)
+                        .padding(.top, Theme.Spacing.xs)
+                }
             }
 
             Spacer()

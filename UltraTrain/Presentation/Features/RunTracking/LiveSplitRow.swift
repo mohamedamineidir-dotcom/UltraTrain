@@ -1,8 +1,10 @@
 import SwiftUI
 
 struct LiveSplitRow: View {
+    @Environment(\.unitPreference) private var units
     let checkpoint: LiveCheckpointState
     let isNext: Bool
+    var targetPaceSecondsPerKm: Double?
 
     var body: some View {
         HStack(spacing: 0) {
@@ -12,12 +14,12 @@ struct LiveSplitRow: View {
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            Text(formatTime(checkpoint.predictedTime))
+            Text(formattedTargetPace)
                 .font(.caption.monospacedDigit())
                 .foregroundStyle(textColor)
-                .frame(width: 52, alignment: .trailing)
+                .frame(width: 44, alignment: .trailing)
 
-            Text(checkpoint.isCrossed ? formatTime(checkpoint.actualTime!) : "--:--")
+            Text(formatTime(checkpoint.predictedTime))
                 .font(.caption.monospacedDigit())
                 .foregroundStyle(textColor)
                 .frame(width: 52, alignment: .trailing)
@@ -25,7 +27,7 @@ struct LiveSplitRow: View {
             Text(deltaText)
                 .font(.caption.bold().monospacedDigit())
                 .foregroundStyle(deltaColor)
-                .frame(width: 60, alignment: .trailing)
+                .frame(width: 52, alignment: .trailing)
         }
         .padding(.vertical, 3)
         .padding(.horizontal, Theme.Spacing.sm)
@@ -33,6 +35,11 @@ struct LiveSplitRow: View {
         .clipShape(RoundedRectangle(cornerRadius: 4))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityDescription)
+    }
+
+    private var formattedTargetPace: String {
+        guard let pace = targetPaceSecondsPerKm else { return "--" }
+        return RunStatisticsCalculator.formatPace(pace, unit: units)
     }
 
     private var accessibilityDescription: String {

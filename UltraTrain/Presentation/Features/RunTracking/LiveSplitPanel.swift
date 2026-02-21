@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LiveSplitPanel: View {
     let checkpoints: [LiveCheckpointState]
+    let segmentPacings: [TerrainAdaptivePacingCalculator.AdaptiveSegmentPacing]
     let nextCheckpoint: LiveCheckpointState?
     let distanceToNext: Double?
     let projectedFinish: TimeInterval?
@@ -26,12 +27,12 @@ struct LiveSplitPanel: View {
         HStack(spacing: 0) {
             Text("Checkpoint")
                 .frame(maxWidth: .infinity, alignment: .leading)
+            Text("Pace")
+                .frame(width: 44, alignment: .trailing)
             Text("Est.")
                 .frame(width: 52, alignment: .trailing)
-            Text("Actual")
-                .frame(width: 52, alignment: .trailing)
             Text("Delta")
-                .frame(width: 60, alignment: .trailing)
+                .frame(width: 52, alignment: .trailing)
         }
         .font(.caption2.bold())
         .foregroundStyle(Theme.Colors.secondaryLabel)
@@ -41,10 +42,13 @@ struct LiveSplitPanel: View {
     private var splitList: some View {
         ScrollView {
             VStack(spacing: 0) {
-                ForEach(checkpoints) { checkpoint in
+                ForEach(Array(checkpoints.enumerated()), id: \.element.id) { index, checkpoint in
+                    let pace = index < segmentPacings.count
+                        ? segmentPacings[index].targetPaceSecondsPerKm : nil
                     LiveSplitRow(
                         checkpoint: checkpoint,
-                        isNext: checkpoint.id == nextCheckpoint?.id
+                        isNext: checkpoint.id == nextCheckpoint?.id,
+                        targetPaceSecondsPerKm: pace
                     )
                 }
             }
