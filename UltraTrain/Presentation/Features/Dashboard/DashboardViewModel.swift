@@ -45,6 +45,7 @@ final class DashboardViewModel {
     var sessionForecast: WeatherSnapshot?
     var recoveryScore: RecoveryScore?
     var sleepHistory: [SleepEntry] = []
+    var weeklyZoneDistribution: [HeartRateZoneDistribution] = []
 
     // MARK: - Init
 
@@ -126,6 +127,14 @@ final class DashboardViewModel {
                 adherencePercent: adherencePercent,
                 recoveryScore: recoveryScore
             )
+
+            let weekResult = WeeklyZoneDistributionCalculator.calculate(
+                runs: runs,
+                weekStartDate: Date.now.startOfWeek,
+                maxHeartRate: athlete.maxHeartRate,
+                customThresholds: athlete.customZoneThresholds
+            )
+            weeklyZoneDistribution = weekResult.distributions
 
             let from = Date.now.adding(days: -28)
             fitnessHistory = try await fitnessRepository.getSnapshots(from: from, to: .now)

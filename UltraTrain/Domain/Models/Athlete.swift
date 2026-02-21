@@ -13,6 +13,7 @@ struct Athlete: Identifiable, Equatable, Sendable {
     var weeklyVolumeKm: Double
     var longestRunKm: Double
     var preferredUnit: UnitPreference
+    var customZoneThresholds: [Int]?
 
     var age: Int {
         Calendar.current.dateComponents([.year], from: dateOfBirth, to: .now).year ?? 0

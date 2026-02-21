@@ -196,6 +196,13 @@ struct ProfileView: View {
                     .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
                 athleteStatsGrid(athlete)
+                NavigationLink {
+                    HRZoneConfigurationView(athlete: athlete) { updated in
+                        Task { await viewModel.updateAthlete(updated) }
+                    }
+                } label: {
+                    Label("HR Zones", systemImage: "heart.text.square")
+                }
             }
         } else {
             Section("Athlete") {

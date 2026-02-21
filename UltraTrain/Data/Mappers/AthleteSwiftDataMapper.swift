@@ -6,6 +6,10 @@ enum AthleteSwiftDataMapper {
               let unit = UnitPreference(rawValue: model.preferredUnitRaw) else {
             return nil
         }
+        let customZones: [Int]? = model.customZoneThresholdsRaw.flatMap { raw in
+            let parts = raw.split(separator: ",").compactMap { Int($0) }
+            return parts.count == 4 ? parts : nil
+        }
         return Athlete(
             id: model.id,
             firstName: model.firstName,
@@ -18,7 +22,8 @@ enum AthleteSwiftDataMapper {
             experienceLevel: level,
             weeklyVolumeKm: model.weeklyVolumeKm,
             longestRunKm: model.longestRunKm,
-            preferredUnit: unit
+            preferredUnit: unit,
+            customZoneThresholds: customZones
         )
     }
 
@@ -35,7 +40,8 @@ enum AthleteSwiftDataMapper {
             experienceLevelRaw: athlete.experienceLevel.rawValue,
             weeklyVolumeKm: athlete.weeklyVolumeKm,
             longestRunKm: athlete.longestRunKm,
-            preferredUnitRaw: athlete.preferredUnit.rawValue
+            preferredUnitRaw: athlete.preferredUnit.rawValue,
+            customZoneThresholdsRaw: athlete.customZoneThresholds?.map(String.init).joined(separator: ",")
         )
     }
 }

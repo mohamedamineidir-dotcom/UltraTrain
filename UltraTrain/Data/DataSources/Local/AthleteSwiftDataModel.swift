@@ -15,6 +15,7 @@ final class AthleteSwiftDataModel {
     var weeklyVolumeKm: Double = 0
     var longestRunKm: Double = 0
     var preferredUnitRaw: String = "metric"
+    var customZoneThresholdsRaw: String? = nil
     var updatedAt: Date = Date()
 
     init(
@@ -30,6 +31,7 @@ final class AthleteSwiftDataModel {
         weeklyVolumeKm: Double = 0,
         longestRunKm: Double = 0,
         preferredUnitRaw: String = "metric",
+        customZoneThresholdsRaw: String? = nil,
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -44,6 +46,7 @@ final class AthleteSwiftDataModel {
         self.weeklyVolumeKm = weeklyVolumeKm
         self.longestRunKm = longestRunKm
         self.preferredUnitRaw = preferredUnitRaw
+        self.customZoneThresholdsRaw = customZoneThresholdsRaw
         self.updatedAt = updatedAt
     }
 }

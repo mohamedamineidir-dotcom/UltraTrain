@@ -99,7 +99,18 @@ enum RunStatisticsCalculator {
 
     // MARK: - Heart Rate Zone
 
-    static func heartRateZone(heartRate: Int, maxHeartRate: Int) -> Int {
+    static func heartRateZone(
+        heartRate: Int,
+        maxHeartRate: Int,
+        customThresholds: [Int]? = nil
+    ) -> Int {
+        if let thresholds = customThresholds, thresholds.count == 4 {
+            if heartRate <= thresholds[0] { return 1 }
+            if heartRate <= thresholds[1] { return 2 }
+            if heartRate <= thresholds[2] { return 3 }
+            if heartRate <= thresholds[3] { return 4 }
+            return 5
+        }
         guard maxHeartRate > 0 else { return 1 }
         let percent = Double(heartRate) / Double(maxHeartRate) * 100
         switch percent {
@@ -117,8 +128,20 @@ enum RunStatisticsCalculator {
 
     static func heartRateZoneDistribution(
         from points: [TrackPoint],
-        maxHeartRate: Int
+        maxHeartRate: Int,
+        customThresholds: [Int]? = nil
     ) -> [HeartRateZoneDistribution] {
+        guard points.count >= 2 else {
+            return (1...5).map { zone in
+                HeartRateZoneDistribution(
+                    zone: zone,
+                    zoneName: zoneNames[zone - 1],
+                    durationSeconds: 0,
+                    percentage: 0
+                )
+            }
+        }
+
         var zoneDurations: [Int: TimeInterval] = [1: 0, 2: 0, 3: 0, 4: 0, 5: 0]
         var totalDurationWithHR: TimeInterval = 0
 
@@ -127,7 +150,7 @@ enum RunStatisticsCalculator {
             let timeDelta = points[i].timestamp.timeIntervalSince(points[i - 1].timestamp)
             guard timeDelta > 0, timeDelta < 60 else { continue }
 
-            let zone = heartRateZone(heartRate: hr, maxHeartRate: maxHeartRate)
+            let zone = heartRateZone(heartRate: hr, maxHeartRate: maxHeartRate, customThresholds: customThresholds)
             zoneDurations[zone, default: 0] += timeDelta
             totalDurationWithHR += timeDelta
         }
@@ -198,7 +221,8 @@ enum RunStatisticsCalculator {
 
     static func buildHeartRateSegments(
         from points: [TrackPoint],
-        maxHeartRate: Int
+        maxHeartRate: Int,
+        customThresholds: [Int]? = nil
     ) -> [HeartRateSegment] {
         guard points.count >= 2, maxHeartRate > 0 else { return [] }
 
@@ -218,7 +242,7 @@ enum RunStatisticsCalculator {
                 let segmentPoints = Array(points[segmentStartIndex...i])
                 let heartRates = segmentPoints.compactMap(\.heartRate)
                 let avgHR = heartRates.isEmpty ? 0 : heartRates.reduce(0, +) / heartRates.count
-                let zone = avgHR > 0 ? heartRateZone(heartRate: avgHR, maxHeartRate: maxHeartRate) : 1
+                let zone = avgHR > 0 ? heartRateZone(heartRate: avgHR, maxHeartRate: maxHeartRate, customThresholds: customThresholds) : 1
 
                 segments.append(HeartRateSegment(
                     coordinates: segmentPoints.map { ($0.latitude, $0.longitude) },
@@ -236,7 +260,7 @@ enum RunStatisticsCalculator {
             let segmentPoints = Array(points[segmentStartIndex..<points.count])
             let heartRates = segmentPoints.compactMap(\.heartRate)
             let avgHR = heartRates.isEmpty ? 0 : heartRates.reduce(0, +) / heartRates.count
-            let zone = avgHR > 0 ? heartRateZone(heartRate: avgHR, maxHeartRate: maxHeartRate) : 1
+            let zone = avgHR > 0 ? heartRateZone(heartRate: avgHR, maxHeartRate: maxHeartRate, customThresholds: customThresholds) : 1
 
             segments.append(HeartRateSegment(
                 coordinates: segmentPoints.map { ($0.latitude, $0.longitude) },

@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct EditRaceSheet: View {
     enum Mode {
@@ -29,6 +30,9 @@ struct EditRaceSheet: View {
     @State private var checkpoints: [Checkpoint]
     @State private var showAddCheckpoint = false
     @State private var editingCheckpoint: Checkpoint?
+    @State private var showDocumentPicker = false
+    @State private var showImportCourse = false
+    @State private var importedFileURL: URL?
 
     private let existingId: UUID?
 
@@ -110,6 +114,20 @@ struct EditRaceSheet: View {
                 EditCheckpointSheet(checkpoint: cp, raceDistanceKm: distanceKm) { updated in
                     if let index = checkpoints.firstIndex(where: { $0.id == updated.id }) {
                         checkpoints[index] = updated
+                    }
+                }
+            }
+            .sheet(isPresented: $showDocumentPicker) {
+                DocumentPicker(contentTypes: [.xml]) { url in
+                    importedFileURL = url
+                    showDocumentPicker = false
+                    showImportCourse = true
+                }
+            }
+            .sheet(isPresented: $showImportCourse) {
+                if let url = importedFileURL {
+                    ImportCourseView(fileURL: url) { result in
+                        applyImportedCourse(result)
                     }
                 }
             }
@@ -230,6 +248,11 @@ struct EditRaceSheet: View {
 
     private var checkpointsSection: some View {
         Section {
+            Button {
+                showDocumentPicker = true
+            } label: {
+                Label("Import GPX Course", systemImage: "doc.badge.arrow.up")
+            }
             if checkpoints.isEmpty {
                 Text("No checkpoints added yet")
                     .foregroundStyle(Theme.Colors.secondaryLabel)
@@ -277,7 +300,7 @@ struct EditRaceSheet: View {
         } header: {
             Text("Checkpoints")
         } footer: {
-            Text("Add aid stations and key waypoints to get predicted split times.")
+            Text("Import a GPX file or add waypoints manually for predicted split times.")
         }
     }
 
@@ -302,6 +325,16 @@ struct EditRaceSheet: View {
         case .finish: .finish
         case .targetTime: .targetTime(TimeInterval(targetTimeHours * 3600 + targetTimeMinutes * 60))
         case .targetRanking: .targetRanking(targetRanking)
+        }
+    }
+
+    private func applyImportedCourse(_ result: CourseImportResult) {
+        distanceKm = result.distanceKm
+        elevationGainM = result.elevationGainM
+        elevationLossM = result.elevationLossM
+        checkpoints = result.checkpoints
+        if let gpxName = result.name, name.isEmpty {
+            name = gpxName
         }
     }
 

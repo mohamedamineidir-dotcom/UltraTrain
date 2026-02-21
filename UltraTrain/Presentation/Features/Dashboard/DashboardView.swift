@@ -109,6 +109,10 @@ struct DashboardView: View {
                         weeksUntilRace: viewModel.weeksUntilRace
                     )
 
+                    DashboardZoneDistributionCard(
+                        distribution: viewModel.weeklyZoneDistribution
+                    )
+
                     DashboardRecoveryCard(
                         recoveryScore: viewModel.recoveryScore,
                         sleepHistory: viewModel.sleepHistory

@@ -8,16 +8,16 @@ enum AppConstants {
         static let zone4Range = 0.80...0.90  // Threshold
         static let zone5Range = 0.90...1.00  // VO2max
 
-        static func zone(for heartRate: Int, maxHeartRate: Int) -> Int {
-            let pct = Double(heartRate) / Double(maxHeartRate)
-            switch pct {
-            case zone1Range: return 1
-            case zone2Range: return 2
-            case zone3Range: return 3
-            case zone4Range: return 4
-            case zone5Range: return 5
-            default: return pct < 0.50 ? 1 : 5
-            }
+        static func zone(
+            for heartRate: Int,
+            maxHeartRate: Int,
+            customThresholds: [Int]? = nil
+        ) -> Int {
+            RunStatisticsCalculator.heartRateZone(
+                heartRate: heartRate,
+                maxHeartRate: maxHeartRate,
+                customThresholds: customThresholds
+            )
         }
     }
 
