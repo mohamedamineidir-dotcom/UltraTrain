@@ -37,6 +37,8 @@ struct MainTabView: View {
     private let weatherService: (any WeatherServiceProtocol)?
     private let recoveryRepository: any RecoveryRepository
     private let checklistRepository: any RacePrepChecklistRepository
+    private let challengeRepository: any ChallengeRepository
+    private let workoutRecipeRepository: any WorkoutRecipeRepository
 
     init(
         athleteRepository: any AthleteRepository,
@@ -72,7 +74,9 @@ struct MainTabView: View {
         healthKitImportService: (any HealthKitImportServiceProtocol)? = nil,
         weatherService: (any WeatherServiceProtocol)? = nil,
         recoveryRepository: any RecoveryRepository,
-        checklistRepository: any RacePrepChecklistRepository
+        checklistRepository: any RacePrepChecklistRepository,
+        challengeRepository: any ChallengeRepository,
+        workoutRecipeRepository: any WorkoutRecipeRepository
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -108,6 +112,8 @@ struct MainTabView: View {
         self.weatherService = weatherService
         self.recoveryRepository = recoveryRepository
         self.checklistRepository = checklistRepository
+        self.challengeRepository = challengeRepository
+        self.workoutRecipeRepository = workoutRecipeRepository
     }
 
     var body: some View {
@@ -129,7 +135,8 @@ struct MainTabView: View {
                 recoveryRepository: recoveryRepository,
                 checklistRepository: checklistRepository,
                 weatherService: weatherService,
-                locationService: locationService
+                locationService: locationService,
+                challengeRepository: challengeRepository
             )
                 .tabItem {
                     Label("Dashboard", systemImage: "house.fill")
@@ -144,7 +151,8 @@ struct MainTabView: View {
                 nutritionRepository: nutritionRepository,
                 sessionNutritionAdvisor: sessionNutritionAdvisor,
                 fitnessRepository: fitnessRepository,
-                widgetDataWriter: widgetDataWriter
+                widgetDataWriter: widgetDataWriter,
+                workoutRecipeRepository: workoutRecipeRepository
             )
                 .tabItem {
                     Label("Plan", systemImage: "calendar")
@@ -215,7 +223,8 @@ struct MainTabView: View {
                 healthKitImportService: healthKitImportService,
                 weatherService: weatherService,
                 locationService: locationService,
-                checklistRepository: checklistRepository
+                checklistRepository: checklistRepository,
+                challengeRepository: challengeRepository
             )
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")

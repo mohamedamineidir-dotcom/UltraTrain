@@ -42,6 +42,8 @@ struct UltraTrainApp: App {
     private let weatherService: AppleWeatherKitService
     private let recoveryRepository: any RecoveryRepository
     private let checklistRepository: any RacePrepChecklistRepository
+    private let challengeRepository: any ChallengeRepository
+    private let workoutRecipeRepository: any WorkoutRecipeRepository
     private let cloudKitSyncMonitor: CloudKitSyncMonitor?
 
     init() {
@@ -69,7 +71,9 @@ struct UltraTrainApp: App {
                 StravaUploadQueueSwiftDataModel.self,
                 RecoverySnapshotSwiftDataModel.self,
                 RacePrepChecklistSwiftDataModel.self,
-                ChecklistItemSwiftDataModel.self
+                ChecklistItemSwiftDataModel.self,
+                ChallengeEnrollmentSwiftDataModel.self,
+                WorkoutRecipeSwiftDataModel.self
             ])
             let config: ModelConfiguration
             if isUITesting {
@@ -150,6 +154,8 @@ struct UltraTrainApp: App {
         stravaUploadQueueRepository = LocalStravaUploadQueueRepository(modelContainer: modelContainer)
         recoveryRepository = LocalRecoveryRepository(modelContainer: modelContainer)
         checklistRepository = LocalRacePrepChecklistRepository(modelContainer: modelContainer)
+        challengeRepository = LocalChallengeRepository(modelContainer: modelContainer)
+        workoutRecipeRepository = LocalWorkoutRecipeRepository(modelContainer: modelContainer)
         stravaUploadQueueService = StravaUploadQueueService(
             queueRepository: stravaUploadQueueRepository,
             runRepository: runRepository,
@@ -228,7 +234,9 @@ struct UltraTrainApp: App {
                 healthKitImportService: healthKitImportService,
                 weatherService: weatherService,
                 recoveryRepository: recoveryRepository,
-                checklistRepository: checklistRepository
+                checklistRepository: checklistRepository,
+                challengeRepository: challengeRepository,
+                workoutRecipeRepository: workoutRecipeRepository
             )
         }
     }

@@ -123,6 +123,14 @@ private struct PreviewChecklistRepository: RacePrepChecklistRepository, @uncheck
     func deleteChecklist(for raceId: UUID) async throws {}
 }
 
+private struct PreviewChallengeRepository: ChallengeRepository, @unchecked Sendable {
+    func getEnrollments() async throws -> [ChallengeEnrollment] { [] }
+    func getActiveEnrollments() async throws -> [ChallengeEnrollment] { [] }
+    func saveEnrollment(_ enrollment: ChallengeEnrollment) async throws {}
+    func updateEnrollment(_ enrollment: ChallengeEnrollment) async throws {}
+    func deleteEnrollment(id: UUID) async throws {}
+}
+
 #Preview("Dashboard") {
     DashboardView(
         selectedTab: .constant(.dashboard),
@@ -140,7 +148,8 @@ private struct PreviewChecklistRepository: RacePrepChecklistRepository, @uncheck
         healthKitService: PreviewHealthKitService(),
         recoveryRepository: PreviewRecoveryRepository(),
         checklistRepository: PreviewChecklistRepository(),
-        locationService: LocationService()
+        locationService: LocationService(),
+        challengeRepository: PreviewChallengeRepository()
     )
 }
 #endif

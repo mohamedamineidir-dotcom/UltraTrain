@@ -24,6 +24,8 @@ enum DomainError: Error, Equatable, Sendable {
     case biometricFailed(reason: String)
     case notificationDenied
     case gearNotFound
+    case workoutRecipeNotFound
+    case challengeNotFound
     case iCloudAccountUnavailable
     case iCloudSyncFailed(reason: String)
     case weatherUnavailable(reason: String)
@@ -79,6 +81,10 @@ extension DomainError: LocalizedError {
             return "Notification permission was denied. Enable in iOS Settings."
         case .gearNotFound:
             return "Gear item not found."
+        case .workoutRecipeNotFound:
+            return "Workout recipe not found."
+        case .challengeNotFound:
+            return "Challenge not found."
         case .iCloudAccountUnavailable:
             return "iCloud account is not available. Sign in to iCloud in iOS Settings."
         case .iCloudSyncFailed(let reason):

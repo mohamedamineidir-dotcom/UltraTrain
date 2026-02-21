@@ -25,6 +25,7 @@ struct ProfileView: View {
     private let weatherService: (any WeatherServiceProtocol)?
     private let locationService: LocationService?
     private let checklistRepository: any RacePrepChecklistRepository
+    private let challengeRepository: any ChallengeRepository
 
     init(
         athleteRepository: any AthleteRepository,
@@ -50,7 +51,8 @@ struct ProfileView: View {
         healthKitImportService: (any HealthKitImportServiceProtocol)? = nil,
         weatherService: (any WeatherServiceProtocol)? = nil,
         locationService: LocationService? = nil,
-        checklistRepository: any RacePrepChecklistRepository
+        checklistRepository: any RacePrepChecklistRepository,
+        challengeRepository: any ChallengeRepository
     ) {
         _viewModel = State(initialValue: ProfileViewModel(
             athleteRepository: athleteRepository,
@@ -81,6 +83,7 @@ struct ProfileView: View {
         self.weatherService = weatherService
         self.locationService = locationService
         self.checklistRepository = checklistRepository
+        self.challengeRepository = challengeRepository
     }
 
     var body: some View {
@@ -92,6 +95,7 @@ struct ProfileView: View {
                     athleteSection
                     racesSection
                     gearSection
+                    challengesSection
                 }
             }
             .navigationTitle("Profile")
@@ -325,6 +329,22 @@ struct ProfileView: View {
                 )
             } label: {
                 Label("Gear", systemImage: "shoe.fill")
+            }
+        }
+    }
+
+    // MARK: - Challenges Section
+
+    private var challengesSection: some View {
+        Section {
+            NavigationLink {
+                ChallengesView(
+                    challengeRepository: challengeRepository,
+                    runRepository: runRepository,
+                    athleteRepository: athleteRepository
+                )
+            } label: {
+                Label("Challenges", systemImage: "trophy.fill")
             }
         }
     }

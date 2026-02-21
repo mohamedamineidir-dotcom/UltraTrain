@@ -4,6 +4,7 @@ struct TrainingPlanView: View {
     @State private var viewModel: TrainingPlanViewModel
     private let raceRepository: any RaceRepository
     private let planRepository: any TrainingPlanRepository
+    private let workoutRecipeRepository: any WorkoutRecipeRepository
 
     init(
         planRepository: any TrainingPlanRepository,
@@ -13,10 +14,12 @@ struct TrainingPlanView: View {
         nutritionRepository: any NutritionRepository,
         sessionNutritionAdvisor: any SessionNutritionAdvisor,
         fitnessRepository: any FitnessRepository,
-        widgetDataWriter: WidgetDataWriter
+        widgetDataWriter: WidgetDataWriter,
+        workoutRecipeRepository: any WorkoutRecipeRepository
     ) {
         self.raceRepository = raceRepository
         self.planRepository = planRepository
+        self.workoutRecipeRepository = workoutRecipeRepository
         _viewModel = State(initialValue: TrainingPlanViewModel(
             planRepository: planRepository,
             athleteRepository: athleteRepository,
@@ -45,6 +48,15 @@ struct TrainingPlanView: View {
                 if viewModel.plan != nil {
                     ToolbarItem(placement: .topBarTrailing) {
                         HStack(spacing: Theme.Spacing.sm) {
+                            NavigationLink {
+                                WorkoutLibraryView(
+                                    recipeRepository: workoutRecipeRepository,
+                                    planRepository: planRepository
+                                )
+                            } label: {
+                                Image(systemName: "book.fill")
+                            }
+
                             NavigationLink {
                                 RaceCalendarView(
                                     plan: viewModel.plan!,

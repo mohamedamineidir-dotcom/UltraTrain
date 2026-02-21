@@ -26,6 +26,7 @@ final class DashboardViewModel {
     private let recoveryRepository: any RecoveryRepository
     private let weatherService: (any WeatherServiceProtocol)?
     private let locationService: LocationService?
+    private let challengeRepository: (any ChallengeRepository)?
 
     // MARK: - State
 
@@ -46,6 +47,8 @@ final class DashboardViewModel {
     var recoveryScore: RecoveryScore?
     var sleepHistory: [SleepEntry] = []
     var weeklyZoneDistribution: [HeartRateZoneDistribution] = []
+    var currentStreak: Int = 0
+    var nearestChallengeProgress: ChallengeProgressCalculator.ChallengeProgress?
 
     // MARK: - Init
 
@@ -61,7 +64,8 @@ final class DashboardViewModel {
         healthKitService: any HealthKitServiceProtocol,
         recoveryRepository: any RecoveryRepository,
         weatherService: (any WeatherServiceProtocol)? = nil,
-        locationService: LocationService? = nil
+        locationService: LocationService? = nil,
+        challengeRepository: (any ChallengeRepository)? = nil
     ) {
         self.planRepository = planRepository
         self.runRepository = runRepository
@@ -75,6 +79,7 @@ final class DashboardViewModel {
         self.recoveryRepository = recoveryRepository
         self.weatherService = weatherService
         self.locationService = locationService
+        self.challengeRepository = challengeRepository
     }
 
     // MARK: - Load
@@ -92,7 +97,8 @@ final class DashboardViewModel {
         async let lastRunTask: () = loadLastRun()
         async let racesTask: () = loadUpcomingRaces()
         async let weatherTask: () = loadWeather()
-        _ = await (fitnessTask, estimateTask, lastRunTask, racesTask, weatherTask)
+        async let challengesTask: () = loadChallenges()
+        _ = await (fitnessTask, estimateTask, lastRunTask, racesTask, weatherTask, challengesTask)
 
         await loadRecovery()
 
@@ -239,6 +245,37 @@ final class DashboardViewModel {
                 fitnessSnapshot: fitnessSnapshot
             )
             recoveryScore = score
+        }
+    }
+
+    // MARK: - Challenges
+
+    private func loadChallenges() async {
+        guard let challengeRepository else { return }
+        do {
+            let athlete = try await athleteRepository.getAthlete()
+            guard let athlete else { return }
+            let runs = try await runRepository.getRuns(for: athlete.id)
+            currentStreak = ChallengeProgressCalculator.computeCurrentStreak(from: runs)
+
+            let enrollments = try await challengeRepository.getActiveEnrollments()
+            var nearest: ChallengeProgressCalculator.ChallengeProgress?
+            for enrollment in enrollments {
+                guard let definition = ChallengeLibrary.definition(for: enrollment.challengeDefinitionId) else {
+                    continue
+                }
+                let progress = ChallengeProgressCalculator.computeProgress(
+                    enrollment: enrollment, definition: definition, runs: runs
+                )
+                if !progress.isComplete {
+                    if nearest == nil || progress.progressFraction > nearest!.progressFraction {
+                        nearest = progress
+                    }
+                }
+            }
+            nearestChallengeProgress = nearest
+        } catch {
+            Logger.challenges.debug("Dashboard: could not load challenges: \(error)")
         }
     }
 

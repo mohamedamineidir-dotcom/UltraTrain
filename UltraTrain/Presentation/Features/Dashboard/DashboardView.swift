@@ -21,6 +21,7 @@ struct DashboardView: View {
     private let checklistRepository: any RacePrepChecklistRepository
     private let weatherService: (any WeatherServiceProtocol)?
     private let locationService: LocationService
+    private let challengeRepository: any ChallengeRepository
 
     init(
         selectedTab: Binding<Tab>,
@@ -39,7 +40,8 @@ struct DashboardView: View {
         recoveryRepository: any RecoveryRepository,
         checklistRepository: any RacePrepChecklistRepository,
         weatherService: (any WeatherServiceProtocol)? = nil,
-        locationService: LocationService
+        locationService: LocationService,
+        challengeRepository: any ChallengeRepository
     ) {
         _selectedTab = selectedTab
         self.planRepository = planRepository
@@ -58,6 +60,7 @@ struct DashboardView: View {
         self.checklistRepository = checklistRepository
         self.weatherService = weatherService
         self.locationService = locationService
+        self.challengeRepository = challengeRepository
         _viewModel = State(initialValue: DashboardViewModel(
             planRepository: planRepository,
             runRepository: runRepository,
@@ -70,7 +73,8 @@ struct DashboardView: View {
             healthKitService: healthKitService,
             recoveryRepository: recoveryRepository,
             weatherService: weatherService,
-            locationService: locationService
+            locationService: locationService,
+            challengeRepository: challengeRepository
         ))
     }
 
@@ -117,6 +121,20 @@ struct DashboardView: View {
                         recoveryScore: viewModel.recoveryScore,
                         sleepHistory: viewModel.sleepHistory
                     )
+
+                    NavigationLink {
+                        ChallengesView(
+                            challengeRepository: challengeRepository,
+                            runRepository: runRepository,
+                            athleteRepository: athleteRepository
+                        )
+                    } label: {
+                        DashboardChallengeCard(
+                            currentStreak: viewModel.currentStreak,
+                            nearestProgress: viewModel.nearestChallengeProgress
+                        )
+                    }
+                    .buttonStyle(.plain)
 
                     LastRunCard(lastRun: viewModel.lastRun)
 
