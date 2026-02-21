@@ -10,6 +10,7 @@ enum Theme {
         static let success = Color.green
         static let warning = Color.orange
         static let danger = Color.red
+        static let info = Color.cyan
 
         static let zone1 = Color.gray
         static let zone2 = Color.blue

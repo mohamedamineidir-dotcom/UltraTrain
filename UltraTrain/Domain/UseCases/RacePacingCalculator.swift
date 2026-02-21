@@ -14,10 +14,11 @@ enum RacePacingCalculator {
         let aidStationDwellTime: TimeInterval
     }
 
-    enum PacingZone: String, Sendable, Equatable {
+    enum PacingZone: String, Sendable, Equatable, CaseIterable {
         case easy
         case moderate
         case hard
+        case descent
     }
 
     struct Input: Sendable {

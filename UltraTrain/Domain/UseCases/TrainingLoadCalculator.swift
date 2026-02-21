@@ -128,7 +128,8 @@ struct TrainingLoadCalculator: CalculateTrainingLoadUseCase, Sendable {
     // MARK: - Helpers
 
     private func effortLoad(for run: CompletedRun) -> Double {
-        run.distanceKm + (run.elevationGainM / 100.0)
+        if let tss = run.trainingStressScore { return tss }
+        return run.distanceKm + (run.elevationGainM / 100.0)
     }
 
     private func buildDailyLoads(from runs: [CompletedRun], upTo endDate: Date) -> [Double] {

@@ -59,7 +59,16 @@ struct RaceDayPlanView: View {
                         PacingSummaryCard(
                             pacingResult: pacing,
                             aidStationDwellSeconds: viewModel.aidStationDwellSeconds,
-                            onDwellTimeChanged: { viewModel.updateDwellTime($0) }
+                            onDwellTimeChanged: { viewModel.updateDwellTime($0) },
+                            terrainPaceProfile: viewModel.terrainPaceProfile,
+                            pacingMode: viewModel.pacingMode,
+                            onPacingModeChanged: { viewModel.setPacingMode($0) }
+                        )
+                    }
+                    if !viewModel.segments.isEmpty, viewModel.terrainPaceProfile != nil {
+                        PaceProfileChart(
+                            segments: viewModel.segments,
+                            checkpoints: viewModel.race.checkpoints
                         )
                     }
                     startBanner

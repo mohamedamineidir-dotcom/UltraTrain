@@ -69,7 +69,8 @@ enum CompletedRunSwiftDataMapper {
             weatherData: weatherData,
             rpe: run.rpe,
             perceivedFeelingRaw: run.perceivedFeeling?.rawValue,
-            terrainTypeRaw: run.terrainType?.rawValue
+            terrainTypeRaw: run.terrainType?.rawValue,
+            trainingStressScore: run.trainingStressScore
         )
     }
 
@@ -110,7 +111,8 @@ enum CompletedRunSwiftDataMapper {
             weatherAtStart: weather,
             rpe: model.rpe,
             perceivedFeeling: model.perceivedFeelingRaw.flatMap { PerceivedFeeling(rawValue: $0) },
-            terrainType: model.terrainTypeRaw.flatMap { TerrainType(rawValue: $0) }
+            terrainType: model.terrainTypeRaw.flatMap { TerrainType(rawValue: $0) },
+            trainingStressScore: model.trainingStressScore
         )
     }
 

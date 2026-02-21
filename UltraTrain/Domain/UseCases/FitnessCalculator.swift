@@ -44,7 +44,8 @@ struct FitnessCalculator: CalculateFitnessUseCase, Sendable {
     // MARK: - Training Load
 
     private func trainingLoad(for run: CompletedRun) -> Double {
-        run.distanceKm + (run.elevationGainM / 100.0)
+        if let tss = run.trainingStressScore { return tss }
+        return run.distanceKm + (run.elevationGainM / 100.0)
     }
 
     // MARK: - Daily Loads

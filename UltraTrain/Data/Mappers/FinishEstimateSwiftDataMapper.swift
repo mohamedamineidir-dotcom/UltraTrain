@@ -43,6 +43,7 @@ enum FinishEstimateSwiftDataMapper {
         var distanceFromStartKm: Double?
         var segmentDistanceKm: Double?
         var segmentElevationGainM: Double?
+        var segmentElevationLossM: Double?
         var hasAidStation: Bool?
         let optimisticTime: Double
         let expectedTime: Double
@@ -58,6 +59,7 @@ enum FinishEstimateSwiftDataMapper {
                 distanceFromStartKm: split.distanceFromStartKm,
                 segmentDistanceKm: split.segmentDistanceKm,
                 segmentElevationGainM: split.segmentElevationGainM,
+                segmentElevationLossM: split.segmentElevationLossM,
                 hasAidStation: split.hasAidStation,
                 optimisticTime: split.optimisticTime,
                 expectedTime: split.expectedTime,
@@ -80,6 +82,7 @@ enum FinishEstimateSwiftDataMapper {
                 distanceFromStartKm: split.distanceFromStartKm ?? 0,
                 segmentDistanceKm: split.segmentDistanceKm ?? 0,
                 segmentElevationGainM: split.segmentElevationGainM ?? 0,
+                segmentElevationLossM: split.segmentElevationLossM ?? 0,
                 hasAidStation: split.hasAidStation ?? false,
                 optimisticTime: split.optimisticTime,
                 expectedTime: split.expectedTime,

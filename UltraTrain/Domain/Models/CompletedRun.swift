@@ -27,6 +27,7 @@ struct CompletedRun: Identifiable, Equatable, Sendable {
     var rpe: Int? = nil
     var perceivedFeeling: PerceivedFeeling? = nil
     var terrainType: TerrainType? = nil
+    var trainingStressScore: Double? = nil
 
     var totalDuration: TimeInterval {
         duration + pausedDuration

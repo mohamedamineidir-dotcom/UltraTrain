@@ -77,7 +77,10 @@ struct RunAnalysisView: View {
                     }
 
                     if viewModel.hasAdvancedMetrics {
-                        AdvancedMetricsCard(metrics: viewModel.advancedMetrics!)
+                        AdvancedMetricsCard(
+                            metrics: viewModel.advancedMetrics!,
+                            trainingStressScore: viewModel.trainingStressScore
+                        )
                     }
 
                     if viewModel.hasNutritionAnalysis {

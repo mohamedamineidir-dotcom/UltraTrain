@@ -7,6 +7,7 @@ extension RacePacingCalculator.PacingZone {
         case .easy: "Easy"
         case .moderate: "Moderate"
         case .hard: "Hard"
+        case .descent: "Descent"
         }
     }
 
@@ -15,6 +16,7 @@ extension RacePacingCalculator.PacingZone {
         case .easy: Theme.Colors.success
         case .moderate: Theme.Colors.primary
         case .hard: Theme.Colors.warning
+        case .descent: Theme.Colors.info
         }
     }
 }

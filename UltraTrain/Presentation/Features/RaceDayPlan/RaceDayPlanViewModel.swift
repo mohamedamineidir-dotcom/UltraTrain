@@ -29,6 +29,9 @@ final class RaceDayPlanViewModel {
     var raceDayForecast: DailyWeatherForecast?
     var pacingResult: RacePacingCalculator.PacingResult?
     var aidStationDwellSeconds: TimeInterval = AppConfiguration.PacingStrategy.defaultAidStationDwellSeconds
+    var pacingMode: TerrainAdaptivePacingCalculator.PacingMode = .pace
+    var adaptivePacingResult: TerrainAdaptivePacingCalculator.AdaptivePacingResult?
+    var terrainPaceProfile: TerrainAdaptivePacingCalculator.TerrainPaceProfile?
 
     // MARK: - Init
 
@@ -114,6 +117,18 @@ final class RaceDayPlanViewModel {
             )
             let pacing = RacePacingCalculator.calculate(pacingInput)
             pacingResult = pacing
+
+            let adaptiveInput = TerrainAdaptivePacingCalculator.AdaptiveInput(
+                checkpointSplits: finishEstimate.checkpointSplits,
+                defaultAidStationDwellSeconds: aidStationDwellSeconds,
+                aidStationDwellOverrides: [:],
+                pacingMode: pacingMode,
+                athlete: athlete,
+                recentRuns: runs
+            )
+            let adaptiveResult = TerrainAdaptivePacingCalculator.calculate(adaptiveInput)
+            adaptivePacingResult = adaptiveResult
+            terrainPaceProfile = adaptiveResult.terrainPaceProfile
 
             segments = buildSegments(
                 splits: finishEstimate.checkpointSplits,
@@ -230,7 +245,9 @@ final class RaceDayPlanViewModel {
                 conservativePaceSecondsPerKm: segPacing?.conservativePaceSecondsPerKm ?? 0,
                 aggressivePaceSecondsPerKm: segPacing?.aggressivePaceSecondsPerKm ?? 0,
                 pacingZone: segPacing?.pacingZone ?? .moderate,
-                aidStationDwellTime: segPacing?.aidStationDwellTime ?? 0
+                aidStationDwellTime: segPacing?.aidStationDwellTime ?? 0,
+                segmentElevationLossM: split.segmentElevationLossM,
+                targetHeartRateRange: adaptivePacingResult?.segmentPacings.first { $0.checkpointId == split.checkpointId }?.targetHeartRateRange
             ))
 
             previousExpectedTime = split.expectedTime
@@ -240,6 +257,11 @@ final class RaceDayPlanViewModel {
     }
 
     // MARK: - Dwell Time
+
+    func setPacingMode(_ mode: TerrainAdaptivePacingCalculator.PacingMode) {
+        pacingMode = mode
+        Task { await load() }
+    }
 
     func updateDwellTime(_ seconds: TimeInterval) {
         aidStationDwellSeconds = seconds

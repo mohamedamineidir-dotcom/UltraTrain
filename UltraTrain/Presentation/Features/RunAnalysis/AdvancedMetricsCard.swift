@@ -4,6 +4,7 @@ struct AdvancedMetricsCard: View {
     @Environment(\.unitPreference) private var units
 
     let metrics: AdvancedRunMetrics
+    var trainingStressScore: Double? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.md) {
@@ -37,6 +38,14 @@ struct AdvancedMetricsCard: View {
                         label: "Climb Efficiency",
                         value: String(format: "%.0f%%", efficiency * 100),
                         color: efficiency < 1.0 ? Theme.Colors.success : Theme.Colors.danger
+                    )
+                }
+
+                if let tss = trainingStressScore {
+                    metricTile(
+                        label: "TSS",
+                        value: String(format: "%.0f", tss),
+                        color: tssColor(tss)
                     )
                 }
             }
@@ -103,6 +112,15 @@ struct AdvancedMetricsCard: View {
         case ..<2: return Theme.Colors.secondaryLabel
         case 2..<3.5: return Theme.Colors.success
         case 3.5..<4.5: return Theme.Colors.warning
+        default: return Theme.Colors.danger
+        }
+    }
+
+    private func tssColor(_ tss: Double) -> Color {
+        switch tss {
+        case ..<50: return Theme.Colors.success
+        case 50..<100: return Theme.Colors.primary
+        case 100..<200: return Theme.Colors.warning
         default: return Theme.Colors.danger
         }
     }

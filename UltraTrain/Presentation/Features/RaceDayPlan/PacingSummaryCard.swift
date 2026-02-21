@@ -5,6 +5,9 @@ struct PacingSummaryCard: View {
     let pacingResult: RacePacingCalculator.PacingResult
     let aidStationDwellSeconds: TimeInterval
     let onDwellTimeChanged: (TimeInterval) -> Void
+    var terrainPaceProfile: TerrainAdaptivePacingCalculator.TerrainPaceProfile? = nil
+    var pacingMode: TerrainAdaptivePacingCalculator.PacingMode = .pace
+    var onPacingModeChanged: ((TerrainAdaptivePacingCalculator.PacingMode) -> Void)? = nil
 
     private var dwellMinutes: Int {
         Int(aidStationDwellSeconds / 60)
@@ -15,7 +18,23 @@ struct PacingSummaryCard: View {
             Label("Pacing Strategy", systemImage: "speedometer")
                 .font(.headline)
 
+            if onPacingModeChanged != nil {
+                Picker("Mode", selection: Binding(
+                    get: { pacingMode },
+                    set: { onPacingModeChanged?($0) }
+                )) {
+                    Text("Pace").tag(TerrainAdaptivePacingCalculator.PacingMode.pace)
+                    Text("Effort").tag(TerrainAdaptivePacingCalculator.PacingMode.effort)
+                }
+                .pickerStyle(.segmented)
+            }
+
             paceStats
+
+            if let profile = terrainPaceProfile, profile.flatPaceSecondsPerKm > 0 {
+                terrainProfileRow(profile: profile)
+            }
+
             timeBreakdown
 
             if pacingResult.totalDwellTime > 0 {
@@ -50,10 +69,12 @@ struct PacingSummaryCard: View {
             let easy = zones.filter { $0 == .easy }.count
             let moderate = zones.filter { $0 == .moderate }.count
             let hard = zones.filter { $0 == .hard }.count
+            let descent = zones.filter { $0 == .descent }.count
 
             if easy > 0 { zoneBadge(count: easy, zone: .easy) }
             if moderate > 0 { zoneBadge(count: moderate, zone: .moderate) }
             if hard > 0 { zoneBadge(count: hard, zone: .hard) }
+            if descent > 0 { zoneBadge(count: descent, zone: .descent) }
         }
     }
 
@@ -93,6 +114,28 @@ struct PacingSummaryCard: View {
                 .foregroundStyle(Theme.Colors.secondaryLabel)
             Text(FinishEstimate.formatDuration(time))
                 .font(.subheadline.bold().monospacedDigit())
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    // MARK: - Terrain Profile
+
+    private func terrainProfileRow(profile: TerrainAdaptivePacingCalculator.TerrainPaceProfile) -> some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            terrainPaceColumn(label: "Flat", pace: profile.flatPaceSecondsPerKm, zone: .easy)
+            terrainPaceColumn(label: "Climb", pace: profile.steepClimbPaceSecondsPerKm, zone: .hard)
+            terrainPaceColumn(label: "Descent", pace: profile.descentPaceSecondsPerKm, zone: .descent)
+        }
+    }
+
+    private func terrainPaceColumn(label: String, pace: Double, zone: RacePacingCalculator.PacingZone) -> some View {
+        VStack(spacing: 2) {
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+            Text(UnitFormatter.formatPace(pace, unit: units))
+                .font(.caption.bold().monospacedDigit())
+                .foregroundStyle(zone.color)
         }
         .frame(maxWidth: .infinity)
     }

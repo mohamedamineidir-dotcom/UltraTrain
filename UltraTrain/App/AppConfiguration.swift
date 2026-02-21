@@ -89,6 +89,7 @@ enum AppConfiguration {
         static let defaultAidStationDwellSeconds: TimeInterval = 300
         static let easyGradientThresholdMPerKm: Double = 20.0
         static let hardGradientThresholdMPerKm: Double = 60.0
+        static let descentGradientThresholdMPerKm: Double = 30.0
     }
 
     enum Recovery {

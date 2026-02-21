@@ -33,6 +33,7 @@ final class RunAnalysisViewModel {
     var historicalComparison: HistoricalComparison?
     var nutritionAnalysis: NutritionAnalysis?
     var racePerformance: RacePerformanceComparison?
+    var trainingStressScore: Double?
     var isLoading = false
     var error: String?
     var showFullScreenMap = false
@@ -158,6 +159,15 @@ final class RunAnalysisViewModel {
                 athleteWeightKg: athlete?.weightKg,
                 maxHeartRate: athlete?.maxHeartRate
             )
+
+            if let athlete {
+                trainingStressScore = TrainingStressCalculator.calculate(
+                    run: run,
+                    maxHeartRate: athlete.maxHeartRate,
+                    restingHeartRate: athlete.restingHeartRate,
+                    customThresholds: athlete.customZoneThresholds
+                )
+            }
 
             let recentRuns = try await runRepository.getRecentRuns(limit: 20)
             let otherRuns = recentRuns.filter { $0.id != run.id }

@@ -65,6 +65,12 @@ struct RaceDaySegmentCard: View {
                 "\(UnitFormatter.formatElevation(segment.segmentElevationGainM, unit: units)) D+",
                 systemImage: "mountain.2"
             )
+            if segment.segmentElevationLossM > 0 {
+                Label(
+                    "\(UnitFormatter.formatElevation(segment.segmentElevationLossM, unit: units)) D-",
+                    systemImage: "arrow.down.right"
+                )
+            }
             Label(
                 FinishEstimate.formatDuration(segment.expectedSegmentDuration),
                 systemImage: "clock"
@@ -97,6 +103,17 @@ struct RaceDaySegmentCard: View {
 
             Spacer()
             PacingZoneIndicator(zone: segment.pacingZone)
+
+            if let hrRange = segment.targetHeartRateRange {
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("Target HR")
+                        .font(.caption2)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                    Text("\(hrRange.lowerBound)-\(hrRange.upperBound) bpm")
+                        .font(.caption.bold().monospacedDigit())
+                        .foregroundStyle(Theme.Colors.danger)
+                }
+            }
         }
     }
 

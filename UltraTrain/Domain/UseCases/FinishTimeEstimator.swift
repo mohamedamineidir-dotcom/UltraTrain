@@ -166,7 +166,7 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         guard !race.checkpoints.isEmpty else { return [] }
 
         let sortedCheckpoints = race.checkpoints.sorted { $0.distanceFromStartKm < $1.distanceFromStartKm }
-        var segments: [(effort: Double, elevationGain: Double, checkpoint: Checkpoint)] = []
+        var segments: [(effort: Double, elevationGain: Double, elevationLoss: Double, checkpoint: Checkpoint)] = []
         var previousDistanceKm = 0.0
         var previousElevationM = 0.0
 
@@ -174,8 +174,9 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
             let segmentDistance = checkpoint.distanceFromStartKm - previousDistanceKm
             let elevationChange = checkpoint.elevationM - previousElevationM
             let elevationGain = max(0, elevationChange)
+            let elevationLoss = max(0, -elevationChange)
             let effort = segmentDistance + (elevationGain / 100.0)
-            segments.append((effort, elevationGain, checkpoint))
+            segments.append((effort, elevationGain, elevationLoss, checkpoint))
             previousDistanceKm = checkpoint.distanceFromStartKm
             previousElevationM = checkpoint.elevationM
         }
@@ -197,6 +198,7 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
                 distanceFromStartKm: segment.checkpoint.distanceFromStartKm,
                 segmentDistanceKm: segmentDistance,
                 segmentElevationGainM: segment.elevationGain,
+                segmentElevationLossM: segment.elevationLoss,
                 hasAidStation: segment.checkpoint.hasAidStation,
                 optimisticTime: optimistic * fraction,
                 expectedTime: expected * fraction,

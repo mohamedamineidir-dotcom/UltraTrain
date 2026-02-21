@@ -11,7 +11,8 @@ struct FitnessCalculatorTests {
         daysAgo: Int = 0,
         distanceKm: Double = 10,
         elevationGainM: Double = 200,
-        duration: TimeInterval = 3600
+        duration: TimeInterval = 3600,
+        trainingStressScore: Double? = nil
     ) -> CompletedRun {
         CompletedRun(
             id: UUID(),
@@ -28,7 +29,8 @@ struct FitnessCalculatorTests {
             splits: [],
             linkedSessionId: nil,
             notes: nil,
-            pausedDuration: 0
+            pausedDuration: 0,
+            trainingStressScore: trainingStressScore
         )
     }
 
@@ -144,5 +146,47 @@ struct FitnessCalculatorTests {
         // After rest, ATL drops faster than CTL, so form should be positive
         #expect(snapshot.form > 0)
         #expect(snapshot.fitness > snapshot.fatigue)
+    }
+
+    // MARK: - TSS Integration
+
+    @Test("Fitness uses TSS when available instead of effort-weighted distance")
+    func testFitness_usesTSSWhenAvailable() async throws {
+        // Run with TSS = 80. Effort-weighted distance would be 10 + 200/100 = 12
+        // Since TSS (80) differs from effort distance (12), the resulting fitness
+        // should reflect the TSS load, which is significantly higher.
+        let runWithTSS = makeRun(
+            daysAgo: 0,
+            distanceKm: 10,
+            elevationGainM: 200,
+            trainingStressScore: 80.0
+        )
+        let runWithoutTSS = makeRun(
+            daysAgo: 0,
+            distanceKm: 10,
+            elevationGainM: 200,
+            trainingStressScore: nil
+        )
+
+        let snapshotWithTSS = try await calculator.execute(runs: [runWithTSS], asOf: .now)
+        let snapshotWithoutTSS = try await calculator.execute(runs: [runWithoutTSS], asOf: .now)
+
+        // TSS of 80 is much higher than effort distance of 12, so fitness should be higher
+        #expect(snapshotWithTSS.fitness > snapshotWithoutTSS.fitness)
+    }
+
+    @Test("Fitness falls back to effort-weighted distance when TSS is nil")
+    func testFitness_fallsBackToEffortWeighted() async throws {
+        // Run without TSS: load = distanceKm + elevationGainM / 100 = 10 + 2 = 12
+        let run = makeRun(
+            daysAgo: 0,
+            distanceKm: 10,
+            elevationGainM: 200,
+            trainingStressScore: nil
+        )
+        let snapshot = try await calculator.execute(runs: [run], asOf: .now)
+        // Fitness should be non-zero, derived from effort distance load of 12
+        #expect(snapshot.fitness > 0)
+        #expect(snapshot.fatigue > 0)
     }
 }

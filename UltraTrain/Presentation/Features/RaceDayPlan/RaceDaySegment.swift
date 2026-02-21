@@ -19,4 +19,6 @@ struct RaceDaySegment: Identifiable, Sendable {
     let aggressivePaceSecondsPerKm: Double
     let pacingZone: RacePacingCalculator.PacingZone
     let aidStationDwellTime: TimeInterval
+    let segmentElevationLossM: Double
+    let targetHeartRateRange: ClosedRange<Int>?
 }

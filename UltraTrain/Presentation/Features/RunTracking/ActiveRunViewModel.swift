@@ -240,7 +240,7 @@ final class ActiveRunViewModel {
             distanceKm: distanceKm, duration: elapsedTime
         )
 
-        let run = CompletedRun(
+        var run = CompletedRun(
             id: UUID(),
             athleteId: athlete.id,
             date: Date.now,
@@ -263,6 +263,13 @@ final class ActiveRunViewModel {
             rpe: rpe,
             perceivedFeeling: feeling,
             terrainType: terrain
+        )
+
+        run.trainingStressScore = TrainingStressCalculator.calculate(
+            run: run,
+            maxHeartRate: athlete.maxHeartRate,
+            restingHeartRate: athlete.restingHeartRate,
+            customThresholds: athlete.customZoneThresholds
         )
 
         do {

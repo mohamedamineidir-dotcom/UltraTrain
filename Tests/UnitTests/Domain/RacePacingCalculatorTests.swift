@@ -205,4 +205,11 @@ struct RacePacingCalculatorTests {
         #expect(result.totalMovingTime == 3600)
         #expect(result.totalTimeWithDwell == 3900) // 3600 + 300
     }
+
+    // MARK: - PacingZone Enum
+
+    @Test("PacingZone has four cases including descent")
+    func testPacingZone_hasFourCases() {
+        #expect(RacePacingCalculator.PacingZone.allCases.count == 4)
+    }
 }
