@@ -153,4 +153,27 @@ enum AppConfiguration {
         static let distanceSplitKm: Double = 1.0
         static let defaultTimeSplitMinutes = 5
     }
+
+    enum AICoach {
+        static let paceDeclineThreshold: Double = 0.05      // 5% pace decline
+        static let hrDriftThreshold: Double = 0.08           // 8% HR drift
+        static let sleepDeclineThreshold: Double = 0.15      // 15% sleep quality decline
+        static let rpeRiseThreshold: Double = 1.5            // RPE points rise
+        static let trendMinDataPoints: Int = 5               // minimum runs for trend analysis
+        static let fatigueDetectionWindowDays: Int = 14      // lookback window
+        static let performanceTrendWindowDays: Int = 28      // lookback for trends
+        static let compoundFatigueThreshold: Int = 2         // signals needed for compound
+        static let longRunThresholdKm: Double = 15.0         // for endurance fade analysis
+        static let deloadSuggestionDays: Int = 3             // default deload suggestion
+    }
+
+    enum MLPredictor {
+        static let minRunsForLowConfidence: Int = 10
+        static let minRunsForMediumConfidence: Int = 20
+        static let minRunsForHighConfidence: Int = 50
+        static let algorithmicWeightLow: Double = 0.70       // <20 runs
+        static let algorithmicWeightMedium: Double = 0.50    // 20-50 runs
+        static let algorithmicWeightHigh: Double = 0.30      // 50+ runs
+        static let modelVersion = "1.0"
+    }
 }

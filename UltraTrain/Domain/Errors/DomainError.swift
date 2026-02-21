@@ -29,6 +29,12 @@ enum DomainError: Error, Equatable, Sendable {
     case iCloudAccountUnavailable
     case iCloudSyncFailed(reason: String)
     case weatherUnavailable(reason: String)
+    case socialProfileNotFound
+    case friendRequestFailed(reason: String)
+    case sharingFailed(reason: String)
+    case cloudKitPermissionDenied
+    case groupChallengeNotFound
+    case crewTrackingUnavailable
     case unknown(message: String)
 }
 
@@ -91,6 +97,18 @@ extension DomainError: LocalizedError {
             return "iCloud sync failed: \(reason)"
         case .weatherUnavailable(let reason):
             return "Weather data unavailable: \(reason)"
+        case .socialProfileNotFound:
+            return "Social profile not found. Please set up your profile."
+        case .friendRequestFailed(let reason):
+            return "Friend request failed: \(reason)"
+        case .sharingFailed(let reason):
+            return "Sharing failed: \(reason)"
+        case .cloudKitPermissionDenied:
+            return "CloudKit permission denied. Please allow access in Settings."
+        case .groupChallengeNotFound:
+            return "Group challenge not found."
+        case .crewTrackingUnavailable:
+            return "Crew tracking is currently unavailable."
         case .unknown(let message):
             return "An unexpected error occurred: \(message)"
         }

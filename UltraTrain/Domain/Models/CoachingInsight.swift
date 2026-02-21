@@ -27,6 +27,11 @@ enum CoachingInsightType: String, Sendable {
     case hrvImproving
     case readyForQualitySession
     case sessionTooIntenseForReadiness
+    case accumulatedFatigue
+    case performanceTrendPositive
+    case performanceTrendNegative
+    case optimalSessionSuggestion
+    case adaptiveAdjustment
 }
 
 enum InsightCategory: String, Sendable {

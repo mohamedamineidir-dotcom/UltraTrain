@@ -14,6 +14,10 @@ struct Athlete: Identifiable, Equatable, Sendable {
     var longestRunKm: Double
     var preferredUnit: UnitPreference
     var customZoneThresholds: [Int]?
+    var displayName: String? = nil
+    var bio: String? = nil
+    var profilePhotoData: Data? = nil
+    var isPublicProfile: Bool = false
 
     var age: Int {
         Calendar.current.dateComponents([.year], from: dateOfBirth, to: .now).year ?? 0
