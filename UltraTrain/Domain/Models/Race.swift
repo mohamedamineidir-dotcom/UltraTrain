@@ -13,6 +13,13 @@ struct Race: Identifiable, Equatable, Sendable {
     var terrainDifficulty: TerrainDifficulty
     var actualFinishTime: TimeInterval?
     var linkedRunId: UUID?
+    var locationLatitude: Double? = nil
+    var locationLongitude: Double? = nil
+    var forecastedWeather: WeatherSnapshot? = nil
+
+    var hasLocation: Bool {
+        locationLatitude != nil && locationLongitude != nil
+    }
 
     var effectiveDistanceKm: Double {
         distanceKm + (elevationGainM / 100.0)

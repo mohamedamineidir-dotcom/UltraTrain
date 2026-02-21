@@ -1,5 +1,12 @@
 import Foundation
 
+struct VolumeAdjustment: Equatable, Sendable {
+    let sessionId: UUID
+    let addedDistanceKm: Double
+    let addedElevationGainM: Double
+    let newType: SessionType?
+}
+
 struct PlanAdjustmentRecommendation: Identifiable, Equatable, Sendable {
     let id: UUID
     let type: PlanAdjustmentType
@@ -8,6 +15,7 @@ struct PlanAdjustmentRecommendation: Identifiable, Equatable, Sendable {
     let message: String
     let actionLabel: String
     let affectedSessionIds: [UUID]
+    var volumeAdjustments: [VolumeAdjustment] = []
 }
 
 enum PlanAdjustmentType: String, Sendable {
@@ -19,6 +27,9 @@ enum PlanAdjustmentType: String, Sendable {
     case swapToRecovery
     case reduceLoadLowRecovery
     case swapToRecoveryLowRecovery
+    case redistributeMissedVolume
+    case convertEasyToQuality
+    case reduceTargetDueToAccumulatedMissed
 }
 
 enum AdjustmentSeverity: String, Comparable, Sendable {

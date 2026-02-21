@@ -66,7 +66,7 @@ private struct PreviewRaceRepository: RaceRepository, @unchecked Sendable {
 }
 
 private struct PreviewFinishTimeEstimator: EstimateFinishTimeUseCase, @unchecked Sendable {
-    func execute(athlete: Athlete, race: Race, recentRuns: [CompletedRun], currentFitness: FitnessSnapshot?, pastRaceCalibrations: [RaceCalibration]) async throws -> FinishEstimate {
+    func execute(athlete: Athlete, race: Race, recentRuns: [CompletedRun], currentFitness: FitnessSnapshot?, pastRaceCalibrations: [RaceCalibration], weatherImpact: WeatherImpactCalculator.WeatherImpact?) async throws -> FinishEstimate {
         FinishEstimate(
             id: UUID(), raceId: race.id, athleteId: athlete.id, calculatedAt: .now,
             optimisticTime: 0, expectedTime: 0, conservativeTime: 0,
@@ -91,7 +91,7 @@ private struct PreviewNutritionRepository: NutritionRepository, @unchecked Senda
 }
 
 private struct PreviewNutritionGenerator: GenerateNutritionPlanUseCase, @unchecked Sendable {
-    func execute(athlete: Athlete, race: Race, estimatedDuration: TimeInterval, preferences: NutritionPreferences) async throws -> NutritionPlan {
+    func execute(athlete: Athlete, race: Race, estimatedDuration: TimeInterval, preferences: NutritionPreferences, weatherAdjustment: WeatherImpactCalculator.NutritionWeatherAdjustment?) async throws -> NutritionPlan {
         NutritionPlan(id: UUID(), raceId: race.id, caloriesPerHour: 0, hydrationMlPerHour: 0, sodiumMgPerHour: 0, entries: [], gutTrainingSessionIds: [])
     }
 }

@@ -6,7 +6,8 @@ struct NutritionPlanGenerator: GenerateNutritionPlanUseCase {
         athlete: Athlete,
         race: Race,
         estimatedDuration: TimeInterval,
-        preferences: NutritionPreferences
+        preferences: NutritionPreferences,
+        weatherAdjustment: WeatherImpactCalculator.NutritionWeatherAdjustment?
     ) async throws -> NutritionPlan {
         let durationMinutes = Int(estimatedDuration / 60)
 
@@ -23,6 +24,10 @@ struct NutritionPlanGenerator: GenerateNutritionPlanUseCase {
         let hydrationMlPerHour = calculateHydrationPerHour(durationMinutes: durationMinutes)
         let sodiumMgPerHour = calculateSodiumPerHour(distanceKm: race.distanceKm)
 
+        let adjustedCalories = weatherAdjustment.map { Int(Double(caloriesPerHour) * $0.caloriesMultiplier) } ?? caloriesPerHour
+        let adjustedHydration = weatherAdjustment.map { Int(Double(hydrationMlPerHour) * $0.hydrationMultiplier) } ?? hydrationMlPerHour
+        let adjustedSodium = weatherAdjustment.map { Int(Double(sodiumMgPerHour) * $0.sodiumMultiplier) } ?? sodiumMgPerHour
+
         let isUltra = race.distanceKm > 50
         let isLongUltra = estimatedDuration > 6 * 3600
 
@@ -36,9 +41,9 @@ struct NutritionPlanGenerator: GenerateNutritionPlanUseCase {
         return NutritionPlan(
             id: UUID(),
             raceId: race.id,
-            caloriesPerHour: caloriesPerHour,
-            hydrationMlPerHour: hydrationMlPerHour,
-            sodiumMgPerHour: sodiumMgPerHour,
+            caloriesPerHour: adjustedCalories,
+            hydrationMlPerHour: adjustedHydration,
+            sodiumMgPerHour: adjustedSodium,
             entries: entries,
             gutTrainingSessionIds: []
         )

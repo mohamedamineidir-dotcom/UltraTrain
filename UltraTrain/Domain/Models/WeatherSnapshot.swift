@@ -1,6 +1,6 @@
 import Foundation
 
-struct WeatherSnapshot: Equatable, Sendable {
+struct WeatherSnapshot: Equatable, Sendable, Codable {
     var temperatureCelsius: Double
     var apparentTemperatureCelsius: Double
     var humidity: Double
@@ -15,7 +15,7 @@ struct WeatherSnapshot: Equatable, Sendable {
     var locationLongitude: Double
 }
 
-enum WeatherConditionType: String, CaseIterable, Sendable {
+enum WeatherConditionType: String, CaseIterable, Sendable, Codable {
     case clear
     case partlyCloudy
     case cloudy

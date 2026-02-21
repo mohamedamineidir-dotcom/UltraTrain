@@ -5,14 +5,17 @@ final class MockGenerateNutritionPlanUseCase: GenerateNutritionPlanUseCase, @unc
     var result: NutritionPlan?
     var shouldThrow = false
     var executeCallCount = 0
+    var lastWeatherAdjustment: WeatherImpactCalculator.NutritionWeatherAdjustment?
 
     func execute(
         athlete: Athlete,
         race: Race,
         estimatedDuration: TimeInterval,
-        preferences: NutritionPreferences
+        preferences: NutritionPreferences,
+        weatherAdjustment: WeatherImpactCalculator.NutritionWeatherAdjustment?
     ) async throws -> NutritionPlan {
         executeCallCount += 1
+        lastWeatherAdjustment = weatherAdjustment
         if shouldThrow {
             throw DomainError.invalidTrainingPlan(reason: "Mock error")
         }

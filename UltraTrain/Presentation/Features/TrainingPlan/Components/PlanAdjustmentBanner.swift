@@ -74,6 +74,9 @@ struct PlanAdjustmentBanner: View {
         case .swapToRecovery: "arrow.triangle.2.circlepath.circle.fill"
         case .reduceLoadLowRecovery: "moon.zzz.fill"
         case .swapToRecoveryLowRecovery: "moon.zzz.fill"
+        case .redistributeMissedVolume: "arrow.triangle.branch"
+        case .convertEasyToQuality: "arrow.triangle.swap"
+        case .reduceTargetDueToAccumulatedMissed: "exclamationmark.triangle.fill"
         }
     }
 

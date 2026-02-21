@@ -32,6 +32,10 @@ enum AppConfiguration {
         static let lowAdherenceVolumeReductionPercent: Double = 20.0
         static let extendedGapDays: Int = 7
         static let staleMissedSessionThreshold: Int = 3
+        static let maxSessionVolumeIncreasePercent: Double = 20.0
+        static let accumulatedMissedVolumeThresholdKm: Double = 30.0
+        static let accumulatedMissedVolumeReductionPercent: Double = 15.0
+        static let redistributionLookbackWeeks: Int = 2
     }
 
     enum RunTracking {
@@ -103,6 +107,27 @@ enum AppConfiguration {
         static let sleepConsistencyWeight: Double = 0.15
         static let restingHRWeight: Double = 0.25
         static let trainingLoadWeight: Double = 0.25
+    }
+
+    enum WeatherImpact {
+        static let heatBaselineCelsius: Double = 15.0
+        static let heatImpactPerDegree: Double = 0.004
+        static let maxHeatImpact: Double = 0.20
+        static let humidityCompoundingThreshold: Double = 0.70
+        static let humidityCompoundingMax: Double = 1.3
+        static let heavyRainImpact: Double = 0.04
+        static let moderateRainImpact: Double = 0.02
+        static let lightRainImpact: Double = 0.01
+        static let windThresholdKmh: Double = 25.0
+        static let strongWindThresholdKmh: Double = 40.0
+        static let windImpact: Double = 0.03
+        static let strongWindImpact: Double = 0.05
+        static let coldThresholdCelsius: Double = 5.0
+        static let coldImpactPerDegree: Double = 0.005
+        static let maxColdImpact: Double = 0.03
+        static let heatHydrationMultiplier: Double = 1.5
+        static let heatSodiumMultiplier: Double = 1.3
+        static let coldCalorieMultiplier: Double = 1.1
     }
 
     enum Strava {

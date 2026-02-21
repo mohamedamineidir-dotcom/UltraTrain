@@ -282,6 +282,43 @@ struct NutritionPlanGeneratorTests {
         #expect(plan.entries.contains { $0.product.type == .drink })
     }
 
+    // MARK: - Weather Adjustments
+
+    @Test("Hot weather increases hydration in generated plan")
+    func hotWeatherIncreasesHydration() async throws {
+        let generator = NutritionPlanGenerator()
+        let athlete = makeAthlete()
+        let race = makeRace()
+        let duration: TimeInterval = 10 * 3600
+
+        let normalPlan = try await generator.execute(athlete: athlete, race: race, estimatedDuration: duration, preferences: .default)
+        let weatherAdj = WeatherImpactCalculator.NutritionWeatherAdjustment(
+            hydrationMultiplier: 1.5, sodiumMultiplier: 1.3, caloriesMultiplier: 1.0,
+            notes: ["Increase fluid intake"]
+        )
+        let weatherPlan = try await generator.execute(athlete: athlete, race: race, estimatedDuration: duration, preferences: .default, weatherAdjustment: weatherAdj)
+
+        #expect(weatherPlan.hydrationMlPerHour > normalPlan.hydrationMlPerHour)
+        #expect(weatherPlan.sodiumMgPerHour > normalPlan.sodiumMgPerHour)
+    }
+
+    @Test("Cold weather increases calories in generated plan")
+    func coldWeatherIncreasesCalories() async throws {
+        let generator = NutritionPlanGenerator()
+        let athlete = makeAthlete()
+        let race = makeRace()
+        let duration: TimeInterval = 10 * 3600
+
+        let normalPlan = try await generator.execute(athlete: athlete, race: race, estimatedDuration: duration, preferences: .default)
+        let weatherAdj = WeatherImpactCalculator.NutritionWeatherAdjustment(
+            hydrationMultiplier: 1.0, sodiumMultiplier: 1.0, caloriesMultiplier: 1.1,
+            notes: ["Increase calorie intake"]
+        )
+        let weatherPlan = try await generator.execute(athlete: athlete, race: race, estimatedDuration: duration, preferences: .default, weatherAdjustment: weatherAdj)
+
+        #expect(weatherPlan.caloriesPerHour > normalPlan.caloriesPerHour)
+    }
+
     @Test("Multiple excluded products still produce valid plan")
     func multipleExclusionsProduceValidPlan() async throws {
         let generator = NutritionPlanGenerator()

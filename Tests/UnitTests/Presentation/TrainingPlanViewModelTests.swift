@@ -996,6 +996,157 @@ struct TrainingPlanViewModelTests {
 
     // MARK: - Snapshot-Based Staleness Detection (cont.)
 
+    // MARK: - Volume Redistribution Apply
+
+    @Test("applyVolumeRedistribution increases session distance and marks missed as skipped")
+    @MainActor
+    func applyVolumeRedistributionWorks() async {
+        let missedId = UUID()
+        let targetId = UUID()
+        let now = Date.now
+
+        let missedSession = TrainingSession(
+            id: missedId,
+            date: now.adding(days: -2),
+            type: .longRun,
+            plannedDistanceKm: 20,
+            plannedElevationGainM: 500,
+            plannedDuration: 7200,
+            intensity: .moderate,
+            description: "Long run",
+            nutritionNotes: nil,
+            isCompleted: false, isSkipped: false,
+            linkedRunId: nil
+        )
+        let targetSession = TrainingSession(
+            id: targetId,
+            date: now.adding(days: 2),
+            type: .tempo,
+            plannedDistanceKm: 10,
+            plannedElevationGainM: 200,
+            plannedDuration: 3600,
+            intensity: .moderate,
+            description: "Tempo run",
+            nutritionNotes: nil,
+            isCompleted: false, isSkipped: false,
+            linkedRunId: nil
+        )
+
+        let week = TrainingWeek(
+            id: UUID(),
+            weekNumber: 1,
+            startDate: now.startOfWeek,
+            endDate: now.startOfWeek.adding(days: 6),
+            phase: .build,
+            sessions: [missedSession, targetSession],
+            isRecoveryWeek: false,
+            targetVolumeKm: 50,
+            targetElevationGainM: 1000
+        )
+        let plan = TrainingPlan(
+            id: UUID(), athleteId: UUID(), targetRaceId: UUID(),
+            createdAt: .now, weeks: [week],
+            intermediateRaceIds: [], intermediateRaceSnapshots: []
+        )
+
+        let planRepo = MockTrainingPlanRepository()
+        let vm = makeViewModel(planRepo: planRepo)
+        vm.plan = plan
+
+        let rec = PlanAdjustmentRecommendation(
+            id: UUID(),
+            type: .redistributeMissedVolume,
+            severity: .recommended,
+            title: "Redistribute",
+            message: "Test",
+            actionLabel: "Apply",
+            affectedSessionIds: [missedId, targetId],
+            volumeAdjustments: [
+                VolumeAdjustment(sessionId: targetId, addedDistanceKm: 2.0, addedElevationGainM: 40, newType: nil)
+            ]
+        )
+
+        await vm.applyRecommendation(rec)
+
+        #expect(vm.plan?.weeks[0].sessions[1].plannedDistanceKm == 12.0)
+        #expect(vm.plan?.weeks[0].sessions[1].plannedElevationGainM == 240)
+        #expect(vm.plan?.weeks[0].sessions[0].isSkipped == true)
+    }
+
+    @Test("applyConvertToQuality changes session type and marks missed as skipped")
+    @MainActor
+    func applyConvertToQualityWorks() async {
+        let missedId = UUID()
+        let recoveryId = UUID()
+        let now = Date.now
+
+        let missedSession = TrainingSession(
+            id: missedId,
+            date: now.adding(days: -1),
+            type: .intervals,
+            plannedDistanceKm: 8,
+            plannedElevationGainM: 100,
+            plannedDuration: 3600,
+            intensity: .hard,
+            description: "Intervals",
+            nutritionNotes: nil,
+            isCompleted: false, isSkipped: false,
+            linkedRunId: nil
+        )
+        let recoverySession = TrainingSession(
+            id: recoveryId,
+            date: now.adding(days: 2),
+            type: .recovery,
+            plannedDistanceKm: 5,
+            plannedElevationGainM: 50,
+            plannedDuration: 1800,
+            intensity: .easy,
+            description: "Recovery run",
+            nutritionNotes: nil,
+            isCompleted: false, isSkipped: false,
+            linkedRunId: nil
+        )
+
+        let week = TrainingWeek(
+            id: UUID(),
+            weekNumber: 1,
+            startDate: now.startOfWeek,
+            endDate: now.startOfWeek.adding(days: 6),
+            phase: .build,
+            sessions: [missedSession, recoverySession],
+            isRecoveryWeek: false,
+            targetVolumeKm: 30,
+            targetElevationGainM: 500
+        )
+        let plan = TrainingPlan(
+            id: UUID(), athleteId: UUID(), targetRaceId: UUID(),
+            createdAt: .now, weeks: [week],
+            intermediateRaceIds: [], intermediateRaceSnapshots: []
+        )
+
+        let planRepo = MockTrainingPlanRepository()
+        let vm = makeViewModel(planRepo: planRepo)
+        vm.plan = plan
+
+        let rec = PlanAdjustmentRecommendation(
+            id: UUID(),
+            type: .convertEasyToQuality,
+            severity: .suggestion,
+            title: "Convert",
+            message: "Test",
+            actionLabel: "Convert",
+            affectedSessionIds: [missedId, recoveryId],
+            volumeAdjustments: [
+                VolumeAdjustment(sessionId: recoveryId, addedDistanceKm: 0, addedElevationGainM: 0, newType: .intervals)
+            ]
+        )
+
+        await vm.applyRecommendation(rec)
+
+        #expect(vm.plan?.weeks[0].sessions[1].type == .intervals)
+        #expect(vm.plan?.weeks[0].sessions[0].isSkipped == true)
+    }
+
     @Test("isPlanStale false when snapshots match")
     @MainActor
     func isPlanStaleSnapshotsMatch() {

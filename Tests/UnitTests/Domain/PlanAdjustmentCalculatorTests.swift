@@ -602,6 +602,50 @@ struct PlanAdjustmentCalculatorTests {
         #expect(reduceRecs[0].severity == .recommended)
     }
 
+    // MARK: - Redistribution Integration
+
+    @Test("Missed key session without rest slot triggers redistribution")
+    func missedKeySessionRedistribution() {
+        // Two missed volume-splittable sessions, one rest slot → one reschedule + one redistribution
+        let missedLongRun = makeSession(daysFromNow: -3, type: .longRun, distanceKm: 20)
+        let missedVerticalGain = makeSession(daysFromNow: -2, type: .verticalGain, distanceKm: 15)
+        let restSlot = makeSession(daysFromNow: 1, type: .rest)
+        let futureTempo = makeSession(daysFromNow: 3, type: .tempo, distanceKm: 12)
+        let week = makeWeek(daysOffset: -4, sessions: [missedLongRun, missedVerticalGain, restSlot, futureTempo])
+        let plan = makePlan(weeks: [week])
+
+        let results = PlanAdjustmentCalculator.analyze(plan: plan, now: now)
+
+        // One missed key session gets rescheduled to rest slot
+        let reschedules = results.filter { $0.type == .rescheduleKeySession }
+        #expect(reschedules.count == 1)
+
+        // The other missed key session (verticalGain, volume-splittable) redistributes
+        let redistRecs = results.filter { $0.type == .redistributeMissedVolume }
+        #expect(!redistRecs.isEmpty)
+    }
+
+    @Test("Accumulated missed volume above threshold triggers target reduction")
+    func accumulatedMissedVolumeReduction() {
+        // Create enough missed volume to exceed the 30km threshold
+        let sessions = (0..<6).map { i in
+            makeSession(daysFromNow: -10 + i, type: .longRun, distanceKm: 8)
+        }
+        let futureSessions = [
+            makeSession(daysFromNow: 1, type: .tempo, distanceKm: 12),
+            makeSession(daysFromNow: 3, type: .longRun, distanceKm: 20)
+        ]
+        let prevWeek = makeWeek(weekNumber: 1, daysOffset: -13, sessions: sessions)
+        let currentWeek = makeWeek(weekNumber: 2, daysOffset: -1, sessions: futureSessions)
+        let plan = makePlan(weeks: [prevWeek, currentWeek])
+
+        let results = PlanAdjustmentCalculator.analyze(plan: plan, now: now)
+
+        let targetReductions = results.filter { $0.type == .reduceTargetDueToAccumulatedMissed }
+        #expect(targetReductions.count == 1)
+        #expect(targetReductions[0].severity == .urgent)
+    }
+
     @Test("Moderate recovery produces no recovery-based adjustment")
     func moderateRecoveryNoAdjustment() {
         let sessions = [

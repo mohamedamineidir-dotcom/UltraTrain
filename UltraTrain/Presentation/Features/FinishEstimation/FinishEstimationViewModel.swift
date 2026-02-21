@@ -13,6 +13,7 @@ final class FinishEstimationViewModel {
     private let fitnessCalculator: any CalculateFitnessUseCase
     private let raceRepository: any RaceRepository
     private let finishEstimateRepository: any FinishEstimateRepository
+    private let weatherService: (any WeatherServiceProtocol)?
 
     // MARK: - State
 
@@ -20,6 +21,9 @@ final class FinishEstimationViewModel {
     var estimate: FinishEstimate?
     var isLoading = false
     var error: String?
+    var weatherImpact: WeatherImpactCalculator.WeatherImpact?
+    var weatherSnapshot: WeatherSnapshot?
+    var dailyForecast: DailyWeatherForecast?
 
     // MARK: - Init
 
@@ -30,7 +34,8 @@ final class FinishEstimationViewModel {
         runRepository: any RunRepository,
         fitnessCalculator: any CalculateFitnessUseCase,
         raceRepository: any RaceRepository,
-        finishEstimateRepository: any FinishEstimateRepository
+        finishEstimateRepository: any FinishEstimateRepository,
+        weatherService: (any WeatherServiceProtocol)? = nil
     ) {
         self.race = race
         self.finishTimeEstimator = finishTimeEstimator
@@ -39,6 +44,7 @@ final class FinishEstimationViewModel {
         self.fitnessCalculator = fitnessCalculator
         self.raceRepository = raceRepository
         self.finishEstimateRepository = finishEstimateRepository
+        self.weatherService = weatherService
     }
 
     // MARK: - Load
@@ -69,12 +75,14 @@ final class FinishEstimationViewModel {
             }
 
             let calibrations = await buildCalibrations()
+            await fetchRaceWeather()
             estimate = try await finishTimeEstimator.execute(
                 athlete: athlete,
                 race: race,
                 recentRuns: runs,
                 currentFitness: fitness,
-                pastRaceCalibrations: calibrations
+                pastRaceCalibrations: calibrations,
+                weatherImpact: weatherImpact
             )
         } catch {
             self.error = error.localizedDescription
@@ -103,6 +111,35 @@ final class FinishEstimationViewModel {
             return calibrations
         } catch {
             return []
+        }
+    }
+
+    // MARK: - Weather
+
+    private func fetchRaceWeather() async {
+        guard let service = weatherService,
+              let lat = race.locationLatitude,
+              let lon = race.locationLongitude else { return }
+
+        let daysUntilRace = Calendar.current.dateComponents([.day], from: .now, to: race.date).day ?? 0
+        guard daysUntilRace >= 0 && daysUntilRace <= AppConfiguration.Weather.maxForecastDays else { return }
+
+        do {
+            if daysUntilRace <= 2 {
+                let hourly = try await service.hourlyForecast(latitude: lat, longitude: lon, hours: 24)
+                if let snapshot = hourly.first {
+                    self.weatherSnapshot = snapshot
+                    self.weatherImpact = WeatherImpactCalculator.calculateImpact(weather: snapshot)
+                }
+            } else {
+                let daily = try await service.dailyForecast(latitude: lat, longitude: lon, days: daysUntilRace + 1)
+                if let forecast = daily.last {
+                    self.dailyForecast = forecast
+                    self.weatherImpact = WeatherImpactCalculator.calculateImpact(forecast: forecast)
+                }
+            }
+        } catch {
+            Logger.weather.warning("Could not fetch race weather: \(error)")
         }
     }
 }

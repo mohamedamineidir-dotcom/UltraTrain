@@ -9,7 +9,8 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         race: Race,
         recentRuns: [CompletedRun],
         currentFitness: FitnessSnapshot?,
-        pastRaceCalibrations: [RaceCalibration]
+        pastRaceCalibrations: [RaceCalibration],
+        weatherImpact: WeatherImpactCalculator.WeatherImpact?
     ) async throws -> FinishEstimate {
         let raceLinkedRuns = recentRuns.filter { $0.linkedRaceId != nil }
         let raceResultsUsed = raceLinkedRuns.count
@@ -45,9 +46,11 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
             targetRace: race
         )
 
-        let optimisticTime = effectiveKm * pace25 * terrain * descent * ultra * 0.97 * calibration
-        let expectedTime = effectiveKm * medianPace * terrain * descent * form * ultra * calibration
-        let conservativeTime = effectiveKm * pace75 * terrain * descent * ultra * 1.05 * calibration
+        let weather = weatherImpact?.multiplier ?? 1.0
+
+        let optimisticTime = effectiveKm * pace25 * terrain * descent * ultra * 0.97 * calibration * weather
+        let expectedTime = effectiveKm * medianPace * terrain * descent * form * ultra * calibration * weather
+        let conservativeTime = effectiveKm * pace75 * terrain * descent * ultra * 1.05 * calibration * weather
 
         let splits = calculateCheckpointSplits(
             race: race,
@@ -74,7 +77,9 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
             checkpointSplits: splits,
             confidencePercent: confidence,
             raceResultsUsed: raceResultsUsed,
-            calibrationFactor: calibration
+            calibrationFactor: calibration,
+            weatherMultiplier: weatherImpact?.multiplier,
+            weatherImpactSummary: weatherImpact?.summary
         )
     }
 

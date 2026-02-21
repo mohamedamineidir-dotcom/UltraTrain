@@ -26,6 +26,13 @@ enum PlanAdjustmentCalculator {
 
         detectStaleMissedSessions(plan: plan, now: now, into: &recommendations)
 
+        let redistribution = MissedSessionRedistributor.analyzeRedistribution(
+            plan: plan, now: now, currentWeekIndex: currentWeekIndex
+        )
+        recommendations.append(contentsOf: redistribution.recommendations)
+
+        detectAccumulatedMissedVolume(plan: plan, now: now, currentWeekIndex: currentWeekIndex, into: &recommendations)
+
         if let snapshot = fitnessSnapshot {
             detectFatigueLoad(
                 plan: plan, now: now, snapshot: snapshot,
@@ -384,6 +391,39 @@ enum PlanAdjustmentCalculator {
             title: "Reduce Load — Low Recovery",
             message: "Recovery score is \(recovery.overallScore)/100. Consider reducing today's session intensity by 20%.",
             actionLabel: "Reduce Intensity",
+            affectedSessionIds: affectedIds
+        ))
+    }
+
+    // MARK: - Accumulated Missed Volume
+
+    private static func detectAccumulatedMissedVolume(
+        plan: TrainingPlan,
+        now: Date,
+        currentWeekIndex: Int?,
+        into recommendations: inout [PlanAdjustmentRecommendation]
+    ) {
+        guard let cwi = currentWeekIndex else { return }
+        let (missedDist, _) = MissedSessionRedistributor.calculateAccumulatedMissedVolume(plan: plan, now: now)
+        let threshold = AppConfiguration.Training.accumulatedMissedVolumeThresholdKm
+        guard missedDist >= threshold else { return }
+
+        let pct = Int(AppConfiguration.Training.accumulatedMissedVolumeReductionPercent)
+        let nowDay = Calendar.current.startOfDay(for: now)
+        let affectedIds = plan.weeks[cwi].sessions
+            .filter { Calendar.current.startOfDay(for: $0.date) >= nowDay
+                && !$0.isCompleted && !$0.isSkipped && $0.type != .rest }
+            .map(\.id)
+
+        guard !affectedIds.isEmpty else { return }
+
+        recommendations.append(PlanAdjustmentRecommendation(
+            id: UUID(),
+            type: .reduceTargetDueToAccumulatedMissed,
+            severity: .urgent,
+            title: "Lower Plan Targets",
+            message: "You've missed \(Int(missedDist)) km in the last 2 weeks. Reduce remaining targets by \(pct)% to avoid overreaching.",
+            actionLabel: "Reduce \(pct)%",
             affectedSessionIds: affectedIds
         ))
     }

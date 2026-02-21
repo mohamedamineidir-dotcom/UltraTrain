@@ -14,6 +14,8 @@ final class FinishEstimateSwiftDataModel {
     var confidencePercent: Double = 0
     var raceResultsUsed: Int = 0
     var calibrationFactor: Double = 1.0
+    var weatherMultiplier: Double?
+    var weatherImpactSummary: String?
 
     init(
         id: UUID = UUID(),
@@ -26,7 +28,9 @@ final class FinishEstimateSwiftDataModel {
         checkpointSplitsData: Data = Data(),
         confidencePercent: Double = 0,
         raceResultsUsed: Int = 0,
-        calibrationFactor: Double = 1.0
+        calibrationFactor: Double = 1.0,
+        weatherMultiplier: Double? = nil,
+        weatherImpactSummary: String? = nil
     ) {
         self.id = id
         self.raceId = raceId
@@ -39,5 +43,7 @@ final class FinishEstimateSwiftDataModel {
         self.confidencePercent = confidencePercent
         self.raceResultsUsed = raceResultsUsed
         self.calibrationFactor = calibrationFactor
+        self.weatherMultiplier = weatherMultiplier
+        self.weatherImpactSummary = weatherImpactSummary
     }
 }

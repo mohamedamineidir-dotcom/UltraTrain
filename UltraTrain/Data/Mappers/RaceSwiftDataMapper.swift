@@ -31,7 +31,10 @@ enum RaceSwiftDataMapper {
             checkpoints: checkpoints,
             terrainDifficulty: terrain,
             actualFinishTime: model.actualFinishTime,
-            linkedRunId: model.linkedRunId
+            linkedRunId: model.linkedRunId,
+            locationLatitude: model.locationLatitude,
+            locationLongitude: model.locationLongitude,
+            forecastedWeather: decodeWeather(model.forecastedWeatherData)
         )
     }
 
@@ -59,7 +62,10 @@ enum RaceSwiftDataMapper {
             terrainDifficultyRaw: race.terrainDifficulty.rawValue,
             checkpointModels: checkpointModels,
             actualFinishTime: race.actualFinishTime,
-            linkedRunId: race.linkedRunId
+            linkedRunId: race.linkedRunId,
+            locationLatitude: race.locationLatitude,
+            locationLongitude: race.locationLongitude,
+            forecastedWeatherData: encodeWeather(race.forecastedWeather)
         )
     }
 
@@ -76,6 +82,16 @@ enum RaceSwiftDataMapper {
         default:
             return nil
         }
+    }
+
+    private static func encodeWeather(_ weather: WeatherSnapshot?) -> Data? {
+        guard let weather else { return nil }
+        return try? JSONEncoder().encode(weather)
+    }
+
+    private static func decodeWeather(_ data: Data?) -> WeatherSnapshot? {
+        guard let data else { return nil }
+        return try? JSONDecoder().decode(WeatherSnapshot.self, from: data)
     }
 
     private static func encodeGoal(_ goal: RaceGoal) -> (String, Double?) {

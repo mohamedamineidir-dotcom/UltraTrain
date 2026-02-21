@@ -1,6 +1,6 @@
 import Foundation
 
-struct DailyWeatherForecast: Equatable, Sendable {
+struct DailyWeatherForecast: Equatable, Sendable, Codable {
     var date: Date
     var highTemperatureCelsius: Double
     var lowTemperatureCelsius: Double

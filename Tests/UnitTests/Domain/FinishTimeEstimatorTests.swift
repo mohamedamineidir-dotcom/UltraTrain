@@ -675,6 +675,71 @@ struct FinishTimeEstimatorTests {
 
     // MARK: - Ultra Fatigue (cont.)
 
+    // MARK: - Weather Impact
+
+    @Test("Weather multiplier increases all scenario times")
+    func weatherMultiplierIncreasesTime() async throws {
+        let race = makeRace()
+        let runs = [makeRun()]
+
+        let weatherImpact = WeatherImpactCalculator.WeatherImpact(
+            multiplier: 1.10, heatImpactPercent: 8.0, humidityCompoundPercent: 2.0,
+            rainImpactPercent: 0, windImpactPercent: 0, coldImpactPercent: 0,
+            summary: "Heat (+8.0%), Humidity (+2.0%)", severity: .moderate
+        )
+
+        let noWeather = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: nil
+        )
+        let withWeather = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: nil,
+            pastRaceCalibrations: [],
+            weatherImpact: weatherImpact
+        )
+
+        #expect(withWeather.expectedTime > noWeather.expectedTime)
+        #expect(withWeather.optimisticTime > noWeather.optimisticTime)
+        #expect(withWeather.conservativeTime > noWeather.conservativeTime)
+    }
+
+    @Test("Weather fields stored in returned FinishEstimate")
+    func weatherFieldsStored() async throws {
+        let race = makeRace()
+        let runs = [makeRun()]
+
+        let weatherImpact = WeatherImpactCalculator.WeatherImpact(
+            multiplier: 1.05, heatImpactPercent: 4.0, humidityCompoundPercent: 1.0,
+            rainImpactPercent: 0, windImpactPercent: 0, coldImpactPercent: 0,
+            summary: "Heat (+4.0%), Humidity (+1.0%)", severity: .minor
+        )
+
+        let estimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: nil,
+            pastRaceCalibrations: [],
+            weatherImpact: weatherImpact
+        )
+
+        #expect(estimate.weatherMultiplier == 1.05)
+        #expect(estimate.weatherImpactSummary == "Heat (+4.0%), Humidity (+1.0%)")
+    }
+
+    @Test("No weather impact returns nil weather fields")
+    func noWeatherReturnsNilFields() async throws {
+        let race = makeRace()
+        let runs = [makeRun()]
+
+        let estimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: nil
+        )
+
+        #expect(estimate.weatherMultiplier == nil)
+        #expect(estimate.weatherImpactSummary == nil)
+    }
+
     @Test("Elite has no ultra fatigue penalty even on long races")
     func eliteNoUltraPenalty() async throws {
         let shortRace = makeRace(distanceKm: 50, elevationGainM: 3000)

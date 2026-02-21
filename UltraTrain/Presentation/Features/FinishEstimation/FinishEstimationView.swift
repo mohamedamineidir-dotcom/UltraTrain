@@ -51,7 +51,8 @@ struct FinishEstimationView: View {
             runRepository: runRepository,
             fitnessCalculator: fitnessCalculator,
             raceRepository: raceRepository,
-            finishEstimateRepository: finishEstimateRepository
+            finishEstimateRepository: finishEstimateRepository,
+            weatherService: weatherService
         ))
     }
 
@@ -74,6 +75,13 @@ struct FinishEstimationView: View {
                         }
                     }
                     scenarioCards(estimate)
+                    if let weatherImpact = viewModel.weatherImpact {
+                        WeatherImpactCard(
+                            impact: weatherImpact,
+                            snapshot: viewModel.weatherSnapshot,
+                            forecast: viewModel.dailyForecast
+                        )
+                    }
                     confidenceSection(estimate)
                     if estimate.raceResultsUsed > 0 {
                         raceCalibrationBadge(estimate: estimate)

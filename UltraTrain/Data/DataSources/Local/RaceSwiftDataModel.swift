@@ -17,6 +17,9 @@ final class RaceSwiftDataModel {
     var checkpointModels: [CheckpointSwiftDataModel] = []
     var actualFinishTime: Double?
     var linkedRunId: UUID?
+    var locationLatitude: Double?
+    var locationLongitude: Double?
+    @Attribute(.externalStorage) var forecastedWeatherData: Data?
     var updatedAt: Date = Date()
 
     init(
@@ -33,6 +36,9 @@ final class RaceSwiftDataModel {
         checkpointModels: [CheckpointSwiftDataModel] = [],
         actualFinishTime: Double? = nil,
         linkedRunId: UUID? = nil,
+        locationLatitude: Double? = nil,
+        locationLongitude: Double? = nil,
+        forecastedWeatherData: Data? = nil,
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -48,6 +54,9 @@ final class RaceSwiftDataModel {
         self.checkpointModels = checkpointModels
         self.actualFinishTime = actualFinishTime
         self.linkedRunId = linkedRunId
+        self.locationLatitude = locationLatitude
+        self.locationLongitude = locationLongitude
+        self.forecastedWeatherData = forecastedWeatherData
         self.updatedAt = updatedAt
     }
 }

@@ -14,7 +14,9 @@ enum FinishEstimateSwiftDataMapper {
             checkpointSplits: decodeSplits(model.checkpointSplitsData),
             confidencePercent: model.confidencePercent,
             raceResultsUsed: model.raceResultsUsed,
-            calibrationFactor: model.calibrationFactor
+            calibrationFactor: model.calibrationFactor,
+            weatherMultiplier: model.weatherMultiplier,
+            weatherImpactSummary: model.weatherImpactSummary
         )
     }
 
@@ -30,7 +32,9 @@ enum FinishEstimateSwiftDataMapper {
             checkpointSplitsData: encodeSplits(estimate.checkpointSplits),
             confidencePercent: estimate.confidencePercent,
             raceResultsUsed: estimate.raceResultsUsed,
-            calibrationFactor: estimate.calibrationFactor
+            calibrationFactor: estimate.calibrationFactor,
+            weatherMultiplier: estimate.weatherMultiplier,
+            weatherImpactSummary: estimate.weatherImpactSummary
         )
     }
 

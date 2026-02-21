@@ -375,6 +375,13 @@ final class TrainingPlanViewModel {
                 try await applyVolumeReduction(recommendation, plan: &currentPlan, factor: 0.80)
             case .swapToRecoveryLowRecovery:
                 try await applySwapToRecovery(recommendation, plan: &currentPlan)
+            case .redistributeMissedVolume:
+                try await applyVolumeRedistribution(recommendation, plan: &currentPlan)
+            case .convertEasyToQuality:
+                try await applyConvertToQuality(recommendation, plan: &currentPlan)
+            case .reduceTargetDueToAccumulatedMissed:
+                let factor = 1.0 - AppConfiguration.Training.accumulatedMissedVolumeReductionPercent / 100.0
+                try await applyVolumeReduction(recommendation, plan: &currentPlan, factor: factor)
             }
 
             plan = currentPlan
@@ -462,6 +469,43 @@ final class TrainingPlanViewModel {
         plan.weeks[wi].sessions[si].plannedDuration *= 0.5
         plan.weeks[wi].sessions[si].description = "Recovery run (auto-adjusted due to high fatigue)"
         try await planRepository.updateSession(plan.weeks[wi].sessions[si])
+    }
+
+    private func applyVolumeRedistribution(
+        _ rec: PlanAdjustmentRecommendation,
+        plan: inout TrainingPlan
+    ) async throws {
+        for adjustment in rec.volumeAdjustments {
+            guard let (wi, si) = findSession(id: adjustment.sessionId, in: plan) else { continue }
+            plan.weeks[wi].sessions[si].plannedDistanceKm += adjustment.addedDistanceKm
+            plan.weeks[wi].sessions[si].plannedElevationGainM += adjustment.addedElevationGainM
+            try await planRepository.updateSession(plan.weeks[wi].sessions[si])
+        }
+        // Mark the missed session as skipped
+        if let missedId = rec.affectedSessionIds.first,
+           let (wi, si) = findSession(id: missedId, in: plan) {
+            plan.weeks[wi].sessions[si].isSkipped = true
+            try await planRepository.updateSession(plan.weeks[wi].sessions[si])
+        }
+    }
+
+    private func applyConvertToQuality(
+        _ rec: PlanAdjustmentRecommendation,
+        plan: inout TrainingPlan
+    ) async throws {
+        for adjustment in rec.volumeAdjustments {
+            guard let newType = adjustment.newType,
+                  let (wi, si) = findSession(id: adjustment.sessionId, in: plan) else { continue }
+            plan.weeks[wi].sessions[si].type = newType
+            plan.weeks[wi].sessions[si].description = "\(newType.rawValue.capitalized) (converted from recovery)"
+            try await planRepository.updateSession(plan.weeks[wi].sessions[si])
+        }
+        // Mark the missed session as skipped
+        if let missedId = rec.affectedSessionIds.first,
+           let (wi, si) = findSession(id: missedId, in: plan) {
+            plan.weeks[wi].sessions[si].isSkipped = true
+            try await planRepository.updateSession(plan.weeks[wi].sessions[si])
+        }
     }
 
     private func findSession(id: UUID, in plan: TrainingPlan) -> (weekIndex: Int, sessionIndex: Int)? {
