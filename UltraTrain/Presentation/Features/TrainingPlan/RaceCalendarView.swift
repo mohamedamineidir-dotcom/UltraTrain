@@ -11,7 +11,7 @@ struct RaceCalendarView: View {
         let planRaces = races.filter { allRaceIds.contains($0.id) }
         for race in planRaces {
             if let week = plan.weeks.first(where: {
-                race.date >= $0.startDate && race.date <= $0.endDate
+                $0.contains(date: race.date)
             }) {
                 map[week.weekNumber] = race
             }

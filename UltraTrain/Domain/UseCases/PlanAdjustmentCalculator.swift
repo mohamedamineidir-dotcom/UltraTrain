@@ -57,7 +57,7 @@ enum PlanAdjustmentCalculator {
     // MARK: - Current Week
 
     private static func findCurrentWeekIndex(plan: TrainingPlan, now: Date) -> Int? {
-        plan.weeks.firstIndex { now >= $0.startDate && now <= $0.endDate }
+        plan.weeks.firstIndex { $0.contains(date: now) }
     }
 
     // MARK: - Missed Key Sessions

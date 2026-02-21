@@ -51,6 +51,8 @@ struct UltraTrainApp: App {
     private let sharedRunRepository: any SharedRunRepository
     private let activityFeedRepository: any ActivityFeedRepository
     private let groupChallengeRepository: any GroupChallengeRepository
+    private let cloudKitSharingService: (any CloudKitSharingServiceProtocol)?
+    private let cloudKitCrewService: any CrewTrackingServiceProtocol
 
     init() {
         let isUITesting = ProcessInfo.processInfo.arguments.contains("-UITestMode")
@@ -193,8 +195,13 @@ struct UltraTrainApp: App {
                 try? await Task.sleep(for: .seconds(3))
                 await CloudKitDeduplicationService.deduplicateIfNeeded(modelContainer: container)
             }
+            let accountManager = CloudKitAccountManager()
+            cloudKitSharingService = CloudKitSharingService(accountManager: accountManager)
+            cloudKitCrewService = CloudKitCrewTrackingService(accountManager: accountManager)
         } else {
             cloudKitSyncMonitor = nil
+            cloudKitSharingService = nil
+            cloudKitCrewService = CrewTrackingService()
         }
 
         let queueService = stravaUploadQueueService

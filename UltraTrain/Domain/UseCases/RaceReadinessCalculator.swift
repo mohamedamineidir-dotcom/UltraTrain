@@ -83,7 +83,7 @@ enum RaceReadinessCalculator {
     }
 
     private static func estimateDailyLoad(for date: Date, from weeks: [TrainingWeek]) -> Double {
-        guard let week = weeks.first(where: { date >= $0.startDate && date <= $0.endDate }) else {
+        guard let week = weeks.first(where: { $0.contains(date: date) }) else {
             return 0
         }
 

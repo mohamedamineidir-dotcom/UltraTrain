@@ -247,7 +247,8 @@ struct WidgetDataWriterTests {
         let data = defaults.data(forKey: WidgetDataKeys.weeklyProgress)
         #expect(data != nil)
 
-        let decoded = try? JSONDecoder().decode(WidgetWeeklyProgressData.self, from: data!)
+        guard let data else { return }
+        let decoded = try? JSONDecoder().decode(WidgetWeeklyProgressData.self, from: data)
         #expect(decoded?.weekNumber == 5)
         #expect(decoded?.phase == "build")
         #expect(decoded?.actualDistanceKm == 20) // One completed session

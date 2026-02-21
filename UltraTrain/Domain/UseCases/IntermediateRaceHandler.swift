@@ -30,8 +30,11 @@ enum IntermediateRaceHandler {
         var overrides: [RaceWeekOverride] = []
 
         for race in sortedRaces {
+            let raceDay = Calendar.current.startOfDay(for: race.date)
             guard let raceWeek = skeletons.first(where: {
-                race.date >= $0.startDate && race.date <= $0.endDate
+                let start = Calendar.current.startOfDay(for: $0.startDate)
+                let end = Calendar.current.startOfDay(for: $0.endDate)
+                return raceDay >= start && raceDay <= end
             }) else { continue }
 
             // B-races get full treatment: taper + race week + recovery

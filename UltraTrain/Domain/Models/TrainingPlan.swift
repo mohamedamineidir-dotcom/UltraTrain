@@ -32,10 +32,15 @@ struct TrainingWeek: Identifiable, Equatable, Sendable {
     var targetVolumeKm: Double
     var targetElevationGainM: Double
 
-    var containsToday: Bool {
-        let now = Date.now
-        return now >= startDate && now <= endDate
+    func contains(date: Date) -> Bool {
+        let calendar = Calendar.current
+        let day = calendar.startOfDay(for: date)
+        let start = calendar.startOfDay(for: startDate)
+        let end = calendar.startOfDay(for: endDate)
+        return day >= start && day <= end
     }
+
+    var containsToday: Bool { contains(date: .now) }
 }
 
 enum TrainingPhase: String, CaseIterable, Sendable {

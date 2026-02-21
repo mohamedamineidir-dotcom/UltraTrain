@@ -52,6 +52,7 @@ targets:
           - group.com.ultratrain.shared
         com.apple.developer.icloud-services:
           - CloudDocuments
+          - CloudKit
         com.apple.developer.icloud-container-identifiers:
           - iCloud.com.ultratrain.app
         aps-environment: development

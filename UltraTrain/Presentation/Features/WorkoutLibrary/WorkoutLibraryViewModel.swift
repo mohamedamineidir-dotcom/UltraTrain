@@ -81,7 +81,7 @@ final class WorkoutLibraryViewModel {
             }
 
             guard let weekIndex = plan.weeks.firstIndex(where: {
-                date >= $0.startDate && date <= $0.endDate
+                $0.contains(date: date)
             }) else {
                 self.error = "No training week found for the selected date."
                 return
