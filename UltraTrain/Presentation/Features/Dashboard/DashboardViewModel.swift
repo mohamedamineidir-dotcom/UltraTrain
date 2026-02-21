@@ -55,6 +55,9 @@ final class DashboardViewModel {
     var personalRecords: [PersonalRecord] = []
     var weeklyGoalProgress: GoalProgress?
     var monthlyGoalProgress: GoalProgress?
+    var optimalSession: OptimalSession?
+    var fatiguePatterns: [FatiguePattern] = []
+    var performanceTrends: [PerformanceTrend] = []
 
     // MARK: - Init
 
@@ -110,6 +113,7 @@ final class DashboardViewModel {
         _ = await (fitnessTask, estimateTask, lastRunTask, racesTask, weatherTask, challengesTask, goalsTask)
 
         await loadRecovery()
+        await loadAICoach()
 
         isLoading = false
     }
@@ -436,6 +440,46 @@ final class DashboardViewModel {
             return calibrations
         } catch {
             return []
+        }
+    }
+
+    // MARK: - AI Coach
+
+    private func loadAICoach() async {
+        do {
+            guard let athlete = try await athleteRepository.getAthlete() else { return }
+            let runs = try await runRepository.getRuns(for: athlete.id)
+            guard !runs.isEmpty else { return }
+
+            // Fatigue detection
+            let fatigueInput = FatiguePatternDetector.Input(
+                recentRuns: runs,
+                sleepHistory: sleepHistory,
+                recoveryScores: recoveryScore.map { [$0] } ?? []
+            )
+            fatiguePatterns = FatiguePatternDetector.detect(input: fatigueInput)
+
+            // Session optimizer
+            if let phase = currentPhase {
+                let optimizerInput = SessionOptimizer.Input(
+                    plannedSession: nextSession,
+                    currentPhase: phase,
+                    readiness: readinessScore,
+                    fatiguePatterns: fatiguePatterns,
+                    weather: currentWeather,
+                    availableTimeMinutes: nil
+                )
+                optimalSession = SessionOptimizer.optimize(input: optimizerInput)
+            }
+
+            // Performance trends
+            let trendInput = PerformanceTrendAnalyzer.Input(
+                recentRuns: runs,
+                restingHeartRates: []
+            )
+            performanceTrends = PerformanceTrendAnalyzer.analyze(input: trendInput)
+        } catch {
+            Logger.aiCoach.debug("AI Coach loading failed: \(error)")
         }
     }
 

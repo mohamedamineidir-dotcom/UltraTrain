@@ -23,6 +23,7 @@ struct RunTrackingLaunchView: View {
     private let finishTimeEstimator: any EstimateFinishTimeUseCase
     private let finishEstimateRepository: any FinishEstimateRepository
     private let weatherService: (any WeatherServiceProtocol)?
+    private let recoveryRepository: any RecoveryRepository
 
     init(
         athleteRepository: any AthleteRepository,
@@ -45,7 +46,8 @@ struct RunTrackingLaunchView: View {
         gearRepository: any GearRepository,
         finishTimeEstimator: any EstimateFinishTimeUseCase,
         finishEstimateRepository: any FinishEstimateRepository,
-        weatherService: (any WeatherServiceProtocol)? = nil
+        weatherService: (any WeatherServiceProtocol)? = nil,
+        recoveryRepository: any RecoveryRepository
     ) {
         _viewModel = State(initialValue: RunTrackingLaunchViewModel(
             athleteRepository: athleteRepository,
@@ -58,7 +60,9 @@ struct RunTrackingLaunchView: View {
             finishTimeEstimator: finishTimeEstimator,
             finishEstimateRepository: finishEstimateRepository,
             weatherService: weatherService,
-            locationService: locationService
+            locationService: locationService,
+            healthKitService: healthKitService,
+            recoveryRepository: recoveryRepository
         ))
         self.athleteRepository = athleteRepository
         self.locationService = locationService
@@ -80,6 +84,7 @@ struct RunTrackingLaunchView: View {
         self.finishTimeEstimator = finishTimeEstimator
         self.finishEstimateRepository = finishEstimateRepository
         self.weatherService = weatherService
+        self.recoveryRepository = recoveryRepository
     }
 
     var body: some View {
@@ -93,6 +98,10 @@ struct RunTrackingLaunchView: View {
                         isLoading: viewModel.isLoading
                     )
                     .padding(.horizontal, Theme.Spacing.md)
+                    if let briefing = viewModel.preRunBriefing {
+                        PreRunBriefingCard(briefing: briefing)
+                            .padding(.horizontal, Theme.Spacing.md)
+                    }
                     if let race = viewModel.todaysRace {
                         raceDayBanner(race: race)
                     }

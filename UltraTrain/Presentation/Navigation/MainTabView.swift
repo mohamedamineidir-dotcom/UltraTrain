@@ -40,6 +40,11 @@ struct MainTabView: View {
     private let challengeRepository: any ChallengeRepository
     private let workoutRecipeRepository: any WorkoutRecipeRepository
     private let goalRepository: any GoalRepository
+    private let socialProfileRepository: any SocialProfileRepository
+    private let friendRepository: any FriendRepository
+    private let sharedRunRepository: any SharedRunRepository
+    private let activityFeedRepository: any ActivityFeedRepository
+    private let groupChallengeRepository: any GroupChallengeRepository
 
     init(
         athleteRepository: any AthleteRepository,
@@ -78,7 +83,12 @@ struct MainTabView: View {
         checklistRepository: any RacePrepChecklistRepository,
         challengeRepository: any ChallengeRepository,
         workoutRecipeRepository: any WorkoutRecipeRepository,
-        goalRepository: any GoalRepository
+        goalRepository: any GoalRepository,
+        socialProfileRepository: any SocialProfileRepository,
+        friendRepository: any FriendRepository,
+        sharedRunRepository: any SharedRunRepository,
+        activityFeedRepository: any ActivityFeedRepository,
+        groupChallengeRepository: any GroupChallengeRepository
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -117,6 +127,11 @@ struct MainTabView: View {
         self.challengeRepository = challengeRepository
         self.workoutRecipeRepository = workoutRecipeRepository
         self.goalRepository = goalRepository
+        self.socialProfileRepository = socialProfileRepository
+        self.friendRepository = friendRepository
+        self.sharedRunRepository = sharedRunRepository
+        self.activityFeedRepository = activityFeedRepository
+        self.groupChallengeRepository = groupChallengeRepository
     }
 
     var body: some View {
@@ -185,7 +200,8 @@ struct MainTabView: View {
                 gearRepository: gearRepository,
                 finishTimeEstimator: finishTimeEstimator,
                 finishEstimateRepository: finishEstimateRepository,
-                weatherService: weatherService
+                weatherService: weatherService,
+                recoveryRepository: recoveryRepository
             )
                 .tabItem {
                     Label("Run", systemImage: "figure.run")
@@ -229,7 +245,12 @@ struct MainTabView: View {
                 weatherService: weatherService,
                 locationService: locationService,
                 checklistRepository: checklistRepository,
-                challengeRepository: challengeRepository
+                challengeRepository: challengeRepository,
+                socialProfileRepository: socialProfileRepository,
+                friendRepository: friendRepository,
+                sharedRunRepository: sharedRunRepository,
+                activityFeedRepository: activityFeedRepository,
+                groupChallengeRepository: groupChallengeRepository
             )
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")

@@ -95,6 +95,14 @@ struct DashboardView: View {
                         CoachingInsightCard(insights: viewModel.coachingInsights)
                     }
 
+                    if let optimalSession = viewModel.optimalSession {
+                        OptimalSessionCard(session: optimalSession)
+                    }
+
+                    if !viewModel.fatiguePatterns.isEmpty {
+                        FatigueAlertCard(patterns: viewModel.fatiguePatterns)
+                    }
+
                     DashboardNextSessionCard(
                         session: viewModel.nextSession,
                         hasPlan: viewModel.plan != nil,
@@ -172,6 +180,12 @@ struct DashboardView: View {
                     finishEstimateSection
 
                     fitnessSection
+
+                    if !viewModel.performanceTrends.isEmpty {
+                        ForEach(viewModel.performanceTrends) { trend in
+                            PerformanceTrendSparkline(trend: trend)
+                        }
+                    }
 
                     UpcomingRacesCard(races: viewModel.upcomingRaces)
 

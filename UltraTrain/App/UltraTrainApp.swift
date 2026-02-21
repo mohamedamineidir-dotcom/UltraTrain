@@ -46,6 +46,11 @@ struct UltraTrainApp: App {
     private let workoutRecipeRepository: any WorkoutRecipeRepository
     private let goalRepository: any GoalRepository
     private let cloudKitSyncMonitor: CloudKitSyncMonitor?
+    private let socialProfileRepository: any SocialProfileRepository
+    private let friendRepository: any FriendRepository
+    private let sharedRunRepository: any SharedRunRepository
+    private let activityFeedRepository: any ActivityFeedRepository
+    private let groupChallengeRepository: any GroupChallengeRepository
 
     init() {
         let isUITesting = ProcessInfo.processInfo.arguments.contains("-UITestMode")
@@ -75,7 +80,12 @@ struct UltraTrainApp: App {
                 ChecklistItemSwiftDataModel.self,
                 ChallengeEnrollmentSwiftDataModel.self,
                 WorkoutRecipeSwiftDataModel.self,
-                TrainingGoalSwiftDataModel.self
+                TrainingGoalSwiftDataModel.self,
+                SocialProfileSwiftDataModel.self,
+                FriendConnectionSwiftDataModel.self,
+                SharedRunSwiftDataModel.self,
+                ActivityFeedItemSwiftDataModel.self,
+                GroupChallengeSwiftDataModel.self
             ])
             let config: ModelConfiguration
             if isUITesting {
@@ -159,6 +169,11 @@ struct UltraTrainApp: App {
         challengeRepository = LocalChallengeRepository(modelContainer: modelContainer)
         workoutRecipeRepository = LocalWorkoutRecipeRepository(modelContainer: modelContainer)
         goalRepository = LocalGoalRepository(modelContainer: modelContainer)
+        socialProfileRepository = LocalSocialProfileRepository(modelContainer: modelContainer)
+        friendRepository = LocalFriendRepository(modelContainer: modelContainer)
+        sharedRunRepository = LocalSharedRunRepository(modelContainer: modelContainer)
+        activityFeedRepository = LocalActivityFeedRepository(modelContainer: modelContainer)
+        groupChallengeRepository = LocalGroupChallengeRepository(modelContainer: modelContainer)
         stravaUploadQueueService = StravaUploadQueueService(
             queueRepository: stravaUploadQueueRepository,
             runRepository: runRepository,
@@ -240,7 +255,12 @@ struct UltraTrainApp: App {
                 checklistRepository: checklistRepository,
                 challengeRepository: challengeRepository,
                 workoutRecipeRepository: workoutRecipeRepository,
-                goalRepository: goalRepository
+                goalRepository: goalRepository,
+                socialProfileRepository: socialProfileRepository,
+                friendRepository: friendRepository,
+                sharedRunRepository: sharedRunRepository,
+                activityFeedRepository: activityFeedRepository,
+                groupChallengeRepository: groupChallengeRepository
             )
         }
     }

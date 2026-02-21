@@ -18,6 +18,8 @@ final class RunTrackingLaunchViewModel {
     private let finishEstimateRepository: any FinishEstimateRepository
     private let weatherService: (any WeatherServiceProtocol)?
     private let locationService: LocationService?
+    private let healthKitService: (any HealthKitServiceProtocol)?
+    private let recoveryRepository: (any RecoveryRepository)?
 
     // MARK: - State
 
@@ -43,6 +45,7 @@ final class RunTrackingLaunchViewModel {
     var pacingAlertsEnabled = true
     var voiceCoachingConfig = VoiceCoachingConfig()
     var preRunWeather: WeatherSnapshot?
+    var preRunBriefing: PreRunBriefing?
 
     // MARK: - Init
 
@@ -57,7 +60,9 @@ final class RunTrackingLaunchViewModel {
         finishTimeEstimator: any EstimateFinishTimeUseCase,
         finishEstimateRepository: any FinishEstimateRepository,
         weatherService: (any WeatherServiceProtocol)? = nil,
-        locationService: LocationService? = nil
+        locationService: LocationService? = nil,
+        healthKitService: (any HealthKitServiceProtocol)? = nil,
+        recoveryRepository: (any RecoveryRepository)? = nil
     ) {
         self.athleteRepository = athleteRepository
         self.planRepository = planRepository
@@ -70,6 +75,8 @@ final class RunTrackingLaunchViewModel {
         self.finishEstimateRepository = finishEstimateRepository
         self.weatherService = weatherService
         self.locationService = locationService
+        self.healthKitService = healthKitService
+        self.recoveryRepository = recoveryRepository
     }
 
     // MARK: - Load
@@ -116,6 +123,7 @@ final class RunTrackingLaunchViewModel {
 
         isLoading = false
         await loadWeather()
+        await loadPreRunBriefing()
     }
 
     // MARK: - Weather
@@ -202,5 +210,66 @@ final class RunTrackingLaunchViewModel {
             if !sessions.isEmpty { return sessions }
         }
         return []
+    }
+
+    // MARK: - Pre-Run Briefing
+
+    private func loadPreRunBriefing() async {
+        guard let healthKitService else { return }
+        do {
+            let runs = try await runRepository.getRecentRuns(limit: 30)
+
+            let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date.now) ?? Date.now
+            let sleepEntries = try await healthKitService.fetchSleepData(from: yesterday, to: .now)
+            let lastNight = sleepEntries.last
+
+            let sevenDaysAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date.now) ?? Date.now
+            let sleepHistory = try await healthKitService.fetchSleepData(from: sevenDaysAgo, to: .now)
+
+            let currentHR = try await healthKitService.fetchRestingHeartRate()
+            let baselineHR = athlete?.restingHeartRate
+
+            let thirtyDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: Date.now) ?? Date.now
+            let hrvReadings = try await healthKitService.fetchHRVData(from: thirtyDaysAgo, to: .now)
+            let hrvTrend = HRVAnalyzer.analyze(readings: hrvReadings)
+            let hrvScore: Int? = hrvTrend.map { HRVAnalyzer.hrvScore(trend: $0) }
+
+            let recoveryScore = RecoveryScoreCalculator.calculate(
+                lastNightSleep: lastNight,
+                sleepHistory: sleepHistory,
+                currentRestingHR: currentHR,
+                baselineRestingHR: baselineHR,
+                fitnessSnapshot: nil,
+                hrvScore: hrvScore
+            )
+
+            var readinessScore: ReadinessScore?
+            if let trend = hrvTrend {
+                readinessScore = ReadinessCalculator.calculate(
+                    recoveryScore: recoveryScore,
+                    hrvTrend: trend,
+                    fitnessSnapshot: nil
+                )
+            }
+
+            let fatigueInput = FatiguePatternDetector.Input(
+                recentRuns: runs,
+                sleepHistory: sleepHistory,
+                recoveryScores: [recoveryScore]
+            )
+            let fatiguePatterns = FatiguePatternDetector.detect(input: fatigueInput)
+
+            preRunBriefing = PreRunBriefingBuilder.build(
+                session: selectedSession,
+                readinessScore: readinessScore,
+                recoveryScore: recoveryScore,
+                weather: preRunWeather,
+                fatiguePatterns: fatiguePatterns,
+                recentRuns: runs,
+                athlete: athlete
+            )
+        } catch {
+            Logger.tracking.debug("Pre-run briefing unavailable: \(error)")
+        }
     }
 }

@@ -46,6 +46,11 @@ struct AppRootView: View {
     private let challengeRepository: any ChallengeRepository
     private let workoutRecipeRepository: any WorkoutRecipeRepository
     private let goalRepository: any GoalRepository
+    private let socialProfileRepository: any SocialProfileRepository
+    private let friendRepository: any FriendRepository
+    private let sharedRunRepository: any SharedRunRepository
+    private let activityFeedRepository: any ActivityFeedRepository
+    private let groupChallengeRepository: any GroupChallengeRepository
 
     init(
         athleteRepository: any AthleteRepository,
@@ -85,7 +90,12 @@ struct AppRootView: View {
         checklistRepository: any RacePrepChecklistRepository,
         challengeRepository: any ChallengeRepository,
         workoutRecipeRepository: any WorkoutRecipeRepository,
-        goalRepository: any GoalRepository
+        goalRepository: any GoalRepository,
+        socialProfileRepository: any SocialProfileRepository,
+        friendRepository: any FriendRepository,
+        sharedRunRepository: any SharedRunRepository,
+        activityFeedRepository: any ActivityFeedRepository,
+        groupChallengeRepository: any GroupChallengeRepository
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -125,6 +135,11 @@ struct AppRootView: View {
         self.challengeRepository = challengeRepository
         self.workoutRecipeRepository = workoutRecipeRepository
         self.goalRepository = goalRepository
+        self.socialProfileRepository = socialProfileRepository
+        self.friendRepository = friendRepository
+        self.sharedRunRepository = sharedRunRepository
+        self.activityFeedRepository = activityFeedRepository
+        self.groupChallengeRepository = groupChallengeRepository
     }
 
     var body: some View {
@@ -175,7 +190,12 @@ struct AppRootView: View {
                         checklistRepository: checklistRepository,
                         challengeRepository: challengeRepository,
                         workoutRecipeRepository: workoutRecipeRepository,
-                        goalRepository: goalRepository
+                        goalRepository: goalRepository,
+                        socialProfileRepository: socialProfileRepository,
+                        friendRepository: friendRepository,
+                        sharedRunRepository: sharedRunRepository,
+                        activityFeedRepository: activityFeedRepository,
+                        groupChallengeRepository: groupChallengeRepository
                     )
                 case .some(false):
                     OnboardingView(

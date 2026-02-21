@@ -26,6 +26,11 @@ struct ProfileView: View {
     private let locationService: LocationService?
     private let checklistRepository: any RacePrepChecklistRepository
     private let challengeRepository: any ChallengeRepository
+    private let socialProfileRepository: any SocialProfileRepository
+    private let friendRepository: any FriendRepository
+    private let sharedRunRepository: any SharedRunRepository
+    private let activityFeedRepository: any ActivityFeedRepository
+    private let groupChallengeRepository: any GroupChallengeRepository
 
     init(
         athleteRepository: any AthleteRepository,
@@ -52,7 +57,12 @@ struct ProfileView: View {
         weatherService: (any WeatherServiceProtocol)? = nil,
         locationService: LocationService? = nil,
         checklistRepository: any RacePrepChecklistRepository,
-        challengeRepository: any ChallengeRepository
+        challengeRepository: any ChallengeRepository,
+        socialProfileRepository: any SocialProfileRepository,
+        friendRepository: any FriendRepository,
+        sharedRunRepository: any SharedRunRepository,
+        activityFeedRepository: any ActivityFeedRepository,
+        groupChallengeRepository: any GroupChallengeRepository
     ) {
         _viewModel = State(initialValue: ProfileViewModel(
             athleteRepository: athleteRepository,
@@ -84,6 +94,11 @@ struct ProfileView: View {
         self.locationService = locationService
         self.checklistRepository = checklistRepository
         self.challengeRepository = challengeRepository
+        self.socialProfileRepository = socialProfileRepository
+        self.friendRepository = friendRepository
+        self.sharedRunRepository = sharedRunRepository
+        self.activityFeedRepository = activityFeedRepository
+        self.groupChallengeRepository = groupChallengeRepository
     }
 
     var body: some View {
@@ -96,6 +111,7 @@ struct ProfileView: View {
                     racesSection
                     gearSection
                     challengesSection
+                    socialSection
                 }
             }
             .navigationTitle("Profile")
@@ -346,6 +362,37 @@ struct ProfileView: View {
             } label: {
                 Label("Challenges", systemImage: "trophy.fill")
             }
+        }
+    }
+
+    // MARK: - Social Section
+
+    private var socialSection: some View {
+        Section {
+            NavigationLink {
+                SocialTabView(
+                    friendRepository: friendRepository,
+                    profileRepository: socialProfileRepository,
+                    athleteRepository: athleteRepository,
+                    runRepository: runRepository,
+                    activityFeedRepository: activityFeedRepository,
+                    sharedRunRepository: sharedRunRepository
+                )
+            } label: {
+                Label("Social", systemImage: "person.2.fill")
+            }
+
+            NavigationLink {
+                GroupChallengesView(
+                    challengeRepository: groupChallengeRepository,
+                    profileRepository: socialProfileRepository,
+                    friendRepository: friendRepository
+                )
+            } label: {
+                Label("Group Challenges", systemImage: "person.3.fill")
+            }
+        } header: {
+            Text("Social")
         }
     }
 

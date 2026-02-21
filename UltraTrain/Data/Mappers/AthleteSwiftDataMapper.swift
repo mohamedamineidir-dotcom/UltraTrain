@@ -23,7 +23,11 @@ enum AthleteSwiftDataMapper {
             weeklyVolumeKm: model.weeklyVolumeKm,
             longestRunKm: model.longestRunKm,
             preferredUnit: unit,
-            customZoneThresholds: customZones
+            customZoneThresholds: customZones,
+            displayName: model.displayName,
+            bio: model.bio,
+            profilePhotoData: model.profilePhotoData,
+            isPublicProfile: model.isPublicProfile
         )
     }
 
@@ -41,7 +45,11 @@ enum AthleteSwiftDataMapper {
             weeklyVolumeKm: athlete.weeklyVolumeKm,
             longestRunKm: athlete.longestRunKm,
             preferredUnitRaw: athlete.preferredUnit.rawValue,
-            customZoneThresholdsRaw: athlete.customZoneThresholds?.map(String.init).joined(separator: ",")
+            customZoneThresholdsRaw: athlete.customZoneThresholds?.map(String.init).joined(separator: ","),
+            displayName: athlete.displayName,
+            bio: athlete.bio,
+            profilePhotoData: athlete.profilePhotoData,
+            isPublicProfile: athlete.isPublicProfile
         )
     }
 }
