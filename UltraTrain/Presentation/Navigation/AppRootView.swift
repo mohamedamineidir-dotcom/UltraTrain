@@ -6,6 +6,8 @@ struct AppRootView: View {
     @State private var hasCompletedOnboarding: Bool?
     @State private var isUnlocked = false
     @State private var needsBiometricLock = false
+    @State private var showFeatureTour = false
+    @AppStorage("hasSeenFeatureTour") private var hasSeenFeatureTour = false
     @State private var unitPreference: UnitPreference = .metric
     @State private var lastAutoImportDate: Date?
     private let athleteRepository: any AthleteRepository
@@ -197,12 +199,23 @@ struct AppRootView: View {
                         activityFeedRepository: activityFeedRepository,
                         groupChallengeRepository: groupChallengeRepository
                     )
+                    .fullScreenCover(isPresented: $showFeatureTour) {
+                        FeatureTourView {
+                            hasSeenFeatureTour = true
+                            showFeatureTour = false
+                        }
+                    }
                 case .some(false):
                     OnboardingView(
                         athleteRepository: athleteRepository,
                         raceRepository: raceRepository,
                         healthKitService: healthKitService,
-                        onComplete: { hasCompletedOnboarding = true }
+                        onComplete: {
+                            hasCompletedOnboarding = true
+                            if !hasSeenFeatureTour {
+                                showFeatureTour = true
+                            }
+                        }
                     )
                 }
             }

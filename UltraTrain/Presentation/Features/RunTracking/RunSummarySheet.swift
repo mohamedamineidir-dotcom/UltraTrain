@@ -363,7 +363,7 @@ struct RunSummarySheet: View {
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
                 Button("Retry") {
-                    viewModel.uploadToStrava()
+                    Task { await viewModel.uploadToStrava() }
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.small)

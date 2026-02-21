@@ -126,23 +126,21 @@ final class ConnectivityHandler {
         }
     }
 
-    func manualUploadToStrava(runId: UUID) {
+    func manualUploadToStrava(runId: UUID) async {
         guard let queueService = stravaUploadQueueService else { return }
         stravaUploadStatus = .uploading
-        Task { [weak self] in
-            do {
-                try await queueService.enqueueUpload(runId: runId)
-                await queueService.processQueue()
-                if let status = await queueService.getQueueStatus(forRunId: runId),
-                   status == .completed {
-                    self?.stravaUploadStatus = .success(activityId: 0)
-                } else {
-                    self?.stravaUploadStatus = .idle
-                }
-            } catch {
-                self?.stravaUploadStatus = .failed(reason: error.localizedDescription)
-                Logger.strava.error("Strava upload failed: \(error)")
+        do {
+            try await queueService.enqueueUpload(runId: runId)
+            await queueService.processQueue()
+            if let status = await queueService.getQueueStatus(forRunId: runId),
+               status == .completed {
+                stravaUploadStatus = .success(activityId: 0)
+            } else {
+                stravaUploadStatus = .idle
             }
+        } catch {
+            stravaUploadStatus = .failed(reason: error.localizedDescription)
+            Logger.strava.error("Strava upload failed: \(error)")
         }
     }
 

@@ -79,10 +79,7 @@ struct ActiveRunViewModelStravaTests {
         let run = makeRun(athleteId: athlete.id)
         vm.lastSavedRun = run
 
-        vm.uploadToStrava()
-
-        // Allow the background Task to execute
-        try await Task.sleep(for: .milliseconds(300))
+        await vm.uploadToStrava()
 
         #expect(queueService.enqueuedRunIds.contains(run.id))
         #expect(queueService.processQueueCalled == true)
@@ -93,8 +90,7 @@ struct ActiveRunViewModelStravaTests {
         let queueService = MockStravaUploadQueueService()
         let vm = makeViewModel(queueService: queueService)
 
-        vm.uploadToStrava()
-        try await Task.sleep(for: .milliseconds(100))
+        await vm.uploadToStrava()
 
         #expect(queueService.enqueuedRunIds.isEmpty)
     }

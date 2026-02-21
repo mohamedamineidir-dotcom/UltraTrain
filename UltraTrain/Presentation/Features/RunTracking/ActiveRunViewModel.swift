@@ -293,9 +293,9 @@ final class ActiveRunViewModel {
         isSaving = false
     }
 
-    func uploadToStrava() {
+    func uploadToStrava() async {
         guard let run = lastSavedRun else { return }
-        connectivityHandler.manualUploadToStrava(runId: run.id)
+        await connectivityHandler.manualUploadToStrava(runId: run.id)
     }
 
     func discardRun() {

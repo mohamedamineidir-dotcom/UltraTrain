@@ -8,6 +8,11 @@ struct OnboardingCompleteStepView: View {
     @ScaledMetric(relativeTo: .largeTitle) private var checkmarkSize: CGFloat = 60
     @State private var isRequestingHealthKit = false
     @State private var healthKitConnected = false
+    @State private var showCheckmark = false
+    @State private var showTitle = false
+    @State private var showSummary = false
+    @State private var showHealthKit = false
+    @State private var showButton = false
 
     var body: some View {
         ScrollView {
@@ -18,22 +23,50 @@ struct OnboardingCompleteStepView: View {
                     .font(.system(size: checkmarkSize))
                     .foregroundStyle(Theme.Colors.success)
                     .accessibilityHidden(true)
+                    .scaleEffect(showCheckmark ? 1 : 0)
+                    .opacity(showCheckmark ? 1 : 0)
 
                 Text("You're All Set!")
                     .font(.title.bold())
+                    .opacity(showTitle ? 1 : 0)
+                    .offset(y: showTitle ? 0 : 10)
 
                 summarySection
+                    .opacity(showSummary ? 1 : 0)
+                    .offset(y: showSummary ? 0 : 20)
                 healthKitCard
+                    .opacity(showHealthKit ? 1 : 0)
+                    .offset(y: showHealthKit ? 0 : 20)
 
                 if let error = viewModel.error {
                     ErrorBannerView(message: error) {
                         Task { await viewModel.completeOnboarding() }
                     }
+                    .opacity(showSummary ? 1 : 0)
+                    .offset(y: showSummary ? 0 : 20)
                 }
 
                 getStartedButton
+                    .opacity(showButton ? 1 : 0)
             }
             .padding()
+        }
+        .onAppear {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.6).delay(0.1)) {
+                showCheckmark = true
+            }
+            withAnimation(.easeOut(duration: 0.4).delay(0.3)) {
+                showTitle = true
+            }
+            withAnimation(.easeOut(duration: 0.4).delay(0.5)) {
+                showSummary = true
+            }
+            withAnimation(.easeOut(duration: 0.4).delay(0.7)) {
+                showHealthKit = true
+            }
+            withAnimation(.easeOut(duration: 0.4).delay(0.9)) {
+                showButton = true
+            }
         }
     }
 
