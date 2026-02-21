@@ -27,6 +27,7 @@ final class DashboardViewModel {
     private let weatherService: (any WeatherServiceProtocol)?
     private let locationService: LocationService?
     private let challengeRepository: (any ChallengeRepository)?
+    private let goalRepository: (any GoalRepository)?
 
     // MARK: - State
 
@@ -50,6 +51,8 @@ final class DashboardViewModel {
     var currentStreak: Int = 0
     var nearestChallengeProgress: ChallengeProgressCalculator.ChallengeProgress?
     var personalRecords: [PersonalRecord] = []
+    var weeklyGoalProgress: GoalProgress?
+    var monthlyGoalProgress: GoalProgress?
 
     // MARK: - Init
 
@@ -66,7 +69,8 @@ final class DashboardViewModel {
         recoveryRepository: any RecoveryRepository,
         weatherService: (any WeatherServiceProtocol)? = nil,
         locationService: LocationService? = nil,
-        challengeRepository: (any ChallengeRepository)? = nil
+        challengeRepository: (any ChallengeRepository)? = nil,
+        goalRepository: (any GoalRepository)? = nil
     ) {
         self.planRepository = planRepository
         self.runRepository = runRepository
@@ -81,6 +85,7 @@ final class DashboardViewModel {
         self.weatherService = weatherService
         self.locationService = locationService
         self.challengeRepository = challengeRepository
+        self.goalRepository = goalRepository
     }
 
     // MARK: - Load
@@ -99,7 +104,8 @@ final class DashboardViewModel {
         async let racesTask: () = loadUpcomingRaces()
         async let weatherTask: () = loadWeather()
         async let challengesTask: () = loadChallenges()
-        _ = await (fitnessTask, estimateTask, lastRunTask, racesTask, weatherTask, challengesTask)
+        async let goalsTask: () = loadGoals()
+        _ = await (fitnessTask, estimateTask, lastRunTask, racesTask, weatherTask, challengesTask, goalsTask)
 
         await loadRecovery()
 
@@ -278,6 +284,27 @@ final class DashboardViewModel {
             nearestChallengeProgress = nearest
         } catch {
             Logger.challenges.debug("Dashboard: could not load challenges: \(error)")
+        }
+    }
+
+    // MARK: - Goals
+
+    private func loadGoals() async {
+        guard let goalRepository else { return }
+        do {
+            let athlete = try await athleteRepository.getAthlete()
+            guard let athlete else { return }
+            let runs = try await runRepository.getRuns(for: athlete.id)
+
+            if let weeklyGoal = try await goalRepository.getActiveGoal(period: .weekly) {
+                weeklyGoalProgress = GoalProgressCalculator.calculate(goal: weeklyGoal, runs: runs)
+            }
+
+            if let monthlyGoal = try await goalRepository.getActiveGoal(period: .monthly) {
+                monthlyGoalProgress = GoalProgressCalculator.calculate(goal: monthlyGoal, runs: runs)
+            }
+        } catch {
+            Logger.training.debug("Dashboard: could not load goals: \(error)")
         }
     }
 

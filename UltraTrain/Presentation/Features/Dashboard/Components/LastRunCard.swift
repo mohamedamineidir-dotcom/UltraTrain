@@ -16,6 +16,33 @@ struct LastRunCard: View {
                     statColumn(value: formattedDuration(run.duration), label: "time")
                 }
 
+                if run.perceivedFeeling != nil || run.rpe != nil {
+                    HStack(spacing: Theme.Spacing.sm) {
+                        if let feeling = run.perceivedFeeling {
+                            Text(feelingEmoji(feeling))
+                                .font(.caption)
+                        }
+                        if let rpe = run.rpe {
+                            Text("RPE \(rpe)")
+                                .font(.caption)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(
+                                    Capsule().fill(Theme.Colors.secondaryBackground)
+                                )
+                        }
+                        if let terrain = run.terrainType {
+                            Text(terrain.rawValue.capitalized)
+                                .font(.caption)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(
+                                    Capsule().fill(Theme.Colors.secondaryBackground)
+                                )
+                        }
+                    }
+                }
+
                 Text(relativeDateString(run.date))
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
@@ -63,5 +90,15 @@ struct LastRunCard: View {
         if days == 1 { return "Yesterday" }
         if days < 7 { return "\(days) days ago" }
         return date.formatted(.dateTime.month().day())
+    }
+
+    private func feelingEmoji(_ feeling: PerceivedFeeling) -> String {
+        switch feeling {
+        case .great: "😀"
+        case .good: "🙂"
+        case .ok: "😐"
+        case .tough: "😤"
+        case .terrible: "😫"
+        }
     }
 }

@@ -3,6 +3,7 @@ import SwiftUI
 struct DashboardView: View {
     @State private var viewModel: DashboardViewModel
     @State private var showFitnessTrend = false
+    @State private var showGoalSetting = false
     @Binding var selectedTab: Tab
 
     private let planRepository: any TrainingPlanRepository
@@ -22,6 +23,7 @@ struct DashboardView: View {
     private let weatherService: (any WeatherServiceProtocol)?
     private let locationService: LocationService
     private let challengeRepository: any ChallengeRepository
+    private let goalRepository: any GoalRepository
 
     init(
         selectedTab: Binding<Tab>,
@@ -41,7 +43,8 @@ struct DashboardView: View {
         checklistRepository: any RacePrepChecklistRepository,
         weatherService: (any WeatherServiceProtocol)? = nil,
         locationService: LocationService,
-        challengeRepository: any ChallengeRepository
+        challengeRepository: any ChallengeRepository,
+        goalRepository: any GoalRepository
     ) {
         _selectedTab = selectedTab
         self.planRepository = planRepository
@@ -61,6 +64,7 @@ struct DashboardView: View {
         self.weatherService = weatherService
         self.locationService = locationService
         self.challengeRepository = challengeRepository
+        self.goalRepository = goalRepository
         _viewModel = State(initialValue: DashboardViewModel(
             planRepository: planRepository,
             runRepository: runRepository,
@@ -74,7 +78,8 @@ struct DashboardView: View {
             recoveryRepository: recoveryRepository,
             weatherService: weatherService,
             locationService: locationService,
-            challengeRepository: challengeRepository
+            challengeRepository: challengeRepository,
+            goalRepository: goalRepository
         ))
     }
 
@@ -111,6 +116,12 @@ struct DashboardView: View {
                         targetDistanceKm: viewModel.weeklyTargetDistanceKm,
                         targetElevationM: viewModel.weeklyTargetElevationM,
                         weeksUntilRace: viewModel.weeksUntilRace
+                    )
+
+                    DashboardGoalProgressCard(
+                        weeklyProgress: viewModel.weeklyGoalProgress,
+                        monthlyProgress: viewModel.monthlyGoalProgress,
+                        onSetGoal: { showGoalSetting = true }
                     )
 
                     DashboardZoneDistributionCard(
@@ -166,6 +177,11 @@ struct DashboardView: View {
             }
             .task {
                 await viewModel.load()
+            }
+            .sheet(isPresented: $showGoalSetting) {
+                GoalSettingView(goalRepository: goalRepository) {
+                    Task { await viewModel.load() }
+                }
             }
         }
     }

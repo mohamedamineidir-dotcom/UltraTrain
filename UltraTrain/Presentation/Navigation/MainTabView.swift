@@ -39,6 +39,7 @@ struct MainTabView: View {
     private let checklistRepository: any RacePrepChecklistRepository
     private let challengeRepository: any ChallengeRepository
     private let workoutRecipeRepository: any WorkoutRecipeRepository
+    private let goalRepository: any GoalRepository
 
     init(
         athleteRepository: any AthleteRepository,
@@ -76,7 +77,8 @@ struct MainTabView: View {
         recoveryRepository: any RecoveryRepository,
         checklistRepository: any RacePrepChecklistRepository,
         challengeRepository: any ChallengeRepository,
-        workoutRecipeRepository: any WorkoutRecipeRepository
+        workoutRecipeRepository: any WorkoutRecipeRepository,
+        goalRepository: any GoalRepository
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -114,6 +116,7 @@ struct MainTabView: View {
         self.checklistRepository = checklistRepository
         self.challengeRepository = challengeRepository
         self.workoutRecipeRepository = workoutRecipeRepository
+        self.goalRepository = goalRepository
     }
 
     var body: some View {
@@ -136,7 +139,8 @@ struct MainTabView: View {
                 checklistRepository: checklistRepository,
                 weatherService: weatherService,
                 locationService: locationService,
-                challengeRepository: challengeRepository
+                challengeRepository: challengeRepository,
+                goalRepository: goalRepository
             )
                 .tabItem {
                     Label("Dashboard", systemImage: "house.fill")

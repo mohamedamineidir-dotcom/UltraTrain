@@ -230,7 +230,7 @@ final class ActiveRunViewModel {
 
     // MARK: - Save
 
-    func saveRun(notes: String?) async {
+    func saveRun(notes: String?, rpe: Int? = nil, feeling: PerceivedFeeling? = nil, terrain: TerrainType? = nil) async {
         isSaving = true
         let splits = RunStatisticsCalculator.buildSplits(from: trackPoints)
         let heartRates = trackPoints.compactMap(\.heartRate)
@@ -259,7 +259,10 @@ final class ActiveRunViewModel {
             pausedDuration: pausedDuration,
             gearIds: selectedGearIds,
             nutritionIntakeLog: nutritionIntakeLog,
-            weatherAtStart: weatherAtStart
+            weatherAtStart: weatherAtStart,
+            rpe: rpe,
+            perceivedFeeling: feeling,
+            terrainType: terrain
         )
 
         do {

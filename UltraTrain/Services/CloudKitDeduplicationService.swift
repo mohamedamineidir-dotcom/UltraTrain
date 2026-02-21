@@ -69,6 +69,7 @@ enum CloudKitDeduplicationService {
         try deduplicateByID(FitnessSnapshotSwiftDataModel.self, context: context)
         try deduplicateByID(GearItemSwiftDataModel.self, context: context)
         try deduplicateByID(StravaUploadQueueSwiftDataModel.self, context: context)
+        try deduplicateByID(TrainingGoalSwiftDataModel.self, context: context)
     }
 
     private static func deduplicateByID<T: PersistentModel>(
@@ -126,3 +127,4 @@ extension NutritionProductSwiftDataModel: HasIDAndUpdatedAt {}
 extension FitnessSnapshotSwiftDataModel: HasIDAndUpdatedAt {}
 extension GearItemSwiftDataModel: HasIDAndUpdatedAt {}
 extension StravaUploadQueueSwiftDataModel: HasIDAndUpdatedAt {}
+extension TrainingGoalSwiftDataModel: HasIDAndUpdatedAt {}

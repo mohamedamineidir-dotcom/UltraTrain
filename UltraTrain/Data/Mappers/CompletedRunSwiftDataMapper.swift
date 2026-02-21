@@ -66,7 +66,10 @@ enum CompletedRunSwiftDataMapper {
             isStravaImport: run.isStravaImport,
             isHealthKitImport: run.isHealthKitImport,
             healthKitWorkoutUUID: run.healthKitWorkoutUUID,
-            weatherData: weatherData
+            weatherData: weatherData,
+            rpe: run.rpe,
+            perceivedFeelingRaw: run.perceivedFeeling?.rawValue,
+            terrainTypeRaw: run.terrainType?.rawValue
         )
     }
 
@@ -104,7 +107,10 @@ enum CompletedRunSwiftDataMapper {
             isStravaImport: model.isStravaImport,
             isHealthKitImport: model.isHealthKitImport,
             healthKitWorkoutUUID: model.healthKitWorkoutUUID,
-            weatherAtStart: weather
+            weatherAtStart: weather,
+            rpe: model.rpe,
+            perceivedFeeling: model.perceivedFeelingRaw.flatMap { PerceivedFeeling(rawValue: $0) },
+            terrainType: model.terrainTypeRaw.flatMap { TerrainType(rawValue: $0) }
         )
     }
 

@@ -28,6 +28,9 @@ final class CompletedRunSwiftDataModel {
     var healthKitWorkoutUUID: String?
     var weatherData: Data = Data()
     var updatedAt: Date = Date()
+    var rpe: Int?
+    var perceivedFeelingRaw: String?
+    var terrainTypeRaw: String?
 
     init(
         id: UUID = UUID(),
@@ -53,7 +56,10 @@ final class CompletedRunSwiftDataModel {
         isHealthKitImport: Bool = false,
         healthKitWorkoutUUID: String? = nil,
         weatherData: Data = Data(),
-        updatedAt: Date = Date()
+        updatedAt: Date = Date(),
+        rpe: Int? = nil,
+        perceivedFeelingRaw: String? = nil,
+        terrainTypeRaw: String? = nil
     ) {
         self.id = id
         self.athleteId = athleteId
@@ -79,5 +85,8 @@ final class CompletedRunSwiftDataModel {
         self.healthKitWorkoutUUID = healthKitWorkoutUUID
         self.weatherData = weatherData
         self.updatedAt = updatedAt
+        self.rpe = rpe
+        self.perceivedFeelingRaw = perceivedFeelingRaw
+        self.terrainTypeRaw = terrainTypeRaw
     }
 }

@@ -131,6 +131,13 @@ private struct PreviewChallengeRepository: ChallengeRepository, @unchecked Senda
     func deleteEnrollment(id: UUID) async throws {}
 }
 
+private struct PreviewGoalRepository: GoalRepository, @unchecked Sendable {
+    func getActiveGoal(period: GoalPeriod) async throws -> TrainingGoal? { nil }
+    func getGoalHistory(period: GoalPeriod, limit: Int) async throws -> [TrainingGoal] { [] }
+    func saveGoal(_ goal: TrainingGoal) async throws {}
+    func deleteGoal(id: UUID) async throws {}
+}
+
 #Preview("Dashboard") {
     DashboardView(
         selectedTab: .constant(.dashboard),
@@ -149,7 +156,8 @@ private struct PreviewChallengeRepository: ChallengeRepository, @unchecked Senda
         recoveryRepository: PreviewRecoveryRepository(),
         checklistRepository: PreviewChecklistRepository(),
         locationService: LocationService(),
-        challengeRepository: PreviewChallengeRepository()
+        challengeRepository: PreviewChallengeRepository(),
+        goalRepository: PreviewGoalRepository()
     )
 }
 #endif

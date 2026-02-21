@@ -66,6 +66,9 @@ final class LocalRunRepository: RunRepository, @unchecked Sendable {
         model.isHealthKitImport = run.isHealthKitImport
         model.healthKitWorkoutUUID = run.healthKitWorkoutUUID
         model.notes = run.notes
+        model.rpe = run.rpe
+        model.perceivedFeelingRaw = run.perceivedFeeling?.rawValue
+        model.terrainTypeRaw = run.terrainType?.rawValue
         model.updatedAt = Date()
         try context.save()
         Logger.tracking.info("Run updated: \(run.id)")

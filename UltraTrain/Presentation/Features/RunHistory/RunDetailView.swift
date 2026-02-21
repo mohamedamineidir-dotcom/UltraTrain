@@ -18,6 +18,8 @@ struct RunDetailView: View {
     @State private var showingShareSheet = false
     @State private var isExporting = false
     @State private var elevationProfile: [ElevationProfilePoint] = []
+    @State private var displayRun: CompletedRun?
+    @State private var showReflectionEdit = false
 
     var body: some View {
         ScrollView {
@@ -50,10 +52,8 @@ struct RunDetailView: View {
                         .padding(.horizontal, Theme.Spacing.md)
                 }
 
-                if let notes = run.notes, !notes.isEmpty {
-                    notesSection(notes)
-                        .padding(.horizontal, Theme.Spacing.md)
-                }
+                reflectionSection
+                    .padding(.horizontal, Theme.Spacing.md)
 
                 analysisLink
                     .padding(.horizontal, Theme.Spacing.md)
@@ -227,22 +227,112 @@ struct RunDetailView: View {
         )
     }
 
-    // MARK: - Notes
+    // MARK: - Reflection
 
-    private func notesSection(_ notes: String) -> some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("Notes")
-                .font(.headline)
-            Text(notes)
-                .font(.subheadline)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
+    @ViewBuilder
+    private var reflectionSection: some View {
+        let currentRun = displayRun ?? run
+        let hasReflection = currentRun.rpe != nil
+            || currentRun.perceivedFeeling != nil
+            || currentRun.terrainType != nil
+        let hasNotes = currentRun.notes != nil && !currentRun.notes!.isEmpty
+
+        if hasReflection || hasNotes {
+            VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                HStack {
+                    Text("Reflection")
+                        .font(.headline)
+                    Spacer()
+                    Button {
+                        showReflectionEdit = true
+                    } label: {
+                        Image(systemName: "pencil.circle")
+                            .font(.title3)
+                            .foregroundStyle(Theme.Colors.primary)
+                    }
+                }
+
+                if let rpe = currentRun.rpe {
+                    HStack(spacing: Theme.Spacing.sm) {
+                        Text("RPE")
+                            .font(.subheadline)
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
+                        Text("\(rpe)/10")
+                            .font(.subheadline.bold())
+                    }
+                }
+
+                if let feeling = currentRun.perceivedFeeling {
+                    HStack(spacing: Theme.Spacing.sm) {
+                        Text("Feeling")
+                            .font(.subheadline)
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
+                        Text(feelingDisplay(feeling))
+                            .font(.subheadline)
+                    }
+                }
+
+                if let terrain = currentRun.terrainType {
+                    HStack(spacing: Theme.Spacing.sm) {
+                        Text("Terrain")
+                            .font(.subheadline)
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
+                        Text(terrain.rawValue.capitalized)
+                            .font(.subheadline)
+                    }
+                }
+
+                if let notes = currentRun.notes, !notes.isEmpty {
+                    Text(notes)
+                        .font(.subheadline)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(Theme.Spacing.md)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                    .fill(Theme.Colors.secondaryBackground)
+            )
+            .sheet(isPresented: $showReflectionEdit) {
+                RunReflectionEditView(
+                    run: currentRun,
+                    runRepository: runRepository,
+                    onSave: { updatedRun in
+                        displayRun = updatedRun
+                    }
+                )
+            }
+        } else {
+            Button {
+                showReflectionEdit = true
+            } label: {
+                Label("Add Reflection", systemImage: "pencil.line")
+                    .font(.subheadline)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, Theme.Spacing.sm)
+            }
+            .buttonStyle(.bordered)
+            .sheet(isPresented: $showReflectionEdit) {
+                RunReflectionEditView(
+                    run: run,
+                    runRepository: runRepository,
+                    onSave: { updatedRun in
+                        displayRun = updatedRun
+                    }
+                )
+            }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(Theme.Spacing.md)
-        .background(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                .fill(Theme.Colors.secondaryBackground)
-        )
+    }
+
+    private func feelingDisplay(_ feeling: PerceivedFeeling) -> String {
+        switch feeling {
+        case .great: "😀 Great"
+        case .good: "🙂 Good"
+        case .ok: "😐 OK"
+        case .tough: "😤 Tough"
+        case .terrible: "😫 Terrible"
+        }
     }
 
     // MARK: - Analysis

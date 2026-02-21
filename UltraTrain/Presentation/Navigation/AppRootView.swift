@@ -45,6 +45,7 @@ struct AppRootView: View {
     private let checklistRepository: any RacePrepChecklistRepository
     private let challengeRepository: any ChallengeRepository
     private let workoutRecipeRepository: any WorkoutRecipeRepository
+    private let goalRepository: any GoalRepository
 
     init(
         athleteRepository: any AthleteRepository,
@@ -83,7 +84,8 @@ struct AppRootView: View {
         recoveryRepository: any RecoveryRepository,
         checklistRepository: any RacePrepChecklistRepository,
         challengeRepository: any ChallengeRepository,
-        workoutRecipeRepository: any WorkoutRecipeRepository
+        workoutRecipeRepository: any WorkoutRecipeRepository,
+        goalRepository: any GoalRepository
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -122,6 +124,7 @@ struct AppRootView: View {
         self.checklistRepository = checklistRepository
         self.challengeRepository = challengeRepository
         self.workoutRecipeRepository = workoutRecipeRepository
+        self.goalRepository = goalRepository
     }
 
     var body: some View {
@@ -171,7 +174,8 @@ struct AppRootView: View {
                         recoveryRepository: recoveryRepository,
                         checklistRepository: checklistRepository,
                         challengeRepository: challengeRepository,
-                        workoutRecipeRepository: workoutRecipeRepository
+                        workoutRecipeRepository: workoutRecipeRepository,
+                        goalRepository: goalRepository
                     )
                 case .some(false):
                     OnboardingView(

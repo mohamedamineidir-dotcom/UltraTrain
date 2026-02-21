@@ -8,6 +8,9 @@ struct RunSummarySheet: View {
 
     @ScaledMetric(relativeTo: .largeTitle) private var headerIconSize: CGFloat = 48
     @State private var notes = ""
+    @State private var rpe: Int?
+    @State private var perceivedFeeling: PerceivedFeeling?
+    @State private var terrainType: TerrainType?
     @State private var didSave = false
     @State private var exportFileURL: URL?
     @State private var showingShareSheet = false
@@ -61,7 +64,12 @@ struct RunSummarySheet: View {
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Save") {
                             Task {
-                                await viewModel.saveRun(notes: notes.isEmpty ? nil : notes)
+                                await viewModel.saveRun(
+                                    notes: notes.isEmpty ? nil : notes,
+                                    rpe: rpe,
+                                    feeling: perceivedFeeling,
+                                    terrain: terrainType
+                                )
                                 didSave = true
                             }
                         }
@@ -115,12 +123,127 @@ struct RunSummarySheet: View {
     }
 
     private var notesSection: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("Notes")
-                .font(.headline)
-            TextField("How did it feel?", text: $notes, axis: .vertical)
-                .lineLimit(3...6)
-                .textFieldStyle(.roundedBorder)
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+            // RPE
+            VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                Text("Rate of Perceived Exertion")
+                    .font(.subheadline.bold())
+                HStack(spacing: Theme.Spacing.xs) {
+                    ForEach(1...10, id: \.self) { value in
+                        Button {
+                            rpe = rpe == value ? nil : value
+                        } label: {
+                            Text("\(value)")
+                                .font(.caption.bold())
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 6)
+                                .background(
+                                    RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                                        .fill(
+                                            rpe == value
+                                                ? rpeColor(value)
+                                                : Theme.Colors.secondaryBackground
+                                        )
+                                )
+                                .foregroundStyle(
+                                    rpe == value
+                                        ? .white
+                                        : Theme.Colors.label
+                                )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+
+            // Feeling
+            VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                Text("How Did It Feel?")
+                    .font(.subheadline.bold())
+                HStack(spacing: Theme.Spacing.sm) {
+                    ForEach(PerceivedFeeling.allCases, id: \.self) { feeling in
+                        Button {
+                            perceivedFeeling = perceivedFeeling == feeling
+                                ? nil
+                                : feeling
+                        } label: {
+                            VStack(spacing: 2) {
+                                Text(feelingEmoji(feeling))
+                                    .font(.title3)
+                                Text(feelingLabel(feeling))
+                                    .font(.caption2)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 6)
+                            .background(
+                                RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                                    .fill(
+                                        perceivedFeeling == feeling
+                                            ? Theme.Colors.primary.opacity(0.15)
+                                            : Theme.Colors.secondaryBackground
+                                    )
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                                    .stroke(
+                                        perceivedFeeling == feeling
+                                            ? Theme.Colors.primary
+                                            : .clear,
+                                        lineWidth: 1.5
+                                    )
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+
+            // Terrain
+            VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                Text("Terrain")
+                    .font(.subheadline.bold())
+                HStack(spacing: Theme.Spacing.sm) {
+                    ForEach(TerrainType.allCases, id: \.self) { terrain in
+                        Button {
+                            terrainType = terrainType == terrain
+                                ? nil
+                                : terrain
+                        } label: {
+                            Text(terrainLabel(terrain))
+                                .font(.caption)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 6)
+                                .background(
+                                    RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                                        .fill(
+                                            terrainType == terrain
+                                                ? Theme.Colors.primary.opacity(0.15)
+                                                : Theme.Colors.secondaryBackground
+                                        )
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                                        .stroke(
+                                            terrainType == terrain
+                                                ? Theme.Colors.primary
+                                                : .clear,
+                                            lineWidth: 1.5
+                                        )
+                                )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+
+            // Notes
+            VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                Text("Notes")
+                    .font(.subheadline.bold())
+                TextField("How did it feel?", text: $notes, axis: .vertical)
+                    .lineLimit(3...6)
+                    .textFieldStyle(.roundedBorder)
+            }
         }
         .padding(.horizontal, Theme.Spacing.md)
     }
@@ -282,6 +405,44 @@ struct RunSummarySheet: View {
             showingShareSheet = true
         } catch {
             // Export failed silently
+        }
+    }
+
+    private func rpeColor(_ value: Int) -> Color {
+        switch value {
+        case 1...3: return Theme.Colors.success
+        case 4...6: return Theme.Colors.warning
+        case 7...8: return .orange
+        default: return Theme.Colors.danger
+        }
+    }
+
+    private func feelingEmoji(_ feeling: PerceivedFeeling) -> String {
+        switch feeling {
+        case .great: "😀"
+        case .good: "🙂"
+        case .ok: "😐"
+        case .tough: "😤"
+        case .terrible: "😫"
+        }
+    }
+
+    private func feelingLabel(_ feeling: PerceivedFeeling) -> String {
+        switch feeling {
+        case .great: "Great"
+        case .good: "Good"
+        case .ok: "OK"
+        case .tough: "Tough"
+        case .terrible: "Terrible"
+        }
+    }
+
+    private func terrainLabel(_ terrain: TerrainType) -> String {
+        switch terrain {
+        case .road: "Road"
+        case .trail: "Trail"
+        case .mountain: "Mountain"
+        case .mixed: "Mixed"
         }
     }
 }

@@ -44,6 +44,7 @@ struct UltraTrainApp: App {
     private let checklistRepository: any RacePrepChecklistRepository
     private let challengeRepository: any ChallengeRepository
     private let workoutRecipeRepository: any WorkoutRecipeRepository
+    private let goalRepository: any GoalRepository
     private let cloudKitSyncMonitor: CloudKitSyncMonitor?
 
     init() {
@@ -73,7 +74,8 @@ struct UltraTrainApp: App {
                 RacePrepChecklistSwiftDataModel.self,
                 ChecklistItemSwiftDataModel.self,
                 ChallengeEnrollmentSwiftDataModel.self,
-                WorkoutRecipeSwiftDataModel.self
+                WorkoutRecipeSwiftDataModel.self,
+                TrainingGoalSwiftDataModel.self
             ])
             let config: ModelConfiguration
             if isUITesting {
@@ -156,6 +158,7 @@ struct UltraTrainApp: App {
         checklistRepository = LocalRacePrepChecklistRepository(modelContainer: modelContainer)
         challengeRepository = LocalChallengeRepository(modelContainer: modelContainer)
         workoutRecipeRepository = LocalWorkoutRecipeRepository(modelContainer: modelContainer)
+        goalRepository = LocalGoalRepository(modelContainer: modelContainer)
         stravaUploadQueueService = StravaUploadQueueService(
             queueRepository: stravaUploadQueueRepository,
             runRepository: runRepository,
@@ -236,7 +239,8 @@ struct UltraTrainApp: App {
                 recoveryRepository: recoveryRepository,
                 checklistRepository: checklistRepository,
                 challengeRepository: challengeRepository,
-                workoutRecipeRepository: workoutRecipeRepository
+                workoutRecipeRepository: workoutRecipeRepository,
+                goalRepository: goalRepository
             )
         }
     }
