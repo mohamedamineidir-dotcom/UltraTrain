@@ -16,6 +16,9 @@ struct Race: Identifiable, Equatable, Sendable {
     var locationLatitude: Double? = nil
     var locationLongitude: Double? = nil
     var forecastedWeather: WeatherSnapshot? = nil
+    var courseRoute: [TrackPoint] = []
+
+    var hasCourseRoute: Bool { !courseRoute.isEmpty }
 
     var hasLocation: Bool {
         locationLatitude != nil && locationLongitude != nil

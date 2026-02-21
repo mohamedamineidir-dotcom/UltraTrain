@@ -1,4 +1,3 @@
-import ActivityKit
 import CoreLocation
 import Foundation
 import os
@@ -21,31 +20,24 @@ final class ActiveRunViewModel {
     private let runRepository: any RunRepository
     private let planRepository: any TrainingPlanRepository
     private let raceRepository: any RaceRepository
-    private let nutritionRepository: any NutritionRepository
     private let hapticService: any HapticServiceProtocol
-    private let connectivityService: PhoneConnectivityService?
-    private let liveActivityService: any LiveActivityServiceProtocol
     private let widgetDataWriter: WidgetDataWriter
-    private let stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)?
     private let gearRepository: any GearRepository
-    private let finishEstimateRepository: any FinishEstimateRepository
     private let weatherService: (any WeatherServiceProtocol)?
+
+    // MARK: - Handlers
+
+    let nutritionHandler: NutritionReminderHandler
+    let racePacingHandler: RacePacingHandler
+    let connectivityHandler: ConnectivityHandler
 
     // MARK: - Config
 
     let athlete: Athlete
     let linkedSession: TrainingSession?
     let autoPauseEnabled: Bool
-    let nutritionRemindersEnabled: Bool
-    let nutritionAlertSoundEnabled: Bool
-    let hydrationIntervalSeconds: TimeInterval
-    let fuelIntervalSeconds: TimeInterval
-    let electrolyteIntervalSeconds: TimeInterval
-    let smartRemindersEnabled: Bool
     let raceId: UUID?
-    let stravaAutoUploadEnabled: Bool
     let saveToHealthEnabled: Bool
-    let pacingAlertsEnabled: Bool
     let selectedGearIds: [UUID]
 
     // MARK: - State
@@ -65,44 +57,23 @@ final class ActiveRunViewModel {
     var isSaving = false
     var lastSavedRun: CompletedRun?
     var isAutoPaused = false
-    var nutritionReminders: [NutritionReminder] = []
-    var activeReminder: NutritionReminder?
-    var resolvedCheckpointLocations: [(checkpoint: Checkpoint, coordinate: CLLocationCoordinate2D)] = []
-    var stravaUploadStatus: StravaUploadStatus = .idle
-    var nutritionIntakeLog: [NutritionIntakeEntry] = []
     var autoMatchedSession: SessionMatcher.MatchResult?
-    var liveCheckpointStates: [LiveCheckpointState] = []
-    var activeCrossingBanner: LiveCheckpointState?
-    var activePacingAlert: PacingAlert?
-    var racePacingGuidance: RacePacingGuidance?
-    var raceSegmentPacings: [TerrainAdaptivePacingCalculator.AdaptiveSegmentPacing] = []
-    var favoriteProducts: [NutritionProduct] = []
-    var liveNutritionTotals: LiveNutritionTracker.Totals?
     private(set) var weatherAtStart: WeatherSnapshot?
+
+    // MARK: - HR Zone State
+
+    var liveZoneState: LiveHRZoneTracker.LiveZoneState?
+    var activeDriftAlert: ZoneDriftAlertCalculator.ZoneDriftAlert?
+    private var lastDriftAlertDismissTime: Date?
 
     // MARK: - Private
 
     private var timerTask: Task<Void, Never>?
     private var locationTask: Task<Void, Never>?
     private var heartRateTask: Task<Void, Never>?
-    private var raceCheckpoints: [Checkpoint] = []
-    private var lastCheckpointResolveKm: Int = 0
     private var autoPauseTimer: TimeInterval = 0
     private var pauseStartTime: Date?
-    private var lastLiveActivityUpdate: TimeInterval = 0
-    private var lastReminderShownTime: [NutritionReminderType: TimeInterval] = [:]
     private var runningAveragePace: Double = 0
-    private var lastCrossedCheckpointIndex: Int = -1
-    private var crossingBannerTask: Task<Void, Never>?
-    private var pacingAlertTask: Task<Void, Never>?
-    private var lastPacingAlertTime: TimeInterval = -.infinity
-    private var lastPacingAlertType: PacingAlertType?
-    private var lastRacePacingAlertTime: TimeInterval = -.infinity
-    private var lastRacePacingAlertType: PacingAlertType?
-    private var raceCheckpointSplits: [CheckpointSplit] = []
-    private var raceExpectedFinishTime: TimeInterval = 0
-    private var nutritionTotalsTickCounter: Int = 0
-    var raceDistanceKm: Double = 0
 
     // MARK: - Init
 
@@ -141,50 +112,69 @@ final class ActiveRunViewModel {
         self.runRepository = runRepository
         self.planRepository = planRepository
         self.raceRepository = raceRepository
-        self.nutritionRepository = nutritionRepository
         self.hapticService = hapticService
-        self.connectivityService = connectivityService
-        self.liveActivityService = liveActivityService
         self.widgetDataWriter = widgetDataWriter ?? WidgetDataWriter(
             planRepository: planRepository,
             runRepository: runRepository,
             raceRepository: raceRepository
         )
-        self.stravaUploadQueueService = stravaUploadQueueService
         self.gearRepository = gearRepository
-        self.finishEstimateRepository = finishEstimateRepository
         self.weatherService = weatherService
         self.athlete = athlete
         self.linkedSession = linkedSession
         self.autoPauseEnabled = autoPauseEnabled
-        self.nutritionRemindersEnabled = nutritionRemindersEnabled
-        self.nutritionAlertSoundEnabled = nutritionAlertSoundEnabled
-        self.hydrationIntervalSeconds = hydrationIntervalSeconds
-        self.fuelIntervalSeconds = fuelIntervalSeconds
-        self.electrolyteIntervalSeconds = electrolyteIntervalSeconds
-        self.smartRemindersEnabled = smartRemindersEnabled
-        self.stravaAutoUploadEnabled = stravaAutoUploadEnabled
-        self.saveToHealthEnabled = saveToHealthEnabled
-        self.pacingAlertsEnabled = pacingAlertsEnabled
         self.raceId = raceId
+        self.saveToHealthEnabled = saveToHealthEnabled
         self.selectedGearIds = selectedGearIds
+
+        self.nutritionHandler = NutritionReminderHandler(
+            nutritionRepository: nutritionRepository,
+            hapticService: hapticService,
+            isEnabled: nutritionRemindersEnabled,
+            alertSoundEnabled: nutritionAlertSoundEnabled,
+            hydrationInterval: hydrationIntervalSeconds,
+            fuelInterval: fuelIntervalSeconds,
+            electrolyteInterval: electrolyteIntervalSeconds,
+            smartRemindersEnabled: smartRemindersEnabled
+        )
+
+        self.racePacingHandler = RacePacingHandler(
+            raceRepository: raceRepository,
+            runRepository: runRepository,
+            finishEstimateRepository: finishEstimateRepository,
+            hapticService: hapticService,
+            athlete: athlete,
+            pacingAlertsEnabled: pacingAlertsEnabled
+        )
+
+        self.connectivityHandler = ConnectivityHandler(
+            connectivityService: connectivityService,
+            liveActivityService: liveActivityService,
+            stravaUploadQueueService: stravaUploadQueueService,
+            stravaAutoUploadEnabled: stravaAutoUploadEnabled
+        )
     }
 
     // MARK: - Controls
 
     func startRun() {
         runState = .running
-        loadNutritionReminders()
-        loadFavoriteProducts()
-        loadRaceCheckpoints()
-        setupWatchCommandHandler()
+        nutritionHandler.loadReminders(raceId: raceId, linkedSessionId: linkedSession?.id)
+        nutritionHandler.loadFavoriteProducts()
+        if let raceId { racePacingHandler.loadRace(raceId: raceId) }
+        connectivityHandler.setupCommandHandler(
+            onPause: { [weak self] in self?.pauseRun() },
+            onResume: { [weak self] in self?.resumeRun() },
+            onStop: { [weak self] in self?.stopRun() },
+            onDismissReminder: { [weak self] in self?.nutritionHandler.dismiss(elapsedTime: self?.elapsedTime ?? 0) }
+        )
         captureWeatherAtStart()
-        if nutritionAlertSoundEnabled { hapticService.prepareHaptics() }
+        hapticService.prepareHaptics()
         startTimer()
         startLocationTracking()
         startHeartRateStreaming()
-        sendWatchUpdate()
-        startLiveActivity()
+        connectivityHandler.sendWatchUpdate(snapshot: buildSnapshot())
+        connectivityHandler.startLiveActivity(snapshot: buildSnapshot())
         Logger.tracking.info("Run started")
     }
 
@@ -198,7 +188,7 @@ final class ActiveRunViewModel {
             locationService.pauseTracking()
             hapticService.playSelection()
         }
-        updateLiveActivityImmediately()
+        connectivityHandler.updateLiveActivityImmediately(snapshot: buildSnapshot())
         Logger.tracking.info("Run \(auto ? "auto-" : "")paused at \(self.elapsedTime)s")
     }
 
@@ -213,11 +203,9 @@ final class ActiveRunViewModel {
         autoPauseTimer = 0
         runState = .running
         startTimer()
-        if wasManuallyPaused {
-            locationService.resumeTracking()
-        }
+        if wasManuallyPaused { locationService.resumeTracking() }
         hapticService.playSelection()
-        updateLiveActivityImmediately()
+        connectivityHandler.updateLiveActivityImmediately(snapshot: buildSnapshot())
         Logger.tracking.info("Run resumed")
     }
 
@@ -232,8 +220,8 @@ final class ActiveRunViewModel {
         heartRateTask?.cancel()
         locationService.stopTracking()
         healthKitService.stopHeartRateStream()
-        sendWatchUpdate()
-        endLiveActivity()
+        connectivityHandler.sendWatchUpdate(snapshot: buildSnapshot())
+        connectivityHandler.endLiveActivity(snapshot: buildSnapshot())
         showSummary = true
         Logger.tracking.info("Run stopped — \(self.distanceKm) km in \(self.elapsedTime)s")
     }
@@ -246,40 +234,21 @@ final class ActiveRunViewModel {
         let heartRates = trackPoints.compactMap(\.heartRate)
         let avgHR = heartRates.isEmpty ? nil : heartRates.reduce(0, +) / heartRates.count
         let maxHR = heartRates.max()
-        let pace = RunStatisticsCalculator.averagePace(
-            distanceKm: distanceKm, duration: elapsedTime
-        )
+        let pace = RunStatisticsCalculator.averagePace(distanceKm: distanceKm, duration: elapsedTime)
 
         var run = CompletedRun(
-            id: UUID(),
-            athleteId: athlete.id,
-            date: Date.now,
-            distanceKm: distanceKm,
-            elevationGainM: elevationGainM,
-            elevationLossM: elevationLossM,
-            duration: elapsedTime,
-            averageHeartRate: avgHR,
-            maxHeartRate: maxHR,
-            averagePaceSecondsPerKm: pace,
-            gpsTrack: trackPoints,
-            splits: splits,
-            linkedSessionId: linkedSession?.id,
-            linkedRaceId: raceId,
-            notes: notes,
-            pausedDuration: pausedDuration,
-            gearIds: selectedGearIds,
-            nutritionIntakeLog: nutritionIntakeLog,
-            weatherAtStart: weatherAtStart,
-            rpe: rpe,
-            perceivedFeeling: feeling,
-            terrainType: terrain
+            id: UUID(), athleteId: athlete.id, date: Date.now,
+            distanceKm: distanceKm, elevationGainM: elevationGainM, elevationLossM: elevationLossM,
+            duration: elapsedTime, averageHeartRate: avgHR, maxHeartRate: maxHR,
+            averagePaceSecondsPerKm: pace, gpsTrack: trackPoints, splits: splits,
+            linkedSessionId: linkedSession?.id, linkedRaceId: raceId, notes: notes,
+            pausedDuration: pausedDuration, gearIds: selectedGearIds,
+            nutritionIntakeLog: nutritionHandler.nutritionIntakeLog,
+            weatherAtStart: weatherAtStart, rpe: rpe, perceivedFeeling: feeling, terrainType: terrain
         )
-
         run.trainingStressScore = TrainingStressCalculator.calculate(
-            run: run,
-            maxHeartRate: athlete.maxHeartRate,
-            restingHeartRate: athlete.restingHeartRate,
-            customThresholds: athlete.customZoneThresholds
+            run: run, maxHeartRate: athlete.maxHeartRate,
+            restingHeartRate: athlete.restingHeartRate, customThresholds: athlete.customZoneThresholds
         )
 
         do {
@@ -292,21 +261,17 @@ final class ActiveRunViewModel {
             } else {
                 await autoMatchSession(run: run)
             }
-            if let raceId {
-                try await linkRunToRace(run: run, raceId: raceId)
-            }
+            if let raceId { try await linkRunToRace(run: run, raceId: raceId) }
             if !selectedGearIds.isEmpty {
                 try await gearRepository.updateGearMileage(
-                    gearIds: selectedGearIds,
-                    distanceKm: distanceKm,
-                    duration: elapsedTime
+                    gearIds: selectedGearIds, distanceKm: distanceKm, duration: elapsedTime
                 )
             }
             lastSavedRun = run
             hapticService.playSuccess()
             Logger.tracking.info("Run saved: \(run.id)")
             await widgetDataWriter.writeAll()
-            autoUploadToStrava(run)
+            connectivityHandler.autoUploadToStrava(runId: run.id, hasTrack: !run.gpsTrack.isEmpty)
             await saveWorkoutToHealth(run)
         } catch {
             hapticService.playError()
@@ -317,100 +282,18 @@ final class ActiveRunViewModel {
     }
 
     func uploadToStrava() {
-        guard let run = lastSavedRun, let queueService = stravaUploadQueueService else { return }
-        stravaUploadStatus = .uploading
-        Task { [weak self] in
-            do {
-                try await queueService.enqueueUpload(runId: run.id)
-                await queueService.processQueue()
-                if let status = await queueService.getQueueStatus(forRunId: run.id),
-                   status == .completed {
-                    self?.stravaUploadStatus = .success(activityId: 0)
-                } else {
-                    self?.stravaUploadStatus = .idle
-                }
-            } catch {
-                self?.stravaUploadStatus = .failed(reason: error.localizedDescription)
-                Logger.strava.error("Strava upload failed: \(error)")
-            }
-        }
+        guard let run = lastSavedRun else { return }
+        connectivityHandler.manualUploadToStrava(runId: run.id)
     }
 
     func discardRun() {
         Logger.tracking.info("Run discarded")
     }
 
-    // MARK: - Auto-Match Session
-
-    private func autoMatchSession(run: CompletedRun) async {
-        do {
-            guard let plan = try await planRepository.getActivePlan() else { return }
-            let allSessions = plan.weeks.flatMap(\.sessions)
-            guard let match = SessionMatcher.findMatch(
-                runDate: run.date,
-                distanceKm: run.distanceKm,
-                duration: run.duration,
-                candidates: allSessions
-            ) else { return }
-
-            var updated = match.session
-            updated.isCompleted = true
-            updated.linkedRunId = run.id
-            try await planRepository.updateSession(updated)
-            try await runRepository.updateLinkedSession(runId: run.id, sessionId: match.session.id)
-            autoMatchedSession = match
-            Logger.tracking.info("Auto-matched run to session \(match.session.id) (confidence: \(match.confidence))")
-        } catch {
-            Logger.tracking.debug("Auto-match failed: \(error)")
-        }
-    }
-
-    // MARK: - Strava Auto-Upload
-
-    private func autoUploadToStrava(_ run: CompletedRun) {
-        guard stravaAutoUploadEnabled,
-              let queueService = stravaUploadQueueService,
-              !run.gpsTrack.isEmpty else { return }
-        stravaUploadStatus = .uploading
-        Task { [weak self] in
-            do {
-                try await queueService.enqueueUpload(runId: run.id)
-                await queueService.processQueue()
-                if let status = await queueService.getQueueStatus(forRunId: run.id),
-                   status == .completed {
-                    self?.stravaUploadStatus = .success(activityId: 0)
-                } else {
-                    self?.stravaUploadStatus = .idle
-                }
-                Logger.strava.info("Auto-upload queued for run \(run.id)")
-            } catch {
-                self?.stravaUploadStatus = .failed(reason: error.localizedDescription)
-                Logger.strava.error("Auto-upload to Strava failed: \(error)")
-            }
-        }
-    }
-
-    // MARK: - HealthKit Save
-
-    private func saveWorkoutToHealth(_ run: CompletedRun) async {
-        guard saveToHealthEnabled else { return }
-        do {
-            try await healthKitService.saveWorkout(run: run)
-            Logger.healthKit.info("Workout saved to Apple Health for run \(run.id)")
-        } catch {
-            Logger.healthKit.error("Failed to save workout to Apple Health: \(error)")
-        }
-    }
-
     // MARK: - Computed
 
-    var formattedTime: String {
-        RunStatisticsCalculator.formatDuration(elapsedTime)
-    }
-
-    var formattedPace: String {
-        currentPace
-    }
+    var formattedTime: String { RunStatisticsCalculator.formatDuration(elapsedTime) }
+    var formattedPace: String { currentPace }
 
     var formattedDistance: String {
         String(format: "%.2f", UnitFormatter.distanceValue(distanceKm, unit: athlete.preferredUnit))
@@ -421,61 +304,71 @@ final class ActiveRunViewModel {
         return String(format: "+%.0f %@", value, UnitFormatter.elevationShortLabel(athlete.preferredUnit))
     }
 
-    var formattedTotalTime: String {
-        RunStatisticsCalculator.formatDuration(elapsedTime + pausedDuration)
+    var formattedTotalTime: String { RunStatisticsCalculator.formatDuration(elapsedTime + pausedDuration) }
+
+    var isRaceModeActive: Bool { raceId != nil && racePacingHandler.isActive }
+
+    // MARK: - HR Zone Actions
+
+    func dismissDriftAlert() {
+        activeDriftAlert = nil
+        lastDriftAlertDismissTime = Date.now
     }
 
-    // MARK: - Live Race
+    // MARK: - Private — HR Zone Updates
 
-    var isRaceModeActive: Bool {
-        raceId != nil && !liveCheckpointStates.isEmpty
-    }
+    private func updateLiveHRZone() {
+        guard let hr = currentHeartRate, athlete.maxHeartRate > 0 else { return }
+        let targetZone = linkedSession?.targetHeartRateZone
+        liveZoneState = LiveHRZoneTracker.update(
+            heartRate: hr,
+            maxHeartRate: athlete.maxHeartRate,
+            customThresholds: athlete.customZoneThresholds,
+            targetZone: targetZone,
+            previousState: liveZoneState,
+            elapsed: elapsedTime
+        )
 
-    var nextCheckpoint: LiveCheckpointState? {
-        liveCheckpointStates.first { !$0.isCrossed }
-    }
-
-    var distanceToNextCheckpointKm: Double? {
-        guard let next = nextCheckpoint else { return nil }
-        return max(0, next.distanceFromStartKm - distanceKm)
-    }
-
-    var projectedFinishTime: TimeInterval? {
-        if let guidance = racePacingGuidance {
-            return guidance.projectedFinishTime
+        guard let state = liveZoneState else { return }
+        let alert = ZoneDriftAlertCalculator.evaluate(state: state)
+        guard let alert else {
+            if activeDriftAlert != nil && state.isInTargetZone {
+                activeDriftAlert = nil
+            }
+            return
         }
-        guard distanceKm > 0.5, raceDistanceKm > 0 else { return nil }
-        let remainingKm = max(0, raceDistanceKm - distanceKm)
-        let pacePerKm = elapsedTime / distanceKm
-        return elapsedTime + (remainingKm * pacePerKm)
+
+        let cooldown = AppConfiguration.HRZoneAlerts.alertCooldownSeconds
+        if let lastDismiss = lastDriftAlertDismissTime,
+           Date.now.timeIntervalSince(lastDismiss) < cooldown {
+            return
+        }
+
+        if activeDriftAlert?.severity != alert.severity {
+            activeDriftAlert = alert
+        }
     }
 
-    func dismissCrossingBanner() {
-        activeCrossingBanner = nil
-    }
-
-    // MARK: - Timer
+    // MARK: - Private — Timer
 
     private func startTimer() {
         timerTask = Task { [weak self] in
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(AppConfiguration.RunTracking.timerInterval))
-                guard !Task.isCancelled else { break }
-                self?.elapsedTime += AppConfiguration.RunTracking.timerInterval
-                self?.checkNutritionReminders()
-                self?.checkPacingAlert()
-                self?.nutritionTotalsTickCounter += 1
-                if self?.nutritionTotalsTickCounter ?? 0 >= 30 {
-                    self?.nutritionTotalsTickCounter = 0
-                    self?.updateNutritionTotals()
-                }
-                self?.sendWatchUpdate()
-                self?.updateLiveActivityIfNeeded()
+                guard !Task.isCancelled, let self else { break }
+                self.elapsedTime += AppConfiguration.RunTracking.timerInterval
+                self.updateLiveHRZone()
+                let context = self.buildNutritionContext()
+                self.nutritionHandler.tick(context: context)
+                let pacingContext = self.buildPacingContext()
+                self.racePacingHandler.checkPacingAlert(context: pacingContext, linkedSession: self.linkedSession)
+                self.connectivityHandler.sendWatchUpdate(snapshot: self.buildSnapshot())
+                self.connectivityHandler.updateLiveActivityIfNeeded(snapshot: self.buildSnapshot())
             }
         }
     }
 
-    // MARK: - Location
+    // MARK: - Private — Location
 
     private func startLocationTracking() {
         let stream = locationService.startTracking()
@@ -492,7 +385,6 @@ final class ActiveRunViewModel {
             handleAutoResume(speed: location.speed)
             return
         }
-
         guard runState == .running else { return }
 
         let point = TrackPoint(
@@ -502,7 +394,6 @@ final class ActiveRunViewModel {
             timestamp: location.timestamp,
             heartRate: currentHeartRate
         )
-
         trackPoints.append(point)
         routeCoordinates.append(location.coordinate)
 
@@ -512,20 +403,16 @@ final class ActiveRunViewModel {
         elevationLossM = elevation.lossM
 
         if distanceKm > 0 {
-            let pace = RunStatisticsCalculator.averagePace(
-                distanceKm: distanceKm, duration: elapsedTime
-            )
+            let pace = RunStatisticsCalculator.averagePace(distanceKm: distanceKm, duration: elapsedTime)
             currentPace = RunStatisticsCalculator.formatPace(pace, unit: athlete.preferredUnit)
             runningAveragePace = pace
         }
 
-        updateCheckpointLocations()
-        detectCheckpointCrossings()
-        updateRacePacingGuidance()
+        racePacingHandler.processLocation(context: buildPacingContext())
         handleAutoPause(speed: location.speed)
     }
 
-    // MARK: - Heart Rate
+    // MARK: - Private — Heart Rate
 
     private func startHeartRateStreaming() {
         let stream = healthKitService.startHeartRateStream()
@@ -537,444 +424,10 @@ final class ActiveRunViewModel {
         }
     }
 
-    // MARK: - Nutrition Reminders
-
-    func dismissReminder() {
-        guard let current = activeReminder else { return }
-        logIntakeEntry(for: current, status: .pending)
-        markReminderDismissed(current)
-    }
-
-    func markReminderTaken() {
-        guard let current = activeReminder else { return }
-        logIntakeEntry(for: current, status: .taken)
-        markReminderDismissed(current)
-        updateNutritionTotals()
-    }
-
-    func markReminderSkipped() {
-        guard let current = activeReminder else { return }
-        logIntakeEntry(for: current, status: .skipped)
-        markReminderDismissed(current)
-    }
-
-    var nutritionSummary: NutritionIntakeSummary {
-        NutritionIntakeSummary(entries: nutritionIntakeLog)
-    }
-
-    private func logIntakeEntry(for reminder: NutritionReminder, status: NutritionIntakeStatus) {
-        let entry = NutritionIntakeEntry(
-            reminderType: reminder.type,
-            status: status,
-            elapsedTimeSeconds: elapsedTime,
-            message: reminder.message
-        )
-        nutritionIntakeLog.append(entry)
-    }
-
-    private func markReminderDismissed(_ reminder: NutritionReminder) {
-        if let index = nutritionReminders.firstIndex(where: { $0.id == reminder.id }) {
-            nutritionReminders[index].isDismissed = true
-        }
-        activeReminder = nil
-    }
-
-    private func loadNutritionReminders() {
-        guard nutritionRemindersEnabled else { return }
-
-        Task { [weak self] in
-            guard let self else { return }
-            do {
-                let plan = try await self.nutritionRepository.getNutritionPlan(for: self.raceId ?? UUID())
-                let isGutTraining = plan?.gutTrainingSessionIds.contains(
-                    self.linkedSession?.id ?? UUID()
-                ) ?? false
-
-                if isGutTraining, let plan {
-                    self.nutritionReminders = NutritionReminderScheduler.buildGutTrainingSchedule(from: plan)
-                } else {
-                    self.nutritionReminders = NutritionReminderScheduler.buildDefaultSchedule(
-                        hydrationIntervalSeconds: self.hydrationIntervalSeconds,
-                        fuelIntervalSeconds: self.fuelIntervalSeconds,
-                        electrolyteIntervalSeconds: self.electrolyteIntervalSeconds
-                    )
-                }
-                Logger.nutrition.info("Loaded \(self.nutritionReminders.count) nutrition reminders")
-            } catch {
-                self.nutritionReminders = NutritionReminderScheduler.buildDefaultSchedule(
-                    hydrationIntervalSeconds: self.hydrationIntervalSeconds,
-                    fuelIntervalSeconds: self.fuelIntervalSeconds,
-                    electrolyteIntervalSeconds: self.electrolyteIntervalSeconds
-                )
-                Logger.nutrition.error("Failed to load nutrition plan, using defaults: \(error)")
-            }
-        }
-    }
-
-    private func checkNutritionReminders() {
-        guard activeReminder == nil, !nutritionReminders.isEmpty else { return }
-        if let next = NutritionReminderScheduler.nextDueReminder(
-            in: nutritionReminders, at: elapsedTime
-        ) {
-            if smartRemindersEnabled {
-                let adjustedTime = adjustedTriggerTime(for: next)
-                guard elapsedTime >= adjustedTime else { return }
-            }
-            activeReminder = next
-            lastReminderShownTime[next.type] = elapsedTime
-            if nutritionAlertSoundEnabled {
-                hapticService.playNutritionAlert()
-            }
-        }
-    }
-
-    private func adjustedTriggerTime(for reminder: NutritionReminder) -> TimeInterval {
-        let conditions = AdaptiveReminderAdjuster.RunConditions(
-            currentHeartRate: currentHeartRate,
-            maxHeartRate: athlete.maxHeartRate,
-            elapsedDistanceKm: distanceKm,
-            currentPaceSecondsPerKm: currentPaceValue(),
-            averagePaceSecondsPerKm: runningAveragePace > 0 ? runningAveragePace : nil
-        )
-        let multiplier = AdaptiveReminderAdjuster.intervalMultiplier(
-            for: reminder.type, conditions: conditions
-        )
-        let baseInterval = reminder.triggerTimeSeconds - (lastReminderShownTime[reminder.type] ?? 0)
-        let adjustedInterval = baseInterval * multiplier
-        return (lastReminderShownTime[reminder.type] ?? 0) + adjustedInterval
-    }
-
-    private func currentPaceValue() -> Double? {
-        guard distanceKm > 0 else { return nil }
-        return elapsedTime / distanceKm
-    }
-
-    // MARK: - Pacing Alerts
-
-    func dismissPacingAlert() {
-        activePacingAlert = nil
-    }
-
-    private func checkPacingAlert() {
-        guard pacingAlertsEnabled, activePacingAlert == nil else { return }
-
-        if isRaceModeActive, let guidance = racePacingGuidance {
-            let timeSinceLastAlert = elapsedTime - lastRacePacingAlertTime
-            let input = RacePacingAlertCalculator.Input(
-                currentPaceSecondsPerKm: runningAveragePace,
-                segmentTargetPaceSecondsPerKm: guidance.targetPaceSecondsPerKm,
-                segmentName: guidance.currentSegmentName,
-                distanceKm: distanceKm,
-                elapsedTimeSinceLastAlert: timeSinceLastAlert,
-                previousAlertType: lastRacePacingAlertType
-            )
-            guard let alert = RacePacingAlertCalculator.evaluate(input) else { return }
-            lastRacePacingAlertTime = elapsedTime
-            lastRacePacingAlertType = alert.type
-            showPacingAlert(alert)
-            return
-        }
-
-        guard let session = linkedSession,
-              session.plannedDistanceKm > 0,
-              session.plannedDuration > 0 else { return }
-
-        let plannedPace = session.plannedDuration / session.plannedDistanceKm
-        let timeSinceLastAlert = elapsedTime - lastPacingAlertTime
-
-        let input = PacingAlertCalculator.Input(
-            currentPaceSecondsPerKm: runningAveragePace,
-            plannedPaceSecondsPerKm: plannedPace,
-            distanceKm: distanceKm,
-            elapsedTimeSinceLastAlert: timeSinceLastAlert,
-            previousAlertType: lastPacingAlertType
-        )
-
-        guard let alert = PacingAlertCalculator.evaluate(input) else { return }
-        lastPacingAlertTime = elapsedTime
-        lastPacingAlertType = alert.type
-        showPacingAlert(alert)
-    }
-
-    private func showPacingAlert(_ alert: PacingAlert) {
-        activePacingAlert = alert
-
-        switch alert.severity {
-        case .major: hapticService.playPacingAlertMajor()
-        case .minor: hapticService.playPacingAlertMinor()
-        case .positive: hapticService.playSuccess()
-        }
-
-        pacingAlertTask?.cancel()
-        pacingAlertTask = Task { [weak self] in
-            try? await Task.sleep(for: .seconds(AppConfiguration.PacingAlerts.autoDismissSeconds))
-            guard !Task.isCancelled else { return }
-            self?.activePacingAlert = nil
-        }
-
-        Logger.pacing.info("\(alert.type.rawValue) alert: \(alert.message)")
-    }
-
-    // MARK: - Race Checkpoints
-
-    private func loadRaceCheckpoints() {
-        guard let raceId else { return }
-        Task { [weak self] in
-            guard let self else { return }
-            do {
-                if let race = try await self.raceRepository.getRace(id: raceId) {
-                    self.raceCheckpoints = race.checkpoints
-                    self.raceDistanceKm = race.distanceKm
-                    Logger.tracking.info("Loaded \(race.checkpoints.count) checkpoints for race \(race.name)")
-                    await self.loadFinishEstimate(raceId: raceId)
-                }
-            } catch {
-                Logger.tracking.error("Failed to load race checkpoints: \(error)")
-            }
-        }
-    }
-
-    private func loadFinishEstimate(raceId: UUID) async {
-        do {
-            guard let estimate = try await finishEstimateRepository.getEstimate(for: raceId) else {
-                Logger.liveRace.info("No saved estimate for race \(raceId) — live splits unavailable")
-                return
-            }
-            liveCheckpointStates = estimate.checkpointSplits.map { split in
-                LiveCheckpointState(
-                    id: split.checkpointId,
-                    checkpointName: split.checkpointName,
-                    distanceFromStartKm: split.distanceFromStartKm,
-                    hasAidStation: split.hasAidStation,
-                    predictedTime: split.expectedTime
-                )
-            }
-            raceCheckpointSplits = estimate.checkpointSplits
-            raceExpectedFinishTime = estimate.expectedTime
-
-            let runs = try await runRepository.getRuns(for: athlete.id)
-            let adaptiveInput = TerrainAdaptivePacingCalculator.AdaptiveInput(
-                checkpointSplits: estimate.checkpointSplits,
-                defaultAidStationDwellSeconds: AppConfiguration.PacingStrategy.defaultAidStationDwellSeconds,
-                aidStationDwellOverrides: [:],
-                pacingMode: .pace,
-                athlete: athlete,
-                recentRuns: runs
-            )
-            let result = TerrainAdaptivePacingCalculator.calculate(adaptiveInput)
-            raceSegmentPacings = result.segmentPacings
-            Logger.liveRace.info("Loaded \(self.liveCheckpointStates.count) live checkpoint states with adaptive pacing")
-        } catch {
-            Logger.liveRace.error("Failed to load finish estimate: \(error)")
-        }
-    }
-
-    private func updateCheckpointLocations() {
-        guard !raceCheckpoints.isEmpty else { return }
-        let currentKm = Int(distanceKm)
-        guard currentKm > lastCheckpointResolveKm else { return }
-        lastCheckpointResolveKm = currentKm
-        resolvedCheckpointLocations = CheckpointLocationResolver.resolveLocations(
-            checkpoints: raceCheckpoints,
-            along: trackPoints
-        )
-    }
-
-    // MARK: - Live Checkpoint Detection
-
-    func detectCheckpointCrossings() {
-        guard !liveCheckpointStates.isEmpty else { return }
-
-        for i in 0..<liveCheckpointStates.count {
-            guard !liveCheckpointStates[i].isCrossed else { continue }
-            guard distanceKm >= liveCheckpointStates[i].distanceFromStartKm else { break }
-
-            liveCheckpointStates[i].actualTime = elapsedTime
-            lastCrossedCheckpointIndex = i
-            showCrossingBanner(for: liveCheckpointStates[i])
-            recalculateRemainingPacing(crossedIndex: i)
-            Logger.liveRace.info("Crossed checkpoint \(self.liveCheckpointStates[i].checkpointName) at \(self.elapsedTime)s")
-        }
-    }
-
-    private func showCrossingBanner(for checkpoint: LiveCheckpointState) {
-        crossingBannerTask?.cancel()
-        activeCrossingBanner = checkpoint
-        hapticService.playSuccess()
-
-        crossingBannerTask = Task { [weak self] in
-            try? await Task.sleep(for: .seconds(AppConfiguration.LiveRace.crossingBannerDismissSeconds))
-            guard !Task.isCancelled else { return }
-            self?.activeCrossingBanner = nil
-        }
-    }
-
-    // MARK: - Race Pacing Guidance
-
-    private func updateRacePacingGuidance() {
-        guard isRaceModeActive, !raceSegmentPacings.isEmpty else { return }
-        guard distanceKm >= AppConfiguration.LiveRace.guidanceUpdateMinDistanceKm else { return }
-        guard runningAveragePace > 0 else { return }
-
-        let segmentIndex = liveCheckpointStates.firstIndex { !$0.isCrossed } ?? liveCheckpointStates.count - 1
-        guard segmentIndex < raceSegmentPacings.count else { return }
-
-        let checkpoint = liveCheckpointStates[segmentIndex]
-        let pacing = raceSegmentPacings[segmentIndex]
-        let previousCheckpointDistance = segmentIndex > 0
-            ? liveCheckpointStates[segmentIndex - 1].distanceFromStartKm : 0
-        let segmentRemainingKm = max(0, checkpoint.distanceFromStartKm - distanceKm)
-
-        let previousCheckpointTime = segmentIndex > 0
-            ? (liveCheckpointStates[segmentIndex - 1].actualTime ?? liveCheckpointStates[segmentIndex - 1].predictedTime)
-            : 0
-        let segmentTargetDuration = pacing.targetPaceSecondsPerKm
-            * (checkpoint.distanceFromStartKm - previousCheckpointDistance)
-        let elapsedInSegment = elapsedTime - previousCheckpointTime
-        let timeBudgetRemaining = max(0, segmentTargetDuration - elapsedInSegment)
-
-        let projectedFinish = calculateTerrainAwareProjection(
-            currentSegmentIndex: segmentIndex,
-            elapsedTime: elapsedTime,
-            distanceKm: distanceKm
-        )
-
-        let scenario: FinishScenario
-        if projectedFinish < raceExpectedFinishTime * 0.98 {
-            scenario = .aheadOfPlan
-        } else if projectedFinish > raceExpectedFinishTime * 1.02 {
-            scenario = .behindPlan
-        } else {
-            scenario = .onPlan
-        }
-
-        racePacingGuidance = RacePacingGuidance(
-            currentSegmentIndex: segmentIndex,
-            currentSegmentName: checkpoint.checkpointName,
-            targetPaceSecondsPerKm: pacing.targetPaceSecondsPerKm,
-            currentPaceSecondsPerKm: runningAveragePace,
-            pacingZone: pacing.pacingZone,
-            segmentTimeBudgetRemaining: timeBudgetRemaining,
-            segmentDistanceRemainingKm: segmentRemainingKm,
-            projectedFinishTime: projectedFinish,
-            projectedFinishScenario: scenario
-        )
-    }
-
-    private func calculateTerrainAwareProjection(
-        currentSegmentIndex: Int,
-        elapsedTime: TimeInterval,
-        distanceKm: Double
-    ) -> TimeInterval {
-        var projected = elapsedTime
-        for i in currentSegmentIndex..<raceSegmentPacings.count {
-            let pacing = raceSegmentPacings[i]
-            let checkpoint = liveCheckpointStates[i]
-            let segmentStartKm = i > 0 ? liveCheckpointStates[i - 1].distanceFromStartKm : 0
-            let segmentDistanceKm = checkpoint.distanceFromStartKm - segmentStartKm
-
-            if i == currentSegmentIndex {
-                let remainingKm = max(0, checkpoint.distanceFromStartKm - distanceKm)
-                projected += remainingKm * pacing.targetPaceSecondsPerKm
-            } else {
-                projected += segmentDistanceKm * pacing.targetPaceSecondsPerKm
-            }
-            projected += pacing.aidStationDwellTime
-        }
-        return projected
-    }
-
-    private func recalculateRemainingPacing(crossedIndex: Int) {
-        guard !raceSegmentPacings.isEmpty,
-              !raceCheckpointSplits.isEmpty else { return }
-        let state = liveCheckpointStates[crossedIndex]
-        guard let actual = state.actualTime, state.predictedTime > 0 else { return }
-        let deltaPercent = abs(actual - state.predictedTime) / state.predictedTime * 100
-        guard deltaPercent >= AppConfiguration.LiveRace.recalculationDeltaThresholdPercent else { return }
-
-        let input = RacePacingRecalculator.Input(
-            segmentPacings: raceSegmentPacings,
-            checkpointSplits: raceCheckpointSplits,
-            crossedCheckpointIndex: crossedIndex,
-            actualTimeAtCrossing: actual,
-            predictedTimeAtCrossing: state.predictedTime,
-            targetFinishTime: raceExpectedFinishTime
-        )
-        let result = RacePacingRecalculator.recalculate(input)
-        raceSegmentPacings = result.updatedPacings
-        Logger.liveRace.info("Recalculated pacing after checkpoint \(crossedIndex), new finish: \(result.recalculatedFinishTime)s")
-    }
-
-    // MARK: - Nutrition Quick-Tap
-
-    func logNutritionProduct(_ product: NutritionProduct, quantity: Int = 1) {
-        let entry = LiveNutritionTracker.buildManualEntry(
-            product: product, elapsedTime: elapsedTime, quantity: quantity
-        )
-        nutritionIntakeLog.append(entry)
-        hapticService.playSelection()
-        updateNutritionTotals()
-    }
-
-    private func updateNutritionTotals() {
-        liveNutritionTotals = LiveNutritionTracker.calculateTotals(
-            from: nutritionIntakeLog, elapsedTime: elapsedTime
-        )
-    }
-
-    private func loadFavoriteProducts() {
-        guard nutritionRemindersEnabled else { return }
-        Task { [weak self] in
-            guard let self else { return }
-            do {
-                let prefs = try await self.nutritionRepository.getNutritionPreferences()
-                let allProducts = try await self.nutritionRepository.getProducts()
-                let favoriteIds = prefs.favoriteProductIds
-                var favorites = favoriteIds.compactMap { fid in allProducts.first { $0.id == fid } }
-                if favorites.isEmpty {
-                    favorites = Array(allProducts.prefix(4))
-                }
-                self.favoriteProducts = favorites
-            } catch {
-                Logger.nutrition.debug("Could not load favorite products: \(error)")
-            }
-        }
-    }
-
-    // MARK: - Race Linking
-
-    private func linkRunToRace(run: CompletedRun, raceId: UUID) async throws {
-        guard var race = try await raceRepository.getRace(id: raceId) else { return }
-        race.actualFinishTime = run.duration
-        race.linkedRunId = run.id
-        try await raceRepository.updateRace(race)
-        Logger.tracking.info("Linked run \(run.id) to race \(race.name)")
-    }
-
-    // MARK: - Weather Capture
-
-    private func captureWeatherAtStart() {
-        guard let weatherService else { return }
-        Task { [weak self] in
-            guard let location = self?.locationService.currentLocation else { return }
-            do {
-                let weather = try await weatherService.currentWeather(
-                    latitude: location.coordinate.latitude,
-                    longitude: location.coordinate.longitude
-                )
-                self?.weatherAtStart = weather
-                Logger.weather.info("Captured weather at run start: \(weather.condition.displayName) \(Int(weather.temperatureCelsius))°C")
-            } catch {
-                Logger.weather.debug("Could not capture weather at run start: \(error)")
-            }
-        }
-    }
-
-    // MARK: - Auto Pause
+    // MARK: - Private — Auto Pause
 
     private func handleAutoPause(speed: CLLocationSpeed) {
         guard autoPauseEnabled, runState == .running else { return }
-
         if speed < AppConfiguration.RunTracking.autoPauseSpeedThreshold && speed >= 0 {
             autoPauseTimer += AppConfiguration.RunTracking.timerInterval
             if autoPauseTimer >= AppConfiguration.RunTracking.autoPauseDelay {
@@ -993,100 +446,89 @@ final class ActiveRunViewModel {
         }
     }
 
-    // MARK: - Watch Connectivity
+    // MARK: - Private — Helpers
 
-    private func setupWatchCommandHandler() {
-        connectivityService?.commandHandler = { [weak self] command in
-            guard let self else { return }
-            switch command {
-            case .pause: self.pauseRun()
-            case .resume: self.resumeRun()
-            case .stop: self.stopRun()
-            case .dismissReminder: self.dismissReminder()
+    private func autoMatchSession(run: CompletedRun) async {
+        do {
+            guard let plan = try await planRepository.getActivePlan() else { return }
+            let allSessions = plan.weeks.flatMap(\.sessions)
+            guard let match = SessionMatcher.findMatch(
+                runDate: run.date, distanceKm: run.distanceKm,
+                duration: run.duration, candidates: allSessions
+            ) else { return }
+            var updated = match.session
+            updated.isCompleted = true
+            updated.linkedRunId = run.id
+            try await planRepository.updateSession(updated)
+            try await runRepository.updateLinkedSession(runId: run.id, sessionId: match.session.id)
+            autoMatchedSession = match
+            Logger.tracking.info("Auto-matched run to session \(match.session.id)")
+        } catch {
+            Logger.tracking.debug("Auto-match failed: \(error)")
+        }
+    }
+
+    private func linkRunToRace(run: CompletedRun, raceId: UUID) async throws {
+        guard var race = try await raceRepository.getRace(id: raceId) else { return }
+        race.actualFinishTime = run.duration
+        race.linkedRunId = run.id
+        try await raceRepository.updateRace(race)
+        Logger.tracking.info("Linked run \(run.id) to race \(race.name)")
+    }
+
+    private func captureWeatherAtStart() {
+        guard let weatherService else { return }
+        Task { [weak self] in
+            guard let location = self?.locationService.currentLocation else { return }
+            do {
+                let weather = try await weatherService.currentWeather(
+                    latitude: location.coordinate.latitude, longitude: location.coordinate.longitude
+                )
+                self?.weatherAtStart = weather
+                Logger.weather.info("Captured weather at run start: \(weather.condition.displayName) \(Int(weather.temperatureCelsius))°C")
+            } catch {
+                Logger.weather.debug("Could not capture weather at run start: \(error)")
             }
         }
     }
 
-    private func sendWatchUpdate() {
-        connectivityService?.sendRunUpdate(buildWatchRunData())
+    private func saveWorkoutToHealth(_ run: CompletedRun) async {
+        guard saveToHealthEnabled else { return }
+        do {
+            try await healthKitService.saveWorkout(run: run)
+            Logger.healthKit.info("Workout saved to Apple Health for run \(run.id)")
+        } catch {
+            Logger.healthKit.error("Failed to save workout to Apple Health: \(error)")
+        }
     }
 
-    // MARK: - Live Activity
+    // MARK: - Context Builders
 
-    private func startLiveActivity() {
-        let attributes = RunActivityAttributes(
-            startTime: Date.now,
+    private func buildNutritionContext() -> NutritionReminderHandler.RunContext {
+        NutritionReminderHandler.RunContext(
+            elapsedTime: elapsedTime, distanceKm: distanceKm,
+            currentHeartRate: currentHeartRate, maxHeartRate: athlete.maxHeartRate,
+            runningAveragePace: runningAveragePace
+        )
+    }
+
+    private func buildPacingContext() -> RacePacingHandler.RunContext {
+        RacePacingHandler.RunContext(
+            distanceKm: distanceKm, elapsedTime: elapsedTime,
+            runningAveragePace: runningAveragePace, trackPoints: trackPoints
+        )
+    }
+
+    private func buildSnapshot() -> ConnectivityHandler.RunSnapshot {
+        ConnectivityHandler.RunSnapshot(
+            runState: runState, elapsedTime: elapsedTime, distanceKm: distanceKm,
+            currentPace: currentPace, currentHeartRate: currentHeartRate,
+            elevationGainM: elevationGainM, formattedTime: formattedTime,
+            formattedDistance: formattedDistance, formattedElevation: formattedElevation,
+            isAutoPaused: isAutoPaused,
+            activeReminderMessage: nutritionHandler.activeReminder?.message,
+            activeReminderType: nutritionHandler.activeReminder?.type.rawValue,
             linkedSessionName: linkedSession?.description
-        )
-        liveActivityService.startActivity(
-            attributes: attributes,
-            state: buildLiveActivityState()
-        )
-    }
-
-    private func updateLiveActivityIfNeeded() {
-        let now = elapsedTime
-        guard now - lastLiveActivityUpdate >= AppConfiguration.LiveActivity.updateIntervalSeconds else { return }
-        lastLiveActivityUpdate = now
-        liveActivityService.updateActivity(state: buildLiveActivityState())
-    }
-
-    private func updateLiveActivityImmediately() {
-        lastLiveActivityUpdate = elapsedTime
-        liveActivityService.updateActivity(state: buildLiveActivityState())
-    }
-
-    private func endLiveActivity() {
-        liveActivityService.endActivity(state: buildLiveActivityState())
-    }
-
-    private func buildLiveActivityState() -> RunActivityAttributes.ContentState {
-        let stateString: String = switch runState {
-        case .notStarted: "notStarted"
-        case .running: "running"
-        case .paused: isAutoPaused ? "autoPaused" : "paused"
-        case .finished: "finished"
-        }
-
-        let isPaused = runState == .paused || runState == .finished
-        let timerStartDate = isPaused ? Date.now : Date.now.addingTimeInterval(-elapsedTime)
-
-        return RunActivityAttributes.ContentState(
-            elapsedTime: elapsedTime,
-            distanceKm: distanceKm,
-            currentHeartRate: currentHeartRate,
-            elevationGainM: elevationGainM,
-            runState: stateString,
-            isAutoPaused: isAutoPaused,
-            formattedDistance: formattedDistance,
-            formattedElevation: formattedElevation,
-            formattedPace: currentPace,
-            timerStartDate: timerStartDate,
-            isPaused: isPaused
-        )
-    }
-
-    private func buildWatchRunData() -> WatchRunData {
-        let stateString: String = switch runState {
-        case .notStarted: "notStarted"
-        case .running: "running"
-        case .paused: isAutoPaused ? "autoPaused" : "paused"
-        case .finished: "finished"
-        }
-
-        return WatchRunData(
-            runState: stateString,
-            elapsedTime: elapsedTime,
-            distanceKm: distanceKm,
-            currentPace: currentPace,
-            currentHeartRate: currentHeartRate,
-            elevationGainM: elevationGainM,
-            formattedTime: formattedTime,
-            formattedDistance: formattedDistance,
-            formattedElevation: formattedElevation,
-            isAutoPaused: isAutoPaused,
-            activeReminderMessage: activeReminder?.message,
-            activeReminderType: activeReminder?.type.rawValue
         )
     }
 }

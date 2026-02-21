@@ -5,6 +5,7 @@ struct RaceDetailCard: View {
     let race: Race
     let onEdit: () -> Void
     let onDelete: () -> Void
+    var onViewCourse: (() -> Void)?
 
     @State private var showDeleteConfirmation = false
 
@@ -12,6 +13,9 @@ struct RaceDetailCard: View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             header
             stats
+            if race.hasCourseRoute {
+                courseMapThumbnail
+            }
             actions
         }
         .padding(Theme.Spacing.md)
@@ -66,6 +70,31 @@ struct RaceDetailCard: View {
             Text(label)
                 .font(.caption2)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+        }
+    }
+
+    private var courseMapThumbnail: some View {
+        ZStack(alignment: .bottomTrailing) {
+            RaceCourseMapView(
+                courseRoute: race.courseRoute,
+                checkpoints: race.checkpoints,
+                height: 120
+            )
+            .allowsHitTesting(false)
+
+            if let onViewCourse {
+                Button {
+                    onViewCourse()
+                } label: {
+                    Label("View Course", systemImage: "map")
+                        .font(.caption.bold())
+                        .padding(.horizontal, Theme.Spacing.sm)
+                        .padding(.vertical, Theme.Spacing.xs)
+                        .background(.ultraThinMaterial)
+                        .clipShape(Capsule())
+                }
+                .padding(Theme.Spacing.sm)
+            }
         }
     }
 

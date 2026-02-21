@@ -28,6 +28,7 @@ struct EditRaceSheet: View {
     @State private var targetRanking: Int
     @State private var terrainDifficulty: TerrainDifficulty
     @State private var checkpoints: [Checkpoint]
+    @State private var courseRoute: [TrackPoint]
     @State private var showAddCheckpoint = false
     @State private var editingCheckpoint: Checkpoint?
     @State private var showDocumentPicker = false
@@ -54,6 +55,7 @@ struct EditRaceSheet: View {
             _targetRanking = State(initialValue: 50)
             _terrainDifficulty = State(initialValue: .moderate)
             _checkpoints = State(initialValue: [])
+            _courseRoute = State(initialValue: [])
         case .edit(let race):
             existingId = race.id
             _name = State(initialValue: race.name)
@@ -64,6 +66,7 @@ struct EditRaceSheet: View {
             _priority = State(initialValue: race.priority)
             _terrainDifficulty = State(initialValue: race.terrainDifficulty)
             _checkpoints = State(initialValue: race.checkpoints)
+            _courseRoute = State(initialValue: race.courseRoute)
             switch race.goalType {
             case .finish:
                 _goalType = State(initialValue: .finish)
@@ -333,13 +336,14 @@ struct EditRaceSheet: View {
         elevationGainM = result.elevationGainM
         elevationLossM = result.elevationLossM
         checkpoints = result.checkpoints
+        courseRoute = result.courseRoute
         if let gpxName = result.name, name.isEmpty {
             name = gpxName
         }
     }
 
     private func save() {
-        let race = Race(
+        var race = Race(
             id: existingId ?? UUID(),
             name: name.trimmingCharacters(in: .whitespaces),
             date: date,
@@ -351,6 +355,7 @@ struct EditRaceSheet: View {
             checkpoints: checkpoints,
             terrainDifficulty: terrainDifficulty
         )
+        race.courseRoute = courseRoute
         onSave(race)
         dismiss()
     }

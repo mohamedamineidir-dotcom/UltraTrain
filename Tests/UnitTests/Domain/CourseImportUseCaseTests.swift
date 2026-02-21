@@ -169,4 +169,52 @@ struct CourseImportUseCaseTests {
         #expect(result.elevationGainM > 1400)
         #expect(result.elevationGainM < 1600)
     }
+
+    // MARK: - Course Route (Simplified)
+
+    @Test("Import result contains non-empty courseRoute")
+    func importResultHasCourseRoute() throws {
+        let points = makeTrackPointsForDistance(
+            distanceKm: 50,
+            pointCount: 200,
+            altitudeStart: 500,
+            altitudeGain: 1000
+        )
+        let parseResult = GPXParseResult(
+            name: "Test Course",
+            date: .now,
+            trackPoints: points
+        )
+        let result = try CourseImportUseCase.importCourse(from: parseResult)
+
+        #expect(!result.courseRoute.isEmpty)
+    }
+
+    @Test("Simplified route has fewer points than original")
+    func simplifiedRouteFewerPoints() {
+        let points = makeTrackPointsForDistance(
+            distanceKm: 50,
+            pointCount: 500,
+            altitudeStart: 500,
+            altitudeGain: 2000
+        )
+        let simplified = CourseImportUseCase.simplifyRoute(points: points)
+
+        #expect(simplified.count < points.count)
+        #expect(simplified.count >= 2)
+    }
+
+    @Test("Simplified route preserves start and end points")
+    func simplifiedRoutePreservesEndpoints() {
+        let points = makeTrackPointsForDistance(
+            distanceKm: 30,
+            pointCount: 200,
+            altitudeStart: 500,
+            altitudeGain: 1000
+        )
+        let simplified = CourseImportUseCase.simplifyRoute(points: points)
+
+        #expect(simplified.first == points.first)
+        #expect(simplified.last == points.last)
+    }
 }

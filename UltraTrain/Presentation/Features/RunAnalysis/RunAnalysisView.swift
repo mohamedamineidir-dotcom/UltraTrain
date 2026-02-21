@@ -36,6 +36,16 @@ struct RunAnalysisView: View {
                         routeMapSection
                     }
 
+                    if viewModel.hasRouteComparison,
+                       let courseRoute = viewModel.linkedRaceCourseRoute,
+                       let comparison = viewModel.routeComparison {
+                        RouteComparisonOverlay(
+                            actualRoute: viewModel.run.gpsTrack,
+                            plannedRoute: courseRoute,
+                            comparison: comparison
+                        )
+                    }
+
                     if !viewModel.elevationProfile.isEmpty {
                         ElevationProfileChart(
                             dataPoints: viewModel.elevationProfile,
@@ -66,6 +76,10 @@ struct RunAnalysisView: View {
 
                     if viewModel.hasHeartRateData {
                         HeartRateZoneChart(distribution: viewModel.zoneDistribution)
+                    }
+
+                    if let compliance = viewModel.zoneCompliance {
+                        ZoneComplianceCard(compliance: compliance)
                     }
 
                     if let comparison = viewModel.planComparison {

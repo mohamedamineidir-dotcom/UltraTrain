@@ -89,14 +89,20 @@ struct SessionDetailView: View {
 
             Spacer()
 
-            Text(session.intensity.displayName)
-                .font(.caption)
-                .fontWeight(.semibold)
-                .foregroundStyle(.white)
-                .padding(.horizontal, Theme.Spacing.sm)
-                .padding(.vertical, Theme.Spacing.xs)
-                .background(session.isSkipped ? Color.gray : session.intensity.color)
-                .clipShape(Capsule())
+            VStack(spacing: Theme.Spacing.xs) {
+                Text(session.intensity.displayName)
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, Theme.Spacing.sm)
+                    .padding(.vertical, Theme.Spacing.xs)
+                    .background(session.isSkipped ? Color.gray : session.intensity.color)
+                    .clipShape(Capsule())
+
+                if let zone = session.targetHeartRateZone {
+                    SessionZoneTargetBadge(zone: zone)
+                }
+            }
         }
         .accessibilityIdentifier("trainingPlan.sessionDetail.header")
     }

@@ -1,6 +1,15 @@
 import Foundation
 
 enum RaceSwiftDataMapper {
+
+    private struct CodableTrackPoint: Codable {
+        let latitude: Double
+        let longitude: Double
+        let altitudeM: Double
+        let timestamp: Date
+        let heartRate: Int?
+    }
+
     static func toDomain(_ model: RaceSwiftDataModel) -> Race? {
         guard let priority = RacePriority(rawValue: model.priorityRaw),
               let terrain = TerrainDifficulty(rawValue: model.terrainDifficultyRaw),
@@ -34,7 +43,8 @@ enum RaceSwiftDataMapper {
             linkedRunId: model.linkedRunId,
             locationLatitude: model.locationLatitude,
             locationLongitude: model.locationLongitude,
-            forecastedWeather: decodeWeather(model.forecastedWeatherData)
+            forecastedWeather: decodeWeather(model.forecastedWeatherData),
+            courseRoute: decodeCourseRoute(model.courseRouteData)
         )
     }
 
@@ -65,7 +75,8 @@ enum RaceSwiftDataMapper {
             linkedRunId: race.linkedRunId,
             locationLatitude: race.locationLatitude,
             locationLongitude: race.locationLongitude,
-            forecastedWeatherData: encodeWeather(race.forecastedWeather)
+            forecastedWeatherData: encodeWeather(race.forecastedWeather),
+            courseRouteData: encodeCourseRoute(race.courseRoute)
         )
     }
 
@@ -102,6 +113,41 @@ enum RaceSwiftDataMapper {
             return ("targetTime", interval)
         case .targetRanking(let rank):
             return ("targetRanking", Double(rank))
+        }
+    }
+
+    // MARK: - Course Route JSON
+
+    private static func encodeCourseRoute(_ points: [TrackPoint]) -> Data? {
+        guard !points.isEmpty else { return nil }
+        let codable = points.map { point in
+            CodableTrackPoint(
+                latitude: point.latitude,
+                longitude: point.longitude,
+                altitudeM: point.altitudeM,
+                timestamp: point.timestamp,
+                heartRate: point.heartRate
+            )
+        }
+        return try? JSONEncoder().encode(codable)
+    }
+
+    private static func decodeCourseRoute(_ data: Data?) -> [TrackPoint] {
+        guard let data, !data.isEmpty else { return [] }
+        guard let codable = try? JSONDecoder().decode(
+            [CodableTrackPoint].self,
+            from: data
+        ) else {
+            return []
+        }
+        return codable.map { point in
+            TrackPoint(
+                latitude: point.latitude,
+                longitude: point.longitude,
+                altitudeM: point.altitudeM,
+                timestamp: point.timestamp,
+                heartRate: point.heartRate
+            )
         }
     }
 }

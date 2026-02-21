@@ -11,7 +11,7 @@ struct ActiveRunView: View {
         VStack(spacing: 0) {
             RunMapView(
                 coordinates: viewModel.routeCoordinates,
-                checkpointLocations: viewModel.resolvedCheckpointLocations
+                checkpointLocations: viewModel.racePacingHandler.resolvedCheckpointLocations
             )
                 .padding(.horizontal, Theme.Spacing.md)
                 .padding(.top, Theme.Spacing.sm)
@@ -30,11 +30,20 @@ struct ActiveRunView: View {
             )
             .padding(.horizontal, Theme.Spacing.md)
 
-            if viewModel.nutritionRemindersEnabled, !viewModel.favoriteProducts.isEmpty {
+            if let zoneState = viewModel.liveZoneState {
+                LiveHRZoneIndicator(
+                    state: zoneState,
+                    heartRate: viewModel.currentHeartRate
+                )
+                .padding(.horizontal, Theme.Spacing.md)
+                .padding(.top, Theme.Spacing.xs)
+            }
+
+            if !viewModel.nutritionHandler.favoriteProducts.isEmpty {
                 NutritionQuickTapBar(
-                    products: viewModel.favoriteProducts,
-                    totals: viewModel.liveNutritionTotals,
-                    onProductTapped: { viewModel.logNutritionProduct($0) }
+                    products: viewModel.nutritionHandler.favoriteProducts,
+                    totals: viewModel.nutritionHandler.liveNutritionTotals,
+                    onProductTapped: { viewModel.nutritionHandler.logProduct($0, elapsedTime: viewModel.elapsedTime) }
                 )
                 .padding(.horizontal, Theme.Spacing.md)
                 .padding(.top, Theme.Spacing.xs)
@@ -42,16 +51,21 @@ struct ActiveRunView: View {
 
             if viewModel.isRaceModeActive {
                 LiveSplitPanel(
-                    checkpoints: viewModel.liveCheckpointStates,
-                    segmentPacings: viewModel.raceSegmentPacings,
-                    nextCheckpoint: viewModel.nextCheckpoint,
-                    distanceToNext: viewModel.distanceToNextCheckpointKm,
-                    projectedFinish: viewModel.projectedFinishTime
+                    checkpoints: viewModel.racePacingHandler.liveCheckpointStates,
+                    segmentPacings: viewModel.racePacingHandler.raceSegmentPacings,
+                    nextCheckpoint: viewModel.racePacingHandler.nextCheckpoint,
+                    distanceToNext: viewModel.racePacingHandler.distanceToNextCheckpointKm(currentDistanceKm: viewModel.distanceKm),
+                    projectedFinish: viewModel.racePacingHandler.projectedFinishTime(context: .init(
+                        distanceKm: viewModel.distanceKm,
+                        elapsedTime: viewModel.elapsedTime,
+                        runningAveragePace: 0,
+                        trackPoints: []
+                    ))
                 )
                 .padding(.horizontal, Theme.Spacing.md)
                 .padding(.top, Theme.Spacing.sm)
 
-                if let guidance = viewModel.racePacingGuidance {
+                if let guidance = viewModel.racePacingHandler.racePacingGuidance {
                     RacePacingGuidancePanel(guidance: guidance)
                         .padding(.horizontal, Theme.Spacing.md)
                         .padding(.top, Theme.Spacing.xs)
@@ -65,36 +79,46 @@ struct ActiveRunView: View {
                 .padding(.bottom, Theme.Spacing.xl)
         }
         .overlay(alignment: .top) {
-            if let reminder = viewModel.activeReminder {
+            if let reminder = viewModel.nutritionHandler.activeReminder {
                 NutritionReminderBanner(
                     reminder: reminder,
-                    onTaken: { viewModel.markReminderTaken() },
-                    onSkipped: { viewModel.markReminderSkipped() },
-                    onAutoDismiss: { viewModel.dismissReminder() }
+                    onTaken: { viewModel.nutritionHandler.markTaken(elapsedTime: viewModel.elapsedTime) },
+                    onSkipped: { viewModel.nutritionHandler.markSkipped(elapsedTime: viewModel.elapsedTime) },
+                    onAutoDismiss: { viewModel.nutritionHandler.dismiss(elapsedTime: viewModel.elapsedTime) }
                 )
             }
         }
-        .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.activeReminder)
+        .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.nutritionHandler.activeReminder)
         .overlay(alignment: .top) {
-            if let crossing = viewModel.activeCrossingBanner {
+            if let crossing = viewModel.racePacingHandler.activeCrossingBanner {
                 CheckpointCrossingBanner(
                     checkpoint: crossing,
-                    onDismiss: { viewModel.dismissCrossingBanner() }
+                    onDismiss: { viewModel.racePacingHandler.dismissCrossingBanner() }
                 )
-                .padding(.top, viewModel.activeReminder != nil ? 80 : 0)
+                .padding(.top, viewModel.nutritionHandler.activeReminder != nil ? 80 : 0)
             }
         }
-        .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.activeCrossingBanner)
+        .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.racePacingHandler.activeCrossingBanner)
         .overlay(alignment: .top) {
-            if let alert = viewModel.activePacingAlert {
+            if let alert = viewModel.racePacingHandler.activePacingAlert {
                 PacingAlertBanner(
                     alert: alert,
-                    onDismiss: { viewModel.dismissPacingAlert() }
+                    onDismiss: { viewModel.racePacingHandler.dismissPacingAlert() }
                 )
                 .padding(.top, pacingBannerOffset)
             }
         }
-        .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.activePacingAlert)
+        .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.racePacingHandler.activePacingAlert)
+        .overlay(alignment: .top) {
+            if let driftAlert = viewModel.activeDriftAlert {
+                ZoneDriftAlertBanner(
+                    alert: driftAlert,
+                    onDismiss: { viewModel.dismissDriftAlert() }
+                )
+                .padding(.top, driftBannerOffset)
+            }
+        }
+        .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.activeDriftAlert)
         .navigationBarBackButtonHidden()
         .onAppear {
             if viewModel.runState == .notStarted {
@@ -131,8 +155,14 @@ struct ActiveRunView: View {
 
     private var pacingBannerOffset: CGFloat {
         var offset: CGFloat = 0
-        if viewModel.activeReminder != nil { offset += 80 }
-        if viewModel.activeCrossingBanner != nil { offset += 80 }
+        if viewModel.nutritionHandler.activeReminder != nil { offset += 80 }
+        if viewModel.racePacingHandler.activeCrossingBanner != nil { offset += 80 }
+        return offset
+    }
+
+    private var driftBannerOffset: CGFloat {
+        var offset = pacingBannerOffset
+        if viewModel.racePacingHandler.activePacingAlert != nil { offset += 80 }
         return offset
     }
 

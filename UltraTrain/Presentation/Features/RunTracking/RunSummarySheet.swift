@@ -31,8 +31,8 @@ struct RunSummarySheet: View {
                         )
                         .padding(.horizontal, Theme.Spacing.md)
                     }
-                    if !viewModel.nutritionIntakeLog.isEmpty {
-                        NutritionIntakeSummaryView(summary: viewModel.nutritionSummary)
+                    if !viewModel.nutritionHandler.nutritionIntakeLog.isEmpty {
+                        NutritionIntakeSummaryView(summary: viewModel.nutritionHandler.nutritionSummary)
                     }
                     if didSave {
                         stravaUploadBanner
@@ -321,7 +321,7 @@ struct RunSummarySheet: View {
 
     @ViewBuilder
     private var stravaUploadBanner: some View {
-        switch viewModel.stravaUploadStatus {
+        switch viewModel.connectivityHandler.stravaUploadStatus {
         case .idle:
             EmptyView()
         case .uploading, .processing:

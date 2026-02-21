@@ -130,6 +130,13 @@ enum AppConfiguration {
         static let coldCalorieMultiplier: Double = 1.1
     }
 
+    enum HRZoneAlerts {
+        static let mildDriftSeconds: TimeInterval = 60
+        static let moderateDriftSeconds: TimeInterval = 180
+        static let significantDriftSeconds: TimeInterval = 300
+        static let alertCooldownSeconds: TimeInterval = 30
+    }
+
     enum Strava {
         static let clientId: String = Bundle.main.infoDictionary?["STRAVA_CLIENT_ID"] as? String ?? ""
         static let clientSecret: String = Bundle.main.infoDictionary?["STRAVA_CLIENT_SECRET"] as? String ?? ""

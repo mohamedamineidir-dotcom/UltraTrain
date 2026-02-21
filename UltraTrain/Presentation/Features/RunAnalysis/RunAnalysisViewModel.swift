@@ -33,6 +33,9 @@ final class RunAnalysisViewModel {
     var historicalComparison: HistoricalComparison?
     var nutritionAnalysis: NutritionAnalysis?
     var racePerformance: RacePerformanceComparison?
+    var routeComparison: RouteComparisonCalculator.RouteComparison?
+    var linkedRaceCourseRoute: [TrackPoint]?
+    var zoneCompliance: ZoneComplianceCalculator.ZoneCompliance?
     var trainingStressScore: Double?
     var isLoading = false
     var error: String?
@@ -106,51 +109,70 @@ final class RunAnalysisViewModel {
                         run: run,
                         session: session
                     )
+                    if let targetZone = session.targetHeartRateZone,
+                       let maxHR = athlete?.maxHeartRate, maxHR > 0,
+                       run.gpsTrack.count >= 2 {
+                        zoneCompliance = ZoneComplianceCalculator.calculate(
+                            trackPoints: run.gpsTrack,
+                            targetZone: targetZone,
+                            maxHeartRate: maxHR,
+                            customThresholds: athlete?.customZoneThresholds
+                        )
+                    }
                 }
             }
 
             if let raceId = run.linkedRaceId,
-               let race = try await raceRepository.getRace(id: raceId),
-               !race.checkpoints.isEmpty {
-                checkpointLocations = CheckpointLocationResolver.resolveLocations(
-                    checkpoints: race.checkpoints,
-                    along: run.gpsTrack
-                )
-
-                if let estimate = try await finishEstimateRepository.getEstimate(for: raceId),
-                   !estimate.checkpointSplits.isEmpty,
-                   run.gpsTrack.count >= 2,
-                   let runStart = run.gpsTrack.first?.timestamp {
-
-                    let timestamps = CheckpointLocationResolver.resolveTimestamps(
+               let race = try await raceRepository.getRace(id: raceId) {
+                if !race.checkpoints.isEmpty {
+                    checkpointLocations = CheckpointLocationResolver.resolveLocations(
                         checkpoints: race.checkpoints,
                         along: run.gpsTrack
                     )
 
-                    let comparisons = estimate.checkpointSplits.compactMap { split -> CheckpointComparison? in
-                        guard let match = timestamps.first(where: { $0.checkpoint.id == split.checkpointId }) else {
-                            return nil
-                        }
-                        let actualSeconds = match.timestamp.timeIntervalSince(runStart)
-                        return CheckpointComparison(
-                            id: split.id,
-                            checkpointName: split.checkpointName,
-                            distanceFromStartKm: split.distanceFromStartKm,
-                            hasAidStation: split.hasAidStation,
-                            predictedTime: split.expectedTime,
-                            actualTime: actualSeconds,
-                            delta: actualSeconds - split.expectedTime
-                        )
-                    }
+                    if let estimate = try await finishEstimateRepository.getEstimate(for: raceId),
+                       !estimate.checkpointSplits.isEmpty,
+                       run.gpsTrack.count >= 2,
+                       let runStart = run.gpsTrack.first?.timestamp {
 
-                    if !comparisons.isEmpty {
-                        racePerformance = RacePerformanceComparison(
-                            checkpointComparisons: comparisons,
-                            predictedFinishTime: estimate.expectedTime,
-                            actualFinishTime: run.duration,
-                            finishDelta: run.duration - estimate.expectedTime
+                        let timestamps = CheckpointLocationResolver.resolveTimestamps(
+                            checkpoints: race.checkpoints,
+                            along: run.gpsTrack
                         )
+
+                        let comparisons = estimate.checkpointSplits.compactMap { split -> CheckpointComparison? in
+                            guard let match = timestamps.first(where: { $0.checkpoint.id == split.checkpointId }) else {
+                                return nil
+                            }
+                            let actualSeconds = match.timestamp.timeIntervalSince(runStart)
+                            return CheckpointComparison(
+                                id: split.id,
+                                checkpointName: split.checkpointName,
+                                distanceFromStartKm: split.distanceFromStartKm,
+                                hasAidStation: split.hasAidStation,
+                                predictedTime: split.expectedTime,
+                                actualTime: actualSeconds,
+                                delta: actualSeconds - split.expectedTime
+                            )
+                        }
+
+                        if !comparisons.isEmpty {
+                            racePerformance = RacePerformanceComparison(
+                                checkpointComparisons: comparisons,
+                                predictedFinishTime: estimate.expectedTime,
+                                actualFinishTime: run.duration,
+                                finishDelta: run.duration - estimate.expectedTime
+                            )
+                        }
                     }
+                }
+
+                if race.hasCourseRoute, run.gpsTrack.count >= 2 {
+                    linkedRaceCourseRoute = race.courseRoute
+                    routeComparison = RouteComparisonCalculator.compare(
+                        actual: run.gpsTrack,
+                        planned: race.courseRoute
+                    )
                 }
             }
 
@@ -204,6 +226,12 @@ final class RunAnalysisViewModel {
     var hasNutritionAnalysis: Bool { nutritionAnalysis != nil }
 
     var hasRacePerformance: Bool { racePerformance != nil }
+
+    var hasZoneCompliance: Bool { zoneCompliance != nil }
+
+    var hasRouteComparison: Bool {
+        routeComparison != nil && linkedRaceCourseRoute != nil
+    }
 
     var hasRouteData: Bool {
         run.gpsTrack.count >= 2

@@ -72,7 +72,7 @@ struct ActiveRunViewModelLiveRaceTests {
     @MainActor
     func raceModeActiveWithCheckpoints() {
         let vm = makeViewModel(raceId: raceId)
-        vm.liveCheckpointStates = makeCheckpointStates()
+        vm.racePacingHandler.liveCheckpointStates = makeCheckpointStates()
 
         #expect(vm.isRaceModeActive)
     }
@@ -81,7 +81,7 @@ struct ActiveRunViewModelLiveRaceTests {
     @MainActor
     func raceModeInactiveWithoutRaceId() {
         let vm = makeViewModel(raceId: nil)
-        vm.liveCheckpointStates = makeCheckpointStates()
+        vm.racePacingHandler.liveCheckpointStates = makeCheckpointStates()
 
         #expect(!vm.isRaceModeActive)
     }
@@ -102,9 +102,9 @@ struct ActiveRunViewModelLiveRaceTests {
         let vm = makeViewModel(raceId: raceId)
         var states = makeCheckpointStates()
         states[0].actualTime = 3500
-        vm.liveCheckpointStates = states
+        vm.racePacingHandler.liveCheckpointStates = states
 
-        #expect(vm.nextCheckpoint?.checkpointName == "CP2")
+        #expect(vm.racePacingHandler.nextCheckpoint?.checkpointName == "CP2")
     }
 
     @Test("nextCheckpoint is nil when all crossed")
@@ -115,9 +115,9 @@ struct ActiveRunViewModelLiveRaceTests {
         states[0].actualTime = 3500
         states[1].actualTime = 8800
         states[2].actualTime = 14000
-        vm.liveCheckpointStates = states
+        vm.racePacingHandler.liveCheckpointStates = states
 
-        #expect(vm.nextCheckpoint == nil)
+        #expect(vm.racePacingHandler.nextCheckpoint == nil)
     }
 
     // MARK: - distanceToNextCheckpointKm
@@ -126,10 +126,10 @@ struct ActiveRunViewModelLiveRaceTests {
     @MainActor
     func distanceToNextCheckpoint() {
         let vm = makeViewModel(raceId: raceId)
-        vm.liveCheckpointStates = makeCheckpointStates()
+        vm.racePacingHandler.liveCheckpointStates = makeCheckpointStates()
         vm.distanceKm = 7.5
 
-        #expect(vm.distanceToNextCheckpointKm == 2.5)
+        #expect(vm.racePacingHandler.distanceToNextCheckpointKm(currentDistanceKm: vm.distanceKm) == 2.5)
     }
 
     @Test("distanceToNextCheckpointKm is nil when no next checkpoint")
@@ -140,9 +140,9 @@ struct ActiveRunViewModelLiveRaceTests {
         states[0].actualTime = 3500
         states[1].actualTime = 8800
         states[2].actualTime = 14000
-        vm.liveCheckpointStates = states
+        vm.racePacingHandler.liveCheckpointStates = states
 
-        #expect(vm.distanceToNextCheckpointKm == nil)
+        #expect(vm.racePacingHandler.distanceToNextCheckpointKm(currentDistanceKm: 50) == nil)
     }
 
     // MARK: - projectedFinishTime
@@ -151,26 +151,32 @@ struct ActiveRunViewModelLiveRaceTests {
     @MainActor
     func projectedFinishTime() {
         let vm = makeViewModel(raceId: raceId)
-        vm.liveCheckpointStates = makeCheckpointStates()
-        vm.raceDistanceKm = 50
+        vm.racePacingHandler.liveCheckpointStates = makeCheckpointStates()
+        vm.racePacingHandler.raceDistanceKm = 50
         vm.distanceKm = 10
         vm.elapsedTime = 3600
 
+        let context = RacePacingHandler.RunContext(
+            distanceKm: 10, elapsedTime: 3600,
+            runningAveragePace: 360, trackPoints: []
+        )
         // pace = 3600/10 = 360 s/km, remaining = 40 km
         // projected = 3600 + 40 * 360 = 18000
-        #expect(vm.projectedFinishTime == 18000)
+        #expect(vm.racePacingHandler.projectedFinishTime(context: context) == 18000)
     }
 
     @Test("projectedFinishTime is nil when distance too small")
     @MainActor
     func projectedFinishTimeNilEarly() {
         let vm = makeViewModel(raceId: raceId)
-        vm.liveCheckpointStates = makeCheckpointStates()
-        vm.raceDistanceKm = 50
-        vm.distanceKm = 0.3
-        vm.elapsedTime = 120
+        vm.racePacingHandler.liveCheckpointStates = makeCheckpointStates()
+        vm.racePacingHandler.raceDistanceKm = 50
 
-        #expect(vm.projectedFinishTime == nil)
+        let context = RacePacingHandler.RunContext(
+            distanceKm: 0.3, elapsedTime: 120,
+            runningAveragePace: 400, trackPoints: []
+        )
+        #expect(vm.racePacingHandler.projectedFinishTime(context: context) == nil)
     }
 
     // MARK: - Checkpoint Crossing Detection
@@ -179,95 +185,110 @@ struct ActiveRunViewModelLiveRaceTests {
     @MainActor
     func checkpointCrossingDetected() {
         let vm = makeViewModel(raceId: raceId)
-        vm.liveCheckpointStates = makeCheckpointStates()
-        vm.distanceKm = 10.5
-        vm.elapsedTime = 3500
+        vm.racePacingHandler.liveCheckpointStates = makeCheckpointStates()
 
-        vm.detectCheckpointCrossings()
+        let context = RacePacingHandler.RunContext(
+            distanceKm: 10.5, elapsedTime: 3500,
+            runningAveragePace: 333, trackPoints: []
+        )
+        vm.racePacingHandler.processLocation(context: context)
 
-        #expect(vm.liveCheckpointStates[0].isCrossed)
-        #expect(vm.liveCheckpointStates[0].actualTime == 3500)
-        #expect(!vm.liveCheckpointStates[1].isCrossed)
+        #expect(vm.racePacingHandler.liveCheckpointStates[0].isCrossed)
+        #expect(vm.racePacingHandler.liveCheckpointStates[0].actualTime == 3500)
+        #expect(!vm.racePacingHandler.liveCheckpointStates[1].isCrossed)
     }
 
     @Test("activeCrossingBanner set on crossing")
     @MainActor
     func crossingBannerSet() {
         let vm = makeViewModel(raceId: raceId)
-        vm.liveCheckpointStates = makeCheckpointStates()
-        vm.distanceKm = 10.5
-        vm.elapsedTime = 3500
+        vm.racePacingHandler.liveCheckpointStates = makeCheckpointStates()
 
-        vm.detectCheckpointCrossings()
+        let context = RacePacingHandler.RunContext(
+            distanceKm: 10.5, elapsedTime: 3500,
+            runningAveragePace: 333, trackPoints: []
+        )
+        vm.racePacingHandler.processLocation(context: context)
 
-        #expect(vm.activeCrossingBanner != nil)
-        #expect(vm.activeCrossingBanner?.checkpointName == "CP1")
+        #expect(vm.racePacingHandler.activeCrossingBanner != nil)
+        #expect(vm.racePacingHandler.activeCrossingBanner?.checkpointName == "CP1")
     }
 
     @Test("Multiple checkpoints crossed in sequence")
     @MainActor
     func multipleCheckpointsCrossed() {
         let vm = makeViewModel(raceId: raceId)
-        vm.liveCheckpointStates = makeCheckpointStates()
+        vm.racePacingHandler.liveCheckpointStates = makeCheckpointStates()
 
         // Cross first checkpoint
-        vm.distanceKm = 10.5
-        vm.elapsedTime = 3500
-        vm.detectCheckpointCrossings()
+        let ctx1 = RacePacingHandler.RunContext(
+            distanceKm: 10.5, elapsedTime: 3500,
+            runningAveragePace: 333, trackPoints: []
+        )
+        vm.racePacingHandler.processLocation(context: ctx1)
 
-        #expect(vm.liveCheckpointStates[0].isCrossed)
-        #expect(!vm.liveCheckpointStates[1].isCrossed)
+        #expect(vm.racePacingHandler.liveCheckpointStates[0].isCrossed)
+        #expect(!vm.racePacingHandler.liveCheckpointStates[1].isCrossed)
 
         // Cross second checkpoint
-        vm.distanceKm = 25.5
-        vm.elapsedTime = 9200
-        vm.detectCheckpointCrossings()
+        let ctx2 = RacePacingHandler.RunContext(
+            distanceKm: 25.5, elapsedTime: 9200,
+            runningAveragePace: 361, trackPoints: []
+        )
+        vm.racePacingHandler.processLocation(context: ctx2)
 
-        #expect(vm.liveCheckpointStates[1].isCrossed)
-        #expect(vm.liveCheckpointStates[1].actualTime == 9200)
-        #expect(!vm.liveCheckpointStates[2].isCrossed)
+        #expect(vm.racePacingHandler.liveCheckpointStates[1].isCrossed)
+        #expect(vm.racePacingHandler.liveCheckpointStates[1].actualTime == 9200)
+        #expect(!vm.racePacingHandler.liveCheckpointStates[2].isCrossed)
     }
 
     @Test("Crossing two checkpoints at once when large distance jump")
     @MainActor
     func crossTwoCheckpointsAtOnce() {
         let vm = makeViewModel(raceId: raceId)
-        vm.liveCheckpointStates = makeCheckpointStates()
-        vm.distanceKm = 30
-        vm.elapsedTime = 10000
+        vm.racePacingHandler.liveCheckpointStates = makeCheckpointStates()
 
-        vm.detectCheckpointCrossings()
+        let context = RacePacingHandler.RunContext(
+            distanceKm: 30, elapsedTime: 10000,
+            runningAveragePace: 333, trackPoints: []
+        )
+        vm.racePacingHandler.processLocation(context: context)
 
-        #expect(vm.liveCheckpointStates[0].isCrossed)
-        #expect(vm.liveCheckpointStates[1].isCrossed)
-        #expect(!vm.liveCheckpointStates[2].isCrossed)
+        #expect(vm.racePacingHandler.liveCheckpointStates[0].isCrossed)
+        #expect(vm.racePacingHandler.liveCheckpointStates[1].isCrossed)
+        #expect(!vm.racePacingHandler.liveCheckpointStates[2].isCrossed)
     }
 
     @Test("dismissCrossingBanner clears the banner")
     @MainActor
     func dismissBanner() {
         let vm = makeViewModel(raceId: raceId)
-        vm.liveCheckpointStates = makeCheckpointStates()
-        vm.distanceKm = 10.5
-        vm.elapsedTime = 3500
-        vm.detectCheckpointCrossings()
+        vm.racePacingHandler.liveCheckpointStates = makeCheckpointStates()
 
-        #expect(vm.activeCrossingBanner != nil)
+        let context = RacePacingHandler.RunContext(
+            distanceKm: 10.5, elapsedTime: 3500,
+            runningAveragePace: 333, trackPoints: []
+        )
+        vm.racePacingHandler.processLocation(context: context)
 
-        vm.dismissCrossingBanner()
+        #expect(vm.racePacingHandler.activeCrossingBanner != nil)
 
-        #expect(vm.activeCrossingBanner == nil)
+        vm.racePacingHandler.dismissCrossingBanner()
+
+        #expect(vm.racePacingHandler.activeCrossingBanner == nil)
     }
 
     @Test("No detection when no live checkpoint states")
     @MainActor
     func noDetectionWithoutStates() {
         let vm = makeViewModel(raceId: raceId)
-        vm.distanceKm = 50
-        vm.elapsedTime = 18000
 
-        vm.detectCheckpointCrossings()
+        let context = RacePacingHandler.RunContext(
+            distanceKm: 50, elapsedTime: 18000,
+            runningAveragePace: 360, trackPoints: []
+        )
+        vm.racePacingHandler.processLocation(context: context)
 
-        #expect(vm.activeCrossingBanner == nil)
+        #expect(vm.racePacingHandler.activeCrossingBanner == nil)
     }
 }
