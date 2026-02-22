@@ -8,6 +8,8 @@ final class CheckpointSwiftDataModel {
     var distanceFromStartKm: Double = 0
     var elevationM: Double = 0
     var hasAidStation: Bool = false
+    var latitude: Double?
+    var longitude: Double?
     var race: RaceSwiftDataModel?
     var updatedAt: Date = Date()
 
@@ -17,6 +19,8 @@ final class CheckpointSwiftDataModel {
         distanceFromStartKm: Double = 0,
         elevationM: Double = 0,
         hasAidStation: Bool = false,
+        latitude: Double? = nil,
+        longitude: Double? = nil,
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -24,6 +28,8 @@ final class CheckpointSwiftDataModel {
         self.distanceFromStartKm = distanceFromStartKm
         self.elevationM = elevationM
         self.hasAidStation = hasAidStation
+        self.latitude = latitude
+        self.longitude = longitude
         self.updatedAt = updatedAt
     }
 }

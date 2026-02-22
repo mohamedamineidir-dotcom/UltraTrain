@@ -5,6 +5,8 @@ struct RouteLibraryView: View {
     @Bindable var viewModel: RouteLibraryViewModel
     @State private var showGPXImporter = false
     @State private var showRunPicker = false
+    @State private var showRouteDrawing = false
+    @State private var showTrailSearch = false
 
     var body: some View {
         NavigationStack {
@@ -34,6 +36,19 @@ struct RouteLibraryView: View {
                     onSelect: { run in
                         showRunPicker = false
                         Task { await viewModel.createFromRun(run) }
+                    }
+                )
+            }
+            .sheet(isPresented: $showRouteDrawing) {
+                Task { await viewModel.load() }
+            } content: {
+                RouteDrawingView(routeRepository: viewModel.routeRepository)
+            }
+            .sheet(isPresented: $showTrailSearch) {
+                OSMTrailSearchView(
+                    routeRepository: viewModel.routeRepository,
+                    onImported: {
+                        Task { await viewModel.load() }
                     }
                 )
             }
@@ -121,6 +136,16 @@ struct RouteLibraryView: View {
                     showRunPicker = true
                 } label: {
                     Label("Save from Run", systemImage: "figure.run")
+                }
+                Button {
+                    showRouteDrawing = true
+                } label: {
+                    Label("Draw Route", systemImage: "pencil.and.outline")
+                }
+                Button {
+                    showTrailSearch = true
+                } label: {
+                    Label("Search Trails", systemImage: "magnifyingglass")
                 }
             } label: {
                 Image(systemName: "plus")

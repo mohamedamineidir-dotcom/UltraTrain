@@ -62,6 +62,9 @@ struct UltraTrainApp: App {
     private let raceReflectionRepository: any RaceReflectionRepository
     private let achievementRepository: any AchievementRepository
     private let morningCheckInRepository: any MorningCheckInRepository
+    private let apiClient: APIClient
+    private let authService: AuthService
+    private let syncService: SyncService
     private let deepLinkRouter: DeepLinkRouter
     private let backgroundTaskService: BackgroundTaskService
     private let notificationDelegate: NotificationDelegate
@@ -129,13 +132,29 @@ struct UltraTrainApp: App {
         }
         #endif
 
-        athleteRepository = LocalAthleteRepository(modelContainer: modelContainer)
+        let localAthleteRepo = LocalAthleteRepository(modelContainer: modelContainer)
+        let localRunRepo = LocalRunRepository(modelContainer: modelContainer)
+
+        let auth = AuthService(apiClient: APIClient())
+        let authInterceptor = AuthInterceptor(authService: auth)
+        let client = APIClient(authInterceptor: authInterceptor)
+        let remoteRunDataSource = RemoteRunDataSource(apiClient: client)
+        let sync = SyncService(
+            localRunRepository: localRunRepo,
+            remoteRunDataSource: remoteRunDataSource,
+            authService: auth
+        )
+        apiClient = client
+        authService = auth
+        syncService = sync
+
+        athleteRepository = localAthleteRepo
         raceRepository = LocalRaceRepository(modelContainer: modelContainer)
         planRepository = LocalTrainingPlanRepository(modelContainer: modelContainer)
         planGenerator = TrainingPlanGenerator()
         nutritionRepository = LocalNutritionRepository(modelContainer: modelContainer)
         nutritionGenerator = NutritionPlanGenerator()
-        runRepository = LocalRunRepository(modelContainer: modelContainer)
+        runRepository = SyncedRunRepository(local: localRunRepo, syncService: sync)
         locationService = LocationService()
         fitnessRepository = LocalFitnessRepository(modelContainer: modelContainer)
         fitnessCalculator = FitnessCalculator()
@@ -233,6 +252,9 @@ struct UltraTrainApp: App {
 
         let queueService = stravaUploadQueueService
         Task { await queueService.processQueue() }
+
+        let syncSvc = syncService
+        Task { await syncSvc.processQueue() }
 
         connectivityService.completedRunHandler = {
             [watchRunImportService, athleteRepository, runRepository, connectivityService] runData in

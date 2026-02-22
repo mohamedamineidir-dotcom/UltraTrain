@@ -7,7 +7,7 @@ final class RouteLibraryViewModel {
 
     // MARK: - Dependencies
 
-    private let routeRepository: any RouteRepository
+    let routeRepository: any RouteRepository
     private let runRepository: any RunRepository
 
     // MARK: - State
@@ -96,6 +96,19 @@ final class RouteLibraryViewModel {
         } catch {
             self.error = error.localizedDescription
             Logger.persistence.error("Failed to create route from run: \(error)")
+        }
+    }
+
+    // MARK: - Save Imported Route
+
+    func saveImportedRoute(_ route: SavedRoute) async {
+        do {
+            try await routeRepository.saveRoute(route)
+            routes.insert(route, at: 0)
+            Logger.persistence.info("Saved imported route: \(route.name)")
+        } catch {
+            self.error = error.localizedDescription
+            Logger.persistence.error("Failed to save imported route: \(error)")
         }
     }
 

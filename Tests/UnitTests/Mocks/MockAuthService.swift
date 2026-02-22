@@ -1,0 +1,55 @@
+import Foundation
+@testable import UltraTrain
+
+final class MockAuthService: AuthServiceProtocol, @unchecked Sendable {
+    var shouldFail = false
+    var registeredEmail: String?
+    var isLoggedIn = false
+
+    var registerCallCount = 0
+    var loginCallCount = 0
+    var logoutCallCount = 0
+
+    var lastEmail: String?
+    var lastPassword: String?
+
+    func register(email: String, password: String) async throws {
+        registerCallCount += 1
+        lastEmail = email
+        lastPassword = password
+        if shouldFail {
+            throw DomainError.serverError(message: "Registration failed")
+        }
+        registeredEmail = email
+        isLoggedIn = true
+    }
+
+    func login(email: String, password: String) async throws {
+        loginCallCount += 1
+        lastEmail = email
+        lastPassword = password
+        if shouldFail {
+            throw DomainError.unauthorized
+        }
+        isLoggedIn = true
+    }
+
+    func logout() async throws {
+        logoutCallCount += 1
+        if shouldFail {
+            throw DomainError.serverError(message: "Logout failed")
+        }
+        isLoggedIn = false
+    }
+
+    func getValidAccessToken() async throws -> String {
+        guard isLoggedIn else {
+            throw DomainError.unauthorized
+        }
+        return "mock-token"
+    }
+
+    func isAuthenticated() -> Bool {
+        isLoggedIn
+    }
+}

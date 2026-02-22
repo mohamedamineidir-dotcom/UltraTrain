@@ -23,7 +23,9 @@ enum RaceSwiftDataMapper {
                     name: cp.name,
                     distanceFromStartKm: cp.distanceFromStartKm,
                     elevationM: cp.elevationM,
-                    hasAidStation: cp.hasAidStation
+                    hasAidStation: cp.hasAidStation,
+                    latitude: cp.latitude,
+                    longitude: cp.longitude
                 )
             }
             .sorted { $0.distanceFromStartKm < $1.distanceFromStartKm }
@@ -57,7 +59,9 @@ enum RaceSwiftDataMapper {
                 name: cp.name,
                 distanceFromStartKm: cp.distanceFromStartKm,
                 elevationM: cp.elevationM,
-                hasAidStation: cp.hasAidStation
+                hasAidStation: cp.hasAidStation,
+                latitude: cp.latitude,
+                longitude: cp.longitude
             )
         }
         return RaceSwiftDataModel(

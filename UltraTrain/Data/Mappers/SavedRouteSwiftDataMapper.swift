@@ -18,6 +18,8 @@ enum SavedRouteSwiftDataMapper {
         let distanceFromStartKm: Double
         let elevationM: Double
         let hasAidStation: Bool
+        let latitude: Double?
+        let longitude: Double?
     }
 
     // MARK: - Domain -> SwiftData
@@ -99,7 +101,9 @@ enum SavedRouteSwiftDataMapper {
                 name: $0.name,
                 distanceFromStartKm: $0.distanceFromStartKm,
                 elevationM: $0.elevationM,
-                hasAidStation: $0.hasAidStation
+                hasAidStation: $0.hasAidStation,
+                latitude: $0.latitude,
+                longitude: $0.longitude
             )
         }
         return (try? JSONEncoder().encode(codable)) ?? Data()
@@ -115,7 +119,9 @@ enum SavedRouteSwiftDataMapper {
                 name: $0.name,
                 distanceFromStartKm: $0.distanceFromStartKm,
                 elevationM: $0.elevationM,
-                hasAidStation: $0.hasAidStation
+                hasAidStation: $0.hasAidStation,
+                latitude: $0.latitude,
+                longitude: $0.longitude
             )
         }
     }
