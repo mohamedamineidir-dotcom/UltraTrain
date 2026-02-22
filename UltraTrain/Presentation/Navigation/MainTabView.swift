@@ -51,6 +51,8 @@ struct MainTabView: View {
     private let intervalWorkoutRepository: (any IntervalWorkoutRepository)?
     private let emergencyContactRepository: (any EmergencyContactRepository)?
     private let motionService: (any MotionServiceProtocol)?
+    private let foodLogRepository: any FoodLogRepository
+    private let raceReflectionRepository: any RaceReflectionRepository
 
     init(
         deepLinkRouter: DeepLinkRouter,
@@ -99,7 +101,9 @@ struct MainTabView: View {
         routeRepository: any RouteRepository,
         intervalWorkoutRepository: (any IntervalWorkoutRepository)? = nil,
         emergencyContactRepository: (any EmergencyContactRepository)? = nil,
-        motionService: (any MotionServiceProtocol)? = nil
+        motionService: (any MotionServiceProtocol)? = nil,
+        foodLogRepository: any FoodLogRepository,
+        raceReflectionRepository: any RaceReflectionRepository
     ) {
         self.deepLinkRouter = deepLinkRouter
         self.athleteRepository = athleteRepository
@@ -148,6 +152,8 @@ struct MainTabView: View {
         self.intervalWorkoutRepository = intervalWorkoutRepository
         self.emergencyContactRepository = emergencyContactRepository
         self.motionService = motionService
+        self.foodLogRepository = foodLogRepository
+        self.raceReflectionRepository = raceReflectionRepository
     }
 
     var body: some View {
@@ -232,7 +238,9 @@ struct MainTabView: View {
                 athleteRepository: athleteRepository,
                 raceRepository: raceRepository,
                 planRepository: planRepository,
-                nutritionGenerator: nutritionGenerator
+                nutritionGenerator: nutritionGenerator,
+                foodLogRepository: foodLogRepository,
+                sessionNutritionAdvisor: sessionNutritionAdvisor
             )
                 .tabItem {
                     Label("Nutrition", systemImage: "fork.knife")
@@ -271,7 +279,8 @@ struct MainTabView: View {
                 activityFeedRepository: activityFeedRepository,
                 groupChallengeRepository: groupChallengeRepository,
                 routeRepository: routeRepository,
-                emergencyContactRepository: emergencyContactRepository
+                emergencyContactRepository: emergencyContactRepository,
+                raceReflectionRepository: raceReflectionRepository
             )
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")

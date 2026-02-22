@@ -137,10 +137,26 @@ final class ProfileViewModel {
         widgetDataWriter.reloadWidgets()
     }
 
+    // MARK: - Post-Race Wizard
+
+    var showingPostRaceWizard: Race?
+
     // MARK: - Computed
 
     var sortedRaces: [Race] {
         races.sorted { $0.date < $1.date }
+    }
+
+    var completedRaces: [Race] {
+        sortedRaces.filter { $0.isCompleted }
+    }
+
+    var upcomingRaces: [Race] {
+        sortedRaces.filter { !$0.isCompleted }
+    }
+
+    var pastUncompletedRaces: [Race] {
+        sortedRaces.filter { !$0.isCompleted && $0.date < Date.now }
     }
 
     var aRace: Race? {

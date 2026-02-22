@@ -58,6 +58,8 @@ struct UltraTrainApp: App {
     private let intervalWorkoutRepository: any IntervalWorkoutRepository
     private let emergencyContactRepository: any EmergencyContactRepository
     private let motionService: MotionService
+    private let foodLogRepository: any FoodLogRepository
+    private let raceReflectionRepository: any RaceReflectionRepository
     private let deepLinkRouter: DeepLinkRouter
     private let backgroundTaskService: BackgroundTaskService
     private let notificationDelegate: NotificationDelegate
@@ -98,7 +100,9 @@ struct UltraTrainApp: App {
                 GroupChallengeSwiftDataModel.self,
                 SavedRouteSwiftDataModel.self,
                 IntervalWorkoutSwiftDataModel.self,
-                EmergencyContactSwiftDataModel.self
+                EmergencyContactSwiftDataModel.self,
+                FoodLogEntrySwiftDataModel.self,
+                RaceReflectionSwiftDataModel.self
             ])
             let config: ModelConfiguration
             if isUITesting {
@@ -190,6 +194,8 @@ struct UltraTrainApp: App {
         routeRepository = LocalRouteRepository(modelContainer: modelContainer)
         intervalWorkoutRepository = LocalIntervalWorkoutRepository(modelContainer: modelContainer)
         emergencyContactRepository = LocalEmergencyContactRepository(modelContainer: modelContainer)
+        foodLogRepository = LocalFoodLogRepository(modelContainer: modelContainer)
+        raceReflectionRepository = LocalRaceReflectionRepository(modelContainer: modelContainer)
         motionService = MotionService()
         stravaUploadQueueService = StravaUploadQueueService(
             queueRepository: stravaUploadQueueRepository,
@@ -323,7 +329,9 @@ struct UltraTrainApp: App {
                 routeRepository: routeRepository,
                 intervalWorkoutRepository: intervalWorkoutRepository,
                 emergencyContactRepository: emergencyContactRepository,
-                motionService: motionService
+                motionService: motionService,
+                foodLogRepository: foodLogRepository,
+                raceReflectionRepository: raceReflectionRepository
             )
             .onOpenURL { url in
                 _ = deepLinkRouter.handle(url: url)

@@ -21,6 +21,8 @@ struct Race: Identifiable, Equatable, Sendable {
 
     var hasCourseRoute: Bool { !courseRoute.isEmpty }
 
+    var isCompleted: Bool { actualFinishTime != nil }
+
     var hasLocation: Bool {
         locationLatitude != nil && locationLongitude != nil
     }

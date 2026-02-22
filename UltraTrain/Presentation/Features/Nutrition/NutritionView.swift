@@ -3,13 +3,27 @@ import SwiftUI
 struct NutritionView: View {
     @State private var viewModel: NutritionViewModel
 
+    private let athleteRepository: any AthleteRepository
+    private let planRepository: any TrainingPlanRepository
+    private let nutritionRepository: any NutritionRepository
+    private let foodLogRepository: any FoodLogRepository
+    private let sessionNutritionAdvisor: any SessionNutritionAdvisor
+
     init(
         nutritionRepository: any NutritionRepository,
         athleteRepository: any AthleteRepository,
         raceRepository: any RaceRepository,
         planRepository: any TrainingPlanRepository,
-        nutritionGenerator: any GenerateNutritionPlanUseCase
+        nutritionGenerator: any GenerateNutritionPlanUseCase,
+        foodLogRepository: any FoodLogRepository,
+        sessionNutritionAdvisor: any SessionNutritionAdvisor
     ) {
+        self.athleteRepository = athleteRepository
+        self.planRepository = planRepository
+        self.nutritionRepository = nutritionRepository
+        self.foodLogRepository = foodLogRepository
+        self.sessionNutritionAdvisor = sessionNutritionAdvisor
+
         _viewModel = State(initialValue: NutritionViewModel(
             nutritionRepository: nutritionRepository,
             athleteRepository: athleteRepository,
@@ -21,26 +35,37 @@ struct NutritionView: View {
 
     var body: some View {
         NavigationStack {
-            Group {
-                if viewModel.isLoading {
-                    ProgressView("Loading nutrition plan...")
-                } else if let plan = viewModel.plan {
-                    planContent(plan)
-                } else {
-                    emptyState
+            VStack(spacing: 0) {
+                tabPicker
+
+                Group {
+                    switch viewModel.selectedTab {
+                    case .training:
+                        TrainingNutritionView(
+                            athleteRepository: athleteRepository,
+                            planRepository: planRepository,
+                            nutritionRepository: nutritionRepository,
+                            foodLogRepository: foodLogRepository,
+                            sessionNutritionAdvisor: sessionNutritionAdvisor
+                        )
+                    case .raceDay:
+                        raceDayContent
+                    }
                 }
             }
             .navigationTitle("Nutrition")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        viewModel.showingProductLibrary = true
-                    } label: {
-                        Image(systemName: "list.bullet")
+                    if viewModel.selectedTab == .raceDay {
+                        Button {
+                            viewModel.showingProductLibrary = true
+                        } label: {
+                            Image(systemName: "list.bullet")
+                        }
+                        .accessibilityIdentifier("nutrition.productLibraryButton")
+                        .accessibilityLabel("Product library")
+                        .accessibilityHint("Opens the product library")
                     }
-                    .accessibilityIdentifier("nutrition.productLibraryButton")
-                    .accessibilityLabel("Product library")
-                    .accessibilityHint("Opens the product library")
                 }
             }
             .task {
@@ -56,6 +81,34 @@ struct NutritionView: View {
             }
             .sheet(isPresented: $viewModel.showingProductLibrary) {
                 ProductLibraryView(viewModel: viewModel)
+            }
+        }
+    }
+
+    // MARK: - Tab Picker
+
+    private var tabPicker: some View {
+        Picker("Nutrition Tab", selection: $viewModel.selectedTab) {
+            ForEach(NutritionTab.allCases, id: \.self) { tab in
+                Text(tab.rawValue).tag(tab)
+            }
+        }
+        .pickerStyle(.segmented)
+        .padding(.horizontal, Theme.Spacing.md)
+        .padding(.vertical, Theme.Spacing.sm)
+        .accessibilityIdentifier("nutrition.tabPicker")
+    }
+
+    // MARK: - Race Day Content
+
+    private var raceDayContent: some View {
+        Group {
+            if viewModel.isLoading {
+                ProgressView("Loading nutrition plan...")
+            } else if let plan = viewModel.plan {
+                planContent(plan)
+            } else {
+                emptyState
             }
         }
     }

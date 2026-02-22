@@ -23,6 +23,7 @@ final class NutritionViewModel {
     var error: String?
     var showingProductLibrary = false
     var showingAddProduct = false
+    var selectedTab: NutritionTab = .training
 
     // MARK: - Init
 
@@ -192,4 +193,9 @@ final class NutritionViewModel {
         let minutesEstimate = race.distanceKm * paceMinPerKm * terrainMultiplier + elevationPenalty
         return minutesEstimate * 60
     }
+}
+
+enum NutritionTab: String, CaseIterable {
+    case raceDay = "Race Day"
+    case training = "Training"
 }

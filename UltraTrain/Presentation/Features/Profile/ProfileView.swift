@@ -33,6 +33,7 @@ struct ProfileView: View {
     private let groupChallengeRepository: any GroupChallengeRepository
     private let routeRepository: any RouteRepository
     private let emergencyContactRepository: (any EmergencyContactRepository)?
+    private let raceReflectionRepository: any RaceReflectionRepository
 
     init(
         athleteRepository: any AthleteRepository,
@@ -66,7 +67,8 @@ struct ProfileView: View {
         activityFeedRepository: any ActivityFeedRepository,
         groupChallengeRepository: any GroupChallengeRepository,
         routeRepository: any RouteRepository,
-        emergencyContactRepository: (any EmergencyContactRepository)? = nil
+        emergencyContactRepository: (any EmergencyContactRepository)? = nil,
+        raceReflectionRepository: any RaceReflectionRepository
     ) {
         _viewModel = State(initialValue: ProfileViewModel(
             athleteRepository: athleteRepository,
@@ -105,6 +107,7 @@ struct ProfileView: View {
         self.groupChallengeRepository = groupChallengeRepository
         self.routeRepository = routeRepository
         self.emergencyContactRepository = emergencyContactRepository
+        self.raceReflectionRepository = raceReflectionRepository
     }
 
     var body: some View {
@@ -205,6 +208,15 @@ struct ProfileView: View {
                     Task { await viewModel.updateRace(updated) }
                 }
             }
+            .sheet(item: $viewModel.showingPostRaceWizard) { race in
+                PostRaceWizardView(
+                    race: race,
+                    raceRepository: raceRepository,
+                    raceReflectionRepository: raceReflectionRepository,
+                    runRepository: runRepository,
+                    finishEstimateRepository: finishEstimateRepository
+                )
+            }
         }
     }
 
@@ -303,37 +315,11 @@ struct ProfileView: View {
                 Label("No races configured", systemImage: "flag.checkered")
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             } else {
-                ForEach(viewModel.sortedRaces) { race in
-                    NavigationLink {
-                        FinishEstimationView(
-                            race: race,
-                            finishTimeEstimator: finishTimeEstimator,
-                            athleteRepository: athleteRepository,
-                            runRepository: runRepository,
-                            fitnessCalculator: fitnessCalculator,
-                            nutritionRepository: nutritionRepository,
-                            nutritionGenerator: nutritionGenerator,
-                            raceRepository: raceRepository,
-                            finishEstimateRepository: finishEstimateRepository,
-                            weatherService: weatherService,
-                            locationService: locationService,
-                            checklistRepository: checklistRepository
-                        )
-                    } label: {
-                        RaceRowView(race: race)
-                    }
-                    .swipeActions(edge: .trailing) {
-                        Button("Edit") {
-                            viewModel.raceToEdit = race
-                        }
-                        .tint(.blue)
-                    }
+                if !viewModel.upcomingRaces.isEmpty {
+                    upcomingRacesSubsection
                 }
-                .onDelete { indexSet in
-                    let sorted = viewModel.sortedRaces
-                    for index in indexSet {
-                        Task { await viewModel.deleteRace(id: sorted[index].id) }
-                    }
+                if !viewModel.completedRaces.isEmpty {
+                    completedRacesSubsection
                 }
             }
         } header: {
@@ -351,6 +337,100 @@ struct ProfileView: View {
             }
         }
         .accessibilityIdentifier("profile.racesSection")
+    }
+
+    // MARK: - Upcoming Races
+
+    @ViewBuilder
+    private var upcomingRacesSubsection: some View {
+        Text("Upcoming")
+            .font(.caption.bold())
+            .foregroundStyle(Theme.Colors.secondaryLabel)
+            .listRowSeparator(.hidden)
+        ForEach(viewModel.upcomingRaces) { race in
+            NavigationLink {
+                FinishEstimationView(
+                    race: race,
+                    finishTimeEstimator: finishTimeEstimator,
+                    athleteRepository: athleteRepository,
+                    runRepository: runRepository,
+                    fitnessCalculator: fitnessCalculator,
+                    nutritionRepository: nutritionRepository,
+                    nutritionGenerator: nutritionGenerator,
+                    raceRepository: raceRepository,
+                    finishEstimateRepository: finishEstimateRepository,
+                    weatherService: weatherService,
+                    locationService: locationService,
+                    checklistRepository: checklistRepository
+                )
+            } label: {
+                RaceRowView(race: race)
+            }
+            .swipeActions(edge: .trailing) {
+                Button("Edit") {
+                    viewModel.raceToEdit = race
+                }
+                .tint(.blue)
+                if race.date < Date.now {
+                    Button("Complete") {
+                        viewModel.showingPostRaceWizard = race
+                    }
+                    .tint(Theme.Colors.success)
+                }
+            }
+        }
+        .onDelete { indexSet in
+            let upcoming = viewModel.upcomingRaces
+            for index in indexSet {
+                Task { await viewModel.deleteRace(id: upcoming[index].id) }
+            }
+        }
+    }
+
+    // MARK: - Completed Races
+
+    @ViewBuilder
+    private var completedRacesSubsection: some View {
+        Text("Completed")
+            .font(.caption.bold())
+            .foregroundStyle(Theme.Colors.secondaryLabel)
+            .listRowSeparator(.hidden)
+        ForEach(viewModel.completedRaces) { race in
+            NavigationLink {
+                RaceReportView(
+                    race: race,
+                    raceReflectionRepository: raceReflectionRepository,
+                    finishEstimateRepository: finishEstimateRepository,
+                    runRepository: runRepository
+                )
+            } label: {
+                HStack {
+                    RaceRowView(race: race)
+                    Spacer()
+                    if let time = race.actualFinishTime {
+                        Text(FinishEstimate.formatDuration(time))
+                            .font(.caption.bold().monospacedDigit())
+                            .padding(.horizontal, Theme.Spacing.sm)
+                            .padding(.vertical, Theme.Spacing.xs)
+                            .background(Theme.Colors.success.opacity(0.15))
+                            .foregroundStyle(Theme.Colors.success)
+                            .clipShape(Capsule())
+                    }
+                }
+            }
+            .swipeActions(edge: .trailing) {
+                Button("Edit") {
+                    viewModel.raceToEdit = race
+                }
+                .tint(.blue)
+            }
+        }
+        .onDelete { indexSet in
+            let completed = viewModel.completedRaces
+            for index in indexSet {
+                Task { await viewModel.deleteRace(id: completed[index].id) }
+            }
+        }
     }
 
     // MARK: - Gear Section
