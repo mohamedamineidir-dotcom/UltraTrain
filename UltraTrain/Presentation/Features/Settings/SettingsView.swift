@@ -49,6 +49,7 @@ struct SettingsView: View {
                 ProgressView()
             } else {
                 unitsSection
+                appearanceSection
                 runTrackingSection
                 safetySection
                 securitySection
@@ -56,6 +57,7 @@ struct SettingsView: View {
                 healthKitSection
                 stravaSection
                 iCloudSection
+                dataRetentionSection
                 dataManagementSection
                 aboutSection
             }
@@ -135,6 +137,28 @@ struct SettingsView: View {
                         Text(unit.displayName).tag(unit)
                     }
                 }
+            }
+        }
+    }
+
+    // MARK: - Appearance Section
+
+    @ViewBuilder
+    private var appearanceSection: some View {
+        if let settings = viewModel.appSettings {
+            Section("Appearance") {
+                Picker("Theme", selection: Binding(
+                    get: { settings.appearanceMode },
+                    set: { newMode in
+                        Task { await viewModel.updateAppearanceMode(newMode) }
+                    }
+                )) {
+                    ForEach(AppearanceMode.allCases, id: \.self) { mode in
+                        Text(mode.displayName).tag(mode)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .accessibilityHint("Choose between system, light, or dark appearance")
             }
         }
     }
@@ -314,6 +338,38 @@ struct SettingsView: View {
                 ))
                 .accessibilityIdentifier("settings.weeklySummaryToggle")
                 .accessibilityHint("Sends a weekly training summary notification on Sundays")
+
+                Toggle("Quiet Hours", isOn: Binding(
+                    get: { settings.quietHoursEnabled },
+                    set: { newValue in
+                        Task { await viewModel.updateQuietHours(enabled: newValue) }
+                    }
+                ))
+                .accessibilityHint("Suppresses notifications during specified hours")
+
+                if settings.quietHoursEnabled {
+                    Picker("Start", selection: Binding(
+                        get: { settings.quietHoursStart },
+                        set: { hour in
+                            Task { await viewModel.updateQuietHoursStart(hour) }
+                        }
+                    )) {
+                        ForEach(0..<24, id: \.self) { hour in
+                            Text(formatHour(hour)).tag(hour)
+                        }
+                    }
+
+                    Picker("End", selection: Binding(
+                        get: { settings.quietHoursEnd },
+                        set: { hour in
+                            Task { await viewModel.updateQuietHoursEnd(hour) }
+                        }
+                    )) {
+                        ForEach(0..<24, id: \.self) { hour in
+                            Text(formatHour(hour)).tag(hour)
+                        }
+                    }
+                }
             }
         }
     }
@@ -586,6 +642,32 @@ struct SettingsView: View {
         }
     }
 
+    // MARK: - Data Retention Section
+
+    @ViewBuilder
+    private var dataRetentionSection: some View {
+        if let settings = viewModel.appSettings {
+            Section {
+                Picker("Keep Data For", selection: Binding(
+                    get: { settings.dataRetentionMonths },
+                    set: { months in
+                        Task { await viewModel.updateDataRetention(months) }
+                    }
+                )) {
+                    Text("Forever").tag(0)
+                    Text("6 Months").tag(6)
+                    Text("12 Months").tag(12)
+                    Text("24 Months").tag(24)
+                }
+                .accessibilityHint("Choose how long to keep training data")
+            } header: {
+                Text("Data Retention")
+            } footer: {
+                Text("Older data will be automatically removed. Set to Forever to keep all data.")
+            }
+        }
+    }
+
     // MARK: - Data Management Section
 
     private var dataManagementSection: some View {
@@ -626,7 +708,36 @@ struct SettingsView: View {
         Section("About") {
             LabeledContent("Version", value: AppConfiguration.appVersion)
             LabeledContent("Build", value: AppConfiguration.buildNumber)
+
+            Link(destination: URL(string: "https://apps.apple.com/app/ultratrain")!) {
+                Label("Rate on App Store", systemImage: "star")
+            }
+            .accessibilityHint("Opens the App Store to rate UltraTrain")
+
+            Link(destination: URL(string: "mailto:support@ultratrain.app?subject=UltraTrain%20Feedback")!) {
+                Label("Send Feedback", systemImage: "envelope")
+            }
+            .accessibilityHint("Opens an email to send feedback to the UltraTrain team")
+
+            Link(destination: URL(string: "https://ultratrain.app/privacy")!) {
+                Label("Privacy Policy", systemImage: "hand.raised")
+            }
+            .accessibilityHint("Opens the privacy policy in your browser")
+
+            Link(destination: URL(string: "https://ultratrain.app/terms")!) {
+                Label("Terms of Service", systemImage: "doc.text")
+            }
+            .accessibilityHint("Opens the terms of service in your browser")
         }
+    }
+
+    // MARK: - Helpers
+
+    private func formatHour(_ hour: Int) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        let date = Calendar.current.date(from: DateComponents(hour: hour, minute: 0))!
+        return formatter.string(from: date)
     }
 }
 

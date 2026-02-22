@@ -9,6 +9,7 @@ final class MorningReadinessViewModel {
     private let recoveryRepository: any RecoveryRepository
     private let fitnessCalculator: any CalculateFitnessUseCase
     private let fitnessRepository: any FitnessRepository
+    private let morningCheckInRepository: (any MorningCheckInRepository)?
 
     var readinessScore: ReadinessScore?
     var recoveryScore: RecoveryScore?
@@ -16,6 +17,8 @@ final class MorningReadinessViewModel {
     var hrvReadings: [HRVReading] = []
     var recoveryHistory: [RecoverySnapshot] = []
     var sleepEntry: SleepEntry?
+    var morningCheckIn: MorningCheckIn?
+    var recommendations: [RecoveryRecommendation] = []
     var isLoading = false
     var error: String?
 
@@ -23,12 +26,14 @@ final class MorningReadinessViewModel {
         healthKitService: any HealthKitServiceProtocol,
         recoveryRepository: any RecoveryRepository,
         fitnessCalculator: any CalculateFitnessUseCase,
-        fitnessRepository: any FitnessRepository
+        fitnessRepository: any FitnessRepository,
+        morningCheckInRepository: (any MorningCheckInRepository)? = nil
     ) {
         self.healthKitService = healthKitService
         self.recoveryRepository = recoveryRepository
         self.fitnessCalculator = fitnessCalculator
         self.fitnessRepository = fitnessRepository
+        self.morningCheckInRepository = morningCheckInRepository
     }
 
     func load() async {
@@ -56,6 +61,13 @@ final class MorningReadinessViewModel {
                     fitnessSnapshot: fitnessSnapshot
                 )
             }
+
+            morningCheckIn = try await morningCheckInRepository?.getCheckIn(for: now)
+            recommendations = RecoveryRecommendationEngine.recommend(
+                readiness: readinessScore,
+                checkIn: morningCheckIn,
+                recoveryScore: recoveryScore
+            )
         } catch {
             self.error = error.localizedDescription
             Logger.recovery.error("Failed to load readiness data: \(error)")

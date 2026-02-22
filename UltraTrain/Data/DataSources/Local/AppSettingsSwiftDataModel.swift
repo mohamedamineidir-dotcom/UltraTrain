@@ -23,6 +23,11 @@ final class AppSettingsSwiftDataModel {
     var weeklySummaryEnabled: Bool = true
     var voiceCoachingConfigData: Data?
     var safetyConfigData: Data?
+    var appearanceModeRaw: String = "system"
+    var quietHoursEnabled: Bool = false
+    var quietHoursStart: Int = 22
+    var quietHoursEnd: Int = 7
+    var dataRetentionMonths: Int = 0
     var updatedAt: Date = Date()
 
     init(
@@ -46,6 +51,11 @@ final class AppSettingsSwiftDataModel {
         weeklySummaryEnabled: Bool = true,
         voiceCoachingConfigData: Data? = nil,
         safetyConfigData: Data? = nil,
+        appearanceModeRaw: String = "system",
+        quietHoursEnabled: Bool = false,
+        quietHoursStart: Int = 22,
+        quietHoursEnd: Int = 7,
+        dataRetentionMonths: Int = 0,
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -68,6 +78,11 @@ final class AppSettingsSwiftDataModel {
         self.weeklySummaryEnabled = weeklySummaryEnabled
         self.voiceCoachingConfigData = voiceCoachingConfigData
         self.safetyConfigData = safetyConfigData
+        self.appearanceModeRaw = appearanceModeRaw
+        self.quietHoursEnabled = quietHoursEnabled
+        self.quietHoursStart = quietHoursStart
+        self.quietHoursEnd = quietHoursEnd
+        self.dataRetentionMonths = dataRetentionMonths
         self.updatedAt = updatedAt
     }
 }

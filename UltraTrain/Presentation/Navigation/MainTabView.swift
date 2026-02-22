@@ -53,6 +53,8 @@ struct MainTabView: View {
     private let motionService: (any MotionServiceProtocol)?
     private let foodLogRepository: any FoodLogRepository
     private let raceReflectionRepository: any RaceReflectionRepository
+    private let achievementRepository: (any AchievementRepository)?
+    private let morningCheckInRepository: (any MorningCheckInRepository)?
 
     init(
         deepLinkRouter: DeepLinkRouter,
@@ -103,7 +105,9 @@ struct MainTabView: View {
         emergencyContactRepository: (any EmergencyContactRepository)? = nil,
         motionService: (any MotionServiceProtocol)? = nil,
         foodLogRepository: any FoodLogRepository,
-        raceReflectionRepository: any RaceReflectionRepository
+        raceReflectionRepository: any RaceReflectionRepository,
+        achievementRepository: (any AchievementRepository)? = nil,
+        morningCheckInRepository: (any MorningCheckInRepository)? = nil
     ) {
         self.deepLinkRouter = deepLinkRouter
         self.athleteRepository = athleteRepository
@@ -154,6 +158,8 @@ struct MainTabView: View {
         self.motionService = motionService
         self.foodLogRepository = foodLogRepository
         self.raceReflectionRepository = raceReflectionRepository
+        self.achievementRepository = achievementRepository
+        self.morningCheckInRepository = morningCheckInRepository
     }
 
     var body: some View {
@@ -177,7 +183,9 @@ struct MainTabView: View {
                 weatherService: weatherService,
                 locationService: locationService,
                 challengeRepository: challengeRepository,
-                goalRepository: goalRepository
+                goalRepository: goalRepository,
+                achievementRepository: achievementRepository,
+                morningCheckInRepository: morningCheckInRepository
             )
                 .tabItem {
                     Label("Dashboard", systemImage: "house.fill")

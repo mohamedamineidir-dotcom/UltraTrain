@@ -21,4 +21,9 @@ struct AppSettings: Identifiable, Equatable, Sendable {
     var weeklySummaryEnabled: Bool
     var voiceCoachingConfig: VoiceCoachingConfig = VoiceCoachingConfig()
     var safetyConfig: SafetyConfig = SafetyConfig()
+    var appearanceMode: AppearanceMode = .system
+    var quietHoursEnabled: Bool = false
+    var quietHoursStart: Int = 22
+    var quietHoursEnd: Int = 7
+    var dataRetentionMonths: Int = 0
 }

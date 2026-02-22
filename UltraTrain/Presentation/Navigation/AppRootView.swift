@@ -61,6 +61,8 @@ struct AppRootView: View {
     private let motionService: (any MotionServiceProtocol)?
     private let foodLogRepository: any FoodLogRepository
     private let raceReflectionRepository: any RaceReflectionRepository
+    private let achievementRepository: (any AchievementRepository)?
+    private let morningCheckInRepository: (any MorningCheckInRepository)?
 
     init(
         deepLinkRouter: DeepLinkRouter,
@@ -112,7 +114,9 @@ struct AppRootView: View {
         emergencyContactRepository: (any EmergencyContactRepository)? = nil,
         motionService: (any MotionServiceProtocol)? = nil,
         foodLogRepository: any FoodLogRepository,
-        raceReflectionRepository: any RaceReflectionRepository
+        raceReflectionRepository: any RaceReflectionRepository,
+        achievementRepository: (any AchievementRepository)? = nil,
+        morningCheckInRepository: (any MorningCheckInRepository)? = nil
     ) {
         self.deepLinkRouter = deepLinkRouter
         self.athleteRepository = athleteRepository
@@ -164,6 +168,8 @@ struct AppRootView: View {
         self.motionService = motionService
         self.foodLogRepository = foodLogRepository
         self.raceReflectionRepository = raceReflectionRepository
+        self.achievementRepository = achievementRepository
+        self.morningCheckInRepository = morningCheckInRepository
     }
 
     var body: some View {
@@ -226,7 +232,9 @@ struct AppRootView: View {
                         emergencyContactRepository: emergencyContactRepository,
                         motionService: motionService,
                         foodLogRepository: foodLogRepository,
-                        raceReflectionRepository: raceReflectionRepository
+                        raceReflectionRepository: raceReflectionRepository,
+                        achievementRepository: achievementRepository,
+                        morningCheckInRepository: morningCheckInRepository
                     )
                     .fullScreenCover(isPresented: $showFeatureTour) {
                         FeatureTourView {

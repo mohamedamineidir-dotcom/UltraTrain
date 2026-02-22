@@ -36,7 +36,12 @@ enum AppSettingsSwiftDataMapper {
             recoveryRemindersEnabled: model.recoveryRemindersEnabled,
             weeklySummaryEnabled: model.weeklySummaryEnabled,
             voiceCoachingConfig: voiceCoachingConfig,
-            safetyConfig: safetyConfig
+            safetyConfig: safetyConfig,
+            appearanceMode: AppearanceMode(rawValue: model.appearanceModeRaw) ?? .system,
+            quietHoursEnabled: model.quietHoursEnabled,
+            quietHoursStart: model.quietHoursStart,
+            quietHoursEnd: model.quietHoursEnd,
+            dataRetentionMonths: model.dataRetentionMonths
         )
     }
 
@@ -59,7 +64,12 @@ enum AppSettingsSwiftDataMapper {
             healthKitAutoImportEnabled: settings.healthKitAutoImportEnabled,
             pacingAlertsEnabled: settings.pacingAlertsEnabled,
             recoveryRemindersEnabled: settings.recoveryRemindersEnabled,
-            weeklySummaryEnabled: settings.weeklySummaryEnabled
+            weeklySummaryEnabled: settings.weeklySummaryEnabled,
+            appearanceModeRaw: settings.appearanceMode.rawValue,
+            quietHoursEnabled: settings.quietHoursEnabled,
+            quietHoursStart: settings.quietHoursStart,
+            quietHoursEnd: settings.quietHoursEnd,
+            dataRetentionMonths: settings.dataRetentionMonths
         )
         model.voiceCoachingConfigData = try? JSONEncoder().encode(settings.voiceCoachingConfig)
         model.safetyConfigData = try? JSONEncoder().encode(settings.safetyConfig)

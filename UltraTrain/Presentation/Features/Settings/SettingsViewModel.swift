@@ -634,4 +634,71 @@ final class SettingsViewModel {
             Logger.settings.error("Failed to clear all data: \(error)")
         }
     }
+
+    // MARK: - Appearance
+
+    func updateAppearanceMode(_ mode: AppearanceMode) async {
+        guard var settings = appSettings else { return }
+        settings.appearanceMode = mode
+        do {
+            try await appSettingsRepository.updateSettings(settings)
+            appSettings = settings
+            UserDefaults.standard.set(mode.rawValue, forKey: "appearanceMode")
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update appearance mode: \(error)")
+        }
+    }
+
+    // MARK: - Quiet Hours
+
+    func updateQuietHours(enabled: Bool) async {
+        guard var settings = appSettings else { return }
+        settings.quietHoursEnabled = enabled
+        do {
+            try await appSettingsRepository.updateSettings(settings)
+            appSettings = settings
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update quiet hours: \(error)")
+        }
+    }
+
+    func updateQuietHoursStart(_ hour: Int) async {
+        guard var settings = appSettings else { return }
+        settings.quietHoursStart = hour
+        do {
+            try await appSettingsRepository.updateSettings(settings)
+            appSettings = settings
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update quiet hours start: \(error)")
+        }
+    }
+
+    func updateQuietHoursEnd(_ hour: Int) async {
+        guard var settings = appSettings else { return }
+        settings.quietHoursEnd = hour
+        do {
+            try await appSettingsRepository.updateSettings(settings)
+            appSettings = settings
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update quiet hours end: \(error)")
+        }
+    }
+
+    // MARK: - Data Retention
+
+    func updateDataRetention(_ months: Int) async {
+        guard var settings = appSettings else { return }
+        settings.dataRetentionMonths = months
+        do {
+            try await appSettingsRepository.updateSettings(settings)
+            appSettings = settings
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update data retention: \(error)")
+        }
+    }
 }

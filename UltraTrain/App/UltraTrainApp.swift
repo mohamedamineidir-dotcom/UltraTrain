@@ -60,6 +60,8 @@ struct UltraTrainApp: App {
     private let motionService: MotionService
     private let foodLogRepository: any FoodLogRepository
     private let raceReflectionRepository: any RaceReflectionRepository
+    private let achievementRepository: any AchievementRepository
+    private let morningCheckInRepository: any MorningCheckInRepository
     private let deepLinkRouter: DeepLinkRouter
     private let backgroundTaskService: BackgroundTaskService
     private let notificationDelegate: NotificationDelegate
@@ -102,7 +104,9 @@ struct UltraTrainApp: App {
                 IntervalWorkoutSwiftDataModel.self,
                 EmergencyContactSwiftDataModel.self,
                 FoodLogEntrySwiftDataModel.self,
-                RaceReflectionSwiftDataModel.self
+                RaceReflectionSwiftDataModel.self,
+                UnlockedAchievementSwiftDataModel.self,
+                MorningCheckInSwiftDataModel.self
             ])
             let config: ModelConfiguration
             if isUITesting {
@@ -196,6 +200,8 @@ struct UltraTrainApp: App {
         emergencyContactRepository = LocalEmergencyContactRepository(modelContainer: modelContainer)
         foodLogRepository = LocalFoodLogRepository(modelContainer: modelContainer)
         raceReflectionRepository = LocalRaceReflectionRepository(modelContainer: modelContainer)
+        achievementRepository = LocalAchievementRepository(modelContainer: modelContainer)
+        morningCheckInRepository = LocalMorningCheckInRepository(modelContainer: modelContainer)
         motionService = MotionService()
         stravaUploadQueueService = StravaUploadQueueService(
             queueRepository: stravaUploadQueueRepository,
@@ -278,6 +284,15 @@ struct UltraTrainApp: App {
     }
 
     @Environment(\.scenePhase) private var scenePhase
+    @AppStorage("appearanceMode") private var appearanceModeRaw: String = "system"
+
+    private var colorScheme: ColorScheme? {
+        switch AppearanceMode(rawValue: appearanceModeRaw) {
+        case .light: .light
+        case .dark: .dark
+        default: nil
+        }
+    }
 
     var body: some Scene {
         WindowGroup {
@@ -331,8 +346,11 @@ struct UltraTrainApp: App {
                 emergencyContactRepository: emergencyContactRepository,
                 motionService: motionService,
                 foodLogRepository: foodLogRepository,
-                raceReflectionRepository: raceReflectionRepository
+                raceReflectionRepository: raceReflectionRepository,
+                achievementRepository: achievementRepository,
+                morningCheckInRepository: morningCheckInRepository
             )
+            .preferredColorScheme(colorScheme)
             .onOpenURL { url in
                 _ = deepLinkRouter.handle(url: url)
             }

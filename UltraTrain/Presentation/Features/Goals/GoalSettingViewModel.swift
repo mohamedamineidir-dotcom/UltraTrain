@@ -15,9 +15,14 @@ final class GoalSettingViewModel {
     var error: String?
     var didSave = false
 
+    var isEditing: Bool { existingGoalId != nil }
+
+    private var existingGoalId: UUID?
+
     init(goalRepository: any GoalRepository, existingGoal: TrainingGoal? = nil) {
         self.goalRepository = goalRepository
         if let goal = existingGoal {
+            existingGoalId = goal.id
             period = goal.period
             targetDistanceKm = goal.targetDistanceKm
             targetElevationM = goal.targetElevationM
@@ -35,7 +40,7 @@ final class GoalSettingViewModel {
         let (startDate, endDate) = dateBounds(for: period)
 
         let goal = TrainingGoal(
-            id: UUID(),
+            id: existingGoalId ?? UUID(),
             period: period,
             targetDistanceKm: targetDistanceKm,
             targetElevationM: targetElevationM,

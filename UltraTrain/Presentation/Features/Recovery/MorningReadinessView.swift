@@ -2,18 +2,26 @@ import SwiftUI
 
 struct MorningReadinessView: View {
     @State private var viewModel: MorningReadinessViewModel
+    @State private var showingCheckInSheet = false
+
+    private let morningCheckInRepository: (any MorningCheckInRepository)?
+    private let recoveryRepository: any RecoveryRepository
 
     init(
         healthKitService: any HealthKitServiceProtocol,
         recoveryRepository: any RecoveryRepository,
         fitnessCalculator: any CalculateFitnessUseCase,
-        fitnessRepository: any FitnessRepository
+        fitnessRepository: any FitnessRepository,
+        morningCheckInRepository: (any MorningCheckInRepository)? = nil
     ) {
+        self.morningCheckInRepository = morningCheckInRepository
+        self.recoveryRepository = recoveryRepository
         _viewModel = State(initialValue: MorningReadinessViewModel(
             healthKitService: healthKitService,
             recoveryRepository: recoveryRepository,
             fitnessCalculator: fitnessCalculator,
-            fitnessRepository: fitnessRepository
+            fitnessRepository: fitnessRepository,
+            morningCheckInRepository: morningCheckInRepository
         ))
     }
 
@@ -24,8 +32,15 @@ struct MorningReadinessView: View {
                     ProgressView()
                         .padding(.top, Theme.Spacing.xl)
                 } else if let readiness = viewModel.readinessScore {
+                    checkInButton
                     readinessGaugeSection(readiness)
+                    if let checkIn = viewModel.morningCheckIn {
+                        checkInSummary(checkIn)
+                    }
                     componentBreakdown(readiness)
+                    if !viewModel.recommendations.isEmpty {
+                        RecoveryRecommendationsCard(recommendations: viewModel.recommendations)
+                    }
                     SessionSuggestionCard(recommendation: readiness.sessionRecommendation)
                         .padding(.horizontal, Theme.Spacing.md)
                     if let trend = viewModel.hrvTrend {
@@ -42,6 +57,23 @@ struct MorningReadinessView: View {
                         HRVTrendChart(readings: viewModel.hrvReadings)
                             .padding(.horizontal, Theme.Spacing.md)
                     }
+                    if let repo = morningCheckInRepository {
+                        NavigationLink {
+                            RecoveryHistoryView(
+                                recoveryRepository: recoveryRepository,
+                                morningCheckInRepository: repo
+                            )
+                        } label: {
+                            Label("View Recovery History", systemImage: "clock.arrow.circlepath")
+                                .frame(maxWidth: .infinity)
+                                .padding(Theme.Spacing.md)
+                                .background(
+                                    RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                                        .fill(Theme.Colors.secondaryBackground)
+                                )
+                        }
+                        .padding(.horizontal, Theme.Spacing.md)
+                    }
                 } else {
                     ContentUnavailableView(
                         "No Recovery Data",
@@ -54,6 +86,67 @@ struct MorningReadinessView: View {
         }
         .navigationTitle("Morning Readiness")
         .task { await viewModel.load() }
+        .sheet(isPresented: $showingCheckInSheet, onDismiss: {
+            Task { await viewModel.load() }
+        }) {
+            if let repo = morningCheckInRepository {
+                MorningCheckInSheet(morningCheckInRepository: repo)
+            }
+        }
+    }
+
+    // MARK: - Check-In
+
+    private var checkInButton: some View {
+        Button {
+            showingCheckInSheet = true
+        } label: {
+            Label(
+                viewModel.morningCheckIn != nil ? "Edit Check-In" : "Morning Check-In",
+                systemImage: viewModel.morningCheckIn != nil ? "checkmark.circle.fill" : "plus.circle"
+            )
+            .frame(maxWidth: .infinity)
+            .padding(Theme.Spacing.sm)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                    .fill(Theme.Colors.primary.opacity(0.15))
+            )
+        }
+        .padding(.horizontal, Theme.Spacing.md)
+        .disabled(morningCheckInRepository == nil)
+    }
+
+    private func checkInSummary(_ checkIn: MorningCheckIn) -> some View {
+        HStack(spacing: Theme.Spacing.md) {
+            checkInMetric(emoji: "⚡️", label: "Energy", value: checkIn.perceivedEnergy)
+            Divider().frame(height: 30)
+            checkInMetric(emoji: "💪", label: "Soreness", value: checkIn.muscleSoreness)
+            Divider().frame(height: 30)
+            checkInMetric(emoji: "😊", label: "Mood", value: checkIn.mood)
+            Divider().frame(height: 30)
+            checkInMetric(emoji: "😴", label: "Sleep", value: checkIn.sleepQualitySubjective)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(Theme.Spacing.md)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .fill(Theme.Colors.secondaryBackground)
+        )
+        .padding(.horizontal, Theme.Spacing.md)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Check-in: Energy \(checkIn.perceivedEnergy), Soreness \(checkIn.muscleSoreness), Mood \(checkIn.mood), Sleep \(checkIn.sleepQualitySubjective)")
+    }
+
+    private func checkInMetric(emoji: String, label: String, value: Int) -> some View {
+        VStack(spacing: 2) {
+            Text(emoji)
+                .font(.title3)
+            Text("\(value)/5")
+                .font(.caption.bold().monospacedDigit())
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+        }
     }
 
     // MARK: - Sections

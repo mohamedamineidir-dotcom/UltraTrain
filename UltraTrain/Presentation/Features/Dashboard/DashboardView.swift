@@ -24,6 +24,8 @@ struct DashboardView: View {
     private let locationService: LocationService
     private let challengeRepository: any ChallengeRepository
     private let goalRepository: any GoalRepository
+    private let achievementRepository: (any AchievementRepository)?
+    private let morningCheckInRepository: (any MorningCheckInRepository)?
 
     init(
         selectedTab: Binding<Tab>,
@@ -44,7 +46,9 @@ struct DashboardView: View {
         weatherService: (any WeatherServiceProtocol)? = nil,
         locationService: LocationService,
         challengeRepository: any ChallengeRepository,
-        goalRepository: any GoalRepository
+        goalRepository: any GoalRepository,
+        achievementRepository: (any AchievementRepository)? = nil,
+        morningCheckInRepository: (any MorningCheckInRepository)? = nil
     ) {
         _selectedTab = selectedTab
         self.planRepository = planRepository
@@ -65,6 +69,8 @@ struct DashboardView: View {
         self.locationService = locationService
         self.challengeRepository = challengeRepository
         self.goalRepository = goalRepository
+        self.achievementRepository = achievementRepository
+        self.morningCheckInRepository = morningCheckInRepository
         _viewModel = State(initialValue: DashboardViewModel(
             planRepository: planRepository,
             runRepository: runRepository,
@@ -134,6 +140,29 @@ struct DashboardView: View {
                         onSetGoal: { showGoalSetting = true }
                     )
 
+                    NavigationLink {
+                        GoalHistoryView(
+                            goalRepository: goalRepository,
+                            runRepository: runRepository,
+                            athleteRepository: athleteRepository
+                        )
+                    } label: {
+                        HStack {
+                            Label("Goal History", systemImage: "chart.bar")
+                                .font(.subheadline)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundStyle(Theme.Colors.secondaryLabel)
+                        }
+                        .padding(Theme.Spacing.sm)
+                        .background(
+                            RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                                .fill(Theme.Colors.secondaryBackground)
+                        )
+                    }
+                    .buttonStyle(.plain)
+
                     DashboardZoneDistributionCard(
                         distribution: viewModel.weeklyZoneDistribution
                     )
@@ -143,7 +172,8 @@ struct DashboardView: View {
                             healthKitService: healthKitService,
                             recoveryRepository: recoveryRepository,
                             fitnessCalculator: fitnessCalculator,
-                            fitnessRepository: fitnessRepository
+                            fitnessRepository: fitnessRepository,
+                            morningCheckInRepository: morningCheckInRepository
                         )
                     } label: {
                         DashboardRecoveryCard(
@@ -171,6 +201,21 @@ struct DashboardView: View {
                     }
                     .buttonStyle(.plain)
                     .accessibilityHint("Opens challenges view")
+
+                    if let achievementRepo = achievementRepository {
+                        NavigationLink {
+                            AchievementsView(
+                                achievementRepository: achievementRepo,
+                                runRepository: runRepository,
+                                challengeRepository: challengeRepository,
+                                raceRepository: raceRepository
+                            )
+                        } label: {
+                            DashboardAchievementsCard()
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityHint("Opens achievements view")
+                    }
 
                     if !viewModel.personalRecords.isEmpty {
                         NavigationLink {

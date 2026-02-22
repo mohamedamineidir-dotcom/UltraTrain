@@ -24,7 +24,7 @@ struct GoalSettingView: View {
                 runCountSection
                 durationSection
             }
-            .navigationTitle("Set Goal")
+            .navigationTitle(viewModel.isEditing ? "Edit Goal" : "Set Goal")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
