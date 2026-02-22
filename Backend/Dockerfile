@@ -4,7 +4,7 @@ WORKDIR /app
 COPY Package.swift Package.resolved* ./
 RUN swift package resolve
 COPY Sources Sources
-RUN swift build -c release --static-swift-stdlib
+RUN swift build -c release --static-swift-stdlib --target App
 
 # Run stage
 FROM ubuntu:jammy
