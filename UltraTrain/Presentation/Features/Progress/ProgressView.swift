@@ -39,6 +39,7 @@ struct TrainingProgressView: View {
                         .padding(.top, Theme.Spacing.xl)
                 } else {
                     trainingLoadLink
+                    runFrequencyHeatmapLink
                     thisWeekSection
                     injuryRiskSection
                     phaseTimelineSection
@@ -48,8 +49,10 @@ struct TrainingProgressView: View {
                     elevationChartSection
                     durationChartSection
                     cumulativeVolumeSection
+                    monthlyVolumeSection
                     sessionTypeSection
                     adherenceSection
+                    trainingCalendarSection
                     summarySection
                     paceTrendSection
                     heartRateTrendSection
@@ -86,6 +89,37 @@ struct TrainingProgressView: View {
                 }
                 Spacer()
                 Image(systemName: "chart.line.uptrend.xyaxis")
+                    .foregroundStyle(Theme.Colors.primary)
+                    .accessibilityHidden(true)
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .accessibilityHidden(true)
+            }
+            .cardStyle()
+        }
+    }
+
+    // MARK: - Run Frequency Heatmap Link
+
+    private var runFrequencyHeatmapLink: some View {
+        NavigationLink {
+            RunFrequencyHeatmapView(
+                runRepository: runRepository,
+                athleteRepository: athleteRepository
+            )
+        } label: {
+            HStack {
+                VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+                    Text("Run Heatmap")
+                        .font(.headline)
+                        .foregroundStyle(Theme.Colors.label)
+                    Text("Most frequently run areas")
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
+                Spacer()
+                Image(systemName: "map.fill")
                     .foregroundStyle(Theme.Colors.primary)
                     .accessibilityHidden(true)
                 Image(systemName: "chevron.right")
@@ -223,6 +257,16 @@ struct TrainingProgressView: View {
         }
     }
 
+    // MARK: - Monthly Volume
+
+    @ViewBuilder
+    private var monthlyVolumeSection: some View {
+        if viewModel.monthlyVolumes.count >= 2 {
+            MonthlyVolumeComparisonChart(monthlyVolumes: viewModel.monthlyVolumes)
+                .cardStyle()
+        }
+    }
+
     // MARK: - Session Type Breakdown
 
     @ViewBuilder
@@ -242,6 +286,16 @@ struct TrainingProgressView: View {
             total: viewModel.planAdherence.total,
             weeklyAdherence: viewModel.weeklyAdherence
         )
+    }
+
+    // MARK: - Training Calendar
+
+    @ViewBuilder
+    private var trainingCalendarSection: some View {
+        if !viewModel.calendarHeatmapDays.isEmpty {
+            TrainingCalendarHeatmapView(dayIntensities: viewModel.calendarHeatmapDays)
+                .cardStyle()
+        }
     }
 
     // MARK: - Summary

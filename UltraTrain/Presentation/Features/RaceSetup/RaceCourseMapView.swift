@@ -9,6 +9,7 @@ struct RaceCourseMapView: View {
     var height: CGFloat = 250
 
     @AppStorage("preferredMapStyle") private var mapStyleRaw = MapStylePreference.standard.rawValue
+    @State private var show3DPreview = false
 
     private var mapStyle: MapStylePreference {
         MapStylePreference(rawValue: mapStyleRaw) ?? .standard
@@ -42,6 +43,24 @@ struct RaceCourseMapView: View {
         .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilitySummary)
+        .overlay(alignment: .bottomTrailing) {
+            Button {
+                show3DPreview = true
+            } label: {
+                Image(systemName: "cube")
+                    .font(.body.bold())
+                    .foregroundStyle(.white)
+                    .frame(width: 36, height: 36)
+                    .background(Circle().fill(Theme.Colors.primary).shadow(radius: 2))
+            }
+            .padding(Theme.Spacing.sm)
+            .accessibilityLabel("3D terrain preview")
+        }
+        .sheet(isPresented: $show3DPreview) {
+            NavigationStack {
+                RaceCourse3DPreviewView(courseRoute: courseRoute, checkpoints: checkpoints)
+            }
+        }
     }
 
     // MARK: - Route Polyline

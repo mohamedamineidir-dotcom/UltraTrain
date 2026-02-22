@@ -29,6 +29,8 @@ final class ProgressViewModel {
     var injuryRiskAlerts: [InjuryRiskAlert] = []
     var raceReadiness: RaceReadinessForecast?
     var sessionTypeStats: [SessionTypeStats] = []
+    var monthlyVolumes: [MonthlyVolumeCalculator.MonthlyVolume] = []
+    var calendarHeatmapDays: [TrainingCalendarHeatmapCalculator.DayIntensity] = []
     var isLoading = false
     var error: String?
 
@@ -64,6 +66,8 @@ final class ProgressViewModel {
 
             let runs = try await runRepository.getRuns(for: athlete.id)
             totalRuns = runs.count
+            monthlyVolumes = MonthlyVolumeCalculator.compute(from: runs)
+            calendarHeatmapDays = TrainingCalendarHeatmapCalculator.compute(runs: runs)
             runTrendPoints = computeRunTrends(from: runs)
             personalRecords = computePersonalRecords(from: runs)
 

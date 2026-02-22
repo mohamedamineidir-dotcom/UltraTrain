@@ -37,6 +37,8 @@ final class RunAnalysisViewModel {
     var linkedRaceCourseRoute: [TrackPoint]?
     var zoneCompliance: ZoneComplianceCalculator.ZoneCompliance?
     var trainingStressScore: Double?
+    var paceDistribution: [PaceDistributionCalculator.PaceBucket] = []
+    var gradientPacePoints: [ElevationPaceScatterCalculator.GradientPacePoint] = []
     var isLoading = false
     var error: String?
     var showFullScreenMap = false
@@ -81,6 +83,11 @@ final class RunAnalysisViewModel {
             elevationProfile = ElevationCalculator.elevationProfile(from: run.gpsTrack)
             routeSegments = RunStatisticsCalculator.buildRouteSegments(from: run.gpsTrack)
             elevationSegments = ElevationCalculator.buildElevationSegments(from: run.gpsTrack)
+
+            paceDistribution = PaceDistributionCalculator.compute(trackPoints: run.gpsTrack)
+            if run.gpsTrack.count >= 10 {
+                gradientPacePoints = ElevationPaceScatterCalculator.compute(trackPoints: run.gpsTrack)
+            }
 
             distanceMarkers = RunStatisticsCalculator.buildDistanceMarkers(from: run.gpsTrack)
             segmentDetails = RunStatisticsCalculator.buildSegmentDetails(
@@ -235,6 +242,10 @@ final class RunAnalysisViewModel {
 
     var hasRouteData: Bool {
         run.gpsTrack.count >= 2
+    }
+
+    var splitPaceMap: [Int: Double] {
+        Dictionary(uniqueKeysWithValues: run.splits.map { ($0.kilometerNumber, $0.duration) })
     }
 
     var checkpointDistanceNames: [(name: String, distanceKm: Double)] {

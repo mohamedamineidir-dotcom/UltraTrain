@@ -4,6 +4,7 @@ import MapKit
 struct RunAnalysisView: View {
     @Environment(\.unitPreference) private var units
     @State private var viewModel: RunAnalysisViewModel
+    @State private var showRunReplay = false
 
     init(
         run: CompletedRun,
@@ -62,6 +63,11 @@ struct RunAnalysisView: View {
                         )
                     }
 
+                    if !viewModel.gradientPacePoints.isEmpty {
+                        ElevationPaceScatterChart(points: viewModel.gradientPacePoints)
+                            .cardStyle()
+                    }
+
                     if viewModel.hasRouteData, !viewModel.elevationProfile.isEmpty {
                         InteractiveElevationMapView(
                             elevationProfile: viewModel.elevationProfile,
@@ -72,6 +78,11 @@ struct RunAnalysisView: View {
 
                     if !viewModel.run.splits.isEmpty {
                         PaceSplitsChart(splits: viewModel.run.splits)
+                    }
+
+                    if !viewModel.paceDistribution.isEmpty {
+                        PaceDistributionChart(buckets: viewModel.paceDistribution)
+                            .cardStyle()
                     }
 
                     if viewModel.hasHeartRateData {
@@ -115,6 +126,16 @@ struct RunAnalysisView: View {
         .navigationTitle("Run Analysis")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                if viewModel.hasRouteData {
+                    Button {
+                        showRunReplay = true
+                    } label: {
+                        Image(systemName: "play.circle")
+                    }
+                    .accessibilityLabel("Replay run")
+                }
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     viewModel.showingExportOptions = true
@@ -179,8 +200,14 @@ struct RunAnalysisView: View {
                 heartRateSegments: viewModel.heartRateSegments,
                 distanceMarkers: viewModel.distanceMarkers,
                 segmentDetails: viewModel.segmentDetails,
+                splitPaces: viewModel.splitPaceMap,
                 selectedSegment: $viewModel.selectedSegment
             )
+        }
+        .sheet(isPresented: $showRunReplay) {
+            NavigationStack {
+                RunReplayView(run: viewModel.run)
+            }
         }
     }
 
@@ -220,6 +247,7 @@ struct RunAnalysisView: View {
                 heartRateSegments: viewModel.heartRateSegments,
                 distanceMarkers: viewModel.distanceMarkers,
                 segmentDetails: viewModel.segmentDetails,
+                splitPaces: viewModel.splitPaceMap,
                 selectedSegment: $viewModel.selectedSegment
             )
         }

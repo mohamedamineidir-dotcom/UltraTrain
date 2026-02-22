@@ -11,6 +11,7 @@ struct RouteMapView: View {
     var heartRateSegments: [HeartRateSegment] = []
     var distanceMarkers: [(km: Int, coordinate: (Double, Double))] = []
     var segmentDetails: [SegmentDetail] = []
+    var splitPaces: [Int: Double] = [:]
     @Binding var selectedSegment: SegmentDetail?
     var height: CGFloat = 250
 
@@ -25,8 +26,20 @@ struct RouteMapView: View {
     }
 
     private var filteredMarkers: [(km: Int, coordinate: (Double, Double))] {
-        let step = totalDistanceKm > 20 ? 5 : 1
+        let step: Int
+        if !splitPaces.isEmpty {
+            step = totalDistanceKm > 10 ? 5 : 1
+        } else {
+            step = totalDistanceKm > 20 ? 5 : 1
+        }
         return distanceMarkers.filter { $0.km % step == 0 }
+    }
+
+    private var markerAveragePace: Double {
+        guard !splitPaces.isEmpty else { return 0 }
+        let paces = splitPaces.values.filter { $0 > 0 }
+        guard !paces.isEmpty else { return 0 }
+        return paces.reduce(0, +) / Double(paces.count)
     }
 
     var body: some View {
@@ -143,11 +156,11 @@ struct RouteMapView: View {
                 latitude: marker.coordinate.0,
                 longitude: marker.coordinate.1
             )) {
-                Text("\(marker.km)")
-                    .font(.caption2.bold())
-                    .foregroundStyle(Theme.Colors.label)
-                    .frame(width: 22, height: 22)
-                    .background(Circle().fill(.white).shadow(radius: 1))
+                SplitMarkerBadge(
+                    km: marker.km,
+                    paceSecondsPerKm: splitPaces[marker.km],
+                    averagePace: markerAveragePace
+                )
             }
         }
     }
