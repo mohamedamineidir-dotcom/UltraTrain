@@ -1,4 +1,5 @@
 import ActivityKit
+import AppIntents
 import SwiftUI
 import WidgetKit
 
@@ -41,23 +42,30 @@ struct RunActivityLiveActivity: Widget {
                 }
 
                 DynamicIslandExpandedRegion(.bottom) {
-                    HStack {
-                        Image(systemName: stateIcon(for: context.state.runState))
-                        Text(stateLabel(
-                            for: context.state.runState,
-                            isAutoPaused: context.state.isAutoPaused
-                        ))
-                        .font(.caption2)
-                        .fontWeight(.medium)
-                        .textCase(.uppercase)
+                    VStack(spacing: 6) {
+                        expandedBottomControl(for: context.state)
+                        if let checkpoint = context.state.nextCheckpointName {
+                            HStack(spacing: 4) {
+                                Image(systemName: "flag.fill")
+                                    .font(.caption2)
+                                    .foregroundStyle(.orange)
+                                Text(checkpoint)
+                                    .font(.caption2)
+                                    .foregroundStyle(.white)
+                                if let dist = context.state.distanceToCheckpointKm {
+                                    Text(String(format: "%.1f km", dist))
+                                        .font(.caption2.bold().monospacedDigit())
+                                        .foregroundStyle(.orange)
+                                }
+                            }
+                        }
                     }
-                    .foregroundStyle(stateColor(for: context.state.runState))
                 }
             } compactLeading: {
                 Image(systemName: stateIcon(for: context.state.runState))
                     .foregroundStyle(stateColor(for: context.state.runState))
             } compactTrailing: {
-                Text(context.state.formattedDistance + " km")
+                compactTrailingContent(for: context.state)
                     .font(.caption2)
                     .fontWeight(.semibold)
                     .monospacedDigit()
@@ -65,6 +73,56 @@ struct RunActivityLiveActivity: Widget {
                 Image(systemName: stateIcon(for: context.state.runState))
                     .foregroundStyle(stateColor(for: context.state.runState))
             }
+        }
+    }
+
+    // MARK: - Expanded Bottom Control
+
+    @ViewBuilder
+    private func expandedBottomControl(
+        for state: RunActivityAttributes.ContentState
+    ) -> some View {
+        switch state.runState {
+        case "running":
+            Button(intent: PauseRunIntent()) {
+                HStack(spacing: 4) {
+                    Image(systemName: "pause.fill")
+                    Text("Pause")
+                }
+                .font(.caption.bold())
+            }
+            .tint(.orange)
+        case "paused", "autoPaused":
+            Button(intent: ResumeRunIntent()) {
+                HStack(spacing: 4) {
+                    Image(systemName: "play.fill")
+                    Text("Resume")
+                }
+                .font(.caption.bold())
+            }
+            .tint(.green)
+        default:
+            HStack {
+                Image(systemName: stateIcon(for: state.runState))
+                Text(stateLabel(for: state.runState, isAutoPaused: state.isAutoPaused))
+                    .font(.caption2)
+                    .fontWeight(.medium)
+                    .textCase(.uppercase)
+            }
+            .foregroundStyle(stateColor(for: state.runState))
+        }
+    }
+
+    // MARK: - Compact Trailing
+
+    @ViewBuilder
+    private func compactTrailingContent(
+        for state: RunActivityAttributes.ContentState
+    ) -> some View {
+        if let dist = state.distanceToCheckpointKm, state.nextCheckpointName != nil {
+            Text(String(format: "%.1f km → CP", dist))
+        } else {
+            Text(state.formattedDistance + " km")
         }
     }
 

@@ -67,7 +67,12 @@ struct LiveActivityServiceTests {
             formattedElevation: "+450 m",
             formattedPace: "5:23",
             timerStartDate: Date.now.addingTimeInterval(-3661),
-            isPaused: false
+            isPaused: false,
+            nextCheckpointName: nil,
+            distanceToCheckpointKm: nil,
+            projectedFinishTime: nil,
+            timeDeltaSeconds: nil,
+            activeNutritionReminder: nil
         )
 
         #expect(state.elapsedTime == 3661)
@@ -106,7 +111,12 @@ struct LiveActivityServiceTests {
             formattedElevation: "+100 m",
             formattedPace: "5:00",
             timerStartDate: Date.now,
-            isPaused: true
+            isPaused: true,
+            nextCheckpointName: nil,
+            distanceToCheckpointKm: nil,
+            projectedFinishTime: nil,
+            timeDeltaSeconds: nil,
+            activeNutritionReminder: nil
         )
 
         #expect(state.runState == "autoPaused")
@@ -176,7 +186,12 @@ struct LiveActivityServiceTests {
             formattedElevation: "+0 m",
             formattedPace: "--:--",
             timerStartDate: Date.now,
-            isPaused: isPaused
+            isPaused: isPaused,
+            nextCheckpointName: nil,
+            distanceToCheckpointKm: nil,
+            projectedFinishTime: nil,
+            timeDeltaSeconds: nil,
+            activeNutritionReminder: nil
         )
     }
 }

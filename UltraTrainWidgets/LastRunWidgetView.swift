@@ -1,3 +1,4 @@
+import AppIntents
 import SwiftUI
 import WidgetKit
 
@@ -51,39 +52,49 @@ struct LastRunWidgetView: View {
     // MARK: - Medium
 
     private func mediumView(_ run: WidgetLastRunData) -> some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(spacing: 4) {
-                    Image(systemName: "figure.run")
-                        .font(.subheadline)
-                        .foregroundStyle(.orange)
-                    Text("Last Run")
-                        .font(.subheadline.bold())
-                        .foregroundStyle(.orange)
-                }
+        VStack(spacing: 6) {
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "figure.run")
+                            .font(.subheadline)
+                            .foregroundStyle(.orange)
+                        Text("Last Run")
+                            .font(.subheadline.bold())
+                            .foregroundStyle(.orange)
+                    }
 
-                Text(relativeDate(run.date))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    Spacer(minLength: 0)
+
+                    Text(formatDistance(run.distanceKm))
+                        .font(.title2.bold())
+                }
 
                 Spacer(minLength: 0)
 
-                Text(formatDistance(run.distanceKm))
-                    .font(.title2.bold())
+                VStack(alignment: .trailing, spacing: 6) {
+                    statRow("timer", formatPace(run.averagePaceSecondsPerKm))
+                    statRow("mountain.2.fill", formatElevation(run.elevationGainM))
+                    statRow("clock", formatDuration(run.duration))
+
+                    if let hr = run.averageHeartRate {
+                        statRow("heart.fill", "\(hr) bpm")
+                    }
+
+                    Spacer(minLength: 0)
+                }
             }
 
-            Spacer(minLength: 0)
-
-            VStack(alignment: .trailing, spacing: 6) {
-                statRow("timer", formatPace(run.averagePaceSecondsPerKm))
-                statRow("mountain.2.fill", formatElevation(run.elevationGainM))
-                statRow("clock", formatDuration(run.duration))
-
-                if let hr = run.averageHeartRate {
-                    statRow("heart.fill", "\(hr) bpm")
+            HStack {
+                Text(relativeDate(run.date))
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Button(intent: ViewRunHistoryIntent()) {
+                    Label("Analysis", systemImage: "chart.xyaxis.line")
+                        .font(.caption2.bold())
                 }
-
-                Spacer(minLength: 0)
+                .tint(.orange)
             }
         }
     }

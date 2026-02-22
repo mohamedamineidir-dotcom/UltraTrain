@@ -54,5 +54,12 @@ struct UltraTrainShortcuts: AppShortcutsProvider {
             shortTitle: "Skip Session",
             systemImageName: "forward.fill"
         )
+        AppShortcut(
+            intent: ViewRunHistoryIntent(),
+            phrases: ["Show my run history in \(.applicationName)",
+                      "View run history in \(.applicationName)"],
+            shortTitle: "Run History",
+            systemImageName: "clock.arrow.circlepath"
+        )
     }
 }

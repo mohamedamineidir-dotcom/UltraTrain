@@ -1,3 +1,4 @@
+import AppIntents
 import SwiftUI
 import WidgetKit
 
@@ -47,6 +48,13 @@ struct WeeklyProgressWidgetView: View {
                 target: progress.targetElevationGainM,
                 unit: "D+"
             )
+
+            Button(intent: ShowTrainingPlanIntent()) {
+                Label("View Plan", systemImage: "list.bullet.clipboard")
+                    .font(.caption2.bold())
+            }
+            .tint(.orange)
+            .frame(maxWidth: .infinity, alignment: .trailing)
         }
     }
 

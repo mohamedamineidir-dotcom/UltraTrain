@@ -1,3 +1,4 @@
+import AppIntents
 import Charts
 import SwiftUI
 import WidgetKit
@@ -73,6 +74,12 @@ struct FitnessTrendWidgetView: View {
                 statRow("TSB", value: Int(fitness.form), color: formColor(fitness.form))
 
                 Spacer(minLength: 0)
+
+                Button(intent: ShowProgressIntent()) {
+                    Label("View", systemImage: "arrow.right.circle")
+                        .font(.caption2.bold())
+                }
+                .tint(.orange)
             }
         }
     }

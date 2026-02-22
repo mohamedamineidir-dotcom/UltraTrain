@@ -34,6 +34,15 @@ final class ConnectivityHandler {
         let activeReminderMessage: String?
         let activeReminderType: String?
         let linkedSessionName: String?
+
+        // Race mode
+        let nextCheckpointName: String?
+        let distanceToCheckpointKm: Double?
+        let projectedFinishTime: String?
+        let timeDeltaSeconds: Double?
+
+        // Nutrition
+        let activeNutritionReminder: String?
     }
 
     // MARK: - Init
@@ -168,7 +177,12 @@ final class ConnectivityHandler {
             formattedElevation: snapshot.formattedElevation,
             formattedPace: snapshot.currentPace,
             timerStartDate: timerStartDate,
-            isPaused: isPaused
+            isPaused: isPaused,
+            nextCheckpointName: snapshot.nextCheckpointName,
+            distanceToCheckpointKm: snapshot.distanceToCheckpointKm,
+            projectedFinishTime: snapshot.projectedFinishTime,
+            timeDeltaSeconds: snapshot.timeDeltaSeconds,
+            activeNutritionReminder: snapshot.activeNutritionReminder
         )
     }
 

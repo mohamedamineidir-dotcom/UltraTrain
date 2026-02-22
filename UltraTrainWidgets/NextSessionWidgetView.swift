@@ -49,9 +49,19 @@ struct NextSessionWidgetView: View {
 
             Spacer(minLength: 0)
 
-            Text(formatDate(session.date))
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+            HStack {
+                Text(formatDate(session.date))
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+
+                Spacer()
+
+                Button(intent: StartRunIntent()) {
+                    Label("Start", systemImage: "play.fill")
+                        .font(.caption2.bold())
+                }
+                .tint(.green)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }

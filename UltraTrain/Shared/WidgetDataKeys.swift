@@ -9,4 +9,5 @@ enum WidgetDataKeys {
     static let fitnessData = "widget.fitnessData"
     static let pendingAction = "widget.pendingAction"
     static let deepLink = "widget.deepLink"
+    static let runCommand = "widget.runCommand"
 }

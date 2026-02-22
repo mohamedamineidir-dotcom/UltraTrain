@@ -23,6 +23,15 @@ struct RunActivityAttributes: ActivityAttributes {
         let formattedPace: String
         let timerStartDate: Date
         let isPaused: Bool
+
+        // Race mode (optional — backward compatible)
+        let nextCheckpointName: String?
+        let distanceToCheckpointKm: Double?
+        let projectedFinishTime: String?
+        let timeDeltaSeconds: Double?
+
+        // Nutrition (optional — backward compatible)
+        let activeNutritionReminder: String?
     }
 }
 #endif

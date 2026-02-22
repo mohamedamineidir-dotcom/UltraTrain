@@ -1,3 +1,4 @@
+import AppIntents
 import SwiftUI
 import WidgetKit
 
@@ -9,7 +10,10 @@ struct RunActivityLockScreenView: View {
     var body: some View {
         VStack(spacing: 12) {
             headerRow
+            raceProgressRow
             metricsGrid
+            controlButtons
+            nutritionBanner
         }
         .padding(16)
         .activityBackgroundTint(.black.opacity(0.75))
@@ -113,6 +117,91 @@ struct RunActivityLockScreenView: View {
         .foregroundStyle(stateColor)
     }
 
+    // MARK: - Race Progress
+
+    @ViewBuilder
+    private var raceProgressRow: some View {
+        if let checkpoint = state.nextCheckpointName {
+            VStack(spacing: 4) {
+                HStack(spacing: 8) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "flag.fill")
+                            .font(.caption2)
+                            .foregroundStyle(.orange)
+                        Text(checkpoint)
+                            .font(.caption.bold())
+                            .foregroundStyle(.white)
+                    }
+
+                    Spacer()
+
+                    if let dist = state.distanceToCheckpointKm {
+                        Text(String(format: "%.1f km", dist))
+                            .font(.caption.bold().monospacedDigit())
+                            .foregroundStyle(.orange)
+                    }
+                }
+
+                if let projected = state.projectedFinishTime {
+                    HStack(spacing: 8) {
+                        Text("Finish: \(projected)")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                        if let delta = state.timeDeltaSeconds {
+                            Text(formatDelta(delta))
+                                .font(.caption2.bold())
+                                .foregroundStyle(delta >= 0 ? .green : .red)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - Control Buttons
+
+    @ViewBuilder
+    private var controlButtons: some View {
+        switch state.runState {
+        case "running":
+            Button(intent: PauseRunIntent()) {
+                Label("Pause", systemImage: "pause.fill")
+                    .font(.caption.bold())
+                    .frame(maxWidth: .infinity)
+            }
+            .tint(.orange)
+        case "paused", "autoPaused":
+            Button(intent: ResumeRunIntent()) {
+                Label("Resume", systemImage: "play.fill")
+                    .font(.caption.bold())
+                    .frame(maxWidth: .infinity)
+            }
+            .tint(.green)
+        default:
+            EmptyView()
+        }
+    }
+
+    // MARK: - Nutrition Banner
+
+    @ViewBuilder
+    private var nutritionBanner: some View {
+        if let reminder = state.activeNutritionReminder {
+            HStack(spacing: 6) {
+                Image(systemName: "drop.fill")
+                    .font(.caption2)
+                    .foregroundStyle(.cyan)
+                Text(reminder)
+                    .font(.caption2)
+                    .foregroundStyle(.white)
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(Color.cyan.opacity(0.2))
+            .clipShape(RoundedRectangle(cornerRadius: 6))
+        }
+    }
+
     // MARK: - Helpers
 
     private var stateIcon: String {
@@ -149,5 +238,13 @@ struct RunActivityLockScreenView: View {
         let minutes = (totalSeconds % 3600) / 60
         let secs = totalSeconds % 60
         return String(format: "%d:%02d:%02d", hours, minutes, secs)
+    }
+
+    private func formatDelta(_ seconds: Double) -> String {
+        let absSeconds = abs(Int(seconds))
+        let mins = absSeconds / 60
+        let secs = absSeconds % 60
+        let sign = seconds >= 0 ? "+" : "-"
+        return String(format: "%@%d:%02d", sign, mins, secs)
     }
 }

@@ -46,6 +46,7 @@ struct RaceCountdownWidgetView: View {
             .tint(.orange)
             .scaleEffect(y: 0.8)
         }
+        .widgetURL(URL(string: "ultratrain://plan"))
     }
 
     // MARK: - Empty

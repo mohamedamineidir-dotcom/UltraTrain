@@ -361,6 +361,21 @@ final class ActiveRunViewModel {
         }
     }
 
+    // MARK: - Private — Widget Commands
+
+    private func processWidgetRunCommands() {
+        guard let command = WidgetDataReader.readRunCommand() else { return }
+        WidgetDataReader.clearRunCommand()
+        switch command {
+        case "pause":
+            if runState == .running { pauseRun() }
+        case "resume":
+            if runState == .paused { resumeRun() }
+        default:
+            break
+        }
+    }
+
     // MARK: - Private — Timer
 
     private func startTimer() {
@@ -368,6 +383,7 @@ final class ActiveRunViewModel {
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(AppConfiguration.RunTracking.timerInterval))
                 guard !Task.isCancelled, let self else { break }
+                self.processWidgetRunCommands()
                 self.elapsedTime += AppConfiguration.RunTracking.timerInterval
                 self.updateLiveHRZone()
                 let context = self.buildNutritionContext()
@@ -533,7 +549,9 @@ final class ActiveRunViewModel {
     }
 
     private func buildSnapshot() -> ConnectivityHandler.RunSnapshot {
-        ConnectivityHandler.RunSnapshot(
+        let raceModeData = buildRaceModeSnapshotData()
+
+        return ConnectivityHandler.RunSnapshot(
             runState: runState, elapsedTime: elapsedTime, distanceKm: distanceKm,
             currentPace: currentPace, currentHeartRate: currentHeartRate,
             elevationGainM: elevationGainM, formattedTime: formattedTime,
@@ -541,8 +559,52 @@ final class ActiveRunViewModel {
             isAutoPaused: isAutoPaused,
             activeReminderMessage: nutritionHandler.activeReminder?.message,
             activeReminderType: nutritionHandler.activeReminder?.type.rawValue,
-            linkedSessionName: linkedSession?.description
+            linkedSessionName: linkedSession?.description,
+            nextCheckpointName: raceModeData.nextCheckpointName,
+            distanceToCheckpointKm: raceModeData.distanceToCheckpointKm,
+            projectedFinishTime: raceModeData.projectedFinishTime,
+            timeDeltaSeconds: raceModeData.timeDeltaSeconds,
+            activeNutritionReminder: nutritionHandler.activeReminder?.message
         )
+    }
+
+    private func buildRaceModeSnapshotData() -> (
+        nextCheckpointName: String?,
+        distanceToCheckpointKm: Double?,
+        projectedFinishTime: String?,
+        timeDeltaSeconds: Double?
+    ) {
+        guard isRaceModeActive else {
+            return (nil, nil, nil, nil)
+        }
+
+        let checkpointName = racePacingHandler.nextCheckpoint?.checkpointName
+        let distToCheckpoint = racePacingHandler.distanceToNextCheckpointKm(currentDistanceKm: distanceKm)
+
+        var projectedFinishStr: String?
+        var timeDelta: Double?
+
+        if let guidance = racePacingHandler.racePacingGuidance {
+            projectedFinishStr = RunStatisticsCalculator.formatDuration(guidance.projectedFinishTime)
+
+            switch guidance.projectedFinishScenario {
+            case .aheadOfPlan:
+                let diff = guidance.segmentTimeBudgetRemaining
+                timeDelta = diff > 0 ? diff : nil
+            case .behindPlan:
+                let diff = guidance.segmentTimeBudgetRemaining
+                timeDelta = diff > 0 ? -diff : nil
+            case .onPlan:
+                timeDelta = 0
+            }
+        } else {
+            let context = buildPacingContext()
+            if let projected = racePacingHandler.projectedFinishTime(context: context) {
+                projectedFinishStr = RunStatisticsCalculator.formatDuration(projected)
+            }
+        }
+
+        return (checkpointName, distToCheckpoint, projectedFinishStr, timeDelta)
     }
 
     private func buildVoiceSnapshot() -> VoiceCueBuilder.RunSnapshot {

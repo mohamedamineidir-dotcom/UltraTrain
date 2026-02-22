@@ -29,6 +29,8 @@ final class DeepLinkRouter {
             pendingDeepLink = .tab(.nutrition)
         case "profile":
             pendingDeepLink = .tab(.profile)
+        case "runHistory":
+            pendingDeepLink = .tab(.run)
         case "readiness":
             pendingDeepLink = .morningReadiness
         default:
