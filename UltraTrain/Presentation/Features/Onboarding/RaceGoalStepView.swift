@@ -114,6 +114,7 @@ struct RaceGoalStepView: View {
                 }
             }
             .pickerStyle(.segmented)
+            .accessibilityHint("Choose your race goal: finish, target time, or target ranking")
 
             if viewModel.raceGoalType == .targetTime {
                 targetTimeFields
@@ -158,6 +159,7 @@ struct RaceGoalStepView: View {
                 }
             }
             .pickerStyle(.segmented)
+            .accessibilityHint("Select the terrain difficulty of your race course")
         }
         .cardStyle()
     }

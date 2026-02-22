@@ -79,6 +79,7 @@ struct SocialProfileView: View {
     private var privacySection: some View {
         Section("Privacy") {
             Toggle("Public Profile", isOn: $viewModel.isPublicProfile)
+                .accessibilityHint("Makes your profile visible to all users")
             if viewModel.isPublicProfile {
                 Label(
                     "Your stats and activity will be visible to all users.",
@@ -120,6 +121,8 @@ struct SocialProfileView: View {
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label): \(value)")
     }
 
     // MARK: - Save
@@ -140,6 +143,7 @@ struct SocialProfileView: View {
                 }
             }
             .disabled(viewModel.displayName.isEmpty || viewModel.isSaving)
+            .accessibilityHint("Saves your social profile changes")
         }
     }
 }

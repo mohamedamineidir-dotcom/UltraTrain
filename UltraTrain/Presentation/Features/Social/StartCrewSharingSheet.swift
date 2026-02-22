@@ -60,6 +60,7 @@ struct StartCrewSharingSheet: View {
                 HStack(spacing: Theme.Spacing.sm) {
                     Image(systemName: "person.circle.fill")
                         .foregroundStyle(Theme.Colors.primary)
+                        .accessibilityHidden(true)
                     Text(participant.displayName)
                         .font(.subheadline)
                     Spacer()
@@ -81,5 +82,6 @@ struct StartCrewSharingSheet: View {
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(.borderedProminent)
+        .accessibilityHint("Shares the session ID via the system share sheet")
     }
 }

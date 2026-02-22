@@ -33,13 +33,4 @@ enum Theme {
         static let md: CGFloat = 12
         static let lg: CGFloat = 16
     }
-
-    enum FontSize {
-        static let caption: CGFloat = 12
-        static let body: CGFloat = 16
-        static let title3: CGFloat = 20
-        static let title2: CGFloat = 24
-        static let title: CGFloat = 28
-        static let largeTitle: CGFloat = 34
-    }
 }

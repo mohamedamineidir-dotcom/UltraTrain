@@ -6,6 +6,7 @@ struct FriendRow: View {
     var body: some View {
         HStack(spacing: Theme.Spacing.md) {
             profilePhoto
+                .accessibilityHidden(true)
             Text(connection.friendDisplayName)
                 .font(.body)
                 .lineLimit(1)
@@ -14,8 +15,10 @@ struct FriendRow: View {
             Image(systemName: "chevron.right")
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .accessibilityHidden(true)
         }
         .padding(.vertical, Theme.Spacing.xs)
+        .accessibilityElement(children: .combine)
     }
 
     // MARK: - Photo

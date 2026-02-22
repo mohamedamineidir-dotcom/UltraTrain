@@ -105,9 +105,25 @@ struct WeekCardView: View {
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
                     .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                    .accessibilityHidden(true)
             }
         }
         .buttonStyle(.plain)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(weekHeaderAccessibilityLabel)
+        .accessibilityHint(isExpanded ? "Double-tap to collapse sessions" : "Double-tap to expand sessions")
+        .accessibilityAddTraits(.isButton)
+    }
+
+    private var weekHeaderAccessibilityLabel: String {
+        var label = "Week \(week.weekNumber), \(week.phase.displayName) phase"
+        if week.isRecoveryWeek {
+            label += ", recovery week"
+        }
+        label += ". \(UnitFormatter.formatDistance(week.targetVolumeKm, unit: units, decimals: 0))"
+        label += ", \(UnitFormatter.formatElevation(week.targetElevationGainM, unit: units)) elevation"
+        label += ". \(progressText)"
+        return label
     }
 
     private var sessionsList: some View {

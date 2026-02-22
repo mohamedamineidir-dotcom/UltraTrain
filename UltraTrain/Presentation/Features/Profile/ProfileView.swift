@@ -142,6 +142,7 @@ struct ProfileView: View {
                         )
                     } label: {
                         Image(systemName: "gearshape")
+                            .accessibilityLabel("Settings")
                     }
                 }
             }
@@ -215,6 +216,7 @@ struct ProfileView: View {
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
+                .accessibilityElement(children: .combine)
                 athleteStatsGrid(athlete)
                 NavigationLink {
                     HRZoneConfigurationView(athlete: athlete) { updated in
@@ -278,6 +280,8 @@ struct ProfileView: View {
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label): \(value) \(unit)")
     }
 
     // MARK: - Races Section
@@ -329,7 +333,9 @@ struct ProfileView: View {
                     viewModel.showingAddRace = true
                 } label: {
                     Image(systemName: "plus.circle.fill")
+                        .accessibilityLabel("Add Race")
                 }
+                .accessibilityHint("Opens the form to add a new race")
             }
         }
     }

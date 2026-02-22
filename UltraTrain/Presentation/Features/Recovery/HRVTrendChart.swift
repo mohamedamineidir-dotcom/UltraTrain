@@ -41,6 +41,11 @@ struct HRVTrendChart: View {
             }
             .chartYAxisLabel("SDNN (ms)")
             .frame(height: 180)
+            .chartAccessibility(summary: AccessibilityFormatters.chartSummary(
+                title: "HRV trend",
+                dataPoints: readings.count,
+                trend: "showing heart rate variability over time with 7-day moving average"
+            ))
         }
         .cardStyle()
     }

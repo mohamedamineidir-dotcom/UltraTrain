@@ -32,6 +32,7 @@ struct NutritionReminderBanner: View {
                     .clipShape(Circle())
             }
             .accessibilityLabel("Taken")
+            .accessibilityHint("Mark this nutrition reminder as taken")
 
             Button {
                 onSkipped()
@@ -44,6 +45,7 @@ struct NutritionReminderBanner: View {
                     .clipShape(Circle())
             }
             .accessibilityLabel("Skip")
+            .accessibilityHint("Skip this nutrition reminder")
         }
         .padding(Theme.Spacing.md)
         .background(

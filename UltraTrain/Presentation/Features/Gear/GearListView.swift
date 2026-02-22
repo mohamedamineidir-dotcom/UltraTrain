@@ -32,6 +32,8 @@ struct GearListView: View {
                 } label: {
                     Image(systemName: "plus")
                 }
+                .accessibilityLabel("Add gear")
+                .accessibilityHint("Opens the add gear form")
             }
         }
         .task {
@@ -68,6 +70,7 @@ struct GearListView: View {
                 Image(systemName: "shoe.fill")
                     .font(.largeTitle)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .accessibilityHidden(true)
                 Text("No Gear Yet")
                     .font(.headline)
                 Text("Add your trail shoes and other gear to track their mileage and know when to replace them.")

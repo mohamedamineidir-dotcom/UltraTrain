@@ -102,6 +102,8 @@ struct MorningReadinessView: View {
             }
             .frame(height: 6)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label): \(score) out of 100")
     }
 
     private func hrvSection(_ trend: HRVAnalyzer.HRVTrend) -> some View {
@@ -155,6 +157,8 @@ struct MorningReadinessView: View {
             }
         }
         .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Sleep: \(String(format: "%.1f", sleep.totalSleepDuration / 3600)) hours, Deep: \(String(format: "%.1f", sleep.deepSleepDuration / 3600)) hours, Efficiency: \(Int(sleep.sleepEfficiency * 100)) percent")
         .padding(Theme.Spacing.md)
         .background(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)

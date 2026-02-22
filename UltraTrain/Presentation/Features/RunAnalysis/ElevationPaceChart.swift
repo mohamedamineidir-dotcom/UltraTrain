@@ -63,7 +63,7 @@ struct ElevationPaceChart: View {
                     if let normalized = value.as(Double.self) {
                         let alt = denormalizeAltitude(normalized)
                         Text(UnitFormatter.formatElevation(alt, unit: units))
-                            .font(.system(size: 8))
+                            .font(.caption2)
                     }
                 }
             }
@@ -72,7 +72,7 @@ struct ElevationPaceChart: View {
                     if let normalized = value.as(Double.self) {
                         let pace = denormalizePace(normalized)
                         Text(RunStatisticsCalculator.formatPace(pace, unit: units))
-                            .font(.system(size: 8))
+                            .font(.caption2)
                     }
                 }
             }
@@ -168,7 +168,7 @@ struct ElevationPaceChart: View {
                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
                 .annotation(position: .top, spacing: 2) {
                     Text(cp.name)
-                        .font(.system(size: 7))
+                        .font(.caption2)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
         }

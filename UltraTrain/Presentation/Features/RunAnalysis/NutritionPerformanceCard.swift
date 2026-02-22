@@ -42,6 +42,8 @@ struct NutritionPerformanceCard: View {
                 .font(.headline.monospacedDigit())
         }
         .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label), \(value)")
     }
 
     private var adherenceBar: some View {
@@ -83,6 +85,7 @@ struct NutritionPerformanceCard: View {
 
             Image(systemName: "arrow.right")
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .accessibilityHidden(true)
 
             Spacer()
 
@@ -96,6 +99,8 @@ struct NutritionPerformanceCard: View {
 
             paceChangeIndicator(impact.paceChangePercent)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Nutrition impact: pace before first intake \(RunStatisticsCalculator.formatPace(impact.averagePaceBeforeFirstIntake, unit: units)), after last intake \(RunStatisticsCalculator.formatPace(impact.averagePaceAfterLastIntake, unit: units)), change \(String(format: "%.1f", abs(impact.paceChangePercent))) percent \(impact.paceChangePercent < 0 ? "faster" : "slower")")
     }
 
     private func paceChangeIndicator(_ changePercent: Double) -> some View {

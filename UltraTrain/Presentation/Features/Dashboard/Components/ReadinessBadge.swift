@@ -9,6 +9,7 @@ struct ReadinessBadge: View {
             Circle()
                 .fill(statusColor)
                 .frame(width: 8, height: 8)
+                .accessibilityHidden(true)
             Text("\(status.displayLabel) \(score)")
                 .font(.caption.bold())
                 .foregroundStyle(statusColor)
@@ -19,6 +20,8 @@ struct ReadinessBadge: View {
             Capsule()
                 .fill(statusColor.opacity(0.12))
         )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Readiness: \(status.displayLabel), score \(score)")
     }
 
     private var statusColor: Color {

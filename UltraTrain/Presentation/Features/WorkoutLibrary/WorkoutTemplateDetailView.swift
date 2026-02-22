@@ -25,6 +25,7 @@ struct WorkoutTemplateDetailView: View {
             Image(systemName: template.category.iconName)
                 .font(.largeTitle)
                 .foregroundStyle(template.intensity.color)
+                .accessibilityHidden(true)
 
             Text(template.category.displayName)
                 .font(.subheadline)
@@ -89,6 +90,7 @@ struct WorkoutTemplateDetailView: View {
             Image(systemName: icon)
                 .font(.title3)
                 .foregroundStyle(Theme.Colors.primary)
+                .accessibilityHidden(true)
             Text(value)
                 .font(.subheadline.bold())
             Text(title)
@@ -98,6 +100,8 @@ struct WorkoutTemplateDetailView: View {
         .frame(maxWidth: .infinity)
         .padding(Theme.Spacing.md)
         .cardStyle()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(title): \(value)")
     }
 
     // MARK: - Add Button
@@ -112,5 +116,6 @@ struct WorkoutTemplateDetailView: View {
         .buttonStyle(.borderedProminent)
         .controlSize(.large)
         .padding(.top, Theme.Spacing.sm)
+        .accessibilityHint("Schedules this workout in your training plan")
     }
 }

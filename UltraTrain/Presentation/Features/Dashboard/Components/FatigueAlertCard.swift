@@ -45,6 +45,8 @@ struct FatigueAlertCard: View {
             }
             Spacer()
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(titleForType(pattern.type)): \(pattern.recommendation)")
     }
 
     // MARK: - Helpers

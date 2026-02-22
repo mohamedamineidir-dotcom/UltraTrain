@@ -56,6 +56,8 @@ struct PacingSummaryCard: View {
                     .font(.title3.bold().monospacedDigit())
                     .foregroundStyle(Theme.Colors.primary)
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Average target pace: \(AccessibilityFormatters.pace(UnitFormatter.formatPace(pacingResult.averageTargetPaceSecondsPerKm, unit: units), unit: units))")
 
             Spacer()
 
@@ -116,6 +118,8 @@ struct PacingSummaryCard: View {
                 .font(.subheadline.bold().monospacedDigit())
         }
         .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label): \(AccessibilityFormatters.duration(time))")
     }
 
     // MARK: - Terrain Profile
@@ -138,6 +142,8 @@ struct PacingSummaryCard: View {
                 .foregroundStyle(zone.color)
         }
         .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label) pace: \(AccessibilityFormatters.pace(UnitFormatter.formatPace(pace, unit: units), unit: units))")
     }
 
     // MARK: - Dwell Time Stepper

@@ -148,6 +148,7 @@ struct ActiveRunView: View {
                     .font(.subheadline.bold())
                     .foregroundStyle(Theme.Colors.warning)
                     .transition(.opacity)
+                    .accessibilityLabel("Run is auto paused")
             }
         }
         .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.isAutoPaused)
@@ -241,6 +242,7 @@ struct ActiveRunView: View {
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(label)
+        .accessibilityHint("Double tap to \(label.lowercased()) the run")
         .accessibilityAddTraits(.isButton)
         .accessibilityIdentifier(accessibilityID)
     }

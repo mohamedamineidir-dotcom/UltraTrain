@@ -118,5 +118,7 @@ struct RunMapView: View {
         .animation(reduceMotion ? .none : .easeInOut(duration: 0.2), value: isFollowing)
         .frame(height: height)
         .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Run route map showing \(coordinates.count) tracked points")
     }
 }

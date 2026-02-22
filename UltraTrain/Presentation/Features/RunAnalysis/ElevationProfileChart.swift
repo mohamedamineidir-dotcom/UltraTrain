@@ -137,7 +137,7 @@ struct ElevationProfileChart: View {
                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
                 .annotation(position: .top, spacing: 2) {
                     Text(cp.name)
-                        .font(.system(size: 7))
+                        .font(.caption2)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
         }
@@ -156,7 +156,7 @@ struct ElevationProfileChart: View {
             .symbolSize(30)
             .annotation(position: .top, spacing: 2) {
                 Text(UnitFormatter.formatElevation(ext.highest.altitudeM, unit: units))
-                    .font(.system(size: 8).bold())
+                    .font(.caption2.bold())
                     .foregroundStyle(Theme.Colors.danger)
             }
 
@@ -168,7 +168,7 @@ struct ElevationProfileChart: View {
             .symbolSize(30)
             .annotation(position: .bottom, spacing: 2) {
                 Text(UnitFormatter.formatElevation(ext.lowest.altitudeM, unit: units))
-                    .font(.system(size: 8).bold())
+                    .font(.caption2.bold())
                     .foregroundStyle(Theme.Colors.success)
             }
         }
@@ -253,7 +253,7 @@ struct ElevationProfileChart: View {
                         .fill(GradientColorHelper.color(for: category))
                         .frame(width: 7, height: 7)
                     Text(legendLabel(for: category))
-                        .font(.system(size: 9))
+                        .font(.caption2)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
             }

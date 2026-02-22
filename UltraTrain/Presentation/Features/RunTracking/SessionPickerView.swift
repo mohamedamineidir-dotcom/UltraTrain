@@ -21,6 +21,8 @@ struct SessionPickerView: View {
                         selectedSession = session
                     }
                 }
+                .accessibilityAddTraits(.isButton)
+                .accessibilityHint(selectedSession?.id == session.id ? "Double tap to deselect" : "Double tap to select this session")
             }
         }
     }
@@ -36,6 +38,7 @@ private struct SessionPickerRow: View {
             Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                 .foregroundStyle(isSelected ? Theme.Colors.primary : Theme.Colors.secondaryLabel)
                 .font(.title3)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                 Text(session.type.rawValue.capitalized)
@@ -76,6 +79,8 @@ private struct SessionPickerRow: View {
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .stroke(isSelected ? Theme.Colors.primary : .clear, lineWidth: 1.5)
         )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(session.type.rawValue.capitalized) session, \(UnitFormatter.formatDistance(session.plannedDistanceKm, unit: units)), \(session.intensity.rawValue) intensity\(isSelected ? ", selected" : "")")
     }
 
     private var intensityColor: Color {

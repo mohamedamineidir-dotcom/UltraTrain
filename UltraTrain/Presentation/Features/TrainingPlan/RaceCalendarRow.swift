@@ -8,6 +8,7 @@ struct RaceCalendarRow: View {
     var body: some View {
         HStack(spacing: Theme.Spacing.sm) {
             phaseBar
+                .accessibilityHidden(true)
             weekInfo
             Spacer()
             if let race {
@@ -18,6 +19,23 @@ struct RaceCalendarRow: View {
         .padding(.horizontal, Theme.Spacing.sm)
         .background(isCurrentWeek ? Theme.Colors.primary.opacity(0.08) : Color.clear)
         .clipShape(RoundedRectangle(cornerRadius: 8))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(rowAccessibilityLabel)
+    }
+
+    private var rowAccessibilityLabel: String {
+        var label = "Week \(week.weekNumber), \(week.phase.displayName) phase"
+        if isCurrentWeek {
+            label += ", current week"
+        }
+        if week.isRecoveryWeek && week.phase != .recovery {
+            label += ", recovery"
+        }
+        label += ". \(dateRange)"
+        if let race {
+            label += ". Race: \(race.name), \(Int(race.distanceKm)) kilometers"
+        }
+        return label
     }
 
     private var phaseBar: some View {

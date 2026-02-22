@@ -8,8 +8,18 @@ struct RaceReadinessCard: View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             header
             projectionChart
+                .chartAccessibility(summary: projectionChartSummary)
             metricsRow
         }
+        .accessibilityElement(children: .combine)
+    }
+
+    private var projectionChartSummary: String {
+        AccessibilityFormatters.chartSummary(
+            title: "Race readiness projection for \(forecast.raceName)",
+            dataPoints: forecast.fitnessProjectionPoints.count,
+            trend: "\(forecast.daysUntilRace) days until race. Current fitness \(Int(forecast.currentFitness)), projected \(Int(forecast.projectedFitnessAtRace)). Form status: \(formLabel)"
+        )
     }
 
     // MARK: - Header
@@ -115,6 +125,8 @@ struct RaceReadinessCard: View {
                 .font(.title3.bold().monospacedDigit())
         }
         .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label): \(value)")
     }
 
     private var formLabel: String {

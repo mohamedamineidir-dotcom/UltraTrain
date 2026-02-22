@@ -9,6 +9,7 @@ struct UpcomingRaceRow: View {
             RoundedRectangle(cornerRadius: 2)
                 .fill(race.priority.badgeColor)
                 .frame(width: 4, height: 36)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(race.name)
@@ -30,6 +31,8 @@ struct UpcomingRaceRow: View {
             }
         }
         .padding(.vertical, Theme.Spacing.xs)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(race.name), \(relativeDateString), \(UnitFormatter.formatDistance(race.distanceKm, unit: units, decimals: 0)), \(UnitFormatter.formatElevation(race.elevationGainM, unit: units)) elevation gain")
     }
 
     private var relativeDateString: String {

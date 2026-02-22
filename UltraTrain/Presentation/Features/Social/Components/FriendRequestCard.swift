@@ -57,6 +57,8 @@ struct FriendRequestCard: View {
                     .foregroundStyle(Theme.Colors.success)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Accept")
+            .accessibilityHint("Accepts friend request from \(connection.friendDisplayName)")
 
             Button(action: onDecline) {
                 Image(systemName: "xmark.circle.fill")
@@ -64,6 +66,8 @@ struct FriendRequestCard: View {
                     .foregroundStyle(Theme.Colors.danger)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Decline")
+            .accessibilityHint("Declines friend request from \(connection.friendDisplayName)")
         }
     }
 }

@@ -42,6 +42,7 @@ struct RunningHistoryStepView: View {
         }
         .tint(Theme.Colors.primary)
         .cardStyle()
+        .accessibilityHint("When enabled, skips running history questions")
         .accessibilityIdentifier("onboarding.newRunnerToggle")
     }
 
@@ -62,9 +63,12 @@ struct RunningHistoryStepView: View {
                     step: isImperial ? 3 : 5
                 )
                 .tint(Theme.Colors.primary)
+                .accessibilityLabel("Weekly distance")
+                .accessibilityValue(AccessibilityFormatters.distance(viewModel.weeklyVolumeKm, unit: viewModel.preferredUnit))
                 Text("\(Int(UnitFormatter.distanceValue(viewModel.weeklyVolumeKm, unit: viewModel.preferredUnit))) \(UnitFormatter.distanceLabel(viewModel.preferredUnit))")
                     .font(.body.monospacedDigit().bold())
                     .frame(width: 65, alignment: .trailing)
+                    .accessibilityHidden(true)
             }
         }
         .cardStyle()
@@ -85,9 +89,12 @@ struct RunningHistoryStepView: View {
                     step: isImperial ? 3 : 5
                 )
                 .tint(Theme.Colors.primary)
+                .accessibilityLabel("Longest run distance")
+                .accessibilityValue(AccessibilityFormatters.distance(viewModel.longestRunKm, unit: viewModel.preferredUnit))
                 Text("\(Int(UnitFormatter.distanceValue(viewModel.longestRunKm, unit: viewModel.preferredUnit))) \(UnitFormatter.distanceLabel(viewModel.preferredUnit))")
                     .font(.body.monospacedDigit().bold())
                     .frame(width: 65, alignment: .trailing)
+                    .accessibilityHidden(true)
             }
         }
         .cardStyle()

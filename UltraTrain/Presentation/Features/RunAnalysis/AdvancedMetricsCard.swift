@@ -71,6 +71,8 @@ struct AdvancedMetricsCard: View {
                 .foregroundStyle(color)
         }
         .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label), \(value)")
     }
 
     private var trainingEffectRow: some View {
@@ -88,6 +90,7 @@ struct AdvancedMetricsCard: View {
                               ? trainingEffectColor
                               : Theme.Colors.secondaryLabel.opacity(0.3))
                         .frame(width: 10, height: 10)
+                        .accessibilityHidden(true)
                 }
             }
 
@@ -95,6 +98,8 @@ struct AdvancedMetricsCard: View {
                 .font(.subheadline.bold().monospacedDigit())
                 .foregroundStyle(trainingEffectColor)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Training effect, \(String(format: "%.1f", metrics.trainingEffectScore)) out of 5")
     }
 
     // MARK: - Colors

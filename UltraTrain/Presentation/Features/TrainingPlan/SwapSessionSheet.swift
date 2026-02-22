@@ -48,6 +48,7 @@ struct SwapSessionSheet: View {
             Image(systemName: candidate.session.type.icon)
                 .foregroundStyle(candidate.session.intensity.color)
                 .frame(width: 24)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(candidate.session.type.displayName)
@@ -68,8 +69,12 @@ struct SwapSessionSheet: View {
 
             Image(systemName: "arrow.triangle.swap")
                 .foregroundStyle(Theme.Colors.primary)
+                .accessibilityHidden(true)
         }
         .padding(.vertical, Theme.Spacing.xs)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Swap with \(candidate.session.type.displayName)\(candidate.session.plannedDistanceKm > 0 ? ", \(UnitFormatter.formatDistance(candidate.session.plannedDistanceKm, unit: units))" : ""), \(candidate.session.date.formatted(.dateTime.weekday(.wide).month().day()))")
+        .accessibilityHint("Double-tap to swap sessions")
     }
 }
 

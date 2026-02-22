@@ -101,6 +101,7 @@ struct RunSummarySheet: View {
             Text(viewModel.formattedTime)
                 .font(.title3.monospacedDigit())
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .accessibilityLabel("Duration, \(viewModel.formattedTime)")
         }
         .padding(.top, Theme.Spacing.md)
     }
@@ -152,6 +153,7 @@ struct RunSummarySheet: View {
                                 )
                         }
                         .buttonStyle(.plain)
+                        .accessibilityLabel("RPE \(value)\(rpe == value ? ", selected" : "")")
                     }
                 }
             }
@@ -194,6 +196,7 @@ struct RunSummarySheet: View {
                             )
                         }
                         .buttonStyle(.plain)
+                        .accessibilityLabel("\(feelingLabel(feeling))\(perceivedFeeling == feeling ? ", selected" : "")")
                     }
                 }
             }
@@ -232,6 +235,7 @@ struct RunSummarySheet: View {
                                 )
                         }
                         .buttonStyle(.plain)
+                        .accessibilityLabel("\(terrainLabel(terrain))\(terrainType == terrain ? ", selected" : "")")
                     }
                 }
             }
@@ -337,10 +341,12 @@ struct RunSummarySheet: View {
                     .fill(Color.orange.opacity(0.1))
             )
             .padding(.horizontal, Theme.Spacing.md)
+            .accessibilityElement(children: .combine)
         case .success:
             HStack(spacing: Theme.Spacing.sm) {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundStyle(.green)
+                    .accessibilityHidden(true)
                 Text("Uploaded to Strava")
                     .font(.subheadline.bold())
             }
@@ -351,11 +357,13 @@ struct RunSummarySheet: View {
                     .fill(Color.green.opacity(0.1))
             )
             .padding(.horizontal, Theme.Spacing.md)
+            .accessibilityElement(children: .combine)
         case .failed(let reason):
             VStack(spacing: Theme.Spacing.xs) {
                 HStack(spacing: Theme.Spacing.sm) {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundStyle(Theme.Colors.warning)
+                        .accessibilityHidden(true)
                     Text("Strava upload failed")
                         .font(.subheadline.bold())
                 }
@@ -367,6 +375,7 @@ struct RunSummarySheet: View {
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.small)
+                .accessibilityHint("Retry uploading run to Strava")
             }
             .frame(maxWidth: .infinity)
             .padding(Theme.Spacing.md)

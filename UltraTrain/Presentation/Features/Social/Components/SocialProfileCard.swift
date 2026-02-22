@@ -10,6 +10,8 @@ struct SocialProfileCard: View {
             Spacer()
         }
         .cardStyle()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(profile.displayName), \(profile.experienceLevel.rawValue.capitalized). \(profile.totalRuns) runs, \(Int(profile.totalDistanceKm)) kilometers, \(Int(profile.totalElevationGainM)) meters elevation gain")
     }
 
     // MARK: - Photo

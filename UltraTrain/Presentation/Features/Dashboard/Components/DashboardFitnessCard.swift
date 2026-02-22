@@ -16,6 +16,7 @@ struct DashboardFitnessCard: View {
                 if snapshot != nil {
                     Button("See trend", action: onSeeTrend)
                         .font(.caption)
+                        .accessibilityHint("Opens detailed fitness trend chart")
                 }
             }
 

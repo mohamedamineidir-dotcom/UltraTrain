@@ -33,6 +33,8 @@ struct WorkoutLibraryView: View {
                     } label: {
                         Image(systemName: "plus")
                     }
+                    .accessibilityLabel("Add workout")
+                    .accessibilityHint("Opens form to create a custom workout recipe")
                 }
             }
             .task {
@@ -92,6 +94,9 @@ struct WorkoutLibraryView: View {
                 .clipShape(Capsule())
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(title)
+        .accessibilityValue(isSelected ? "Selected" : "Not selected")
+        .accessibilityHint("Filters workouts by \(title) category")
     }
 
     // MARK: - Templates

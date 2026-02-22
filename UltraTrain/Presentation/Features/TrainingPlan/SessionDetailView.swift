@@ -78,6 +78,7 @@ struct SessionDetailView: View {
             Image(systemName: session.type.icon)
                 .font(.largeTitle)
                 .foregroundStyle(session.isSkipped ? Theme.Colors.secondaryLabel : session.intensity.color)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                 Text(session.type.displayName)
@@ -105,6 +106,22 @@ struct SessionDetailView: View {
             }
         }
         .accessibilityIdentifier("trainingPlan.sessionDetail.header")
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(headerAccessibilityLabel)
+    }
+
+    private var headerAccessibilityLabel: String {
+        var label = "\(session.type.displayName), \(session.intensity.displayName) intensity"
+        label += ". \(session.date.formatted(.dateTime.weekday(.wide).month().day()))"
+        if let zone = session.targetHeartRateZone {
+            label += ". Target heart rate zone \(zone)"
+        }
+        if session.isSkipped {
+            label += ". Skipped"
+        } else if session.isCompleted {
+            label += ". Completed"
+        }
+        return label
     }
 
     // MARK: - Skipped Banner
@@ -113,6 +130,7 @@ struct SessionDetailView: View {
         HStack(spacing: Theme.Spacing.sm) {
             Image(systemName: "forward.fill")
                 .foregroundStyle(.orange)
+                .accessibilityHidden(true)
             Text("Skipped")
                 .font(.subheadline.bold())
                 .foregroundStyle(.orange)
@@ -120,6 +138,7 @@ struct SessionDetailView: View {
             if onUnskip != nil {
                 Button("Undo") { onUnskip?() }
                     .font(.subheadline.bold())
+                    .accessibilityHint("Double-tap to restore this session")
             }
         }
         .padding(Theme.Spacing.md)
@@ -194,6 +213,7 @@ struct SessionDetailView: View {
                 }
                 .buttonStyle(.bordered)
                 .tint(.orange)
+                .accessibilityHint("Double-tap to skip this session")
             }
 
             if !session.isCompleted {
@@ -204,6 +224,7 @@ struct SessionDetailView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
+                .accessibilityHint("Double-tap to move this session to a different date")
             }
 
             if !session.isCompleted && !session.isSkipped {
@@ -214,6 +235,7 @@ struct SessionDetailView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
+                .accessibilityHint("Double-tap to swap this session with another one")
             }
         }
         .padding(.top, Theme.Spacing.sm)

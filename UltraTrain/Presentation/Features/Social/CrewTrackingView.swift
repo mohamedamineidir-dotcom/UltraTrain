@@ -58,6 +58,7 @@ struct CrewTrackingView: View {
                 .font(.system(size: 48))
                 .foregroundStyle(Theme.Colors.primary)
                 .padding(.top, Theme.Spacing.xl)
+                .accessibilityHidden(true)
 
             Text("Track your crew's location in real time during a run or race.")
                 .font(.body)
@@ -72,6 +73,7 @@ struct CrewTrackingView: View {
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
+            .accessibilityHint("Creates a new crew tracking session")
 
             VStack(spacing: Theme.Spacing.sm) {
                 Text("Or join an existing session:")
@@ -91,6 +93,7 @@ struct CrewTrackingView: View {
                 }
                 .buttonStyle(.bordered)
                 .disabled(UUID(uuidString: joinSessionIdText) == nil)
+                .accessibilityHint("Joins an existing crew tracking session")
             }
             .cardStyle()
         }
@@ -123,6 +126,8 @@ struct CrewTrackingView: View {
                 }
                 .foregroundStyle(Theme.Colors.secondaryLabel)
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Crew tracking map placeholder")
     }
 
     private func sessionInfoCard(_ session: CrewTrackingSession) -> some View {
@@ -162,6 +167,7 @@ struct CrewTrackingView: View {
             Image(systemName: "person.circle.fill")
                 .font(.title2)
                 .foregroundStyle(Theme.Colors.primary)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(participant.displayName)
@@ -182,6 +188,8 @@ struct CrewTrackingView: View {
             }
         }
         .padding(.vertical, Theme.Spacing.xs)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(participant.displayName), \(String(format: "%.1f", participant.distanceKm)) kilometers, pace \(formattedPace(participant.currentPaceSecondsPerKm)), updated \(relativeTime(participant.lastUpdated))")
     }
 
     private func sessionActions(_ session: CrewTrackingSession) -> some View {
@@ -195,6 +203,7 @@ struct CrewTrackingView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(Theme.Colors.danger)
+                .accessibilityHint("Ends the crew tracking session for all participants")
             } else {
                 Button(role: .destructive) {
                     Task { await viewModel.leaveSession() }
@@ -203,6 +212,7 @@ struct CrewTrackingView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
+                .accessibilityHint("Leaves the current crew tracking session")
             }
         }
     }

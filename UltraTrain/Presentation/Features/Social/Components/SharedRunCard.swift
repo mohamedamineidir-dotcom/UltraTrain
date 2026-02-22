@@ -28,6 +28,7 @@ struct SharedRunCard: View {
             Image(systemName: "person.circle.fill")
                 .font(.title3)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Text(run.sharedByDisplayName)
                     .font(.subheadline.bold())
@@ -36,6 +37,7 @@ struct SharedRunCard: View {
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
         }
+        .accessibilityElement(children: .combine)
     }
 
     // MARK: - Stats
@@ -56,7 +58,9 @@ struct SharedRunCard: View {
     private var footer: some View {
         HStack(spacing: Theme.Spacing.md) {
             Label("\(run.likeCount)", systemImage: "heart")
+                .accessibilityLabel("\(run.likeCount) like\(run.likeCount == 1 ? "" : "s")")
             Label("\(run.commentCount)", systemImage: "bubble.right")
+                .accessibilityLabel("\(run.commentCount) comment\(run.commentCount == 1 ? "" : "s")")
             Spacer()
         }
         .font(.caption)

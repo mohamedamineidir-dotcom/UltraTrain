@@ -19,6 +19,18 @@ struct CalendarDayCell: View {
         }
         .frame(maxWidth: .infinity, minHeight: 40)
         .background(backgroundView)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilityDescription)
+    }
+
+    private var accessibilityDescription: String {
+        var parts: [String] = []
+        parts.append(date.formatted(.dateTime.month(.wide).day()))
+        if isToday { parts.append("Today") }
+        if let phase { parts.append(phase.displayName) }
+        if let race { parts.append("\(race.priority.displayName) race: \(race.name)") }
+        if sessionCount > 0 { parts.append("\(sessionCount) session\(sessionCount > 1 ? "s" : "")") }
+        return parts.joined(separator: ", ")
     }
 
     @ViewBuilder

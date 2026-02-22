@@ -52,6 +52,7 @@ struct DashboardWeeklyStatsCard: View {
                         .font(.caption)
                 }
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .accessibilityElement(children: .combine)
             }
 
             if let weeksLeft = weeksUntilRace {
@@ -62,6 +63,7 @@ struct DashboardWeeklyStatsCard: View {
                         .font(.caption)
                 }
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .accessibilityElement(children: .combine)
             }
         }
     }

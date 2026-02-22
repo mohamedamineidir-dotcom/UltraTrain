@@ -39,6 +39,11 @@ struct ExperienceLevelCard: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(level.rawValue.capitalized), \(levelDescription)")
+        .accessibilityValue(isSelected ? "Selected" : "Not selected")
+        .accessibilityHint("Double tap to select \(level.rawValue) experience level")
+        .accessibilityAddTraits(.isButton)
         .accessibilityIdentifier("onboarding.experienceCard.\(level.rawValue)")
     }
 

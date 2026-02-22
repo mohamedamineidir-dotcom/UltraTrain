@@ -21,6 +21,7 @@ struct DashboardRecoveryCard: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .cardStyle()
+        .accessibilityHint("Opens morning readiness check")
     }
 
     @ViewBuilder
@@ -81,6 +82,8 @@ struct DashboardRecoveryCard: View {
                 .foregroundStyle(Theme.Colors.secondaryLabel)
                 .frame(width: 22, alignment: .trailing)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label): \(score) out of 100")
     }
 
     private func componentColor(_ score: Int) -> Color {

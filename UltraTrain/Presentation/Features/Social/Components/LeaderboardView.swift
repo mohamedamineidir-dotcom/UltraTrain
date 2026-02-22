@@ -51,6 +51,8 @@ struct LeaderboardView: View {
             }
         }
         .padding(.vertical, Theme.Spacing.xs)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Rank \(entry.rank), \(entry.participant.displayName), \(String(format: "%.1f", entry.participant.currentValue)) \(challenge.unitLabel), \(Int(entry.progressPercent * 100)) percent")
     }
 
     // MARK: - Rank Badge
@@ -74,5 +76,6 @@ struct LeaderboardView: View {
             }
         }
         .frame(width: 24, alignment: .center)
+        .accessibilityLabel("Rank \(rank)")
     }
 }

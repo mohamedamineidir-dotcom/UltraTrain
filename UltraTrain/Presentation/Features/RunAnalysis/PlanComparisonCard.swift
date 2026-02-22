@@ -93,5 +93,7 @@ struct PlanComparisonCard: View {
                 .foregroundStyle(targetMet ? Theme.Colors.success : Theme.Colors.warning)
                 .frame(width: 80, alignment: .trailing)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label): planned \(planned), actual \(actual)\(targetMet ? ", target met" : ", target missed")")
     }
 }

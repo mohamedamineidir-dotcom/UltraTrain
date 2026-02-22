@@ -72,5 +72,7 @@ struct LiveSplitPanel: View {
         }
         .padding(.horizontal, Theme.Spacing.sm)
         .padding(.top, Theme.Spacing.xs)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Projected finish time, \(FinishEstimate.formatDuration(time))")
     }
 }

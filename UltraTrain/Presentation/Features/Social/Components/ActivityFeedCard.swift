@@ -51,6 +51,7 @@ struct ActivityFeedCard: View {
         }
         .frame(width: 36, height: 36)
         .clipShape(Circle())
+        .accessibilityHidden(true)
     }
 
     // MARK: - Title
@@ -100,6 +101,8 @@ struct ActivityFeedCard: View {
                 .foregroundStyle(item.isLikedByMe ? Theme.Colors.danger : Theme.Colors.secondaryLabel)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("\(item.likeCount) like\(item.likeCount == 1 ? "" : "s")")
+            .accessibilityHint(item.isLikedByMe ? "Removes your like" : "Likes this activity")
             Spacer()
         }
         .font(.caption)

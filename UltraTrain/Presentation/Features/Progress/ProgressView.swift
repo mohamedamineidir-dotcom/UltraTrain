@@ -158,6 +158,7 @@ struct TrainingProgressView: View {
                     HStack(spacing: Theme.Spacing.sm) {
                         Image(systemName: viewModel.formIcon)
                             .foregroundStyle(viewModel.formColor)
+                            .accessibilityHidden(true)
                         Text("Form: \(viewModel.formLabel)")
                             .font(.subheadline)
                         Spacer()
@@ -167,6 +168,8 @@ struct TrainingProgressView: View {
                                 .foregroundStyle(viewModel.formColor)
                         }
                     }
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("Current form: \(viewModel.formLabel)\(viewModel.currentFitnessSnapshot.map { String(format: ". Training stress balance: %+.0f", $0.form) } ?? "")")
                 }
             } else {
                 Text("Complete some runs to see your fitness trend")

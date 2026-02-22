@@ -9,6 +9,18 @@ struct ActivityTypeIcon: View {
             .foregroundStyle(.white)
             .padding(Theme.Spacing.xs)
             .background(iconColor, in: Circle())
+            .accessibilityLabel(accessibilityDescription)
+    }
+
+    private var accessibilityDescription: String {
+        switch activityType {
+        case .completedRun: "Completed run"
+        case .personalRecord: "Personal record"
+        case .challengeCompleted: "Challenge completed"
+        case .raceFinished: "Race finished"
+        case .weeklyGoalMet: "Weekly goal met"
+        case .friendJoined: "Friend joined"
+        }
     }
 
     private var iconName: String {

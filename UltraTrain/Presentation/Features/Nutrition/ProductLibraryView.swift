@@ -52,6 +52,8 @@ struct ProductLibraryView: View {
                     } label: {
                         Image(systemName: "plus")
                     }
+                    .accessibilityLabel("Add product")
+                    .accessibilityHint("Opens the add product form")
                 }
             }
             .sheet(isPresented: $viewModel.showingAddProduct) {
@@ -65,6 +67,7 @@ struct ProductLibraryView: View {
         return HStack {
             Image(systemName: product.type.icon)
                 .foregroundStyle(excluded ? Theme.Colors.secondaryLabel : product.type.color)
+                .accessibilityHidden(true)
             VStack(alignment: .leading) {
                 Text(product.name)
                     .font(.subheadline)
@@ -83,6 +86,7 @@ struct ProductLibraryView: View {
                 Image(systemName: "cup.and.saucer.fill")
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.warning)
+                    .accessibilityLabel("Caffeinated")
             }
             Button {
                 Task { await viewModel.toggleProductExclusion(product.id) }
@@ -91,6 +95,8 @@ struct ProductLibraryView: View {
                     .foregroundStyle(excluded ? .red : .green)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel(excluded ? "Excluded" : "Included")
+            .accessibilityHint(excluded ? "Includes this product in your plan" : "Excludes this product from your plan")
         }
     }
 }

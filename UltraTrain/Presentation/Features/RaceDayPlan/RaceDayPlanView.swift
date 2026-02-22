@@ -151,6 +151,7 @@ struct RaceDayPlanView: View {
         HStack {
             Image(systemName: "flag.fill")
                 .foregroundStyle(Theme.Colors.success)
+                .accessibilityHidden(true)
             Text("START")
                 .font(.subheadline.bold())
             Spacer()
@@ -160,6 +161,8 @@ struct RaceDayPlanView: View {
         .padding(Theme.Spacing.md)
         .background(Theme.Colors.success.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Start at \(viewModel.race.date.formatted(.dateTime.hour().minute()))")
     }
 
     // MARK: - Segment Cards
@@ -177,6 +180,7 @@ struct RaceDayPlanView: View {
             HStack {
                 Image(systemName: "flag.checkered")
                     .foregroundStyle(Theme.Colors.primary)
+                    .accessibilityHidden(true)
                 Text("FINISH")
                     .font(.subheadline.bold())
                 Spacer()
@@ -217,6 +221,8 @@ struct RaceDayPlanView: View {
                 .foregroundStyle(color)
         }
         .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label): \(AccessibilityFormatters.duration(time))")
     }
 
     // MARK: - Checklist Link
@@ -228,12 +234,14 @@ struct RaceDayPlanView: View {
             HStack {
                 Image(systemName: "checklist")
                     .foregroundStyle(Theme.Colors.primary)
+                    .accessibilityHidden(true)
                 Text("Race Prep Checklist")
                     .font(.subheadline.bold())
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .accessibilityHidden(true)
             }
             .padding(Theme.Spacing.md)
             .background(Theme.Colors.primary.opacity(0.1))
@@ -247,7 +255,7 @@ struct RaceDayPlanView: View {
     private func errorSection(_ message: String) -> some View {
         VStack(spacing: Theme.Spacing.md) {
             Image(systemName: "map.circle")
-                .font(.system(size: 48))
+                .font(.largeTitle)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
                 .accessibilityHidden(true)
             Text(message)

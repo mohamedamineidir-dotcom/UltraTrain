@@ -38,6 +38,7 @@ struct FitnessTrendView: View {
             HStack(spacing: Theme.Spacing.sm) {
                 Image(systemName: status.icon)
                     .foregroundStyle(status.color)
+                    .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(status.label)
@@ -58,6 +59,8 @@ struct FitnessTrendView: View {
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                     .fill(status.color.opacity(0.1))
             )
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Form status: \(status.label), score \(String(format: "%+.0f", snapshot.form)). \(status.explanation)")
         }
     }
 
@@ -90,6 +93,7 @@ struct FitnessTrendView: View {
         HStack(spacing: Theme.Spacing.sm) {
             Image(systemName: acrIcon(for: snapshot.acuteToChronicRatio))
                 .foregroundStyle(acrColor(for: snapshot.acuteToChronicRatio))
+                .accessibilityHidden(true)
             Text("Acute:Chronic Ratio: \(snapshot.acuteToChronicRatio, specifier: "%.2f")")
                 .font(.subheadline)
             Spacer()
@@ -102,6 +106,8 @@ struct FitnessTrendView: View {
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .fill(acrColor(for: snapshot.acuteToChronicRatio).opacity(0.1))
         )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Acute to Chronic Ratio: \(String(format: "%.2f", snapshot.acuteToChronicRatio)), \(acrLabel(for: snapshot.acuteToChronicRatio))")
     }
 
     // MARK: - Weekly Volume

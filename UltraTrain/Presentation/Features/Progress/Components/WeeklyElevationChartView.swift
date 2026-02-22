@@ -19,8 +19,7 @@ struct WeeklyElevationChartView: View {
                 legend
             }
         }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(chartSummary)
+        .chartAccessibility(summary: chartSummary)
     }
 
     private var chartSummary: String {

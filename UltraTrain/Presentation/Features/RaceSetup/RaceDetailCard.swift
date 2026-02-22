@@ -33,6 +33,7 @@ struct RaceDetailCard: View {
         HStack(spacing: Theme.Spacing.sm) {
             Image(systemName: "flag.checkered")
                 .foregroundStyle(race.priority.badgeColor)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(race.name)
@@ -71,6 +72,8 @@ struct RaceDetailCard: View {
                 .font(.caption2)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label): \(value)")
     }
 
     private var courseMapThumbnail: some View {
@@ -106,6 +109,7 @@ struct RaceDetailCard: View {
             }
             .buttonStyle(.bordered)
             .controlSize(.small)
+            .accessibilityHint("Opens editor for this race")
 
             Button { showDeleteConfirmation = true } label: {
                 Label("Delete", systemImage: "trash")
@@ -114,6 +118,7 @@ struct RaceDetailCard: View {
             .buttonStyle(.bordered)
             .controlSize(.small)
             .tint(.red)
+            .accessibilityHint("Deletes this race")
         }
     }
 }

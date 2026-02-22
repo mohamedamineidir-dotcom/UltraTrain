@@ -8,6 +8,7 @@ struct NutritionEntryRow: View {
             Image(systemName: entry.product.type.icon)
                 .foregroundStyle(entry.product.type.color)
                 .frame(width: 24)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(entry.product.name)
@@ -32,6 +33,8 @@ struct NutritionEntryRow: View {
             }
         }
         .padding(.vertical, Theme.Spacing.xs)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(entry.product.name), \(entry.product.type.displayName), at \(formattedTiming), \(entry.product.caloriesPerServing * entry.quantity) kilocalories")
     }
 
     private var formattedTiming: String {

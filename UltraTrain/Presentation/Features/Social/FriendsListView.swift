@@ -38,6 +38,8 @@ struct FriendsListView: View {
                 } label: {
                     Image(systemName: "plus")
                 }
+                .accessibilityLabel("Add friend")
+                .accessibilityHint("Opens the add friend screen")
             }
         }
         .task {

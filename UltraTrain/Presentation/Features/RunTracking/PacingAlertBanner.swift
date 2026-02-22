@@ -30,6 +30,7 @@ struct PacingAlertBanner: View {
                     .clipShape(Circle())
             }
             .accessibilityLabel("Dismiss")
+            .accessibilityHint("Dismiss pacing alert")
         }
         .padding(Theme.Spacing.md)
         .background(
@@ -40,6 +41,7 @@ struct PacingAlertBanner: View {
         .padding(.horizontal, Theme.Spacing.md)
         .padding(.top, Theme.Spacing.sm)
         .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
+        .accessibilityElement(children: .combine)
         .onAppear {
             AccessibilityNotification.Announcement(alert.message).post()
         }

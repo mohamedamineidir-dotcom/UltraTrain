@@ -126,6 +126,8 @@ struct ImportCourseView: View {
             Text(value)
                 .font(.subheadline.bold().monospacedDigit())
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label): \(value)")
     }
 
     // MARK: - Checkpoints
@@ -139,6 +141,7 @@ struct ImportCourseView: View {
                 HStack(spacing: Theme.Spacing.sm) {
                     Image(systemName: "mappin.circle.fill")
                         .foregroundStyle(Theme.Colors.primary)
+                        .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(cp.name)
                         Text(
@@ -183,6 +186,7 @@ struct ImportCourseView: View {
             Image(systemName: "exclamationmark.triangle")
                 .font(.largeTitle)
                 .foregroundStyle(Theme.Colors.danger)
+                .accessibilityHidden(true)
             Text("Failed to parse GPX file")
                 .font(.headline)
             Text(message)

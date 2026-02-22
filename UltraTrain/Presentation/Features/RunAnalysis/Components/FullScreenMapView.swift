@@ -55,6 +55,8 @@ struct FullScreenMapView: View {
                         .onTapGesture { screenPoint in
                             handleTap(at: screenPoint, proxy: proxy)
                         }
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("Full screen route map showing \(segments.count) segments colored by \(coloringMode.rawValue). Tap to view segment details.")
                     }
 
                     if let detail = selectedSegment {

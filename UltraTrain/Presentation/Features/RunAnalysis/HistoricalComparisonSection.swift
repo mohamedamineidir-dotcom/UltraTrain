@@ -35,6 +35,7 @@ struct HistoricalComparisonSection: View {
         HStack(spacing: 4) {
             Image(systemName: trendIcon)
                 .font(.caption)
+                .accessibilityHidden(true)
             Text(trendText)
                 .font(.caption.bold())
         }
@@ -44,6 +45,8 @@ struct HistoricalComparisonSection: View {
         .background(
             Capsule().fill(trendColor.opacity(0.15))
         )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Pace trend: \(trendText)")
     }
 
     private var trendIcon: String {
@@ -84,6 +87,7 @@ struct HistoricalComparisonSection: View {
                             Image(systemName: "trophy.fill")
                                 .font(.caption)
                                 .foregroundStyle(Theme.Colors.warning)
+                                .accessibilityHidden(true)
                             Text("\(UnitFormatter.distanceLabel(units).uppercased()) \(pr.kilometerNumber)")
                                 .font(.caption2.bold())
                             Text(RunStatisticsCalculator.formatPace(pr.currentPace, unit: units))
@@ -96,6 +100,8 @@ struct HistoricalComparisonSection: View {
                             RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
                                 .fill(Theme.Colors.warning.opacity(0.1))
                         )
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("Personal record, \(UnitFormatter.distanceLabel(units)) \(pr.kilometerNumber), pace \(RunStatisticsCalculator.formatPace(pr.currentPace, unit: units))")
                     }
                 }
             }
@@ -116,6 +122,7 @@ struct HistoricalComparisonSection: View {
                             Image(systemName: badge.icon)
                                 .font(.subheadline)
                                 .foregroundStyle(Theme.Colors.primary)
+                                .accessibilityHidden(true)
                             VStack(alignment: .leading) {
                                 Text(badge.title)
                                     .font(.caption.bold())
@@ -130,6 +137,8 @@ struct HistoricalComparisonSection: View {
                             RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
                                 .fill(Theme.Colors.primary.opacity(0.08))
                         )
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("\(badge.title), \(badge.description)")
                     }
                 }
             }

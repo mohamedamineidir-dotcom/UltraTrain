@@ -48,6 +48,7 @@ struct ChallengesView: View {
             HStack {
                 Image(systemName: "flame.fill")
                     .foregroundStyle(.orange)
+                    .accessibilityHidden(true)
                 Text("\(viewModel.currentStreak)-day streak")
                     .font(.subheadline.bold())
                 Spacer()
@@ -55,6 +56,8 @@ struct ChallengesView: View {
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Current streak: \(viewModel.currentStreak) days, Longest streak: \(viewModel.longestStreak) days")
         }
     }
 
@@ -112,6 +115,7 @@ struct ChallengesView: View {
                         HStack {
                             Image(systemName: definition.iconName)
                                 .foregroundStyle(Theme.Colors.success)
+                                .accessibilityHidden(true)
                             VStack(alignment: .leading) {
                                 Text(definition.name)
                                     .font(.subheadline.bold())
@@ -122,6 +126,7 @@ struct ChallengesView: View {
                                 }
                             }
                         }
+                        .accessibilityElement(children: .combine)
                     }
                 }
             }

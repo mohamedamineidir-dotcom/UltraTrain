@@ -13,12 +13,14 @@ struct DashboardPersonalRecordsCard: View {
             HStack {
                 Image(systemName: "trophy.fill")
                     .foregroundStyle(Theme.Colors.warning)
+                    .accessibilityHidden(true)
                 Text("Personal Records")
                     .font(.headline)
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .accessibilityHidden(true)
             }
 
             if let latest = latestRecord {
@@ -45,6 +47,14 @@ struct DashboardPersonalRecordsCard: View {
             }
         }
         .cardStyle()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(personalRecordsAccessibilityLabel)
+        .accessibilityHint("Opens personal records wall")
+    }
+
+    private var personalRecordsAccessibilityLabel: String {
+        guard let latest = latestRecord else { return "Personal Records, \(records.count) records" }
+        return "Personal Records. Latest: \(label(for: latest.type)), \(formattedValue(for: latest)). \(records.count) records total."
     }
 
     // MARK: - Helpers

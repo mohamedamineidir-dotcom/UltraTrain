@@ -25,7 +25,7 @@ struct ZoneComplianceCard: View {
                 Spacer()
 
                 Text(String(format: "%.0f%%", compliance.compliancePercent))
-                    .font(.system(size: 36, weight: .bold, design: .monospaced))
+                    .font(.title.bold().monospaced())
                     .foregroundStyle(ratingColor)
             }
 

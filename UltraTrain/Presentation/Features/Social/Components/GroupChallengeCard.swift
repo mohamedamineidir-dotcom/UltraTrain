@@ -19,6 +19,7 @@ struct GroupChallengeCard: View {
             Image(systemName: typeIcon)
                 .font(.title3)
                 .foregroundStyle(Theme.Colors.primary)
+                .accessibilityHidden(true)
             Text(challenge.name)
                 .font(.subheadline.bold())
                 .lineLimit(1)
@@ -59,6 +60,8 @@ struct GroupChallengeCard: View {
                 .font(.caption2)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(AccessibilityFormatters.percentage(leaderProgress * 100) + " progress")
     }
 
     private var leaderProgress: Double {
@@ -72,6 +75,7 @@ struct GroupChallengeCard: View {
             Label("\(challenge.participants.count)", systemImage: "person.2")
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .accessibilityLabel("\(challenge.participants.count) participant\(challenge.participants.count == 1 ? "" : "s")")
             Spacer()
             Text(String(format: "%.0f %@", challenge.targetValue, challenge.unitLabel))
                 .font(.caption)

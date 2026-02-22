@@ -91,6 +91,8 @@ struct TrainingCalendarView: View {
                 }
             }
             .cardStyle()
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Week \(currentWeek.weekNumber), \(currentWeek.phase.displayName) phase. \(currentWeek.sessions.filter { $0.type != .rest }.filter(\.isCompleted).count) of \(currentWeek.sessions.filter { $0.type != .rest }.count) sessions completed. \(runsInDisplayedMonth) runs this month.")
         }
     }
 

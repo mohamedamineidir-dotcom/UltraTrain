@@ -32,5 +32,7 @@ struct NutritionSummaryCard: View {
             }
         }
         .cardStyle()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Hourly targets: \(caloriesPerHour) kilocalories per hour, \(hydrationMlPerHour) milliliters hydration per hour, \(sodiumMgPerHour) milligrams sodium per hour. Total: \(totalCalories) kilocalories. \(gutTrainingSessions) gut training runs")
     }
 }

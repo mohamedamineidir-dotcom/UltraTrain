@@ -81,6 +81,8 @@ struct ShareRunSheet: View {
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label): \(value)")
     }
 
     // MARK: - Friends List
@@ -114,16 +116,21 @@ struct ShareRunSheet: View {
                 Image(systemName: "person.circle.fill")
                     .font(.title2)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .accessibilityHidden(true)
                 Text(friend.friendDisplayName)
                     .font(.body)
                     .foregroundStyle(Theme.Colors.label)
                 Spacer()
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                     .foregroundStyle(isSelected ? Theme.Colors.primary : Theme.Colors.secondaryLabel)
+                    .accessibilityHidden(true)
             }
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(friend.friendDisplayName)
+        .accessibilityValue(isSelected ? "Selected" : "Not selected")
+        .accessibilityHint("Toggles selection for sharing")
     }
 
     // MARK: - Share Button
@@ -139,7 +146,7 @@ struct ShareRunSheet: View {
                         .tint(.white)
                 } else {
                     Label(
-                        "Share with \(viewModel.selectedFriendIds.count) friend\(viewModel.selectedFriendIds.count == 1 ? "" : "s")",
+                        "Share with \(viewModel.selectedFriendIds.count) friends",
                         systemImage: "paperplane.fill"
                     )
                 }
@@ -150,5 +157,6 @@ struct ShareRunSheet: View {
         .buttonStyle(.borderedProminent)
         .disabled(viewModel.selectedFriendIds.isEmpty || viewModel.isSharing)
         .padding(Theme.Spacing.md)
+        .accessibilityHint("Shares this run with selected friends")
     }
 }

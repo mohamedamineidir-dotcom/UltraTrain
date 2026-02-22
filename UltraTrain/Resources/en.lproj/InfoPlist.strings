@@ -1,0 +1,6 @@
+/* Permission descriptions - English */
+"NSLocationWhenInUseUsageDescription" = "UltraTrain uses your location to track your runs and display your route on the map.";
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "UltraTrain uses background location to continue tracking your run when the app is in the background.";
+"NSHealthShareUsageDescription" = "UltraTrain reads your heart rate, workout, and activity data to track your training progress and fitness.";
+"NSHealthUpdateUsageDescription" = "UltraTrain saves your completed runs as workouts in Apple Health.";
+"NSFaceIDUsageDescription" = "UltraTrain uses Face ID to protect your training and health data.";

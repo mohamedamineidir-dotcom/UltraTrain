@@ -28,6 +28,8 @@ struct TrainingCalendarGridView: View {
                     .font(.body.bold())
                     .foregroundStyle(Theme.Colors.primary)
             }
+            .accessibilityLabel("Previous month")
+            .accessibilityHint("Double-tap to navigate to the previous month")
 
             Spacer()
 
@@ -41,6 +43,8 @@ struct TrainingCalendarGridView: View {
                     .font(.body.bold())
                     .foregroundStyle(Theme.Colors.primary)
             }
+            .accessibilityLabel("Next month")
+            .accessibilityHint("Double-tap to navigate to the next month")
         }
         .padding(.horizontal, Theme.Spacing.xs)
     }
@@ -77,6 +81,8 @@ struct TrainingCalendarGridView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel(dayCellAccessibilityLabel(for: day))
+                    .accessibilityHint("Double-tap to view day details")
                 } else {
                     Color.clear
                         .frame(minHeight: 40)
@@ -109,6 +115,34 @@ struct TrainingCalendarGridView: View {
             }
         }
         return days
+    }
+
+    private func dayCellAccessibilityLabel(for date: Date) -> String {
+        let dayString = date.formatted(.dateTime.weekday(.wide).month(.abbreviated).day())
+        let status = statusForDate(date)
+        let statusDescription: String
+        switch status {
+        case .completed:
+            statusDescription = "all sessions completed"
+        case .partial:
+            statusDescription = "partially completed"
+        case .planned:
+            statusDescription = "sessions planned"
+        case .ranWithoutPlan:
+            statusDescription = "unplanned run completed"
+        case .rest:
+            statusDescription = "rest day"
+        case .noActivity:
+            statusDescription = "no activity"
+        }
+        var label = "\(dayString), \(statusDescription)"
+        if date.isSameDay(as: .now) {
+            label += ", today"
+        }
+        if let phase = phaseForDate(date) {
+            label += ", \(phase.displayName) phase"
+        }
+        return label
     }
 
     private var swipeGesture: some Gesture {

@@ -29,6 +29,8 @@ struct CalendarMonthGridView: View {
                     .font(.body.bold())
                     .foregroundStyle(Theme.Colors.primary)
             }
+            .accessibilityLabel("Previous month")
+            .accessibilityHint("Navigates to the previous month")
 
             Spacer()
 
@@ -42,6 +44,8 @@ struct CalendarMonthGridView: View {
                     .font(.body.bold())
                     .foregroundStyle(Theme.Colors.primary)
             }
+            .accessibilityLabel("Next month")
+            .accessibilityHint("Navigates to the next month")
         }
         .padding(.horizontal, Theme.Spacing.xs)
     }

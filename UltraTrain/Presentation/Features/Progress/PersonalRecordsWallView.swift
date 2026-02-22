@@ -56,6 +56,7 @@ struct PersonalRecordsWallView: View {
                 .font(.title2)
                 .foregroundStyle(iconColor(for: record.type))
                 .frame(width: 32)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(label(for: record.type))
@@ -71,6 +72,8 @@ struct PersonalRecordsWallView: View {
             Text(formattedValue(for: record))
                 .font(.title3.bold().monospacedDigit())
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label(for: record.type)): \(formattedValue(for: record)), set on \(record.date.formatted(.dateTime.month(.abbreviated).day().year()))")
     }
 
     // MARK: - Helpers

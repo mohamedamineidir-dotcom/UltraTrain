@@ -42,6 +42,8 @@ struct RaceCalendarGridView: View {
                 } label: {
                     Image(systemName: "plus")
                 }
+                .accessibilityLabel("Add race")
+                .accessibilityHint("Opens form to add a new race")
             }
         }
         .task {

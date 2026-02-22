@@ -93,6 +93,7 @@ struct RunReflectionEditView: View {
                             )
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("RPE \(value)\(viewModel.rpe == value ? ", selected" : "")")
                 }
             }
 
@@ -149,6 +150,7 @@ struct RunReflectionEditView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("\(label(for: feeling))\(viewModel.perceivedFeeling == feeling ? ", selected" : "")")
                 }
             }
         }
@@ -171,6 +173,7 @@ struct RunReflectionEditView: View {
                         VStack(spacing: 4) {
                             Image(systemName: terrainIcon(for: terrain))
                                 .font(.title3)
+                                .accessibilityHidden(true)
                             Text(terrainLabel(for: terrain))
                                 .font(.caption2)
                         }
@@ -195,6 +198,7 @@ struct RunReflectionEditView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("\(terrainLabel(for: terrain))\(viewModel.terrainType == terrain ? ", selected" : "")")
                 }
             }
         }

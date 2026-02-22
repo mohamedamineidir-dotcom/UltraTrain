@@ -16,8 +16,7 @@ struct SessionTypeBreakdownChart: View {
                 legend
             }
         }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(accessibilityDescription)
+        .chartAccessibility(summary: accessibilityDescription)
     }
 
     // MARK: - Chart

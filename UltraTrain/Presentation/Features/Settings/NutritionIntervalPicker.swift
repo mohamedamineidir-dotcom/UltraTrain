@@ -22,5 +22,7 @@ struct NutritionIntervalPicker: View {
                 Text("\(minutes) min").tag(minutes)
             }
         }
+        .accessibilityValue(valueMinutes == 0 ? "Off" : "\(valueMinutes) minutes")
+        .accessibilityHint("Sets the reminder interval for \(label.lowercased())")
     }
 }

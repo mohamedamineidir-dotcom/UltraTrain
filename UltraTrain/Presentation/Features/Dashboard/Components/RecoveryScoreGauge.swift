@@ -16,7 +16,7 @@ struct RecoveryScoreGauge: View {
                 Text("\(score)")
                     .font(.title2.bold().monospacedDigit())
                 Text(status.rawValue.capitalized)
-                    .font(.system(size: 9).bold())
+                    .font(.caption2.bold())
                     .foregroundStyle(color)
             }
         }

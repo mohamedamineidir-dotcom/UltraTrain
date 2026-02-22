@@ -115,5 +115,7 @@ struct PreRunWeatherCard: View {
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label), \(value)")
     }
 }

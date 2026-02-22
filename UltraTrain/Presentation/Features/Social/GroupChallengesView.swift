@@ -40,6 +40,8 @@ struct GroupChallengesView: View {
                 } label: {
                     Image(systemName: "plus")
                 }
+                .accessibilityLabel("Create challenge")
+                .accessibilityHint("Opens the new group challenge form")
             }
         }
         .task {

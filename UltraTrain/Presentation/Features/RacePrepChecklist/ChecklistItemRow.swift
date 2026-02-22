@@ -10,6 +10,7 @@ struct ChecklistItemRow: View {
                 Image(systemName: item.isChecked ? "checkmark.circle.fill" : "circle")
                     .foregroundStyle(item.isChecked ? Theme.Colors.success : Theme.Colors.secondaryLabel)
                     .font(.title3)
+                    .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(item.name)
@@ -40,5 +41,9 @@ struct ChecklistItemRow: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(item.name)\(item.isChecked ? ", checked" : ", unchecked")\(item.isCustom ? ", custom item" : "")")
+        .accessibilityHint("Toggles the checked state")
+        .accessibilityAddTraits(item.isChecked ? .isSelected : [])
     }
 }

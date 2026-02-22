@@ -49,10 +49,12 @@ struct EditAthleteSheet: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Cancel") { dismiss() }
+                        .accessibilityHint("Discards changes and closes the editor")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Save") { save() }
                         .disabled(!isValid)
+                        .accessibilityHint("Saves your profile changes")
                 }
             }
         }
@@ -142,6 +144,7 @@ struct EditAthleteSheet: View {
                 }
             }
             .pickerStyle(.segmented)
+            .accessibilityHint("Select your running experience level")
         }
     }
 
@@ -189,6 +192,7 @@ struct EditAthleteSheet: View {
                 Text("Imperial").tag(UnitPreference.imperial)
             }
             .pickerStyle(.segmented)
+            .accessibilityHint("Choose between metric and imperial measurement units")
         }
     }
 

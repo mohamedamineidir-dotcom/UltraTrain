@@ -39,6 +39,8 @@ struct RacePrepChecklistView: View {
                 } label: {
                     Image(systemName: "ellipsis.circle")
                 }
+                .accessibilityLabel("Checklist options")
+                .accessibilityHint("Opens menu to add items or reset checklist")
             }
         }
         .sheet(isPresented: $viewModel.showAddItem) {
@@ -95,6 +97,7 @@ struct RacePrepChecklistView: View {
                 Image(systemName: "checkmark.seal.fill")
                     .font(.title2)
                     .foregroundStyle(Theme.Colors.success)
+                    .accessibilityLabel("All items checked")
             }
         }
         .cardStyle()

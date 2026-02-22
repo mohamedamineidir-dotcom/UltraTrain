@@ -121,6 +121,8 @@ struct RunAnalysisView: View {
                 } label: {
                     Image(systemName: "square.and.arrow.up")
                 }
+                .accessibilityLabel("Share and export")
+                .accessibilityHint("Open export options for this run")
                 .disabled(viewModel.isExporting || viewModel.isLoading)
             }
         }

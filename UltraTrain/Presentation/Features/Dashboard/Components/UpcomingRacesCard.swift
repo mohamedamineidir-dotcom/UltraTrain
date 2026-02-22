@@ -24,6 +24,7 @@ struct UpcomingRacesCard: View {
             RoundedRectangle(cornerRadius: 2)
                 .fill(race.priority.badgeColor)
                 .frame(width: 4, height: 32)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(race.name)
@@ -45,6 +46,8 @@ struct UpcomingRacesCard: View {
                     .foregroundStyle(race.priority.badgeColor)
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(race.name), \(race.priority.displayName) race. \(UnitFormatter.formatDistance(race.distanceKm, unit: units, decimals: 0)), \(UnitFormatter.formatElevation(race.elevationGainM, unit: units)) elevation gain. \(daysUntilText(race.date))")
     }
 
     private func daysUntilText(_ date: Date) -> String {

@@ -174,6 +174,8 @@ struct FinishEstimationView: View {
                 .foregroundStyle(color)
         }
         .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(title): \(AccessibilityFormatters.duration(time))")
     }
 
     // MARK: - Confidence
@@ -222,7 +224,7 @@ struct FinishEstimationView: View {
                 Image(systemName: "checkmark.seal.fill")
                     .foregroundStyle(Theme.Colors.success)
                     .accessibilityHidden(true)
-                Text("Calibrated from \(count) race result\(count == 1 ? "" : "s")")
+                Text("Calibrated from \(count) results")
                     .font(.subheadline)
             }
             if factor != 1.0 {
@@ -271,12 +273,14 @@ struct FinishEstimationView: View {
             HStack {
                 Image(systemName: "map.fill")
                     .foregroundStyle(Theme.Colors.primary)
+                    .accessibilityHidden(true)
                 Text("Race Day Plan")
                     .font(.subheadline.bold())
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .accessibilityHidden(true)
             }
             .padding(Theme.Spacing.md)
             .background(Theme.Colors.primary.opacity(0.1))

@@ -49,6 +49,8 @@ struct RouteMapView: View {
             }
             .frame(height: height)
             .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Route map showing \(segments.count) segments colored by \(coloringMode.rawValue). Tap to view segment details.")
 
             if let detail = selectedSegment {
                 SegmentDetailPopup(detail: detail) {

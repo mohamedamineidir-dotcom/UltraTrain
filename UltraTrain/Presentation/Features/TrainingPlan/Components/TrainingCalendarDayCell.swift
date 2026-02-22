@@ -10,14 +10,17 @@ struct TrainingCalendarDayCell: View {
     var body: some View {
         VStack(spacing: 2) {
             Text("\(Calendar.current.component(.day, from: date))")
-                .font(.system(.callout, design: .rounded))
+                .font(.callout)
+                .fontDesign(.rounded)
                 .fontWeight(isToday ? .bold : .regular)
                 .foregroundStyle(foregroundColor)
 
             statusIndicator
+                .accessibilityHidden(true)
         }
         .frame(maxWidth: .infinity, minHeight: 40)
         .background(backgroundView)
+        .accessibilityHidden(true)
     }
 
     @ViewBuilder

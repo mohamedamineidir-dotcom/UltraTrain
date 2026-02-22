@@ -19,8 +19,12 @@ struct RunHistoryFilterBadge: View {
                         .background(Theme.Colors.primary)
                         .clipShape(Circle())
                         .offset(x: 6, y: -6)
+                        .accessibilityHidden(true)
                 }
             }
         }
+        .accessibilityLabel("Filters")
+        .accessibilityValue(activeCount > 0 ? "\(activeCount) active" : "None active")
+        .accessibilityHint("Opens the filter options")
     }
 }

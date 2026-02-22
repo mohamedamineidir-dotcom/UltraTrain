@@ -11,5 +11,6 @@ struct PacingZoneIndicator: View {
             .background(zone.color.opacity(0.15))
             .foregroundStyle(zone.color)
             .clipShape(Capsule())
+            .accessibilityLabel("Pacing zone: \(zone.label)")
     }
 }

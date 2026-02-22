@@ -19,8 +19,7 @@ struct ACRTrendChartView: View {
             }
         }
         .cardStyle()
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(chartSummary)
+        .chartAccessibility(summary: chartSummary)
     }
 
     private var chartSummary: String {

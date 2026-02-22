@@ -161,8 +161,6 @@ enum PreRunBriefingBuilder {
         let totalKm = lastWeekRuns.reduce(0.0) { $0 + $1.distanceKm }
         let totalElev = lastWeekRuns.reduce(0.0) { $0 + $1.elevationGainM }
         let count = lastWeekRuns.count
-        let suffix = count == 1 ? "" : "s"
-
-        return "Last 7 days: \(String(format: "%.1f", totalKm)) km, \(Int(totalElev)) m D+ across \(count) run\(suffix)."
+        return "Last 7 days: \(String(format: "%.1f", totalKm)) km, \(Int(totalElev)) m D+ across \(count) runs."
     }
 }

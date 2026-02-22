@@ -23,6 +23,9 @@ struct OnboardingProgressBar: View {
         )
         .padding(.horizontal, Theme.Spacing.md)
         .padding(.top, Theme.Spacing.sm)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Step \(current + 1) of \(total)")
+        .accessibilityValue("\(AccessibilityFormatters.percentage(Double(current) * 100.0 / Double(max(total - 1, 1)))) complete")
     }
 
     @ViewBuilder

@@ -150,6 +150,8 @@ struct ImportRunView: View {
             Text(value)
                 .font(.subheadline.bold().monospacedDigit())
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label): \(value)")
     }
 
     private var importButton: some View {
@@ -159,6 +161,7 @@ struct ImportRunView: View {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.largeTitle)
                         .foregroundStyle(Theme.Colors.success)
+                        .accessibilityHidden(true)
                     Text("Run imported successfully!")
                         .font(.headline)
                     Text("\(UnitFormatter.formatDistance(run.distanceKm, unit: units, decimals: 2)) — \(RunStatisticsCalculator.formatDuration(run.duration))")

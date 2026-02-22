@@ -62,12 +62,15 @@ struct RaceCalendarView: View {
                     Circle()
                         .fill(phase.color)
                         .frame(width: 8, height: 8)
+                        .accessibilityHidden(true)
                     Text(phase.displayName)
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Training phases: \(usedPhases.map(\.displayName).joined(separator: ", "))")
     }
 
     private var usedPhases: [TrainingPhase] {
@@ -121,6 +124,7 @@ struct RaceCalendarView: View {
                 HStack(spacing: Theme.Spacing.sm) {
                     Image(systemName: "flag.checkered")
                         .foregroundStyle(Theme.Colors.danger)
+                        .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(target.name)
                             .font(.subheadline.bold())
@@ -143,5 +147,6 @@ struct RaceCalendarView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .cardStyle()
         .padding(.top, Theme.Spacing.sm)
+        .accessibilityElement(children: .combine)
     }
 }

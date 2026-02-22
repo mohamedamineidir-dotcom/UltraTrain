@@ -102,10 +102,12 @@ struct EditRaceSheet: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Cancel") { dismiss() }
+                        .accessibilityHint("Discards changes and closes the editor")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Save") { save() }
                         .disabled(!isValid)
+                        .accessibilityHint("Saves the race configuration")
                 }
             }
             .sheet(isPresented: $showAddCheckpoint) {
@@ -212,6 +214,7 @@ struct EditRaceSheet: View {
                 }
             }
             .pickerStyle(.segmented)
+            .accessibilityHint("A Race is your main goal, B Race is important, C Race is a training race")
         }
     }
 
@@ -223,6 +226,7 @@ struct EditRaceSheet: View {
                 }
             }
             .pickerStyle(.segmented)
+            .accessibilityHint("Choose your race goal: finish, target time, or target ranking")
 
             if goalType == .targetTime {
                 HStack(spacing: Theme.Spacing.md) {
@@ -246,6 +250,7 @@ struct EditRaceSheet: View {
                 }
             }
             .pickerStyle(.segmented)
+            .accessibilityHint("Select the terrain difficulty of your race course")
         }
     }
 
@@ -256,6 +261,7 @@ struct EditRaceSheet: View {
             } label: {
                 Label("Import GPX Course", systemImage: "doc.badge.arrow.up")
             }
+            .accessibilityHint("Import a GPX file to automatically populate the course route and checkpoints")
             if checkpoints.isEmpty {
                 Text("No checkpoints added yet")
                     .foregroundStyle(Theme.Colors.secondaryLabel)
@@ -268,9 +274,11 @@ struct EditRaceSheet: View {
                             if cp.hasAidStation {
                                 Image(systemName: "cross.circle.fill")
                                     .foregroundStyle(Theme.Colors.success)
+                                    .accessibilityHidden(true)
                             } else {
                                 Image(systemName: "mappin.circle.fill")
                                     .foregroundStyle(Theme.Colors.primary)
+                                    .accessibilityHidden(true)
                             }
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(cp.name)
@@ -283,8 +291,12 @@ struct EditRaceSheet: View {
                             Image(systemName: "chevron.right")
                                 .font(.caption)
                                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                                .accessibilityHidden(true)
                         }
                     }
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("\(cp.name), \(AccessibilityFormatters.distance(cp.distanceFromStartKm, unit: units)), \(AccessibilityFormatters.elevation(cp.elevationM, unit: units))\(cp.hasAidStation ? ", aid station" : "")")
+                    .accessibilityHint("Double tap to edit this checkpoint")
                 }
                 .onDelete { offsets in
                     let sorted = sortedCheckpoints
@@ -300,6 +312,7 @@ struct EditRaceSheet: View {
             } label: {
                 Label("Add Checkpoint", systemImage: "plus.circle")
             }
+            .accessibilityHint("Opens the form to add a new checkpoint")
         } header: {
             Text("Checkpoints")
         } footer: {

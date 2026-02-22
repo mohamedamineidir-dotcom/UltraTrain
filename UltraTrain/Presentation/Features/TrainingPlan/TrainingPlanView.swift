@@ -61,6 +61,7 @@ struct TrainingPlanView: View {
                             } label: {
                                 Image(systemName: "book.fill")
                             }
+                            .accessibilityLabel("Workout library")
 
                             NavigationLink {
                                 TrainingCalendarView(
@@ -71,6 +72,7 @@ struct TrainingPlanView: View {
                             } label: {
                                 Image(systemName: "calendar.badge.checkmark")
                             }
+                            .accessibilityLabel("Training calendar")
 
                             NavigationLink {
                                 RaceCalendarView(
@@ -80,6 +82,7 @@ struct TrainingPlanView: View {
                             } label: {
                                 Image(systemName: "list.bullet")
                             }
+                            .accessibilityLabel("Race calendar list")
 
                             NavigationLink {
                                 RaceCalendarGridView(
@@ -89,6 +92,7 @@ struct TrainingPlanView: View {
                             } label: {
                                 Image(systemName: "calendar")
                             }
+                            .accessibilityLabel("Race calendar grid")
                         }
                     }
                 }
@@ -242,12 +246,27 @@ struct TrainingPlanView: View {
             }
         }
         .cardStyle()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(planHeaderAccessibilityLabel(plan))
+    }
+
+    private func planHeaderAccessibilityLabel(_ plan: TrainingPlan) -> String {
+        var label = "\(plan.totalWeeks) week training plan"
+        if let currentWeek = viewModel.currentWeek {
+            label += ". Currently in week \(currentWeek.weekNumber), \(currentWeek.phase.displayName) phase"
+        }
+        let progress = viewModel.weeklyProgress
+        if progress.total > 0 {
+            label += ". \(progress.completed) of \(progress.total) sessions completed this week"
+        }
+        return label
     }
 
     private var stalePlanBanner: some View {
         HStack(spacing: Theme.Spacing.sm) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .foregroundStyle(Theme.Colors.warning)
+                .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Text("Plan may be outdated")
                     .font(.subheadline.bold())
@@ -262,6 +281,7 @@ struct TrainingPlanView: View {
             .font(.caption.bold())
             .buttonStyle(.borderedProminent)
             .controlSize(.small)
+            .accessibilityHint("Double-tap to regenerate your training plan")
         }
         .padding(Theme.Spacing.sm)
         .background(Theme.Colors.warning.opacity(0.1))
@@ -277,7 +297,7 @@ struct TrainingPlanView: View {
         }
         if !summary.removed.isEmpty {
             let count = summary.removed.count
-            parts.append("Removed: \(count) race\(count == 1 ? "" : "s")")
+            parts.append("Removed: \(count) races")
         }
         if parts.isEmpty {
             return "Your races have changed since this plan was generated."
@@ -294,7 +314,7 @@ struct TrainingPlanView: View {
         }
         if !summary.removed.isEmpty {
             let count = summary.removed.count
-            lines.append("Removed: \(count) race\(count == 1 ? "" : "s")")
+            lines.append("Removed: \(count) races")
         }
         lines.append("The plan will be regenerated with taper and recovery adjustments. Completed sessions will be preserved where possible.")
         return lines.joined(separator: "\n")

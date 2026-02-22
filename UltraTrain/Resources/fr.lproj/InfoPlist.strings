@@ -1,0 +1,6 @@
+/* Permission descriptions - French */
+"NSLocationWhenInUseUsageDescription" = "UltraTrain utilise votre position pour suivre vos courses et afficher votre parcours sur la carte.";
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "UltraTrain utilise la localisation en arrière-plan pour continuer à suivre votre course lorsque l'app est en arrière-plan.";
+"NSHealthShareUsageDescription" = "UltraTrain lit vos données de fréquence cardiaque, d'entraînement et d'activité pour suivre vos progrès et votre forme.";
+"NSHealthUpdateUsageDescription" = "UltraTrain enregistre vos courses terminées comme des entraînements dans Apple Santé.";
+"NSFaceIDUsageDescription" = "UltraTrain utilise Face ID pour protéger vos données d'entraînement et de santé.";

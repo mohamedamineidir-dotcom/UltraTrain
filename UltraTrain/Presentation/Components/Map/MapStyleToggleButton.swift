@@ -24,6 +24,7 @@ struct MapStyleToggleButton: View {
         }
         .accessibilityLabel("Map style")
         .accessibilityValue(accessibilityStyleName)
+        .accessibilityHint("Cycles through map style options")
     }
 
     private var nextStyle: MapStylePreference {

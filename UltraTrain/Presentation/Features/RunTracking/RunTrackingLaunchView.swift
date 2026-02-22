@@ -247,6 +247,7 @@ struct RunTrackingLaunchView: View {
             || locationService.authorizationStatus == .notDetermined
         )
         .accessibilityIdentifier("runTracking.startButton")
+        .accessibilityHint("Double tap to begin GPS run tracking")
     }
 
     // MARK: - History

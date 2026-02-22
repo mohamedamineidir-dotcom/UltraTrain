@@ -17,6 +17,8 @@ struct SegmentDetailPopup: View {
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
+                .accessibilityLabel("Dismiss")
+                .accessibilityHint("Dismiss segment details")
             }
 
             Divider()
@@ -65,12 +67,14 @@ struct SegmentDetailPopup: View {
             Image(systemName: icon)
                 .font(.caption2)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .accessibilityHidden(true)
             Text(value)
                 .font(.caption.bold().monospacedDigit())
             Text(unit)
                 .font(.caption2)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
+        .accessibilityElement(children: .combine)
     }
 
     private func zoneColor(_ zone: Int) -> Color {

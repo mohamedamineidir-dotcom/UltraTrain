@@ -38,6 +38,8 @@ struct NutritionView: View {
                     } label: {
                         Image(systemName: "list.bullet")
                     }
+                    .accessibilityLabel("Product library")
+                    .accessibilityHint("Opens the product library")
                 }
             }
             .task {

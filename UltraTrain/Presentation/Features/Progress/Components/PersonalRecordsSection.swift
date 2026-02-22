@@ -14,6 +14,7 @@ struct PersonalRecordsSection: View {
                 if let onSeeAll, !records.isEmpty {
                     Button("See All") { onSeeAll() }
                         .font(.subheadline)
+                        .accessibilityHint("Double-tap to view all personal records")
                 }
             }
 

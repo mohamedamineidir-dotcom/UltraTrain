@@ -20,6 +20,7 @@ struct HRVIndicator: View {
                     Image(systemName: trendIcon)
                         .font(.caption2)
                         .foregroundStyle(trendColor)
+                        .accessibilityHidden(true)
                 }
             }
             Divider().frame(height: 24)
@@ -30,6 +31,16 @@ struct HRVIndicator: View {
                 Text("\(Int(sevenDayAverage)) ms")
                     .font(.caption.monospacedDigit())
             }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Heart rate variability: \(Int(currentHRV)) milliseconds, \(trendAccessibilityLabel). 7-day average: \(Int(sevenDayAverage)) milliseconds")
+    }
+
+    private var trendAccessibilityLabel: String {
+        switch trend {
+        case .improving: "improving"
+        case .stable: "stable"
+        case .declining: "declining"
         }
     }
 

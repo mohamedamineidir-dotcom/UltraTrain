@@ -68,6 +68,7 @@ struct StravaImportView: View {
             Image(systemName: "figure.run.circle")
                 .font(.system(size: 48))
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .accessibilityHidden(true)
             Text("No run activities found")
                 .font(.headline)
             Text("Only runs and trail runs from Strava are shown here.")
@@ -173,6 +174,7 @@ private struct StravaActivityRow: View {
             if activity.isImported {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundStyle(Theme.Colors.success)
+                    .accessibilityLabel("Already imported")
             } else if isImporting {
                 ProgressView()
             } else {
@@ -180,6 +182,7 @@ private struct StravaActivityRow: View {
                     .buttonStyle(.bordered)
                     .controlSize(.small)
                     .tint(.orange)
+                    .accessibilityHint("Imports this activity from Strava")
             }
         }
         .padding(.vertical, Theme.Spacing.xs)

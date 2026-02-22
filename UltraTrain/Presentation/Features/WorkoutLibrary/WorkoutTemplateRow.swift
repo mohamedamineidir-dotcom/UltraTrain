@@ -45,5 +45,6 @@ struct WorkoutTemplateRow: View {
             .foregroundStyle(Theme.Colors.secondaryLabel)
         }
         .padding(.vertical, Theme.Spacing.xs)
+        .accessibilityElement(children: .combine)
     }
 }

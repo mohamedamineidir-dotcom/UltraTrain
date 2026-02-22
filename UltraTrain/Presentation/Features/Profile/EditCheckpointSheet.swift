@@ -64,6 +64,7 @@ struct EditCheckpointSheet: View {
 
                 Section {
                     Toggle("Aid Station", isOn: $hasAidStation)
+                        .accessibilityHint("Marks this checkpoint as having an aid station with supplies")
                 }
             }
             .navigationTitle(checkpoint == nil ? "Add Checkpoint" : "Edit Checkpoint")
@@ -71,10 +72,12 @@ struct EditCheckpointSheet: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Cancel") { dismiss() }
+                        .accessibilityHint("Discards changes and closes the editor")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Save") { save() }
                         .disabled(!isValid)
+                        .accessibilityHint("Saves the checkpoint")
                 }
             }
         }

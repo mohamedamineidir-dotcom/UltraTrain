@@ -65,10 +65,12 @@ struct TrainingCalendarDayDetail: View {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundStyle(Theme.Colors.success)
                             .font(.caption)
+                            .accessibilityHidden(true)
                     } else if session.isSkipped {
                         Image(systemName: "forward.fill")
                             .foregroundStyle(Theme.Colors.secondaryLabel)
                             .font(.caption)
+                            .accessibilityHidden(true)
                     }
                 }
 
@@ -95,6 +97,24 @@ struct TrainingCalendarDayDetail: View {
                 .background(intensityColor(session.intensity).opacity(0.15))
                 .clipShape(Capsule())
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(sessionAccessibilityLabel(session))
+    }
+
+    private func sessionAccessibilityLabel(_ session: TrainingSession) -> String {
+        var label = "\(session.type.rawValue.camelCaseToWords), \(session.intensity.rawValue.capitalized) intensity"
+        if session.isCompleted {
+            label += ", completed"
+        } else if session.isSkipped {
+            label += ", skipped"
+        }
+        if session.plannedDistanceKm > 0 {
+            label += ". \(UnitFormatter.formatDistance(session.plannedDistanceKm, unit: units))"
+        }
+        if session.plannedElevationGainM > 0 {
+            label += ", \(UnitFormatter.formatElevation(session.plannedElevationGainM, unit: units))"
+        }
+        return label
     }
 
     // MARK: - Run Row
@@ -128,6 +148,20 @@ struct TrainingCalendarDayDetail: View {
                 }
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(runAccessibilityLabel(run))
+    }
+
+    private func runAccessibilityLabel(_ run: CompletedRun) -> String {
+        var label = "\(UnitFormatter.formatDistance(run.distanceKm, unit: units)) in \(formatDuration(run.duration))"
+        label += ". Pace \(RunStatisticsCalculator.formatPace(run.averagePaceSecondsPerKm, unit: units)) \(UnitFormatter.paceLabel(units))"
+        if let hr = run.averageHeartRate {
+            label += ", \(hr) beats per minute"
+        }
+        if run.elevationGainM > 0 {
+            label += ", \(UnitFormatter.formatElevation(run.elevationGainM, unit: units)) elevation"
+        }
+        return label
     }
 
     // MARK: - Helpers

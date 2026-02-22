@@ -20,6 +20,14 @@ struct SleepHistoryBars: View {
             }
             .frame(height: 40)
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(sleepChartAccessibilityLabel)
+    }
+
+    private var sleepChartAccessibilityLabel: String {
+        guard !recentEntries.isEmpty else { return "Sleep history, no data" }
+        let avgHours = recentEntries.reduce(0.0) { $0 + $1.totalSleepDuration / 3600 } / Double(recentEntries.count)
+        return "Sleep history over \(recentEntries.count) nights, average \(String(format: "%.1f", avgHours)) hours"
     }
 
     private func barView(_ entry: SleepEntry) -> some View {
@@ -32,7 +40,7 @@ struct SleepHistoryBars: View {
                 .fill(barColor(hours: hours))
                 .frame(width: 16, height: max(4, maxHeight * fraction))
             Text(dayLabel(entry.date))
-                .font(.system(size: 8))
+                .font(.caption2)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
         .frame(maxWidth: .infinity)

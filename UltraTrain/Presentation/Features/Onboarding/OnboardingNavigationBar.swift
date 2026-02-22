@@ -15,10 +15,12 @@ struct OnboardingNavigationBar: View {
                 } label: {
                     HStack(spacing: Theme.Spacing.xs) {
                         Image(systemName: "chevron.left")
+                            .accessibilityHidden(true)
                         Text("Back")
                     }
                 }
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .accessibilityHint("Go to the previous step")
                 .accessibilityIdentifier("onboarding.backButton")
             }
 
@@ -31,10 +33,12 @@ struct OnboardingNavigationBar: View {
                     HStack(spacing: Theme.Spacing.xs) {
                         Text("Next")
                         Image(systemName: "chevron.right")
+                            .accessibilityHidden(true)
                     }
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(!viewModel.canAdvance)
+                .accessibilityHint("Continue to the next step")
                 .accessibilityIdentifier("onboarding.nextButton")
             }
         }

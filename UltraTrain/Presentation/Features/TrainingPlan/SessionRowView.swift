@@ -58,6 +58,7 @@ struct SessionRowView: View {
         }
         .padding(.vertical, Theme.Spacing.xs)
         .opacity(session.type == .rest || session.isSkipped ? 0.5 : 1.0)
+        .accessibilityElement(children: .combine)
     }
 
     private var statusIcon: String {

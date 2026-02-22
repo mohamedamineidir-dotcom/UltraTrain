@@ -14,6 +14,17 @@ struct OptimalSessionCard: View {
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .fill(Theme.Colors.secondaryBackground)
         )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(cardAccessibilityLabel)
+    }
+
+    private var cardAccessibilityLabel: String {
+        var label = "AI Suggested Session: \(displayName(for: session.recommendedType)), \(session.intensity.rawValue.capitalized) intensity, \(String(format: "%.1f", session.distanceKm)) kilometers"
+        if session.elevationGainM > 0 {
+            label += ", \(Int(session.elevationGainM)) meters elevation gain"
+        }
+        label += ". \(session.reasoning)"
+        return label
     }
 
     // MARK: - Subviews

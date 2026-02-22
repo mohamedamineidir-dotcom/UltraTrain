@@ -97,6 +97,7 @@ struct TrainingLoadView: View {
         HStack(spacing: Theme.Spacing.sm) {
             Image(systemName: viewModel.acrStatusIcon)
                 .foregroundStyle(acrColor)
+                .accessibilityHidden(true)
             Text("ACR: \(viewModel.currentACR, specifier: "%.2f")")
                 .font(.subheadline)
             Spacer()
@@ -109,6 +110,8 @@ struct TrainingLoadView: View {
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .fill(acrColor.opacity(0.1))
         )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Acute to chronic ratio: \(String(format: "%.2f", viewModel.currentACR)). Status: \(viewModel.acrStatusLabel)")
     }
 
     private var acrColor: Color {
@@ -146,6 +149,8 @@ struct TrainingLoadView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .cardStyle()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Training monotony: \(String(format: "%.1f", summary.monotony)), \(summary.monotonyLevel.displayName). \(viewModel.monotonyDescription)")
     }
 
     private func monotonyColor(_ level: MonotonyLevel) -> Color {

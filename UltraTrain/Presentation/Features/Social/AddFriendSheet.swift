@@ -64,6 +64,8 @@ struct AddFriendSheet: View {
                 Image(systemName: "magnifyingglass")
             }
             .disabled(viewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            .accessibilityLabel("Search")
+            .accessibilityHint("Searches for a user profile")
         }
     }
 
@@ -90,6 +92,7 @@ struct AddFriendSheet: View {
             }
             .buttonStyle(.borderedProminent)
             .disabled(viewModel.isSending || viewModel.didSend)
+            .accessibilityHint("Sends a friend request to this user")
         }
     }
 

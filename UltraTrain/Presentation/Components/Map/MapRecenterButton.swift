@@ -19,5 +19,6 @@ struct MapRecenterButton: View {
             .clipShape(Capsule())
         }
         .accessibilityLabel("Re-center map")
+        .accessibilityHint("Centers the map on your current location")
     }
 }

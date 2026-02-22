@@ -10,6 +10,7 @@ struct ChallengeDefinitionCard: View {
                 .font(.title3)
                 .foregroundStyle(Theme.Colors.primary)
                 .frame(width: 28)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                 Text(definition.name)
@@ -34,6 +35,7 @@ struct ChallengeDefinitionCard: View {
             }
             .buttonStyle(.bordered)
             .tint(Theme.Colors.primary)
+            .accessibilityHint("Starts the \(definition.name) challenge")
         }
         .padding(.vertical, Theme.Spacing.xs)
     }

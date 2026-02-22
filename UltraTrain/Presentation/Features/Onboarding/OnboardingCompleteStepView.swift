@@ -95,6 +95,7 @@ struct OnboardingCompleteStepView: View {
             SummaryRow(label: "Goal", value: viewModel.raceGoalType.displayName)
         }
         .cardStyle()
+        .accessibilityElement(children: .combine)
     }
 
     @ViewBuilder
@@ -136,6 +137,7 @@ struct OnboardingCompleteStepView: View {
                     .buttonStyle(.borderedProminent)
                     .controlSize(.small)
                     .disabled(isRequestingHealthKit)
+                    .accessibilityHint("Connects to Apple Health to sync heart rate and workouts")
                 }
             }
             .frame(maxWidth: .infinity)
@@ -178,6 +180,7 @@ struct OnboardingCompleteStepView: View {
         .controlSize(.large)
         .disabled(viewModel.isSaving)
         .padding(.top, Theme.Spacing.md)
+        .accessibilityHint("Completes setup and opens the main app")
         .accessibilityIdentifier("onboarding.getStartedButton")
     }
 }

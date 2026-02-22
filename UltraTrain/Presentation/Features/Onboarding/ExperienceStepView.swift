@@ -46,6 +46,7 @@ struct ExperienceStepView: View {
                 Text("Imperial (mi, lbs)").tag(UnitPreference.imperial)
             }
             .pickerStyle(.segmented)
+            .accessibilityHint("Choose between metric and imperial measurement units")
         }
         .cardStyle()
     }

@@ -23,5 +23,8 @@ struct DashboardProgressCard: View {
                 .accessibilityHidden(true)
         }
         .cardStyle()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Training Progress, \(runCount) runs logged")
+        .accessibilityHint("Opens detailed training progress view")
     }
 }

@@ -54,6 +54,7 @@ struct RescheduleDateSheet: View {
                 .disabled(Calendar.current.isDate(selectedDate, inSameDayAs: currentDate))
                 .padding(.horizontal, Theme.Spacing.md)
                 .padding(.bottom, Theme.Spacing.md)
+                .accessibilityHint("Double-tap to confirm rescheduling to the selected date")
             }
             .navigationTitle("Reschedule")
             .navigationBarTitleDisplayMode(.inline)

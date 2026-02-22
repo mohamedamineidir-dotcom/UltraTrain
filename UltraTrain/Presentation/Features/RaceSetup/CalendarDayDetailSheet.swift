@@ -83,6 +83,7 @@ struct CalendarDayDetailSheet: View {
                 .font(.body)
                 .foregroundStyle(Theme.Colors.primary)
                 .frame(width: 28)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(session.type.displayName)
@@ -106,9 +107,11 @@ struct CalendarDayDetailSheet: View {
         if session.isCompleted {
             Image(systemName: "checkmark.circle.fill")
                 .foregroundStyle(Theme.Colors.success)
+                .accessibilityLabel("Completed")
         } else if session.isSkipped {
             Image(systemName: "forward.fill")
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .accessibilityLabel("Skipped")
         }
     }
 
@@ -119,6 +122,7 @@ struct CalendarDayDetailSheet: View {
             Image(systemName: "moon.zzz.fill")
                 .font(.title)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .accessibilityHidden(true)
             Text("Rest Day")
                 .font(.subheadline.bold())
                 .foregroundStyle(Theme.Colors.secondaryLabel)

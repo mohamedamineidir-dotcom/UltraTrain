@@ -70,6 +70,8 @@ struct DashboardWeatherCard: View {
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(weather.condition.displayName), \(Int(weather.temperatureCelsius.rounded())) degrees, feels like \(Int(weather.apparentTemperatureCelsius.rounded())) degrees")
     }
 
     // MARK: - Stats Row
@@ -117,5 +119,7 @@ struct DashboardWeatherCard: View {
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label): \(value)")
     }
 }

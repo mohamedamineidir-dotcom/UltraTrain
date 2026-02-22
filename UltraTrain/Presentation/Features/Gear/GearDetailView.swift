@@ -85,6 +85,7 @@ struct GearDetailView: View {
             if item.needsReplacement {
                 Label("Time to replace this gear!", systemImage: "exclamationmark.triangle.fill")
                     .foregroundStyle(.orange)
+                    .accessibilityLabel("Warning: Time to replace this gear")
             }
         }
     }

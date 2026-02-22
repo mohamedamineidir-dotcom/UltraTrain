@@ -3,6 +3,7 @@ import SwiftUI
 struct FeatureTourView: View {
     var onDismiss: () -> Void
     @State private var currentPage = 0
+    @ScaledMetric(relativeTo: .largeTitle) private var pageIconSize: CGFloat = 80
 
     private let pages: [(icon: String, color: Color, title: String, description: String)] = [
         ("chart.bar.fill", Theme.Colors.primary, "Your Training Hub",
@@ -21,6 +22,7 @@ struct FeatureTourView: View {
                     Button("Skip") { onDismiss() }
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                         .padding(Theme.Spacing.md)
+                        .accessibilityHint("Skips the feature tour and goes to the main app")
                 }
             }
 
@@ -30,11 +32,12 @@ struct FeatureTourView: View {
                         Spacer()
 
                         Image(systemName: page.icon)
-                            .font(.system(size: 80))
+                            .font(.system(size: pageIconSize))
                             .foregroundStyle(page.color)
                             .frame(width: 140, height: 140)
                             .background(page.color.opacity(0.12))
                             .clipShape(Circle())
+                            .accessibilityHidden(true)
 
                         Text(page.title)
                             .font(.title.bold())
@@ -48,6 +51,7 @@ struct FeatureTourView: View {
                         Spacer()
                     }
                     .tag(index)
+                    .accessibilityElement(children: .combine)
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .always))
@@ -67,6 +71,7 @@ struct FeatureTourView: View {
             .controlSize(.large)
             .padding(.horizontal, Theme.Spacing.xl)
             .padding(.bottom, Theme.Spacing.xl)
+            .accessibilityHint(currentPage < pages.count - 1 ? "Shows the next feature" : "Closes the tour and opens the main app")
         }
         .background(Theme.Colors.background)
     }

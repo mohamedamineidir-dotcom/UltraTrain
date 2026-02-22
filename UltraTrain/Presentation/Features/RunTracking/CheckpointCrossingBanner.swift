@@ -46,6 +46,7 @@ struct CheckpointCrossingBanner: View {
                     .clipShape(Circle())
             }
             .accessibilityLabel("Dismiss")
+            .accessibilityHint("Dismiss checkpoint banner")
         }
         .padding(Theme.Spacing.md)
         .background(
@@ -56,6 +57,7 @@ struct CheckpointCrossingBanner: View {
         .padding(.horizontal, Theme.Spacing.md)
         .padding(.top, Theme.Spacing.sm)
         .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
+        .accessibilityElement(children: .combine)
         .onAppear {
             let announcement: String
             if let delta = checkpoint.delta {

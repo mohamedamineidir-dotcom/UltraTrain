@@ -11,6 +11,7 @@ struct DashboardGoalProgressCard: View {
             HStack {
                 Image(systemName: "target")
                     .foregroundStyle(Theme.Colors.primary)
+                    .accessibilityHidden(true)
                 Text("Goals")
                     .font(.headline)
                 Spacer()
@@ -21,6 +22,8 @@ struct DashboardGoalProgressCard: View {
                         .font(.title3)
                         .foregroundStyle(Theme.Colors.primary)
                 }
+                .accessibilityLabel("Add goal")
+                .accessibilityHint("Opens goal setting screen")
             }
 
             if let weekly = weeklyProgress {
@@ -124,6 +127,8 @@ struct DashboardGoalProgressCard: View {
                 .minimumScaleFactor(0.7)
         }
         .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label): \(actual) of \(target), \(Int(percent * 100)) percent")
     }
 
     // MARK: - Helpers

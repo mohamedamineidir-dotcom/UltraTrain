@@ -199,6 +199,8 @@ struct RunHistoryView: View {
         } label: {
             Image(systemName: "arrow.up.arrow.down")
         }
+        .accessibilityLabel("Sort")
+        .accessibilityHint("Changes run sort order")
     }
 
     private var importMenu: some View {
@@ -218,6 +220,8 @@ struct RunHistoryView: View {
         } label: {
             Image(systemName: "plus")
         }
+        .accessibilityLabel("Import run")
+        .accessibilityHint("Opens import options")
     }
 
     // MARK: - Empty States

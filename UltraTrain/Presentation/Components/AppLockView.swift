@@ -13,7 +13,8 @@ struct AppLockView: View {
             Spacer()
 
             Image(systemName: biometricIconName)
-                .font(.system(size: 64))
+                .font(.largeTitle)
+                .imageScale(.large)
                 .foregroundStyle(Theme.Colors.primary)
                 .accessibilityHidden(true)
 

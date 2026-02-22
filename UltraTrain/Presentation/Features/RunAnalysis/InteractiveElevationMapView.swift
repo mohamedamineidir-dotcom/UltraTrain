@@ -24,6 +24,8 @@ struct InteractiveElevationMapView: View {
             mapSection
                 .frame(height: 200)
                 .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Interactive map showing the run route. Drag on the elevation chart above to highlight a position on the map.")
         }
         .cardStyle()
     }

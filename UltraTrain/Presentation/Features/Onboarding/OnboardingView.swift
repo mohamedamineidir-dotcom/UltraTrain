@@ -56,6 +56,11 @@ struct OnboardingView: View {
             .animation(.easeInOut(duration: 0.3), value: viewModel.currentStep)
             .navigationTitle("Setup")
             .navigationBarTitleDisplayMode(.inline)
+            .accessibilityAction(.escape) {
+                if viewModel.currentStep > 0 {
+                    viewModel.goBack()
+                }
+            }
         }
     }
 }

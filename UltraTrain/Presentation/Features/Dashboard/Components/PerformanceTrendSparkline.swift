@@ -13,6 +13,16 @@ struct PerformanceTrendSparkline: View {
             RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
                 .fill(Theme.Colors.secondaryBackground)
         )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(trend.displayName), \(trendDirectionLabel) \(String(format: "%.1f", abs(trend.changePercent))) percent. \(trend.summary)")
+    }
+
+    private var trendDirectionLabel: String {
+        switch trend.trendDirection {
+        case .improving: "improving"
+        case .stable: "stable"
+        case .declining: "declining"
+        }
     }
 
     // MARK: - Subviews

@@ -126,16 +126,21 @@ struct CreateGroupChallengeSheet: View {
                 Image(systemName: "person.circle.fill")
                     .font(.title2)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .accessibilityHidden(true)
                 Text(friend.friendDisplayName)
                     .font(.body)
                     .foregroundStyle(Theme.Colors.label)
                 Spacer()
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                     .foregroundStyle(isSelected ? Theme.Colors.primary : Theme.Colors.secondaryLabel)
+                    .accessibilityHidden(true)
             }
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(friend.friendDisplayName)
+        .accessibilityValue(isSelected ? "Invited" : "Not invited")
+        .accessibilityHint("Toggles invitation for this friend")
     }
 
     // MARK: - Create Button

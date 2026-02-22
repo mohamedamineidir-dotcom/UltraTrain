@@ -51,6 +51,11 @@ struct PaceProfileChart: View {
             .chartXAxisLabel("Distance (\(UnitFormatter.distanceLabel(units)))")
             .chartYAxisLabel("Pace (min/\(UnitFormatter.distanceLabel(units)))")
             .frame(height: 180)
+            .chartAccessibility(summary: AccessibilityFormatters.chartSummary(
+                title: "Pace profile",
+                dataPoints: segments.count,
+                trend: "showing target paces across race segments"
+            ))
         }
         .cardStyle()
     }

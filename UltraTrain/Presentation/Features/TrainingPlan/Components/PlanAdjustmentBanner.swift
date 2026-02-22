@@ -19,6 +19,7 @@ struct PlanAdjustmentBanner: View {
             HStack(spacing: Theme.Spacing.sm) {
                 Image(systemName: icon(for: rec.type))
                     .foregroundStyle(color(for: rec.severity))
+                    .accessibilityHidden(true)
                 Text(rec.title)
                     .font(.subheadline.bold())
                     .lineLimit(2)
@@ -31,6 +32,8 @@ struct PlanAdjustmentBanner: View {
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Dismiss recommendation")
+                .accessibilityHint("Double-tap to dismiss this adjustment suggestion")
             }
 
             Text(rec.message)
@@ -51,6 +54,7 @@ struct PlanAdjustmentBanner: View {
             .buttonStyle(.borderedProminent)
             .controlSize(.small)
             .disabled(isApplying)
+            .accessibilityHint("Double-tap to apply this adjustment to your plan")
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(Theme.Spacing.md)

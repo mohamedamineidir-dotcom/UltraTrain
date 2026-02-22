@@ -20,6 +20,7 @@ struct InjuryRiskAlertBanner: View {
             HStack(spacing: Theme.Spacing.sm) {
                 Image(systemName: alertIcon(alert.severity))
                     .foregroundStyle(alertColor(alert.severity))
+                    .accessibilityHidden(true)
                 Text(alert.message)
                     .font(.subheadline)
                     .lineLimit(2)
@@ -39,6 +40,8 @@ struct InjuryRiskAlertBanner: View {
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .stroke(alertColor(alert.severity).opacity(0.3), lineWidth: 1)
         )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(alert.severity == .critical ? "Critical" : "Warning") alert: \(alert.message). \(alert.recommendation)")
     }
 
     private func alertIcon(_ severity: AlertSeverity) -> String {

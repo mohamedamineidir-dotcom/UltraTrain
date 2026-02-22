@@ -56,5 +56,7 @@ struct CompactElevationCard: View {
             .frame(height: 80)
         }
         .cardStyle()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Elevation chart. Gain: \(Int(elevationGainM)) meters. Loss: \(Int(elevationLossM)) meters")
     }
 }

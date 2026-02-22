@@ -49,13 +49,14 @@ struct PhysicalDataStepView: View {
             Text("Date of Birth")
                 .font(.headline)
             DatePicker(
-                "Birthday",
+                "Date of Birth",
                 selection: $viewModel.dateOfBirth,
                 in: ...Date.now,
                 displayedComponents: .date
             )
             .datePickerStyle(.compact)
             .labelsHidden()
+            .accessibilityLabel("Date of Birth")
         }
         .cardStyle()
     }
@@ -123,6 +124,7 @@ struct PhysicalDataStepView: View {
             Text("Tip: If unknown, use 220 minus your age as max HR")
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .accessibilityLabel("Tip: If unknown, use 220 minus your age as maximum heart rate")
         }
         .cardStyle()
     }

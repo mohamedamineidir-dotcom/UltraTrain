@@ -34,6 +34,11 @@ struct RecoveryTrendChart: View {
             .chartYScale(domain: 0...100)
             .chartYAxisLabel("Score")
             .frame(height: 180)
+            .chartAccessibility(summary: AccessibilityFormatters.chartSummary(
+                title: "Recovery trend",
+                dataPoints: snapshots.count,
+                trend: "showing recovery score over time"
+            ))
         }
         .cardStyle()
     }

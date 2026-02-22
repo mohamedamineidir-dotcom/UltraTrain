@@ -77,6 +77,8 @@ struct RunDetailView: View {
                     Image(systemName: "square.and.arrow.up")
                 }
                 .disabled(isExporting)
+                .accessibilityLabel("Export")
+                .accessibilityHint("Opens export options for this run")
             }
         }
         .confirmationDialog("Export Run", isPresented: $showingExportOptions) {
@@ -250,6 +252,8 @@ struct RunDetailView: View {
                             .font(.title3)
                             .foregroundStyle(Theme.Colors.primary)
                     }
+                    .accessibilityLabel("Edit reflection")
+                    .accessibilityHint("Opens the reflection editor")
                 }
 
                 if let rpe = currentRun.rpe {
@@ -373,5 +377,7 @@ struct RunDetailView: View {
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .fill(Theme.Colors.secondaryBackground)
         )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label): \(value)")
     }
 }

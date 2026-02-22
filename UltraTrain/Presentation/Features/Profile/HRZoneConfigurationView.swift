@@ -43,6 +43,7 @@ struct HRZoneConfigurationView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Save") { save() }
+                    .accessibilityHint("Saves your heart rate zone configuration")
             }
         }
     }
@@ -52,6 +53,7 @@ struct HRZoneConfigurationView: View {
     private var toggleSection: some View {
         Section {
             Toggle("Custom HR Zones", isOn: $useCustomZones.animation())
+                .accessibilityHint("When enabled, you can set custom heart rate boundaries for each zone")
         } footer: {
             Text("When off, zones are calculated as percentages of your max HR (\(athlete.maxHeartRate) bpm).")
         }
@@ -62,9 +64,17 @@ struct HRZoneConfigurationView: View {
     private var customZoneBoundaries: some View {
         Section("Zone Boundaries (BPM)") {
             Stepper("Zone 1 max: \(zone1Max) bpm", value: $zone1Max, in: 80...zone2Max - 1)
+                .accessibilityValue(AccessibilityFormatters.heartRate(zone1Max))
+                .accessibilityHint("Adjust the upper limit for Zone 1 Recovery")
             Stepper("Zone 2 max: \(zone2Max) bpm", value: $zone2Max, in: zone1Max + 1...zone3Max - 1)
+                .accessibilityValue(AccessibilityFormatters.heartRate(zone2Max))
+                .accessibilityHint("Adjust the upper limit for Zone 2 Aerobic")
             Stepper("Zone 3 max: \(zone3Max) bpm", value: $zone3Max, in: zone2Max + 1...zone4Max - 1)
+                .accessibilityValue(AccessibilityFormatters.heartRate(zone3Max))
+                .accessibilityHint("Adjust the upper limit for Zone 3 Tempo")
             Stepper("Zone 4 max: \(zone4Max) bpm", value: $zone4Max, in: zone3Max + 1...athlete.maxHeartRate)
+                .accessibilityValue(AccessibilityFormatters.heartRate(zone4Max))
+                .accessibilityHint("Adjust the upper limit for Zone 4 Threshold")
         }
     }
 
@@ -94,6 +104,7 @@ struct HRZoneConfigurationView: View {
             RoundedRectangle(cornerRadius: 4)
                 .fill(color)
                 .frame(width: 6, height: 32)
+                .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Text("Zone \(zone) — \(name)")
                     .font(.subheadline.bold())
@@ -103,6 +114,7 @@ struct HRZoneConfigurationView: View {
             }
             Spacer()
         }
+        .accessibilityElement(children: .combine)
     }
 
     // MARK: - Helpers

@@ -38,12 +38,14 @@ struct GearPickerView: View {
             HStack(spacing: Theme.Spacing.xs) {
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                     .font(.caption)
+                    .accessibilityHidden(true)
                 Text(item.name)
                     .font(.caption)
                 if item.needsReplacement {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .font(.caption2)
                         .foregroundStyle(.orange)
+                        .accessibilityHidden(true)
                 }
             }
             .padding(.horizontal, Theme.Spacing.sm)
@@ -58,5 +60,8 @@ struct GearPickerView: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(item.name + (item.needsReplacement ? ", needs replacement" : ""))
+        .accessibilityValue(isSelected ? "Selected" : "Not selected")
+        .accessibilityHint("Toggles gear selection")
     }
 }

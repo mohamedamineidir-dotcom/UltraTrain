@@ -9,6 +9,7 @@ struct ChallengeProgressRow: View {
                 .font(.title3)
                 .foregroundStyle(Theme.Colors.primary)
                 .frame(width: 28)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                 Text(progress.definition.name)
@@ -16,6 +17,7 @@ struct ChallengeProgressRow: View {
 
                 ProgressView(value: progress.progressFraction)
                     .tint(Theme.Colors.primary)
+                    .accessibilityLabel("Progress: \(AccessibilityFormatters.percentage(progress.progressFraction * 100))")
 
                 Text("\(formatted(progress.currentValue)) / \(formatted(progress.targetValue)) \(progress.definition.unitLabel)")
                     .font(.caption)

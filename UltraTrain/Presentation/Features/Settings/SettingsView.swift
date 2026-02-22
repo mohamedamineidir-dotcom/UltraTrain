@@ -123,6 +123,7 @@ struct SettingsView: View {
                         Task { await viewModel.updateAutoPause(newValue) }
                     }
                 ))
+                .accessibilityHint("Automatically pauses your run when you stop moving")
 
                 Toggle("Pacing Alerts", isOn: Binding(
                     get: { settings.pacingAlertsEnabled },
@@ -130,6 +131,7 @@ struct SettingsView: View {
                         Task { await viewModel.updatePacingAlerts(newValue) }
                     }
                 ))
+                .accessibilityHint("Notifies you when your pace deviates from the planned target")
 
                 NavigationLink {
                     VoiceCoachingSettingsView(
@@ -172,6 +174,7 @@ struct SettingsView: View {
                         Image(systemName: viewModel.biometricIconName)
                     }
                 }
+                .accessibilityHint("Requires \(viewModel.biometricTypeLabel) authentication to open the app")
             } header: {
                 Text("Security")
             } footer: {
@@ -192,6 +195,7 @@ struct SettingsView: View {
                         Task { await viewModel.updateTrainingReminders(newValue) }
                     }
                 ))
+                .accessibilityHint("Sends reminders about upcoming training sessions")
 
                 Toggle("Nutrition Reminders", isOn: Binding(
                     get: { settings.nutritionRemindersEnabled },
@@ -199,6 +203,7 @@ struct SettingsView: View {
                         Task { await viewModel.updateNutritionReminders(newValue) }
                     }
                 ))
+                .accessibilityHint("Sends hydration, fuel, and electrolyte reminders during runs")
 
                 if settings.nutritionRemindersEnabled {
                     Toggle("Sound & Haptic Alerts", isOn: Binding(
@@ -207,6 +212,7 @@ struct SettingsView: View {
                             Task { await viewModel.updateNutritionAlertSound(newValue) }
                         }
                     ))
+                    .accessibilityHint("Plays sound and vibration for nutrition reminders")
 
                     NutritionIntervalPicker(
                         label: "Hydration Interval",
@@ -248,6 +254,7 @@ struct SettingsView: View {
                             Task { await viewModel.updateSmartReminders(newValue) }
                         }
                     ))
+                    .accessibilityHint("Adjusts reminder timing based on your pace and conditions")
                 }
 
                 Toggle("Race Countdown", isOn: Binding(
@@ -256,6 +263,7 @@ struct SettingsView: View {
                         Task { await viewModel.updateRaceCountdown(newValue) }
                     }
                 ))
+                .accessibilityHint("Shows a countdown notification as race day approaches")
             }
         }
     }
@@ -274,7 +282,9 @@ struct SettingsView: View {
             } icon: {
                 Image(systemName: "heart.fill")
                     .foregroundStyle(healthKitStatusColor)
+                    .accessibilityHidden(true)
             }
+            .accessibilityElement(children: .combine)
 
             switch viewModel.healthKitStatus {
             case .unavailable:
@@ -292,6 +302,7 @@ struct SettingsView: View {
                     }
                 }
                 .disabled(viewModel.isRequestingHealthKit)
+                .accessibilityHint("Requests permission to read and write health data")
             case .authorized:
                 if let rhr = viewModel.healthKitRestingHR {
                     LabeledContent("Resting HR", value: "\(rhr) bpm")
@@ -306,6 +317,7 @@ struct SettingsView: View {
                     Button("Update Profile with Health Data") {
                         Task { await viewModel.updateAthleteWithHealthKitData() }
                     }
+                    .accessibilityHint("Updates your athlete profile with the latest Apple Health data")
                 }
                 if let settings = viewModel.appSettings {
                     Toggle("Save Runs to Apple Health", isOn: Binding(
@@ -314,12 +326,14 @@ struct SettingsView: View {
                             Task { await viewModel.updateSaveToHealth(newValue) }
                         }
                     ))
+                    .accessibilityHint("Saves completed runs as workouts in Apple Health")
                     Toggle("Auto-import from Apple Health", isOn: Binding(
                         get: { settings.healthKitAutoImportEnabled },
                         set: { newValue in
                             Task { await viewModel.updateHealthKitAutoImport(newValue) }
                         }
                     ))
+                    .accessibilityHint("Automatically imports running workouts from Apple Health")
                     if settings.healthKitAutoImportEnabled {
                         if viewModel.isImportingFromHealth {
                             HStack(spacing: Theme.Spacing.sm) {
@@ -339,12 +353,14 @@ struct SettingsView: View {
                 Button("Refresh Health Data") {
                     Task { await viewModel.fetchHealthKitData() }
                 }
+                .accessibilityHint("Fetches the latest heart rate, weight, and workout data from Apple Health")
             case .denied:
                 Button("Open Settings") {
                     if let url = URL(string: UIApplication.openSettingsURLString) {
                         UIApplication.shared.open(url)
                     }
                 }
+                .accessibilityHint("Opens iOS Settings to enable Apple Health access for UltraTrain")
             }
         } header: {
             Text("Health")
@@ -410,7 +426,9 @@ struct SettingsView: View {
             } icon: {
                 Image(systemName: "arrow.triangle.2.circlepath")
                     .foregroundStyle(stravaStatusColor)
+                    .accessibilityHidden(true)
             }
+            .accessibilityElement(children: .combine)
 
             switch viewModel.stravaStatus {
             case .disconnected, .error:
@@ -425,6 +443,7 @@ struct SettingsView: View {
                     }
                 }
                 .disabled(viewModel.isConnectingStrava)
+                .accessibilityHint("Connects your Strava account to automatically upload runs")
 
             case .connecting:
                 ProgressView("Connecting...")
@@ -437,6 +456,7 @@ struct SettingsView: View {
                             Task { await viewModel.updateStravaAutoUpload(newValue) }
                         }
                     ))
+                    .accessibilityHint("Automatically uploads completed runs to Strava")
                 }
                 if viewModel.stravaQueuePendingCount > 0 {
                     LabeledContent(
@@ -449,6 +469,7 @@ struct SettingsView: View {
                 } label: {
                     Text("Disconnect Strava")
                 }
+                .accessibilityHint("Removes the connection to your Strava account")
             }
         } header: {
             Text("Connected Services")
@@ -480,6 +501,7 @@ struct SettingsView: View {
                 get: { viewModel.iCloudSyncEnabled },
                 set: { newValue in viewModel.toggleiCloudSync(newValue) }
             ))
+            .accessibilityHint("Syncs your training data across all your Apple devices via iCloud")
 
             if viewModel.iCloudSyncEnabled {
                 Label {
@@ -489,6 +511,7 @@ struct SettingsView: View {
                 } icon: {
                     Image(systemName: "checkmark.icloud.fill")
                         .foregroundStyle(.green)
+                        .accessibilityHidden(true)
                 }
             } else {
                 Label {
@@ -498,6 +521,7 @@ struct SettingsView: View {
                 } icon: {
                     Image(systemName: "icloud.slash")
                         .foregroundStyle(.gray)
+                        .accessibilityHidden(true)
                 }
             }
         } header: {
@@ -528,6 +552,7 @@ struct SettingsView: View {
                 }
             }
             .disabled(viewModel.isExporting)
+            .accessibilityHint("Exports all your training data as a CSV file for sharing")
             .onChange(of: viewModel.exportedFileURL) {
                 if viewModel.exportedFileURL != nil {
                     showingShareSheet = true
@@ -539,6 +564,7 @@ struct SettingsView: View {
             } label: {
                 Label("Clear All Data", systemImage: "trash")
             }
+            .accessibilityHint("Permanently deletes all training data, plans, and settings")
         }
     }
 

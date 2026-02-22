@@ -23,6 +23,22 @@ struct RaceRowView: View {
             goalLabel
         }
         .padding(.vertical, Theme.Spacing.xs)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(raceAccessibilityLabel)
+    }
+
+    private var raceAccessibilityLabel: String {
+        let dateStr = race.date.formatted(date: .abbreviated, time: .omitted)
+        let distance = AccessibilityFormatters.distance(race.distanceKm, unit: units)
+        let elevation = AccessibilityFormatters.elevation(race.elevationGainM, unit: units)
+        let goal: String = switch race.goalType {
+        case .finish: "Goal: Finish"
+        case .targetTime(let seconds):
+            "Goal: \(AccessibilityFormatters.duration(seconds))"
+        case .targetRanking(let rank):
+            "Goal: Top \(rank)"
+        }
+        return "\(race.name), \(race.priority.displayName), \(dateStr), \(distance), \(elevation), \(goal)"
     }
 
     private var priorityBadge: some View {

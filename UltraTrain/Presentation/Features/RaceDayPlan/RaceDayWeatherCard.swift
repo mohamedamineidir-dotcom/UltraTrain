@@ -71,6 +71,8 @@ struct RaceDayWeatherCard: View {
                 Text("\(Int(forecast.highTemperatureCelsius.rounded()))°C")
                     .font(.title3.bold())
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("High temperature: \(Int(forecast.highTemperatureCelsius.rounded())) degrees Celsius")
             VStack(alignment: .leading, spacing: 2) {
                 Text("Low")
                     .font(.caption)
@@ -78,6 +80,8 @@ struct RaceDayWeatherCard: View {
                 Text("\(Int(forecast.lowTemperatureCelsius.rounded()))°C")
                     .font(.title3.bold())
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Low temperature: \(Int(forecast.lowTemperatureCelsius.rounded())) degrees Celsius")
             Spacer()
         }
     }
@@ -155,5 +159,7 @@ struct RaceDayWeatherCard: View {
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label): \(value)")
     }
 }

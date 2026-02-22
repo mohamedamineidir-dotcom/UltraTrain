@@ -24,6 +24,7 @@ struct ProgressAdherenceSection: View {
                             .font(.title3.bold().monospacedDigit())
                     }
                     .frame(width: 80, height: 80)
+                    .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                         Text("\(completed) of \(total) sessions")
@@ -33,6 +34,8 @@ struct ProgressAdherenceSection: View {
                             .foregroundStyle(Theme.Colors.secondaryLabel)
                     }
                 }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Plan adherence: \(AccessibilityFormatters.percentage(adherencePercent)). \(completed) of \(total) sessions completed. \(adherenceMessage)")
             } else {
                 Text("Generate a training plan to track adherence")
                     .foregroundStyle(Theme.Colors.secondaryLabel)

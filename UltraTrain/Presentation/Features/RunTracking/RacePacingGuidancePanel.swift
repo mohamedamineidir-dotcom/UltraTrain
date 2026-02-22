@@ -19,6 +19,17 @@ struct RacePacingGuidancePanel: View {
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .fill(Theme.Colors.secondaryBackground)
         )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilitySummary)
+    }
+
+    private var accessibilitySummary: String {
+        let target = formatPace(guidance.targetPaceSecondsPerKm)
+        let current = formatPace(guidance.currentPaceSecondsPerKm)
+        let remaining = UnitFormatter.formatDistance(guidance.segmentDistanceRemainingKm, unit: units, decimals: 1)
+        let scenario = guidance.projectedFinishScenario == .aheadOfPlan ? "ahead of plan" :
+            guidance.projectedFinishScenario == .behindPlan ? "behind plan" : "on plan"
+        return "Pacing guidance for \(guidance.currentSegmentName). Target pace \(target), current pace \(current). \(remaining) remaining. \(scenario)."
     }
 
     // MARK: - Segment Header

@@ -151,6 +151,7 @@ struct DashboardView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .accessibilityHint("Opens morning readiness check")
 
                     NavigationLink {
                         ChallengesView(
@@ -165,6 +166,7 @@ struct DashboardView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .accessibilityHint("Opens challenges view")
 
                     if !viewModel.personalRecords.isEmpty {
                         NavigationLink {
@@ -173,6 +175,7 @@ struct DashboardView: View {
                             DashboardPersonalRecordsCard(records: viewModel.personalRecords)
                         }
                         .buttonStyle(.plain)
+                        .accessibilityHint("Opens personal records wall")
                     }
 
                     LastRunCard(lastRun: viewModel.lastRun)
@@ -234,6 +237,7 @@ struct DashboardView: View {
             } label: {
                 DashboardFinishEstimateCard(estimate: estimate, race: race)
             }
+            .accessibilityHint("Opens detailed finish time estimation")
         }
     }
 
@@ -261,5 +265,6 @@ struct DashboardView: View {
         } label: {
             DashboardProgressCard(runCount: viewModel.runCount)
         }
+        .accessibilityHint("Opens detailed training progress view")
     }
 }

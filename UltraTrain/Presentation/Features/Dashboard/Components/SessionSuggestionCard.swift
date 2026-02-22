@@ -24,6 +24,8 @@ struct SessionSuggestionCard: View {
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .fill(iconColor.opacity(0.08))
         )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Today's suggestion: \(recommendation.displayText)")
     }
 
     private var iconName: String {

@@ -78,6 +78,8 @@ struct RaceDaySegmentCard: View {
         }
         .font(.caption)
         .foregroundStyle(Theme.Colors.secondaryLabel)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Segment: \(AccessibilityFormatters.distance(segment.segmentDistanceKm, unit: units)), \(AccessibilityFormatters.elevation(segment.segmentElevationGainM, unit: units)) gain, \(AccessibilityFormatters.duration(segment.expectedSegmentDuration))")
     }
 
     // MARK: - Pacing
@@ -122,6 +124,7 @@ struct RaceDaySegmentCard: View {
             Image(systemName: "pause.circle.fill")
                 .foregroundStyle(Theme.Colors.primary)
                 .font(.caption)
+                .accessibilityHidden(true)
             Text("Aid station stop: \(Int(segment.aidStationDwellTime / 60)) min")
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
@@ -154,5 +157,7 @@ struct RaceDaySegmentCard: View {
                 .foregroundStyle(.gray)
         }
         .font(.caption2)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Cumulative nutrition: \(segment.cumulativeCalories) kilocalories, \(segment.cumulativeHydrationMl) milliliters hydration, \(segment.cumulativeSodiumMg) milligrams sodium")
     }
 }

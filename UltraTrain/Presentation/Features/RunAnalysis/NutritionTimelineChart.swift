@@ -5,6 +5,17 @@ struct NutritionTimelineChart: View {
     let analysis: NutritionAnalysis
     let splits: [Split]
 
+    private var chartSummary: String {
+        let eventCount = analysis.timelineEvents.count
+        let takenCount = analysis.timelineEvents.filter { $0.status == .taken }.count
+        let skippedCount = analysis.timelineEvents.filter { $0.status == .skipped }.count
+        return AccessibilityFormatters.chartSummary(
+            title: "Nutrition timeline",
+            dataPoints: eventCount,
+            trend: "\(takenCount) taken, \(skippedCount) skipped"
+        )
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             Text("Nutrition Timeline")
@@ -44,6 +55,8 @@ struct NutritionTimelineChart: View {
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .fill(Theme.Colors.secondaryBackground)
         )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(chartSummary)
     }
 
     // MARK: - Legend

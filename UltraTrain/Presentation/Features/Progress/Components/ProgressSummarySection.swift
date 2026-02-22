@@ -38,5 +38,7 @@ struct ProgressSummarySection: View {
                 )
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("8-week summary. Total distance: \(AccessibilityFormatters.distance(totalDistanceKm, unit: units)). Total elevation: \(AccessibilityFormatters.elevation(totalElevationGainM, unit: units)). \(totalRuns) total runs. Average \(AccessibilityFormatters.distance(averageWeeklyKm, unit: units)) per week.")
     }
 }

@@ -39,6 +39,7 @@ struct SessionNutritionSection: View {
                         Circle()
                             .fill(Theme.Colors.secondaryLabel)
                             .frame(width: 4, height: 4)
+                            .accessibilityHidden(true)
                         Text(meal)
                             .font(.caption)
                             .foregroundStyle(Theme.Colors.secondaryLabel)
@@ -51,10 +52,13 @@ struct SessionNutritionSection: View {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .font(.caption2)
                         .foregroundStyle(Theme.Colors.warning)
+                        .accessibilityHidden(true)
                     Text(avoidNotes)
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.warning)
                 }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Warning: \(avoidNotes)")
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -89,6 +93,7 @@ struct SessionNutritionSection: View {
                             .font(.caption)
                             .foregroundStyle(suggestion.product.type.color)
                             .frame(width: 16)
+                            .accessibilityHidden(true)
                         Text(suggestion.product.name)
                             .font(.caption)
                         Spacer()
@@ -96,6 +101,8 @@ struct SessionNutritionSection: View {
                             .font(.caption2)
                             .foregroundStyle(Theme.Colors.secondaryLabel)
                     }
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("\(suggestion.product.name), \(suggestion.frequencyDescription)")
                 }
             }
 
@@ -135,6 +142,7 @@ struct SessionNutritionSection: View {
                         Circle()
                             .fill(Theme.Colors.secondaryLabel)
                             .frame(width: 4, height: 4)
+                            .accessibilityHidden(true)
                         Text(meal)
                             .font(.caption)
                             .foregroundStyle(Theme.Colors.secondaryLabel)
@@ -152,6 +160,7 @@ struct SessionNutritionSection: View {
         HStack(spacing: Theme.Spacing.xs) {
             Image(systemName: icon)
                 .foregroundStyle(color)
+                .accessibilityHidden(true)
             Text(title)
                 .font(.subheadline.bold())
         }

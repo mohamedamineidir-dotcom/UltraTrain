@@ -40,6 +40,8 @@ struct RouteComparisonOverlay: View {
         .mapControls {
             MapCompass()
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Route comparison map showing planned course and actual route. Max deviation \(formatMeters(comparison.maxDeviationMeters)), average deviation \(formatMeters(comparison.averageDeviationMeters))")
     }
 
     @MapContentBuilder
@@ -111,6 +113,8 @@ struct RouteComparisonOverlay: View {
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
         .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label), \(formatMeters(meters))")
     }
 
     private func formatMeters(_ meters: Double) -> String {

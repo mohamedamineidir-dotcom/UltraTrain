@@ -8,6 +8,7 @@ struct VoiceCoachingSettingsView: View {
         List {
             Section {
                 Toggle("Voice Coaching", isOn: binding(\.enabled))
+                    .accessibilityHint("Enables hands-free audio announcements during your runs")
             } footer: {
                 Text("Hands-free audio announcements during your runs. Lowers music volume while speaking.")
             }
@@ -26,8 +27,10 @@ struct VoiceCoachingSettingsView: View {
     private var splitAnnouncementsSection: some View {
         Section("Split Announcements") {
             Toggle("Distance Splits", isOn: binding(\.announceDistanceSplits))
+                .accessibilityHint("Announces your pace and distance at each kilometer or mile split")
 
             Toggle("Time Splits", isOn: binding(\.announceTimeSplits))
+                .accessibilityHint("Announces your progress at regular time intervals")
 
             if config.announceTimeSplits {
                 Picker("Interval", selection: binding(\.timeSplitIntervalMinutes)) {
@@ -35,6 +38,7 @@ struct VoiceCoachingSettingsView: View {
                         Text("\(minutes) min").tag(minutes)
                     }
                 }
+                .accessibilityHint("How often time-based announcements are made")
             }
         }
     }
@@ -42,10 +46,15 @@ struct VoiceCoachingSettingsView: View {
     private var eventAnnouncementsSection: some View {
         Section("Event Announcements") {
             Toggle("HR Zone Changes", isOn: binding(\.announceHRZoneChanges))
+                .accessibilityHint("Announces when you move into a different heart rate zone")
             Toggle("Nutrition Reminders", isOn: binding(\.announceNutritionReminders))
+                .accessibilityHint("Announces hydration and fuel reminders by voice")
             Toggle("Checkpoint Crossings", isOn: binding(\.announceCheckpoints))
+                .accessibilityHint("Announces when you reach a race checkpoint")
             Toggle("Pacing Alerts", isOn: binding(\.announcePacingAlerts))
+                .accessibilityHint("Announces when your pace deviates from the target")
             Toggle("Zone Drift Alerts", isOn: binding(\.announceZoneDriftAlerts))
+                .accessibilityHint("Announces when you drift out of the target heart rate zone")
         }
     }
 
@@ -57,13 +66,24 @@ struct VoiceCoachingSettingsView: View {
                     Text("Slow")
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
+                        .accessibilityHidden(true)
                     Slider(value: binding(\.speechRate), in: 0.3...0.7, step: 0.05)
+                        .accessibilityLabel("Speech Rate")
+                        .accessibilityValue(speechRateDescription)
                     Text("Fast")
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
+                        .accessibilityHidden(true)
                 }
             }
         }
+    }
+
+    private var speechRateDescription: String {
+        let rate = config.speechRate
+        if rate < 0.4 { return "Slow" }
+        if rate < 0.55 { return "Normal" }
+        return "Fast"
     }
 
     // MARK: - Helper

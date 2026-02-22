@@ -33,6 +33,8 @@ struct NutritionQuickTapBar: View {
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
         .font(.caption2)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Nutrition totals: \(totals.totalCalories) kilocalories, \(String(format: "%.0f", totals.totalCarbsGrams)) grams carbs, \(String(format: "%.0f", totals.caloriesPerHour)) kilocalories per hour")
     }
 
     // MARK: - Product Buttons
@@ -62,6 +64,7 @@ struct NutritionQuickTapBar: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("Log \(product.name)")
+                .accessibilityHint("Double tap to log this product intake")
             }
         }
     }

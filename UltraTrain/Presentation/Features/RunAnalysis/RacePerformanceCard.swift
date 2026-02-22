@@ -60,6 +60,7 @@ struct RacePerformanceCard: View {
                     Image(systemName: "cup.and.saucer.fill")
                         .font(.caption2)
                         .foregroundStyle(Theme.Colors.primary)
+                        .accessibilityHidden(true)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -78,6 +79,8 @@ struct RacePerformanceCard: View {
                 .foregroundStyle(deltaColor(cp.delta))
                 .frame(width: 60, alignment: .trailing)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(cp.checkpointName)\(cp.hasAidStation ? ", aid station" : ""). Predicted \(FinishEstimate.formatDuration(cp.predictedTime)), actual \(FinishEstimate.formatDuration(cp.actualTime)), \(formatDelta(cp.delta))")
     }
 
     // MARK: - Finish Row
@@ -102,6 +105,8 @@ struct RacePerformanceCard: View {
                 .foregroundStyle(deltaColor(performance.finishDelta))
                 .frame(width: 60, alignment: .trailing)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Finish. Predicted \(FinishEstimate.formatDuration(performance.predictedFinishTime)), actual \(FinishEstimate.formatDuration(performance.actualFinishTime)), \(formatDelta(performance.finishDelta))")
     }
 
     // MARK: - Helpers
