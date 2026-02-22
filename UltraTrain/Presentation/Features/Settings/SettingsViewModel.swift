@@ -89,6 +89,8 @@ final class SettingsViewModel {
                 saveToHealthEnabled: false,
                 healthKitAutoImportEnabled: false,
                 pacingAlertsEnabled: true,
+                recoveryRemindersEnabled: true,
+                weeklySummaryEnabled: true,
                 voiceCoachingConfig: VoiceCoachingConfig()
             )
         }
@@ -157,6 +159,8 @@ final class SettingsViewModel {
                     saveToHealthEnabled: false,
                     healthKitAutoImportEnabled: false,
                     pacingAlertsEnabled: true,
+                    recoveryRemindersEnabled: true,
+                    weeklySummaryEnabled: true,
                     voiceCoachingConfig: VoiceCoachingConfig()
                 )
                 try await appSettingsRepository.saveSettings(defaults)
@@ -266,6 +270,49 @@ final class SettingsViewModel {
         } catch {
             self.error = error.localizedDescription
             Logger.settings.error("Failed to update race countdown: \(error)")
+        }
+    }
+
+    func updateRecoveryReminders(_ enabled: Bool) async {
+        guard var settings = appSettings else { return }
+        settings.recoveryRemindersEnabled = enabled
+
+        do {
+            try await appSettingsRepository.updateSettings(settings)
+            appSettings = settings
+
+            if enabled {
+                _ = try await notificationService.requestAuthorization()
+                if let plan = try await planRepository.getActivePlan() {
+                    let sessions = plan.weeks.flatMap(\.sessions)
+                    let races = try await raceRepository.getRaces()
+                    await notificationService.rescheduleAll(sessions: sessions, races: races)
+                }
+            } else {
+                await notificationService.cancelNotifications(withIdentifierPrefix: "recovery-")
+            }
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update recovery reminders: \(error)")
+        }
+    }
+
+    func updateWeeklySummary(_ enabled: Bool) async {
+        guard var settings = appSettings else { return }
+        settings.weeklySummaryEnabled = enabled
+
+        do {
+            try await appSettingsRepository.updateSettings(settings)
+            appSettings = settings
+
+            if enabled {
+                _ = try await notificationService.requestAuthorization()
+            } else {
+                await notificationService.cancelNotifications(withIdentifierPrefix: "weekly-")
+            }
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update weekly summary: \(error)")
         }
     }
 

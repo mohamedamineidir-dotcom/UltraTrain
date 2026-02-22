@@ -38,6 +38,7 @@ struct NutritionView: View {
                     } label: {
                         Image(systemName: "list.bullet")
                     }
+                    .accessibilityIdentifier("nutrition.productLibraryButton")
                     .accessibilityLabel("Product library")
                     .accessibilityHint("Opens the product library")
                 }
@@ -74,6 +75,7 @@ struct NutritionView: View {
             }
             .padding()
         }
+        .accessibilityIdentifier("nutrition.planContent")
     }
 
     private var emptyState: some View {
@@ -94,6 +96,8 @@ struct NutritionView: View {
             }
             .buttonStyle(.borderedProminent)
             .disabled(viewModel.isGenerating)
+            .accessibilityIdentifier("nutrition.generateButton")
         }
+        .accessibilityIdentifier("nutrition.emptyState")
     }
 }

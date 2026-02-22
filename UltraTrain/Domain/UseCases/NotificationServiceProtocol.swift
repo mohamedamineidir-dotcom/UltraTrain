@@ -7,4 +7,7 @@ protocol NotificationServiceProtocol: AnyObject, Sendable {
     func cancelAllNotifications() async
     func cancelNotifications(withIdentifierPrefix prefix: String) async
     func rescheduleAll(sessions: [TrainingSession], races: [Race]) async
+    func scheduleRecoveryReminder(for date: Date) async
+    func scheduleWeeklySummary(distanceKm: Double, elevationM: Double, runCount: Int) async
+    func registerNotificationCategories() async
 }

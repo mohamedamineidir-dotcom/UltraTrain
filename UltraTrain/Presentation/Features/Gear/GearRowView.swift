@@ -35,6 +35,7 @@ struct GearRowView: View {
             }
         }
         .padding(.vertical, Theme.Spacing.xs)
+        .accessibilityIdentifier("gear.row.\(item.name)")
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityDescription)
     }

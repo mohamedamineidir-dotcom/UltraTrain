@@ -109,6 +109,7 @@ struct DashboardView: View {
                         currentPhase: viewModel.currentPhase,
                         onStartRun: { selectedTab = .run }
                     )
+                    .accessibilityIdentifier("dashboard.nextSessionCard")
 
                     DashboardWeatherCard(
                         currentWeather: viewModel.currentWeather,
@@ -125,6 +126,7 @@ struct DashboardView: View {
                         targetElevationM: viewModel.weeklyTargetElevationM,
                         weeksUntilRace: viewModel.weeksUntilRace
                     )
+                    .accessibilityIdentifier("dashboard.weeklyStatsCard")
 
                     DashboardGoalProgressCard(
                         weeklyProgress: viewModel.weeklyGoalProgress,
@@ -152,6 +154,7 @@ struct DashboardView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .accessibilityIdentifier("dashboard.recoveryCard")
                     .accessibilityHint("Opens morning readiness check")
 
                     NavigationLink {
@@ -192,6 +195,7 @@ struct DashboardView: View {
                     }
 
                     UpcomingRacesCard(races: viewModel.upcomingRaces)
+                        .accessibilityIdentifier("dashboard.upcomingRacesCard")
 
                     progressSection
                 }
@@ -250,6 +254,7 @@ struct DashboardView: View {
             fitnessHistory: viewModel.recentFormHistory,
             onSeeTrend: { showFitnessTrend = true }
         )
+        .accessibilityIdentifier("dashboard.fitnessCard")
     }
 
     private var progressSection: some View {

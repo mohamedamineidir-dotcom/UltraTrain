@@ -13,6 +13,8 @@ enum UITestDataSeeder {
         seedAthlete(id: athleteId, into: context)
         seedRace(id: raceId, into: context)
         seedTrainingPlan(athleteId: athleteId, raceId: raceId, into: context)
+        seedCompletedRun(athleteId: athleteId, into: context)
+        seedNutritionPlan(raceId: raceId, into: context)
         seedAppSettings(into: context)
         seedGear(into: context)
 
@@ -129,6 +131,76 @@ enum UITestDataSeeder {
         }
     }
 
+    // MARK: - Completed Run
+
+    private static func seedCompletedRun(athleteId: UUID, into context: ModelContext) {
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: .now)!
+        let run = CompletedRunSwiftDataModel(
+            id: UUID(),
+            athleteId: athleteId,
+            date: yesterday,
+            distanceKm: 15.0,
+            elevationGainM: 350,
+            elevationLossM: 340,
+            duration: 5400,
+            averageHeartRate: 148,
+            maxHeartRate: 172,
+            averagePaceSecondsPerKm: 360,
+            gpsTrackData: Data(),
+            splits: [],
+            linkedSessionId: nil,
+            linkedRaceId: nil,
+            notes: "Test run",
+            pausedDuration: 0,
+            gearIds: [],
+            nutritionIntakeData: Data()
+        )
+        context.insert(run)
+    }
+
+    // MARK: - Nutrition Plan
+
+    private static func seedNutritionPlan(raceId: UUID, into context: ModelContext) {
+        let gelEntry = NutritionEntrySwiftDataModel(
+            id: UUID(),
+            productId: UUID(),
+            productName: "Energy Gel",
+            productTypeRaw: "gel",
+            productCaloriesPerServing: 100,
+            productCarbsGramsPerServing: 25,
+            productSodiumMgPerServing: 50,
+            productCaffeinated: false,
+            timingMinutes: 30,
+            quantity: 1,
+            notes: nil
+        )
+
+        let drinkEntry = NutritionEntrySwiftDataModel(
+            id: UUID(),
+            productId: UUID(),
+            productName: "Electrolyte Drink",
+            productTypeRaw: "drink",
+            productCaloriesPerServing: 80,
+            productCarbsGramsPerServing: 20,
+            productSodiumMgPerServing: 300,
+            productCaffeinated: false,
+            timingMinutes: 45,
+            quantity: 1,
+            notes: nil
+        )
+
+        let plan = NutritionPlanSwiftDataModel(
+            id: UUID(),
+            raceId: raceId,
+            caloriesPerHour: 250,
+            hydrationMlPerHour: 500,
+            sodiumMgPerHour: 500,
+            entries: [gelEntry, drinkEntry],
+            gutTrainingSessionIds: []
+        )
+        context.insert(plan)
+    }
+
     // MARK: - Gear
 
     private static func seedGear(into context: ModelContext) {
@@ -168,7 +240,9 @@ enum UITestDataSeeder {
             trainingRemindersEnabled: false,
             nutritionRemindersEnabled: false,
             autoPauseEnabled: true,
-            nutritionAlertSoundEnabled: false
+            nutritionAlertSoundEnabled: false,
+            recoveryRemindersEnabled: false,
+            weeklySummaryEnabled: false
         )
         context.insert(settings)
     }

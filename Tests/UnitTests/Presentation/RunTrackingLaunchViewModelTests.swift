@@ -215,7 +215,9 @@ struct RunTrackingLaunchViewModelTests {
             smartRemindersEnabled: true,
             saveToHealthEnabled: false,
             healthKitAutoImportEnabled: false,
-            pacingAlertsEnabled: true
+            pacingAlertsEnabled: true,
+            recoveryRemindersEnabled: true,
+            weeklySummaryEnabled: true
         )
 
         let vm = makeViewModel(athleteRepo: athleteRepo, settingsRepo: settingsRepo)
@@ -317,7 +319,9 @@ struct RunTrackingLaunchViewModelTests {
             smartRemindersEnabled: false,
             saveToHealthEnabled: true,
             healthKitAutoImportEnabled: false,
-            pacingAlertsEnabled: true
+            pacingAlertsEnabled: true,
+            recoveryRemindersEnabled: true,
+            weeklySummaryEnabled: true
         )
 
         let vm = makeViewModel(athleteRepo: athleteRepo, settingsRepo: settingsRepo)

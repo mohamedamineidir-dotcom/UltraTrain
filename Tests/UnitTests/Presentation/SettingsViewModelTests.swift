@@ -39,7 +39,9 @@ struct SettingsViewModelTests {
             smartRemindersEnabled: false,
             saveToHealthEnabled: false,
             healthKitAutoImportEnabled: false,
-            pacingAlertsEnabled: true
+            pacingAlertsEnabled: true,
+            recoveryRemindersEnabled: true,
+            weeklySummaryEnabled: true
         )
     }
 

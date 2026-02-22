@@ -77,6 +77,7 @@ struct DashboardNextSessionCard: View {
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.small)
+            .accessibilityIdentifier("dashboard.startRunButton")
             .accessibilityHint("Starts GPS tracking for this session")
         }
         .accessibilityElement(children: .contain)

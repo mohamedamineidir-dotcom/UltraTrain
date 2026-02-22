@@ -32,6 +32,7 @@ struct GearListView: View {
                 } label: {
                     Image(systemName: "plus")
                 }
+                .accessibilityIdentifier("gear.addButton")
                 .accessibilityLabel("Add gear")
                 .accessibilityHint("Opens the add gear form")
             }
@@ -85,6 +86,7 @@ struct GearListView: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, Theme.Spacing.lg)
         }
+        .accessibilityIdentifier("gear.emptyState")
     }
 
     // MARK: - Active Section

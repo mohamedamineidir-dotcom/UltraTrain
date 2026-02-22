@@ -49,7 +49,9 @@ struct EditGearSheet: View {
             Form {
                 Section("Details") {
                     TextField("Name", text: $name)
+                        .accessibilityIdentifier("gear.nameField")
                     TextField("Brand", text: $brand)
+                        .accessibilityIdentifier("gear.brandField")
                     Picker("Type", selection: $type) {
                         ForEach(GearType.allCases, id: \.self) { gearType in
                             Text(gearType.displayName).tag(gearType)
@@ -81,10 +83,12 @@ struct EditGearSheet: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
+                        .accessibilityIdentifier("gear.cancelButton")
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { save() }
                         .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
+                        .accessibilityIdentifier("gear.saveButton")
                 }
             }
         }

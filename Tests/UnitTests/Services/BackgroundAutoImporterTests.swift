@@ -41,7 +41,9 @@ struct BackgroundAutoImporterTests {
             smartRemindersEnabled: false,
             saveToHealthEnabled: false,
             healthKitAutoImportEnabled: autoImportEnabled,
-            pacingAlertsEnabled: true
+            pacingAlertsEnabled: true,
+            recoveryRemindersEnabled: true,
+            weeklySummaryEnabled: true
         )
     }
 

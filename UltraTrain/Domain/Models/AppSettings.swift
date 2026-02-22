@@ -17,5 +17,7 @@ struct AppSettings: Identifiable, Equatable, Sendable {
     var saveToHealthEnabled: Bool
     var healthKitAutoImportEnabled: Bool
     var pacingAlertsEnabled: Bool
+    var recoveryRemindersEnabled: Bool
+    var weeklySummaryEnabled: Bool
     var voiceCoachingConfig: VoiceCoachingConfig = VoiceCoachingConfig()
 }

@@ -10,6 +10,9 @@ final class MockNotificationService: NotificationServiceProtocol, @unchecked Sen
     var cancelAllCalled = false
     var cancelledPrefixes: [String] = []
     var rescheduleAllCalled = false
+    var registerCategoriesCalled = false
+    var scheduledRecoveryDates: [Date] = []
+    var scheduledWeeklySummaries: [(distanceKm: Double, elevationM: Double, runCount: Int)] = []
 
     func requestAuthorization() async throws -> Bool {
         requestAuthorizationCalled = true
@@ -37,5 +40,17 @@ final class MockNotificationService: NotificationServiceProtocol, @unchecked Sen
         rescheduleAllCalled = true
         scheduledTrainingSessions = sessions.filter { !$0.isCompleted && !$0.isSkipped }
         scheduledRaces = races
+    }
+
+    func scheduleRecoveryReminder(for date: Date) async {
+        scheduledRecoveryDates.append(date)
+    }
+
+    func scheduleWeeklySummary(distanceKm: Double, elevationM: Double, runCount: Int) async {
+        scheduledWeeklySummaries.append((distanceKm: distanceKm, elevationM: elevationM, runCount: runCount))
+    }
+
+    func registerNotificationCategories() async {
+        registerCategoriesCalled = true
     }
 }

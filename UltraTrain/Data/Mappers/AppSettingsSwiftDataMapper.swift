@@ -26,6 +26,8 @@ enum AppSettingsSwiftDataMapper {
             saveToHealthEnabled: model.saveToHealthEnabled,
             healthKitAutoImportEnabled: model.healthKitAutoImportEnabled,
             pacingAlertsEnabled: model.pacingAlertsEnabled,
+            recoveryRemindersEnabled: model.recoveryRemindersEnabled,
+            weeklySummaryEnabled: model.weeklySummaryEnabled,
             voiceCoachingConfig: voiceCoachingConfig
         )
     }
@@ -47,7 +49,9 @@ enum AppSettingsSwiftDataMapper {
             smartRemindersEnabled: settings.smartRemindersEnabled,
             saveToHealthEnabled: settings.saveToHealthEnabled,
             healthKitAutoImportEnabled: settings.healthKitAutoImportEnabled,
-            pacingAlertsEnabled: settings.pacingAlertsEnabled
+            pacingAlertsEnabled: settings.pacingAlertsEnabled,
+            recoveryRemindersEnabled: settings.recoveryRemindersEnabled,
+            weeklySummaryEnabled: settings.weeklySummaryEnabled
         )
         model.voiceCoachingConfigData = try? JSONEncoder().encode(settings.voiceCoachingConfig)
         return model

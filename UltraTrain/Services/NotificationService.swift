@@ -14,6 +14,25 @@ final class NotificationService: NotificationServiceProtocol, @unchecked Sendabl
         return granted
     }
 
+    // MARK: - Categories
+
+    func registerNotificationCategories() async {
+        let viewSession = UNNotificationAction(identifier: "viewSession", title: "View Session")
+        let skipSession = UNNotificationAction(identifier: "skipSession", title: "Skip Session")
+        let viewRace = UNNotificationAction(identifier: "viewRace", title: "View Race")
+        let viewProgress = UNNotificationAction(identifier: "viewProgress", title: "View Progress")
+        let dismiss = UNNotificationAction(identifier: "dismiss", title: "Dismiss")
+
+        let categories: Set<UNNotificationCategory> = [
+            UNNotificationCategory(identifier: "training", actions: [viewSession, skipSession], intentIdentifiers: []),
+            UNNotificationCategory(identifier: "race", actions: [viewRace], intentIdentifiers: []),
+            UNNotificationCategory(identifier: "recovery", actions: [dismiss], intentIdentifiers: []),
+            UNNotificationCategory(identifier: "weeklySummary", actions: [viewProgress], intentIdentifiers: []),
+        ]
+        center.setNotificationCategories(categories)
+        Logger.notification.info("Registered notification categories")
+    }
+
     // MARK: - Training Reminders
 
     func scheduleTrainingReminder(for session: TrainingSession) async {
@@ -29,8 +48,10 @@ final class NotificationService: NotificationServiceProtocol, @unchecked Sendabl
 
         let content = UNMutableNotificationContent()
         content.title = "Tomorrow's Training"
-        content.body = buildTrainingReminderBody(session)
+        content.body = NotificationContentBuilder.trainingReminderBody(session)
         content.sound = .default
+        content.categoryIdentifier = "training"
+        content.userInfo = ["sessionId": session.id.uuidString]
 
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
         let identifier = "training-\(session.id.uuidString)"
@@ -47,7 +68,7 @@ final class NotificationService: NotificationServiceProtocol, @unchecked Sendabl
     // MARK: - Race Countdown
 
     func scheduleRaceCountdown(for race: Race) async {
-        let daysBeforeRace = [7, 3, 1]
+        let daysBeforeRace = [56, 49, 42, 35, 28, 21, 14, 7, 6, 5, 4, 3, 2, 1]
 
         for days in daysBeforeRace {
             guard let reminderDate = Calendar.current.date(byAdding: .day, value: -days, to: race.date) else {
@@ -61,8 +82,10 @@ final class NotificationService: NotificationServiceProtocol, @unchecked Sendabl
 
             let content = UNMutableNotificationContent()
             content.title = "Race Countdown"
-            content.body = "Your race \(race.name) is in \(days) day\(days == 1 ? "" : "s")!"
+            content.body = NotificationContentBuilder.raceCountdownBody(raceName: race.name, daysRemaining: days)
             content.sound = .default
+            content.categoryIdentifier = "race"
+            content.userInfo = ["raceId": race.id.uuidString]
 
             let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
             let identifier = "race-\(race.id.uuidString)-\(days)"
@@ -74,6 +97,73 @@ final class NotificationService: NotificationServiceProtocol, @unchecked Sendabl
             } catch {
                 Logger.notification.error("Failed to schedule race countdown: \(error)")
             }
+        }
+    }
+
+    // MARK: - Recovery Reminder
+
+    func scheduleRecoveryReminder(for date: Date) async {
+        guard date > Date.now else { return }
+
+        var components = Calendar.current.dateComponents([.year, .month, .day], from: date)
+        components.hour = 9
+        components.minute = 0
+
+        let content = UNMutableNotificationContent()
+        content.title = "Rest Day"
+        content.body = NotificationContentBuilder.recoveryReminderBody()
+        content.sound = .default
+        content.categoryIdentifier = "recovery"
+
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+        let dateStr = ISO8601DateFormatter().string(from: date)
+        let identifier = "recovery-\(dateStr)"
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+
+        do {
+            try await center.add(request)
+            Logger.notification.info("Scheduled recovery reminder: \(identifier)")
+        } catch {
+            Logger.notification.error("Failed to schedule recovery reminder: \(error)")
+        }
+    }
+
+    // MARK: - Weekly Summary
+
+    func scheduleWeeklySummary(distanceKm: Double, elevationM: Double, runCount: Int) async {
+        let calendar = Calendar.current
+        let now = Date.now
+        var components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now)
+        components.weekday = 1 // Sunday
+        components.hour = 19
+        components.minute = 0
+
+        guard let nextSunday = calendar.nextDate(after: now, matching: components, matchingPolicy: .nextTime) else {
+            return
+        }
+
+        let triggerComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: nextSunday)
+
+        let content = UNMutableNotificationContent()
+        content.title = "Weekly Training Summary"
+        content.body = NotificationContentBuilder.weeklySummaryBody(
+            distanceKm: distanceKm,
+            elevationM: elevationM,
+            runCount: runCount
+        )
+        content.sound = .default
+        content.categoryIdentifier = "weeklySummary"
+
+        let trigger = UNCalendarNotificationTrigger(dateMatching: triggerComponents, repeats: false)
+        let dateStr = ISO8601DateFormatter().string(from: nextSunday)
+        let identifier = "summary-\(dateStr)"
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+
+        do {
+            try await center.add(request)
+            Logger.notification.info("Scheduled weekly summary: \(identifier)")
+        } catch {
+            Logger.notification.error("Failed to schedule weekly summary: \(error)")
         }
     }
 
@@ -106,33 +196,11 @@ final class NotificationService: NotificationServiceProtocol, @unchecked Sendabl
             await scheduleRaceCountdown(for: race)
         }
 
+        let restDays = sessions.filter { $0.type == .rest && $0.date > Date.now }
+        for session in restDays {
+            await scheduleRecoveryReminder(for: session.date)
+        }
+
         Logger.notification.info("Rescheduled all: \(futureSessions.count) sessions, \(races.count) races")
-    }
-
-    // MARK: - Helpers
-
-    private func buildTrainingReminderBody(_ session: TrainingSession) -> String {
-        var parts: [String] = []
-
-        let typeName: String = switch session.type {
-        case .longRun: "Long Run"
-        case .tempo: "Tempo"
-        case .intervals: "Intervals"
-        case .verticalGain: "Vertical Gain"
-        case .backToBack: "Back-to-Back"
-        case .recovery: "Recovery Run"
-        case .crossTraining: "Cross Training"
-        case .rest: "Rest Day"
-        }
-        parts.append(typeName)
-
-        if session.plannedDistanceKm > 0 {
-            parts.append(String(format: "%.1f km", session.plannedDistanceKm))
-        }
-        if session.plannedElevationGainM > 0 {
-            parts.append(String(format: "%.0f m D+", session.plannedElevationGainM))
-        }
-
-        return "Tomorrow: " + parts.joined(separator: " — ")
     }
 }

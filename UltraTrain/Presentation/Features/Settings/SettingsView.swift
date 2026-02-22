@@ -123,6 +123,7 @@ struct SettingsView: View {
                         Task { await viewModel.updateAutoPause(newValue) }
                     }
                 ))
+                .accessibilityIdentifier("settings.autoPauseToggle")
                 .accessibilityHint("Automatically pauses your run when you stop moving")
 
                 Toggle("Pacing Alerts", isOn: Binding(
@@ -195,6 +196,7 @@ struct SettingsView: View {
                         Task { await viewModel.updateTrainingReminders(newValue) }
                     }
                 ))
+                .accessibilityIdentifier("settings.trainingRemindersToggle")
                 .accessibilityHint("Sends reminders about upcoming training sessions")
 
                 Toggle("Nutrition Reminders", isOn: Binding(
@@ -203,6 +205,7 @@ struct SettingsView: View {
                         Task { await viewModel.updateNutritionReminders(newValue) }
                     }
                 ))
+                .accessibilityIdentifier("settings.nutritionRemindersToggle")
                 .accessibilityHint("Sends hydration, fuel, and electrolyte reminders during runs")
 
                 if settings.nutritionRemindersEnabled {
@@ -263,7 +266,26 @@ struct SettingsView: View {
                         Task { await viewModel.updateRaceCountdown(newValue) }
                     }
                 ))
+                .accessibilityIdentifier("settings.raceCountdownToggle")
                 .accessibilityHint("Shows a countdown notification as race day approaches")
+
+                Toggle("Recovery Reminders", isOn: Binding(
+                    get: { settings.recoveryRemindersEnabled },
+                    set: { newValue in
+                        Task { await viewModel.updateRecoveryReminders(newValue) }
+                    }
+                ))
+                .accessibilityIdentifier("settings.recoveryRemindersToggle")
+                .accessibilityHint("Sends reminders on rest days to stretch and hydrate")
+
+                Toggle("Weekly Summary", isOn: Binding(
+                    get: { settings.weeklySummaryEnabled },
+                    set: { newValue in
+                        Task { await viewModel.updateWeeklySummary(newValue) }
+                    }
+                ))
+                .accessibilityIdentifier("settings.weeklySummaryToggle")
+                .accessibilityHint("Sends a weekly training summary notification on Sundays")
             }
         }
     }
@@ -552,6 +574,7 @@ struct SettingsView: View {
                 }
             }
             .disabled(viewModel.isExporting)
+            .accessibilityIdentifier("settings.exportButton")
             .accessibilityHint("Exports all your training data as a CSV file for sharing")
             .onChange(of: viewModel.exportedFileURL) {
                 if viewModel.exportedFileURL != nil {
@@ -564,6 +587,7 @@ struct SettingsView: View {
             } label: {
                 Label("Clear All Data", systemImage: "trash")
             }
+            .accessibilityIdentifier("settings.clearDataButton")
             .accessibilityHint("Permanently deletes all training data, plans, and settings")
         }
     }

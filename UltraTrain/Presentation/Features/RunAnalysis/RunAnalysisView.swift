@@ -121,6 +121,7 @@ struct RunAnalysisView: View {
                 } label: {
                     Image(systemName: "square.and.arrow.up")
                 }
+                .accessibilityIdentifier("runAnalysis.exportButton")
                 .accessibilityLabel("Share and export")
                 .accessibilityHint("Open export options for this run")
                 .disabled(viewModel.isExporting || viewModel.isLoading)
@@ -130,15 +131,19 @@ struct RunAnalysisView: View {
             Button("Share as Image") {
                 Task { await viewModel.exportAsShareImage(unitPreference: units) }
             }
+            .accessibilityIdentifier("runAnalysis.shareImage")
             Button("Export as GPX") {
                 Task { await viewModel.exportAsGPX() }
             }
+            .accessibilityIdentifier("runAnalysis.exportGPX")
             Button("Export Track Points (CSV)") {
                 Task { await viewModel.exportAsTrackCSV() }
             }
+            .accessibilityIdentifier("runAnalysis.exportCSV")
             Button("Export as PDF Report") {
                 Task { await viewModel.exportAsPDF() }
             }
+            .accessibilityIdentifier("runAnalysis.exportPDF")
             Button("Cancel", role: .cancel) {}
         }
         .sheet(isPresented: $viewModel.showingShareSheet) {

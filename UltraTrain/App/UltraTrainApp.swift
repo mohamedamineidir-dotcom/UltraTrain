@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UserNotifications
 import os
 
 @main
@@ -55,6 +56,7 @@ struct UltraTrainApp: App {
     private let cloudKitCrewService: any CrewTrackingServiceProtocol
     private let deepLinkRouter: DeepLinkRouter
     private let backgroundTaskService: BackgroundTaskService
+    private let notificationDelegate: NotificationDelegate
 
     init() {
         let isUITesting = ProcessInfo.processInfo.arguments.contains("-UITestMode")
@@ -224,6 +226,14 @@ struct UltraTrainApp: App {
         }
 
         deepLinkRouter = DeepLinkRouter()
+
+        let delegate = NotificationDelegate()
+        delegate.deepLinkRouter = deepLinkRouter
+        notificationDelegate = delegate
+        UNUserNotificationCenter.current().delegate = delegate
+
+        let notifService = notificationService
+        Task { await notifService.registerNotificationCategories() }
 
         backgroundTaskService = BackgroundTaskService(
             healthKitService: healthKitService,

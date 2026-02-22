@@ -144,6 +144,7 @@ struct ProfileView: View {
                         Image(systemName: "gearshape")
                             .accessibilityLabel("Settings")
                     }
+                    .accessibilityIdentifier("profile.settingsButton")
                 }
             }
             .task {
@@ -226,11 +227,13 @@ struct ProfileView: View {
                     Label("HR Zones", systemImage: "heart.text.square")
                 }
             }
+            .accessibilityIdentifier("profile.athleteSection")
         } else {
             Section("Athlete") {
                 Label("Complete onboarding to see your profile", systemImage: "person.crop.circle")
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
+            .accessibilityIdentifier("profile.athleteSection")
         }
     }
 
@@ -335,9 +338,11 @@ struct ProfileView: View {
                     Image(systemName: "plus.circle.fill")
                         .accessibilityLabel("Add Race")
                 }
+                .accessibilityIdentifier("profile.addRaceButton")
                 .accessibilityHint("Opens the form to add a new race")
             }
         }
+        .accessibilityIdentifier("profile.racesSection")
     }
 
     // MARK: - Gear Section
@@ -352,6 +357,7 @@ struct ProfileView: View {
             } label: {
                 Label("Gear", systemImage: "shoe.fill")
             }
+            .accessibilityIdentifier("profile.gearLink")
         }
     }
 
