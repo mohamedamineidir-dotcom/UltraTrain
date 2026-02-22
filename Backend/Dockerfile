@@ -23,3 +23,4 @@ ENV LD_LIBRARY_PATH=/usr/lib/swift/linux
 EXPOSE 8080
 ENTRYPOINT ["./App"]
 CMD ["serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "8080"]
+# Railway overrides CMD via railway.toml startCommand
