@@ -55,6 +55,7 @@ struct AppRootView: View {
     private let sharedRunRepository: any SharedRunRepository
     private let activityFeedRepository: any ActivityFeedRepository
     private let groupChallengeRepository: any GroupChallengeRepository
+    private let routeRepository: any RouteRepository
 
     init(
         deepLinkRouter: DeepLinkRouter,
@@ -100,7 +101,8 @@ struct AppRootView: View {
         friendRepository: any FriendRepository,
         sharedRunRepository: any SharedRunRepository,
         activityFeedRepository: any ActivityFeedRepository,
-        groupChallengeRepository: any GroupChallengeRepository
+        groupChallengeRepository: any GroupChallengeRepository,
+        routeRepository: any RouteRepository
     ) {
         self.deepLinkRouter = deepLinkRouter
         self.athleteRepository = athleteRepository
@@ -146,6 +148,7 @@ struct AppRootView: View {
         self.sharedRunRepository = sharedRunRepository
         self.activityFeedRepository = activityFeedRepository
         self.groupChallengeRepository = groupChallengeRepository
+        self.routeRepository = routeRepository
     }
 
     var body: some View {
@@ -202,7 +205,8 @@ struct AppRootView: View {
                         friendRepository: friendRepository,
                         sharedRunRepository: sharedRunRepository,
                         activityFeedRepository: activityFeedRepository,
-                        groupChallengeRepository: groupChallengeRepository
+                        groupChallengeRepository: groupChallengeRepository,
+                        routeRepository: routeRepository
                     )
                     .fullScreenCover(isPresented: $showFeatureTour) {
                         FeatureTourView {

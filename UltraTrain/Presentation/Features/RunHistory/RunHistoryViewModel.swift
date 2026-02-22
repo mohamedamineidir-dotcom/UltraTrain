@@ -202,6 +202,10 @@ final class RunHistoryViewModel {
                 if !advancedFilter.importSources.contains(source) { return false }
             }
 
+            if !advancedFilter.activityTypes.isEmpty {
+                if !advancedFilter.activityTypes.contains(run.activityType) { return false }
+            }
+
             return true
         }
     }

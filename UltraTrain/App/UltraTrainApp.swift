@@ -54,6 +54,7 @@ struct UltraTrainApp: App {
     private let groupChallengeRepository: any GroupChallengeRepository
     private let cloudKitSharingService: (any CloudKitSharingServiceProtocol)?
     private let cloudKitCrewService: any CrewTrackingServiceProtocol
+    private let routeRepository: any RouteRepository
     private let deepLinkRouter: DeepLinkRouter
     private let backgroundTaskService: BackgroundTaskService
     private let notificationDelegate: NotificationDelegate
@@ -91,7 +92,8 @@ struct UltraTrainApp: App {
                 FriendConnectionSwiftDataModel.self,
                 SharedRunSwiftDataModel.self,
                 ActivityFeedItemSwiftDataModel.self,
-                GroupChallengeSwiftDataModel.self
+                GroupChallengeSwiftDataModel.self,
+                SavedRouteSwiftDataModel.self
             ])
             let config: ModelConfiguration
             if isUITesting {
@@ -180,6 +182,7 @@ struct UltraTrainApp: App {
         sharedRunRepository = LocalSharedRunRepository(modelContainer: modelContainer)
         activityFeedRepository = LocalActivityFeedRepository(modelContainer: modelContainer)
         groupChallengeRepository = LocalGroupChallengeRepository(modelContainer: modelContainer)
+        routeRepository = LocalRouteRepository(modelContainer: modelContainer)
         stravaUploadQueueService = StravaUploadQueueService(
             queueRepository: stravaUploadQueueRepository,
             runRepository: runRepository,
@@ -293,7 +296,8 @@ struct UltraTrainApp: App {
                 friendRepository: friendRepository,
                 sharedRunRepository: sharedRunRepository,
                 activityFeedRepository: activityFeedRepository,
-                groupChallengeRepository: groupChallengeRepository
+                groupChallengeRepository: groupChallengeRepository,
+                routeRepository: routeRepository
             )
             .onOpenURL { url in
                 _ = deepLinkRouter.handle(url: url)

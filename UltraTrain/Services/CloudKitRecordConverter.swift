@@ -178,7 +178,7 @@ enum CloudKitRecordConverter {
               let profileId = record["athleteProfileId"] as? String,
               let displayName = record["athleteDisplayName"] as? String,
               let typeRaw = record["activityTypeRaw"] as? String,
-              let activityType = ActivityType(rawValue: typeRaw),
+              let activityType = FeedActivityType(rawValue: typeRaw),
               let title = record["title"] as? String else { return nil }
 
         let stats: ActivityStats? = {

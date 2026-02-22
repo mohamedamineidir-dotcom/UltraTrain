@@ -31,6 +31,7 @@ struct ProfileView: View {
     private let sharedRunRepository: any SharedRunRepository
     private let activityFeedRepository: any ActivityFeedRepository
     private let groupChallengeRepository: any GroupChallengeRepository
+    private let routeRepository: any RouteRepository
 
     init(
         athleteRepository: any AthleteRepository,
@@ -62,7 +63,8 @@ struct ProfileView: View {
         friendRepository: any FriendRepository,
         sharedRunRepository: any SharedRunRepository,
         activityFeedRepository: any ActivityFeedRepository,
-        groupChallengeRepository: any GroupChallengeRepository
+        groupChallengeRepository: any GroupChallengeRepository,
+        routeRepository: any RouteRepository
     ) {
         _viewModel = State(initialValue: ProfileViewModel(
             athleteRepository: athleteRepository,
@@ -99,6 +101,7 @@ struct ProfileView: View {
         self.sharedRunRepository = sharedRunRepository
         self.activityFeedRepository = activityFeedRepository
         self.groupChallengeRepository = groupChallengeRepository
+        self.routeRepository = routeRepository
     }
 
     var body: some View {
@@ -110,6 +113,7 @@ struct ProfileView: View {
                     athleteSection
                     racesSection
                     gearSection
+                    routesSection
                     challengesSection
                     socialSection
                 }
@@ -358,6 +362,24 @@ struct ProfileView: View {
                 Label("Gear", systemImage: "shoe.fill")
             }
             .accessibilityIdentifier("profile.gearLink")
+        }
+    }
+
+    // MARK: - Routes Section
+
+    private var routesSection: some View {
+        Section {
+            NavigationLink {
+                RouteLibraryView(
+                    viewModel: RouteLibraryViewModel(
+                        routeRepository: routeRepository,
+                        runRepository: runRepository
+                    )
+                )
+            } label: {
+                Label("My Routes", systemImage: "map.fill")
+            }
+            .accessibilityIdentifier("profile.routesLink")
         }
     }
 

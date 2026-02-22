@@ -46,7 +46,6 @@ final class StravaImportService: StravaImportServiceProtocol {
         let existingRuns = try await runRepository.getRecentRuns(limit: 200)
 
         return dtos.compactMap { dto -> StravaActivity? in
-            guard dto.type == "Run" || dto.type == "TrailRun" else { return nil }
             let isImported = isDuplicate(dto: dto, existingRuns: existingRuns)
             return StravaActivity(
                 id: dto.id,
@@ -98,12 +97,28 @@ final class StravaImportService: StravaImportServiceProtocol {
             notes: "Imported from Strava: \(activity.name)",
             pausedDuration: 0,
             stravaActivityId: activity.id,
-            isStravaImport: true
+            isStravaImport: true,
+            activityType: mapStravaType(activity.type)
         )
 
         try await runRepository.saveRun(run)
         Logger.strava.info("Imported Strava activity \(activity.id) as run \(run.id)")
         return run
+    }
+
+    // MARK: - Activity Type Mapping
+
+    private func mapStravaType(_ type: String) -> ActivityType {
+        switch type {
+        case "Run": return .running
+        case "TrailRun": return .trailRunning
+        case "Ride", "VirtualRide", "EBikeRide": return .cycling
+        case "Swim": return .swimming
+        case "Hike", "Walk": return .hiking
+        case "Yoga": return .yoga
+        case "WeightTraining", "Crossfit": return .strength
+        default: return .other
+        }
     }
 
     // MARK: - Fetch Streams

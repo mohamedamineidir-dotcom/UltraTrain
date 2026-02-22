@@ -28,6 +28,11 @@ struct CompletedRun: Identifiable, Equatable, Sendable {
     var perceivedFeeling: PerceivedFeeling? = nil
     var terrainType: TerrainType? = nil
     var trainingStressScore: Double? = nil
+    var activityType: ActivityType = .running
+
+    var isRunningActivity: Bool {
+        activityType == .running || activityType == .trailRunning
+    }
 
     var totalDuration: TimeInterval {
         duration + pausedDuration

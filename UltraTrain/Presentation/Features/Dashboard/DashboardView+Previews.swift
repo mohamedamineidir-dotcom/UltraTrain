@@ -106,6 +106,7 @@ private final class PreviewHealthKitService: HealthKitServiceProtocol, @unchecke
     func fetchRestingHeartRate() async throws -> Int? { nil }
     func fetchMaxHeartRate() async throws -> Int? { nil }
     func fetchRunningWorkouts(from: Date, to: Date) async throws -> [HealthKitWorkout] { [] }
+    func fetchWorkouts(activityTypes: [ActivityType], from startDate: Date, to endDate: Date) async throws -> [HealthKitWorkout] { [] }
     func saveWorkout(run: CompletedRun) async throws {}
     func fetchBodyWeight() async throws -> Double? { nil }
     func fetchSleepData(from: Date, to: Date) async throws -> [SleepEntry] { [] }

@@ -7,6 +7,9 @@ struct RunHistoryRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
             HStack {
+                Image(systemName: run.activityType.iconName)
+                    .foregroundStyle(Theme.Colors.primary)
+                    .accessibilityLabel(run.activityType.displayName)
                 Text(run.date, style: .date)
                     .font(.subheadline.bold())
                 Spacer()

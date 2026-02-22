@@ -129,7 +129,17 @@ struct TrainingLoadCalculator: CalculateTrainingLoadUseCase, Sendable {
 
     private func effortLoad(for run: CompletedRun) -> Double {
         if let tss = run.trainingStressScore { return tss }
-        return run.distanceKm + (run.elevationGainM / 100.0)
+
+        switch run.activityType {
+        case .running, .trailRunning, .hiking:
+            return run.distanceKm + (run.elevationGainM / 100.0)
+        case .cycling:
+            return (run.distanceKm / 3.0) + (run.elevationGainM / 100.0)
+        case .swimming:
+            return run.distanceKm * 4.0
+        case .strength, .yoga, .other:
+            return (run.duration / 3600.0) * 30.0
+        }
     }
 
     private func buildDailyLoads(from runs: [CompletedRun], upTo endDate: Date) -> [Double] {

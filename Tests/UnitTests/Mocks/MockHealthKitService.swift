@@ -55,6 +55,18 @@ final class MockHealthKitService: HealthKitServiceProtocol, @unchecked Sendable 
         return workouts.filter { $0.startDate >= startDate && $0.startDate <= endDate }
     }
 
+    func fetchWorkouts(
+        activityTypes: [ActivityType],
+        from startDate: Date,
+        to endDate: Date
+    ) async throws -> [HealthKitWorkout] {
+        if shouldThrow { throw DomainError.healthKitUnavailable }
+        return workouts.filter {
+            $0.startDate >= startDate && $0.startDate <= endDate
+                && activityTypes.contains($0.activityType)
+        }
+    }
+
     func saveWorkout(run: CompletedRun) async throws {
         if shouldThrow { throw DomainError.healthKitWriteDenied }
         saveWorkoutCalled = true

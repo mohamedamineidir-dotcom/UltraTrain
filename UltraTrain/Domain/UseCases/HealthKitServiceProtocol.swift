@@ -23,6 +23,7 @@ struct HealthKitWorkout: Identifiable, Sendable, Equatable {
     let averageHeartRate: Int?
     let maxHeartRate: Int?
     let source: String
+    let activityType: ActivityType
 }
 
 protocol HealthKitServiceProtocol: AnyObject, Sendable {
@@ -33,6 +34,7 @@ protocol HealthKitServiceProtocol: AnyObject, Sendable {
     func fetchRestingHeartRate() async throws -> Int?
     func fetchMaxHeartRate() async throws -> Int?
     func fetchRunningWorkouts(from startDate: Date, to endDate: Date) async throws -> [HealthKitWorkout]
+    func fetchWorkouts(activityTypes: [ActivityType], from startDate: Date, to endDate: Date) async throws -> [HealthKitWorkout]
     func saveWorkout(run: CompletedRun) async throws
     func fetchBodyWeight() async throws -> Double?
     func fetchSleepData(from startDate: Date, to endDate: Date) async throws -> [SleepEntry]

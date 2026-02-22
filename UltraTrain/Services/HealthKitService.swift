@@ -166,6 +166,18 @@ final class HealthKitService: @preconcurrency HealthKitServiceProtocol, @uncheck
         from startDate: Date,
         to endDate: Date
     ) async throws -> [HealthKitWorkout] {
+        try await fetchWorkouts(
+            activityTypes: [.running, .trailRunning],
+            from: startDate,
+            to: endDate
+        )
+    }
+
+    func fetchWorkouts(
+        activityTypes: [ActivityType],
+        from startDate: Date,
+        to endDate: Date
+    ) async throws -> [HealthKitWorkout] {
         guard let healthStore else {
             throw DomainError.healthKitUnavailable
         }
@@ -174,9 +186,13 @@ final class HealthKitService: @preconcurrency HealthKitServiceProtocol, @uncheck
         let datePredicate = HKQuery.predicateForSamples(
             withStart: startDate, end: endDate, options: .strictEndDate
         )
-        let activityPredicate = HKQuery.predicateForWorkouts(
-            with: .running
+
+        let hkTypes = HealthKitQueryHelper.hkActivityTypes(for: activityTypes)
+        let activityPredicates = hkTypes.map { HKQuery.predicateForWorkouts(with: $0) }
+        let activityPredicate = NSCompoundPredicate(
+            orPredicateWithSubpredicates: activityPredicates
         )
+
         let predicate = NSCompoundPredicate(
             andPredicateWithSubpredicates: [datePredicate, activityPredicate]
         )
@@ -442,6 +458,7 @@ final class HealthKitService: @preconcurrency HealthKitServiceProtocol, @uncheck
         }
 
         let source = workout.sourceRevision.source.name
+        let activityType = HealthKitQueryHelper.mapActivityType(workout.workoutActivityType)
 
         return HealthKitWorkout(
             id: UUID(),
@@ -453,7 +470,8 @@ final class HealthKitService: @preconcurrency HealthKitServiceProtocol, @uncheck
             duration: workout.duration,
             averageHeartRate: averageHR,
             maxHeartRate: maxHR,
-            source: source
+            source: source,
+            activityType: activityType
         )
     }
 
@@ -465,6 +483,8 @@ final class HealthKitService: @preconcurrency HealthKitServiceProtocol, @uncheck
             distanceKm = 0
         }
 
+        let activityType = HealthKitQueryHelper.mapActivityType(workout.workoutActivityType)
+
         return HealthKitWorkout(
             id: UUID(),
             originalUUID: workout.uuid.uuidString,
@@ -475,7 +495,8 @@ final class HealthKitService: @preconcurrency HealthKitServiceProtocol, @uncheck
             duration: workout.duration,
             averageHeartRate: nil,
             maxHeartRate: nil,
-            source: workout.sourceRevision.source.name
+            source: workout.sourceRevision.source.name,
+            activityType: activityType
         )
     }
 }

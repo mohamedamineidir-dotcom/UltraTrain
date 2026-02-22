@@ -137,12 +137,41 @@ enum HealthKitQueryHelper {
         Logger.healthKit.info("Workout saved to Apple Health: \(run.distanceKm, format: .fixed(precision: 1)) km")
     }
 
+    // MARK: - Activity Type Mapping
+
+    static func mapActivityType(_ hkType: HKWorkoutActivityType) -> ActivityType {
+        switch hkType {
+        case .running: return .running
+        case .cycling: return .cycling
+        case .swimming: return .swimming
+        case .hiking: return .hiking
+        case .yoga: return .yoga
+        case .functionalStrengthTraining, .traditionalStrengthTraining: return .strength
+        default: return .other
+        }
+    }
+
+    static func hkActivityTypes(for activityTypes: [ActivityType]) -> [HKWorkoutActivityType] {
+        activityTypes.flatMap { type -> [HKWorkoutActivityType] in
+            switch type {
+            case .running, .trailRunning: return [.running]
+            case .cycling: return [.cycling]
+            case .swimming: return [.swimming]
+            case .hiking: return [.hiking]
+            case .yoga: return [.yoga]
+            case .strength: return [.functionalStrengthTraining, .traditionalStrengthTraining]
+            case .other: return []
+            }
+        }
+    }
+
     // MARK: - Write Types
 
     static func writeTypes() -> Set<HKSampleType> {
         var types: Set<HKSampleType> = []
         types.insert(HKWorkoutType.workoutType())
         types.insert(HKQuantityType(.distanceWalkingRunning))
+        types.insert(HKQuantityType(.distanceCycling))
         return types
     }
 
@@ -153,6 +182,8 @@ enum HealthKitQueryHelper {
         types.insert(HKQuantityType(.heartRate))
         types.insert(HKQuantityType(.restingHeartRate))
         types.insert(HKQuantityType(.distanceWalkingRunning))
+        types.insert(HKQuantityType(.distanceCycling))
+        types.insert(HKQuantityType(.distanceSwimming))
         types.insert(HKQuantityType(.activeEnergyBurned))
         types.insert(HKQuantityType(.bodyMass))
         types.insert(HKWorkoutType.workoutType())

@@ -5,7 +5,7 @@ enum ActivityFeedItemSwiftDataMapper {
     // MARK: - SwiftData -> Domain
 
     static func toDomain(_ model: ActivityFeedItemSwiftDataModel) -> ActivityFeedItem? {
-        guard let activityType = ActivityType(rawValue: model.activityTypeRaw) else {
+        guard let activityType = FeedActivityType(rawValue: model.activityTypeRaw) else {
             return nil
         }
         let stats = mapStats(

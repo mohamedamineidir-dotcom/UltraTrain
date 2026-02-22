@@ -23,7 +23,8 @@ final class HealthKitImportService: HealthKitImportServiceProtocol, @unchecked S
         let now = Date.now
         let thirtyDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: now)!
 
-        let workouts = try await healthKitService.fetchRunningWorkouts(
+        let workouts = try await healthKitService.fetchWorkouts(
+            activityTypes: ActivityType.allCases.filter { $0 != .other },
             from: thirtyDaysAgo,
             to: now
         )
@@ -45,6 +46,8 @@ final class HealthKitImportService: HealthKitImportServiceProtocol, @unchecked S
             let run = mapToCompletedRun(workout: workout, athleteId: athleteId)
             try await runRepository.saveRun(run)
             importedCount += 1
+
+            guard run.isRunningActivity else { continue }
 
             if let match = SessionMatcher.findMatch(
                 runDate: run.date,
@@ -113,7 +116,8 @@ final class HealthKitImportService: HealthKitImportServiceProtocol, @unchecked S
             splits: [],
             pausedDuration: 0,
             isHealthKitImport: true,
-            healthKitWorkoutUUID: workout.originalUUID
+            healthKitWorkoutUUID: workout.originalUUID,
+            activityType: workout.activityType
         )
     }
 }

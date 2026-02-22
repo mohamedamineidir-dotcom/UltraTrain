@@ -3,6 +3,7 @@ import SwiftUI
 struct RunTrackingLaunchView: View {
     @ScaledMetric(relativeTo: .largeTitle) private var heroIconSize: CGFloat = 60
     @State private var viewModel: RunTrackingLaunchViewModel
+    @State private var showCrossTrainingSheet = false
     private let athleteRepository: any AthleteRepository
     private let locationService: LocationService
     private let healthKitService: any HealthKitServiceProtocol
@@ -122,6 +123,7 @@ struct RunTrackingLaunchView: View {
                         )
                     }
                     startButton
+                    crossTrainingButton
                     historyLink
                 }
                 .padding(.vertical, Theme.Spacing.md)
@@ -284,6 +286,30 @@ struct RunTrackingLaunchView: View {
         .padding(Theme.Spacing.md)
         .background(RoundedRectangle(cornerRadius: Theme.CornerRadius.md).fill(Theme.Colors.primary.opacity(0.08)))
         .padding(.horizontal, Theme.Spacing.md)
+    }
+
+    // MARK: - Cross-Training
+
+    private var crossTrainingButton: some View {
+        Button {
+            showCrossTrainingSheet = true
+        } label: {
+            Label("Log Cross-Training", systemImage: "figure.mixed.cardio")
+                .font(.headline)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, Theme.Spacing.md)
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.large)
+        .padding(.horizontal, Theme.Spacing.md)
+        .sheet(isPresented: $showCrossTrainingSheet) {
+            CrossTrainingLogView(
+                viewModel: CrossTrainingLogViewModel(
+                    runRepository: runRepository,
+                    athleteRepository: athleteRepository
+                )
+            )
+        }
     }
 
     // MARK: - History

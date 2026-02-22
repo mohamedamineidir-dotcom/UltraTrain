@@ -32,6 +32,7 @@ final class CompletedRunSwiftDataModel {
     var perceivedFeelingRaw: String?
     var terrainTypeRaw: String?
     var trainingStressScore: Double?
+    var activityTypeRaw: String = "running"
 
     init(
         id: UUID = UUID(),
@@ -61,7 +62,8 @@ final class CompletedRunSwiftDataModel {
         rpe: Int? = nil,
         perceivedFeelingRaw: String? = nil,
         terrainTypeRaw: String? = nil,
-        trainingStressScore: Double? = nil
+        trainingStressScore: Double? = nil,
+        activityTypeRaw: String = "running"
     ) {
         self.id = id
         self.athleteId = athleteId
@@ -91,5 +93,6 @@ final class CompletedRunSwiftDataModel {
         self.perceivedFeelingRaw = perceivedFeelingRaw
         self.terrainTypeRaw = terrainTypeRaw
         self.trainingStressScore = trainingStressScore
+        self.activityTypeRaw = activityTypeRaw
     }
 }

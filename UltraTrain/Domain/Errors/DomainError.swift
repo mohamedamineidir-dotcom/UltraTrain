@@ -34,6 +34,7 @@ enum DomainError: Error, Equatable, Sendable {
     case sharingFailed(reason: String)
     case cloudKitPermissionDenied
     case groupChallengeNotFound
+    case routeNotFound
     case crewTrackingUnavailable
     case unknown(message: String)
 }
@@ -107,6 +108,8 @@ extension DomainError: LocalizedError {
             return "CloudKit permission denied. Please allow access in Settings."
         case .groupChallengeNotFound:
             return "Group challenge not found."
+        case .routeNotFound:
+            return "Route not found."
         case .crewTrackingUnavailable:
             return "Crew tracking is currently unavailable."
         case .unknown(let message):

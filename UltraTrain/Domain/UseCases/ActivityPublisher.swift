@@ -32,14 +32,14 @@ enum ActivityPublisher {
 
     // MARK: - Private Helpers
 
-    private static func determineActivityType(for run: CompletedRun) -> ActivityType {
+    private static func determineActivityType(for run: CompletedRun) -> FeedActivityType {
         if run.linkedRaceId != nil {
             return .raceFinished
         }
         return .completedRun
     }
 
-    private static func buildTitle(for run: CompletedRun, type: ActivityType) -> String {
+    private static func buildTitle(for run: CompletedRun, type: FeedActivityType) -> String {
         let distanceText = String(format: "%.1f km", run.distanceKm)
         switch type {
         case .raceFinished:

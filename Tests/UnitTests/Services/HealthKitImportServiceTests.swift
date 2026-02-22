@@ -42,7 +42,8 @@ struct HealthKitImportServiceTests {
             duration: duration,
             averageHeartRate: averageHeartRate,
             maxHeartRate: maxHeartRate,
-            source: source
+            source: source,
+            activityType: .running
         )
     }
 

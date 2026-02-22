@@ -1,6 +1,6 @@
 import Foundation
 
-enum ActivityType: String, Sendable, CaseIterable {
+enum FeedActivityType: String, Sendable, CaseIterable {
     case completedRun
     case personalRecord
     case challengeCompleted
@@ -14,7 +14,7 @@ struct ActivityFeedItem: Identifiable, Equatable, Sendable {
     var athleteProfileId: String
     var athleteDisplayName: String
     var athletePhotoData: Data?
-    var activityType: ActivityType
+    var activityType: FeedActivityType
     var title: String
     var subtitle: String?
     var stats: ActivityStats?

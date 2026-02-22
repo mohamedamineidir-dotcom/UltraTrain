@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ActivityTypeIcon: View {
-    let activityType: ActivityType
+    let activityType: FeedActivityType
 
     var body: some View {
         Image(systemName: iconName)

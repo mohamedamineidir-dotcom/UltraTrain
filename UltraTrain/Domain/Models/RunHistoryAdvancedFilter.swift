@@ -8,6 +8,7 @@ struct RunHistoryAdvancedFilter: Equatable, Sendable {
     var sessionTypes: Set<SessionType> = []
     var gearIds: Set<UUID> = []
     var importSources: Set<ImportSourceFilter> = []
+    var activityTypes: Set<ActivityType> = []
 
     var isActive: Bool {
         activeFilterCount > 0
@@ -20,6 +21,7 @@ struct RunHistoryAdvancedFilter: Equatable, Sendable {
         if !sessionTypes.isEmpty { count += 1 }
         if !gearIds.isEmpty { count += 1 }
         if !importSources.isEmpty { count += 1 }
+        if !activityTypes.isEmpty { count += 1 }
         return count
     }
 
@@ -31,5 +33,6 @@ struct RunHistoryAdvancedFilter: Equatable, Sendable {
         sessionTypes = []
         gearIds = []
         importSources = []
+        activityTypes = []
     }
 }
