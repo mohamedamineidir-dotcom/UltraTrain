@@ -48,6 +48,9 @@ struct MainTabView: View {
     private let activityFeedRepository: any ActivityFeedRepository
     private let groupChallengeRepository: any GroupChallengeRepository
     private let routeRepository: any RouteRepository
+    private let intervalWorkoutRepository: (any IntervalWorkoutRepository)?
+    private let emergencyContactRepository: (any EmergencyContactRepository)?
+    private let motionService: (any MotionServiceProtocol)?
 
     init(
         deepLinkRouter: DeepLinkRouter,
@@ -93,7 +96,10 @@ struct MainTabView: View {
         sharedRunRepository: any SharedRunRepository,
         activityFeedRepository: any ActivityFeedRepository,
         groupChallengeRepository: any GroupChallengeRepository,
-        routeRepository: any RouteRepository
+        routeRepository: any RouteRepository,
+        intervalWorkoutRepository: (any IntervalWorkoutRepository)? = nil,
+        emergencyContactRepository: (any EmergencyContactRepository)? = nil,
+        motionService: (any MotionServiceProtocol)? = nil
     ) {
         self.deepLinkRouter = deepLinkRouter
         self.athleteRepository = athleteRepository
@@ -139,6 +145,9 @@ struct MainTabView: View {
         self.activityFeedRepository = activityFeedRepository
         self.groupChallengeRepository = groupChallengeRepository
         self.routeRepository = routeRepository
+        self.intervalWorkoutRepository = intervalWorkoutRepository
+        self.emergencyContactRepository = emergencyContactRepository
+        self.motionService = motionService
     }
 
     var body: some View {
@@ -208,7 +217,10 @@ struct MainTabView: View {
                 finishTimeEstimator: finishTimeEstimator,
                 finishEstimateRepository: finishEstimateRepository,
                 weatherService: weatherService,
-                recoveryRepository: recoveryRepository
+                recoveryRepository: recoveryRepository,
+                intervalWorkoutRepository: intervalWorkoutRepository,
+                emergencyContactRepository: emergencyContactRepository,
+                motionService: motionService
             )
                 .tabItem {
                     Label("Run", systemImage: "figure.run")
@@ -258,7 +270,8 @@ struct MainTabView: View {
                 sharedRunRepository: sharedRunRepository,
                 activityFeedRepository: activityFeedRepository,
                 groupChallengeRepository: groupChallengeRepository,
-                routeRepository: routeRepository
+                routeRepository: routeRepository,
+                emergencyContactRepository: emergencyContactRepository
             )
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")

@@ -116,6 +116,13 @@ struct RunAnalysisView: View {
                         NutritionPerformanceCard(analysis: viewModel.nutritionAnalysis!)
                     }
 
+                    if viewModel.hasIntervalAnalysis, let intervalAnalysis = viewModel.intervalAnalysis {
+                        IntervalAnalysisCard(analysis: intervalAnalysis)
+                        if !intervalAnalysis.workSplits.isEmpty {
+                            IntervalSplitsChart(workSplits: intervalAnalysis.workSplits)
+                        }
+                    }
+
                     if viewModel.hasHistoricalComparison {
                         HistoricalComparisonSection(comparison: viewModel.historicalComparison!)
                     }

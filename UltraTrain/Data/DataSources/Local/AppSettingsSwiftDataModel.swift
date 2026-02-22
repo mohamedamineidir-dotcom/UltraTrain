@@ -22,6 +22,7 @@ final class AppSettingsSwiftDataModel {
     var recoveryRemindersEnabled: Bool = true
     var weeklySummaryEnabled: Bool = true
     var voiceCoachingConfigData: Data?
+    var safetyConfigData: Data?
     var updatedAt: Date = Date()
 
     init(
@@ -44,6 +45,7 @@ final class AppSettingsSwiftDataModel {
         recoveryRemindersEnabled: Bool = true,
         weeklySummaryEnabled: Bool = true,
         voiceCoachingConfigData: Data? = nil,
+        safetyConfigData: Data? = nil,
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -65,6 +67,7 @@ final class AppSettingsSwiftDataModel {
         self.recoveryRemindersEnabled = recoveryRemindersEnabled
         self.weeklySummaryEnabled = weeklySummaryEnabled
         self.voiceCoachingConfigData = voiceCoachingConfigData
+        self.safetyConfigData = safetyConfigData
         self.updatedAt = updatedAt
     }
 }

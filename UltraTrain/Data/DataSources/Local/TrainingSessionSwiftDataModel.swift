@@ -16,6 +16,7 @@ final class TrainingSessionSwiftDataModel {
     var isSkipped: Bool = false
     var linkedRunId: UUID?
     var targetHeartRateZone: Int?
+    var intervalWorkoutId: UUID?
     var week: TrainingWeekSwiftDataModel?
     var updatedAt: Date = Date()
 
@@ -33,6 +34,7 @@ final class TrainingSessionSwiftDataModel {
         isSkipped: Bool = false,
         linkedRunId: UUID? = nil,
         targetHeartRateZone: Int? = nil,
+        intervalWorkoutId: UUID? = nil,
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -48,6 +50,7 @@ final class TrainingSessionSwiftDataModel {
         self.isSkipped = isSkipped
         self.linkedRunId = linkedRunId
         self.targetHeartRateZone = targetHeartRateZone
+        self.intervalWorkoutId = intervalWorkoutId
         self.updatedAt = updatedAt
     }
 }

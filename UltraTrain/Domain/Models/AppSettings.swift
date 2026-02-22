@@ -20,4 +20,5 @@ struct AppSettings: Identifiable, Equatable, Sendable {
     var recoveryRemindersEnabled: Bool
     var weeklySummaryEnabled: Bool
     var voiceCoachingConfig: VoiceCoachingConfig = VoiceCoachingConfig()
+    var safetyConfig: SafetyConfig = SafetyConfig()
 }

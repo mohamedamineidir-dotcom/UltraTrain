@@ -9,15 +9,18 @@ final class WorkoutLibraryViewModel {
 
     private let recipeRepository: any WorkoutRecipeRepository
     private let planRepository: any TrainingPlanRepository
+    private let intervalWorkoutRepository: (any IntervalWorkoutRepository)?
 
     // MARK: - State
 
     var userRecipes: [WorkoutTemplate] = []
+    var userIntervalWorkouts: [IntervalWorkout] = []
     var selectedCategory: WorkoutCategory?
     var searchQuery: String = ""
     var isLoading = false
     var error: String?
     var showingAddRecipe = false
+    var showingIntervalBuilder = false
     var templateToAdd: WorkoutTemplate?
     var recipeToEdit: WorkoutTemplate?
 
@@ -25,10 +28,12 @@ final class WorkoutLibraryViewModel {
 
     init(
         recipeRepository: any WorkoutRecipeRepository,
-        planRepository: any TrainingPlanRepository
+        planRepository: any TrainingPlanRepository,
+        intervalWorkoutRepository: (any IntervalWorkoutRepository)? = nil
     ) {
         self.recipeRepository = recipeRepository
         self.planRepository = planRepository
+        self.intervalWorkoutRepository = intervalWorkoutRepository
     }
 
     // MARK: - Computed
@@ -57,12 +62,41 @@ final class WorkoutLibraryViewModel {
 
     // MARK: - Load
 
+    // MARK: - Interval Computed
+
+    var filteredIntervalWorkouts: [IntervalWorkout] {
+        let combined = IntervalWorkoutLibrary.allWorkouts + userIntervalWorkouts
+        let filtered: [IntervalWorkout]
+
+        if let category = selectedCategory {
+            filtered = combined.filter { $0.category == category }
+        } else {
+            filtered = combined
+        }
+
+        if searchQuery.isEmpty {
+            return filtered.sorted { $0.name < $1.name }
+        }
+
+        let query = searchQuery.lowercased()
+        return filtered.filter {
+            $0.name.lowercased().contains(query) ||
+            $0.descriptionText.lowercased().contains(query)
+        }
+        .sorted { $0.name < $1.name }
+    }
+
+    // MARK: - Load
+
     func load() async {
         isLoading = true
         error = nil
 
         do {
             userRecipes = try await recipeRepository.getRecipes()
+            if let repo = intervalWorkoutRepository {
+                userIntervalWorkouts = try await repo.getWorkouts()
+            }
         } catch {
             self.error = error.localizedDescription
             Logger.workouts.error("Failed to load recipes: \(error)")
@@ -129,6 +163,18 @@ final class WorkoutLibraryViewModel {
         } catch {
             self.error = error.localizedDescription
             Logger.workouts.error("Failed to delete recipe: \(error)")
+        }
+    }
+
+    // MARK: - Interval Workouts
+
+    func deleteIntervalWorkout(id: UUID) async {
+        do {
+            try await intervalWorkoutRepository?.deleteWorkout(id: id)
+            userIntervalWorkouts.removeAll { $0.id == id }
+        } catch {
+            self.error = error.localizedDescription
+            Logger.workouts.error("Failed to delete interval workout: \(error)")
         }
     }
 }

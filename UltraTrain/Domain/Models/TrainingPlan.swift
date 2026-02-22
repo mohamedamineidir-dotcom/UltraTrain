@@ -66,6 +66,7 @@ struct TrainingSession: Identifiable, Equatable, Sendable {
     var isSkipped: Bool
     var linkedRunId: UUID?
     var targetHeartRateZone: Int? = nil
+    var intervalWorkoutId: UUID? = nil
 
     var isGutTrainingRecommended: Bool {
         (type == .longRun || type == .backToBack) && plannedDuration >= 7200
@@ -83,7 +84,7 @@ enum SessionType: String, CaseIterable, Sendable {
     case rest
 }
 
-enum Intensity: String, CaseIterable, Sendable {
+enum Intensity: String, CaseIterable, Sendable, Codable {
     case easy
     case moderate
     case hard

@@ -12,6 +12,14 @@ enum VoiceCueType: String, Codable, Sendable {
     case runPaused
     case runResumed
     case autoPaused
+    case intervalPhaseStart
+    case intervalPhaseEnd
+    case intervalCountdown
+    case intervalWorkoutComplete
+    case sosActivated
+    case fallDetected
+    case noMovementWarning
+    case safetyTimerWarning
 }
 
 struct VoiceCue: Equatable, Sendable {

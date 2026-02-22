@@ -35,6 +35,10 @@ enum DomainError: Error, Equatable, Sendable {
     case cloudKitPermissionDenied
     case groupChallengeNotFound
     case routeNotFound
+    case invalidIntervalWorkout(reason: String)
+    case intervalWorkoutNotFound
+    case emergencyContactNotFound
+    case motionServiceUnavailable
     case crewTrackingUnavailable
     case unknown(message: String)
 }
@@ -110,6 +114,14 @@ extension DomainError: LocalizedError {
             return "Group challenge not found."
         case .routeNotFound:
             return "Route not found."
+        case .invalidIntervalWorkout(let reason):
+            return "Invalid interval workout: \(reason)"
+        case .intervalWorkoutNotFound:
+            return "Interval workout not found."
+        case .emergencyContactNotFound:
+            return "Emergency contact not found."
+        case .motionServiceUnavailable:
+            return "Motion services are unavailable on this device."
         case .crewTrackingUnavailable:
             return "Crew tracking is currently unavailable."
         case .unknown(let message):

@@ -66,6 +66,34 @@ final class VoiceCoachingHandler {
         voiceService.speak(cue)
     }
 
+    func announceIntervalTransition(
+        phaseType: IntervalPhaseType,
+        intervalNumber: Int?,
+        totalIntervals: Int?
+    ) {
+        guard config.enabled, config.announceIntervalTransitions else { return }
+        let cue = VoiceCueBuilder.intervalPhaseStartCue(
+            phaseType: phaseType,
+            intervalNumber: intervalNumber,
+            totalIntervals: totalIntervals
+        )
+        voiceService.speak(cue)
+    }
+
+    func announceIntervalCountdown(seconds: Int) {
+        guard config.enabled, config.announceIntervalTransitions else { return }
+        let cue = VoiceCueBuilder.intervalCountdownCue(seconds: seconds)
+        voiceService.speak(cue)
+    }
+
+    func announceIntervalComplete(totalWorkTime: TimeInterval, totalIntervals: Int) {
+        guard config.enabled, config.announceIntervalTransitions else { return }
+        let cue = VoiceCueBuilder.intervalWorkoutCompleteCue(
+            totalWorkTime: totalWorkTime, totalIntervals: totalIntervals
+        )
+        voiceService.speak(cue)
+    }
+
     func stopSpeaking() {
         voiceService.stop()
     }

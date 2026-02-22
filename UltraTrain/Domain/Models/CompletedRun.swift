@@ -29,6 +29,7 @@ struct CompletedRun: Identifiable, Equatable, Sendable {
     var terrainType: TerrainType? = nil
     var trainingStressScore: Double? = nil
     var activityType: ActivityType = .running
+    var intervalSplits: [IntervalSplit] = []
 
     var isRunningActivity: Bool {
         activityType == .running || activityType == .trailRunning

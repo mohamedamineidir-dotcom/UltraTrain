@@ -9,6 +9,13 @@ enum AppSettingsSwiftDataMapper {
             voiceCoachingConfig = VoiceCoachingConfig()
         }
 
+        let safetyConfig: SafetyConfig
+        if let data = model.safetyConfigData {
+            safetyConfig = (try? JSONDecoder().decode(SafetyConfig.self, from: data)) ?? SafetyConfig()
+        } else {
+            safetyConfig = SafetyConfig()
+        }
+
         return AppSettings(
             id: model.id,
             trainingRemindersEnabled: model.trainingRemindersEnabled,
@@ -28,7 +35,8 @@ enum AppSettingsSwiftDataMapper {
             pacingAlertsEnabled: model.pacingAlertsEnabled,
             recoveryRemindersEnabled: model.recoveryRemindersEnabled,
             weeklySummaryEnabled: model.weeklySummaryEnabled,
-            voiceCoachingConfig: voiceCoachingConfig
+            voiceCoachingConfig: voiceCoachingConfig,
+            safetyConfig: safetyConfig
         )
     }
 
@@ -54,6 +62,7 @@ enum AppSettingsSwiftDataMapper {
             weeklySummaryEnabled: settings.weeklySummaryEnabled
         )
         model.voiceCoachingConfigData = try? JSONEncoder().encode(settings.voiceCoachingConfig)
+        model.safetyConfigData = try? JSONEncoder().encode(settings.safetyConfig)
         return model
     }
 }

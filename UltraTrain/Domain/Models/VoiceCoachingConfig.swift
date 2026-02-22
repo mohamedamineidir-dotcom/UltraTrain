@@ -10,5 +10,6 @@ struct VoiceCoachingConfig: Equatable, Sendable, Codable {
     var announceCheckpoints: Bool = true
     var announcePacingAlerts: Bool = true
     var announceZoneDriftAlerts: Bool = true
+    var announceIntervalTransitions: Bool = true
     var speechRate: Float = 0.5
 }

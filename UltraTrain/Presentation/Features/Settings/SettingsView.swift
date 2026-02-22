@@ -5,6 +5,9 @@ struct SettingsView: View {
 
     @State private var showingShareSheet = false
 
+    private let appSettingsRepository: any AppSettingsRepository
+    private let emergencyContactRepository: (any EmergencyContactRepository)?
+
     init(
         athleteRepository: any AthleteRepository,
         appSettingsRepository: any AppSettingsRepository,
@@ -18,8 +21,11 @@ struct SettingsView: View {
         planRepository: any TrainingPlanRepository,
         raceRepository: any RaceRepository,
         biometricAuthService: any BiometricAuthServiceProtocol,
-        healthKitImportService: (any HealthKitImportServiceProtocol)? = nil
+        healthKitImportService: (any HealthKitImportServiceProtocol)? = nil,
+        emergencyContactRepository: (any EmergencyContactRepository)? = nil
     ) {
+        self.appSettingsRepository = appSettingsRepository
+        self.emergencyContactRepository = emergencyContactRepository
         _viewModel = State(initialValue: SettingsViewModel(
             athleteRepository: athleteRepository,
             appSettingsRepository: appSettingsRepository,
@@ -44,6 +50,7 @@ struct SettingsView: View {
             } else {
                 unitsSection
                 runTrackingSection
+                safetySection
                 securitySection
                 notificationsSection
                 healthKitSection
@@ -87,6 +94,27 @@ struct SettingsView: View {
         }) {
             if let url = viewModel.exportedFileURL {
                 ShareSheet(activityItems: [url])
+            }
+        }
+    }
+
+    // MARK: - Safety Section
+
+    @ViewBuilder
+    private var safetySection: some View {
+        if let emergencyContactRepository {
+            Section {
+                NavigationLink {
+                    SafetySettingsView(
+                        appSettingsRepository: appSettingsRepository,
+                        emergencyContactRepository: emergencyContactRepository
+                    )
+                } label: {
+                    Label("Safety & Emergency", systemImage: "sos")
+                }
+                .accessibilityHint("Manage SOS, fall detection, emergency contacts, and safety timer settings")
+            } header: {
+                Text("Safety")
             }
         }
     }

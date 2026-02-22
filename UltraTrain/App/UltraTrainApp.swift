@@ -55,6 +55,9 @@ struct UltraTrainApp: App {
     private let cloudKitSharingService: (any CloudKitSharingServiceProtocol)?
     private let cloudKitCrewService: any CrewTrackingServiceProtocol
     private let routeRepository: any RouteRepository
+    private let intervalWorkoutRepository: any IntervalWorkoutRepository
+    private let emergencyContactRepository: any EmergencyContactRepository
+    private let motionService: MotionService
     private let deepLinkRouter: DeepLinkRouter
     private let backgroundTaskService: BackgroundTaskService
     private let notificationDelegate: NotificationDelegate
@@ -93,7 +96,9 @@ struct UltraTrainApp: App {
                 SharedRunSwiftDataModel.self,
                 ActivityFeedItemSwiftDataModel.self,
                 GroupChallengeSwiftDataModel.self,
-                SavedRouteSwiftDataModel.self
+                SavedRouteSwiftDataModel.self,
+                IntervalWorkoutSwiftDataModel.self,
+                EmergencyContactSwiftDataModel.self
             ])
             let config: ModelConfiguration
             if isUITesting {
@@ -183,6 +188,9 @@ struct UltraTrainApp: App {
         activityFeedRepository = LocalActivityFeedRepository(modelContainer: modelContainer)
         groupChallengeRepository = LocalGroupChallengeRepository(modelContainer: modelContainer)
         routeRepository = LocalRouteRepository(modelContainer: modelContainer)
+        intervalWorkoutRepository = LocalIntervalWorkoutRepository(modelContainer: modelContainer)
+        emergencyContactRepository = LocalEmergencyContactRepository(modelContainer: modelContainer)
+        motionService = MotionService()
         stravaUploadQueueService = StravaUploadQueueService(
             queueRepository: stravaUploadQueueRepository,
             runRepository: runRepository,
@@ -297,7 +305,10 @@ struct UltraTrainApp: App {
                 sharedRunRepository: sharedRunRepository,
                 activityFeedRepository: activityFeedRepository,
                 groupChallengeRepository: groupChallengeRepository,
-                routeRepository: routeRepository
+                routeRepository: routeRepository,
+                intervalWorkoutRepository: intervalWorkoutRepository,
+                emergencyContactRepository: emergencyContactRepository,
+                motionService: motionService
             )
             .onOpenURL { url in
                 _ = deepLinkRouter.handle(url: url)

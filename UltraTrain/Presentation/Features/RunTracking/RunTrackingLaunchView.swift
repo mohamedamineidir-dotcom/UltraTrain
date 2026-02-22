@@ -25,6 +25,9 @@ struct RunTrackingLaunchView: View {
     private let finishEstimateRepository: any FinishEstimateRepository
     private let weatherService: (any WeatherServiceProtocol)?
     private let recoveryRepository: any RecoveryRepository
+    private let intervalWorkoutRepository: (any IntervalWorkoutRepository)?
+    private let emergencyContactRepository: (any EmergencyContactRepository)?
+    private let motionService: (any MotionServiceProtocol)?
 
     init(
         athleteRepository: any AthleteRepository,
@@ -48,7 +51,10 @@ struct RunTrackingLaunchView: View {
         finishTimeEstimator: any EstimateFinishTimeUseCase,
         finishEstimateRepository: any FinishEstimateRepository,
         weatherService: (any WeatherServiceProtocol)? = nil,
-        recoveryRepository: any RecoveryRepository
+        recoveryRepository: any RecoveryRepository,
+        intervalWorkoutRepository: (any IntervalWorkoutRepository)? = nil,
+        emergencyContactRepository: (any EmergencyContactRepository)? = nil,
+        motionService: (any MotionServiceProtocol)? = nil
     ) {
         _viewModel = State(initialValue: RunTrackingLaunchViewModel(
             athleteRepository: athleteRepository,
@@ -63,7 +69,8 @@ struct RunTrackingLaunchView: View {
             weatherService: weatherService,
             locationService: locationService,
             healthKitService: healthKitService,
-            recoveryRepository: recoveryRepository
+            recoveryRepository: recoveryRepository,
+            intervalWorkoutRepository: intervalWorkoutRepository
         ))
         self.athleteRepository = athleteRepository
         self.locationService = locationService
@@ -86,6 +93,9 @@ struct RunTrackingLaunchView: View {
         self.finishEstimateRepository = finishEstimateRepository
         self.weatherService = weatherService
         self.recoveryRepository = recoveryRepository
+        self.intervalWorkoutRepository = intervalWorkoutRepository
+        self.emergencyContactRepository = emergencyContactRepository
+        self.motionService = motionService
     }
 
     var body: some View {
@@ -166,7 +176,11 @@ struct RunTrackingLaunchView: View {
                             pacingAlertsEnabled: viewModel.pacingAlertsEnabled,
                             raceId: viewModel.raceId,
                             selectedGearIds: Array(viewModel.selectedGearIds),
-                            voiceCoachingConfig: viewModel.voiceCoachingConfig
+                            voiceCoachingConfig: viewModel.voiceCoachingConfig,
+                            intervalWorkout: viewModel.intervalWorkout,
+                            emergencyContactRepository: emergencyContactRepository,
+                            motionService: motionService,
+                            safetyConfig: viewModel.safetyConfig
                         ),
                         exportService: exportService
                     )

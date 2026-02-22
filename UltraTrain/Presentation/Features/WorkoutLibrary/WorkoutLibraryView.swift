@@ -5,16 +5,20 @@ struct WorkoutLibraryView: View {
 
     private let recipeRepository: any WorkoutRecipeRepository
     private let planRepository: any TrainingPlanRepository
+    private let intervalWorkoutRepository: (any IntervalWorkoutRepository)?
 
     init(
         recipeRepository: any WorkoutRecipeRepository,
-        planRepository: any TrainingPlanRepository
+        planRepository: any TrainingPlanRepository,
+        intervalWorkoutRepository: (any IntervalWorkoutRepository)? = nil
     ) {
         self.recipeRepository = recipeRepository
         self.planRepository = planRepository
+        self.intervalWorkoutRepository = intervalWorkoutRepository
         _viewModel = State(initialValue: WorkoutLibraryViewModel(
             recipeRepository: recipeRepository,
-            planRepository: planRepository
+            planRepository: planRepository,
+            intervalWorkoutRepository: intervalWorkoutRepository
         ))
     }
 
@@ -22,6 +26,7 @@ struct WorkoutLibraryView: View {
         NavigationStack {
             List {
                 categoryFilterSection
+                intervalsSection
                 templatesSection
             }
             .searchable(text: $viewModel.searchQuery)
@@ -54,6 +59,13 @@ struct WorkoutLibraryView: View {
             .sheet(isPresented: $viewModel.showingAddRecipe) {
                 EditRecipeSheet { recipe in
                     Task { await viewModel.saveRecipe(recipe) }
+                }
+            }
+            .sheet(isPresented: $viewModel.showingIntervalBuilder) {
+                if let repo = intervalWorkoutRepository {
+                    IntervalBuilderView(
+                        viewModel: IntervalBuilderViewModel(repository: repo)
+                    )
                 }
             }
             .sheet(item: $viewModel.templateToAdd) { template in
@@ -97,6 +109,52 @@ struct WorkoutLibraryView: View {
         .accessibilityLabel(title)
         .accessibilityValue(isSelected ? "Selected" : "Not selected")
         .accessibilityHint("Filters workouts by \(title) category")
+    }
+
+    // MARK: - Intervals
+
+    @ViewBuilder
+    private var intervalsSection: some View {
+        if !viewModel.filteredIntervalWorkouts.isEmpty {
+            Section {
+                ForEach(viewModel.filteredIntervalWorkouts) { workout in
+                    NavigationLink {
+                        IntervalWorkoutPreviewView(
+                            viewModel: IntervalWorkoutPreviewViewModel(workout: workout)
+                        )
+                    } label: {
+                        HStack(spacing: Theme.Spacing.sm) {
+                            Image(systemName: "timer")
+                                .font(.title3)
+                                .foregroundStyle(Theme.Colors.primary)
+                                .frame(width: 32)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(workout.name)
+                                    .font(.subheadline.weight(.semibold))
+                                Text("\(workout.intervalCount) intervals")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    .swipeActions(edge: .trailing) {
+                        if workout.isUserCreated {
+                            Button("Delete", role: .destructive) {
+                                Task { await viewModel.deleteIntervalWorkout(id: workout.id) }
+                            }
+                        }
+                    }
+                }
+
+                Button {
+                    viewModel.showingIntervalBuilder = true
+                } label: {
+                    Label("Create Interval Workout", systemImage: "plus.circle.fill")
+                }
+            } header: {
+                Text("Interval Workouts")
+            }
+        }
     }
 
     // MARK: - Templates

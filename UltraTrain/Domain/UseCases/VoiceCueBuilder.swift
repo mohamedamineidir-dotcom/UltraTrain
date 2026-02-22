@@ -80,6 +80,46 @@ enum VoiceCueBuilder {
         return VoiceCue(type: .zoneDriftAlert, message: message, priority: .high)
     }
 
+    // MARK: - Intervals
+
+    static func intervalPhaseStartCue(
+        phaseType: IntervalPhaseType,
+        intervalNumber: Int?,
+        totalIntervals: Int?
+    ) -> VoiceCue {
+        var message: String
+        switch phaseType {
+        case .warmUp:
+            message = "Warm up. Easy pace."
+        case .work:
+            if let num = intervalNumber, let total = totalIntervals {
+                message = "Go! Interval \(num) of \(total)."
+            } else {
+                message = "Go! Work interval."
+            }
+        case .recovery:
+            message = "Recover. Easy pace."
+        case .coolDown:
+            message = "Cool down. Easy pace."
+        }
+        return VoiceCue(type: .intervalPhaseStart, message: message, priority: .high)
+    }
+
+    static func intervalCountdownCue(seconds: Int) -> VoiceCue {
+        VoiceCue(type: .intervalCountdown, message: "\(seconds)", priority: .high)
+    }
+
+    static func intervalWorkoutCompleteCue(
+        totalWorkTime: TimeInterval,
+        totalIntervals: Int
+    ) -> VoiceCue {
+        let timeStr = spokenDuration(totalWorkTime)
+        let message = "Interval workout complete. \(totalIntervals) intervals in \(timeStr)."
+        return VoiceCue(type: .intervalWorkoutComplete, message: message, priority: .high)
+    }
+
+    // MARK: - Run State
+
     static func runStateCue(type: VoiceCueType) -> VoiceCue {
         let message: String
         switch type {

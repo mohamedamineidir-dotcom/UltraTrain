@@ -39,6 +39,7 @@ final class RunAnalysisViewModel {
     var trainingStressScore: Double?
     var paceDistribution: [PaceDistributionCalculator.PaceBucket] = []
     var gradientPacePoints: [ElevationPaceScatterCalculator.GradientPacePoint] = []
+    var intervalAnalysis: IntervalAnalysisCalculator.IntervalAnalysis?
     var isLoading = false
     var error: String?
     var showFullScreenMap = false
@@ -208,6 +209,10 @@ final class RunAnalysisViewModel {
             }
 
             nutritionAnalysis = NutritionAnalysisCalculator.analyze(run: run)
+
+            if !run.intervalSplits.isEmpty {
+                intervalAnalysis = IntervalAnalysisCalculator.analyze(splits: run.intervalSplits)
+            }
         } catch {
             self.error = error.localizedDescription
             Logger.analysis.error("Failed to load run analysis: \(error)")
@@ -231,6 +236,8 @@ final class RunAnalysisViewModel {
     var hasHistoricalComparison: Bool { historicalComparison != nil }
 
     var hasNutritionAnalysis: Bool { nutritionAnalysis != nil }
+
+    var hasIntervalAnalysis: Bool { intervalAnalysis != nil }
 
     var hasRacePerformance: Bool { racePerformance != nil }
 

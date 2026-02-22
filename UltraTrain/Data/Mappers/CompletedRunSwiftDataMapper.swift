@@ -48,6 +48,7 @@ enum CompletedRunSwiftDataMapper {
         let splitModels = run.splits.map { splitToSwiftData($0) }
         let intakeData = encodeIntakeEntries(run.nutritionIntakeLog)
         let weatherData = encodeWeather(run.weatherAtStart)
+        let intervalData = encodeIntervalSplits(run.intervalSplits)
 
         return CompletedRunSwiftDataModel(
             id: run.id,
@@ -77,7 +78,8 @@ enum CompletedRunSwiftDataMapper {
             perceivedFeelingRaw: run.perceivedFeeling?.rawValue,
             terrainTypeRaw: run.terrainType?.rawValue,
             trainingStressScore: run.trainingStressScore,
-            activityTypeRaw: run.activityType.rawValue
+            activityTypeRaw: run.activityType.rawValue,
+            intervalSplitsData: intervalData
         )
     }
 
@@ -91,6 +93,7 @@ enum CompletedRunSwiftDataMapper {
 
         let intakeLog = decodeIntakeEntries(model.nutritionIntakeData)
         let weather = decodeWeather(model.weatherData)
+        let intervalSplits = decodeIntervalSplits(model.intervalSplitsData)
 
         return CompletedRun(
             id: model.id,
@@ -120,7 +123,8 @@ enum CompletedRunSwiftDataMapper {
             perceivedFeeling: model.perceivedFeelingRaw.flatMap { PerceivedFeeling(rawValue: $0) },
             terrainType: model.terrainTypeRaw.flatMap { TerrainType(rawValue: $0) },
             trainingStressScore: model.trainingStressScore,
-            activityType: ActivityType(rawValue: model.activityTypeRaw) ?? .running
+            activityType: ActivityType(rawValue: model.activityTypeRaw) ?? .running,
+            intervalSplits: intervalSplits
         )
     }
 
@@ -220,6 +224,18 @@ enum CompletedRunSwiftDataMapper {
                 isManualEntry: entry.isManualEntry ?? false
             )
         }
+    }
+
+    // MARK: - IntervalSplit JSON
+
+    private static func encodeIntervalSplits(_ splits: [IntervalSplit]) -> Data {
+        guard !splits.isEmpty else { return Data() }
+        return (try? JSONEncoder().encode(splits)) ?? Data()
+    }
+
+    private static func decodeIntervalSplits(_ data: Data) -> [IntervalSplit] {
+        guard !data.isEmpty else { return [] }
+        return (try? JSONDecoder().decode([IntervalSplit].self, from: data)) ?? []
     }
 
     // MARK: - Weather JSON

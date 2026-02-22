@@ -20,6 +20,7 @@ final class RunTrackingLaunchViewModel {
     private let locationService: LocationService?
     private let healthKitService: (any HealthKitServiceProtocol)?
     private let recoveryRepository: (any RecoveryRepository)?
+    private let intervalWorkoutRepository: (any IntervalWorkoutRepository)?
 
     // MARK: - State
 
@@ -46,6 +47,8 @@ final class RunTrackingLaunchViewModel {
     var voiceCoachingConfig = VoiceCoachingConfig()
     var preRunWeather: WeatherSnapshot?
     var preRunBriefing: PreRunBriefing?
+    var intervalWorkout: IntervalWorkout?
+    var safetyConfig = SafetyConfig()
 
     // MARK: - Init
 
@@ -62,7 +65,8 @@ final class RunTrackingLaunchViewModel {
         weatherService: (any WeatherServiceProtocol)? = nil,
         locationService: LocationService? = nil,
         healthKitService: (any HealthKitServiceProtocol)? = nil,
-        recoveryRepository: (any RecoveryRepository)? = nil
+        recoveryRepository: (any RecoveryRepository)? = nil,
+        intervalWorkoutRepository: (any IntervalWorkoutRepository)? = nil
     ) {
         self.athleteRepository = athleteRepository
         self.planRepository = planRepository
@@ -77,6 +81,7 @@ final class RunTrackingLaunchViewModel {
         self.locationService = locationService
         self.healthKitService = healthKitService
         self.recoveryRepository = recoveryRepository
+        self.intervalWorkoutRepository = intervalWorkoutRepository
     }
 
     // MARK: - Load
@@ -112,10 +117,16 @@ final class RunTrackingLaunchViewModel {
                 saveToHealthEnabled = settings.saveToHealthEnabled
                 pacingAlertsEnabled = settings.pacingAlertsEnabled
                 voiceCoachingConfig = settings.voiceCoachingConfig
+                safetyConfig = settings.safetyConfig
             }
 
             activeGear = try await gearRepository.getActiveGear(ofType: nil)
             restoreLastUsedGear()
+
+            if let workoutId = selectedSession?.intervalWorkoutId,
+               let repo = intervalWorkoutRepository {
+                intervalWorkout = try await repo.getWorkout(id: workoutId)
+            }
         } catch {
             self.error = error.localizedDescription
             Logger.tracking.error("Failed to load run launch data: \(error)")

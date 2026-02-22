@@ -37,4 +37,5 @@ extension Logger {
     static let enhancedEstimator = Logger(subsystem: subsystem, category: "enhancedEstimator")
     static let social = Logger(subsystem: subsystem, category: "social")
     static let aiCoach = Logger(subsystem: subsystem, category: "aiCoach")
+    static let safety = Logger(subsystem: subsystem, category: "safety")
 }

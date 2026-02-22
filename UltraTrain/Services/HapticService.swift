@@ -12,6 +12,11 @@ protocol HapticServiceProtocol: Sendable {
     func playButtonTap()
     func playPacingAlertMinor()
     func playPacingAlertMajor()
+    func playIntervalStart()
+    func playIntervalEnd()
+    func playIntervalCountdown()
+    func playSOSAlert()
+    func playFallDetectedAlert()
 }
 
 @MainActor
@@ -62,5 +67,32 @@ final class HapticService: HapticServiceProtocol {
 
     func playPacingAlertMajor() {
         heavyImpactGenerator.impactOccurred()
+    }
+
+    func playIntervalStart() {
+        heavyImpactGenerator.impactOccurred()
+        AudioServicesPlaySystemSound(1304)
+        Logger.haptic.info("Interval start haptic played")
+    }
+
+    func playIntervalEnd() {
+        notificationGenerator.notificationOccurred(.success)
+        Logger.haptic.info("Interval end haptic played")
+    }
+
+    func playIntervalCountdown() {
+        softImpactGenerator.impactOccurred()
+    }
+
+    func playSOSAlert() {
+        notificationGenerator.notificationOccurred(.error)
+        AudioServicesPlaySystemSound(1005)
+        Logger.haptic.info("SOS alert haptic played")
+    }
+
+    func playFallDetectedAlert() {
+        heavyImpactGenerator.impactOccurred()
+        AudioServicesPlaySystemSound(1005)
+        Logger.haptic.info("Fall detected alert haptic played")
     }
 }

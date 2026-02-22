@@ -31,6 +31,8 @@ final class ActiveRunViewModel {
     let racePacingHandler: RacePacingHandler
     let connectivityHandler: ConnectivityHandler
     let voiceCoachingHandler: VoiceCoachingHandler
+    let intervalHandler: IntervalGuidanceHandler
+    let safetyHandler: SafetyHandler?
 
     // MARK: - Config
 
@@ -75,6 +77,7 @@ final class ActiveRunViewModel {
     private var autoPauseTimer: TimeInterval = 0
     private var pauseStartTime: Date?
     private var runningAveragePace: Double = 0
+    private var lastKnownSpeed: Double = 0
 
     // MARK: - Init
 
@@ -108,7 +111,11 @@ final class ActiveRunViewModel {
         raceId: UUID?,
         selectedGearIds: [UUID] = [],
         voiceCoachingService: (any VoiceCoachingServiceProtocol)? = nil,
-        voiceCoachingConfig: VoiceCoachingConfig = VoiceCoachingConfig()
+        voiceCoachingConfig: VoiceCoachingConfig = VoiceCoachingConfig(),
+        intervalWorkout: IntervalWorkout? = nil,
+        emergencyContactRepository: (any EmergencyContactRepository)? = nil,
+        motionService: (any MotionServiceProtocol)? = nil,
+        safetyConfig: SafetyConfig = SafetyConfig()
     ) {
         self.locationService = locationService
         self.healthKitService = healthKitService
@@ -161,6 +168,22 @@ final class ActiveRunViewModel {
             voiceService: voiceCoachingService ?? VoiceCoachingService(speechRate: voiceCoachingConfig.speechRate),
             config: voiceCoachingConfig
         )
+
+        self.intervalHandler = IntervalGuidanceHandler(
+            hapticService: hapticService,
+            intervalWorkout: intervalWorkout
+        )
+
+        if let emergencyContactRepository {
+            self.safetyHandler = SafetyHandler(
+                emergencyContactRepository: emergencyContactRepository,
+                motionService: motionService,
+                hapticService: hapticService,
+                config: safetyConfig
+            )
+        } else {
+            self.safetyHandler = nil
+        }
     }
 
     // MARK: - Controls
@@ -184,6 +207,7 @@ final class ActiveRunViewModel {
         connectivityHandler.sendWatchUpdate(snapshot: buildSnapshot())
         connectivityHandler.startLiveActivity(snapshot: buildSnapshot())
         voiceCoachingHandler.announceRunState(.runStarted)
+        Task { await safetyHandler?.start() }
         Logger.tracking.info("Run started")
     }
 
@@ -234,6 +258,7 @@ final class ActiveRunViewModel {
         connectivityHandler.sendWatchUpdate(snapshot: buildSnapshot())
         connectivityHandler.endLiveActivity(snapshot: buildSnapshot())
         voiceCoachingHandler.stopSpeaking()
+        safetyHandler?.stop()
         showSummary = true
         Logger.tracking.info("Run stopped — \(self.distanceKm) km in \(self.elapsedTime)s")
     }
@@ -256,7 +281,8 @@ final class ActiveRunViewModel {
             linkedSessionId: linkedSession?.id, linkedRaceId: raceId, notes: notes,
             pausedDuration: pausedDuration, gearIds: selectedGearIds,
             nutritionIntakeLog: nutritionHandler.nutritionIntakeLog,
-            weatherAtStart: weatherAtStart, rpe: rpe, perceivedFeeling: feeling, terrainType: terrain
+            weatherAtStart: weatherAtStart, rpe: rpe, perceivedFeeling: feeling, terrainType: terrain,
+            intervalSplits: intervalHandler.intervalSplits
         )
         run.trainingStressScore = TrainingStressCalculator.calculate(
             run: run, maxHeartRate: athlete.maxHeartRate,
@@ -391,6 +417,8 @@ final class ActiveRunViewModel {
                 let pacingContext = self.buildPacingContext()
                 self.racePacingHandler.checkPacingAlert(context: pacingContext, linkedSession: self.linkedSession)
                 self.voiceCoachingHandler.tick(snapshot: self.buildVoiceSnapshot())
+                self.intervalHandler.tick(context: self.buildIntervalContext())
+                self.safetyHandler?.tick(context: self.buildSafetyContext())
                 self.connectivityHandler.sendWatchUpdate(snapshot: self.buildSnapshot())
                 self.connectivityHandler.updateLiveActivityIfNeeded(snapshot: self.buildSnapshot())
             }
@@ -415,6 +443,7 @@ final class ActiveRunViewModel {
             return
         }
         guard runState == .running else { return }
+        lastKnownSpeed = location.speed >= 0 ? location.speed : 0
 
         let point = TrackPoint(
             latitude: location.coordinate.latitude,
@@ -607,6 +636,15 @@ final class ActiveRunViewModel {
         return (checkpointName, distToCheckpoint, projectedFinishStr, timeDelta)
     }
 
+    private func buildIntervalContext() -> IntervalGuidanceHandler.RunContext {
+        IntervalGuidanceHandler.RunContext(
+            elapsedTime: elapsedTime,
+            distanceKm: distanceKm,
+            currentHeartRate: currentHeartRate,
+            currentPace: runningAveragePace
+        )
+    }
+
     private func buildVoiceSnapshot() -> VoiceCueBuilder.RunSnapshot {
         VoiceCueBuilder.RunSnapshot(
             distanceKm: distanceKm,
@@ -618,5 +656,22 @@ final class ActiveRunViewModel {
             previousZoneName: nil,
             isMetric: athlete.preferredUnit == .metric
         )
+    }
+
+    private func buildSafetyContext() -> SafetyHandler.RunContext {
+        SafetyHandler.RunContext(
+            elapsedTime: elapsedTime,
+            distanceKm: distanceKm,
+            latitude: trackPoints.last?.latitude,
+            longitude: trackPoints.last?.longitude,
+            isRunPaused: runState == .paused,
+            currentSpeed: lastKnownSpeed
+        )
+    }
+
+    // MARK: - Safety Actions
+
+    func triggerSOS() {
+        safetyHandler?.triggerSOS(context: buildSafetyContext())
     }
 }

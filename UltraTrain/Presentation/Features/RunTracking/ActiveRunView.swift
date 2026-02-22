@@ -30,6 +30,11 @@ struct ActiveRunView: View {
             )
             .padding(.horizontal, Theme.Spacing.md)
 
+            if let intervalState = viewModel.intervalHandler.currentState {
+                IntervalProgressBar(state: intervalState)
+                    .padding(.top, Theme.Spacing.xs)
+            }
+
             if let zoneState = viewModel.liveZoneState {
                 LiveHRZoneIndicator(
                     state: zoneState,
@@ -119,6 +124,41 @@ struct ActiveRunView: View {
             }
         }
         .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.activeDriftAlert)
+        .overlay(alignment: .top) {
+            if let transition = viewModel.intervalHandler.showPhaseTransitionBanner {
+                IntervalPhaseBanner(transition: transition)
+                    .padding(.top, intervalBannerOffset)
+            }
+        }
+        .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.intervalHandler.showPhaseTransitionBanner)
+        .overlay {
+            if viewModel.intervalHandler.isCountingDown {
+                IntervalCountdownOverlay(seconds: viewModel.intervalHandler.countdownSeconds)
+            }
+        }
+        .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.intervalHandler.isCountingDown)
+        .overlay {
+            if let handler = viewModel.safetyHandler,
+               let alert = handler.activeAlert,
+               handler.isCountingDown {
+                SafetyAlertBanner(
+                    alert: alert,
+                    countdownRemaining: handler.countdownRemaining,
+                    onCancel: { handler.cancelAlert() }
+                )
+            }
+        }
+        .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.safetyHandler?.isCountingDown)
+        .sheet(isPresented: safetyMessageBinding) {
+            if let handler = viewModel.safetyHandler, MessageComposeView.canSendText {
+                MessageComposeView(
+                    recipients: handler.emergencyPhoneNumbers,
+                    body: handler.emergencyMessage
+                ) {
+                    handler.showMessageCompose = false
+                }
+            }
+        }
         .navigationBarBackButtonHidden()
         .onAppear {
             if viewModel.runState == .notStarted {
@@ -167,6 +207,19 @@ struct ActiveRunView: View {
         return offset
     }
 
+    private var safetyMessageBinding: Binding<Bool> {
+        Binding(
+            get: { viewModel.safetyHandler?.showMessageCompose ?? false },
+            set: { viewModel.safetyHandler?.showMessageCompose = $0 }
+        )
+    }
+
+    private var intervalBannerOffset: CGFloat {
+        var offset = driftBannerOffset
+        if viewModel.activeDriftAlert != nil { offset += 80 }
+        return offset
+    }
+
     private var timerColor: Color {
         switch viewModel.runState {
         case .paused: Theme.Colors.warning
@@ -185,6 +238,11 @@ struct ActiveRunView: View {
 
         case .running:
             HStack(spacing: Theme.Spacing.xl) {
+                if viewModel.safetyHandler?.isActive == true {
+                    SOSButton {
+                        viewModel.triggerSOS()
+                    }
+                }
                 controlButton(
                     icon: "pause.fill",
                     label: "Pause",

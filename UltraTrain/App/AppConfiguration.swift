@@ -147,6 +147,21 @@ enum AppConfiguration {
         static let requiredScopes = "read,activity:read_all,activity:write"
     }
 
+    enum IntervalGuidance {
+        static let countdownSeconds: Int = 3
+        static let phaseTransitionBannerDismissSeconds: TimeInterval = 5
+        static let minPhaseDurationSeconds: TimeInterval = 10
+        static let maxPhaseCount: Int = 50
+    }
+
+    enum Safety {
+        static let fallImpactThresholdG: Double = 3.0
+        static let countdownSeconds: Int = 30
+        static let noMovementDefaultMinutes: Int = 5
+        static let motionBufferSize: Int = 100
+        static let sosLongPressSeconds: Double = 1.5
+    }
+
     enum VoiceCoaching {
         static let defaultSpeechRate: Float = 0.5
         static let maxQueueSize = 3
