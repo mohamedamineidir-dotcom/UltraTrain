@@ -2,23 +2,25 @@ import Vapor
 import Fluent
 import FluentPostgresDriver
 import JWT
-import NIOSSL
-
 func configure(_ app: Application) async throws {
     // MARK: - Database
 
     if let dbURL = Environment.get("DATABASE_URL") {
-        var tlsConfig = TLSConfiguration.makeClientConfiguration()
-        tlsConfig.certificateVerification = .none
-        let nioSSLContext = try NIOSSLContext(configuration: tlsConfig)
-
-        var postgresConfig = try SQLPostgresConfiguration(url: dbURL)
-        postgresConfig.coreConfiguration.tls = .require(nioSSLContext)
-        app.databases.use(
-            DatabaseConfigurationFactory.postgres(configuration: postgresConfig),
-            as: .psql
-        )
+        app.logger.notice("DATABASE_URL found, configuring PostgreSQL")
+        do {
+            var postgresConfig = try SQLPostgresConfiguration(url: dbURL)
+            // Railway internal Postgres doesn't require TLS
+            postgresConfig.coreConfiguration.tls = .disable
+            app.databases.use(
+                DatabaseConfigurationFactory.postgres(configuration: postgresConfig),
+                as: .psql
+            )
+            app.logger.notice("PostgreSQL configured successfully")
+        } catch {
+            app.logger.error("Failed to configure PostgreSQL: \(error)")
+        }
     } else {
+        app.logger.notice("No DATABASE_URL, using local PostgreSQL")
         app.databases.use(
             .postgres(configuration: .init(
                 hostname: Environment.get("DB_HOST") ?? "localhost",
