@@ -53,6 +53,8 @@ struct UltraTrainApp: App {
     private let groupChallengeRepository: any GroupChallengeRepository
     private let cloudKitSharingService: (any CloudKitSharingServiceProtocol)?
     private let cloudKitCrewService: any CrewTrackingServiceProtocol
+    private let deepLinkRouter: DeepLinkRouter
+    private let backgroundTaskService: BackgroundTaskService
 
     init() {
         let isUITesting = ProcessInfo.processInfo.arguments.contains("-UITestMode")
@@ -220,11 +222,25 @@ struct UltraTrainApp: App {
                 }
             }
         }
+
+        deepLinkRouter = DeepLinkRouter()
+
+        backgroundTaskService = BackgroundTaskService(
+            healthKitService: healthKitService,
+            recoveryRepository: recoveryRepository,
+            fitnessRepository: fitnessRepository,
+            fitnessCalculator: fitnessCalculator,
+            runRepository: runRepository
+        )
+        backgroundTaskService.registerTasks()
     }
+
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
             AppRootView(
+                deepLinkRouter: deepLinkRouter,
                 athleteRepository: athleteRepository,
                 raceRepository: raceRepository,
                 planRepository: planRepository,
@@ -269,6 +285,15 @@ struct UltraTrainApp: App {
                 activityFeedRepository: activityFeedRepository,
                 groupChallengeRepository: groupChallengeRepository
             )
+            .onOpenURL { url in
+                _ = deepLinkRouter.handle(url: url)
+            }
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .background {
+                backgroundTaskService.scheduleHealthKitSync()
+                backgroundTaskService.scheduleRecoveryCalc()
+            }
         }
     }
 }

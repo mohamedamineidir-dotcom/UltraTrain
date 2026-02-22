@@ -140,7 +140,8 @@ struct DashboardView: View {
                         MorningReadinessView(
                             healthKitService: healthKitService,
                             recoveryRepository: recoveryRepository,
-                            fitnessCalculator: fitnessCalculator
+                            fitnessCalculator: fitnessCalculator,
+                            fitnessRepository: fitnessRepository
                         )
                     } label: {
                         DashboardRecoveryCard(

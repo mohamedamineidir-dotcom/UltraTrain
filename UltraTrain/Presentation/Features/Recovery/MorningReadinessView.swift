@@ -6,12 +6,14 @@ struct MorningReadinessView: View {
     init(
         healthKitService: any HealthKitServiceProtocol,
         recoveryRepository: any RecoveryRepository,
-        fitnessCalculator: any CalculateFitnessUseCase
+        fitnessCalculator: any CalculateFitnessUseCase,
+        fitnessRepository: any FitnessRepository
     ) {
         _viewModel = State(initialValue: MorningReadinessViewModel(
             healthKitService: healthKitService,
             recoveryRepository: recoveryRepository,
-            fitnessCalculator: fitnessCalculator
+            fitnessCalculator: fitnessCalculator,
+            fitnessRepository: fitnessRepository
         ))
     }
 

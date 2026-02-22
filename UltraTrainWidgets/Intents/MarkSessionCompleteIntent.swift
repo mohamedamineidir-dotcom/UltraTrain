@@ -4,6 +4,11 @@ import Foundation
 struct MarkSessionCompleteIntent: AppIntent {
     static let title: LocalizedStringResource = "Mark Session Complete"
     static let description: IntentDescription = "Marks the next training session as completed."
+    static let openAppWhenRun = false
+
+    static var parameterSummary: some ParameterSummary {
+        Summary("Mark session \(\.$sessionId) as complete")
+    }
 
     @Parameter(title: "Session ID")
     var sessionId: String

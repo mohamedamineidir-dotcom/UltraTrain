@@ -10,6 +10,8 @@ struct AppRootView: View {
     @AppStorage("hasSeenFeatureTour") private var hasSeenFeatureTour = false
     @State private var unitPreference: UnitPreference = .metric
     @State private var lastAutoImportDate: Date?
+    private let deepLinkRouter: DeepLinkRouter
+
     private let athleteRepository: any AthleteRepository
     private let raceRepository: any RaceRepository
     private let planRepository: any TrainingPlanRepository
@@ -55,6 +57,7 @@ struct AppRootView: View {
     private let groupChallengeRepository: any GroupChallengeRepository
 
     init(
+        deepLinkRouter: DeepLinkRouter,
         athleteRepository: any AthleteRepository,
         raceRepository: any RaceRepository,
         planRepository: any TrainingPlanRepository,
@@ -99,6 +102,7 @@ struct AppRootView: View {
         activityFeedRepository: any ActivityFeedRepository,
         groupChallengeRepository: any GroupChallengeRepository
     ) {
+        self.deepLinkRouter = deepLinkRouter
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
         self.planRepository = planRepository
@@ -156,6 +160,7 @@ struct AppRootView: View {
                     ProgressView("Loading...")
                 case .some(true):
                     MainTabView(
+                        deepLinkRouter: deepLinkRouter,
                         athleteRepository: athleteRepository,
                         raceRepository: raceRepository,
                         planRepository: planRepository,

@@ -37,6 +37,13 @@
     <array>
         <string>location</string>
         <string>remote-notification</string>
+        <string>fetch</string>
+        <string>processing</string>
+    </array>
+    <key>BGTaskSchedulerPermittedIdentifiers</key>
+    <array>
+        <string>com.ultratrain.app.healthkit-sync</string>
+        <string>com.ultratrain.app.recovery-calc</string>
     </array>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>UltraTrain uses your location to track your runs and display your route on the map.</string>

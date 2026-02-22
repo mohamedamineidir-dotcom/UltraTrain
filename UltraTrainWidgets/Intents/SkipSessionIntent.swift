@@ -4,6 +4,11 @@ import Foundation
 struct SkipSessionIntent: AppIntent {
     static let title: LocalizedStringResource = "Skip Session"
     static let description: IntentDescription = "Skips the next training session."
+    static let openAppWhenRun = false
+
+    static var parameterSummary: some ParameterSummary {
+        Summary("Skip session \(\.$sessionId)")
+    }
 
     @Parameter(title: "Session ID")
     var sessionId: String

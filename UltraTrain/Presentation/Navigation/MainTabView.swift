@@ -3,6 +3,8 @@ import SwiftUI
 struct MainTabView: View {
     @State private var selectedTab: Tab = .dashboard
 
+    let deepLinkRouter: DeepLinkRouter
+
     private let athleteRepository: any AthleteRepository
     private let raceRepository: any RaceRepository
     private let planRepository: any TrainingPlanRepository
@@ -47,6 +49,7 @@ struct MainTabView: View {
     private let groupChallengeRepository: any GroupChallengeRepository
 
     init(
+        deepLinkRouter: DeepLinkRouter,
         athleteRepository: any AthleteRepository,
         raceRepository: any RaceRepository,
         planRepository: any TrainingPlanRepository,
@@ -90,6 +93,7 @@ struct MainTabView: View {
         activityFeedRepository: any ActivityFeedRepository,
         groupChallengeRepository: any GroupChallengeRepository
     ) {
+        self.deepLinkRouter = deepLinkRouter
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
         self.planRepository = planRepository
@@ -256,6 +260,17 @@ struct MainTabView: View {
                     Label("Profile", systemImage: "person.fill")
                 }
                 .tag(Tab.profile)
+        }
+        .onChange(of: deepLinkRouter.pendingDeepLink) { _, newLink in
+            guard let link = deepLinkRouter.consume() else { return }
+            switch link {
+            case .tab(let tab):
+                selectedTab = tab
+            case .startRun:
+                selectedTab = .run
+            case .morningReadiness:
+                selectedTab = .dashboard
+            }
         }
     }
 }

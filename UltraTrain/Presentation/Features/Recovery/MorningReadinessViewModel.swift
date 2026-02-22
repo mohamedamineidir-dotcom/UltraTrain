@@ -8,6 +8,7 @@ final class MorningReadinessViewModel {
     private let healthKitService: any HealthKitServiceProtocol
     private let recoveryRepository: any RecoveryRepository
     private let fitnessCalculator: any CalculateFitnessUseCase
+    private let fitnessRepository: any FitnessRepository
 
     var readinessScore: ReadinessScore?
     var recoveryScore: RecoveryScore?
@@ -21,11 +22,13 @@ final class MorningReadinessViewModel {
     init(
         healthKitService: any HealthKitServiceProtocol,
         recoveryRepository: any RecoveryRepository,
-        fitnessCalculator: any CalculateFitnessUseCase
+        fitnessCalculator: any CalculateFitnessUseCase,
+        fitnessRepository: any FitnessRepository
     ) {
         self.healthKitService = healthKitService
         self.recoveryRepository = recoveryRepository
         self.fitnessCalculator = fitnessCalculator
+        self.fitnessRepository = fitnessRepository
     }
 
     func load() async {
@@ -44,11 +47,13 @@ final class MorningReadinessViewModel {
                 sleepEntry = latestSnapshot.sleepEntry
             }
 
+            let fitnessSnapshot = try await fitnessRepository.getLatestSnapshot()
+
             if let recovery = recoveryScore {
                 readinessScore = ReadinessCalculator.calculate(
                     recoveryScore: recovery,
                     hrvTrend: hrvTrend,
-                    fitnessSnapshot: nil
+                    fitnessSnapshot: fitnessSnapshot
                 )
             }
         } catch {
