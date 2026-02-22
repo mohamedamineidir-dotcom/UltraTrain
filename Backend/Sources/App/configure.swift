@@ -2,13 +2,20 @@ import Vapor
 import Fluent
 import FluentPostgresDriver
 import JWT
+import NIOSSL
 
 func configure(_ app: Application) async throws {
     // MARK: - Database
 
     if let dbURL = Environment.get("DATABASE_URL") {
-        try app.databases.use(
-            .postgres(url: dbURL),
+        var tlsConfig = TLSConfiguration.makeClientConfiguration()
+        tlsConfig.certificateVerification = .none
+        let nioSSLContext = try NIOSSLContext(configuration: tlsConfig)
+
+        var postgresConfig = try SQLPostgresConfiguration(url: dbURL)
+        postgresConfig.coreConfiguration.tls = .require(nioSSLContext)
+        app.databases.use(
+            DatabaseConfigurationFactory.postgres(configuration: postgresConfig),
             as: .psql
         )
     } else {
