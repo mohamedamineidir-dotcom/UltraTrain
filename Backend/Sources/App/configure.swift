@@ -37,7 +37,12 @@ func configure(_ app: Application) async throws {
     app.migrations.add(CreateUser())
     app.migrations.add(CreateAthlete())
     app.migrations.add(CreateRun())
-    try await app.autoMigrate()
+    do {
+        try await app.autoMigrate()
+        app.logger.notice("Migrations completed successfully")
+    } catch {
+        app.logger.error("Migration failed: \(error)")
+    }
 
     // MARK: - JWT
 
