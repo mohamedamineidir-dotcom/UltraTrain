@@ -38,4 +38,5 @@ extension Logger {
     static let social = Logger(subsystem: subsystem, category: "social")
     static let aiCoach = Logger(subsystem: subsystem, category: "aiCoach")
     static let safety = Logger(subsystem: subsystem, category: "safety")
+    static let courseTracking = Logger(subsystem: subsystem, category: "courseTracking")
 }

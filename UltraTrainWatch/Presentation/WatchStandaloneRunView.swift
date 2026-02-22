@@ -4,20 +4,42 @@ struct WatchStandaloneRunView: View {
     let viewModel: WatchRunViewModel
     let onStop: () -> Void
 
+    @Environment(\.isLuminanceReduced) var isLuminanceReduced
+
     var body: some View {
         TabView {
             metricsPage
-            controlsPage
+            if !isLuminanceReduced {
+                controlsPage
+                WatchSplitsPage(splits: viewModel.splits)
+            }
         }
         .tabViewStyle(.verticalPage)
         .overlay(alignment: .top) {
-            if viewModel.activeReminder != nil {
-                WatchNutritionBanner(
-                    message: viewModel.activeReminder?.message ?? "",
-                    reminderType: viewModel.activeReminder?.type.rawValue,
-                    onDismiss: { viewModel.dismissReminder() }
-                )
+            if !isLuminanceReduced {
+                bannerOverlay
             }
+        }
+    }
+
+    // MARK: - Banner Overlay
+
+    @ViewBuilder
+    private var bannerOverlay: some View {
+        if let split = viewModel.latestSplit {
+            WatchSplitBanner(
+                split: split,
+                previousPace: previousSplitPace(before: split)
+            )
+            .transition(.move(edge: .top).combined(with: .opacity))
+            .padding(.horizontal, 4)
+            .padding(.top, 2)
+        } else if viewModel.activeReminder != nil {
+            WatchNutritionBanner(
+                message: viewModel.activeReminder?.message ?? "",
+                reminderType: viewModel.activeReminder?.type.rawValue,
+                onDismiss: { viewModel.dismissReminder() }
+            )
         }
     }
 
@@ -29,17 +51,24 @@ struct WatchStandaloneRunView: View {
             Text(viewModel.formattedTime)
                 .font(.system(.title, design: .monospaced, weight: .bold))
                 .foregroundStyle(.white)
+                .opacity(isLuminanceReduced ? 0.6 : 1.0)
 
             HStack(spacing: 16) {
                 metricColumn(value: viewModel.formattedDistance, unit: "km", icon: "figure.run")
-                metricColumn(value: viewModel.currentPace, unit: "/km", icon: "speedometer")
-            }
-
-            HStack(spacing: 16) {
-                if let hr = viewModel.currentHeartRate {
-                    metricColumn(value: "\(hr)", unit: "bpm", icon: "heart.fill")
+                if !isLuminanceReduced {
+                    metricColumn(value: viewModel.currentPace, unit: "/km", icon: "speedometer")
                 }
-                metricColumn(value: viewModel.formattedElevation, unit: "", icon: "mountain.2.fill")
+            }
+            .opacity(isLuminanceReduced ? 0.6 : 1.0)
+
+            if !isLuminanceReduced {
+                HStack(spacing: 16) {
+                    if let hr = viewModel.currentHeartRate {
+                        metricColumn(value: "\(hr)", unit: "bpm", icon: "heart.fill")
+                            .foregroundStyle(hrZoneColor)
+                    }
+                    metricColumn(value: viewModel.formattedElevation, unit: "", icon: "mountain.2.fill")
+                }
             }
         }
         .padding(.horizontal, 4)
@@ -96,7 +125,6 @@ struct WatchStandaloneRunView: View {
                 .foregroundStyle(.secondary)
             Text(value)
                 .font(.system(.body, design: .monospaced, weight: .semibold))
-                .foregroundStyle(.white)
             if !unit.isEmpty {
                 Text(unit)
                     .font(.system(size: 10))
@@ -121,5 +149,28 @@ struct WatchStandaloneRunView: View {
         case .paused: return .yellow
         default: return .secondary
         }
+    }
+
+    // MARK: - HR Zone Color
+
+    private var hrZoneColor: Color {
+        guard let zone = viewModel.currentHRZone else { return .white }
+        switch zone {
+        case 1: return .green
+        case 2: return .blue
+        case 3: return .yellow
+        case 4: return .orange
+        case 5: return .red
+        default: return .white
+        }
+    }
+
+    // MARK: - Split Helpers
+
+    private func previousSplitPace(before split: WatchSplit) -> Double? {
+        guard split.kilometerNumber > 1 else { return nil }
+        return viewModel.splits.first(where: {
+            $0.kilometerNumber == split.kilometerNumber - 1
+        })?.duration
     }
 }

@@ -49,6 +49,10 @@ final class RunTrackingLaunchViewModel {
     var preRunBriefing: PreRunBriefing?
     var intervalWorkout: IntervalWorkout?
     var safetyConfig = SafetyConfig()
+    var raceCourseRoute: [TrackPoint]?
+    var raceCheckpoints: [Checkpoint]?
+    var raceCheckpointSplits: [CheckpointSplit]?
+    var raceTotalDistanceKm: Double?
 
     // MARK: - Init
 
@@ -104,6 +108,13 @@ final class RunTrackingLaunchViewModel {
             let calendar = Calendar.current
             todaysRace = allRaces.first { calendar.isDate($0.date, inSameDayAs: Date.now) }
             raceId = todaysRace?.id
+
+            if let race = todaysRace, race.hasCourseRoute {
+                raceCourseRoute = race.courseRoute
+                raceCheckpoints = race.checkpoints
+                raceTotalDistanceKm = race.distanceKm
+                await loadCheckpointSplits(raceId: race.id)
+            }
 
             if let settings = try await appSettingsRepository.getSettings() {
                 autoPauseEnabled = settings.autoPauseEnabled
@@ -205,6 +216,15 @@ final class RunTrackingLaunchViewModel {
             try await finishEstimateRepository.saveEstimate(estimate)
         } catch {
             Logger.training.debug("Auto-recalculation skipped: \(error)")
+        }
+    }
+
+    private func loadCheckpointSplits(raceId: UUID) async {
+        do {
+            let estimate = try await finishEstimateRepository.getEstimate(for: raceId)
+            raceCheckpointSplits = estimate?.checkpointSplits
+        } catch {
+            Logger.tracking.debug("Could not load checkpoint splits: \(error)")
         }
     }
 

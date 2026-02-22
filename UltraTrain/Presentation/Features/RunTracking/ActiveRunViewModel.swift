@@ -33,6 +33,7 @@ final class ActiveRunViewModel {
     let voiceCoachingHandler: VoiceCoachingHandler
     let intervalHandler: IntervalGuidanceHandler
     let safetyHandler: SafetyHandler?
+    let courseGuidanceHandler: CourseGuidanceHandler?
 
     // MARK: - Config
 
@@ -78,6 +79,7 @@ final class ActiveRunViewModel {
     private var pauseStartTime: Date?
     private var runningAveragePace: Double = 0
     private var lastKnownSpeed: Double = 0
+    private var arrivedCheckpointIdsForVoice: Set<UUID> = []
 
     // MARK: - Init
 
@@ -115,7 +117,11 @@ final class ActiveRunViewModel {
         intervalWorkout: IntervalWorkout? = nil,
         emergencyContactRepository: (any EmergencyContactRepository)? = nil,
         motionService: (any MotionServiceProtocol)? = nil,
-        safetyConfig: SafetyConfig = SafetyConfig()
+        safetyConfig: SafetyConfig = SafetyConfig(),
+        raceCourseRoute: [TrackPoint]? = nil,
+        raceCheckpoints: [Checkpoint]? = nil,
+        raceCheckpointSplits: [CheckpointSplit]? = nil,
+        raceTotalDistanceKm: Double? = nil
     ) {
         self.locationService = locationService
         self.healthKitService = healthKitService
@@ -183,6 +189,17 @@ final class ActiveRunViewModel {
             )
         } else {
             self.safetyHandler = nil
+        }
+
+        if let route = raceCourseRoute, route.count >= 2 {
+            self.courseGuidanceHandler = CourseGuidanceHandler(
+                courseRoute: route,
+                checkpoints: raceCheckpoints ?? [],
+                checkpointSplits: raceCheckpointSplits,
+                totalDistanceKm: raceTotalDistanceKm ?? RunStatisticsCalculator.totalDistanceKm(route)
+            )
+        } else {
+            self.courseGuidanceHandler = nil
         }
     }
 
@@ -467,6 +484,30 @@ final class ActiveRunViewModel {
         }
 
         racePacingHandler.processLocation(context: buildPacingContext())
+
+        courseGuidanceHandler?.tick(
+            latitude: location.coordinate.latitude,
+            longitude: location.coordinate.longitude,
+            elapsedTime: elapsedTime,
+            currentPaceSecondsPerKm: runningAveragePace
+        )
+
+        if let handler = courseGuidanceHandler {
+            if handler.isOffCourse {
+                voiceCoachingHandler.announceOffCourseWarning(
+                    distanceM: handler.currentProgress?.distanceOffCourseM ?? 0
+                )
+            }
+            if let arrived = handler.arrivedCheckpoint,
+               !arrivedCheckpointIdsForVoice.contains(arrived.id) {
+                arrivedCheckpointIdsForVoice.insert(arrived.id)
+                voiceCoachingHandler.announceCheckpointArrival(
+                    name: arrived.name,
+                    timeDelta: handler.arrivedCheckpointTimeDelta
+                )
+            }
+        }
+
         handleAutoPause(speed: location.speed)
     }
 

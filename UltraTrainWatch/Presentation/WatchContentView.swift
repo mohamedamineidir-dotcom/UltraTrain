@@ -2,6 +2,7 @@ import SwiftUI
 
 struct WatchContentView: View {
     let connectivityService: WatchConnectivityService
+    let locationService: WatchLocationService
     let watchRunViewModel: WatchRunViewModel
 
     @State private var showRunSummary = false
@@ -36,16 +37,23 @@ struct WatchContentView: View {
                     }
                 )
             } else {
-                WatchHomeView(
-                    sessionData: connectivityService.sessionData,
-                    isPhoneReachable: connectivityService.isPhoneReachable,
-                    onStartRun: {
-                        watchRunViewModel.linkedSession = connectivityService.sessionData
-                        Task {
-                            await watchRunViewModel.startRun()
+                NavigationStack {
+                    WatchHomeView(
+                        sessionData: connectivityService.sessionData,
+                        isPhoneReachable: connectivityService.isPhoneReachable,
+                        runHistory: connectivityService.runHistory,
+                        locationAuthStatus: locationService.authStatus,
+                        onStartRun: {
+                            watchRunViewModel.linkedSession = connectivityService.sessionData
+                            Task {
+                                await watchRunViewModel.startRun()
+                            }
+                        },
+                        onRequestLocationPermission: {
+                            locationService.requestAuthorization()
                         }
-                    }
-                )
+                    )
+                }
             }
         }
         .sheet(isPresented: $showRunSummary) {

@@ -12,6 +12,7 @@ final class WatchConnectivityService: NSObject, @unchecked Sendable {
     var runData: WatchRunData?
     var sessionData: WatchSessionData?
     var complicationData: WatchComplicationData?
+    var runHistory: [WatchRunHistoryData] = []
     var isPhoneReachable = false
 
     // MARK: - Private
@@ -76,6 +77,7 @@ extension WatchConnectivityService: WCSessionDelegate {
         let decodedRunData = WatchMessageCoder.decodeRunData(applicationContext)
         let decodedSessionData = WatchMessageCoder.decodeSessionData(applicationContext)
         let decodedComplicationData = WatchMessageCoder.decodeComplicationData(applicationContext)
+        let decodedRunHistory = WatchMessageCoder.decodeRunHistoryContext(applicationContext)
 
         Task { @MainActor in
             if let decodedRunData {
@@ -90,7 +92,10 @@ extension WatchConnectivityService: WCSessionDelegate {
                 WidgetCenter.shared.reloadTimelines(ofKind: "WatchNextSessionComplication")
                 WidgetCenter.shared.reloadTimelines(ofKind: "WatchRaceCountdownComplication")
             }
-            Logger.watch.info("Received application context — run: \(decodedRunData != nil), session: \(decodedSessionData != nil), complication: \(decodedComplicationData != nil)")
+            if let decodedRunHistory {
+                self.runHistory = decodedRunHistory
+            }
+            Logger.watch.info("Received application context — run: \(decodedRunData != nil), session: \(decodedSessionData != nil), complication: \(decodedComplicationData != nil), history: \(decodedRunHistory?.count ?? 0) runs")
         }
     }
 

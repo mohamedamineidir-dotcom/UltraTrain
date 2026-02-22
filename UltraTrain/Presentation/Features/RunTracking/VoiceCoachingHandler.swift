@@ -52,6 +52,18 @@ final class VoiceCoachingHandler {
         voiceService.speak(cue)
     }
 
+    func announceCheckpointArrival(name: String, timeDelta: TimeInterval?) {
+        guard config.enabled, config.announceCheckpoints else { return }
+        let cue = VoiceCueBuilder.checkpointArrivalCue(name: name, timeDelta: timeDelta)
+        voiceService.speak(cue)
+    }
+
+    func announceOffCourseWarning(distanceM: Double) {
+        guard config.enabled else { return }
+        let cue = VoiceCueBuilder.offCourseWarningCue(distanceM: distanceM)
+        voiceService.speak(cue)
+    }
+
     func announceZoneDrift(currentZone: Int, targetZone: Int, duration: TimeInterval) {
         guard config.enabled, config.announceZoneDriftAlerts else { return }
         let cue = VoiceCueBuilder.zoneDriftCue(

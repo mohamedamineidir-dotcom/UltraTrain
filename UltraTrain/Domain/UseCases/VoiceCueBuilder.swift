@@ -73,6 +73,28 @@ enum VoiceCueBuilder {
         VoiceCue(type: .pacingAlert, message: message, priority: .high)
     }
 
+    static func checkpointArrivalCue(name: String, timeDelta: TimeInterval?) -> VoiceCue {
+        var message = "Arrived at \(name)."
+        if let delta = timeDelta {
+            let absDelta = abs(delta)
+            let timeStr = spokenDuration(absDelta)
+            if delta < 0 {
+                message += " \(timeStr) ahead of plan."
+            } else if delta > 0 {
+                message += " \(timeStr) behind plan."
+            } else {
+                message += " Right on schedule."
+            }
+        }
+        return VoiceCue(type: .checkpointArrival, message: message, priority: .high)
+    }
+
+    static func offCourseWarningCue(distanceM: Double) -> VoiceCue {
+        let meters = Int(distanceM)
+        let message = "Warning. You are \(meters) meters off course."
+        return VoiceCue(type: .offCourseWarning, message: message, priority: .high)
+    }
+
     static func zoneDriftCue(currentZone: Int, targetZone: Int, duration: TimeInterval) -> VoiceCue {
         let durationStr = spokenDuration(duration)
         let direction = currentZone > targetZone ? "Slow down" : "Pick up the pace"

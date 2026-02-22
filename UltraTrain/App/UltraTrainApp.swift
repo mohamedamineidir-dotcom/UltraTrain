@@ -222,7 +222,8 @@ struct UltraTrainApp: App {
         let queueService = stravaUploadQueueService
         Task { await queueService.processQueue() }
 
-        connectivityService.completedRunHandler = { [watchRunImportService, athleteRepository] runData in
+        connectivityService.completedRunHandler = {
+            [watchRunImportService, athleteRepository, runRepository, connectivityService] runData in
             Task {
                 do {
                     guard let athlete = try await athleteRepository.getAthlete() else {
@@ -230,6 +231,20 @@ struct UltraTrainApp: App {
                         return
                     }
                     try await watchRunImportService.importWatchRun(runData, athleteId: athlete.id)
+
+                    let recentRuns = try await runRepository.getRecentRuns(limit: 10)
+                    let historyData = recentRuns.map { run in
+                        WatchRunHistoryData(
+                            id: run.id,
+                            date: run.date,
+                            distanceKm: run.distanceKm,
+                            elevationGainM: run.elevationGainM,
+                            duration: run.duration,
+                            averagePaceSecondsPerKm: run.averagePaceSecondsPerKm,
+                            averageHeartRate: run.averageHeartRate
+                        )
+                    }
+                    await connectivityService.sendRunHistory(historyData)
                 } catch {
                     Logger.watch.error("Failed to import watch run: \(error)")
                 }

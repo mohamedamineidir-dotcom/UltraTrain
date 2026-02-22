@@ -3,11 +3,20 @@ import SwiftUI
 struct WatchHomeView: View {
     let sessionData: WatchSessionData?
     let isPhoneReachable: Bool
+    let runHistory: [WatchRunHistoryData]
+    let locationAuthStatus: WatchLocationAuthStatus
     let onStartRun: () -> Void
+    let onRequestLocationPermission: () -> Void
+
+    private var isStartDisabled: Bool {
+        locationAuthStatus != .authorized
+    }
 
     var body: some View {
         ScrollView {
             VStack(spacing: 12) {
+                locationBanner
+
                 if let session = sessionData {
                     sessionCard(session)
                 } else {
@@ -15,6 +24,15 @@ struct WatchHomeView: View {
                 }
 
                 startButton
+
+                if !runHistory.isEmpty {
+                    NavigationLink {
+                        WatchRunHistoryView(runs: runHistory)
+                    } label: {
+                        Label("History (\(runHistory.count))", systemImage: "clock.arrow.circlepath")
+                            .font(.caption)
+                    }
+                }
 
                 connectionStatus
             }
@@ -83,6 +101,47 @@ struct WatchHomeView: View {
         .padding(.vertical, 8)
     }
 
+    // MARK: - Location Banner
+
+    @ViewBuilder
+    private var locationBanner: some View {
+        switch locationAuthStatus {
+        case .notDetermined:
+            Button(action: onRequestLocationPermission) {
+                HStack(spacing: 6) {
+                    Image(systemName: "location.fill")
+                        .font(.caption)
+                    Text("Allow location to track runs")
+                        .font(.caption2)
+                        .lineLimit(2)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 6)
+                .frame(maxWidth: .infinity)
+                .background(.blue.opacity(0.8))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+            .buttonStyle(.plain)
+        case .denied:
+            HStack(spacing: 6) {
+                Image(systemName: "location.slash.fill")
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                Text("Location denied. Enable in Settings.")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
+            .frame(maxWidth: .infinity)
+            .background(.red.opacity(0.15))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+        case .authorized:
+            EmptyView()
+        }
+    }
+
     // MARK: - Start Button
 
     private var startButton: some View {
@@ -92,6 +151,8 @@ struct WatchHomeView: View {
                 .frame(maxWidth: .infinity)
         }
         .tint(.green)
+        .disabled(isStartDisabled)
+        .opacity(isStartDisabled ? 0.5 : 1)
     }
 
     // MARK: - Connection Status

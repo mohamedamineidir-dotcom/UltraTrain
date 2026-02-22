@@ -180,7 +180,11 @@ struct RunTrackingLaunchView: View {
                             intervalWorkout: viewModel.intervalWorkout,
                             emergencyContactRepository: emergencyContactRepository,
                             motionService: motionService,
-                            safetyConfig: viewModel.safetyConfig
+                            safetyConfig: viewModel.safetyConfig,
+                            raceCourseRoute: viewModel.raceCourseRoute,
+                            raceCheckpoints: viewModel.raceCheckpoints,
+                            raceCheckpointSplits: viewModel.raceCheckpointSplits,
+                            raceTotalDistanceKm: viewModel.raceTotalDistanceKm
                         ),
                         exportService: exportService
                     )

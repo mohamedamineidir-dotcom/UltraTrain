@@ -1,5 +1,6 @@
 import CoreLocation
 import os
+import WatchKit
 
 enum WatchRunState: String, Sendable {
     case notStarted
@@ -23,6 +24,9 @@ final class WatchRunViewModel {
     var currentHeartRate: Int?
     var isAutoPaused = false
     var activeReminder: WatchNutritionReminder?
+    var splits: [WatchSplit] = []
+    var latestSplit: WatchSplit?
+    var currentHRZone: Int?
     var error: String?
 
     var linkedSession: WatchSessionData?
@@ -46,6 +50,7 @@ final class WatchRunViewModel {
     private var timer: Task<Void, Never>?
     private var locationTask: Task<Void, Never>?
     private var heartRateTask: Task<Void, Never>?
+    private var splitDismissTask: Task<Void, Never>?
     private var pausedDuration: TimeInterval = 0
     private var runStartDate: Date?
     private var pauseStartDate: Date?
@@ -136,6 +141,8 @@ final class WatchRunViewModel {
         locationTask = nil
         heartRateTask?.cancel()
         heartRateTask = nil
+        splitDismissTask?.cancel()
+        splitDismissTask = nil
 
         locationService.stopTracking()
         do {
@@ -260,6 +267,22 @@ final class WatchRunViewModel {
         elevationGainM = changes.gainM
         elevationLossM = changes.lossM
 
+        // Check for new km split
+        if let newSplit = WatchRunCalculator.liveSplitCheck(
+            trackPoints: trackPoints,
+            previousSplitCount: splits.count
+        ) {
+            splits.append(newSplit)
+            latestSplit = newSplit
+            WKInterfaceDevice.current().play(.notification)
+            splitDismissTask?.cancel()
+            splitDismissTask = Task { [weak self] in
+                try? await Task.sleep(for: .seconds(5))
+                guard !Task.isCancelled else { return }
+                self?.latestSplit = nil
+            }
+        }
+
         // Auto-pause detection
         checkAutoPause(speed: location.speed)
 
@@ -278,6 +301,15 @@ final class WatchRunViewModel {
                     if hr > maxHR { self?.maxHeartRate = hr }
                 } else {
                     self?.maxHeartRate = hr
+                }
+                // Calculate HR zone using athlete data from session
+                if let athleteMaxHR = self?.connectivityService.sessionData?.maxHeartRate,
+                   let restingHR = self?.connectivityService.sessionData?.restingHeartRate {
+                    self?.currentHRZone = WatchHRZoneCalculator.zone(
+                        heartRate: hr,
+                        maxHR: athleteMaxHR,
+                        restingHR: restingHR
+                    )
                 }
             }
         }

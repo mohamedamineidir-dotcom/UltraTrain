@@ -9,6 +9,18 @@ struct ActiveRunView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            if let handler = viewModel.courseGuidanceHandler,
+               let progress = handler.currentProgress {
+                CourseProgressOverlay(
+                    progress: progress,
+                    courseRoute: handler.courseRoute,
+                    nextCheckpointName: handler.nextCheckpointName,
+                    nextCheckpointDistanceKm: handler.nextCheckpointDistanceKm,
+                    nextCheckpointETA: handler.nextCheckpointETA,
+                    isOffCourse: handler.isOffCourse
+                )
+            }
+
             RunMapView(
                 coordinates: viewModel.routeCoordinates,
                 checkpointLocations: viewModel.racePacingHandler.resolvedCheckpointLocations
@@ -149,6 +161,17 @@ struct ActiveRunView: View {
             }
         }
         .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.safetyHandler?.isCountingDown)
+        .overlay(alignment: .top) {
+            if let handler = viewModel.courseGuidanceHandler,
+               let arrived = handler.arrivedCheckpoint {
+                CheckpointArrivalBanner(
+                    checkpoint: arrived,
+                    timeDelta: handler.arrivedCheckpointTimeDelta
+                )
+                .padding(.top, courseArrivalBannerOffset)
+            }
+        }
+        .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: viewModel.courseGuidanceHandler?.arrivedCheckpoint?.id)
         .sheet(isPresented: safetyMessageBinding) {
             if let handler = viewModel.safetyHandler, MessageComposeView.canSendText {
                 MessageComposeView(
@@ -217,6 +240,12 @@ struct ActiveRunView: View {
     private var intervalBannerOffset: CGFloat {
         var offset = driftBannerOffset
         if viewModel.activeDriftAlert != nil { offset += 80 }
+        return offset
+    }
+
+    private var courseArrivalBannerOffset: CGFloat {
+        var offset = intervalBannerOffset
+        if viewModel.intervalHandler.showPhaseTransitionBanner != nil { offset += 80 }
         return offset
     }
 

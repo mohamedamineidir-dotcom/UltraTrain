@@ -14,6 +14,7 @@ struct EditRaceSheet: View {
 
     let mode: Mode
     let onSave: (Race) -> Void
+    private let routeRepository: (any RouteRepository)?
     @Environment(\.dismiss) private var dismiss
 
     @State private var name: String
@@ -29,17 +30,25 @@ struct EditRaceSheet: View {
     @State private var terrainDifficulty: TerrainDifficulty
     @State private var checkpoints: [Checkpoint]
     @State private var courseRoute: [TrackPoint]
+    @State private var savedRouteId: UUID?
     @State private var showAddCheckpoint = false
     @State private var editingCheckpoint: Checkpoint?
     @State private var showDocumentPicker = false
     @State private var showImportCourse = false
     @State private var importedFileURL: URL?
+    @State private var showRoutePicker = false
+    @State private var availableRoutes: [SavedRoute] = []
 
     private let existingId: UUID?
 
-    init(mode: Mode, onSave: @escaping (Race) -> Void) {
+    init(
+        mode: Mode,
+        routeRepository: (any RouteRepository)? = nil,
+        onSave: @escaping (Race) -> Void
+    ) {
         self.mode = mode
         self.onSave = onSave
+        self.routeRepository = routeRepository
         switch mode {
         case .add:
             existingId = nil
@@ -56,6 +65,7 @@ struct EditRaceSheet: View {
             _terrainDifficulty = State(initialValue: .moderate)
             _checkpoints = State(initialValue: [])
             _courseRoute = State(initialValue: [])
+            _savedRouteId = State(initialValue: nil)
         case .edit(let race):
             existingId = race.id
             _name = State(initialValue: race.name)
@@ -67,6 +77,7 @@ struct EditRaceSheet: View {
             _terrainDifficulty = State(initialValue: race.terrainDifficulty)
             _checkpoints = State(initialValue: race.checkpoints)
             _courseRoute = State(initialValue: race.courseRoute)
+            _savedRouteId = State(initialValue: race.savedRouteId)
             switch race.goalType {
             case .finish:
                 _goalType = State(initialValue: .finish)
@@ -135,6 +146,15 @@ struct EditRaceSheet: View {
                         applyImportedCourse(result)
                     }
                 }
+            }
+            .sheet(isPresented: $showRoutePicker) {
+                RaceRoutePickerSheet(routes: availableRoutes) { route in
+                    applyRoute(route)
+                }
+            }
+            .task {
+                guard let repo = routeRepository else { return }
+                availableRoutes = (try? await repo.getRoutes()) ?? []
             }
         }
     }
@@ -262,6 +282,14 @@ struct EditRaceSheet: View {
                 Label("Import GPX Course", systemImage: "doc.badge.arrow.up")
             }
             .accessibilityHint("Import a GPX file to automatically populate the course route and checkpoints")
+            if routeRepository != nil {
+                Button {
+                    showRoutePicker = true
+                } label: {
+                    Label("Pick from Route Library", systemImage: "map.fill")
+                }
+                .accessibilityHint("Select a saved route to use as the race course")
+            }
             if checkpoints.isEmpty {
                 Text("No checkpoints added yet")
                     .foregroundStyle(Theme.Colors.secondaryLabel)
@@ -350,8 +378,21 @@ struct EditRaceSheet: View {
         elevationLossM = result.elevationLossM
         checkpoints = result.checkpoints
         courseRoute = result.courseRoute
+        savedRouteId = nil
         if let gpxName = result.name, name.isEmpty {
             name = gpxName
+        }
+    }
+
+    private func applyRoute(_ route: SavedRoute) {
+        distanceKm = route.distanceKm
+        elevationGainM = route.elevationGainM
+        elevationLossM = route.elevationLossM
+        checkpoints = route.checkpoints
+        courseRoute = route.courseRoute
+        savedRouteId = route.id
+        if name.isEmpty {
+            name = route.name
         }
     }
 
@@ -369,6 +410,7 @@ struct EditRaceSheet: View {
             terrainDifficulty: terrainDifficulty
         )
         race.courseRoute = courseRoute
+        race.savedRouteId = savedRouteId
         onSave(race)
         dismiss()
     }

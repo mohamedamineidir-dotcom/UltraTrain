@@ -9,6 +9,8 @@ struct WatchSessionData: Codable, Sendable, Equatable {
     var plannedDuration: TimeInterval
     var intensity: String
     var description: String
+    var maxHeartRate: Int?
+    var restingHeartRate: Int?
 
     var sessionTypeLabel: String {
         switch type {

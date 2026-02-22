@@ -119,8 +119,12 @@ struct RouteDetailView: View {
                 VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                     Text("Elevation Profile")
                         .font(.headline)
-                    CourseRouteElevationChart(courseRoute: route.courseRoute)
-                        .frame(height: 180)
+                    InteractiveCourseProfileView(
+                        viewModel: InteractiveCourseProfileViewModel(
+                            courseRoute: route.courseRoute,
+                            checkpoints: route.checkpoints
+                        )
+                    )
                 }
                 .padding(.horizontal, Theme.Spacing.md)
             }

@@ -18,6 +18,7 @@ final class PhoneConnectivityService: NSObject, @unchecked Sendable {
     private var currentRunData: WatchRunData?
     private var currentSessionData: WatchSessionData?
     private var currentComplicationData: WatchComplicationData?
+    private var currentRunHistory: [WatchRunHistoryData]?
 
     // MARK: - Init
 
@@ -60,6 +61,13 @@ final class PhoneConnectivityService: NSObject, @unchecked Sendable {
         sendApplicationContext()
     }
 
+    // MARK: - Send Run History
+
+    func sendRunHistory(_ history: [WatchRunHistoryData]) {
+        currentRunHistory = history
+        sendApplicationContext()
+    }
+
     // MARK: - Private
 
     private func sendApplicationContext() {
@@ -67,7 +75,8 @@ final class PhoneConnectivityService: NSObject, @unchecked Sendable {
         let context = WatchMessageCoder.mergeApplicationContext(
             runData: currentRunData,
             sessionData: currentSessionData,
-            complicationData: currentComplicationData
+            complicationData: currentComplicationData,
+            runHistory: currentRunHistory
         )
         guard !context.isEmpty else { return }
         do {

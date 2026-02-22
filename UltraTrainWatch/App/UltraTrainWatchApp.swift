@@ -1,4 +1,5 @@
 import SwiftUI
+import os
 
 @main
 struct UltraTrainWatchApp: App {
@@ -17,6 +18,7 @@ struct UltraTrainWatchApp: App {
                         healthKitService: healthKitService,
                         connectivityService: connectivityService
                     )
+                    await requestInitialPermissions()
                 }
         }
     }
@@ -26,10 +28,29 @@ struct UltraTrainWatchApp: App {
         if let vm = watchRunViewModel {
             WatchContentView(
                 connectivityService: connectivityService,
+                locationService: locationService,
                 watchRunViewModel: vm
             )
         } else {
             ProgressView()
+        }
+    }
+
+    // MARK: - Permissions
+
+    private func requestInitialPermissions() async {
+        if locationService.authStatus == .notDetermined {
+            locationService.requestAuthorization()
+            Logger.watch.info("Requested location authorization on first launch")
+        }
+
+        if healthKitService.authStatus == .notDetermined {
+            do {
+                try await healthKitService.requestAuthorization()
+                Logger.watch.info("Requested HealthKit authorization on first launch")
+            } catch {
+                Logger.watch.error("HealthKit authorization failed: \(error)")
+            }
         }
     }
 }

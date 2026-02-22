@@ -20,6 +20,8 @@ enum VoiceCueType: String, Codable, Sendable {
     case fallDetected
     case noMovementWarning
     case safetyTimerWarning
+    case checkpointArrival
+    case offCourseWarning
 }
 
 struct VoiceCue: Equatable, Sendable {

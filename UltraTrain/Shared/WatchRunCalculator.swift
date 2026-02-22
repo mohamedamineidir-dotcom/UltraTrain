@@ -109,4 +109,16 @@ enum WatchRunCalculator {
 
         return splits
     }
+
+    // MARK: - Live Split Detection
+
+    static func liveSplitCheck(
+        trackPoints: [WatchTrackPoint],
+        previousSplitCount: Int
+    ) -> WatchSplit? {
+        let currentSplits = buildSplits(from: trackPoints)
+        guard currentSplits.count > previousSplitCount,
+              let newSplit = currentSplits.last else { return nil }
+        return newSplit
+    }
 }

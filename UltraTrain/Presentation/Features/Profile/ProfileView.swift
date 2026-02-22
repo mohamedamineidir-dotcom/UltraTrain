@@ -196,12 +196,12 @@ struct ProfileView: View {
             }
             .animation(.easeInOut, value: viewModel.planWasAutoAdjusted)
             .sheet(isPresented: $viewModel.showingAddRace) {
-                EditRaceSheet(mode: .add) { newRace in
+                EditRaceSheet(mode: .add, routeRepository: routeRepository) { newRace in
                     Task { await viewModel.addRace(newRace) }
                 }
             }
             .sheet(item: $viewModel.raceToEdit) { race in
-                EditRaceSheet(mode: .edit(race)) { updated in
+                EditRaceSheet(mode: .edit(race), routeRepository: routeRepository) { updated in
                     Task { await viewModel.updateRace(updated) }
                 }
             }

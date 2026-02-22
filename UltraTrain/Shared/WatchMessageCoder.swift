@@ -7,6 +7,7 @@ enum WatchMessageCoder {
     private static let sessionDataKey = "sessionData"
     private static let completedRunKey = "completedRun"
     private static let complicationKey = "complicationData"
+    private static let runHistoryKey = "runHistory"
 
     // MARK: - Run Data (phone → watch, applicationContext)
 
@@ -85,12 +86,37 @@ enum WatchMessageCoder {
         return try? JSONDecoder().decode(WatchComplicationData.self, from: jsonData)
     }
 
+    // MARK: - Run History (phone → watch, applicationContext)
+
+    static func encodeRunHistory(_ history: [WatchRunHistoryData]) -> Data? {
+        try? JSONEncoder().encode(history)
+    }
+
+    static func decodeRunHistory(from data: Data) -> [WatchRunHistoryData]? {
+        try? JSONDecoder().decode([WatchRunHistoryData].self, from: data)
+    }
+
+    static func encodeRunHistoryContext(_ history: [WatchRunHistoryData]) -> [String: Any] {
+        guard let jsonData = encodeRunHistory(history) else {
+            return [:]
+        }
+        return [runHistoryKey: jsonData]
+    }
+
+    static func decodeRunHistoryContext(_ context: [String: Any]) -> [WatchRunHistoryData]? {
+        guard let jsonData = context[runHistoryKey] as? Data else {
+            return nil
+        }
+        return decodeRunHistory(from: jsonData)
+    }
+
     // MARK: - Merge Context
 
     static func mergeApplicationContext(
         runData: WatchRunData? = nil,
         sessionData: WatchSessionData? = nil,
-        complicationData: WatchComplicationData? = nil
+        complicationData: WatchComplicationData? = nil,
+        runHistory: [WatchRunHistoryData]? = nil
     ) -> [String: Any] {
         var context: [String: Any] = [:]
         if let runData {
@@ -101,6 +127,9 @@ enum WatchMessageCoder {
         }
         if let complicationData {
             context.merge(encodeComplicationData(complicationData)) { _, new in new }
+        }
+        if let runHistory {
+            context.merge(encodeRunHistoryContext(runHistory)) { _, new in new }
         }
         return context
     }
