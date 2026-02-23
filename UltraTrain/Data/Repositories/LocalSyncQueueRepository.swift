@@ -84,4 +84,15 @@ final class LocalSyncQueueRepository: SyncQueueRepository, @unchecked Sendable {
         )
         return try context.fetchCount(descriptor)
     }
+
+    func getFailedItems() async throws -> [SyncQueueItem] {
+        let context = ModelContext(modelContainer)
+        let failedRaw = SyncQueueItemStatus.failed.rawValue
+        let descriptor = FetchDescriptor<SyncQueueSwiftDataModel>(
+            predicate: #Predicate { $0.statusRaw == failedRaw },
+            sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
+        )
+        let results = try context.fetch(descriptor)
+        return results.compactMap { SyncQueueMapper.toDomain($0) }
+    }
 }

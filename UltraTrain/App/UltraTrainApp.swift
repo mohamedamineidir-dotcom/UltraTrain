@@ -426,6 +426,7 @@ struct UltraTrainApp: App {
                 deviceTokenService: deviceTokenService
             )
             .environment(\.syncStatusMonitor, syncStatusMonitor)
+            .environment(\.syncService, syncService)
             .preferredColorScheme(colorScheme)
             .onOpenURL { url in
                 _ = deepLinkRouter.handle(url: url)

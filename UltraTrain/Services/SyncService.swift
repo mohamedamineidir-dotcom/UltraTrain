@@ -100,6 +100,49 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
         (try? await queueRepository.getFailedCount()) ?? 0
     }
 
+    func getFailedItems() async -> [SyncQueueItem] {
+        (try? await queueRepository.getFailedItems()) ?? []
+    }
+
+    func retryItem(id: UUID) async {
+        do {
+            let items = try await queueRepository.getPendingItems()
+            let failed = try await queueRepository.getFailedItems()
+            let allItems = items + failed
+            guard var item = allItems.first(where: { $0.id == id }) else { return }
+            item.status = .pending
+            item.retryCount = 0
+            item.errorMessage = nil
+            try await queueRepository.updateItem(item)
+            await processQueue()
+        } catch {
+            Logger.network.error("SyncService: retryItem failed: \(error)")
+        }
+    }
+
+    func discardItem(id: UUID) async {
+        do {
+            try await queueRepository.deleteItem(id: id)
+            Logger.network.info("SyncService: discarded item \(id)")
+        } catch {
+            Logger.network.error("SyncService: discardItem failed: \(error)")
+        }
+    }
+
+    func retryAllFailed() async {
+        let failed = await getFailedItems()
+        for item in failed {
+            await retryItem(id: item.id)
+        }
+    }
+
+    func discardAllFailed() async {
+        let failed = await getFailedItems()
+        for item in failed {
+            await discardItem(id: item.id)
+        }
+    }
+
     // MARK: - Private
 
     private func processItem(_ item: SyncQueueItem) async {

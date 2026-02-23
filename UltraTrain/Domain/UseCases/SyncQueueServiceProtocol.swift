@@ -7,4 +7,9 @@ protocol SyncQueueServiceProtocol: Sendable {
     func getQueueStatus(forRunId runId: UUID) async -> SyncQueueItemStatus?
     func getPendingCount() async -> Int
     func getFailedCount() async -> Int
+    func getFailedItems() async -> [SyncQueueItem]
+    func retryItem(id: UUID) async
+    func discardItem(id: UUID) async
+    func retryAllFailed() async
+    func discardAllFailed() async
 }

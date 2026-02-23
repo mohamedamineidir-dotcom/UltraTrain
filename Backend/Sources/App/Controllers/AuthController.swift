@@ -49,7 +49,7 @@ struct AuthController: RouteCollection {
         let emailService = EmailService(app: req.application)
         await emailService.sendVerificationCode(to: body.email.lowercased(), code: code)
 
-        return try generateTokenPair(for: user, on: req)
+        return try await generateTokenPair(for: user, on: req)
     }
 
     // MARK: - Login
@@ -69,7 +69,7 @@ struct AuthController: RouteCollection {
             throw Abort(.unauthorized, reason: "Invalid credentials")
         }
 
-        return try generateTokenPair(for: user, on: req)
+        return try await generateTokenPair(for: user, on: req)
     }
 
     // MARK: - Refresh
@@ -85,7 +85,7 @@ struct AuthController: RouteCollection {
             throw Abort(.unauthorized, reason: "Invalid refresh token")
         }
 
-        return try generateTokenPair(for: user, on: req)
+        return try await generateTokenPair(for: user, on: req)
     }
 
     // MARK: - Logout
@@ -288,7 +288,7 @@ struct AuthController: RouteCollection {
 
     // MARK: - Token Generation
 
-    private func generateTokenPair(for user: UserModel, on req: Request) throws -> TokenResponse {
+    private func generateTokenPair(for user: UserModel, on req: Request) async throws -> TokenResponse {
         guard let userId = user.id else {
             throw Abort(.internalServerError, reason: "User has no ID")
         }
@@ -305,6 +305,7 @@ struct AuthController: RouteCollection {
         let refreshHash = hashRefreshToken(refreshToken)
 
         user.refreshTokenHash = refreshHash
+        try await user.save(on: req.db)
 
         return TokenResponse(
             accessToken: accessToken,

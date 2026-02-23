@@ -8,4 +8,5 @@ protocol SyncQueueRepository: Sendable {
     func deleteItem(id: UUID) async throws
     func getPendingCount() async throws -> Int
     func getFailedCount() async throws -> Int
+    func getFailedItems() async throws -> [SyncQueueItem]
 }

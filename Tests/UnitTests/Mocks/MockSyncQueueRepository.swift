@@ -37,4 +37,8 @@ final class MockSyncQueueRepository: SyncQueueRepository, @unchecked Sendable {
     func getFailedCount() async throws -> Int {
         items.filter { $0.status == .failed }.count
     }
+
+    func getFailedItems() async throws -> [SyncQueueItem] {
+        items.filter { $0.status == .failed }
+    }
 }

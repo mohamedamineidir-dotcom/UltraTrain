@@ -62,6 +62,7 @@ struct SettingsView: View {
                 healthKitSection
                 stravaSection
                 iCloudSection
+                syncQueueSection
                 dataRetentionSection
                 dataManagementSection
                 accountSection
@@ -491,6 +492,8 @@ struct SettingsView: View {
     }
 
     @Environment(\.unitPreference) private var units
+    @Environment(\.syncStatusMonitor) private var syncStatusMonitor
+    @Environment(\.syncService) private var syncService
 
     private func bodyWeightFormatted(_ kg: Double) -> String {
         UnitFormatter.formatWeight(kg, unit: units)
@@ -645,6 +648,42 @@ struct SettingsView: View {
             Button("OK") {}
         } message: {
             Text("Please close and reopen UltraTrain for the iCloud sync change to take effect.")
+        }
+    }
+
+    // MARK: - Sync Queue Section
+
+    @ViewBuilder
+    private var syncQueueSection: some View {
+        if let syncService {
+            Section {
+                NavigationLink {
+                    SyncQueueView(syncService: syncService)
+                } label: {
+                    HStack {
+                        Label("Sync Queue", systemImage: "arrow.triangle.2.circlepath.circle")
+                        Spacer()
+                        if let monitor = syncStatusMonitor {
+                            if monitor.hasFailures {
+                                Text("\(monitor.failedCount) failed")
+                                    .font(.caption)
+                                    .foregroundStyle(Theme.Colors.danger)
+                            } else if monitor.hasPending {
+                                Text("\(monitor.pendingCount) pending")
+                                    .font(.caption)
+                                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                            } else {
+                                Text("All synced")
+                                    .font(.caption)
+                                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                            }
+                        }
+                    }
+                }
+                .accessibilityHint("View and manage pending and failed sync items")
+            } header: {
+                Text("Server Sync")
+            }
         }
     }
 
