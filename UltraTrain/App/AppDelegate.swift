@@ -4,6 +4,7 @@ import os
 final class AppDelegate: NSObject, UIApplicationDelegate {
 
     var onDeviceTokenReceived: ((String) -> Void)?
+    var onSilentPushReceived: (() async -> Void)?
 
     func application(
         _ application: UIApplication,
@@ -19,5 +20,14 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         didFailToRegisterForRemoteNotificationsWithError error: Error
     ) {
         Logger.notification.error("Failed to register for remote notifications: \(error)")
+    }
+
+    func application(
+        _ application: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any]
+    ) async -> UIBackgroundFetchResult {
+        Logger.notification.info("Received silent push notification")
+        await onSilentPushReceived?()
+        return .newData
     }
 }

@@ -410,6 +410,12 @@ struct UltraTrainApp: App {
                 appDelegate.onDeviceTokenReceived = { token in
                     Task { await tokenService.registerToken(token) }
                 }
+                let syncSvc = syncService
+                let monitor = syncStatusMonitor
+                appDelegate.onSilentPushReceived = {
+                    await syncSvc.processQueue()
+                    await monitor.refresh()
+                }
             }
         }
         .onChange(of: scenePhase) { _, newPhase in
