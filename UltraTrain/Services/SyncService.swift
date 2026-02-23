@@ -3,7 +3,7 @@ import os
 
 final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
     private let queueRepository: any SyncQueueRepository
-    private let localRunRepository: LocalRunRepository
+    private let localRunRepository: any RunRepository
     private let remoteRunDataSource: RemoteRunDataSource
     private let authService: any AuthServiceProtocol
     private let remoteAthleteDataSource: RemoteAthleteDataSource?
@@ -16,7 +16,7 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
 
     init(
         queueRepository: any SyncQueueRepository,
-        localRunRepository: LocalRunRepository,
+        localRunRepository: any RunRepository,
         remoteRunDataSource: RemoteRunDataSource,
         authService: any AuthServiceProtocol,
         remoteAthleteDataSource: RemoteAthleteDataSource? = nil,

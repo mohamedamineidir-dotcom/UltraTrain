@@ -89,5 +89,8 @@ final class SyncedRunRepository: RunRepository, @unchecked Sendable {
 
     func updateLinkedSession(runId: UUID, sessionId: UUID) async throws {
         try await local.updateLinkedSession(runId: runId, sessionId: sessionId)
+        if let run = try? await local.getRun(id: runId) {
+            try? await syncService.enqueueOperation(.runUpload, entityId: run.id)
+        }
     }
 }

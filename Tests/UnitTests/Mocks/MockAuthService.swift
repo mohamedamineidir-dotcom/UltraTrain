@@ -51,6 +51,25 @@ final class MockAuthService: AuthServiceProtocol, @unchecked Sendable {
         isLoggedIn = false
     }
 
+    var requestPasswordResetCallCount = 0
+    var resetPasswordCallCount = 0
+
+    func requestPasswordReset(email: String) async throws {
+        requestPasswordResetCallCount += 1
+        lastEmail = email
+        if shouldFail {
+            throw DomainError.serverError(message: "Reset failed")
+        }
+    }
+
+    func resetPassword(email: String, code: String, newPassword: String) async throws {
+        resetPasswordCallCount += 1
+        lastEmail = email
+        if shouldFail {
+            throw DomainError.serverError(message: "Reset failed")
+        }
+    }
+
     func getValidAccessToken() async throws -> String {
         guard isLoggedIn else {
             throw DomainError.unauthorized

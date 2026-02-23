@@ -29,6 +29,8 @@ enum RunMapper {
             )
         }
 
+        let linkedSessionId: UUID? = dto.linkedSessionId.flatMap { UUID(uuidString: $0) }
+
         return CompletedRun(
             id: id,
             athleteId: athleteId,
@@ -42,6 +44,7 @@ enum RunMapper {
             averagePaceSecondsPerKm: dto.averagePaceSecondsPerKm,
             gpsTrack: trackPoints,
             splits: splits,
+            linkedSessionId: linkedSessionId,
             notes: dto.notes,
             pausedDuration: 0
         )
@@ -62,6 +65,7 @@ enum RunMapper {
             gpsTrack: run.gpsTrack.map { toTrackPointDTO($0) },
             splits: run.splits.map { toSplitDTO($0) },
             notes: run.notes,
+            linkedSessionId: run.linkedSessionId?.uuidString,
             idempotencyKey: run.id.uuidString
         )
     }

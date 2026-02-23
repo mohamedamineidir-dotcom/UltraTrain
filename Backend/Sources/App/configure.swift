@@ -45,6 +45,8 @@ func configure(_ app: Application) async throws {
     app.migrations.add(AddDeviceTokenToUser())
     app.migrations.add(CreateTrainingPlan())
     app.migrations.add(CreateRace())
+    app.migrations.add(AddLinkedSessionToRun())
+    app.migrations.add(AddPasswordResetToUser())
     do {
         try await app.autoMigrate()
         app.logger.notice("Migrations completed successfully")

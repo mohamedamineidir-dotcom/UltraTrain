@@ -27,6 +27,7 @@ struct RunMapperRemoteTests {
                 SplitDTO(id: "A0000000-0000-0000-0000-000000000001", kilometerNumber: 1, duration: 340, elevationChangeM: 30, averageHeartRate: 142)
             ],
             notes: "Great trail run",
+            linkedSessionId: nil,
             createdAt: "2026-02-20T09:00:00Z"
         )
 
@@ -63,6 +64,7 @@ struct RunMapperRemoteTests {
             gpsTrack: nil,
             splits: nil,
             notes: nil,
+            linkedSessionId: nil,
             createdAt: nil
         )
 
@@ -85,6 +87,7 @@ struct RunMapperRemoteTests {
             gpsTrack: nil,
             splits: nil,
             notes: nil,
+            linkedSessionId: nil,
             createdAt: nil
         )
 
@@ -107,6 +110,7 @@ struct RunMapperRemoteTests {
             gpsTrack: nil,
             splits: nil,
             notes: nil,
+            linkedSessionId: nil,
             createdAt: nil
         )
 

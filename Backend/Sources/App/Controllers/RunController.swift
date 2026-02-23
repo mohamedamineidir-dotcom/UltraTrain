@@ -68,6 +68,7 @@ struct RunController: RouteCollection {
         run.gpsTrackJSON = gpsTrackJSON
         run.splitsJSON = splitsJSON
         run.notes = body.notes
+        run.linkedSessionId = body.linkedSessionId
         run.idempotencyKey = body.idempotencyKey
 
         try await run.save(on: req.db)
@@ -148,6 +149,7 @@ struct RunController: RouteCollection {
         run.gpsTrackJSON = try encodeJSON(body.gpsTrack)
         run.splitsJSON = try encodeJSON(body.splits)
         run.notes = body.notes
+        run.linkedSessionId = body.linkedSessionId
 
         try await run.save(on: req.db)
         return RunResponse(from: run)

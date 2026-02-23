@@ -24,6 +24,30 @@ struct RefreshRequest: Content {
     let refreshToken: String
 }
 
+struct ForgotPasswordRequest: Content, Validatable {
+    let email: String
+
+    static func validations(_ validations: inout Validations) {
+        validations.add("email", as: String.self, is: .email)
+    }
+}
+
+struct ResetPasswordRequest: Content, Validatable {
+    let email: String
+    let code: String
+    let newPassword: String
+
+    static func validations(_ validations: inout Validations) {
+        validations.add("email", as: String.self, is: .email)
+        validations.add("code", as: String.self, is: .count(6...6))
+        validations.add("newPassword", as: String.self, is: .count(8...128))
+    }
+}
+
+struct MessageResponse: Content {
+    let message: String
+}
+
 struct TokenResponse: Content {
     let accessToken: String
     let refreshToken: String

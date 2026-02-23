@@ -13,6 +13,7 @@ struct RunUploadRequest: Content, Validatable {
     let gpsTrack: [TrackPointServerDTO]
     let splits: [SplitServerDTO]
     let notes: String?
+    let linkedSessionId: String?
     let idempotencyKey: String
 
     static func validations(_ validations: inout Validations) {
@@ -54,6 +55,7 @@ struct RunResponse: Content {
     let gpsTrack: [TrackPointServerDTO]
     let splits: [SplitServerDTO]
     let notes: String?
+    let linkedSessionId: String?
     let createdAt: String?
 
     init(from model: RunModel) {
@@ -70,6 +72,7 @@ struct RunResponse: Content {
         self.gpsTrack = Self.decodeJSON(model.gpsTrackJSON) ?? []
         self.splits = Self.decodeJSON(model.splitsJSON) ?? []
         self.notes = model.notes
+        self.linkedSessionId = model.linkedSessionId
         self.createdAt = model.createdAt.map { formatter.string(from: $0) }
     }
 

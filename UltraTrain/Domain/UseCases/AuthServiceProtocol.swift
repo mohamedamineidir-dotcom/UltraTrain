@@ -6,5 +6,7 @@ protocol AuthServiceProtocol: Sendable {
     func logout() async throws
     func getValidAccessToken() async throws -> String
     func deleteAccount() async throws
+    func requestPasswordReset(email: String) async throws
+    func resetPassword(email: String, code: String, newPassword: String) async throws
     func isAuthenticated() -> Bool
 }

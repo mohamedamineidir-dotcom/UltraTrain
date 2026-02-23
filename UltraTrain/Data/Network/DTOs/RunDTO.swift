@@ -29,6 +29,7 @@ struct RunUploadRequestDTO: Encodable, Sendable {
     let gpsTrack: [TrackPointDTO]
     let splits: [SplitDTO]
     let notes: String?
+    let linkedSessionId: String?
     let idempotencyKey: String
 }
 
@@ -45,5 +46,6 @@ struct RunResponseDTO: Decodable, Sendable {
     let gpsTrack: [TrackPointDTO]?
     let splits: [SplitDTO]?
     let notes: String?
+    let linkedSessionId: String?
     let createdAt: String?
 }

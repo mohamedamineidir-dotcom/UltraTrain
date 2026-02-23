@@ -43,6 +43,9 @@ final class RunModel: Model, Content, @unchecked Sendable {
     @OptionalField(key: "notes")
     var notes: String?
 
+    @OptionalField(key: "linked_session_id")
+    var linkedSessionId: String?
+
     @Field(key: "idempotency_key")
     var idempotencyKey: String
 

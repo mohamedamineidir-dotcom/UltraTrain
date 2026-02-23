@@ -23,6 +23,12 @@ final class UserModel: Model, Content, @unchecked Sendable {
     @OptionalField(key: "device_platform")
     var devicePlatform: String?
 
+    @OptionalField(key: "reset_code_hash")
+    var resetCodeHash: String?
+
+    @OptionalField(key: "reset_code_expires_at")
+    var resetCodeExpiresAt: Date?
+
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
 

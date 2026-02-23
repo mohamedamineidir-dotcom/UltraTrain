@@ -2,9 +2,11 @@ import SwiftUI
 
 struct LoginView: View {
     @State private var viewModel: LoginViewModel
+    private let authService: any AuthServiceProtocol
     private let onAuthenticated: () -> Void
 
     init(authService: any AuthServiceProtocol, onAuthenticated: @escaping () -> Void) {
+        self.authService = authService
         _viewModel = State(initialValue: LoginViewModel(authService: authService))
         self.onAuthenticated = onAuthenticated
     }
@@ -63,6 +65,16 @@ struct LoginView: View {
                             : "Don't have an account? Create one")
                             .font(.subheadline)
                             .foregroundStyle(Theme.Colors.primary)
+                    }
+
+                    if !viewModel.isRegistering {
+                        NavigationLink {
+                            ForgotPasswordView(authService: authService)
+                        } label: {
+                            Text("Forgot Password?")
+                                .font(.subheadline)
+                                .foregroundStyle(Theme.Colors.secondaryLabel)
+                        }
                     }
                 }
                 .padding()

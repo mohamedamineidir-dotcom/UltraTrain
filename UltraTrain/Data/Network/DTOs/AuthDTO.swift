@@ -20,3 +20,17 @@ struct LoginRequestDTO: Encodable, Sendable {
 struct RefreshRequestDTO: Encodable, Sendable {
     let refreshToken: String
 }
+
+struct ForgotPasswordRequestDTO: Encodable, Sendable {
+    let email: String
+}
+
+struct ResetPasswordRequestDTO: Encodable, Sendable {
+    let email: String
+    let code: String
+    let newPassword: String
+}
+
+struct MessageResponseDTO: Decodable, Sendable {
+    let message: String
+}
