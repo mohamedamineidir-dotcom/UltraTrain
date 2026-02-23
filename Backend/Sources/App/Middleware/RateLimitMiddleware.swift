@@ -31,7 +31,9 @@ struct RateLimitMiddleware: AsyncMiddleware {
     }
 
     func respond(to request: Request, chainingTo next: AsyncResponder) async throws -> Response {
-        let key = request.peerAddress?.description ?? request.remoteAddress?.description ?? "unknown"
+        let key = request.headers.first(name: "X-Forwarded-For")?.components(separatedBy: ",").first?.trimmingCharacters(in: .whitespaces)
+            ?? request.peerAddress?.description
+            ?? "unknown"
 
         guard await store.shouldAllow(key: key) else {
             throw Abort(.tooManyRequests, reason: "Rate limit exceeded. Try again later.")
