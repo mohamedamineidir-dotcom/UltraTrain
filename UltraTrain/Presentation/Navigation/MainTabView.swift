@@ -55,6 +55,8 @@ struct MainTabView: View {
     private let raceReflectionRepository: any RaceReflectionRepository
     private let achievementRepository: (any AchievementRepository)?
     private let morningCheckInRepository: (any MorningCheckInRepository)?
+    private let authService: (any AuthServiceProtocol)?
+    var onLogout: (() -> Void)?
 
     init(
         deepLinkRouter: DeepLinkRouter,
@@ -107,7 +109,9 @@ struct MainTabView: View {
         foodLogRepository: any FoodLogRepository,
         raceReflectionRepository: any RaceReflectionRepository,
         achievementRepository: (any AchievementRepository)? = nil,
-        morningCheckInRepository: (any MorningCheckInRepository)? = nil
+        morningCheckInRepository: (any MorningCheckInRepository)? = nil,
+        authService: (any AuthServiceProtocol)? = nil,
+        onLogout: (() -> Void)? = nil
     ) {
         self.deepLinkRouter = deepLinkRouter
         self.athleteRepository = athleteRepository
@@ -160,6 +164,8 @@ struct MainTabView: View {
         self.raceReflectionRepository = raceReflectionRepository
         self.achievementRepository = achievementRepository
         self.morningCheckInRepository = morningCheckInRepository
+        self.authService = authService
+        self.onLogout = onLogout
     }
 
     var body: some View {
@@ -288,7 +294,9 @@ struct MainTabView: View {
                 groupChallengeRepository: groupChallengeRepository,
                 routeRepository: routeRepository,
                 emergencyContactRepository: emergencyContactRepository,
-                raceReflectionRepository: raceReflectionRepository
+                raceReflectionRepository: raceReflectionRepository,
+                authService: authService,
+                onLogout: onLogout
             )
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")

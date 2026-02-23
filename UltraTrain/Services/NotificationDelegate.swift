@@ -44,7 +44,7 @@ final class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate, @u
             deepLinkRouter?.pendingDeepLink = .tab(.plan)
         case "race":
             deepLinkRouter?.pendingDeepLink = .tab(.plan)
-        case "recovery", "weeklySummary":
+        case "recovery", "weeklySummary", "sync_available":
             deepLinkRouter?.pendingDeepLink = .tab(.dashboard)
         default:
             deepLinkRouter?.pendingDeepLink = .tab(.dashboard)

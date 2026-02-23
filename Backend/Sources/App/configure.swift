@@ -2,6 +2,8 @@ import Vapor
 import Fluent
 import FluentPostgresDriver
 import JWT
+import VaporAPNS
+import APNSCore
 func configure(_ app: Application) async throws {
     // MARK: - Database
 
@@ -39,6 +41,7 @@ func configure(_ app: Application) async throws {
     app.migrations.add(CreateUser())
     app.migrations.add(CreateAthlete())
     app.migrations.add(CreateRun())
+    app.migrations.add(AddDeviceTokenToUser())
     do {
         try await app.autoMigrate()
         app.logger.notice("Migrations completed successfully")
@@ -71,6 +74,27 @@ func configure(_ app: Application) async throws {
         allowedMethods: [.GET, .POST, .PUT, .DELETE, .PATCH],
         allowedHeaders: [.accept, .authorization, .contentType, .origin, .xRequestedWith]
     )))
+
+    // MARK: - APNs
+
+    if let apnsKeyContent = Environment.get("APNS_KEY_CONTENT"),
+       let apnsKeyId = Environment.get("APNS_KEY_ID"),
+       let apnsTeamId = Environment.get("APNS_TEAM_ID") {
+        do {
+            app.apns.configure(
+                .jwt(
+                    privateKey: try .loadFrom(string: apnsKeyContent),
+                    keyIdentifier: apnsKeyId,
+                    teamIdentifier: apnsTeamId
+                )
+            )
+            app.logger.notice("APNs configured successfully")
+        } catch {
+            app.logger.error("Failed to configure APNs: \(error)")
+        }
+    } else {
+        app.logger.warning("APNs not configured — missing APNS_KEY_CONTENT, APNS_KEY_ID, or APNS_TEAM_ID")
+    }
 
     // MARK: - Routes
 

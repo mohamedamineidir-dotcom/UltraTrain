@@ -2,9 +2,11 @@ import SwiftUI
 
 struct LoginView: View {
     @State private var viewModel: LoginViewModel
+    private let onAuthenticated: () -> Void
 
-    init(authService: any AuthServiceProtocol) {
+    init(authService: any AuthServiceProtocol, onAuthenticated: @escaping () -> Void) {
         _viewModel = State(initialValue: LoginViewModel(authService: authService))
+        self.onAuthenticated = onAuthenticated
     }
 
     var body: some View {
@@ -66,6 +68,9 @@ struct LoginView: View {
                 .padding()
             }
             .navigationTitle(viewModel.isRegistering ? "Create Account" : "Sign In")
+            .onChange(of: viewModel.isAuthenticated) { _, newValue in
+                if newValue { onAuthenticated() }
+            }
         }
     }
 

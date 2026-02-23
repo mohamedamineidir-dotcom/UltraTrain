@@ -7,6 +7,7 @@ struct SettingsView: View {
 
     private let appSettingsRepository: any AppSettingsRepository
     private let emergencyContactRepository: (any EmergencyContactRepository)?
+    var onLogout: (() -> Void)?
 
     init(
         athleteRepository: any AthleteRepository,
@@ -22,10 +23,13 @@ struct SettingsView: View {
         raceRepository: any RaceRepository,
         biometricAuthService: any BiometricAuthServiceProtocol,
         healthKitImportService: (any HealthKitImportServiceProtocol)? = nil,
-        emergencyContactRepository: (any EmergencyContactRepository)? = nil
+        emergencyContactRepository: (any EmergencyContactRepository)? = nil,
+        authService: (any AuthServiceProtocol)? = nil,
+        onLogout: (() -> Void)? = nil
     ) {
         self.appSettingsRepository = appSettingsRepository
         self.emergencyContactRepository = emergencyContactRepository
+        self.onLogout = onLogout
         _viewModel = State(initialValue: SettingsViewModel(
             athleteRepository: athleteRepository,
             appSettingsRepository: appSettingsRepository,
@@ -39,7 +43,8 @@ struct SettingsView: View {
             planRepository: planRepository,
             raceRepository: raceRepository,
             biometricAuthService: biometricAuthService,
-            healthKitImportService: healthKitImportService
+            healthKitImportService: healthKitImportService,
+            authService: authService
         ))
     }
 
@@ -59,6 +64,7 @@ struct SettingsView: View {
                 iCloudSection
                 dataRetentionSection
                 dataManagementSection
+                accountSection
                 aboutSection
             }
         }
@@ -699,6 +705,34 @@ struct SettingsView: View {
             }
             .accessibilityIdentifier("settings.clearDataButton")
             .accessibilityHint("Permanently deletes all training data, plans, and settings")
+        }
+    }
+
+    // MARK: - Account Section
+
+    private var accountSection: some View {
+        Section("Account") {
+            Button(role: .destructive) {
+                viewModel.showingLogoutConfirmation = true
+            } label: {
+                Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right")
+            }
+            .accessibilityHint("Signs out of your UltraTrain account")
+        }
+        .confirmationDialog(
+            "Sign Out",
+            isPresented: $viewModel.showingLogoutConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Sign Out", role: .destructive) {
+                Task { await viewModel.logout() }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Your local training data will remain on this device.")
+        }
+        .onChange(of: viewModel.didLogout) { _, didLogout in
+            if didLogout { onLogout?() }
         }
     }
 

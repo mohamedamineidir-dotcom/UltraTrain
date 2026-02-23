@@ -20,6 +20,7 @@ final class SettingsViewModel {
     private let raceRepository: any RaceRepository
     private let biometricAuthService: any BiometricAuthServiceProtocol
     private let healthKitImportService: (any HealthKitImportServiceProtocol)?
+    private let authService: (any AuthServiceProtocol)?
 
     // MARK: - State
 
@@ -43,6 +44,8 @@ final class SettingsViewModel {
     var showRestartAlert = false
     var isImportingFromHealth = false
     var lastImportResult: HealthKitImportResult?
+    var didLogout = false
+    var showingLogoutConfirmation = false
 
     var healthKitStatus: HealthKitAuthStatus {
         healthKitService.authorizationStatus
@@ -114,7 +117,8 @@ final class SettingsViewModel {
         planRepository: any TrainingPlanRepository,
         raceRepository: any RaceRepository,
         biometricAuthService: any BiometricAuthServiceProtocol,
-        healthKitImportService: (any HealthKitImportServiceProtocol)? = nil
+        healthKitImportService: (any HealthKitImportServiceProtocol)? = nil,
+        authService: (any AuthServiceProtocol)? = nil
     ) {
         self.athleteRepository = athleteRepository
         self.appSettingsRepository = appSettingsRepository
@@ -129,6 +133,7 @@ final class SettingsViewModel {
         self.raceRepository = raceRepository
         self.biometricAuthService = biometricAuthService
         self.healthKitImportService = healthKitImportService
+        self.authService = authService
     }
 
     // MARK: - Load
@@ -685,6 +690,19 @@ final class SettingsViewModel {
         } catch {
             self.error = error.localizedDescription
             Logger.settings.error("Failed to update quiet hours end: \(error)")
+        }
+    }
+
+    // MARK: - Account
+
+    func logout() async {
+        guard let authService else { return }
+        do {
+            try await authService.logout()
+            didLogout = true
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Logout failed: \(error)")
         }
     }
 

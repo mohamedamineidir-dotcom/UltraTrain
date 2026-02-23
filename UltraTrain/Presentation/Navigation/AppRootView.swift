@@ -1,8 +1,11 @@
 import SwiftUI
+import UIKit
+import UserNotifications
 import os
 
 struct AppRootView: View {
     @Environment(\.scenePhase) private var scenePhase
+    @State private var isAuthenticated: Bool?
     @State private var hasCompletedOnboarding: Bool?
     @State private var isUnlocked = false
     @State private var needsBiometricLock = false
@@ -10,6 +13,7 @@ struct AppRootView: View {
     @AppStorage("hasSeenFeatureTour") private var hasSeenFeatureTour = false
     @State private var unitPreference: UnitPreference = .metric
     @State private var lastAutoImportDate: Date?
+    private let authService: any AuthServiceProtocol
     private let deepLinkRouter: DeepLinkRouter
 
     private let athleteRepository: any AthleteRepository
@@ -63,8 +67,10 @@ struct AppRootView: View {
     private let raceReflectionRepository: any RaceReflectionRepository
     private let achievementRepository: (any AchievementRepository)?
     private let morningCheckInRepository: (any MorningCheckInRepository)?
+    private let deviceTokenService: DeviceTokenService?
 
     init(
+        authService: any AuthServiceProtocol,
         deepLinkRouter: DeepLinkRouter,
         athleteRepository: any AthleteRepository,
         raceRepository: any RaceRepository,
@@ -116,8 +122,10 @@ struct AppRootView: View {
         foodLogRepository: any FoodLogRepository,
         raceReflectionRepository: any RaceReflectionRepository,
         achievementRepository: (any AchievementRepository)? = nil,
-        morningCheckInRepository: (any MorningCheckInRepository)? = nil
+        morningCheckInRepository: (any MorningCheckInRepository)? = nil,
+        deviceTokenService: DeviceTokenService? = nil
     ) {
+        self.authService = authService
         self.deepLinkRouter = deepLinkRouter
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
@@ -170,9 +178,63 @@ struct AppRootView: View {
         self.raceReflectionRepository = raceReflectionRepository
         self.achievementRepository = achievementRepository
         self.morningCheckInRepository = morningCheckInRepository
+        self.deviceTokenService = deviceTokenService
     }
 
     var body: some View {
+        Group {
+            switch isAuthenticated {
+            case .none:
+                ProgressView("Loading...")
+            case .some(false):
+                LoginView(authService: authService) {
+                    isAuthenticated = true
+                    Task {
+                        await checkBiometricLockSetting()
+                        await checkOnboardingStatus()
+                        await loadUnitPreference()
+                        await registerForPushNotifications()
+                    }
+                }
+            case .some(true):
+                authenticatedContent
+            }
+        }
+        .environment(\.unitPreference, unitPreference)
+        .task {
+            #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("-UITestSkipOnboarding") {
+                isAuthenticated = true
+                hasCompletedOnboarding = true
+                return
+            }
+            #endif
+            isAuthenticated = authService.isAuthenticated()
+            if isAuthenticated == true {
+                await checkBiometricLockSetting()
+                await checkOnboardingStatus()
+                await loadUnitPreference()
+                await widgetDataWriter.writeAll()
+                await performAutoImportIfNeeded()
+                await registerForPushNotifications()
+            }
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                Task {
+                    await pendingActionProcessor?.processPendingActions()
+                    await loadUnitPreference()
+                    await performAutoImportIfNeeded()
+                }
+            }
+            if newPhase == .background && needsBiometricLock {
+                isUnlocked = false
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var authenticatedContent: some View {
         Group {
             if needsBiometricLock && !isUnlocked {
                 AppLockView(biometricService: biometricAuthService) {
@@ -234,7 +296,9 @@ struct AppRootView: View {
                         foodLogRepository: foodLogRepository,
                         raceReflectionRepository: raceReflectionRepository,
                         achievementRepository: achievementRepository,
-                        morningCheckInRepository: morningCheckInRepository
+                        morningCheckInRepository: morningCheckInRepository,
+                        authService: authService,
+                        onLogout: { isAuthenticated = false }
                     )
                     .fullScreenCover(isPresented: $showFeatureTour) {
                         FeatureTourView {
@@ -255,32 +319,6 @@ struct AppRootView: View {
                         }
                     )
                 }
-            }
-        }
-        .environment(\.unitPreference, unitPreference)
-        .task {
-            #if DEBUG
-            if ProcessInfo.processInfo.arguments.contains("-UITestSkipOnboarding") {
-                hasCompletedOnboarding = true
-                return
-            }
-            #endif
-            await checkBiometricLockSetting()
-            await checkOnboardingStatus()
-            await loadUnitPreference()
-            await widgetDataWriter.writeAll()
-            await performAutoImportIfNeeded()
-        }
-        .onChange(of: scenePhase) { _, newPhase in
-            if newPhase == .active {
-                Task {
-                    await pendingActionProcessor?.processPendingActions()
-                    await loadUnitPreference()
-                    await performAutoImportIfNeeded()
-                }
-            }
-            if newPhase == .background && needsBiometricLock {
-                isUnlocked = false
             }
         }
     }
@@ -324,6 +362,23 @@ struct AppRootView: View {
             }
         } catch {
             Logger.app.error("Failed to load unit preference: \(error)")
+        }
+    }
+
+    private func registerForPushNotifications() async {
+        do {
+            let center = UNUserNotificationCenter.current()
+            let granted = try await center.requestAuthorization(options: [.alert, .sound, .badge])
+            guard granted else {
+                Logger.app.info("Push notification permission denied")
+                return
+            }
+            await MainActor.run {
+                UIApplication.shared.registerForRemoteNotifications()
+            }
+            await deviceTokenService?.sendPendingTokenIfNeeded()
+        } catch {
+            Logger.app.error("Failed to register for push notifications: \(error)")
         }
     }
 }

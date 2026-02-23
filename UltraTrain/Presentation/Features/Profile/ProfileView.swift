@@ -34,6 +34,8 @@ struct ProfileView: View {
     private let routeRepository: any RouteRepository
     private let emergencyContactRepository: (any EmergencyContactRepository)?
     private let raceReflectionRepository: any RaceReflectionRepository
+    private let authService: (any AuthServiceProtocol)?
+    var onLogout: (() -> Void)?
 
     init(
         athleteRepository: any AthleteRepository,
@@ -68,7 +70,9 @@ struct ProfileView: View {
         groupChallengeRepository: any GroupChallengeRepository,
         routeRepository: any RouteRepository,
         emergencyContactRepository: (any EmergencyContactRepository)? = nil,
-        raceReflectionRepository: any RaceReflectionRepository
+        raceReflectionRepository: any RaceReflectionRepository,
+        authService: (any AuthServiceProtocol)? = nil,
+        onLogout: (() -> Void)? = nil
     ) {
         _viewModel = State(initialValue: ProfileViewModel(
             athleteRepository: athleteRepository,
@@ -108,6 +112,8 @@ struct ProfileView: View {
         self.routeRepository = routeRepository
         self.emergencyContactRepository = emergencyContactRepository
         self.raceReflectionRepository = raceReflectionRepository
+        self.authService = authService
+        self.onLogout = onLogout
     }
 
     var body: some View {
@@ -149,7 +155,9 @@ struct ProfileView: View {
                             raceRepository: raceRepository,
                             biometricAuthService: biometricAuthService,
                             healthKitImportService: healthKitImportService,
-                            emergencyContactRepository: emergencyContactRepository
+                            emergencyContactRepository: emergencyContactRepository,
+                            authService: authService,
+                            onLogout: onLogout
                         )
                     } label: {
                         Image(systemName: "gearshape")

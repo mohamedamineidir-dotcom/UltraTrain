@@ -28,6 +28,7 @@ final class NotificationService: NotificationServiceProtocol, @unchecked Sendabl
             UNNotificationCategory(identifier: "race", actions: [viewRace], intentIdentifiers: []),
             UNNotificationCategory(identifier: "recovery", actions: [dismiss], intentIdentifiers: []),
             UNNotificationCategory(identifier: "weeklySummary", actions: [viewProgress], intentIdentifiers: []),
+            UNNotificationCategory(identifier: "sync_available", actions: [dismiss], intentIdentifiers: []),
         ]
         center.setNotificationCategories(categories)
         Logger.notification.info("Registered notification categories")

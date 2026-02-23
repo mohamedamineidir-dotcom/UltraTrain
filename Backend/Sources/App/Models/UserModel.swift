@@ -17,6 +17,12 @@ final class UserModel: Model, Content, @unchecked Sendable {
     @OptionalField(key: "refresh_token_hash")
     var refreshTokenHash: String?
 
+    @OptionalField(key: "device_token")
+    var deviceToken: String?
+
+    @OptionalField(key: "device_platform")
+    var devicePlatform: String?
+
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
 

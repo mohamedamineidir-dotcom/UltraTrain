@@ -57,4 +57,6 @@ struct Checkpoint: Identifiable, Equatable, Sendable {
     var distanceFromStartKm: Double
     var elevationM: Double
     var hasAidStation: Bool
+    var latitude: Double? = nil
+    var longitude: Double? = nil
 }

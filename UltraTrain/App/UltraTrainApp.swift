@@ -5,6 +5,7 @@ import os
 
 @main
 struct UltraTrainApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     private let modelContainer: ModelContainer
     private let athleteRepository: any AthleteRepository
     private let raceRepository: any RaceRepository
@@ -65,6 +66,7 @@ struct UltraTrainApp: App {
     private let apiClient: APIClient
     private let authService: AuthService
     private let syncService: SyncService
+    private let deviceTokenService: DeviceTokenService
     private let deepLinkRouter: DeepLinkRouter
     private let backgroundTaskService: BackgroundTaskService
     private let notificationDelegate: NotificationDelegate
@@ -147,6 +149,7 @@ struct UltraTrainApp: App {
         apiClient = client
         authService = auth
         syncService = sync
+        deviceTokenService = DeviceTokenService(apiClient: client)
 
         athleteRepository = localAthleteRepo
         raceRepository = LocalRaceRepository(modelContainer: modelContainer)
@@ -319,6 +322,7 @@ struct UltraTrainApp: App {
     var body: some Scene {
         WindowGroup {
             AppRootView(
+                authService: authService,
                 deepLinkRouter: deepLinkRouter,
                 athleteRepository: athleteRepository,
                 raceRepository: raceRepository,
@@ -370,11 +374,18 @@ struct UltraTrainApp: App {
                 foodLogRepository: foodLogRepository,
                 raceReflectionRepository: raceReflectionRepository,
                 achievementRepository: achievementRepository,
-                morningCheckInRepository: morningCheckInRepository
+                morningCheckInRepository: morningCheckInRepository,
+                deviceTokenService: deviceTokenService
             )
             .preferredColorScheme(colorScheme)
             .onOpenURL { url in
                 _ = deepLinkRouter.handle(url: url)
+            }
+            .onAppear {
+                let tokenService = deviceTokenService
+                appDelegate.onDeviceTokenReceived = { token in
+                    Task { await tokenService.registerToken(token) }
+                }
             }
         }
         .onChange(of: scenePhase) { _, newPhase in
