@@ -11,7 +11,22 @@ final class SyncedTrainingPlanRepository: TrainingPlanRepository, @unchecked Sen
     }
 
     func getActivePlan() async throws -> TrainingPlan? {
-        try await local.getActivePlan()
+        if let localPlan = try await local.getActivePlan() {
+            return localPlan
+        }
+        return await restoreFromRemoteIfNeeded()
+    }
+
+    private func restoreFromRemoteIfNeeded() async -> TrainingPlan? {
+        guard let plan = await syncService.restorePlan() else { return nil }
+        do {
+            try await local.savePlan(plan)
+            Logger.persistence.info("SyncedTrainingPlanRepository: restored plan from server")
+            return plan
+        } catch {
+            Logger.persistence.error("SyncedTrainingPlanRepository: failed to save restored plan: \(error)")
+            return nil
+        }
     }
 
     func getPlan(id: UUID) async throws -> TrainingPlan? {

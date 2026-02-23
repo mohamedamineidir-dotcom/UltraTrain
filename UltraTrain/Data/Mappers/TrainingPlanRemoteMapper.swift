@@ -25,4 +25,14 @@ enum TrainingPlanRemoteMapper {
             idempotencyKey: plan.id.uuidString
         )
     }
+
+    static func toDomain(from response: TrainingPlanResponseDTO) -> TrainingPlan? {
+        guard let jsonData = response.planJson.data(using: .utf8) else { return nil }
+
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        decoder.dateDecodingStrategy = .iso8601
+
+        return try? decoder.decode(TrainingPlan.self, from: jsonData)
+    }
 }
