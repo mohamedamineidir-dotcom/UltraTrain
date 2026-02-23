@@ -1,6 +1,6 @@
 import Foundation
 
-struct Race: Identifiable, Equatable, Sendable {
+struct Race: Identifiable, Equatable, Sendable, Codable {
     let id: UUID
     var name: String
     var date: Date
@@ -38,20 +38,20 @@ enum RacePriority: String, CaseIterable, Codable, Sendable {
     case cRace
 }
 
-enum RaceGoal: Equatable, Sendable {
+enum RaceGoal: Equatable, Sendable, Codable {
     case finish
     case targetTime(TimeInterval)
     case targetRanking(Int)
 }
 
-enum TerrainDifficulty: String, CaseIterable, Sendable {
+enum TerrainDifficulty: String, CaseIterable, Sendable, Codable {
     case easy
     case moderate
     case technical
     case extreme
 }
 
-struct Checkpoint: Identifiable, Equatable, Sendable {
+struct Checkpoint: Identifiable, Equatable, Sendable, Codable {
     let id: UUID
     var name: String
     var distanceFromStartKm: Double

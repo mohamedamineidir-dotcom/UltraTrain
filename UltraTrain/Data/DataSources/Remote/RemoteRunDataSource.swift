@@ -16,6 +16,14 @@ final class RemoteRunDataSource: Sendable {
         )
     }
 
+    func deleteRun(id: UUID) async throws {
+        try await apiClient.requestVoid(
+            path: RunEndpoints.runPath(id: id.uuidString),
+            method: .delete,
+            requiresAuth: true
+        )
+    }
+
     func fetchRuns(since: Date? = nil) async throws -> [RunResponseDTO] {
         var queryItems: [URLQueryItem]?
         if let since {

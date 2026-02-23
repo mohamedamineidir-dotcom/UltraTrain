@@ -13,4 +13,5 @@ func routes(_ app: Application) throws {
     try api.register(collection: RunController())
     try api.register(collection: DeviceTokenController())
     try api.register(collection: TrainingPlanController())
+    try api.register(collection: RaceController())
 }

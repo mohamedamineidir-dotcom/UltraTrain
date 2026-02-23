@@ -46,7 +46,7 @@ struct CompletedRun: Identifiable, Equatable, Sendable {
     }
 }
 
-struct TrackPoint: Equatable, Sendable {
+struct TrackPoint: Equatable, Sendable, Codable {
     var latitude: Double
     var longitude: Double
     var altitudeM: Double

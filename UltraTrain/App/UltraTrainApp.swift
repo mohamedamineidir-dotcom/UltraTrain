@@ -162,7 +162,10 @@ struct UltraTrainApp: App {
             remote: remoteAthleteDataSource,
             authService: auth
         )
-        raceRepository = LocalRaceRepository(modelContainer: modelContainer)
+        let localRaceRepo = LocalRaceRepository(modelContainer: modelContainer)
+        let remoteRaceDataSource = RemoteRaceDataSource(apiClient: client)
+        let raceSyncService = RaceSyncService(remote: remoteRaceDataSource, authService: auth)
+        raceRepository = SyncedRaceRepository(local: localRaceRepo, syncService: raceSyncService)
         let localPlanRepo = LocalTrainingPlanRepository(modelContainer: modelContainer)
         let remoteTrainingPlanDataSource = RemoteTrainingPlanDataSource(apiClient: client)
         let planSyncService = TrainingPlanSyncService(
@@ -179,7 +182,13 @@ struct UltraTrainApp: App {
             authService: auth,
             athleteRepository: athleteRepository
         )
-        runRepository = SyncedRunRepository(local: localRunRepo, syncService: sync, restoreService: runRestoreService)
+        runRepository = SyncedRunRepository(
+            local: localRunRepo,
+            syncService: sync,
+            restoreService: runRestoreService,
+            remoteDataSource: remoteRunDataSource,
+            authService: auth
+        )
         locationService = LocationService()
         fitnessRepository = LocalFitnessRepository(modelContainer: modelContainer)
         fitnessCalculator = FitnessCalculator()

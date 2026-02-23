@@ -5,16 +5,22 @@ final class SyncedRunRepository: RunRepository, @unchecked Sendable {
     private let local: LocalRunRepository
     private let syncService: any SyncQueueServiceProtocol
     private let restoreService: RunRestoreService?
+    private let remoteDataSource: RemoteRunDataSource?
+    private let authService: (any AuthServiceProtocol)?
     private var hasAttemptedRestore = false
 
     init(
         local: LocalRunRepository,
         syncService: any SyncQueueServiceProtocol,
-        restoreService: RunRestoreService? = nil
+        restoreService: RunRestoreService? = nil,
+        remoteDataSource: RemoteRunDataSource? = nil,
+        authService: (any AuthServiceProtocol)? = nil
     ) {
         self.local = local
         self.syncService = syncService
         self.restoreService = restoreService
+        self.remoteDataSource = remoteDataSource
+        self.authService = authService
     }
 
     func getRuns(for athleteId: UUID) async throws -> [CompletedRun] {
@@ -60,6 +66,15 @@ final class SyncedRunRepository: RunRepository, @unchecked Sendable {
 
     func deleteRun(id: UUID) async throws {
         try await local.deleteRun(id: id)
+        if let remote = remoteDataSource, authService?.isAuthenticated() == true {
+            Task {
+                do {
+                    try await remote.deleteRun(id: id)
+                } catch {
+                    Logger.network.warning("Remote run deletion failed: \(error)")
+                }
+            }
+        }
     }
 
     func updateLinkedSession(runId: UUID, sessionId: UUID) async throws {

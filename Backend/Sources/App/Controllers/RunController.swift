@@ -7,6 +7,7 @@ struct RunController: RouteCollection {
         protected.post("runs", use: uploadRun)
         protected.get("runs", use: listRuns)
         protected.get("runs", ":runId", use: getRun)
+        protected.delete("runs", ":runId", use: deleteRun)
     }
 
     @Sendable
@@ -110,6 +111,26 @@ struct RunController: RouteCollection {
         }
 
         return RunResponse(from: run)
+    }
+
+    @Sendable
+    func deleteRun(req: Request) async throws -> HTTPStatus {
+        let userId = try req.userId
+
+        guard let runIdStr = req.parameters.get("runId"),
+              let runId = UUID(uuidString: runIdStr) else {
+            throw Abort(.badRequest, reason: "Invalid run ID")
+        }
+
+        guard let run = try await RunModel.query(on: req.db)
+            .filter(\.$id == runId)
+            .filter(\.$user.$id == userId)
+            .first() else {
+            throw Abort(.notFound, reason: "Run not found")
+        }
+
+        try await run.delete(on: req.db)
+        return .noContent
     }
 
     // MARK: - Helpers
