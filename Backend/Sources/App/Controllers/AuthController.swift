@@ -15,6 +15,7 @@ struct AuthController: RouteCollection {
 
         let protected = auth.grouped(UserAuthMiddleware())
         protected.post("logout", use: logout)
+        protected.post("change-password", use: changePassword)
         protected.delete("account", use: deleteAccount)
     }
 
@@ -92,6 +93,30 @@ struct AuthController: RouteCollection {
         return .noContent
     }
 
+    // MARK: - Change Password
+
+    @Sendable
+    func changePassword(req: Request) async throws -> MessageResponse {
+        try ChangePasswordRequest.validate(content: req)
+        let body = try req.content.decode(ChangePasswordRequest.self)
+        let userId = try req.userId
+
+        guard let user = try await UserModel.find(userId, on: req.db) else {
+            throw Abort(.notFound)
+        }
+
+        guard try Bcrypt.verify(body.currentPassword, created: user.passwordHash) else {
+            throw Abort(.unauthorized, reason: "Current password is incorrect")
+        }
+
+        user.passwordHash = try Bcrypt.hash(body.newPassword)
+        user.refreshTokenHash = nil
+        try await user.save(on: req.db)
+
+        req.logger.info("Password changed for user \(userId)")
+        return MessageResponse(message: "Password changed successfully")
+    }
+
     // MARK: - Delete Account
 
     @Sendable
@@ -136,9 +161,8 @@ struct AuthController: RouteCollection {
         user.resetCodeExpiresAt = Date().addingTimeInterval(600) // 10 minutes
         try await user.save(on: req.db)
 
-        // In production, send email with the code
-        // For now, log it (remove in production!)
-        req.logger.notice("Password reset code for \(body.email): \(code)")
+        let emailService = EmailService(app: req.application)
+        await emailService.sendPasswordResetCode(to: body.email.lowercased(), code: code)
 
         return MessageResponse(message: "If an account exists, a reset code has been sent.")
     }

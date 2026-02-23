@@ -48,6 +48,12 @@ final class SettingsViewModel {
     var showingLogoutConfirmation = false
     var showingDeleteAccountConfirmation = false
     var isDeletingAccount = false
+    var showingChangePassword = false
+    var currentPassword = ""
+    var newPassword = ""
+    var confirmPassword = ""
+    var isChangingPassword = false
+    var changePasswordSuccess = false
 
     var healthKitStatus: HealthKitAuthStatus {
         healthKitService.authorizationStatus
@@ -705,6 +711,41 @@ final class SettingsViewModel {
         } catch {
             self.error = error.localizedDescription
             Logger.settings.error("Logout failed: \(error)")
+        }
+    }
+
+    func changePassword() async {
+        guard let authService else { return }
+        guard !currentPassword.isEmpty, !newPassword.isEmpty else {
+            error = "Please fill in all fields"
+            return
+        }
+        guard newPassword.count >= 8 else {
+            error = "New password must be at least 8 characters"
+            return
+        }
+        guard newPassword == confirmPassword else {
+            error = "New passwords do not match"
+            return
+        }
+
+        isChangingPassword = true
+        error = nil
+
+        do {
+            try await authService.changePassword(
+                currentPassword: currentPassword,
+                newPassword: newPassword
+            )
+            isChangingPassword = false
+            currentPassword = ""
+            newPassword = ""
+            confirmPassword = ""
+            changePasswordSuccess = true
+        } catch {
+            isChangingPassword = false
+            self.error = error.localizedDescription
+            Logger.settings.error("Change password failed: \(error)")
         }
     }
 

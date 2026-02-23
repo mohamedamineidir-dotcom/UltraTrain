@@ -712,6 +712,13 @@ struct SettingsView: View {
 
     private var accountSection: some View {
         Section("Account") {
+            Button {
+                viewModel.showingChangePassword = true
+            } label: {
+                Label("Change Password", systemImage: "key")
+            }
+            .accessibilityHint("Change your account password")
+
             Button(role: .destructive) {
                 viewModel.showingLogoutConfirmation = true
             } label: {
@@ -758,6 +765,66 @@ struct SettingsView: View {
         }
         .onChange(of: viewModel.didLogout) { _, didLogout in
             if didLogout { onLogout?() }
+        }
+        .sheet(isPresented: $viewModel.showingChangePassword) {
+            changePasswordSheet
+        }
+        .alert("Password Changed", isPresented: $viewModel.changePasswordSuccess) {
+            Button("OK") {}
+        } message: {
+            Text("Your password has been changed successfully.")
+        }
+    }
+
+    private var changePasswordSheet: some View {
+        NavigationStack {
+            Form {
+                SecureField("Current Password", text: $viewModel.currentPassword)
+                    .textContentType(.password)
+                SecureField("New Password", text: $viewModel.newPassword)
+                    .textContentType(.newPassword)
+                SecureField("Confirm New Password", text: $viewModel.confirmPassword)
+                    .textContentType(.newPassword)
+
+                if let error = viewModel.error {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.danger)
+                }
+            }
+            .navigationTitle("Change Password")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        viewModel.showingChangePassword = false
+                        viewModel.currentPassword = ""
+                        viewModel.newPassword = ""
+                        viewModel.confirmPassword = ""
+                        viewModel.error = nil
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button {
+                        Task { await viewModel.changePassword() }
+                    } label: {
+                        if viewModel.isChangingPassword {
+                            ProgressView()
+                        } else {
+                            Text("Save")
+                        }
+                    }
+                    .disabled(
+                        viewModel.isChangingPassword
+                        || viewModel.currentPassword.isEmpty
+                        || viewModel.newPassword.isEmpty
+                        || viewModel.confirmPassword.isEmpty
+                    )
+                }
+            }
+            .onChange(of: viewModel.changePasswordSuccess) { _, success in
+                if success { viewModel.showingChangePassword = false }
+            }
         }
     }
 

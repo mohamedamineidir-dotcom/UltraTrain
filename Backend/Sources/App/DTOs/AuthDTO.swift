@@ -44,6 +44,16 @@ struct ResetPasswordRequest: Content, Validatable {
     }
 }
 
+struct ChangePasswordRequest: Content, Validatable {
+    let currentPassword: String
+    let newPassword: String
+
+    static func validations(_ validations: inout Validations) {
+        validations.add("currentPassword", as: String.self, is: !.empty)
+        validations.add("newPassword", as: String.self, is: .count(8...128))
+    }
+}
+
 struct MessageResponse: Content {
     let message: String
 }

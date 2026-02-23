@@ -51,8 +51,16 @@ final class MockAuthService: AuthServiceProtocol, @unchecked Sendable {
         isLoggedIn = false
     }
 
+    var changePasswordCallCount = 0
     var requestPasswordResetCallCount = 0
     var resetPasswordCallCount = 0
+
+    func changePassword(currentPassword: String, newPassword: String) async throws {
+        changePasswordCallCount += 1
+        if shouldFail {
+            throw DomainError.serverError(message: "Change password failed")
+        }
+    }
 
     func requestPasswordReset(email: String) async throws {
         requestPasswordResetCallCount += 1

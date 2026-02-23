@@ -31,6 +31,11 @@ struct ResetPasswordRequestDTO: Encodable, Sendable {
     let newPassword: String
 }
 
+struct ChangePasswordRequestDTO: Encodable, Sendable {
+    let currentPassword: String
+    let newPassword: String
+}
+
 struct MessageResponseDTO: Decodable, Sendable {
     let message: String
 }

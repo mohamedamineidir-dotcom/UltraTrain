@@ -64,6 +64,19 @@ final class AuthService: AuthServiceProtocol, @unchecked Sendable {
         Logger.network.info("Auth: account deleted")
     }
 
+    func changePassword(currentPassword: String, newPassword: String) async throws {
+        let body = ChangePasswordRequestDTO(
+            currentPassword: currentPassword,
+            newPassword: newPassword
+        )
+        let _: MessageResponseDTO = try await apiClient.request(
+            path: AuthEndpoints.changePasswordPath,
+            method: .post,
+            body: body,
+            requiresAuth: true
+        )
+    }
+
     func requestPasswordReset(email: String) async throws {
         let body = ForgotPasswordRequestDTO(email: email)
         let _: MessageResponseDTO = try await apiClient.request(
