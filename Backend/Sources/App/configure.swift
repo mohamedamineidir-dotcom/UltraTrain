@@ -43,6 +43,7 @@ func configure(_ app: Application) async throws {
     app.migrations.add(CreateAthlete())
     app.migrations.add(CreateRun())
     app.migrations.add(AddDeviceTokenToUser())
+    app.migrations.add(CreateTrainingPlan())
     do {
         try await app.autoMigrate()
         app.logger.notice("Migrations completed successfully")
@@ -114,6 +115,10 @@ func configure(_ app: Application) async throws {
     } else {
         app.logger.warning("APNs not configured — missing APNS_KEY_CONTENT, APNS_KEY_ID, or APNS_TEAM_ID")
     }
+
+    // MARK: - Scheduled Jobs
+
+    app.lifecycle.use(ScheduledJobService())
 
     // MARK: - Routes
 

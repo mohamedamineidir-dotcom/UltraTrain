@@ -44,6 +44,8 @@ final class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate, @u
             deepLinkRouter?.pendingDeepLink = .tab(.plan)
         case "race":
             deepLinkRouter?.pendingDeepLink = .tab(.plan)
+        case "inactivity":
+            deepLinkRouter?.pendingDeepLink = .tab(.run)
         case "recovery", "weeklySummary", "sync_available":
             deepLinkRouter?.pendingDeepLink = .tab(.dashboard)
         default:
@@ -58,6 +60,8 @@ final class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate, @u
             deepLinkRouter?.pendingDeepLink = .tab(.plan)
         case "viewProgress":
             deepLinkRouter?.pendingDeepLink = .tab(.dashboard)
+        case "startRun":
+            deepLinkRouter?.pendingDeepLink = .tab(.run)
         default:
             break
         }

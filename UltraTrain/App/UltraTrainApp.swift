@@ -156,9 +156,21 @@ struct UltraTrainApp: App {
         syncStatusMonitor = SyncStatusMonitor(syncQueueService: sync)
         deviceTokenService = DeviceTokenService(apiClient: client)
 
-        athleteRepository = localAthleteRepo
+        let remoteAthleteDataSource = RemoteAthleteDataSource(apiClient: client)
+        athleteRepository = SyncedAthleteRepository(
+            local: localAthleteRepo,
+            remote: remoteAthleteDataSource,
+            authService: auth
+        )
         raceRepository = LocalRaceRepository(modelContainer: modelContainer)
-        planRepository = LocalTrainingPlanRepository(modelContainer: modelContainer)
+        let localPlanRepo = LocalTrainingPlanRepository(modelContainer: modelContainer)
+        let remoteTrainingPlanDataSource = RemoteTrainingPlanDataSource(apiClient: client)
+        let planSyncService = TrainingPlanSyncService(
+            remote: remoteTrainingPlanDataSource,
+            raceRepository: raceRepository,
+            authService: auth
+        )
+        planRepository = SyncedTrainingPlanRepository(local: localPlanRepo, syncService: planSyncService)
         planGenerator = TrainingPlanGenerator()
         nutritionRepository = LocalNutritionRepository(modelContainer: modelContainer)
         nutritionGenerator = NutritionPlanGenerator()

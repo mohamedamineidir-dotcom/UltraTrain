@@ -23,12 +23,15 @@ final class NotificationService: NotificationServiceProtocol, @unchecked Sendabl
         let viewProgress = UNNotificationAction(identifier: "viewProgress", title: "View Progress")
         let dismiss = UNNotificationAction(identifier: "dismiss", title: "Dismiss")
 
+        let startRun = UNNotificationAction(identifier: "startRun", title: "Start a Run")
+
         let categories: Set<UNNotificationCategory> = [
             UNNotificationCategory(identifier: "training", actions: [viewSession, skipSession], intentIdentifiers: []),
             UNNotificationCategory(identifier: "race", actions: [viewRace], intentIdentifiers: []),
             UNNotificationCategory(identifier: "recovery", actions: [dismiss], intentIdentifiers: []),
             UNNotificationCategory(identifier: "weeklySummary", actions: [viewProgress], intentIdentifiers: []),
             UNNotificationCategory(identifier: "sync_available", actions: [dismiss], intentIdentifiers: []),
+            UNNotificationCategory(identifier: "inactivity", actions: [startRun, dismiss], intentIdentifiers: []),
         ]
         center.setNotificationCategories(categories)
         Logger.notification.info("Registered notification categories")

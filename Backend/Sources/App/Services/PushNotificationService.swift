@@ -27,6 +27,31 @@ struct PushNotificationService {
         try await app.apns.client.sendAlertNotification(alert, deviceToken: deviceToken)
     }
 
+    func sendWeeklySummary(to deviceToken: String, distanceKm: Double, elevationM: Double, runCount: Int) async throws {
+        let body = String(format: "This week: %.1f km, %.0f m D+ across %d run%@. Keep it up!",
+                          distanceKm, elevationM, runCount, runCount == 1 ? "" : "s")
+        let alert = APNSAlertNotification(
+            alert: .init(title: .raw("Weekly Training Summary"), body: .raw(body)),
+            expiration: .immediately,
+            priority: .consideringDevicePower,
+            topic: "com.ultratrain.app",
+            category: "weeklySummary"
+        )
+        try await app.apns.client.sendAlertNotification(alert, deviceToken: deviceToken)
+    }
+
+    func sendInactivityNudge(to deviceToken: String, daysSinceLastRun: Int) async throws {
+        let body = "It's been \(daysSinceLastRun) days since your last run. A short recovery run can do wonders!"
+        let alert = APNSAlertNotification(
+            alert: .init(title: .raw("Time to Run?"), body: .raw(body)),
+            expiration: .immediately,
+            priority: .consideringDevicePower,
+            topic: "com.ultratrain.app",
+            category: "inactivity"
+        )
+        try await app.apns.client.sendAlertNotification(alert, deviceToken: deviceToken)
+    }
+
     func sendRaceCountdown(to deviceToken: String, raceName: String, daysRemaining: Int) async throws {
         let body = daysRemaining == 1
             ? "\(raceName) is tomorrow! You've got this."

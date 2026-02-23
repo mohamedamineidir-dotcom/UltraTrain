@@ -6,7 +6,7 @@ struct RaceSnapshot: Codable, Equatable, Sendable {
     let priority: RacePriority
 }
 
-struct TrainingPlan: Identifiable, Equatable, Sendable {
+struct TrainingPlan: Identifiable, Equatable, Sendable, Codable {
     let id: UUID
     var athleteId: UUID
     var targetRaceId: UUID
@@ -21,7 +21,7 @@ struct TrainingPlan: Identifiable, Equatable, Sendable {
     }
 }
 
-struct TrainingWeek: Identifiable, Equatable, Sendable {
+struct TrainingWeek: Identifiable, Equatable, Sendable, Codable {
     let id: UUID
     var weekNumber: Int
     var startDate: Date
@@ -43,7 +43,7 @@ struct TrainingWeek: Identifiable, Equatable, Sendable {
     var containsToday: Bool { contains(date: .now) }
 }
 
-enum TrainingPhase: String, CaseIterable, Sendable {
+enum TrainingPhase: String, CaseIterable, Sendable, Codable {
     case base
     case build
     case peak
@@ -52,7 +52,7 @@ enum TrainingPhase: String, CaseIterable, Sendable {
     case race
 }
 
-struct TrainingSession: Identifiable, Equatable, Sendable {
+struct TrainingSession: Identifiable, Equatable, Sendable, Codable {
     let id: UUID
     var date: Date
     var type: SessionType
@@ -73,7 +73,7 @@ struct TrainingSession: Identifiable, Equatable, Sendable {
     }
 }
 
-enum SessionType: String, CaseIterable, Sendable {
+enum SessionType: String, CaseIterable, Sendable, Codable {
     case longRun
     case tempo
     case intervals
