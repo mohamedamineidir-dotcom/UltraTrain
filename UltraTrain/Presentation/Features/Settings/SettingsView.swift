@@ -718,6 +718,19 @@ struct SettingsView: View {
                 Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right")
             }
             .accessibilityHint("Signs out of your UltraTrain account")
+
+            Button(role: .destructive) {
+                viewModel.showingDeleteAccountConfirmation = true
+            } label: {
+                if viewModel.isDeletingAccount {
+                    ProgressView()
+                } else {
+                    Label("Delete Account", systemImage: "person.crop.circle.badge.minus")
+                }
+            }
+            .disabled(viewModel.isDeletingAccount)
+            .accessibilityIdentifier("settings.deleteAccountButton")
+            .accessibilityHint("Permanently deletes your account and all data from the server")
         }
         .confirmationDialog(
             "Sign Out",
@@ -730,6 +743,18 @@ struct SettingsView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Your local training data will remain on this device.")
+        }
+        .confirmationDialog(
+            "Delete Account",
+            isPresented: $viewModel.showingDeleteAccountConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Delete Account", role: .destructive) {
+                Task { await viewModel.deleteAccount() }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This will permanently delete your account and all data from the server. This action cannot be undone.")
         }
         .onChange(of: viewModel.didLogout) { _, didLogout in
             if didLogout { onLogout?() }

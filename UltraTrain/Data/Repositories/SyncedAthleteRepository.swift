@@ -5,15 +5,18 @@ final class SyncedAthleteRepository: AthleteRepository, @unchecked Sendable {
     private let local: LocalAthleteRepository
     private let remote: RemoteAthleteDataSource
     private let authService: any AuthServiceProtocol
+    private let syncQueue: (any SyncQueueServiceProtocol)?
 
     init(
         local: LocalAthleteRepository,
         remote: RemoteAthleteDataSource,
-        authService: any AuthServiceProtocol
+        authService: any AuthServiceProtocol,
+        syncQueue: (any SyncQueueServiceProtocol)? = nil
     ) {
         self.local = local
         self.remote = remote
         self.authService = authService
+        self.syncQueue = syncQueue
     }
 
     func getAthlete() async throws -> Athlete? {
@@ -54,28 +57,34 @@ final class SyncedAthleteRepository: AthleteRepository, @unchecked Sendable {
 
     func saveAthlete(_ athlete: Athlete) async throws {
         try await local.saveAthlete(athlete)
-
-        guard authService.isAuthenticated() else { return }
-        Task {
-            do {
-                let dto = AthleteMapper.toDTO(athlete)
-                _ = try await self.remote.updateAthlete(dto)
-            } catch {
-                Logger.network.warning("Athlete remote sync failed: \(error)")
+        if let queue = syncQueue {
+            try? await queue.enqueueOperation(.athleteSync, entityId: athlete.id)
+        } else {
+            guard authService.isAuthenticated() else { return }
+            Task {
+                do {
+                    let dto = AthleteMapper.toDTO(athlete)
+                    _ = try await self.remote.updateAthlete(dto)
+                } catch {
+                    Logger.network.warning("Athlete remote sync failed: \(error)")
+                }
             }
         }
     }
 
     func updateAthlete(_ athlete: Athlete) async throws {
         try await local.updateAthlete(athlete)
-
-        guard authService.isAuthenticated() else { return }
-        Task {
-            do {
-                let dto = AthleteMapper.toDTO(athlete)
-                _ = try await self.remote.updateAthlete(dto)
-            } catch {
-                Logger.network.warning("Athlete remote update failed: \(error)")
+        if let queue = syncQueue {
+            try? await queue.enqueueOperation(.athleteSync, entityId: athlete.id)
+        } else {
+            guard authService.isAuthenticated() else { return }
+            Task {
+                do {
+                    let dto = AthleteMapper.toDTO(athlete)
+                    _ = try await self.remote.updateAthlete(dto)
+                } catch {
+                    Logger.network.warning("Athlete remote update failed: \(error)")
+                }
             }
         }
     }

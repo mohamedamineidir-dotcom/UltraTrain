@@ -143,12 +143,30 @@ struct UltraTrainApp: App {
         let authInterceptor = AuthInterceptor(authService: auth)
         let client = APIClient(authInterceptor: authInterceptor)
         let remoteRunDataSource = RemoteRunDataSource(apiClient: client)
+        let remoteAthleteDataSource = RemoteAthleteDataSource(apiClient: client)
+        let remoteRaceDataSource = RemoteRaceDataSource(apiClient: client)
+        let remoteTrainingPlanDataSource = RemoteTrainingPlanDataSource(apiClient: client)
+        let localRaceRepo = LocalRaceRepository(modelContainer: modelContainer)
+        let localPlanRepo = LocalTrainingPlanRepository(modelContainer: modelContainer)
+        let raceSyncService = RaceSyncService(remote: remoteRaceDataSource, authService: auth)
+        let planSyncService = TrainingPlanSyncService(
+            remote: remoteTrainingPlanDataSource,
+            raceRepository: localRaceRepo,
+            authService: auth
+        )
         let syncQueueRepo = LocalSyncQueueRepository(modelContainer: modelContainer)
         let sync = SyncService(
             queueRepository: syncQueueRepo,
             localRunRepository: localRunRepo,
             remoteRunDataSource: remoteRunDataSource,
-            authService: auth
+            authService: auth,
+            remoteAthleteDataSource: remoteAthleteDataSource,
+            localAthleteRepository: localAthleteRepo,
+            remoteRaceDataSource: remoteRaceDataSource,
+            localRaceRepository: localRaceRepo,
+            remoteTrainingPlanDataSource: remoteTrainingPlanDataSource,
+            localTrainingPlanRepository: localPlanRepo,
+            trainingPlanSyncService: planSyncService
         )
         apiClient = client
         authService = auth
@@ -156,24 +174,22 @@ struct UltraTrainApp: App {
         syncStatusMonitor = SyncStatusMonitor(syncQueueService: sync)
         deviceTokenService = DeviceTokenService(apiClient: client)
 
-        let remoteAthleteDataSource = RemoteAthleteDataSource(apiClient: client)
         athleteRepository = SyncedAthleteRepository(
             local: localAthleteRepo,
             remote: remoteAthleteDataSource,
-            authService: auth
+            authService: auth,
+            syncQueue: sync
         )
-        let localRaceRepo = LocalRaceRepository(modelContainer: modelContainer)
-        let remoteRaceDataSource = RemoteRaceDataSource(apiClient: client)
-        let raceSyncService = RaceSyncService(remote: remoteRaceDataSource, authService: auth)
-        raceRepository = SyncedRaceRepository(local: localRaceRepo, syncService: raceSyncService)
-        let localPlanRepo = LocalTrainingPlanRepository(modelContainer: modelContainer)
-        let remoteTrainingPlanDataSource = RemoteTrainingPlanDataSource(apiClient: client)
-        let planSyncService = TrainingPlanSyncService(
-            remote: remoteTrainingPlanDataSource,
-            raceRepository: raceRepository,
-            authService: auth
+        raceRepository = SyncedRaceRepository(
+            local: localRaceRepo,
+            syncService: raceSyncService,
+            syncQueue: sync
         )
-        planRepository = SyncedTrainingPlanRepository(local: localPlanRepo, syncService: planSyncService)
+        planRepository = SyncedTrainingPlanRepository(
+            local: localPlanRepo,
+            syncService: planSyncService,
+            syncQueue: sync
+        )
         planGenerator = TrainingPlanGenerator()
         nutritionRepository = LocalNutritionRepository(modelContainer: modelContainer)
         nutritionGenerator = NutritionPlanGenerator()

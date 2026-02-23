@@ -4,10 +4,16 @@ import os
 final class SyncedTrainingPlanRepository: TrainingPlanRepository, @unchecked Sendable {
     private let local: LocalTrainingPlanRepository
     private let syncService: TrainingPlanSyncService
+    private let syncQueue: (any SyncQueueServiceProtocol)?
 
-    init(local: LocalTrainingPlanRepository, syncService: TrainingPlanSyncService) {
+    init(
+        local: LocalTrainingPlanRepository,
+        syncService: TrainingPlanSyncService,
+        syncQueue: (any SyncQueueServiceProtocol)? = nil
+    ) {
         self.local = local
         self.syncService = syncService
+        self.syncQueue = syncQueue
     }
 
     func getActivePlan() async throws -> TrainingPlan? {
@@ -35,15 +41,19 @@ final class SyncedTrainingPlanRepository: TrainingPlanRepository, @unchecked Sen
 
     func savePlan(_ plan: TrainingPlan) async throws {
         try await local.savePlan(plan)
-        Task {
-            await syncService.syncPlan(plan)
+        if let queue = syncQueue {
+            try? await queue.enqueueOperation(.trainingPlanSync, entityId: plan.id)
+        } else {
+            Task { await syncService.syncPlan(plan) }
         }
     }
 
     func updatePlan(_ plan: TrainingPlan) async throws {
         try await local.updatePlan(plan)
-        Task {
-            await syncService.syncPlan(plan)
+        if let queue = syncQueue {
+            try? await queue.enqueueOperation(.trainingPlanSync, entityId: plan.id)
+        } else {
+            Task { await syncService.syncPlan(plan) }
         }
     }
 

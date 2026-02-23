@@ -46,6 +46,8 @@ final class SettingsViewModel {
     var lastImportResult: HealthKitImportResult?
     var didLogout = false
     var showingLogoutConfirmation = false
+    var showingDeleteAccountConfirmation = false
+    var isDeletingAccount = false
 
     var healthKitStatus: HealthKitAuthStatus {
         healthKitService.authorizationStatus
@@ -703,6 +705,21 @@ final class SettingsViewModel {
         } catch {
             self.error = error.localizedDescription
             Logger.settings.error("Logout failed: \(error)")
+        }
+    }
+
+    func deleteAccount() async {
+        guard let authService else { return }
+        isDeletingAccount = true
+        do {
+            try await authService.deleteAccount()
+            try await clearAllDataUseCase.execute()
+            isDeletingAccount = false
+            didLogout = true
+        } catch {
+            isDeletingAccount = false
+            self.error = error.localizedDescription
+            Logger.settings.error("Account deletion failed: \(error)")
         }
     }
 

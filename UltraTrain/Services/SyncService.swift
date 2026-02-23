@@ -6,21 +6,47 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
     private let localRunRepository: LocalRunRepository
     private let remoteRunDataSource: RemoteRunDataSource
     private let authService: any AuthServiceProtocol
+    private let remoteAthleteDataSource: RemoteAthleteDataSource?
+    private let localAthleteRepository: (any AthleteRepository)?
+    private let remoteRaceDataSource: RemoteRaceDataSource?
+    private let localRaceRepository: (any RaceRepository)?
+    private let remoteTrainingPlanDataSource: RemoteTrainingPlanDataSource?
+    private let localTrainingPlanRepository: (any TrainingPlanRepository)?
+    private let trainingPlanSyncService: TrainingPlanSyncService?
 
     init(
         queueRepository: any SyncQueueRepository,
         localRunRepository: LocalRunRepository,
         remoteRunDataSource: RemoteRunDataSource,
-        authService: any AuthServiceProtocol
+        authService: any AuthServiceProtocol,
+        remoteAthleteDataSource: RemoteAthleteDataSource? = nil,
+        localAthleteRepository: (any AthleteRepository)? = nil,
+        remoteRaceDataSource: RemoteRaceDataSource? = nil,
+        localRaceRepository: (any RaceRepository)? = nil,
+        remoteTrainingPlanDataSource: RemoteTrainingPlanDataSource? = nil,
+        localTrainingPlanRepository: (any TrainingPlanRepository)? = nil,
+        trainingPlanSyncService: TrainingPlanSyncService? = nil
     ) {
         self.queueRepository = queueRepository
         self.localRunRepository = localRunRepository
         self.remoteRunDataSource = remoteRunDataSource
         self.authService = authService
+        self.remoteAthleteDataSource = remoteAthleteDataSource
+        self.localAthleteRepository = localAthleteRepository
+        self.remoteRaceDataSource = remoteRaceDataSource
+        self.localRaceRepository = localRaceRepository
+        self.remoteTrainingPlanDataSource = remoteTrainingPlanDataSource
+        self.localTrainingPlanRepository = localTrainingPlanRepository
+        self.trainingPlanSyncService = trainingPlanSyncService
     }
 
     func enqueueUpload(runId: UUID) async throws {
-        if let existing = try await queueRepository.getItem(forRunId: runId) {
+        try await enqueueOperation(.runUpload, entityId: runId)
+    }
+
+    func enqueueOperation(_ type: SyncOperationType, entityId: UUID) async throws {
+        let items = try await queueRepository.getPendingItems()
+        if let existing = items.first(where: { $0.operationType == type && $0.entityId == entityId }) {
             if existing.status == .completed { return }
             var reset = existing
             reset.status = .pending
@@ -30,7 +56,9 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
         } else {
             let item = SyncQueueItem(
                 id: UUID(),
-                runId: runId,
+                runId: type == .runUpload ? entityId : UUID(),
+                operationType: type,
+                entityId: entityId,
                 status: .pending,
                 retryCount: 0,
                 lastAttempt: nil,
@@ -39,7 +67,7 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
             )
             try await queueRepository.saveItem(item)
         }
-        Logger.network.info("SyncService: queued run \(runId) for upload")
+        Logger.network.info("SyncService: queued \(type.rawValue) for entity \(entityId)")
         await processQueue()
     }
 
@@ -81,30 +109,34 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
         try? await queueRepository.updateItem(mutable)
 
         do {
-            guard let run = try await localRunRepository.getRun(id: item.runId) else {
-                try? await queueRepository.deleteItem(id: item.id)
-                Logger.network.info("SyncService: run \(item.runId) not found, removed from queue")
-                return
+            switch item.operationType {
+            case .runUpload:
+                try await processRunUpload(item)
+            case .athleteSync:
+                try await processAthleteSync(item)
+            case .raceSync:
+                try await processRaceSync(item)
+            case .raceDelete:
+                try await processRaceDelete(item)
+            case .trainingPlanSync:
+                try await processTrainingPlanSync(item)
             }
-
-            let dto = RunMapper.toUploadDTO(run)
-            _ = try await remoteRunDataSource.uploadRun(dto)
 
             mutable.status = .completed
             try? await queueRepository.updateItem(mutable)
-            Logger.network.info("SyncService: uploaded run \(item.runId)")
+            Logger.network.info("SyncService: completed \(item.operationType.rawValue) for \(item.entityId)")
         } catch let error as APIError {
             switch error {
             case .clientError, .unauthorized, .invalidURL, .decodingError:
                 mutable.status = .failed
                 mutable.retryCount = 5
                 mutable.errorMessage = error.localizedDescription
-                Logger.network.error("SyncService: permanent failure for run \(item.runId): \(error)")
+                Logger.network.error("SyncService: permanent failure for \(item.operationType.rawValue) \(item.entityId): \(error)")
             default:
                 mutable.retryCount += 1
                 mutable.errorMessage = error.localizedDescription
                 mutable.status = mutable.hasReachedMaxRetries ? .failed : .pending
-                Logger.network.warning("SyncService: retryable failure for run \(item.runId) (attempt \(mutable.retryCount)): \(error)")
+                Logger.network.warning("SyncService: retryable failure for \(item.operationType.rawValue) \(item.entityId) (attempt \(mutable.retryCount)): \(error)")
             }
             try? await queueRepository.updateItem(mutable)
         } catch {
@@ -112,7 +144,54 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
             mutable.errorMessage = error.localizedDescription
             mutable.status = mutable.hasReachedMaxRetries ? .failed : .pending
             try? await queueRepository.updateItem(mutable)
-            Logger.network.warning("SyncService: upload error for run \(item.runId): \(error)")
+            Logger.network.warning("SyncService: error for \(item.operationType.rawValue) \(item.entityId): \(error)")
         }
+    }
+
+    private func processRunUpload(_ item: SyncQueueItem) async throws {
+        guard let run = try await localRunRepository.getRun(id: item.entityId) else {
+            try? await queueRepository.deleteItem(id: item.id)
+            Logger.network.info("SyncService: run \(item.entityId) not found, removed from queue")
+            return
+        }
+        let dto = RunMapper.toUploadDTO(run)
+        _ = try await remoteRunDataSource.uploadRun(dto)
+    }
+
+    private func processAthleteSync(_ item: SyncQueueItem) async throws {
+        guard let repo = localAthleteRepository,
+              let remote = remoteAthleteDataSource else { return }
+        guard let athlete = try await repo.getAthlete() else {
+            try? await queueRepository.deleteItem(id: item.id)
+            return
+        }
+        let dto = AthleteMapper.toDTO(athlete)
+        _ = try await remote.updateAthlete(dto)
+    }
+
+    private func processRaceSync(_ item: SyncQueueItem) async throws {
+        guard let repo = localRaceRepository,
+              let remote = remoteRaceDataSource else { return }
+        guard let race = try await repo.getRace(id: item.entityId) else {
+            try? await queueRepository.deleteItem(id: item.id)
+            return
+        }
+        guard let dto = RaceRemoteMapper.toUploadDTO(race) else { return }
+        _ = try await remote.upsertRace(dto)
+    }
+
+    private func processRaceDelete(_ item: SyncQueueItem) async throws {
+        guard let remote = remoteRaceDataSource else { return }
+        try await remote.deleteRace(id: item.entityId.uuidString)
+    }
+
+    private func processTrainingPlanSync(_ item: SyncQueueItem) async throws {
+        guard let repo = localTrainingPlanRepository,
+              let syncService = trainingPlanSyncService else { return }
+        guard let plan = try await repo.getActivePlan() else {
+            try? await queueRepository.deleteItem(id: item.id)
+            return
+        }
+        await syncService.syncPlan(plan)
     }
 }

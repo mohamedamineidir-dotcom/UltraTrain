@@ -5,4 +5,5 @@ enum AuthEndpoints {
     static let loginPath = "/auth/login"
     static let refreshPath = "/auth/refresh"
     static let logoutPath = "/auth/logout"
+    static let deleteAccountPath = "/auth/account"
 }

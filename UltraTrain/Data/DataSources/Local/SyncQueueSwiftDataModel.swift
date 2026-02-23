@@ -5,6 +5,8 @@ import SwiftData
 final class SyncQueueSwiftDataModel {
     var id: UUID = UUID()
     var runId: UUID = UUID()
+    var operationTypeRaw: String = "runUpload"
+    var entityId: UUID = UUID()
     var statusRaw: String = "pending"
     var retryCount: Int = 0
     var lastAttempt: Date?
@@ -15,6 +17,8 @@ final class SyncQueueSwiftDataModel {
     init(
         id: UUID = UUID(),
         runId: UUID = UUID(),
+        operationTypeRaw: String = "runUpload",
+        entityId: UUID = UUID(),
         statusRaw: String = "pending",
         retryCount: Int = 0,
         lastAttempt: Date? = nil,
@@ -24,6 +28,8 @@ final class SyncQueueSwiftDataModel {
     ) {
         self.id = id
         self.runId = runId
+        self.operationTypeRaw = operationTypeRaw
+        self.entityId = entityId
         self.statusRaw = statusRaw
         self.retryCount = retryCount
         self.lastAttempt = lastAttempt

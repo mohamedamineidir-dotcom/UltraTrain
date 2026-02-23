@@ -7,9 +7,19 @@ enum SyncQueueItemStatus: String, Sendable, Equatable {
     case completed
 }
 
+enum SyncOperationType: String, Sendable, Equatable {
+    case runUpload
+    case athleteSync
+    case raceSync
+    case raceDelete
+    case trainingPlanSync
+}
+
 struct SyncQueueItem: Identifiable, Equatable, Sendable {
     let id: UUID
     var runId: UUID
+    var operationType: SyncOperationType
+    var entityId: UUID
     var status: SyncQueueItemStatus
     var retryCount: Int
     var lastAttempt: Date?

@@ -9,6 +9,7 @@ final class MockAuthService: AuthServiceProtocol, @unchecked Sendable {
     var registerCallCount = 0
     var loginCallCount = 0
     var logoutCallCount = 0
+    var deleteAccountCallCount = 0
 
     var lastEmail: String?
     var lastPassword: String?
@@ -38,6 +39,14 @@ final class MockAuthService: AuthServiceProtocol, @unchecked Sendable {
         logoutCallCount += 1
         if shouldFail {
             throw DomainError.serverError(message: "Logout failed")
+        }
+        isLoggedIn = false
+    }
+
+    func deleteAccount() async throws {
+        deleteAccountCallCount += 1
+        if shouldFail {
+            throw DomainError.serverError(message: "Delete account failed")
         }
         isLoggedIn = false
     }

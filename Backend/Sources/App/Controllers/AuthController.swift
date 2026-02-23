@@ -13,6 +13,7 @@ struct AuthController: RouteCollection {
 
         let protected = auth.grouped(UserAuthMiddleware())
         protected.post("logout", use: logout)
+        protected.delete("account", use: deleteAccount)
     }
 
     // MARK: - Register
@@ -86,6 +87,28 @@ struct AuthController: RouteCollection {
         user.refreshTokenHash = nil
         try await user.save(on: req.db)
 
+        return .noContent
+    }
+
+    // MARK: - Delete Account
+
+    @Sendable
+    func deleteAccount(req: Request) async throws -> HTTPStatus {
+        let userId = try req.userId
+
+        guard let user = try await UserModel.find(userId, on: req.db) else {
+            throw Abort(.notFound)
+        }
+
+        // Cascade deletes handle runs, athlete, training plans, races
+        // via foreign key ON DELETE CASCADE, but delete explicitly for safety
+        try await RunModel.query(on: req.db).filter(\.$user.$id == userId).delete()
+        try await TrainingPlanModel.query(on: req.db).filter(\.$user.$id == userId).delete()
+        try await RaceModel.query(on: req.db).filter(\.$user.$id == userId).delete()
+        try await AthleteModel.query(on: req.db).filter(\.$user.$id == userId).delete()
+        try await user.delete(on: req.db)
+
+        req.logger.info("Account deleted for user \(userId)")
         return .noContent
     }
 

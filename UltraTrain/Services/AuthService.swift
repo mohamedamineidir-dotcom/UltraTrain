@@ -54,6 +54,16 @@ final class AuthService: AuthServiceProtocol, @unchecked Sendable {
         Logger.network.info("Auth: logged out")
     }
 
+    func deleteAccount() async throws {
+        try await apiClient.requestVoid(
+            path: AuthEndpoints.deleteAccountPath,
+            method: .delete,
+            requiresAuth: true
+        )
+        clearLocalToken()
+        Logger.network.info("Auth: account deleted")
+    }
+
     func getValidAccessToken() async throws -> String {
         guard var currentToken = token else {
             throw DomainError.unauthorized
