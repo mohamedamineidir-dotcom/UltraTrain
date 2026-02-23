@@ -39,7 +39,11 @@ struct RunResponseDTO: Decodable, Sendable {
     let elevationGainM: Double
     let elevationLossM: Double
     let duration: Double
+    let averageHeartRate: Int?
+    let maxHeartRate: Int?
     let averagePaceSecondsPerKm: Double
+    let gpsTrack: [TrackPointDTO]?
+    let splits: [SplitDTO]?
     let notes: String?
     let createdAt: String?
 }

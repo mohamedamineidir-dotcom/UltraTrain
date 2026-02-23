@@ -1074,6 +1074,7 @@
 		EADEC681EE12EBAC5739D4D2 /* SplitMarkerBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6764EE540FB5575FEBA5B59A /* SplitMarkerBadge.swift */; };
 		EAEF2987D0FD46819E38AE03 /* RouteComparisonCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F78DB512938B0F92655E2130 /* RouteComparisonCalculator.swift */; };
 		EB51E1D3A73A3DED05C9D501 /* PlanProgressPreserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7063BC625DDE163AA3468C /* PlanProgressPreserver.swift */; };
+		EB5B1AAD32AB65ED41C9F985 /* RunRestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E063E05781F2642432AA3BE /* RunRestoreService.swift */; };
 		EBA7CB582665AFF6533F5612 /* WelcomeStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE12FA931D8F5C0480A05021 /* WelcomeStepView.swift */; };
 		EBAF254A4D24250034B3C130 /* WeeklyZoneDistributionCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF6DEE726DD3370EDBA7A92 /* WeeklyZoneDistributionCalculator.swift */; };
 		EBCF67337681E203D2160980 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC5E47BCEA16D2AC3DC417F /* SettingsView.swift */; };
@@ -1510,6 +1511,7 @@
 		3D81877774814D297CC99EF7 /* PersonalRecordCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalRecordCalculatorTests.swift; sourceTree = "<group>"; };
 		3DA9AF684023B4C3D98AF9DF /* PhaseDistributor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhaseDistributor.swift; sourceTree = "<group>"; };
 		3DE1D7498CD42A168E8C0E7C /* HeartRateTrendChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartRateTrendChartView.swift; sourceTree = "<group>"; };
+		3E063E05781F2642432AA3BE /* RunRestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunRestoreService.swift; sourceTree = "<group>"; };
 		3E5714F4AB49B9F343C1CA34 /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
 		3E611360D30E9D409A534BC5 /* SavedRouteSwiftDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedRouteSwiftDataModel.swift; sourceTree = "<group>"; };
 		3EB7A5DEC9ECB0930DF1CA07 /* RaceSwiftDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceSwiftDataModel.swift; sourceTree = "<group>"; };
@@ -3027,6 +3029,7 @@
 				6835133C2E79A4761E97804E /* NotificationService.swift */,
 				70ADD38CD82892C8EF05BA11 /* OSMTrailService.swift */,
 				EBBF8647BF4D7567663C12D3 /* PhoneConnectivityService.swift */,
+				3E063E05781F2642432AA3BE /* RunRestoreService.swift */,
 				E195F0FF97CEDBE4FBDD97FF /* StravaAuthService.swift */,
 				0532A6BE3367D9C982406B53 /* StravaImportService.swift */,
 				D68CE68C76CFC61238042A66 /* StravaUploadQueueService.swift */,
@@ -5386,6 +5389,7 @@
 				74D55AE8916803A7CB08C0A7 /* RunReplayViewModel.swift in Sources */,
 				E6E645B2062843D76E946D09 /* RunReportView.swift in Sources */,
 				1D42A4DFF5099D802B409276 /* RunRepository.swift in Sources */,
+				EB5B1AAD32AB65ED41C9F985 /* RunRestoreService.swift in Sources */,
 				081ED92406BB416696DA1848 /* RunShareCardView.swift in Sources */,
 				58F8376AFBFE5DDB5C934FE2 /* RunStatisticsCalculator.swift in Sources */,
 				3A0A5F18A0C382D9148BC29C /* RunSummarySheet.swift in Sources */,

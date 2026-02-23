@@ -17,22 +17,39 @@ final class SyncedAthleteRepository: AthleteRepository, @unchecked Sendable {
     }
 
     func getAthlete() async throws -> Athlete? {
-        let localAthlete = try await local.getAthlete()
-
-        if authService.isAuthenticated() {
-            Task {
-                do {
-                    let dto = try await self.remote.fetchAthlete()
-                    if let athlete = AthleteMapper.toDomain(dto) {
-                        try await self.local.updateAthlete(athlete)
+        if let localAthlete = try await local.getAthlete() {
+            // Background refresh from server
+            if authService.isAuthenticated() {
+                Task {
+                    do {
+                        let dto = try await self.remote.fetchAthlete()
+                        if let athlete = AthleteMapper.toDomain(dto) {
+                            try await self.local.updateAthlete(athlete)
+                        }
+                    } catch {
+                        Logger.network.warning("Background athlete fetch failed: \(error)")
                     }
-                } catch {
-                    Logger.network.warning("Background athlete fetch failed: \(error)")
                 }
             }
+            return localAthlete
         }
 
-        return localAthlete
+        // No local athlete — try to restore from server
+        return await restoreFromRemoteIfNeeded()
+    }
+
+    private func restoreFromRemoteIfNeeded() async -> Athlete? {
+        guard authService.isAuthenticated() else { return nil }
+        do {
+            let dto = try await remote.fetchAthlete()
+            guard let athlete = AthleteMapper.toDomain(dto) else { return nil }
+            try await local.saveAthlete(athlete)
+            Logger.network.info("Restored athlete profile from server")
+            return athlete
+        } catch {
+            Logger.network.info("No remote athlete to restore: \(error)")
+            return nil
+        }
     }
 
     func saveAthlete(_ athlete: Athlete) async throws {

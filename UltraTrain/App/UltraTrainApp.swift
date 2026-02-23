@@ -174,7 +174,12 @@ struct UltraTrainApp: App {
         planGenerator = TrainingPlanGenerator()
         nutritionRepository = LocalNutritionRepository(modelContainer: modelContainer)
         nutritionGenerator = NutritionPlanGenerator()
-        runRepository = SyncedRunRepository(local: localRunRepo, syncService: sync)
+        let runRestoreService = RunRestoreService(
+            remote: remoteRunDataSource,
+            authService: auth,
+            athleteRepository: athleteRepository
+        )
+        runRepository = SyncedRunRepository(local: localRunRepo, syncService: sync, restoreService: runRestoreService)
         locationService = LocationService()
         fitnessRepository = LocalFitnessRepository(modelContainer: modelContainer)
         fitnessCalculator = FitnessCalculator()

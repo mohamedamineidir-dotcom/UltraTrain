@@ -48,7 +48,11 @@ struct RunResponse: Content {
     let elevationGainM: Double
     let elevationLossM: Double
     let duration: Double
+    let averageHeartRate: Int?
+    let maxHeartRate: Int?
     let averagePaceSecondsPerKm: Double
+    let gpsTrack: [TrackPointServerDTO]
+    let splits: [SplitServerDTO]
     let notes: String?
     let createdAt: String?
 
@@ -60,8 +64,19 @@ struct RunResponse: Content {
         self.elevationGainM = model.elevationGainM
         self.elevationLossM = model.elevationLossM
         self.duration = model.duration
+        self.averageHeartRate = model.averageHeartRate
+        self.maxHeartRate = model.maxHeartRate
         self.averagePaceSecondsPerKm = model.averagePaceSecondsPerKm
+        self.gpsTrack = Self.decodeJSON(model.gpsTrackJSON) ?? []
+        self.splits = Self.decodeJSON(model.splitsJSON) ?? []
         self.notes = model.notes
         self.createdAt = model.createdAt.map { formatter.string(from: $0) }
+    }
+
+    private static func decodeJSON<T: Decodable>(_ json: String) -> T? {
+        guard let data = json.data(using: .utf8) else { return nil }
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return try? decoder.decode(T.self, from: data)
     }
 }
