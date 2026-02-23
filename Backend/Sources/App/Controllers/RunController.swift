@@ -7,6 +7,7 @@ struct RunController: RouteCollection {
         protected.post("runs", use: uploadRun)
         protected.get("runs", use: listRuns)
         protected.get("runs", ":runId", use: getRun)
+        protected.put("runs", ":runId", use: updateRun)
         protected.delete("runs", ":runId", use: deleteRun)
     }
 
@@ -110,6 +111,45 @@ struct RunController: RouteCollection {
             throw Abort(.notFound, reason: "Run not found")
         }
 
+        return RunResponse(from: run)
+    }
+
+    @Sendable
+    func updateRun(req: Request) async throws -> RunResponse {
+        try RunUploadRequest.validate(content: req)
+        let body = try req.content.decode(RunUploadRequest.self)
+        let userId = try req.userId
+
+        guard let runIdStr = req.parameters.get("runId"),
+              let runId = UUID(uuidString: runIdStr) else {
+            throw Abort(.badRequest, reason: "Invalid run ID")
+        }
+
+        guard let run = try await RunModel.query(on: req.db)
+            .filter(\.$id == runId)
+            .filter(\.$user.$id == userId)
+            .first() else {
+            throw Abort(.notFound, reason: "Run not found")
+        }
+
+        let formatter = ISO8601DateFormatter()
+        guard let runDate = formatter.date(from: body.date) else {
+            throw Abort(.badRequest, reason: "Invalid date format. Use ISO8601.")
+        }
+
+        run.date = runDate
+        run.distanceKm = body.distanceKm
+        run.elevationGainM = body.elevationGainM
+        run.elevationLossM = body.elevationLossM
+        run.duration = body.duration
+        run.averageHeartRate = body.averageHeartRate
+        run.maxHeartRate = body.maxHeartRate
+        run.averagePaceSecondsPerKm = body.averagePaceSecondsPerKm
+        run.gpsTrackJSON = try encodeJSON(body.gpsTrack)
+        run.splitsJSON = try encodeJSON(body.splits)
+        run.notes = body.notes
+
+        try await run.save(on: req.db)
         return RunResponse(from: run)
     }
 

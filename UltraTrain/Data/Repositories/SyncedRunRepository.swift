@@ -62,6 +62,16 @@ final class SyncedRunRepository: RunRepository, @unchecked Sendable {
 
     func updateRun(_ run: CompletedRun) async throws {
         try await local.updateRun(run)
+        if let remote = remoteDataSource, authService?.isAuthenticated() == true {
+            Task {
+                do {
+                    let dto = RunMapper.toUploadDTO(run)
+                    _ = try await remote.updateRun(dto, id: run.id)
+                } catch {
+                    Logger.network.warning("Remote run update failed: \(error)")
+                }
+            }
+        }
     }
 
     func deleteRun(id: UUID) async throws {

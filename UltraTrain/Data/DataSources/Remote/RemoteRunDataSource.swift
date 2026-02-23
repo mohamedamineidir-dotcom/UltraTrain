@@ -16,6 +16,15 @@ final class RemoteRunDataSource: Sendable {
         )
     }
 
+    func updateRun(_ dto: RunUploadRequestDTO, id: UUID) async throws -> RunResponseDTO {
+        try await apiClient.request(
+            path: RunEndpoints.runPath(id: id.uuidString),
+            method: .put,
+            body: dto,
+            requiresAuth: true
+        )
+    }
+
     func deleteRun(id: UUID) async throws {
         try await apiClient.requestVoid(
             path: RunEndpoints.runPath(id: id.uuidString),
