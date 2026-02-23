@@ -9,9 +9,9 @@ enum AppConfiguration {
     enum API {
         static let baseURL: URL = {
             #if DEBUG
-            return URL(string: "https://api-dev.ultratrain.app/v1")!
+            return URL(string: "https://ultratrain-production.up.railway.app/v1")!
             #else
-            return URL(string: "https://api.ultratrain.app/v1")!
+            return URL(string: "https://ultratrain-production.up.railway.app/v1")!
             #endif
         }()
         static let timeoutInterval: TimeInterval = 30
