@@ -12,6 +12,7 @@ final class LoginViewModel {
     var isLoading = false
     var error: String?
     var isAuthenticated = false
+    var didRegister = false
 
     init(authService: any AuthServiceProtocol) {
         self.authService = authService
@@ -30,6 +31,7 @@ final class LoginViewModel {
         do {
             if isRegistering {
                 try await authService.register(email: email, password: password)
+                didRegister = true
             } else {
                 try await authService.login(email: email, password: password)
             }

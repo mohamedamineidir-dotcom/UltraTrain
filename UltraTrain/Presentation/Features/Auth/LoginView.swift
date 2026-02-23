@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LoginView: View {
     @State private var viewModel: LoginViewModel
+    @State private var showVerification = false
     private let authService: any AuthServiceProtocol
     private let onAuthenticated: () -> Void
 
@@ -81,7 +82,20 @@ struct LoginView: View {
             }
             .navigationTitle(viewModel.isRegistering ? "Create Account" : "Sign In")
             .onChange(of: viewModel.isAuthenticated) { _, newValue in
-                if newValue { onAuthenticated() }
+                if newValue {
+                    if viewModel.didRegister {
+                        showVerification = true
+                    } else {
+                        onAuthenticated()
+                    }
+                }
+            }
+            .navigationDestination(isPresented: $showVerification) {
+                EmailVerificationView(
+                    authService: authService,
+                    onVerified: { onAuthenticated() },
+                    onSkip: { onAuthenticated() }
+                )
             }
         }
     }
