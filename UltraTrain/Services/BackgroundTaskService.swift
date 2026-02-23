@@ -5,25 +5,29 @@ import os
 final class BackgroundTaskService: Sendable {
     static let healthKitSyncId = "com.ultratrain.app.healthkit-sync"
     static let recoveryCalcId = "com.ultratrain.app.recovery-calc"
+    static let syncQueueId = "com.ultratrain.app.sync-queue"
 
     private let healthKitService: any HealthKitServiceProtocol
     private let recoveryRepository: any RecoveryRepository
     private let fitnessRepository: any FitnessRepository
     private let fitnessCalculator: any CalculateFitnessUseCase
     private let runRepository: any RunRepository
+    private let syncQueueService: (any SyncQueueServiceProtocol)?
 
     init(
         healthKitService: any HealthKitServiceProtocol,
         recoveryRepository: any RecoveryRepository,
         fitnessRepository: any FitnessRepository,
         fitnessCalculator: any CalculateFitnessUseCase,
-        runRepository: any RunRepository
+        runRepository: any RunRepository,
+        syncQueueService: (any SyncQueueServiceProtocol)? = nil
     ) {
         self.healthKitService = healthKitService
         self.recoveryRepository = recoveryRepository
         self.fitnessRepository = fitnessRepository
         self.fitnessCalculator = fitnessCalculator
         self.runRepository = runRepository
+        self.syncQueueService = syncQueueService
     }
 
     func registerTasks() {
@@ -46,6 +50,17 @@ final class BackgroundTaskService: Sendable {
             let service = self
             Task { @MainActor in
                 await service.handleRecoveryCalc(task: processingTask)
+            }
+        }
+
+        BGTaskScheduler.shared.register(
+            forTaskWithIdentifier: Self.syncQueueId,
+            using: nil
+        ) { task in
+            nonisolated(unsafe) let refreshTask = task as! BGAppRefreshTask
+            let service = self
+            Task { @MainActor in
+                await service.handleSyncQueue(task: refreshTask)
             }
         }
     }
@@ -71,6 +86,35 @@ final class BackgroundTaskService: Sendable {
         } catch {
             Logger.recovery.error("Failed to schedule recovery calc: \(error)")
         }
+    }
+
+    func scheduleSyncQueueProcessing() {
+        let request = BGAppRefreshTaskRequest(identifier: Self.syncQueueId)
+        request.earliestBeginDate = Date(timeIntervalSinceNow: 1800)
+        do {
+            try BGTaskScheduler.shared.submit(request)
+            Logger.network.debug("Scheduled sync queue background task")
+        } catch {
+            Logger.network.error("Failed to schedule sync queue task: \(error)")
+        }
+    }
+
+    @MainActor
+    private func handleSyncQueue(task: BGAppRefreshTask) async {
+        scheduleSyncQueueProcessing()
+
+        task.expirationHandler = {
+            task.setTaskCompleted(success: false)
+        }
+
+        guard let service = syncQueueService else {
+            task.setTaskCompleted(success: true)
+            return
+        }
+
+        await service.processQueue()
+        task.setTaskCompleted(success: true)
+        Logger.network.info("Background sync queue processing completed")
     }
 
     @MainActor

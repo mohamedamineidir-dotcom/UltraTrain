@@ -66,6 +66,7 @@ struct UltraTrainApp: App {
     private let apiClient: APIClient
     private let authService: AuthService
     private let syncService: SyncService
+    private let syncStatusMonitor: SyncStatusMonitor
     private let deviceTokenService: DeviceTokenService
     private let deepLinkRouter: DeepLinkRouter
     private let backgroundTaskService: BackgroundTaskService
@@ -111,7 +112,8 @@ struct UltraTrainApp: App {
                 FoodLogEntrySwiftDataModel.self,
                 RaceReflectionSwiftDataModel.self,
                 UnlockedAchievementSwiftDataModel.self,
-                MorningCheckInSwiftDataModel.self
+                MorningCheckInSwiftDataModel.self,
+                SyncQueueSwiftDataModel.self
             ])
             let config: ModelConfiguration
             if isUITesting {
@@ -141,7 +143,9 @@ struct UltraTrainApp: App {
         let authInterceptor = AuthInterceptor(authService: auth)
         let client = APIClient(authInterceptor: authInterceptor)
         let remoteRunDataSource = RemoteRunDataSource(apiClient: client)
+        let syncQueueRepo = LocalSyncQueueRepository(modelContainer: modelContainer)
         let sync = SyncService(
+            queueRepository: syncQueueRepo,
             localRunRepository: localRunRepo,
             remoteRunDataSource: remoteRunDataSource,
             authService: auth
@@ -149,6 +153,7 @@ struct UltraTrainApp: App {
         apiClient = client
         authService = auth
         syncService = sync
+        syncStatusMonitor = SyncStatusMonitor(syncQueueService: sync)
         deviceTokenService = DeviceTokenService(apiClient: client)
 
         athleteRepository = localAthleteRepo
@@ -303,7 +308,8 @@ struct UltraTrainApp: App {
             recoveryRepository: recoveryRepository,
             fitnessRepository: fitnessRepository,
             fitnessCalculator: fitnessCalculator,
-            runRepository: runRepository
+            runRepository: runRepository,
+            syncQueueService: sync
         )
         backgroundTaskService.registerTasks()
     }
@@ -377,6 +383,7 @@ struct UltraTrainApp: App {
                 morningCheckInRepository: morningCheckInRepository,
                 deviceTokenService: deviceTokenService
             )
+            .environment(\.syncStatusMonitor, syncStatusMonitor)
             .preferredColorScheme(colorScheme)
             .onOpenURL { url in
                 _ = deepLinkRouter.handle(url: url)
@@ -389,9 +396,18 @@ struct UltraTrainApp: App {
             }
         }
         .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                let syncSvc = syncService
+                let monitor = syncStatusMonitor
+                Task {
+                    await syncSvc.processQueue()
+                    await monitor.refresh()
+                }
+            }
             if newPhase == .background {
                 backgroundTaskService.scheduleHealthKitSync()
                 backgroundTaskService.scheduleRecoveryCalc()
+                backgroundTaskService.scheduleSyncQueueProcessing()
             }
         }
     }

@@ -1,26 +1,44 @@
 import Foundation
 import os
 
-final class SyncService: @unchecked Sendable {
+final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
+    private let queueRepository: any SyncQueueRepository
     private let localRunRepository: LocalRunRepository
     private let remoteRunDataSource: RemoteRunDataSource
     private let authService: any AuthServiceProtocol
 
-    private var pendingRunIds: Set<UUID> = []
-    private let lock = NSLock()
-
     init(
+        queueRepository: any SyncQueueRepository,
         localRunRepository: LocalRunRepository,
         remoteRunDataSource: RemoteRunDataSource,
         authService: any AuthServiceProtocol
     ) {
+        self.queueRepository = queueRepository
         self.localRunRepository = localRunRepository
         self.remoteRunDataSource = remoteRunDataSource
         self.authService = authService
     }
 
-    func enqueueRunUpload(runId: UUID) async {
-        addToQueue(id: runId)
+    func enqueueUpload(runId: UUID) async throws {
+        if let existing = try await queueRepository.getItem(forRunId: runId) {
+            if existing.status == .completed { return }
+            var reset = existing
+            reset.status = .pending
+            reset.retryCount = 0
+            reset.errorMessage = nil
+            try await queueRepository.updateItem(reset)
+        } else {
+            let item = SyncQueueItem(
+                id: UUID(),
+                runId: runId,
+                status: .pending,
+                retryCount: 0,
+                lastAttempt: nil,
+                errorMessage: nil,
+                createdAt: Date()
+            )
+            try await queueRepository.saveItem(item)
+        }
         Logger.network.info("SyncService: queued run \(runId) for upload")
         await processQueue()
     }
@@ -28,49 +46,73 @@ final class SyncService: @unchecked Sendable {
     func processQueue() async {
         guard authService.isAuthenticated() else { return }
 
-        let ids = copyQueue()
-
-        for id in ids {
-            await uploadRun(id: id)
+        do {
+            let items = try await queueRepository.getPendingItems()
+            for item in items {
+                if let lastAttempt = item.lastAttempt {
+                    let elapsed = Date().timeIntervalSince(lastAttempt)
+                    if elapsed < item.nextRetryDelay { continue }
+                }
+                await processItem(item)
+            }
+        } catch {
+            Logger.network.error("SyncService: failed to fetch queue: \(error)")
         }
     }
 
-    // MARK: - Synchronous Lock Helpers
-
-    private func addToQueue(id: UUID) {
-        lock.withLock { _ = pendingRunIds.insert(id) }
+    func getQueueStatus(forRunId runId: UUID) async -> SyncQueueItemStatus? {
+        try? await queueRepository.getItem(forRunId: runId)?.status
     }
 
-    private func copyQueue() -> Set<UUID> {
-        lock.withLock { pendingRunIds }
+    func getPendingCount() async -> Int {
+        (try? await queueRepository.getPendingCount()) ?? 0
     }
 
-    private func removeFromQueue(id: UUID) {
-        lock.withLock { _ = pendingRunIds.remove(id) }
+    func getFailedCount() async -> Int {
+        (try? await queueRepository.getFailedCount()) ?? 0
     }
 
     // MARK: - Private
 
-    private func uploadRun(id: UUID) async {
+    private func processItem(_ item: SyncQueueItem) async {
+        var mutable = item
+        mutable.status = .uploading
+        mutable.lastAttempt = Date()
+        try? await queueRepository.updateItem(mutable)
+
         do {
-            guard let run = try await localRunRepository.getRun(id: id) else {
-                removeFromQueue(id: id)
+            guard let run = try await localRunRepository.getRun(id: item.runId) else {
+                try? await queueRepository.deleteItem(id: item.id)
+                Logger.network.info("SyncService: run \(item.runId) not found, removed from queue")
                 return
             }
 
             let dto = RunMapper.toUploadDTO(run)
             _ = try await remoteRunDataSource.uploadRun(dto)
-            removeFromQueue(id: id)
-            Logger.network.info("SyncService: uploaded run \(id)")
+
+            mutable.status = .completed
+            try? await queueRepository.updateItem(mutable)
+            Logger.network.info("SyncService: uploaded run \(item.runId)")
         } catch let error as APIError {
-            if case .clientError = error {
-                removeFromQueue(id: id)
-                Logger.network.error("SyncService: permanent failure for run \(id): \(error)")
-            } else {
-                Logger.network.warning("SyncService: upload failed for run \(id), will retry: \(error)")
+            switch error {
+            case .clientError, .unauthorized, .invalidURL, .decodingError:
+                mutable.status = .failed
+                mutable.retryCount = 5
+                mutable.errorMessage = error.localizedDescription
+                Logger.network.error("SyncService: permanent failure for run \(item.runId): \(error)")
+            default:
+                mutable.retryCount += 1
+                mutable.errorMessage = error.localizedDescription
+                mutable.status = mutable.hasReachedMaxRetries ? .failed : .pending
+                Logger.network.warning("SyncService: retryable failure for run \(item.runId) (attempt \(mutable.retryCount)): \(error)")
             }
+            try? await queueRepository.updateItem(mutable)
         } catch {
-            Logger.network.warning("SyncService: upload error for run \(id): \(error)")
+            mutable.retryCount += 1
+            mutable.errorMessage = error.localizedDescription
+            mutable.status = mutable.hasReachedMaxRetries ? .failed : .pending
+            try? await queueRepository.updateItem(mutable)
+            Logger.network.warning("SyncService: upload error for run \(item.runId): \(error)")
         }
     }
 }

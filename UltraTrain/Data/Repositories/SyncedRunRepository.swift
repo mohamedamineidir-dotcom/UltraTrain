@@ -3,9 +3,9 @@ import os
 
 final class SyncedRunRepository: RunRepository, @unchecked Sendable {
     private let local: LocalRunRepository
-    private let syncService: SyncService
+    private let syncService: any SyncQueueServiceProtocol
 
-    init(local: LocalRunRepository, syncService: SyncService) {
+    init(local: LocalRunRepository, syncService: any SyncQueueServiceProtocol) {
         self.local = local
         self.syncService = syncService
     }
@@ -24,7 +24,7 @@ final class SyncedRunRepository: RunRepository, @unchecked Sendable {
 
     func saveRun(_ run: CompletedRun) async throws {
         try await local.saveRun(run)
-        await syncService.enqueueRunUpload(runId: run.id)
+        try await syncService.enqueueUpload(runId: run.id)
     }
 
     func updateRun(_ run: CompletedRun) async throws {

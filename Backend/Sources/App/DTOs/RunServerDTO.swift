@@ -1,6 +1,6 @@
 import Vapor
 
-struct RunUploadRequest: Content {
+struct RunUploadRequest: Content, Validatable {
     let id: String
     let date: String
     let distanceKm: Double
@@ -14,6 +14,15 @@ struct RunUploadRequest: Content {
     let splits: [SplitServerDTO]
     let notes: String?
     let idempotencyKey: String
+
+    static func validations(_ validations: inout Validations) {
+        validations.add("distanceKm", as: Double.self, is: .range(0...1000))
+        validations.add("elevationGainM", as: Double.self, is: .range(0...30000))
+        validations.add("elevationLossM", as: Double.self, is: .range(0...30000))
+        validations.add("duration", as: Double.self, is: .range(1...604800))
+        validations.add("idempotencyKey", as: String.self, is: !.empty)
+        validations.add("id", as: String.self, is: !.empty)
+    }
 }
 
 struct TrackPointServerDTO: Content {

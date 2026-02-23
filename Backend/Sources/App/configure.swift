@@ -4,6 +4,7 @@ import FluentPostgresDriver
 import JWT
 import VaporAPNS
 import APNSCore
+
 func configure(_ app: Application) async throws {
     // MARK: - Database
 
@@ -51,8 +52,11 @@ func configure(_ app: Application) async throws {
 
     // MARK: - JWT
 
-    let jwtSecret = Environment.get("JWT_SECRET") ?? "dev-secret-change-in-production"
-    app.jwt.signers.use(.hs256(key: jwtSecret))
+    let jwtSecret = Environment.get("JWT_SECRET")
+    if app.environment == .production && jwtSecret == nil {
+        fatalError("JWT_SECRET must be set in production")
+    }
+    app.jwt.signers.use(.hs256(key: jwtSecret ?? "dev-secret-change-in-production"))
 
     // MARK: - Content Coding
 
@@ -67,10 +71,25 @@ func configure(_ app: Application) async throws {
     ContentConfiguration.global.use(encoder: encoder, for: .json)
     ContentConfiguration.global.use(decoder: decoder, for: .json)
 
+    // MARK: - Body Size Limit
+
+    app.routes.defaultMaxBodySize = "10mb"
+
     // MARK: - Middleware
 
+    let allowedOrigin: CORSMiddleware.AllowOriginSetting
+    if let origin = Environment.get("CORS_ORIGIN") {
+        allowedOrigin = .custom(origin)
+    } else if app.environment == .production {
+        allowedOrigin = .none
+    } else {
+        allowedOrigin = .all
+    }
+
+    app.middleware.use(SecurityHeadersMiddleware())
+    app.middleware.use(RequestLoggingMiddleware())
     app.middleware.use(CORSMiddleware(configuration: .init(
-        allowedOrigin: .all,
+        allowedOrigin: allowedOrigin,
         allowedMethods: [.GET, .POST, .PUT, .DELETE, .PATCH],
         allowedHeaders: [.accept, .authorization, .contentType, .origin, .xRequestedWith]
     )))

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct DashboardView: View {
+    @Environment(\.syncStatusMonitor) private var syncStatusMonitor
     @State private var viewModel: DashboardViewModel
     @State private var showFitnessTrend = false
     @State private var showGoalSetting = false
@@ -247,6 +248,17 @@ struct DashboardView: View {
                 .padding()
             }
             .navigationTitle("Dashboard")
+            .toolbar {
+                if let monitor = syncStatusMonitor, monitor.isVisible {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        SyncStatusBadge(
+                            pendingCount: monitor.pendingCount,
+                            failedCount: monitor.failedCount,
+                            isSyncing: monitor.isSyncing
+                        )
+                    }
+                }
+            }
             .navigationDestination(isPresented: $showFitnessTrend) {
                 FitnessTrendView(
                     snapshots: viewModel.fitnessHistory,
@@ -255,6 +267,7 @@ struct DashboardView: View {
             }
             .task {
                 await viewModel.load()
+                await syncStatusMonitor?.refresh()
             }
             .sheet(isPresented: $showGoalSetting) {
                 GoalSettingView(goalRepository: goalRepository) {

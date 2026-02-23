@@ -11,8 +11,25 @@ struct RunController: RouteCollection {
 
     @Sendable
     func uploadRun(req: Request) async throws -> Response {
+        try RunUploadRequest.validate(content: req)
         let body = try req.content.decode(RunUploadRequest.self)
         let userId = try req.userId
+
+        // Validate array sizes
+        guard body.gpsTrack.count <= 100_000 else {
+            throw Abort(.badRequest, reason: "GPS track exceeds maximum of 100,000 points")
+        }
+        guard body.splits.count <= 1_000 else {
+            throw Abort(.badRequest, reason: "Splits exceed maximum of 1,000 entries")
+        }
+
+        // Validate GPS coordinate bounds
+        for point in body.gpsTrack {
+            guard (-90...90).contains(point.latitude),
+                  (-180...180).contains(point.longitude) else {
+                throw Abort(.badRequest, reason: "GPS coordinates out of valid range")
+            }
+        }
 
         // Idempotency check — if a run with this key already exists, return 200
         let existing = try await RunModel.query(on: req.db)
@@ -69,7 +86,8 @@ struct RunController: RouteCollection {
             query = query.filter(\.$date >= since)
         }
 
-        let limit = req.query[Int.self, at: "limit"] ?? 100
+        let requestedLimit = req.query[Int.self, at: "limit"] ?? 100
+        let limit = min(max(requestedLimit, 1), 100)
         let runs = try await query.range(..<limit).all()
 
         return runs.map { RunResponse(from: $0) }
