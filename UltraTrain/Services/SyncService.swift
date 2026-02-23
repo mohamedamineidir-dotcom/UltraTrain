@@ -127,6 +127,11 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
             Logger.network.info("SyncService: completed \(item.operationType.rawValue) for \(item.entityId)")
         } catch let error as APIError {
             switch error {
+            case .conflict:
+                mutable.status = .failed
+                mutable.retryCount = 5
+                mutable.errorMessage = "Conflict: data was modified on another device"
+                Logger.network.warning("SyncService: conflict for \(item.operationType.rawValue) \(item.entityId) — server has newer version")
             case .clientError, .unauthorized, .invalidURL, .decodingError:
                 mutable.status = .failed
                 mutable.retryCount = 5
@@ -149,13 +154,19 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
     }
 
     private func processRunUpload(_ item: SyncQueueItem) async throws {
-        guard let run = try await localRunRepository.getRun(id: item.entityId) else {
+        guard var run = try await localRunRepository.getRun(id: item.entityId) else {
             try? await queueRepository.deleteItem(id: item.id)
             Logger.network.info("SyncService: run \(item.entityId) not found, removed from queue")
             return
         }
         let dto = RunMapper.toUploadDTO(run)
-        _ = try await remoteRunDataSource.uploadRun(dto)
+        let response = try await remoteRunDataSource.uploadRun(dto)
+        // Update serverUpdatedAt from the response so future syncs can detect conflicts
+        if let updatedAtStr = response.updatedAt,
+           let updatedAt = ISO8601DateFormatter().date(from: updatedAtStr) {
+            run.serverUpdatedAt = updatedAt
+            try? await localRunRepository.updateRun(run)
+        }
     }
 
     private func processAthleteSync(_ item: SyncQueueItem) async throws {
@@ -172,12 +183,18 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
     private func processRaceSync(_ item: SyncQueueItem) async throws {
         guard let repo = localRaceRepository,
               let remote = remoteRaceDataSource else { return }
-        guard let race = try await repo.getRace(id: item.entityId) else {
+        guard var race = try await repo.getRace(id: item.entityId) else {
             try? await queueRepository.deleteItem(id: item.id)
             return
         }
         guard let dto = RaceRemoteMapper.toUploadDTO(race) else { return }
-        _ = try await remote.upsertRace(dto)
+        let response = try await remote.upsertRace(dto)
+        // Update serverUpdatedAt from the response so future syncs can detect conflicts
+        if let updatedAtStr = response.updatedAt,
+           let updatedAt = ISO8601DateFormatter().date(from: updatedAtStr) {
+            race.serverUpdatedAt = updatedAt
+            try? await repo.saveRace(race)
+        }
     }
 
     private func processRaceDelete(_ item: SyncQueueItem) async throws {

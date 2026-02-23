@@ -20,7 +20,8 @@ enum RaceRemoteMapper {
             elevationGainM: race.elevationGainM,
             priority: race.priority.rawValue,
             raceJson: jsonString,
-            idempotencyKey: race.id.uuidString
+            idempotencyKey: race.id.uuidString,
+            clientUpdatedAt: race.serverUpdatedAt.map { formatter.string(from: $0) }
         )
     }
 
@@ -29,6 +30,10 @@ enum RaceRemoteMapper {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         decoder.dateDecodingStrategy = .iso8601
-        return try? decoder.decode(Race.self, from: jsonData)
+        guard var race = try? decoder.decode(Race.self, from: jsonData) else { return nil }
+        if let updatedAtStr = response.updatedAt {
+            race.serverUpdatedAt = ISO8601DateFormatter().date(from: updatedAtStr)
+        }
+        return race
     }
 }

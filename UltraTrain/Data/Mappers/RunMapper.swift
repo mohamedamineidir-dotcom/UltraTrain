@@ -30,6 +30,7 @@ enum RunMapper {
         }
 
         let linkedSessionId: UUID? = dto.linkedSessionId.flatMap { UUID(uuidString: $0) }
+        let serverUpdatedAt: Date? = dto.updatedAt.flatMap { formatter.date(from: $0) }
 
         return CompletedRun(
             id: id,
@@ -46,7 +47,8 @@ enum RunMapper {
             splits: splits,
             linkedSessionId: linkedSessionId,
             notes: dto.notes,
-            pausedDuration: 0
+            pausedDuration: 0,
+            serverUpdatedAt: serverUpdatedAt
         )
     }
 
@@ -66,7 +68,8 @@ enum RunMapper {
             splits: run.splits.map { toSplitDTO($0) },
             notes: run.notes,
             linkedSessionId: run.linkedSessionId?.uuidString,
-            idempotencyKey: run.id.uuidString
+            idempotencyKey: run.id.uuidString,
+            clientUpdatedAt: run.serverUpdatedAt.map { formatter.string(from: $0) }
         )
     }
 

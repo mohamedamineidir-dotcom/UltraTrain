@@ -9,6 +9,7 @@ struct RaceUploadRequestDTO: Encodable, Sendable {
     let priority: String
     let raceJson: String
     let idempotencyKey: String
+    let clientUpdatedAt: String?
 }
 
 struct RaceResponseDTO: Decodable, Sendable {

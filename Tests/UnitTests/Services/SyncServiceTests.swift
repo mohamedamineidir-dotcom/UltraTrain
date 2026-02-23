@@ -231,7 +231,8 @@ struct SyncServiceTests {
             "splits": [],
             "notes": null,
             "linked_session_id": null,
-            "created_at": null
+            "created_at": null,
+            "updated_at": null
         }
         """
         SyncTestURLProtocol.responseData = Data(json.utf8)

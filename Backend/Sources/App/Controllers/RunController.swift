@@ -77,23 +77,35 @@ struct RunController: RouteCollection {
     }
 
     @Sendable
-    func listRuns(req: Request) async throws -> [RunResponse] {
+    func listRuns(req: Request) async throws -> PaginatedResponse<RunResponse> {
         let userId = try req.userId
+        let formatter = ISO8601DateFormatter()
 
         var query = RunModel.query(on: req.db)
             .filter(\.$user.$id == userId)
             .sort(\.$date, .descending)
 
         if let sinceStr = req.query[String.self, at: "since"],
-           let since = ISO8601DateFormatter().date(from: sinceStr) {
+           let since = formatter.date(from: sinceStr) {
             query = query.filter(\.$date >= since)
         }
 
-        let requestedLimit = req.query[Int.self, at: "limit"] ?? 100
-        let limit = min(max(requestedLimit, 1), 100)
-        let runs = try await query.range(..<limit).all()
+        if let cursorStr = req.query[String.self, at: "cursor"],
+           let cursorDate = formatter.date(from: cursorStr) {
+            query = query.filter(\.$date < cursorDate)
+        }
 
-        return runs.map { RunResponse(from: $0) }
+        let requestedLimit = req.query[Int.self, at: "limit"] ?? 20
+        let limit = min(max(requestedLimit, 1), 100)
+        // Fetch one extra to determine if there's a next page
+        let runs = try await query.range(..<(limit + 1)).all()
+
+        let hasMore = runs.count > limit
+        let pageRuns = hasMore ? Array(runs.prefix(limit)) : runs
+        let items = pageRuns.map { RunResponse(from: $0) }
+        let nextCursor = hasMore ? pageRuns.last.map { formatter.string(from: $0.date) } : nil
+
+        return PaginatedResponse(items: items, nextCursor: nextCursor, hasMore: hasMore)
     }
 
     @Sendable
@@ -134,6 +146,15 @@ struct RunController: RouteCollection {
         }
 
         let formatter = ISO8601DateFormatter()
+
+        // Conflict detection: if client sends clientUpdatedAt and server has a newer version, reject
+        if let clientUpdatedAtStr = body.clientUpdatedAt,
+           let clientUpdatedAt = formatter.date(from: clientUpdatedAtStr),
+           let serverUpdatedAt = run.updatedAt,
+           serverUpdatedAt > clientUpdatedAt {
+            throw Abort(.conflict, reason: "Run was modified on another device. Please refresh and try again.")
+        }
+
         guard let runDate = formatter.date(from: body.date) else {
             throw Abort(.badRequest, reason: "Invalid date format. Use ISO8601.")
         }

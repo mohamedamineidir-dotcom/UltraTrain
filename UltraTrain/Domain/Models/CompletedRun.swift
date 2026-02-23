@@ -30,6 +30,7 @@ struct CompletedRun: Identifiable, Equatable, Sendable {
     var trainingStressScore: Double? = nil
     var activityType: ActivityType = .running
     var intervalSplits: [IntervalSplit] = []
+    var serverUpdatedAt: Date? = nil
 
     var isRunningActivity: Bool {
         activityType == .running || activityType == .trailRunning

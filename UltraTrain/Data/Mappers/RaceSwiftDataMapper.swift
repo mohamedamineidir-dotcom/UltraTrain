@@ -47,7 +47,8 @@ enum RaceSwiftDataMapper {
             locationLongitude: model.locationLongitude,
             forecastedWeather: decodeWeather(model.forecastedWeatherData),
             courseRoute: decodeCourseRoute(model.courseRouteData),
-            savedRouteId: model.savedRouteId
+            savedRouteId: model.savedRouteId,
+            serverUpdatedAt: model.serverUpdatedAt
         )
     }
 
@@ -82,7 +83,8 @@ enum RaceSwiftDataMapper {
             locationLongitude: race.locationLongitude,
             forecastedWeatherData: encodeWeather(race.forecastedWeather),
             courseRouteData: encodeCourseRoute(race.courseRoute),
-            savedRouteId: race.savedRouteId
+            savedRouteId: race.savedRouteId,
+            serverUpdatedAt: race.serverUpdatedAt
         )
     }
 

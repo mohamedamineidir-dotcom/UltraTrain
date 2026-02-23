@@ -23,6 +23,7 @@ final class RaceSwiftDataModel {
     @Attribute(.externalStorage) var courseRouteData: Data?
     var savedRouteId: UUID?
     var updatedAt: Date = Date()
+    var serverUpdatedAt: Date?
 
     init(
         id: UUID = UUID(),
@@ -43,7 +44,8 @@ final class RaceSwiftDataModel {
         forecastedWeatherData: Data? = nil,
         courseRouteData: Data? = nil,
         savedRouteId: UUID? = nil,
-        updatedAt: Date = Date()
+        updatedAt: Date = Date(),
+        serverUpdatedAt: Date? = nil
     ) {
         self.id = id
         self.name = name
@@ -64,5 +66,6 @@ final class RaceSwiftDataModel {
         self.courseRouteData = courseRouteData
         self.savedRouteId = savedRouteId
         self.updatedAt = updatedAt
+        self.serverUpdatedAt = serverUpdatedAt
     }
 }

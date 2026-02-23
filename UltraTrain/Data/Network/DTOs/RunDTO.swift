@@ -31,6 +31,7 @@ struct RunUploadRequestDTO: Encodable, Sendable {
     let notes: String?
     let linkedSessionId: String?
     let idempotencyKey: String
+    let clientUpdatedAt: String?
 }
 
 struct RunResponseDTO: Decodable, Sendable {
@@ -48,4 +49,5 @@ struct RunResponseDTO: Decodable, Sendable {
     let notes: String?
     let linkedSessionId: String?
     let createdAt: String?
+    let updatedAt: String?
 }

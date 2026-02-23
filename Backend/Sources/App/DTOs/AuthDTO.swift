@@ -54,6 +54,14 @@ struct ChangePasswordRequest: Content, Validatable {
     }
 }
 
+struct VerifyEmailRequest: Content, Validatable {
+    let code: String
+
+    static func validations(_ validations: inout Validations) {
+        validations.add("code", as: String.self, is: .count(6...6))
+    }
+}
+
 struct MessageResponse: Content {
     let message: String
 }

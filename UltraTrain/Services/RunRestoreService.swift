@@ -25,8 +25,14 @@ final class RunRestoreService: @unchecked Sendable {
                 return []
             }
 
-            let dtos = try await remote.fetchRuns()
-            let runs = dtos.compactMap { RunMapper.toDomain($0, athleteId: athlete.id) }
+            var allDTOs: [RunResponseDTO] = []
+            var cursor: String? = nil
+            repeat {
+                let page = try await remote.fetchRuns(cursor: cursor, limit: 100)
+                allDTOs.append(contentsOf: page.items)
+                cursor = page.nextCursor
+            } while cursor != nil
+            let runs = allDTOs.compactMap { RunMapper.toDomain($0, athleteId: athlete.id) }
             Logger.network.info("RunRestoreService: restored \(runs.count) runs from server")
             return runs
         } catch {

@@ -26,6 +26,14 @@ struct RaceController: RouteCollection {
             .first()
 
         if let race = existing {
+            // Conflict detection: if client sends clientUpdatedAt and server has a newer version, reject
+            if let clientUpdatedAtStr = body.clientUpdatedAt,
+               let clientUpdatedAt = formatter.date(from: clientUpdatedAtStr),
+               let serverUpdatedAt = race.updatedAt,
+               serverUpdatedAt > clientUpdatedAt {
+                throw Abort(.conflict, reason: "Race was modified on another device. Please refresh and try again.")
+            }
+
             race.name = body.name
             race.date = raceDate
             race.distanceKm = body.distanceKm
@@ -54,15 +62,29 @@ struct RaceController: RouteCollection {
     }
 
     @Sendable
-    func listRaces(req: Request) async throws -> [RaceResponse] {
+    func listRaces(req: Request) async throws -> PaginatedResponse<RaceResponse> {
         let userId = try req.userId
+        let formatter = ISO8601DateFormatter()
 
-        let races = try await RaceModel.query(on: req.db)
+        var query = RaceModel.query(on: req.db)
             .filter(\.$user.$id == userId)
             .sort(\.$date, .ascending)
-            .all()
 
-        return races.map { RaceResponse(from: $0) }
+        if let cursorStr = req.query[String.self, at: "cursor"],
+           let cursorDate = formatter.date(from: cursorStr) {
+            query = query.filter(\.$date > cursorDate)
+        }
+
+        let requestedLimit = req.query[Int.self, at: "limit"] ?? 20
+        let limit = min(max(requestedLimit, 1), 100)
+        let races = try await query.range(..<(limit + 1)).all()
+
+        let hasMore = races.count > limit
+        let pageRaces = hasMore ? Array(races.prefix(limit)) : races
+        let items = pageRaces.map { RaceResponse(from: $0) }
+        let nextCursor = hasMore ? pageRaces.last.map { formatter.string(from: $0.date) } : nil
+
+        return PaginatedResponse(items: items, nextCursor: nextCursor, hasMore: hasMore)
     }
 
     @Sendable

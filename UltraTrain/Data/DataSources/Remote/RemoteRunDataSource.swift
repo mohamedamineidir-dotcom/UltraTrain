@@ -33,16 +33,20 @@ final class RemoteRunDataSource: Sendable {
         )
     }
 
-    func fetchRuns(since: Date? = nil) async throws -> [RunResponseDTO] {
-        var queryItems: [URLQueryItem]?
+    func fetchRuns(since: Date? = nil, cursor: String? = nil, limit: Int = 20) async throws -> PaginatedResponseDTO<RunResponseDTO> {
+        let formatter = ISO8601DateFormatter()
+        var queryItems: [URLQueryItem] = []
         if let since {
-            let formatter = ISO8601DateFormatter()
-            queryItems = [URLQueryItem(name: "since", value: formatter.string(from: since))]
+            queryItems.append(URLQueryItem(name: "since", value: formatter.string(from: since)))
         }
+        if let cursor {
+            queryItems.append(URLQueryItem(name: "cursor", value: cursor))
+        }
+        queryItems.append(URLQueryItem(name: "limit", value: String(limit)))
         return try await apiClient.request(
             path: RunEndpoints.runsPath,
             method: .get,
-            queryItems: queryItems,
+            queryItems: queryItems.isEmpty ? nil : queryItems,
             requiresAuth: true
         )
     }

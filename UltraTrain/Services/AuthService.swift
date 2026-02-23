@@ -97,6 +97,24 @@ final class AuthService: AuthServiceProtocol, @unchecked Sendable {
         )
     }
 
+    func verifyEmail(code: String) async throws {
+        let body = VerifyEmailRequestDTO(code: code)
+        let _: MessageResponseDTO = try await apiClient.request(
+            path: AuthEndpoints.verifyEmailPath,
+            method: .post,
+            body: body,
+            requiresAuth: true
+        )
+    }
+
+    func resendVerificationCode() async throws {
+        let _: MessageResponseDTO = try await apiClient.request(
+            path: AuthEndpoints.resendVerificationPath,
+            method: .post,
+            requiresAuth: true
+        )
+    }
+
     func getValidAccessToken() async throws -> String {
         guard var currentToken = token else {
             throw DomainError.unauthorized

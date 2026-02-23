@@ -16,10 +16,16 @@ final class RemoteRaceDataSource: Sendable {
         )
     }
 
-    func fetchRaces() async throws -> [RaceResponseDTO] {
-        try await apiClient.request(
+    func fetchRaces(cursor: String? = nil, limit: Int = 20) async throws -> PaginatedResponseDTO<RaceResponseDTO> {
+        var queryItems: [URLQueryItem] = []
+        if let cursor {
+            queryItems.append(URLQueryItem(name: "cursor", value: cursor))
+        }
+        queryItems.append(URLQueryItem(name: "limit", value: String(limit)))
+        return try await apiClient.request(
             path: RaceEndpoints.racesPath,
             method: .get,
+            queryItems: queryItems.isEmpty ? nil : queryItems,
             requiresAuth: true
         )
     }

@@ -28,7 +28,8 @@ struct RunMapperRemoteTests {
             ],
             notes: "Great trail run",
             linkedSessionId: nil,
-            createdAt: "2026-02-20T09:00:00Z"
+            createdAt: "2026-02-20T09:00:00Z",
+            updatedAt: nil
         )
 
         let athleteId = UUID()
@@ -65,7 +66,8 @@ struct RunMapperRemoteTests {
             splits: nil,
             notes: nil,
             linkedSessionId: nil,
-            createdAt: nil
+            createdAt: nil,
+            updatedAt: nil
         )
 
         let run = RunMapper.toDomain(dto, athleteId: UUID())
@@ -88,7 +90,8 @@ struct RunMapperRemoteTests {
             splits: nil,
             notes: nil,
             linkedSessionId: nil,
-            createdAt: nil
+            createdAt: nil,
+            updatedAt: nil
         )
 
         let run = RunMapper.toDomain(dto, athleteId: UUID())
@@ -111,7 +114,8 @@ struct RunMapperRemoteTests {
             splits: nil,
             notes: nil,
             linkedSessionId: nil,
-            createdAt: nil
+            createdAt: nil,
+            updatedAt: nil
         )
 
         let run = RunMapper.toDomain(dto, athleteId: UUID())

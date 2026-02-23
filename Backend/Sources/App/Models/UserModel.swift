@@ -29,6 +29,15 @@ final class UserModel: Model, Content, @unchecked Sendable {
     @OptionalField(key: "reset_code_expires_at")
     var resetCodeExpiresAt: Date?
 
+    @Field(key: "is_email_verified")
+    var isEmailVerified: Bool
+
+    @OptionalField(key: "verification_code_hash")
+    var verificationCodeHash: String?
+
+    @OptionalField(key: "verification_code_expires_at")
+    var verificationCodeExpiresAt: Date?
+
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
 
@@ -37,10 +46,11 @@ final class UserModel: Model, Content, @unchecked Sendable {
 
     init() {}
 
-    init(id: UUID? = nil, email: String, passwordHash: String) {
+    init(id: UUID? = nil, email: String, passwordHash: String, isEmailVerified: Bool = false) {
         self.id = id
         self.email = email
         self.passwordHash = passwordHash
+        self.isEmailVerified = isEmailVerified
     }
 }
 

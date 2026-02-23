@@ -37,8 +37,14 @@ final class RaceSyncService: @unchecked Sendable {
     func restoreRaces() async -> [Race] {
         guard authService.isAuthenticated() else { return [] }
         do {
-            let responses = try await remote.fetchRaces()
-            let races = responses.compactMap { RaceRemoteMapper.toDomain(from: $0) }
+            var allResponses: [RaceResponseDTO] = []
+            var cursor: String? = nil
+            repeat {
+                let page = try await remote.fetchRaces(cursor: cursor, limit: 100)
+                allResponses.append(contentsOf: page.items)
+                cursor = page.nextCursor
+            } while cursor != nil
+            let races = allResponses.compactMap { RaceRemoteMapper.toDomain(from: $0) }
             Logger.network.info("RaceSyncService: restored \(races.count) races from server")
             return races
         } catch {

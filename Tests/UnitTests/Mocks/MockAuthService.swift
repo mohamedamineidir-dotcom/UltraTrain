@@ -78,6 +78,23 @@ final class MockAuthService: AuthServiceProtocol, @unchecked Sendable {
         }
     }
 
+    var verifyEmailCallCount = 0
+    var resendVerificationCallCount = 0
+
+    func verifyEmail(code: String) async throws {
+        verifyEmailCallCount += 1
+        if shouldFail {
+            throw DomainError.serverError(message: "Verification failed")
+        }
+    }
+
+    func resendVerificationCode() async throws {
+        resendVerificationCallCount += 1
+        if shouldFail {
+            throw DomainError.serverError(message: "Resend failed")
+        }
+    }
+
     func getValidAccessToken() async throws -> String {
         guard isLoggedIn else {
             throw DomainError.unauthorized

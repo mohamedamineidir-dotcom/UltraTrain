@@ -36,6 +36,10 @@ struct ChangePasswordRequestDTO: Encodable, Sendable {
     let newPassword: String
 }
 
+struct VerifyEmailRequestDTO: Encodable, Sendable {
+    let code: String
+}
+
 struct MessageResponseDTO: Decodable, Sendable {
     let message: String
 }

@@ -18,6 +18,7 @@ struct Race: Identifiable, Equatable, Sendable, Codable {
     var forecastedWeather: WeatherSnapshot? = nil
     var courseRoute: [TrackPoint] = []
     var savedRouteId: UUID? = nil
+    var serverUpdatedAt: Date? = nil
 
     var hasCourseRoute: Bool { !courseRoute.isEmpty }
 

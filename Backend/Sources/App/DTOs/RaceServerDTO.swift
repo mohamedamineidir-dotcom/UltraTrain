@@ -9,6 +9,7 @@ struct RaceUploadRequest: Content, Validatable {
     let priority: String
     let raceJson: String
     let idempotencyKey: String
+    let clientUpdatedAt: String?
 
     static func validations(_ validations: inout Validations) {
         validations.add("raceId", as: String.self, is: !.empty)

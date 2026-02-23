@@ -4,6 +4,7 @@ enum APIError: Error, Equatable, Sendable {
     case invalidURL
     case invalidResponse
     case unauthorized
+    case conflict
     case clientError(statusCode: Int)
     case serverError(statusCode: Int)
     case decodingError
@@ -20,6 +21,8 @@ extension APIError: LocalizedError {
             return "Invalid server response."
         case .unauthorized:
             return "Unauthorized. Please sign in again."
+        case .conflict:
+            return "Data was modified on another device. Please refresh and try again."
         case .clientError(let code):
             return "Request failed with status \(code)."
         case .serverError(let code):

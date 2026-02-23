@@ -9,4 +9,6 @@ enum AuthEndpoints {
     static let changePasswordPath = "/auth/change-password"
     static let forgotPasswordPath = "/auth/forgot-password"
     static let resetPasswordPath = "/auth/reset-password"
+    static let verifyEmailPath = "/auth/verify-email"
+    static let resendVerificationPath = "/auth/resend-verification"
 }

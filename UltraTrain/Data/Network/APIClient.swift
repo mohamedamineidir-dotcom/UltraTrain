@@ -155,6 +155,8 @@ actor APIClient {
             return try decoder.decode(T.self, from: data)
         case 401:
             throw APIError.unauthorized
+        case 409:
+            throw APIError.conflict
         case 400...499:
             throw APIError.clientError(statusCode: statusCode)
         case 500...599:

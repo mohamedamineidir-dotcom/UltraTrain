@@ -74,6 +74,7 @@ enum CompletedRunSwiftDataMapper {
             isHealthKitImport: run.isHealthKitImport,
             healthKitWorkoutUUID: run.healthKitWorkoutUUID,
             weatherData: weatherData,
+            serverUpdatedAt: run.serverUpdatedAt,
             rpe: run.rpe,
             perceivedFeelingRaw: run.perceivedFeeling?.rawValue,
             terrainTypeRaw: run.terrainType?.rawValue,
@@ -124,7 +125,8 @@ enum CompletedRunSwiftDataMapper {
             terrainType: model.terrainTypeRaw.flatMap { TerrainType(rawValue: $0) },
             trainingStressScore: model.trainingStressScore,
             activityType: ActivityType(rawValue: model.activityTypeRaw) ?? .running,
-            intervalSplits: intervalSplits
+            intervalSplits: intervalSplits,
+            serverUpdatedAt: model.serverUpdatedAt
         )
     }
 

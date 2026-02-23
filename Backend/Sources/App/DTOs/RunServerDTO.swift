@@ -15,6 +15,7 @@ struct RunUploadRequest: Content, Validatable {
     let notes: String?
     let linkedSessionId: String?
     let idempotencyKey: String
+    let clientUpdatedAt: String?
 
     static func validations(_ validations: inout Validations) {
         validations.add("distanceKm", as: Double.self, is: .range(0...1000))
@@ -57,6 +58,7 @@ struct RunResponse: Content {
     let notes: String?
     let linkedSessionId: String?
     let createdAt: String?
+    let updatedAt: String?
 
     init(from model: RunModel) {
         let formatter = ISO8601DateFormatter()
@@ -74,6 +76,7 @@ struct RunResponse: Content {
         self.notes = model.notes
         self.linkedSessionId = model.linkedSessionId
         self.createdAt = model.createdAt.map { formatter.string(from: $0) }
+        self.updatedAt = model.updatedAt.map { formatter.string(from: $0) }
     }
 
     private static func decodeJSON<T: Decodable>(_ json: String) -> T? {

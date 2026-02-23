@@ -9,5 +9,7 @@ protocol AuthServiceProtocol: Sendable {
     func changePassword(currentPassword: String, newPassword: String) async throws
     func requestPasswordReset(email: String) async throws
     func resetPassword(email: String, code: String, newPassword: String) async throws
+    func verifyEmail(code: String) async throws
+    func resendVerificationCode() async throws
     func isAuthenticated() -> Bool
 }
