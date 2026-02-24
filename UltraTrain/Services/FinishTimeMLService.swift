@@ -1,22 +1,27 @@
 import Foundation
+import CoreML
 import os
 
 /// CoreML-based finish time prediction service.
 ///
-/// Currently uses a regression approximation as a stub implementation.
-/// When a real `.mlmodel` file is added to the project, this service
-/// should be updated to load the model and run CoreML inference instead.
-///
-/// The regression formula accounts for:
-/// - Base pace adjusted for effective distance
-/// - Experience level multiplier
-/// - Fitness (CTL) and freshness (TSB) adjustments
-/// - Terrain difficulty factor
-/// - Elevation density impact
-/// - Per-athlete calibration factor
+/// Attempts to load a trained `FinishTimePredictor` CoreML model.
+/// Falls back to the regression approximation if the model is unavailable.
 actor FinishTimeMLService: FinishTimePredictionServiceProtocol {
 
     private let logger = Logger.ml
+    private var coreMLModel: FinishTimePredictor?
+
+    init() {
+        do {
+            let config = MLModelConfiguration()
+            config.computeUnits = .cpuOnly
+            coreMLModel = try FinishTimePredictor(configuration: config)
+            logger.info("CoreML FinishTimePredictor model loaded successfully")
+        } catch {
+            logger.info("CoreML model not available, using regression fallback: \(error.localizedDescription)")
+            coreMLModel = nil
+        }
+    }
 
     // MARK: - Prediction
 
@@ -35,13 +40,87 @@ actor FinishTimeMLService: FinishTimePredictionServiceProtocol {
             return 0
         }
 
-        let experienceMultiplier = experienceMultiplier(for: experienceLevel)
-        let basePrediction = computeBasePrediction(
+        if let model = coreMLModel {
+            do {
+                let result = try coreMLPrediction(
+                    model: model,
+                    effectiveDistanceKm: effectiveDistanceKm,
+                    experienceLevel: experienceLevel,
+                    recentAvgPaceSecondsPerKm: recentAvgPaceSecondsPerKm,
+                    ctl: ctl,
+                    tsb: tsb,
+                    terrainDifficulty: terrainDifficulty,
+                    elevationPerKm: elevationPerKm,
+                    calibrationFactor: calibrationFactor
+                )
+                logger.debug("CoreML prediction: \(result)s for \(effectiveDistanceKm)km effective")
+                return max(0, result)
+            } catch {
+                logger.warning("CoreML prediction failed, falling back to regression: \(error.localizedDescription)")
+            }
+        }
+
+        return regressionFallback(
             effectiveDistanceKm: effectiveDistanceKm,
-            paceSecondsPerKm: recentAvgPaceSecondsPerKm,
-            experienceMultiplier: experienceMultiplier
+            experienceLevel: experienceLevel,
+            recentAvgPaceSecondsPerKm: recentAvgPaceSecondsPerKm,
+            ctl: ctl,
+            tsb: tsb,
+            terrainDifficulty: terrainDifficulty,
+            elevationPerKm: elevationPerKm,
+            calibrationFactor: calibrationFactor
+        )
+    }
+
+    // MARK: - CoreML Prediction
+
+    private func coreMLPrediction(
+        model: FinishTimePredictor,
+        effectiveDistanceKm: Double,
+        experienceLevel: ExperienceLevel,
+        recentAvgPaceSecondsPerKm: Double,
+        ctl: Double,
+        tsb: Double,
+        terrainDifficulty: Double,
+        elevationPerKm: Double,
+        calibrationFactor: Double
+    ) throws -> Double {
+        let experienceNumeric: Double = switch experienceLevel {
+        case .beginner: 0
+        case .intermediate: 1
+        case .advanced: 2
+        case .elite: 3
+        }
+
+        let input = FinishTimePredictorInput(
+            effectiveDistanceKm: effectiveDistanceKm,
+            experienceLevel: experienceNumeric,
+            avgPaceSecondsPerKm: recentAvgPaceSecondsPerKm,
+            ctl: ctl,
+            tsb: tsb,
+            terrainDifficulty: terrainDifficulty,
+            elevationPerKm: elevationPerKm,
+            calibrationFactor: calibrationFactor
         )
 
+        let output = try model.prediction(input: input)
+        return output.predictedTimeSeconds
+    }
+
+    // MARK: - Regression Fallback
+
+    private func regressionFallback(
+        effectiveDistanceKm: Double,
+        experienceLevel: ExperienceLevel,
+        recentAvgPaceSecondsPerKm: Double,
+        ctl: Double,
+        tsb: Double,
+        terrainDifficulty: Double,
+        elevationPerKm: Double,
+        calibrationFactor: Double
+    ) -> Double {
+        let expMult = experienceMultiplier(for: experienceLevel)
+        let basePrediction = effectiveDistanceKm * recentAvgPaceSecondsPerKm * expMult
         let fitnessAdjustment = computeFitnessAdjustment(ctl: ctl, tsb: tsb)
         let terrainAdjustment = computeTerrainAdjustment(
             terrainDifficulty: terrainDifficulty,
@@ -50,7 +129,7 @@ actor FinishTimeMLService: FinishTimePredictionServiceProtocol {
 
         let calibrated = basePrediction * fitnessAdjustment * terrainAdjustment * calibrationFactor
 
-        let debugMessage: String = "ML prediction: \(calibrated)s for \(effectiveDistanceKm)km effective"
+        let debugMessage: String = "Regression fallback: \(calibrated)s for \(effectiveDistanceKm)km effective"
             + " (base=\(basePrediction), fitness=\(fitnessAdjustment),"
             + " terrain=\(terrainAdjustment), cal=\(calibrationFactor))"
         logger.debug("\(debugMessage, privacy: .public)")
@@ -60,8 +139,6 @@ actor FinishTimeMLService: FinishTimePredictionServiceProtocol {
 
     // MARK: - Component Calculations
 
-    /// Returns a multiplier based on experience level.
-    /// Beginners tend to slow down more over ultra distances; elites pace better.
     private func experienceMultiplier(for level: ExperienceLevel) -> Double {
         switch level {
         case .beginner: return 1.15
@@ -71,37 +148,17 @@ actor FinishTimeMLService: FinishTimePredictionServiceProtocol {
         }
     }
 
-    /// Computes the base predicted time from pace, distance, and experience.
-    private func computeBasePrediction(
-        effectiveDistanceKm: Double,
-        paceSecondsPerKm: Double,
-        experienceMultiplier: Double
-    ) -> Double {
-        effectiveDistanceKm * paceSecondsPerKm * experienceMultiplier
-    }
-
-    /// Adjusts prediction based on chronic training load (CTL) and training stress balance (TSB).
-    ///
-    /// - Higher CTL (fitter) = slight speed-up
-    /// - Positive TSB (fresh) = slight speed-up
-    /// - Negative TSB (fatigued) = slight slow-down
     private func computeFitnessAdjustment(ctl: Double, tsb: Double) -> Double {
         let ctlEffect = ctl * 0.001
         let tsbEffect: Double
         if tsb < 0 {
-            // Fatigued: slow down proportional to negative TSB
             tsbEffect = abs(tsb) * 0.002
         } else {
-            // Fresh: speed up proportional to positive TSB
             tsbEffect = -tsb * 0.001
         }
         return max(0.80, min(1.20, 1.0 - ctlEffect + tsbEffect))
     }
 
-    /// Adjusts prediction for terrain difficulty and elevation density.
-    ///
-    /// `terrainDifficulty` of 1.0 = standard trail, higher = more technical.
-    /// `elevationPerKm` in meters of D+ per kilometer of distance.
     private func computeTerrainAdjustment(
         terrainDifficulty: Double,
         elevationPerKm: Double

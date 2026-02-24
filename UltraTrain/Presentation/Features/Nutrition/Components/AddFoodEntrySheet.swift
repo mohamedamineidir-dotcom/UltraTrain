@@ -11,12 +11,26 @@ struct AddFoodEntrySheet: View {
     @State private var proteinGrams: Double = 0
     @State private var fatGrams: Double = 0
     @State private var hydrationMl: Int = 0
+    @State private var showingBarcodeScanner = false
+    @State private var showingFoodSearch = false
+    @State private var isLookingUp = false
+    @State private var lookupError: String?
 
+    let foodDatabaseService: (any FoodDatabaseServiceProtocol)?
     let onSave: (FoodLogEntry) -> Void
+
+    init(
+        foodDatabaseService: (any FoodDatabaseServiceProtocol)? = nil,
+        onSave: @escaping (FoodLogEntry) -> Void
+    ) {
+        self.foodDatabaseService = foodDatabaseService
+        self.onSave = onSave
+    }
 
     var body: some View {
         NavigationStack {
             Form {
+                quickAddSection
                 mealTypeSection
                 descriptionSection
                 caloriesSection
@@ -39,6 +53,35 @@ struct AddFoodEntrySheet: View {
                     .disabled(entryDescription.isEmpty)
                     .accessibilityIdentifier("addFood.saveButton")
                 }
+            }
+            .overlay {
+                if isLookingUp {
+                    ProgressView("Looking up product...")
+                        .padding()
+                        .background(.ultraThinMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+            }
+            .sheet(isPresented: $showingBarcodeScanner) {
+                BarcodeScannerView { barcode in
+                    showingBarcodeScanner = false
+                    Task { await lookupBarcode(barcode) }
+                }
+            }
+            .sheet(isPresented: $showingFoodSearch) {
+                if let service = foodDatabaseService {
+                    FoodSearchSheet(foodService: service) { result in
+                        applySearchResult(result)
+                    }
+                }
+            }
+            .alert("Lookup Failed", isPresented: .init(
+                get: { lookupError != nil },
+                set: { if !$0 { lookupError = nil } }
+            )) {
+                Button("OK") { lookupError = nil }
+            } message: {
+                Text(lookupError ?? "")
             }
         }
         .accessibilityIdentifier("addFood.sheet")
@@ -142,6 +185,70 @@ struct AddFoodEntrySheet: View {
             .accessibilityIdentifier("addFood.hydrationStepper")
             .accessibilityLabel("Hydration")
             .accessibilityValue("\(hydrationMl) milliliters")
+        }
+    }
+
+    // MARK: - Quick Add
+
+    @ViewBuilder
+    private var quickAddSection: some View {
+        if foodDatabaseService != nil {
+            Section("Quick Add") {
+                Button {
+                    showingBarcodeScanner = true
+                } label: {
+                    Label("Scan Barcode", systemImage: "barcode.viewfinder")
+                }
+                .accessibilityIdentifier("addFood.scanBarcodeButton")
+
+                Button {
+                    showingFoodSearch = true
+                } label: {
+                    Label("Search Food Database", systemImage: "magnifyingglass")
+                }
+                .accessibilityIdentifier("addFood.searchFoodButton")
+            }
+        }
+    }
+
+    // MARK: - Food Lookup
+
+    @MainActor
+    private func lookupBarcode(_ barcode: String) async {
+        guard let service = foodDatabaseService else { return }
+        isLookingUp = true
+        defer { isLookingUp = false }
+        do {
+            if let result = try await service.searchByBarcode(barcode) {
+                applySearchResult(result)
+            } else {
+                lookupError = "Product not found for barcode \(barcode)"
+            }
+        } catch {
+            lookupError = "Could not look up barcode: \(error.localizedDescription)"
+        }
+    }
+
+    private func applySearchResult(_ result: FoodSearchResult) {
+        if let brand = result.brand, !brand.isEmpty {
+            entryDescription = "\(result.name) (\(brand))"
+        } else {
+            entryDescription = result.name
+        }
+        if let cal = result.caloriesPerServing ?? result.caloriesPer100g {
+            calories = cal
+        }
+        if let carbs = result.carbsPerServing ?? result.carbsPer100g {
+            carbsGrams = carbs
+            showMacros = true
+        }
+        if let protein = result.proteinPerServing ?? result.proteinPer100g {
+            proteinGrams = protein
+            showMacros = true
+        }
+        if let fat = result.fatPerServing ?? result.fatPer100g {
+            fatGrams = fat
+            showMacros = true
         }
     }
 

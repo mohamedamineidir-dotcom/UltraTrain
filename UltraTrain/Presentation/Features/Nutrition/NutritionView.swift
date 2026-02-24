@@ -8,6 +8,7 @@ struct NutritionView: View {
     private let nutritionRepository: any NutritionRepository
     private let foodLogRepository: any FoodLogRepository
     private let sessionNutritionAdvisor: any SessionNutritionAdvisor
+    private let foodDatabaseService: (any FoodDatabaseServiceProtocol)?
 
     init(
         nutritionRepository: any NutritionRepository,
@@ -16,13 +17,15 @@ struct NutritionView: View {
         planRepository: any TrainingPlanRepository,
         nutritionGenerator: any GenerateNutritionPlanUseCase,
         foodLogRepository: any FoodLogRepository,
-        sessionNutritionAdvisor: any SessionNutritionAdvisor
+        sessionNutritionAdvisor: any SessionNutritionAdvisor,
+        foodDatabaseService: (any FoodDatabaseServiceProtocol)? = nil
     ) {
         self.athleteRepository = athleteRepository
         self.planRepository = planRepository
         self.nutritionRepository = nutritionRepository
         self.foodLogRepository = foodLogRepository
         self.sessionNutritionAdvisor = sessionNutritionAdvisor
+        self.foodDatabaseService = foodDatabaseService
 
         _viewModel = State(initialValue: NutritionViewModel(
             nutritionRepository: nutritionRepository,
@@ -46,7 +49,8 @@ struct NutritionView: View {
                             planRepository: planRepository,
                             nutritionRepository: nutritionRepository,
                             foodLogRepository: foodLogRepository,
-                            sessionNutritionAdvisor: sessionNutritionAdvisor
+                            sessionNutritionAdvisor: sessionNutritionAdvisor,
+                            foodDatabaseService: foodDatabaseService
                         )
                     case .raceDay:
                         raceDayContent

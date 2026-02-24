@@ -60,6 +60,7 @@ struct UltraTrainApp: App {
     private let emergencyContactRepository: any EmergencyContactRepository
     private let motionService: MotionService
     private let foodLogRepository: any FoodLogRepository
+    private let foodDatabaseService: FoodDatabaseService
     private let raceReflectionRepository: any RaceReflectionRepository
     private let achievementRepository: any AchievementRepository
     private let morningCheckInRepository: any MorningCheckInRepository
@@ -300,6 +301,7 @@ struct UltraTrainApp: App {
         intervalWorkoutRepository = LocalIntervalWorkoutRepository(modelContainer: modelContainer)
         emergencyContactRepository = LocalEmergencyContactRepository(modelContainer: modelContainer)
         foodLogRepository = LocalFoodLogRepository(modelContainer: modelContainer)
+        foodDatabaseService = FoodDatabaseService()
         raceReflectionRepository = LocalRaceReflectionRepository(modelContainer: modelContainer)
         achievementRepository = LocalAchievementRepository(modelContainer: modelContainer)
         morningCheckInRepository = LocalMorningCheckInRepository(modelContainer: modelContainer)
@@ -452,6 +454,7 @@ struct UltraTrainApp: App {
                 emergencyContactRepository: emergencyContactRepository,
                 motionService: motionService,
                 foodLogRepository: foodLogRepository,
+                foodDatabaseService: foodDatabaseService,
                 raceReflectionRepository: raceReflectionRepository,
                 achievementRepository: achievementRepository,
                 morningCheckInRepository: morningCheckInRepository,

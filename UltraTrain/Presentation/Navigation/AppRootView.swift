@@ -64,6 +64,7 @@ struct AppRootView: View {
     private let emergencyContactRepository: (any EmergencyContactRepository)?
     private let motionService: (any MotionServiceProtocol)?
     private let foodLogRepository: any FoodLogRepository
+    private let foodDatabaseService: (any FoodDatabaseServiceProtocol)?
     private let raceReflectionRepository: any RaceReflectionRepository
     private let achievementRepository: (any AchievementRepository)?
     private let morningCheckInRepository: (any MorningCheckInRepository)?
@@ -120,6 +121,7 @@ struct AppRootView: View {
         emergencyContactRepository: (any EmergencyContactRepository)? = nil,
         motionService: (any MotionServiceProtocol)? = nil,
         foodLogRepository: any FoodLogRepository,
+        foodDatabaseService: (any FoodDatabaseServiceProtocol)? = nil,
         raceReflectionRepository: any RaceReflectionRepository,
         achievementRepository: (any AchievementRepository)? = nil,
         morningCheckInRepository: (any MorningCheckInRepository)? = nil,
@@ -175,6 +177,7 @@ struct AppRootView: View {
         self.emergencyContactRepository = emergencyContactRepository
         self.motionService = motionService
         self.foodLogRepository = foodLogRepository
+        self.foodDatabaseService = foodDatabaseService
         self.raceReflectionRepository = raceReflectionRepository
         self.achievementRepository = achievementRepository
         self.morningCheckInRepository = morningCheckInRepository
@@ -294,6 +297,7 @@ struct AppRootView: View {
                         emergencyContactRepository: emergencyContactRepository,
                         motionService: motionService,
                         foodLogRepository: foodLogRepository,
+                        foodDatabaseService: foodDatabaseService,
                         raceReflectionRepository: raceReflectionRepository,
                         achievementRepository: achievementRepository,
                         morningCheckInRepository: morningCheckInRepository,

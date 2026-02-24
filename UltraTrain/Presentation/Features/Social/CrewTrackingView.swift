@@ -1,4 +1,5 @@
 import SwiftUI
+import MapKit
 
 struct CrewTrackingView: View {
 
@@ -103,7 +104,7 @@ struct CrewTrackingView: View {
 
     private func activeSessionView(_ session: CrewTrackingSession) -> some View {
         VStack(spacing: Theme.Spacing.md) {
-            mapPlaceholder
+            CrewTrackingMapView(participants: session.participants)
 
             sessionInfoCard(session)
 
@@ -111,23 +112,6 @@ struct CrewTrackingView: View {
 
             sessionActions(session)
         }
-    }
-
-    private var mapPlaceholder: some View {
-        RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-            .fill(Theme.Colors.secondaryBackground)
-            .frame(height: 200)
-            .overlay {
-                VStack(spacing: Theme.Spacing.sm) {
-                    Image(systemName: "map")
-                        .font(.largeTitle)
-                    Text("Map would show participants here")
-                        .font(.caption)
-                }
-                .foregroundStyle(Theme.Colors.secondaryLabel)
-            }
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Crew tracking map placeholder")
     }
 
     private func sessionInfoCard(_ session: CrewTrackingSession) -> some View {
