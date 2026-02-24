@@ -12,10 +12,10 @@ final class NutritionUITests: XCTestCase {
     func testNutritionTabLoads() throws {
         let app = XCUIApplication.launchWithTestData()
         app.tabBars.buttons["Nutrition"].waitAndTap()
-        // Verify we're on the nutrition tab - look for nutrition content or empty state
-        let planContent = app.scrollViews["nutrition.planContent"]
-        let emptyState = app.otherElements["nutrition.emptyState"]
-        XCTAssertTrue(planContent.waitForExistence(timeout: 5) || emptyState.waitForExistence(timeout: 5))
+        // The default tab is "Training" — verify training content or the tab picker loads
+        let trainingView = app.otherElements["nutrition.trainingView"]
+        let tabPicker = app.segmentedControls["nutrition.tabPicker"]
+        XCTAssertTrue(trainingView.waitForExistence(timeout: 5) || tabPicker.waitForExistence(timeout: 5))
     }
 
     @MainActor

@@ -211,6 +211,11 @@ struct AppRootView: View {
                 hasCompletedOnboarding = true
                 return
             }
+            if ProcessInfo.processInfo.arguments.contains("-UITestMode") {
+                isAuthenticated = true
+                await checkOnboardingStatus()
+                return
+            }
             #endif
             isAuthenticated = authService.isAuthenticated()
             if isAuthenticated == true {

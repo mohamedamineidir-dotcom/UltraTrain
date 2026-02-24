@@ -14,6 +14,14 @@ final class SettingsUITests: XCTestCase {
         settingsButton.waitAndTap()
     }
 
+    private func scrollToElement(_ element: XCUIElement, in scrollable: XCUIElement, maxSwipes: Int = 8) {
+        var swipes = 0
+        while !element.exists && swipes < maxSwipes {
+            scrollable.swipeUp()
+            swipes += 1
+        }
+    }
+
     // MARK: - Tests
 
     @MainActor
@@ -21,10 +29,15 @@ final class SettingsUITests: XCTestCase {
         let app = XCUIApplication.launchWithTestData()
         navigateToSettings(app)
         XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5))
+        // Scroll to find training reminders toggle in Notifications section
+        let settingsList = app.collectionViews.firstMatch
         let trainingToggle = app.switches["settings.trainingRemindersToggle"]
-        XCTAssertTrue(trainingToggle.waitForExistence(timeout: 5))
+        scrollToElement(trainingToggle, in: settingsList)
+        XCTAssertTrue(trainingToggle.waitForExistence(timeout: 3))
+        // Race countdown is further down
         let raceToggle = app.switches["settings.raceCountdownToggle"]
-        XCTAssertTrue(raceToggle.waitForExistence(timeout: 5))
+        scrollToElement(raceToggle, in: settingsList)
+        XCTAssertTrue(raceToggle.waitForExistence(timeout: 3))
     }
 
     @MainActor
@@ -39,8 +52,11 @@ final class SettingsUITests: XCTestCase {
     func testExportButtonExists() throws {
         let app = XCUIApplication.launchWithTestData()
         navigateToSettings(app)
+        // Scroll down to reach the Data section near the bottom
+        let settingsList = app.collectionViews.firstMatch
         let exportButton = app.buttons["settings.exportButton"]
-        XCTAssertTrue(exportButton.waitForExistence(timeout: 5))
+        scrollToElement(exportButton, in: settingsList)
+        XCTAssertTrue(exportButton.waitForExistence(timeout: 3))
     }
 
     @MainActor
