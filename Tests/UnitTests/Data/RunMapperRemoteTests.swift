@@ -138,6 +138,110 @@ struct RunMapperRemoteTests {
         #expect(dto.idempotencyKey == run.id.uuidString)
     }
 
+    // MARK: - Validation Tests
+
+    @Test("toDomain returns nil for negative distance")
+    func toDomainReturnsNilForNegativeDistance() {
+        let dto = RunResponseDTO(
+            id: "550e8400-e29b-41d4-a716-446655440000",
+            date: "2026-02-20T08:30:00Z",
+            distanceKm: -5,
+            elevationGainM: 100,
+            elevationLossM: 90,
+            duration: 3600,
+            averageHeartRate: nil,
+            maxHeartRate: nil,
+            averagePaceSecondsPerKm: 360,
+            gpsTrack: nil,
+            splits: nil,
+            notes: nil,
+            linkedSessionId: nil,
+            createdAt: nil,
+            updatedAt: nil
+        )
+
+        #expect(RunMapper.toDomain(dto, athleteId: UUID()) == nil)
+    }
+
+    @Test("toDomain filters invalid GPS coordinates")
+    func toDomainFiltersInvalidGPS() {
+        let dto = RunResponseDTO(
+            id: "550e8400-e29b-41d4-a716-446655440000",
+            date: "2026-02-20T08:30:00Z",
+            distanceKm: 10,
+            elevationGainM: 100,
+            elevationLossM: 90,
+            duration: 3600,
+            averageHeartRate: nil,
+            maxHeartRate: nil,
+            averagePaceSecondsPerKm: 360,
+            gpsTrack: [
+                TrackPointDTO(latitude: 45.5, longitude: 6.1, altitudeM: 1200, timestamp: "2026-02-20T08:30:00Z", heartRate: 140),
+                TrackPointDTO(latitude: 999, longitude: 6.1, altitudeM: 1200, timestamp: "2026-02-20T08:31:00Z", heartRate: 140),
+                TrackPointDTO(latitude: 45.5, longitude: -999, altitudeM: 1200, timestamp: "2026-02-20T08:32:00Z", heartRate: 140)
+            ],
+            splits: nil,
+            notes: nil,
+            linkedSessionId: nil,
+            createdAt: nil,
+            updatedAt: nil
+        )
+
+        let run = RunMapper.toDomain(dto, athleteId: UUID())
+        #expect(run != nil)
+        #expect(run?.gpsTrack.count == 1)
+    }
+
+    @Test("toDomain sanitizes notes")
+    func toDomainSanitizesNotes() {
+        let dto = RunResponseDTO(
+            id: "550e8400-e29b-41d4-a716-446655440000",
+            date: "2026-02-20T08:30:00Z",
+            distanceKm: 10,
+            elevationGainM: 100,
+            elevationLossM: 90,
+            duration: 3600,
+            averageHeartRate: nil,
+            maxHeartRate: nil,
+            averagePaceSecondsPerKm: 360,
+            gpsTrack: nil,
+            splits: nil,
+            notes: "  Great run\u{0000}!  ",
+            linkedSessionId: nil,
+            createdAt: nil,
+            updatedAt: nil
+        )
+
+        let run = RunMapper.toDomain(dto, athleteId: UUID())
+        #expect(run?.notes == "Great run!")
+    }
+
+    @Test("toDomain nullifies invalid heart rate")
+    func toDomainNullifiesInvalidHR() {
+        let dto = RunResponseDTO(
+            id: "550e8400-e29b-41d4-a716-446655440000",
+            date: "2026-02-20T08:30:00Z",
+            distanceKm: 10,
+            elevationGainM: 100,
+            elevationLossM: 90,
+            duration: 3600,
+            averageHeartRate: 999,
+            maxHeartRate: 0,
+            averagePaceSecondsPerKm: 360,
+            gpsTrack: nil,
+            splits: nil,
+            notes: nil,
+            linkedSessionId: nil,
+            createdAt: nil,
+            updatedAt: nil
+        )
+
+        let run = RunMapper.toDomain(dto, athleteId: UUID())
+        #expect(run != nil)
+        #expect(run?.averageHeartRate == nil)
+        #expect(run?.maxHeartRate == nil)
+    }
+
     // MARK: - Helpers
 
     private func makeRun() -> CompletedRun {

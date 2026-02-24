@@ -1,4 +1,5 @@
 import Foundation
+import os
 
 enum GroupChallengeRemoteMapper {
     static func toDomain(_ dto: GroupChallengeResponseDTO) -> GroupChallenge? {
@@ -14,13 +15,18 @@ enum GroupChallengeRemoteMapper {
             return nil
         }
 
+        guard InputValidator.isPositive(dto.targetValue) else {
+            Logger.validation.warning("GroupChallengeMapper: invalid targetValue \(dto.targetValue)")
+            return nil
+        }
+
         let participants = dto.participants.compactMap { participantDTO -> GroupChallengeParticipant? in
             guard let joinedDate = formatter.date(from: participantDTO.joinedDate) else {
                 return nil
             }
             return GroupChallengeParticipant(
                 id: participantDTO.id,
-                displayName: participantDTO.displayName,
+                displayName: InputValidator.sanitizeName(participantDTO.displayName),
                 photoData: nil,
                 currentValue: participantDTO.currentValue,
                 joinedDate: joinedDate
@@ -30,9 +36,9 @@ enum GroupChallengeRemoteMapper {
         return GroupChallenge(
             id: id,
             creatorProfileId: dto.creatorProfileId,
-            creatorDisplayName: dto.creatorDisplayName,
-            name: dto.name,
-            descriptionText: dto.descriptionText,
+            creatorDisplayName: InputValidator.sanitizeName(dto.creatorDisplayName),
+            name: InputValidator.sanitizeText(dto.name, maxLength: 200),
+            descriptionText: InputValidator.sanitizeText(dto.descriptionText, maxLength: 1000),
             type: type,
             targetValue: dto.targetValue,
             startDate: startDate,

@@ -25,6 +25,7 @@ struct SettingsView: View {
         healthKitImportService: (any HealthKitImportServiceProtocol)? = nil,
         emergencyContactRepository: (any EmergencyContactRepository)? = nil,
         authService: (any AuthServiceProtocol)? = nil,
+        privacyTrackingService: (any PrivacyTrackingServiceProtocol)? = nil,
         onLogout: (() -> Void)? = nil
     ) {
         self.appSettingsRepository = appSettingsRepository
@@ -44,7 +45,8 @@ struct SettingsView: View {
             raceRepository: raceRepository,
             biometricAuthService: biometricAuthService,
             healthKitImportService: healthKitImportService,
-            authService: authService
+            authService: authService,
+            privacyTrackingService: privacyTrackingService
         ))
     }
 
@@ -62,6 +64,7 @@ struct SettingsView: View {
                 healthKitSection
                 stravaSection
                 iCloudSection
+                privacySection
                 syncQueueSection
                 dataRetentionSection
                 dataManagementSection
@@ -648,6 +651,38 @@ struct SettingsView: View {
             Button("OK") {}
         } message: {
             Text("Please close and reopen UltraTrain for the iCloud sync change to take effect.")
+        }
+    }
+
+    // MARK: - Privacy Section
+
+    private var privacySection: some View {
+        Section {
+            HStack {
+                Label("Tracking Permission", systemImage: "hand.raised")
+                Spacer()
+                Text(viewModel.trackingStatus.displayDescription)
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+
+            if viewModel.trackingStatus == .notDetermined {
+                Button("Request Permission") {
+                    Task { await viewModel.requestTrackingPermission() }
+                }
+                .accessibilityHint("Requests App Tracking Transparency permission")
+            } else if viewModel.trackingStatus == .denied {
+                Button("Open Settings") {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                }
+                .accessibilityHint("Opens iOS Settings to change tracking permission")
+            }
+        } header: {
+            Text("Privacy")
+        } footer: {
+            Text("UltraTrain only collects anonymous usage data. No personal information is shared with third parties.")
         }
     }
 

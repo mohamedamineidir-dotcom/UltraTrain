@@ -80,44 +80,7 @@ struct UltraTrainApp: App {
         let iCloudEnabled = UserDefaults.standard.bool(forKey: "iCloudSyncEnabled")
 
         do {
-            let schema = Schema([
-                AthleteSwiftDataModel.self,
-                RaceSwiftDataModel.self,
-                CheckpointSwiftDataModel.self,
-                TrainingPlanSwiftDataModel.self,
-                TrainingWeekSwiftDataModel.self,
-                TrainingSessionSwiftDataModel.self,
-                NutritionPlanSwiftDataModel.self,
-                NutritionEntrySwiftDataModel.self,
-                NutritionProductSwiftDataModel.self,
-                CompletedRunSwiftDataModel.self,
-                SplitSwiftDataModel.self,
-                FitnessSnapshotSwiftDataModel.self,
-                AppSettingsSwiftDataModel.self,
-                NutritionPreferencesSwiftDataModel.self,
-                GearItemSwiftDataModel.self,
-                FinishEstimateSwiftDataModel.self,
-                StravaUploadQueueSwiftDataModel.self,
-                RecoverySnapshotSwiftDataModel.self,
-                RacePrepChecklistSwiftDataModel.self,
-                ChecklistItemSwiftDataModel.self,
-                ChallengeEnrollmentSwiftDataModel.self,
-                WorkoutRecipeSwiftDataModel.self,
-                TrainingGoalSwiftDataModel.self,
-                SocialProfileSwiftDataModel.self,
-                FriendConnectionSwiftDataModel.self,
-                SharedRunSwiftDataModel.self,
-                ActivityFeedItemSwiftDataModel.self,
-                GroupChallengeSwiftDataModel.self,
-                SavedRouteSwiftDataModel.self,
-                IntervalWorkoutSwiftDataModel.self,
-                EmergencyContactSwiftDataModel.self,
-                FoodLogEntrySwiftDataModel.self,
-                RaceReflectionSwiftDataModel.self,
-                UnlockedAchievementSwiftDataModel.self,
-                MorningCheckInSwiftDataModel.self,
-                SyncQueueSwiftDataModel.self
-            ])
+            let schema = Schema(SchemaV1.models)
             let config: ModelConfiguration
             if isUITesting {
                 config = ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
@@ -128,7 +91,11 @@ struct UltraTrainApp: App {
             } else {
                 config = ModelConfiguration(cloudKitDatabase: .none)
             }
-            modelContainer = try ModelContainer(for: schema, configurations: config)
+            modelContainer = try ModelContainer(
+                for: schema,
+                migrationPlan: UltraTrainMigrationPlan.self,
+                configurations: config
+            )
         } catch {
             fatalError("Failed to create ModelContainer: \(error)")
         }

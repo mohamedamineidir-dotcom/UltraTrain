@@ -21,6 +21,7 @@ final class SettingsViewModel {
     private let biometricAuthService: any BiometricAuthServiceProtocol
     private let healthKitImportService: (any HealthKitImportServiceProtocol)?
     private let authService: (any AuthServiceProtocol)?
+    private let privacyTrackingService: (any PrivacyTrackingServiceProtocol)?
 
     // MARK: - State
 
@@ -54,6 +55,7 @@ final class SettingsViewModel {
     var confirmPassword = ""
     var isChangingPassword = false
     var changePasswordSuccess = false
+    var trackingStatus: TrackingAuthorizationStatus = .notDetermined
 
     var healthKitStatus: HealthKitAuthStatus {
         healthKitService.authorizationStatus
@@ -126,7 +128,8 @@ final class SettingsViewModel {
         raceRepository: any RaceRepository,
         biometricAuthService: any BiometricAuthServiceProtocol,
         healthKitImportService: (any HealthKitImportServiceProtocol)? = nil,
-        authService: (any AuthServiceProtocol)? = nil
+        authService: (any AuthServiceProtocol)? = nil,
+        privacyTrackingService: (any PrivacyTrackingServiceProtocol)? = nil
     ) {
         self.athleteRepository = athleteRepository
         self.appSettingsRepository = appSettingsRepository
@@ -142,6 +145,10 @@ final class SettingsViewModel {
         self.biometricAuthService = biometricAuthService
         self.healthKitImportService = healthKitImportService
         self.authService = authService
+        self.privacyTrackingService = privacyTrackingService
+        if let privacyTrackingService {
+            self.trackingStatus = privacyTrackingService.authorizationStatus
+        }
     }
 
     // MARK: - Load
@@ -762,6 +769,13 @@ final class SettingsViewModel {
             self.error = error.localizedDescription
             Logger.settings.error("Account deletion failed: \(error)")
         }
+    }
+
+    // MARK: - Privacy Tracking
+
+    func requestTrackingPermission() async {
+        guard let privacyTrackingService else { return }
+        trackingStatus = await privacyTrackingService.requestAuthorization()
     }
 
     // MARK: - Data Retention

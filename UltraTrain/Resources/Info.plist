@@ -58,6 +58,8 @@
     <string>UltraTrain uses the camera to scan food product barcodes for quick nutrition entry.</string>
     <key>NSFaceIDUsageDescription</key>
     <string>UltraTrain uses Face ID to protect your training and health data.</string>
+    <key>NSUserTrackingUsageDescription</key>
+    <string>UltraTrain uses this permission to measure app performance and improve your training experience. No personal data is shared with third parties.</string>
     <key>NSSupportsLiveActivities</key>
     <true/>
     <key>STRAVA_CLIENT_ID</key>

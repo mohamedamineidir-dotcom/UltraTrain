@@ -18,7 +18,7 @@ enum TrainingPlanRemoteMapper {
         let formatter = ISO8601DateFormatter()
         return TrainingPlanUploadRequestDTO(
             planId: plan.id.uuidString,
-            targetRaceName: raceName,
+            targetRaceName: InputValidator.sanitizeText(raceName, maxLength: 200),
             targetRaceDate: formatter.string(from: raceDate),
             totalWeeks: plan.weeks.count,
             planJson: jsonString,

@@ -17,7 +17,7 @@ enum FriendConnectionRemoteMapper {
         return FriendConnection(
             id: id,
             friendProfileId: dto.friendProfileId,
-            friendDisplayName: dto.friendDisplayName,
+            friendDisplayName: InputValidator.sanitizeName(dto.friendDisplayName),
             friendPhotoData: nil,
             status: status,
             createdDate: createdDate,

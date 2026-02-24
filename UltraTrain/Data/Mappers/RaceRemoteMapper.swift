@@ -34,6 +34,10 @@ enum RaceRemoteMapper {
         if let updatedAtStr = response.updatedAt {
             race.serverUpdatedAt = ISO8601DateFormatter().date(from: updatedAtStr)
         }
+
+        guard InputValidator.isValidDistance(race.distanceKm) else { return nil }
+        guard InputValidator.isValidElevation(race.elevationGainM) else { return nil }
+
         return race
     }
 }

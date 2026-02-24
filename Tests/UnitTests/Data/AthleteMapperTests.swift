@@ -70,6 +70,69 @@ struct AthleteMapperTests {
         #expect(AthleteMapper.toDomain(dto) == nil)
     }
 
+    @Test("toDomain returns nil for invalid weight")
+    func toDomainReturnsNilForInvalidWeight() {
+        let dto = AthleteDTO(
+            id: "550e8400-e29b-41d4-a716-446655440000",
+            firstName: "Test",
+            lastName: "Runner",
+            dateOfBirth: "1990-01-01T00:00:00Z",
+            weightKg: 5,
+            heightCm: 175,
+            restingHeartRate: 55,
+            maxHeartRate: 185,
+            experienceLevel: "intermediate",
+            weeklyVolumeKm: 50,
+            longestRunKm: 30
+        )
+
+        #expect(AthleteMapper.toDomain(dto) == nil)
+    }
+
+    @Test("toDomain passes through HR values with warning for invalid ranges")
+    func toDomainPassesThroughInvalidHR() {
+        let dto = AthleteDTO(
+            id: "550e8400-e29b-41d4-a716-446655440000",
+            firstName: "Test",
+            lastName: "Runner",
+            dateOfBirth: "1990-01-01T00:00:00Z",
+            weightKg: 70,
+            heightCm: 175,
+            restingHeartRate: 999,
+            maxHeartRate: 0,
+            experienceLevel: "intermediate",
+            weeklyVolumeKm: 50,
+            longestRunKm: 30
+        )
+
+        let athlete = AthleteMapper.toDomain(dto)
+        #expect(athlete != nil)
+        // Non-optional fields pass through with validation warnings logged
+        #expect(athlete?.restingHeartRate == 999)
+        #expect(athlete?.maxHeartRate == 0)
+    }
+
+    @Test("toDomain sanitizes names")
+    func toDomainSanitizesNames() {
+        let dto = AthleteDTO(
+            id: "550e8400-e29b-41d4-a716-446655440000",
+            firstName: "  Kilian\u{0000}  ",
+            lastName: "  Jornet  ",
+            dateOfBirth: "1987-10-27T00:00:00Z",
+            weightKg: 60.0,
+            heightCm: 171.0,
+            restingHeartRate: 40,
+            maxHeartRate: 195,
+            experienceLevel: "elite",
+            weeklyVolumeKm: 120.0,
+            longestRunKm: 170.0
+        )
+
+        let athlete = AthleteMapper.toDomain(dto)
+        #expect(athlete?.firstName == "Kilian")
+        #expect(athlete?.lastName == "Jornet")
+    }
+
     @Test("Round-trip preserves athlete data")
     func roundTripPreservesData() {
         let original = Athlete(

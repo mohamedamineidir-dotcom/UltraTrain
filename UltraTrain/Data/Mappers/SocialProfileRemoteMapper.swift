@@ -10,8 +10,8 @@ enum SocialProfileRemoteMapper {
 
         return SocialProfile(
             id: dto.id,
-            displayName: dto.displayName,
-            bio: dto.bio,
+            displayName: InputValidator.sanitizeName(dto.displayName),
+            bio: InputValidator.sanitizeOptionalText(dto.bio, maxLength: 1000),
             profilePhotoData: nil,
             experienceLevel: experienceLevel,
             totalDistanceKm: dto.totalDistanceKm,

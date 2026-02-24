@@ -43,4 +43,7 @@ extension Logger {
     static let routePlanning = Logger(subsystem: subsystem, category: "routePlanning")
     static let security = Logger(subsystem: subsystem, category: "security")
     static let backgroundUpload = Logger(subsystem: subsystem, category: "backgroundUpload")
+    static let validation = Logger(subsystem: subsystem, category: "validation")
+    static let analyticsLog = Logger(subsystem: subsystem, category: "analytics")
+    static let privacy = Logger(subsystem: subsystem, category: "privacy")
 }

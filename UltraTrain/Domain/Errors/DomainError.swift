@@ -40,6 +40,8 @@ enum DomainError: Error, Equatable, Sendable {
     case emergencyContactNotFound
     case motionServiceUnavailable
     case crewTrackingUnavailable
+    case validationFailed(field: String, reason: String)
+    case invalidGPSData(reason: String)
     case unknown(message: String)
 }
 
@@ -124,6 +126,10 @@ extension DomainError: LocalizedError {
             return "Motion services are unavailable on this device."
         case .crewTrackingUnavailable:
             return "Crew tracking is currently unavailable."
+        case .validationFailed(let field, let reason):
+            return "Invalid \(field): \(reason)"
+        case .invalidGPSData(let reason):
+            return "Invalid GPS data: \(reason)"
         case .unknown(let message):
             return "An unexpected error occurred: \(message)"
         }

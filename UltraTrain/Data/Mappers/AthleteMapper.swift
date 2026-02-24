@@ -1,4 +1,5 @@
 import Foundation
+import os
 
 enum AthleteMapper {
     static func toDomain(_ dto: AthleteDTO) -> Athlete? {
@@ -12,10 +13,29 @@ enum AthleteMapper {
             return nil
         }
 
+        guard InputValidator.isValidWeight(dto.weightKg) else {
+            Logger.validation.warning("AthleteMapper: invalid weight \(dto.weightKg)")
+            return nil
+        }
+        guard InputValidator.isValidHeight(dto.heightCm) else {
+            Logger.validation.warning("AthleteMapper: invalid height \(dto.heightCm)")
+            return nil
+        }
+
+        if !InputValidator.isValidHeartRate(dto.restingHeartRate) {
+            Logger.validation.warning("AthleteMapper: invalid restingHR \(dto.restingHeartRate)")
+        }
+        if !InputValidator.isValidHeartRate(dto.maxHeartRate) {
+            Logger.validation.warning("AthleteMapper: invalid maxHR \(dto.maxHeartRate)")
+        }
+        if dto.maxHeartRate <= dto.restingHeartRate {
+            Logger.validation.warning("AthleteMapper: maxHR (\(dto.maxHeartRate)) <= restingHR (\(dto.restingHeartRate))")
+        }
+
         return Athlete(
             id: id,
-            firstName: dto.firstName,
-            lastName: dto.lastName,
+            firstName: InputValidator.sanitizeName(dto.firstName),
+            lastName: InputValidator.sanitizeName(dto.lastName),
             dateOfBirth: dob,
             weightKg: dto.weightKg,
             heightCm: dto.heightCm,

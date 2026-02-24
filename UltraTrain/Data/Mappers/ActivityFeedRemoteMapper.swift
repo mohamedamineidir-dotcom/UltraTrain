@@ -25,15 +25,25 @@ enum ActivityFeedRemoteMapper {
             return nil
         }()
 
+        let validatedStats: ActivityStats? = {
+            guard let s = stats else { return nil }
+            let dist = s.distanceKm.flatMap { InputValidator.isValidDistance($0) ? $0 : nil }
+            let elev = s.elevationGainM.flatMap { InputValidator.isValidElevation($0) ? $0 : nil }
+            let dur = s.duration.flatMap { InputValidator.isValidDuration($0) ? $0 : nil }
+            let pace = s.averagePace.flatMap { InputValidator.isValidPace($0) ? $0 : nil }
+            if dist == nil && elev == nil && dur == nil && pace == nil { return nil }
+            return ActivityStats(distanceKm: dist, elevationGainM: elev, duration: dur, averagePace: pace)
+        }()
+
         return ActivityFeedItem(
             id: id,
             athleteProfileId: dto.athleteProfileId,
-            athleteDisplayName: dto.athleteDisplayName,
+            athleteDisplayName: InputValidator.sanitizeName(dto.athleteDisplayName),
             athletePhotoData: nil,
             activityType: activityType,
-            title: dto.title,
-            subtitle: dto.subtitle,
-            stats: stats,
+            title: InputValidator.sanitizeText(dto.title, maxLength: 200),
+            subtitle: InputValidator.sanitizeOptionalText(dto.subtitle, maxLength: 500),
+            stats: validatedStats,
             timestamp: timestamp,
             likeCount: dto.likeCount,
             isLikedByMe: dto.isLikedByMe
