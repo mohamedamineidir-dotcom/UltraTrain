@@ -13,6 +13,9 @@ enum SyncOperationType: String, Sendable, Equatable {
     case raceSync
     case raceDelete
     case trainingPlanSync
+    case socialProfileSync
+    case activityPublish
+    case shareRevoke
 }
 
 struct SyncQueueItem: Identifiable, Equatable, Sendable {

@@ -5,17 +5,20 @@ final class SyncedActivityFeedRepository: ActivityFeedRepository, @unchecked Sen
     private let local: LocalActivityFeedRepository
     private let remote: RemoteActivityFeedDataSource
     private let authService: any AuthServiceProtocol
+    private let syncQueue: (any SyncQueueServiceProtocol)?
 
     private static let logger = Logger(subsystem: "com.ultratrain", category: "SyncedActivityFeedRepository")
 
     init(
         local: LocalActivityFeedRepository,
         remote: RemoteActivityFeedDataSource,
-        authService: any AuthServiceProtocol
+        authService: any AuthServiceProtocol,
+        syncQueue: (any SyncQueueServiceProtocol)? = nil
     ) {
         self.local = local
         self.remote = remote
         self.authService = authService
+        self.syncQueue = syncQueue
     }
 
     func fetchFeed(limit: Int) async throws -> [ActivityFeedItem] {
@@ -40,12 +43,16 @@ final class SyncedActivityFeedRepository: ActivityFeedRepository, @unchecked Sen
         try await local.publishActivity(item)
 
         guard authService.isAuthenticated() else { return }
-        Task {
-            do {
-                let dto = ActivityFeedRemoteMapper.toDTO(item)
-                _ = try await self.remote.publishActivity(dto)
-            } catch {
-                Self.logger.warning("Remote activity publish failed: \(error)")
+        if let syncQueue {
+            try? await syncQueue.enqueueOperation(.activityPublish, entityId: item.id)
+        } else {
+            Task {
+                do {
+                    let dto = ActivityFeedRemoteMapper.toDTO(item)
+                    _ = try await self.remote.publishActivity(dto)
+                } catch {
+                    Self.logger.warning("Remote activity publish failed: \(error)")
+                }
             }
         }
     }

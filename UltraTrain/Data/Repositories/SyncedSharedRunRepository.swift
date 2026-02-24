@@ -5,17 +5,20 @@ final class SyncedSharedRunRepository: SharedRunRepository, @unchecked Sendable 
     private let local: LocalSharedRunRepository
     private let remote: RemoteSharedRunDataSource
     private let authService: any AuthServiceProtocol
+    private let syncQueue: (any SyncQueueServiceProtocol)?
 
     private static let logger = Logger(subsystem: "com.ultratrain", category: "SyncedSharedRunRepository")
 
     init(
         local: LocalSharedRunRepository,
         remote: RemoteSharedRunDataSource,
-        authService: any AuthServiceProtocol
+        authService: any AuthServiceProtocol,
+        syncQueue: (any SyncQueueServiceProtocol)? = nil
     ) {
         self.local = local
         self.remote = remote
         self.authService = authService
+        self.syncQueue = syncQueue
     }
 
     func fetchSharedRuns() async throws -> [SharedRun] {
@@ -51,11 +54,15 @@ final class SyncedSharedRunRepository: SharedRunRepository, @unchecked Sendable 
         try await local.revokeShare(runId)
 
         guard authService.isAuthenticated() else { return }
-        Task {
-            do {
-                try await self.remote.revokeShare(id: runId.uuidString)
-            } catch {
-                Self.logger.warning("Remote share revoke failed: \(error)")
+        if let syncQueue {
+            try? await syncQueue.enqueueOperation(.shareRevoke, entityId: runId)
+        } else {
+            Task {
+                do {
+                    try await self.remote.revokeShare(id: runId.uuidString)
+                } catch {
+                    Self.logger.warning("Remote share revoke failed: \(error)")
+                }
             }
         }
     }

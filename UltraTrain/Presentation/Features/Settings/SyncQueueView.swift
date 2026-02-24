@@ -138,6 +138,9 @@ struct SyncQueueView: View {
         case .raceSync: "Race Sync"
         case .raceDelete: "Race Delete"
         case .trainingPlanSync: "Plan Sync"
+        case .socialProfileSync: "Social Profile Sync"
+        case .activityPublish: "Activity Publish"
+        case .shareRevoke: "Share Revoke"
         }
     }
 
@@ -148,6 +151,9 @@ struct SyncQueueView: View {
         case .raceSync: "flag"
         case .raceDelete: "flag.slash"
         case .trainingPlanSync: "calendar"
+        case .socialProfileSync: "person.crop.circle"
+        case .activityPublish: "megaphone"
+        case .shareRevoke: "xmark.circle"
         }
     }
 }

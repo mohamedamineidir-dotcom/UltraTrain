@@ -5,17 +5,20 @@ final class SyncedSocialProfileRepository: SocialProfileRepository, @unchecked S
     private let local: LocalSocialProfileRepository
     private let remote: RemoteSocialProfileDataSource
     private let authService: any AuthServiceProtocol
+    private let syncQueue: (any SyncQueueServiceProtocol)?
 
     private static let logger = Logger(subsystem: "com.ultratrain", category: "SyncedSocialProfileRepository")
 
     init(
         local: LocalSocialProfileRepository,
         remote: RemoteSocialProfileDataSource,
-        authService: any AuthServiceProtocol
+        authService: any AuthServiceProtocol,
+        syncQueue: (any SyncQueueServiceProtocol)? = nil
     ) {
         self.local = local
         self.remote = remote
         self.authService = authService
+        self.syncQueue = syncQueue
     }
 
     func fetchMyProfile() async throws -> SocialProfile? {
@@ -41,15 +44,20 @@ final class SyncedSocialProfileRepository: SocialProfileRepository, @unchecked S
         try await local.saveMyProfile(profile)
 
         guard authService.isAuthenticated() else { return }
-        Task {
-            do {
-                let dto = SocialProfileRemoteMapper.toDTO(profile)
-                let responseDTO = try await self.remote.updateMyProfile(dto)
-                if let updated = SocialProfileRemoteMapper.toDomain(responseDTO) {
-                    try await self.local.saveMyProfile(updated)
+        if let syncQueue {
+            let entityId = UUID(uuidString: profile.id) ?? UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
+            try? await syncQueue.enqueueOperation(.socialProfileSync, entityId: entityId)
+        } else {
+            Task {
+                do {
+                    let dto = SocialProfileRemoteMapper.toDTO(profile)
+                    let responseDTO = try await self.remote.updateMyProfile(dto)
+                    if let updated = SocialProfileRemoteMapper.toDomain(responseDTO) {
+                        try await self.local.saveMyProfile(updated)
+                    }
+                } catch {
+                    Self.logger.warning("Remote social profile sync failed: \(error)")
                 }
-            } catch {
-                Self.logger.warning("Remote social profile sync failed: \(error)")
             }
         }
     }

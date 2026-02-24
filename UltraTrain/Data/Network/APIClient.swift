@@ -9,6 +9,7 @@ actor APIClient {
     private let authInterceptor: AuthInterceptor?
     private let retryInterceptor: RetryInterceptor
     private let signingInterceptor: RequestSigningInterceptor?
+    private let idempotencyInterceptor: IdempotencyInterceptor
 
     private static let pinnedSession: URLSession = {
         let delegate = CertificatePinningDelegate()
@@ -20,13 +21,15 @@ actor APIClient {
         session: URLSession? = nil,
         authInterceptor: AuthInterceptor? = nil,
         retryInterceptor: RetryInterceptor = RetryInterceptor(),
-        signingInterceptor: RequestSigningInterceptor? = nil
+        signingInterceptor: RequestSigningInterceptor? = nil,
+        idempotencyInterceptor: IdempotencyInterceptor = IdempotencyInterceptor()
     ) {
         self.baseURL = baseURL
         self.session = session ?? APIClient.pinnedSession
         self.authInterceptor = authInterceptor
         self.retryInterceptor = retryInterceptor
         self.signingInterceptor = signingInterceptor
+        self.idempotencyInterceptor = idempotencyInterceptor
 
         self.decoder = JSONDecoder()
         self.decoder.keyDecodingStrategy = .convertFromSnakeCase
@@ -37,6 +40,8 @@ actor APIClient {
         self.encoder.dateEncodingStrategy = .iso8601
     }
 
+    private var inFlightGETs: [InFlightRequestKey: Task<(Data, HTTPURLResponse), Error>] = [:]
+
     func request<Response: Decodable>(
         path: String,
         method: HTTPMethod,
@@ -44,12 +49,100 @@ actor APIClient {
         queryItems: [URLQueryItem]? = nil,
         requiresAuth: Bool = true
     ) async throws -> Response {
-        var urlRequest = try buildRequest(
+        let bodyData = try body.map { try encoder.encode($0) }
+
+        let (data, httpResponse): (Data, HTTPURLResponse)
+        if method == .get {
+            (data, httpResponse) = try await deduplicatedGET(
+                path: path,
+                bodyData: bodyData,
+                queryItems: queryItems,
+                requiresAuth: requiresAuth
+            )
+        } else {
+            (data, httpResponse) = try await performNetworkCall(
+                path: path,
+                method: method,
+                bodyData: bodyData,
+                queryItems: queryItems,
+                requiresAuth: requiresAuth
+            )
+        }
+
+        return try handleResponse(data: data, statusCode: httpResponse.statusCode)
+    }
+
+    func requestVoid(
+        path: String,
+        method: HTTPMethod,
+        body: (any Encodable)? = nil,
+        requiresAuth: Bool = true
+    ) async throws {
+        let _: EmptyResponseBody = try await request(
             path: path,
             method: method,
             body: body,
+            requiresAuth: requiresAuth
+        )
+    }
+
+    // MARK: - Deduplication
+
+    private func deduplicatedGET(
+        path: String,
+        bodyData: Data?,
+        queryItems: [URLQueryItem]?,
+        requiresAuth: Bool
+    ) async throws -> (Data, HTTPURLResponse) {
+        let key = InFlightRequestKey(
+            method: "GET",
+            path: path,
+            queryItems: queryItems,
+            bodyData: bodyData
+        )
+
+        if let existingTask = inFlightGETs[key] {
+            return try await existingTask.value
+        }
+
+        let task = Task<(Data, HTTPURLResponse), Error> {
+            try await performNetworkCall(
+                path: path,
+                method: .get,
+                bodyData: bodyData,
+                queryItems: queryItems,
+                requiresAuth: requiresAuth
+            )
+        }
+        inFlightGETs[key] = task
+
+        do {
+            let result = try await task.value
+            inFlightGETs.removeValue(forKey: key)
+            return result
+        } catch {
+            inFlightGETs.removeValue(forKey: key)
+            throw error
+        }
+    }
+
+    // MARK: - Network Call
+
+    private func performNetworkCall(
+        path: String,
+        method: HTTPMethod,
+        bodyData: Data?,
+        queryItems: [URLQueryItem]?,
+        requiresAuth: Bool
+    ) async throws -> (Data, HTTPURLResponse) {
+        var urlRequest = try buildRequest(
+            path: path,
+            method: method,
+            bodyData: bodyData,
             queryItems: queryItems
         )
+
+        idempotencyInterceptor.addKey(&urlRequest)
 
         if requiresAuth, let interceptor = authInterceptor {
             let token = try await interceptor.validToken()
@@ -74,7 +167,6 @@ actor APIClient {
 
                 Logger.network.debug("Response: \(httpResponse.statusCode) \(path)")
 
-                // Handle 401 — attempt token refresh once
                 if httpResponse.statusCode == 401, requiresAuth, let interceptor = authInterceptor {
                     let newToken = try await interceptor.handleUnauthorized()
                     urlRequest.setValue("Bearer \(newToken)", forHTTPHeaderField: "Authorization")
@@ -82,10 +174,10 @@ actor APIClient {
                     guard let retryHttp = retryResponse as? HTTPURLResponse else {
                         throw APIError.invalidResponse
                     }
-                    return try handleResponse(data: retryData, statusCode: retryHttp.statusCode)
+                    return (retryData, retryHttp)
                 }
 
-                return try handleResponse(data: data, statusCode: httpResponse.statusCode)
+                return (data, httpResponse)
 
             } catch let error as APIError {
                 if case .serverError = error,
@@ -112,26 +204,12 @@ actor APIClient {
         throw lastError
     }
 
-    func requestVoid(
-        path: String,
-        method: HTTPMethod,
-        body: (any Encodable)? = nil,
-        requiresAuth: Bool = true
-    ) async throws {
-        let _: EmptyResponseBody = try await request(
-            path: path,
-            method: method,
-            body: body,
-            requiresAuth: requiresAuth
-        )
-    }
-
     // MARK: - Private
 
     private func buildRequest(
         path: String,
         method: HTTPMethod,
-        body: (any Encodable)?,
+        bodyData: Data?,
         queryItems: [URLQueryItem]?
     ) throws -> URLRequest {
         var components = URLComponents(
@@ -151,8 +229,8 @@ actor APIClient {
         request.setValue(AppConfiguration.appVersion, forHTTPHeaderField: "X-Client-Version")
         request.timeoutInterval = AppConfiguration.API.timeoutInterval
 
-        if let body {
-            request.httpBody = try encoder.encode(body)
+        if let bodyData {
+            request.httpBody = bodyData
         }
 
         return request

@@ -100,7 +100,7 @@ final class SyncedGroupChallengeRepository: GroupChallengeRepository, @unchecked
             return
         }
 
-        let dto = UpdateProgressRequestDTO(value: value)
+        let dto = UpdateProgressRequestDTO(value: value, idempotencyKey: UUID().uuidString)
         _ = try await remote.updateProgress(challengeId: challengeId.uuidString, dto: dto)
         try await local.updateProgress(challengeId: challengeId, value: value)
     }

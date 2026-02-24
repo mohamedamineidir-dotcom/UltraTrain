@@ -73,6 +73,7 @@ struct UltraTrainApp: App {
     private let backgroundTaskService: BackgroundTaskService
     private let notificationDelegate: NotificationDelegate
     private let deviceIntegrityChecker: DeviceIntegrityChecker
+    private let networkMonitor: NetworkMonitor
 
     init() {
         let isUITesting = ProcessInfo.processInfo.arguments.contains("-UITestMode")
@@ -162,6 +163,34 @@ struct UltraTrainApp: App {
             authService: auth
         )
         let syncQueueRepo = LocalSyncQueueRepository(modelContainer: modelContainer)
+
+        // Social local repos
+        let localSocialProfileRepo = LocalSocialProfileRepository(modelContainer: modelContainer)
+        let localFriendRepo = LocalFriendRepository(modelContainer: modelContainer)
+        let localSharedRunRepo = LocalSharedRunRepository(modelContainer: modelContainer)
+        let localActivityFeedRepo = LocalActivityFeedRepository(modelContainer: modelContainer)
+        let localGroupChallengeRepo = LocalGroupChallengeRepository(modelContainer: modelContainer)
+
+        // Social remote data sources
+        let remoteSocialProfile = RemoteSocialProfileDataSource(apiClient: client)
+        let remoteFriend = RemoteFriendDataSource(apiClient: client)
+        let remoteActivityFeed = RemoteActivityFeedDataSource(apiClient: client)
+        let remoteSharedRun = RemoteSharedRunDataSource(apiClient: client)
+        let remoteGroupChallenge = RemoteGroupChallengeDataSource(apiClient: client)
+
+        let socialHandler = SocialSyncHandler(
+            remoteSocialProfile: remoteSocialProfile,
+            localSocialProfile: localSocialProfileRepo,
+            remoteActivityFeed: remoteActivityFeed,
+            localActivityFeed: localActivityFeedRepo,
+            remoteSharedRun: remoteSharedRun
+        )
+
+        let bgUploadService = BackgroundUploadService(
+            baseURL: AppConfiguration.API.baseURL,
+            syncQueueRepository: syncQueueRepo,
+            authService: auth
+        )
         let sync = SyncService(
             queueRepository: syncQueueRepo,
             localRunRepository: localRunRepo,
@@ -173,7 +202,9 @@ struct UltraTrainApp: App {
             localRaceRepository: localRaceRepo,
             remoteTrainingPlanDataSource: remoteTrainingPlanDataSource,
             localTrainingPlanRepository: localPlanRepo,
-            trainingPlanSyncService: planSyncService
+            trainingPlanSyncService: planSyncService,
+            socialSyncHandler: socialHandler,
+            backgroundUploadService: bgUploadService
         )
         apiClient = client
         authService = auth
@@ -266,22 +297,12 @@ struct UltraTrainApp: App {
         challengeRepository = LocalChallengeRepository(modelContainer: modelContainer)
         workoutRecipeRepository = LocalWorkoutRecipeRepository(modelContainer: modelContainer)
         goalRepository = LocalGoalRepository(modelContainer: modelContainer)
-        let localSocialProfileRepo = LocalSocialProfileRepository(modelContainer: modelContainer)
-        let localFriendRepo = LocalFriendRepository(modelContainer: modelContainer)
-        let localSharedRunRepo = LocalSharedRunRepository(modelContainer: modelContainer)
-        let localActivityFeedRepo = LocalActivityFeedRepository(modelContainer: modelContainer)
-        let localGroupChallengeRepo = LocalGroupChallengeRepository(modelContainer: modelContainer)
-
-        let remoteSocialProfile = RemoteSocialProfileDataSource(apiClient: client)
-        let remoteFriend = RemoteFriendDataSource(apiClient: client)
-        let remoteActivityFeed = RemoteActivityFeedDataSource(apiClient: client)
-        let remoteSharedRun = RemoteSharedRunDataSource(apiClient: client)
-        let remoteGroupChallenge = RemoteGroupChallengeDataSource(apiClient: client)
 
         socialProfileRepository = SyncedSocialProfileRepository(
             local: localSocialProfileRepo,
             remote: remoteSocialProfile,
-            authService: auth
+            authService: auth,
+            syncQueue: sync
         )
         friendRepository = SyncedFriendRepository(
             local: localFriendRepo,
@@ -291,12 +312,14 @@ struct UltraTrainApp: App {
         sharedRunRepository = SyncedSharedRunRepository(
             local: localSharedRunRepo,
             remote: remoteSharedRun,
-            authService: auth
+            authService: auth,
+            syncQueue: sync
         )
         activityFeedRepository = SyncedActivityFeedRepository(
             local: localActivityFeedRepo,
             remote: remoteActivityFeed,
-            authService: auth
+            authService: auth,
+            syncQueue: sync
         )
         groupChallengeRepository = SyncedGroupChallengeRepository(
             local: localGroupChallengeRepo,
@@ -395,6 +418,16 @@ struct UltraTrainApp: App {
         )
         backgroundTaskService.registerTasks()
         deviceIntegrityChecker = DeviceIntegrityChecker()
+
+        let netMonitor = NetworkMonitor(onConnectivityRestored: { [syncSvc = sync] in
+            await syncSvc.processQueue()
+        })
+        netMonitor.start()
+        networkMonitor = netMonitor
+
+        appDelegate.onBackgroundSessionCompletion = { [bgUploadService] identifier, completion in
+            bgUploadService.handleSessionCompletion(identifier: identifier, completion: completion)
+        }
     }
 
     @Environment(\.scenePhase) private var scenePhase

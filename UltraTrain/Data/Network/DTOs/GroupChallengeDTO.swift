@@ -12,6 +12,7 @@ struct CreateChallengeRequestDTO: Encodable, Sendable {
 
 struct UpdateProgressRequestDTO: Encodable, Sendable {
     let value: Double
+    let idempotencyKey: String
 }
 
 struct ChallengeParticipantResponseDTO: Decodable, Sendable {

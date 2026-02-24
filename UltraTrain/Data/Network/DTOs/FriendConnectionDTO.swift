@@ -2,6 +2,7 @@ import Foundation
 
 struct FriendRequestRequestDTO: Encodable, Sendable {
     let recipientProfileId: String
+    let idempotencyKey: String
 }
 
 struct FriendConnectionResponseDTO: Decodable, Sendable {

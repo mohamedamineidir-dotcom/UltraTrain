@@ -5,6 +5,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
 
     var onDeviceTokenReceived: ((String) -> Void)?
     var onSilentPushReceived: (() async -> Void)?
+    var onBackgroundSessionCompletion: ((String, @escaping () -> Void) -> Void)?
 
     func application(
         _ application: UIApplication,
@@ -29,5 +30,14 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         Logger.notification.info("Received silent push notification")
         await onSilentPushReceived?()
         return .newData
+    }
+
+    func application(
+        _ application: UIApplication,
+        handleEventsForBackgroundURLSession identifier: String,
+        completionHandler: @escaping () -> Void
+    ) {
+        Logger.backgroundUpload.info("System woke app for background session: \(identifier)")
+        onBackgroundSessionCompletion?(identifier, completionHandler)
     }
 }

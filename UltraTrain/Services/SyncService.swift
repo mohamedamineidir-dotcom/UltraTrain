@@ -13,6 +13,8 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
     private let remoteTrainingPlanDataSource: RemoteTrainingPlanDataSource?
     private let localTrainingPlanRepository: (any TrainingPlanRepository)?
     private let trainingPlanSyncService: TrainingPlanSyncService?
+    private let socialSyncHandler: SocialSyncHandler?
+    private let backgroundUploadService: (any BackgroundUploadServiceProtocol)?
 
     init(
         queueRepository: any SyncQueueRepository,
@@ -25,7 +27,9 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
         localRaceRepository: (any RaceRepository)? = nil,
         remoteTrainingPlanDataSource: RemoteTrainingPlanDataSource? = nil,
         localTrainingPlanRepository: (any TrainingPlanRepository)? = nil,
-        trainingPlanSyncService: TrainingPlanSyncService? = nil
+        trainingPlanSyncService: TrainingPlanSyncService? = nil,
+        socialSyncHandler: SocialSyncHandler? = nil,
+        backgroundUploadService: (any BackgroundUploadServiceProtocol)? = nil
     ) {
         self.queueRepository = queueRepository
         self.localRunRepository = localRunRepository
@@ -38,6 +42,8 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
         self.remoteTrainingPlanDataSource = remoteTrainingPlanDataSource
         self.localTrainingPlanRepository = localTrainingPlanRepository
         self.trainingPlanSyncService = trainingPlanSyncService
+        self.socialSyncHandler = socialSyncHandler
+        self.backgroundUploadService = backgroundUploadService
     }
 
     func enqueueUpload(runId: UUID) async throws {
@@ -163,6 +169,8 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
                 try await processRaceDelete(item)
             case .trainingPlanSync:
                 try await processTrainingPlanSync(item)
+            case .socialProfileSync, .activityPublish, .shareRevoke:
+                try await socialSyncHandler?.process(item)
             }
 
             mutable.status = .completed
@@ -203,6 +211,15 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
             return
         }
         let dto = RunMapper.toUploadDTO(run)
+
+        // Use background URLSession for runs with large GPS tracks
+        if run.gpsTrack.count >= BackgroundUploadService.gpsThreshold,
+           let bgService = backgroundUploadService {
+            try bgService.uploadRun(dto: dto, syncItemId: item.id)
+            Logger.network.info("SyncService: delegated large run \(item.entityId) to background upload (\(run.gpsTrack.count) points)")
+            return
+        }
+
         let response = try await remoteRunDataSource.uploadRun(dto)
         // Update serverUpdatedAt from the response so future syncs can detect conflicts
         if let updatedAtStr = response.updatedAt,

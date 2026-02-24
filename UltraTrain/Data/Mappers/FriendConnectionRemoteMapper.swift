@@ -26,6 +26,9 @@ enum FriendConnectionRemoteMapper {
     }
 
     static func toRequestDTO(profileId: String) -> FriendRequestRequestDTO {
-        FriendRequestRequestDTO(recipientProfileId: profileId)
+        FriendRequestRequestDTO(
+            recipientProfileId: profileId,
+            idempotencyKey: UUID().uuidString
+        )
     }
 }
