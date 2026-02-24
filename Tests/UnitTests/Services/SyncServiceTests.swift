@@ -293,6 +293,157 @@ struct SyncServiceTests {
         let status = await sut.getQueueStatus(forRunId: UUID())
         #expect(status == nil)
     }
+
+    // MARK: - getFailedItems
+
+    @Test("getFailedItems returns only failed items")
+    func getFailedItemsReturnsOnlyFailed() async {
+        let (queueRepo, _, _, sut) = makeSUT()
+        queueRepo.items = [
+            makeItem(status: .pending),
+            makeItem(status: .failed),
+            makeItem(status: .failed),
+            makeItem(status: .completed)
+        ]
+
+        let failed = await sut.getFailedItems()
+        #expect(failed.count == 2)
+        #expect(failed.allSatisfy { $0.status == .failed })
+    }
+
+    @Test("getFailedItems returns empty when no failures")
+    func getFailedItemsReturnsEmptyWhenNoFailures() async {
+        let (queueRepo, _, _, sut) = makeSUT()
+        queueRepo.items = [
+            makeItem(status: .pending),
+            makeItem(status: .completed)
+        ]
+
+        let failed = await sut.getFailedItems()
+        #expect(failed.isEmpty)
+    }
+
+    // MARK: - retryItem
+
+    @Test("retryItem resets failed item to pending")
+    func retryItemResetsToPending() async {
+        let (queueRepo, _, _, sut) = makeSUT(authenticated: false)
+        let entityId = UUID()
+        let failedItem = SyncQueueItem(
+            id: UUID(),
+            runId: UUID(),
+            operationType: .raceSync,
+            entityId: entityId,
+            status: .failed,
+            retryCount: 3,
+            lastAttempt: Date.now,
+            errorMessage: "Server error",
+            createdAt: Date()
+        )
+        queueRepo.items = [failedItem]
+
+        await sut.retryItem(id: failedItem.id)
+
+        let item = queueRepo.items.first { $0.id == failedItem.id }
+        #expect(item?.status == .pending)
+        #expect(item?.retryCount == 0)
+        #expect(item?.errorMessage == nil)
+    }
+
+    @Test("retryItem does nothing for unknown id")
+    func retryItemDoesNothingForUnknownId() async {
+        let (queueRepo, _, _, sut) = makeSUT(authenticated: false)
+        let item = makeItem(status: .failed)
+        queueRepo.items = [item]
+
+        await sut.retryItem(id: UUID())
+
+        // Item unchanged
+        #expect(queueRepo.items.count == 1)
+        #expect(queueRepo.items[0].status == .failed)
+    }
+
+    // MARK: - discardItem
+
+    @Test("discardItem removes item from queue")
+    func discardItemRemovesItem() async {
+        let (queueRepo, _, _, sut) = makeSUT()
+        let item = makeItem(status: .failed)
+        queueRepo.items = [item]
+
+        await sut.discardItem(id: item.id)
+
+        #expect(queueRepo.items.isEmpty)
+    }
+
+    @Test("discardItem does nothing for unknown id")
+    func discardItemDoesNothingForUnknownId() async {
+        let (queueRepo, _, _, sut) = makeSUT()
+        let item = makeItem(status: .failed)
+        queueRepo.items = [item]
+
+        await sut.discardItem(id: UUID())
+
+        #expect(queueRepo.items.count == 1)
+    }
+
+    // MARK: - retryAllFailed
+
+    @Test("retryAllFailed resets all failed items")
+    func retryAllFailedResetsAll() async {
+        let (queueRepo, _, _, sut) = makeSUT(authenticated: false)
+        let failed1 = SyncQueueItem(
+            id: UUID(), runId: UUID(), operationType: .runUpload,
+            entityId: UUID(), status: .failed, retryCount: 2,
+            lastAttempt: Date.now, errorMessage: "Err", createdAt: Date()
+        )
+        let failed2 = SyncQueueItem(
+            id: UUID(), runId: UUID(), operationType: .athleteSync,
+            entityId: UUID(), status: .failed, retryCount: 1,
+            lastAttempt: Date.now, errorMessage: "Err2", createdAt: Date()
+        )
+        let pending = makeItem(status: .pending)
+        queueRepo.items = [failed1, failed2, pending]
+
+        await sut.retryAllFailed()
+
+        let failedItems = queueRepo.items.filter { $0.status == .failed }
+        #expect(failedItems.isEmpty)
+
+        let resetItems = queueRepo.items.filter { $0.id == failed1.id || $0.id == failed2.id }
+        #expect(resetItems.allSatisfy { $0.status == .pending && $0.retryCount == 0 })
+
+        // Pending item untouched
+        let pendingItem = queueRepo.items.first { $0.id == pending.id }
+        #expect(pendingItem?.status == .pending)
+    }
+
+    // MARK: - discardAllFailed
+
+    @Test("discardAllFailed removes all failed items")
+    func discardAllFailedRemovesAll() async {
+        let (queueRepo, _, _, sut) = makeSUT()
+        let failed1 = makeItem(status: .failed)
+        let failed2 = makeItem(status: .failed)
+        let pending = makeItem(status: .pending)
+        queueRepo.items = [failed1, failed2, pending]
+
+        await sut.discardAllFailed()
+
+        #expect(queueRepo.items.count == 1)
+        #expect(queueRepo.items[0].id == pending.id)
+    }
+
+    @Test("discardAllFailed does nothing when no failures")
+    func discardAllFailedDoesNothingWhenEmpty() async {
+        let (queueRepo, _, _, sut) = makeSUT()
+        let pending = makeItem(status: .pending)
+        queueRepo.items = [pending]
+
+        await sut.discardAllFailed()
+
+        #expect(queueRepo.items.count == 1)
+    }
 }
 
 // MARK: - Stub URL Protocol for SyncService tests
