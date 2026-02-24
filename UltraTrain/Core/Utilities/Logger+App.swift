@@ -41,4 +41,5 @@ extension Logger {
     static let courseTracking = Logger(subsystem: subsystem, category: "courseTracking")
     static let achievements = Logger(subsystem: subsystem, category: "achievements")
     static let routePlanning = Logger(subsystem: subsystem, category: "routePlanning")
+    static let security = Logger(subsystem: subsystem, category: "security")
 }

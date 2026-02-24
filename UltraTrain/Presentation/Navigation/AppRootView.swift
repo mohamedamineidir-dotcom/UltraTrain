@@ -13,8 +13,10 @@ struct AppRootView: View {
     @AppStorage("hasSeenFeatureTour") private var hasSeenFeatureTour = false
     @State private var unitPreference: UnitPreference = .metric
     @State private var lastAutoImportDate: Date?
+    @State private var isDeviceCompromised = false
     private let authService: any AuthServiceProtocol
     private let deepLinkRouter: DeepLinkRouter
+    private let deviceIntegrityChecker: (any DeviceIntegrityCheckerProtocol)?
 
     private let athleteRepository: any AthleteRepository
     private let raceRepository: any RaceRepository
@@ -125,10 +127,12 @@ struct AppRootView: View {
         raceReflectionRepository: any RaceReflectionRepository,
         achievementRepository: (any AchievementRepository)? = nil,
         morningCheckInRepository: (any MorningCheckInRepository)? = nil,
-        deviceTokenService: DeviceTokenService? = nil
+        deviceTokenService: DeviceTokenService? = nil,
+        deviceIntegrityChecker: (any DeviceIntegrityCheckerProtocol)? = nil
     ) {
         self.authService = authService
         self.deepLinkRouter = deepLinkRouter
+        self.deviceIntegrityChecker = deviceIntegrityChecker
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
         self.planRepository = planRepository
@@ -185,26 +189,34 @@ struct AppRootView: View {
     }
 
     var body: some View {
-        Group {
-            switch isAuthenticated {
-            case .none:
-                ProgressView("Loading...")
-            case .some(false):
-                LoginView(authService: authService) {
-                    isAuthenticated = true
-                    Task {
-                        await checkBiometricLockSetting()
-                        await checkOnboardingStatus()
-                        await loadUnitPreference()
-                        await registerForPushNotifications()
+        VStack(spacing: 0) {
+            if isDeviceCompromised {
+                JailbreakWarningBanner()
+            }
+            Group {
+                switch isAuthenticated {
+                case .none:
+                    ProgressView("Loading...")
+                case .some(false):
+                    LoginView(authService: authService) {
+                        isAuthenticated = true
+                        Task {
+                            await checkBiometricLockSetting()
+                            await checkOnboardingStatus()
+                            await loadUnitPreference()
+                            await registerForPushNotifications()
+                        }
                     }
+                case .some(true):
+                    authenticatedContent
                 }
-            case .some(true):
-                authenticatedContent
             }
         }
         .environment(\.unitPreference, unitPreference)
         .task {
+            if let checker = deviceIntegrityChecker {
+                isDeviceCompromised = checker.isDeviceCompromised()
+            }
             #if DEBUG
             if ProcessInfo.processInfo.arguments.contains("-UITestSkipOnboarding") {
                 isAuthenticated = true

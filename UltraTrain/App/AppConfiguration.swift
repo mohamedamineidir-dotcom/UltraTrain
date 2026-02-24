@@ -15,6 +15,9 @@ enum AppConfiguration {
             #endif
         }()
         static let timeoutInterval: TimeInterval = 30
+        static let hmacSecret: String = Bundle.main.infoDictionary?["HMAC_SIGNING_SECRET"] as? String ?? ""
+        static let pinnedHost: String = "ultratrain-production.up.railway.app"
+        static let certificatePinHashes: [String] = []
     }
 
     enum GPS {

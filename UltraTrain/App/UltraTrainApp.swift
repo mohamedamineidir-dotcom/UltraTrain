@@ -72,6 +72,7 @@ struct UltraTrainApp: App {
     private let deepLinkRouter: DeepLinkRouter
     private let backgroundTaskService: BackgroundTaskService
     private let notificationDelegate: NotificationDelegate
+    private let deviceIntegrityChecker: DeviceIntegrityChecker
 
     init() {
         let isUITesting = ProcessInfo.processInfo.arguments.contains("-UITestMode")
@@ -131,6 +132,10 @@ struct UltraTrainApp: App {
             fatalError("Failed to create ModelContainer: \(error)")
         }
 
+        if !isUITesting {
+            FileProtectionManager.applyProtection(to: FileProtectionManager.defaultStoreDirectory)
+        }
+
         #if DEBUG
         if isUITesting && ProcessInfo.processInfo.arguments.contains("-UITestSkipOnboarding") {
             UITestDataSeeder.seed(into: modelContainer)
@@ -142,7 +147,8 @@ struct UltraTrainApp: App {
 
         let auth = AuthService(apiClient: APIClient())
         let authInterceptor = AuthInterceptor(authService: auth)
-        let client = APIClient(authInterceptor: authInterceptor)
+        let signingInterceptor = RequestSigningInterceptor()
+        let client = APIClient(authInterceptor: authInterceptor, signingInterceptor: signingInterceptor)
         let remoteRunDataSource = RemoteRunDataSource(apiClient: client)
         let remoteAthleteDataSource = RemoteAthleteDataSource(apiClient: client)
         let remoteRaceDataSource = RemoteRaceDataSource(apiClient: client)
@@ -388,6 +394,7 @@ struct UltraTrainApp: App {
             syncQueueService: sync
         )
         backgroundTaskService.registerTasks()
+        deviceIntegrityChecker = DeviceIntegrityChecker()
     }
 
     @Environment(\.scenePhase) private var scenePhase
@@ -458,7 +465,8 @@ struct UltraTrainApp: App {
                 raceReflectionRepository: raceReflectionRepository,
                 achievementRepository: achievementRepository,
                 morningCheckInRepository: morningCheckInRepository,
-                deviceTokenService: deviceTokenService
+                deviceTokenService: deviceTokenService,
+                deviceIntegrityChecker: deviceIntegrityChecker
             )
             .environment(\.syncStatusMonitor, syncStatusMonitor)
             .environment(\.syncService, syncService)

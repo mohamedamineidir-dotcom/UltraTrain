@@ -8,17 +8,25 @@ actor APIClient {
     private let encoder: JSONEncoder
     private let authInterceptor: AuthInterceptor?
     private let retryInterceptor: RetryInterceptor
+    private let signingInterceptor: RequestSigningInterceptor?
+
+    private static let pinnedSession: URLSession = {
+        let delegate = CertificatePinningDelegate()
+        return URLSession(configuration: .default, delegate: delegate, delegateQueue: nil)
+    }()
 
     init(
         baseURL: URL = AppConfiguration.API.baseURL,
-        session: URLSession = .shared,
+        session: URLSession? = nil,
         authInterceptor: AuthInterceptor? = nil,
-        retryInterceptor: RetryInterceptor = RetryInterceptor()
+        retryInterceptor: RetryInterceptor = RetryInterceptor(),
+        signingInterceptor: RequestSigningInterceptor? = nil
     ) {
         self.baseURL = baseURL
-        self.session = session
+        self.session = session ?? APIClient.pinnedSession
         self.authInterceptor = authInterceptor
         self.retryInterceptor = retryInterceptor
+        self.signingInterceptor = signingInterceptor
 
         self.decoder = JSONDecoder()
         self.decoder.keyDecodingStrategy = .convertFromSnakeCase
@@ -46,6 +54,10 @@ actor APIClient {
         if requiresAuth, let interceptor = authInterceptor {
             let token = try await interceptor.validToken()
             urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+
+        if requiresAuth {
+            signingInterceptor?.sign(&urlRequest)
         }
 
         Logger.network.debug("Request: \(method.rawValue) \(path)")

@@ -57,6 +57,7 @@ targets:
         com.apple.developer.icloud-container-identifiers:
           - iCloud.com.ultratrain.app
         aps-environment: development
+        com.apple.developer.default-data-protection: NSFileProtectionCompleteUntilFirstUserAuthentication
     postCompileScripts: []
 
   UltraTrainWatch:
