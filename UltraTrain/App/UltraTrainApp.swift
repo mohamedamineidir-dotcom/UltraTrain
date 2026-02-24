@@ -259,11 +259,43 @@ struct UltraTrainApp: App {
         challengeRepository = LocalChallengeRepository(modelContainer: modelContainer)
         workoutRecipeRepository = LocalWorkoutRecipeRepository(modelContainer: modelContainer)
         goalRepository = LocalGoalRepository(modelContainer: modelContainer)
-        socialProfileRepository = LocalSocialProfileRepository(modelContainer: modelContainer)
-        friendRepository = LocalFriendRepository(modelContainer: modelContainer)
-        sharedRunRepository = LocalSharedRunRepository(modelContainer: modelContainer)
-        activityFeedRepository = LocalActivityFeedRepository(modelContainer: modelContainer)
-        groupChallengeRepository = LocalGroupChallengeRepository(modelContainer: modelContainer)
+        let localSocialProfileRepo = LocalSocialProfileRepository(modelContainer: modelContainer)
+        let localFriendRepo = LocalFriendRepository(modelContainer: modelContainer)
+        let localSharedRunRepo = LocalSharedRunRepository(modelContainer: modelContainer)
+        let localActivityFeedRepo = LocalActivityFeedRepository(modelContainer: modelContainer)
+        let localGroupChallengeRepo = LocalGroupChallengeRepository(modelContainer: modelContainer)
+
+        let remoteSocialProfile = RemoteSocialProfileDataSource(apiClient: client)
+        let remoteFriend = RemoteFriendDataSource(apiClient: client)
+        let remoteActivityFeed = RemoteActivityFeedDataSource(apiClient: client)
+        let remoteSharedRun = RemoteSharedRunDataSource(apiClient: client)
+        let remoteGroupChallenge = RemoteGroupChallengeDataSource(apiClient: client)
+
+        socialProfileRepository = SyncedSocialProfileRepository(
+            local: localSocialProfileRepo,
+            remote: remoteSocialProfile,
+            authService: auth
+        )
+        friendRepository = SyncedFriendRepository(
+            local: localFriendRepo,
+            remote: remoteFriend,
+            authService: auth
+        )
+        sharedRunRepository = SyncedSharedRunRepository(
+            local: localSharedRunRepo,
+            remote: remoteSharedRun,
+            authService: auth
+        )
+        activityFeedRepository = SyncedActivityFeedRepository(
+            local: localActivityFeedRepo,
+            remote: remoteActivityFeed,
+            authService: auth
+        )
+        groupChallengeRepository = SyncedGroupChallengeRepository(
+            local: localGroupChallengeRepo,
+            remote: remoteGroupChallenge,
+            authService: auth
+        )
         routeRepository = LocalRouteRepository(modelContainer: modelContainer)
         intervalWorkoutRepository = LocalIntervalWorkoutRepository(modelContainer: modelContainer)
         emergencyContactRepository = LocalEmergencyContactRepository(modelContainer: modelContainer)

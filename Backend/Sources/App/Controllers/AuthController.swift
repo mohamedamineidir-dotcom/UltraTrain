@@ -138,8 +138,21 @@ struct AuthController: RouteCollection {
             throw Abort(.notFound)
         }
 
-        // Cascade deletes handle runs, athlete, training plans, races
-        // via foreign key ON DELETE CASCADE, but delete explicitly for safety
+        // Cascade deletes handle via foreign key ON DELETE CASCADE, but delete explicitly for safety
+        // Social data
+        try await FeedLikeModel.query(on: req.db).filter(\.$user.$id == userId).delete()
+        try await ActivityFeedItemModel.query(on: req.db).filter(\.$user.$id == userId).delete()
+        try await SharedRunRecipientModel.query(on: req.db).filter(\.$recipient.$id == userId).delete()
+        try await SharedRunModel.query(on: req.db).filter(\.$user.$id == userId).delete()
+        try await ChallengeParticipantModel.query(on: req.db).filter(\.$user.$id == userId).delete()
+        try await GroupChallengeModel.query(on: req.db).filter(\.$creator.$id == userId).delete()
+        try await FriendConnectionModel.query(on: req.db)
+            .group(.or) { group in
+                group.filter(\.$requestor.$id == userId)
+                group.filter(\.$recipient.$id == userId)
+            }
+            .delete()
+        // Core data
         try await RunModel.query(on: req.db).filter(\.$user.$id == userId).delete()
         try await TrainingPlanModel.query(on: req.db).filter(\.$user.$id == userId).delete()
         try await RaceModel.query(on: req.db).filter(\.$user.$id == userId).delete()

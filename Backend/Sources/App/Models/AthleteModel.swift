@@ -40,6 +40,15 @@ final class AthleteModel: Model, Content, @unchecked Sendable {
     @Field(key: "longest_run_km")
     var longestRunKm: Double
 
+    @OptionalField(key: "bio")
+    var bio: String?
+
+    @Field(key: "is_public_profile")
+    var isPublicProfile: Bool
+
+    @Field(key: "display_name")
+    var displayName: String
+
     @Timestamp(key: "updated_at", on: .update)
     var updatedAt: Date?
 
