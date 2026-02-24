@@ -396,6 +396,252 @@ final class RunControllerTests: XCTestCase {
         })
     }
 
+    // MARK: - Edge Cases: since filter
+
+    func testListRuns_sinceFilter_returnsOnlyRecentRuns() async throws {
+        let user = try await app.registerUser(email: "since@test.com", password: "password123")
+
+        // Upload an old run
+        let oldBody = RunUploadRequest(
+            id: UUID().uuidString,
+            date: "2025-01-15T08:00:00Z",
+            distanceKm: 10, elevationGainM: 100, elevationLossM: 100,
+            duration: 3600, averageHeartRate: 140, maxHeartRate: 165,
+            averagePaceSecondsPerKm: 360, gpsTrack: [], splits: [],
+            notes: nil, linkedSessionId: nil,
+            idempotencyKey: UUID().uuidString, clientUpdatedAt: nil
+        )
+        try await app.test(.POST, "v1/runs", beforeRequest: { req in
+            req.headers.bearerAuthorization = .init(token: user.accessToken!)
+            try req.content.encode(oldBody)
+        }, afterResponse: { _ in })
+
+        // Upload a recent run
+        let recentBody = RunUploadRequest(
+            id: UUID().uuidString,
+            date: "2026-02-20T08:00:00Z",
+            distanceKm: 20, elevationGainM: 500, elevationLossM: 500,
+            duration: 7200, averageHeartRate: 150, maxHeartRate: 175,
+            averagePaceSecondsPerKm: 360, gpsTrack: [], splits: [],
+            notes: nil, linkedSessionId: nil,
+            idempotencyKey: UUID().uuidString, clientUpdatedAt: nil
+        )
+        try await app.test(.POST, "v1/runs", beforeRequest: { req in
+            req.headers.bearerAuthorization = .init(token: user.accessToken!)
+            try req.content.encode(recentBody)
+        }, afterResponse: { _ in })
+
+        // Filter with since=2026-01-01 — should only return the recent run
+        try await app.test(.GET, "v1/runs?since=2026-01-01T00:00:00Z", beforeRequest: { req in
+            req.headers.bearerAuthorization = .init(token: user.accessToken!)
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .ok)
+            let page = try res.content.decode(PaginatedResponse<RunResponse>.self)
+            XCTAssertEqual(page.items.count, 1)
+            XCTAssertEqual(page.items[0].distanceKm, 20)
+        })
+
+        // Without since — should return both
+        try await app.test(.GET, "v1/runs", beforeRequest: { req in
+            req.headers.bearerAuthorization = .init(token: user.accessToken!)
+        }, afterResponse: { res in
+            let page = try res.content.decode(PaginatedResponse<RunResponse>.self)
+            XCTAssertEqual(page.items.count, 2)
+        })
+    }
+
+    // MARK: - Edge Cases: cursor pagination flow
+
+    func testListRuns_cursorPagination_fetchesAllPages() async throws {
+        let user = try await app.registerUser(email: "cursor@test.com", password: "password123")
+
+        // Upload 5 runs with distinct dates
+        for i in 0..<5 {
+            let body = RunUploadRequest(
+                id: UUID().uuidString,
+                date: "2026-02-\(String(format: "%02d", 10 + i))T08:00:00Z",
+                distanceKm: Double(10 + i), elevationGainM: 100, elevationLossM: 100,
+                duration: 3600, averageHeartRate: nil, maxHeartRate: nil,
+                averagePaceSecondsPerKm: 360, gpsTrack: [], splits: [],
+                notes: "Run \(i)", linkedSessionId: nil,
+                idempotencyKey: UUID().uuidString, clientUpdatedAt: nil
+            )
+            try await app.test(.POST, "v1/runs", beforeRequest: { req in
+                req.headers.bearerAuthorization = .init(token: user.accessToken!)
+                try req.content.encode(body)
+            }, afterResponse: { _ in })
+        }
+
+        // Page 1: limit=2
+        var cursor: String?
+        try await app.test(.GET, "v1/runs?limit=2", beforeRequest: { req in
+            req.headers.bearerAuthorization = .init(token: user.accessToken!)
+        }, afterResponse: { res in
+            let page = try res.content.decode(PaginatedResponse<RunResponse>.self)
+            XCTAssertEqual(page.items.count, 2)
+            XCTAssertTrue(page.hasMore)
+            cursor = page.nextCursor
+        })
+
+        XCTAssertNotNil(cursor)
+
+        // Page 2: use cursor from page 1
+        var cursor2: String?
+        try await app.test(.GET, "v1/runs?limit=2&cursor=\(cursor!)", beforeRequest: { req in
+            req.headers.bearerAuthorization = .init(token: user.accessToken!)
+        }, afterResponse: { res in
+            let page = try res.content.decode(PaginatedResponse<RunResponse>.self)
+            XCTAssertEqual(page.items.count, 2)
+            XCTAssertTrue(page.hasMore)
+            cursor2 = page.nextCursor
+        })
+
+        // Page 3: last page with 1 remaining
+        try await app.test(.GET, "v1/runs?limit=2&cursor=\(cursor2!)", beforeRequest: { req in
+            req.headers.bearerAuthorization = .init(token: user.accessToken!)
+        }, afterResponse: { res in
+            let page = try res.content.decode(PaginatedResponse<RunResponse>.self)
+            XCTAssertEqual(page.items.count, 1)
+            XCTAssertFalse(page.hasMore)
+            XCTAssertNil(page.nextCursor)
+        })
+    }
+
+    // MARK: - Edge Cases: invalid longitude
+
+    func testUploadRun_invalidLongitude_returnsBadRequest() async throws {
+        let user = try await app.registerUser(email: "badlng@test.com", password: "password123")
+
+        let body = RunUploadRequest(
+            id: UUID().uuidString,
+            date: "2026-02-20T08:30:00Z",
+            distanceKm: 10, elevationGainM: 200, elevationLossM: 200,
+            duration: 3600, averageHeartRate: nil, maxHeartRate: nil,
+            averagePaceSecondsPerKm: 360,
+            gpsTrack: [
+                TrackPointServerDTO(latitude: 45.0, longitude: 200, altitudeM: 100, timestamp: "2026-02-20T08:30:00Z", heartRate: nil)
+            ],
+            splits: [], notes: nil, linkedSessionId: nil,
+            idempotencyKey: UUID().uuidString, clientUpdatedAt: nil
+        )
+
+        try await app.test(.POST, "v1/runs", beforeRequest: { req in
+            req.headers.bearerAuthorization = .init(token: user.accessToken!)
+            try req.content.encode(body)
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .badRequest)
+        })
+    }
+
+    // MARK: - Edge Cases: invalid date
+
+    func testUploadRun_invalidDate_returnsBadRequest() async throws {
+        let user = try await app.registerUser(email: "baddate@test.com", password: "password123")
+
+        let body = RunUploadRequest(
+            id: UUID().uuidString,
+            date: "not-a-date",
+            distanceKm: 10, elevationGainM: 200, elevationLossM: 200,
+            duration: 3600, averageHeartRate: nil, maxHeartRate: nil,
+            averagePaceSecondsPerKm: 360, gpsTrack: [], splits: [],
+            notes: nil, linkedSessionId: nil,
+            idempotencyKey: UUID().uuidString, clientUpdatedAt: nil
+        )
+
+        try await app.test(.POST, "v1/runs", beforeRequest: { req in
+            req.headers.bearerAuthorization = .init(token: user.accessToken!)
+            try req.content.encode(body)
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .badRequest)
+        })
+    }
+
+    // MARK: - Edge Cases: empty idempotency key
+
+    func testUploadRun_emptyIdempotencyKey_returnsBadRequest() async throws {
+        let user = try await app.registerUser(email: "emptykey@test.com", password: "password123")
+
+        let body = RunUploadRequest(
+            id: UUID().uuidString,
+            date: "2026-02-20T08:30:00Z",
+            distanceKm: 10, elevationGainM: 200, elevationLossM: 200,
+            duration: 3600, averageHeartRate: nil, maxHeartRate: nil,
+            averagePaceSecondsPerKm: 360, gpsTrack: [], splits: [],
+            notes: nil, linkedSessionId: nil,
+            idempotencyKey: "", clientUpdatedAt: nil
+        )
+
+        try await app.test(.POST, "v1/runs", beforeRequest: { req in
+            req.headers.bearerAuthorization = .init(token: user.accessToken!)
+            try req.content.encode(body)
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .badRequest)
+        })
+    }
+
+    // MARK: - Edge Cases: limit clamping
+
+    func testListRuns_limitClampedToMax100() async throws {
+        let user = try await app.registerUser(email: "maxlimit@test.com", password: "password123")
+
+        // Request limit=999 — should be clamped to 100
+        try await app.test(.GET, "v1/runs?limit=999", beforeRequest: { req in
+            req.headers.bearerAuthorization = .init(token: user.accessToken!)
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .ok)
+            // Even with a huge limit, it shouldn't error
+            let page = try res.content.decode(PaginatedResponse<RunResponse>.self)
+            XCTAssertFalse(page.hasMore)
+        })
+    }
+
+    func testListRuns_limitClampedToMin1() async throws {
+        let user = try await app.registerUser(email: "minlimit@test.com", password: "password123")
+
+        try await app.test(.POST, "v1/runs", beforeRequest: { req in
+            req.headers.bearerAuthorization = .init(token: user.accessToken!)
+            try req.content.encode(validRunBody())
+        }, afterResponse: { _ in })
+
+        // Request limit=0 — should be clamped to 1
+        try await app.test(.GET, "v1/runs?limit=0", beforeRequest: { req in
+            req.headers.bearerAuthorization = .init(token: user.accessToken!)
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .ok)
+            let page = try res.content.decode(PaginatedResponse<RunResponse>.self)
+            XCTAssertEqual(page.items.count, 1)
+        })
+    }
+
+    // MARK: - Edge Cases: optional fields
+
+    func testUploadRun_withoutOptionalFields_succeeds() async throws {
+        let user = try await app.registerUser(email: "minimal@test.com", password: "password123")
+
+        let body = RunUploadRequest(
+            id: UUID().uuidString,
+            date: "2026-02-20T08:30:00Z",
+            distanceKm: 5, elevationGainM: 50, elevationLossM: 50,
+            duration: 1800, averageHeartRate: nil, maxHeartRate: nil,
+            averagePaceSecondsPerKm: 360, gpsTrack: [], splits: [],
+            notes: nil, linkedSessionId: nil,
+            idempotencyKey: UUID().uuidString, clientUpdatedAt: nil
+        )
+
+        try await app.test(.POST, "v1/runs", beforeRequest: { req in
+            req.headers.bearerAuthorization = .init(token: user.accessToken!)
+            try req.content.encode(body)
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .created)
+            let run = try res.content.decode(RunResponse.self)
+            XCTAssertNil(run.averageHeartRate)
+            XCTAssertNil(run.maxHeartRate)
+            XCTAssertNil(run.notes)
+            XCTAssertTrue(run.gpsTrack.isEmpty)
+            XCTAssertTrue(run.splits.isEmpty)
+        })
+    }
+
     // MARK: - User Isolation
 
     func testRun_usersCannotAccessOtherRuns() async throws {
