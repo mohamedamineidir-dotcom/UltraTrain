@@ -4,7 +4,9 @@ WORKDIR /build
 COPY Package.swift Package.resolved* ./
 RUN swift package resolve
 COPY Sources Sources
-RUN swift build -c release
+COPY Tests Tests
+RUN swift build -c release \
+    && cp .build/release/App /build/App
 
 # Run stage
 FROM ubuntu:jammy
@@ -18,7 +20,7 @@ RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=build /usr/lib/swift/linux/lib*.so* /usr/lib/swift/linux/
-COPY --from=build /build/.build/release/App .
+COPY --from=build /build/App .
 ENV LD_LIBRARY_PATH=/usr/lib/swift/linux
 EXPOSE 8080
 CMD ["./App", "serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "8080"]
