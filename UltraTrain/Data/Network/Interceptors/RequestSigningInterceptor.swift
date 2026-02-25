@@ -19,10 +19,12 @@ struct RequestSigningInterceptor: Sendable {
         let body = request.httpBody ?? Data()
         let payload = Data(timestamp.utf8) + body
 
-        guard let keyData = secret.data(using: .utf8) else { return }
+        var keyData = Data(secret.utf8)
+        defer { keyData.resetBytes(in: 0..<keyData.count) }
         let key = SymmetricKey(data: keyData)
-        let signature = HMAC<SHA256>.authenticationCode(for: payload, using: key)
-        let signatureBase64 = Data(signature).base64EncodedString()
+        var signatureData = Data(HMAC<SHA256>.authenticationCode(for: payload, using: key))
+        defer { signatureData.resetBytes(in: 0..<signatureData.count) }
+        let signatureBase64 = signatureData.base64EncodedString()
 
         request.setValue(signatureBase64, forHTTPHeaderField: "X-Signature")
         request.setValue(timestamp, forHTTPHeaderField: "X-Timestamp")

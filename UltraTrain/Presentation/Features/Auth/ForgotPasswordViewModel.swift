@@ -64,6 +64,8 @@ final class ForgotPasswordViewModel {
                 newPassword: newPassword
             )
             isResetComplete = true
+            code = ""
+            newPassword = ""
         } catch {
             self.error = error.localizedDescription
             Logger.network.error("Password reset failed: \(error)")

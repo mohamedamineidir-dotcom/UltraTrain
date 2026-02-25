@@ -36,6 +36,7 @@ final class LoginViewModel {
                 try await authService.login(email: email, password: password)
             }
             isAuthenticated = true
+            password = ""
         } catch {
             self.error = error.localizedDescription
             Logger.network.error("Auth failed: \(error)")

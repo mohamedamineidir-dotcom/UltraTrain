@@ -8,6 +8,9 @@ func routes(_ app: Application) throws {
         ["status": "ok"]
     }
 
+    // Public pages (outside /v1, no rate limit)
+    try app.register(collection: PrivacyController())
+
     try api.register(collection: AuthController())
     try api.register(collection: AthleteController())
     try api.register(collection: RunController())

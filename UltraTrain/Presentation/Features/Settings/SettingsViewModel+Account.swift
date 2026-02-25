@@ -86,6 +86,9 @@ extension SettingsViewModel {
             changePasswordSuccess = true
         } catch {
             isChangingPassword = false
+            currentPassword = ""
+            newPassword = ""
+            confirmPassword = ""
             self.error = error.localizedDescription
             Logger.settings.error("Change password failed: \(error)")
         }

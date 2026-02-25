@@ -134,7 +134,9 @@ final class StravaAuthService: StravaAuthServiceProtocol, @unchecked Sendable {
             "code": code,
             "grant_type": "authorization_code"
         ]
-        request.httpBody = try JSONEncoder().encode(body)
+        var httpBody = try JSONEncoder().encode(body)
+        request.httpBody = httpBody
+        defer { httpBody.resetBytes(in: 0..<httpBody.count) }
 
         let (data, response) = try await URLSession.shared.data(for: request)
 
@@ -162,7 +164,9 @@ final class StravaAuthService: StravaAuthServiceProtocol, @unchecked Sendable {
             "refresh_token": expiredToken.refreshToken,
             "grant_type": "refresh_token"
         ]
-        request.httpBody = try JSONEncoder().encode(body)
+        var httpBody = try JSONEncoder().encode(body)
+        request.httpBody = httpBody
+        defer { httpBody.resetBytes(in: 0..<httpBody.count) }
 
         let (data, response) = try await URLSession.shared.data(for: request)
 

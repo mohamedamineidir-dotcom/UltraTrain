@@ -61,7 +61,8 @@ enum KeychainManager {
     // MARK: - Codable Convenience
 
     static func save<T: Encodable>(_ value: T, for key: String) throws {
-        let data = try JSONEncoder().encode(value)
+        var data = try JSONEncoder().encode(value)
+        defer { data.resetBytes(in: 0..<data.count) }
         try save(data, for: key)
     }
 
