@@ -2468,6 +2468,7 @@
 		DB0BB9FF755F64A47F5E28A8 /* LocalMorningCheckInRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalMorningCheckInRepository.swift; sourceTree = "<group>"; };
 		DB0E6CFAC9F6D817FDA561F9 /* LocalFoodLogRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalFoodLogRepository.swift; sourceTree = "<group>"; };
 		DB3B2B32FCDB8FF14772CAB6 /* AddChecklistItemSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddChecklistItemSheet.swift; sourceTree = "<group>"; };
+		DB5680CC4FFEA9A80D73A0C6 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		DB596B3377402F4A766D7A39 /* ElevationProfileChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevationProfileChart.swift; sourceTree = "<group>"; };
 		DB9B4CE28D004C1FF24045B5 /* UltraTrain.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = UltraTrain.entitlements; sourceTree = "<group>"; };
 		DBADAAA7D1629853C7C1864A /* PersonalRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalRecord.swift; sourceTree = "<group>"; };
@@ -2727,6 +2728,15 @@
 				D21532BC877CC92EE7AD7BCC /* SyncStatusBadge.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		0BA30F56EFED63DF394EDBC8 /* UltraTrain */ = {
+			isa = PBXGroup;
+			children = (
+				DB5680CC4FFEA9A80D73A0C6 /* Secrets.xcconfig */,
+			);
+			name = UltraTrain;
+			path = .;
 			sourceTree = "<group>";
 		};
 		0D531AC90A2A6354AADCA764 /* Shared */ = {
@@ -3634,6 +3644,7 @@
 			children = (
 				4D7718F9F73027927CFC3399 /* UITests */,
 				50A0218E70FDB129CA7BBEE0 /* UltraTrain */,
+				0BA30F56EFED63DF394EDBC8 /* UltraTrain */,
 				644965A28A38CFFFBA0C94EB /* UltraTrainWatch */,
 				110F3FFEB1C764D73FDE5076 /* UltraTrainWatchWidgets */,
 				4EBB671E69DD81443F507E51 /* UltraTrainWidgets */,
@@ -6426,6 +6437,7 @@
 		};
 		644346568F6BA3BAA0A5FC22 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DB5680CC4FFEA9A80D73A0C6 /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -6526,6 +6538,7 @@
 		};
 		803544D52425DEC90C3E95D5 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DB5680CC4FFEA9A80D73A0C6 /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;

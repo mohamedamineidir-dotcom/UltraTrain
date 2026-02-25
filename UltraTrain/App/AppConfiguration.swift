@@ -17,9 +17,9 @@ enum AppConfiguration {
         static let timeoutInterval: TimeInterval = 30
         static let hmacSecret: String = Bundle.main.infoDictionary?["HMAC_SIGNING_SECRET"] as? String ?? ""
         static let pinnedHost: String = "railway-link-production-96cc.up.railway.app"
-        // TODO: Extract server certificate hash before production release.
-        // See CertificatePinningDelegate.swift for extraction instructions.
-        static let certificatePinHashes: [String] = []
+        static let certificatePinHashes: [String] = [
+            "u6dScLDuE2TrAks7ct4HDBekXo9byFES6oApqW/pAjQ=" // Railway TLS cert pin
+        ]
     }
 
     enum GPS {
