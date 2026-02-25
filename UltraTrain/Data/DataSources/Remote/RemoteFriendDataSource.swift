@@ -8,51 +8,26 @@ final class RemoteFriendDataSource: Sendable {
     }
 
     func fetchFriends() async throws -> [FriendConnectionResponseDTO] {
-        try await apiClient.request(
-            path: FriendEndpoints.friendsPath,
-            method: .get,
-            requiresAuth: true
-        )
+        try await apiClient.send(FriendEndpoints.FetchAll())
     }
 
     func fetchPending() async throws -> [FriendConnectionResponseDTO] {
-        try await apiClient.request(
-            path: FriendEndpoints.pendingPath,
-            method: .get,
-            requiresAuth: true
-        )
+        try await apiClient.send(FriendEndpoints.FetchPending())
     }
 
     func sendRequest(_ dto: FriendRequestRequestDTO) async throws -> FriendConnectionResponseDTO {
-        try await apiClient.request(
-            path: FriendEndpoints.requestPath,
-            method: .post,
-            body: dto,
-            requiresAuth: true
-        )
+        try await apiClient.send(FriendEndpoints.SendRequest(body: dto))
     }
 
     func acceptRequest(connectionId: String) async throws -> FriendConnectionResponseDTO {
-        try await apiClient.request(
-            path: FriendEndpoints.acceptPath(id: connectionId),
-            method: .put,
-            requiresAuth: true
-        )
+        try await apiClient.send(FriendEndpoints.Accept(connectionId: connectionId))
     }
 
     func declineRequest(connectionId: String) async throws -> FriendConnectionResponseDTO {
-        try await apiClient.request(
-            path: FriendEndpoints.declinePath(id: connectionId),
-            method: .put,
-            requiresAuth: true
-        )
+        try await apiClient.send(FriendEndpoints.Decline(connectionId: connectionId))
     }
 
     func removeFriend(connectionId: String) async throws {
-        try await apiClient.requestVoid(
-            path: FriendEndpoints.friendPath(id: connectionId),
-            method: .delete,
-            requiresAuth: true
-        )
+        try await apiClient.sendVoid(FriendEndpoints.Remove(connectionId: connectionId))
     }
 }

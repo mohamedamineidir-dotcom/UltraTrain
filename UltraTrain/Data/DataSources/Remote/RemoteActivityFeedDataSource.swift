@@ -8,28 +8,14 @@ final class RemoteActivityFeedDataSource: Sendable {
     }
 
     func fetchFeed(limit: Int = 50) async throws -> [ActivityFeedItemResponseDTO] {
-        try await apiClient.request(
-            path: FeedEndpoints.feedPath,
-            method: .get,
-            queryItems: [URLQueryItem(name: "limit", value: String(limit))],
-            requiresAuth: true
-        )
+        try await apiClient.send(FeedEndpoints.Fetch(limit: limit))
     }
 
     func publishActivity(_ dto: PublishActivityRequestDTO) async throws -> ActivityFeedItemResponseDTO {
-        try await apiClient.request(
-            path: FeedEndpoints.feedPath,
-            method: .post,
-            body: dto,
-            requiresAuth: true
-        )
+        try await apiClient.send(FeedEndpoints.Publish(body: dto))
     }
 
     func toggleLike(itemId: String) async throws -> LikeResponseDTO {
-        try await apiClient.request(
-            path: FeedEndpoints.likePath(itemId: itemId),
-            method: .post,
-            requiresAuth: true
-        )
+        try await apiClient.send(FeedEndpoints.ToggleLike(itemId: itemId))
     }
 }

@@ -8,36 +8,18 @@ final class RemoteSharedRunDataSource: Sendable {
     }
 
     func shareRun(_ dto: ShareRunRequestDTO) async throws -> SharedRunResponseDTO {
-        try await apiClient.request(
-            path: SharedRunEndpoints.sharedRunsPath,
-            method: .post,
-            body: dto,
-            requiresAuth: true
-        )
+        try await apiClient.send(SharedRunEndpoints.Share(body: dto))
     }
 
     func fetchSharedRuns(limit: Int = 20) async throws -> [SharedRunResponseDTO] {
-        try await apiClient.request(
-            path: SharedRunEndpoints.sharedRunsPath,
-            method: .get,
-            queryItems: [URLQueryItem(name: "limit", value: String(limit))],
-            requiresAuth: true
-        )
+        try await apiClient.send(SharedRunEndpoints.FetchAll(limit: limit))
     }
 
     func fetchMySharedRuns() async throws -> [SharedRunResponseDTO] {
-        try await apiClient.request(
-            path: SharedRunEndpoints.mySharedRunsPath,
-            method: .get,
-            requiresAuth: true
-        )
+        try await apiClient.send(SharedRunEndpoints.FetchMine())
     }
 
     func revokeShare(id: String) async throws {
-        try await apiClient.requestVoid(
-            path: SharedRunEndpoints.sharedRunPath(id: id),
-            method: .delete,
-            requiresAuth: true
-        )
+        try await apiClient.sendVoid(SharedRunEndpoints.Revoke(id: id))
     }
 }

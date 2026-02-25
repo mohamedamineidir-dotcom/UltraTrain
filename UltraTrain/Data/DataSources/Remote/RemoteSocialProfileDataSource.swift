@@ -8,36 +8,18 @@ final class RemoteSocialProfileDataSource: Sendable {
     }
 
     func fetchMyProfile() async throws -> SocialProfileResponseDTO {
-        try await apiClient.request(
-            path: SocialEndpoints.profilePath,
-            method: .get,
-            requiresAuth: true
-        )
+        try await apiClient.send(SocialEndpoints.FetchMyProfile())
     }
 
     func updateMyProfile(_ dto: SocialProfileUpdateRequestDTO) async throws -> SocialProfileResponseDTO {
-        try await apiClient.request(
-            path: SocialEndpoints.profilePath,
-            method: .put,
-            body: dto,
-            requiresAuth: true
-        )
+        try await apiClient.send(SocialEndpoints.UpdateProfile(body: dto))
     }
 
     func fetchProfile(id: String) async throws -> SocialProfileResponseDTO {
-        try await apiClient.request(
-            path: SocialEndpoints.profilePath(id: id),
-            method: .get,
-            requiresAuth: true
-        )
+        try await apiClient.send(SocialEndpoints.FetchProfile(id: id))
     }
 
     func searchProfiles(query: String) async throws -> [SocialProfileResponseDTO] {
-        try await apiClient.request(
-            path: SocialEndpoints.searchPath,
-            method: .get,
-            queryItems: [URLQueryItem(name: "q", value: query)],
-            requiresAuth: true
-        )
+        try await apiClient.send(SocialEndpoints.Search(query: query))
     }
 }

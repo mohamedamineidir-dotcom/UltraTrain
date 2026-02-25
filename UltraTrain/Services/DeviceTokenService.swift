@@ -20,15 +20,8 @@ actor DeviceTokenService {
     func sendPendingTokenIfNeeded() async {
         guard let token = currentToken, !hasSentToken else { return }
         do {
-            let body = DeviceTokenRequestDTO(
-                deviceToken: token,
-                platform: "ios"
-            )
-            try await apiClient.requestVoid(
-                path: "device-token",
-                method: .put,
-                body: body,
-                requiresAuth: true
+            try await apiClient.sendVoid(
+                DeviceTokenEndpoints.Register(deviceToken: token)
             )
             hasSentToken = true
             Logger.notification.info("Device token sent to backend")

@@ -2,31 +2,31 @@ import SwiftUI
 
 struct DashboardView: View {
     @Environment(\.syncStatusMonitor) private var syncStatusMonitor
-    @State private var viewModel: DashboardViewModel
-    @State private var showFitnessTrend = false
+    @State var viewModel: DashboardViewModel
+    @State var showFitnessTrend = false
     @State private var showGoalSetting = false
     @Binding var selectedTab: Tab
 
-    private let planRepository: any TrainingPlanRepository
-    private let runRepository: any RunRepository
-    private let athleteRepository: any AthleteRepository
-    private let fitnessRepository: any FitnessRepository
-    private let fitnessCalculator: any CalculateFitnessUseCase
-    private let trainingLoadCalculator: any CalculateTrainingLoadUseCase
-    private let raceRepository: any RaceRepository
-    private let finishTimeEstimator: any EstimateFinishTimeUseCase
-    private let finishEstimateRepository: any FinishEstimateRepository
-    private let nutritionRepository: any NutritionRepository
-    private let nutritionGenerator: any GenerateNutritionPlanUseCase
-    private let healthKitService: any HealthKitServiceProtocol
-    private let recoveryRepository: any RecoveryRepository
-    private let checklistRepository: any RacePrepChecklistRepository
-    private let weatherService: (any WeatherServiceProtocol)?
-    private let locationService: LocationService
-    private let challengeRepository: any ChallengeRepository
-    private let goalRepository: any GoalRepository
-    private let achievementRepository: (any AchievementRepository)?
-    private let morningCheckInRepository: (any MorningCheckInRepository)?
+    let planRepository: any TrainingPlanRepository
+    let runRepository: any RunRepository
+    let athleteRepository: any AthleteRepository
+    let fitnessRepository: any FitnessRepository
+    let fitnessCalculator: any CalculateFitnessUseCase
+    let trainingLoadCalculator: any CalculateTrainingLoadUseCase
+    let raceRepository: any RaceRepository
+    let finishTimeEstimator: any EstimateFinishTimeUseCase
+    let finishEstimateRepository: any FinishEstimateRepository
+    let nutritionRepository: any NutritionRepository
+    let nutritionGenerator: any GenerateNutritionPlanUseCase
+    let healthKitService: any HealthKitServiceProtocol
+    let recoveryRepository: any RecoveryRepository
+    let checklistRepository: any RacePrepChecklistRepository
+    let weatherService: (any WeatherServiceProtocol)?
+    let locationService: LocationService
+    let challengeRepository: any ChallengeRepository
+    let goalRepository: any GoalRepository
+    let achievementRepository: (any AchievementRepository)?
+    let morningCheckInRepository: (any MorningCheckInRepository)?
 
     init(
         selectedTab: Binding<Tab>,
@@ -141,92 +141,19 @@ struct DashboardView: View {
                         onSetGoal: { showGoalSetting = true }
                     )
 
-                    NavigationLink {
-                        GoalHistoryView(
-                            goalRepository: goalRepository,
-                            runRepository: runRepository,
-                            athleteRepository: athleteRepository
-                        )
-                    } label: {
-                        HStack {
-                            Label("Goal History", systemImage: "chart.bar")
-                                .font(.subheadline)
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.caption)
-                                .foregroundStyle(Theme.Colors.secondaryLabel)
-                        }
-                        .padding(Theme.Spacing.sm)
-                        .background(
-                            RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
-                                .fill(Theme.Colors.secondaryBackground)
-                        )
-                    }
-                    .buttonStyle(.plain)
+                    goalHistoryLink
 
                     DashboardZoneDistributionCard(
                         distribution: viewModel.weeklyZoneDistribution
                     )
 
-                    NavigationLink {
-                        MorningReadinessView(
-                            healthKitService: healthKitService,
-                            recoveryRepository: recoveryRepository,
-                            fitnessCalculator: fitnessCalculator,
-                            fitnessRepository: fitnessRepository,
-                            morningCheckInRepository: morningCheckInRepository
-                        )
-                    } label: {
-                        DashboardRecoveryCard(
-                            recoveryScore: viewModel.recoveryScore,
-                            sleepHistory: viewModel.sleepHistory,
-                            readinessScore: viewModel.readinessScore,
-                            hrvTrend: viewModel.hrvTrend
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityIdentifier("dashboard.recoveryCard")
-                    .accessibilityHint("Opens morning readiness check")
+                    recoveryLink
 
-                    NavigationLink {
-                        ChallengesView(
-                            challengeRepository: challengeRepository,
-                            runRepository: runRepository,
-                            athleteRepository: athleteRepository
-                        )
-                    } label: {
-                        DashboardChallengeCard(
-                            currentStreak: viewModel.currentStreak,
-                            nearestProgress: viewModel.nearestChallengeProgress
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityHint("Opens challenges view")
+                    challengeLink
 
-                    if let achievementRepo = achievementRepository {
-                        NavigationLink {
-                            AchievementsView(
-                                achievementRepository: achievementRepo,
-                                runRepository: runRepository,
-                                challengeRepository: challengeRepository,
-                                raceRepository: raceRepository
-                            )
-                        } label: {
-                            DashboardAchievementsCard()
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityHint("Opens achievements view")
-                    }
+                    achievementLink
 
-                    if !viewModel.personalRecords.isEmpty {
-                        NavigationLink {
-                            PersonalRecordsWallView(records: viewModel.personalRecords)
-                        } label: {
-                            DashboardPersonalRecordsCard(records: viewModel.personalRecords)
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityHint("Opens personal records wall")
-                    }
+                    personalRecordsLink
 
                     LastRunCard(lastRun: viewModel.lastRun)
 
@@ -275,60 +202,5 @@ struct DashboardView: View {
                 }
             }
         }
-    }
-
-    // MARK: - NavigationLink Wrappers
-
-    @ViewBuilder
-    private var finishEstimateSection: some View {
-        if let estimate = viewModel.finishEstimate, let race = viewModel.aRace {
-            NavigationLink {
-                FinishEstimationView(
-                    race: race,
-                    finishTimeEstimator: finishTimeEstimator,
-                    athleteRepository: athleteRepository,
-                    runRepository: runRepository,
-                    fitnessCalculator: fitnessCalculator,
-                    nutritionRepository: nutritionRepository,
-                    nutritionGenerator: nutritionGenerator,
-                    raceRepository: raceRepository,
-                    finishEstimateRepository: finishEstimateRepository,
-                    weatherService: weatherService,
-                    locationService: locationService,
-                    checklistRepository: checklistRepository
-                )
-            } label: {
-                DashboardFinishEstimateCard(estimate: estimate, race: race)
-            }
-            .accessibilityHint("Opens detailed finish time estimation")
-        }
-    }
-
-    private var fitnessSection: some View {
-        DashboardFitnessCard(
-            snapshot: viewModel.fitnessSnapshot,
-            fitnessStatus: viewModel.fitnessStatus,
-            formDescription: viewModel.formDescription,
-            fitnessHistory: viewModel.recentFormHistory,
-            onSeeTrend: { showFitnessTrend = true }
-        )
-        .accessibilityIdentifier("dashboard.fitnessCard")
-    }
-
-    private var progressSection: some View {
-        NavigationLink {
-            TrainingProgressView(
-                runRepository: runRepository,
-                athleteRepository: athleteRepository,
-                planRepository: planRepository,
-                raceRepository: raceRepository,
-                fitnessCalculator: fitnessCalculator,
-                fitnessRepository: fitnessRepository,
-                trainingLoadCalculator: trainingLoadCalculator
-            )
-        } label: {
-            DashboardProgressCard(runCount: viewModel.runCount)
-        }
-        .accessibilityHint("Opens detailed training progress view")
     }
 }

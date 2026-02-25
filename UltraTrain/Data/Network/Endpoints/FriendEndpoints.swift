@@ -1,19 +1,66 @@
 import Foundation
 
 enum FriendEndpoints {
-    static let friendsPath = "/friends"
-    static let pendingPath = "/friends/pending"
-    static let requestPath = "/friends/request"
 
-    static func acceptPath(id: String) -> String {
-        "/friends/\(id)/accept"
+    struct FetchAll: APIEndpoint {
+        typealias RequestBody = EmptyRequestBody
+        typealias ResponseBody = [FriendConnectionResponseDTO]
+        var path: String { "/friends" }
+        var method: HTTPMethod { .get }
     }
 
-    static func declinePath(id: String) -> String {
-        "/friends/\(id)/decline"
+    struct FetchPending: APIEndpoint {
+        typealias RequestBody = EmptyRequestBody
+        typealias ResponseBody = [FriendConnectionResponseDTO]
+        var path: String { "/friends/pending" }
+        var method: HTTPMethod { .get }
     }
 
-    static func friendPath(id: String) -> String {
-        "/friends/\(id)"
+    struct SendRequest: APIEndpoint {
+        typealias RequestBody = FriendRequestRequestDTO
+        typealias ResponseBody = FriendConnectionResponseDTO
+        let body: FriendRequestRequestDTO?
+        var path: String { "/friends/request" }
+        var method: HTTPMethod { .post }
+
+        init(body: FriendRequestRequestDTO) {
+            self.body = body
+        }
+    }
+
+    struct Accept: APIEndpoint {
+        typealias RequestBody = EmptyRequestBody
+        typealias ResponseBody = FriendConnectionResponseDTO
+        let connectionId: String
+        var path: String { "/friends/\(connectionId)/accept" }
+        var method: HTTPMethod { .put }
+
+        init(connectionId: String) {
+            self.connectionId = connectionId
+        }
+    }
+
+    struct Decline: APIEndpoint {
+        typealias RequestBody = EmptyRequestBody
+        typealias ResponseBody = FriendConnectionResponseDTO
+        let connectionId: String
+        var path: String { "/friends/\(connectionId)/decline" }
+        var method: HTTPMethod { .put }
+
+        init(connectionId: String) {
+            self.connectionId = connectionId
+        }
+    }
+
+    struct Remove: APIEndpoint {
+        typealias RequestBody = EmptyRequestBody
+        typealias ResponseBody = EmptyResponseBody
+        let connectionId: String
+        var path: String { "/friends/\(connectionId)" }
+        var method: HTTPMethod { .delete }
+
+        init(connectionId: String) {
+            self.connectionId = connectionId
+        }
     }
 }

@@ -5,72 +5,72 @@ import os
 
 struct AppRootView: View {
     @Environment(\.scenePhase) private var scenePhase
-    @State private var isAuthenticated: Bool?
-    @State private var hasCompletedOnboarding: Bool?
-    @State private var isUnlocked = false
-    @State private var needsBiometricLock = false
-    @State private var showFeatureTour = false
-    @AppStorage("hasSeenFeatureTour") private var hasSeenFeatureTour = false
-    @State private var unitPreference: UnitPreference = .metric
-    @State private var lastAutoImportDate: Date?
+    @State var isAuthenticated: Bool?
+    @State var hasCompletedOnboarding: Bool?
+    @State var isUnlocked = false
+    @State var needsBiometricLock = false
+    @State var showFeatureTour = false
+    @AppStorage("hasSeenFeatureTour") var hasSeenFeatureTour = false
+    @State var unitPreference: UnitPreference = .metric
+    @State var lastAutoImportDate: Date?
     @State private var isDeviceCompromised = false
-    private let authService: any AuthServiceProtocol
-    private let deepLinkRouter: DeepLinkRouter
+    let authService: any AuthServiceProtocol
+    let deepLinkRouter: DeepLinkRouter
     private let deviceIntegrityChecker: (any DeviceIntegrityCheckerProtocol)?
 
-    private let athleteRepository: any AthleteRepository
-    private let raceRepository: any RaceRepository
-    private let planRepository: any TrainingPlanRepository
-    private let planGenerator: any GenerateTrainingPlanUseCase
-    private let nutritionRepository: any NutritionRepository
-    private let nutritionGenerator: any GenerateNutritionPlanUseCase
-    private let runRepository: any RunRepository
-    private let locationService: LocationService
-    private let fitnessRepository: any FitnessRepository
-    private let fitnessCalculator: any CalculateFitnessUseCase
-    private let finishTimeEstimator: any EstimateFinishTimeUseCase
-    private let appSettingsRepository: any AppSettingsRepository
-    private let clearAllDataUseCase: any ClearAllDataUseCase
-    private let healthKitService: any HealthKitServiceProtocol
-    private let hapticService: any HapticServiceProtocol
-    private let trainingLoadCalculator: any CalculateTrainingLoadUseCase
-    private let sessionNutritionAdvisor: any SessionNutritionAdvisor
-    private let connectivityService: PhoneConnectivityService?
-    private let widgetDataWriter: WidgetDataWriter
-    private let exportService: any ExportServiceProtocol
-    private let runImportUseCase: any RunImportUseCase
-    private let stravaAuthService: any StravaAuthServiceProtocol
-    private let stravaUploadService: (any StravaUploadServiceProtocol)?
-    private let stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)?
-    private let stravaImportService: (any StravaImportServiceProtocol)?
-    private let notificationService: any NotificationServiceProtocol
-    private let biometricAuthService: any BiometricAuthServiceProtocol
-    private let gearRepository: any GearRepository
-    private let finishEstimateRepository: any FinishEstimateRepository
-    private let planAutoAdjustmentService: any PlanAutoAdjustmentService
+    let athleteRepository: any AthleteRepository
+    let raceRepository: any RaceRepository
+    let planRepository: any TrainingPlanRepository
+    let planGenerator: any GenerateTrainingPlanUseCase
+    let nutritionRepository: any NutritionRepository
+    let nutritionGenerator: any GenerateNutritionPlanUseCase
+    let runRepository: any RunRepository
+    let locationService: LocationService
+    let fitnessRepository: any FitnessRepository
+    let fitnessCalculator: any CalculateFitnessUseCase
+    let finishTimeEstimator: any EstimateFinishTimeUseCase
+    let appSettingsRepository: any AppSettingsRepository
+    let clearAllDataUseCase: any ClearAllDataUseCase
+    let healthKitService: any HealthKitServiceProtocol
+    let hapticService: any HapticServiceProtocol
+    let trainingLoadCalculator: any CalculateTrainingLoadUseCase
+    let sessionNutritionAdvisor: any SessionNutritionAdvisor
+    let connectivityService: PhoneConnectivityService?
+    let widgetDataWriter: WidgetDataWriter
+    let exportService: any ExportServiceProtocol
+    let runImportUseCase: any RunImportUseCase
+    let stravaAuthService: any StravaAuthServiceProtocol
+    let stravaUploadService: (any StravaUploadServiceProtocol)?
+    let stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)?
+    let stravaImportService: (any StravaImportServiceProtocol)?
+    let notificationService: any NotificationServiceProtocol
+    let biometricAuthService: any BiometricAuthServiceProtocol
+    let gearRepository: any GearRepository
+    let finishEstimateRepository: any FinishEstimateRepository
+    let planAutoAdjustmentService: any PlanAutoAdjustmentService
     private let pendingActionProcessor: WidgetPendingActionProcessor?
-    private let healthKitImportService: (any HealthKitImportServiceProtocol)?
-    private let weatherService: (any WeatherServiceProtocol)?
-    private let recoveryRepository: any RecoveryRepository
-    private let checklistRepository: any RacePrepChecklistRepository
-    private let challengeRepository: any ChallengeRepository
-    private let workoutRecipeRepository: any WorkoutRecipeRepository
-    private let goalRepository: any GoalRepository
-    private let socialProfileRepository: any SocialProfileRepository
-    private let friendRepository: any FriendRepository
-    private let sharedRunRepository: any SharedRunRepository
-    private let activityFeedRepository: any ActivityFeedRepository
-    private let groupChallengeRepository: any GroupChallengeRepository
-    private let routeRepository: any RouteRepository
-    private let intervalWorkoutRepository: (any IntervalWorkoutRepository)?
-    private let emergencyContactRepository: (any EmergencyContactRepository)?
-    private let motionService: (any MotionServiceProtocol)?
-    private let foodLogRepository: any FoodLogRepository
-    private let foodDatabaseService: (any FoodDatabaseServiceProtocol)?
-    private let raceReflectionRepository: any RaceReflectionRepository
-    private let achievementRepository: (any AchievementRepository)?
-    private let morningCheckInRepository: (any MorningCheckInRepository)?
-    private let deviceTokenService: DeviceTokenService?
+    let healthKitImportService: (any HealthKitImportServiceProtocol)?
+    let weatherService: (any WeatherServiceProtocol)?
+    let recoveryRepository: any RecoveryRepository
+    let checklistRepository: any RacePrepChecklistRepository
+    let challengeRepository: any ChallengeRepository
+    let workoutRecipeRepository: any WorkoutRecipeRepository
+    let goalRepository: any GoalRepository
+    let socialProfileRepository: any SocialProfileRepository
+    let friendRepository: any FriendRepository
+    let sharedRunRepository: any SharedRunRepository
+    let activityFeedRepository: any ActivityFeedRepository
+    let groupChallengeRepository: any GroupChallengeRepository
+    let routeRepository: any RouteRepository
+    let intervalWorkoutRepository: (any IntervalWorkoutRepository)?
+    let emergencyContactRepository: (any EmergencyContactRepository)?
+    let motionService: (any MotionServiceProtocol)?
+    let foodLogRepository: any FoodLogRepository
+    let foodDatabaseService: (any FoodDatabaseServiceProtocol)?
+    let raceReflectionRepository: any RaceReflectionRepository
+    let achievementRepository: (any AchievementRepository)?
+    let morningCheckInRepository: (any MorningCheckInRepository)?
+    let deviceTokenService: DeviceTokenService?
 
     init(
         authService: any AuthServiceProtocol,
@@ -250,156 +250,6 @@ struct AppRootView: View {
             if newPhase == .background && needsBiometricLock {
                 isUnlocked = false
             }
-        }
-    }
-
-    @ViewBuilder
-    private var authenticatedContent: some View {
-        Group {
-            if needsBiometricLock && !isUnlocked {
-                AppLockView(biometricService: biometricAuthService) {
-                    isUnlocked = true
-                }
-            } else {
-                switch hasCompletedOnboarding {
-                case .none:
-                    ProgressView("Loading...")
-                case .some(true):
-                    MainTabView(
-                        deepLinkRouter: deepLinkRouter,
-                        athleteRepository: athleteRepository,
-                        raceRepository: raceRepository,
-                        planRepository: planRepository,
-                        planGenerator: planGenerator,
-                        nutritionRepository: nutritionRepository,
-                        nutritionGenerator: nutritionGenerator,
-                        runRepository: runRepository,
-                        locationService: locationService,
-                        fitnessRepository: fitnessRepository,
-                        fitnessCalculator: fitnessCalculator,
-                        finishTimeEstimator: finishTimeEstimator,
-                        appSettingsRepository: appSettingsRepository,
-                        clearAllDataUseCase: clearAllDataUseCase,
-                        healthKitService: healthKitService,
-                        hapticService: hapticService,
-                        trainingLoadCalculator: trainingLoadCalculator,
-                        sessionNutritionAdvisor: sessionNutritionAdvisor,
-                        connectivityService: connectivityService,
-                        widgetDataWriter: widgetDataWriter,
-                        exportService: exportService,
-                        runImportUseCase: runImportUseCase,
-                        stravaAuthService: stravaAuthService,
-                        stravaUploadService: stravaUploadService,
-                        stravaUploadQueueService: stravaUploadQueueService,
-                        stravaImportService: stravaImportService,
-                        notificationService: notificationService,
-                        biometricAuthService: biometricAuthService,
-                        gearRepository: gearRepository,
-                        finishEstimateRepository: finishEstimateRepository,
-                        planAutoAdjustmentService: planAutoAdjustmentService,
-                        healthKitImportService: healthKitImportService,
-                        weatherService: weatherService,
-                        recoveryRepository: recoveryRepository,
-                        checklistRepository: checklistRepository,
-                        challengeRepository: challengeRepository,
-                        workoutRecipeRepository: workoutRecipeRepository,
-                        goalRepository: goalRepository,
-                        socialProfileRepository: socialProfileRepository,
-                        friendRepository: friendRepository,
-                        sharedRunRepository: sharedRunRepository,
-                        activityFeedRepository: activityFeedRepository,
-                        groupChallengeRepository: groupChallengeRepository,
-                        routeRepository: routeRepository,
-                        intervalWorkoutRepository: intervalWorkoutRepository,
-                        emergencyContactRepository: emergencyContactRepository,
-                        motionService: motionService,
-                        foodLogRepository: foodLogRepository,
-                        foodDatabaseService: foodDatabaseService,
-                        raceReflectionRepository: raceReflectionRepository,
-                        achievementRepository: achievementRepository,
-                        morningCheckInRepository: morningCheckInRepository,
-                        authService: authService,
-                        onLogout: { isAuthenticated = false }
-                    )
-                    .fullScreenCover(isPresented: $showFeatureTour) {
-                        FeatureTourView {
-                            hasSeenFeatureTour = true
-                            showFeatureTour = false
-                        }
-                    }
-                case .some(false):
-                    OnboardingView(
-                        athleteRepository: athleteRepository,
-                        raceRepository: raceRepository,
-                        healthKitService: healthKitService,
-                        onComplete: {
-                            hasCompletedOnboarding = true
-                            if !hasSeenFeatureTour {
-                                showFeatureTour = true
-                            }
-                        }
-                    )
-                }
-            }
-        }
-    }
-
-    private func checkBiometricLockSetting() async {
-        do {
-            if let settings = try await appSettingsRepository.getSettings() {
-                needsBiometricLock = settings.biometricLockEnabled
-            }
-        } catch {
-            Logger.app.error("Failed to check biometric lock setting: \(error)")
-        }
-    }
-
-    private func checkOnboardingStatus() async {
-        do {
-            let athlete = try await athleteRepository.getAthlete()
-            hasCompletedOnboarding = athlete != nil
-        } catch {
-            Logger.app.error("Failed to check onboarding status: \(error)")
-            hasCompletedOnboarding = false
-        }
-    }
-
-    private func performAutoImportIfNeeded() async {
-        guard let importService = healthKitImportService else { return }
-        let importer = BackgroundAutoImporter(
-            healthKitService: healthKitService,
-            appSettingsRepository: appSettingsRepository,
-            athleteRepository: athleteRepository,
-            importService: importService
-        )
-        let check = await importer.importIfNeeded(lastImportDate: lastAutoImportDate)
-        lastAutoImportDate = check.importDate
-    }
-
-    private func loadUnitPreference() async {
-        do {
-            if let athlete = try await athleteRepository.getAthlete() {
-                unitPreference = athlete.preferredUnit
-            }
-        } catch {
-            Logger.app.error("Failed to load unit preference: \(error)")
-        }
-    }
-
-    private func registerForPushNotifications() async {
-        do {
-            let center = UNUserNotificationCenter.current()
-            let granted = try await center.requestAuthorization(options: [.alert, .sound, .badge])
-            guard granted else {
-                Logger.app.info("Push notification permission denied")
-                return
-            }
-            await MainActor.run {
-                UIApplication.shared.registerForRemoteNotifications()
-            }
-            await deviceTokenService?.sendPendingTokenIfNeeded()
-        } catch {
-            Logger.app.error("Failed to register for push notifications: \(error)")
         }
     }
 }

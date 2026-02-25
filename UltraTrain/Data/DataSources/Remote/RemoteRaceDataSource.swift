@@ -8,33 +8,14 @@ final class RemoteRaceDataSource: Sendable {
     }
 
     func upsertRace(_ dto: RaceUploadRequestDTO) async throws -> RaceResponseDTO {
-        try await apiClient.request(
-            path: RaceEndpoints.racesPath,
-            method: .put,
-            body: dto,
-            requiresAuth: true
-        )
+        try await apiClient.send(RaceEndpoints.Upsert(body: dto))
     }
 
     func fetchRaces(cursor: String? = nil, limit: Int = 20) async throws -> PaginatedResponseDTO<RaceResponseDTO> {
-        var queryItems: [URLQueryItem] = []
-        if let cursor {
-            queryItems.append(URLQueryItem(name: "cursor", value: cursor))
-        }
-        queryItems.append(URLQueryItem(name: "limit", value: String(limit)))
-        return try await apiClient.request(
-            path: RaceEndpoints.racesPath,
-            method: .get,
-            queryItems: queryItems.isEmpty ? nil : queryItems,
-            requiresAuth: true
-        )
+        try await apiClient.send(RaceEndpoints.FetchAll(cursor: cursor, limit: limit))
     }
 
     func deleteRace(id: String) async throws {
-        try await apiClient.requestVoid(
-            path: RaceEndpoints.racePath(id: id),
-            method: .delete,
-            requiresAuth: true
-        )
+        try await apiClient.sendVoid(RaceEndpoints.Delete(id: id))
     }
 }

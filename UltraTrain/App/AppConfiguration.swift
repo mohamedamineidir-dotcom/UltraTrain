@@ -17,6 +17,8 @@ enum AppConfiguration {
         static let timeoutInterval: TimeInterval = 30
         static let hmacSecret: String = Bundle.main.infoDictionary?["HMAC_SIGNING_SECRET"] as? String ?? ""
         static let pinnedHost: String = "ultratrain-production.up.railway.app"
+        // TODO: Extract server certificate hash before production release.
+        // See CertificatePinningDelegate.swift for extraction instructions.
         static let certificatePinHashes: [String] = []
     }
 

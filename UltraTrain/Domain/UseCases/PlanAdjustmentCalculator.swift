@@ -71,7 +71,6 @@ enum PlanAdjustmentCalculator {
         let keyTypes: Set<SessionType> = [.longRun, .intervals, .tempo, .verticalGain]
         let nowDay = Calendar.current.startOfDay(for: now)
 
-        // Collect missed key sessions from current and previous week
         var missedSessions: [(weekIndex: Int, sessionIndex: Int, session: TrainingSession)] = []
         let weeksToCheck: [Int]
         if let cwi = currentWeekIndex {
@@ -94,7 +93,6 @@ enum PlanAdjustmentCalculator {
 
         guard !missedSessions.isEmpty else { return }
 
-        // Find available rest slots in current and next week
         let restSlotWeeks: [Int]
         if let cwi = currentWeekIndex {
             restSlotWeeks = cwi + 1 < plan.weeks.count ? [cwi, cwi + 1] : [cwi]
@@ -114,7 +112,6 @@ enum PlanAdjustmentCalculator {
             }
         }
 
-        // Match each missed key session to the earliest available rest slot
         var usedSlotIds: Set<UUID> = []
         for missed in missedSessions {
             guard let slot = availableRestSlots.first(where: { !usedSlotIds.contains($0.session.id) }) else {
@@ -151,7 +148,6 @@ enum PlanAdjustmentCalculator {
         let previousWeek = plan.weeks[cwi - 1]
         let nowDay = Calendar.current.startOfDay(for: now)
 
-        // Only evaluate fully completed weeks
         let allPast = previousWeek.sessions.allSatisfy {
             Calendar.current.startOfDay(for: $0.date) < nowDay
         }
@@ -165,7 +161,6 @@ enum PlanAdjustmentCalculator {
 
         guard adherence < AppConfiguration.Training.lowAdherenceThreshold else { return }
 
-        // Target: future non-completed non-rest sessions in current week
         let currentWeek = plan.weeks[cwi]
         let affectedIds = currentWeek.sessions
             .filter { Calendar.current.startOfDay(for: $0.date) >= nowDay
@@ -198,7 +193,6 @@ enum PlanAdjustmentCalculator {
         guard let cwi = currentWeekIndex else { return false }
         let currentWeek = plan.weeks[cwi]
 
-        // Don't suggest if already a recovery week
         guard !currentWeek.isRecoveryWeek else { return false }
 
         let allSessions = plan.weeks.flatMap(\.sessions)
@@ -213,7 +207,6 @@ enum PlanAdjustmentCalculator {
             let daysSince = Calendar.current.dateComponents([.day], from: mostRecent, to: now).day ?? 0
             needsRecovery = daysSince >= gapDays
         } else {
-            // No completed sessions at all — check if plan has been active long enough
             let planStartDate = plan.weeks.first?.startDate ?? now
             let daysSinceStart = Calendar.current.dateComponents([.day], from: planStartDate, to: now).day ?? 0
             needsRecovery = daysSinceStart >= gapDays
@@ -269,162 +262,6 @@ enum PlanAdjustmentCalculator {
             message: "\(missedSessions.count) past sessions are unmarked. Mark them as skipped to keep your plan tidy.",
             actionLabel: "Skip All Missed",
             affectedSessionIds: missedSessions.map(\.id)
-        ))
-    }
-
-    // MARK: - Fatigue Load
-
-    private static func detectFatigueLoad(
-        plan: TrainingPlan,
-        now: Date,
-        snapshot: FitnessSnapshot,
-        currentWeekIndex: Int?,
-        into recommendations: inout [PlanAdjustmentRecommendation]
-    ) {
-        let isFatigued = snapshot.form < -15 || snapshot.acuteToChronicRatio > 1.3
-        guard isFatigued else { return }
-        guard let cwi = currentWeekIndex else { return }
-
-        let nowDay = Calendar.current.startOfDay(for: now)
-        let affectedIds = plan.weeks[cwi].sessions
-            .filter { Calendar.current.startOfDay(for: $0.date) >= nowDay
-                && !$0.isCompleted && !$0.isSkipped && $0.type != .rest }
-            .map(\.id)
-
-        guard !affectedIds.isEmpty else { return }
-
-        let isSevere = snapshot.form < -25 || snapshot.acuteToChronicRatio > 1.5
-        let severity: AdjustmentSeverity = isSevere ? .urgent : .recommended
-        let reductionPct = isSevere ? 25 : 15
-
-        recommendations.append(PlanAdjustmentRecommendation(
-            id: UUID(),
-            type: .reduceFatigueLoad,
-            severity: severity,
-            title: "Reduce Training Load",
-            message: "High fatigue detected (form: \(Int(snapshot.form)), ACR: \(String(format: "%.1f", snapshot.acuteToChronicRatio))). Reduce remaining sessions by \(reductionPct)%.",
-            actionLabel: "Reduce \(reductionPct)%",
-            affectedSessionIds: affectedIds
-        ))
-    }
-
-    // MARK: - Swap to Recovery
-
-    private static func detectSwapToRecovery(
-        plan: TrainingPlan,
-        now: Date,
-        snapshot: FitnessSnapshot,
-        currentWeekIndex: Int?,
-        into recommendations: inout [PlanAdjustmentRecommendation]
-    ) {
-        guard snapshot.acuteToChronicRatio > 1.5 else { return }
-        guard let cwi = currentWeekIndex else { return }
-
-        let hardTypes: Set<SessionType> = [.tempo, .intervals, .verticalGain]
-        let nowDay = Calendar.current.startOfDay(for: now)
-
-        let nextHardSession = plan.weeks[cwi].sessions.first {
-            Calendar.current.startOfDay(for: $0.date) >= nowDay
-                && !$0.isCompleted && !$0.isSkipped
-                && hardTypes.contains($0.type)
-        }
-
-        guard let session = nextHardSession else { return }
-
-        recommendations.append(PlanAdjustmentRecommendation(
-            id: UUID(),
-            type: .swapToRecovery,
-            severity: .urgent,
-            title: "Swap to Recovery Run",
-            message: "ACR is \(String(format: "%.1f", snapshot.acuteToChronicRatio)) — injury risk is high. Swap your \(session.type.rawValue) to a recovery run.",
-            actionLabel: "Swap to Recovery",
-            affectedSessionIds: [session.id]
-        ))
-    }
-
-    // MARK: - Low Recovery
-
-    private static func detectLowRecovery(
-        plan: TrainingPlan,
-        now: Date,
-        recovery: RecoveryScore,
-        currentWeekIndex: Int?,
-        into recommendations: inout [PlanAdjustmentRecommendation]
-    ) {
-        guard recovery.overallScore < AppConfiguration.Recovery.lowRecoveryThreshold else { return }
-        guard let cwi = currentWeekIndex else { return }
-
-        let nowDay = Calendar.current.startOfDay(for: now)
-        let hardTypes: Set<SessionType> = [.tempo, .intervals, .verticalGain]
-
-        if recovery.overallScore < AppConfiguration.Recovery.criticalRecoveryThreshold {
-            let nextHard = plan.weeks[cwi].sessions.first {
-                Calendar.current.startOfDay(for: $0.date) >= nowDay
-                    && !$0.isCompleted && !$0.isSkipped
-                    && hardTypes.contains($0.type)
-            }
-            if let session = nextHard {
-                recommendations.append(PlanAdjustmentRecommendation(
-                    id: UUID(),
-                    type: .swapToRecoveryLowRecovery,
-                    severity: .urgent,
-                    title: "Recovery Critical",
-                    message: "Recovery score is \(recovery.overallScore)/100. Swap your \(session.type.rawValue) to a recovery run.",
-                    actionLabel: "Swap to Recovery",
-                    affectedSessionIds: [session.id]
-                ))
-                return
-            }
-        }
-
-        let affectedIds = plan.weeks[cwi].sessions
-            .filter { Calendar.current.startOfDay(for: $0.date) >= nowDay
-                && !$0.isCompleted && !$0.isSkipped && $0.type != .rest }
-            .map(\.id)
-
-        guard !affectedIds.isEmpty else { return }
-
-        recommendations.append(PlanAdjustmentRecommendation(
-            id: UUID(),
-            type: .reduceLoadLowRecovery,
-            severity: .recommended,
-            title: "Reduce Load — Low Recovery",
-            message: "Recovery score is \(recovery.overallScore)/100. Consider reducing today's session intensity by 20%.",
-            actionLabel: "Reduce Intensity",
-            affectedSessionIds: affectedIds
-        ))
-    }
-
-    // MARK: - Accumulated Missed Volume
-
-    private static func detectAccumulatedMissedVolume(
-        plan: TrainingPlan,
-        now: Date,
-        currentWeekIndex: Int?,
-        into recommendations: inout [PlanAdjustmentRecommendation]
-    ) {
-        guard let cwi = currentWeekIndex else { return }
-        let (missedDist, _) = MissedSessionRedistributor.calculateAccumulatedMissedVolume(plan: plan, now: now)
-        let threshold = AppConfiguration.Training.accumulatedMissedVolumeThresholdKm
-        guard missedDist >= threshold else { return }
-
-        let pct = Int(AppConfiguration.Training.accumulatedMissedVolumeReductionPercent)
-        let nowDay = Calendar.current.startOfDay(for: now)
-        let affectedIds = plan.weeks[cwi].sessions
-            .filter { Calendar.current.startOfDay(for: $0.date) >= nowDay
-                && !$0.isCompleted && !$0.isSkipped && $0.type != .rest }
-            .map(\.id)
-
-        guard !affectedIds.isEmpty else { return }
-
-        recommendations.append(PlanAdjustmentRecommendation(
-            id: UUID(),
-            type: .reduceTargetDueToAccumulatedMissed,
-            severity: .urgent,
-            title: "Lower Plan Targets",
-            message: "You've missed \(Int(missedDist)) km in the last 2 weeks. Reduce remaining targets by \(pct)% to avoid overreaching.",
-            actionLabel: "Reduce \(pct)%",
-            affectedSessionIds: affectedIds
         ))
     }
 }

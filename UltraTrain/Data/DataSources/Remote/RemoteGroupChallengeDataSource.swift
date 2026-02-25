@@ -8,57 +8,26 @@ final class RemoteGroupChallengeDataSource: Sendable {
     }
 
     func createChallenge(_ dto: CreateChallengeRequestDTO) async throws -> GroupChallengeResponseDTO {
-        try await apiClient.request(
-            path: ChallengeEndpoints.challengesPath,
-            method: .post,
-            body: dto,
-            requiresAuth: true
-        )
+        try await apiClient.send(ChallengeEndpoints.Create(body: dto))
     }
 
     func fetchChallenges(status: String? = nil) async throws -> [GroupChallengeResponseDTO] {
-        var queryItems: [URLQueryItem] = []
-        if let status {
-            queryItems.append(URLQueryItem(name: "status", value: status))
-        }
-        return try await apiClient.request(
-            path: ChallengeEndpoints.challengesPath,
-            method: .get,
-            queryItems: queryItems.isEmpty ? nil : queryItems,
-            requiresAuth: true
-        )
+        try await apiClient.send(ChallengeEndpoints.FetchAll(status: status))
     }
 
     func fetchChallenge(id: String) async throws -> GroupChallengeResponseDTO {
-        try await apiClient.request(
-            path: ChallengeEndpoints.challengePath(id: id),
-            method: .get,
-            requiresAuth: true
-        )
+        try await apiClient.send(ChallengeEndpoints.FetchOne(id: id))
     }
 
     func joinChallenge(id: String) async throws -> GroupChallengeResponseDTO {
-        try await apiClient.request(
-            path: ChallengeEndpoints.joinPath(id: id),
-            method: .post,
-            requiresAuth: true
-        )
+        try await apiClient.send(ChallengeEndpoints.Join(id: id))
     }
 
     func leaveChallenge(id: String) async throws {
-        try await apiClient.requestVoid(
-            path: ChallengeEndpoints.leavePath(id: id),
-            method: .post,
-            requiresAuth: true
-        )
+        try await apiClient.sendVoid(ChallengeEndpoints.Leave(id: id))
     }
 
     func updateProgress(challengeId: String, dto: UpdateProgressRequestDTO) async throws -> ChallengeParticipantResponseDTO {
-        try await apiClient.request(
-            path: ChallengeEndpoints.progressPath(id: challengeId),
-            method: .put,
-            body: dto,
-            requiresAuth: true
-        )
+        try await apiClient.send(ChallengeEndpoints.UpdateProgress(challengeId: challengeId, body: dto))
     }
 }

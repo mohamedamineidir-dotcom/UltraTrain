@@ -10,6 +10,7 @@ actor APIClient {
     private let retryInterceptor: RetryInterceptor
     private let signingInterceptor: RequestSigningInterceptor?
     private let idempotencyInterceptor: IdempotencyInterceptor
+    private let loggingInterceptor: LoggingInterceptor
 
     private static let pinnedSession: URLSession = {
         let delegate = CertificatePinningDelegate()
@@ -22,7 +23,8 @@ actor APIClient {
         authInterceptor: AuthInterceptor? = nil,
         retryInterceptor: RetryInterceptor = RetryInterceptor(),
         signingInterceptor: RequestSigningInterceptor? = nil,
-        idempotencyInterceptor: IdempotencyInterceptor = IdempotencyInterceptor()
+        idempotencyInterceptor: IdempotencyInterceptor = IdempotencyInterceptor(),
+        loggingInterceptor: LoggingInterceptor = LoggingInterceptor()
     ) {
         self.baseURL = baseURL
         self.session = session ?? APIClient.pinnedSession
@@ -30,6 +32,7 @@ actor APIClient {
         self.retryInterceptor = retryInterceptor
         self.signingInterceptor = signingInterceptor
         self.idempotencyInterceptor = idempotencyInterceptor
+        self.loggingInterceptor = loggingInterceptor
 
         self.decoder = JSONDecoder()
         self.decoder.keyDecodingStrategy = .convertFromSnakeCase
@@ -42,7 +45,7 @@ actor APIClient {
 
     private var inFlightGETs: [InFlightRequestKey: Task<(Data, HTTPURLResponse), Error>] = [:]
 
-    func request<Response: Decodable>(
+    private func request<Response: Decodable>(
         path: String,
         method: HTTPMethod,
         body: (any Encodable)? = nil,
@@ -72,18 +75,22 @@ actor APIClient {
         return try handleResponse(data: data, statusCode: httpResponse.statusCode)
     }
 
-    func requestVoid(
-        path: String,
-        method: HTTPMethod,
-        body: (any Encodable)? = nil,
-        requiresAuth: Bool = true
-    ) async throws {
-        let _: EmptyResponseBody = try await request(
-            path: path,
-            method: method,
-            body: body,
-            requiresAuth: requiresAuth
+    // MARK: - Typed Endpoint API
+
+    func send<E: APIEndpoint>(_ endpoint: E) async throws -> E.ResponseBody {
+        try await request(
+            path: endpoint.path,
+            method: endpoint.method,
+            body: endpoint.body,
+            queryItems: endpoint.queryItems,
+            requiresAuth: endpoint.requiresAuth
         )
+    }
+
+    func sendVoid<E: APIEndpoint>(
+        _ endpoint: E
+    ) async throws where E.ResponseBody == EmptyResponseBody {
+        let _: EmptyResponseBody = try await send(endpoint)
     }
 
     // MARK: - Deduplication
@@ -153,19 +160,21 @@ actor APIClient {
             signingInterceptor?.sign(&urlRequest)
         }
 
-        Logger.network.debug("Request: \(method.rawValue) \(path)")
+        loggingInterceptor.logRequest(urlRequest)
 
         var lastError: Error = APIError.unknown(statusCode: -1)
 
         for attempt in 0..<retryInterceptor.maxAttempts {
             do {
+                let startTime = CFAbsoluteTimeGetCurrent()
                 let (data, response) = try await session.data(for: urlRequest)
+                let elapsed = CFAbsoluteTimeGetCurrent() - startTime
 
                 guard let httpResponse = response as? HTTPURLResponse else {
                     throw APIError.invalidResponse
                 }
 
-                Logger.network.debug("Response: \(httpResponse.statusCode) \(path)")
+                loggingInterceptor.logResponse(httpResponse, data: data, duration: elapsed, url: urlRequest.url)
 
                 if httpResponse.statusCode == 401, requiresAuth, let interceptor = authInterceptor {
                     let newToken = try await interceptor.handleUnauthorized()
@@ -255,17 +264,4 @@ actor APIClient {
             throw APIError.unknown(statusCode: statusCode)
         }
     }
-}
-
-struct EmptyResponseBody: Decodable {
-    init() {}
-    init(from decoder: Decoder) throws {}
-}
-
-enum HTTPMethod: String, Sendable {
-    case get = "GET"
-    case post = "POST"
-    case put = "PUT"
-    case patch = "PATCH"
-    case delete = "DELETE"
 }

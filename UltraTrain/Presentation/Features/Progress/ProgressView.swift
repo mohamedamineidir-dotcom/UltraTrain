@@ -2,7 +2,7 @@ import SwiftUI
 
 struct TrainingProgressView: View {
     @Environment(\.unitPreference) private var units
-    @State private var viewModel: ProgressViewModel
+    @State var viewModel: ProgressViewModel
     private let runRepository: any RunRepository
     private let athleteRepository: any AthleteRepository
     private let planRepository: any TrainingPlanRepository
@@ -69,7 +69,7 @@ struct TrainingProgressView: View {
 
     // MARK: - Training Load Link
 
-    private var trainingLoadLink: some View {
+    var trainingLoadLink: some View {
         NavigationLink {
             TrainingLoadView(
                 trainingLoadCalculator: trainingLoadCalculator,
@@ -102,7 +102,7 @@ struct TrainingProgressView: View {
 
     // MARK: - Run Frequency Heatmap Link
 
-    private var runFrequencyHeatmapLink: some View {
+    var runFrequencyHeatmapLink: some View {
         NavigationLink {
             RunFrequencyHeatmapView(
                 runRepository: runRepository,
@@ -133,7 +133,7 @@ struct TrainingProgressView: View {
 
     // MARK: - This Week
 
-    private var thisWeekSection: some View {
+    var thisWeekSection: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             Text("This Week")
                 .font(.headline)
@@ -164,7 +164,7 @@ struct TrainingProgressView: View {
     // MARK: - Injury Risk Alerts
 
     @ViewBuilder
-    private var injuryRiskSection: some View {
+    var injuryRiskSection: some View {
         let critical = viewModel.injuryRiskAlerts.filter { $0.severity == .critical }
         if !critical.isEmpty {
             InjuryRiskAlertBanner(alerts: critical)
@@ -174,168 +174,9 @@ struct TrainingProgressView: View {
     // MARK: - Phase Timeline
 
     @ViewBuilder
-    private var phaseTimelineSection: some View {
+    var phaseTimelineSection: some View {
         if !viewModel.phaseBlocks.isEmpty {
             PhaseTimelineView(blocks: viewModel.phaseBlocks)
-                .cardStyle()
-        }
-    }
-
-    // MARK: - Fitness Section
-
-    private var fitnessSection: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            if viewModel.fitnessSnapshots.count >= 2 {
-                FitnessTrendChartView(snapshots: viewModel.fitnessSnapshots)
-
-                if viewModel.formStatus != .noData {
-                    HStack(spacing: Theme.Spacing.sm) {
-                        Image(systemName: viewModel.formIcon)
-                            .foregroundStyle(viewModel.formColor)
-                            .accessibilityHidden(true)
-                        Text("Form: \(viewModel.formLabel)")
-                            .font(.subheadline)
-                        Spacer()
-                        if let snapshot = viewModel.currentFitnessSnapshot {
-                            Text(String(format: "%+.0f TSB", snapshot.form))
-                                .font(.caption.bold().monospacedDigit())
-                                .foregroundStyle(viewModel.formColor)
-                        }
-                    }
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel("Current form: \(viewModel.formLabel)\(viewModel.currentFitnessSnapshot.map { String(format: ". Training stress balance: %+.0f", $0.form) } ?? "")")
-                }
-            } else {
-                Text("Complete some runs to see your fitness trend")
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-            }
-        }
-        .cardStyle()
-    }
-
-    // MARK: - Race Readiness
-
-    @ViewBuilder
-    private var raceReadinessSection: some View {
-        if let forecast = viewModel.raceReadiness {
-            RaceReadinessCard(forecast: forecast)
-                .cardStyle()
-        }
-    }
-
-    // MARK: - Volume Chart
-
-    private var volumeChartSection: some View {
-        WeeklyDistanceChartView(weeklyVolumes: viewModel.weeklyVolumes)
-            .cardStyle()
-    }
-
-    // MARK: - Elevation Chart
-
-    private var elevationChartSection: some View {
-        WeeklyElevationChartView(weeklyVolumes: viewModel.weeklyVolumes)
-            .cardStyle()
-    }
-
-    // MARK: - Duration Chart
-
-    @ViewBuilder
-    private var durationChartSection: some View {
-        if viewModel.weeklyVolumes.contains(where: { $0.duration > 0 }) {
-            WeeklyDurationChartView(weeklyVolumes: viewModel.weeklyVolumes)
-                .cardStyle()
-        }
-    }
-
-    // MARK: - Cumulative Volume
-
-    @ViewBuilder
-    private var cumulativeVolumeSection: some View {
-        if viewModel.weeklyVolumes.contains(where: { $0.distanceKm > 0 }) {
-            CumulativeVolumeChartView(weeklyVolumes: viewModel.weeklyVolumes)
-                .cardStyle()
-        }
-    }
-
-    // MARK: - Monthly Volume
-
-    @ViewBuilder
-    private var monthlyVolumeSection: some View {
-        if viewModel.monthlyVolumes.count >= 2 {
-            MonthlyVolumeComparisonChart(monthlyVolumes: viewModel.monthlyVolumes)
-                .cardStyle()
-        }
-    }
-
-    // MARK: - Session Type Breakdown
-
-    @ViewBuilder
-    private var sessionTypeSection: some View {
-        if !viewModel.sessionTypeStats.isEmpty {
-            SessionTypeBreakdownChart(stats: viewModel.sessionTypeStats)
-                .cardStyle()
-        }
-    }
-
-    // MARK: - Adherence
-
-    private var adherenceSection: some View {
-        ProgressAdherenceSection(
-            adherencePercent: viewModel.adherencePercent,
-            completed: viewModel.planAdherence.completed,
-            total: viewModel.planAdherence.total,
-            weeklyAdherence: viewModel.weeklyAdherence
-        )
-    }
-
-    // MARK: - Training Calendar
-
-    @ViewBuilder
-    private var trainingCalendarSection: some View {
-        if !viewModel.calendarHeatmapDays.isEmpty {
-            TrainingCalendarHeatmapView(dayIntensities: viewModel.calendarHeatmapDays)
-                .cardStyle()
-        }
-    }
-
-    // MARK: - Summary
-
-    private var summarySection: some View {
-        ProgressSummarySection(
-            totalDistanceKm: viewModel.totalDistanceKm,
-            totalElevationGainM: viewModel.totalElevationGainM,
-            totalRuns: viewModel.totalRuns,
-            averageWeeklyKm: viewModel.averageWeeklyKm
-        )
-    }
-
-    // MARK: - Pace Trend
-
-    @ViewBuilder
-    private var paceTrendSection: some View {
-        if viewModel.runTrendPoints.count >= 3 {
-            PaceTrendChartView(trendPoints: viewModel.runTrendPoints)
-                .cardStyle()
-        }
-    }
-
-    // MARK: - Heart Rate Trend
-
-    @ViewBuilder
-    private var heartRateTrendSection: some View {
-        let pointsWithHR = viewModel.runTrendPoints.filter { $0.averageHeartRate != nil }
-        if pointsWithHR.count >= 3 {
-            HeartRateTrendChartView(trendPoints: viewModel.runTrendPoints)
-                .cardStyle()
-        }
-    }
-
-    // MARK: - Personal Records
-
-    @ViewBuilder
-    private var personalRecordsSection: some View {
-        if !viewModel.personalRecords.isEmpty {
-            PersonalRecordsSection(records: viewModel.personalRecords)
                 .cardStyle()
         }
     }

@@ -14,20 +14,20 @@ final class DashboardViewModel {
 
     // MARK: - Dependencies
 
-    private let planRepository: any TrainingPlanRepository
-    private let runRepository: any RunRepository
-    private let athleteRepository: any AthleteRepository
-    private let fitnessRepository: any FitnessRepository
-    private let fitnessCalculator: any CalculateFitnessUseCase
-    private let raceRepository: any RaceRepository
-    private let finishTimeEstimator: any EstimateFinishTimeUseCase
-    private let finishEstimateRepository: any FinishEstimateRepository
-    private let healthKitService: any HealthKitServiceProtocol
-    private let recoveryRepository: any RecoveryRepository
-    private let weatherService: (any WeatherServiceProtocol)?
-    private let locationService: LocationService?
-    private let challengeRepository: (any ChallengeRepository)?
-    private let goalRepository: (any GoalRepository)?
+    let planRepository: any TrainingPlanRepository
+    let runRepository: any RunRepository
+    let athleteRepository: any AthleteRepository
+    let fitnessRepository: any FitnessRepository
+    let fitnessCalculator: any CalculateFitnessUseCase
+    let raceRepository: any RaceRepository
+    let finishTimeEstimator: any EstimateFinishTimeUseCase
+    let finishEstimateRepository: any FinishEstimateRepository
+    let healthKitService: any HealthKitServiceProtocol
+    let recoveryRepository: any RecoveryRepository
+    let weatherService: (any WeatherServiceProtocol)?
+    let locationService: LocationService?
+    let challengeRepository: (any ChallengeRepository)?
+    let goalRepository: (any GoalRepository)?
 
     // MARK: - State
 
@@ -118,7 +118,7 @@ final class DashboardViewModel {
         isLoading = false
     }
 
-    private func loadFitness() async {
+    func loadFitness() async {
         do {
             guard let athlete = try await athleteRepository.getAthlete() else { return }
             let runs = try await runRepository.getRuns(for: athlete.id)
@@ -166,7 +166,7 @@ final class DashboardViewModel {
         }
     }
 
-    private func loadLastRun() async {
+    func loadLastRun() async {
         do {
             let recent = try await runRepository.getRecentRuns(limit: 1)
             lastRun = recent.first
@@ -175,7 +175,7 @@ final class DashboardViewModel {
         }
     }
 
-    private func loadUpcomingRaces() async {
+    func loadUpcomingRaces() async {
         do {
             let allRaces = try await raceRepository.getRaces()
             let today = Date.now.startOfDay
@@ -187,337 +187,6 @@ final class DashboardViewModel {
             )
         } catch {
             Logger.training.debug("Dashboard: could not load races: \(error)")
-        }
-    }
-
-    // MARK: - Weather
-
-    private func loadWeather() async {
-        guard let weatherService, let locationService else { return }
-        guard let location = locationService.currentLocation else { return }
-        let lat = location.coordinate.latitude
-        let lon = location.coordinate.longitude
-
-        do {
-            currentWeather = try await weatherService.currentWeather(latitude: lat, longitude: lon)
-        } catch {
-            Logger.weather.debug("Dashboard: could not load current weather: \(error)")
-        }
-
-        guard let session = nextSession,
-              abs(session.date.timeIntervalSinceNow) < Double(AppConfiguration.Weather.sessionForecastHoursAhead) * 3600 else {
-            return
-        }
-
-        do {
-            let hours = max(1, Int(session.date.timeIntervalSinceNow / 3600) + 1)
-            let forecast = try await weatherService.hourlyForecast(latitude: lat, longitude: lon, hours: hours)
-            sessionForecast = forecast.last
-        } catch {
-            Logger.weather.debug("Dashboard: could not load session forecast: \(error)")
-        }
-    }
-
-    // MARK: - Recovery
-
-    private func loadRecovery() async {
-        do {
-            let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date.now) ?? Date.now
-            let sleepEntries = try await healthKitService.fetchSleepData(from: yesterday, to: .now)
-            let lastNight = sleepEntries.last
-
-            let sevenDaysAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date.now) ?? Date.now
-            let history = try await healthKitService.fetchSleepData(from: sevenDaysAgo, to: .now)
-            sleepHistory = history
-
-            let currentHR = try await healthKitService.fetchRestingHeartRate()
-            let athlete = try await athleteRepository.getAthlete()
-            let baselineHR = athlete?.restingHeartRate
-
-            // Fetch HRV data
-            let thirtyDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: Date.now) ?? Date.now
-            let hrvReadings = try await healthKitService.fetchHRVData(from: thirtyDaysAgo, to: .now)
-            let computedHRVTrend = HRVAnalyzer.analyze(readings: hrvReadings)
-            hrvTrend = computedHRVTrend
-
-            let computedHRVScore: Int?
-            if let trend = computedHRVTrend {
-                computedHRVScore = HRVAnalyzer.hrvScore(trend: trend)
-            } else {
-                computedHRVScore = nil
-            }
-
-            let score = RecoveryScoreCalculator.calculate(
-                lastNightSleep: lastNight,
-                sleepHistory: history,
-                currentRestingHR: currentHR,
-                baselineRestingHR: baselineHR,
-                fitnessSnapshot: fitnessSnapshot,
-                hrvScore: computedHRVScore
-            )
-            recoveryScore = score
-
-            // Compute readiness score
-            if let trend = computedHRVTrend {
-                readinessScore = ReadinessCalculator.calculate(
-                    recoveryScore: score,
-                    hrvTrend: trend,
-                    fitnessSnapshot: fitnessSnapshot
-                )
-            }
-
-            let latestHRV = hrvReadings.sorted(by: { $0.date > $1.date }).first
-            let snapshot = RecoverySnapshot(
-                id: UUID(),
-                date: .now,
-                recoveryScore: score,
-                sleepEntry: lastNight,
-                restingHeartRate: currentHR,
-                hrvReading: latestHRV,
-                readinessScore: readinessScore
-            )
-            try await recoveryRepository.saveSnapshot(snapshot)
-        } catch {
-            Logger.recovery.debug("Dashboard: could not load recovery data: \(error)")
-            let score = RecoveryScoreCalculator.calculate(
-                lastNightSleep: nil,
-                sleepHistory: [],
-                currentRestingHR: nil,
-                baselineRestingHR: nil,
-                fitnessSnapshot: fitnessSnapshot
-            )
-            recoveryScore = score
-        }
-    }
-
-    // MARK: - Challenges
-
-    private func loadChallenges() async {
-        guard let challengeRepository else { return }
-        do {
-            let athlete = try await athleteRepository.getAthlete()
-            guard let athlete else { return }
-            let runs = try await runRepository.getRuns(for: athlete.id)
-            currentStreak = ChallengeProgressCalculator.computeCurrentStreak(from: runs)
-
-            let enrollments = try await challengeRepository.getActiveEnrollments()
-            var nearest: ChallengeProgressCalculator.ChallengeProgress?
-            for enrollment in enrollments {
-                guard let definition = ChallengeLibrary.definition(for: enrollment.challengeDefinitionId) else {
-                    continue
-                }
-                let progress = ChallengeProgressCalculator.computeProgress(
-                    enrollment: enrollment, definition: definition, runs: runs
-                )
-                if !progress.isComplete {
-                    if nearest == nil || progress.progressFraction > nearest!.progressFraction {
-                        nearest = progress
-                    }
-                }
-            }
-            nearestChallengeProgress = nearest
-        } catch {
-            Logger.challenges.debug("Dashboard: could not load challenges: \(error)")
-        }
-    }
-
-    // MARK: - Goals
-
-    private func loadGoals() async {
-        guard let goalRepository else { return }
-        do {
-            let athlete = try await athleteRepository.getAthlete()
-            guard let athlete else { return }
-            let runs = try await runRepository.getRuns(for: athlete.id)
-
-            if let weeklyGoal = try await goalRepository.getActiveGoal(period: .weekly) {
-                weeklyGoalProgress = GoalProgressCalculator.calculate(goal: weeklyGoal, runs: runs)
-            }
-
-            if let monthlyGoal = try await goalRepository.getActiveGoal(period: .monthly) {
-                monthlyGoalProgress = GoalProgressCalculator.calculate(goal: monthlyGoal, runs: runs)
-            }
-        } catch {
-            Logger.training.debug("Dashboard: could not load goals: \(error)")
-        }
-    }
-
-    // MARK: - Fitness Computed
-
-    var fitnessStatus: FitnessStatus {
-        guard let snapshot = fitnessSnapshot else { return .noData }
-        let acr = snapshot.acuteToChronicRatio
-        if acr > 1.5 { return .injuryRisk }
-        if acr < 0.8 && snapshot.fitness > 0 { return .detraining }
-        return .optimal
-    }
-
-    var formDescription: String {
-        guard let snapshot = fitnessSnapshot else { return "--" }
-        if snapshot.form > 10 { return "Fresh" }
-        if snapshot.form > -10 { return "Neutral" }
-        return "Fatigued"
-    }
-
-    var recentFormHistory: [FitnessSnapshot] {
-        let cutoff = Date.now.adding(days: -14)
-        return fitnessHistory.filter { $0.date >= cutoff }
-    }
-
-    // MARK: - Plan Computed
-
-    var currentWeek: TrainingWeek? {
-        plan?.weeks.first { $0.containsToday }
-    }
-
-    var currentPhase: TrainingPhase? {
-        currentWeek?.phase
-    }
-
-    var nextSession: TrainingSession? {
-        guard let week = currentWeek else { return nil }
-        let now = Date.now.startOfDay
-        return week.sessions
-            .filter { !$0.isCompleted && $0.date >= now && $0.type != .rest }
-            .sorted { $0.date < $1.date }
-            .first
-    }
-
-    var weeklyProgress: (completed: Int, total: Int) {
-        guard let week = currentWeek else { return (0, 0) }
-        let active = week.sessions.filter { $0.type != .rest }
-        let done = active.filter(\.isCompleted).count
-        return (done, active.count)
-    }
-
-    var weeklyDistanceKm: Double {
-        guard let week = currentWeek else { return 0 }
-        return week.sessions.filter(\.isCompleted).reduce(0) { $0 + $1.plannedDistanceKm }
-    }
-
-    var weeklyElevationM: Double {
-        guard let week = currentWeek else { return 0 }
-        return week.sessions.filter(\.isCompleted).reduce(0) { $0 + $1.plannedElevationGainM }
-    }
-
-    var weeklyTargetDistanceKm: Double {
-        currentWeek?.targetVolumeKm ?? 0
-    }
-
-    var weeklyTargetElevationM: Double {
-        currentWeek?.targetElevationGainM ?? 0
-    }
-
-    var adherencePercent: Double? {
-        let progress = weeklyProgress
-        guard progress.total > 0 else { return nil }
-        return Double(progress.completed) / Double(progress.total)
-    }
-
-    var weeksUntilRace: Int? {
-        guard let plan else { return nil }
-        let lastWeek = plan.weeks.last
-        guard let raceEnd = lastWeek?.endDate else { return nil }
-        return Date.now.weeksBetween(raceEnd)
-    }
-
-    // MARK: - Calibration
-
-    private func buildCalibrations() async -> [RaceCalibration] {
-        do {
-            let allRaces = try await raceRepository.getRaces()
-            var calibrations: [RaceCalibration] = []
-            for race in allRaces where race.actualFinishTime != nil {
-                guard let saved = try await finishEstimateRepository.getEstimate(for: race.id) else { continue }
-                calibrations.append(RaceCalibration(
-                    raceId: race.id,
-                    predictedTime: saved.expectedTime,
-                    actualTime: race.actualFinishTime!,
-                    raceDistanceKm: race.distanceKm,
-                    raceElevationGainM: race.elevationGainM
-                ))
-            }
-            return calibrations
-        } catch {
-            return []
-        }
-    }
-
-    // MARK: - AI Coach
-
-    private func loadAICoach() async {
-        do {
-            guard let athlete = try await athleteRepository.getAthlete() else { return }
-            let runs = try await runRepository.getRuns(for: athlete.id)
-            guard !runs.isEmpty else { return }
-
-            // Fatigue detection
-            let fatigueInput = FatiguePatternDetector.Input(
-                recentRuns: runs,
-                sleepHistory: sleepHistory,
-                recoveryScores: recoveryScore.map { [$0] } ?? []
-            )
-            fatiguePatterns = FatiguePatternDetector.detect(input: fatigueInput)
-
-            // Session optimizer
-            if let phase = currentPhase {
-                let optimizerInput = SessionOptimizer.Input(
-                    plannedSession: nextSession,
-                    currentPhase: phase,
-                    readiness: readinessScore,
-                    fatiguePatterns: fatiguePatterns,
-                    weather: currentWeather,
-                    availableTimeMinutes: nil
-                )
-                optimalSession = SessionOptimizer.optimize(input: optimizerInput)
-            }
-
-            // Performance trends
-            let trendInput = PerformanceTrendAnalyzer.Input(
-                recentRuns: runs,
-                restingHeartRates: []
-            )
-            performanceTrends = PerformanceTrendAnalyzer.analyze(input: trendInput)
-        } catch {
-            Logger.aiCoach.debug("AI Coach loading failed: \(error)")
-        }
-    }
-
-    // MARK: - Finish Estimate
-
-    private func loadFinishEstimate() async {
-        do {
-            let races = try await raceRepository.getRaces()
-            guard let race = races.first(where: { $0.priority == .aRace }) else { return }
-            aRace = race
-
-            if let cached = try await finishEstimateRepository.getEstimate(for: race.id) {
-                finishEstimate = cached
-            }
-
-            guard let athlete = try await athleteRepository.getAthlete() else { return }
-            let runs = try await runRepository.getRuns(for: athlete.id)
-            guard !runs.isEmpty else { return }
-
-            var fitness: FitnessSnapshot?
-            do {
-                fitness = try await fitnessCalculator.execute(runs: runs, asOf: .now)
-            } catch {
-                Logger.fitness.warning("Could not calculate fitness for dashboard estimate: \(error)")
-            }
-
-            let calibrations = await buildCalibrations()
-            let estimate = try await finishTimeEstimator.execute(
-                athlete: athlete,
-                race: race,
-                recentRuns: runs,
-                currentFitness: fitness,
-                pastRaceCalibrations: calibrations
-            )
-            finishEstimate = estimate
-            try await finishEstimateRepository.saveEstimate(estimate)
-        } catch {
-            Logger.training.debug("Dashboard finish estimate unavailable: \(error)")
         }
     }
 }

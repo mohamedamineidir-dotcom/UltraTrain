@@ -8,19 +8,10 @@ final class RemoteTrainingPlanDataSource: Sendable {
     }
 
     func uploadPlan(_ dto: TrainingPlanUploadRequestDTO) async throws -> TrainingPlanResponseDTO {
-        try await apiClient.request(
-            path: "/training-plan",
-            method: .put,
-            body: dto,
-            requiresAuth: true
-        )
+        try await apiClient.send(TrainingPlanEndpoints.Upload(body: dto))
     }
 
     func fetchPlan() async throws -> TrainingPlanResponseDTO {
-        try await apiClient.request(
-            path: "/training-plan",
-            method: .get,
-            requiresAuth: true
-        )
+        try await apiClient.send(TrainingPlanEndpoints.Fetch())
     }
 }

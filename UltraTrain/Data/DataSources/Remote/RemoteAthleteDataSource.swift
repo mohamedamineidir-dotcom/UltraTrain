@@ -8,19 +8,10 @@ final class RemoteAthleteDataSource: Sendable {
     }
 
     func fetchAthlete() async throws -> AthleteDTO {
-        try await apiClient.request(
-            path: AthleteEndpoints.athletePath,
-            method: .get,
-            requiresAuth: true
-        )
+        try await apiClient.send(AthleteEndpoints.Fetch())
     }
 
     func updateAthlete(_ dto: AthleteDTO) async throws -> AthleteDTO {
-        try await apiClient.request(
-            path: AthleteEndpoints.athletePath,
-            method: .put,
-            body: dto,
-            requiresAuth: true
-        )
+        try await apiClient.send(AthleteEndpoints.Update(body: dto))
     }
 }
