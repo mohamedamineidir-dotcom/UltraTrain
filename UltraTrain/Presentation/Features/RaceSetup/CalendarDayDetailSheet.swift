@@ -12,7 +12,7 @@ struct CalendarDayDetailSheet: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+                LazyVStack(alignment: .leading, spacing: Theme.Spacing.md) {
                     dateHeader
                     if let race {
                         raceSection(race)

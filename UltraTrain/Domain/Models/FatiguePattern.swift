@@ -1,27 +1,5 @@
 import Foundation
 
-enum FatiguePatternType: String, Sendable, CaseIterable {
-    case paceDecline
-    case heartRateDrift
-    case sleepQualityDecline
-    case rpeTrend
-    case compoundFatigue
-}
-
-enum FatigueSeverity: String, Sendable, CaseIterable {
-    case mild
-    case moderate
-    case significant
-}
-
-struct FatigueEvidence: Equatable, Sendable {
-    var metric: String
-    var baselineValue: Double
-    var currentValue: Double
-    var changePercent: Double
-    var period: String
-}
-
 struct FatiguePattern: Identifiable, Equatable, Sendable {
     let id: UUID
     var type: FatiguePatternType

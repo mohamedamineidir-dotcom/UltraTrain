@@ -1,11 +1,5 @@
 import Foundation
 
-enum GroupChallengeStatus: String, Sendable, CaseIterable {
-    case active
-    case completed
-    case expired
-}
-
 struct GroupChallenge: Identifiable, Equatable, Sendable {
     let id: UUID
     var creatorProfileId: String
@@ -30,17 +24,5 @@ struct GroupChallenge: Identifiable, Equatable, Sendable {
         case .consistency: return "runs"
         case .streak: return "days"
         }
-    }
-}
-
-struct GroupChallengeParticipant: Identifiable, Equatable, Sendable {
-    let id: String
-    var displayName: String
-    var photoData: Data?
-    var currentValue: Double
-    var joinedDate: Date
-
-    var progressPercent: Double {
-        0
     }
 }

@@ -1,23 +1,5 @@
 import Foundation
 
-enum PerformanceTrendType: String, Sendable, CaseIterable {
-    case aerobicEfficiency
-    case climbingEfficiency
-    case enduranceFade
-    case recoveryRate
-}
-
-enum PerformanceTrendDirection: String, Sendable {
-    case improving
-    case stable
-    case declining
-}
-
-struct TrendDataPoint: Equatable, Sendable {
-    var date: Date
-    var value: Double
-}
-
 struct PerformanceTrend: Identifiable, Equatable, Sendable {
     let id: UUID
     var type: PerformanceTrendType

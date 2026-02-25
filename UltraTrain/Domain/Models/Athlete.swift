@@ -23,15 +23,3 @@ struct Athlete: Identifiable, Equatable, Sendable {
         Calendar.current.dateComponents([.year], from: dateOfBirth, to: .now).year ?? 0
     }
 }
-
-enum ExperienceLevel: String, CaseIterable, Sendable {
-    case beginner
-    case intermediate
-    case advanced
-    case elite
-}
-
-enum UnitPreference: String, CaseIterable, Sendable {
-    case metric
-    case imperial
-}

@@ -37,7 +37,7 @@ struct ImportCourseView: View {
 
     private func previewContent(_ result: CourseImportResult) -> some View {
         ScrollView {
-            VStack(spacing: Theme.Spacing.lg) {
+            LazyVStack(spacing: Theme.Spacing.lg) {
                 if result.trackPoints.count >= 2 {
                     routeMap(result.trackPoints)
                 }

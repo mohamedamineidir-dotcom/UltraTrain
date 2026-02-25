@@ -46,6 +46,8 @@ final class RunHistoryViewModel {
     var isLoading = false
     var error: String?
     var searchText: String = ""
+    var debouncedSearchText: String = ""
+    private var searchDebounceTask: Task<Void, Never>?
     var selectedTimePeriod: RunTimePeriod = .all
     var sortOption: RunSortOption = .dateNewest
     var customStartDate: Date = Calendar.current.date(byAdding: .month, value: -1, to: .now) ?? .now
@@ -118,13 +120,28 @@ final class RunHistoryViewModel {
         }
     }
 
+    // MARK: - Search Debounce
+
+    func debounceSearch(_ query: String) {
+        searchDebounceTask?.cancel()
+        guard !query.isEmpty else {
+            debouncedSearchText = ""
+            return
+        }
+        searchDebounceTask = Task {
+            try? await Task.sleep(for: .milliseconds(AppConstants.Debounce.searchMilliseconds))
+            guard !Task.isCancelled else { return }
+            debouncedSearchText = query
+        }
+    }
+
     // MARK: - Filtered & Sorted
 
     var filteredRuns: [CompletedRun] {
         var result = runs
 
-        if !searchText.isEmpty {
-            let query = searchText.lowercased()
+        if !debouncedSearchText.isEmpty {
+            let query = debouncedSearchText.lowercased()
             result = result.filter { $0.notes?.lowercased().contains(query) == true }
         }
 

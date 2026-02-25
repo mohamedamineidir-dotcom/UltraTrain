@@ -8,7 +8,7 @@ struct RouteDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: Theme.Spacing.lg) {
+            LazyVStack(spacing: Theme.Spacing.lg) {
                 mapSection
                 statsSection
                 elevationSection

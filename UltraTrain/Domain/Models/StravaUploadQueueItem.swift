@@ -1,12 +1,5 @@
 import Foundation
 
-enum StravaQueueItemStatus: String, Sendable, Equatable {
-    case pending
-    case uploading
-    case failed
-    case completed
-}
-
 struct StravaUploadQueueItem: Identifiable, Equatable, Sendable {
     let id: UUID
     var runId: UUID

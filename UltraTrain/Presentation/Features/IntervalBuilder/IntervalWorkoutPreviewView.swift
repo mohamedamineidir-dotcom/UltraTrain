@@ -5,7 +5,7 @@ struct IntervalWorkoutPreviewView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
+            LazyVStack(spacing: 16) {
                 statsCard
                 phaseTimeline
             }
@@ -44,7 +44,7 @@ struct IntervalWorkoutPreviewView: View {
     // MARK: - Phase Timeline
 
     private var phaseTimeline: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        LazyVStack(alignment: .leading, spacing: 0) {
             ForEach(Array(viewModel.flattenedPhases.enumerated()), id: \.offset) { index, entry in
                 HStack(spacing: 12) {
                     Circle()

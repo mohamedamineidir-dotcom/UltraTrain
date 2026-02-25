@@ -1,11 +1,5 @@
 import Foundation
 
-enum NutritionIntakeStatus: String, CaseIterable, Sendable {
-    case taken
-    case skipped
-    case pending
-}
-
 struct NutritionIntakeEntry: Identifiable, Equatable, Sendable {
     let id: UUID
     var reminderType: NutritionReminderType

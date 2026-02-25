@@ -69,6 +69,9 @@ struct RunHistoryView: View {
         }
         .navigationTitle("Run History")
         .searchable(text: $viewModel.searchText, prompt: "Search notes")
+        .onChange(of: viewModel.searchText) { _, newValue in
+            viewModel.debounceSearch(newValue)
+        }
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 HStack(spacing: Theme.Spacing.sm) {

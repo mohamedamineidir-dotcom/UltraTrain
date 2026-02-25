@@ -27,9 +27,3 @@ struct SavedRoute: Identifiable, Equatable, Sendable {
             && lhs.courseRoute.count == rhs.courseRoute.count
     }
 }
-
-enum RouteSource: String, CaseIterable, Sendable, Codable {
-    case gpxImport
-    case completedRun
-    case manual
-}

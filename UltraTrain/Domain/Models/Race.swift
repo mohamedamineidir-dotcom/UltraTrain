@@ -32,32 +32,3 @@ struct Race: Identifiable, Equatable, Sendable, Codable {
         distanceKm + (elevationGainM / 100.0)
     }
 }
-
-enum RacePriority: String, CaseIterable, Codable, Sendable {
-    case aRace
-    case bRace
-    case cRace
-}
-
-enum RaceGoal: Equatable, Sendable, Codable {
-    case finish
-    case targetTime(TimeInterval)
-    case targetRanking(Int)
-}
-
-enum TerrainDifficulty: String, CaseIterable, Sendable, Codable {
-    case easy
-    case moderate
-    case technical
-    case extreme
-}
-
-struct Checkpoint: Identifiable, Equatable, Sendable, Codable {
-    let id: UUID
-    var name: String
-    var distanceFromStartKm: Double
-    var elevationM: Double
-    var hasAidStation: Bool
-    var latitude: Double? = nil
-    var longitude: Double? = nil
-}

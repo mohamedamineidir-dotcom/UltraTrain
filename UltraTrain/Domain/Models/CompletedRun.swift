@@ -46,19 +46,3 @@ struct CompletedRun: Identifiable, Equatable, Sendable {
         return String(format: "%d:%02d /km", minutes, seconds)
     }
 }
-
-struct TrackPoint: Equatable, Sendable, Codable {
-    var latitude: Double
-    var longitude: Double
-    var altitudeM: Double
-    var timestamp: Date
-    var heartRate: Int?
-}
-
-struct Split: Identifiable, Equatable, Sendable {
-    let id: UUID
-    var kilometerNumber: Int
-    var duration: TimeInterval
-    var elevationChangeM: Double
-    var averageHeartRate: Int?
-}

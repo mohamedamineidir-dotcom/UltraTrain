@@ -30,6 +30,9 @@ struct WorkoutLibraryView: View {
                 templatesSection
             }
             .searchable(text: $viewModel.searchQuery)
+            .onChange(of: viewModel.searchQuery) { _, newValue in
+                viewModel.debounceSearch(newValue)
+            }
             .navigationTitle("Workout Library")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {

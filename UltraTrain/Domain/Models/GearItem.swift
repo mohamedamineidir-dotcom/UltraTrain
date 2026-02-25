@@ -25,12 +25,3 @@ struct GearItem: Identifiable, Equatable, Sendable {
         max(0, maxDistanceKm - totalDistanceKm)
     }
 }
-
-enum GearType: String, CaseIterable, Sendable {
-    case trailShoes
-    case roadShoes
-    case poles
-    case vest
-    case headlamp
-    case other
-}

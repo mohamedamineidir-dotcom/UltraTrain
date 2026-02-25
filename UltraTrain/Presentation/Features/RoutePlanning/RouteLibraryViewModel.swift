@@ -17,11 +17,28 @@ final class RouteLibraryViewModel {
     var isLoading = false
     var error: String?
     var searchText: String = ""
+    var debouncedSearchText: String = ""
+    private var searchDebounceTask: Task<Void, Never>?
 
     var filteredRoutes: [SavedRoute] {
-        guard !searchText.isEmpty else { return routes }
-        let query = searchText.lowercased()
+        guard !debouncedSearchText.isEmpty else { return routes }
+        let query = debouncedSearchText.lowercased()
         return routes.filter { $0.name.lowercased().contains(query) }
+    }
+
+    // MARK: - Search Debounce
+
+    func debounceSearch(_ query: String) {
+        searchDebounceTask?.cancel()
+        guard !query.isEmpty else {
+            debouncedSearchText = ""
+            return
+        }
+        searchDebounceTask = Task {
+            try? await Task.sleep(for: .milliseconds(AppConstants.Debounce.searchMilliseconds))
+            guard !Task.isCancelled else { return }
+            debouncedSearchText = query
+        }
     }
 
     // MARK: - Init

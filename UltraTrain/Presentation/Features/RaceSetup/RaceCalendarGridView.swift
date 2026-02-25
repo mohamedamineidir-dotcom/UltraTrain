@@ -15,7 +15,7 @@ struct RaceCalendarGridView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: Theme.Spacing.md) {
+            LazyVStack(spacing: Theme.Spacing.md) {
                 CalendarMonthGridView(
                     displayedMonth: viewModel.displayedMonth,
                     phaseForDate: viewModel.phaseForDate,

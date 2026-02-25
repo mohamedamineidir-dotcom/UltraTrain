@@ -21,6 +21,9 @@ struct RouteLibraryView: View {
             }
             .navigationTitle("My Routes")
             .searchable(text: $viewModel.searchText, prompt: "Search routes")
+            .onChange(of: viewModel.searchText) { _, newValue in
+                viewModel.debounceSearch(newValue)
+            }
             .toolbar { toolbarContent }
             .task { await viewModel.load() }
             .fileImporter(

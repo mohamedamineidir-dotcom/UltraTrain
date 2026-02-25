@@ -12,11 +12,3 @@ struct RecoveryScore: Identifiable, Equatable, Sendable {
     var status: RecoveryStatus
     var hrvScore: Int = 0
 }
-
-enum RecoveryStatus: String, Sendable, Equatable {
-    case excellent
-    case good
-    case moderate
-    case poor
-    case critical
-}

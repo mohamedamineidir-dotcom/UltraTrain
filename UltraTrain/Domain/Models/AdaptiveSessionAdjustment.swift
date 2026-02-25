@@ -1,14 +1,5 @@
 import Foundation
 
-enum AdjustmentReason: String, Sendable, CaseIterable {
-    case readinessTooLow
-    case readinessHighUpgrade
-    case poorSleep
-    case highFatigue
-    case weatherConditions
-    case compoundFatigue
-}
-
 struct AdaptiveSessionAdjustment: Identifiable, Equatable, Sendable {
     let id: UUID
     var originalSessionId: UUID

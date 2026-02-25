@@ -17,6 +17,8 @@ final class WorkoutLibraryViewModel {
     var userIntervalWorkouts: [IntervalWorkout] = []
     var selectedCategory: WorkoutCategory?
     var searchQuery: String = ""
+    var debouncedSearchQuery: String = ""
+    private var searchDebounceTask: Task<Void, Never>?
     var isLoading = false
     var error: String?
     var showingAddRecipe = false
@@ -36,6 +38,21 @@ final class WorkoutLibraryViewModel {
         self.intervalWorkoutRepository = intervalWorkoutRepository
     }
 
+    // MARK: - Search Debounce
+
+    func debounceSearch(_ query: String) {
+        searchDebounceTask?.cancel()
+        guard !query.isEmpty else {
+            debouncedSearchQuery = ""
+            return
+        }
+        searchDebounceTask = Task {
+            try? await Task.sleep(for: .milliseconds(AppConstants.Debounce.searchMilliseconds))
+            guard !Task.isCancelled else { return }
+            debouncedSearchQuery = query
+        }
+    }
+
     // MARK: - Computed
 
     var filteredTemplates: [WorkoutTemplate] {
@@ -48,11 +65,11 @@ final class WorkoutLibraryViewModel {
             filtered = combined
         }
 
-        if searchQuery.isEmpty {
+        if debouncedSearchQuery.isEmpty {
             return filtered.sorted { $0.name < $1.name }
         }
 
-        let query = searchQuery.lowercased()
+        let query = debouncedSearchQuery.lowercased()
         return filtered.filter {
             $0.name.lowercased().contains(query) ||
             $0.descriptionText.lowercased().contains(query)
@@ -74,11 +91,11 @@ final class WorkoutLibraryViewModel {
             filtered = combined
         }
 
-        if searchQuery.isEmpty {
+        if debouncedSearchQuery.isEmpty {
             return filtered.sorted { $0.name < $1.name }
         }
 
-        let query = searchQuery.lowercased()
+        let query = debouncedSearchQuery.lowercased()
         return filtered.filter {
             $0.name.lowercased().contains(query) ||
             $0.descriptionText.lowercased().contains(query)

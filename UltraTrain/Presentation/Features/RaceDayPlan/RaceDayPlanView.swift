@@ -39,7 +39,7 @@ struct RaceDayPlanView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: Theme.Spacing.md) {
+            LazyVStack(spacing: Theme.Spacing.md) {
                 if viewModel.isLoading {
                     ProgressView("Building race plan...")
                         .padding(.top, Theme.Spacing.xl)

@@ -93,7 +93,7 @@ struct DashboardView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: Theme.Spacing.md) {
+                LazyVStack(spacing: Theme.Spacing.md) {
                     if !viewModel.injuryRiskAlerts.isEmpty {
                         InjuryRiskAlertBanner(alerts: viewModel.injuryRiskAlerts)
                     }

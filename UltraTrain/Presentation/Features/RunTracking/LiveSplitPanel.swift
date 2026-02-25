@@ -41,7 +41,7 @@ struct LiveSplitPanel: View {
 
     private var splitList: some View {
         ScrollView {
-            VStack(spacing: 0) {
+            LazyVStack(spacing: 0) {
                 ForEach(Array(checkpoints.enumerated()), id: \.element.id) { index, checkpoint in
                     let pace = index < segmentPacings.count
                         ? segmentPacings[index].targetPaceSecondsPerKm : nil
