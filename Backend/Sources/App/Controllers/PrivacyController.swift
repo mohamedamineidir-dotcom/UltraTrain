@@ -3,13 +3,13 @@ import Vapor
 struct PrivacyController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         routes.get("privacy") { _ -> Response in
-            var response = Response(status: .ok, body: .init(string: Self.privacyHTML))
+            let response = Response(status: .ok, body: .init(string: Self.privacyHTML))
             response.headers.replaceOrAdd(name: .contentType, value: "text/html; charset=utf-8")
             return response
         }
 
         routes.get("terms") { _ -> Response in
-            var response = Response(status: .ok, body: .init(string: Self.termsHTML))
+            let response = Response(status: .ok, body: .init(string: Self.termsHTML))
             response.headers.replaceOrAdd(name: .contentType, value: "text/html; charset=utf-8")
             return response
         }

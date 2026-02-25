@@ -105,7 +105,8 @@ func configure(_ app: Application) async throws {
     app.middleware.use(CORSMiddleware(configuration: .init(
         allowedOrigin: allowedOrigin,
         allowedMethods: [.GET, .POST, .PUT, .DELETE, .PATCH],
-        allowedHeaders: [.accept, .authorization, .contentType, .origin, .xRequestedWith]
+        allowedHeaders: [.accept, .authorization, .contentType, .origin, .xRequestedWith,
+                         .init("X-Signature"), .init("X-Timestamp"), .init("X-Client-Version")]
     )))
 
     // MARK: - APNs

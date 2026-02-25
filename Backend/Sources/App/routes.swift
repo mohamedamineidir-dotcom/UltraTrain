@@ -1,11 +1,20 @@
 import Vapor
 
 func routes(_ app: Application) throws {
-    let api = app.grouped("v1")
+    let rateLimited = app.grouped("v1")
         .grouped(RateLimitMiddleware(maxRequests: 60, windowSeconds: 60))
 
-    api.get("health") { _ in
+    // Health check outside HMAC — Railway uses this for health probes
+    rateLimited.get("health") { _ in
         ["status": "ok"]
+    }
+
+    let api: RoutesBuilder
+    if let hmacSecret = Environment.get("HMAC_SECRET") {
+        api = rateLimited.grouped(HMACVerificationMiddleware(secret: hmacSecret))
+    } else {
+        app.logger.warning("HMAC_SECRET not set — request signing verification disabled")
+        api = rateLimited
     }
 
     // Public pages (outside /v1, no rate limit)
