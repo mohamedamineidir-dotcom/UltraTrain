@@ -239,6 +239,7 @@ struct RunHistoryViewModelFilterTests {
 
         vm.runs = [run1, run2, run3]
         vm.searchText = "trail"
+        vm.debouncedSearchText = "trail"
         vm.advancedFilter.minDistanceKm = 10
 
         #expect(vm.filteredRuns.count == 1)

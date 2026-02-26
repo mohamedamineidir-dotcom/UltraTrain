@@ -86,6 +86,7 @@ struct WorkoutLibraryViewModelTests {
         await vm.load()
 
         vm.searchQuery = "fartlek"
+        vm.debouncedSearchQuery = "fartlek"
 
         let filtered = vm.filteredTemplates
         #expect(!filtered.isEmpty)

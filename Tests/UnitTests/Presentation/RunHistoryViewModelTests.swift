@@ -129,6 +129,7 @@ struct RunHistoryViewModelTests {
         let vm = makeViewModel()
         vm.runs = [run1, run2, run3]
         vm.searchText = "mountain"
+        vm.debouncedSearchText = "mountain"
 
         #expect(vm.filteredRuns.count == 1)
         #expect(vm.filteredRuns.first?.id == run1.id)
@@ -140,6 +141,7 @@ struct RunHistoryViewModelTests {
         let vm = makeViewModel()
         vm.runs = [run]
         vm.searchText = "utmb"
+        vm.debouncedSearchText = "utmb"
 
         #expect(vm.filteredRuns.count == 1)
     }
@@ -287,6 +289,7 @@ struct RunHistoryViewModelTests {
         let vm = makeViewModel()
         vm.runs = [recentTrail, oldTrail, recentRoad]
         vm.searchText = "trail"
+        vm.debouncedSearchText = "trail"
         vm.selectedTimePeriod = .thisYear
 
         #expect(vm.filteredRuns.count == 1)

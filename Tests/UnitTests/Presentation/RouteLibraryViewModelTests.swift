@@ -93,6 +93,7 @@ struct RouteLibraryViewModelTests {
         let (vm, _, _) = makeViewModel()
         vm.routes = [makeRoute(name: "UTMB"), makeRoute(name: "CCC")]
         vm.searchText = "utmb"
+        vm.debouncedSearchText = "utmb"
 
         #expect(vm.filteredRoutes.count == 1)
         #expect(vm.filteredRoutes.first?.name == "UTMB")
@@ -104,6 +105,7 @@ struct RouteLibraryViewModelTests {
         let (vm, _, _) = makeViewModel()
         vm.routes = [makeRoute(name: "UTMB")]
         vm.searchText = "xyz"
+        vm.debouncedSearchText = "xyz"
 
         #expect(vm.filteredRoutes.isEmpty)
     }
