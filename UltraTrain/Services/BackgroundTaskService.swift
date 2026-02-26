@@ -35,10 +35,11 @@ final class BackgroundTaskService: Sendable {
             forTaskWithIdentifier: Self.healthKitSyncId,
             using: nil
         ) { task in
-            nonisolated(unsafe) let refreshTask = task as! BGAppRefreshTask
+            guard let refreshTask = task as? BGAppRefreshTask else { return }
+            nonisolated(unsafe) let safeTask = refreshTask
             let service = self
             Task { @MainActor in
-                await service.handleHealthKitSync(task: refreshTask)
+                await service.handleHealthKitSync(task: safeTask)
             }
         }
 
@@ -46,10 +47,11 @@ final class BackgroundTaskService: Sendable {
             forTaskWithIdentifier: Self.recoveryCalcId,
             using: nil
         ) { task in
-            nonisolated(unsafe) let processingTask = task as! BGProcessingTask
+            guard let processingTask = task as? BGProcessingTask else { return }
+            nonisolated(unsafe) let safeTask = processingTask
             let service = self
             Task { @MainActor in
-                await service.handleRecoveryCalc(task: processingTask)
+                await service.handleRecoveryCalc(task: safeTask)
             }
         }
 
@@ -57,10 +59,11 @@ final class BackgroundTaskService: Sendable {
             forTaskWithIdentifier: Self.syncQueueId,
             using: nil
         ) { task in
-            nonisolated(unsafe) let refreshTask = task as! BGAppRefreshTask
+            guard let refreshTask = task as? BGAppRefreshTask else { return }
+            nonisolated(unsafe) let safeTask = refreshTask
             let service = self
             Task { @MainActor in
-                await service.handleSyncQueue(task: refreshTask)
+                await service.handleSyncQueue(task: safeTask)
             }
         }
     }

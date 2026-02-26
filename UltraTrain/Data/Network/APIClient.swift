@@ -13,8 +13,14 @@ actor APIClient {
     private let loggingInterceptor: LoggingInterceptor
 
     private static let pinnedSession: URLSession = {
+        let config = URLSessionConfiguration.default
+        config.urlCache = URLCache(
+            memoryCapacity: 10 * 1024 * 1024,   // 10 MB
+            diskCapacity: 50 * 1024 * 1024       // 50 MB
+        )
+        config.requestCachePolicy = .returnCacheDataElseLoad
         let delegate = CertificatePinningDelegate()
-        return URLSession(configuration: .default, delegate: delegate, delegateQueue: nil)
+        return URLSession(configuration: config, delegate: delegate, delegateQueue: nil)
     }()
 
     init(
@@ -248,8 +254,8 @@ actor APIClient {
     private func handleResponse<T: Decodable>(data: Data, statusCode: Int) throws -> T {
         switch statusCode {
         case 200...299:
-            if T.self == EmptyResponseBody.self {
-                return EmptyResponseBody() as! T
+            if let empty = EmptyResponseBody() as? T {
+                return empty
             }
             return try decoder.decode(T.self, from: data)
         case 401:

@@ -11,13 +11,13 @@ enum FileProtectionManager {
         let fileManager = FileManager.default
         do {
             try fileManager.setAttributes(
-                [.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication],
+                [.protectionKey: FileProtectionType.complete],
                 ofItemAtPath: directory.path
             )
             if let enumerator = fileManager.enumerator(at: directory, includingPropertiesForKeys: nil) {
                 for case let fileURL as URL in enumerator {
                     try fileManager.setAttributes(
-                        [.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication],
+                        [.protectionKey: FileProtectionType.complete],
                         ofItemAtPath: fileURL.path
                     )
                 }

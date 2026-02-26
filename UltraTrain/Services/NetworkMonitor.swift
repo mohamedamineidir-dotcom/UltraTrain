@@ -12,13 +12,11 @@ protocol NetworkMonitorProtocol: Sendable {
 final class NetworkMonitor: NetworkMonitorProtocol, @unchecked Sendable {
     private(set) var isConnected: Bool = true
     private let monitor: NWPathMonitor
-    private let queue: DispatchQueue
     private let onConnectivityRestored: (@Sendable () async -> Void)?
     private var wasDisconnected = false
 
     init(onConnectivityRestored: (@Sendable () async -> Void)? = nil) {
         self.monitor = NWPathMonitor()
-        self.queue = DispatchQueue(label: "com.ultratrain.networkmonitor")
         self.onConnectivityRestored = onConnectivityRestored
     }
 
@@ -43,7 +41,8 @@ final class NetworkMonitor: NetworkMonitorProtocol, @unchecked Sendable {
                 }
             }
         }
-        monitor.start(queue: queue)
+        // NWPathMonitor requires a DispatchQueue — no async alternative exists
+        monitor.start(queue: DispatchQueue(label: "com.ultratrain.networkmonitor"))
     }
 
     func stop() {
