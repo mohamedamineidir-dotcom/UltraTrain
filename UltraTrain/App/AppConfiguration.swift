@@ -18,7 +18,8 @@ enum AppConfiguration {
         static let hmacSecret: String = Bundle.main.infoDictionary?["HMAC_SIGNING_SECRET"] as? String ?? ""
         static let pinnedHost: String = "railway-link-production-96cc.up.railway.app"
         static let certificatePinHashes: [String] = [
-            "u6dScLDuE2TrAks7ct4HDBekXo9byFES6oApqW/pAjQ=" // Railway TLS cert pin
+            "uDJoKW7obJUPmVjZ6PfANMvVjFjM28DhB5Nl42ovcPs=", // Leaf: *.up.railway.app
+            "oW7smChMJRcnzTObF7K+HzInReAPTxB/L1h6eZTmw9Q="  // Intermediate: Certainly Intermediate R1
         ]
     }
 

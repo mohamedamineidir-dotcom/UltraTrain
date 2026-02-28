@@ -24,9 +24,10 @@ extension AppDependencyContainer {
 
         let localAthleteRepo = LocalAthleteRepository(modelContainer: modelContainer)
         let localRunRepo = LocalRunRepository(modelContainer: modelContainer)
-        let auth = AuthService(apiClient: APIClient())
-        let authInterceptor = AuthInterceptor(authService: auth)
         let signingInterceptor = RequestSigningInterceptor()
+        let authApiClient = APIClient(signingInterceptor: signingInterceptor)
+        let auth = AuthService(apiClient: authApiClient)
+        let authInterceptor = AuthInterceptor(authService: auth)
         let client = APIClient(authInterceptor: authInterceptor, signingInterceptor: signingInterceptor)
         let remoteRunDataSource = RemoteRunDataSource(apiClient: client)
         let remoteAthleteDataSource = RemoteAthleteDataSource(apiClient: client)

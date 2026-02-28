@@ -75,7 +75,7 @@ final class StravaAuthService: StravaAuthServiceProtocol, @unchecked Sendable {
         components.queryItems = [
             URLQueryItem(name: "client_id", value: config.clientId),
             URLQueryItem(name: "response_type", value: "code"),
-            URLQueryItem(name: "redirect_uri", value: "\(config.callbackURLScheme)://strava"),
+            URLQueryItem(name: "redirect_uri", value: "\(config.callbackURLScheme)://\(config.callbackURLScheme)"),
             URLQueryItem(name: "scope", value: config.requiredScopes),
             URLQueryItem(name: "approval_prompt", value: "auto")
         ]

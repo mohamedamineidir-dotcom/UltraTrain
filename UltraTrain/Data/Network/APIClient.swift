@@ -162,9 +162,7 @@ actor APIClient {
             urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
 
-        if requiresAuth {
-            signingInterceptor?.sign(&urlRequest)
-        }
+        signingInterceptor?.sign(&urlRequest)
 
         loggingInterceptor.logRequest(urlRequest)
 

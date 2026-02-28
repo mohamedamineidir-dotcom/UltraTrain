@@ -41,21 +41,33 @@ final class CertificatePinningDelegate: NSObject, URLSessionDelegate, @unchecked
             return (.performDefaultHandling, nil)
         }
 
-        guard let serverPublicKey = SecTrustCopyKey(serverTrust),
-              let serverKeyData = SecKeyCopyExternalRepresentation(serverPublicKey, nil) as? Data else {
-            Logger.security.error("Certificate pinning: failed to extract server public key")
+        // Check all certificates in the chain (leaf + intermediates).
+        // This way if the leaf cert rotates, the intermediate CA pin still matches.
+        guard let certChain = SecTrustCopyCertificateChain(serverTrust) as? [SecCertificate] else {
+            Logger.security.error("Certificate pinning: failed to read certificate chain")
             return (.cancelAuthenticationChallenge, nil)
         }
 
-        let hash = SHA256.hash(data: serverKeyData)
-        let hashBase64 = Data(hash).base64EncodedString()
+        var serverHashes: [String] = []
 
-        if pinnedHashes.contains(hashBase64) {
-            let credential = URLCredential(trust: serverTrust)
-            return (.useCredential, credential)
+        for certificate in certChain {
+            guard let publicKey = SecCertificateCopyKey(certificate),
+                  let keyData = SecKeyCopyExternalRepresentation(publicKey, nil) as? Data else {
+                continue
+            }
+            let hash = SHA256.hash(data: keyData)
+            let hashBase64 = Data(hash).base64EncodedString()
+            serverHashes.append(hashBase64)
+
+            if pinnedHashes.contains(hashBase64) {
+                let credential = URLCredential(trust: serverTrust)
+                return (.useCredential, credential)
+            }
         }
 
-        Logger.security.error("Certificate pinning: hash mismatch for \(self.pinnedHost)")
+        Logger.security.error(
+            "Certificate pinning: no hash matched for \(self.pinnedHost). Server hashes: \(serverHashes)"
+        )
         return (.cancelAuthenticationChallenge, nil)
     }
 }
