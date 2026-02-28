@@ -2,7 +2,7 @@ import Foundation
 import os
 
 protocol BackgroundUploadServiceProtocol: Sendable {
-    func uploadRun(dto: RunUploadRequestDTO, syncItemId: UUID) throws
+    func uploadRun(dto: RunUploadRequestDTO, syncItemId: UUID) async throws
     func handleSessionCompletion(identifier: String, completion: @escaping () -> Void)
 }
 
@@ -41,8 +41,10 @@ final class BackgroundUploadService: NSObject, BackgroundUploadServiceProtocol, 
         _ = backgroundSession
     }
 
-    func uploadRun(dto: RunUploadRequestDTO, syncItemId: UUID) throws {
+    func uploadRun(dto: RunUploadRequestDTO, syncItemId: UUID) async throws {
         let fileURL = try fileManager.writeUploadFile(dto: dto, id: syncItemId)
+
+        let token = try await authService.getValidAccessToken()
 
         var request = URLRequest(url: baseURL.appendingPathComponent("/runs"))
         request.httpMethod = "POST"
@@ -50,15 +52,19 @@ final class BackgroundUploadService: NSObject, BackgroundUploadServiceProtocol, 
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue(AppConfiguration.appVersion, forHTTPHeaderField: "X-Client-Version")
         request.setValue(UUID().uuidString, forHTTPHeaderField: "X-Idempotency-Key")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
         let task = backgroundSession.uploadTask(with: request, fromFile: fileURL)
-
-        lock.lock()
-        taskToSyncItemId[task.taskIdentifier] = syncItemId
-        lock.unlock()
+        storeSyncItemId(syncItemId, for: task.taskIdentifier)
 
         Logger.backgroundUpload.info("Starting background upload for sync item \(syncItemId)")
         task.resume()
+    }
+
+    private nonisolated func storeSyncItemId(_ syncItemId: UUID, for taskIdentifier: Int) {
+        lock.lock()
+        taskToSyncItemId[taskIdentifier] = syncItemId
+        lock.unlock()
     }
 
     func handleSessionCompletion(identifier: String, completion: @escaping () -> Void) {

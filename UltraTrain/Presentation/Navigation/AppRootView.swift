@@ -61,6 +61,7 @@ struct AppRootView: View {
     let sharedRunRepository: any SharedRunRepository
     let activityFeedRepository: any ActivityFeedRepository
     let groupChallengeRepository: any GroupChallengeRepository
+    let crewService: any CrewTrackingServiceProtocol
     let routeRepository: any RouteRepository
     let intervalWorkoutRepository: (any IntervalWorkoutRepository)?
     let emergencyContactRepository: (any EmergencyContactRepository)?
@@ -118,6 +119,7 @@ struct AppRootView: View {
         sharedRunRepository: any SharedRunRepository,
         activityFeedRepository: any ActivityFeedRepository,
         groupChallengeRepository: any GroupChallengeRepository,
+        crewService: any CrewTrackingServiceProtocol,
         routeRepository: any RouteRepository,
         intervalWorkoutRepository: (any IntervalWorkoutRepository)? = nil,
         emergencyContactRepository: (any EmergencyContactRepository)? = nil,
@@ -176,6 +178,7 @@ struct AppRootView: View {
         self.sharedRunRepository = sharedRunRepository
         self.activityFeedRepository = activityFeedRepository
         self.groupChallengeRepository = groupChallengeRepository
+        self.crewService = crewService
         self.routeRepository = routeRepository
         self.intervalWorkoutRepository = intervalWorkoutRepository
         self.emergencyContactRepository = emergencyContactRepository

@@ -10,4 +10,5 @@ protocol NotificationServiceProtocol: AnyObject, Sendable {
     func scheduleRecoveryReminder(for date: Date) async
     func scheduleWeeklySummary(distanceKm: Double, elevationM: Double, runCount: Int) async
     func registerNotificationCategories() async
+    func scheduleInactivityReminder(lastRunDate: Date) async
 }

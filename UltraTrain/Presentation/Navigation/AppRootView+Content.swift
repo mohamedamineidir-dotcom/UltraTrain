@@ -63,6 +63,7 @@ extension AppRootView {
                         sharedRunRepository: sharedRunRepository,
                         activityFeedRepository: activityFeedRepository,
                         groupChallengeRepository: groupChallengeRepository,
+                        crewService: crewService,
                         routeRepository: routeRepository,
                         intervalWorkoutRepository: intervalWorkoutRepository,
                         emergencyContactRepository: emergencyContactRepository,

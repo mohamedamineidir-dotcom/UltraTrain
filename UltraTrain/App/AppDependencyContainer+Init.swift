@@ -97,7 +97,8 @@ extension AppDependencyContainer {
         locationService = LocationService()
         fitnessRepository = LocalFitnessRepository(modelContainer: modelContainer)
         fitnessCalculator = FitnessCalculator()
-        finishTimeEstimator = FinishTimeEstimator()
+        let mlService = FinishTimeMLService()
+        finishTimeEstimator = FinishTimeEstimator(mlPredictionService: mlService)
         appSettingsRepository = LocalAppSettingsRepository(modelContainer: modelContainer)
         clearAllDataUseCase = DataCleaner(modelContainer: modelContainer)
         healthKitService = HealthKitService()
@@ -186,7 +187,8 @@ extension AppDependencyContainer {
         backgroundTaskService = BackgroundTaskService(
             healthKitService: healthKitService, recoveryRepository: recoveryRepository,
             fitnessRepository: fitnessRepository, fitnessCalculator: fitnessCalculator,
-            runRepository: runRepository, syncQueueService: sync
+            runRepository: runRepository, syncQueueService: sync,
+            notificationService: notificationService
         )
         backgroundTaskService.registerTasks()
 

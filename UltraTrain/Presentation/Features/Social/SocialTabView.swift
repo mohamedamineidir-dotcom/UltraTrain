@@ -7,6 +7,7 @@ struct SocialTabView: View {
     private let runRepository: any RunRepository
     private let activityFeedRepository: any ActivityFeedRepository
     private let sharedRunRepository: any SharedRunRepository
+    private let crewService: any CrewTrackingServiceProtocol
 
     init(
         friendRepository: any FriendRepository,
@@ -14,7 +15,8 @@ struct SocialTabView: View {
         athleteRepository: any AthleteRepository,
         runRepository: any RunRepository,
         activityFeedRepository: any ActivityFeedRepository,
-        sharedRunRepository: any SharedRunRepository
+        sharedRunRepository: any SharedRunRepository,
+        crewService: any CrewTrackingServiceProtocol
     ) {
         self.friendRepository = friendRepository
         self.profileRepository = profileRepository
@@ -22,6 +24,7 @@ struct SocialTabView: View {
         self.runRepository = runRepository
         self.activityFeedRepository = activityFeedRepository
         self.sharedRunRepository = sharedRunRepository
+        self.crewService = crewService
     }
 
     var body: some View {
@@ -32,6 +35,7 @@ struct SocialTabView: View {
                     friendsRow
                     activityFeedRow
                     sharedWithMeRow
+                    crewTrackingRow
                 }
             }
             .navigationTitle("Social")
@@ -118,6 +122,28 @@ struct SocialTabView: View {
                 }
             } icon: {
                 Image(systemName: "tray.and.arrow.down")
+                    .foregroundStyle(Theme.Colors.primary)
+            }
+        }
+    }
+
+    private var crewTrackingRow: some View {
+        NavigationLink {
+            CrewTrackingView(
+                crewService: crewService,
+                profileRepository: profileRepository
+            )
+        } label: {
+            Label {
+                VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+                    Text("Crew Tracking")
+                        .font(.body)
+                    Text("Share your live location with your crew")
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
+            } icon: {
+                Image(systemName: "location.circle")
                     .foregroundStyle(Theme.Colors.primary)
             }
         }

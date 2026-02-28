@@ -215,7 +215,7 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
         // Use background URLSession for runs with large GPS tracks
         if run.gpsTrack.count >= BackgroundUploadService.gpsThreshold,
            let bgService = backgroundUploadService {
-            try bgService.uploadRun(dto: dto, syncItemId: item.id)
+            try await bgService.uploadRun(dto: dto, syncItemId: item.id)
             Logger.network.info("SyncService: delegated large run \(item.entityId) to background upload (\(run.gpsTrack.count) points)")
             return
         }

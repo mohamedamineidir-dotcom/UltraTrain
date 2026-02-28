@@ -53,4 +53,8 @@ final class MockNotificationService: NotificationServiceProtocol, @unchecked Sen
     func registerNotificationCategories() async {
         registerCategoriesCalled = true
     }
+
+    func scheduleInactivityReminder(lastRunDate: Date) async {
+        // no-op for tests
+    }
 }

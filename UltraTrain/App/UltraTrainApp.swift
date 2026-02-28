@@ -70,6 +70,7 @@ struct UltraTrainApp: App {
                 sharedRunRepository: container.sharedRunRepository,
                 activityFeedRepository: container.activityFeedRepository,
                 groupChallengeRepository: container.groupChallengeRepository,
+                crewService: container.cloudKitCrewService,
                 routeRepository: container.routeRepository,
                 intervalWorkoutRepository: container.intervalWorkoutRepository,
                 emergencyContactRepository: container.emergencyContactRepository,

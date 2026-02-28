@@ -171,6 +171,37 @@ final class NotificationService: NotificationServiceProtocol, @unchecked Sendabl
         }
     }
 
+    // MARK: - Inactivity Reminder
+
+    func scheduleInactivityReminder(lastRunDate: Date) async {
+        await cancelNotifications(withIdentifierPrefix: "inactivity")
+
+        let calendar = Calendar.current
+        guard let reminderDate = calendar.date(byAdding: .day, value: 3, to: lastRunDate),
+              reminderDate > Date.now else { return }
+
+        var components = calendar.dateComponents([.year, .month, .day], from: reminderDate)
+        components.hour = 10
+        components.minute = 0
+
+        let content = UNMutableNotificationContent()
+        content.title = "Time to Run!"
+        content.body = "It's been a few days since your last run. Lace up and get out there!"
+        content.sound = .default
+        content.categoryIdentifier = "inactivity"
+
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+        let identifier = "inactivity-reminder"
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+
+        do {
+            try await center.add(request)
+            Logger.notification.info("Scheduled inactivity reminder for 3 days after last run")
+        } catch {
+            Logger.notification.error("Failed to schedule inactivity reminder: \(error)")
+        }
+    }
+
     // MARK: - Cancel
 
     func cancelAllNotifications() async {
@@ -206,5 +237,13 @@ final class NotificationService: NotificationServiceProtocol, @unchecked Sendabl
         }
 
         Logger.notification.info("Rescheduled all: \(futureSessions.count) sessions, \(races.count) races")
+    }
+
+    // MARK: - Reschedule Inactivity
+
+    func rescheduleInactivityIfNeeded(latestRunDate: Date?) async {
+        if let date = latestRunDate {
+            await scheduleInactivityReminder(lastRunDate: date)
+        }
     }
 }

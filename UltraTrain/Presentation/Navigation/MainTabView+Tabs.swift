@@ -129,6 +129,7 @@ extension MainTabView {
                 sharedRunRepository: sharedRunRepository,
                 activityFeedRepository: activityFeedRepository,
                 groupChallengeRepository: groupChallengeRepository,
+                crewService: crewService,
                 routeRepository: routeRepository,
                 emergencyContactRepository: emergencyContactRepository,
                 raceReflectionRepository: raceReflectionRepository,

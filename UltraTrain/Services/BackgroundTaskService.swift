@@ -13,6 +13,7 @@ final class BackgroundTaskService: Sendable {
     private let fitnessCalculator: any CalculateFitnessUseCase
     private let runRepository: any RunRepository
     private let syncQueueService: (any SyncQueueServiceProtocol)?
+    private let notificationService: (any NotificationServiceProtocol)?
 
     init(
         healthKitService: any HealthKitServiceProtocol,
@@ -20,7 +21,8 @@ final class BackgroundTaskService: Sendable {
         fitnessRepository: any FitnessRepository,
         fitnessCalculator: any CalculateFitnessUseCase,
         runRepository: any RunRepository,
-        syncQueueService: (any SyncQueueServiceProtocol)? = nil
+        syncQueueService: (any SyncQueueServiceProtocol)? = nil,
+        notificationService: (any NotificationServiceProtocol)? = nil
     ) {
         self.healthKitService = healthKitService
         self.recoveryRepository = recoveryRepository
@@ -28,6 +30,7 @@ final class BackgroundTaskService: Sendable {
         self.fitnessCalculator = fitnessCalculator
         self.runRepository = runRepository
         self.syncQueueService = syncQueueService
+        self.notificationService = notificationService
     }
 
     func registerTasks() {
@@ -176,6 +179,12 @@ final class BackgroundTaskService: Sendable {
                 hrvScore: hrvScore
             )
 
+            let readinessScore = ReadinessCalculator.calculate(
+                recoveryScore: recoveryScore,
+                hrvTrend: hrvTrend,
+                fitnessSnapshot: fitnessSnapshot
+            )
+
             let snapshot = RecoverySnapshot(
                 id: UUID(),
                 date: now,
@@ -183,9 +192,13 @@ final class BackgroundTaskService: Sendable {
                 sleepEntry: sleepData.last,
                 restingHeartRate: restingHR,
                 hrvReading: hrvReadings.last,
-                readinessScore: nil
+                readinessScore: readinessScore
             )
             try await recoveryRepository.saveSnapshot(snapshot)
+
+            if let lastRun = recentRuns.first {
+                await notificationService?.scheduleInactivityReminder(lastRunDate: lastRun.date)
+            }
 
             task.setTaskCompleted(success: true)
             Logger.recovery.info("Background recovery calculation completed")

@@ -243,7 +243,8 @@ extension ProfileView {
                     athleteRepository: athleteRepository,
                     runRepository: runRepository,
                     activityFeedRepository: activityFeedRepository,
-                    sharedRunRepository: sharedRunRepository
+                    sharedRunRepository: sharedRunRepository,
+                    crewService: crewService
                 )
             } label: {
                 Label("Social", systemImage: "person.2.fill")

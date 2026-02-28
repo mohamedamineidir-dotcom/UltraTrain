@@ -2,6 +2,12 @@ import Foundation
 
 struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
 
+    private let mlPredictionService: (any FinishTimePredictionServiceProtocol)?
+
+    init(mlPredictionService: (any FinishTimePredictionServiceProtocol)? = nil) {
+        self.mlPredictionService = mlPredictionService
+    }
+
     // MARK: - Execute
 
     func execute(
@@ -49,8 +55,31 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         let weather = weatherImpact?.multiplier ?? 1.0
 
         let optimisticTime = effectiveKm * pace25 * terrain * descent * ultra * 0.97 * calibration * weather
-        let expectedTime = effectiveKm * medianPace * terrain * descent * form * ultra * calibration * weather
+        let algorithmicExpected = effectiveKm * medianPace * terrain * descent * form * ultra * calibration * weather
         let conservativeTime = effectiveKm * pace75 * terrain * descent * ultra * 1.05 * calibration * weather
+
+        let avgPace = weightedPaces.reduce(0.0) { $0 + $1.pace * $1.weight }
+            / weightedPaces.reduce(0.0) { $0 + $1.weight }
+        let terrainNumeric: Double = switch race.terrainDifficulty {
+        case .easy: 1.0
+        case .moderate: 1.05
+        case .technical: 1.15
+        case .extreme: 1.25
+        }
+        let mlBlend = await EnhancedFinishTimeEstimator.blend(
+            algorithmicTimeSeconds: algorithmicExpected,
+            mlPredictionService: mlPredictionService,
+            effectiveDistanceKm: effectiveKm,
+            experienceLevel: athlete.experienceLevel,
+            recentAvgPaceSecondsPerKm: avgPace,
+            ctl: currentFitness?.fitness ?? 0,
+            tsb: currentFitness?.form ?? 0,
+            terrainDifficulty: terrainNumeric,
+            elevationPerKm: race.elevationGainM / max(race.distanceKm, 1),
+            calibrationFactor: calibration,
+            runCount: recentRuns.count
+        )
+        let expectedTime = mlBlend.blendWeight > 0 ? mlBlend.predictedTimeSeconds : algorithmicExpected
 
         let splits = calculateCheckpointSplits(
             race: race,
