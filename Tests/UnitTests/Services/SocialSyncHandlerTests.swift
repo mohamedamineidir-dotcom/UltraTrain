@@ -23,9 +23,8 @@ struct SocialSyncHandlerTests {
     }
 
     @Test func handlerInitializesWithNilDeps() {
-        let handler = SocialSyncHandler()
         // No crash = success
-        #expect(handler != nil)
+        _ = SocialSyncHandler()
     }
 
     @Test func processUnexpectedTypeDoesNotCrash() async throws {

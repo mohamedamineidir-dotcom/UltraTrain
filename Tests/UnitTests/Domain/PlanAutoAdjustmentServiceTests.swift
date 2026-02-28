@@ -65,7 +65,7 @@ struct PlanAutoAdjustmentServiceTests {
     ) -> TrainingPlan {
         let weekStart = Date.now.startOfWeek
 
-        var session = TrainingSession(
+        let session = TrainingSession(
             id: UUID(),
             date: weekStart,
             type: .longRun,

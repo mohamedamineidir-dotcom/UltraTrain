@@ -22,14 +22,14 @@ struct BackgroundTaskServiceTests {
 
     @Test("Service initializes with mock dependencies")
     func initialization() {
-        let service = BackgroundTaskService(
+        // Should initialize without crashing
+        _ = BackgroundTaskService(
             healthKitService: MockHealthKitService(),
             recoveryRepository: MockRecoveryRepository(),
             fitnessRepository: MockFitnessRepository(),
             fitnessCalculator: MockCalculateFitnessUseCase(),
             runRepository: MockRunRepository()
         )
-        #expect(service != nil)
     }
 
     @Test("Task identifiers use reverse-DNS format")
