@@ -106,11 +106,6 @@ final class IntervalGuidanceHandler {
             remainingDistance = max(0, km - phaseElapsedDistance)
         }
 
-        let workPhasesSoFar = flattenedPhases[0..<currentFlatIndex]
-            .filter { $0.phase.phaseType == .work }.count
-        let totalWorkPhases = flattenedPhases
-            .filter { $0.phase.phaseType == .work }.count
-
         let progress: Double
         if flattenedPhases.count > 1 {
             progress = Double(currentFlatIndex) / Double(flattenedPhases.count - 1)

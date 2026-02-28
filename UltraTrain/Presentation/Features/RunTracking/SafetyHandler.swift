@@ -203,7 +203,7 @@ final class SafetyHandler {
             let stream = motionService.startAccelerometerUpdates()
             for await reading in stream {
                 guard !Task.isCancelled else { break }
-                await self?.processMotionReading(reading)
+                self?.processMotionReading(reading)
             }
         }
     }

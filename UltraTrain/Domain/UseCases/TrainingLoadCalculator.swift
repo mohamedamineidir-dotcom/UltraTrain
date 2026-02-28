@@ -105,8 +105,6 @@ struct TrainingLoadCalculator: CalculateTrainingLoadUseCase, Sendable {
     private func computeMonotony(runs: [CompletedRun], asOf date: Date) -> Double {
         let calendar = Calendar.current
         let sevenDaysAgo = calendar.startOfDay(for: date.adding(days: -6))
-        let endDay = calendar.startOfDay(for: date)
-
         var dailyLoads: [Double] = []
         for dayOffset in 0..<7 {
             let dayStart = sevenDaysAgo.adding(days: dayOffset)

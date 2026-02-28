@@ -105,7 +105,7 @@ extension AppDependencyContainer {
                             averageHeartRate: run.averageHeartRate
                         )
                     }
-                    await connectivityService.sendRunHistory(historyData)
+                    connectivityService.sendRunHistory(historyData)
                 } catch {
                     Logger.watch.error("Failed to import watch run: \(error)")
                 }
