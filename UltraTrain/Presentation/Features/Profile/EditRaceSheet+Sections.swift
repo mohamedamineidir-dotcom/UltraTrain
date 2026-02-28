@@ -33,6 +33,37 @@ extension EditRaceSheet {
             : $elevationLossM
     }
 
+    // MARK: - Location Section
+
+    var locationSection: some View {
+        Section {
+            if let name = locationName {
+                HStack {
+                    Image(systemName: "mappin.circle.fill")
+                        .foregroundStyle(Theme.Colors.primary)
+                        .accessibilityHidden(true)
+                    Text(name)
+                        .font(.subheadline)
+                    Spacer()
+                    Button("Change") {
+                        showLocationPicker = true
+                    }
+                    .font(.subheadline)
+                }
+            } else {
+                Button {
+                    showLocationPicker = true
+                } label: {
+                    Label("Set Race Location", systemImage: "mappin.and.ellipse")
+                }
+            }
+        } header: {
+            Text("Location")
+        } footer: {
+            Text("Used for weather forecasts in your race day estimate.")
+        }
+    }
+
     // MARK: - Priority Section
 
     var prioritySection: some View {
@@ -226,6 +257,9 @@ extension EditRaceSheet {
         )
         race.courseRoute = courseRoute
         race.savedRouteId = savedRouteId
+        race.locationLatitude = locationLatitude
+        race.locationLongitude = locationLongitude
+        race.locationName = locationName
         onSave(race)
         dismiss()
     }

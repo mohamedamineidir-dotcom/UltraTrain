@@ -38,6 +38,10 @@ struct EditRaceSheet: View {
     @State private var importedFileURL: URL?
     @State var showRoutePicker = false
     @State private var availableRoutes: [SavedRoute] = []
+    @State var locationLatitude: Double?
+    @State var locationLongitude: Double?
+    @State var locationName: String?
+    @State var showLocationPicker = false
 
     let existingId: UUID?
 
@@ -66,6 +70,9 @@ struct EditRaceSheet: View {
             _checkpoints = State(initialValue: [])
             _courseRoute = State(initialValue: [])
             _savedRouteId = State(initialValue: nil)
+            _locationLatitude = State(initialValue: nil)
+            _locationLongitude = State(initialValue: nil)
+            _locationName = State(initialValue: nil)
         case .edit(let race):
             existingId = race.id
             _name = State(initialValue: race.name)
@@ -78,6 +85,9 @@ struct EditRaceSheet: View {
             _checkpoints = State(initialValue: race.checkpoints)
             _courseRoute = State(initialValue: race.courseRoute)
             _savedRouteId = State(initialValue: race.savedRouteId)
+            _locationLatitude = State(initialValue: race.locationLatitude)
+            _locationLongitude = State(initialValue: race.locationLongitude)
+            _locationName = State(initialValue: race.locationName)
             switch race.goalType {
             case .finish:
                 _goalType = State(initialValue: .finish)
@@ -102,6 +112,7 @@ struct EditRaceSheet: View {
         NavigationStack {
             Form {
                 raceInfoSection
+                locationSection
                 elevationSection
                 prioritySection
                 goalSection
@@ -145,6 +156,13 @@ struct EditRaceSheet: View {
                     ImportCourseView(fileURL: url) { result in
                         applyImportedCourse(result)
                     }
+                }
+            }
+            .sheet(isPresented: $showLocationPicker) {
+                RaceLocationPickerSheet { lat, lon, name in
+                    locationLatitude = lat
+                    locationLongitude = lon
+                    locationName = name
                 }
             }
             .sheet(isPresented: $showRoutePicker) {

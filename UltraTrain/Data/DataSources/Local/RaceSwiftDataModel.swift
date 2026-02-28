@@ -19,6 +19,7 @@ final class RaceSwiftDataModel {
     var linkedRunId: UUID?
     var locationLatitude: Double?
     var locationLongitude: Double?
+    var locationName: String?
     @Attribute(.externalStorage) var forecastedWeatherData: Data?
     @Attribute(.externalStorage) var courseRouteData: Data?
     var savedRouteId: UUID?
@@ -41,6 +42,7 @@ final class RaceSwiftDataModel {
         linkedRunId: UUID? = nil,
         locationLatitude: Double? = nil,
         locationLongitude: Double? = nil,
+        locationName: String? = nil,
         forecastedWeatherData: Data? = nil,
         courseRouteData: Data? = nil,
         savedRouteId: UUID? = nil,
@@ -62,6 +64,7 @@ final class RaceSwiftDataModel {
         self.linkedRunId = linkedRunId
         self.locationLatitude = locationLatitude
         self.locationLongitude = locationLongitude
+        self.locationName = locationName
         self.forecastedWeatherData = forecastedWeatherData
         self.courseRouteData = courseRouteData
         self.savedRouteId = savedRouteId

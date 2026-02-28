@@ -15,6 +15,7 @@ struct Race: Identifiable, Equatable, Sendable, Codable {
     var linkedRunId: UUID?
     var locationLatitude: Double? = nil
     var locationLongitude: Double? = nil
+    var locationName: String? = nil
     var forecastedWeather: WeatherSnapshot? = nil
     var courseRoute: [TrackPoint] = []
     var savedRouteId: UUID? = nil

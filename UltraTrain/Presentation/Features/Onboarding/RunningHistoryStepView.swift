@@ -1,7 +1,10 @@
 import SwiftUI
+import os
 
 struct RunningHistoryStepView: View {
     @Bindable var viewModel: OnboardingViewModel
+    let healthKitService: (any HealthKitServiceProtocol)?
+    @State private var importState: HealthKitImportState = .idle
 
     var body: some View {
         ScrollView {
@@ -10,6 +13,7 @@ struct RunningHistoryStepView: View {
                 newRunnerToggle
 
                 if !viewModel.isNewRunner {
+                    healthKitImportCard
                     weeklyVolumeSection
                     longestRunSection
                 }
@@ -117,4 +121,127 @@ struct RunningHistoryStepView: View {
             )
             : $viewModel.longestRunKm
     }
+
+    // MARK: - HealthKit Import
+
+    @ViewBuilder
+    private var healthKitImportCard: some View {
+        if let service = healthKitService, service.authorizationStatus != .unavailable {
+            switch importState {
+            case .idle, .error:
+                VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                    HStack {
+                        Image(systemName: "heart.circle")
+                            .font(.title2)
+                            .foregroundStyle(Theme.Colors.primary)
+                            .accessibilityHidden(true)
+                        VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+                            Text("Import from Apple Health")
+                                .font(.headline)
+                            Text("Auto-fill from your recent running history.")
+                                .font(.caption)
+                                .foregroundStyle(Theme.Colors.secondaryLabel)
+                        }
+                        Spacer()
+                        Button("Import") {
+                            Task { await importFromHealthKit(service: service) }
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.small)
+                    }
+                    if case .error(let message) = importState {
+                        Text(message)
+                            .font(.caption)
+                            .foregroundStyle(Theme.Colors.warning)
+                    }
+                }
+                .cardStyle()
+
+            case .loading:
+                HStack(spacing: Theme.Spacing.sm) {
+                    ProgressView()
+                    Text("Reading workouts...")
+                        .font(.subheadline)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .cardStyle()
+
+            case .imported(let weeklyKm, let longestKm):
+                VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                    HStack {
+                        Image(systemName: "heart.circle.fill")
+                            .font(.title2)
+                            .foregroundStyle(Theme.Colors.success)
+                            .accessibilityHidden(true)
+                        Text("Imported from Apple Health")
+                            .font(.headline)
+                            .foregroundStyle(Theme.Colors.success)
+                    }
+                    Text("Weekly avg: \(UnitFormatter.formatDistance(weeklyKm, unit: viewModel.preferredUnit, decimals: 0)) · Longest: \(UnitFormatter.formatDistance(longestKm, unit: viewModel.preferredUnit, decimals: 0))")
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                    Text("You can still adjust the sliders below.")
+                        .font(.caption2)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
+                .cardStyle()
+
+            case .noWorkouts:
+                HStack(spacing: Theme.Spacing.sm) {
+                    Image(systemName: "exclamationmark.circle")
+                        .foregroundStyle(Theme.Colors.warning)
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+                        Text("No running workouts found")
+                            .font(.subheadline.weight(.medium))
+                        Text("No runs in the last 90 days. Fill in the sliders manually.")
+                            .font(.caption)
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
+                    }
+                }
+                .cardStyle()
+            }
+        }
+    }
+
+    private func importFromHealthKit(service: any HealthKitServiceProtocol) async {
+        importState = .loading
+        do {
+            try await service.requestAuthorization()
+
+            let endDate = Date.now
+            let startDate = Calendar.current.date(byAdding: .day, value: -90, to: endDate)!
+            let workouts = try await service.fetchRunningWorkouts(from: startDate, to: endDate)
+
+            guard !workouts.isEmpty else {
+                importState = .noWorkouts
+                return
+            }
+
+            let avgWeeklyKm = RunningHistoryCalculator.averageWeeklyKm(from: workouts)
+            let longestKm = workouts.map(\.distanceKm).max() ?? 0
+
+            viewModel.weeklyVolumeKm = max(5, avgWeeklyKm)
+            viewModel.longestRunKm = max(5, longestKm)
+
+            importState = .imported(weeklyKm: avgWeeklyKm, longestKm: longestKm)
+            Logger.healthKit.info(
+                "HealthKit auto-fill: avgWeekly=\(avgWeeklyKm, format: .fixed(precision: 1)) longest=\(longestKm, format: .fixed(precision: 1))"
+            )
+        } catch {
+            importState = .error("Could not read from Apple Health. Please try again.")
+            Logger.healthKit.error("HealthKit onboarding import failed: \(error)")
+        }
+    }
+}
+
+// MARK: - Import State
+
+private enum HealthKitImportState: Equatable {
+    case idle
+    case loading
+    case imported(weeklyKm: Double, longestKm: Double)
+    case noWorkouts
+    case error(String)
 }

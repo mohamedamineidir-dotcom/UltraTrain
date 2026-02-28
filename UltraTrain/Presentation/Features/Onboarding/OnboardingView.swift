@@ -36,7 +36,7 @@ struct OnboardingView: View {
                     switch viewModel.currentStep {
                     case 0: WelcomeStepView()
                     case 1: ExperienceStepView(viewModel: viewModel)
-                    case 2: RunningHistoryStepView(viewModel: viewModel)
+                    case 2: RunningHistoryStepView(viewModel: viewModel, healthKitService: healthKitService)
                     case 3: PhysicalDataStepView(viewModel: viewModel)
                     case 4: RaceGoalStepView(viewModel: viewModel)
                     case 5: OnboardingCompleteStepView(
