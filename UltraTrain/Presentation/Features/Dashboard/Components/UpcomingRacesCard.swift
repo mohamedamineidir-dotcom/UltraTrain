@@ -16,6 +16,7 @@ struct UpcomingRacesCard: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .cardStyle()
+            .accessibilityIdentifier("dashboard.upcomingRacesCard")
         }
     }
 

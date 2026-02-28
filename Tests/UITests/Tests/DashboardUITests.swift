@@ -30,8 +30,12 @@ final class DashboardUITests: XCTestCase {
     func testDashboardShowsUpcomingRaces() throws {
         let app = XCUIApplication.launchWithTestData()
         XCTAssertTrue(app.tabBars.buttons["Dashboard"].waitForExistence(timeout: 5))
-        let races = app.otherElements["dashboard.upcomingRacesCard"]
-        XCTAssertTrue(races.waitForExistence(timeout: 5))
+        // Card is far down the scroll view; scroll until visible
+        let racesText = app.staticTexts["Upcoming Races"]
+        for _ in 0..<5 where !racesText.exists {
+            app.swipeUp()
+        }
+        XCTAssertTrue(racesText.waitForExistence(timeout: 10))
     }
 
     @MainActor

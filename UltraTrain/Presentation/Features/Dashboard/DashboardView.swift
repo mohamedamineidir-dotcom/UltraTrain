@@ -168,7 +168,6 @@ struct DashboardView: View {
                     }
 
                     UpcomingRacesCard(races: viewModel.upcomingRaces)
-                        .accessibilityIdentifier("dashboard.upcomingRacesCard")
 
                     progressSection
                 }
