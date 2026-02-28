@@ -26,8 +26,7 @@ struct PaceTrendChartView: View {
         guard let latest = trendPoints.last else { return "Pace trend chart, no data" }
         let pace = RunStatisticsCalculator.formatPace(latest.averagePaceSecondsPerKm, unit: units)
         let paceUnit = UnitFormatter.paceLabel(units)
-        if trendPoints.count >= 2 {
-            let first = trendPoints.first!
+        if trendPoints.count >= 2, let first = trendPoints.first {
             let improving = latest.averagePaceSecondsPerKm < first.averagePaceSecondsPerKm
             return "Pace trend chart. \(trendPoints.count) runs. Latest pace \(pace) \(paceUnit), \(improving ? "improving" : "declining")."
         }

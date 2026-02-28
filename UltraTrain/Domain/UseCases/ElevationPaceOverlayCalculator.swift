@@ -47,8 +47,9 @@ enum ElevationPaceOverlayCalculator {
         guard !segPaces.isEmpty else { return (elevationPoints, []) }
 
         let paces = segPaces.map(\.paceSecondsPerKm)
-        let minPace = paces.min()!
-        let maxPace = paces.max()!
+        guard let minPace = paces.min(), let maxPace = paces.max() else {
+            return (elevationPoints, [])
+        }
         let avgPace = paces.reduce(0, +) / Double(paces.count)
         let range = maxPace - minPace
 
@@ -82,10 +83,10 @@ enum ElevationPaceOverlayCalculator {
     private static func normalizeElevation(
         _ profile: [ElevationProfilePoint]
     ) -> [OverlayDataPoint] {
-        guard !profile.isEmpty else { return [] }
         let altitudes = profile.map(\.altitudeM)
-        let minAlt = altitudes.min()!
-        let maxAlt = altitudes.max()!
+        guard let minAlt = altitudes.min(), let maxAlt = altitudes.max() else {
+            return []
+        }
         let range = maxAlt - minAlt
 
         return profile.map { point in
@@ -101,10 +102,10 @@ enum ElevationPaceOverlayCalculator {
     private static func normalizePace(
         _ splits: [Split]
     ) -> [PaceOverlayPoint] {
-        guard !splits.isEmpty else { return [] }
         let paces = splits.map(\.duration)
-        let minPace = paces.min()!
-        let maxPace = paces.max()!
+        guard let minPace = paces.min(), let maxPace = paces.max() else {
+            return []
+        }
         let avgPace = paces.reduce(0, +) / Double(paces.count)
         let range = maxPace - minPace
 
