@@ -6,6 +6,9 @@ enum SyncOperationType: String, Sendable, Equatable {
     case raceSync
     case raceDelete
     case trainingPlanSync
+    case nutritionPlanSync
+    case fitnessSnapshotSync
+    case finishEstimateSync
     case socialProfileSync
     case activityPublish
     case shareRevoke

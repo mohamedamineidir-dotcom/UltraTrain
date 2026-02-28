@@ -1,6 +1,6 @@
 import Foundation
 
-struct NutritionPlan: Identifiable, Equatable, Sendable {
+struct NutritionPlan: Identifiable, Equatable, Sendable, Codable {
     let id: UUID
     var raceId: UUID
     var caloriesPerHour: Int

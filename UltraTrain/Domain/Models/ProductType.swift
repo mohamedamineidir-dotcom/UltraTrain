@@ -1,6 +1,6 @@
 import Foundation
 
-enum ProductType: String, CaseIterable, Sendable {
+enum ProductType: String, CaseIterable, Sendable, Codable {
     case gel
     case bar
     case drink

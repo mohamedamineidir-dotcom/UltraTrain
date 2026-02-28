@@ -1,6 +1,6 @@
 import Foundation
 
-struct FinishEstimate: Identifiable, Equatable, Sendable {
+struct FinishEstimate: Identifiable, Equatable, Sendable, Codable {
     let id: UUID
     var raceId: UUID
     var athleteId: UUID

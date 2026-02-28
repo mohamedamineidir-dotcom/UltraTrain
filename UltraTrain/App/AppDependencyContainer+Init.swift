@@ -85,7 +85,14 @@ extension AppDependencyContainer {
             local: localPlanRepo, syncService: planSyncService, syncQueue: sync
         )
         planGenerator = TrainingPlanGenerator()
-        nutritionRepository = LocalNutritionRepository(modelContainer: modelContainer)
+        let localNutritionRepo = LocalNutritionRepository(modelContainer: modelContainer)
+        let remoteNutritionDataSource = RemoteNutritionDataSource(apiClient: client)
+        let nutritionSyncService = NutritionSyncService(
+            remote: remoteNutritionDataSource, authService: auth
+        )
+        nutritionRepository = SyncedNutritionRepository(
+            local: localNutritionRepo, syncService: nutritionSyncService
+        )
         nutritionGenerator = NutritionPlanGenerator()
         let runRestoreService = RunRestoreService(
             remote: remoteRunDataSource, authService: auth, athleteRepository: athleteRepository
@@ -95,7 +102,14 @@ extension AppDependencyContainer {
             remoteDataSource: remoteRunDataSource, authService: auth
         )
         locationService = LocationService()
-        fitnessRepository = LocalFitnessRepository(modelContainer: modelContainer)
+        let localFitnessRepo = LocalFitnessRepository(modelContainer: modelContainer)
+        let remoteFitnessDataSource = RemoteFitnessDataSource(apiClient: client)
+        let fitnessSyncService = FitnessSyncService(
+            remote: remoteFitnessDataSource, authService: auth
+        )
+        fitnessRepository = SyncedFitnessRepository(
+            local: localFitnessRepo, syncService: fitnessSyncService
+        )
         fitnessCalculator = FitnessCalculator()
         let mlService = FinishTimeMLService()
         finishTimeEstimator = FinishTimeEstimator(mlPredictionService: mlService)
@@ -132,7 +146,14 @@ extension AppDependencyContainer {
             healthKitService: healthKitService, runRepository: runRepository, planRepository: planRepository
         )
         gearRepository = LocalGearRepository(modelContainer: modelContainer)
-        finishEstimateRepository = LocalFinishEstimateRepository(modelContainer: modelContainer)
+        let localFinishEstimateRepo = LocalFinishEstimateRepository(modelContainer: modelContainer)
+        let remoteFinishEstimateDataSource = RemoteFinishEstimateDataSource(apiClient: client)
+        let finishEstimateSyncService = FinishEstimateSyncService(
+            remote: remoteFinishEstimateDataSource, authService: auth
+        )
+        finishEstimateRepository = SyncedFinishEstimateRepository(
+            local: localFinishEstimateRepo, syncService: finishEstimateSyncService
+        )
         stravaUploadQueueRepository = LocalStravaUploadQueueRepository(modelContainer: modelContainer)
         recoveryRepository = LocalRecoveryRepository(modelContainer: modelContainer)
         checklistRepository = LocalRacePrepChecklistRepository(modelContainer: modelContainer)

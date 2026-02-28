@@ -1,6 +1,6 @@
 import Foundation
 
-struct NutritionProduct: Identifiable, Equatable, Sendable {
+struct NutritionProduct: Identifiable, Equatable, Sendable, Codable {
     let id: UUID
     var name: String
     var type: ProductType

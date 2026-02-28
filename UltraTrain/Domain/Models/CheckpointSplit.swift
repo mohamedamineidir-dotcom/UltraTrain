@@ -1,6 +1,6 @@
 import Foundation
 
-struct CheckpointSplit: Identifiable, Equatable, Sendable {
+struct CheckpointSplit: Identifiable, Equatable, Sendable, Codable {
     let id: UUID
     var checkpointId: UUID
     var checkpointName: String

@@ -169,6 +169,12 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
                 try await processRaceDelete(item)
             case .trainingPlanSync:
                 try await processTrainingPlanSync(item)
+            case .nutritionPlanSync:
+                try await processNutritionPlanSync(item)
+            case .fitnessSnapshotSync:
+                try await processFitnessSnapshotSync(item)
+            case .finishEstimateSync:
+                try await processFinishEstimateSync(item)
             case .socialProfileSync, .activityPublish, .shareRevoke:
                 try await socialSyncHandler?.process(item)
             }
@@ -270,5 +276,20 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
             return
         }
         await syncService.syncPlan(plan)
+    }
+
+    // Nutrition, fitness, and finish estimate sync use direct fire-and-forget from their
+    // SyncedRepositories. These queue handlers exist only as safety nets to clean up
+    // any stale items that might end up in the queue.
+    private func processNutritionPlanSync(_ item: SyncQueueItem) async throws {
+        try? await queueRepository.deleteItem(id: item.id)
+    }
+
+    private func processFitnessSnapshotSync(_ item: SyncQueueItem) async throws {
+        try? await queueRepository.deleteItem(id: item.id)
+    }
+
+    private func processFinishEstimateSync(_ item: SyncQueueItem) async throws {
+        try? await queueRepository.deleteItem(id: item.id)
     }
 }

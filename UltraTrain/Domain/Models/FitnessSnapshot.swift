@@ -1,6 +1,6 @@
 import Foundation
 
-struct FitnessSnapshot: Identifiable, Equatable, Sendable {
+struct FitnessSnapshot: Identifiable, Equatable, Sendable, Codable {
     let id: UUID
     var date: Date
     var fitness: Double    // CTL — chronic training load (42-day EMA)

@@ -1,6 +1,6 @@
 import Foundation
 
-struct NutritionPreferences: Equatable, Sendable {
+struct NutritionPreferences: Equatable, Sendable, Codable {
     var avoidCaffeine: Bool
     var preferRealFood: Bool
     var excludedProductIds: Set<UUID>
