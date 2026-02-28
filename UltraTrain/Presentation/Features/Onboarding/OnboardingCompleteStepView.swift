@@ -5,9 +5,12 @@ struct OnboardingCompleteStepView: View {
     let viewModel: OnboardingViewModel
     var onComplete: () -> Void
     let healthKitService: (any HealthKitServiceProtocol)?
+    let healthKitImportService: (any HealthKitImportServiceProtocol)?
     @ScaledMetric(relativeTo: .largeTitle) private var checkmarkSize: CGFloat = 60
     @State private var isRequestingHealthKit = false
     @State private var healthKitConnected = false
+    @State private var isImportingWorkouts = false
+    @State private var importResult: HealthKitImportResult?
     @State private var showCheckmark = false
     @State private var showTitle = false
     @State private var showSummary = false
@@ -110,7 +113,7 @@ struct OnboardingCompleteStepView: View {
                     Text("Apple Health Connected")
                         .font(.headline)
                         .foregroundStyle(Theme.Colors.success)
-                    Text("Heart rate, body weight, and workouts will sync automatically.")
+                    Text("Your recent running workouts will be imported when you tap Get Started.")
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                         .multilineTextAlignment(.center)
@@ -161,15 +164,32 @@ struct OnboardingCompleteStepView: View {
         Button {
             Task {
                 await viewModel.completeOnboarding()
-                if viewModel.isCompleted {
-                    onComplete()
+                guard viewModel.isCompleted else { return }
+                if healthKitConnected, let importService = healthKitImportService,
+                   let athleteId = viewModel.savedAthleteId {
+                    isImportingWorkouts = true
+                    do {
+                        let result = try await importService.importNewWorkouts(athleteId: athleteId)
+                        importResult = result
+                        Logger.healthKit.info("Onboarding import: \(result.importedCount) workouts imported")
+                    } catch {
+                        Logger.healthKit.error("Onboarding HealthKit import failed: \(error)")
+                    }
+                    isImportingWorkouts = false
                 }
+                onComplete()
             }
         } label: {
             Group {
-                if viewModel.isSaving {
-                    ProgressView()
-                        .tint(.white)
+                if viewModel.isSaving || isImportingWorkouts {
+                    HStack(spacing: Theme.Spacing.sm) {
+                        ProgressView()
+                            .tint(.white)
+                        if isImportingWorkouts {
+                            Text("Importing workouts...")
+                                .font(.subheadline)
+                        }
+                    }
                 } else {
                     Text("Get Started")
                 }
@@ -178,7 +198,7 @@ struct OnboardingCompleteStepView: View {
         }
         .buttonStyle(.borderedProminent)
         .controlSize(.large)
-        .disabled(viewModel.isSaving)
+        .disabled(viewModel.isSaving || isImportingWorkouts)
         .padding(.top, Theme.Spacing.md)
         .accessibilityHint("Completes setup and opens the main app")
         .accessibilityIdentifier("onboarding.getStartedButton")

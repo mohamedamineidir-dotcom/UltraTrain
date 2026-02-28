@@ -4,11 +4,13 @@ struct OnboardingView: View {
     @State private var viewModel: OnboardingViewModel
     var onComplete: () -> Void
     private let healthKitService: (any HealthKitServiceProtocol)?
+    private let healthKitImportService: (any HealthKitImportServiceProtocol)?
 
     init(
         athleteRepository: any AthleteRepository,
         raceRepository: any RaceRepository,
         healthKitService: (any HealthKitServiceProtocol)? = nil,
+        healthKitImportService: (any HealthKitImportServiceProtocol)? = nil,
         onComplete: @escaping () -> Void
     ) {
         _viewModel = State(initialValue: OnboardingViewModel(
@@ -16,6 +18,7 @@ struct OnboardingView: View {
             raceRepository: raceRepository
         ))
         self.healthKitService = healthKitService
+        self.healthKitImportService = healthKitImportService
         self.onComplete = onComplete
     }
 
@@ -39,7 +42,8 @@ struct OnboardingView: View {
                     case 5: OnboardingCompleteStepView(
                         viewModel: viewModel,
                         onComplete: onComplete,
-                        healthKitService: healthKitService
+                        healthKitService: healthKitService,
+                        healthKitImportService: healthKitImportService
                     )
                     default: EmptyView()
                     }

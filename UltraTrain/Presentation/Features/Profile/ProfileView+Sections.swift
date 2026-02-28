@@ -60,6 +60,16 @@ extension ProfileView {
 
     var racesSection: some View {
         Section {
+            NavigationLink {
+                RaceCalendarGridView(
+                    raceRepository: raceRepository,
+                    planRepository: planRepository
+                )
+            } label: {
+                Label("Race Calendar", systemImage: "calendar")
+            }
+            .accessibilityIdentifier("profile.raceCalendarLink")
+
             if viewModel.races.isEmpty {
                 Label("No races configured", systemImage: "flag.checkered")
                     .foregroundStyle(Theme.Colors.secondaryLabel)

@@ -17,6 +17,7 @@ final class OnboardingViewModel {
     var isCompleted = false
     var isSaving = false
     var error: String?
+    private(set) var savedAthleteId: UUID?
 
     // MARK: - Step 1: Experience
 
@@ -132,6 +133,7 @@ final class OnboardingViewModel {
             let race = buildRace()
             try await athleteRepository.saveAthlete(athlete)
             try await raceRepository.saveRace(race)
+            savedAthleteId = athlete.id
             isCompleted = true
             Logger.app.info("Onboarding completed for \(athlete.firstName)")
         } catch {

@@ -16,7 +16,7 @@ struct ProfileView: View {
     private let stravaAuthService: any StravaAuthServiceProtocol
     private let stravaUploadQueueService: (any StravaUploadQueueServiceProtocol)?
     private let notificationService: any NotificationServiceProtocol
-    private let planRepository: any TrainingPlanRepository
+    let planRepository: any TrainingPlanRepository
     private let biometricAuthService: any BiometricAuthServiceProtocol
     let gearRepository: any GearRepository
     let nutritionRepository: any NutritionRepository

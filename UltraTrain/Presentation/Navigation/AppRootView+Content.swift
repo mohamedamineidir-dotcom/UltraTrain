@@ -87,6 +87,7 @@ extension AppRootView {
                         athleteRepository: athleteRepository,
                         raceRepository: raceRepository,
                         healthKitService: healthKitService,
+                        healthKitImportService: healthKitImportService,
                         onComplete: {
                             hasCompletedOnboarding = true
                             if !hasSeenFeatureTour {
