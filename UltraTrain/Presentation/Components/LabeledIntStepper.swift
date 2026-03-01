@@ -6,6 +6,10 @@ struct LabeledIntStepper: View {
     let range: ClosedRange<Int>
     let unit: String
 
+    @State private var isEditing = false
+    @State private var editText = ""
+    @FocusState private var isFocused: Bool
+
     var body: some View {
         HStack {
             Text(label)
@@ -20,10 +24,25 @@ struct LabeledIntStepper: View {
             .buttonStyle(.plain)
             .foregroundStyle(Theme.Colors.primary)
 
-            Text("\(value) \(unit)")
-                .font(.body.monospacedDigit())
-                .frame(minWidth: 70)
-                .multilineTextAlignment(.center)
+            if isEditing {
+                TextField("", text: $editText)
+                    .keyboardType(.numberPad)
+                    .font(.body.monospacedDigit())
+                    .multilineTextAlignment(.center)
+                    .frame(minWidth: 70)
+                    .focused($isFocused)
+                    .onSubmit { commitEdit() }
+                    .onChange(of: isFocused) { _, focused in
+                        if !focused { commitEdit() }
+                    }
+            } else {
+                Text("\(value) \(unit)")
+                    .font(.body.monospacedDigit())
+                    .frame(minWidth: 70)
+                    .multilineTextAlignment(.center)
+                    .contentShape(Rectangle())
+                    .onTapGesture { beginEdit() }
+            }
 
             Button {
                 value = min(range.upperBound, value + 1)
@@ -47,5 +66,18 @@ struct LabeledIntStepper: View {
                 break
             }
         }
+    }
+
+    private func beginEdit() {
+        editText = "\(value)"
+        isEditing = true
+        isFocused = true
+    }
+
+    private func commitEdit() {
+        if let parsed = Int(editText) {
+            value = min(range.upperBound, max(range.lowerBound, parsed))
+        }
+        isEditing = false
     }
 }

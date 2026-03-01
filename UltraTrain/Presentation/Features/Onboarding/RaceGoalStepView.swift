@@ -9,6 +9,7 @@ struct RaceGoalStepView: View {
                 headerSection
                 raceInfoSection
                 elevationSection
+                trainingDurationWarning
                 goalTypeSection
                 terrainSection
             }
@@ -33,10 +34,11 @@ struct RaceGoalStepView: View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             Text("Race Info")
                 .font(.headline)
-            TextField("Race Name (e.g. UTMB, Diagonale des Fous)", text: $viewModel.raceName)
-                .textFieldStyle(.roundedBorder)
-                .autocorrectionDisabled()
-                .accessibilityIdentifier("onboarding.raceNameField")
+            RaceAutoCompleteField(text: $viewModel.raceName) { race in
+                viewModel.raceDistanceKm = race.distanceKm
+                viewModel.raceElevationGainM = race.elevationGainM
+                viewModel.raceElevationLossM = race.elevationLossM
+            }
             DatePicker(
                 "Race Date",
                 selection: $viewModel.raceDate,
@@ -75,6 +77,28 @@ struct RaceGoalStepView: View {
             )
         }
         .cardStyle()
+    }
+
+    @ViewBuilder
+    private var trainingDurationWarning: some View {
+        let validation = TrainingDurationValidator.validate(
+            distanceKm: viewModel.raceDistanceKm,
+            elevationGainM: viewModel.raceElevationGainM,
+            raceDate: viewModel.raceDate,
+            experienceLevel: viewModel.experienceLevel ?? .beginner
+        )
+        if let message = validation.warningMessage {
+            HStack(alignment: .top, spacing: Theme.Spacing.sm) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundStyle(Theme.Colors.warning)
+                Text(message)
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+            .padding(Theme.Spacing.md)
+            .background(Theme.Colors.warning.opacity(0.1))
+            .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
+        }
     }
 
     private var distanceBinding: Binding<Double> {

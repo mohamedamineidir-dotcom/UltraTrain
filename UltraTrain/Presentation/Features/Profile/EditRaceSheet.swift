@@ -185,8 +185,11 @@ struct EditRaceSheet: View {
 
     private var raceInfoSection: some View {
         Section("Race Info") {
-            TextField("Race Name", text: $name)
-                .autocorrectionDisabled()
+            RaceAutoCompleteField(text: $name) { race in
+                distanceKm = race.distanceKm
+                elevationGainM = race.elevationGainM
+                elevationLossM = race.elevationLossM
+            }
             DatePicker("Race Date", selection: $date, in: Date.now..., displayedComponents: .date)
             LabeledStepper(
                 label: "Distance",

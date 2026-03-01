@@ -114,6 +114,9 @@ struct PhysicalDataStepView: View {
                 range: 30...120,
                 unit: "bpm"
             )
+            Text("Tip: If unknown, a typical resting HR for active adults is 60–70 bpm. Measure first thing in the morning for best accuracy.")
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
             Divider()
             LabeledIntStepper(
                 label: "Max HR",
