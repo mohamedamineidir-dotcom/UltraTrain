@@ -11,6 +11,7 @@ struct RaceGoalStepView: View {
                 elevationSection
                 trainingDurationWarning
                 goalTypeSection
+                goalRealisticnessWarning
                 terrainSection
             }
             .padding()
@@ -170,6 +171,46 @@ struct RaceGoalStepView: View {
                 range: 0...59,
                 unit: "m"
             )
+        }
+    }
+
+    @ViewBuilder
+    private var goalRealisticnessWarning: some View {
+        let validation: GoalValidation? = {
+            let level = viewModel.experienceLevel ?? .beginner
+            switch viewModel.raceGoalType {
+            case .finish:
+                return nil
+            case .targetTime:
+                let seconds = TimeInterval(viewModel.raceTargetTimeHours * 3600 + viewModel.raceTargetTimeMinutes * 60)
+                guard seconds > 0 else { return nil }
+                return GoalRealisticnessValidator.validateTime(
+                    targetTimeSeconds: seconds,
+                    distanceKm: viewModel.raceDistanceKm,
+                    elevationGainM: viewModel.raceElevationGainM,
+                    experienceLevel: level
+                )
+            case .targetRanking:
+                guard viewModel.raceTargetRanking > 0 else { return nil }
+                return GoalRealisticnessValidator.validateRanking(
+                    targetRanking: viewModel.raceTargetRanking,
+                    distanceKm: viewModel.raceDistanceKm,
+                    elevationGainM: viewModel.raceElevationGainM,
+                    experienceLevel: level
+                )
+            }
+        }()
+        if let message = validation?.warningMessage {
+            HStack(alignment: .top, spacing: Theme.Spacing.sm) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundStyle(Theme.Colors.warning)
+                Text(message)
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+            .padding(Theme.Spacing.md)
+            .background(Theme.Colors.warning.opacity(0.1))
+            .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
         }
     }
 

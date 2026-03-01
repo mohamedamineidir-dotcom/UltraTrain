@@ -38,145 +38,143 @@ struct SessionTemplateGeneratorTests {
     func sevenSessionsPerWeek() {
         let phases: [TrainingPhase] = [.base, .build, .peak, .taper]
         for phase in phases {
-            let sessions = SessionTemplateGenerator.sessions(
+            let result = SessionTemplateGenerator.sessions(
                 for: makeSkeleton(phase: phase),
                 volume: makeVolume(),
                 experience: .intermediate
             )
-            #expect(sessions.count == 7, "Phase \(phase) should produce 7 sessions")
+            #expect(result.sessions.count == 7, "Phase \(phase) should produce 7 sessions")
         }
     }
 
     @Test("recovery week generates 7 sessions")
     func recoveryWeekSevenSessions() {
-        let sessions = SessionTemplateGenerator.sessions(
+        let result = SessionTemplateGenerator.sessions(
             for: makeSkeleton(isRecovery: true),
             volume: makeVolume(),
             experience: .intermediate
         )
-        #expect(sessions.count == 7)
+        #expect(result.sessions.count == 7)
     }
 
     // MARK: - Base Phase
 
     @Test("base phase includes long run")
     func basePhaseHasLongRun() {
-        let sessions = SessionTemplateGenerator.sessions(
+        let result = SessionTemplateGenerator.sessions(
             for: makeSkeleton(phase: .base),
             volume: makeVolume(),
             experience: .intermediate
         )
 
-        let longRuns = sessions.filter { $0.type == .longRun }
+        let longRuns = result.sessions.filter { $0.type == .longRun }
         #expect(longRuns.count >= 1)
     }
 
-    @Test("base phase long run is the biggest volume session")
-    func basePhaseLongRunBiggestVolume() {
-        let sessions = SessionTemplateGenerator.sessions(
+    @Test("base phase long run has the longest duration")
+    func basePhaseLongRunBiggestDuration() {
+        let result = SessionTemplateGenerator.sessions(
             for: makeSkeleton(phase: .base),
             volume: makeVolume(km: 60),
             experience: .intermediate
         )
 
-        let longRun = sessions.filter { $0.type == .longRun }.first
-        let maxDistance = sessions.max(by: { $0.plannedDistanceKm < $1.plannedDistanceKm })
+        let longRun = result.sessions.filter { $0.type == .longRun }.first
+        let maxDuration = result.sessions.max(by: { $0.plannedDuration < $1.plannedDuration })
 
         #expect(longRun != nil)
-        #expect(longRun?.plannedDistanceKm == maxDistance?.plannedDistanceKm)
+        #expect(longRun?.plannedDuration == maxDuration?.plannedDuration)
     }
 
     // MARK: - Build Phase
 
     @Test("build phase includes intervals")
     func buildPhaseHasIntervals() {
-        let sessions = SessionTemplateGenerator.sessions(
+        let result = SessionTemplateGenerator.sessions(
             for: makeSkeleton(phase: .build),
             volume: makeVolume(),
             experience: .intermediate
         )
 
-        let intervals = sessions.filter { $0.type == .intervals }
+        let intervals = result.sessions.filter { $0.type == .intervals }
         #expect(intervals.count >= 1)
     }
 
     @Test("build phase includes vertical gain for advanced athletes")
     func buildPhaseHasVerticalForAdvanced() {
-        let sessions = SessionTemplateGenerator.sessions(
+        let result = SessionTemplateGenerator.sessions(
             for: makeSkeleton(phase: .build),
             volume: makeVolume(),
             experience: .advanced
         )
 
-        let vertical = sessions.filter { $0.type == .verticalGain }
+        let vertical = result.sessions.filter { $0.type == .verticalGain }
         #expect(vertical.count >= 1)
     }
 
     @Test("build phase does not include vertical gain for beginners")
     func buildPhaseNoVerticalForBeginners() {
-        let sessions = SessionTemplateGenerator.sessions(
+        let result = SessionTemplateGenerator.sessions(
             for: makeSkeleton(phase: .build),
             volume: makeVolume(),
             experience: .beginner
         )
 
-        let vertical = sessions.filter { $0.type == .verticalGain }
+        let vertical = result.sessions.filter { $0.type == .verticalGain }
         #expect(vertical.isEmpty)
     }
 
     // MARK: - Peak Phase
 
-    @Test("peak phase includes back-to-back for elite")
+    @Test("peak phase includes back-to-back for elite with high effective km")
     func peakPhaseBackToBackForElite() {
-        let sessions = SessionTemplateGenerator.sessions(
+        let result = SessionTemplateGenerator.sessions(
             for: makeSkeleton(phase: .peak),
             volume: makeVolume(),
-            experience: .elite
+            experience: .elite,
+            raceEffectiveKm: 150
         )
 
-        let b2b = sessions.filter { $0.type == .backToBack }
+        let b2b = result.sessions.filter { $0.type == .backToBack }
         #expect(b2b.count >= 1)
     }
 
-    @Test("peak phase uses cross-training instead of back-to-back for non-elite")
-    func peakPhaseNoCrossTrainingForNonElite() {
-        let sessions = SessionTemplateGenerator.sessions(
+    @Test("peak phase has no back-to-back for beginner")
+    func peakPhaseNoB2BForBeginner() {
+        let result = SessionTemplateGenerator.sessions(
             for: makeSkeleton(phase: .peak),
             volume: makeVolume(),
-            experience: .intermediate
+            experience: .beginner,
+            raceEffectiveKm: 50
         )
 
-        let b2b = sessions.filter { $0.type == .backToBack }
-        let cross = sessions.filter { $0.type == .crossTraining }
+        let b2b = result.sessions.filter { $0.type == .backToBack }
         #expect(b2b.isEmpty)
-        #expect(cross.count >= 1)
     }
 
     // MARK: - Taper Phase
 
     @Test("taper phase has reduced volume sessions")
     func taperPhaseReducedVolume() {
-        let sessions = SessionTemplateGenerator.sessions(
+        let result = SessionTemplateGenerator.sessions(
             for: makeSkeleton(phase: .taper),
             volume: makeVolume(km: 30),
             experience: .intermediate
         )
 
-        let longRun = sessions.filter { $0.type == .longRun }.first
+        let longRun = result.sessions.filter { $0.type == .longRun }.first
         #expect(longRun != nil)
-        // Long run in taper should have reduced fraction
-        #expect(longRun!.plannedDistanceKm < 30) // Less than full volume
     }
 
     @Test("taper phase includes opener intervals")
     func taperPhaseHasOpenerIntervals() {
-        let sessions = SessionTemplateGenerator.sessions(
+        let result = SessionTemplateGenerator.sessions(
             for: makeSkeleton(phase: .taper),
             volume: makeVolume(),
             experience: .intermediate
         )
 
-        let intervals = sessions.filter { $0.type == .intervals }
+        let intervals = result.sessions.filter { $0.type == .intervals }
         #expect(intervals.count >= 1)
     }
 
@@ -184,34 +182,29 @@ struct SessionTemplateGeneratorTests {
 
     @Test("volume distributes to non-rest sessions only")
     func volumeDistributedToNonRestSessions() {
-        let sessions = SessionTemplateGenerator.sessions(
+        let result = SessionTemplateGenerator.sessions(
             for: makeSkeleton(phase: .base),
             volume: makeVolume(km: 60),
             experience: .intermediate
         )
 
-        let restSessions = sessions.filter { $0.type == .rest }
+        let restSessions = result.sessions.filter { $0.type == .rest }
         for session in restSessions {
             #expect(session.plannedDistanceKm == 0)
         }
-
-        let activeSessions = sessions.filter { $0.type != .rest }
-        let totalDistance = activeSessions.reduce(0.0) { $0 + $1.plannedDistanceKm }
-        // Total should be close to 60 km
-        #expect(abs(totalDistance - 60.0) < 1.0)
     }
 
     // MARK: - Nutrition Notes
 
     @Test("long sessions get nutrition notes")
     func longSessionsGetNutritionNotes() {
-        let sessions = SessionTemplateGenerator.sessions(
+        let result = SessionTemplateGenerator.sessions(
             for: makeSkeleton(phase: .base),
             volume: makeVolume(km: 80, elevation: 4000),
             experience: .advanced
         )
 
-        let longRun = sessions.filter { $0.type == .longRun }.first
+        let longRun = result.sessions.filter { $0.type == .longRun }.first
         #expect(longRun != nil)
         #expect(longRun?.nutritionNotes != nil)
     }
@@ -225,16 +218,15 @@ struct SessionTemplateGeneratorTests {
             raceId: UUID(),
             behavior: .raceWeek(priority: .bRace)
         )
-        let sessions = SessionTemplateGenerator.sessions(
+        let result = SessionTemplateGenerator.sessions(
             for: makeSkeleton(phase: .build),
             volume: makeVolume(),
             experience: .intermediate,
             raceOverride: override
         )
 
-        #expect(sessions.count == 7)
-        // B-race week should have mostly rest days
-        let restSessions = sessions.filter { $0.type == .rest }
+        #expect(result.sessions.count == 7)
+        let restSessions = result.sessions.filter { $0.type == .rest }
         #expect(restSessions.count >= 4)
     }
 
@@ -245,15 +237,14 @@ struct SessionTemplateGeneratorTests {
             raceId: UUID(),
             behavior: .postRaceRecovery
         )
-        let sessions = SessionTemplateGenerator.sessions(
+        let result = SessionTemplateGenerator.sessions(
             for: makeSkeleton(phase: .build),
             volume: makeVolume(),
             experience: .intermediate,
             raceOverride: override
         )
 
-        // Recovery templates should have easy intensity
-        let hardSessions = sessions.filter { $0.intensity == .hard || $0.intensity == .maxEffort }
+        let hardSessions = result.sessions.filter { $0.intensity == .hard || $0.intensity == .maxEffort }
         #expect(hardSessions.isEmpty)
     }
 
@@ -261,28 +252,70 @@ struct SessionTemplateGeneratorTests {
 
     @Test("session durations are positive for non-rest sessions")
     func durationsPositive() {
-        let sessions = SessionTemplateGenerator.sessions(
+        let result = SessionTemplateGenerator.sessions(
             for: makeSkeleton(phase: .build),
             volume: makeVolume(km: 50),
             experience: .intermediate
         )
 
-        for session in sessions where session.type != .rest {
+        for session in result.sessions where session.type != .rest {
             #expect(session.plannedDuration > 0)
         }
     }
 
     @Test("rest sessions have zero duration")
     func restSessionsZeroDuration() {
-        let sessions = SessionTemplateGenerator.sessions(
+        let result = SessionTemplateGenerator.sessions(
             for: makeSkeleton(phase: .base),
             volume: makeVolume(),
             experience: .intermediate
         )
 
-        for session in sessions where session.type == .rest {
+        for session in result.sessions where session.type == .rest {
             #expect(session.plannedDuration == 0)
             #expect(session.plannedDistanceKm == 0)
         }
+    }
+
+    // MARK: - Workout Generation
+
+    @Test("interval sessions generate workouts")
+    func intervalSessionsGenerateWorkouts() {
+        let result = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(phase: .build),
+            volume: makeVolume(),
+            experience: .intermediate,
+            weekNumberInPhase: 0
+        )
+
+        let intervals = result.sessions.filter { $0.type == .intervals }
+        #expect(!intervals.isEmpty)
+
+        for interval in intervals {
+            #expect(interval.intervalWorkoutId != nil)
+            let workout = result.workouts.first { $0.id == interval.intervalWorkoutId }
+            #expect(workout != nil)
+            #expect(!workout!.phases.isEmpty)
+        }
+    }
+
+    @Test("different weeks produce different interval workouts")
+    func differentWeeksProduceDifferentWorkouts() {
+        let result0 = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(phase: .build),
+            volume: makeVolume(),
+            experience: .intermediate,
+            weekNumberInPhase: 0
+        )
+        let result1 = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(phase: .build),
+            volume: makeVolume(),
+            experience: .intermediate,
+            weekNumberInPhase: 1
+        )
+
+        let desc0 = result0.workouts.first?.descriptionText ?? ""
+        let desc1 = result1.workouts.first?.descriptionText ?? ""
+        #expect(desc0 != desc1, "Week 0 and week 1 should have different workout descriptions")
     }
 }

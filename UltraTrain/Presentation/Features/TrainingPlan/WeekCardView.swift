@@ -16,6 +16,7 @@ struct WeekCardView: View {
     let onRescheduleSession: (Int, Date) -> Void
     let onSwapSession: (Int, SwapCandidate) -> Void
     let onReorderSession: (Int, Int, SwapCandidate) -> Void
+    var workouts: [IntervalWorkout] = []
 
     @State private var isExpanded: Bool
     @State private var contextRescheduleItem: ContextSheetItem?
@@ -36,6 +37,7 @@ struct WeekCardView: View {
         onUnskipSession: @escaping (Int) -> Void,
         onRescheduleSession: @escaping (Int, Date) -> Void,
         onSwapSession: @escaping (Int, SwapCandidate) -> Void,
+        workouts: [IntervalWorkout] = [],
         onReorderSession: @escaping (Int, Int, SwapCandidate) -> Void
     ) {
         self.week = week
@@ -51,6 +53,7 @@ struct WeekCardView: View {
         self.onUnskipSession = onUnskipSession
         self.onRescheduleSession = onRescheduleSession
         self.onSwapSession = onSwapSession
+        self.workouts = workouts
         self.onReorderSession = onReorderSession
         _isExpanded = State(initialValue: isCurrentWeek)
     }
@@ -206,6 +209,7 @@ struct WeekCardView: View {
             athlete: athlete,
             nutritionAdvisor: nutritionAdvisor,
             nutritionPreferences: nutritionPreferences,
+            workouts: workouts,
             onSkip: { onSkipSession(sessionIndex) },
             onUnskip: session.isSkipped ? { onUnskipSession(sessionIndex) } : nil,
             onReschedule: { newDate in onRescheduleSession(sessionIndex, newDate) },

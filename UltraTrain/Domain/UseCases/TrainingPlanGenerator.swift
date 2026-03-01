@@ -44,16 +44,27 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             intermediateRaces: intermediateRaces
         )
 
-        // 5. Generate sessions for each week
-        let weeks: [TrainingWeek] = zip(skeletons, volumes).map { skeleton, volume in
+        // 5. Track week number within each phase
+        let phaseCounters = computeWeekNumbersInPhase(skeletons: skeletons)
+
+        // 6. Generate sessions for each week
+        let raceEffectiveKm = targetRace.effectiveDistanceKm
+        var allWorkouts: [IntervalWorkout] = []
+
+        let weeks: [TrainingWeek] = zip(skeletons, volumes).enumerated().map { index, pair in
+            let (skeleton, volume) = pair
             let override = overrides.first { $0.weekNumber == skeleton.weekNumber }
 
-            let sessions = SessionTemplateGenerator.sessions(
+            let result = SessionTemplateGenerator.sessions(
                 for: skeleton,
                 volume: volume,
                 experience: athlete.experienceLevel,
+                raceEffectiveKm: raceEffectiveKm,
+                weekNumberInPhase: phaseCounters[index],
                 raceOverride: override
             )
+
+            allWorkouts.append(contentsOf: result.workouts)
 
             return TrainingWeek(
                 id: UUID(),
@@ -61,7 +72,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 startDate: skeleton.startDate,
                 endDate: skeleton.endDate,
                 phase: override?.behavior.isRaceWeek == true ? .race : skeleton.phase,
-                sessions: sessions,
+                sessions: result.sessions,
                 isRecoveryWeek: skeleton.isRecoveryWeek || override?.behavior == .postRaceRecovery,
                 targetVolumeKm: volume.targetVolumeKm,
                 targetElevationGainM: volume.targetElevationGainM
@@ -72,7 +83,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             RaceSnapshot(id: race.id, date: race.date, priority: race.priority)
         }
 
-        return TrainingPlan(
+        var plan = TrainingPlan(
             id: UUID(),
             athleteId: athlete.id,
             targetRaceId: targetRace.id,
@@ -81,5 +92,20 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             intermediateRaceIds: intermediateRaces.map(\.id),
             intermediateRaceSnapshots: snapshots
         )
+        plan.workouts = allWorkouts
+
+        return plan
+    }
+
+    private func computeWeekNumbersInPhase(
+        skeletons: [WeekSkeletonBuilder.WeekSkeleton]
+    ) -> [Int] {
+        var counters: [TrainingPhase: Int] = [:]
+        return skeletons.map { skeleton in
+            let phase = skeleton.phase
+            let current = counters[phase, default: 0]
+            counters[phase] = current + 1
+            return current
+        }
     }
 }

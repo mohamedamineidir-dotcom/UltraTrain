@@ -12,9 +12,9 @@ extension TimeInterval {
     var formattedDuration: String {
         let hms = hoursMinutesSeconds
         if hms.hours > 0 {
-            return String(format: "%dh%02dm%02ds", hms.hours, hms.minutes, hms.seconds)
+            return String(format: "%dh%02d", hms.hours, hms.minutes)
         }
-        return String(format: "%dm%02ds", hms.minutes, hms.seconds)
+        return String(format: "%dmin", hms.minutes)
     }
 
     var formattedPace: String {

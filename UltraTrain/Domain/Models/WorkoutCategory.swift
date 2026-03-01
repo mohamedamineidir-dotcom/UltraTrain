@@ -1,6 +1,6 @@
 import Foundation
 
-enum WorkoutCategory: String, CaseIterable, Sendable {
+enum WorkoutCategory: String, CaseIterable, Sendable, Codable {
     case trailSpecific
     case speedWork
     case hillTraining

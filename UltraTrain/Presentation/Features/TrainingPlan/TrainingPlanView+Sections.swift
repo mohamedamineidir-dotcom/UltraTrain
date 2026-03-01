@@ -80,6 +80,7 @@ extension TrainingPlanView {
                                 )
                             }
                         },
+                        workouts: plan.workouts,
                         onReorderSession: { sourceWeekIndex, sourceSessionIndex, target in
                             Task {
                                 await viewModel.swapSessions(

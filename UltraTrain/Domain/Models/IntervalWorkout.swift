@@ -1,6 +1,6 @@
 import Foundation
 
-struct IntervalWorkout: Identifiable, Equatable, Sendable {
+struct IntervalWorkout: Identifiable, Equatable, Sendable, Codable {
     let id: UUID
     var name: String
     var descriptionText: String

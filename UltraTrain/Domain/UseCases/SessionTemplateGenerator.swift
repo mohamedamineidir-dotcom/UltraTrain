@@ -8,6 +8,7 @@ enum SessionTemplateGenerator {
         let intensity: Intensity
         let volumeFraction: Double
         let description: String
+        let isTimeBased: Bool
     }
 
     // MARK: - Public
@@ -16,28 +17,65 @@ enum SessionTemplateGenerator {
         for skeleton: WeekSkeletonBuilder.WeekSkeleton,
         volume: VolumeCalculator.WeekVolume,
         experience: ExperienceLevel,
+        raceEffectiveKm: Double = 0,
+        weekNumberInPhase: Int = 0,
         raceOverride: IntermediateRaceHandler.RaceWeekOverride? = nil
-    ) -> [TrainingSession] {
+    ) -> (sessions: [TrainingSession], workouts: [IntervalWorkout]) {
         let templates: [SessionTemplate]
+        var workouts: [IntervalWorkout] = []
 
         if let override = raceOverride {
             templates = overrideTemplates(for: override.behavior)
         } else if skeleton.isRecoveryWeek {
             templates = recoveryTemplates()
         } else {
-            templates = phaseTemplates(for: skeleton.phase, experience: experience)
+            templates = phaseTemplates(
+                for: skeleton.phase,
+                experience: experience,
+                raceEffectiveKm: raceEffectiveKm,
+                weekInPhase: weekNumberInPhase
+            )
         }
 
         let totalFraction = templates.reduce(0.0) { $0 + $1.volumeFraction }
+        let weeklyTimeBudget = volume.targetVolumeKm * 7.0 * 60.0 // rough time in seconds
 
-        return templates.map { template in
-            let distance = totalFraction > 0
-                ? volume.targetVolumeKm * (template.volumeFraction / totalFraction)
-                : 0
-            let elevation = totalFraction > 0
-                ? volume.targetElevationGainM * (template.volumeFraction / totalFraction)
-                : 0
-            let estimatedDuration = estimateDuration(distanceKm: distance, intensity: template.intensity)
+        let sessions = templates.map { template in
+            let distance: Double
+            let duration: TimeInterval
+            let elevation: Double
+
+            if template.isTimeBased && totalFraction > 0 {
+                // Time-based: duration is primary, distance is estimated
+                duration = weeklyTimeBudget * (template.volumeFraction / totalFraction)
+                let paceMinPerKm = paceForIntensity(template.intensity)
+                distance = duration / (paceMinPerKm * 60.0)
+                elevation = totalFraction > 0
+                    ? volume.targetElevationGainM * (template.volumeFraction / totalFraction)
+                    : 0
+            } else if totalFraction > 0 {
+                distance = volume.targetVolumeKm * (template.volumeFraction / totalFraction)
+                elevation = volume.targetElevationGainM * (template.volumeFraction / totalFraction)
+                duration = estimateDuration(distanceKm: distance, intensity: template.intensity)
+            } else {
+                distance = 0
+                elevation = 0
+                duration = 0
+            }
+
+            // Generate workout for quality sessions
+            var workoutId: UUID?
+            if template.type == .intervals || template.type == .verticalGain {
+                let workout = WorkoutProgressionEngine.workout(
+                    type: template.type,
+                    phase: skeleton.phase,
+                    weekInPhase: weekNumberInPhase,
+                    intensity: template.intensity,
+                    totalDuration: duration
+                )
+                workouts.append(workout)
+                workoutId = workout.id
+            }
 
             return TrainingSession(
                 id: UUID(),
@@ -45,27 +83,35 @@ enum SessionTemplateGenerator {
                 type: template.type,
                 plannedDistanceKm: (distance * 10).rounded() / 10,
                 plannedElevationGainM: (elevation * 10).rounded() / 10,
-                plannedDuration: estimatedDuration,
+                plannedDuration: duration,
                 intensity: template.intensity,
                 description: template.description,
-                nutritionNotes: nutritionNotes(duration: estimatedDuration, distance: distance),
+                nutritionNotes: nutritionNotes(duration: duration, distance: distance),
                 isCompleted: false,
                 isSkipped: false,
-                linkedRunId: nil
+                linkedRunId: nil,
+                intervalWorkoutId: workoutId
             )
         }
+
+        return (sessions, workouts)
     }
 
     // MARK: - Phase Templates
 
-    private static func phaseTemplates(for phase: TrainingPhase, experience: ExperienceLevel) -> [SessionTemplate] {
+    private static func phaseTemplates(
+        for phase: TrainingPhase,
+        experience: ExperienceLevel,
+        raceEffectiveKm: Double,
+        weekInPhase: Int
+    ) -> [SessionTemplate] {
         switch phase {
         case .base:
             return baseTemplates()
         case .build:
-            return buildTemplates(experience: experience)
+            return buildTemplates(experience: experience, raceEffectiveKm: raceEffectiveKm, weekInPhase: weekInPhase)
         case .peak:
-            return peakTemplates(experience: experience)
+            return peakTemplates(experience: experience, raceEffectiveKm: raceEffectiveKm, weekInPhase: weekInPhase)
         case .taper:
             return taperTemplates()
         case .recovery, .race:
@@ -75,106 +121,113 @@ enum SessionTemplateGenerator {
 
     private static func baseTemplates() -> [SessionTemplate] {
         [
-            SessionTemplate(dayOffset: 0, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Rest day. Focus on sleep and mobility work."),
-            SessionTemplate(dayOffset: 1, type: .recovery, intensity: .easy, volumeFraction: 0.10,
-                           description: "Easy recovery run at conversational pace. Keep heart rate in Zone 1-2."),
-            SessionTemplate(dayOffset: 2, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Rest day. Light stretching or yoga recommended."),
-            SessionTemplate(dayOffset: 3, type: .tempo, intensity: .moderate, volumeFraction: 0.15,
-                           description: "Tempo run at comfortably hard pace. Maintain steady effort in Zone 3."),
-            SessionTemplate(dayOffset: 4, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Rest day. Prepare gear and nutrition for the long run."),
-            SessionTemplate(dayOffset: 5, type: .longRun, intensity: .easy, volumeFraction: 0.45,
-                           description: "Long run at easy pace. Practice race-day nutrition strategy. Stay in Zone 2."),
-            SessionTemplate(dayOffset: 6, type: .crossTraining, intensity: .easy, volumeFraction: 0.10,
-                           description: "Cross-training: cycling, swimming, or hiking. Active recovery.")
+            tpl(0, .rest, .easy, 0, "Rest day. Focus on sleep and mobility work."),
+            tpl(1, .recovery, .easy, 0.10, "Easy recovery run at conversational pace. Keep heart rate in Zone 1-2."),
+            tpl(2, .rest, .easy, 0, "Rest day. Light stretching or yoga recommended."),
+            tpl(3, .tempo, .moderate, 0.15, "Tempo run at comfortably hard pace. Maintain steady effort in Zone 3."),
+            tpl(4, .rest, .easy, 0, "Rest day. Prepare gear and nutrition for the long run."),
+            tplTime(5, .longRun, .easy, 0.45, "Long run at easy pace. Practice race-day nutrition strategy. Stay in Zone 2."),
+            tpl(6, .crossTraining, .easy, 0.10, "Cross-training: cycling, swimming, or hiking. Active recovery.")
         ]
     }
 
-    private static func buildTemplates(experience: ExperienceLevel) -> [SessionTemplate] {
-        var templates = [
-            SessionTemplate(dayOffset: 0, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Rest day. Prioritize sleep for adaptation."),
-            SessionTemplate(dayOffset: 1, type: .intervals, intensity: .hard, volumeFraction: 0.12,
-                           description: "Interval session: 6-8 x 3min hard / 2min easy. Build speed and VO2max."),
-            SessionTemplate(dayOffset: 2, type: .recovery, intensity: .easy, volumeFraction: 0.08,
-                           description: "Easy recovery run. Flush legs from yesterday's intervals."),
-            SessionTemplate(dayOffset: 3, type: .tempo, intensity: .moderate, volumeFraction: 0.15,
-                           description: "Tempo run with sustained effort. Practice pacing for race intensity."),
-            SessionTemplate(dayOffset: 4, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Rest day. Hydrate well ahead of the weekend."),
-            SessionTemplate(dayOffset: 5, type: .longRun, intensity: .easy, volumeFraction: 0.40,
-                           description: "Long run on trail terrain. Include elevation if possible. Practice nutrition."),
-            SessionTemplate(dayOffset: 6, type: .crossTraining, intensity: .easy, volumeFraction: 0.10,
-                           description: "Cross-training or easy hike. Keep intensity low.")
+    private static func buildTemplates(experience: ExperienceLevel, raceEffectiveKm: Double, weekInPhase: Int) -> [SessionTemplate] {
+        let hasSignificantElevation = raceEffectiveKm > 0 && raceEffectiveKm > 1.3 * (raceEffectiveKm - raceEffectiveKm * 0.23)
+        let wantsDoubleVertical = hasSignificantElevation && weekInPhase % 2 == 1 && (experience == .advanced || experience == .elite)
+        let wantsB2B = shouldHaveB2B(phase: .build, experience: experience, raceEffectiveKm: raceEffectiveKm)
+
+        var templates: [SessionTemplate] = [
+            tpl(0, .rest, .easy, 0, "Rest day. Prioritize sleep for adaptation."),
         ]
 
-        if experience == .advanced || experience == .elite {
-            templates[3] = SessionTemplate(dayOffset: 3, type: .verticalGain, intensity: .hard, volumeFraction: 0.15,
-                                           description: "Vertical gain session: hill repeats or stair climbing. Build climbing strength.")
+        if wantsDoubleVertical && !wantsB2B {
+            // 2 vertical sessions: VO2max + endurance
+            templates += [
+                tpl(1, .verticalGain, .hard, 0.12, "VO2max hill repeats. Short, intense climbs to build power."),
+                tpl(2, .recovery, .easy, 0.08, "Easy recovery run. Flush legs from yesterday's effort."),
+                tpl(3, .verticalGain, .moderate, 0.15, "Endurance climbing. Longer moderate efforts to build vertical stamina."),
+            ]
+        } else {
+            templates += [
+                tpl(1, .intervals, .hard, 0.12, "Interval session. Build speed and VO2max."),
+                tpl(2, .recovery, .easy, 0.08, "Easy recovery run. Flush legs from yesterday's intervals."),
+            ]
+            if experience == .advanced || experience == .elite {
+                templates.append(tpl(3, .verticalGain, .hard, 0.15, "Vertical gain session. Build climbing strength."))
+            } else {
+                templates.append(tpl(3, .tempo, .moderate, 0.15, "Tempo run with sustained effort. Practice pacing for race intensity."))
+            }
         }
+
+        templates.append(tpl(4, .rest, .easy, 0, "Rest day. Hydrate well ahead of the weekend."))
+
+        if wantsB2B {
+            templates += [
+                tplTime(5, .longRun, .easy, 0.25, "Back-to-back day 1. Moderate long run building fatigue for tomorrow."),
+                tplTime(6, .backToBack, .easy, 0.30, "Back-to-back day 2. Long run on tired legs to simulate ultra fatigue."),
+            ]
+        } else {
+            templates += [
+                tplTime(5, .longRun, .easy, 0.40, "Long run on trail terrain. Include elevation if possible. Practice nutrition."),
+                tpl(6, .crossTraining, .easy, 0.10, "Cross-training or easy hike. Keep intensity low."),
+            ]
+        }
+
         return templates
     }
 
-    private static func peakTemplates(experience: ExperienceLevel) -> [SessionTemplate] {
-        [
-            SessionTemplate(dayOffset: 0, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Rest day. Mental preparation and gear check."),
-            SessionTemplate(dayOffset: 1, type: .intervals, intensity: .hard, volumeFraction: 0.10,
-                           description: "Short sharp intervals: 8-10 x 1min hard / 1min easy. Maintain sharpness."),
-            SessionTemplate(dayOffset: 2, type: .recovery, intensity: .easy, volumeFraction: 0.08,
-                           description: "Easy recovery run. Focus on form and relaxation."),
-            SessionTemplate(dayOffset: 3, type: .verticalGain, intensity: .hard, volumeFraction: 0.12,
-                           description: "Vertical gain work on steep terrain. Practice power hiking technique."),
-            SessionTemplate(dayOffset: 4, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Rest day. Pre-hydrate for the weekend block."),
-            SessionTemplate(dayOffset: 5, type: .longRun, intensity: .moderate, volumeFraction: 0.40,
-                           description: "Peak long run simulating race conditions. Full nutrition rehearsal."),
-            SessionTemplate(dayOffset: 6, type: experience == .elite ? .backToBack : .crossTraining,
-                           intensity: experience == .elite ? .moderate : .easy,
-                           volumeFraction: experience == .elite ? 0.20 : 0.10,
-                           description: experience == .elite
-                               ? "Back-to-back long effort: run on tired legs to simulate ultra fatigue."
-                               : "Cross-training or easy hike. Keep intensity low.")
+    private static func peakTemplates(experience: ExperienceLevel, raceEffectiveKm: Double, weekInPhase: Int) -> [SessionTemplate] {
+        let wantsB2B = shouldHaveB2B(phase: .peak, experience: experience, raceEffectiveKm: raceEffectiveKm)
+
+        var templates: [SessionTemplate] = [
+            tpl(0, .rest, .easy, 0, "Rest day. Mental preparation and gear check."),
         ]
+
+        if wantsB2B {
+            // Only 1 quality session when B2B is scheduled
+            templates += [
+                tpl(1, .intervals, .hard, 0.10, "Short sharp intervals. Maintain sharpness."),
+                tpl(2, .recovery, .easy, 0.08, "Easy recovery run. Focus on form and relaxation."),
+                tpl(3, .recovery, .easy, 0.07, "Light recovery jog. Keep legs loose."),
+                tpl(4, .rest, .easy, 0, "Rest day. Pre-hydrate for the weekend block."),
+                tplTime(5, .longRun, .moderate, 0.22, "Back-to-back day 1. Steady effort building fatigue."),
+                tplTime(6, .backToBack, .moderate, 0.28, "Back-to-back day 2. Peak simulation on tired legs. Full nutrition rehearsal."),
+            ]
+        } else {
+            templates += [
+                tpl(1, .intervals, .hard, 0.10, "Short sharp intervals. Maintain sharpness."),
+                tpl(2, .recovery, .easy, 0.08, "Easy recovery run. Focus on form and relaxation."),
+                tpl(3, .verticalGain, .hard, 0.12, "Vertical gain work on steep terrain. Practice power hiking."),
+                tpl(4, .rest, .easy, 0, "Rest day. Pre-hydrate for the weekend block."),
+                tplTime(5, .longRun, .moderate, 0.40, "Peak long run simulating race conditions. Full nutrition rehearsal."),
+                tpl(6, .crossTraining, .easy, 0.10, "Cross-training or easy hike. Keep intensity low."),
+            ]
+        }
+
+        return templates
     }
 
     private static func taperTemplates() -> [SessionTemplate] {
         [
-            SessionTemplate(dayOffset: 0, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Rest day. Enjoy the taper — trust your training."),
-            SessionTemplate(dayOffset: 1, type: .intervals, intensity: .moderate, volumeFraction: 0.12,
-                           description: "Short opener intervals: 4-5 x 2min at tempo / 2min easy. Stay sharp."),
-            SessionTemplate(dayOffset: 2, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Rest day. Light stretching and foam rolling."),
-            SessionTemplate(dayOffset: 3, type: .recovery, intensity: .easy, volumeFraction: 0.10,
-                           description: "Easy shakeout run. Keep it short and comfortable."),
-            SessionTemplate(dayOffset: 4, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Rest day. Final gear and nutrition prep."),
-            SessionTemplate(dayOffset: 5, type: .longRun, intensity: .easy, volumeFraction: 0.25,
-                           description: "Reduced long run at easy effort. No heroics — save it for race day."),
-            SessionTemplate(dayOffset: 6, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Full rest. Sleep, hydrate, visualize your race.")
+            tpl(0, .rest, .easy, 0, "Rest day. Enjoy the taper — trust your training."),
+            tpl(1, .intervals, .moderate, 0.12, "Short opener intervals. Stay sharp without fatiguing."),
+            tpl(2, .rest, .easy, 0, "Rest day. Light stretching and foam rolling."),
+            tpl(3, .recovery, .easy, 0.10, "Easy shakeout run. Keep it short and comfortable."),
+            tpl(4, .rest, .easy, 0, "Rest day. Final gear and nutrition prep."),
+            tplTime(5, .longRun, .easy, 0.25, "Reduced long run at easy effort. No heroics — save it for race day."),
+            tpl(6, .rest, .easy, 0, "Full rest. Sleep, hydrate, visualize your race.")
         ]
     }
 
     private static func recoveryTemplates() -> [SessionTemplate] {
         [
-            SessionTemplate(dayOffset: 0, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Recovery week rest day. Let your body absorb the training."),
-            SessionTemplate(dayOffset: 1, type: .recovery, intensity: .easy, volumeFraction: 0.12,
-                           description: "Easy recovery jog. Very comfortable pace, Zone 1 only."),
-            SessionTemplate(dayOffset: 2, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Rest day. Focus on nutrition and sleep quality."),
-            SessionTemplate(dayOffset: 3, type: .crossTraining, intensity: .easy, volumeFraction: 0.10,
-                           description: "Light cross-training: swimming, yoga, or gentle cycling."),
-            SessionTemplate(dayOffset: 4, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Rest day. Stretching and mobility work."),
-            SessionTemplate(dayOffset: 5, type: .longRun, intensity: .easy, volumeFraction: 0.25,
-                           description: "Reduced long run at very easy pace. Enjoy the scenery."),
-            SessionTemplate(dayOffset: 6, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Full rest day. You've earned it.")
+            tpl(0, .rest, .easy, 0, "Recovery week rest day. Let your body absorb the training."),
+            tpl(1, .recovery, .easy, 0.12, "Easy recovery jog. Very comfortable pace, Zone 1 only."),
+            tpl(2, .rest, .easy, 0, "Rest day. Focus on nutrition and sleep quality."),
+            tpl(3, .crossTraining, .easy, 0.10, "Light cross-training: swimming, yoga, or gentle cycling."),
+            tpl(4, .rest, .easy, 0, "Rest day. Stretching and mobility work."),
+            tplTime(5, .longRun, .easy, 0.25, "Reduced long run at very easy pace. Enjoy the scenery."),
+            tpl(6, .rest, .easy, 0, "Full rest day. You've earned it.")
         ]
     }
 
@@ -193,54 +246,63 @@ enum SessionTemplateGenerator {
 
     private static func bRaceWeekTemplates() -> [SessionTemplate] {
         [
-            SessionTemplate(dayOffset: 0, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Rest before race. Stay off your feet."),
-            SessionTemplate(dayOffset: 1, type: .recovery, intensity: .easy, volumeFraction: 0.08,
-                           description: "Short shakeout run. 15-20 min at easy pace."),
-            SessionTemplate(dayOffset: 2, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Rest day. Carb-load and hydrate."),
-            SessionTemplate(dayOffset: 3, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Rest day. Final race prep and gear check."),
-            SessionTemplate(dayOffset: 4, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Rest day. Visualize your race plan."),
-            SessionTemplate(dayOffset: 5, type: .rest, intensity: .maxEffort, volumeFraction: 0,
-                           description: "RACE DAY! Execute your plan. Trust your training."),
-            SessionTemplate(dayOffset: 6, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Post-race recovery. Walk, stretch, refuel.")
+            tpl(0, .rest, .easy, 0, "Rest before race. Stay off your feet."),
+            tpl(1, .recovery, .easy, 0.08, "Short shakeout run. 15-20 min at easy pace."),
+            tpl(2, .rest, .easy, 0, "Rest day. Carb-load and hydrate."),
+            tpl(3, .rest, .easy, 0, "Rest day. Final race prep and gear check."),
+            tpl(4, .rest, .easy, 0, "Rest day. Visualize your race plan."),
+            tpl(5, .rest, .maxEffort, 0, "RACE DAY! Execute your plan. Trust your training."),
+            tpl(6, .rest, .easy, 0, "Post-race recovery. Walk, stretch, refuel.")
         ]
     }
 
     private static func cRaceWeekTemplates() -> [SessionTemplate] {
         [
-            SessionTemplate(dayOffset: 0, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Rest day. Easy start to race week."),
-            SessionTemplate(dayOffset: 1, type: .recovery, intensity: .easy, volumeFraction: 0.10,
-                           description: "Easy run at conversational pace. Keep it short."),
-            SessionTemplate(dayOffset: 2, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Rest day. Light stretching."),
-            SessionTemplate(dayOffset: 3, type: .tempo, intensity: .moderate, volumeFraction: 0.12,
-                           description: "Short tempo effort. Stay sharp but save energy for race."),
-            SessionTemplate(dayOffset: 4, type: .rest, intensity: .easy, volumeFraction: 0,
-                           description: "Rest day. Prepare race gear and nutrition."),
-            SessionTemplate(dayOffset: 5, type: .rest, intensity: .maxEffort, volumeFraction: 0,
-                           description: "RACE DAY! Use this as a hard training effort."),
-            SessionTemplate(dayOffset: 6, type: .recovery, intensity: .easy, volumeFraction: 0.08,
-                           description: "Easy recovery run. Shake out race-day legs.")
+            tpl(0, .rest, .easy, 0, "Rest day. Easy start to race week."),
+            tpl(1, .recovery, .easy, 0.10, "Easy run at conversational pace. Keep it short."),
+            tpl(2, .rest, .easy, 0, "Rest day. Light stretching."),
+            tpl(3, .tempo, .moderate, 0.12, "Short tempo effort. Stay sharp but save energy for race."),
+            tpl(4, .rest, .easy, 0, "Rest day. Prepare race gear and nutrition."),
+            tpl(5, .rest, .maxEffort, 0, "RACE DAY! Use this as a hard training effort."),
+            tpl(6, .recovery, .easy, 0.08, "Easy recovery run. Shake out race-day legs.")
         ]
+    }
+
+    // MARK: - B2B Logic
+
+    private static func shouldHaveB2B(phase: TrainingPhase, experience: ExperienceLevel, raceEffectiveKm: Double) -> Bool {
+        switch (phase, experience) {
+        case (.peak, .intermediate): raceEffectiveKm >= 100
+        case (.peak, .advanced):     raceEffectiveKm >= 80
+        case (.peak, .elite):        raceEffectiveKm >= 80
+        case (.build, .advanced):    raceEffectiveKm >= 100
+        case (.build, .elite):       raceEffectiveKm >= 80
+        default: false
+        }
     }
 
     // MARK: - Helpers
 
-    private static func estimateDuration(distanceKm: Double, intensity: Intensity) -> TimeInterval {
-        guard distanceKm > 0 else { return 0 }
-        // Pace in min/km by intensity
-        let paceMinPerKm: Double = switch intensity {
+    private static func tpl(_ day: Int, _ type: SessionType, _ intensity: Intensity, _ fraction: Double, _ desc: String) -> SessionTemplate {
+        SessionTemplate(dayOffset: day, type: type, intensity: intensity, volumeFraction: fraction, description: desc, isTimeBased: false)
+    }
+
+    private static func tplTime(_ day: Int, _ type: SessionType, _ intensity: Intensity, _ fraction: Double, _ desc: String) -> SessionTemplate {
+        SessionTemplate(dayOffset: day, type: type, intensity: intensity, volumeFraction: fraction, description: desc, isTimeBased: true)
+    }
+
+    private static func paceForIntensity(_ intensity: Intensity) -> Double {
+        switch intensity {
         case .easy:      7.0
         case .moderate:  6.0
         case .hard:      5.5
         case .maxEffort: 5.0
         }
-        return distanceKm * paceMinPerKm * 60.0
+    }
+
+    private static func estimateDuration(distanceKm: Double, intensity: Intensity) -> TimeInterval {
+        guard distanceKm > 0 else { return 0 }
+        return distanceKm * paceForIntensity(intensity) * 60.0
     }
 
     private static func nutritionNotes(duration: TimeInterval, distance: Double) -> String? {
@@ -250,7 +312,7 @@ enum SessionTemplateGenerator {
         var notes = "Carry water and fuel for this session."
 
         if hours > 1.5 {
-            let carbsPerHour = 60 // grams for efforts > 1.5h
+            let carbsPerHour = 60
             notes += " Aim for ~\(carbsPerHour)g carbs/hour (gels, bars, or real food)."
         }
 

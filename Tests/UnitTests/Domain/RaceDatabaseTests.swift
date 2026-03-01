@@ -4,9 +4,9 @@ import Testing
 @Suite("RaceDatabase Tests")
 struct RaceDatabaseTests {
 
-    @Test("Database contains at least 50 races")
+    @Test("Database contains at least 130 races")
     func databaseHasMinimumRaces() {
-        #expect(RaceDatabase.races.count >= 50)
+        #expect(RaceDatabase.races.count >= 130)
     }
 
     @Test("Search finds UTMB by short name")

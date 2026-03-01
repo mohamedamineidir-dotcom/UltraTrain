@@ -9,6 +9,7 @@ struct SessionDetailView: View {
     let athlete: Athlete?
     let nutritionAdvisor: any SessionNutritionAdvisor
     let nutritionPreferences: NutritionPreferences
+    var workouts: [IntervalWorkout] = []
     var onSkip: (() -> Void)?
     var onUnskip: (() -> Void)?
     var onReschedule: ((Date) -> Void)?
@@ -28,7 +29,14 @@ struct SessionDetailView: View {
                 }
 
                 statsSection
-                descriptionSection
+
+                if let workoutId = session.intervalWorkoutId,
+                   let workout = workouts.first(where: { $0.id == workoutId }),
+                   !workout.phases.isEmpty {
+                    WorkoutBlocksSection(workout: workout)
+                } else {
+                    descriptionSection
+                }
 
                 if let athlete,
                    let advice = nutritionAdvisor.advise(
@@ -150,28 +158,56 @@ struct SessionDetailView: View {
 
     // MARK: - Stats
 
+    private var isTimeBased: Bool {
+        session.type == .longRun || session.type == .backToBack
+    }
+
     private var statsSection: some View {
         HStack(spacing: Theme.Spacing.md) {
-            if session.plannedDistanceKm > 0 {
-                StatCard(
-                    title: "Distance",
-                    value: String(format: "%.1f", UnitFormatter.distanceValue(session.plannedDistanceKm, unit: units)),
-                    unit: UnitFormatter.distanceLabel(units)
-                )
-            }
-            if session.plannedElevationGainM > 0 {
-                StatCard(
-                    title: "Elevation",
-                    value: String(format: "%.0f", UnitFormatter.elevationValue(session.plannedElevationGainM, unit: units)),
-                    unit: UnitFormatter.elevationLabel(units)
-                )
-            }
-            if session.plannedDuration > 0 {
-                StatCard(
-                    title: "Duration",
-                    value: session.plannedDuration.formattedDuration,
-                    unit: ""
-                )
+            if isTimeBased {
+                if session.plannedDuration > 0 {
+                    StatCard(
+                        title: "Duration",
+                        value: session.plannedDuration.formattedDuration,
+                        unit: ""
+                    )
+                }
+                if session.plannedElevationGainM > 0 {
+                    StatCard(
+                        title: "Elevation",
+                        value: String(format: "%.0f", UnitFormatter.elevationValue(session.plannedElevationGainM, unit: units)),
+                        unit: UnitFormatter.elevationLabel(units)
+                    )
+                }
+                if session.plannedDistanceKm > 0 {
+                    StatCard(
+                        title: "Distance",
+                        value: String(format: "%.1f", UnitFormatter.distanceValue(session.plannedDistanceKm, unit: units)),
+                        unit: UnitFormatter.distanceLabel(units)
+                    )
+                }
+            } else {
+                if session.plannedDistanceKm > 0 {
+                    StatCard(
+                        title: "Distance",
+                        value: String(format: "%.1f", UnitFormatter.distanceValue(session.plannedDistanceKm, unit: units)),
+                        unit: UnitFormatter.distanceLabel(units)
+                    )
+                }
+                if session.plannedElevationGainM > 0 {
+                    StatCard(
+                        title: "Elevation",
+                        value: String(format: "%.0f", UnitFormatter.elevationValue(session.plannedElevationGainM, unit: units)),
+                        unit: UnitFormatter.elevationLabel(units)
+                    )
+                }
+                if session.plannedDuration > 0 {
+                    StatCard(
+                        title: "Duration",
+                        value: session.plannedDuration.formattedDuration,
+                        unit: ""
+                    )
+                }
             }
         }
     }
