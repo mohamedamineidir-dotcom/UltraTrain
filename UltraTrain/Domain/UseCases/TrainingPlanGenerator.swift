@@ -35,7 +35,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             currentWeeklyVolumeKm: athlete.weeklyVolumeKm,
             raceDistanceKm: targetRace.distanceKm,
             raceElevationGainM: targetRace.elevationGainM,
-            experience: athlete.experienceLevel
+            experience: athlete.experienceLevel,
+            philosophy: athlete.trainingPhilosophy
         )
 
         // 4. Compute intermediate race overrides
@@ -61,7 +62,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 experience: athlete.experienceLevel,
                 raceEffectiveKm: raceEffectiveKm,
                 weekNumberInPhase: phaseCounters[index],
-                raceOverride: override
+                raceOverride: override,
+                preferredRunsPerWeek: athlete.preferredRunsPerWeek
             )
 
             allWorkouts.append(contentsOf: result.workouts)

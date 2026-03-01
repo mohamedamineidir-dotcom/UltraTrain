@@ -17,6 +17,8 @@ final class AthleteSwiftDataModel {
     var preferredUnitRaw: String = "metric"
     var customZoneThresholdsRaw: String? = nil
     var personalBestsRaw: String? = nil
+    var trainingPhilosophyRaw: String = "balanced"
+    var preferredRunsPerWeek: Int? = nil
     var updatedAt: Date = Date()
     var displayName: String? = nil
     var bio: String? = nil
@@ -38,6 +40,8 @@ final class AthleteSwiftDataModel {
         preferredUnitRaw: String = "metric",
         customZoneThresholdsRaw: String? = nil,
         personalBestsRaw: String? = nil,
+        trainingPhilosophyRaw: String = "balanced",
+        preferredRunsPerWeek: Int? = nil,
         updatedAt: Date = Date(),
         displayName: String? = nil,
         bio: String? = nil,
@@ -58,6 +62,8 @@ final class AthleteSwiftDataModel {
         self.preferredUnitRaw = preferredUnitRaw
         self.customZoneThresholdsRaw = customZoneThresholdsRaw
         self.personalBestsRaw = personalBestsRaw
+        self.trainingPhilosophyRaw = trainingPhilosophyRaw
+        self.preferredRunsPerWeek = preferredRunsPerWeek
         self.updatedAt = updatedAt
         self.displayName = displayName
         self.bio = bio

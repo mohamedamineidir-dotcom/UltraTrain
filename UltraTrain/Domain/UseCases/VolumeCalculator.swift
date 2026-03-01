@@ -14,13 +14,14 @@ enum VolumeCalculator {
         raceDistanceKm: Double,
         raceElevationGainM: Double,
         experience: ExperienceLevel,
+        philosophy: TrainingPhilosophy = .balanced,
         maxIncreasePercent: Double = AppConfiguration.Training.maxWeeklyVolumeIncreasePercent,
         recoveryReductionPercent: Double = AppConfiguration.Training.recoveryWeekVolumeReductionPercent
     ) -> [WeekVolume] {
         guard !skeletons.isEmpty else { return [] }
 
         let peakFraction = peakFraction(for: experience)
-        let peakVolume = raceDistanceKm * peakFraction
+        let peakVolume = raceDistanceKm * peakFraction * philosophyMultiplier(for: philosophy)
         let startVolume = max(currentWeeklyVolumeKm, 10.0)
 
         // Find the last non-taper, non-recovery week index for peak target
@@ -81,6 +82,14 @@ enum VolumeCalculator {
         case .intermediate: 0.50
         case .advanced:     0.60
         case .elite:        0.70
+        }
+    }
+
+    private static func philosophyMultiplier(for philosophy: TrainingPhilosophy) -> Double {
+        switch philosophy {
+        case .enjoyment:    0.80
+        case .balanced:     1.00
+        case .performance:  1.15
         }
     }
 

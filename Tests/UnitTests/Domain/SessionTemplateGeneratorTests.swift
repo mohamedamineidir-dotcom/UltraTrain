@@ -393,6 +393,62 @@ struct SessionTemplateGeneratorTests {
         #expect(!crossTraining.isEmpty, "Advanced recovery week should have cross-training")
     }
 
+    // MARK: - Preferred Runs Per Week
+
+    @Test("preferred 3 runs per week produces exactly 3 active sessions")
+    func preferredThreeRunsPerWeek() {
+        let result = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(phase: .base),
+            volume: makeVolume(),
+            experience: .intermediate,
+            preferredRunsPerWeek: 3
+        )
+
+        let activeSessions = result.sessions.filter { $0.type != .rest && $0.plannedDistanceKm > 0 }
+        #expect(activeSessions.count == 3, "Should have exactly 3 active sessions")
+    }
+
+    @Test("nil preferred runs keeps default count")
+    func nilPreferredRunsKeepsDefault() {
+        let withNil = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(phase: .base),
+            volume: makeVolume(),
+            experience: .intermediate,
+            preferredRunsPerWeek: nil
+        )
+        let withoutParam = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(phase: .base),
+            volume: makeVolume(),
+            experience: .intermediate
+        )
+
+        let activeNil = withNil.sessions.filter { $0.type != .rest && $0.plannedDistanceKm > 0 }.count
+        let activeDefault = withoutParam.sessions.filter { $0.type != .rest && $0.plannedDistanceKm > 0 }.count
+        #expect(activeNil == activeDefault, "nil preferredRunsPerWeek should not change session count")
+    }
+
+    @Test("preferred runs redistributes volume to remaining sessions")
+    func preferredRunsRedistributesVolume() {
+        let full = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(phase: .base),
+            volume: makeVolume(km: 50),
+            experience: .intermediate,
+            preferredRunsPerWeek: nil
+        )
+        let reduced = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(phase: .base),
+            volume: makeVolume(km: 50),
+            experience: .intermediate,
+            preferredRunsPerWeek: 3
+        )
+
+        let fullTotal = full.sessions.reduce(0.0) { $0 + $1.plannedDistanceKm }
+        let reducedTotal = reduced.sessions.reduce(0.0) { $0 + $1.plannedDistanceKm }
+
+        // Total distance should be approximately the same (volume is redistributed)
+        #expect(abs(fullTotal - reducedTotal) < 1.0, "Total distance should be similar after redistribution")
+    }
+
     @Test("beginner gets rest instead of cross-training in recovery week")
     func beginnerGetsRestInsteadOfCrossTrainingRecovery() {
         let result = SessionTemplateGenerator.sessions(

@@ -205,6 +205,62 @@ struct VolumeCalculatorTests {
 
     // MARK: - Minimum Volume
 
+    // MARK: - Training Philosophy
+
+    @Test("enjoyment philosophy produces lower peak volume than balanced")
+    func enjoymentLowerVolume() {
+        let skeletons = (1...8).map { makeSkeleton(weekNumber: $0, phase: .build) }
+
+        let balanced = VolumeCalculator.calculate(
+            skeletons: skeletons,
+            currentWeeklyVolumeKm: 30,
+            raceDistanceKm: 100,
+            raceElevationGainM: 5000,
+            experience: .intermediate,
+            philosophy: .balanced
+        )
+        let enjoyment = VolumeCalculator.calculate(
+            skeletons: skeletons,
+            currentWeeklyVolumeKm: 30,
+            raceDistanceKm: 100,
+            raceElevationGainM: 5000,
+            experience: .intermediate,
+            philosophy: .enjoyment
+        )
+
+        let lastBalanced = balanced.last!.targetVolumeKm
+        let lastEnjoyment = enjoyment.last!.targetVolumeKm
+        #expect(lastEnjoyment < lastBalanced, "Enjoyment should produce lower volume than balanced")
+    }
+
+    @Test("performance philosophy produces higher peak volume than balanced")
+    func performanceHigherVolume() {
+        let skeletons = (1...8).map { makeSkeleton(weekNumber: $0, phase: .build) }
+
+        let balanced = VolumeCalculator.calculate(
+            skeletons: skeletons,
+            currentWeeklyVolumeKm: 30,
+            raceDistanceKm: 100,
+            raceElevationGainM: 5000,
+            experience: .intermediate,
+            philosophy: .balanced
+        )
+        let performance = VolumeCalculator.calculate(
+            skeletons: skeletons,
+            currentWeeklyVolumeKm: 30,
+            raceDistanceKm: 100,
+            raceElevationGainM: 5000,
+            experience: .intermediate,
+            philosophy: .performance
+        )
+
+        let lastBalanced = balanced.last!.targetVolumeKm
+        let lastPerformance = performance.last!.targetVolumeKm
+        #expect(lastPerformance > lastBalanced, "Performance should produce higher volume than balanced")
+    }
+
+    // MARK: - Minimum Volume
+
     @Test("start volume has minimum of 10 km")
     func startVolumeMinimum() {
         let skeletons = [makeSkeleton(weekNumber: 1, phase: .build)]

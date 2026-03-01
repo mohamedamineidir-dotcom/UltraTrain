@@ -218,6 +218,36 @@ final class SettingsViewModel {
         }
     }
 
+    // MARK: - Training Philosophy
+
+    func updateTrainingPhilosophy(_ philosophy: TrainingPhilosophy) async {
+        guard var athlete else { return }
+        athlete.trainingPhilosophy = philosophy
+
+        do {
+            try await athleteRepository.updateAthlete(athlete)
+            self.athlete = athlete
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update training philosophy: \(error)")
+        }
+    }
+
+    // MARK: - Preferred Runs Per Week
+
+    func updatePreferredRunsPerWeek(_ count: Int) async {
+        guard var athlete else { return }
+        athlete.preferredRunsPerWeek = count
+
+        do {
+            try await athleteRepository.updateAthlete(athlete)
+            self.athlete = athlete
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update preferred runs per week: \(error)")
+        }
+    }
+
     // MARK: - Auto Pause
 
     func updateAutoPause(_ enabled: Bool) async {

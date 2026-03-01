@@ -14,6 +14,7 @@ enum AthleteSwiftDataMapper {
             guard let data = raw.data(using: .utf8) else { return nil }
             return try? JSONDecoder().decode([PersonalBest].self, from: data)
         } ?? []
+        let philosophy = TrainingPhilosophy(rawValue: model.trainingPhilosophyRaw) ?? .balanced
         return Athlete(
             id: model.id,
             firstName: model.firstName,
@@ -29,6 +30,8 @@ enum AthleteSwiftDataMapper {
             preferredUnit: unit,
             customZoneThresholds: customZones,
             personalBests: personalBests,
+            trainingPhilosophy: philosophy,
+            preferredRunsPerWeek: model.preferredRunsPerWeek,
             displayName: model.displayName,
             bio: model.bio,
             profilePhotoData: model.profilePhotoData,
@@ -56,6 +59,8 @@ enum AthleteSwiftDataMapper {
             preferredUnitRaw: athlete.preferredUnit.rawValue,
             customZoneThresholdsRaw: athlete.customZoneThresholds?.map(String.init).joined(separator: ","),
             personalBestsRaw: pbRaw,
+            trainingPhilosophyRaw: athlete.trainingPhilosophy.rawValue,
+            preferredRunsPerWeek: athlete.preferredRunsPerWeek,
             displayName: athlete.displayName,
             bio: athlete.bio,
             profilePhotoData: athlete.profilePhotoData,

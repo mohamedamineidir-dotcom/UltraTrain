@@ -64,6 +64,8 @@ final class OnboardingViewModel {
 
     // MARK: - Step 5: Race Goal
 
+    var trainingPhilosophy: TrainingPhilosophy = .balanced
+    var preferredRunsPerWeek: Int = 4
     var raceName = ""
     var raceDate = Calendar.current.date(byAdding: .month, value: 6, to: .now)!
     var raceDistanceKm: Double = 50
@@ -182,7 +184,9 @@ final class OnboardingViewModel {
             weeklyVolumeKm: isNewRunner ? 0 : weeklyVolumeKm,
             longestRunKm: isNewRunner ? 0 : longestRunKm,
             preferredUnit: preferredUnit,
-            personalBests: buildPersonalBests()
+            personalBests: buildPersonalBests(),
+            trainingPhilosophy: trainingPhilosophy,
+            preferredRunsPerWeek: preferredRunsPerWeek
         )
     }
 

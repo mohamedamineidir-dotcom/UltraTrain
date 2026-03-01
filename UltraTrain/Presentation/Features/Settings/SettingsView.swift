@@ -56,6 +56,7 @@ struct SettingsView: View {
                 ProgressView()
             } else {
                 unitsSection
+                trainingPreferencesSection
                 appearanceSection
                 runTrackingSection
                 safetySection
@@ -147,6 +148,43 @@ struct SettingsView: View {
                         Text(unit.displayName).tag(unit)
                     }
                 }
+            }
+        }
+    }
+
+    // MARK: - Training Preferences Section
+
+    @ViewBuilder
+    private var trainingPreferencesSection: some View {
+        if let athlete = viewModel.athlete {
+            Section {
+                Picker("Training Style", selection: Binding(
+                    get: { athlete.trainingPhilosophy },
+                    set: { newPhilosophy in
+                        Task { await viewModel.updateTrainingPhilosophy(newPhilosophy) }
+                    }
+                )) {
+                    ForEach(TrainingPhilosophy.allCases, id: \.self) { philosophy in
+                        Text(philosophy.displayName).tag(philosophy)
+                    }
+                }
+                .accessibilityHint("Choose how hard you want to train: enjoyment, balanced, or performance")
+
+                Stepper(
+                    "Runs per week: \(athlete.preferredRunsPerWeek ?? 4)",
+                    value: Binding(
+                        get: { athlete.preferredRunsPerWeek ?? 4 },
+                        set: { newValue in
+                            Task { await viewModel.updatePreferredRunsPerWeek(newValue) }
+                        }
+                    ),
+                    in: 3...6
+                )
+                .accessibilityHint("Set how many running sessions per week you prefer")
+            } header: {
+                Text("Training Preferences")
+            } footer: {
+                Text("These preferences affect how your training plan is generated. Regenerate your plan to apply changes.")
             }
         }
     }

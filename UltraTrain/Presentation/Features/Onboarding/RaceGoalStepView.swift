@@ -13,6 +13,8 @@ struct RaceGoalStepView: View {
                 goalTypeSection
                 goalRealisticnessWarning
                 terrainSection
+                trainingPhilosophySection
+                runsPerWeekSection
             }
             .padding()
         }
@@ -225,6 +227,71 @@ struct RaceGoalStepView: View {
             }
             .pickerStyle(.segmented)
             .accessibilityHint("Select the terrain difficulty of your race course")
+        }
+        .cardStyle()
+    }
+
+    private var trainingPhilosophySection: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            Text("Training Style")
+                .font(.headline)
+            Text("How do you want to approach your training?")
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+
+            ForEach(TrainingPhilosophy.allCases, id: \.self) { philosophy in
+                Button {
+                    viewModel.trainingPhilosophy = philosophy
+                } label: {
+                    HStack(spacing: Theme.Spacing.md) {
+                        Image(systemName: philosophy.iconName)
+                            .font(.title2)
+                            .foregroundStyle(viewModel.trainingPhilosophy == philosophy ? .white : Theme.Colors.primary)
+                            .frame(width: 36)
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(philosophy.displayName)
+                                .font(.subheadline.bold())
+                            Text(philosophy.subtitle)
+                                .font(.caption)
+                                .foregroundStyle(viewModel.trainingPhilosophy == philosophy ? .white.opacity(0.85) : Theme.Colors.secondaryLabel)
+                        }
+
+                        Spacer()
+
+                        if viewModel.trainingPhilosophy == philosophy {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.white)
+                        }
+                    }
+                    .padding(Theme.Spacing.md)
+                    .background(
+                        viewModel.trainingPhilosophy == philosophy
+                            ? AnyShapeStyle(Theme.Colors.primary)
+                            : AnyShapeStyle(Theme.Colors.secondaryBackground)
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .cardStyle()
+        .animation(.easeInOut(duration: 0.2), value: viewModel.trainingPhilosophy)
+    }
+
+    private var runsPerWeekSection: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            Text("Runs Per Week")
+                .font(.headline)
+            LabeledIntStepper(
+                label: "Sessions",
+                value: $viewModel.preferredRunsPerWeek,
+                range: 3...6,
+                unit: "runs"
+            )
+            Text("Extra days become rest days. 3 runs minimum to maintain fitness.")
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
         }
         .cardStyle()
     }
