@@ -15,7 +15,9 @@ enum FoodLogEntryMapper {
             proteinGrams: model.proteinGrams,
             fatGrams: model.fatGrams,
             hydrationMl: model.hydrationMl,
-            productId: model.productId
+            productId: model.productId,
+            portionGrams: model.portionGrams,
+            foodSearchResultId: model.foodSearchResultId
         )
     }
 
@@ -30,7 +32,9 @@ enum FoodLogEntryMapper {
             proteinGrams: entry.proteinGrams,
             fatGrams: entry.fatGrams,
             hydrationMl: entry.hydrationMl,
-            productId: entry.productId
+            productId: entry.productId,
+            portionGrams: entry.portionGrams,
+            foodSearchResultId: entry.foodSearchResultId
         )
     }
 }

@@ -39,9 +39,9 @@ struct OnboardingViewModelTests {
     @MainActor
     func cannotAdvancePastEnd() {
         let (vm, _, _) = makeViewModel()
-        vm.currentStep = 5
+        vm.currentStep = 6
         vm.advance()
-        #expect(vm.currentStep == 5)
+        #expect(vm.currentStep == 6)
     }
 
     @Test("Go back decrements step")
@@ -99,13 +99,23 @@ struct OnboardingViewModelTests {
         #expect(vm.canAdvance == true)
     }
 
-    // MARK: - Step 3 Validation (Physical Data)
+    // MARK: - Step 3 Validation (Personal Bests - Optional)
+
+    @Test("Can always advance from personal bests step")
+    @MainActor
+    func personalBestsOptional() {
+        let (vm, _, _) = makeViewModel()
+        vm.currentStep = 3
+        #expect(vm.canAdvance == true)
+    }
+
+    // MARK: - Step 4 Validation (Physical Data)
 
     @Test("Cannot advance with empty first name")
     @MainActor
     func nameRequired() {
         let (vm, _, _) = makeViewModel()
-        vm.currentStep = 3
+        vm.currentStep = 4
         vm.firstName = ""
         vm.lastName = "Runner"
         #expect(vm.canAdvance == false)
@@ -117,7 +127,7 @@ struct OnboardingViewModelTests {
     @MainActor
     func heartRateValidation() {
         let (vm, _, _) = makeViewModel()
-        vm.currentStep = 3
+        vm.currentStep = 4
         vm.firstName = "Test"
         vm.lastName = "Runner"
         vm.restingHeartRate = 60
@@ -127,13 +137,13 @@ struct OnboardingViewModelTests {
         #expect(vm.canAdvance == true)
     }
 
-    // MARK: - Step 4 Validation (Race Goal)
+    // MARK: - Step 5 Validation (Race Goal)
 
     @Test("Cannot advance with empty race name")
     @MainActor
     func raceNameRequired() {
         let (vm, _, _) = makeViewModel()
-        vm.currentStep = 4
+        vm.currentStep = 5
         vm.raceName = ""
         #expect(vm.canAdvance == false)
         vm.raceName = "UTMB"

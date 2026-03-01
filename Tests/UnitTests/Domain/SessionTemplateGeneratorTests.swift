@@ -318,4 +318,90 @@ struct SessionTemplateGeneratorTests {
         let desc1 = result1.workouts.first?.descriptionText ?? ""
         #expect(desc0 != desc1, "Week 0 and week 1 should have different workout descriptions")
     }
+
+    // MARK: - Cross-Training Restriction
+
+    @Test("beginner has no cross-training sessions in base phase")
+    func beginnerNoCrossTrainingBase() {
+        let result = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(phase: .base),
+            volume: makeVolume(),
+            experience: .beginner
+        )
+
+        let crossTraining = result.sessions.filter { $0.type == .crossTraining }
+        #expect(crossTraining.isEmpty, "Beginner should have no cross-training")
+    }
+
+    @Test("intermediate has no cross-training sessions in build phase")
+    func intermediateNoCrossTrainingBuild() {
+        let result = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(phase: .build),
+            volume: makeVolume(),
+            experience: .intermediate
+        )
+
+        let crossTraining = result.sessions.filter { $0.type == .crossTraining }
+        #expect(crossTraining.isEmpty, "Intermediate should have no cross-training")
+    }
+
+    @Test("elite keeps cross-training in base phase")
+    func eliteKeepsCrossTrainingBase() {
+        let result = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(phase: .base),
+            volume: makeVolume(),
+            experience: .elite
+        )
+
+        let crossTraining = result.sessions.filter { $0.type == .crossTraining }
+        #expect(!crossTraining.isEmpty, "Elite should have cross-training")
+    }
+
+    @Test("elite keeps cross-training in recovery week")
+    func eliteKeepsCrossTrainingRecovery() {
+        let result = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(isRecovery: true),
+            volume: makeVolume(),
+            experience: .elite
+        )
+
+        let crossTraining = result.sessions.filter { $0.type == .crossTraining }
+        #expect(!crossTraining.isEmpty, "Elite recovery week should have cross-training")
+    }
+
+    @Test("advanced gets recovery run instead of cross-training in non-recovery week")
+    func advancedGetsRecoveryRunInsteadOfCrossTraining() {
+        let result = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(phase: .base),
+            volume: makeVolume(),
+            experience: .advanced
+        )
+
+        let crossTraining = result.sessions.filter { $0.type == .crossTraining }
+        #expect(crossTraining.isEmpty, "Advanced non-recovery should replace cross-training with recovery run")
+    }
+
+    @Test("advanced keeps cross-training in recovery week")
+    func advancedKeepsCrossTrainingRecovery() {
+        let result = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(isRecovery: true),
+            volume: makeVolume(),
+            experience: .advanced
+        )
+
+        let crossTraining = result.sessions.filter { $0.type == .crossTraining }
+        #expect(!crossTraining.isEmpty, "Advanced recovery week should have cross-training")
+    }
+
+    @Test("beginner gets rest instead of cross-training in recovery week")
+    func beginnerGetsRestInsteadOfCrossTrainingRecovery() {
+        let result = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(isRecovery: true),
+            volume: makeVolume(),
+            experience: .beginner
+        )
+
+        let crossTraining = result.sessions.filter { $0.type == .crossTraining }
+        #expect(crossTraining.isEmpty, "Beginner should never have cross-training, even in recovery week")
+    }
 }

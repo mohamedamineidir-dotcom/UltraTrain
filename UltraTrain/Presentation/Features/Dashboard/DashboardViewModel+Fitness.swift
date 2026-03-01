@@ -84,6 +84,16 @@ extension DashboardViewModel {
         return Date.now.weeksBetween(raceEnd)
     }
 
+    var daysUntilRace: Int? {
+        guard let raceDate = aRace?.date else { return nil }
+        let days = Calendar.current.dateComponents([.day], from: .now, to: raceDate).day
+        return days.flatMap { $0 >= 0 ? $0 : nil }
+    }
+
+    var raceName: String? {
+        aRace?.name
+    }
+
     // MARK: - Calibration
 
     func buildCalibrations() async -> [RaceCalibration] {

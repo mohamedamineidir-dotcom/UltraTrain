@@ -68,20 +68,37 @@ struct FoodSearchSheet: View {
                     onProductSelected(result)
                     dismiss()
                 } label: {
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: 4) {
                         Text(result.name)
                             .font(.subheadline.bold())
                             .foregroundStyle(.primary)
+                            .lineLimit(2)
                         if let brand = result.brand, !brand.isEmpty {
                             Text(brand)
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(.orange)
                         }
-                        if let cal = result.caloriesPer100g {
-                            Text("\(cal) kcal / 100g")
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
+                        HStack(spacing: 12) {
+                            if let cal = result.caloriesPer100g {
+                                Text("\(cal) kcal")
+                                    .fontWeight(.medium)
+                            }
+                            if let carbs = result.carbsPer100g {
+                                Text("C: \(Int(carbs))g")
+                            }
+                            if let protein = result.proteinPer100g {
+                                Text("P: \(Int(protein))g")
+                            }
+                            if let fat = result.fatPer100g {
+                                Text("F: \(Int(fat))g")
+                            }
                         }
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+
+                        Text("per 100g")
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
                     }
                     .padding(.vertical, 2)
                 }

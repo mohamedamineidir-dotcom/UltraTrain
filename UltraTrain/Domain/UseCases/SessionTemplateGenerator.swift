@@ -25,9 +25,9 @@ enum SessionTemplateGenerator {
         var workouts: [IntervalWorkout] = []
 
         if let override = raceOverride {
-            templates = overrideTemplates(for: override.behavior)
+            templates = overrideTemplates(for: override.behavior, experience: experience)
         } else if skeleton.isRecoveryWeek {
-            templates = recoveryTemplates()
+            templates = recoveryTemplates(experience: experience)
         } else {
             templates = phaseTemplates(
                 for: skeleton.phase,
@@ -107,7 +107,7 @@ enum SessionTemplateGenerator {
     ) -> [SessionTemplate] {
         switch phase {
         case .base:
-            return baseTemplates()
+            return baseTemplates(experience: experience)
         case .build:
             return buildTemplates(experience: experience, raceEffectiveKm: raceEffectiveKm, weekInPhase: weekInPhase)
         case .peak:
@@ -115,11 +115,11 @@ enum SessionTemplateGenerator {
         case .taper:
             return taperTemplates()
         case .recovery, .race:
-            return recoveryTemplates()
+            return recoveryTemplates(experience: experience)
         }
     }
 
-    private static func baseTemplates() -> [SessionTemplate] {
+    private static func baseTemplates(experience: ExperienceLevel) -> [SessionTemplate] {
         [
             tpl(0, .rest, .easy, 0, "Rest day. Focus on sleep and mobility work."),
             tpl(1, .recovery, .easy, 0.10, "Easy recovery run at conversational pace. Keep heart rate in Zone 1-2."),
@@ -127,7 +127,7 @@ enum SessionTemplateGenerator {
             tpl(3, .tempo, .moderate, 0.15, "Tempo run at comfortably hard pace. Maintain steady effort in Zone 3."),
             tpl(4, .rest, .easy, 0, "Rest day. Prepare gear and nutrition for the long run."),
             tplTime(5, .longRun, .easy, 0.45, "Long run at easy pace. Practice race-day nutrition strategy. Stay in Zone 2."),
-            tpl(6, .crossTraining, .easy, 0.10, "Cross-training: cycling, swimming, or hiking. Active recovery.")
+            crossTrainingOrAlternative(day: 6, experience: experience)
         ]
     }
 
@@ -169,7 +169,7 @@ enum SessionTemplateGenerator {
         } else {
             templates += [
                 tplTime(5, .longRun, .easy, 0.40, "Long run on trail terrain. Include elevation if possible. Practice nutrition."),
-                tpl(6, .crossTraining, .easy, 0.10, "Cross-training or easy hike. Keep intensity low."),
+                crossTrainingOrAlternative(day: 6, experience: experience),
             ]
         }
 
@@ -200,7 +200,7 @@ enum SessionTemplateGenerator {
                 tpl(3, .verticalGain, .hard, 0.12, "Vertical gain work on steep terrain. Practice power hiking."),
                 tpl(4, .rest, .easy, 0, "Rest day. Pre-hydrate for the weekend block."),
                 tplTime(5, .longRun, .moderate, 0.40, "Peak long run simulating race conditions. Full nutrition rehearsal."),
-                tpl(6, .crossTraining, .easy, 0.10, "Cross-training or easy hike. Keep intensity low."),
+                crossTrainingOrAlternative(day: 6, experience: experience),
             ]
         }
 
@@ -219,12 +219,12 @@ enum SessionTemplateGenerator {
         ]
     }
 
-    private static func recoveryTemplates() -> [SessionTemplate] {
+    private static func recoveryTemplates(experience: ExperienceLevel) -> [SessionTemplate] {
         [
             tpl(0, .rest, .easy, 0, "Recovery week rest day. Let your body absorb the training."),
             tpl(1, .recovery, .easy, 0.12, "Easy recovery jog. Very comfortable pace, Zone 1 only."),
             tpl(2, .rest, .easy, 0, "Rest day. Focus on nutrition and sleep quality."),
-            tpl(3, .crossTraining, .easy, 0.10, "Light cross-training: swimming, yoga, or gentle cycling."),
+            crossTrainingOrAlternative(day: 3, experience: experience, isRecoveryWeek: true),
             tpl(4, .rest, .easy, 0, "Rest day. Stretching and mobility work."),
             tplTime(5, .longRun, .easy, 0.25, "Reduced long run at very easy pace. Enjoy the scenery."),
             tpl(6, .rest, .easy, 0, "Full rest day. You've earned it.")
@@ -233,14 +233,14 @@ enum SessionTemplateGenerator {
 
     // MARK: - Race Override Templates
 
-    private static func overrideTemplates(for behavior: IntermediateRaceHandler.Behavior) -> [SessionTemplate] {
+    private static func overrideTemplates(for behavior: IntermediateRaceHandler.Behavior, experience: ExperienceLevel) -> [SessionTemplate] {
         switch behavior {
         case .miniTaper:
             return taperTemplates()
         case .raceWeek(let priority):
             return priority == .cRace ? cRaceWeekTemplates() : bRaceWeekTemplates()
         case .postRaceRecovery:
-            return recoveryTemplates()
+            return recoveryTemplates(experience: experience)
         }
     }
 
@@ -278,6 +278,29 @@ enum SessionTemplateGenerator {
         case (.build, .advanced):    raceEffectiveKm >= 100
         case (.build, .elite):       raceEffectiveKm >= 80
         default: false
+        }
+    }
+
+    // MARK: - Cross-Training / Alternative
+
+    private static func crossTrainingOrAlternative(
+        day: Int,
+        experience: ExperienceLevel,
+        isRecoveryWeek: Bool = false
+    ) -> SessionTemplate {
+        switch experience {
+        case .elite:
+            return tpl(day, .crossTraining, .easy, 0.10,
+                "Cross-training: cycling, swimming, or hiking. Active recovery.")
+        case .advanced where isRecoveryWeek:
+            return tpl(day, .crossTraining, .easy, 0.10,
+                "Light cross-training: swimming, yoga, or gentle cycling.")
+        case .advanced:
+            return tpl(day, .recovery, .easy, 0.08,
+                "Easy recovery run. Keep the pace conversational.")
+        case .beginner, .intermediate:
+            return tpl(day, .rest, .easy, 0,
+                "Rest day. Recovery is part of training.")
         }
     }
 

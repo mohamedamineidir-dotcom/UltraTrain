@@ -16,6 +16,7 @@ final class AthleteSwiftDataModel {
     var longestRunKm: Double = 0
     var preferredUnitRaw: String = "metric"
     var customZoneThresholdsRaw: String? = nil
+    var personalBestsRaw: String? = nil
     var updatedAt: Date = Date()
     var displayName: String? = nil
     var bio: String? = nil
@@ -36,6 +37,7 @@ final class AthleteSwiftDataModel {
         longestRunKm: Double = 0,
         preferredUnitRaw: String = "metric",
         customZoneThresholdsRaw: String? = nil,
+        personalBestsRaw: String? = nil,
         updatedAt: Date = Date(),
         displayName: String? = nil,
         bio: String? = nil,
@@ -55,6 +57,7 @@ final class AthleteSwiftDataModel {
         self.longestRunKm = longestRunKm
         self.preferredUnitRaw = preferredUnitRaw
         self.customZoneThresholdsRaw = customZoneThresholdsRaw
+        self.personalBestsRaw = personalBestsRaw
         self.updatedAt = updatedAt
         self.displayName = displayName
         self.bio = bio

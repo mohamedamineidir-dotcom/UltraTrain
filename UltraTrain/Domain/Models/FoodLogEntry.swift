@@ -11,4 +11,6 @@ struct FoodLogEntry: Identifiable, Equatable, Sendable {
     var fatGrams: Double?
     var hydrationMl: Int?
     var productId: UUID?
+    var portionGrams: Double?
+    var foodSearchResultId: String?
 }

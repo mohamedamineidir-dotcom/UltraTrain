@@ -13,6 +13,8 @@ final class FoodLogEntrySwiftDataModel {
     var fatGrams: Double?
     var hydrationMl: Int?
     var productId: UUID?
+    var portionGrams: Double?
+    var foodSearchResultId: String?
 
     init(
         id: UUID = UUID(),
@@ -24,7 +26,9 @@ final class FoodLogEntrySwiftDataModel {
         proteinGrams: Double? = nil,
         fatGrams: Double? = nil,
         hydrationMl: Int? = nil,
-        productId: UUID? = nil
+        productId: UUID? = nil,
+        portionGrams: Double? = nil,
+        foodSearchResultId: String? = nil
     ) {
         self.id = id
         self.date = date
@@ -36,5 +40,7 @@ final class FoodLogEntrySwiftDataModel {
         self.fatGrams = fatGrams
         self.hydrationMl = hydrationMl
         self.productId = productId
+        self.portionGrams = portionGrams
+        self.foodSearchResultId = foodSearchResultId
     }
 }

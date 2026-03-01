@@ -37,9 +37,10 @@ struct OnboardingView: View {
                     case 0: WelcomeStepView()
                     case 1: ExperienceStepView(viewModel: viewModel)
                     case 2: RunningHistoryStepView(viewModel: viewModel, healthKitService: healthKitService)
-                    case 3: PhysicalDataStepView(viewModel: viewModel)
-                    case 4: RaceGoalStepView(viewModel: viewModel)
-                    case 5: OnboardingCompleteStepView(
+                    case 3: PersonalBestsStepView(viewModel: viewModel)
+                    case 4: PhysicalDataStepView(viewModel: viewModel)
+                    case 5: RaceGoalStepView(viewModel: viewModel)
+                    case 6: OnboardingCompleteStepView(
                         viewModel: viewModel,
                         onComplete: onComplete,
                         healthKitService: healthKitService,

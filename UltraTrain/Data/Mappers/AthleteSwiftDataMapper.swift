@@ -10,6 +10,10 @@ enum AthleteSwiftDataMapper {
             let parts = raw.split(separator: ",").compactMap { Int($0) }
             return parts.count == 4 ? parts : nil
         }
+        let personalBests: [PersonalBest] = model.personalBestsRaw.flatMap { raw in
+            guard let data = raw.data(using: .utf8) else { return nil }
+            return try? JSONDecoder().decode([PersonalBest].self, from: data)
+        } ?? []
         return Athlete(
             id: model.id,
             firstName: model.firstName,
@@ -24,6 +28,7 @@ enum AthleteSwiftDataMapper {
             longestRunKm: model.longestRunKm,
             preferredUnit: unit,
             customZoneThresholds: customZones,
+            personalBests: personalBests,
             displayName: model.displayName,
             bio: model.bio,
             profilePhotoData: model.profilePhotoData,
@@ -32,7 +37,11 @@ enum AthleteSwiftDataMapper {
     }
 
     static func toSwiftData(_ athlete: Athlete) -> AthleteSwiftDataModel {
-        AthleteSwiftDataModel(
+        let pbRaw: String? = athlete.personalBests.isEmpty ? nil : {
+            guard let data = try? JSONEncoder().encode(athlete.personalBests) else { return nil }
+            return String(data: data, encoding: .utf8)
+        }()
+        return AthleteSwiftDataModel(
             id: athlete.id,
             firstName: athlete.firstName,
             lastName: athlete.lastName,
@@ -46,6 +55,7 @@ enum AthleteSwiftDataMapper {
             longestRunKm: athlete.longestRunKm,
             preferredUnitRaw: athlete.preferredUnit.rawValue,
             customZoneThresholdsRaw: athlete.customZoneThresholds?.map(String.init).joined(separator: ","),
+            personalBestsRaw: pbRaw,
             displayName: athlete.displayName,
             bio: athlete.bio,
             profilePhotoData: athlete.profilePhotoData,

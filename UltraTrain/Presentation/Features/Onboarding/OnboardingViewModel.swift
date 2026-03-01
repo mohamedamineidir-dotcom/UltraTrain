@@ -13,7 +13,7 @@ final class OnboardingViewModel {
     // MARK: - Navigation State
 
     var currentStep = 0
-    let totalSteps = 6
+    let totalSteps = 7
     var isCompleted = false
     var isSaving = false
     var error: String?
@@ -30,7 +30,29 @@ final class OnboardingViewModel {
     var longestRunKm: Double = 15
     var isNewRunner = false
 
-    // MARK: - Step 3: Physical Data
+    // MARK: - Step 3: Personal Bests (Optional)
+
+    var pb5kHours: Int = 0
+    var pb5kMinutes: Int = 0
+    var pb5kSeconds: Int = 0
+    var pb5kDate: Date = .now
+
+    var pb10kHours: Int = 0
+    var pb10kMinutes: Int = 0
+    var pb10kSeconds: Int = 0
+    var pb10kDate: Date = .now
+
+    var pbHalfHours: Int = 0
+    var pbHalfMinutes: Int = 0
+    var pbHalfSeconds: Int = 0
+    var pbHalfDate: Date = .now
+
+    var pbMarathonHours: Int = 0
+    var pbMarathonMinutes: Int = 0
+    var pbMarathonSeconds: Int = 0
+    var pbMarathonDate: Date = .now
+
+    // MARK: - Step 4: Physical Data
 
     var firstName = ""
     var lastName = ""
@@ -40,7 +62,7 @@ final class OnboardingViewModel {
     var restingHeartRate: Int = 60
     var maxHeartRate: Int = 185
 
-    // MARK: - Step 4: Race Goal
+    // MARK: - Step 5: Race Goal
 
     var raceName = ""
     var raceDate = Calendar.current.date(byAdding: .month, value: 6, to: .now)!
@@ -71,8 +93,10 @@ final class OnboardingViewModel {
         case 2:
             return isNewRunner || (weeklyVolumeKm > 0 && longestRunKm > 0)
         case 3:
-            return isPhysicalDataValid
+            return true // Personal bests are optional
         case 4:
+            return isPhysicalDataValid
+        case 5:
             return isRaceGoalValid
         default:
             return true
@@ -157,8 +181,26 @@ final class OnboardingViewModel {
             experienceLevel: experienceLevel ?? .beginner,
             weeklyVolumeKm: isNewRunner ? 0 : weeklyVolumeKm,
             longestRunKm: isNewRunner ? 0 : longestRunKm,
-            preferredUnit: preferredUnit
+            preferredUnit: preferredUnit,
+            personalBests: buildPersonalBests()
         )
+    }
+
+    private func buildPersonalBests() -> [PersonalBest] {
+        var bests: [PersonalBest] = []
+        let entries: [(PersonalBestDistance, Int, Int, Int, Date)] = [
+            (.fiveK, pb5kHours, pb5kMinutes, pb5kSeconds, pb5kDate),
+            (.tenK, pb10kHours, pb10kMinutes, pb10kSeconds, pb10kDate),
+            (.halfMarathon, pbHalfHours, pbHalfMinutes, pbHalfSeconds, pbHalfDate),
+            (.marathon, pbMarathonHours, pbMarathonMinutes, pbMarathonSeconds, pbMarathonDate),
+        ]
+        for (distance, h, m, s, date) in entries {
+            let total = TimeInterval(h * 3600 + m * 60 + s)
+            if total > 0 {
+                bests.append(PersonalBest(id: UUID(), distance: distance, timeSeconds: total, date: date))
+            }
+        }
+        return bests
     }
 
     private func buildRace() -> Race {

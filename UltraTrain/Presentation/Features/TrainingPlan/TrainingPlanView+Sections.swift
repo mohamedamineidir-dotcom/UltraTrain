@@ -26,6 +26,8 @@ extension TrainingPlanView {
 
                 planHeader(plan)
 
+                PlanVolumeChartsSection(plan: plan)
+
                 ForEach(Array(plan.weeks.enumerated()), id: \.element.id) { weekIndex, week in
                     WeekCardView(
                         week: week,

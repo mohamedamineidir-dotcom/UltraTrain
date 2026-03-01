@@ -94,10 +94,48 @@ struct DashboardView: View {
         NavigationStack {
             ScrollView {
                 LazyVStack(spacing: Theme.Spacing.md) {
+                    // 1. Hero card — visual focal point
+                    DashboardHeroCard(
+                        daysUntilRace: viewModel.daysUntilRace,
+                        raceName: viewModel.raceName,
+                        currentPhase: viewModel.currentPhase,
+                        weeklyProgress: viewModel.weeklyProgress,
+                        weeklyDistanceKm: viewModel.weeklyDistanceKm,
+                        weeklyTargetDistanceKm: viewModel.weeklyTargetDistanceKm
+                    )
+
+                    // 2. Safety alerts
                     if !viewModel.injuryRiskAlerts.isEmpty {
                         InjuryRiskAlertBanner(alerts: viewModel.injuryRiskAlerts)
                     }
 
+                    // 3. Next session — actionable
+                    DashboardNextSessionCard(
+                        session: viewModel.nextSession,
+                        hasPlan: viewModel.plan != nil,
+                        currentPhase: viewModel.currentPhase,
+                        onStartRun: { selectedTab = .run }
+                    )
+                    .accessibilityIdentifier("dashboard.nextSessionCard")
+
+                    // 4. Weekly stats
+                    DashboardWeeklyStatsCard(
+                        progress: viewModel.weeklyProgress,
+                        distanceKm: viewModel.weeklyDistanceKm,
+                        elevationM: viewModel.weeklyElevationM,
+                        targetDistanceKm: viewModel.weeklyTargetDistanceKm,
+                        targetElevationM: viewModel.weeklyTargetElevationM,
+                        weeksUntilRace: viewModel.weeksUntilRace
+                    )
+                    .accessibilityIdentifier("dashboard.weeklyStatsCard")
+
+                    // 5. Last run — immediate feedback
+                    LastRunCard(lastRun: viewModel.lastRun)
+
+                    // 6. Fitness sparkline
+                    fitnessSection
+
+                    // 7. Coaching & AI
                     if !viewModel.coachingInsights.isEmpty {
                         CoachingInsightCard(insights: viewModel.coachingInsights)
                     }
@@ -110,14 +148,7 @@ struct DashboardView: View {
                         FatigueAlertCard(patterns: viewModel.fatiguePatterns)
                     }
 
-                    DashboardNextSessionCard(
-                        session: viewModel.nextSession,
-                        hasPlan: viewModel.plan != nil,
-                        currentPhase: viewModel.currentPhase,
-                        onStartRun: { selectedTab = .run }
-                    )
-                    .accessibilityIdentifier("dashboard.nextSessionCard")
-
+                    // 8. Weather
                     DashboardWeatherCard(
                         currentWeather: viewModel.currentWeather,
                         sessionForecast: viewModel.sessionForecast,
@@ -125,16 +156,7 @@ struct DashboardView: View {
                         isLoading: viewModel.isLoading
                     )
 
-                    DashboardWeeklyStatsCard(
-                        progress: viewModel.weeklyProgress,
-                        distanceKm: viewModel.weeklyDistanceKm,
-                        elevationM: viewModel.weeklyElevationM,
-                        targetDistanceKm: viewModel.weeklyTargetDistanceKm,
-                        targetElevationM: viewModel.weeklyTargetElevationM,
-                        weeksUntilRace: viewModel.weeksUntilRace
-                    )
-                    .accessibilityIdentifier("dashboard.weeklyStatsCard")
-
+                    // 9. Goals & Zones
                     DashboardGoalProgressCard(
                         weeklyProgress: viewModel.weeklyGoalProgress,
                         monthlyProgress: viewModel.monthlyGoalProgress,
@@ -147,28 +169,26 @@ struct DashboardView: View {
                         distribution: viewModel.weeklyZoneDistribution
                     )
 
-                    recoveryLink
-
-                    challengeLink
-
-                    achievementLink
-
-                    personalRecordsLink
-
-                    LastRunCard(lastRun: viewModel.lastRun)
-
+                    // 10. Finish estimate
                     finishEstimateSection
 
-                    fitnessSection
+                    // 11. Recovery
+                    recoveryLink
 
+                    // 12. Social & achievements
+                    challengeLink
+                    achievementLink
+                    personalRecordsLink
+
+                    // 13. Trends
                     if !viewModel.performanceTrends.isEmpty {
                         ForEach(viewModel.performanceTrends) { trend in
                             PerformanceTrendSparkline(trend: trend)
                         }
                     }
 
+                    // 14. Upcoming races & progress
                     UpcomingRacesCard(races: viewModel.upcomingRaces)
-
                     progressSection
                 }
                 .padding()

@@ -15,6 +15,9 @@ struct AddFoodEntrySheet: View {
     @State private var showingFoodSearch = false
     @State private var isLookingUp = false
     @State private var lookupError: String?
+    @State private var portionGrams: Double = 100
+    @State private var basePer100g: (cal: Int?, carbs: Double?, protein: Double?, fat: Double?) = (nil, nil, nil, nil)
+    @State private var selectedFoodResultId: String?
 
     let foodDatabaseService: (any FoodDatabaseServiceProtocol)?
     let onSave: (FoodLogEntry) -> Void
@@ -33,6 +36,7 @@ struct AddFoodEntrySheet: View {
                 quickAddSection
                 mealTypeSection
                 descriptionSection
+                portionSection
                 caloriesSection
                 macrosSection
                 hydrationSection
@@ -188,6 +192,50 @@ struct AddFoodEntrySheet: View {
         }
     }
 
+    // MARK: - Portion Size
+
+    @ViewBuilder
+    private var portionSection: some View {
+        if selectedFoodResultId != nil {
+            Section("Portion Size") {
+                Stepper(
+                    "\(Int(portionGrams))g",
+                    value: $portionGrams,
+                    in: 1...2000,
+                    step: portionGrams < 50 ? 5 : 10
+                )
+                .accessibilityIdentifier("addFood.portionStepper")
+                .accessibilityLabel("Portion size")
+                .accessibilityValue("\(Int(portionGrams)) grams")
+                .onChange(of: portionGrams) { _, _ in
+                    recalculateForPortion()
+                }
+
+                if basePer100g.cal != nil {
+                    Text("Macros auto-calculated from per-100g values")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+    }
+
+    private func recalculateForPortion() {
+        let factor = portionGrams / 100.0
+        if let cal = basePer100g.cal {
+            calories = Int(Double(cal) * factor)
+        }
+        if let carbs = basePer100g.carbs {
+            carbsGrams = (carbs * factor * 10).rounded() / 10
+        }
+        if let protein = basePer100g.protein {
+            proteinGrams = (protein * factor * 10).rounded() / 10
+        }
+        if let fat = basePer100g.fat {
+            fatGrams = (fat * factor * 10).rounded() / 10
+        }
+    }
+
     // MARK: - Quick Add
 
     @ViewBuilder
@@ -235,19 +283,24 @@ struct AddFoodEntrySheet: View {
         } else {
             entryDescription = result.name
         }
-        if let cal = result.caloriesPerServing ?? result.caloriesPer100g {
-            calories = cal
+
+        selectedFoodResultId = result.id
+        basePer100g = (
+            cal: result.caloriesPer100g,
+            carbs: result.carbsPer100g,
+            protein: result.proteinPer100g,
+            fat: result.fatPer100g
+        )
+
+        if let serving = result.servingSizeGrams, serving > 0 {
+            portionGrams = serving
+        } else {
+            portionGrams = 100
         }
-        if let carbs = result.carbsPerServing ?? result.carbsPer100g {
-            carbsGrams = carbs
-            showMacros = true
-        }
-        if let protein = result.proteinPerServing ?? result.proteinPer100g {
-            proteinGrams = protein
-            showMacros = true
-        }
-        if let fat = result.fatPerServing ?? result.fatPer100g {
-            fatGrams = fat
+
+        recalculateForPortion()
+
+        if basePer100g.carbs != nil || basePer100g.protein != nil || basePer100g.fat != nil {
             showMacros = true
         }
     }
@@ -265,7 +318,9 @@ struct AddFoodEntrySheet: View {
             proteinGrams: proteinGrams > 0 ? proteinGrams : nil,
             fatGrams: fatGrams > 0 ? fatGrams : nil,
             hydrationMl: hydrationMl > 0 ? hydrationMl : nil,
-            productId: nil
+            productId: nil,
+            portionGrams: selectedFoodResultId != nil ? portionGrams : nil,
+            foodSearchResultId: selectedFoodResultId
         )
         onSave(entry)
         dismiss()
