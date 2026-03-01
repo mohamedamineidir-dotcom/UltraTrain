@@ -35,6 +35,7 @@ actor RaceCountdownJob {
                 do {
                     try await pushService.sendRaceCountdown(
                         to: token,
+                        apnsEnvironment: user.apnsEnvironment,
                         raceName: plan.targetRaceName,
                         daysRemaining: daysRemaining
                     )

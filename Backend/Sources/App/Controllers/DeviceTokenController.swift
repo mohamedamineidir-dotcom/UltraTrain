@@ -19,6 +19,7 @@ struct DeviceTokenController: RouteCollection {
 
         user.deviceToken = body.deviceToken
         user.devicePlatform = body.platform
+        user.apnsEnvironment = body.apnsEnvironment ?? "production"
         try await user.save(on: req.db)
 
         return DeviceTokenResponse(message: "Device token updated")

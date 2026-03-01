@@ -38,7 +38,7 @@ actor InactivityAlertJob {
                 guard daysSinceLastRun >= 5 else { continue }
 
                 do {
-                    try await pushService.sendInactivityNudge(to: token, daysSinceLastRun: daysSinceLastRun)
+                    try await pushService.sendInactivityNudge(to: token, apnsEnvironment: user.apnsEnvironment, daysSinceLastRun: daysSinceLastRun)
                     lastNudgeSent[userId] = now
                 } catch {
                     app.logger.warning("Failed to send inactivity nudge to user \(userId): \(error)")

@@ -9,10 +9,11 @@ enum DeviceTokenEndpoints {
         var path: String { "device-token" }
         var method: HTTPMethod { .put }
 
-        init(deviceToken: String) {
+        init(deviceToken: String, apnsEnvironment: String) {
             self.body = DeviceTokenRequestDTO(
                 deviceToken: deviceToken,
-                platform: "ios"
+                platform: "ios",
+                apnsEnvironment: apnsEnvironment
             )
         }
     }

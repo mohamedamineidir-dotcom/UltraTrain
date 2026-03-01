@@ -3,6 +3,7 @@ import Vapor
 struct DeviceTokenRequest: Content, Validatable {
     let deviceToken: String
     let platform: String
+    let apnsEnvironment: String?
 
     static func validations(_ validations: inout Validations) {
         validations.add("deviceToken", as: String.self, is: !.empty)

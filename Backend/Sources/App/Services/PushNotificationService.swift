@@ -5,7 +5,16 @@ import APNSCore
 struct PushNotificationService {
     let app: Application
 
-    func sendTrainingReminder(to deviceToken: String, sessionTitle: String) async throws {
+    private func apnsClient(for environment: String?) -> APNSGenericClient {
+        switch environment {
+        case "sandbox", "development":
+            return app.apns.client(.development)
+        default:
+            return app.apns.client(.production)
+        }
+    }
+
+    func sendTrainingReminder(to deviceToken: String, apnsEnvironment: String? = nil, sessionTitle: String) async throws {
         let alert = APNSAlertNotification(
             alert: .init(title: .raw("Training Reminder"), body: .raw("Time for: \(sessionTitle)")),
             expiration: .immediately,
@@ -13,10 +22,10 @@ struct PushNotificationService {
             topic: "com.ultratrain.app",
             category: "training"
         )
-        try await app.apns.client.sendAlertNotification(alert, deviceToken: deviceToken)
+        try await apnsClient(for: apnsEnvironment).sendAlertNotification(alert, deviceToken: deviceToken)
     }
 
-    func sendSyncAvailable(to deviceToken: String) async throws {
+    func sendSyncAvailable(to deviceToken: String, apnsEnvironment: String? = nil) async throws {
         let alert = APNSAlertNotification(
             alert: .init(title: .raw("Sync Available"), body: .raw("New training data is ready to sync.")),
             expiration: .immediately,
@@ -24,10 +33,10 @@ struct PushNotificationService {
             topic: "com.ultratrain.app",
             category: "sync_available"
         )
-        try await app.apns.client.sendAlertNotification(alert, deviceToken: deviceToken)
+        try await apnsClient(for: apnsEnvironment).sendAlertNotification(alert, deviceToken: deviceToken)
     }
 
-    func sendWeeklySummary(to deviceToken: String, distanceKm: Double, elevationM: Double, runCount: Int) async throws {
+    func sendWeeklySummary(to deviceToken: String, apnsEnvironment: String? = nil, distanceKm: Double, elevationM: Double, runCount: Int) async throws {
         let body = String(format: "This week: %.1f km, %.0f m D+ across %d run%@. Keep it up!",
                           distanceKm, elevationM, runCount, runCount == 1 ? "" : "s")
         let alert = APNSAlertNotification(
@@ -37,10 +46,10 @@ struct PushNotificationService {
             topic: "com.ultratrain.app",
             category: "weeklySummary"
         )
-        try await app.apns.client.sendAlertNotification(alert, deviceToken: deviceToken)
+        try await apnsClient(for: apnsEnvironment).sendAlertNotification(alert, deviceToken: deviceToken)
     }
 
-    func sendInactivityNudge(to deviceToken: String, daysSinceLastRun: Int) async throws {
+    func sendInactivityNudge(to deviceToken: String, apnsEnvironment: String? = nil, daysSinceLastRun: Int) async throws {
         let body = "It's been \(daysSinceLastRun) days since your last run. A short recovery run can do wonders!"
         let alert = APNSAlertNotification(
             alert: .init(title: .raw("Time to Run?"), body: .raw(body)),
@@ -49,10 +58,10 @@ struct PushNotificationService {
             topic: "com.ultratrain.app",
             category: "inactivity"
         )
-        try await app.apns.client.sendAlertNotification(alert, deviceToken: deviceToken)
+        try await apnsClient(for: apnsEnvironment).sendAlertNotification(alert, deviceToken: deviceToken)
     }
 
-    func sendRaceCountdown(to deviceToken: String, raceName: String, daysRemaining: Int) async throws {
+    func sendRaceCountdown(to deviceToken: String, apnsEnvironment: String? = nil, raceName: String, daysRemaining: Int) async throws {
         let body = daysRemaining == 1
             ? "\(raceName) is tomorrow! You've got this."
             : "\(daysRemaining) days until \(raceName). Stay focused."
@@ -63,6 +72,6 @@ struct PushNotificationService {
             topic: "com.ultratrain.app",
             category: "race"
         )
-        try await app.apns.client.sendAlertNotification(alert, deviceToken: deviceToken)
+        try await apnsClient(for: apnsEnvironment).sendAlertNotification(alert, deviceToken: deviceToken)
     }
 }

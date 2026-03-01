@@ -27,6 +27,7 @@ enum WeeklySummaryJob {
                 do {
                     try await pushService.sendWeeklySummary(
                         to: token,
+                        apnsEnvironment: user.apnsEnvironment,
                         distanceKm: totalKm,
                         elevationM: totalElev,
                         runCount: runs.count

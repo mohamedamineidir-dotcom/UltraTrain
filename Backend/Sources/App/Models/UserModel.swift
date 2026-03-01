@@ -23,6 +23,9 @@ final class UserModel: Model, Content, @unchecked Sendable {
     @OptionalField(key: "device_platform")
     var devicePlatform: String?
 
+    @OptionalField(key: "apns_environment")
+    var apnsEnvironment: String?
+
     @OptionalField(key: "reset_code_hash")
     var resetCodeHash: String?
 
