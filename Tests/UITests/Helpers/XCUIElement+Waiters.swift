@@ -20,4 +20,14 @@ extension XCUIElement {
         let result = XCTWaiter().wait(for: [expectation], timeout: timeout)
         return result == .completed
     }
+
+    /// Waits until the element no longer exists.
+    /// - Parameter timeout: Maximum seconds to wait (default 5).
+    @discardableResult
+    func waitForNonExistence(timeout: TimeInterval = 5) -> Bool {
+        let predicate = NSPredicate(format: "exists == false")
+        let expectation = XCTNSPredicateExpectation(predicate: predicate, object: self)
+        let result = XCTWaiter().wait(for: [expectation], timeout: timeout)
+        return result == .completed
+    }
 }

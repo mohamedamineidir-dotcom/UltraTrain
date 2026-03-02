@@ -51,7 +51,7 @@ struct NutritionReminderBanner: View {
         .background(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .fill(backgroundColor)
-                .shadow(color: .black.opacity(0.15), radius: 8, y: 4)
+                .shadow(color: Theme.Colors.shadow, radius: 8, y: 4)
         )
         .padding(.horizontal, Theme.Spacing.md)
         .padding(.top, Theme.Spacing.sm)

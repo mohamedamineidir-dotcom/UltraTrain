@@ -17,7 +17,7 @@ struct CheckpointAnnotationView: View {
             Image(systemName: hasAidStation ? "cross.circle.fill" : "mappin.circle.fill")
                 .font(.caption)
                 .foregroundStyle(hasAidStation ? Theme.Colors.danger : Theme.Colors.primary)
-                .background(Circle().fill(.white).padding(-1))
+                .background(Circle().fill(Theme.Colors.mapAnnotationBackground).padding(-1))
 
             Text(name)
                 .font(.system(size: clampedNameSize, weight: .semibold))

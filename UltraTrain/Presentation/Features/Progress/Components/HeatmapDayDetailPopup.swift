@@ -37,7 +37,7 @@ struct HeatmapDayDetailPopup: View {
         .padding(Theme.Spacing.md)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
-        .shadow(color: .black.opacity(0.15), radius: 8, y: 4)
+        .shadow(color: Theme.Colors.shadow, radius: 8, y: 4)
         .padding(.horizontal, Theme.Spacing.lg)
     }
 

@@ -49,7 +49,7 @@ extension FullScreenMapView {
                 Image(systemName: "play.circle.fill")
                     .font(.title3)
                     .foregroundStyle(Theme.Colors.success)
-                    .background(Circle().fill(.white).padding(-2))
+                    .background(Circle().fill(Theme.Colors.mapAnnotationBackground).padding(-2))
             }
         }
 
@@ -58,7 +58,7 @@ extension FullScreenMapView {
                 Image(systemName: "flag.circle.fill")
                     .font(.title3)
                     .foregroundStyle(Theme.Colors.danger)
-                    .background(Circle().fill(.white).padding(-2))
+                    .background(Circle().fill(Theme.Colors.mapAnnotationBackground).padding(-2))
             }
         }
     }
@@ -108,7 +108,7 @@ extension FullScreenMapView {
                 Circle()
                     .fill(Theme.Colors.primary)
                     .frame(width: 12, height: 12)
-                    .background(Circle().fill(.white).frame(width: 16, height: 16))
+                    .background(Circle().fill(Theme.Colors.mapAnnotationBackground).frame(width: 16, height: 16))
             }
         }
     }

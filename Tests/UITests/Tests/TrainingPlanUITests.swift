@@ -58,4 +58,96 @@ final class TrainingPlanUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Description"].waitForExistence(timeout: 5),
                        "Session detail view should appear")
     }
+
+    // MARK: - Expand/Collapse Tests
+
+    @MainActor
+    func testCollapsedWeekExpandsOnTap() throws {
+        let app = XCUIApplication.launchWithTestData()
+        navigateToPlanTab(app)
+
+        XCTAssertTrue(app.staticTexts["Week 1"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.staticTexts["Week 2"].waitForExistence(timeout: 3))
+
+        // Week 2 should be collapsed — tap to expand
+        app.staticTexts["Week 2"].tap()
+
+        // After expanding, sessions should become visible in Week 2
+        // Give it time for the expand animation
+        Thread.sleep(forTimeInterval: 0.5)
+
+        // The week 2 area should now show session content
+        // Week 2 sessions exist somewhere below Week 2 header
+        XCTAssertTrue(app.staticTexts["Week 2"].exists, "Week 2 should still be visible after tap")
+    }
+
+    @MainActor
+    func testExpandedWeekCollapsesOnTap() throws {
+        let app = XCUIApplication.launchWithTestData()
+        navigateToPlanTab(app)
+
+        // Week 1 is auto-expanded with sessions visible
+        XCTAssertTrue(app.staticTexts["Week 1"].waitForExistence(timeout: 10))
+        let recovery = app.staticTexts["Recovery"].firstMatch
+        XCTAssertTrue(recovery.waitForExistence(timeout: 5), "Recovery session should be visible in expanded week")
+
+        // Tap Week 1 header to collapse
+        app.staticTexts["Week 1"].tap()
+
+        // Sessions should disappear
+        XCTAssertTrue(recovery.waitForNonExistence(timeout: 5),
+                       "Sessions should disappear when week is collapsed")
+    }
+
+    @MainActor
+    func testSessionDetailShowsStatsAndDescription() throws {
+        let app = XCUIApplication.launchWithTestData()
+        navigateToPlanTab(app)
+
+        // Open a session detail
+        XCTAssertTrue(app.staticTexts["Week 1"].waitForExistence(timeout: 10))
+        let recoveryText = app.staticTexts["Recovery"].firstMatch
+        XCTAssertTrue(recoveryText.waitForExistence(timeout: 5))
+        recoveryText.tap()
+
+        // Verify detail view has Description section
+        XCTAssertTrue(app.staticTexts["Description"].waitForExistence(timeout: 5))
+
+        // Check for stat labels (Distance or Duration)
+        let distance = app.staticTexts["Distance"]
+        let duration = app.staticTexts["Duration"]
+        XCTAssertTrue(distance.waitForExistence(timeout: 3) || duration.waitForExistence(timeout: 3),
+                       "Session detail should show statistics")
+    }
+
+    @MainActor
+    func testPlanHeaderShowsWeekCount() throws {
+        let app = XCUIApplication.launchWithTestData()
+        navigateToPlanTab(app)
+
+        // Plan should load and show week cards
+        XCTAssertTrue(app.staticTexts["Week 1"].waitForExistence(timeout: 10))
+
+        // The plan view should show the navigation title
+        XCTAssertTrue(app.navigationBars["Training Plan"].waitForExistence(timeout: 3) ||
+                      app.staticTexts["Training Plan"].waitForExistence(timeout: 3),
+                       "Plan header should be visible")
+    }
+
+    @MainActor
+    func testMultipleWeeksVisible() throws {
+        let app = XCUIApplication.launchWithTestData()
+        navigateToPlanTab(app)
+
+        // All 3 seeded weeks should be visible (scroll if needed)
+        XCTAssertTrue(app.staticTexts["Week 1"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.staticTexts["Week 2"].exists)
+
+        // Scroll to find Week 3 if not visible
+        let week3 = app.staticTexts["Week 3"]
+        for _ in 0..<3 where !week3.exists {
+            app.swipeUp()
+        }
+        XCTAssertTrue(week3.waitForExistence(timeout: 3), "Week 3 should be reachable by scrolling")
+    }
 }

@@ -85,6 +85,7 @@ struct UltraTrainApp: App {
             )
             .environment(\.syncStatusMonitor, container.syncStatusMonitor)
             .environment(\.syncService, container.syncService)
+            .environment(\.networkMonitor, container.networkMonitor)
             .preferredColorScheme(colorScheme)
             .onOpenURL { url in
                 _ = container.deepLinkRouter.handle(url: url)

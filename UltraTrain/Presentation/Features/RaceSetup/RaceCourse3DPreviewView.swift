@@ -88,7 +88,7 @@ struct RaceCourse3DPreviewView: View {
                 Image(systemName: "play.circle.fill")
                     .font(.title3)
                     .foregroundStyle(Theme.Colors.success)
-                    .background(Circle().fill(.white).padding(-2))
+                    .background(Circle().fill(Theme.Colors.mapAnnotationBackground).padding(-2))
             }
         }
 
@@ -97,7 +97,7 @@ struct RaceCourse3DPreviewView: View {
                 Image(systemName: "flag.circle.fill")
                     .font(.title3)
                     .foregroundStyle(Theme.Colors.danger)
-                    .background(Circle().fill(.white).padding(-2))
+                    .background(Circle().fill(Theme.Colors.mapAnnotationBackground).padding(-2))
             }
         }
     }

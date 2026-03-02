@@ -2,9 +2,11 @@ import SwiftUI
 
 struct DashboardView: View {
     @Environment(\.syncStatusMonitor) private var syncStatusMonitor
+    @Environment(\.syncService) private var syncService
     @State var viewModel: DashboardViewModel
     @State var showFitnessTrend = false
     @State private var showGoalSetting = false
+    @State private var showSyncQueue = false
     @Binding var selectedTab: Tab
 
     let planRepository: any TrainingPlanRepository
@@ -204,12 +206,22 @@ struct DashboardView: View {
             .toolbar {
                 if let monitor = syncStatusMonitor, monitor.isVisible {
                     ToolbarItem(placement: .topBarTrailing) {
-                        SyncStatusBadge(
-                            pendingCount: monitor.pendingCount,
-                            failedCount: monitor.failedCount,
-                            isSyncing: monitor.isSyncing
-                        )
+                        Button {
+                            showSyncQueue = true
+                        } label: {
+                            SyncStatusBadge(
+                                pendingCount: monitor.pendingCount,
+                                failedCount: monitor.failedCount,
+                                isSyncing: monitor.isSyncing
+                            )
+                        }
+                        .accessibilityHint("View sync queue details")
                     }
+                }
+            }
+            .navigationDestination(isPresented: $showSyncQueue) {
+                if let svc = syncService {
+                    SyncQueueView(syncService: svc)
                 }
             }
             .navigationDestination(isPresented: $showFitnessTrend) {

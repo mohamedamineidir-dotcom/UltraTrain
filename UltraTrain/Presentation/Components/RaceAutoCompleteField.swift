@@ -51,7 +51,7 @@ struct RaceAutoCompleteField: View {
         }
         .background(Theme.Colors.secondaryBackground)
         .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
-        .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
+        .shadow(color: Theme.Colors.shadow, radius: 4, y: 2)
     }
 
     private func debounceSearch(query: String) {

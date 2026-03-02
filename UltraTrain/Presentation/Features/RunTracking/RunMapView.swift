@@ -30,7 +30,7 @@ struct RunMapView: View {
                     Image(systemName: "play.circle.fill")
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.success)
-                        .background(Circle().fill(.white).padding(-1))
+                        .background(Circle().fill(Theme.Colors.mapAnnotationBackground).padding(-1))
                 }
             }
 
@@ -39,7 +39,7 @@ struct RunMapView: View {
                     Image(systemName: "flag.circle.fill")
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.danger)
-                        .background(Circle().fill(.white).padding(-1))
+                        .background(Circle().fill(Theme.Colors.mapAnnotationBackground).padding(-1))
                 }
             }
 

@@ -7,6 +7,14 @@ final class MockSyncQueueService: SyncQueueServiceProtocol, @unchecked Sendable 
     var processQueueCallCount = 0
     var shouldThrow = false
 
+    var stubbedPendingCount: Int?
+    var stubbedFailedCount: Int = 0
+    var stubbedFailedItems: [SyncQueueItem] = []
+    var retryItemCallCount = 0
+    var discardItemCallCount = 0
+    var retryAllCallCount = 0
+    var discardAllCallCount = 0
+
     func enqueueUpload(runId: UUID) async throws {
         if shouldThrow { throw DomainError.persistenceError(message: "Mock error") }
         enqueuedUploads.append(runId)
@@ -26,19 +34,19 @@ final class MockSyncQueueService: SyncQueueServiceProtocol, @unchecked Sendable 
     }
 
     func getPendingCount() async -> Int {
-        enqueuedOperations.count + enqueuedUploads.count
+        stubbedPendingCount ?? (enqueuedOperations.count + enqueuedUploads.count)
     }
 
     func getFailedCount() async -> Int {
-        0
+        stubbedFailedCount
     }
 
     func getFailedItems() async -> [SyncQueueItem] {
-        []
+        stubbedFailedItems
     }
 
-    func retryItem(id: UUID) async {}
-    func discardItem(id: UUID) async {}
-    func retryAllFailed() async {}
-    func discardAllFailed() async {}
+    func retryItem(id: UUID) async { retryItemCallCount += 1 }
+    func discardItem(id: UUID) async { discardItemCallCount += 1 }
+    func retryAllFailed() async { retryAllCallCount += 1 }
+    func discardAllFailed() async { discardAllCallCount += 1 }
 }

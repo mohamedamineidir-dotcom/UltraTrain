@@ -68,7 +68,7 @@ struct DashboardHeroCard: View {
         .padding(Theme.Spacing.lg)
         .background(gradientBackground)
         .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.lg))
-        .shadow(color: .black.opacity(0.15), radius: 8, y: 4)
+        .shadow(color: Theme.Colors.shadow, radius: 8, y: 4)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityDescription)
     }

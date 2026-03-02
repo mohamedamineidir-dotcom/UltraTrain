@@ -14,6 +14,7 @@ struct AppRootView: View {
     @State var unitPreference: UnitPreference = .metric
     @State var lastAutoImportDate: Date?
     @State private var isDeviceCompromised = false
+    @Environment(\.networkMonitor) private var networkMonitor
     let authService: any AuthServiceProtocol
     let deepLinkRouter: DeepLinkRouter
     private let deviceIntegrityChecker: (any DeviceIntegrityCheckerProtocol)?
@@ -195,6 +196,10 @@ struct AppRootView: View {
         VStack(spacing: 0) {
             if isDeviceCompromised {
                 JailbreakWarningBanner()
+            }
+            if let monitor = networkMonitor, !monitor.isConnected {
+                OfflineBanner()
+                    .transition(.move(edge: .top).combined(with: .opacity))
             }
             Group {
                 switch isAuthenticated {

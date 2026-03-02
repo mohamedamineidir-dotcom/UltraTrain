@@ -213,8 +213,10 @@ extension AppDependencyContainer {
         )
         backgroundTaskService.registerTasks()
 
+        let statusMon = syncStatusMonitor
         let netMonitor = NetworkMonitor(onConnectivityRestored: { [syncSvc = sync] in
             await syncSvc.processQueue()
+            await statusMon.refresh()
         })
         netMonitor.start()
         networkMonitor = netMonitor
