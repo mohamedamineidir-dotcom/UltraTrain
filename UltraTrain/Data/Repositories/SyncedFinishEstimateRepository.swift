@@ -4,7 +4,8 @@ import os
 final class SyncedFinishEstimateRepository: FinishEstimateRepository, @unchecked Sendable {
     private let local: LocalFinishEstimateRepository
     private let syncService: FinishEstimateSyncService
-    private var hasAttemptedRestore = false
+    private var lastRestoreAttempt: Date?
+    private let restoreTTL: TimeInterval = 86400
 
     init(local: LocalFinishEstimateRepository, syncService: FinishEstimateSyncService) {
         self.local = local
@@ -24,8 +25,8 @@ final class SyncedFinishEstimateRepository: FinishEstimateRepository, @unchecked
     }
 
     private func restoreIfNeeded(raceId: UUID) async -> FinishEstimate? {
-        guard !hasAttemptedRestore else { return nil }
-        hasAttemptedRestore = true
+        if let last = lastRestoreAttempt, Date().timeIntervalSince(last) < restoreTTL { return nil }
+        lastRestoreAttempt = Date()
         let estimates = await syncService.restoreEstimates()
         guard !estimates.isEmpty else { return nil }
         for estimate in estimates {

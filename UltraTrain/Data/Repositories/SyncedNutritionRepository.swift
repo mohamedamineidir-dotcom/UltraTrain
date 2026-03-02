@@ -4,7 +4,8 @@ import os
 final class SyncedNutritionRepository: NutritionRepository, @unchecked Sendable {
     private let local: LocalNutritionRepository
     private let syncService: NutritionSyncService
-    private var hasAttemptedRestore = false
+    private var lastRestoreAttempt: Date?
+    private let restoreTTL: TimeInterval = 86400
 
     init(local: LocalNutritionRepository, syncService: NutritionSyncService) {
         self.local = local
@@ -45,8 +46,8 @@ final class SyncedNutritionRepository: NutritionRepository, @unchecked Sendable 
     }
 
     private func restoreIfNeeded(raceId: UUID) async -> NutritionPlan? {
-        guard !hasAttemptedRestore else { return nil }
-        hasAttemptedRestore = true
+        if let last = lastRestoreAttempt, Date().timeIntervalSince(last) < restoreTTL { return nil }
+        lastRestoreAttempt = Date()
         let plans = await syncService.restoreNutrition()
         guard !plans.isEmpty else { return nil }
         for plan in plans {

@@ -4,7 +4,8 @@ import os
 final class SyncedFitnessRepository: FitnessRepository, @unchecked Sendable {
     private let local: LocalFitnessRepository
     private let syncService: FitnessSyncService
-    private var hasAttemptedRestore = false
+    private var lastRestoreAttempt: Date?
+    private let restoreTTL: TimeInterval = 86400
 
     init(local: LocalFitnessRepository, syncService: FitnessSyncService) {
         self.local = local
@@ -29,8 +30,8 @@ final class SyncedFitnessRepository: FitnessRepository, @unchecked Sendable {
     }
 
     private func restoreIfNeeded(from startDate: Date, to endDate: Date) async -> [FitnessSnapshot] {
-        guard !hasAttemptedRestore else { return [] }
-        hasAttemptedRestore = true
+        if let last = lastRestoreAttempt, Date().timeIntervalSince(last) < restoreTTL { return [] }
+        lastRestoreAttempt = Date()
         let snapshots = await syncService.restoreSnapshots()
         guard !snapshots.isEmpty else { return [] }
         for snapshot in snapshots {

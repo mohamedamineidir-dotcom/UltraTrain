@@ -52,9 +52,9 @@ struct RunShareCardView: View {
     private var backgroundGradient: some View {
         LinearGradient(
             colors: [
-                Color(red: 0.08, green: 0.08, blue: 0.14),
-                Color(red: 0.04, green: 0.12, blue: 0.18),
-                Color(red: 0.06, green: 0.06, blue: 0.12)
+                Theme.Colors.shareCardBackgroundTop,
+                Theme.Colors.shareCardBackgroundMid,
+                Theme.Colors.shareCardBackgroundBottom
             ],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
@@ -218,6 +218,6 @@ struct RunShareCardView: View {
     // MARK: - Accent
 
     private var accentColor: Color {
-        Color(red: 0.3, green: 0.75, blue: 0.55)
+        Theme.Colors.shareCardAccent
     }
 }

@@ -70,6 +70,8 @@
     <string>UltraTrain saves your completed runs as workouts in Apple Health.</string>
     <key>NSCameraUsageDescription</key>
     <string>UltraTrain uses the camera to scan food product barcodes for quick nutrition entry.</string>
+    <key>NSMotionUsageDescription</key>
+    <string>UltraTrain uses motion data to detect your cadence and running dynamics during tracked runs.</string>
     <key>NSFaceIDUsageDescription</key>
     <string>UltraTrain uses Face ID to protect your training and health data.</string>
     <key>NSUserTrackingUsageDescription</key>

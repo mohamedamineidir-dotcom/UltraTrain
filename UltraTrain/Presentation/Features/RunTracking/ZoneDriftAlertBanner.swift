@@ -59,9 +59,9 @@ struct ZoneDriftAlertBanner: View {
 
     private var backgroundColor: Color {
         switch alert.severity {
-        case .mild: Color.yellow.opacity(0.15)
-        case .moderate: Color.orange.opacity(0.15)
-        case .significant: Color.red.opacity(0.15)
+        case .mild: Theme.Colors.warning.opacity(0.15)
+        case .moderate: Theme.Colors.warning.opacity(0.25)
+        case .significant: Theme.Colors.danger.opacity(0.15)
         }
     }
 }

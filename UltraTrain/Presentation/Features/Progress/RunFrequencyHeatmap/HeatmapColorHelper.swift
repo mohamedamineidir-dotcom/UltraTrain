@@ -17,7 +17,7 @@ enum HeatmapColorHelper {
         case ..<0.75:
             return Color.red.opacity(0.6 + (clamped - 0.5) * 1.2)
         default:
-            return Color(red: 0.7, green: 0, blue: 0).opacity(0.8 + (clamped - 0.75) * 0.8)
+            return Theme.Colors.heatmapHigh.opacity(0.8 + (clamped - 0.75) * 0.8)
         }
     }
 }

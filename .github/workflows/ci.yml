@@ -114,6 +114,25 @@ jobs:
                   print(f'{t[\"name\"]}: {pct:.1f}%')
           " || echo "Coverage data not available"
 
+      - name: Enforce Coverage Threshold
+        run: |
+          THRESHOLD=60
+          COVERAGE=$(xcrun xccov view --report TestResults.xcresult --json 2>/dev/null \
+            | python3 -c "
+          import json, sys
+          data = json.load(sys.stdin)
+          for t in data.get('targets', []):
+              if t.get('name') == 'UltraTrain.app':
+                  print(f\"{t.get('lineCoverage', 0) * 100:.1f}\")
+                  sys.exit(0)
+          print('0')
+          ") || echo "0"
+          echo "Coverage: ${COVERAGE}%"
+          if (( $(echo "$COVERAGE < $THRESHOLD" | bc -l) )); then
+            echo "::error::Coverage ${COVERAGE}% is below threshold ${THRESHOLD}%"
+            exit 1
+          fi
+
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
         if: always()

@@ -98,7 +98,7 @@ targets:
       path: UltraTrainWatch/Resources/UltraTrainWatch.entitlements
       properties:
         com.apple.security.application-groups:
-          - group.com.ultratrain.watchshared
+          - group.com.ultratrain.shared
         com.apple.developer.healthkit: true
         com.apple.developer.healthkit.access: []
 
@@ -158,7 +158,7 @@ targets:
       path: UltraTrainWatchWidgets/Resources/UltraTrainWatchWidgets.entitlements
       properties:
         com.apple.security.application-groups:
-          - group.com.ultratrain.watchshared
+          - group.com.ultratrain.shared
 
   UltraTrainClip:
     type: application.on-demand-install-capable
