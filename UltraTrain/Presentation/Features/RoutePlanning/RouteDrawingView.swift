@@ -122,7 +122,7 @@ struct RouteDrawingView: View {
 
     private var resolvingOverlay: some View {
         ZStack {
-            Color.black.opacity(0.2)
+            Color.primary.opacity(0.2)
                 .ignoresSafeArea()
             ProgressView("Resolving path...")
                 .padding(Theme.Spacing.lg)

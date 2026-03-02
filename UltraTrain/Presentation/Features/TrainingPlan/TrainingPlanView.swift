@@ -18,7 +18,8 @@ struct TrainingPlanView: View {
         fitnessRepository: any FitnessRepository,
         widgetDataWriter: WidgetDataWriter,
         workoutRecipeRepository: any WorkoutRecipeRepository,
-        runRepository: any RunRepository
+        runRepository: any RunRepository,
+        hapticService: any HapticServiceProtocol = HapticService()
     ) {
         self.raceRepository = raceRepository
         self.planRepository = planRepository
@@ -33,7 +34,8 @@ struct TrainingPlanView: View {
             nutritionRepository: nutritionRepository,
             nutritionAdvisor: sessionNutritionAdvisor,
             fitnessRepository: fitnessRepository,
-            widgetDataWriter: widgetDataWriter
+            widgetDataWriter: widgetDataWriter,
+            hapticService: hapticService
         ))
     }
 

@@ -7,27 +7,50 @@ struct AchievementsView: View {
         achievementRepository: any AchievementRepository,
         runRepository: any RunRepository,
         challengeRepository: any ChallengeRepository,
-        raceRepository: any RaceRepository
+        raceRepository: any RaceRepository,
+        hapticService: any HapticServiceProtocol = HapticService()
     ) {
         _viewModel = State(initialValue: AchievementsViewModel(
             achievementRepository: achievementRepository,
             runRepository: runRepository,
             challengeRepository: challengeRepository,
-            raceRepository: raceRepository
+            raceRepository: raceRepository,
+            hapticService: hapticService
         ))
     }
 
     var body: some View {
         ScrollView {
             VStack(spacing: Theme.Spacing.md) {
-                progressHeader
-                categoryFilter
-                achievementGrid
+                if viewModel.isLoading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, minHeight: 200)
+                } else {
+                    progressHeader
+                    categoryFilter
+                    if viewModel.displayedAchievements.isEmpty {
+                        ContentUnavailableView(
+                            "No Achievements",
+                            systemImage: "trophy",
+                            description: Text("No achievements found for this category.")
+                        )
+                    } else {
+                        achievementGrid
+                    }
+                }
             }
             .padding()
         }
         .navigationTitle("Achievements")
         .task { await viewModel.load() }
+        .alert("Error", isPresented: Binding(
+            get: { viewModel.error != nil },
+            set: { if !$0 { viewModel.error = nil } }
+        )) {
+            Button("OK") { viewModel.error = nil }
+        } message: {
+            Text(viewModel.error ?? "")
+        }
     }
 
     // MARK: - Progress Header

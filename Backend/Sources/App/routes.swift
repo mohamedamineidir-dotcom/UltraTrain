@@ -32,6 +32,11 @@ func routes(_ app: Application) throws {
     try api.register(collection: SharedRunController())
     try api.register(collection: GroupChallengeController())
 
+    try api.register(collection: NutritionController())
+    try api.register(collection: FitnessController())
+    try api.register(collection: FinishEstimateController())
+    try api.register(collection: ChallengeController())
+
     // Crash reports — no auth required, aggressively rate-limited
     try api.register(collection: CrashReportController())
 }

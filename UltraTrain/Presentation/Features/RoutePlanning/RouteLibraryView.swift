@@ -89,6 +89,7 @@ struct RouteLibraryView: View {
             HStack {
                 Image(systemName: sourceIcon(route.source))
                     .foregroundStyle(Theme.Colors.primary)
+                    .accessibilityHidden(true)
                 Text(route.name)
                     .font(.subheadline.bold())
                     .lineLimit(1)
@@ -153,6 +154,7 @@ struct RouteLibraryView: View {
                 }
             } label: {
                 Image(systemName: "plus")
+                    .accessibilityLabel("Add route")
             }
         }
     }

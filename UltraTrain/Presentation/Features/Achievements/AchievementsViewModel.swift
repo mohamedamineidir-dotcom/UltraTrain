@@ -8,6 +8,7 @@ final class AchievementsViewModel {
     private let runRepository: any RunRepository
     private let challengeRepository: any ChallengeRepository
     private let raceRepository: any RaceRepository
+    private let hapticService: any HapticServiceProtocol
 
     var unlockedIds: Set<String> = []
     var unlockedAchievements: [UnlockedAchievement] = []
@@ -28,12 +29,14 @@ final class AchievementsViewModel {
         achievementRepository: any AchievementRepository,
         runRepository: any RunRepository,
         challengeRepository: any ChallengeRepository,
-        raceRepository: any RaceRepository
+        raceRepository: any RaceRepository,
+        hapticService: any HapticServiceProtocol
     ) {
         self.achievementRepository = achievementRepository
         self.runRepository = runRepository
         self.challengeRepository = challengeRepository
         self.raceRepository = raceRepository
+        self.hapticService = hapticService
     }
 
     func load() async {
@@ -76,6 +79,10 @@ final class AchievementsViewModel {
                 try await achievementRepository.saveUnlocked(achievement)
                 unlockedIds.insert(achievement.achievementId)
                 unlockedAchievements.append(achievement)
+            }
+
+            if !newlyUnlocked.isEmpty {
+                hapticService.playSuccess()
             }
         } catch {
             Logger.achievements.error("Failed to evaluate achievements: \(error)")

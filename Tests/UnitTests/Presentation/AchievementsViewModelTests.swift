@@ -12,7 +12,8 @@ struct AchievementsViewModelTests {
             achievementRepository: repo,
             runRepository: MockRunRepository(),
             challengeRepository: MockChallengeRepository(),
-            raceRepository: MockRaceRepository()
+            raceRepository: MockRaceRepository(),
+            hapticService: MockHapticService()
         )
         return (vm, repo)
     }

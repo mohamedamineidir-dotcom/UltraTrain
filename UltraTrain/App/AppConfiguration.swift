@@ -25,9 +25,15 @@ enum AppConfiguration {
         static let isProduction: Bool = environment == "production"
         static let timeoutInterval: TimeInterval = 30
         static let hmacSecret: String = Bundle.main.infoDictionary?["HMAC_SIGNING_SECRET"] as? String ?? ""
-        static let pinnedHost: String = "railway-link-production-96cc.up.railway.app"
+        static let pinnedHost: String = {
+            #if DEBUG
+            return "railway-link-production-96cc.up.railway.app"
+            #else
+            return "ultratrain.app"
+            #endif
+        }()
         static let certificatePinHashes: [String] = [
-            "uDJoKW7obJUPmVjZ6PfANMvVjFjM28DhB5Nl42ovcPs=", // Leaf: *.up.railway.app
+            "uDJoKW7obJUPmVjZ6PfANMvVjFjM28DhB5Nl42ovcPs=", // Leaf: *.up.railway.app (staging)
             "oW7smChMJRcnzTObF7K+HzInReAPTxB/L1h6eZTmw9Q="  // Intermediate: Certainly Intermediate R1
         ]
     }

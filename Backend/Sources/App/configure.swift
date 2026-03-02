@@ -59,6 +59,10 @@ func configure(_ app: Application) async throws {
     app.migrations.add(CreateChallengeParticipant())
     app.migrations.add(AddAPNSEnvironmentToUser())
     app.migrations.add(CreateCrashReport())
+    app.migrations.add(CreateNutritionPlan())
+    app.migrations.add(CreateFitnessSnapshot())
+    app.migrations.add(CreateFinishEstimate())
+    app.migrations.add(CreateChallenge())
     do {
         try await app.autoMigrate()
         app.logger.notice("Migrations completed successfully")

@@ -235,6 +235,14 @@ struct DashboardView: View {
                 await syncStatusMonitor?.refresh()
             }
             .animation(.easeInOut(duration: 0.3), value: viewModel.isLoading)
+            .alert("Error", isPresented: Binding(
+                get: { viewModel.fitnessError != nil },
+                set: { if !$0 { viewModel.fitnessError = nil } }
+            )) {
+                Button("OK") { viewModel.fitnessError = nil }
+            } message: {
+                Text(viewModel.fitnessError ?? "")
+            }
             .sheet(isPresented: $showGoalSetting) {
                 GoalSettingView(goalRepository: goalRepository) {
                     Task { await viewModel.load() }

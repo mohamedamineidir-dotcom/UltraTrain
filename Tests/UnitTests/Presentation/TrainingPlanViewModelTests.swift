@@ -110,7 +110,8 @@ struct TrainingPlanViewModelTests {
             nutritionRepository: MockNutritionRepository(),
             nutritionAdvisor: DefaultSessionNutritionAdvisor(),
             fitnessRepository: MockFitnessRepository(),
-            widgetDataWriter: writer
+            widgetDataWriter: writer,
+            hapticService: MockHapticService()
         )
     }
 

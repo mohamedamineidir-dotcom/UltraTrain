@@ -15,6 +15,7 @@ final class TrainingPlanViewModel {
     let nutritionAdvisor: any SessionNutritionAdvisor
     let fitnessRepository: any FitnessRepository
     let widgetDataWriter: WidgetDataWriter
+    private let hapticService: any HapticServiceProtocol
 
     // MARK: - State
 
@@ -40,7 +41,8 @@ final class TrainingPlanViewModel {
         nutritionRepository: any NutritionRepository,
         nutritionAdvisor: any SessionNutritionAdvisor,
         fitnessRepository: any FitnessRepository,
-        widgetDataWriter: WidgetDataWriter
+        widgetDataWriter: WidgetDataWriter,
+        hapticService: any HapticServiceProtocol
     ) {
         self.planRepository = planRepository
         self.athleteRepository = athleteRepository
@@ -50,6 +52,7 @@ final class TrainingPlanViewModel {
         self.nutritionAdvisor = nutritionAdvisor
         self.fitnessRepository = fitnessRepository
         self.widgetDataWriter = widgetDataWriter
+        self.hapticService = hapticService
     }
 
     // MARK: - Load
@@ -126,6 +129,7 @@ final class TrainingPlanViewModel {
             self.athlete = athlete
             races = allRaces
             Logger.training.info("Plan generated: \(newPlan.weeks.count) weeks")
+            hapticService.playSuccess()
             await updateWidgets()
             checkForAdjustments()
         } catch {

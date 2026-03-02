@@ -28,7 +28,7 @@ enum Theme {
 
         // MARK: - Feature-specific
 
-        static let heatmapHigh = Color(red: 0.7, green: 0, blue: 0)
+        static let heatmapHigh = Color(red: 0.85, green: 0.1, blue: 0.1)
         static let shareCardAccent = Color(red: 0.3, green: 0.75, blue: 0.55)
         static let shareCardBackgroundTop = Color(red: 0.08, green: 0.08, blue: 0.14)
         static let shareCardBackgroundMid = Color(red: 0.04, green: 0.12, blue: 0.18)

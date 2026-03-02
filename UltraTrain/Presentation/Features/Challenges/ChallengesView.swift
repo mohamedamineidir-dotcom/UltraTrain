@@ -18,10 +18,16 @@ struct ChallengesView: View {
     var body: some View {
         NavigationStack {
             List {
-                streakSection
-                activeChallengesSection
-                availableChallengesSection
-                completedSection
+                if viewModel.isLoading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity)
+                        .listRowSeparator(.hidden)
+                } else {
+                    streakSection
+                    activeChallengesSection
+                    availableChallengesSection
+                    completedSection
+                }
             }
             .navigationTitle("Challenges")
             .task {
