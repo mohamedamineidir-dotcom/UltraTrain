@@ -76,6 +76,10 @@
     <string>UltraTrain uses this permission to measure app performance and improve your training experience. No personal data is shared with third parties.</string>
     <key>NSSupportsLiveActivities</key>
     <true/>
+    <key>API_BASE_URL</key>
+    <string>$(API_BASE_URL)</string>
+    <key>API_ENVIRONMENT</key>
+    <string>$(API_ENVIRONMENT)</string>
     <key>STRAVA_CLIENT_ID</key>
     <string>$(STRAVA_CLIENT_ID)</string>
     <key>STRAVA_CLIENT_SECRET</key>

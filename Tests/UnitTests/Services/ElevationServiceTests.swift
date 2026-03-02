@@ -56,4 +56,36 @@ struct ElevationServiceTests {
         #expect(result[1].category == .flat)
         #expect(result[2].category == .steepDown)
     }
+
+    // MARK: - DEM Elevation Lookup
+
+    @Test("correctElevations returns empty for empty input")
+    func correctElevationsEmptyInput() async {
+        let result = await ElevationService.correctElevations(for: [])
+        #expect(result.isEmpty)
+    }
+
+    @Test("correctElevationProfile falls back to smoothed on coordinate mismatch")
+    func correctProfileMismatch() async {
+        let profile = makeProfile([100, 200, 150])
+        let coords: [(latitude: Double, longitude: Double)] = [(45.0, 6.0)] // count mismatch
+
+        let result = await ElevationService.correctElevationProfile(profile, coordinates: coords)
+        #expect(result.count == 3)
+    }
+
+    @Test("correctElevationProfile preserves point count on fallback")
+    func correctProfilePreservesCount() async {
+        let profile = makeProfile([100, 200, 150, 300, 250])
+        let coords: [(latitude: Double, longitude: Double)] = [
+            (45.0, 6.0), (45.01, 6.01), (45.02, 6.02), (45.03, 6.03), (45.04, 6.04)
+        ]
+
+        // With default URLSession this will likely fail (no real API in tests)
+        // so it should gracefully fall back to smoothed GPS data
+        let result = await ElevationService.correctElevationProfile(
+            profile, coordinates: coords
+        )
+        #expect(result.count == 5)
+    }
 }

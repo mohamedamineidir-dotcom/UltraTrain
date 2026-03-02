@@ -202,6 +202,8 @@ extension AppDependencyContainer {
         crashReporterService.start()
         crashReporter = crashReporterService
 
+        analyticsService = AnalyticsService(apiClient: client)
+
         deepLinkRouter = DeepLinkRouter()
         let delegate = NotificationDelegate()
         delegate.deepLinkRouter = deepLinkRouter

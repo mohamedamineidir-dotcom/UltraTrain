@@ -35,6 +35,10 @@ final class SyncedRunRepository: RunRepository, @unchecked Sendable {
         try await local.getRun(id: id)
     }
 
+    func getRuns(from startDate: Date, to endDate: Date) async throws -> [CompletedRun] {
+        try await local.getRuns(from: startDate, to: endDate)
+    }
+
     func getRecentRuns(limit: Int) async throws -> [CompletedRun] {
         let localRuns = try await local.getRecentRuns(limit: limit)
         if localRuns.isEmpty, let restored = await restoreRunsIfNeeded() {

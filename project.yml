@@ -9,8 +9,8 @@ options:
   groupSortPosition: top
 
 configFiles:
-  Debug: Secrets.xcconfig
-  Release: Secrets.xcconfig
+  Debug: Configuration/Debug.xcconfig
+  Release: Configuration/Release.xcconfig
 
 settings:
   base:
@@ -62,8 +62,8 @@ targets:
           - CloudKit
         com.apple.developer.icloud-container-identifiers:
           - iCloud.com.ultratrain.app
-        aps-environment: development
-        com.apple.developer.default-data-protection: NSFileProtectionCompleteUntilFirstUserAuthentication
+        aps-environment: production
+        com.apple.developer.default-data-protection: NSFileProtectionComplete
         com.apple.developer.associated-domains:
           - applinks:ultratrain.app
     postCompileScripts: []

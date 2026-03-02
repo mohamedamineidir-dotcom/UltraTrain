@@ -1,0 +1,10 @@
+// Debug.xcconfig — Development / Staging configuration
+// Imports local secrets (gitignored)
+#include "../Secrets.xcconfig"
+
+// API
+API_BASE_URL = https:/$()/railway-link-production-96cc.up.railway.app/v1
+API_ENVIRONMENT = staging
+
+// Push Notifications
+APS_ENVIRONMENT = development

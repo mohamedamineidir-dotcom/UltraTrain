@@ -44,6 +44,11 @@ final class MockRunRepository: RunRepository, @unchecked Sendable {
         linkedSessionUpdate = (runId, sessionId)
     }
 
+    func getRuns(from startDate: Date, to endDate: Date) async throws -> [CompletedRun] {
+        if shouldThrow { throw DomainError.persistenceError(message: "Mock error") }
+        return runs.filter { $0.date >= startDate && $0.date <= endDate }
+    }
+
     func getRecentRuns(limit: Int) async throws -> [CompletedRun] {
         if shouldThrow { throw DomainError.persistenceError(message: "Mock error") }
         return Array(runs.prefix(limit))

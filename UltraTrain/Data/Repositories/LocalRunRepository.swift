@@ -90,6 +90,16 @@ final class LocalRunRepository: RunRepository, @unchecked Sendable {
         Logger.tracking.info("Run \(runId) linked to session \(sessionId)")
     }
 
+    func getRuns(from startDate: Date, to endDate: Date) async throws -> [CompletedRun] {
+        let context = ModelContext(modelContainer)
+        let descriptor = FetchDescriptor<CompletedRunSwiftDataModel>(
+            predicate: #Predicate { $0.date >= startDate && $0.date <= endDate },
+            sortBy: [SortDescriptor(\.date, order: .reverse)]
+        )
+        let results = try context.fetch(descriptor)
+        return results.map { CompletedRunSwiftDataMapper.toDomain($0) }
+    }
+
     func getRecentRuns(limit: Int) async throws -> [CompletedRun] {
         let context = ModelContext(modelContainer)
         var descriptor = FetchDescriptor<CompletedRunSwiftDataModel>(

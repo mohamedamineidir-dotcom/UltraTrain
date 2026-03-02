@@ -1,0 +1,10 @@
+// Release.xcconfig — Production configuration
+// Imports local secrets (gitignored)
+#include "../Secrets.xcconfig"
+
+// API
+API_BASE_URL = https:/$()/ultratrain.app/api/v1
+API_ENVIRONMENT = production
+
+// Push Notifications
+APS_ENVIRONMENT = production

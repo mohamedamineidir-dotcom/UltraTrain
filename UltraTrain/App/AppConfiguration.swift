@@ -8,12 +8,15 @@ enum AppConfiguration {
 
     enum API {
         static let baseURL: URL = {
-            #if DEBUG
+            if let urlString = Bundle.main.infoDictionary?["API_BASE_URL"] as? String,
+               !urlString.isEmpty,
+               let url = URL(string: urlString) {
+                return url
+            }
             return URL(string: "https://railway-link-production-96cc.up.railway.app/v1")!
-            #else
-            return URL(string: "https://railway-link-production-96cc.up.railway.app/v1")!
-            #endif
         }()
+        static let environment: String = Bundle.main.infoDictionary?["API_ENVIRONMENT"] as? String ?? "staging"
+        static let isProduction: Bool = environment == "production"
         static let timeoutInterval: TimeInterval = 30
         static let hmacSecret: String = Bundle.main.infoDictionary?["HMAC_SIGNING_SECRET"] as? String ?? ""
         static let pinnedHost: String = "railway-link-production-96cc.up.railway.app"

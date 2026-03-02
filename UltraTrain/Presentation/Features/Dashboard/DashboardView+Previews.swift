@@ -17,6 +17,7 @@ private struct PreviewRunRepository: RunRepository, @unchecked Sendable {
     func updateRun(_ run: CompletedRun) async throws {}
     func updateLinkedSession(runId: UUID, sessionId: UUID) async throws {}
     func getRecentRuns(limit: Int) async throws -> [CompletedRun] { [] }
+    func getRuns(from startDate: Date, to endDate: Date) async throws -> [CompletedRun] { [] }
 }
 
 private struct PreviewAthleteRepository: AthleteRepository, @unchecked Sendable {

@@ -91,6 +91,10 @@ struct AppDependencyContainer {
     let cloudKitSharingService: (any CloudKitSharingServiceProtocol)?
     let cloudKitCrewService: any CrewTrackingServiceProtocol
 
+    // MARK: - Analytics
+
+    let analyticsService: AnalyticsService
+
     // MARK: - Crash Reporting
 
     let crashReporter: CrashReporterProtocol

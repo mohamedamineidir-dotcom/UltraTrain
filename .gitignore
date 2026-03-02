@@ -19,6 +19,8 @@ Package.resolved
 
 # Secrets — NEVER commit these
 *.xcconfig
+!Configuration/Debug.xcconfig
+!Configuration/Release.xcconfig
 Secrets/
 
 # macOS
