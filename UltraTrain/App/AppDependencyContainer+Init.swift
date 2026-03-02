@@ -198,6 +198,10 @@ extension AppDependencyContainer {
         cloudKitSharingService = cloudKitResult.sharingService
         cloudKitCrewService = cloudKitResult.crewService
 
+        let crashReporterService = CrashReporterService(apiClient: authApiClient)
+        crashReporterService.start()
+        crashReporter = crashReporterService
+
         deepLinkRouter = DeepLinkRouter()
         let delegate = NotificationDelegate()
         delegate.deepLinkRouter = deepLinkRouter

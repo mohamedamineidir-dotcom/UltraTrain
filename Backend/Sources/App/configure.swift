@@ -58,6 +58,7 @@ func configure(_ app: Application) async throws {
     app.migrations.add(CreateGroupChallenge())
     app.migrations.add(CreateChallengeParticipant())
     app.migrations.add(AddAPNSEnvironmentToUser())
+    app.migrations.add(CreateCrashReport())
     do {
         try await app.autoMigrate()
         app.logger.notice("Migrations completed successfully")

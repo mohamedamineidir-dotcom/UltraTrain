@@ -121,4 +121,76 @@ struct DeepLinkRouterTests {
         _ = router.handle(url: URL(string: "ultratrain://profile")!)
         #expect(router.pendingDeepLink == .tab(.profile))
     }
+
+    // MARK: - Universal Link Tests
+
+    @Test("Handles shared-runs universal link")
+    @MainActor
+    func sharedRunUniversalLink() {
+        let router = DeepLinkRouter()
+        let url = URL(string: "https://ultratrain.app/shared-runs/abc-123")!
+        let handled = router.handle(url: url)
+        #expect(handled)
+        #expect(router.pendingDeepLink == .sharedRun(id: "abc-123"))
+    }
+
+    @Test("Handles crew universal link")
+    @MainActor
+    func crewUniversalLink() {
+        let router = DeepLinkRouter()
+        let url = URL(string: "https://ultratrain.app/crew/session-456")!
+        let handled = router.handle(url: url)
+        #expect(handled)
+        #expect(router.pendingDeepLink == .crewTracking(sessionId: "session-456"))
+    }
+
+    @Test("Handles race universal link")
+    @MainActor
+    func raceUniversalLink() {
+        let router = DeepLinkRouter()
+        let url = URL(string: "https://ultratrain.app/race/race-789")!
+        let handled = router.handle(url: url)
+        #expect(handled)
+        #expect(router.pendingDeepLink == .raceDetail(raceId: "race-789"))
+    }
+
+    @Test("Rejects unknown ultratrain.app path")
+    @MainActor
+    func unknownUniversalLinkPath() {
+        let router = DeepLinkRouter()
+        let url = URL(string: "https://ultratrain.app/unknown/123")!
+        let handled = router.handle(url: url)
+        #expect(!handled)
+        #expect(router.pendingDeepLink == nil)
+    }
+
+    @Test("Rejects universal link with wrong domain")
+    @MainActor
+    func wrongDomain() {
+        let router = DeepLinkRouter()
+        let url = URL(string: "https://other.com/shared-runs/123")!
+        let handled = router.handle(url: url)
+        #expect(!handled)
+        #expect(router.pendingDeepLink == nil)
+    }
+
+    @Test("Rejects universal link with missing identifier")
+    @MainActor
+    func missingIdentifier() {
+        let router = DeepLinkRouter()
+        let url = URL(string: "https://ultratrain.app/shared-runs")!
+        let handled = router.handle(url: url)
+        #expect(!handled)
+        #expect(router.pendingDeepLink == nil)
+    }
+
+    @Test("Existing custom scheme links still work after universal link support")
+    @MainActor
+    func backwardCompatibility() {
+        let router = DeepLinkRouter()
+        let url = URL(string: "ultratrain://dashboard")!
+        let handled = router.handle(url: url)
+        #expect(handled)
+        #expect(router.pendingDeepLink == .tab(.dashboard))
+    }
 }

@@ -150,6 +150,12 @@ extension MainTabView {
                 selectedTab = .run
             case .morningReadiness:
                 selectedTab = .dashboard
+            case .sharedRun:
+                selectedTab = .profile
+            case .crewTracking:
+                selectedTab = .run
+            case .raceDetail:
+                selectedTab = .plan
             }
         }
     }

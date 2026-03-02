@@ -91,6 +91,10 @@ struct AppDependencyContainer {
     let cloudKitSharingService: (any CloudKitSharingServiceProtocol)?
     let cloudKitCrewService: any CrewTrackingServiceProtocol
 
+    // MARK: - Crash Reporting
+
+    let crashReporter: CrashReporterProtocol
+
     // MARK: - App Infrastructure
 
     let deepLinkRouter: DeepLinkRouter

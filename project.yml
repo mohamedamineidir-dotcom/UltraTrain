@@ -62,6 +62,8 @@ targets:
           - iCloud.com.ultratrain.app
         aps-environment: development
         com.apple.developer.default-data-protection: NSFileProtectionCompleteUntilFirstUserAuthentication
+        com.apple.developer.associated-domains:
+          - applinks:ultratrain.app
     postCompileScripts: []
 
   UltraTrainWatch:

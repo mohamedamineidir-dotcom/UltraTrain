@@ -46,4 +46,5 @@ extension Logger {
     static let validation = Logger(subsystem: subsystem, category: "validation")
     static let analyticsLog = Logger(subsystem: subsystem, category: "analytics")
     static let privacy = Logger(subsystem: subsystem, category: "privacy")
+    static let crashReporter = Logger(subsystem: subsystem, category: "crashReporter")
 }

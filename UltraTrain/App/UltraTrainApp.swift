@@ -108,9 +108,11 @@ struct UltraTrainApp: App {
             if newPhase == .active {
                 let syncSvc = container.syncService
                 let monitor = container.syncStatusMonitor
+                let reporter = container.crashReporter
                 Task {
                     await syncSvc.processQueue()
                     await monitor.refresh()
+                    await reporter.uploadPendingReports()
                 }
             }
             if newPhase == .background {
