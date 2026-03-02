@@ -40,6 +40,7 @@ final class MorningReadinessViewModel {
         isLoading = true
         do {
             let now = Date.now
+            // invariant: Calendar.date(byAdding:) always succeeds for simple offsets
             let thirtyDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: now)!
 
             hrvReadings = try await healthKitService.fetchHRVData(from: thirtyDaysAgo, to: now)

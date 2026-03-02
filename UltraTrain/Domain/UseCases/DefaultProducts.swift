@@ -1,6 +1,7 @@
 import Foundation
 
 enum DefaultProducts {
+    // invariant: literal UUID strings are always valid
     static let all: [NutritionProduct] = [
         NutritionProduct(
             id: UUID(uuidString: "00000000-0000-0000-0000-000000000001")!,

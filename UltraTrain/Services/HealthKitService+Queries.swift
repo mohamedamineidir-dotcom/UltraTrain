@@ -15,6 +15,7 @@ extension HealthKitService {
 
         let heartRateType = HKQuantityType(.restingHeartRate)
         let now = Date.now
+        // invariant: Calendar.date(byAdding:) always succeeds for simple offsets
         let sevenDaysAgo = Calendar.current.date(byAdding: .day, value: -7, to: now)!
         let predicate = HKQuery.predicateForSamples(
             withStart: sevenDaysAgo, end: now, options: .strictEndDate
@@ -46,6 +47,7 @@ extension HealthKitService {
 
         let heartRateType = HKQuantityType(.heartRate)
         let now = Date.now
+        // invariant: Calendar.date(byAdding:) always succeeds for simple offsets
         let thirtyDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: now)!
         let predicate = HKQuery.predicateForSamples(
             withStart: thirtyDaysAgo, end: now, options: .strictEndDate

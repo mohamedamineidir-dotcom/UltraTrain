@@ -111,7 +111,7 @@ extension RunDetailView {
         let hasReflection = currentRun.rpe != nil
             || currentRun.perceivedFeeling != nil
             || currentRun.terrainType != nil
-        let hasNotes = currentRun.notes != nil && !currentRun.notes!.isEmpty
+        let hasNotes = currentRun.notes?.isEmpty == false
 
         if hasReflection || hasNotes {
             VStack(alignment: .leading, spacing: Theme.Spacing.sm) {

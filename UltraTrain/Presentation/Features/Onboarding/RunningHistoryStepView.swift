@@ -211,6 +211,7 @@ struct RunningHistoryStepView: View {
             try await service.requestAuthorization()
 
             let endDate = Date.now
+            // invariant: Calendar.date(byAdding:) always succeeds for simple offsets
             let startDate = Calendar.current.date(byAdding: .day, value: -90, to: endDate)!
             let workouts = try await service.fetchRunningWorkouts(from: startDate, to: endDate)
 

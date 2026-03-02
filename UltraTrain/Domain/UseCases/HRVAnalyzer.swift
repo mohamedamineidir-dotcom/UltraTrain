@@ -22,6 +22,7 @@ enum HRVAnalyzer {
         guard readings.count >= 3 else { return nil }
 
         let now = Date.now
+        // invariant: Calendar.date(byAdding:) always succeeds for simple day offsets
         let sevenDaysAgo = Calendar.current.date(byAdding: .day, value: -7, to: now)!
         let thirtyDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: now)!
 

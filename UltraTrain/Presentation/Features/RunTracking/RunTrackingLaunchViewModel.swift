@@ -168,6 +168,8 @@ final class RunTrackingLaunchViewModel {
 
     // MARK: - Private
 
+    // Transient UI preference — not sensitive data, stored in UserDefaults
+    // for quick access without loading full AppSettings
     private static let lastUsedGearKey = "lastUsedGearIds"
 
     private func saveLastUsedGear() {

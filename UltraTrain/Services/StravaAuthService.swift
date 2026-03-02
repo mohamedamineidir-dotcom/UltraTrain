@@ -71,6 +71,7 @@ final class StravaAuthService: StravaAuthServiceProtocol, @unchecked Sendable {
     private func performOAuth() async throws -> String {
         let config = AppConfiguration.Strava.self
 
+        // invariant: authorizeURL is a compile-time constant string
         var components = URLComponents(string: config.authorizeURL)!
         components.queryItems = [
             URLQueryItem(name: "client_id", value: config.clientId),
@@ -113,9 +114,7 @@ final class StravaAuthService: StravaAuthServiceProtocol, @unchecked Sendable {
             session.prefersEphemeralWebBrowserSession = false
             session.presentationContextProvider = provider
 
-            DispatchQueue.main.async {
-                session.start()
-            }
+            Task { @MainActor in session.start() }
         }
     }
 
@@ -124,6 +123,7 @@ final class StravaAuthService: StravaAuthServiceProtocol, @unchecked Sendable {
     private func exchangeCodeForToken(_ code: String) async throws -> StravaToken {
         let config = AppConfiguration.Strava.self
 
+        // invariant: tokenURL is a compile-time constant string
         var request = URLRequest(url: URL(string: config.tokenURL)!)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -154,6 +154,7 @@ final class StravaAuthService: StravaAuthServiceProtocol, @unchecked Sendable {
     private func refreshToken(_ expiredToken: StravaToken) async throws -> StravaToken {
         let config = AppConfiguration.Strava.self
 
+        // invariant: tokenURL is a compile-time constant string
         var request = URLRequest(url: URL(string: config.tokenURL)!)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")

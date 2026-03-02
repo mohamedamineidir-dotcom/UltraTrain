@@ -133,6 +133,7 @@ final class BackgroundTaskService: Sendable {
 
         do {
             let now = Date.now
+            // invariant: Calendar.date(byAdding:) always succeeds for simple offsets
             let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: now)!
             _ = try await healthKitService.fetchSleepData(from: yesterday, to: now)
             _ = try await healthKitService.fetchHRVData(from: yesterday, to: now)
@@ -155,6 +156,7 @@ final class BackgroundTaskService: Sendable {
 
         do {
             let now = Date.now
+            // invariant: Calendar.date(byAdding:) always succeeds for simple offsets
             let thirtyDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: now)!
             let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: now)!
 

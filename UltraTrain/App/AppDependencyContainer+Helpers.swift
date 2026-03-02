@@ -6,8 +6,8 @@ extension AppDependencyContainer {
     // MARK: - ModelContainer
 
     static func createModelContainer(isUITesting: Bool, iCloudEnabled: Bool) -> ModelContainer {
+        let schema = Schema(SchemaV1.models)
         do {
-            let schema = Schema(SchemaV1.models)
             let config: ModelConfiguration
             if isUITesting {
                 config = ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
@@ -24,7 +24,15 @@ extension AppDependencyContainer {
                 configurations: config
             )
         } catch {
-            fatalError("Failed to create ModelContainer: \(error)")
+            Logger.persistence.critical("Failed to create ModelContainer: \(error). Attempting fallback with in-memory store.")
+            // Fallback: create an in-memory container so the app can still launch.
+            // User will see empty data but won't get an instant crash.
+            do {
+                let fallbackConfig = ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
+                return try ModelContainer(for: schema, configurations: fallbackConfig)
+            } catch {
+                fatalError("Failed to create even in-memory ModelContainer: \(error)")
+            }
         }
     }
 

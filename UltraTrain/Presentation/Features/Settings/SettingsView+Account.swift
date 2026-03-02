@@ -125,27 +125,34 @@ extension SettingsView {
 
     // MARK: - About Section
 
+    // swiftlint:disable force_unwrapping
+    private static let appStoreURL = URL(string: "https://apps.apple.com/app/ultratrain")!
+    private static let feedbackURL = URL(string: "mailto:support@ultratrain.app?subject=UltraTrain%20Feedback")!
+    private static let privacyURL = URL(string: "https://ultratrain.app/privacy")!
+    private static let termsURL = URL(string: "https://ultratrain.app/terms")!
+    // swiftlint:enable force_unwrapping
+
     var aboutSection: some View {
         Section("About") {
             LabeledContent("Version", value: AppConfiguration.appVersion)
             LabeledContent("Build", value: AppConfiguration.buildNumber)
 
-            Link(destination: URL(string: "https://apps.apple.com/app/ultratrain")!) {
+            Link(destination: Self.appStoreURL) {
                 Label("Rate on App Store", systemImage: "star")
             }
             .accessibilityHint("Opens the App Store to rate UltraTrain")
 
-            Link(destination: URL(string: "mailto:support@ultratrain.app?subject=UltraTrain%20Feedback")!) {
+            Link(destination: Self.feedbackURL) {
                 Label("Send Feedback", systemImage: "envelope")
             }
             .accessibilityHint("Opens an email to send feedback to the UltraTrain team")
 
-            Link(destination: URL(string: "https://ultratrain.app/privacy")!) {
+            Link(destination: Self.privacyURL) {
                 Label("Privacy Policy", systemImage: "hand.raised")
             }
             .accessibilityHint("Opens the privacy policy in your browser")
 
-            Link(destination: URL(string: "https://ultratrain.app/terms")!) {
+            Link(destination: Self.termsURL) {
                 Label("Terms of Service", systemImage: "doc.text")
             }
             .accessibilityHint("Opens the terms of service in your browser")

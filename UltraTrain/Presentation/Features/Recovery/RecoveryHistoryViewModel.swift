@@ -24,6 +24,7 @@ final class RecoveryHistoryViewModel {
         isLoading = true
         do {
             let now = Date.now
+            // invariant: Calendar.date(byAdding:) always succeeds for simple offsets
             let thirtyDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: now)!
 
             let snapshots = try await recoveryRepository.getSnapshots(from: thirtyDaysAgo, to: now)

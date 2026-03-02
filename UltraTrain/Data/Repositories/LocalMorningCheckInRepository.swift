@@ -12,6 +12,7 @@ final class LocalMorningCheckInRepository: MorningCheckInRepository, @unchecked 
         let context = ModelContext(modelContainer)
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: date)
+        // invariant: Calendar.date(byAdding:) always succeeds for simple offsets
         let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
 
         var descriptor = FetchDescriptor<MorningCheckInSwiftDataModel>(

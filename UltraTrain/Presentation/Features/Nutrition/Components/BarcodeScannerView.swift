@@ -53,9 +53,8 @@ final class BarcodeScannerViewController: UIViewController, AVCaptureMetadataOut
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
                 if granted {
-                    DispatchQueue.main.async {
-                        self?.setupCamera()
-                    }
+                    // AVCaptureDevice callback fires off-main; UI setup must happen on main thread
+                    Task { @MainActor in self?.setupCamera() }
                 }
             }
         default:
@@ -93,8 +92,9 @@ final class BarcodeScannerViewController: UIViewController, AVCaptureMetadataOut
         previewLayer = preview
         captureSession = session
 
+        // AVCaptureSession.startRunning() blocks — must not run on main thread
         let capturedSession = session
-        DispatchQueue.global(qos: .userInitiated).async {
+        Task.detached(priority: .userInitiated) {
             capturedSession.startRunning()
         }
     }
@@ -116,7 +116,8 @@ final class BarcodeScannerViewController: UIViewController, AVCaptureMetadataOut
     ) {
         guard let object = metadataObjects.first as? AVMetadataMachineReadableCodeObject,
               let barcode = object.stringValue else { return }
-        DispatchQueue.main.async { [weak self] in
+        // Metadata delegate fires on the queue set in setMetadataObjectsDelegate (main)
+        Task { @MainActor [weak self] in
             guard let self, !self.hasScanned else { return }
             self.hasScanned = true
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()

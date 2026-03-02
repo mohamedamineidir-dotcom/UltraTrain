@@ -8,6 +8,8 @@ extension SettingsViewModel {
     // MARK: - iCloud Sync
 
     func toggleiCloudSync(_ enabled: Bool) {
+        // Duplicated to UserDefaults because this value is read at app launch
+        // before SwiftData/AppSettings is available, to configure ModelContainer
         UserDefaults.standard.set(enabled, forKey: "iCloudSyncEnabled")
         iCloudSyncEnabled = enabled
         showRestartAlert = true
@@ -36,6 +38,7 @@ extension SettingsViewModel {
         do {
             try await appSettingsRepository.updateSettings(settings)
             appSettings = settings
+            // Duplicated to UserDefaults for instant theme application before AppSettings loads
             UserDefaults.standard.set(mode.rawValue, forKey: "appearanceMode")
         } catch {
             self.error = error.localizedDescription

@@ -39,6 +39,7 @@ final class StravaUploadService: StravaUploadServiceProtocol {
     // MARK: - Upload
 
     private func uploadGPX(data: Data, token: String, run: CompletedRun) async throws -> Int {
+        // invariant: apiBaseURL + static path is always a valid URL
         let url = URL(string: "\(AppConfiguration.Strava.apiBaseURL)/uploads")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -85,6 +86,7 @@ final class StravaUploadService: StravaUploadServiceProtocol {
         for attempt in 1...maxAttempts {
             try await Task.sleep(nanoseconds: pollInterval)
 
+            // invariant: apiBaseURL + static path is always a valid URL
             let url = URL(string: "\(AppConfiguration.Strava.apiBaseURL)/uploads/\(uploadId)")!
             var request = URLRequest(url: url)
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")

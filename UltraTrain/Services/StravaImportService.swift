@@ -21,8 +21,9 @@ final class StravaImportService: StravaImportServiceProtocol {
 
     func fetchActivities(page: Int, perPage: Int) async throws -> [StravaActivity] {
         let token = try await authService.getValidToken()
+        // invariant: apiBaseURL + static path is always a valid URL
         let url = URL(string: "\(AppConfiguration.Strava.apiBaseURL)/athlete/activities")!
-
+        // invariant: URLComponents always succeeds for a valid URL
         var components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
         components.queryItems = [
             URLQueryItem(name: "page", value: "\(page)"),
@@ -124,6 +125,7 @@ final class StravaImportService: StravaImportServiceProtocol {
     // MARK: - Fetch Streams
 
     private func fetchStreams(activityId: Int, token: String) async throws -> [TrackPoint] {
+        // invariant: apiBaseURL + static path is always a valid URL
         let url = URL(
             string: "\(AppConfiguration.Strava.apiBaseURL)/activities/\(activityId)/streams?keys=time,latlng,altitude,heartrate&key_type=distance"
         )!

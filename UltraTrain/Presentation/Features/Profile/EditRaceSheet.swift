@@ -57,6 +57,7 @@ struct EditRaceSheet: View {
         case .add:
             existingId = nil
             _name = State(initialValue: "")
+            // invariant: Calendar.date(byAdding:) always succeeds for simple offsets
             _date = State(initialValue: Calendar.current.date(byAdding: .month, value: 3, to: .now)!)
             _distanceKm = State(initialValue: 50)
             _elevationGainM = State(initialValue: 1000)

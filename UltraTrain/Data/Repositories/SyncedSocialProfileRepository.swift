@@ -45,6 +45,7 @@ final class SyncedSocialProfileRepository: SocialProfileRepository, @unchecked S
 
         guard authService.isAuthenticated() else { return }
         if let syncQueue {
+            // invariant: zero UUID literal is always valid
             let entityId = UUID(uuidString: profile.id) ?? UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
             try? await syncQueue.enqueueOperation(.socialProfileSync, entityId: entityId)
         } else {

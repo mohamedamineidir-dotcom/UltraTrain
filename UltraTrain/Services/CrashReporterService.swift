@@ -2,6 +2,8 @@ import Foundation
 import os
 
 final class CrashReporterService: CrashReporterProtocol, @unchecked Sendable {
+    // NSLock required: persistReport is called from signal/exception handlers
+    // which run in a constrained context incompatible with actors
     private let lock = NSLock()
     private let storageDirectory: URL
     private let apiClient: APIClient

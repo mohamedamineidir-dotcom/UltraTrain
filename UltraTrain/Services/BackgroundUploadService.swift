@@ -25,6 +25,8 @@ final class BackgroundUploadService: NSObject, BackgroundUploadServiceProtocol, 
 
     private var pendingCompletionHandler: (() -> Void)?
     private var taskToSyncItemId: [Int: UUID] = [:]
+    // NSLock required: URLSessionDelegate callbacks fire on arbitrary threads
+    // and cannot use actors (non-async delegate methods)
     private let lock = NSLock()
 
     init(
@@ -87,9 +89,8 @@ extension BackgroundUploadService: URLSessionDelegate {
         pendingCompletionHandler = nil
         lock.unlock()
 
-        DispatchQueue.main.async {
-            handler?()
-        }
+        // Background session completion handler must be called on main thread per Apple docs
+        Task { @MainActor in handler?() }
         Logger.backgroundUpload.info("Background session finished all events")
     }
 }

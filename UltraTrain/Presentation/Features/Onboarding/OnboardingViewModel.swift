@@ -56,6 +56,7 @@ final class OnboardingViewModel {
 
     var firstName = ""
     var lastName = ""
+    // invariant: Calendar.date(byAdding:) always succeeds for simple year/month offsets
     var dateOfBirth = Calendar.current.date(byAdding: .year, value: -30, to: .now)!
     var weightKg: Double = 70
     var heightCm: Double = 175

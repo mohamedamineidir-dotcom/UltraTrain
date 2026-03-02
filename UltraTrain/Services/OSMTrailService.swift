@@ -4,6 +4,7 @@ import os
 
 final class OSMTrailService: @unchecked Sendable {
     private let session: URLSession
+    // invariant: static string literal is always a valid URL
     private let baseURL = URL(string: "https://overpass-api.de/api/interpreter")!
 
     init(session: URLSession = .shared) {

@@ -8,12 +8,18 @@ enum AppConfiguration {
 
     enum API {
         static let baseURL: URL = {
-            if let urlString = Bundle.main.infoDictionary?["API_BASE_URL"] as? String,
-               !urlString.isEmpty,
-               let url = URL(string: urlString) {
-                return url
+            guard let urlString = Bundle.main.infoDictionary?["API_BASE_URL"] as? String,
+                  !urlString.isEmpty,
+                  let url = URL(string: urlString) else {
+                #if DEBUG
+                Logger.network.error("API_BASE_URL not configured — check Secrets.xcconfig")
+                // Return a clearly invalid URL so requests fail fast during development
+                return URL(string: "https://api-not-configured.invalid")!
+                #else
+                fatalError("API_BASE_URL must be configured in Secrets.xcconfig for release builds")
+                #endif
             }
-            return URL(string: "https://railway-link-production-96cc.up.railway.app/v1")!
+            return url
         }()
         static let environment: String = Bundle.main.infoDictionary?["API_ENVIRONMENT"] as? String ?? "staging"
         static let isProduction: Bool = environment == "production"
