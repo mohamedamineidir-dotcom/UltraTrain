@@ -66,5 +66,6 @@ struct DashboardWeeklyStatsCard: View {
                 .accessibilityElement(children: .combine)
             }
         }
+        .cardStyle()
     }
 }

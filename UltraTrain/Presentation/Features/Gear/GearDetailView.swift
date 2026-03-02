@@ -1,4 +1,5 @@
 import SwiftUI
+import os
 
 struct GearDetailView: View {
     @Environment(\.unitPreference) private var units
@@ -40,7 +41,9 @@ struct GearDetailView: View {
                     do {
                         try await gearRepository.updateGearItem(updated)
                         item = updated
-                    } catch {}
+                    } catch {
+                        Logger.gear.error("Failed to update gear item: \(error)")
+                    }
                 }
             }
         }
@@ -138,7 +141,9 @@ struct GearDetailView: View {
             recentRuns = allRuns
                 .filter { $0.gearIds.contains(gearId) }
                 .sorted { $0.date > $1.date }
-        } catch {}
+        } catch {
+            Logger.gear.error("Failed to load runs for gear item: \(error)")
+        }
         isLoading = false
     }
 }

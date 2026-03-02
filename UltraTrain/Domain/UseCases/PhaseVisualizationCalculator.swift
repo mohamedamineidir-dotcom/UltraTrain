@@ -33,7 +33,8 @@ enum PhaseVisualizationCalculator {
             }
         }
 
-        let lastEnd = sortedWeeks.last!.endDate
+        guard let lastWeek = sortedWeeks.last else { return blocks }
+        let lastEnd = lastWeek.endDate
         let isCurrent = now >= blockStart && now <= lastEnd
         blocks.append(PhaseBlock(
             id: UUID(),

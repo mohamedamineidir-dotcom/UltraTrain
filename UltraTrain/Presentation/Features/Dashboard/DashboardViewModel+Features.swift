@@ -125,7 +125,7 @@ extension DashboardViewModel {
                     enrollment: enrollment, definition: definition, runs: runs
                 )
                 if !progress.isComplete {
-                    if nearest == nil || progress.progressFraction > nearest!.progressFraction {
+                    if nearest == nil || progress.progressFraction > (nearest?.progressFraction ?? 0) {
                         nearest = progress
                     }
                 }

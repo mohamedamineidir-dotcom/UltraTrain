@@ -164,18 +164,27 @@ struct WorkoutLibraryView: View {
 
     private var templatesSection: some View {
         Section {
-            ForEach(viewModel.filteredTemplates, id: \.id) { template in
-                NavigationLink {
-                    WorkoutTemplateDetailView(template: template) { selected in
-                        viewModel.templateToAdd = selected
+            if viewModel.filteredTemplates.isEmpty {
+                ContentUnavailableView(
+                    "No Templates Found",
+                    systemImage: "doc.text.magnifyingglass",
+                    description: Text("No workout templates match your search.")
+                )
+                .listRowBackground(Color.clear)
+            } else {
+                ForEach(viewModel.filteredTemplates, id: \.id) { template in
+                    NavigationLink {
+                        WorkoutTemplateDetailView(template: template) { selected in
+                            viewModel.templateToAdd = selected
+                        }
+                    } label: {
+                        WorkoutTemplateRow(template: template)
                     }
-                } label: {
-                    WorkoutTemplateRow(template: template)
-                }
-                .swipeActions(edge: .trailing) {
-                    if template.isUserCreated {
-                        Button("Delete", role: .destructive) {
-                            Task { await viewModel.deleteRecipe(id: template.id) }
+                    .swipeActions(edge: .trailing) {
+                        if template.isUserCreated {
+                            Button("Delete", role: .destructive) {
+                                Task { await viewModel.deleteRecipe(id: template.id) }
+                            }
                         }
                     }
                 }

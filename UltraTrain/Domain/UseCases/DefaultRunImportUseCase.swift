@@ -22,11 +22,15 @@ final class DefaultRunImportUseCase: RunImportUseCase {
         }
 
         let points = parseResult.trackPoints
+        guard let firstPoint = points.first, let lastPoint = points.last else {
+            throw DomainError.importFailed(reason: "GPX file contains no track points")
+        }
+
         let distanceKm = RunStatisticsCalculator.totalDistanceKm(points)
         let elevation = ElevationCalculator.elevationChanges(points)
         let splits = RunStatisticsCalculator.buildSplits(from: points)
 
-        let duration = points.last!.timestamp.timeIntervalSince(points.first!.timestamp)
+        let duration = lastPoint.timestamp.timeIntervalSince(firstPoint.timestamp)
         guard duration > 0 else {
             logger.error("GPX file has zero or negative duration")
             throw DomainError.importFailed(reason: "GPX file has invalid timestamps")
@@ -41,7 +45,7 @@ final class DefaultRunImportUseCase: RunImportUseCase {
         let run = CompletedRun(
             id: UUID(),
             athleteId: athleteId,
-            date: parseResult.date ?? points.first!.timestamp,
+            date: parseResult.date ?? firstPoint.timestamp,
             distanceKm: distanceKm,
             elevationGainM: elevation.gainM,
             elevationLossM: elevation.lossM,

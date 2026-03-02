@@ -138,8 +138,9 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
             cumulative += entry.weight
         }
 
-        if p <= centers.first!.position { return centers.first!.pace }
-        if p >= centers.last!.position { return centers.last!.pace }
+        guard let first = centers.first, let last = centers.last else { return 0 }
+        if p <= first.position { return first.pace }
+        if p >= last.position { return last.pace }
 
         for i in 1..<centers.count {
             if p <= centers[i].position {
@@ -149,7 +150,7 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
                 return prev.pace + fraction * (curr.pace - prev.pace)
             }
         }
-        return centers.last!.pace
+        return last.pace
     }
 
     // MARK: - Adjustments

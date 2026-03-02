@@ -93,6 +93,13 @@ struct DashboardView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
+                if viewModel.isLoading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, minHeight: 200)
+                        .accessibilityLabel("Loading dashboard")
+                        .transition(.opacity)
+                }
+
                 LazyVStack(spacing: Theme.Spacing.md) {
                     // 1. Hero card — visual focal point
                     DashboardHeroCard(
@@ -215,6 +222,7 @@ struct DashboardView: View {
                 await viewModel.load()
                 await syncStatusMonitor?.refresh()
             }
+            .animation(.easeInOut(duration: 0.3), value: viewModel.isLoading)
             .sheet(isPresented: $showGoalSetting) {
                 GoalSettingView(goalRepository: goalRepository) {
                     Task { await viewModel.load() }

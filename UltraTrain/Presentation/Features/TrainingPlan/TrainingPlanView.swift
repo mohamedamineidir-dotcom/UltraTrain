@@ -74,15 +74,17 @@ struct TrainingPlanView: View {
                             }
                             .accessibilityLabel("Training calendar")
 
-                            NavigationLink {
-                                RaceCalendarView(
-                                    plan: viewModel.plan!,
-                                    races: viewModel.races
-                                )
-                            } label: {
-                                Image(systemName: "list.bullet")
+                            if let plan = viewModel.plan {
+                                NavigationLink {
+                                    RaceCalendarView(
+                                        plan: plan,
+                                        races: viewModel.races
+                                    )
+                                } label: {
+                                    Image(systemName: "list.bullet")
+                                }
+                                .accessibilityLabel("Race calendar list")
                             }
-                            .accessibilityLabel("Race calendar list")
 
                             NavigationLink {
                                 RaceCalendarGridView(
@@ -97,6 +99,7 @@ struct TrainingPlanView: View {
                     }
                 }
             }
+            .animation(.easeInOut(duration: 0.3), value: viewModel.isLoading)
             .task {
                 await viewModel.loadPlan()
             }
