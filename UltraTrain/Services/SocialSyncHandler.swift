@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: immutable after init
 final class SocialSyncHandler: @unchecked Sendable {
     private let remoteSocialProfile: RemoteSocialProfileDataSource?
     private let localSocialProfile: LocalSocialProfileRepository?

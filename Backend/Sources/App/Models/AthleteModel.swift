@@ -52,5 +52,8 @@ final class AthleteModel: Model, Content, @unchecked Sendable {
     @Timestamp(key: "updated_at", on: .update)
     var updatedAt: Date?
 
-    init() {}
+    init() {
+        self.isPublicProfile = true
+        self.displayName = ""
+    }
 }

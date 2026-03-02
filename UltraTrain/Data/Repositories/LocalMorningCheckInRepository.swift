@@ -1,6 +1,7 @@
 import Foundation
 import SwiftData
 
+// @unchecked Sendable: thread-safe via ModelContainer (new context per call)
 final class LocalMorningCheckInRepository: MorningCheckInRepository, @unchecked Sendable {
     private let modelContainer: ModelContainer
 

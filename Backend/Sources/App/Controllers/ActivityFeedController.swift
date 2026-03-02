@@ -55,7 +55,11 @@ struct ActivityFeedController: RouteCollection {
             if let json = item.statsJSON, let data = json.data(using: .utf8) {
                 let decoder = JSONDecoder()
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
-                stats = try? decoder.decode(ActivityStatsJSON.self, from: data)
+                do {
+                    stats = try decoder.decode(ActivityStatsJSON.self, from: data)
+                } catch {
+                    req.logger.warning("Failed to decode activity stats JSON for item \(item.id?.uuidString ?? "unknown"): \(error)")
+                }
             }
 
             let formatter = ISO8601DateFormatter()
@@ -128,8 +132,11 @@ struct ActivityFeedController: RouteCollection {
         if body.distanceKm != nil || body.elevationGainM != nil || body.duration != nil || body.averagePace != nil {
             let encoder = JSONEncoder()
             encoder.keyEncodingStrategy = .convertToSnakeCase
-            if let data = try? encoder.encode(stats) {
+            do {
+                let data = try encoder.encode(stats)
                 statsJSON = String(data: data, encoding: .utf8)
+            } catch {
+                req.logger.warning("Failed to encode activity stats JSON: \(error)")
             }
         }
 

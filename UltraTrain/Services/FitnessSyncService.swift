@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: immutable after init
 final class FitnessSyncService: @unchecked Sendable {
     private let remote: RemoteFitnessDataSource
     private let authService: any AuthServiceProtocol

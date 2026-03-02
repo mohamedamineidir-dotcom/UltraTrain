@@ -3,6 +3,7 @@ import SwiftData
 import os
 
 @Observable
+// @unchecked Sendable: mutable state updated on MainActor
 final class CloudKitSyncMonitor: @unchecked Sendable {
     var lastSyncDate: Date?
     var syncError: String?

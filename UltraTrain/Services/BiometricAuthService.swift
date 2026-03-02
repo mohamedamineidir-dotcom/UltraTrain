@@ -1,6 +1,7 @@
 import LocalAuthentication
 import os
 
+// @unchecked Sendable: no mutable state; LAContext created per call
 final class BiometricAuthService: BiometricAuthServiceProtocol, @unchecked Sendable {
 
     var availableBiometricType: BiometricType {

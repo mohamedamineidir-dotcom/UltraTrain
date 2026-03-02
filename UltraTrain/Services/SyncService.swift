@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: immutable after init
 final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
     private let queueRepository: any SyncQueueRepository
     private let localRunRepository: any RunRepository
@@ -95,19 +96,39 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
     }
 
     func getQueueStatus(forRunId runId: UUID) async -> SyncQueueItemStatus? {
-        try? await queueRepository.getItem(forRunId: runId)?.status
+        do {
+            return try await queueRepository.getItem(forRunId: runId)?.status
+        } catch {
+            Logger.network.warning("SyncService: failed to get queue status for run \(runId): \(error)")
+            return nil
+        }
     }
 
     func getPendingCount() async -> Int {
-        (try? await queueRepository.getPendingCount()) ?? 0
+        do {
+            return try await queueRepository.getPendingCount()
+        } catch {
+            Logger.network.warning("SyncService: failed to get pending count: \(error)")
+            return 0
+        }
     }
 
     func getFailedCount() async -> Int {
-        (try? await queueRepository.getFailedCount()) ?? 0
+        do {
+            return try await queueRepository.getFailedCount()
+        } catch {
+            Logger.network.warning("SyncService: failed to get failed count: \(error)")
+            return 0
+        }
     }
 
     func getFailedItems() async -> [SyncQueueItem] {
-        (try? await queueRepository.getFailedItems()) ?? []
+        do {
+            return try await queueRepository.getFailedItems()
+        } catch {
+            Logger.network.warning("SyncService: failed to get failed items: \(error)")
+            return []
+        }
     }
 
     func retryItem(id: UUID) async {
@@ -155,7 +176,11 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
         var mutable = item
         mutable.status = .uploading
         mutable.lastAttempt = Date()
-        try? await queueRepository.updateItem(mutable)
+        do {
+            try await queueRepository.updateItem(mutable)
+        } catch {
+            Logger.network.warning("SyncService: failed to mark item as uploading for \(item.operationType.rawValue) \(item.entityId): \(error)")
+        }
 
         do {
             switch item.operationType {
@@ -180,7 +205,11 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
             }
 
             mutable.status = .completed
-            try? await queueRepository.updateItem(mutable)
+            do {
+                try await queueRepository.updateItem(mutable)
+            } catch {
+                Logger.network.warning("SyncService: failed to mark item as completed for \(item.operationType.rawValue) \(item.entityId): \(error)")
+            }
             Logger.network.info("SyncService: completed \(item.operationType.rawValue) for \(item.entityId)")
         } catch let error as APIError {
             switch error {
@@ -200,19 +229,31 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
                 mutable.status = mutable.hasReachedMaxRetries ? .failed : .pending
                 Logger.network.warning("SyncService: retryable failure for \(item.operationType.rawValue) \(item.entityId) (attempt \(mutable.retryCount)): \(error)")
             }
-            try? await queueRepository.updateItem(mutable)
+            do {
+                try await queueRepository.updateItem(mutable)
+            } catch let updateError {
+                Logger.network.warning("SyncService: failed to update queue item after API error for \(item.operationType.rawValue) \(item.entityId): \(updateError)")
+            }
         } catch {
             mutable.retryCount += 1
             mutable.errorMessage = error.localizedDescription
             mutable.status = mutable.hasReachedMaxRetries ? .failed : .pending
-            try? await queueRepository.updateItem(mutable)
+            do {
+                try await queueRepository.updateItem(mutable)
+            } catch let updateError {
+                Logger.network.warning("SyncService: failed to update queue item after error for \(item.operationType.rawValue) \(item.entityId): \(updateError)")
+            }
             Logger.network.warning("SyncService: error for \(item.operationType.rawValue) \(item.entityId): \(error)")
         }
     }
 
     private func processRunUpload(_ item: SyncQueueItem) async throws {
         guard var run = try await localRunRepository.getRun(id: item.entityId) else {
-            try? await queueRepository.deleteItem(id: item.id)
+            do {
+                try await queueRepository.deleteItem(id: item.id)
+            } catch {
+                Logger.network.warning("SyncService: failed to remove orphaned run queue item \(item.id): \(error)")
+            }
             Logger.network.info("SyncService: run \(item.entityId) not found, removed from queue")
             return
         }
@@ -231,7 +272,11 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
         if let updatedAtStr = response.updatedAt,
            let updatedAt = ISO8601DateFormatter().date(from: updatedAtStr) {
             run.serverUpdatedAt = updatedAt
-            try? await localRunRepository.updateRun(run)
+            do {
+                try await localRunRepository.updateRun(run)
+            } catch {
+                Logger.network.warning("SyncService: failed to save serverUpdatedAt for run \(item.entityId): \(error)")
+            }
         }
     }
 
@@ -239,7 +284,11 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
         guard let repo = localAthleteRepository,
               let remote = remoteAthleteDataSource else { return }
         guard let athlete = try await repo.getAthlete() else {
-            try? await queueRepository.deleteItem(id: item.id)
+            do {
+                try await queueRepository.deleteItem(id: item.id)
+            } catch {
+                Logger.network.warning("SyncService: failed to remove orphaned athlete queue item \(item.id): \(error)")
+            }
             return
         }
         let dto = AthleteMapper.toDTO(athlete)
@@ -250,7 +299,11 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
         guard let repo = localRaceRepository,
               let remote = remoteRaceDataSource else { return }
         guard var race = try await repo.getRace(id: item.entityId) else {
-            try? await queueRepository.deleteItem(id: item.id)
+            do {
+                try await queueRepository.deleteItem(id: item.id)
+            } catch {
+                Logger.network.warning("SyncService: failed to remove orphaned race queue item \(item.id): \(error)")
+            }
             return
         }
         guard let dto = RaceRemoteMapper.toUploadDTO(race) else { return }
@@ -259,7 +312,11 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
         if let updatedAtStr = response.updatedAt,
            let updatedAt = ISO8601DateFormatter().date(from: updatedAtStr) {
             race.serverUpdatedAt = updatedAt
-            try? await repo.saveRace(race)
+            do {
+                try await repo.saveRace(race)
+            } catch {
+                Logger.network.warning("SyncService: failed to save serverUpdatedAt for race \(item.entityId): \(error)")
+            }
         }
     }
 
@@ -272,7 +329,11 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
         guard let repo = localTrainingPlanRepository,
               let syncService = trainingPlanSyncService else { return }
         guard let plan = try await repo.getActivePlan() else {
-            try? await queueRepository.deleteItem(id: item.id)
+            do {
+                try await queueRepository.deleteItem(id: item.id)
+            } catch {
+                Logger.network.warning("SyncService: failed to remove orphaned training plan queue item \(item.id): \(error)")
+            }
             return
         }
         await syncService.syncPlan(plan)
@@ -282,14 +343,26 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
     // SyncedRepositories. These queue handlers exist only as safety nets to clean up
     // any stale items that might end up in the queue.
     private func processNutritionPlanSync(_ item: SyncQueueItem) async throws {
-        try? await queueRepository.deleteItem(id: item.id)
+        do {
+            try await queueRepository.deleteItem(id: item.id)
+        } catch {
+            Logger.network.warning("SyncService: failed to clean up nutrition sync queue item \(item.id): \(error)")
+        }
     }
 
     private func processFitnessSnapshotSync(_ item: SyncQueueItem) async throws {
-        try? await queueRepository.deleteItem(id: item.id)
+        do {
+            try await queueRepository.deleteItem(id: item.id)
+        } catch {
+            Logger.network.warning("SyncService: failed to clean up fitness sync queue item \(item.id): \(error)")
+        }
     }
 
     private func processFinishEstimateSync(_ item: SyncQueueItem) async throws {
-        try? await queueRepository.deleteItem(id: item.id)
+        do {
+            try await queueRepository.deleteItem(id: item.id)
+        } catch {
+            Logger.network.warning("SyncService: failed to clean up finish estimate sync queue item \(item.id): \(error)")
+        }
     }
 }

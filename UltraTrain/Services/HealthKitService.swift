@@ -4,6 +4,7 @@ import os
 
 @Observable
 @MainActor
+// @unchecked Sendable: all mutable state guarded by @MainActor
 final class HealthKitService: @preconcurrency HealthKitServiceProtocol, @unchecked Sendable {
 
     // MARK: - State

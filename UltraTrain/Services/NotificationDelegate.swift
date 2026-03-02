@@ -2,6 +2,7 @@ import Foundation
 import UserNotifications
 import os
 
+// @unchecked Sendable: deepLinkRouter set once at startup
 final class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate, @unchecked Sendable {
 
     var deepLinkRouter: DeepLinkRouter?

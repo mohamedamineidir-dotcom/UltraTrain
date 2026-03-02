@@ -5,6 +5,7 @@ import os
 
 @Observable
 @MainActor
+// @unchecked Sendable: all mutable state guarded by @MainActor
 final class WatchConnectivityService: NSObject, @unchecked Sendable {
 
     // MARK: - State

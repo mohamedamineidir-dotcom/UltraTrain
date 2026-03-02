@@ -40,3 +40,4 @@ fastlane/test_output
 # Code coverage
 *.gcda
 *.gcno
+website

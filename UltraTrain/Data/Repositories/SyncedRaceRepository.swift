@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: mutable flag only written from async context
 final class SyncedRaceRepository: RaceRepository, @unchecked Sendable {
     private let local: LocalRaceRepository
     private let syncService: RaceSyncService
@@ -32,7 +33,11 @@ final class SyncedRaceRepository: RaceRepository, @unchecked Sendable {
     func saveRace(_ race: Race) async throws {
         try await local.saveRace(race)
         if let queue = syncQueue {
-            try? await queue.enqueueOperation(.raceSync, entityId: race.id)
+            do {
+                try await queue.enqueueOperation(.raceSync, entityId: race.id)
+            } catch {
+                Logger.network.warning("SyncedRaceRepository: failed to enqueue race sync for \(race.id): \(error)")
+            }
         } else {
             Task { await syncService.syncRace(race) }
         }
@@ -41,7 +46,11 @@ final class SyncedRaceRepository: RaceRepository, @unchecked Sendable {
     func updateRace(_ race: Race) async throws {
         try await local.updateRace(race)
         if let queue = syncQueue {
-            try? await queue.enqueueOperation(.raceSync, entityId: race.id)
+            do {
+                try await queue.enqueueOperation(.raceSync, entityId: race.id)
+            } catch {
+                Logger.network.warning("SyncedRaceRepository: failed to enqueue race sync for \(race.id): \(error)")
+            }
         } else {
             Task { await syncService.syncRace(race) }
         }
@@ -50,7 +59,11 @@ final class SyncedRaceRepository: RaceRepository, @unchecked Sendable {
     func deleteRace(id: UUID) async throws {
         try await local.deleteRace(id: id)
         if let queue = syncQueue {
-            try? await queue.enqueueOperation(.raceDelete, entityId: id)
+            do {
+                try await queue.enqueueOperation(.raceDelete, entityId: id)
+            } catch {
+                Logger.network.warning("SyncedRaceRepository: failed to enqueue race delete for \(id): \(error)")
+            }
         } else {
             Task { await syncService.deleteRace(id: id) }
         }
@@ -62,7 +75,11 @@ final class SyncedRaceRepository: RaceRepository, @unchecked Sendable {
         let races = await syncService.restoreRaces()
         guard !races.isEmpty else { return nil }
         for race in races {
-            try? await local.saveRace(race)
+            do {
+                try await local.saveRace(race)
+            } catch {
+                Logger.persistence.warning("SyncedRaceRepository: failed to save restored race \(race.id): \(error)")
+            }
         }
         Logger.network.info("SyncedRaceRepository: saved \(races.count) restored races locally")
         return races

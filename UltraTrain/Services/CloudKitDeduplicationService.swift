@@ -41,6 +41,8 @@ enum CloudKitDeduplicationService {
 
         guard all.count > 1 else { return }
 
+        // Keep the most recently updated instance; delete the rest.
+        // Safe: guard above ensures all.count > 1, so sorted is non-empty and dropFirst is valid.
         let sorted = all.sorted { $0.updatedAt > $1.updatedAt }
         let duplicates = sorted.dropFirst()
 
@@ -83,6 +85,8 @@ enum CloudKitDeduplicationService {
         var totalRemoved = 0
 
         for (_, models) in grouped where models.count > 1 {
+            // Keep the most recently updated; delete older duplicates with the same ID.
+            // Safe: `where models.count > 1` ensures sorted is non-empty and dropFirst is valid.
             let sorted = models.sorted { $0.updatedAt > $1.updatedAt }
             let duplicates = sorted.dropFirst()
             for duplicate in duplicates {

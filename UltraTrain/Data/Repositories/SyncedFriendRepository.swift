@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: immutable after init; delegates to Sendable deps
 final class SyncedFriendRepository: FriendRepository, @unchecked Sendable {
     private let local: LocalFriendRepository
     private let remote: RemoteFriendDataSource

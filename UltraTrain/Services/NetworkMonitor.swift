@@ -9,6 +9,7 @@ protocol NetworkMonitorProtocol: Sendable {
 }
 
 @Observable
+// @unchecked Sendable: mutable state updated on MainActor
 final class NetworkMonitor: NetworkMonitorProtocol, @unchecked Sendable {
     private(set) var isConnected: Bool = true
     private let monitor: NWPathMonitor

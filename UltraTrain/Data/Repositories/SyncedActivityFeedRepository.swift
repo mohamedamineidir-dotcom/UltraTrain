@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: immutable after init; delegates to Sendable deps
 final class SyncedActivityFeedRepository: ActivityFeedRepository, @unchecked Sendable {
     private let local: LocalActivityFeedRepository
     private let remote: RemoteActivityFeedDataSource
@@ -30,7 +31,11 @@ final class SyncedActivityFeedRepository: ActivityFeedRepository, @unchecked Sen
             let dtos = try await remote.fetchFeed(limit: limit)
             let items = dtos.compactMap { ActivityFeedRemoteMapper.toDomain($0) }
             for item in items {
-                try? await local.publishActivity(item)
+                do {
+                    try await local.publishActivity(item)
+                } catch {
+                    Self.logger.warning("Failed to cache activity feed item \(item.id) locally: \(error)")
+                }
             }
             return items
         } catch {
@@ -44,7 +49,11 @@ final class SyncedActivityFeedRepository: ActivityFeedRepository, @unchecked Sen
 
         guard authService.isAuthenticated() else { return }
         if let syncQueue {
-            try? await syncQueue.enqueueOperation(.activityPublish, entityId: item.id)
+            do {
+                try await syncQueue.enqueueOperation(.activityPublish, entityId: item.id)
+            } catch {
+                Self.logger.warning("Failed to enqueue activity publish for \(item.id): \(error)")
+            }
         } else {
             Task {
                 do {

@@ -1,4 +1,5 @@
 import Foundation
+import os
 
 enum WatchMessageCoder {
 
@@ -8,21 +9,30 @@ enum WatchMessageCoder {
     private static let completedRunKey = "completedRun"
     private static let complicationKey = "complicationData"
     private static let runHistoryKey = "runHistory"
+    private static let logger = Logger(subsystem: "com.ultratrain.app", category: "watch")
 
     // MARK: - Run Data (phone → watch, applicationContext)
 
     static func encode(_ data: WatchRunData) -> [String: Any] {
-        guard let jsonData = try? JSONEncoder().encode(data) else {
+        do {
+            let jsonData = try JSONEncoder().encode(data)
+            return [runDataKey: jsonData]
+        } catch {
+            logger.warning("WatchMessageCoder: failed to encode WatchRunData: \(error)")
             return [:]
         }
-        return [runDataKey: jsonData]
     }
 
     static func decodeRunData(_ context: [String: Any]) -> WatchRunData? {
         guard let jsonData = context[runDataKey] as? Data else {
             return nil
         }
-        return try? JSONDecoder().decode(WatchRunData.self, from: jsonData)
+        do {
+            return try JSONDecoder().decode(WatchRunData.self, from: jsonData)
+        } catch {
+            logger.warning("WatchMessageCoder: failed to decode WatchRunData: \(error)")
+            return nil
+        }
     }
 
     // MARK: - Commands (watch → phone, sendMessage)
@@ -41,59 +51,93 @@ enum WatchMessageCoder {
     // MARK: - Session Data (phone → watch, applicationContext)
 
     static func encodeSessionData(_ data: WatchSessionData) -> [String: Any] {
-        guard let jsonData = try? JSONEncoder().encode(data) else {
+        do {
+            let jsonData = try JSONEncoder().encode(data)
+            return [sessionDataKey: jsonData]
+        } catch {
+            logger.warning("WatchMessageCoder: failed to encode WatchSessionData: \(error)")
             return [:]
         }
-        return [sessionDataKey: jsonData]
     }
 
     static func decodeSessionData(_ context: [String: Any]) -> WatchSessionData? {
         guard let jsonData = context[sessionDataKey] as? Data else {
             return nil
         }
-        return try? JSONDecoder().decode(WatchSessionData.self, from: jsonData)
+        do {
+            return try JSONDecoder().decode(WatchSessionData.self, from: jsonData)
+        } catch {
+            logger.warning("WatchMessageCoder: failed to decode WatchSessionData: \(error)")
+            return nil
+        }
     }
 
     // MARK: - Completed Run (watch → phone, transferUserInfo)
 
     static func encodeCompletedRun(_ data: WatchCompletedRunData) -> [String: Any] {
-        guard let jsonData = try? JSONEncoder().encode(data) else {
+        do {
+            let jsonData = try JSONEncoder().encode(data)
+            return [completedRunKey: jsonData]
+        } catch {
+            logger.warning("WatchMessageCoder: failed to encode WatchCompletedRunData: \(error)")
             return [:]
         }
-        return [completedRunKey: jsonData]
     }
 
     static func decodeCompletedRun(_ userInfo: [String: Any]) -> WatchCompletedRunData? {
         guard let jsonData = userInfo[completedRunKey] as? Data else {
             return nil
         }
-        return try? JSONDecoder().decode(WatchCompletedRunData.self, from: jsonData)
+        do {
+            return try JSONDecoder().decode(WatchCompletedRunData.self, from: jsonData)
+        } catch {
+            logger.warning("WatchMessageCoder: failed to decode WatchCompletedRunData: \(error)")
+            return nil
+        }
     }
 
     // MARK: - Complication Data (phone → watch, applicationContext)
 
     static func encodeComplicationData(_ data: WatchComplicationData) -> [String: Any] {
-        guard let jsonData = try? JSONEncoder().encode(data) else {
+        do {
+            let jsonData = try JSONEncoder().encode(data)
+            return [complicationKey: jsonData]
+        } catch {
+            logger.warning("WatchMessageCoder: failed to encode WatchComplicationData: \(error)")
             return [:]
         }
-        return [complicationKey: jsonData]
     }
 
     static func decodeComplicationData(_ context: [String: Any]) -> WatchComplicationData? {
         guard let jsonData = context[complicationKey] as? Data else {
             return nil
         }
-        return try? JSONDecoder().decode(WatchComplicationData.self, from: jsonData)
+        do {
+            return try JSONDecoder().decode(WatchComplicationData.self, from: jsonData)
+        } catch {
+            logger.warning("WatchMessageCoder: failed to decode WatchComplicationData: \(error)")
+            return nil
+        }
     }
 
     // MARK: - Run History (phone → watch, applicationContext)
 
     static func encodeRunHistory(_ history: [WatchRunHistoryData]) -> Data? {
-        try? JSONEncoder().encode(history)
+        do {
+            return try JSONEncoder().encode(history)
+        } catch {
+            logger.warning("WatchMessageCoder: failed to encode run history: \(error)")
+            return nil
+        }
     }
 
     static func decodeRunHistory(from data: Data) -> [WatchRunHistoryData]? {
-        try? JSONDecoder().decode([WatchRunHistoryData].self, from: data)
+        do {
+            return try JSONDecoder().decode([WatchRunHistoryData].self, from: data)
+        } catch {
+            logger.warning("WatchMessageCoder: failed to decode run history: \(error)")
+            return nil
+        }
     }
 
     static func encodeRunHistoryContext(_ history: [WatchRunHistoryData]) -> [String: Any] {

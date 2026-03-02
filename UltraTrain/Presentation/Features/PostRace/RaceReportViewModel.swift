@@ -28,10 +28,22 @@ final class RaceReportViewModel {
 
     func load() async {
         isLoading = true
-        reflection = try? await raceReflectionRepository.getReflection(for: race.id)
-        estimate = try? await finishEstimateRepository.getEstimate(for: race.id)
+        do {
+            reflection = try await raceReflectionRepository.getReflection(for: race.id)
+        } catch {
+            Logger.persistence.warning("RaceReportViewModel: failed to load reflection for race \(self.race.id): \(error)")
+        }
+        do {
+            estimate = try await finishEstimateRepository.getEstimate(for: race.id)
+        } catch {
+            Logger.persistence.warning("RaceReportViewModel: failed to load estimate for race \(self.race.id): \(error)")
+        }
         if let runId = race.linkedRunId {
-            linkedRun = try? await runRepository.getRun(id: runId)
+            do {
+                linkedRun = try await runRepository.getRun(id: runId)
+            } catch {
+                Logger.persistence.warning("RaceReportViewModel: failed to load linked run \(runId): \(error)")
+            }
         }
         isLoading = false
     }

@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: immutable after init
 final class StravaUploadQueueService: StravaUploadQueueServiceProtocol, @unchecked Sendable {
 
     private let queueRepository: any StravaUploadQueueRepository
@@ -63,11 +64,21 @@ final class StravaUploadQueueService: StravaUploadQueueServiceProtocol, @uncheck
     }
 
     func getQueueStatus(forRunId runId: UUID) async -> StravaQueueItemStatus? {
-        try? await queueRepository.getItem(forRunId: runId)?.status
+        do {
+            return try await queueRepository.getItem(forRunId: runId)?.status
+        } catch {
+            Logger.strava.warning("Failed to get queue status for run \(runId): \(error)")
+            return nil
+        }
     }
 
     func getPendingCount() async -> Int {
-        (try? await queueRepository.getPendingCount()) ?? 0
+        do {
+            return try await queueRepository.getPendingCount()
+        } catch {
+            Logger.strava.warning("Failed to get pending count: \(error)")
+            return 0
+        }
     }
 
     // MARK: - Private
@@ -75,12 +86,20 @@ final class StravaUploadQueueService: StravaUploadQueueServiceProtocol, @uncheck
     private func processItem(_ item: StravaUploadQueueItem) async {
         var mutableItem = item
         mutableItem.status = .uploading
-        try? await queueRepository.updateItem(mutableItem)
+        do {
+            try await queueRepository.updateItem(mutableItem)
+        } catch {
+            Logger.strava.warning("Failed to mark item as uploading for run \(item.runId): \(error)")
+        }
 
         do {
             guard let run = try await runRepository.getRun(id: item.runId) else {
                 Logger.strava.warning("Run \(item.runId) not found — removing from queue")
-                try? await queueRepository.deleteItem(id: item.id)
+                do {
+                    try await queueRepository.deleteItem(id: item.id)
+                } catch {
+                    Logger.strava.warning("Failed to remove orphaned queue item \(item.id): \(error)")
+                }
                 return
             }
 
@@ -89,7 +108,11 @@ final class StravaUploadQueueService: StravaUploadQueueServiceProtocol, @uncheck
             mutableItem.status = .completed
             mutableItem.stravaActivityId = activityId
             mutableItem.lastAttempt = .now
-            try? await queueRepository.updateItem(mutableItem)
+            do {
+                try await queueRepository.updateItem(mutableItem)
+            } catch {
+                Logger.strava.warning("Failed to mark upload as completed for run \(item.runId): \(error)")
+            }
 
             var updatedRun = run
             updatedRun.stravaActivityId = activityId
@@ -101,7 +124,11 @@ final class StravaUploadQueueService: StravaUploadQueueServiceProtocol, @uncheck
             mutableItem.retryCount += 1
             mutableItem.lastAttempt = .now
             mutableItem.errorMessage = error.localizedDescription
-            try? await queueRepository.updateItem(mutableItem)
+            do {
+                try await queueRepository.updateItem(mutableItem)
+            } catch let updateError {
+                Logger.strava.warning("Failed to update queue item after error for run \(item.runId): \(updateError)")
+            }
             Logger.strava.error("Upload failed for run \(item.runId) (attempt \(mutableItem.retryCount)): \(error)")
         }
     }

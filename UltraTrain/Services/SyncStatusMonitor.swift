@@ -2,6 +2,7 @@ import Foundation
 import os
 
 @Observable
+// @unchecked Sendable: mutable state updated on @MainActor
 final class SyncStatusMonitor: @unchecked Sendable {
     private(set) var pendingCount: Int = 0
     private(set) var failedCount: Int = 0

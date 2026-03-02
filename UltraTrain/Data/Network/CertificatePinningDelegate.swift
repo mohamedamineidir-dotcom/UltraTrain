@@ -2,6 +2,7 @@ import Foundation
 import CryptoKit
 import os
 
+// @unchecked Sendable: immutable after init; URLSession delegate
 final class CertificatePinningDelegate: NSObject, URLSessionDelegate, @unchecked Sendable {
 
     private let pinnedHost: String

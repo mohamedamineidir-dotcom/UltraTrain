@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: immutable after init; delegates to Sendable deps
 final class SyncedSharedRunRepository: SharedRunRepository, @unchecked Sendable {
     private let local: LocalSharedRunRepository
     private let remote: RemoteSharedRunDataSource
@@ -30,7 +31,11 @@ final class SyncedSharedRunRepository: SharedRunRepository, @unchecked Sendable 
             let dtos = try await remote.fetchSharedRuns()
             let runs = dtos.compactMap { SharedRunRemoteMapper.toDomain($0) }
             for run in runs {
-                try? await local.shareRun(run, withFriendIds: [])
+                do {
+                    try await local.shareRun(run, withFriendIds: [])
+                } catch {
+                    Self.logger.warning("Failed to cache shared run \(run.id) locally: \(error)")
+                }
             }
             return runs
         } catch {
@@ -55,7 +60,11 @@ final class SyncedSharedRunRepository: SharedRunRepository, @unchecked Sendable 
 
         guard authService.isAuthenticated() else { return }
         if let syncQueue {
-            try? await syncQueue.enqueueOperation(.shareRevoke, entityId: runId)
+            do {
+                try await syncQueue.enqueueOperation(.shareRevoke, entityId: runId)
+            } catch {
+                Self.logger.warning("Failed to enqueue share revoke for run \(runId): \(error)")
+            }
         } else {
             Task {
                 do {

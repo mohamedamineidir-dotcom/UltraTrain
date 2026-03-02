@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: immutable after init
 final class NutritionSyncService: @unchecked Sendable {
     private let remote: RemoteNutritionDataSource
     private let authService: any AuthServiceProtocol

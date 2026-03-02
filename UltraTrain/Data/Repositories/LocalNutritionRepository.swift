@@ -2,6 +2,7 @@ import Foundation
 import SwiftData
 import os
 
+// @unchecked Sendable: thread-safe via ModelContainer (new context per call)
 final class LocalNutritionRepository: NutritionRepository, @unchecked Sendable {
     private let modelContainer: ModelContainer
 

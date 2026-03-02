@@ -2,6 +2,7 @@ import CoreMotion
 import Foundation
 import os
 
+// @unchecked Sendable: wraps CMMotionManager (main-thread API)
 final class MotionService: MotionServiceProtocol, @unchecked Sendable {
 
     private let motionManager = CMMotionManager()

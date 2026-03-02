@@ -19,7 +19,14 @@ extension TrainingPlanViewModel {
         dismissedRecommendationIds = dismissedRecommendationIds.intersection(currentIds)
 
         Task {
-            guard let snapshot = try? await fitnessRepository.getLatestSnapshot() else { return }
+            let snapshot: FitnessSnapshot?
+            do {
+                snapshot = try await fitnessRepository.getLatestSnapshot()
+            } catch {
+                Logger.fitness.warning("TrainingPlanViewModel: failed to load fitness snapshot for adjustments: \(error)")
+                return
+            }
+            guard let snapshot else { return }
             adjustmentRecommendations = PlanAdjustmentCalculator.analyze(
                 plan: plan, fitnessSnapshot: snapshot
             )

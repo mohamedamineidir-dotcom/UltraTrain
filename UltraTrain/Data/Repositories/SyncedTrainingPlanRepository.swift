@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: immutable after init; delegates to Sendable deps
 final class SyncedTrainingPlanRepository: TrainingPlanRepository, @unchecked Sendable {
     private let local: LocalTrainingPlanRepository
     private let syncService: TrainingPlanSyncService
@@ -42,7 +43,11 @@ final class SyncedTrainingPlanRepository: TrainingPlanRepository, @unchecked Sen
     func savePlan(_ plan: TrainingPlan) async throws {
         try await local.savePlan(plan)
         if let queue = syncQueue {
-            try? await queue.enqueueOperation(.trainingPlanSync, entityId: plan.id)
+            do {
+                try await queue.enqueueOperation(.trainingPlanSync, entityId: plan.id)
+            } catch {
+                Logger.network.warning("SyncedTrainingPlanRepository: failed to enqueue plan sync for \(plan.id): \(error)")
+            }
         } else {
             Task { await syncService.syncPlan(plan) }
         }
@@ -51,7 +56,11 @@ final class SyncedTrainingPlanRepository: TrainingPlanRepository, @unchecked Sen
     func updatePlan(_ plan: TrainingPlan) async throws {
         try await local.updatePlan(plan)
         if let queue = syncQueue {
-            try? await queue.enqueueOperation(.trainingPlanSync, entityId: plan.id)
+            do {
+                try await queue.enqueueOperation(.trainingPlanSync, entityId: plan.id)
+            } catch {
+                Logger.network.warning("SyncedTrainingPlanRepository: failed to enqueue plan update sync for \(plan.id): \(error)")
+            }
         } else {
             Task { await syncService.syncPlan(plan) }
         }

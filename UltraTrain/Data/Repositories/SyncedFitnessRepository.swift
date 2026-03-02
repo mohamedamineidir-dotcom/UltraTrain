@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: mutable timestamp only written from async context
 final class SyncedFitnessRepository: FitnessRepository, @unchecked Sendable {
     private let local: LocalFitnessRepository
     private let syncService: FitnessSyncService
@@ -35,7 +36,11 @@ final class SyncedFitnessRepository: FitnessRepository, @unchecked Sendable {
         let snapshots = await syncService.restoreSnapshots()
         guard !snapshots.isEmpty else { return [] }
         for snapshot in snapshots {
-            try? await local.saveSnapshot(snapshot)
+            do {
+                try await local.saveSnapshot(snapshot)
+            } catch {
+                Logger.persistence.warning("SyncedFitnessRepository: failed to save restored snapshot for \(snapshot.date): \(error)")
+            }
         }
         Logger.network.info("SyncedFitnessRepository: restored \(snapshots.count) snapshots")
         return snapshots.filter { $0.date >= startDate && $0.date <= endDate }

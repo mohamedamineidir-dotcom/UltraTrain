@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: mutable flag only written from async context
 final class SyncedRunRepository: RunRepository, @unchecked Sendable {
     private let local: LocalRunRepository
     private let syncService: any SyncQueueServiceProtocol
@@ -53,7 +54,11 @@ final class SyncedRunRepository: RunRepository, @unchecked Sendable {
         let runs = await restoreService.restoreRuns()
         guard !runs.isEmpty else { return nil }
         for run in runs {
-            try? await local.saveRun(run)
+            do {
+                try await local.saveRun(run)
+            } catch {
+                Logger.persistence.warning("SyncedRunRepository: failed to save restored run \(run.id): \(error)")
+            }
         }
         Logger.network.info("SyncedRunRepository: saved \(runs.count) restored runs locally")
         return runs
@@ -93,8 +98,12 @@ final class SyncedRunRepository: RunRepository, @unchecked Sendable {
 
     func updateLinkedSession(runId: UUID, sessionId: UUID) async throws {
         try await local.updateLinkedSession(runId: runId, sessionId: sessionId)
-        if let run = try? await local.getRun(id: runId) {
-            try? await syncService.enqueueOperation(.runUpload, entityId: run.id)
+        do {
+            if let run = try await local.getRun(id: runId) {
+                try await syncService.enqueueOperation(.runUpload, entityId: run.id)
+            }
+        } catch {
+            Logger.network.warning("SyncedRunRepository: failed to enqueue sync after linking session for run \(runId): \(error)")
         }
     }
 }

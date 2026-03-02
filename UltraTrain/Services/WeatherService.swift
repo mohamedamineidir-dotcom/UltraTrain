@@ -3,6 +3,7 @@ import Foundation
 import os
 import WeatherKit
 
+// @unchecked Sendable: wraps thread-safe WeatherService.shared + actor cache
 final class AppleWeatherKitService: WeatherServiceProtocol, @unchecked Sendable {
 
     private let weatherService = WeatherKit.WeatherService.shared

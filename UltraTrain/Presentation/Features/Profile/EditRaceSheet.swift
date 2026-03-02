@@ -1,5 +1,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
+import os
 
 struct EditRaceSheet: View {
     enum Mode {
@@ -173,7 +174,12 @@ struct EditRaceSheet: View {
             }
             .task {
                 guard let repo = routeRepository else { return }
-                availableRoutes = (try? await repo.getRoutes()) ?? []
+                do {
+                    availableRoutes = try await repo.getRoutes()
+                } catch {
+                    Logger.routePlanning.warning("EditRaceSheet: failed to load routes: \(error)")
+                    availableRoutes = []
+                }
             }
         }
     }

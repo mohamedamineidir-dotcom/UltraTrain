@@ -150,11 +150,15 @@ enum RaceSwiftDataMapper {
         ) else {
             return []
         }
-        return codable.map { point in
-            TrackPoint(
+        return codable.compactMap { point in
+            guard InputValidator.isValidCoordinate(latitude: point.latitude, longitude: point.longitude) else {
+                return nil
+            }
+            let alt = InputValidator.isValidAltitude(point.altitudeM) ? point.altitudeM : 0
+            return TrackPoint(
                 latitude: point.latitude,
                 longitude: point.longitude,
-                altitudeM: point.altitudeM,
+                altitudeM: alt,
                 timestamp: point.timestamp,
                 heartRate: point.heartRate
             )

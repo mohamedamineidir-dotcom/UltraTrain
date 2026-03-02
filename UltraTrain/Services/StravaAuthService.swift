@@ -2,6 +2,7 @@ import Foundation
 import AuthenticationServices
 import os
 
+// @unchecked Sendable: token mutated only via async methods (no races)
 final class StravaAuthService: StravaAuthServiceProtocol, @unchecked Sendable {
     private static let logger = Logger.strava
     private static let keychainKey = "strava_token"
@@ -9,7 +10,12 @@ final class StravaAuthService: StravaAuthServiceProtocol, @unchecked Sendable {
     private var token: StravaToken?
 
     init() {
-        token = try? KeychainManager.load(StravaToken.self, for: Self.keychainKey)
+        do {
+            token = try KeychainManager.load(StravaToken.self, for: Self.keychainKey)
+        } catch {
+            token = nil
+            Self.logger.warning("Strava: failed to load token from Keychain: \(error)")
+        }
         if let name = token?.athleteName {
             Self.logger.info("Strava: restored session for \(name)")
         }

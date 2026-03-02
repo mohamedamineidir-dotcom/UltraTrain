@@ -2,6 +2,7 @@ import Foundation
 import SwiftUI
 import os
 
+// @unchecked Sendable: immutable after init; stateless helpers
 final class ExportService: ExportServiceProtocol, @unchecked Sendable {
 
     private let gpxExporter = GPXExporter()

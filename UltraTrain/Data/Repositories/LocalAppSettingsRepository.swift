@@ -2,6 +2,7 @@ import Foundation
 import SwiftData
 import os
 
+// @unchecked Sendable: thread-safe via ModelContainer (new context per call)
 final class LocalAppSettingsRepository: AppSettingsRepository, @unchecked Sendable {
     private let modelContainer: ModelContainer
 
@@ -60,9 +61,21 @@ final class LocalAppSettingsRepository: AppSettingsRepository, @unchecked Sendab
         existing.quietHoursStart = settings.quietHoursStart
         existing.quietHoursEnd = settings.quietHoursEnd
         existing.dataRetentionMonths = settings.dataRetentionMonths
-        existing.voiceCoachingConfigData = try? JSONEncoder().encode(settings.voiceCoachingConfig)
-        existing.safetyConfigData = try? JSONEncoder().encode(settings.safetyConfig)
-        existing.notificationSoundPreferencesData = try? JSONEncoder().encode(settings.notificationSoundPreferences)
+        do {
+            existing.voiceCoachingConfigData = try JSONEncoder().encode(settings.voiceCoachingConfig)
+        } catch {
+            Logger.persistence.warning("Failed to encode voiceCoachingConfig: \(error)")
+        }
+        do {
+            existing.safetyConfigData = try JSONEncoder().encode(settings.safetyConfig)
+        } catch {
+            Logger.persistence.warning("Failed to encode safetyConfig: \(error)")
+        }
+        do {
+            existing.notificationSoundPreferencesData = try JSONEncoder().encode(settings.notificationSoundPreferences)
+        } catch {
+            Logger.persistence.warning("Failed to encode notificationSoundPreferences: \(error)")
+        }
 
         try context.save()
         Logger.persistence.info("App settings updated")

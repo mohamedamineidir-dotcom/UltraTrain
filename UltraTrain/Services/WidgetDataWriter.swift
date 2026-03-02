@@ -2,6 +2,7 @@ import Foundation
 import os
 import WidgetKit
 
+// @unchecked Sendable: immutable after init
 final class WidgetDataWriter: @unchecked Sendable {
 
     private let planRepository: any TrainingPlanRepository

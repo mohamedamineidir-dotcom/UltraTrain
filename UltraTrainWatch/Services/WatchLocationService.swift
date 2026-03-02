@@ -9,6 +9,7 @@ enum WatchLocationAuthStatus: Sendable {
 
 @Observable
 @MainActor
+// @unchecked Sendable: all mutable state guarded by @MainActor
 final class WatchLocationService: NSObject, @unchecked Sendable {
 
     // MARK: - State

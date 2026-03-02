@@ -2,6 +2,7 @@ import Foundation
 import CoreLocation
 import os
 
+// @unchecked Sendable: immutable after init
 final class OSMTrailService: @unchecked Sendable {
     private let session: URLSession
     // invariant: static string literal is always a valid URL

@@ -20,6 +20,7 @@ protocol WatchHealthKitServiceProtocol: Sendable {
 
 @Observable
 @MainActor
+// @unchecked Sendable: all mutable state guarded by @MainActor
 final class WatchHealthKitService: NSObject, WatchHealthKitServiceProtocol, @unchecked Sendable {
 
     // MARK: - State
@@ -33,12 +34,16 @@ final class WatchHealthKitService: NSObject, WatchHealthKitServiceProtocol, @unc
     private var workoutBuilder: HKLiveWorkoutBuilder?
     private var heartRateContinuation: AsyncStream<Int>.Continuation?
 
+    // invariant: Apple guarantees non-nil for all standard HKQuantityTypeIdentifier values
     private let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
     private let activeEnergyType = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!
     private let distanceType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
 
     // MARK: - Authorization
 
+    /// Requests HealthKit authorization for the metrics needed by the watch run tracker:
+    /// - **Read**: Heart rate (live HR display + zones), active energy (calorie tracking), walking/running distance (GPS fallback)
+    /// - **Write**: Workout type (saves completed runs as HealthKit workouts)
     func requestAuthorization() async throws {
         let readTypes: Set<HKObjectType> = [heartRateType, activeEnergyType, distanceType]
         let shareTypes: Set<HKSampleType> = [HKWorkoutType.workoutType()]

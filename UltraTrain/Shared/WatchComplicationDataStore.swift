@@ -1,6 +1,9 @@
 import Foundation
+import os
 
 enum WatchComplicationDataStore {
+
+    private static let logger = Logger(subsystem: "com.ultratrain.app", category: "watch")
 
     private static var defaults: UserDefaults? {
         UserDefaults(suiteName: WatchComplicationDataKeys.suiteName)
@@ -10,12 +13,21 @@ enum WatchComplicationDataStore {
         guard let data = defaults?.data(forKey: WatchComplicationDataKeys.complicationData) else {
             return nil
         }
-        return try? JSONDecoder().decode(WatchComplicationData.self, from: data)
+        do {
+            return try JSONDecoder().decode(WatchComplicationData.self, from: data)
+        } catch {
+            logger.warning("WatchComplicationDataStore: failed to decode complication data: \(error)")
+            return nil
+        }
     }
 
     static func write(_ complicationData: WatchComplicationData) {
-        guard let encoded = try? JSONEncoder().encode(complicationData) else { return }
-        defaults?.set(encoded, forKey: WatchComplicationDataKeys.complicationData)
+        do {
+            let encoded = try JSONEncoder().encode(complicationData)
+            defaults?.set(encoded, forKey: WatchComplicationDataKeys.complicationData)
+        } catch {
+            logger.warning("WatchComplicationDataStore: failed to encode complication data: \(error)")
+        }
     }
 
     static func clear() {

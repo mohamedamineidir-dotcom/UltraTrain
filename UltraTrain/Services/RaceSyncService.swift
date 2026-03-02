@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: immutable after init
 final class RaceSyncService: @unchecked Sendable {
     private let remote: RemoteRaceDataSource
     private let authService: any AuthServiceProtocol

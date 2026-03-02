@@ -38,6 +38,21 @@ enum RaceRemoteMapper {
         guard InputValidator.isValidDistance(race.distanceKm) else { return nil }
         guard InputValidator.isValidElevation(race.elevationGainM) else { return nil }
 
+        // Validate checkpoint coordinates from the API
+        race.checkpoints = race.checkpoints.filter { cp in
+            if let lat = cp.latitude, let lon = cp.longitude {
+                return InputValidator.isValidCoordinate(latitude: lat, longitude: lon)
+            }
+            return true // checkpoints without coordinates are valid
+        }
+
+        // Validate race location coordinates
+        if let lat = race.locationLatitude, let lon = race.locationLongitude,
+           !InputValidator.isValidCoordinate(latitude: lat, longitude: lon) {
+            race.locationLatitude = nil
+            race.locationLongitude = nil
+        }
+
         return race
     }
 }

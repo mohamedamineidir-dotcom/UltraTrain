@@ -2,6 +2,7 @@ import Foundation
 import UserNotifications
 import os
 
+// @unchecked Sendable: wraps thread-safe UNUserNotificationCenter
 final class NotificationService: NotificationServiceProtocol, @unchecked Sendable {
 
     private let center = UNUserNotificationCenter.current()

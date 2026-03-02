@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: immutable after init
 final class WidgetPendingActionProcessor: @unchecked Sendable {
 
     private let planRepository: any TrainingPlanRepository

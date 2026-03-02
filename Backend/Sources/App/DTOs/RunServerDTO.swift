@@ -1,4 +1,7 @@
 import Vapor
+import Logging
+
+private let runDTOLogger = Logger(label: "com.ultratrain.backend.dto.run")
 
 struct RunUploadRequest: Content, Validatable {
     let id: String
@@ -83,6 +86,11 @@ struct RunResponse: Content {
         guard let data = json.data(using: .utf8) else { return nil }
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
-        return try? decoder.decode(T.self, from: data)
+        do {
+            return try decoder.decode(T.self, from: data)
+        } catch {
+            runDTOLogger.warning("Failed to decode JSON for run DTO (\(T.self)): \(error)")
+            return nil
+        }
     }
 }

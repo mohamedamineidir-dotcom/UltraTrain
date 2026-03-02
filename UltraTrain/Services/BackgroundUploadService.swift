@@ -6,6 +6,7 @@ protocol BackgroundUploadServiceProtocol: Sendable {
     func handleSessionCompletion(identifier: String, completion: @escaping () -> Void)
 }
 
+// @unchecked Sendable: thread-safe via NSLock for URLSession callbacks
 final class BackgroundUploadService: NSObject, BackgroundUploadServiceProtocol, @unchecked Sendable {
     static let sessionIdentifier = "com.ultratrain.app.background-upload"
     static let gpsThreshold = 500

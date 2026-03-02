@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: immutable after init
 final class TrainingPlanSyncService: @unchecked Sendable {
     private let remote: RemoteTrainingPlanDataSource
     private let raceRepository: any RaceRepository

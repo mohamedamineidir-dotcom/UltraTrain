@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: immutable after init
 final class HealthKitImportService: HealthKitImportServiceProtocol, @unchecked Sendable {
 
     private let healthKitService: any HealthKitServiceProtocol

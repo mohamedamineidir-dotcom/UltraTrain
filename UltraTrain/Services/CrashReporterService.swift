@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: thread-safe via NSLock for all mutable state
 final class CrashReporterService: CrashReporterProtocol, @unchecked Sendable {
     // NSLock required: persistReport is called from signal/exception handlers
     // which run in a constrained context incompatible with actors
@@ -111,23 +112,41 @@ final class CrashReporterService: CrashReporterProtocol, @unchecked Sendable {
         lock.lock()
         defer { lock.unlock() }
         let fileURL = storageDirectory.appendingPathComponent("\(report.id.uuidString).json")
-        if let data = try? encoder.encode(report) {
-            try? data.write(to: fileURL, options: .atomic)
+        do {
+            let data = try encoder.encode(report)
+            do {
+                try data.write(to: fileURL, options: .atomic)
+            } catch {
+                Logger.crashReporter.error("Failed to write crash report \(report.id) to disk: \(error)")
+            }
+        } catch {
+            Logger.crashReporter.error("Failed to encode crash report \(report.id): \(error)")
         }
     }
 
     func loadPendingReports() -> [CrashReport] {
         lock.lock()
         defer { lock.unlock() }
-        guard let files = try? FileManager.default.contentsOfDirectory(
-            at: storageDirectory, includingPropertiesForKeys: nil
-        ) else { return [] }
+        let files: [URL]
+        do {
+            files = try FileManager.default.contentsOfDirectory(
+                at: storageDirectory, includingPropertiesForKeys: nil
+            )
+        } catch {
+            Logger.crashReporter.warning("Failed to list crash report directory: \(error)")
+            return []
+        }
 
         return files
             .filter { $0.pathExtension == "json" }
             .compactMap { url -> CrashReport? in
-                guard let data = try? Data(contentsOf: url) else { return nil }
-                return try? decoder.decode(CrashReport.self, from: data)
+                do {
+                    let data = try Data(contentsOf: url)
+                    return try decoder.decode(CrashReport.self, from: data)
+                } catch {
+                    Logger.crashReporter.warning("Failed to read crash report at \(url.lastPathComponent): \(error)")
+                    return nil
+                }
             }
             .sorted { $0.timestamp < $1.timestamp }
     }
@@ -136,7 +155,11 @@ final class CrashReporterService: CrashReporterProtocol, @unchecked Sendable {
         lock.lock()
         defer { lock.unlock() }
         let fileURL = storageDirectory.appendingPathComponent("\(id.uuidString).json")
-        try? FileManager.default.removeItem(at: fileURL)
+        do {
+            try FileManager.default.removeItem(at: fileURL)
+        } catch {
+            Logger.crashReporter.warning("Failed to delete crash report \(id): \(error)")
+        }
     }
 
     // MARK: - Static Helpers

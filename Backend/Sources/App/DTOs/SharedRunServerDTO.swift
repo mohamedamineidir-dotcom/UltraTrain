@@ -1,4 +1,7 @@
 import Vapor
+import Logging
+
+private let dtoLogger = Logger(label: "com.ultratrain.backend.dto.sharedrun")
 
 struct ShareRunRequest: Content, Validatable {
     let id: String
@@ -59,14 +62,24 @@ struct SharedRunResponse: Content {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         if let data = model.gpsTrackJSON.data(using: .utf8) {
-            self.gpsTrack = try? decoder.decode([TrackPointServerDTO].self, from: data)
+            do {
+                self.gpsTrack = try decoder.decode([TrackPointServerDTO].self, from: data)
+            } catch {
+                dtoLogger.warning("Failed to decode GPS track JSON for shared run \(model.id?.uuidString ?? "unknown"): \(error)")
+                self.gpsTrack = nil
+            }
         } else {
             self.gpsTrack = nil
         }
 
         // Decode splits
         if let data = model.splitsJSON.data(using: .utf8) {
-            self.splits = try? decoder.decode([SplitServerDTO].self, from: data)
+            do {
+                self.splits = try decoder.decode([SplitServerDTO].self, from: data)
+            } catch {
+                dtoLogger.warning("Failed to decode splits JSON for shared run \(model.id?.uuidString ?? "unknown"): \(error)")
+                self.splits = nil
+            }
         } else {
             self.splits = nil
         }

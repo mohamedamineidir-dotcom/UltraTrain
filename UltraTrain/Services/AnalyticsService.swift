@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: thread-safe via NSLock for all mutable state
 final class AnalyticsService: AnalyticsServiceProtocol, @unchecked Sendable {
     private let lock = NSLock()
     private var isEnabled = true

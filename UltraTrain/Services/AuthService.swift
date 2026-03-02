@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: token mutated only via async methods (no races)
 final class AuthService: AuthServiceProtocol, @unchecked Sendable {
     private static let keychainKey = "ultratrain_auth_token"
 
@@ -10,7 +11,12 @@ final class AuthService: AuthServiceProtocol, @unchecked Sendable {
 
     init(apiClient: APIClient) {
         self.apiClient = apiClient
-        token = try? KeychainManager.load(AuthToken.self, for: Self.keychainKey)
+        do {
+            token = try KeychainManager.load(AuthToken.self, for: Self.keychainKey)
+        } catch {
+            token = nil
+            Logger.network.warning("Auth: failed to load token from Keychain: \(error)")
+        }
         if token != nil {
             Logger.network.info("Auth: restored session from Keychain")
         }
@@ -37,7 +43,11 @@ final class AuthService: AuthServiceProtocol, @unchecked Sendable {
     }
 
     func logout() async throws {
-        try? await apiClient.sendVoid(AuthEndpoints.Logout())
+        do {
+            try await apiClient.sendVoid(AuthEndpoints.Logout())
+        } catch {
+            Logger.network.warning("Auth: server logout request failed (clearing local token anyway): \(error)")
+        }
         clearLocalToken()
         Logger.network.info("Auth: logged out")
     }

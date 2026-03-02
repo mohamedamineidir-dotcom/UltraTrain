@@ -1,6 +1,7 @@
 import AppTrackingTransparency
 import os
 
+// @unchecked Sendable: no mutable state
 final class PrivacyTrackingService: PrivacyTrackingServiceProtocol, @unchecked Sendable {
 
     var authorizationStatus: TrackingAuthorizationStatus {

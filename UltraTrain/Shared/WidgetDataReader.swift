@@ -1,6 +1,9 @@
 import Foundation
+import os
 
 enum WidgetDataReader {
+
+    private static let logger = Logger(subsystem: "com.ultratrain.app", category: "widget")
 
     private static var defaults: UserDefaults? {
         UserDefaults(suiteName: WidgetDataKeys.suiteName)
@@ -44,6 +47,11 @@ enum WidgetDataReader {
 
     private static func read<T: Decodable>(key: String) -> T? {
         guard let data = defaults?.data(forKey: key) else { return nil }
-        return try? JSONDecoder().decode(T.self, from: data)
+        do {
+            return try JSONDecoder().decode(T.self, from: data)
+        } catch {
+            logger.warning("WidgetDataReader: failed to decode data for key \(key): \(error)")
+            return nil
+        }
     }
 }

@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: immutable after init
 final class FinishEstimateSyncService: @unchecked Sendable {
     private let remote: RemoteFinishEstimateDataSource
     private let authService: any AuthServiceProtocol

@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: immutable after init; delegates to Sendable deps
 final class SyncedSocialProfileRepository: SocialProfileRepository, @unchecked Sendable {
     private let local: LocalSocialProfileRepository
     private let remote: RemoteSocialProfileDataSource
@@ -47,7 +48,11 @@ final class SyncedSocialProfileRepository: SocialProfileRepository, @unchecked S
         if let syncQueue {
             // invariant: zero UUID literal is always valid
             let entityId = UUID(uuidString: profile.id) ?? UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
-            try? await syncQueue.enqueueOperation(.socialProfileSync, entityId: entityId)
+            do {
+                try await syncQueue.enqueueOperation(.socialProfileSync, entityId: entityId)
+            } catch {
+                Self.logger.warning("Failed to enqueue social profile sync for \(entityId): \(error)")
+            }
         } else {
             Task {
                 do {

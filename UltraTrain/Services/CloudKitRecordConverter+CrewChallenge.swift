@@ -145,7 +145,12 @@ extension CloudKitRecordConverter {
 
     static func readAsset(_ asset: CKAsset?) -> Data? {
         guard let fileURL = asset?.fileURL else { return nil }
-        return try? Data(contentsOf: fileURL)
+        do {
+            return try Data(contentsOf: fileURL)
+        } catch {
+            Logger.cloudKit.warning("CloudKitRecordConverter: failed to read CKAsset at \(fileURL): \(error)")
+            return nil
+        }
     }
 
     // MARK: - JSON Encoding Helpers

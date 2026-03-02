@@ -43,9 +43,12 @@ enum ClipNutritionDataWriter {
         )
 
         let key = "clip.nutritionPlan.\(raceId.uuidString)"
-        if let data = try? JSONEncoder().encode(clipData) {
+        do {
+            let data = try JSONEncoder().encode(clipData)
             defaults.set(data, forKey: key)
             Logger.persistence.info("Wrote clip nutrition data for race \(raceId)")
+        } catch {
+            Logger.persistence.error("Failed to encode clip nutrition data for race \(raceId): \(error)")
         }
     }
 }

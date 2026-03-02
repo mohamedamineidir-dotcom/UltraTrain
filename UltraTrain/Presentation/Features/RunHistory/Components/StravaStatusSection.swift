@@ -114,11 +114,21 @@ struct StravaStatusSection: View {
     }
 
     private func stravaLink(activityId: Int) -> some View {
-        Link(destination: URL(string: "https://www.strava.com/activities/\(activityId)")!) {
+        let url = stravaActivityURL(activityId: activityId)
+        return Link(destination: url) {
             Label("View on Strava", systemImage: "arrow.up.right.square")
                 .font(.subheadline)
         }
         .frame(maxWidth: .infinity)
+    }
+
+    private func stravaActivityURL(activityId: Int) -> URL {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "www.strava.com"
+        components.path = "/activities/\(activityId)"
+        // invariant: components with scheme + host + numeric path always produce a valid URL
+        return components.url!
     }
 
     private func uploadToStrava() {

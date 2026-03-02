@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: mutable timestamp only written from async context
 final class SyncedFinishEstimateRepository: FinishEstimateRepository, @unchecked Sendable {
     private let local: LocalFinishEstimateRepository
     private let syncService: FinishEstimateSyncService
@@ -30,7 +31,11 @@ final class SyncedFinishEstimateRepository: FinishEstimateRepository, @unchecked
         let estimates = await syncService.restoreEstimates()
         guard !estimates.isEmpty else { return nil }
         for estimate in estimates {
-            try? await local.saveEstimate(estimate)
+            do {
+                try await local.saveEstimate(estimate)
+            } catch {
+                Logger.persistence.warning("SyncedFinishEstimateRepository: failed to save restored estimate for race \(estimate.raceId): \(error)")
+            }
         }
         Logger.network.info("SyncedFinishEstimateRepository: restored \(estimates.count) estimates")
         return estimates.first { $0.raceId == raceId }

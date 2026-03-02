@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: no mutable state; pure read-only checks
 final class DeviceIntegrityChecker: DeviceIntegrityCheckerProtocol, @unchecked Sendable {
 
     func isDeviceCompromised() -> Bool {

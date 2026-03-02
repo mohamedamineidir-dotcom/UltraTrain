@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: mutable timestamp only written from async context
 final class SyncedNutritionRepository: NutritionRepository, @unchecked Sendable {
     private let local: LocalNutritionRepository
     private let syncService: NutritionSyncService
@@ -51,7 +52,11 @@ final class SyncedNutritionRepository: NutritionRepository, @unchecked Sendable 
         let plans = await syncService.restoreNutrition()
         guard !plans.isEmpty else { return nil }
         for plan in plans {
-            try? await local.saveNutritionPlan(plan)
+            do {
+                try await local.saveNutritionPlan(plan)
+            } catch {
+                Logger.persistence.warning("SyncedNutritionRepository: failed to save restored nutrition plan \(plan.id): \(error)")
+            }
         }
         Logger.network.info("SyncedNutritionRepository: restored \(plans.count) nutrition plans")
         return plans.first { $0.raceId == raceId }

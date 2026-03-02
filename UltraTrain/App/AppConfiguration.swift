@@ -13,7 +13,7 @@ enum AppConfiguration {
                   let url = URL(string: urlString) else {
                 #if DEBUG
                 Logger.network.error("API_BASE_URL not configured — check Secrets.xcconfig")
-                // Return a clearly invalid URL so requests fail fast during development
+                // invariant: static string literal is always a valid URL; intentionally invalid host so requests fail fast
                 return URL(string: "https://api-not-configured.invalid")!
                 #else
                 fatalError("API_BASE_URL must be configured in Secrets.xcconfig for release builds")

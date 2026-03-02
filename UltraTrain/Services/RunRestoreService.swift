@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: immutable after init
 final class RunRestoreService: @unchecked Sendable {
     private let remote: RemoteRunDataSource
     private let authService: any AuthServiceProtocol

@@ -1,4 +1,5 @@
 import SwiftUI
+import os
 
 struct RouteLibraryView: View {
     @Environment(\.unitPreference) private var units
@@ -172,7 +173,11 @@ struct RouteLibraryView: View {
             guard let url = urls.first else { return }
             guard url.startAccessingSecurityScopedResource() else { return }
             defer { url.stopAccessingSecurityScopedResource() }
-            guard let data = try? Data(contentsOf: url) else {
+            let data: Data
+            do {
+                data = try Data(contentsOf: url)
+            } catch {
+                Logger.routePlanning.warning("RouteLibraryView: failed to read GPX file at \(url): \(error)")
                 viewModel.error = "Could not read the selected file."
                 return
             }

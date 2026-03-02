@@ -81,11 +81,15 @@ enum SavedRouteSwiftDataMapper {
         guard let codable = try? JSONDecoder().decode([CodableTrackPoint].self, from: data) else {
             return []
         }
-        return codable.map {
-            TrackPoint(
+        return codable.compactMap {
+            guard InputValidator.isValidCoordinate(latitude: $0.latitude, longitude: $0.longitude) else {
+                return nil
+            }
+            let alt = InputValidator.isValidAltitude($0.altitudeM) ? $0.altitudeM : 0
+            return TrackPoint(
                 latitude: $0.latitude,
                 longitude: $0.longitude,
-                altitudeM: $0.altitudeM,
+                altitudeM: alt,
                 timestamp: $0.timestamp,
                 heartRate: $0.heartRate
             )
@@ -114,14 +118,25 @@ enum SavedRouteSwiftDataMapper {
             return []
         }
         return codable.map {
-            Checkpoint(
+            // Validate optional checkpoint coordinates; nil out invalid pairs
+            let validLat: Double?
+            let validLon: Double?
+            if let lat = $0.latitude, let lon = $0.longitude,
+               InputValidator.isValidCoordinate(latitude: lat, longitude: lon) {
+                validLat = lat
+                validLon = lon
+            } else {
+                validLat = nil
+                validLon = nil
+            }
+            return Checkpoint(
                 id: $0.id,
                 name: $0.name,
                 distanceFromStartKm: $0.distanceFromStartKm,
                 elevationM: $0.elevationM,
                 hasAidStation: $0.hasAidStation,
-                latitude: $0.latitude,
-                longitude: $0.longitude
+                latitude: validLat,
+                longitude: validLon
             )
         }
     }

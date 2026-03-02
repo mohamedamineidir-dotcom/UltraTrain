@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: immutable after init; delegates to Sendable deps
 final class SyncedAthleteRepository: AthleteRepository, @unchecked Sendable {
     private let local: LocalAthleteRepository
     private let remote: RemoteAthleteDataSource
@@ -58,7 +59,11 @@ final class SyncedAthleteRepository: AthleteRepository, @unchecked Sendable {
     func saveAthlete(_ athlete: Athlete) async throws {
         try await local.saveAthlete(athlete)
         if let queue = syncQueue {
-            try? await queue.enqueueOperation(.athleteSync, entityId: athlete.id)
+            do {
+                try await queue.enqueueOperation(.athleteSync, entityId: athlete.id)
+            } catch {
+                Logger.network.warning("SyncedAthleteRepository: failed to enqueue athlete sync for \(athlete.id): \(error)")
+            }
         } else {
             guard authService.isAuthenticated() else { return }
             Task {
@@ -75,7 +80,11 @@ final class SyncedAthleteRepository: AthleteRepository, @unchecked Sendable {
     func updateAthlete(_ athlete: Athlete) async throws {
         try await local.updateAthlete(athlete)
         if let queue = syncQueue {
-            try? await queue.enqueueOperation(.athleteSync, entityId: athlete.id)
+            do {
+                try await queue.enqueueOperation(.athleteSync, entityId: athlete.id)
+            } catch {
+                Logger.network.warning("SyncedAthleteRepository: failed to enqueue athlete update sync for \(athlete.id): \(error)")
+            }
         } else {
             guard authService.isAuthenticated() else { return }
             Task {

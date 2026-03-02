@@ -1,6 +1,7 @@
 import Foundation
 import os
 
+// @unchecked Sendable: immutable after init; delegates to Sendable deps
 final class SyncedGroupChallengeRepository: GroupChallengeRepository, @unchecked Sendable {
     private let local: LocalGroupChallengeRepository
     private let remote: RemoteGroupChallengeDataSource
@@ -27,7 +28,11 @@ final class SyncedGroupChallengeRepository: GroupChallengeRepository, @unchecked
             let dtos = try await remote.fetchChallenges(status: "active")
             let challenges = dtos.compactMap { GroupChallengeRemoteMapper.toDomain($0) }
             for challenge in challenges {
-                _ = try? await local.createChallenge(challenge)
+                do {
+                    _ = try await local.createChallenge(challenge)
+                } catch {
+                    Self.logger.warning("Failed to cache active challenge \(challenge.id) locally: \(error)")
+                }
             }
             return challenges
         } catch {
@@ -45,7 +50,11 @@ final class SyncedGroupChallengeRepository: GroupChallengeRepository, @unchecked
             let dtos = try await remote.fetchChallenges(status: "completed")
             let challenges = dtos.compactMap { GroupChallengeRemoteMapper.toDomain($0) }
             for challenge in challenges {
-                _ = try? await local.createChallenge(challenge)
+                do {
+                    _ = try await local.createChallenge(challenge)
+                } catch {
+                    Self.logger.warning("Failed to cache completed challenge \(challenge.id) locally: \(error)")
+                }
             }
             return challenges
         } catch {
@@ -67,7 +76,11 @@ final class SyncedGroupChallengeRepository: GroupChallengeRepository, @unchecked
             return try await local.createChallenge(challenge)
         }
 
-        _ = try? await local.createChallenge(created)
+        do {
+            _ = try await local.createChallenge(created)
+        } catch {
+            Self.logger.warning("Failed to cache created challenge \(created.id) locally: \(error)")
+        }
         return created
     }
 
@@ -79,7 +92,11 @@ final class SyncedGroupChallengeRepository: GroupChallengeRepository, @unchecked
 
         let responseDTO = try await remote.joinChallenge(id: challengeId.uuidString)
         if let updated = GroupChallengeRemoteMapper.toDomain(responseDTO) {
-            _ = try? await local.createChallenge(updated)
+            do {
+                _ = try await local.createChallenge(updated)
+            } catch {
+                Self.logger.warning("Failed to cache joined challenge \(challengeId) locally: \(error)")
+            }
         }
         try await local.joinChallenge(challengeId)
     }
