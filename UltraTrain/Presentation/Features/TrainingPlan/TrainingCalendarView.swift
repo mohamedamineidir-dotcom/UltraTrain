@@ -65,19 +65,19 @@ struct TrainingCalendarView: View {
     private var weekSummary: some View {
         if let plan = viewModel.plan,
            let currentWeek = plan.weeks.first(where: \.containsToday) {
+            let activeSessions = currentWeek.sessions.filter { $0.type != .rest }
+            let completedCount = activeSessions.filter(\.isCompleted).count
+
             VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                 Text("Week \(currentWeek.weekNumber) — \(currentWeek.phase.displayName)")
                     .font(.headline)
-
-                let active = currentWeek.sessions.filter { $0.type != .rest }
-                let completed = active.filter(\.isCompleted).count
 
                 HStack(spacing: Theme.Spacing.lg) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Sessions")
                             .font(.caption)
                             .foregroundStyle(Theme.Colors.secondaryLabel)
-                        Text("\(completed)/\(active.count)")
+                        Text("\(completedCount)/\(activeSessions.count)")
                             .font(.title3.bold().monospacedDigit())
                     }
 
@@ -92,7 +92,7 @@ struct TrainingCalendarView: View {
             }
             .cardStyle()
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Week \(currentWeek.weekNumber), \(currentWeek.phase.displayName) phase. \(currentWeek.sessions.filter { $0.type != .rest }.filter(\.isCompleted).count) of \(currentWeek.sessions.filter { $0.type != .rest }.count) sessions completed. \(runsInDisplayedMonth) runs this month.")
+            .accessibilityLabel("Week \(currentWeek.weekNumber), \(currentWeek.phase.displayName) phase. \(completedCount) of \(activeSessions.count) sessions completed. \(runsInDisplayedMonth) runs this month.")
         }
     }
 

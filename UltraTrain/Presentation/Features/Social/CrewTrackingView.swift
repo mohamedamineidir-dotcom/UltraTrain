@@ -7,7 +7,6 @@ struct CrewTrackingView: View {
     @State private var viewModel: CrewTrackingViewModel
     @State private var joinSessionIdText = ""
     @State private var showingSharingSheet = false
-    private let timer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
 
     init(
         crewService: any CrewTrackingServiceProtocol,
@@ -34,8 +33,12 @@ struct CrewTrackingView: View {
             .padding(Theme.Spacing.md)
         }
         .navigationTitle("Crew Tracking")
-        .onReceive(timer) { _ in
-            Task { await viewModel.refreshSession() }
+        .task {
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(10))
+                guard !Task.isCancelled else { return }
+                await viewModel.refreshSession()
+            }
         }
         .sheet(isPresented: $showingSharingSheet) {
             if let session = viewModel.session {
