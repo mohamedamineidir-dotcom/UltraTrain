@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support - UltraTrain</title>
+    <meta name="description" content="Get help with UltraTrain. FAQs, troubleshooting, and contact information.">
+    <style>
+        :root {
+            --accent: #26589B;
+            --text: #1d1d1f;
+            --text-secondary: #6e6e73;
+            --bg: #fbfbfd;
+            --card-bg: #ffffff;
+            --border: #e5e5ea;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            line-height: 1.7;
+            color: var(--text);
+            background: var(--bg);
+            padding: 2rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container { max-width: 720px; margin: 0 auto; }
+
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.875rem;
+            margin-bottom: 2rem;
+        }
+
+        .back-link:hover { text-decoration: underline; }
+
+        h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+
+        .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            font-size: 1.0625rem;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .faq-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .faq-item h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.375rem;
+        }
+
+        .faq-item p {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+        }
+
+        .contact-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .contact-card h3 {
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-card p {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-card a {
+            display: inline-block;
+            background: var(--accent);
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9375rem;
+        }
+
+        .contact-card a:hover { opacity: 0.9; }
+
+        a { color: var(--accent); }
+
+        .footer {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <a href="/" class="back-link">&larr; Back to UltraTrain</a>
+
+    <h1>Support</h1>
+    <p class="subtitle">Find answers to common questions or get in touch with us.</p>
+
+    <h2>Getting Started</h2>
+
+    <div class="faq-item">
+        <h3>How do I create a training plan?</h3>
+        <p>After setting up your athlete profile, go to the Race Setup tab and add your target race (A-race). Enter the race name, date, distance, and elevation gain. UltraTrain will automatically generate a periodized training plan working backwards from your race date.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>What data does UltraTrain need from HealthKit?</h3>
+        <p>UltraTrain reads heart rate, workout data, and running metrics to calibrate your training plan and track fitness. You can grant or revoke access at any time in iOS Settings > Health > Data Access.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>Can I use UltraTrain without an account?</h3>
+        <p>Core features like training plans, run tracking, and nutrition planning work locally on your device. An account is only needed for cloud sync, social features, and Strava integration.</p>
+    </div>
+
+    <h2>Training Plans</h2>
+
+    <div class="faq-item">
+        <h3>How does the plan adjust when I miss sessions?</h3>
+        <p>UltraTrain monitors your plan adherence. When you miss sessions, the plan redistributes volume across remaining days. Extended gaps trigger automatic volume reduction to prevent injury from ramping back up too quickly.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>Can I add intermediate (B/C) races?</h3>
+        <p>Yes. Go to Race Setup and add B or C races. The plan automatically inserts mini-tapers before and recovery periods after intermediate races, using them as fitness benchmarks for your A-race prediction.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>What is the recovery week cycle?</h3>
+        <p>By default, UltraTrain schedules a recovery week every 3rd week, reducing volume by 30-40%. This follows the proven 2:1 or 3:1 build/recovery cycle used by most elite ultra coaches.</p>
+    </div>
+
+    <h2>Run Tracking</h2>
+
+    <div class="faq-item">
+        <h3>How accurate is GPS tracking?</h3>
+        <p>During active runs, UltraTrain uses your device's highest-accuracy GPS with a 5-meter distance filter. Accuracy depends on your device, satellite visibility, and terrain. In deep valleys or dense forest, expect reduced accuracy.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>Does tracking work without cellular signal?</h3>
+        <p>Yes. GPS tracking works without cellular or Wi-Fi. Your run data is stored locally and synced when you regain connectivity.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>How does auto-pause work?</h3>
+        <p>When your speed drops below 0.5 m/s for 5 seconds, the run automatically pauses. It resumes when you exceed 0.8 m/s. The slight difference (hysteresis) prevents rapid on/off toggling at aid stations.</p>
+    </div>
+
+    <h2>Nutrition</h2>
+
+    <div class="faq-item">
+        <h3>How are nutrition recommendations calculated?</h3>
+        <p>Race-day calorie needs are estimated at 4-6 cal/kg/hour based on intensity. Hydration targets are 400-800 ml/hour adjusted for weather. Sodium intake targets approximately 600 mg/hour for ultras. All values are customizable.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>What is gut training?</h3>
+        <p>Gut training means practicing your race-day nutrition plan during long training runs (2+ hours). UltraTrain flags eligible sessions and reminds you to consume your planned fuel, so your digestive system adapts before race day.</p>
+    </div>
+
+    <h2>Finish Time Prediction</h2>
+
+    <div class="faq-item">
+        <h3>How does finish time estimation work?</h3>
+        <p>UltraTrain uses effort-based distance (every 100m of elevation gain adds ~1 km of equivalent effort) combined with your recent training data and race results. It provides three scenarios: optimistic, expected, and conservative.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>Why does my predicted time change?</h3>
+        <p>Your prediction updates automatically as you log more runs and your fitness changes. Improved training consistency and volume will typically lower your predicted time.</p>
+    </div>
+
+    <h2>Account & Data</h2>
+
+    <div class="faq-item">
+        <h3>How do I export my data?</h3>
+        <p>Go to Settings > Data Management > Export. You can export runs as GPX files, training data as CSV, or generate a PDF training report. You can also share individual runs as images.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>How do I delete my account?</h3>
+        <p>Go to Settings > Account > Delete Account. This permanently removes all your server-side data within 30 days. Local data on your device can be cleared separately from Settings > Data Management.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>Does iCloud sync work across devices?</h3>
+        <p>Yes. When iCloud sync is enabled, your data syncs across all your Apple devices signed into the same Apple ID. The sync uses your private CloudKit container — only you can access your data.</p>
+    </div>
+
+    <h2>Strava Integration</h2>
+
+    <div class="faq-item">
+        <h3>How do I connect Strava?</h3>
+        <p>Go to Settings > Integrations > Strava and tap "Connect". You'll be redirected to Strava to authorize UltraTrain. Once connected, completed runs are automatically uploaded to your Strava account.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>Can I import past Strava activities?</h3>
+        <p>Yes. After connecting, UltraTrain can import your recent Strava activities to calibrate your training plan and finish time predictions.</p>
+    </div>
+
+    <div class="contact-card">
+        <h3>Still Need Help?</h3>
+        <p>Can't find what you're looking for? We're happy to help.</p>
+        <a href="mailto:support@ultratrain.app">Email Support</a>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2026 UltraTrain. All rights reserved. | <a href="/privacy">Privacy</a> | <a href="/terms">Terms</a></p>
+    </div>
+</div>
+</body>
+</html>

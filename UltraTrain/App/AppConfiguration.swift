@@ -32,10 +32,24 @@ enum AppConfiguration {
             return "ultratrain.app"
             #endif
         }()
-        static let certificatePinHashes: [String] = [
-            "uDJoKW7obJUPmVjZ6PfANMvVjFjM28DhB5Nl42ovcPs=", // Leaf: *.up.railway.app (staging)
-            "oW7smChMJRcnzTObF7K+HzInReAPTxB/L1h6eZTmw9Q="  // Intermediate: Certainly Intermediate R1
-        ]
+        static let certificatePinHashes: [String] = {
+            #if DEBUG
+            // Staging: Railway hosting
+            // To regenerate, run:
+            //   echo | openssl s_client -connect railway-link-production-96cc.up.railway.app:443 2>/dev/null \
+            //     | openssl x509 -pubkey -noout | openssl pkey -pubin -outform DER \
+            //     | openssl dgst -sha256 -binary | base64
+            return [
+                "uDJoKW7obJUPmVjZ6PfANMvVjFjM28DhB5Nl42ovcPs=", // Leaf: *.up.railway.app
+                "oW7smChMJRcnzTObF7K+HzInReAPTxB/L1h6eZTmw9Q="  // Intermediate: Certainly Intermediate R1
+            ]
+            #else
+            // Production: ultratrain.app
+            // TODO: Before release, run the openssl command above against ultratrain.app:443
+            // and replace these placeholder hashes with the actual values.
+            return []
+            #endif
+        }()
     }
 
     enum GPS {

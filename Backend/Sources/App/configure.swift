@@ -63,6 +63,7 @@ func configure(_ app: Application) async throws {
     app.migrations.add(CreateFitnessSnapshot())
     app.migrations.add(CreateFinishEstimate())
     app.migrations.add(CreateChallenge())
+    app.migrations.add(CreateAnalyticsEvent())
     do {
         try await app.autoMigrate()
         app.logger.notice("Migrations completed successfully")

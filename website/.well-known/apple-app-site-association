@@ -1,0 +1,20 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["KF2LJCF3GM.com.ultratrain.app"],
+        "components": [
+          { "/": "/shared-runs/*" },
+          { "/": "/crew/*" },
+          { "/": "/race/*" }
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": ["KF2LJCF3GM.com.ultratrain.app"]
+  },
+  "appclips": {
+    "apps": ["KF2LJCF3GM.com.ultratrain.app.Clip"]
+  }
+}

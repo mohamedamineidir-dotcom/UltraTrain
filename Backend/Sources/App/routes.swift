@@ -39,4 +39,7 @@ func routes(_ app: Application) throws {
 
     // Crash reports — no auth required, aggressively rate-limited
     try api.register(collection: CrashReportController())
+
+    // Analytics — no auth required
+    try api.register(collection: AnalyticsController())
 }

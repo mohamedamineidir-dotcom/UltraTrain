@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UltraTrain - Trail Running Training Companion</title>
+    <meta name="description" content="Your personalized ultra trail running coach. Training plans, nutrition strategy, GPS tracking, and finish time predictions — all in one app.">
+    <meta name="theme-color" content="#26589B">
+    <link rel="canonical" href="https://ultratrain.app">
+    <meta property="og:title" content="UltraTrain - Trail Running Training Companion">
+    <meta property="og:description" content="Personalized training plans, nutrition strategy, GPS tracking, and finish time predictions for ultra trail runners.">
+    <meta property="og:url" content="https://ultratrain.app">
+    <meta property="og:type" content="website">
+    <style>
+        :root {
+            --accent: #26589B;
+            --accent-light: #3A72B5;
+            --accent-dark: #1B3F6F;
+            --text: #1d1d1f;
+            --text-secondary: #6e6e73;
+            --bg: #fbfbfd;
+            --card-bg: #ffffff;
+            --border: #e5e5ea;
+            --radius: 16px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(251, 251, 253, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+            padding: 0 1.5rem;
+        }
+
+        .nav-inner {
+            max-width: 1080px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 52px;
+        }
+
+        .nav-logo {
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+
+        .nav-links a {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--accent); }
+
+        /* Hero */
+        .hero {
+            padding: 8rem 1.5rem 5rem;
+            text-align: center;
+            background: linear-gradient(180deg, #eaf1fb 0%, var(--bg) 100%);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent-dark), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: clamp(1.0625rem, 2.5vw, 1.25rem);
+            color: var(--text-secondary);
+            max-width: 560px;
+            margin: 0 auto 2.5rem;
+        }
+
+        .cta-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+        .cta-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--accent);
+            color: #fff;
+            padding: 0.875rem 2rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+
+        .cta-primary:hover { background: var(--accent-dark); }
+
+        .cta-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: transparent;
+            color: var(--accent);
+            padding: 0.875rem 2rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            border: 2px solid var(--accent);
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .cta-secondary:hover { background: var(--accent); color: #fff; }
+
+        /* Features */
+        .features {
+            padding: 5rem 1.5rem;
+            max-width: 1080px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.01em;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.0625rem;
+            margin-bottom: 3rem;
+            max-width: 560px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            line-height: 1.6;
+        }
+
+        /* Stats */
+        .stats {
+            background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+            padding: 4rem 1.5rem;
+            color: #fff;
+        }
+
+        .stats-grid {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-item p {
+            font-size: 0.9375rem;
+            opacity: 0.85;
+        }
+
+        /* How it works */
+        .how-it-works {
+            padding: 5rem 1.5rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .step {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+
+        .step-content h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.375rem;
+        }
+
+        .step-content p {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 2.5rem 1.5rem;
+        }
+
+        .footer-inner {
+            max-width: 1080px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-left {
+            color: var(--text-secondary);
+            font-size: 0.8125rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.8125rem;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover { color: var(--accent); }
+
+        @media (max-width: 640px) {
+            .hero { padding: 7rem 1rem 3rem; }
+            .feature-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .step { flex-direction: column; gap: 0.75rem; }
+            .footer-inner { flex-direction: column; text-align: center; }
+            .footer-links { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-inner">
+        <a href="/" class="nav-logo">UltraTrain</a>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="/support">Support</a>
+            <a href="/privacy">Privacy</a>
+        </div>
+    </div>
+</nav>
+
+<section class="hero">
+    <h1>Train Smarter.<br>Run Further.</h1>
+    <p>Your personalized ultra trail running coach. Training plans, nutrition strategy, GPS tracking, and finish time predictions — all in one app.</p>
+    <div class="cta-group">
+        <a href="#" class="cta-primary">Download on the App Store</a>
+        <a href="#features" class="cta-secondary">See Features</a>
+    </div>
+</section>
+
+<section class="features" id="features">
+    <h2 class="section-title">Everything You Need to Reach the Finish Line</h2>
+    <p class="section-subtitle">Built by runners, for runners. Every feature designed around the unique demands of ultra trail running.</p>
+
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="feature-icon">&#x1F4CB;</div>
+            <h3>Personalized Training Plans</h3>
+            <p>Periodized plans built from your A-race backwards. Base, build, peak, and taper phases calibrated to your fitness level, with automatic B/C race integration.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">&#x1F34C;</div>
+            <h3>Race Nutrition Strategy</h3>
+            <p>Calorie, hydration, and electrolyte plans based on your weight and race profile. Gut training reminders during long runs to practice race-day fueling.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">&#x1F4CD;</div>
+            <h3>GPS Run Tracking</h3>
+            <p>Live pace, distance, elevation, and heart rate with auto-pause detection. Post-run splits, elevation profiles, and HR zone analysis.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">&#x23F1;</div>
+            <h3>Finish Time Prediction</h3>
+            <p>Effort-based estimates using your training data and race elevation profile. Three scenarios — optimistic, expected, conservative — with per-checkpoint splits.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">&#x1F4C8;</div>
+            <h3>Fitness & Training Load</h3>
+            <p>Track weekly volume, elevation, and time. Monitor fitness, fatigue, and form trends with acute-to-chronic ratio alerts to prevent overtraining.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">&#x26A1;</div>
+            <h3>Apple Watch & Widgets</h3>
+            <p>Standalone watch tracking with GPS and heart rate. Home screen widgets for next session, race countdown, weekly progress, and live activity during runs.</p>
+        </div>
+    </div>
+</section>
+
+<section class="stats">
+    <div class="stats-grid">
+        <div class="stat-item">
+            <h3>D+</h3>
+            <p>Elevation-aware training</p>
+        </div>
+        <div class="stat-item">
+            <h3>3</h3>
+            <p>Finish time scenarios</p>
+        </div>
+        <div class="stat-item">
+            <h3>A/B/C</h3>
+            <p>Multi-race planning</p>
+        </div>
+        <div class="stat-item">
+            <h3>24/7</h3>
+            <p>Works offline</p>
+        </div>
+    </div>
+</section>
+
+<section class="how-it-works">
+    <h2 class="section-title">Get Started in Minutes</h2>
+    <p class="section-subtitle">From download to your first training plan in under 5 minutes.</p>
+
+    <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+            <h3>Set Up Your Profile</h3>
+            <p>Enter your experience level, running history, and physical data. Connect HealthKit to import your training history automatically.</p>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+            <h3>Add Your Target Race</h3>
+            <p>Enter your A-race details — distance, elevation, date, and goal. Add B/C races as training milestones if you have them.</p>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+            <h3>Get Your Plan</h3>
+            <p>UltraTrain generates a periodized training plan with integrated nutrition strategy. Adjust sessions as needed — the plan adapts to you.</p>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-number">4</div>
+        <div class="step-content">
+            <h3>Train & Track</h3>
+            <p>Track runs with GPS, monitor your fitness trends, and watch your predicted finish time improve as you get stronger.</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-inner">
+        <div class="footer-left">&copy; 2026 UltraTrain. All rights reserved.</div>
+        <div class="footer-links">
+            <a href="/privacy">Privacy Policy</a>
+            <a href="/terms">Terms of Service</a>
+            <a href="/support">Support</a>
+            <a href="mailto:support@ultratrain.app">Contact</a>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
