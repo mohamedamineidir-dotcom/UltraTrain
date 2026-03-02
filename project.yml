@@ -89,6 +89,7 @@ targets:
         CURRENT_PROJECT_VERSION: 1
         CODE_SIGN_STYLE: Automatic
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        SWIFT_EMIT_LOC_STRINGS: "YES"
     entitlements:
       path: UltraTrainWatch/Resources/UltraTrainWatch.entitlements
       properties:
@@ -119,6 +120,7 @@ targets:
         CODE_SIGN_STYLE: Automatic
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
+        SWIFT_EMIT_LOC_STRINGS: "YES"
     entitlements:
       path: UltraTrainWidgets/Resources/UltraTrainWidgets.entitlements
       properties:
@@ -147,6 +149,7 @@ targets:
         CODE_SIGN_STYLE: Automatic
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
+        SWIFT_EMIT_LOC_STRINGS: "YES"
     entitlements:
       path: UltraTrainWatchWidgets/Resources/UltraTrainWatchWidgets.entitlements
       properties:
@@ -183,3 +186,26 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.ultratrain.uitests
         GENERATE_INFOPLIST_FILE: true
         TEST_TARGET_NAME: UltraTrain
+
+schemes:
+  UltraTrain:
+    build:
+      targets:
+        UltraTrain: all
+        UltraTrainWatch: all
+        UltraTrainWidgets: all
+        UltraTrainWatchWidgets: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+      targets:
+        - name: UltraTrainTests
+          randomExecutionOrder: true
+        - name: UltraTrainUITests
+          randomExecutionOrder: true
+      coverageTargets:
+        - UltraTrain
+    archive:
+      config: Release

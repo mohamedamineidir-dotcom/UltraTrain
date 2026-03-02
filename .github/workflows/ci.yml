@@ -11,6 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # ── Backend Tests ─────────────────────────────────────────────────────────
   backend-tests:
     name: Backend Tests
     runs-on: macos-15
@@ -33,49 +34,155 @@ jobs:
       - name: Test
         run: swift test
 
-  ios-tests:
-    name: iOS Tests
+  # ── SwiftLint ─────────────────────────────────────────────────────────────
+  swiftlint:
+    name: SwiftLint
     runs-on: macos-15
-    env:
-      SCHEME: UltraTrain
-      DESTINATION: "platform=iOS Simulator,name=iPhone 16 Pro"
     steps:
       - uses: actions/checkout@v4
 
-      - name: Select Xcode
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
+      - name: Run SwiftLint
+        run: swiftlint lint --strict --reporter github-actions-logging
+
+  # ── iOS Unit Tests ────────────────────────────────────────────────────────
+  ios-unit-tests:
+    name: iOS Unit Tests
+    runs-on: macos-15
+    env:
+      SCHEME: UltraTrain
+      DESTINATION: "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode 16.2
         run: sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
+
+      - name: Show available simulators
+        run: xcrun simctl list devices available | grep iPhone | head -10
 
       - name: Install xcodegen
         run: brew install xcodegen
 
-      - name: Create dummy xcconfig
+      - name: Create dummy Secrets.xcconfig
         run: |
-          echo "// CI placeholder" > Secrets.xcconfig
+          cat > Secrets.xcconfig << 'EOF'
+          // CI placeholder — real secrets are in local dev only
+          STRAVA_CLIENT_ID =
+          STRAVA_CLIENT_SECRET =
+          HMAC_SIGNING_SECRET =
+          EOF
 
       - name: Generate Xcode project
         run: xcodegen generate
 
-      - name: Cache SPM
-        uses: actions/cache@v4
-        with:
-          path: ~/Library/Developer/Xcode/DerivedData/**/SourcePackages
-          key: ${{ runner.os }}-spm-ios-${{ hashFiles('**/Package.resolved') }}
-          restore-keys: ${{ runner.os }}-spm-ios-
-
-      - name: Build
+      - name: Build for Testing
         run: |
+          set -o pipefail
           xcodebuild build-for-testing \
             -project UltraTrain.xcodeproj \
             -scheme "$SCHEME" \
             -destination "$DESTINATION" \
             -skipPackagePluginValidation \
-            CODE_SIGNING_ALLOWED=NO | xcpretty
+            -enableCodeCoverage YES \
+            CODE_SIGNING_ALLOWED=NO
 
-      - name: Run unit tests
+      - name: Run Unit Tests
         run: |
+          set -o pipefail
           xcodebuild test-without-building \
             -project UltraTrain.xcodeproj \
             -scheme "$SCHEME" \
             -destination "$DESTINATION" \
             -only-testing:UltraTrainTests \
-            CODE_SIGNING_ALLOWED=NO | xcpretty
+            -enableCodeCoverage YES \
+            -resultBundlePath TestResults.xcresult \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Code Coverage Summary
+        if: always()
+        run: |
+          xcrun xccov view --report TestResults.xcresult --json 2>/dev/null \
+            | python3 -c "
+          import json, sys
+          data = json.load(sys.stdin)
+          for t in data.get('targets', []):
+              if t.get('name','').startswith('UltraTrain') and not t.get('name','').endswith('Tests'):
+                  pct = t.get('lineCoverage', 0) * 100
+                  print(f'{t[\"name\"]}: {pct:.1f}%')
+          " || echo "Coverage data not available"
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-unit-test-results
+          path: TestResults.xcresult
+          retention-days: 7
+
+  # ── iOS UI Tests (main branch only) ───────────────────────────────────────
+  ios-ui-tests:
+    name: iOS UI Tests
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: macos-15
+    env:
+      SCHEME: UltraTrain
+      DESTINATION: "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode 16.2
+        run: sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
+
+      - name: Install xcodegen
+        run: brew install xcodegen
+
+      - name: Create dummy Secrets.xcconfig
+        run: |
+          cat > Secrets.xcconfig << 'EOF'
+          // CI placeholder
+          STRAVA_CLIENT_ID =
+          STRAVA_CLIENT_SECRET =
+          HMAC_SIGNING_SECRET =
+          EOF
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Boot Simulator
+        run: |
+          UDID=$(xcrun simctl list devices available | grep "iPhone 16 Pro" | grep -v "Max\|Plus" | head -1 | sed 's/.*(\(.*\)).*/\1/')
+          echo "Using simulator UDID: $UDID"
+          xcrun simctl boot "$UDID" 2>/dev/null || true
+          xcrun simctl bootstatus "$UDID" -b
+
+      - name: Build for Testing
+        run: |
+          set -o pipefail
+          xcodebuild build-for-testing \
+            -project UltraTrain.xcodeproj \
+            -scheme "$SCHEME" \
+            -destination "$DESTINATION" \
+            -skipPackagePluginValidation \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Run UI Tests
+        run: |
+          set -o pipefail
+          xcodebuild test-without-building \
+            -project UltraTrain.xcodeproj \
+            -scheme "$SCHEME" \
+            -destination "$DESTINATION" \
+            -only-testing:UltraTrainUITests \
+            -resultBundlePath UITestResults.xcresult \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Upload UI Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-ui-test-results
+          path: UITestResults.xcresult
+          retention-days: 7

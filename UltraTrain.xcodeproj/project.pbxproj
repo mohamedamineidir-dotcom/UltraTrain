@@ -129,6 +129,7 @@
 		121DC1D30552E4810E8AC4D9 /* SessionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACFC008A7F2E6FC06D95E02 /* SessionType.swift */; };
 		129766169CD9DA51EEEC48FF /* SocialProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D4BBEC7C569B7D6749B781 /* SocialProfileRepository.swift */; };
 		12FB116F93C655FC07E2FAF2 /* CalendarDayDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69089A878BFED07AE054725E /* CalendarDayDetailSheet.swift */; };
+		130CC484536623AD47833066 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = D1B18C2F978C4F928156CDD2 /* Localizable.xcstrings */; };
 		131D04225D9A9824EAB16517 /* RunStatisticsCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D07A5D502159366130E271A /* RunStatisticsCalculatorTests.swift */; };
 		13478CE454DEA50DD4CC0992 /* WatchSplit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EF4559395A612CD5A5520BB /* WatchSplit.swift */; };
 		13912C49A4B921A966B8537D /* EmergencyContactSwiftDataMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EAAD480E6F7199FCA73B19 /* EmergencyContactSwiftDataMapper.swift */; };
@@ -194,6 +195,7 @@
 		2033B1EF7E27BF339EFBFA38 /* ChallengeLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5D5730A19A08997B730053 /* ChallengeLibrary.swift */; };
 		203B863705CA4171F2423E94 /* SharedRunCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFCBA3747112D539E6EF693F /* SharedRunCard.swift */; };
 		2084AF5A5A5D835187E376DC /* PostRaceWizardViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B150EB750670D80A54F2BAF /* PostRaceWizardViewModelTests.swift */; };
+		211D7290A6B6241BCC9FCBE5 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C0E95B211DFF769822417BB2 /* Localizable.xcstrings */; };
 		2136D83F534A8ABAB4780D17 /* RacePerformanceComparison.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94953B3822A48702C5C83A8A /* RacePerformanceComparison.swift */; };
 		215088768179AEB17BCBFCF5 /* AdaptiveSessionAdjusterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11F045CA21C1ED4753DAF245 /* AdaptiveSessionAdjusterTests.swift */; };
 		2155332377B71ACE1DD31A23 /* SocialProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E4B274FDA10A3ADB47CC6B /* SocialProfile.swift */; };
@@ -914,6 +916,7 @@
 		9DA0D5903990C017174D900C /* WatchNutritionReminderScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC048E83912AD8CC3D9A91F /* WatchNutritionReminderScheduler.swift */; };
 		9DAE26298EDD75EC29D792AF /* HapticService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4535E0BB060C0EA83A4AF3 /* HapticService.swift */; };
 		9DE4A55DF34E5AF53D0679A1 /* RaceDatabase+AsiaPacific.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888ABF1F1FC9B0DEC349A9EF /* RaceDatabase+AsiaPacific.swift */; };
+		9DF0497373371766372D1E87 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 2FB162B7920E8420962E4AE0 /* Localizable.xcstrings */; };
 		9E0066793A4FFBA8DAC23E4B /* RunFrequencyHeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BD83BD7920AB698DC06CCE /* RunFrequencyHeatmapView.swift */; };
 		9E615488DDA7FB39FDE4F5EA /* AppIntentsDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F891C7A8FC6C2FFF36D2EBE3 /* AppIntentsDataTests.swift */; };
 		9E76CF84B669DBFCF162B4A6 /* WorkoutRecipeSwiftDataMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF29E8AFAACD0C3F0A86723 /* WorkoutRecipeSwiftDataMapper.swift */; };
@@ -1820,6 +1823,7 @@
 		2EBFA0091874848483A66BA4 /* NutritionTimelineChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionTimelineChart.swift; sourceTree = "<group>"; };
 		2EC10DB5425536A2C4CB4A0F /* PersonalRecordsWallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalRecordsWallView.swift; sourceTree = "<group>"; };
 		2EC1FD067AF9A5402D7D90DA /* RaceCourse3DPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceCourse3DPreviewView.swift; sourceTree = "<group>"; };
+		2FB162B7920E8420962E4AE0 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		2FBC90851AF1F5ECC25BD41D /* RemoteNutritionDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteNutritionDataSource.swift; sourceTree = "<group>"; };
 		2FD0A31FC3F8F4E5673D49E5 /* PlanAutoAdjustmentServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanAutoAdjustmentServiceTests.swift; sourceTree = "<group>"; };
 		2FFCA7CFDD292674ED9EC0D7 /* TrainingPlanEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingPlanEndpoints.swift; sourceTree = "<group>"; };
@@ -2631,6 +2635,7 @@
 		C07858ABA4589E352A3C1CD6 /* CreateGroupChallengeSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupChallengeSheet.swift; sourceTree = "<group>"; };
 		C09820BC007EC66C971849EA /* WatchRunImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchRunImportService.swift; sourceTree = "<group>"; };
 		C0D97F2285ACDE601D7BDFB5 /* PlanAdjustmentCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanAdjustmentCalculator.swift; sourceTree = "<group>"; };
+		C0E95B211DFF769822417BB2 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		C128FFCA7A73F2487BC16533 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		C13EB2AD43DAF86B2992AA2C /* SocialProfileSwiftDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialProfileSwiftDataModel.swift; sourceTree = "<group>"; };
 		C1596075498103C092D76FC5 /* MockRunImportUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRunImportUseCase.swift; sourceTree = "<group>"; };
@@ -2734,6 +2739,7 @@
 		D123FECC8334B770745DC917 /* RaceReflectionMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceReflectionMapper.swift; sourceTree = "<group>"; };
 		D13D9C48950C8837CD562462 /* RouteRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRepository.swift; sourceTree = "<group>"; };
 		D165E77AF05EFE2A6911E3E5 /* MonthlyVolumeCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyVolumeCalculatorTests.swift; sourceTree = "<group>"; };
+		D1B18C2F978C4F928156CDD2 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		D1C3E73DB99AFD0614E28BD9 /* MockHealthKitImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockHealthKitImportService.swift; sourceTree = "<group>"; };
 		D1FB24B59C2C14FB3386B3A8 /* DoubleExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleExtensions.swift; sourceTree = "<group>"; };
 		D20F802A33B6D2BCAD1B921D /* PlanAutoAdjustmentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanAutoAdjustmentService.swift; sourceTree = "<group>"; };
@@ -3422,6 +3428,7 @@
 			children = (
 				0FC4C2489FDE2FFEEBD0B235 /* Assets.xcassets */,
 				FDFF8E01D9D5B8C188643DB5 /* Info.plist */,
+				D1B18C2F978C4F928156CDD2 /* Localizable.xcstrings */,
 				0DD2F11E5717A5E8EE860414 /* UltraTrainWidgets.entitlements */,
 			);
 			path = Resources;
@@ -3930,6 +3937,7 @@
 			isa = PBXGroup;
 			children = (
 				B758A4B56B04735C8D81E67D /* Assets.xcassets */,
+				2FB162B7920E8420962E4AE0 /* Localizable.xcstrings */,
 				64C2B36466FBA09D5382C4D9 /* UltraTrainWatch.entitlements */,
 			);
 			path = Resources;
@@ -4393,6 +4401,7 @@
 			children = (
 				3D6C6B912DABCC6F887B9734 /* Assets.xcassets */,
 				9E83DAB9D42C84C3CDDC71CD /* Info.plist */,
+				C0E95B211DFF769822417BB2 /* Localizable.xcstrings */,
 				EF8D71E92959C7FF4F41AA52 /* UltraTrainWatchWidgets.entitlements */,
 			);
 			path = Resources;
@@ -5401,6 +5410,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DEDAFD2F06F99DAD168761B1 /* Assets.xcassets in Resources */,
+				9DF0497373371766372D1E87 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5409,6 +5419,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				02254FF20CA61ECF2275D228 /* Assets.xcassets in Resources */,
+				211D7290A6B6241BCC9FCBE5 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5417,6 +5428,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A4326EEA983103BE27AE5E4E /* Assets.xcassets in Resources */,
+				130CC484536623AD47833066 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6996,6 +7008,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ultratrain.app.watchkitapp.widgets;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 4;
 			};
 			name = Release;
@@ -7013,6 +7026,7 @@
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ultratrain.app.widgets;
 				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -7071,6 +7085,7 @@
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ultratrain.app.widgets;
 				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -7179,6 +7194,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ultratrain.app.watchkitapp;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 4;
 			};
 			name = Release;
@@ -7290,6 +7306,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ultratrain.app.watchkitapp;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 4;
 			};
 			name = Debug;
@@ -7308,6 +7325,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ultratrain.app.watchkitapp.widgets;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 4;
 			};
 			name = Debug;
