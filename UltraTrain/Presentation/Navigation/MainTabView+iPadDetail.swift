@@ -1,29 +1,12 @@
 import SwiftUI
 
-// MARK: - Body & Tab Content
+// MARK: - iPad Detail Content
 
 extension MainTabView {
-    var body: some View {
-        Group {
-            if sizeClass == .regular {
-                NavigationSplitView {
-                    SidebarView(selectedTab: $selectedTab)
-                } detail: {
-                    tabContent
-                }
-            } else {
-                compactTabView
-            }
-        }
-        .onChange(of: deepLinkRouter.pendingDeepLink) { _, _ in
-            handleDeepLink()
-        }
-    }
-
-    // MARK: - Compact (iPhone)
-
-    private var compactTabView: some View {
-        TabView(selection: $selectedTab) {
+    @ViewBuilder
+    var tabContent: some View {
+        switch selectedTab {
+        case .dashboard:
             DashboardView(
                 selectedTab: $selectedTab,
                 planRepository: planRepository,
@@ -47,11 +30,8 @@ extension MainTabView {
                 achievementRepository: achievementRepository,
                 morningCheckInRepository: morningCheckInRepository
             )
-                .tabItem {
-                    Label("Dashboard", systemImage: "house.fill")
-                }
-                .tag(Tab.dashboard)
 
+        case .plan:
             TrainingPlanView(
                 planRepository: planRepository,
                 athleteRepository: athleteRepository,
@@ -64,11 +44,8 @@ extension MainTabView {
                 workoutRecipeRepository: workoutRecipeRepository,
                 runRepository: runRepository
             )
-                .tabItem {
-                    Label("Plan", systemImage: "calendar")
-                }
-                .tag(Tab.plan)
 
+        case .run:
             RunTrackingLaunchView(
                 athleteRepository: athleteRepository,
                 planRepository: planRepository,
@@ -96,11 +73,8 @@ extension MainTabView {
                 emergencyContactRepository: emergencyContactRepository,
                 motionService: motionService
             )
-                .tabItem {
-                    Label("Run", systemImage: "figure.run")
-                }
-                .tag(Tab.run)
 
+        case .nutrition:
             NutritionView(
                 nutritionRepository: nutritionRepository,
                 athleteRepository: athleteRepository,
@@ -111,11 +85,8 @@ extension MainTabView {
                 sessionNutritionAdvisor: sessionNutritionAdvisor,
                 foodDatabaseService: foodDatabaseService
             )
-                .tabItem {
-                    Label("Nutrition", systemImage: "fork.knife")
-                }
-                .tag(Tab.nutrition)
 
+        case .profile:
             ProfileView(
                 athleteRepository: athleteRepository,
                 raceRepository: raceRepository,
@@ -154,32 +125,6 @@ extension MainTabView {
                 authService: authService,
                 onLogout: onLogout
             )
-                .tabItem {
-                    Label("Profile", systemImage: "person.fill")
-                }
-                .tag(Tab.profile)
-        }
-    }
-
-    // MARK: - Deep Link
-
-    func handleDeepLink() {
-        guard let link = deepLinkRouter.consume() else { return }
-        switch link {
-        case .tab(let tab):
-            selectedTab = tab
-        case .startRun:
-            selectedTab = .run
-        case .morningReadiness:
-            selectedTab = .dashboard
-        case .sharedRun:
-            selectedTab = .profile
-        case .crewTracking:
-            selectedTab = .run
-        case .raceDetail:
-            selectedTab = .plan
-        case .raceNutritionTimer:
-            selectedTab = .nutrition
         }
     }
 }

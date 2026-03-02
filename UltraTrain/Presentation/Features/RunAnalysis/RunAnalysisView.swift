@@ -28,7 +28,7 @@ struct RunAnalysisView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: Theme.Spacing.lg) {
+            AdaptiveGrid(spacing: Theme.Spacing.lg) {
                 if viewModel.isLoading {
                     ProgressView("Analyzing...")
                         .padding(.top, Theme.Spacing.xl)
@@ -195,6 +195,8 @@ struct RunAnalysisView: View {
                     .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
             }
         }
+        .onAppear { OrientationLock.unlockAll() }
+        .onDisappear { OrientationLock.resetToPortrait() }
         .task { await viewModel.load() }
         .sheet(isPresented: $viewModel.showFullScreenMap) {
             FullScreenMapView(

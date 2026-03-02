@@ -16,6 +16,15 @@ enum AppSettingsSwiftDataMapper {
             safetyConfig = SafetyConfig()
         }
 
+        let notificationSoundPreferences: [NotificationCategory: NotificationSoundPreference]
+        if let data = model.notificationSoundPreferencesData {
+            notificationSoundPreferences = (try? JSONDecoder().decode(
+                [NotificationCategory: NotificationSoundPreference].self, from: data
+            )) ?? [:]
+        } else {
+            notificationSoundPreferences = [:]
+        }
+
         return AppSettings(
             id: model.id,
             trainingRemindersEnabled: model.trainingRemindersEnabled,
@@ -41,7 +50,8 @@ enum AppSettingsSwiftDataMapper {
             quietHoursEnabled: model.quietHoursEnabled,
             quietHoursStart: model.quietHoursStart,
             quietHoursEnd: model.quietHoursEnd,
-            dataRetentionMonths: model.dataRetentionMonths
+            dataRetentionMonths: model.dataRetentionMonths,
+            notificationSoundPreferences: notificationSoundPreferences
         )
     }
 
@@ -73,6 +83,7 @@ enum AppSettingsSwiftDataMapper {
         )
         model.voiceCoachingConfigData = try? JSONEncoder().encode(settings.voiceCoachingConfig)
         model.safetyConfigData = try? JSONEncoder().encode(settings.safetyConfig)
+        model.notificationSoundPreferencesData = try? JSONEncoder().encode(settings.notificationSoundPreferences)
         return model
     }
 }

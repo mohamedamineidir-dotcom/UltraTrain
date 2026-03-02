@@ -171,6 +171,24 @@ extension SettingsViewModel {
         }
     }
 
+    // MARK: - Notification Sound Preferences
+
+    func updateNotificationSoundPreference(
+        _ category: NotificationCategory,
+        _ preference: NotificationSoundPreference
+    ) async {
+        guard var settings = appSettings else { return }
+        settings.notificationSoundPreferences[category] = preference
+        do {
+            try await appSettingsRepository.updateSettings(settings)
+            appSettings = settings
+            notificationService.soundPreferences = settings.notificationSoundPreferences
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update sound preference: \(error)")
+        }
+    }
+
     // MARK: - Quiet Hours
 
     func updateQuietHours(enabled: Bool) async {

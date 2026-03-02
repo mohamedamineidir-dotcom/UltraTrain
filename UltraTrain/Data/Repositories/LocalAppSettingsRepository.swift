@@ -52,6 +52,17 @@ final class LocalAppSettingsRepository: AppSettingsRepository, @unchecked Sendab
         existing.smartRemindersEnabled = settings.smartRemindersEnabled
         existing.saveToHealthEnabled = settings.saveToHealthEnabled
         existing.healthKitAutoImportEnabled = settings.healthKitAutoImportEnabled
+        existing.pacingAlertsEnabled = settings.pacingAlertsEnabled
+        existing.recoveryRemindersEnabled = settings.recoveryRemindersEnabled
+        existing.weeklySummaryEnabled = settings.weeklySummaryEnabled
+        existing.appearanceModeRaw = settings.appearanceMode.rawValue
+        existing.quietHoursEnabled = settings.quietHoursEnabled
+        existing.quietHoursStart = settings.quietHoursStart
+        existing.quietHoursEnd = settings.quietHoursEnd
+        existing.dataRetentionMonths = settings.dataRetentionMonths
+        existing.voiceCoachingConfigData = try? JSONEncoder().encode(settings.voiceCoachingConfig)
+        existing.safetyConfigData = try? JSONEncoder().encode(settings.safetyConfig)
+        existing.notificationSoundPreferencesData = try? JSONEncoder().encode(settings.notificationSoundPreferences)
 
         try context.save()
         Logger.persistence.info("App settings updated")

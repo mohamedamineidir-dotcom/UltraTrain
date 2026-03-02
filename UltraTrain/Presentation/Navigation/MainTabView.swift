@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct MainTabView: View {
+    @Environment(\.horizontalSizeClass) var sizeClass
     @State var selectedTab: Tab = .dashboard
 
     let deepLinkRouter: DeepLinkRouter

@@ -26,4 +26,9 @@ struct AppSettings: Identifiable, Equatable, Sendable {
     var quietHoursStart: Int = 22
     var quietHoursEnd: Int = 7
     var dataRetentionMonths: Int = 0
+    var notificationSoundPreferences: [NotificationCategory: NotificationSoundPreference] = [:]
+
+    func soundPreference(for category: NotificationCategory) -> NotificationSoundPreference {
+        notificationSoundPreferences[category] ?? .defaultSound
+    }
 }

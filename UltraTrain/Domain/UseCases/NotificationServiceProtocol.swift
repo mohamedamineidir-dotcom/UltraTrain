@@ -1,6 +1,7 @@
 import Foundation
 
 protocol NotificationServiceProtocol: AnyObject, Sendable {
+    var soundPreferences: [NotificationCategory: NotificationSoundPreference] { get set }
     func requestAuthorization() async throws -> Bool
     func scheduleTrainingReminder(for session: TrainingSession) async
     func scheduleRaceCountdown(for race: Race) async

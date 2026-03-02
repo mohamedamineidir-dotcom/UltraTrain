@@ -8,6 +8,7 @@ enum DeepLink: Equatable {
     case sharedRun(id: String)
     case crewTracking(sessionId: String)
     case raceDetail(raceId: String)
+    case raceNutritionTimer(raceId: String)
 }
 
 @Observable
@@ -75,7 +76,11 @@ final class DeepLinkRouter {
         case "crew":
             pendingDeepLink = .crewTracking(sessionId: identifier)
         case "race":
-            pendingDeepLink = .raceDetail(raceId: identifier)
+            if pathComponents.count >= 3, pathComponents[2] == "nutrition" {
+                pendingDeepLink = .raceNutritionTimer(raceId: identifier)
+            } else {
+                pendingDeepLink = .raceDetail(raceId: identifier)
+            }
         default:
             return false
         }

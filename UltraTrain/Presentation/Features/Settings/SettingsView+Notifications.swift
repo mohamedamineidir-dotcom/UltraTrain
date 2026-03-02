@@ -139,6 +139,25 @@ extension SettingsView {
         }
     }
 
+    @ViewBuilder
+    var notificationSoundsSection: some View {
+        if let settings = viewModel.appSettings {
+            Section("Notification Sounds") {
+                ForEach(NotificationCategory.allCases, id: \.self) { category in
+                    NotificationSoundPickerRow(
+                        category: category,
+                        preference: Binding(
+                            get: { settings.soundPreference(for: category) },
+                            set: { newValue in
+                                Task { await viewModel.updateNotificationSoundPreference(category, newValue) }
+                            }
+                        )
+                    )
+                }
+            }
+        }
+    }
+
     private func formatHour(_ hour: Int) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"

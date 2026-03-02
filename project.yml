@@ -35,6 +35,8 @@ targets:
         embed: true
       - target: UltraTrainWidgets
         embed: true
+      - target: UltraTrainClip
+        embed: true
       - sdk: WatchConnectivity.framework
     settings:
       base:
@@ -158,6 +160,36 @@ targets:
         com.apple.security.application-groups:
           - group.com.ultratrain.watchshared
 
+  UltraTrainClip:
+    type: application.on-demand-install-capable
+    platform: iOS
+    sources:
+      - path: UltraTrainClip
+        excludes:
+          - "**/.DS_Store"
+          - Resources
+    resources:
+      - path: UltraTrainClip/Resources/Assets.xcassets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ultratrain.app.Clip
+        GENERATE_INFOPLIST_FILE: true
+        INFOPLIST_KEY_CFBundleDisplayName: UltraTrain Clip
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: 1
+        CODE_SIGN_STYLE: Automatic
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        SWIFT_EMIT_LOC_STRINGS: "YES"
+    entitlements:
+      path: UltraTrainClip/Resources/UltraTrainClip.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.ultratrain.shared
+        com.apple.developer.associated-domains:
+          - applinks:ultratrain.app
+        com.apple.developer.parent-application-identifiers:
+          - $(AppIdentifierPrefix)com.ultratrain.app
+
   UltraTrainTests:
     type: bundle.unit-test
     platform: iOS
@@ -197,6 +229,7 @@ schemes:
         UltraTrainWatch: all
         UltraTrainWidgets: all
         UltraTrainWatchWidgets: all
+        UltraTrainClip: all
     run:
       config: Debug
     test:
@@ -211,3 +244,14 @@ schemes:
         - UltraTrain
     archive:
       config: Release
+
+  UltraTrainClip:
+    build:
+      targets:
+        UltraTrainClip: all
+    run:
+      config: Debug
+      environmentVariables:
+        - variable: _XCAppClipURL
+          value: "https://ultratrain.app/race/test-race-id/nutrition"
+          isEnabled: true

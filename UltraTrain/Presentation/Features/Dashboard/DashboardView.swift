@@ -102,7 +102,7 @@ struct DashboardView: View {
                         .transition(.opacity)
                 }
 
-                LazyVStack(spacing: Theme.Spacing.md) {
+                AdaptiveGrid(spacing: Theme.Spacing.md) {
                     // 1. Hero card — visual focal point
                     DashboardHeroCard(
                         daysUntilRace: viewModel.daysUntilRace,

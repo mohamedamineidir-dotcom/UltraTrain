@@ -29,6 +29,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "9DB9B78B1B543F28D5FE4DF1"
+               BuildableName = "UltraTrainClip.app"
+               BlueprintName = "UltraTrainClip"
+               ReferencedContainer = "container:UltraTrain.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "A879DD4F8E0514165161D08A"
                BuildableName = "UltraTrainWatch.app"
                BlueprintName = "UltraTrainWatch"

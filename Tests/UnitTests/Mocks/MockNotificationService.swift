@@ -2,6 +2,7 @@ import Foundation
 @testable import UltraTrain
 
 final class MockNotificationService: NotificationServiceProtocol, @unchecked Sendable {
+    var soundPreferences: [NotificationCategory: NotificationSoundPreference] = [:]
     var authorizationGranted = true
     var shouldThrow = false
     var requestAuthorizationCalled = false

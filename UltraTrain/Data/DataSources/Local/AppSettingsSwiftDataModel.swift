@@ -28,6 +28,7 @@ final class AppSettingsSwiftDataModel {
     var quietHoursStart: Int = 22
     var quietHoursEnd: Int = 7
     var dataRetentionMonths: Int = 0
+    var notificationSoundPreferencesData: Data?
     var updatedAt: Date = Date()
 
     init(
@@ -56,6 +57,7 @@ final class AppSettingsSwiftDataModel {
         quietHoursStart: Int = 22,
         quietHoursEnd: Int = 7,
         dataRetentionMonths: Int = 0,
+        notificationSoundPreferencesData: Data? = nil,
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -83,6 +85,7 @@ final class AppSettingsSwiftDataModel {
         self.quietHoursStart = quietHoursStart
         self.quietHoursEnd = quietHoursEnd
         self.dataRetentionMonths = dataRetentionMonths
+        self.notificationSoundPreferencesData = notificationSoundPreferencesData
         self.updatedAt = updatedAt
     }
 }

@@ -34,13 +34,28 @@ final class HapticService: HapticServiceProtocol {
         selectionGenerator.prepare()
     }
 
+    private var cachedSoundIDs: [String: SystemSoundID] = [:]
+
+    private func playBundledSound(named filename: String) {
+        if let cached = cachedSoundIDs[filename] {
+            AudioServicesPlaySystemSound(cached)
+            return
+        }
+        guard let url = Bundle.main.url(forResource: filename, withExtension: nil) else {
+            // Fall back to system sound if custom file not found
+            AudioServicesPlaySystemSound(1304)
+            return
+        }
+        var soundID: SystemSoundID = 0
+        AudioServicesCreateSystemSoundID(url as CFURL, &soundID)
+        cachedSoundIDs[filename] = soundID
+        AudioServicesPlaySystemSound(soundID)
+    }
+
     func playNutritionAlert() {
         heavyImpactGenerator.impactOccurred()
-
-        // System sound 1304 is a subtle tri-tone alert
-        AudioServicesPlaySystemSound(1304)
-
-        Logger.haptic.info("Nutrition alert played (haptic + sound)")
+        playBundledSound(named: NotificationCategory.nutrition.customSoundFilename)
+        Logger.haptic.info("Nutrition alert played (haptic + custom sound)")
     }
 
     func playSuccess() {
@@ -71,7 +86,7 @@ final class HapticService: HapticServiceProtocol {
 
     func playIntervalStart() {
         heavyImpactGenerator.impactOccurred()
-        AudioServicesPlaySystemSound(1304)
+        playBundledSound(named: NotificationCategory.training.customSoundFilename)
         Logger.haptic.info("Interval start haptic played")
     }
 

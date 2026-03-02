@@ -40,4 +40,11 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         Logger.backgroundUpload.info("System woke app for background session: \(identifier)")
         onBackgroundSessionCompletion?(identifier, completionHandler)
     }
+
+    func application(
+        _ application: UIApplication,
+        supportedInterfaceOrientationsFor window: UIWindow?
+    ) -> UIInterfaceOrientationMask {
+        OrientationLock.allowedOrientations
+    }
 }

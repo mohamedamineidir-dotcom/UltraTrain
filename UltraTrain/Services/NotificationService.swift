@@ -5,6 +5,12 @@ import os
 final class NotificationService: NotificationServiceProtocol, @unchecked Sendable {
 
     private let center = UNUserNotificationCenter.current()
+    var soundPreferences: [NotificationCategory: NotificationSoundPreference] = [:]
+
+    private func resolveSound(for category: NotificationCategory) -> UNNotificationSound? {
+        let preference = soundPreferences[category] ?? .defaultSound
+        return NotificationSoundProvider.sound(for: category, preference: preference)
+    }
 
     // MARK: - Authorization
 
@@ -53,7 +59,7 @@ final class NotificationService: NotificationServiceProtocol, @unchecked Sendabl
         let content = UNMutableNotificationContent()
         content.title = "Tomorrow's Training"
         content.body = NotificationContentBuilder.trainingReminderBody(session)
-        content.sound = .default
+        content.sound = resolveSound(for: .training)
         content.categoryIdentifier = "training"
         content.userInfo = ["sessionId": session.id.uuidString]
 
@@ -87,7 +93,7 @@ final class NotificationService: NotificationServiceProtocol, @unchecked Sendabl
             let content = UNMutableNotificationContent()
             content.title = "Race Countdown"
             content.body = NotificationContentBuilder.raceCountdownBody(raceName: race.name, daysRemaining: days)
-            content.sound = .default
+            content.sound = resolveSound(for: .race)
             content.categoryIdentifier = "race"
             content.userInfo = ["raceId": race.id.uuidString]
 
@@ -116,7 +122,7 @@ final class NotificationService: NotificationServiceProtocol, @unchecked Sendabl
         let content = UNMutableNotificationContent()
         content.title = "Rest Day"
         content.body = NotificationContentBuilder.recoveryReminderBody()
-        content.sound = .default
+        content.sound = resolveSound(for: .recovery)
         content.categoryIdentifier = "recovery"
 
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
@@ -155,7 +161,7 @@ final class NotificationService: NotificationServiceProtocol, @unchecked Sendabl
             elevationM: elevationM,
             runCount: runCount
         )
-        content.sound = .default
+        content.sound = resolveSound(for: .weeklySummary)
         content.categoryIdentifier = "weeklySummary"
 
         let trigger = UNCalendarNotificationTrigger(dateMatching: triggerComponents, repeats: false)
@@ -187,7 +193,7 @@ final class NotificationService: NotificationServiceProtocol, @unchecked Sendabl
         let content = UNMutableNotificationContent()
         content.title = "Time to Run!"
         content.body = "It's been a few days since your last run. Lace up and get out there!"
-        content.sound = .default
+        content.sound = resolveSound(for: .inactivity)
         content.categoryIdentifier = "inactivity"
 
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)

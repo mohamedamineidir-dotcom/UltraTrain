@@ -184,6 +184,26 @@ struct DeepLinkRouterTests {
         #expect(router.pendingDeepLink == nil)
     }
 
+    @Test("Handles race nutrition timer universal link")
+    @MainActor
+    func raceNutritionTimerUniversalLink() {
+        let router = DeepLinkRouter()
+        let url = URL(string: "https://ultratrain.app/race/race-789/nutrition")!
+        let handled = router.handle(url: url)
+        #expect(handled)
+        #expect(router.pendingDeepLink == .raceNutritionTimer(raceId: "race-789"))
+    }
+
+    @Test("Race link without nutrition subpath resolves to raceDetail")
+    @MainActor
+    func raceDetailNotNutrition() {
+        let router = DeepLinkRouter()
+        let url = URL(string: "https://ultratrain.app/race/race-789")!
+        let handled = router.handle(url: url)
+        #expect(handled)
+        #expect(router.pendingDeepLink == .raceDetail(raceId: "race-789"))
+    }
+
     @Test("Existing custom scheme links still work after universal link support")
     @MainActor
     func backwardCompatibility() {

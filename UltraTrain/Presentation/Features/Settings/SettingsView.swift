@@ -62,6 +62,7 @@ struct SettingsView: View {
                 safetySection
                 securitySection
                 notificationsSection
+                notificationSoundsSection
                 healthKitSection
                 stravaSection
                 iCloudSection
