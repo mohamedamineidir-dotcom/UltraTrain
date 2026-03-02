@@ -1,12 +1,13 @@
 import SwiftUI
 
 struct SOSButton: View {
+    @ScaledMetric(relativeTo: .title) private var sosTextSize: CGFloat = 18
+    @ScaledMetric(relativeTo: .title) private var buttonSize: CGFloat = 56
+
     let onActivate: () -> Void
 
     @State private var isPressed = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
-    private let buttonSize: CGFloat = 56
 
     var body: some View {
         VStack(spacing: Theme.Spacing.xs) {
@@ -22,7 +23,7 @@ struct SOSButton: View {
 
     private var sosCircle: some View {
         Text("SOS")
-            .font(.system(size: 18, weight: .bold, design: .rounded))
+            .font(.system(size: sosTextSize, weight: .bold, design: .rounded))
             .foregroundStyle(.white)
             .frame(width: buttonSize, height: buttonSize)
             .background(

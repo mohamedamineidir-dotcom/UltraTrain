@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct StravaImportView: View {
+    @ScaledMetric(relativeTo: .largeTitle) private var emptyStateIconSize: CGFloat = 48
+
     @State private var activities: [StravaActivity] = []
     @State private var isLoading = false
     @State private var error: String?
@@ -66,7 +68,7 @@ struct StravaImportView: View {
     private var emptyState: some View {
         VStack(spacing: Theme.Spacing.md) {
             Image(systemName: "figure.run.circle")
-                .font(.system(size: 48))
+                .font(.system(size: emptyStateIconSize))
                 .foregroundStyle(Theme.Colors.secondaryLabel)
                 .accessibilityHidden(true)
             Text("No run activities found")

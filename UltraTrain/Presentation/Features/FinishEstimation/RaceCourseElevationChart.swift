@@ -2,6 +2,9 @@ import SwiftUI
 import Charts
 
 struct RaceCourseElevationChart: View {
+    @ScaledMetric(relativeTo: .caption2) private var annotationIconSize: CGFloat = 8
+    @ScaledMetric(relativeTo: .caption2) private var annotationLabelSize: CGFloat = 7
+
     @Environment(\.unitPreference) private var units
     let checkpoints: [Checkpoint]
 
@@ -77,11 +80,11 @@ struct RaceCourseElevationChart: View {
         VStack(spacing: 0) {
             if cp.hasAidStation {
                 Image(systemName: "cross.circle.fill")
-                    .font(.system(size: 8))
+                    .font(.system(size: annotationIconSize))
                     .foregroundStyle(Theme.Colors.success)
             }
             Text(cp.name)
-                .font(.system(size: 7))
+                .font(.system(size: annotationLabelSize))
                 .foregroundStyle(Theme.Colors.secondaryLabel)
                 .lineLimit(1)
         }

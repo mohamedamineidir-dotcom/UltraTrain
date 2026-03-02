@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct SplitMarkerBadge: View {
+    @ScaledMetric(relativeTo: .caption2) private var badgeSize: CGFloat = 10
+    @ScaledMetric(relativeTo: .caption2) private var paceSize: CGFloat = 8
+
     let km: Int
     let paceSecondsPerKm: Double?
     var averagePace: Double = 0
@@ -8,12 +11,12 @@ struct SplitMarkerBadge: View {
     var body: some View {
         VStack(spacing: 0) {
             Text("\(km)")
-                .font(.system(size: 10, weight: .bold))
+                .font(.system(size: badgeSize, weight: .bold))
                 .foregroundStyle(.white)
 
             if let pace = paceSecondsPerKm {
                 Text(RunStatisticsCalculator.formatPace(pace))
-                    .font(.system(size: 8, weight: .medium))
+                    .font(.system(size: paceSize, weight: .medium))
                     .foregroundStyle(.white.opacity(0.9))
             }
         }

@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct CheckpointSplitsCard: View {
+    @ScaledMetric(relativeTo: .caption2) private var aidStationIconSize: CGFloat = 8
+
     @Environment(\.unitPreference) private var units
     let race: Race
     let estimate: FinishEstimate
@@ -81,7 +83,7 @@ struct CheckpointSplitsCard: View {
                         .lineLimit(1)
                     if split.hasAidStation {
                         Image(systemName: "cross.fill")
-                            .font(.system(size: 8))
+                            .font(.system(size: aidStationIconSize))
                             .foregroundStyle(Theme.Colors.success)
                             .accessibilityLabel("Aid station")
                     }

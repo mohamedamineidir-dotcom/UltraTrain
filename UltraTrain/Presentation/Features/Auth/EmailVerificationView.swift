@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct EmailVerificationView: View {
+    @ScaledMetric(relativeTo: .largeTitle) private var iconSize: CGFloat = 50
+
     @State private var viewModel: EmailVerificationViewModel
     private let onVerified: () -> Void
     private let onSkip: () -> Void
@@ -69,7 +71,7 @@ struct EmailVerificationView: View {
     private var headerSection: some View {
         VStack(spacing: Theme.Spacing.sm) {
             Image(systemName: "envelope.badge")
-                .font(.system(size: 50))
+                .font(.system(size: iconSize))
                 .foregroundStyle(Theme.Colors.primary)
 
             Text("Check your email")

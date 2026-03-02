@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct WaypointAnnotationView: View {
+    @ScaledMetric(relativeTo: .caption) private var labelSize: CGFloat = 11
+
     let index: Int
     let totalCount: Int
 
@@ -21,7 +23,7 @@ struct WaypointAnnotationView: View {
                 .frame(width: 24, height: 24)
 
             Text("\(index + 1)")
-                .font(.system(size: 11, weight: .bold))
+                .font(.system(size: labelSize, weight: .bold))
                 .foregroundStyle(.white)
         }
         .accessibilityElement(children: .ignore)

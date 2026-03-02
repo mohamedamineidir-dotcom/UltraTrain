@@ -2,6 +2,7 @@ import SwiftUI
 import MapKit
 
 struct CrewTrackingView: View {
+    @ScaledMetric(relativeTo: .largeTitle) private var emptyStateIconSize: CGFloat = 48
 
     @State private var viewModel: CrewTrackingViewModel
     @State private var joinSessionIdText = ""
@@ -56,7 +57,7 @@ struct CrewTrackingView: View {
     private var noSessionView: some View {
         VStack(spacing: Theme.Spacing.lg) {
             Image(systemName: "person.3.fill")
-                .font(.system(size: 48))
+                .font(.system(size: emptyStateIconSize))
                 .foregroundStyle(Theme.Colors.primary)
                 .padding(.top, Theme.Spacing.xl)
                 .accessibilityHidden(true)

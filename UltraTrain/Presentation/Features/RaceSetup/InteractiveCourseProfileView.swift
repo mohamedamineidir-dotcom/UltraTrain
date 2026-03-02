@@ -2,6 +2,9 @@ import SwiftUI
 import Charts
 
 struct InteractiveCourseProfileView: View {
+    @ScaledMetric(relativeTo: .caption2) private var annotationIconSize: CGFloat = 8
+    @ScaledMetric(relativeTo: .caption2) private var annotationLabelSize: CGFloat = 7
+
     @Environment(\.unitPreference) private var units
     @State var viewModel: InteractiveCourseProfileViewModel
 
@@ -122,15 +125,15 @@ struct InteractiveCourseProfileView: View {
         VStack(spacing: 0) {
             if checkpoint.hasAidStation {
                 Image(systemName: "cross.circle.fill")
-                    .font(.system(size: 8))
+                    .font(.system(size: annotationIconSize))
                     .foregroundStyle(Theme.Colors.danger)
             } else {
                 Image(systemName: "mappin.circle.fill")
-                    .font(.system(size: 8))
+                    .font(.system(size: annotationIconSize))
                     .foregroundStyle(Theme.Colors.primary)
             }
             Text(checkpoint.name)
-                .font(.system(size: 7))
+                .font(.system(size: annotationLabelSize))
                 .foregroundStyle(Theme.Colors.secondaryLabel)
                 .lineLimit(1)
         }

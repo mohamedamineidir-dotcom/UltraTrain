@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct RunHistoryFilterBadge: View {
+    @ScaledMetric(relativeTo: .caption2) private var badgeSize: CGFloat = 10
+
     let activeCount: Int
     let action: () -> Void
 
@@ -13,7 +15,7 @@ struct RunHistoryFilterBadge: View {
             .overlay(alignment: .topTrailing) {
                 if activeCount > 0 {
                     Text("\(activeCount)")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(.system(size: badgeSize, weight: .bold))
                         .foregroundStyle(.white)
                         .padding(3)
                         .background(Theme.Colors.primary)

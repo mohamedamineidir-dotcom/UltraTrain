@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct DashboardHeroCard: View {
+    @ScaledMetric(relativeTo: .largeTitle) private var daysCounterSize: CGFloat = 52
+    @ScaledMetric(relativeTo: .largeTitle) private var trainingTitleSize: CGFloat = 32
+
     let daysUntilRace: Int?
     let raceName: String?
     let currentPhase: TrainingPhase?
@@ -14,14 +17,14 @@ struct DashboardHeroCard: View {
                 VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                     if let days = daysUntilRace {
                         Text("\(days)")
-                            .font(.system(size: 52, weight: .bold, design: .rounded))
+                            .font(.system(size: daysCounterSize, weight: .bold, design: .rounded))
                             .foregroundStyle(.white)
                         Text("days to go")
                             .font(.subheadline)
                             .foregroundStyle(.white.opacity(0.85))
                     } else {
                         Text("Training")
-                            .font(.system(size: 32, weight: .bold, design: .rounded))
+                            .font(.system(size: trainingTitleSize, weight: .bold, design: .rounded))
                             .foregroundStyle(.white)
                     }
 

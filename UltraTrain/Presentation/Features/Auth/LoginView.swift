@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct LoginView: View {
+    @ScaledMetric(relativeTo: .largeTitle) private var iconSize: CGFloat = 60
+
     @State private var viewModel: LoginViewModel
     @State private var showVerification = false
     private let authService: any AuthServiceProtocol
@@ -103,7 +105,7 @@ struct LoginView: View {
     private var headerSection: some View {
         VStack(spacing: Theme.Spacing.sm) {
             Image(systemName: "figure.run")
-                .font(.system(size: 60))
+                .font(.system(size: iconSize))
                 .foregroundStyle(Theme.Colors.primary)
 
             Text("UltraTrain")

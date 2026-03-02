@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct RaceDaySegmentCard: View {
+    @ScaledMetric(relativeTo: .caption2) private var aidStationIconSize: CGFloat = 10
+
     @Environment(\.unitPreference) private var units
     let segment: RaceDaySegment
 
@@ -34,7 +36,7 @@ struct RaceDaySegmentCard: View {
                     .font(.subheadline.bold())
                 if segment.hasAidStation {
                     Image(systemName: "cross.fill")
-                        .font(.system(size: 10))
+                        .font(.system(size: aidStationIconSize))
                         .foregroundStyle(Theme.Colors.success)
                         .accessibilityLabel("Aid station")
                 }

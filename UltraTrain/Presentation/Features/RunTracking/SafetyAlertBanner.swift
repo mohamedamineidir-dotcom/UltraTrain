@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct SafetyAlertBanner: View {
+    @ScaledMetric(relativeTo: .largeTitle) private var countdownSize: CGFloat = 56
+
     let alert: SafetyAlert
     let countdownRemaining: Int
     let onCancel: () -> Void
@@ -50,7 +52,7 @@ struct SafetyAlertBanner: View {
 
     private var countdownDisplay: some View {
         Text("\(countdownRemaining)")
-            .font(.system(size: 56, weight: .heavy, design: .rounded))
+            .font(.system(size: countdownSize, weight: .heavy, design: .rounded))
             .foregroundStyle(.white)
             .contentTransition(.numericText(countsDown: true))
             .animation(

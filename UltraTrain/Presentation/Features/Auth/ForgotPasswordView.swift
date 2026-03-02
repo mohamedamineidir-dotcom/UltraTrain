@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct ForgotPasswordView: View {
+    @ScaledMetric(relativeTo: .largeTitle) private var iconSize: CGFloat = 50
+
     @State private var viewModel: ForgotPasswordViewModel
     @Environment(\.dismiss) private var dismiss
 
@@ -41,7 +43,7 @@ struct ForgotPasswordView: View {
     private var headerSection: some View {
         VStack(spacing: Theme.Spacing.sm) {
             Image(systemName: "lock.rotation")
-                .font(.system(size: 50))
+                .font(.system(size: iconSize))
                 .foregroundStyle(Theme.Colors.primary)
 
             Text(viewModel.step == .enterEmail

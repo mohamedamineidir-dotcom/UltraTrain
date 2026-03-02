@@ -2,6 +2,17 @@ import SwiftUI
 import Charts
 
 struct RunShareCardView: View {
+    @ScaledMetric(relativeTo: .title) private var headerTitleSize: CGFloat = 28
+    @ScaledMetric(relativeTo: .title2) private var headerDateSize: CGFloat = 24
+    @ScaledMetric(relativeTo: .largeTitle) private var heroValueSize: CGFloat = 96
+    @ScaledMetric(relativeTo: .title3) private var heroLabelSize: CGFloat = 22
+    @ScaledMetric(relativeTo: .body) private var statValueSize: CGFloat = 28
+    @ScaledMetric(relativeTo: .caption) private var statLabelSize: CGFloat = 16
+    @ScaledMetric(relativeTo: .body) private var badgeIconSize: CGFloat = 20
+    @ScaledMetric(relativeTo: .body) private var badgeTitleSize: CGFloat = 20
+    @ScaledMetric(relativeTo: .title2) private var footerIconSize: CGFloat = 24
+    @ScaledMetric(relativeTo: .title2) private var footerTextSize: CGFloat = 26
+
     let run: CompletedRun
     let elevationProfile: [ElevationProfilePoint]
     let advancedMetrics: AdvancedRunMetrics?
@@ -55,12 +66,12 @@ struct RunShareCardView: View {
     private var headerSection: some View {
         VStack(spacing: 8) {
             Text(runTypeLabel)
-                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .font(.system(size: headerTitleSize, weight: .bold, design: .rounded))
                 .tracking(6)
                 .foregroundStyle(accentColor.opacity(0.9))
 
             Text(run.date.formatted(.dateTime.weekday(.wide).month(.wide).day().year()))
-                .font(.system(size: 24))
+                .font(.system(size: headerDateSize))
                 .foregroundStyle(.white.opacity(0.6))
         }
     }
@@ -71,20 +82,20 @@ struct RunShareCardView: View {
         HStack(spacing: 64) {
             VStack(spacing: 8) {
                 Text(UnitFormatter.formatDistance(run.distanceKm, unit: unitPreference, decimals: 2))
-                    .font(.system(size: 96, weight: .bold, design: .rounded).monospacedDigit())
+                    .font(.system(size: heroValueSize, weight: .bold, design: .rounded).monospacedDigit())
                     .foregroundStyle(.white)
                 Text(UnitFormatter.distanceLabel(unitPreference).uppercased())
-                    .font(.system(size: 22, weight: .medium))
+                    .font(.system(size: heroLabelSize, weight: .medium))
                     .tracking(3)
                     .foregroundStyle(.white.opacity(0.5))
             }
 
             VStack(spacing: 8) {
                 Text(RunStatisticsCalculator.formatDuration(run.duration))
-                    .font(.system(size: 96, weight: .bold, design: .rounded).monospacedDigit())
+                    .font(.system(size: heroValueSize, weight: .bold, design: .rounded).monospacedDigit())
                     .foregroundStyle(.white)
                 Text("DURATION")
-                    .font(.system(size: 22, weight: .medium))
+                    .font(.system(size: heroLabelSize, weight: .medium))
                     .tracking(3)
                     .foregroundStyle(.white.opacity(0.5))
             }
@@ -116,10 +127,10 @@ struct RunShareCardView: View {
     private func statPill(label: String, value: String) -> some View {
         VStack(spacing: 6) {
             Text(value)
-                .font(.system(size: 28, weight: .semibold, design: .rounded).monospacedDigit())
+                .font(.system(size: statValueSize, weight: .semibold, design: .rounded).monospacedDigit())
                 .foregroundStyle(.white.opacity(0.9))
             Text(label)
-                .font(.system(size: 16, weight: .medium))
+                .font(.system(size: statLabelSize, weight: .medium))
                 .tracking(2)
                 .foregroundStyle(.white.opacity(0.4))
         }
@@ -174,10 +185,10 @@ struct RunShareCardView: View {
             ForEach(badges.prefix(3)) { badge in
                 HStack(spacing: 8) {
                     Image(systemName: badge.icon)
-                        .font(.system(size: 20))
+                        .font(.system(size: badgeIconSize))
                         .foregroundStyle(accentColor)
                     Text(badge.title)
-                        .font(.system(size: 20, weight: .semibold))
+                        .font(.system(size: badgeTitleSize, weight: .semibold))
                         .foregroundStyle(.white.opacity(0.85))
                 }
                 .padding(.horizontal, 20)
@@ -196,10 +207,10 @@ struct RunShareCardView: View {
     private var footerSection: some View {
         HStack(spacing: 12) {
             Image(systemName: "mountain.2.fill")
-                .font(.system(size: 24))
+                .font(.system(size: footerIconSize))
                 .foregroundStyle(accentColor.opacity(0.7))
             Text("UltraTrain")
-                .font(.system(size: 26, weight: .bold, design: .rounded))
+                .font(.system(size: footerTextSize, weight: .bold, design: .rounded))
                 .foregroundStyle(.white.opacity(0.4))
         }
     }
