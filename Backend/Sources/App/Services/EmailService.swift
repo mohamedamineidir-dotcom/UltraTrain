@@ -9,7 +9,7 @@ struct EmailService {
 
     func sendVerificationCode(to email: String, code: String) async {
         guard let apiKey = Environment.get("RESEND_API_KEY") else {
-            app.logger.warning("EmailService: RESEND_API_KEY not set, skipping email. Verification code: \(code)")
+            app.logger.warning("EmailService: RESEND_API_KEY not set, skipping verification email")
             return
         }
 
@@ -57,7 +57,7 @@ struct EmailService {
 
     func sendPasswordResetCode(to email: String, code: String) async {
         guard let apiKey = Environment.get("RESEND_API_KEY") else {
-            app.logger.warning("EmailService: RESEND_API_KEY not set, skipping email. Code: \(code)")
+            app.logger.warning("EmailService: RESEND_API_KEY not set, skipping password reset email")
             return
         }
 

@@ -12,6 +12,8 @@ func routes(_ app: Application) throws {
     let api: RoutesBuilder
     if let hmacSecret = Environment.get("HMAC_SECRET") {
         api = rateLimited.grouped(HMACVerificationMiddleware(secret: hmacSecret))
+    } else if app.environment == .production {
+        fatalError("HMAC_SECRET must be set in production")
     } else {
         app.logger.warning("HMAC_SECRET not set — request signing verification disabled")
         api = rateLimited

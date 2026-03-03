@@ -121,17 +121,30 @@ func configure(_ app: Application) async throws {
     if let apnsKeyContent = Environment.get("APNS_KEY_CONTENT"),
        let apnsKeyId = Environment.get("APNS_KEY_ID"),
        let apnsTeamId = Environment.get("APNS_TEAM_ID") {
+        // Normalize PEM: Railway env vars may use literal \n instead of newlines
+        let normalizedKey = apnsKeyContent
+            .replacingOccurrences(of: "\\n", with: "\n")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard normalizedKey.contains("-----BEGIN PRIVATE KEY-----") else {
+            app.logger.error("APNS_KEY_CONTENT is not valid PEM — must include -----BEGIN PRIVATE KEY----- header. Check that the .p8 file content is pasted correctly with newlines.")
+            if app.environment == .production {
+                app.logger.critical("APNs will not work. Push notifications are disabled.")
+            }
+            return // Skip APNs configuration but don't crash
+        }
+
         do {
             app.apns.configure(
                 .jwt(
-                    privateKey: try .loadFrom(string: apnsKeyContent),
+                    privateKey: try .loadFrom(string: normalizedKey),
                     keyIdentifier: apnsKeyId,
                     teamIdentifier: apnsTeamId
                 )
             )
             app.logger.notice("APNs configured successfully")
         } catch {
-            app.logger.error("Failed to configure APNs: \(error)")
+            app.logger.error("Failed to configure APNs: \(error). Verify APNS_KEY_CONTENT is a valid .p8 private key.")
         }
     } else {
         app.logger.warning("APNs not configured — missing APNS_KEY_CONTENT, APNS_KEY_ID, or APNS_TEAM_ID")

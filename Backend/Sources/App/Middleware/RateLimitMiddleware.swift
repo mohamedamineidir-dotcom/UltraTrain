@@ -4,6 +4,8 @@ actor RateLimitStore {
     private var requests: [String: [Date]] = [:]
     private let maxRequests: Int
     private let windowSeconds: TimeInterval
+    private var lastCleanup: Date = Date()
+    private let cleanupInterval: TimeInterval = 300 // Prune stale entries every 5 minutes
 
     init(maxRequests: Int, windowSeconds: TimeInterval) {
         self.maxRequests = maxRequests
@@ -13,6 +15,15 @@ actor RateLimitStore {
     func shouldAllow(key: String) -> Bool {
         let now = Date()
         let cutoff = now.addingTimeInterval(-windowSeconds)
+
+        // Periodically prune all stale entries to prevent unbounded memory growth
+        if now.timeIntervalSince(lastCleanup) > cleanupInterval {
+            requests = requests.compactMapValues { timestamps in
+                let active = timestamps.filter { $0 >= cutoff }
+                return active.isEmpty ? nil : active
+            }
+            lastCleanup = now
+        }
 
         var timestamps = requests[key, default: []]
         timestamps.removeAll { $0 < cutoff }
