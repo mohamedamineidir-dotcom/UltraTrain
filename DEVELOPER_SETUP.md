@@ -139,7 +139,7 @@ The backend starts at `http://localhost:8080`. Migrations run automatically on s
 ### Production Backend
 
 The production backend is deployed on Railway:
-`https://railway-link-production-96cc.up.railway.app`
+`https://ultratrain-production.up.railway.app`
 
 The iOS app points to this URL by default (see `AppConfiguration.swift`).
 

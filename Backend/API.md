@@ -3,7 +3,7 @@
 ## Base URL
 
 ```
-Production: https://railway-link-production-96cc.up.railway.app/v1
+Production: https://ultratrain-production.up.railway.app/v1
 Local:      http://localhost:8080/v1
 ```
 

@@ -27,7 +27,7 @@ enum AppConfiguration {
         static let hmacSecret: String = Bundle.main.infoDictionary?["HMAC_SIGNING_SECRET"] as? String ?? ""
         static let pinnedHost: String = {
             #if DEBUG
-            return "railway-link-production-96cc.up.railway.app"
+            return "ultratrain-production.up.railway.app"
             #else
             return "ultratrain.app"
             #endif
@@ -36,7 +36,7 @@ enum AppConfiguration {
             #if DEBUG
             // Staging: Railway hosting
             // To regenerate, run:
-            //   echo | openssl s_client -connect railway-link-production-96cc.up.railway.app:443 2>/dev/null \
+            //   echo | openssl s_client -connect ultratrain-production.up.railway.app:443 2>/dev/null \
             //     | openssl x509 -pubkey -noout | openssl pkey -pubin -outform DER \
             //     | openssl dgst -sha256 -binary | base64
             return [
