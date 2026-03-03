@@ -4,6 +4,7 @@ import Fluent
 struct ActivityFeedController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let protected = routes.grouped(UserAuthMiddleware())
+            .grouped(RateLimitMiddleware(maxRequests: 20, windowSeconds: 60))
         protected.get("feed", use: getFeed)
         protected.post("feed", use: publishActivity)
         protected.post("feed", ":itemId", "like", use: toggleLike)

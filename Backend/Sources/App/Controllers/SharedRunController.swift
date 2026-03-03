@@ -4,6 +4,7 @@ import Fluent
 struct SharedRunController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let protected = routes.grouped(UserAuthMiddleware())
+            .grouped(RateLimitMiddleware(maxRequests: 20, windowSeconds: 60))
         protected.post("shared-runs", use: shareRun)
         protected.get("shared-runs", use: listSharedWithMe)
         protected.get("shared-runs", "mine", use: listMySharedRuns)

@@ -4,6 +4,7 @@ import Fluent
 struct RunController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let protected = routes.grouped(UserAuthMiddleware())
+            .grouped(RateLimitMiddleware(maxRequests: 20, windowSeconds: 60))
         protected.post("runs", use: uploadRun)
         protected.get("runs", use: listRuns)
         protected.get("runs", ":runId", use: getRun)

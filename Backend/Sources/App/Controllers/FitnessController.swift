@@ -4,6 +4,7 @@ import Fluent
 struct FitnessController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let protected = routes.grouped(UserAuthMiddleware())
+            .grouped(RateLimitMiddleware(maxRequests: 10, windowSeconds: 60))
         protected.put("fitness-snapshots", use: upsertSnapshot)
         protected.get("fitness-snapshots", use: listSnapshots)
         protected.delete("fitness-snapshots", ":snapshotId", use: deleteSnapshot)

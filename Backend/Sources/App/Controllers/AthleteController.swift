@@ -4,6 +4,7 @@ import Fluent
 struct AthleteController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let protected = routes.grouped(UserAuthMiddleware())
+            .grouped(RateLimitMiddleware(maxRequests: 10, windowSeconds: 60))
         protected.get("athlete", use: getAthlete)
         protected.put("athlete", use: updateAthlete)
     }

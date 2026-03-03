@@ -4,6 +4,7 @@ import Fluent
 struct FinishEstimateController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let protected = routes.grouped(UserAuthMiddleware())
+            .grouped(RateLimitMiddleware(maxRequests: 10, windowSeconds: 60))
         protected.put("finish-estimates", use: upsertEstimate)
         protected.get("finish-estimates", use: listEstimates)
         protected.delete("finish-estimates", ":estimateId", use: deleteEstimate)

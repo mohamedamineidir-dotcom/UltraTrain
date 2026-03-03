@@ -4,6 +4,7 @@ import Fluent
 struct DeviceTokenController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let protected = routes.grouped(UserAuthMiddleware())
+            .grouped(RateLimitMiddleware(maxRequests: 5, windowSeconds: 60))
         protected.put("device-token", use: updateDeviceToken)
     }
 

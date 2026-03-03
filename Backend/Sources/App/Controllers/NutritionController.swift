@@ -4,6 +4,7 @@ import Fluent
 struct NutritionController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let protected = routes.grouped(UserAuthMiddleware())
+            .grouped(RateLimitMiddleware(maxRequests: 10, windowSeconds: 60))
         protected.put("nutrition", use: upsertNutrition)
         protected.get("nutrition", use: listNutrition)
         protected.delete("nutrition", ":nutritionId", use: deleteNutrition)

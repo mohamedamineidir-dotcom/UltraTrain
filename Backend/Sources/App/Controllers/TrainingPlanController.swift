@@ -4,6 +4,7 @@ import Fluent
 struct TrainingPlanController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let protected = routes.grouped(UserAuthMiddleware())
+            .grouped(RateLimitMiddleware(maxRequests: 10, windowSeconds: 60))
         protected.put("training-plan", use: upsertPlan)
         protected.get("training-plan", use: getPlan)
     }

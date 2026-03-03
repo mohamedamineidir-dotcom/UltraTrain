@@ -4,3 +4,6 @@
 "NSHealthShareUsageDescription" = "UltraTrain lit vos données de fréquence cardiaque, d'entraînement et d'activité pour suivre vos progrès et votre forme.";
 "NSHealthUpdateUsageDescription" = "UltraTrain enregistre vos courses terminées comme des entraînements dans Apple Santé.";
 "NSFaceIDUsageDescription" = "UltraTrain utilise Face ID pour protéger vos données d'entraînement et de santé.";
+"NSCameraUsageDescription" = "UltraTrain utilise l'appareil photo pour scanner les codes-barres des produits alimentaires pour une saisie nutritionnelle rapide.";
+"NSMotionUsageDescription" = "UltraTrain utilise les données de mouvement pour détecter votre cadence et votre dynamique de course pendant les courses suivies.";
+"NSUserTrackingUsageDescription" = "UltraTrain utilise cette autorisation pour mesurer les performances de l'app et améliorer votre expérience d'entraînement. Aucune donnée personnelle n'est partagée avec des tiers.";

@@ -17,8 +17,9 @@ func routes(_ app: Application) throws {
         api = rateLimited
     }
 
-    // Public pages (outside /v1, no rate limit)
-    try app.register(collection: PrivacyController())
+    // Public pages (outside /v1, own rate limit)
+    let publicLimited = app.grouped(RateLimitMiddleware(maxRequests: 30, windowSeconds: 60))
+    try publicLimited.register(collection: PrivacyController())
 
     try api.register(collection: AuthController())
     try api.register(collection: AthleteController())

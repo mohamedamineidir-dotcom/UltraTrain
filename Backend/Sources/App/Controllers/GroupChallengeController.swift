@@ -4,6 +4,7 @@ import Fluent
 struct GroupChallengeController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let protected = routes.grouped(UserAuthMiddleware())
+            .grouped(RateLimitMiddleware(maxRequests: 15, windowSeconds: 60))
         protected.post("challenges", use: createChallenge)
         protected.get("challenges", use: listChallenges)
         protected.get("challenges", ":challengeId", use: getChallenge)

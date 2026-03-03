@@ -4,6 +4,7 @@ import Fluent
 struct RaceController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let protected = routes.grouped(UserAuthMiddleware())
+            .grouped(RateLimitMiddleware(maxRequests: 10, windowSeconds: 60))
         protected.put("races", use: upsertRace)
         protected.get("races", use: listRaces)
         protected.delete("races", ":raceId", use: deleteRace)

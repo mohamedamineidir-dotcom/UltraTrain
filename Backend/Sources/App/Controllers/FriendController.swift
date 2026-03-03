@@ -4,6 +4,7 @@ import Fluent
 struct FriendController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let protected = routes.grouped(UserAuthMiddleware())
+            .grouped(RateLimitMiddleware(maxRequests: 20, windowSeconds: 60))
         protected.get("friends", use: listFriends)
         protected.get("friends", "pending", use: listPending)
         protected.post("friends", "request", use: sendRequest)

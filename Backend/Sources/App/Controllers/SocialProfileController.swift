@@ -4,6 +4,7 @@ import Fluent
 struct SocialProfileController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let protected = routes.grouped(UserAuthMiddleware())
+            .grouped(RateLimitMiddleware(maxRequests: 15, windowSeconds: 60))
         protected.get("social", "profile", use: getMyProfile)
         protected.put("social", "profile", use: updateMyProfile)
         protected.get("social", "profile", ":profileId", use: getProfile)
