@@ -100,8 +100,21 @@ enum SessionTemplateGenerator {
         return (markedSessions, workouts)
     }
 
-    /// Mark the top 3 most important sessions as key ("do not miss")
+    /// Mark the most important sessions as key ("do not miss").
+    /// Normal weeks: 3 key sessions. Peak/build weeks: 4. Race week: 5.
     private static func markKeySessions(_ sessions: [TrainingSession], phase: TrainingPhase) -> [TrainingSession] {
+        let keyCount: Int
+        switch phase {
+        case .peak:
+            keyCount = 4
+        case .build:
+            keyCount = 4
+        case .race:
+            keyCount = 5
+        default:
+            keyCount = 3
+        }
+
         // Priority: longRun/backToBack > intervals/verticalGain > tempo > recovery
         let keyPriority: [SessionType] = [.longRun, .backToBack, .intervals, .verticalGain, .tempo, .recovery]
 
@@ -112,7 +125,7 @@ enum SessionTemplateGenerator {
             return aPriority < bPriority
         }
 
-        let keyIndices = Set(sorted.prefix(min(3, sorted.count)).map { $0.offset })
+        let keyIndices = Set(sorted.prefix(min(keyCount, sorted.count)).map { $0.offset })
 
         return sessions.enumerated().map { idx, session in
             var s = session

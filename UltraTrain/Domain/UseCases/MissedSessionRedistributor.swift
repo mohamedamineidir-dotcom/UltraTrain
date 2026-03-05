@@ -22,12 +22,11 @@ enum MissedSessionRedistributor {
         let nowDay = Calendar.current.startOfDay(for: now)
         let volumeSplittable: Set<SessionType> = [.longRun, .verticalGain, .backToBack]
         let qualityTypes: Set<SessionType> = [.intervals, .tempo]
-        let keyTypes = volumeSplittable.union(qualityTypes)
 
         let weeksToCheck = cwi > 0 ? [cwi - 1, cwi] : [cwi]
         let missedSessions = weeksToCheck.flatMap { plan.weeks[$0].sessions }.filter {
             Calendar.current.startOfDay(for: $0.date) < nowDay
-                && !$0.isCompleted && !$0.isSkipped && keyTypes.contains($0.type)
+                && !$0.isCompleted && !$0.isSkipped && $0.isKeySession
         }
 
         let restSlotWeeks = cwi + 1 < plan.weeks.count ? [cwi, cwi + 1] : [cwi]
@@ -87,7 +86,7 @@ enum MissedSessionRedistributor {
         }
         var dist = 0.0
         var elev = 0.0
-        for session in plan.weeks.flatMap(\.sessions) where session.type != .rest {
+        for session in plan.weeks.flatMap(\.sessions) where session.isKeySession {
             let day = calendar.startOfDay(for: session.date)
             if day >= cutoff && day < nowDay && !session.isCompleted && !session.isSkipped {
                 dist += session.plannedDistanceKm

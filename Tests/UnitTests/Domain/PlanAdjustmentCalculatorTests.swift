@@ -15,9 +15,10 @@ struct PlanAdjustmentCalculatorTests {
         type: SessionType = .tempo,
         isCompleted: Bool = false,
         isSkipped: Bool = false,
+        isKeySession: Bool = false,
         distanceKm: Double = 10
     ) -> TrainingSession {
-        TrainingSession(
+        var session = TrainingSession(
             id: id,
             date: Calendar.current.date(byAdding: .day, value: daysFromNow, to: now)!,
             type: type,
@@ -31,6 +32,8 @@ struct PlanAdjustmentCalculatorTests {
             isSkipped: isSkipped,
             linkedRunId: nil
         )
+        session.isKeySession = isKeySession
+        return session
     }
 
     private func makeWeek(
@@ -71,7 +74,7 @@ struct PlanAdjustmentCalculatorTests {
 
     @Test("Missed long run with available rest day suggests reschedule")
     func missedLongRunWithRestDay() {
-        let missedLongRun = makeSession(daysFromNow: -2, type: .longRun)
+        let missedLongRun = makeSession(daysFromNow: -2, type: .longRun, isKeySession: true)
         let restDay = makeSession(daysFromNow: 2, type: .rest)
         let week = makeWeek(daysOffset: -3, sessions: [missedLongRun, restDay])
         let plan = makePlan(weeks: [week])
@@ -86,7 +89,7 @@ struct PlanAdjustmentCalculatorTests {
 
     @Test("Missed key session with no rest day produces no reschedule")
     func missedKeyNoRestDay() {
-        let missedTempo = makeSession(daysFromNow: -1, type: .tempo)
+        let missedTempo = makeSession(daysFromNow: -1, type: .tempo, isKeySession: true)
         let futureTempo = makeSession(daysFromNow: 2, type: .tempo)
         let week = makeWeek(daysOffset: -3, sessions: [missedTempo, futureTempo])
         let plan = makePlan(weeks: [week])
@@ -112,7 +115,7 @@ struct PlanAdjustmentCalculatorTests {
 
     @Test("Completed key session produces no reschedule")
     func completedKeyNoReschedule() {
-        let completed = makeSession(daysFromNow: -1, type: .intervals, isCompleted: true)
+        let completed = makeSession(daysFromNow: -1, type: .intervals, isCompleted: true, isKeySession: true)
         let restDay = makeSession(daysFromNow: 2, type: .rest)
         let week = makeWeek(daysOffset: -3, sessions: [completed, restDay])
         let plan = makePlan(weeks: [week])
@@ -125,7 +128,7 @@ struct PlanAdjustmentCalculatorTests {
 
     @Test("Skipped key session produces no reschedule")
     func skippedKeyNoReschedule() {
-        let skipped = makeSession(daysFromNow: -1, type: .verticalGain, isSkipped: true)
+        let skipped = makeSession(daysFromNow: -1, type: .verticalGain, isSkipped: true, isKeySession: true)
         let restDay = makeSession(daysFromNow: 2, type: .rest)
         let week = makeWeek(daysOffset: -3, sessions: [skipped, restDay])
         let plan = makePlan(weeks: [week])
@@ -138,7 +141,7 @@ struct PlanAdjustmentCalculatorTests {
 
     @Test("Rest day in the past is not a valid slot")
     func restDayInPastNotValid() {
-        let missedTempo = makeSession(daysFromNow: -2, type: .tempo)
+        let missedTempo = makeSession(daysFromNow: -2, type: .tempo, isKeySession: true)
         let pastRest = makeSession(daysFromNow: -1, type: .rest)
         let week = makeWeek(daysOffset: -3, sessions: [missedTempo, pastRest])
         let plan = makePlan(weeks: [week])
@@ -153,12 +156,12 @@ struct PlanAdjustmentCalculatorTests {
 
     @Test("Previous week below 50% adherence suggests volume reduction")
     func lowAdherenceSuggestsReduction() {
-        // Previous week: 1/4 non-rest completed = 25%
+        // Previous week: 1/3 key sessions completed = 33%
         let prevSessions = [
             makeSession(daysFromNow: -10, type: .rest),
-            makeSession(daysFromNow: -9, type: .tempo, isCompleted: true),
-            makeSession(daysFromNow: -8, type: .intervals),
-            makeSession(daysFromNow: -7, type: .longRun),
+            makeSession(daysFromNow: -9, type: .tempo, isCompleted: true, isKeySession: true),
+            makeSession(daysFromNow: -8, type: .intervals, isKeySession: true),
+            makeSession(daysFromNow: -7, type: .longRun, isKeySession: true),
             makeSession(daysFromNow: -6, type: .recovery)
         ]
         let prevWeek = makeWeek(weekNumber: 1, daysOffset: -10, sessions: prevSessions)
@@ -183,9 +186,9 @@ struct PlanAdjustmentCalculatorTests {
     @Test("Previous week above 50% adherence produces no reduction")
     func goodAdherenceNoReduction() {
         let prevSessions = [
-            makeSession(daysFromNow: -10, type: .tempo, isCompleted: true),
-            makeSession(daysFromNow: -9, type: .intervals, isCompleted: true),
-            makeSession(daysFromNow: -8, type: .longRun),
+            makeSession(daysFromNow: -10, type: .tempo, isCompleted: true, isKeySession: true),
+            makeSession(daysFromNow: -9, type: .intervals, isCompleted: true, isKeySession: true),
+            makeSession(daysFromNow: -8, type: .longRun, isKeySession: true),
             makeSession(daysFromNow: -7, type: .recovery, isCompleted: true)
         ]
         let prevWeek = makeWeek(weekNumber: 1, daysOffset: -10, sessions: prevSessions)
@@ -202,10 +205,10 @@ struct PlanAdjustmentCalculatorTests {
 
     @Test("Affected sessions are future only")
     func reductionAffectsFutureOnly() {
-        // Prev week: 0/2 non-rest completed = 0% adherence
+        // Prev week: 0/2 key sessions completed = 0% adherence
         let prevSessions = [
-            makeSession(daysFromNow: -10, type: .tempo),
-            makeSession(daysFromNow: -9, type: .longRun)
+            makeSession(daysFromNow: -10, type: .tempo, isKeySession: true),
+            makeSession(daysFromNow: -9, type: .longRun, isKeySession: true)
         ]
         let prevWeek = makeWeek(weekNumber: 1, daysOffset: -10, sessions: prevSessions)
 
@@ -284,7 +287,7 @@ struct PlanAdjustmentCalculatorTests {
         let prevWeek = makeWeek(weekNumber: 1, daysOffset: -13, sessions: prevSessions)
 
         let currentSessions = [
-            makeSession(daysFromNow: -1, type: .longRun), // missed key session
+            makeSession(daysFromNow: -1, type: .longRun, isKeySession: true), // missed key session
             makeSession(daysFromNow: 1, type: .rest),     // available rest slot
             makeSession(daysFromNow: 2, type: .tempo)
         ]
@@ -379,9 +382,9 @@ struct PlanAdjustmentCalculatorTests {
     func sortedBySeverity() {
         // Create conditions for both bulk skip (suggestion) and reschedule (recommended)
         let sessions = [
-            makeSession(daysFromNow: -5, type: .tempo),
-            makeSession(daysFromNow: -4, type: .intervals),
-            makeSession(daysFromNow: -3, type: .longRun),
+            makeSession(daysFromNow: -5, type: .tempo, isKeySession: true),
+            makeSession(daysFromNow: -4, type: .intervals, isKeySession: true),
+            makeSession(daysFromNow: -3, type: .longRun, isKeySession: true),
             makeSession(daysFromNow: 1, type: .rest)
         ]
         let week = makeWeek(daysOffset: -6, sessions: sessions)
@@ -607,8 +610,8 @@ struct PlanAdjustmentCalculatorTests {
     @Test("Missed key session without rest slot triggers redistribution")
     func missedKeySessionRedistribution() {
         // Two missed volume-splittable sessions, one rest slot → one reschedule + one redistribution
-        let missedLongRun = makeSession(daysFromNow: -3, type: .longRun, distanceKm: 20)
-        let missedVerticalGain = makeSession(daysFromNow: -2, type: .verticalGain, distanceKm: 15)
+        let missedLongRun = makeSession(daysFromNow: -3, type: .longRun, isKeySession: true, distanceKm: 20)
+        let missedVerticalGain = makeSession(daysFromNow: -2, type: .verticalGain, isKeySession: true, distanceKm: 15)
         let restSlot = makeSession(daysFromNow: 1, type: .rest)
         let futureTempo = makeSession(daysFromNow: 3, type: .tempo, distanceKm: 12)
         let week = makeWeek(daysOffset: -4, sessions: [missedLongRun, missedVerticalGain, restSlot, futureTempo])
@@ -629,7 +632,7 @@ struct PlanAdjustmentCalculatorTests {
     func accumulatedMissedVolumeReduction() {
         // Create enough missed volume to exceed the 30km threshold
         let sessions = (0..<6).map { i in
-            makeSession(daysFromNow: -10 + i, type: .longRun, distanceKm: 8)
+            makeSession(daysFromNow: -10 + i, type: .longRun, isKeySession: true, distanceKm: 8)
         }
         let futureSessions = [
             makeSession(daysFromNow: 1, type: .tempo, distanceKm: 12),

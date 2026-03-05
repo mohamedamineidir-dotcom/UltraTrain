@@ -68,7 +68,6 @@ enum PlanAdjustmentCalculator {
         currentWeekIndex: Int?,
         into recommendations: inout [PlanAdjustmentRecommendation]
     ) {
-        let keyTypes: Set<SessionType> = [.longRun, .intervals, .tempo, .verticalGain]
         let nowDay = Calendar.current.startOfDay(for: now)
 
         var missedSessions: [(weekIndex: Int, sessionIndex: Int, session: TrainingSession)] = []
@@ -85,7 +84,7 @@ enum PlanAdjustmentCalculator {
                 if sessionDay < nowDay
                     && !session.isCompleted
                     && !session.isSkipped
-                    && keyTypes.contains(session.type) {
+                    && session.isKeySession {
                     missedSessions.append((wi, si, session))
                 }
             }
@@ -153,11 +152,11 @@ enum PlanAdjustmentCalculator {
         }
         guard allPast else { return }
 
-        let activeSessions = previousWeek.sessions.filter { $0.type != .rest }
-        guard !activeSessions.isEmpty else { return }
+        let keySessions = previousWeek.sessions.filter { $0.isKeySession }
+        guard !keySessions.isEmpty else { return }
 
-        let completed = activeSessions.filter(\.isCompleted).count
-        let adherence = Double(completed) / Double(activeSessions.count)
+        let completed = keySessions.filter(\.isCompleted).count
+        let adherence = Double(completed) / Double(keySessions.count)
 
         guard adherence < AppConfiguration.Training.lowAdherenceThreshold else { return }
 

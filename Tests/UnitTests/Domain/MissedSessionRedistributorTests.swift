@@ -15,10 +15,11 @@ struct MissedSessionRedistributorTests {
         type: SessionType = .tempo,
         isCompleted: Bool = false,
         isSkipped: Bool = false,
+        isKeySession: Bool = false,
         distanceKm: Double = 10,
         elevationGainM: Double = 200
     ) -> TrainingSession {
-        TrainingSession(
+        var session = TrainingSession(
             id: id,
             date: Calendar.current.date(byAdding: .day, value: daysFromNow, to: now)!,
             type: type,
@@ -32,6 +33,8 @@ struct MissedSessionRedistributorTests {
             isSkipped: isSkipped,
             linkedRunId: nil
         )
+        session.isKeySession = isKeySession
+        return session
     }
 
     private func makeWeek(
@@ -98,7 +101,7 @@ struct MissedSessionRedistributorTests {
 
     @Test("Missed sessions handled by rest slots produce no redistribution")
     func missedWithRestSlot() {
-        let missed = makeSession(daysFromNow: -2, type: .longRun)
+        let missed = makeSession(daysFromNow: -2, type: .longRun, isKeySession: true)
         let rest = makeSession(daysFromNow: 2, type: .rest)
         let future = makeSession(daysFromNow: 3, type: .tempo)
         let week = makeWeek(daysOffset: -3, sessions: [missed, rest, future])
@@ -114,7 +117,7 @@ struct MissedSessionRedistributorTests {
 
     @Test("Missed long run without rest slot triggers volume redistribution")
     func missedLongRunRedistributes() {
-        let missed = makeSession(daysFromNow: -2, type: .longRun, distanceKm: 20, elevationGainM: 500)
+        let missed = makeSession(daysFromNow: -2, type: .longRun, isKeySession: true, distanceKm: 20, elevationGainM: 500)
         let future1 = makeSession(daysFromNow: 1, type: .tempo, distanceKm: 10, elevationGainM: 200)
         let future2 = makeSession(daysFromNow: 3, type: .recovery, distanceKm: 8, elevationGainM: 100)
         let future3 = makeSession(daysFromNow: 5, type: .longRun, distanceKm: 22, elevationGainM: 600)
@@ -131,7 +134,7 @@ struct MissedSessionRedistributorTests {
 
     @Test("Volume adjustments respect 20% cap per session")
     func volumeAdjustmentsCapped() {
-        let missed = makeSession(daysFromNow: -2, type: .longRun, distanceKm: 100, elevationGainM: 5000)
+        let missed = makeSession(daysFromNow: -2, type: .longRun, isKeySession: true, distanceKm: 100, elevationGainM: 5000)
         let future = makeSession(daysFromNow: 2, type: .tempo, distanceKm: 10, elevationGainM: 200)
         let week = makeWeek(daysOffset: -3, sessions: [missed, future])
         let plan = makePlan(weeks: [week])
@@ -150,7 +153,7 @@ struct MissedSessionRedistributorTests {
 
     @Test("Missed verticalGain triggers volume redistribution")
     func missedVerticalGainRedistributes() {
-        let missed = makeSession(daysFromNow: -1, type: .verticalGain, distanceKm: 15, elevationGainM: 800)
+        let missed = makeSession(daysFromNow: -1, type: .verticalGain, isKeySession: true, distanceKm: 15, elevationGainM: 800)
         let future = makeSession(daysFromNow: 2, type: .tempo, distanceKm: 12, elevationGainM: 300)
         let week = makeWeek(daysOffset: -3, sessions: [missed, future])
         let plan = makePlan(weeks: [week])
@@ -163,7 +166,7 @@ struct MissedSessionRedistributorTests {
 
     @Test("Missed backToBack triggers volume redistribution")
     func missedBackToBackRedistributes() {
-        let missed = makeSession(daysFromNow: -1, type: .backToBack, distanceKm: 18, elevationGainM: 400)
+        let missed = makeSession(daysFromNow: -1, type: .backToBack, isKeySession: true, distanceKm: 18, elevationGainM: 400)
         let future = makeSession(daysFromNow: 2, type: .longRun, distanceKm: 20, elevationGainM: 500)
         let week = makeWeek(daysOffset: -3, sessions: [missed, future])
         let plan = makePlan(weeks: [week])
@@ -176,7 +179,7 @@ struct MissedSessionRedistributorTests {
 
     @Test("No future sessions means fully unrecoverable volume")
     func noFutureSessionsUnrecoverable() {
-        let missed = makeSession(daysFromNow: -1, type: .longRun, distanceKm: 20, elevationGainM: 500)
+        let missed = makeSession(daysFromNow: -1, type: .longRun, isKeySession: true, distanceKm: 20, elevationGainM: 500)
         let week = makeWeek(daysOffset: -3, sessions: [missed])
         let plan = makePlan(weeks: [week])
 
@@ -191,7 +194,7 @@ struct MissedSessionRedistributorTests {
 
     @Test("Missed intervals converts recovery to quality")
     func missedIntervalsConvertsRecovery() {
-        let missed = makeSession(daysFromNow: -1, type: .intervals, distanceKm: 8, elevationGainM: 100)
+        let missed = makeSession(daysFromNow: -1, type: .intervals, isKeySession: true, distanceKm: 8, elevationGainM: 100)
         let futureRecovery = makeSession(daysFromNow: 2, type: .recovery, distanceKm: 5, elevationGainM: 50)
         let week = makeWeek(daysOffset: -3, sessions: [missed, futureRecovery])
         let plan = makePlan(weeks: [week])
@@ -207,7 +210,7 @@ struct MissedSessionRedistributorTests {
 
     @Test("Missed tempo with no recovery session is unrecoverable")
     func missedTempoNoRecovery() {
-        let missed = makeSession(daysFromNow: -1, type: .tempo, distanceKm: 12, elevationGainM: 250)
+        let missed = makeSession(daysFromNow: -1, type: .tempo, isKeySession: true, distanceKm: 12, elevationGainM: 250)
         let futureHard = makeSession(daysFromNow: 2, type: .longRun, distanceKm: 20, elevationGainM: 500)
         let week = makeWeek(daysOffset: -3, sessions: [missed, futureHard])
         let plan = makePlan(weeks: [week])
@@ -224,9 +227,9 @@ struct MissedSessionRedistributorTests {
 
     @Test("Accumulated missed volume counts sessions in lookback window")
     func accumulatedMissedVolume() {
-        let missed1 = makeSession(daysFromNow: -3, type: .tempo, distanceKm: 10, elevationGainM: 200)
-        let missed2 = makeSession(daysFromNow: -5, type: .longRun, distanceKm: 20, elevationGainM: 500)
-        let completed = makeSession(daysFromNow: -4, type: .recovery, isCompleted: true, distanceKm: 5, elevationGainM: 50)
+        let missed1 = makeSession(daysFromNow: -3, type: .tempo, isKeySession: true, distanceKm: 10, elevationGainM: 200)
+        let missed2 = makeSession(daysFromNow: -5, type: .longRun, isKeySession: true, distanceKm: 20, elevationGainM: 500)
+        let completed = makeSession(daysFromNow: -4, type: .recovery, isCompleted: true, isKeySession: true, distanceKm: 5, elevationGainM: 50)
         let week = makeWeek(daysOffset: -7, sessions: [missed1, missed2, completed])
         let plan = makePlan(weeks: [week])
 
@@ -240,8 +243,8 @@ struct MissedSessionRedistributorTests {
 
     @Test("Completed and skipped sessions excluded from accumulated missed")
     func accumulatedExcludesCompletedSkipped() {
-        let completed = makeSession(daysFromNow: -3, type: .tempo, isCompleted: true, distanceKm: 10)
-        let skipped = makeSession(daysFromNow: -2, type: .longRun, isSkipped: true, distanceKm: 20)
+        let completed = makeSession(daysFromNow: -3, type: .tempo, isCompleted: true, isKeySession: true, distanceKm: 10)
+        let skipped = makeSession(daysFromNow: -2, type: .longRun, isSkipped: true, isKeySession: true, distanceKm: 20)
         let rest = makeSession(daysFromNow: -1, type: .rest, distanceKm: 0)
         let week = makeWeek(daysOffset: -4, sessions: [completed, skipped, rest])
         let plan = makePlan(weeks: [week])
@@ -255,8 +258,8 @@ struct MissedSessionRedistributorTests {
 
     @Test("Sessions outside lookback window excluded")
     func accumulatedLookbackWindow() {
-        let old = makeSession(daysFromNow: -20, type: .longRun, distanceKm: 25, elevationGainM: 600)
-        let recent = makeSession(daysFromNow: -3, type: .tempo, distanceKm: 10, elevationGainM: 200)
+        let old = makeSession(daysFromNow: -20, type: .longRun, isKeySession: true, distanceKm: 25, elevationGainM: 600)
+        let recent = makeSession(daysFromNow: -3, type: .tempo, isKeySession: true, distanceKm: 10, elevationGainM: 200)
         let week1 = makeWeek(weekNumber: 1, daysOffset: -21, sessions: [old])
         let week2 = makeWeek(weekNumber: 2, daysOffset: -4, sessions: [recent])
         let plan = makePlan(weeks: [week1, week2])
