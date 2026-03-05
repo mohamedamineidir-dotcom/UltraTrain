@@ -8,4 +8,5 @@ struct KnownRace: Identifiable, Sendable {
     let elevationGainM: Double
     let elevationLossM: Double
     let country: String
+    let nextEditionDate: Date?
 }

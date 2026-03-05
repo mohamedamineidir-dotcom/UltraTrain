@@ -45,10 +45,15 @@ actor OpenFoodFactsDataSource {
             url: Self.baseURL.appendingPathComponent("cgi/search.pl"),
             resolvingAgainstBaseURL: true
         )
+        let languageCode = Locale.current.language.languageCode?.identifier ?? "en"
+        let countryCode = Locale.current.region?.identifier.lowercased() ?? "us"
         components?.queryItems = [
+            URLQueryItem(name: "action", value: "process"),
             URLQueryItem(name: "search_terms", value: trimmed),
             URLQueryItem(name: "json", value: "1"),
-            URLQueryItem(name: "page_size", value: "20")
+            URLQueryItem(name: "page_size", value: "20"),
+            URLQueryItem(name: "lc", value: languageCode),
+            URLQueryItem(name: "cc", value: countryCode)
         ]
 
         guard let url = components?.url else { return [] }

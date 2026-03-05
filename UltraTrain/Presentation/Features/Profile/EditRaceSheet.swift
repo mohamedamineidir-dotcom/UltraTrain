@@ -196,6 +196,9 @@ struct EditRaceSheet: View {
                 distanceKm = race.distanceKm
                 elevationGainM = race.elevationGainM
                 elevationLossM = race.elevationLossM
+                if let raceDate = race.nextEditionDate, raceDate > Date.now {
+                    date = raceDate
+                }
             }
             DatePicker("Race Date", selection: $date, in: Date.now..., displayedComponents: .date)
             LabeledStepper(

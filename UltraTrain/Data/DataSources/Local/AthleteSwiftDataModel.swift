@@ -24,6 +24,7 @@ final class AthleteSwiftDataModel {
     var bio: String? = nil
     @Attribute(.externalStorage) var profilePhotoData: Data? = nil
     var isPublicProfile: Bool = false
+    var weightGoalRaw: String = "maintain"
 
     init(
         id: UUID = UUID(),
@@ -46,7 +47,8 @@ final class AthleteSwiftDataModel {
         displayName: String? = nil,
         bio: String? = nil,
         profilePhotoData: Data? = nil,
-        isPublicProfile: Bool = false
+        isPublicProfile: Bool = false,
+        weightGoalRaw: String = "maintain"
     ) {
         self.id = id
         self.firstName = firstName
@@ -69,5 +71,6 @@ final class AthleteSwiftDataModel {
         self.bio = bio
         self.profilePhotoData = profilePhotoData
         self.isPublicProfile = isPublicProfile
+        self.weightGoalRaw = weightGoalRaw
     }
 }

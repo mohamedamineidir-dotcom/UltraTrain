@@ -1,6 +1,32 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "--" : {
+
+    },
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@: %lldd" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@: %2$lldd"
+          }
+        }
+      }
+    },
+    "%lld" : {
+
+    },
     "day to go" : {
       "localizations" : {
         "fr" : {
@@ -31,6 +57,9 @@
         }
       }
     },
+    "Days until your A-race." : {
+
+    },
     "Enjoy the rest!" : {
       "localizations" : {
         "fr" : {
@@ -40,6 +69,9 @@
           }
         }
       }
+    },
+    "Next Session" : {
+
     },
     "No Race" : {
       "localizations" : {
@@ -81,6 +113,9 @@
         }
       }
     },
+    "Race Countdown" : {
+
+    },
     "Rest" : {
       "localizations" : {
         "fr" : {
@@ -100,6 +135,9 @@
           }
         }
       }
+    },
+    "Your next training session." : {
+
     }
   },
   "version" : "1.0"

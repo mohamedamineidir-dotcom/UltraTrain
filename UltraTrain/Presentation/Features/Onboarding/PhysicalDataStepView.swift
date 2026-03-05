@@ -10,6 +10,7 @@ struct PhysicalDataStepView: View {
                 nameSection
                 dateOfBirthSection
                 bodyMetricsSection
+                weightGoalSection
                 heartRateSection
             }
             .padding()
@@ -80,6 +81,23 @@ struct PhysicalDataStepView: View {
                 step: 1,
                 unit: isImperial ? "in" : "cm"
             )
+        }
+        .cardStyle()
+    }
+
+    private var weightGoalSection: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            Text("Weight Goal")
+                .font(.headline)
+            Text("Adjusts your daily calorie targets.")
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+            Picker("Weight Goal", selection: $viewModel.weightGoal) {
+                Text("Lose Weight").tag(WeightGoal.lose)
+                Text("Maintain").tag(WeightGoal.maintain)
+                Text("Gain Weight").tag(WeightGoal.gain)
+            }
+            .pickerStyle(.segmented)
         }
         .cardStyle()
     }

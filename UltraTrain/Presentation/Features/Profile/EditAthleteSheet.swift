@@ -16,6 +16,7 @@ struct EditAthleteSheet: View {
     @State private var weeklyVolumeKm: Double
     @State private var longestRunKm: Double
     @State private var preferredUnit: UnitPreference
+    @State private var weightGoal: WeightGoal
 
     init(athlete: Athlete, onSave: @escaping (Athlete) -> Void) {
         self.athlete = athlete
@@ -31,6 +32,7 @@ struct EditAthleteSheet: View {
         _weeklyVolumeKm = State(initialValue: athlete.weeklyVolumeKm)
         _longestRunKm = State(initialValue: athlete.longestRunKm)
         _preferredUnit = State(initialValue: athlete.preferredUnit)
+        _weightGoal = State(initialValue: athlete.weightGoal)
     }
 
     var body: some View {
@@ -39,6 +41,7 @@ struct EditAthleteSheet: View {
                 nameSection
                 dateOfBirthSection
                 bodyMetricsSection
+                weightGoalSection
                 heartRateSection
                 experienceSection
                 runningHistorySection
@@ -82,6 +85,17 @@ struct EditAthleteSheet: View {
                 displayedComponents: .date
             )
             .labelsHidden()
+        }
+    }
+
+    private var weightGoalSection: some View {
+        Section("Weight Goal") {
+            Picker("Weight Goal", selection: $weightGoal) {
+                Text("Lose Weight").tag(WeightGoal.lose)
+                Text("Maintain").tag(WeightGoal.maintain)
+                Text("Gain Weight").tag(WeightGoal.gain)
+            }
+            .pickerStyle(.segmented)
         }
     }
 
@@ -217,7 +231,8 @@ struct EditAthleteSheet: View {
             experienceLevel: experienceLevel,
             weeklyVolumeKm: weeklyVolumeKm,
             longestRunKm: longestRunKm,
-            preferredUnit: preferredUnit
+            preferredUnit: preferredUnit,
+            weightGoal: weightGoal
         )
         onSave(updated)
         dismiss()

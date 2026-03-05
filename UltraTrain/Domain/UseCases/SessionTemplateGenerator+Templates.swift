@@ -35,7 +35,7 @@ extension SessionTemplateGenerator {
             tpl(2, .rest, .easy, 0, "Rest day. Light stretching or yoga recommended."),
             tpl(3, .tempo, .moderate, 0.15, "Tempo run at comfortably hard pace. Maintain steady effort in Zone 3."),
             tpl(4, .rest, .easy, 0, "Rest day. Prepare gear and nutrition for the long run."),
-            tplTime(5, .longRun, .easy, 0.45, "Long run at easy pace. Practice race-day nutrition strategy. Stay in Zone 2."),
+            tplTime(5, .longRun, .easy, 0.30, "Long run at easy pace. Practice race-day nutrition strategy. Stay in Zone 2."),
             crossTrainingOrAlternative(day: 6, experience: experience)
         ]
     }
@@ -78,7 +78,7 @@ extension SessionTemplateGenerator {
             ]
         } else {
             templates += [
-                tplTime(5, .longRun, .easy, 0.40, "Long run on trail terrain. Include elevation if possible. Practice nutrition."),
+                tplTime(5, .longRun, .easy, 0.30, "Long run on trail terrain. Include elevation if possible. Practice nutrition."),
                 crossTrainingOrAlternative(day: 6, experience: experience),
             ]
         }
@@ -110,7 +110,7 @@ extension SessionTemplateGenerator {
                 tpl(2, .recovery, .easy, 0.08, "Easy recovery run. Focus on form and relaxation."),
                 tpl(3, .verticalGain, .hard, 0.12, "Vertical gain work on steep terrain. Practice power hiking."),
                 tpl(4, .rest, .easy, 0, "Rest day. Pre-hydrate for the weekend block."),
-                tplTime(5, .longRun, .moderate, 0.40, "Peak long run simulating race conditions. Full nutrition rehearsal."),
+                tplTime(5, .longRun, .moderate, 0.30, "Peak long run simulating race conditions. Full nutrition rehearsal."),
                 crossTrainingOrAlternative(day: 6, experience: experience),
             ]
         }

@@ -41,6 +41,9 @@ struct RaceGoalStepView: View {
                 viewModel.raceDistanceKm = race.distanceKm
                 viewModel.raceElevationGainM = race.elevationGainM
                 viewModel.raceElevationLossM = race.elevationLossM
+                if let date = race.nextEditionDate, date > Date.now {
+                    viewModel.raceDate = date
+                }
             }
             DatePicker(
                 "Race Date",
@@ -286,7 +289,7 @@ struct RaceGoalStepView: View {
             LabeledIntStepper(
                 label: "Sessions",
                 value: $viewModel.preferredRunsPerWeek,
-                range: 3...6,
+                range: 3...7,
                 unit: "runs"
             )
             Text("Extra days become rest days. 3 runs minimum to maintain fitness.")

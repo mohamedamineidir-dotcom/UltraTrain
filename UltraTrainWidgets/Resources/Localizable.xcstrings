@@ -1,6 +1,34 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "--" : {
+
+    },
+    "%@" : {
+
+    },
+    "%lld" : {
+
+    },
+    "%lld bpm" : {
+
+    },
+    "%lld%%" : {
+
+    },
+    "%lldd to %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lldd to %2$@"
+          }
+        }
+      }
+    },
+    "14-day fitness form trend with sparkline." : {
+
+    },
     "Analysis" : {
       "localizations" : {
         "fr" : {
@@ -11,10 +39,10 @@
         }
       }
     },
-    "ATL" : {
+    "Complete Session" : {
 
     },
-    "CTL" : {
+    "Date" : {
 
     },
     "days" : {
@@ -27,7 +55,11 @@
         }
       }
     },
+    "Days until your A-race with plan progress." : {
+
+    },
     "Distance" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -48,6 +80,7 @@
       }
     },
     "Elevation" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -58,6 +91,7 @@
       }
     },
     "Fatigued" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -66,6 +100,25 @@
           }
         }
       }
+    },
+    "Finish: %@" : {
+
+    },
+    "Fitness %lld | Fatigue %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Fitness %1$lld | Fatigue %2$lld"
+          }
+        }
+      }
+    },
+    "Fitness Form" : {
+
+    },
+    "Fitness Status" : {
+
     },
     "Fitness Trend" : {
       "localizations" : {
@@ -88,6 +141,7 @@
       }
     },
     "Fresh" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -117,7 +171,17 @@
         }
       }
     },
+    "Mark session ${sessionId} as complete" : {
+
+    },
+    "Mark Session Complete" : {
+
+    },
+    "Marks the next training session as completed." : {
+
+    },
     "Neutral" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -126,6 +190,9 @@
           }
         }
       }
+    },
+    "Next Session" : {
+
     },
     "No Fitness Data" : {
       "localizations" : {
@@ -136,6 +203,15 @@
           }
         }
       }
+    },
+    "No fitness data available yet." : {
+
+    },
+    "No Plan" : {
+
+    },
+    "No Race" : {
+
     },
     "No Race Scheduled" : {
       "localizations" : {
@@ -177,6 +253,27 @@
         }
       }
     },
+    "No upcoming race found." : {
+
+    },
+    "No upcoming session found." : {
+
+    },
+    "No weekly progress data available." : {
+
+    },
+    "Opens UltraTrain to the run history screen." : {
+
+    },
+    "Opens UltraTrain to the run tracking screen." : {
+
+    },
+    "Opens UltraTrain to your progress dashboard." : {
+
+    },
+    "Opens UltraTrain to your training plan." : {
+
+    },
     "Pause" : {
       "localizations" : {
         "fr" : {
@@ -186,6 +283,18 @@
           }
         }
       }
+    },
+    "Pause Run" : {
+
+    },
+    "Pauses the active run from the Live Activity." : {
+
+    },
+    "Quick stats from your most recent run." : {
+
+    },
+    "Race Countdown" : {
+
     },
     "Rest" : {
       "localizations" : {
@@ -207,6 +316,51 @@
         }
       }
     },
+    "Resume Run" : {
+
+    },
+    "Resumes the paused run from the Live Activity." : {
+
+    },
+    "Run History" : {
+
+    },
+    "See your next training session at a glance." : {
+
+    },
+    "Session ID" : {
+
+    },
+    "Show Fitness Summary" : {
+
+    },
+    "Show Next Session" : {
+
+    },
+    "Show Progress" : {
+
+    },
+    "Show Race Countdown" : {
+
+    },
+    "Show Training Plan" : {
+
+    },
+    "Show Weekly Progress" : {
+
+    },
+    "Shows details about your next training session." : {
+
+    },
+    "Shows how many days until your next race." : {
+
+    },
+    "Shows your current fitness, fatigue, and form." : {
+
+    },
+    "Shows your training progress for the current week." : {
+
+    },
     "Skip" : {
       "localizations" : {
         "fr" : {
@@ -216,6 +370,15 @@
           }
         }
       }
+    },
+    "Skip Session" : {
+
+    },
+    "Skip session ${sessionId}" : {
+
+    },
+    "Skips the next training session." : {
+
     },
     "Start" : {
       "localizations" : {
@@ -227,7 +390,14 @@
         }
       }
     },
+    "Start a Run" : {
+
+    },
+    "Start Run" : {
+
+    },
     "Today" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -238,6 +408,7 @@
       }
     },
     "Tomorrow" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -246,6 +417,12 @@
           }
         }
       }
+    },
+    "Track your training volume this week." : {
+
+    },
+    "Training Plan" : {
+
     },
     "Trend" : {
       "localizations" : {
@@ -277,7 +454,17 @@
         }
       }
     },
+    "View Run History" : {
+
+    },
+    "Week %lld" : {
+
+    },
+    "Weekly Progress" : {
+
+    },
     "Yesterday" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -286,6 +473,9 @@
           }
         }
       }
+    },
+    "Your current training form at a glance." : {
+
     }
   },
   "version" : "1.0"

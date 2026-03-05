@@ -62,6 +62,7 @@ final class OnboardingViewModel {
     var heightCm: Double = 175
     var restingHeartRate: Int = 60
     var maxHeartRate: Int = 185
+    var weightGoal: WeightGoal = .maintain
 
     // MARK: - Step 5: Race Goal
 
@@ -187,7 +188,8 @@ final class OnboardingViewModel {
             preferredUnit: preferredUnit,
             personalBests: buildPersonalBests(),
             trainingPhilosophy: trainingPhilosophy,
-            preferredRunsPerWeek: preferredRunsPerWeek
+            preferredRunsPerWeek: preferredRunsPerWeek,
+            weightGoal: weightGoal
         )
     }
 

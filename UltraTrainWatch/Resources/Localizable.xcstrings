@@ -1,6 +1,24 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%lld" : {
+
+    },
+    "%lld bpm" : {
+
+    },
+    "%lldm" : {
+
+    },
+    "+%lld m" : {
+
+    },
+    "+%lldm" : {
+
+    },
+    "0m" : {
+
+    },
     "Allow location to track runs" : {
       "localizations" : {
         "fr" : {
@@ -12,6 +30,7 @@
       }
     },
     "Auto-paused" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -22,6 +41,7 @@
       }
     },
     "Avg HR" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -32,6 +52,7 @@
       }
     },
     "Distance" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -52,6 +73,7 @@
       }
     },
     "Elevation" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -71,6 +93,9 @@
         }
       }
     },
+    "History (%lld)" : {
+
+    },
     "iPhone not connected" : {
       "localizations" : {
         "fr" : {
@@ -80,6 +105,9 @@
           }
         }
       }
+    },
+    "KM %lld" : {
+
     },
     "Location denied. Enable in Settings." : {
       "localizations" : {
@@ -122,6 +150,7 @@
       }
     },
     "Pace" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -142,6 +171,7 @@
       }
     },
     "Paused" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -172,6 +202,7 @@
       }
     },
     "Running" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -212,6 +243,7 @@
       }
     },
     "Time" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {

@@ -69,7 +69,8 @@ enum TrainingPlanSwiftDataMapper {
             isSkipped: model.isSkipped,
             linkedRunId: model.linkedRunId,
             targetHeartRateZone: model.targetHeartRateZone,
-            intervalWorkoutId: model.intervalWorkoutId
+            intervalWorkoutId: model.intervalWorkoutId,
+            isKeySession: model.isKeySession
         )
     }
 
@@ -119,7 +120,8 @@ enum TrainingPlanSwiftDataMapper {
             isSkipped: session.isSkipped,
             linkedRunId: session.linkedRunId,
             targetHeartRateZone: session.targetHeartRateZone,
-            intervalWorkoutId: session.intervalWorkoutId
+            intervalWorkoutId: session.intervalWorkoutId,
+            isKeySession: session.isKeySession
         )
     }
 }

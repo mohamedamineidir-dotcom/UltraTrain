@@ -47,6 +47,16 @@ enum DailyNutritionCalculator {
         }
     }
 
+    // MARK: - Weight Goal Adjustment
+
+    private static func calorieAdjustment(for goal: WeightGoal) -> Int {
+        switch goal {
+        case .gain: return 400
+        case .maintain: return 0
+        case .lose: return -400
+        }
+    }
+
     // MARK: - Public API
 
     static func calculateTarget(
@@ -57,7 +67,9 @@ enum DailyNutritionCalculator {
     ) -> DailyNutritionTarget {
         let baseCalories = Int(athlete.weightKg * 30)
         let activity = activityCalories(for: session)
-        let totalCalories = baseCalories + activity
+        let goalAdjustment = calorieAdjustment(for: athlete.weightGoal)
+        let bmr = max(Int(athlete.weightKg * 20), 1200) // safety floor
+        let totalCalories = max(baseCalories + activity + goalAdjustment, bmr)
 
         let split = macroSplit(for: trainingPhase)
 

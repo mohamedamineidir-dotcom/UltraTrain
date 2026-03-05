@@ -15,6 +15,7 @@ enum AthleteSwiftDataMapper {
             return try? JSONDecoder().decode([PersonalBest].self, from: data)
         } ?? []
         let philosophy = TrainingPhilosophy(rawValue: model.trainingPhilosophyRaw) ?? .balanced
+        let weightGoal = WeightGoal(rawValue: model.weightGoalRaw) ?? .maintain
         return Athlete(
             id: model.id,
             firstName: model.firstName,
@@ -35,7 +36,8 @@ enum AthleteSwiftDataMapper {
             displayName: model.displayName,
             bio: model.bio,
             profilePhotoData: model.profilePhotoData,
-            isPublicProfile: model.isPublicProfile
+            isPublicProfile: model.isPublicProfile,
+            weightGoal: weightGoal
         )
     }
 
@@ -64,7 +66,8 @@ enum AthleteSwiftDataMapper {
             displayName: athlete.displayName,
             bio: athlete.bio,
             profilePhotoData: athlete.profilePhotoData,
-            isPublicProfile: athlete.isPublicProfile
+            isPublicProfile: athlete.isPublicProfile,
+            weightGoalRaw: athlete.weightGoal.rawValue
         )
     }
 }

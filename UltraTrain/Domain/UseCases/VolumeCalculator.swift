@@ -22,7 +22,10 @@ enum VolumeCalculator {
 
         let peakFraction = peakFraction(for: experience)
         let peakVolume = raceDistanceKm * peakFraction * philosophyMultiplier(for: philosophy)
-        let startVolume = max(currentWeeklyVolumeKm, 10.0)
+        // Start from current fitness but cap at a safe fraction of peak to avoid
+        // dangerously high volumes in early weeks
+        let safeMaxStart = peakVolume * 0.5
+        let startVolume = min(max(currentWeeklyVolumeKm, 10.0), safeMaxStart)
 
         // Find the last non-taper, non-recovery week index for peak target
         let buildWeeks = skeletons.filter { $0.phase != .taper && !$0.isRecoveryWeek }

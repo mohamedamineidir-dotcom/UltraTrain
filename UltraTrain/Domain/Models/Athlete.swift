@@ -21,6 +21,7 @@ struct Athlete: Identifiable, Equatable, Sendable {
     var bio: String? = nil
     var profilePhotoData: Data? = nil
     var isPublicProfile: Bool = false
+    var weightGoal: WeightGoal = .maintain
 
     var age: Int {
         Calendar.current.dateComponents([.year], from: dateOfBirth, to: .now).year ?? 0

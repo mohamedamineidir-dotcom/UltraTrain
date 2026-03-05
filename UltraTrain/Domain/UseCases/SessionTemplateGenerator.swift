@@ -39,25 +39,25 @@ enum SessionTemplateGenerator {
         }
 
         let adapted = adaptTemplates(templates, preferredRuns: preferredRunsPerWeek)
-        let totalFraction = adapted.reduce(0.0) { $0 + $1.volumeFraction }
-        let weeklyTimeBudget = volume.targetVolumeKm * 7.0 * 60.0 // rough time in seconds
+        // Use fractions directly — do NOT divide by totalFraction to avoid inflation
+        // when rest days reduce the sum below 1.0
+        // Weekly time budget: estimate from volume at ~6.5 min/km avg pace
+        let weeklyTimeBudget = volume.targetVolumeKm * 6.5 * 60.0 // seconds
 
         let sessions = adapted.map { template in
             let distance: Double
             let duration: TimeInterval
             let elevation: Double
 
-            if template.isTimeBased && totalFraction > 0 {
-                // Time-based: duration is primary, distance is estimated
-                duration = weeklyTimeBudget * (template.volumeFraction / totalFraction)
-                let paceMinPerKm = paceForIntensity(template.intensity)
-                distance = duration / (paceMinPerKm * 60.0)
-                elevation = totalFraction > 0
-                    ? volume.targetElevationGainM * (template.volumeFraction / totalFraction)
-                    : 0
-            } else if totalFraction > 0 {
-                distance = volume.targetVolumeKm * (template.volumeFraction / totalFraction)
-                elevation = volume.targetElevationGainM * (template.volumeFraction / totalFraction)
+            if template.isTimeBased {
+                // Time-based sessions (long runs, B2B): use duration + elevation only
+                duration = weeklyTimeBudget * template.volumeFraction
+                elevation = volume.targetElevationGainM * template.volumeFraction
+                // No distance target for time-based sessions
+                distance = 0
+            } else if template.volumeFraction > 0 {
+                distance = volume.targetVolumeKm * template.volumeFraction
+                elevation = volume.targetElevationGainM * template.volumeFraction
                 duration = estimateDuration(distanceKm: distance, intensity: template.intensity)
             } else {
                 distance = 0
@@ -96,7 +96,29 @@ enum SessionTemplateGenerator {
             )
         }
 
-        return (sessions, workouts)
+        let markedSessions = markKeySessions(sessions, phase: skeleton.phase)
+        return (markedSessions, workouts)
+    }
+
+    /// Mark the top 3 most important sessions as key ("do not miss")
+    private static func markKeySessions(_ sessions: [TrainingSession], phase: TrainingPhase) -> [TrainingSession] {
+        // Priority: longRun/backToBack > intervals/verticalGain > tempo > recovery
+        let keyPriority: [SessionType] = [.longRun, .backToBack, .intervals, .verticalGain, .tempo, .recovery]
+
+        let activeSessions = sessions.enumerated().filter { $0.element.type != .rest }
+        let sorted = activeSessions.sorted { a, b in
+            let aPriority = keyPriority.firstIndex(of: a.element.type) ?? keyPriority.count
+            let bPriority = keyPriority.firstIndex(of: b.element.type) ?? keyPriority.count
+            return aPriority < bPriority
+        }
+
+        let keyIndices = Set(sorted.prefix(min(3, sorted.count)).map { $0.offset })
+
+        return sessions.enumerated().map { idx, session in
+            var s = session
+            s.isKeySession = keyIndices.contains(idx)
+            return s
+        }
     }
 
     // MARK: - Runs Per Week Adaptation
@@ -106,44 +128,86 @@ enum SessionTemplateGenerator {
         preferredRuns: Int?
     ) -> [SessionTemplate] {
         guard let preferred = preferredRuns else { return templates }
-        var result = templates
-        let currentRunCount = result.filter { $0.type != .rest && $0.volumeFraction > 0 }.count
-        var toRemove = currentRunCount - preferred
-        guard toRemove > 0 else { return result }
 
-        // Collect volume being removed to redistribute
-        var removedVolume = 0.0
-        let removalPriority: [SessionType] = [.recovery, .crossTraining, .tempo]
+        // Split into active sessions and rest days
+        let active = templates.filter { $0.type != .rest && $0.volumeFraction > 0 }
+        let currentCount = active.count
 
-        for typeToRemove in removalPriority where toRemove > 0 {
-            for i in result.indices where toRemove > 0 {
-                if result[i].type == typeToRemove && result[i].volumeFraction > 0 {
-                    removedVolume += result[i].volumeFraction
-                    result[i] = tpl(result[i].dayOffset, .rest, .easy, 0, "Rest day. Recovery is part of training.")
-                    toRemove -= 1
-                }
-            }
+        if currentCount == preferred {
+            return templates
         }
 
-        // Redistribute removed volume among remaining active sessions
-        let remainingActive = result.filter { $0.type != .rest && $0.volumeFraction > 0 }
-        guard !remainingActive.isEmpty, removedVolume > 0 else { return result }
+        if currentCount > preferred {
+            // Remove lowest-priority sessions first
+            let removalPriority: [SessionType] = [.crossTraining, .recovery, .tempo]
+            var kept = active
+            var toRemove = currentCount - preferred
 
-        let totalRemaining = remainingActive.reduce(0.0) { $0 + $1.volumeFraction }
-        guard totalRemaining > 0 else { return result }
+            for typeToRemove in removalPriority where toRemove > 0 {
+                kept = kept.enumerated().compactMap { idx, t in
+                    if toRemove > 0 && t.type == typeToRemove {
+                        toRemove -= 1
+                        return nil
+                    }
+                    return t
+                }
+            }
 
-        for i in result.indices {
-            if result[i].type != .rest && result[i].volumeFraction > 0 {
-                let share = result[i].volumeFraction / totalRemaining
-                let bonus = removedVolume * share
-                result[i] = SessionTemplate(
-                    dayOffset: result[i].dayOffset,
-                    type: result[i].type,
-                    intensity: result[i].intensity,
-                    volumeFraction: result[i].volumeFraction + bonus,
-                    description: result[i].description,
-                    isTimeBased: result[i].isTimeBased
-                )
+            return buildWeek(from: kept)
+        }
+
+        // currentCount < preferred: add easy/recovery sessions to fill
+        var expanded = active
+        let additionalTypes: [(SessionType, Intensity, String)] = [
+            (.recovery, .easy, "Easy recovery run. Conversational pace, Zone 1-2."),
+            (.recovery, .easy, "Light aerobic run. Keep it relaxed."),
+            (.tempo, .moderate, "Moderate tempo effort to build aerobic capacity."),
+        ]
+        var addIndex = 0
+        while expanded.count < preferred && addIndex < additionalTypes.count {
+            let (type, intensity, desc) = additionalTypes[addIndex]
+            expanded.append(SessionTemplate(dayOffset: 0, type: type, intensity: intensity,
+                                            volumeFraction: 0.08, description: desc, isTimeBased: false))
+            addIndex += 1
+        }
+        // If still not enough, add more recovery runs
+        while expanded.count < preferred {
+            expanded.append(SessionTemplate(dayOffset: 0, type: .recovery, intensity: .easy,
+                                            volumeFraction: 0.06, description: "Easy run. Keep effort comfortable.",
+                                            isTimeBased: false))
+        }
+
+        return buildWeek(from: expanded)
+    }
+
+    /// Arrange active sessions into a 7-day week with rest days filling gaps
+    private static func buildWeek(from active: [SessionTemplate]) -> [SessionTemplate] {
+        let count = active.count
+        guard count > 0 && count <= 7 else { return active }
+
+        // Spread sessions across the week with rest days between hard efforts
+        let dayAssignments: [[Int]] = [
+            [],                          // 0 sessions (unused)
+            [5],                         // 1 session
+            [2, 5],                      // 2 sessions
+            [1, 3, 5],                   // 3 sessions
+            [1, 3, 5, 6],               // 4 sessions
+            [1, 2, 3, 5, 6],            // 5 sessions
+            [0, 1, 2, 3, 5, 6],         // 6 sessions
+            [0, 1, 2, 3, 4, 5, 6],      // 7 sessions
+        ]
+
+        let days = dayAssignments[min(count, 7)]
+        var result: [SessionTemplate] = []
+
+        for day in 0...6 {
+            if let idx = days.firstIndex(of: day), idx < active.count {
+                let t = active[idx]
+                result.append(SessionTemplate(dayOffset: day, type: t.type, intensity: t.intensity,
+                                              volumeFraction: t.volumeFraction, description: t.description,
+                                              isTimeBased: t.isTimeBased))
+            } else {
+                result.append(tpl(day, .rest, .easy, 0, "Rest day. Recovery is part of training."))
             }
         }
 

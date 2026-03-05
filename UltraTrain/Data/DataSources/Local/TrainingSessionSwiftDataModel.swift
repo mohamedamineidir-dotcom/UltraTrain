@@ -18,6 +18,7 @@ final class TrainingSessionSwiftDataModel {
     var targetHeartRateZone: Int?
     var intervalWorkoutId: UUID?
     var week: TrainingWeekSwiftDataModel?
+    var isKeySession: Bool = false
     var updatedAt: Date = Date()
 
     init(
@@ -35,6 +36,7 @@ final class TrainingSessionSwiftDataModel {
         linkedRunId: UUID? = nil,
         targetHeartRateZone: Int? = nil,
         intervalWorkoutId: UUID? = nil,
+        isKeySession: Bool = false,
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -51,6 +53,7 @@ final class TrainingSessionSwiftDataModel {
         self.linkedRunId = linkedRunId
         self.targetHeartRateZone = targetHeartRateZone
         self.intervalWorkoutId = intervalWorkoutId
+        self.isKeySession = isKeySession
         self.updatedAt = updatedAt
     }
 }

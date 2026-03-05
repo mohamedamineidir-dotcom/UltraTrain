@@ -98,41 +98,65 @@ enum WorkoutProgressionEngine {
         )
     }
 
-    // MARK: - Vertical Gain Templates
+    // MARK: - Vertical Gain Templates (Progressive Overload)
 
     private static func verticalTemplate(phase trainingPhase: TrainingPhase, weekInPhase: Int, intensity: Intensity) -> WorkoutTemplate {
         let warmUp = phase(.warmUp, duration: 900, intensity: .easy, reps: 1, notes: "Easy jog to the climb")
         let coolDown = phase(.coolDown, duration: 600, intensity: .easy, reps: 1, notes: "Easy jog back, stretching")
 
-        let workPhases: (reps: Int, workSec: Double, restSec: Double, desc: String)
+        let workPhases: (reps: Int, workSec: Double, restSec: Double, desc: String, name: String)
 
-        if intensity == .moderate {
-            // Endurance vertical — longer efforts
-            let variants: [(Int, Double, Double, String)] = [
-                (4, 480, 300, "4×8min moderate climb / 5min descent"),
-                (3, 720, 420, "3×12min moderate climb / 7min descent"),
-                (2, 1080, 600, "2×18min moderate climb / 10min descent"),
-                (5, 360, 240, "5×6min moderate climb / 4min descent"),
-            ]
-            workPhases = variants[weekInPhase % variants.count]
-        } else {
-            // VO2max vertical — shorter, harder
-            let variants: [(Int, Double, Double, String)] = [
-                (5, 240, 180, "5×4min hard climb / 3min descent"),
-                (6, 240, 180, "6×4min hard climb / 3min descent"),
-                (5, 300, 210, "5×5min hard climb / 3min30 descent"),
-                (7, 240, 180, "7×4min hard climb / 3min descent"),
-                (6, 300, 210, "6×5min hard climb / 3min30 descent"),
-                (8, 180, 150, "8×3min hard climb / 2min30 descent"),
-            ]
-            workPhases = variants[weekInPhase % variants.count]
+        switch trainingPhase {
+        case .base:
+            // Aerobic climbing: longer efforts, moderate grade, progressive reps
+            switch weekInPhase {
+            case 0...1:
+                workPhases = (3, 480, 300, "3×8min moderate climb / 5min jog down", "Aerobic climbing")
+            case 2...3:
+                workPhases = (4, 480, 300, "4×8min moderate climb / 5min jog down", "Aerobic climbing")
+            case 4...5:
+                workPhases = (4, 600, 360, "4×10min moderate climb / 6min jog down", "Endurance climbing")
+            default:
+                workPhases = (5, 600, 360, "5×10min moderate climb / 6min jog down", "Endurance climbing")
+            }
+
+        case .build:
+            // Mixed efforts: increasing grade and intensity
+            switch weekInPhase {
+            case 0...1:
+                workPhases = (4, 240, 180, "4×4min hard climb / 3min jog down", "Hill repeats")
+            case 2...3:
+                workPhases = (5, 240, 180, "5×4min hard climb / 3min jog down", "Hill repeats")
+            case 4...5:
+                workPhases = (6, 180, 120, "6×3min steep climb / 2min jog down", "Steep repeats")
+            default:
+                workPhases = (7, 180, 120, "7×3min steep climb / 2min jog down", "Steep repeats")
+            }
+
+        case .peak:
+            // Short explosive efforts: steep grade, race-specific
+            switch weekInPhase {
+            case 0...1:
+                workPhases = (6, 180, 120, "6×3min hard climb / 2min jog down", "Power climbing")
+            case 2...3:
+                workPhases = (8, 120, 120, "8×2min max effort climb / 2min jog down", "Max effort climbing")
+            default:
+                workPhases = (10, 90, 90, "10×90s max effort climb / 90s jog down", "Sprint climbing")
+            }
+
+        case .taper:
+            workPhases = (3, 180, 180, "3×3min moderate climb / 3min jog down", "Maintenance climbing")
+
+        case .recovery, .race:
+            workPhases = (2, 240, 240, "2×4min easy climb / 4min jog down", "Easy climbing")
         }
 
-        let work = self.phase(.work, duration: workPhases.workSec, intensity: intensity, reps: workPhases.reps, notes: "Climb at steady effort")
+        let workIntensity: Intensity = (trainingPhase == .base || trainingPhase == .recovery) ? .moderate : intensity
+        let work = self.phase(.work, duration: workPhases.workSec, intensity: workIntensity, reps: workPhases.reps, notes: "Climb at steady effort")
         let recovery = self.phase(.recovery, duration: workPhases.restSec, intensity: .easy, reps: workPhases.reps, notes: "Jog/walk descent")
 
         return WorkoutTemplate(
-            name: intensity == .moderate ? "Endurance climbing" : "VO2max hill repeats",
+            name: workPhases.name,
             description: workPhases.desc,
             phases: [warmUp, work, recovery, coolDown]
         )

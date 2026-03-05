@@ -131,6 +131,7 @@
 		108E249CCF8804D22EEA23D3 /* SettingsEnhancementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7C36D211A7E2ED6D61FD7D /* SettingsEnhancementTests.swift */; };
 		109B7B66EDDA1C2A688CF94A /* ActiveRunStatsBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE333BE72676CF90BC238F78 /* ActiveRunStatsBar.swift */; };
 		10D280EEA0B32FE8E89FC54A /* RaceCalendarRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D997EE803794D8E39D9108 /* RaceCalendarRow.swift */; };
+		113CCD0B72EADB05BFC44F37 /* WeightGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7B3FCA3A558AD7FC7D0004 /* WeightGoal.swift */; };
 		118A8E50D7FFAD1982F89B6B /* WatchRunHistoryData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9FEFABE15E245AD3EEBE18A /* WatchRunHistoryData.swift */; };
 		11EFA6CEC9837856A0CDBCEE /* LocalFinishEstimateRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45B51EB261DFEC4F5C2DE54 /* LocalFinishEstimateRepositoryTests.swift */; };
 		121DC1D30552E4810E8AC4D9 /* SessionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACFC008A7F2E6FC06D95E02 /* SessionType.swift */; };
@@ -1851,6 +1852,7 @@
 		1B2ADC57A850F8B36EF48717 /* WeeklyElevationChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyElevationChartView.swift; sourceTree = "<group>"; };
 		1B4E2FC472FC70FF3E4C07F5 /* LocalGoalRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalGoalRepository.swift; sourceTree = "<group>"; };
 		1B6FA0F980CC680B840C5321 /* NutritionEntrySwiftDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionEntrySwiftDataModel.swift; sourceTree = "<group>"; };
+		1B7B3FCA3A558AD7FC7D0004 /* WeightGoal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightGoal.swift; sourceTree = "<group>"; };
 		1BE122884EB27DC182693D2B /* IntervalPhaseEditSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntervalPhaseEditSheet.swift; sourceTree = "<group>"; };
 		1BFD20A17961B2DCB6910889 /* TabNavigationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabNavigationUITests.swift; sourceTree = "<group>"; };
 		1C6FE1EB86F8E05A8FA48093 /* NutritionPlanGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionPlanGeneratorTests.swift; sourceTree = "<group>"; };
@@ -4547,6 +4549,7 @@
 				297EB638FB9B9CC1DC6517D0 /* WeeklyAdherence.swift */,
 				0A07830AFDE7CB0956E9BDE3 /* WeeklyLoadData.swift */,
 				05ED558AB130A5C31F6886E7 /* WeeklyVolume.swift */,
+				1B7B3FCA3A558AD7FC7D0004 /* WeightGoal.swift */,
 				63768DAD7841EBD0D452A508 /* WorkoutCategory.swift */,
 				169B39C8B8899153449DB182 /* WorkoutTemplate.swift */,
 			);
@@ -7352,6 +7355,7 @@
 				2B0A8847866DF73EAD57C4E2 /* WeeklyVolume.swift in Sources */,
 				3439AB12536874C47A0419D4 /* WeeklyVolumeCalculator.swift in Sources */,
 				EBAF254A4D24250034B3C130 /* WeeklyZoneDistributionCalculator.swift in Sources */,
+				113CCD0B72EADB05BFC44F37 /* WeightGoal.swift in Sources */,
 				EBA7CB582665AFF6533F5612 /* WelcomeStepView.swift in Sources */,
 				09F2B3E7ECD8F463A8EA22A6 /* WidgetData.swift in Sources */,
 				DF53E593D5089911437D3CF1 /* WidgetDataKeys.swift in Sources */,

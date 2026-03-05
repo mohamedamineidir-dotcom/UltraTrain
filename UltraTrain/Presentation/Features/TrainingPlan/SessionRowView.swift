@@ -38,12 +38,26 @@ struct SessionRowView: View {
                             .clipShape(Capsule())
                     }
 
+                    if session.isKeySession && !session.isSkipped && !session.isCompleted {
+                        Text("Key")
+                            .font(.caption2.bold())
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 1)
+                            .background(Theme.Colors.primary)
+                            .clipShape(Capsule())
+                    }
+
                     if session.isGutTrainingRecommended && !session.isSkipped {
                         GutTrainingBadge()
                     }
                 }
 
-                if session.plannedDistanceKm > 0 {
+                if isTimeBased && session.plannedDuration > 0 {
+                    Text(formattedTimeBased)
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                } else if session.plannedDistanceKm > 0 {
                     Text(UnitFormatter.formatDistance(session.plannedDistanceKm, unit: units))
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
@@ -59,6 +73,21 @@ struct SessionRowView: View {
         .padding(.vertical, Theme.Spacing.xs)
         .opacity(session.type == .rest || session.isSkipped ? 0.5 : 1.0)
         .accessibilityElement(children: .combine)
+    }
+
+    private var isTimeBased: Bool {
+        session.type == .longRun || session.type == .backToBack
+    }
+
+    private var formattedTimeBased: String {
+        let hours = Int(session.plannedDuration) / 3600
+        let minutes = (Int(session.plannedDuration) % 3600) / 60
+        let timeStr = hours > 0 ? "\(hours)h\(String(format: "%02d", minutes))" : "\(minutes)min"
+        if session.plannedElevationGainM > 0 {
+            let elev = UnitFormatter.formatElevation(session.plannedElevationGainM, unit: units)
+            return "\(timeStr) · \(elev) D+"
+        }
+        return timeStr
     }
 
     private var statusIcon: String {
