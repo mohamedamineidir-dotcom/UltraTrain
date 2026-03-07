@@ -73,6 +73,7 @@ extension AppRootView {
                         raceReflectionRepository: raceReflectionRepository,
                         achievementRepository: achievementRepository,
                         morningCheckInRepository: morningCheckInRepository,
+                        referralRepository: referralRepository,
                         authService: authService,
                         onLogout: { isAuthenticated = false }
                     )
@@ -88,7 +89,9 @@ extension AppRootView {
                         raceRepository: raceRepository,
                         healthKitService: healthKitService,
                         healthKitImportService: healthKitImportService,
+                        initialFirstName: pendingFirstName,
                         onComplete: {
+                            pendingFirstName = nil
                             hasCompletedOnboarding = true
                             if !hasSeenFeatureTour {
                                 showFeatureTour = true

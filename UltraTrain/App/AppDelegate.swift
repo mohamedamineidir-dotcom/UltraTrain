@@ -1,4 +1,5 @@
 import UIKit
+import GoogleSignIn
 import os
 
 final class AppDelegate: NSObject, UIApplicationDelegate {
@@ -39,6 +40,14 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
     ) {
         Logger.backgroundUpload.info("System woke app for background session: \(identifier)")
         onBackgroundSessionCompletion?(identifier, completionHandler)
+    }
+
+    func application(
+        _ app: UIApplication,
+        open url: URL,
+        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+    ) -> Bool {
+        GIDSignIn.sharedInstance.handle(url)
     }
 
     func application(

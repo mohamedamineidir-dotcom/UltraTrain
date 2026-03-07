@@ -45,4 +45,7 @@ func routes(_ app: Application) throws {
 
     // Analytics — no auth required
     try api.register(collection: AnalyticsController())
+
+    // Referral — auth required
+    try api.register(collection: ReferralController())
 }

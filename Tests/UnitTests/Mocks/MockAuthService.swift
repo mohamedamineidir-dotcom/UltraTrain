@@ -14,15 +14,41 @@ final class MockAuthService: AuthServiceProtocol, @unchecked Sendable {
     var lastEmail: String?
     var lastPassword: String?
 
-    func register(email: String, password: String) async throws {
+    var lastFirstName: String?
+    var lastReferralCode: String?
+
+    func register(email: String, password: String, firstName: String?, referralCode: String?) async throws {
         registerCallCount += 1
         lastEmail = email
         lastPassword = password
+        lastFirstName = firstName
+        lastReferralCode = referralCode
         if shouldFail {
             throw DomainError.serverError(message: "Registration failed")
         }
         registeredEmail = email
         isLoggedIn = true
+    }
+
+    var signInWithAppleCallCount = 0
+    var signInWithGoogleCallCount = 0
+
+    func signInWithApple(identityToken: String, firstName: String?, lastName: String?) async throws -> Bool {
+        signInWithAppleCallCount += 1
+        if shouldFail {
+            throw DomainError.serverError(message: "Apple sign-in failed")
+        }
+        isLoggedIn = true
+        return true
+    }
+
+    func signInWithGoogle(idToken: String) async throws -> Bool {
+        signInWithGoogleCallCount += 1
+        if shouldFail {
+            throw DomainError.serverError(message: "Google sign-in failed")
+        }
+        isLoggedIn = true
+        return true
     }
 
     func login(email: String, password: String) async throws {

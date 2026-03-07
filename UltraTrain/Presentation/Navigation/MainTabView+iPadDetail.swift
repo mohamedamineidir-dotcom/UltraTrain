@@ -122,6 +122,7 @@ extension MainTabView {
                 routeRepository: routeRepository,
                 emergencyContactRepository: emergencyContactRepository,
                 raceReflectionRepository: raceReflectionRepository,
+                referralRepository: referralRepository,
                 authService: authService,
                 onLogout: onLogout
             )

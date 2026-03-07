@@ -10,8 +10,40 @@ enum AuthEndpoints {
         var method: HTTPMethod { .post }
         var requiresAuth: Bool { false }
 
-        init(email: String, password: String) {
-            self.body = RegisterRequestDTO(email: email, password: password)
+        init(email: String, password: String, firstName: String? = nil, referralCode: String? = nil) {
+            self.body = RegisterRequestDTO(
+                email: email, password: password,
+                firstName: firstName, referralCode: referralCode
+            )
+        }
+    }
+
+    struct AppleSignIn: APIEndpoint {
+        typealias RequestBody = AppleSignInRequestDTO
+        typealias ResponseBody = SocialAuthResponseDTO
+        let body: AppleSignInRequestDTO?
+        var path: String { "/auth/apple" }
+        var method: HTTPMethod { .post }
+        var requiresAuth: Bool { false }
+
+        init(identityToken: String, firstName: String? = nil, lastName: String? = nil) {
+            self.body = AppleSignInRequestDTO(
+                identityToken: identityToken,
+                firstName: firstName, lastName: lastName
+            )
+        }
+    }
+
+    struct GoogleSignIn: APIEndpoint {
+        typealias RequestBody = GoogleSignInRequestDTO
+        typealias ResponseBody = SocialAuthResponseDTO
+        let body: GoogleSignInRequestDTO?
+        var path: String { "/auth/google" }
+        var method: HTTPMethod { .post }
+        var requiresAuth: Bool { false }
+
+        init(idToken: String) {
+            self.body = GoogleSignInRequestDTO(idToken: idToken)
         }
     }
 

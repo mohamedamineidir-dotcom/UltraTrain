@@ -3,6 +3,20 @@ import SwiftUI
 // MARK: - Account & About Sections
 
 extension SettingsView {
+    // MARK: - Referral Section
+
+    var referralSection: some View {
+        Section {
+            if let repo = referralRepository {
+                NavigationLink {
+                    ReferralSettingsView(referralRepository: repo)
+                } label: {
+                    Label("Refer a Friend", systemImage: "gift")
+                }
+            }
+        }
+    }
+
     // MARK: - Account Section
 
     var accountSection: some View {

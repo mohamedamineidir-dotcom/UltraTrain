@@ -33,6 +33,13 @@ enum Theme {
         static let shareCardBackgroundTop = Color(red: 0.08, green: 0.08, blue: 0.14)
         static let shareCardBackgroundMid = Color(red: 0.04, green: 0.12, blue: 0.18)
         static let shareCardBackgroundBottom = Color(red: 0.06, green: 0.06, blue: 0.12)
+
+        // MARK: - Hero / Onboarding
+
+        /// Top color for the hero gradient (dark: deep indigo, light: warm sky blue)
+        static let heroGradientTop = Color("HeroGradientTop")
+        /// Bottom color for the hero gradient (dark: teal-black, light: light peach)
+        static let heroGradientBottom = Color("HeroGradientBottom")
     }
 
     enum Gradients {
@@ -57,11 +64,13 @@ enum Theme {
         static let lg: CGFloat = 24
         static let xl: CGFloat = 32
         static let xxl: CGFloat = 48
+        static let xxxl: CGFloat = 64
     }
 
     enum CornerRadius {
         static let sm: CGFloat = 8
         static let md: CGFloat = 12
         static let lg: CGFloat = 16
+        static let xl: CGFloat = 24
     }
 }

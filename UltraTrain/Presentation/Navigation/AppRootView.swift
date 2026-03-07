@@ -15,7 +15,9 @@ struct AppRootView: View {
     @State var lastAutoImportDate: Date?
     @State private var isDeviceCompromised = false
     @Environment(\.networkMonitor) private var networkMonitor
+    @State var pendingFirstName: String?
     let authService: any AuthServiceProtocol
+    let referralRepository: any ReferralRepository
     let deepLinkRouter: DeepLinkRouter
     private let deviceIntegrityChecker: (any DeviceIntegrityCheckerProtocol)?
 
@@ -76,6 +78,7 @@ struct AppRootView: View {
 
     init(
         authService: any AuthServiceProtocol,
+        referralRepository: any ReferralRepository,
         deepLinkRouter: DeepLinkRouter,
         athleteRepository: any AthleteRepository,
         raceRepository: any RaceRepository,
@@ -134,6 +137,7 @@ struct AppRootView: View {
         deviceIntegrityChecker: (any DeviceIntegrityCheckerProtocol)? = nil
     ) {
         self.authService = authService
+        self.referralRepository = referralRepository
         self.deepLinkRouter = deepLinkRouter
         self.deviceIntegrityChecker = deviceIntegrityChecker
         self.athleteRepository = athleteRepository
@@ -206,11 +210,20 @@ struct AppRootView: View {
                 case .none:
                     ProgressView("Loading...")
                 case .some(false):
-                    LoginView(authService: authService) {
+                    HeroLandingView(
+                        authService: authService,
+                        referralRepository: referralRepository
+                    ) { isNewUser, firstName in
+                        pendingFirstName = firstName
                         isAuthenticated = true
+                        if isNewUser {
+                            hasCompletedOnboarding = false
+                        }
                         Task {
                             await checkBiometricLockSetting()
-                            await checkOnboardingStatus()
+                            if !isNewUser {
+                                await checkOnboardingStatus()
+                            }
                             await loadUnitPreference()
                             await registerForPushNotifications()
                         }

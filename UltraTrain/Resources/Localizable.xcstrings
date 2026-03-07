@@ -51,6 +51,9 @@
         }
       }
     },
+    "·" : {
+
+    },
     "(%lld/100)" : {
       "localizations" : {
         "fr" : {
@@ -762,6 +765,9 @@
           }
         }
       }
+    },
+    "%@!" : {
+
     },
     "%@. %@" : {
       "localizations" : {
@@ -1629,6 +1635,9 @@
         }
       }
     },
+    "3 runs minimum. Extra days become rest days." : {
+
+    },
     "3D Preview" : {
       "localizations" : {
         "fr" : {
@@ -1804,6 +1813,9 @@
           }
         }
       }
+    },
+    "About You" : {
+
     },
     "Accept" : {
       "localizations" : {
@@ -2309,6 +2321,9 @@
           }
         }
       }
+    },
+    "Adjusts your daily calorie targets." : {
+
     },
     "Advanced Metrics" : {
       "localizations" : {
@@ -3043,6 +3058,9 @@
         }
       }
     },
+    "By creating an account, you agree to our [Terms of Service](https://ultratrain.app/terms) and [Privacy Policy](https://ultratrain.app/privacy)." : {
+
+    },
     "C: %lldg" : {
 
     },
@@ -3398,6 +3416,9 @@
         }
       }
     },
+    "Code applied! You'll get 2 extra free weeks." : {
+
+    },
     "Coloring" : {
       "localizations" : {
         "fr" : {
@@ -3697,6 +3718,9 @@
           }
         }
       }
+    },
+    "Copy Code" : {
+
     },
     "Could not load forecast" : {
       "localizations" : {
@@ -5348,6 +5372,9 @@
         }
       }
     },
+    "Experience Level" : {
+
+    },
     "Export" : {
       "localizations" : {
         "fr" : {
@@ -5437,9 +5464,6 @@
           }
         }
       }
-    },
-    "Extra days become rest days. 3 runs minimum to maintain fitness." : {
-
     },
     "F: %lldg" : {
 
@@ -5730,6 +5754,9 @@
         }
       }
     },
+    "Forgot password?" : {
+
+    },
     "Forgot Password?" : {
       "localizations" : {
         "fr" : {
@@ -5816,6 +5843,9 @@
         }
       }
     },
+    "Friends Referred" : {
+
+    },
     "From" : {
       "localizations" : {
         "fr" : {
@@ -5851,6 +5881,12 @@
           }
         }
       }
+    },
+    "Gain" : {
+
+    },
+    "Gain Weight" : {
+
     },
     "Gear" : {
       "localizations" : {
@@ -5971,6 +6007,9 @@
           }
         }
       }
+    },
+    "Goal & Training" : {
+
     },
     "Goal History" : {
       "localizations" : {
@@ -6128,6 +6167,9 @@
         }
       }
     },
+    "Have a friend's code?" : {
+
+    },
     "Health" : {
       "localizations" : {
         "fr" : {
@@ -6206,6 +6248,9 @@
       }
     },
     "Help us calibrate your training paces. Recent results are weighted more heavily." : {
+
+    },
+    "Helps us calibrate your training zones and nutrition." : {
 
     },
     "High" : {
@@ -6334,9 +6379,6 @@
         }
       }
     },
-    "How do you want to approach your training?" : {
-
-    },
     "How many %@ do you typically run per week?" : {
       "localizations" : {
         "fr" : {
@@ -6356,6 +6398,9 @@
           }
         }
       }
+    },
+    "How should we build your plan?" : {
+
     },
     "How Was Your Nutrition?" : {
       "localizations" : {
@@ -6502,6 +6547,9 @@
           }
         }
       }
+    },
+    "If unknown, use 220 minus your age." : {
+
     },
     "If your run exceeds this duration without being stopped, an alert is sent to your emergency contacts." : {
       "localizations" : {
@@ -6921,6 +6969,9 @@
         }
       }
     },
+    "Join the trail community" : {
+
+    },
     "Joins an existing crew tracking session" : {
       "localizations" : {
         "fr" : {
@@ -6940,6 +6991,9 @@
           }
         }
       }
+    },
+    "Key" : {
+
     },
     "Key takeaways" : {
       "localizations" : {
@@ -7350,6 +7404,12 @@
         }
       }
     },
+    "Lose" : {
+
+    },
+    "Lose Weight" : {
+
+    },
     "Low" : {
       "localizations" : {
         "fr" : {
@@ -7391,6 +7451,9 @@
       }
     },
     "Macros auto-calculated from per-100g values" : {
+
+    },
+    "Maintain" : {
 
     },
     "Makes your profile visible to all users" : {
@@ -7572,6 +7635,9 @@
           }
         }
       }
+    },
+    "Measure first thing in the morning. Typical: 60-70 bpm." : {
+
     },
     "Measurement System" : {
       "localizations" : {
@@ -9011,6 +9077,9 @@
         }
       }
     },
+    "or" : {
+
+    },
     "Or join an existing session:" : {
       "localizations" : {
         "fr" : {
@@ -9995,6 +10064,9 @@
         }
       }
     },
+    "Race Goal" : {
+
+    },
     "Race Info" : {
       "localizations" : {
         "fr" : {
@@ -10009,7 +10081,6 @@
 
     },
     "Race Name" : {
-      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -10068,6 +10139,9 @@
           }
         }
       }
+    },
+    "Race Profile" : {
+
     },
     "Race Readiness" : {
       "localizations" : {
@@ -10321,6 +10395,9 @@
       }
     },
     "Recovery: %@" : {
+
+    },
+    "Refer a Friend" : {
 
     },
     "Reflection" : {
@@ -11752,6 +11829,7 @@
 
     },
     "Set up your principal objective race. Everything else will be built around it." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -11782,6 +11860,7 @@
       }
     },
     "Setup" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -11871,6 +11950,9 @@
         }
       }
     },
+    "Share this code with friends to invite them to UltraTrain." : {
+
+    },
     "Share this ID so others can join your session." : {
       "localizations" : {
         "fr" : {
@@ -11890,6 +11972,9 @@
           }
         }
       }
+    },
+    "Share with Friends" : {
+
     },
     "Share your live location with your crew" : {
 
@@ -12657,6 +12742,9 @@
         }
       }
     },
+    "Tell us about the course." : {
+
+    },
     "Tell us about your current training so we can set the right starting point." : {
       "localizations" : {
         "fr" : {
@@ -12950,10 +13038,8 @@
         }
       }
     },
-    "Tip: If unknown, a typical resting HR for active adults is 60–70 bpm. Measure first thing in the morning for best accuracy." : {
-
-    },
     "Tip: If unknown, use 220 minus your age as max HR" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -12964,6 +13050,7 @@
       }
     },
     "Tip: If unknown, use 220 minus your age as maximum heart rate" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -13162,6 +13249,9 @@
           }
         }
       }
+    },
+    "Train for the trails.\nGo the distance." : {
+
     },
     "Training" : {
 
@@ -13591,6 +13681,7 @@
 
     },
     "Used to personalize training intensity and nutrition." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -13599,6 +13690,9 @@
           }
         }
       }
+    },
+    "Used to set your training zones. Skip if unsure." : {
+
     },
     "Uses motion sensors to detect a potential fall. If no response is detected, an alert is sent to your emergency contacts." : {
       "localizations" : {
@@ -13818,6 +13912,9 @@
           }
         }
       }
+    },
+    "We'll use this to personalize your experience." : {
+
     },
     "Weather" : {
       "localizations" : {
@@ -14051,7 +14148,17 @@
         }
       }
     },
+    "Weight Goal" : {
+
+    },
+    "Welcome back, runner" : {
+
+    },
+    "Welcome to the club%@" : {
+
+    },
     "Welcome to UltraTrain" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -14081,6 +14188,9 @@
         }
       }
     },
+    "What race are you training for?" : {
+
+    },
     "What worked or did not work?" : {
       "localizations" : {
         "fr" : {
@@ -14102,6 +14212,7 @@
       }
     },
     "What's your experience level?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -14267,6 +14378,9 @@
     "You can still adjust the sliders below." : {
 
     },
+    "You're about to start your trail running journey." : {
+
+    },
     "You're All Set!" : {
       "localizations" : {
         "fr" : {
@@ -14280,7 +14394,11 @@
     "You're offline. Changes will sync when reconnected." : {
 
     },
+    "Your A-Race" : {
+
+    },
     "Your A-Race Goal" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -14331,6 +14449,7 @@
       }
     },
     "Your Physical Data" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -14344,6 +14463,9 @@
 
     },
     "Your recent running workouts will be imported when you tap Get Started." : {
+
+    },
+    "Your Referral Code" : {
 
     },
     "Your Running Background" : {
@@ -14367,6 +14489,7 @@
       }
     },
     "Your ultra trail training companion" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {

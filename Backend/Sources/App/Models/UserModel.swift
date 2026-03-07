@@ -41,6 +41,18 @@ final class UserModel: Model, Content, @unchecked Sendable {
     @OptionalField(key: "verification_code_expires_at")
     var verificationCodeExpiresAt: Date?
 
+    @OptionalField(key: "referral_code")
+    var referralCode: String?
+
+    @OptionalField(key: "referred_by_user_id")
+    var referredByUserId: UUID?
+
+    @OptionalField(key: "apple_user_id")
+    var appleUserId: String?
+
+    @OptionalField(key: "google_user_id")
+    var googleUserId: String?
+
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
 
@@ -54,6 +66,12 @@ final class UserModel: Model, Content, @unchecked Sendable {
         self.email = email
         self.passwordHash = passwordHash
         self.isEmailVerified = isEmailVerified
+    }
+
+    /// Generate an 8-character uppercase alphanumeric referral code (no ambiguous 0/O/1/I/L).
+    static func generateReferralCode() -> String {
+        let chars = Array("ABCDEFGHJKMNPQRSTUVWXYZ23456789")
+        return String((0..<8).map { _ in chars.randomElement()! })
     }
 }
 

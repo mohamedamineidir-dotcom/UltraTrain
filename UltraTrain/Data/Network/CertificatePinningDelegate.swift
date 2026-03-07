@@ -27,14 +27,12 @@ final class CertificatePinningDelegate: NSObject, URLSessionDelegate, @unchecked
             return (.performDefaultHandling, nil)
         }
 
+        #if DEBUG
+        // Skip certificate pinning in debug builds (simulator may not extract keys correctly)
+        return (.performDefaultHandling, nil)
+        #endif
+
         // When no pin hashes are configured, log a warning and allow the connection.
-        // To extract the hash for your server, run:
-        //   echo | openssl s_client -connect YOUR_HOST:443 2>/dev/null \
-        //     | openssl x509 -pubkey -noout \
-        //     | openssl pkey -pubin -outform DER \
-        //     | openssl dgst -sha256 -binary \
-        //     | base64
-        // Then add the output to AppConfiguration.API.certificatePinHashes.
         guard !pinnedHashes.isEmpty else {
             Logger.security.warning(
                 "Certificate pinning: no hashes configured for \(self.pinnedHost). Connection allowed but NOT pinned."

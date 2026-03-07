@@ -25,31 +25,15 @@ enum AppConfiguration {
         static let isProduction: Bool = environment == "production"
         static let timeoutInterval: TimeInterval = 30
         static let hmacSecret: String = Bundle.main.infoDictionary?["HMAC_SIGNING_SECRET"] as? String ?? ""
-        static let pinnedHost: String = {
-            #if DEBUG
-            return "ultratrain-production.up.railway.app"
-            #else
-            return "ultratrain.app"
-            #endif
-        }()
-        static let certificatePinHashes: [String] = {
-            #if DEBUG
-            // Staging: Railway hosting
-            // To regenerate, run:
-            //   echo | openssl s_client -connect ultratrain-production.up.railway.app:443 2>/dev/null \
-            //     | openssl x509 -pubkey -noout | openssl pkey -pubin -outform DER \
-            //     | openssl dgst -sha256 -binary | base64
-            return [
-                "uDJoKW7obJUPmVjZ6PfANMvVjFjM28DhB5Nl42ovcPs=", // Leaf: *.up.railway.app
-                "oW7smChMJRcnzTObF7K+HzInReAPTxB/L1h6eZTmw9Q="  // Intermediate: Certainly Intermediate R1
-            ]
-            #else
-            // Production: ultratrain.app
-            // TODO: Before release, run the openssl command above against ultratrain.app:443
-            // and replace these placeholder hashes with the actual values.
-            return []
-            #endif
-        }()
+        static let pinnedHost = "ultratrain-production.up.railway.app"
+        // To regenerate, run:
+        //   echo | openssl s_client -connect ultratrain-production.up.railway.app:443 2>/dev/null \
+        //     | openssl x509 -pubkey -noout | openssl pkey -pubin -outform DER \
+        //     | openssl dgst -sha256 -binary | base64
+        static let certificatePinHashes: [String] = [
+            "uDJoKW7obJUPmVjZ6PfANMvVjFjM28DhB5Nl42ovcPs=", // Leaf: *.up.railway.app
+            "oW7smChMJRcnzTObF7K+HzInReAPTxB/L1h6eZTmw9Q="  // Intermediate: Certainly Intermediate R1
+        ]
     }
 
     enum GPS {
@@ -170,6 +154,14 @@ enum AppConfiguration {
         static let moderateDriftSeconds: TimeInterval = 180
         static let significantDriftSeconds: TimeInterval = 300
         static let alertCooldownSeconds: TimeInterval = 30
+    }
+
+    enum Google {
+        static let clientId: String = Bundle.main.infoDictionary?["GOOGLE_CLIENT_ID"] as? String ?? ""
+        static let reversedClientId: String = {
+            let parts = clientId.split(separator: ".").reversed()
+            return parts.joined(separator: ".")
+        }()
     }
 
     enum Strava {

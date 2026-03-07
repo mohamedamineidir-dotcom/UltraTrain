@@ -9,6 +9,7 @@ enum DeepLink: Equatable {
     case crewTracking(sessionId: String)
     case raceDetail(raceId: String)
     case raceNutritionTimer(raceId: String)
+    case referral(code: String)
 }
 
 @Observable
@@ -56,6 +57,12 @@ final class DeepLinkRouter {
             pendingDeepLink = .tab(.run)
         case "readiness":
             pendingDeepLink = .morningReadiness
+        case "referral":
+            let code = URLComponents(url: url, resolvingAgainstBaseURL: false)?
+                .queryItems?.first(where: { $0.name == "code" })?.value
+            if let code, !code.isEmpty {
+                pendingDeepLink = .referral(code: code)
+            }
         default:
             return false
         }
@@ -71,6 +78,8 @@ final class DeepLinkRouter {
         guard !identifier.isEmpty else { return false }
 
         switch section {
+        case "referral":
+            pendingDeepLink = .referral(code: identifier)
         case "shared-runs":
             pendingDeepLink = .sharedRun(id: identifier)
         case "crew":

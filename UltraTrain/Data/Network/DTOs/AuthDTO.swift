@@ -10,6 +10,35 @@ struct TokenResponseDTO: Decodable, Sendable {
 struct RegisterRequestDTO: Encodable, Sendable {
     let email: String
     let password: String
+    var firstName: String?
+    var referralCode: String?
+}
+
+struct AppleSignInRequestDTO: Encodable, Sendable {
+    let identityToken: String
+    var firstName: String?
+    var lastName: String?
+}
+
+struct GoogleSignInRequestDTO: Encodable, Sendable {
+    let idToken: String
+}
+
+struct SocialAuthResponseDTO: Decodable, Sendable {
+    let accessToken: String
+    let refreshToken: String
+    let expiresIn: Int
+    let tokenType: String
+    let isNewUser: Bool
+}
+
+struct ReferralCodeResponseDTO: Decodable, Sendable {
+    let referralCode: String
+    let referralCount: Int
+}
+
+struct ApplyReferralRequestDTO: Encodable, Sendable {
+    let code: String
 }
 
 struct LoginRequestDTO: Encodable, Sendable {

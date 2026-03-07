@@ -6,27 +6,27 @@ final class OnboardingUITests: XCTestCase {
         continueAfterFailure = false
     }
 
-    // MARK: - Tests
+    // MARK: - Full Flow
 
     @MainActor
     func testCompleteOnboardingFlow() throws {
         let app = XCUIApplication.launchForOnboardingTest()
 
-        // Step 0: Welcome
-        XCTAssertTrue(app.staticTexts["Welcome to UltraTrain"].waitForExistence(timeout: 5))
-        app.buttons["onboarding.nextButton"].waitAndTap()
-
-        // Step 1: Experience — select "intermediate"
-        XCTAssertTrue(app.staticTexts["What's your experience level?"].waitForExistence(timeout: 3))
+        // Step 0: Experience — select "intermediate"
+        XCTAssertTrue(app.staticTexts["Experience Level"].waitForExistence(timeout: 5))
         app.buttons["onboarding.experienceCard.intermediate"].waitAndTap()
         app.buttons["onboarding.nextButton"].waitAndTap()
 
-        // Step 2: Running History — defaults are valid, just advance
+        // Step 1: Running History — defaults valid, advance
         XCTAssertTrue(app.staticTexts["Your Running Background"].waitForExistence(timeout: 3))
         app.buttons["onboarding.nextButton"].waitAndTap()
 
-        // Step 3: Physical Data — enter name
-        XCTAssertTrue(app.staticTexts["Your Physical Data"].waitForExistence(timeout: 3))
+        // Step 2: Personal Bests — skip
+        XCTAssertTrue(app.staticTexts["Your Race Times"].waitForExistence(timeout: 3))
+        app.buttons["onboarding.nextButton"].waitAndTap()
+
+        // Step 3: About You — enter name
+        XCTAssertTrue(app.staticTexts["About You"].waitForExistence(timeout: 3))
         let firstNameField = app.textFields["onboarding.firstNameField"]
         XCTAssertTrue(firstNameField.waitForExistence(timeout: 3))
         firstNameField.tap()
@@ -37,15 +37,31 @@ final class OnboardingUITests: XCTestCase {
         lastNameField.typeText("Runner")
         app.buttons["onboarding.nextButton"].waitAndTap()
 
-        // Step 4: Race Goal — enter race name
-        XCTAssertTrue(app.staticTexts["Your A-Race Goal"].waitForExistence(timeout: 3))
-        let raceNameField = app.textFields["onboarding.raceNameField"]
+        // Step 4: Body Metrics — defaults valid, advance
+        XCTAssertTrue(app.staticTexts["Body Metrics"].waitForExistence(timeout: 3))
+        app.buttons["onboarding.nextButton"].waitAndTap()
+
+        // Step 5: Heart Rate — defaults valid, advance
+        XCTAssertTrue(app.staticTexts["Heart Rate"].waitForExistence(timeout: 3))
+        app.buttons["onboarding.nextButton"].waitAndTap()
+
+        // Step 6: Race Name & Date — enter race name
+        XCTAssertTrue(app.staticTexts["Your A-Race"].waitForExistence(timeout: 3))
+        let raceNameField = app.textFields["raceNameField"]
         XCTAssertTrue(raceNameField.waitForExistence(timeout: 3))
         raceNameField.tap()
         raceNameField.typeText("UTMB")
         app.buttons["onboarding.nextButton"].waitAndTap()
 
-        // Step 5: Complete — tap Get Started
+        // Step 7: Race Profile — defaults valid, advance
+        XCTAssertTrue(app.staticTexts["Race Profile"].waitForExistence(timeout: 3))
+        app.buttons["onboarding.nextButton"].waitAndTap()
+
+        // Step 8: Goal & Training — defaults valid, advance
+        XCTAssertTrue(app.staticTexts["Goal & Training"].waitForExistence(timeout: 3))
+        app.buttons["onboarding.nextButton"].waitAndTap()
+
+        // Step 9: Complete — tap Get Started
         XCTAssertTrue(app.staticTexts["You're All Set!"].waitForExistence(timeout: 3))
         app.buttons["onboarding.getStartedButton"].waitAndTap()
 
@@ -53,16 +69,14 @@ final class OnboardingUITests: XCTestCase {
         XCTAssertTrue(app.tabBars.buttons["Dashboard"].waitForExistence(timeout: 5))
     }
 
+    // MARK: - Validation
+
     @MainActor
     func testNextButtonDisabledWithoutExperienceSelection() throws {
         let app = XCUIApplication.launchForOnboardingTest()
 
-        // Welcome → Next
-        XCTAssertTrue(app.staticTexts["Welcome to UltraTrain"].waitForExistence(timeout: 5))
-        app.buttons["onboarding.nextButton"].waitAndTap()
-
-        // Experience step — don't select anything
-        XCTAssertTrue(app.staticTexts["What's your experience level?"].waitForExistence(timeout: 3))
+        // Step 0: Experience — don't select anything
+        XCTAssertTrue(app.staticTexts["Experience Level"].waitForExistence(timeout: 5))
         let nextButton = app.buttons["onboarding.nextButton"]
         XCTAssertTrue(nextButton.exists)
         XCTAssertFalse(nextButton.isEnabled, "Next should be disabled when no experience level is selected")
@@ -72,32 +86,25 @@ final class OnboardingUITests: XCTestCase {
     func testBackButtonNavigatesBackward() throws {
         let app = XCUIApplication.launchForOnboardingTest()
 
-        // Welcome → Next
-        XCTAssertTrue(app.staticTexts["Welcome to UltraTrain"].waitForExistence(timeout: 5))
-        app.buttons["onboarding.nextButton"].waitAndTap()
-
-        // Experience step → select → Next
-        XCTAssertTrue(app.staticTexts["What's your experience level?"].waitForExistence(timeout: 3))
+        // Step 0: Experience → select → Next
+        XCTAssertTrue(app.staticTexts["Experience Level"].waitForExistence(timeout: 5))
         app.buttons["onboarding.experienceCard.beginner"].waitAndTap()
         app.buttons["onboarding.nextButton"].waitAndTap()
 
-        // Running History step → Back
+        // Step 1: Running History → Back
         XCTAssertTrue(app.staticTexts["Your Running Background"].waitForExistence(timeout: 3))
         app.buttons["onboarding.backButton"].waitAndTap()
 
         // Should be back on Experience step
-        XCTAssertTrue(app.staticTexts["What's your experience level?"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts["Experience Level"].waitForExistence(timeout: 3))
     }
-
-    // MARK: - Validation Tests
 
     @MainActor
     func testNewRunnerToggleSkipsHistoryFields() throws {
         let app = XCUIApplication.launchForOnboardingTest()
 
-        // Welcome → Experience → select → Next
-        app.buttons["onboarding.nextButton"].waitAndTap()
-        XCTAssertTrue(app.staticTexts["What's your experience level?"].waitForExistence(timeout: 3))
+        // Experience → select → Next
+        XCTAssertTrue(app.staticTexts["Experience Level"].waitForExistence(timeout: 5))
         app.buttons["onboarding.experienceCard.beginner"].waitAndTap()
         app.buttons["onboarding.nextButton"].waitAndTap()
 
@@ -106,7 +113,6 @@ final class OnboardingUITests: XCTestCase {
         let toggle = app.switches["onboarding.newRunnerToggle"]
         if toggle.waitForExistence(timeout: 3) {
             toggle.tap()
-            // Next should still be enabled (new runners skip history)
             XCTAssertTrue(app.buttons["onboarding.nextButton"].isEnabled)
         }
     }
@@ -115,35 +121,33 @@ final class OnboardingUITests: XCTestCase {
     func testExperienceSelectionPersistsThroughBackNavigation() throws {
         let app = XCUIApplication.launchForOnboardingTest()
 
-        // Welcome → Experience
-        app.buttons["onboarding.nextButton"].waitAndTap()
-        XCTAssertTrue(app.staticTexts["What's your experience level?"].waitForExistence(timeout: 3))
-
-        // Select "advanced"
+        // Step 0: Experience — select "advanced" → Next
+        XCTAssertTrue(app.staticTexts["Experience Level"].waitForExistence(timeout: 5))
         app.buttons["onboarding.experienceCard.advanced"].waitAndTap()
         app.buttons["onboarding.nextButton"].waitAndTap()
 
-        // Running History → go back
+        // Step 1: Running History → go back
         XCTAssertTrue(app.staticTexts["Your Running Background"].waitForExistence(timeout: 3))
         app.buttons["onboarding.backButton"].waitAndTap()
 
-        // Back on Experience step — Next should still be enabled (selection persists)
-        XCTAssertTrue(app.staticTexts["What's your experience level?"].waitForExistence(timeout: 3))
+        // Back on Experience step — Next should still be enabled
+        XCTAssertTrue(app.staticTexts["Experience Level"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.buttons["onboarding.nextButton"].isEnabled,
-                       "Next should remain enabled after returning — selection should persist")
+                       "Next should remain enabled — selection should persist")
     }
 
     @MainActor
-    func testPhysicalDataStepRequiresFirstName() throws {
+    func testAboutYouStepRequiresFirstName() throws {
         let app = XCUIApplication.launchForOnboardingTest()
 
-        // Navigate to Physical Data step (step 3)
-        app.buttons["onboarding.nextButton"].waitAndTap() // Welcome → Experience
+        // Navigate to About You step (step 3)
+        XCTAssertTrue(app.staticTexts["Experience Level"].waitForExistence(timeout: 5))
         app.buttons["onboarding.experienceCard.intermediate"].waitAndTap()
-        app.buttons["onboarding.nextButton"].waitAndTap() // Experience → Running History
-        app.buttons["onboarding.nextButton"].waitAndTap() // Running History → Physical Data
+        app.buttons["onboarding.nextButton"].waitAndTap() // → Running History
+        app.buttons["onboarding.nextButton"].waitAndTap() // → Personal Bests
+        app.buttons["onboarding.nextButton"].waitAndTap() // → About You
 
-        XCTAssertTrue(app.staticTexts["Your Physical Data"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts["About You"].waitForExistence(timeout: 3))
 
         // Next should be disabled when first name is empty
         let nextButton = app.buttons["onboarding.nextButton"]
@@ -158,28 +162,20 @@ final class OnboardingUITests: XCTestCase {
     }
 
     @MainActor
-    func testRaceGoalStepRequiresRaceName() throws {
+    func testRaceNameStepRequiresRaceName() throws {
         let app = XCUIApplication.launchForOnboardingTest()
 
-        // Navigate to Race Goal step (step 4)
-        app.buttons["onboarding.nextButton"].waitAndTap() // Welcome → Experience
-        app.buttons["onboarding.experienceCard.intermediate"].waitAndTap()
-        app.buttons["onboarding.nextButton"].waitAndTap() // → Running History
-        app.buttons["onboarding.nextButton"].waitAndTap() // → Physical Data
-        let firstNameField = app.textFields["onboarding.firstNameField"]
-        XCTAssertTrue(firstNameField.waitForExistence(timeout: 3))
-        firstNameField.tap()
-        firstNameField.typeText("Alex")
-        app.buttons["onboarding.nextButton"].waitAndTap() // → Race Goal
+        // Navigate to Race Name step (step 6)
+        navigateToStep(app: app, targetStep: 6)
 
-        XCTAssertTrue(app.staticTexts["Your A-Race Goal"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts["Your A-Race"].waitForExistence(timeout: 3))
 
         // Next should be disabled when race name is empty
         let nextButton = app.buttons["onboarding.nextButton"]
         XCTAssertFalse(nextButton.isEnabled, "Next should be disabled without a race name")
 
         // Fill race name → Next should become enabled
-        let raceNameField = app.textFields["onboarding.raceNameField"]
+        let raceNameField = app.textFields["raceNameField"]
         raceNameField.tap()
         raceNameField.typeText("UTMB")
         XCTAssertTrue(nextButton.waitUntilEnabled(timeout: 3),
@@ -190,52 +186,28 @@ final class OnboardingUITests: XCTestCase {
     func testCanNavigateToPersonalBestsStep() throws {
         let app = XCUIApplication.launchForOnboardingTest()
 
-        // Navigate to PBs step — check step ordering by looking for the header
-        app.buttons["onboarding.nextButton"].waitAndTap() // Welcome → Experience
+        // Experience → select → Next → Running History → Next → Personal Bests
+        XCTAssertTrue(app.staticTexts["Experience Level"].waitForExistence(timeout: 5))
         app.buttons["onboarding.experienceCard.intermediate"].waitAndTap()
-        app.buttons["onboarding.nextButton"].waitAndTap() // → Running History
-        app.buttons["onboarding.nextButton"].waitAndTap() // → Physical Data or PBs
+        app.buttons["onboarding.nextButton"].waitAndTap()
+        app.buttons["onboarding.nextButton"].waitAndTap()
 
-        // The step after Running History could be Personal Bests or Physical Data
-        // depending on the step order. Look for either heading.
+        // Step 2: Personal Bests
         let pbsHeader = app.staticTexts["Your Race Times"]
-        let physicalHeader = app.staticTexts["Your Physical Data"]
-        let foundPBs = pbsHeader.waitForExistence(timeout: 3)
-        let foundPhysical = physicalHeader.waitForExistence(timeout: 1)
+        XCTAssertTrue(pbsHeader.waitForExistence(timeout: 3),
+                       "Should reach Personal Bests step")
 
-        XCTAssertTrue(foundPBs || foundPhysical,
-                       "Should reach Personal Bests or Physical Data step")
-
-        // Next should be enabled (PBs are optional)
-        if foundPBs {
-            XCTAssertTrue(app.buttons["onboarding.nextButton"].isEnabled,
-                           "Next should be enabled — personal bests are optional")
-        }
+        // Next should be enabled (PBs are optional / skip button shown)
+        XCTAssertTrue(app.buttons["onboarding.nextButton"].isEnabled,
+                       "Next/Skip should be enabled — personal bests are optional")
     }
 
     @MainActor
     func testCompleteStepShowsProfileSummary() throws {
         let app = XCUIApplication.launchForOnboardingTest()
 
-        // Navigate through all steps
-        app.buttons["onboarding.nextButton"].waitAndTap() // Welcome → Experience
-        app.buttons["onboarding.experienceCard.intermediate"].waitAndTap()
-        app.buttons["onboarding.nextButton"].waitAndTap() // → Running History
-        app.buttons["onboarding.nextButton"].waitAndTap() // → Physical Data
-
-        // Fill name
-        XCTAssertTrue(app.staticTexts["Your Physical Data"].waitForExistence(timeout: 3))
-        let firstNameField = app.textFields["onboarding.firstNameField"]
-        firstNameField.tap()
-        firstNameField.typeText("Alex")
-        app.buttons["onboarding.nextButton"].waitAndTap() // → Race Goal
-
-        // Fill race name
-        XCTAssertTrue(app.staticTexts["Your A-Race Goal"].waitForExistence(timeout: 3))
-        let raceNameField = app.textFields["onboarding.raceNameField"]
-        raceNameField.tap()
-        raceNameField.typeText("UTMB")
-        app.buttons["onboarding.nextButton"].waitAndTap() // → Complete
+        // Navigate all the way to step 9 (Complete)
+        navigateToStep(app: app, targetStep: 9)
 
         // Verify completion step
         XCTAssertTrue(app.staticTexts["You're All Set!"].waitForExistence(timeout: 5))
@@ -243,5 +215,65 @@ final class OnboardingUITests: XCTestCase {
         // Get Started button should be present
         let getStartedButton = app.buttons["onboarding.getStartedButton"]
         XCTAssertTrue(getStartedButton.waitForExistence(timeout: 3))
+    }
+
+    // MARK: - Helpers
+
+    private func navigateToStep(app: XCUIApplication, targetStep: Int) {
+        // Step 0: Experience
+        _ = app.staticTexts["Experience Level"].waitForExistence(timeout: 5)
+        app.buttons["onboarding.experienceCard.intermediate"].waitAndTap()
+        if targetStep == 0 { return }
+        app.buttons["onboarding.nextButton"].waitAndTap()
+
+        // Step 1: Running History
+        if targetStep == 1 { return }
+        _ = app.staticTexts["Your Running Background"].waitForExistence(timeout: 3)
+        app.buttons["onboarding.nextButton"].waitAndTap()
+
+        // Step 2: Personal Bests (Skip)
+        if targetStep == 2 { return }
+        _ = app.staticTexts["Your Race Times"].waitForExistence(timeout: 3)
+        app.buttons["onboarding.nextButton"].waitAndTap()
+
+        // Step 3: About You — fill name
+        if targetStep == 3 { return }
+        _ = app.staticTexts["About You"].waitForExistence(timeout: 3)
+        let firstNameField = app.textFields["onboarding.firstNameField"]
+        _ = firstNameField.waitForExistence(timeout: 3)
+        firstNameField.tap()
+        firstNameField.typeText("Alex")
+        app.buttons["onboarding.nextButton"].waitAndTap()
+
+        // Step 4: Body Metrics
+        if targetStep == 4 { return }
+        _ = app.staticTexts["Body Metrics"].waitForExistence(timeout: 3)
+        app.buttons["onboarding.nextButton"].waitAndTap()
+
+        // Step 5: Heart Rate
+        if targetStep == 5 { return }
+        _ = app.staticTexts["Heart Rate"].waitForExistence(timeout: 3)
+        app.buttons["onboarding.nextButton"].waitAndTap()
+
+        // Step 6: Race Name & Date — fill race name
+        if targetStep == 6 { return }
+        _ = app.staticTexts["Your A-Race"].waitForExistence(timeout: 3)
+        let raceNameField = app.textFields["raceNameField"]
+        _ = raceNameField.waitForExistence(timeout: 3)
+        raceNameField.tap()
+        raceNameField.typeText("UTMB")
+        app.buttons["onboarding.nextButton"].waitAndTap()
+
+        // Step 7: Race Profile
+        if targetStep == 7 { return }
+        _ = app.staticTexts["Race Profile"].waitForExistence(timeout: 3)
+        app.buttons["onboarding.nextButton"].waitAndTap()
+
+        // Step 8: Goal & Training
+        if targetStep == 8 { return }
+        _ = app.staticTexts["Goal & Training"].waitForExistence(timeout: 3)
+        app.buttons["onboarding.nextButton"].waitAndTap()
+
+        // Step 9: Complete
     }
 }

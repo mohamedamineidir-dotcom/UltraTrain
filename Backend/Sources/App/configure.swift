@@ -64,6 +64,8 @@ func configure(_ app: Application) async throws {
     app.migrations.add(CreateFinishEstimate())
     app.migrations.add(CreateChallenge())
     app.migrations.add(CreateAnalyticsEvent())
+    app.migrations.add(AddReferralToUser())
+    app.migrations.add(AddSocialAuthToUser())
     do {
         try await app.autoMigrate()
         app.logger.notice("Migrations completed successfully")

@@ -21,6 +21,11 @@ settings:
     KNOWN_REGIONS: "en fr"
     DEVELOPMENT_TEAM: KF2LJCF3GM
 
+packages:
+  GoogleSignIn:
+    url: https://github.com/google/GoogleSignIn-iOS
+    from: "8.0.0"
+
 targets:
   UltraTrain:
     type: application
@@ -39,6 +44,7 @@ targets:
       - target: UltraTrainClip
         embed: true
       - sdk: WatchConnectivity.framework
+      - package: GoogleSignIn
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.ultratrain.app

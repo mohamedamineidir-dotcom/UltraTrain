@@ -30,7 +30,7 @@ final class LoginViewModel {
 
         do {
             if isRegistering {
-                try await authService.register(email: email, password: password)
+                try await authService.register(email: email, password: password, firstName: nil, referralCode: nil)
                 didRegister = true
             } else {
                 try await authService.login(email: email, password: password)

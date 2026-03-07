@@ -13,11 +13,12 @@ final class OnboardingViewModel {
     // MARK: - Navigation State
 
     var currentStep = 0
-    let totalSteps = 7
+    let totalSteps = 10
     var isCompleted = false
     var isSaving = false
     var error: String?
     private(set) var savedAthleteId: UUID?
+    var initialFirstName: String?
 
     // MARK: - Step 1: Experience
 
@@ -81,51 +82,61 @@ final class OnboardingViewModel {
 
     // MARK: - Init
 
-    init(athleteRepository: any AthleteRepository, raceRepository: any RaceRepository) {
+    init(
+        athleteRepository: any AthleteRepository,
+        raceRepository: any RaceRepository,
+        initialFirstName: String? = nil
+    ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
-    }
-
-    // MARK: - Validation
-
-    var canAdvance: Bool {
-        switch currentStep {
-        case 0:
-            return true
-        case 1:
-            return experienceLevel != nil
-        case 2:
-            return isNewRunner || (weeklyVolumeKm > 0 && longestRunKm > 0)
-        case 3:
-            return true // Personal bests are optional
-        case 4:
-            return isPhysicalDataValid
-        case 5:
-            return isRaceGoalValid
-        default:
-            return true
+        self.initialFirstName = initialFirstName
+        if let name = initialFirstName, !name.isEmpty {
+            self.firstName = name
         }
     }
 
-    private var isPhysicalDataValid: Bool {
-        guard !firstName.trimmingCharacters(in: .whitespaces).isEmpty else { return false }
-        guard !lastName.trimmingCharacters(in: .whitespaces).isEmpty else { return false }
-        let age = Calendar.current.dateComponents([.year], from: dateOfBirth, to: .now).year ?? 0
-        guard age >= 16, age <= 100 else { return false }
-        guard (30...200).contains(weightKg) else { return false }
-        guard (100...250).contains(heightCm) else { return false }
-        guard (30...120).contains(restingHeartRate) else { return false }
-        guard (120...230).contains(maxHeartRate) else { return false }
-        guard maxHeartRate > restingHeartRate else { return false }
-        return true
+    // MARK: - Validation
+    // Steps: 0=Experience, 1=RunningHistory, 2=PersonalBests, 3=AboutYou,
+    //        4=BodyMetrics, 5=HeartRate, 6=RaceName, 7=RaceProfile,
+    //        8=GoalTraining, 9=Complete
+
+    var canAdvance: Bool {
+        switch currentStep {
+        case 0: experienceLevel != nil
+        case 1: isNewRunner || (weeklyVolumeKm > 0 && longestRunKm > 0)
+        case 2: true // Personal bests optional
+        case 3: isAboutYouValid
+        case 4: isBodyMetricsValid
+        case 5: true // Heart rate has sane defaults
+        case 6: isRaceNameValid
+        case 7: isRaceProfileValid
+        case 8: isGoalTrainingValid
+        default: true
+        }
     }
 
-    private var isRaceGoalValid: Bool {
-        guard !raceName.trimmingCharacters(in: .whitespaces).isEmpty else { return false }
-        guard raceDate > Date.now else { return false }
-        guard raceDistanceKm > 0 else { return false }
-        guard raceElevationGainM >= 0 else { return false }
-        guard raceElevationLossM >= 0 else { return false }
+    private var isAboutYouValid: Bool {
+        !firstName.trimmingCharacters(in: .whitespaces).isEmpty
+            && !lastName.trimmingCharacters(in: .whitespaces).isEmpty
+            && {
+                let age = Calendar.current.dateComponents([.year], from: dateOfBirth, to: .now).year ?? 0
+                return (16...100).contains(age)
+            }()
+    }
+
+    private var isBodyMetricsValid: Bool {
+        (30...200).contains(weightKg) && (100...250).contains(heightCm)
+    }
+
+    private var isRaceNameValid: Bool {
+        !raceName.trimmingCharacters(in: .whitespaces).isEmpty && raceDate > Date.now
+    }
+
+    private var isRaceProfileValid: Bool {
+        raceDistanceKm > 0 && raceElevationGainM >= 0 && raceElevationLossM >= 0
+    }
+
+    private var isGoalTrainingValid: Bool {
         if raceGoalType == .targetTime {
             guard raceTargetTimeHours > 0 || raceTargetTimeMinutes > 0 else { return false }
         }

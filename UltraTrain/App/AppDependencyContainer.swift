@@ -44,6 +44,10 @@ struct AppDependencyContainer {
     let achievementRepository: any AchievementRepository
     let morningCheckInRepository: any MorningCheckInRepository
 
+    // MARK: - Referral
+
+    let referralRepository: any ReferralRepository
+
     // MARK: - Social Repositories
 
     let socialProfileRepository: any SocialProfileRepository

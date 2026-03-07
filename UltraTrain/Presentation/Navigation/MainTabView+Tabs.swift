@@ -151,6 +151,7 @@ extension MainTabView {
                 routeRepository: routeRepository,
                 emergencyContactRepository: emergencyContactRepository,
                 raceReflectionRepository: raceReflectionRepository,
+                referralRepository: referralRepository,
                 authService: authService,
                 onLogout: onLogout
             )
@@ -180,6 +181,8 @@ extension MainTabView {
             selectedTab = .plan
         case .raceNutritionTimer:
             selectedTab = .nutrition
+        case .referral:
+            selectedTab = .profile
         }
     }
 }

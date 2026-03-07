@@ -7,6 +7,7 @@ struct SettingsView: View {
 
     let appSettingsRepository: any AppSettingsRepository
     let emergencyContactRepository: (any EmergencyContactRepository)?
+    let referralRepository: (any ReferralRepository)?
     var onLogout: (() -> Void)?
 
     init(
@@ -24,12 +25,14 @@ struct SettingsView: View {
         biometricAuthService: any BiometricAuthServiceProtocol,
         healthKitImportService: (any HealthKitImportServiceProtocol)? = nil,
         emergencyContactRepository: (any EmergencyContactRepository)? = nil,
+        referralRepository: (any ReferralRepository)? = nil,
         authService: (any AuthServiceProtocol)? = nil,
         privacyTrackingService: (any PrivacyTrackingServiceProtocol)? = nil,
         onLogout: (() -> Void)? = nil
     ) {
         self.appSettingsRepository = appSettingsRepository
         self.emergencyContactRepository = emergencyContactRepository
+        self.referralRepository = referralRepository
         self.onLogout = onLogout
         _viewModel = State(initialValue: SettingsViewModel(
             athleteRepository: athleteRepository,
@@ -70,6 +73,9 @@ struct SettingsView: View {
                 syncQueueSection
                 dataRetentionSection
                 dataManagementSection
+                if referralRepository != nil {
+                    referralSection
+                }
                 accountSection
                 aboutSection
             }

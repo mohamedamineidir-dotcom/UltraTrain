@@ -88,6 +88,8 @@
     <string>$(STRAVA_CLIENT_SECRET)</string>
     <key>HMAC_SIGNING_SECRET</key>
     <string>$(HMAC_SIGNING_SECRET)</string>
+    <key>GOOGLE_CLIENT_ID</key>
+    <string>$(GOOGLE_CLIENT_ID)</string>
     <key>CFBundleURLTypes</key>
     <array>
         <dict>
@@ -96,6 +98,14 @@
             <key>CFBundleURLSchemes</key>
             <array>
                 <string>ultratrain</string>
+            </array>
+        </dict>
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>com.ultratrain.google</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>com.googleusercontent.apps.443945392774-v0ninpbc2krjro1mjh1ehqski5k0upnm</string>
             </array>
         </dict>
     </array>

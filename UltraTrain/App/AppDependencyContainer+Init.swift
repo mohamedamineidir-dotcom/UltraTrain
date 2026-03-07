@@ -175,6 +175,7 @@ extension AppDependencyContainer {
         groupChallengeRepository = SyncedGroupChallengeRepository(
             local: localGroupChallengeRepo, remote: remoteGroupChallenge, authService: auth
         )
+        referralRepository = RemoteReferralRepository(apiClient: client)
         routeRepository = LocalRouteRepository(modelContainer: modelContainer)
         intervalWorkoutRepository = LocalIntervalWorkoutRepository(modelContainer: modelContainer)
         emergencyContactRepository = LocalEmergencyContactRepository(modelContainer: modelContainer)

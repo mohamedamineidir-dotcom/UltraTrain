@@ -58,6 +58,7 @@ struct MainTabView: View {
     let raceReflectionRepository: any RaceReflectionRepository
     let achievementRepository: (any AchievementRepository)?
     let morningCheckInRepository: (any MorningCheckInRepository)?
+    let referralRepository: (any ReferralRepository)?
     let authService: (any AuthServiceProtocol)?
     var onLogout: (() -> Void)?
 
@@ -115,6 +116,7 @@ struct MainTabView: View {
         raceReflectionRepository: any RaceReflectionRepository,
         achievementRepository: (any AchievementRepository)? = nil,
         morningCheckInRepository: (any MorningCheckInRepository)? = nil,
+        referralRepository: (any ReferralRepository)? = nil,
         authService: (any AuthServiceProtocol)? = nil,
         onLogout: (() -> Void)? = nil
     ) {
@@ -171,6 +173,7 @@ struct MainTabView: View {
         self.raceReflectionRepository = raceReflectionRepository
         self.achievementRepository = achievementRepository
         self.morningCheckInRepository = morningCheckInRepository
+        self.referralRepository = referralRepository
         self.authService = authService
         self.onLogout = onLogout
     }

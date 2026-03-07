@@ -22,14 +22,42 @@ final class AuthService: AuthServiceProtocol, @unchecked Sendable {
         }
     }
 
-    func register(email: String, password: String) async throws {
+    func register(email: String, password: String, firstName: String? = nil, referralCode: String? = nil) async throws {
         let response: TokenResponseDTO = try await apiClient.send(
-            AuthEndpoints.Register(email: email, password: password)
+            AuthEndpoints.Register(
+                email: email, password: password,
+                firstName: firstName, referralCode: referralCode
+            )
         )
         let newToken = makeToken(from: response, email: email)
         token = newToken
         try KeychainManager.save(newToken, for: Self.keychainKey)
         Logger.network.info("Auth: registered as \(email)")
+    }
+
+    func signInWithApple(identityToken: String, firstName: String?, lastName: String?) async throws -> Bool {
+        let response: SocialAuthResponseDTO = try await apiClient.send(
+            AuthEndpoints.AppleSignIn(
+                identityToken: identityToken,
+                firstName: firstName, lastName: lastName
+            )
+        )
+        let newToken = makeSocialToken(from: response)
+        token = newToken
+        try KeychainManager.save(newToken, for: Self.keychainKey)
+        Logger.network.info("Auth: signed in with Apple (isNew: \(response.isNewUser))")
+        return response.isNewUser
+    }
+
+    func signInWithGoogle(idToken: String) async throws -> Bool {
+        let response: SocialAuthResponseDTO = try await apiClient.send(
+            AuthEndpoints.GoogleSignIn(idToken: idToken)
+        )
+        let newToken = makeSocialToken(from: response)
+        token = newToken
+        try KeychainManager.save(newToken, for: Self.keychainKey)
+        Logger.network.info("Auth: signed in with Google (isNew: \(response.isNewUser))")
+        return response.isNewUser
     }
 
     func login(email: String, password: String) async throws {
@@ -139,6 +167,16 @@ final class AuthService: AuthServiceProtocol, @unchecked Sendable {
             expiresAt: Date().addingTimeInterval(TimeInterval(dto.expiresIn)),
             userId: "",
             email: email
+        )
+    }
+
+    private func makeSocialToken(from dto: SocialAuthResponseDTO) -> AuthToken {
+        AuthToken(
+            accessToken: dto.accessToken,
+            refreshToken: dto.refreshToken,
+            expiresAt: Date().addingTimeInterval(TimeInterval(dto.expiresIn)),
+            userId: "",
+            email: ""
         )
     }
 

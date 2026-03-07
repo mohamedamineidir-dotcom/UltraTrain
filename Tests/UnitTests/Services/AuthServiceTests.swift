@@ -20,7 +20,7 @@ struct AuthServiceTests {
     func registerSucceeds() async throws {
         let auth = makeMockAuth()
 
-        try await auth.register(email: "runner@ultra.com", password: "S3cureP@ss!")
+        try await auth.register(email: "runner@ultra.com", password: "S3cureP@ss!", firstName: nil, referralCode: nil)
 
         #expect(auth.isAuthenticated() == true)
         #expect(auth.registerCallCount == 1)
@@ -32,7 +32,7 @@ struct AuthServiceTests {
         let auth = makeMockAuth(shouldFail: true)
 
         await #expect(throws: DomainError.self) {
-            try await auth.register(email: "fail@test.com", password: "password")
+            try await auth.register(email: "fail@test.com", password: "password", firstName: nil, referralCode: nil)
         }
         #expect(auth.isAuthenticated() == false)
     }

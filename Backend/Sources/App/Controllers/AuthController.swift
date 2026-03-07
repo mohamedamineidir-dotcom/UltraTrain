@@ -12,6 +12,8 @@ struct AuthController: RouteCollection {
         authRateLimited.post("refresh", use: refresh)
         authRateLimited.post("forgot-password", use: forgotPassword)
         authRateLimited.post("reset-password", use: resetPassword)
+        authRateLimited.post("apple", use: appleSignIn)
+        authRateLimited.post("google", use: googleSignIn)
 
         let protected = auth.grouped(UserAuthMiddleware())
         protected.post("logout", use: logout)
@@ -38,6 +40,18 @@ struct AuthController: RouteCollection {
 
         let passwordHash = try Bcrypt.hash(body.password)
         let user = UserModel(email: body.email.lowercased(), passwordHash: passwordHash)
+
+        // Generate unique referral code
+        user.referralCode = try await generateUniqueReferralCode(on: req.db)
+
+        // Apply referral code if provided (silently ignore invalid codes)
+        if let refCode = body.referralCode?.uppercased(), !refCode.isEmpty {
+            if let referrer = try await UserModel.query(on: req.db)
+                .filter(\.$referralCode == refCode)
+                .first() {
+                user.referredByUserId = referrer.id
+            }
+        }
 
         // Generate verification code
         let code = String(format: "%06d", Int.random(in: 0...999999))
@@ -177,5 +191,16 @@ struct AuthController: RouteCollection {
     func hashResetCode(_ code: String) -> String {
         let digest = SHA256.hash(data: Data(code.utf8))
         return digest.map { String(format: "%02x", $0) }.joined()
+    }
+
+    func generateUniqueReferralCode(on db: Database) async throws -> String {
+        for _ in 0..<10 {
+            let code = UserModel.generateReferralCode()
+            let exists = try await UserModel.query(on: db)
+                .filter(\.$referralCode == code)
+                .first()
+            if exists == nil { return code }
+        }
+        return String(UserModel.generateReferralCode().prefix(4) + UUID().uuidString.prefix(4).uppercased())
     }
 }
