@@ -3,6 +3,7 @@ import SwiftUI
 struct DashboardView: View {
     @Environment(\.syncStatusMonitor) private var syncStatusMonitor
     @Environment(\.syncService) private var syncService
+    @Environment(\.colorScheme) private var colorScheme
     @State var viewModel: DashboardViewModel
     @State private var showSyncQueue = false
     @Binding var selectedTab: Tab
@@ -152,6 +153,7 @@ struct DashboardView: View {
                 }
                 .padding()
             }
+            .background(dashboardBackground)
             .navigationTitle("Dashboard")
             .toolbar {
                 if let monitor = syncStatusMonitor, monitor.isVisible {
@@ -187,6 +189,21 @@ struct DashboardView: View {
             } message: {
                 Text(viewModel.fitnessError ?? "")
             }
+        }
+    }
+
+    @ViewBuilder
+    private var dashboardBackground: some View {
+        if colorScheme == .dark {
+            LinearGradient(
+                colors: [
+                    Color(red: 0.04, green: 0.04, blue: 0.06),
+                    Color(red: 0.06, green: 0.05, blue: 0.09)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
         }
     }
 }

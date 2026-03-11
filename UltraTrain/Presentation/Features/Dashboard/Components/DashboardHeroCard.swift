@@ -78,9 +78,20 @@ struct DashboardHeroCard: View {
             }
         }
         .padding(Theme.Spacing.lg)
-        .background(gradientBackground)
+        .background(
+            ZStack {
+                gradientBackground
+                // Thin glass overlay to soften gradient and connect to card family
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                    .fill(.ultraThinMaterial.opacity(0.15))
+            }
+        )
         .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.lg))
-        .shadow(color: Theme.Colors.shadow, radius: 8, y: 4)
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
+        )
+        .shadow(color: Theme.Colors.shadow, radius: 6, y: 3)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityDescription)
     }

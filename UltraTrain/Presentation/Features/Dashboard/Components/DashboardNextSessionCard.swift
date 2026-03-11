@@ -34,11 +34,17 @@ struct DashboardNextSessionCard: View {
     private func sessionContent(_ session: TrainingSession) -> some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             HStack(spacing: Theme.Spacing.sm) {
-                Image(systemName: session.type.icon)
-                    .font(.title2)
-                    .foregroundStyle(session.intensity.color)
-                    .frame(width: 40)
-                    .accessibilityHidden(true)
+                // Icon glow circle
+                ZStack {
+                    Circle()
+                        .fill(session.intensity.color.opacity(0.12))
+                        .frame(width: 44, height: 44)
+                    Image(systemName: session.type.icon)
+                        .font(.title3)
+                        .foregroundStyle(session.intensity.color)
+                }
+                .shadow(color: session.intensity.color.opacity(0.3), radius: 4)
+                .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(session.type.displayName)
@@ -70,14 +76,20 @@ struct DashboardNextSessionCard: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(sessionAccessibilityLabel(session))
 
+            // Warm coral gradient CTA
             Button(action: onStartRun) {
                 Label("Start Run", systemImage: "figure.run")
                     .font(.subheadline.bold())
+                    .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 4)
+                    .frame(height: 48)
+                    .background(
+                        Theme.Gradients.warmCoralCTA,
+                        in: RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                    )
+                    .shadow(color: Theme.Colors.warmCoral.opacity(0.3), radius: 6, y: 3)
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.regular)
+            .buttonStyle(.plain)
             .accessibilityIdentifier("dashboard.startRunButton")
             .accessibilityHint("Starts GPS tracking for this session")
         }

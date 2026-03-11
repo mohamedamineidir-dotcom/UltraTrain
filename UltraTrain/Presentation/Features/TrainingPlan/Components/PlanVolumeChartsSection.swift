@@ -97,7 +97,7 @@ struct PlanVolumeChartsSection: View {
     private var chartView: some View {
         Chart {
             ForEach(dataPoints) { point in
-                // Planned area fill — smooth gradient
+                // Rich area gradient fill
                 AreaMark(
                     x: .value("Week", "W\(point.weekNumber)"),
                     y: .value("Planned", plannedValue(for: point))
@@ -105,8 +105,9 @@ struct PlanVolumeChartsSection: View {
                 .foregroundStyle(
                     .linearGradient(
                         colors: [
-                            Theme.Colors.accentColor.opacity(0.25),
-                            Theme.Colors.accentColor.opacity(0.03)
+                            Theme.Colors.accentColor.opacity(0.35),
+                            Theme.Colors.accentColor.opacity(0.12),
+                            Theme.Colors.accentColor.opacity(0.02)
                         ],
                         startPoint: .top,
                         endPoint: .bottom
@@ -114,39 +115,57 @@ struct PlanVolumeChartsSection: View {
                 )
                 .interpolationMethod(.catmullRom)
 
-                // Planned line — accent colored
+                // Glow line — 3pt with shadow
                 LineMark(
                     x: .value("Week", "W\(point.weekNumber)"),
                     y: .value("Planned", plannedValue(for: point))
                 )
                 .foregroundStyle(Theme.Colors.accentColor)
-                .lineStyle(StrokeStyle(lineWidth: 2.5))
+                .lineStyle(StrokeStyle(lineWidth: 3))
                 .interpolationMethod(.catmullRom)
 
-                // Completed bars — subtle phase-colored
+                // Point markers at each week
+                PointMark(
+                    x: .value("Week", "W\(point.weekNumber)"),
+                    y: .value("Planned", plannedValue(for: point))
+                )
+                .symbolSize(point.isCurrentWeek ? 50 : 30)
+                .foregroundStyle(Theme.Colors.accentColor)
+
+                // Completed bars — gradient capsule
                 if completedValue(for: point) > 0 {
                     BarMark(
                         x: .value("Week", "W\(point.weekNumber)"),
                         y: .value("Completed", completedValue(for: point)),
-                        width: .fixed(6)
+                        width: .fixed(10)
                     )
-                    .foregroundStyle(phaseColor(point.phase))
+                    .foregroundStyle(
+                        .linearGradient(
+                            colors: [phaseColor(point.phase), phaseColor(point.phase).opacity(0.5)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
                     .clipShape(Capsule())
                 }
             }
 
-            // Current week indicator
+            // Current week — filled accent pill
             if let currentWeek = dataPoints.first(where: \.isCurrentWeek) {
                 RuleMark(x: .value("Current", "W\(currentWeek.weekNumber)"))
-                    .foregroundStyle(Theme.Colors.accentColor.opacity(0.4))
-                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [5, 4]))
+                    .foregroundStyle(Theme.Colors.accentColor.opacity(0.3))
+                    .lineStyle(StrokeStyle(lineWidth: 1))
                     .annotation(position: .top, spacing: 4) {
                         Text("NOW")
-                            .font(.system(size: 9, weight: .bold, design: .rounded))
-                            .foregroundStyle(Theme.Colors.accentColor)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(Theme.Colors.accentColor.opacity(0.12), in: Capsule())
+                            .font(.system(size: 9, weight: .heavy, design: .rounded))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(
+                                Capsule()
+                                    .fill(Theme.Colors.accentColor)
+                                    .shadow(color: Theme.Colors.accentColor.opacity(0.4), radius: 4, y: 2)
+                            )
                     }
             }
 
@@ -161,21 +180,25 @@ struct PlanVolumeChartsSection: View {
             AxisMarks { _ in
                 AxisValueLabel()
                     .font(.system(size: 10, weight: .medium, design: .rounded))
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.7))
             }
         }
         .chartYAxis {
             AxisMarks(position: .leading, values: .automatic(desiredCount: 4)) { _ in
-                AxisGridLine()
-                    .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.08))
                 AxisValueLabel()
                     .font(.system(size: 10, design: .rounded))
-                    .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.6))
+                    .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.5))
             }
         }
         .chartPlotStyle { plot in
-            plot.frame(height: 180)
+            plot
+                .frame(height: 200)
+                .background(
+                    RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                        .fill(Theme.Colors.secondaryLabel.opacity(0.03))
+                )
         }
+        .shadow(color: Theme.Colors.accentColor.opacity(0.15), radius: 8)
         .chartOverlay { proxy in
             GeometryReader { geo in
                 Rectangle()
@@ -203,7 +226,7 @@ struct PlanVolumeChartsSection: View {
                     if let xPos = proxy.position(forX: "W\(selected.weekNumber)") {
                         annotationCard(for: selected)
                             .offset(
-                                x: min(max(xPos - 50, 0), plotFrame.width - 100),
+                                x: min(max(xPos - 60, 0), plotFrame.width - 120),
                                 y: -8
                             )
                     }
@@ -215,37 +238,52 @@ struct PlanVolumeChartsSection: View {
     // MARK: - Annotation
 
     private func annotationCard(for point: WeekChartDataPoint) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
-            HStack(spacing: 5) {
-                Circle()
-                    .fill(phaseColor(point.phase))
-                    .frame(width: 6, height: 6)
+        HStack(spacing: 0) {
+            // Phase-colored left strip
+            RoundedRectangle(cornerRadius: 2)
+                .fill(phaseColor(point.phase))
+                .frame(width: 3)
+                .padding(.vertical, 4)
+
+            VStack(alignment: .leading, spacing: 3) {
                 Text("Week \(point.weekNumber)")
-                    .font(.system(size: 11, weight: .semibold, design: .rounded))
-            }
-            HStack(spacing: 8) {
-                VStack(alignment: .leading, spacing: 1) {
-                    Text("Plan")
-                        .font(.system(size: 9))
-                        .foregroundStyle(Theme.Colors.secondaryLabel)
-                    Text(formattedPlannedValue(for: point))
-                        .font(.system(size: 11, weight: .bold, design: .rounded).monospacedDigit())
-                }
-                if completedValue(for: point) > 0 {
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                HStack(spacing: 10) {
                     VStack(alignment: .leading, spacing: 1) {
-                        Text("Done")
+                        Text("Plan")
                             .font(.system(size: 9))
                             .foregroundStyle(Theme.Colors.secondaryLabel)
-                        Text(formattedCompletedValue(for: point))
-                            .font(.system(size: 11, weight: .bold, design: .rounded).monospacedDigit())
-                            .foregroundStyle(phaseColor(point.phase))
+                        Text(formattedPlannedValue(for: point))
+                            .font(.system(size: 12, weight: .bold, design: .rounded).monospacedDigit())
+                    }
+                    if completedValue(for: point) > 0 {
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text("Done")
+                                .font(.system(size: 9))
+                                .foregroundStyle(Theme.Colors.secondaryLabel)
+                            Text(formattedCompletedValue(for: point))
+                                .font(.system(size: 12, weight: .bold, design: .rounded).monospacedDigit())
+                                .foregroundStyle(phaseColor(point.phase))
+                        }
                     }
                 }
             }
+            .padding(.leading, 8)
         }
         .padding(10)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
-        .shadow(color: .black.opacity(0.1), radius: 8, y: 4)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.white.opacity(0.06))
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
+        )
+        .shadow(color: phaseColor(point.phase).opacity(0.15), radius: 8, y: 4)
     }
 
     // MARK: - Summary Calculations

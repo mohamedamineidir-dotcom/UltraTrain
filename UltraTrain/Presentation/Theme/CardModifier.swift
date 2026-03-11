@@ -30,30 +30,40 @@ extension View {
 struct AppCardModifier: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
 
+    private var borderGradient: LinearGradient {
+        if colorScheme == .dark {
+            return LinearGradient(
+                colors: [Color.white.opacity(0.1), Color.white.opacity(0.04)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
+        return LinearGradient(
+            colors: [Color.black.opacity(0.04), Color.black.opacity(0.04)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
     func body(content: Content) -> some View {
         content
             .padding(Theme.Spacing.md)
             .background(
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
                     .fill(colorScheme == .dark
-                          ? Color(.secondarySystemBackground)
+                          ? Color(red: 0.08, green: 0.08, blue: 0.12)
                           : Color.white)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                    .stroke(
-                        colorScheme == .dark
-                            ? Color.white.opacity(0.06)
-                            : Color.black.opacity(0.04),
-                        lineWidth: 0.5
-                    )
+                    .stroke(borderGradient, lineWidth: 0.5)
             )
             .shadow(
                 color: colorScheme == .dark
-                    ? Color.white.opacity(0.02)
+                    ? Color(red: 0.1, green: 0.1, blue: 0.3).opacity(0.15)
                     : .black.opacity(0.06),
-                radius: colorScheme == .dark ? 6 : 12,
-                y: colorScheme == .dark ? 2 : 4
+                radius: colorScheme == .dark ? 8 : 12,
+                y: colorScheme == .dark ? 3 : 4
             )
     }
 }
