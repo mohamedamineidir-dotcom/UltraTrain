@@ -7,8 +7,9 @@ struct FoodSearchSheet: View {
 
     @State private var searchText = ""
     @State private var results: [FoodSearchResult] = []
-    @State private var isSearching = false
+    @State private var isSearchingOnline = false
     @State private var hasSearched = false
+    @State private var apiFailed = false
     @State private var searchTask: Task<Void, Never>?
 
     init(
@@ -22,17 +23,14 @@ struct FoodSearchSheet: View {
     var body: some View {
         NavigationStack {
             Group {
-                if isSearching {
-                    ProgressView("Searching...")
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if results.isEmpty && hasSearched {
-                    ContentUnavailableView.search(text: searchText)
-                } else if results.isEmpty {
+                if results.isEmpty && !hasSearched {
                     ContentUnavailableView(
                         "Search Food Products",
                         systemImage: "magnifyingglass",
-                        description: Text("Type a food name to search the Open Food Facts database.")
+                        description: Text("Type a food name to search.")
                     )
+                } else if results.isEmpty && hasSearched && !isSearchingOnline {
+                    ContentUnavailableView.search(text: searchText)
                 } else {
                     resultsList
                 }
@@ -40,15 +38,25 @@ struct FoodSearchSheet: View {
             .searchable(text: $searchText, prompt: "Search foods...")
             .onChange(of: searchText) { _, newValue in
                 searchTask?.cancel()
-                guard !newValue.trimmingCharacters(in: .whitespaces).isEmpty else {
+                apiFailed = false
+                let trimmed = newValue.trimmingCharacters(in: .whitespaces)
+                guard !trimmed.isEmpty else {
                     results = []
                     hasSearched = false
+                    isSearchingOnline = false
                     return
                 }
+
+                // Instant local results
+                let localResults = CommonFoodDatabase.search(trimmed)
+                results = localResults
+                hasSearched = true
+
+                // Async API search with debounce
                 searchTask = Task {
-                    try? await Task.sleep(for: .milliseconds(300))
+                    try? await Task.sleep(for: .milliseconds(150))
                     guard !Task.isCancelled else { return }
-                    await performSearch(query: newValue)
+                    await performOnlineSearch(query: trimmed, localResults: localResults)
                 }
             }
             .navigationTitle("Search Food")
@@ -103,20 +111,46 @@ struct FoodSearchSheet: View {
                     .padding(.vertical, 2)
                 }
             }
+
+            // Online search status footer
+            if isSearchingOnline {
+                HStack(spacing: Theme.Spacing.sm) {
+                    ProgressView()
+                        .controlSize(.small)
+                    Text("Searching online...")
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
+                .frame(maxWidth: .infinity)
+                .listRowSeparator(.hidden)
+            } else if apiFailed && !results.isEmpty {
+                HStack(spacing: Theme.Spacing.xs) {
+                    Image(systemName: "wifi.slash")
+                        .font(.caption2)
+                    Text("Showing offline results only")
+                        .font(.caption)
+                }
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+                .frame(maxWidth: .infinity)
+                .listRowSeparator(.hidden)
+            }
         }
     }
 
     @MainActor
-    private func performSearch(query: String) async {
-        isSearching = true
-        defer {
-            isSearching = false
-            hasSearched = true
-        }
+    private func performOnlineSearch(query: String, localResults: [FoodSearchResult]) async {
+        isSearchingOnline = true
+        defer { isSearchingOnline = false }
+
         do {
-            results = try await foodService.searchByName(query)
+            let allResults = try await foodService.searchByName(query)
+            guard !Task.isCancelled else { return }
+            results = allResults
+            apiFailed = false
         } catch {
-            results = []
+            guard !Task.isCancelled else { return }
+            // Keep local results, mark API as failed
+            apiFailed = true
         }
     }
 }

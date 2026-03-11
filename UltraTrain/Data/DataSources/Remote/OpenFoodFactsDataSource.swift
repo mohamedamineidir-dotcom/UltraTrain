@@ -27,7 +27,7 @@ actor OpenFoodFactsDataSource {
             .appendingPathComponent("v2")
             .appendingPathComponent("product")
             .appendingPathComponent("\(trimmed).json")
-        var request = URLRequest(url: url, timeoutInterval: 15)
+        var request = URLRequest(url: url, timeoutInterval: 10)
         request.setValue("UltraTrain iOS", forHTTPHeaderField: "User-Agent")
 
         let (data, _) = try await session.data(for: request)
@@ -57,7 +57,7 @@ actor OpenFoodFactsDataSource {
         ]
 
         guard let url = components?.url else { return [] }
-        var request = URLRequest(url: url, timeoutInterval: 15)
+        var request = URLRequest(url: url, timeoutInterval: 10)
         request.setValue("UltraTrain iOS", forHTTPHeaderField: "User-Agent")
 
         let (data, _) = try await session.data(for: request)
