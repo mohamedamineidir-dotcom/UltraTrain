@@ -15,9 +15,12 @@ struct StatCard: View {
                 Text(value)
                     .font(.title2)
                     .fontWeight(.bold)
+                    .lineLimit(1)
+                    .fixedSize(horizontal: true, vertical: false)
                 Text(unit)
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .lineLimit(1)
                 if let trend {
                     Image(systemName: trend.iconName)
                         .font(.caption)

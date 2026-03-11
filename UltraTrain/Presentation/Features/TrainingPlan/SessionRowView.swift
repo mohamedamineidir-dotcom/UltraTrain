@@ -58,7 +58,12 @@ struct SessionRowView: View {
                     }
                 }
 
-                if isTimeBased && session.plannedDuration > 0 {
+                if hasWorkoutDescription {
+                    Text(session.description)
+                        .font(.caption)
+                        .foregroundStyle(session.intensity.color)
+                        .lineLimit(1)
+                } else if isTimeBased && session.plannedDuration > 0 {
                     Text(formattedTimeBased)
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
@@ -113,6 +118,12 @@ struct SessionRowView: View {
         return ""
     }
 
+    private var hasWorkoutDescription: Bool {
+        (session.type == .intervals || session.type == .verticalGain)
+            && session.intervalWorkoutId != nil
+            && session.description.contains("×")
+    }
+
     private var isTimeBased: Bool {
         session.type == .longRun || session.type == .backToBack
     }
@@ -154,7 +165,7 @@ extension SessionType {
         case .tempo:         "Tempo"
         case .intervals:     "Intervals"
         case .verticalGain:  "Vertical Gain"
-        case .backToBack:    "Back-to-Back"
+        case .backToBack:    "Long Run (B2B)"
         case .recovery:      "Recovery"
         case .crossTraining: "Cross-Training"
         case .rest:          "Rest"

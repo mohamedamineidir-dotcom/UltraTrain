@@ -60,32 +60,46 @@ enum WorkoutProgressionEngine {
         let workPhases: (reps: Int, workSec: Double, restSec: Double, desc: String)
 
         switch trainingPhase {
-        case .build:
+        case .base:
+            // Progressive threshold intervals — moderate intensity, building volume
             let variants: [(Int, Double, Double, String)] = [
-                (6, 180, 120, "6×3min hard / 2min jog"),
-                (7, 180, 90,  "7×3min hard / 90s jog"),
-                (5, 240, 120, "5×4min hard / 2min jog"),
-                (8, 150, 90,  "8×2min30 hard / 90s jog"),
-                (6, 240, 120, "6×4min hard / 2min jog"),
-                (10, 120, 60, "10×2min hard / 1min jog"),
+                (4, 180, 120, "4×3min at threshold (Z3) / 2min jog"),
+                (5, 180, 120, "5×3min at threshold (Z3) / 2min jog"),
+                (5, 240, 120, "5×4min at threshold (Z3) / 2min jog"),
+                (6, 240, 120, "6×4min at threshold (Z3) / 2min jog"),
+                (6, 300, 120, "6×5min at threshold (Z3) / 2min jog"),
+                (5, 360, 150, "5×6min at threshold (Z3) / 2min30 jog"),
+            ]
+            workPhases = variants[min(weekInPhase, variants.count - 1)]
+
+        case .build:
+            // VO2max intervals — hard intensity, progressive
+            let variants: [(Int, Double, Double, String)] = [
+                (6, 180, 120, "6×3min at VO2max (Z4) / 2min jog"),
+                (7, 180, 90,  "7×3min at VO2max (Z4) / 90s jog"),
+                (5, 240, 120, "5×4min at VO2max (Z4) / 2min jog"),
+                (8, 150, 90,  "8×2min30 at VO2max (Z4) / 90s jog"),
+                (6, 240, 120, "6×4min at VO2max (Z4) / 2min jog"),
+                (10, 120, 60, "10×2min at VO2max (Z4) / 1min jog"),
             ]
             workPhases = variants[weekInPhase % variants.count]
 
         case .peak:
+            // Short sharp intervals — high intensity, race-specific
             let variants: [(Int, Double, Double, String)] = [
-                (10, 60, 60,  "10×1min hard / 1min jog"),
-                (8, 90, 60,   "8×90s hard / 1min jog"),
-                (12, 45, 75,  "12×45s max / 1min15 jog"),
-                (6, 120, 60,  "6×2min hard / 1min jog"),
-                (10, 60, 45,  "10×1min hard / 45s jog"),
+                (10, 60, 60,  "10×1min at VO2max (Z4-5) / 1min jog"),
+                (8, 90, 60,   "8×90s at VO2max (Z4-5) / 1min jog"),
+                (12, 45, 75,  "12×45s max effort (Z5) / 1min15 jog"),
+                (6, 120, 60,  "6×2min at VO2max (Z4) / 1min jog"),
+                (10, 60, 45,  "10×1min at VO2max (Z4-5) / 45s jog"),
             ]
             workPhases = variants[weekInPhase % variants.count]
 
         case .taper:
-            workPhases = (4, 120, 120, "4×2min moderate / 2min jog")
+            workPhases = (4, 120, 120, "4×2min at threshold (Z3) / 2min jog")
 
         default:
-            workPhases = (5, 180, 120, "5×3min moderate / 2min jog")
+            workPhases = (5, 180, 120, "5×3min at threshold (Z3) / 2min jog")
         }
 
         let work = self.phase(.work, duration: workPhases.workSec, intensity: intensity, reps: workPhases.reps, notes: nil)
@@ -108,47 +122,47 @@ enum WorkoutProgressionEngine {
 
         switch trainingPhase {
         case .base:
-            // Aerobic climbing: longer efforts, moderate grade, progressive reps
+            // Aerobic climbing at threshold — progressive reps and duration
             switch weekInPhase {
             case 0...1:
-                workPhases = (3, 480, 300, "3×8min moderate climb / 5min jog down", "Aerobic climbing")
+                workPhases = (3, 480, 300, "3×8min climb at threshold (Z3) / 5min jog down", "Aerobic climbing")
             case 2...3:
-                workPhases = (4, 480, 300, "4×8min moderate climb / 5min jog down", "Aerobic climbing")
+                workPhases = (4, 480, 300, "4×8min climb at threshold (Z3) / 5min jog down", "Aerobic climbing")
             case 4...5:
-                workPhases = (4, 600, 360, "4×10min moderate climb / 6min jog down", "Endurance climbing")
+                workPhases = (4, 600, 360, "4×10min climb at threshold (Z3) / 6min jog down", "Endurance climbing")
             default:
-                workPhases = (5, 600, 360, "5×10min moderate climb / 6min jog down", "Endurance climbing")
+                workPhases = (5, 600, 360, "5×10min climb at threshold (Z3) / 6min jog down", "Endurance climbing")
             }
 
         case .build:
-            // Mixed efforts: increasing grade and intensity
+            // VO2max climbing — increasing grade and intensity
             switch weekInPhase {
             case 0...1:
-                workPhases = (4, 240, 180, "4×4min hard climb / 3min jog down", "Hill repeats")
+                workPhases = (4, 240, 180, "4×4min climb at VO2max (Z4) / 3min jog down", "Hill repeats")
             case 2...3:
-                workPhases = (5, 240, 180, "5×4min hard climb / 3min jog down", "Hill repeats")
+                workPhases = (5, 240, 180, "5×4min climb at VO2max (Z4) / 3min jog down", "Hill repeats")
             case 4...5:
-                workPhases = (6, 180, 120, "6×3min steep climb / 2min jog down", "Steep repeats")
+                workPhases = (6, 180, 120, "6×3min steep climb at VO2max (Z4) / 2min jog down", "Steep repeats")
             default:
-                workPhases = (7, 180, 120, "7×3min steep climb / 2min jog down", "Steep repeats")
+                workPhases = (7, 180, 120, "7×3min steep climb at VO2max (Z4) / 2min jog down", "Steep repeats")
             }
 
         case .peak:
-            // Short explosive efforts: steep grade, race-specific
+            // Short explosive efforts — steep grade, race-specific
             switch weekInPhase {
             case 0...1:
-                workPhases = (6, 180, 120, "6×3min hard climb / 2min jog down", "Power climbing")
+                workPhases = (6, 180, 120, "6×3min climb at VO2max (Z4) / 2min jog down", "Power climbing")
             case 2...3:
-                workPhases = (8, 120, 120, "8×2min max effort climb / 2min jog down", "Max effort climbing")
+                workPhases = (8, 120, 120, "8×2min max effort climb (Z5) / 2min jog down", "Max effort climbing")
             default:
-                workPhases = (10, 90, 90, "10×90s max effort climb / 90s jog down", "Sprint climbing")
+                workPhases = (10, 90, 90, "10×90s max effort climb (Z5) / 90s jog down", "Sprint climbing")
             }
 
         case .taper:
-            workPhases = (3, 180, 180, "3×3min moderate climb / 3min jog down", "Maintenance climbing")
+            workPhases = (3, 180, 180, "3×3min climb at threshold (Z3) / 3min jog down", "Maintenance climbing")
 
         case .recovery, .race:
-            workPhases = (2, 240, 240, "2×4min easy climb / 4min jog down", "Easy climbing")
+            workPhases = (2, 240, 240, "2×4min easy climb (Z2) / 4min jog down", "Easy climbing")
         }
 
         let workIntensity: Intensity = (trainingPhase == .base || trainingPhase == .recovery) ? .moderate : intensity

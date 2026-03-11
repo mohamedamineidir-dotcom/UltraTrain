@@ -29,15 +29,38 @@ extension SessionTemplateGenerator {
     // MARK: - Base
 
     static func baseTemplates(experience: ExperienceLevel) -> [SessionTemplate] {
-        [
-            tpl(0, .rest, .easy, 0, "Rest day. Focus on sleep and mobility work."),
-            tpl(1, .recovery, .easy, 0.10, "Easy recovery run at conversational pace. Keep heart rate in Zone 1-2."),
-            tpl(2, .rest, .easy, 0, "Rest day. Light stretching or yoga recommended."),
-            tpl(3, .tempo, .moderate, 0.15, "Tempo run at comfortably hard pace. Maintain steady effort in Zone 3."),
-            tpl(4, .rest, .easy, 0, "Rest day. Prepare gear and nutrition for the long run."),
-            tplTime(5, .longRun, .easy, 0.30, "Long run at easy pace. Practice race-day nutrition strategy. Stay in Zone 2."),
-            crossTrainingOrAlternative(day: 6, experience: experience)
-        ]
+        switch experience {
+        case .beginner:
+            return [
+                tpl(0, .recovery, .easy, 0.10, "Easy recovery run at conversational pace. Stay in Zone 2."),
+                tpl(1, .rest, .easy, 0, "Rest day. Focus on sleep and mobility work."),
+                tpl(2, .intervals, .moderate, 0.10, "Intervals at threshold (Zone 3). Build aerobic speed."),
+                tpl(3, .rest, .easy, 0, "Rest day. Light stretching or yoga recommended."),
+                tpl(4, .tempo, .moderate, 0.12, "Tempo run at threshold (Zone 3). Steady effort."),
+                tpl(5, .rest, .easy, 0, "Rest day. Prepare gear and nutrition for the long run."),
+                tplTime(6, .longRun, .easy, 0.30, "Long run at easy pace (Zone 2). Practice race-day nutrition."),
+            ]
+        case .intermediate:
+            return [
+                tpl(0, .recovery, .easy, 0.08, "Easy recovery run. Conversational pace, Zone 2."),
+                tpl(1, .intervals, .moderate, 0.12, "Intervals at threshold (Zone 3). Build aerobic speed."),
+                tpl(2, .rest, .easy, 0, "Rest day. Light stretching or yoga."),
+                tpl(3, .verticalGain, .moderate, 0.12, "Vertical gain at threshold (Zone 3). Build climbing endurance."),
+                tpl(4, .rest, .easy, 0, "Rest day. Prepare gear for the long run."),
+                tpl(5, .tempo, .moderate, 0.12, "Tempo run at threshold (Zone 3). Sustained effort."),
+                tplTime(6, .longRun, .easy, 0.30, "Long run at easy pace (Zone 2). Practice race-day nutrition."),
+            ]
+        case .advanced, .elite:
+            return [
+                tpl(0, .recovery, .easy, 0.08, "Easy recovery run. Conversational pace, Zone 2."),
+                tpl(1, .intervals, .moderate, 0.12, "Intervals at threshold (Zone 3). Build aerobic speed."),
+                tpl(2, .recovery, .easy, 0.06, "Easy recovery jog to flush legs."),
+                tpl(3, .verticalGain, .moderate, 0.12, "Vertical gain at threshold (Zone 3). Build climbing endurance."),
+                tpl(4, .rest, .easy, 0, "Rest day. Prepare for the weekend block."),
+                tplTime(5, .longRun, .easy, 0.28, "Long run at easy pace (Zone 2). Practice race-day nutrition."),
+                crossTrainingOrAlternative(day: 6, experience: experience),
+            ]
+        }
     }
 
     // MARK: - Build
@@ -53,19 +76,19 @@ extension SessionTemplateGenerator {
 
         if wantsDoubleVertical && !wantsB2B {
             templates += [
-                tpl(1, .verticalGain, .hard, 0.12, "VO2max hill repeats. Short, intense climbs to build power."),
-                tpl(2, .recovery, .easy, 0.08, "Easy recovery run. Flush legs from yesterday's effort."),
-                tpl(3, .verticalGain, .moderate, 0.15, "Endurance climbing. Longer moderate efforts to build vertical stamina."),
+                tpl(1, .verticalGain, .hard, 0.12, "Hill repeats at VO2max (Zone 4). Short, intense climbs."),
+                tpl(2, .recovery, .easy, 0.08, "Easy recovery run (Zone 2). Flush legs."),
+                tpl(3, .verticalGain, .moderate, 0.15, "Endurance climbing at threshold (Zone 3). Build vertical stamina."),
             ]
         } else {
             templates += [
-                tpl(1, .intervals, .hard, 0.12, "Interval session. Build speed and VO2max."),
-                tpl(2, .recovery, .easy, 0.08, "Easy recovery run. Flush legs from yesterday's intervals."),
+                tpl(1, .intervals, .hard, 0.12, "Intervals at VO2max (Zone 4). Build speed and power."),
+                tpl(2, .recovery, .easy, 0.08, "Easy recovery run (Zone 2). Flush legs."),
             ]
             if experience == .advanced || experience == .elite {
-                templates.append(tpl(3, .verticalGain, .hard, 0.15, "Vertical gain session. Build climbing strength."))
+                templates.append(tpl(3, .verticalGain, .hard, 0.15, "Vertical gain at VO2max (Zone 4). Build climbing strength."))
             } else {
-                templates.append(tpl(3, .tempo, .moderate, 0.15, "Tempo run with sustained effort. Practice pacing for race intensity."))
+                templates.append(tpl(3, .verticalGain, .moderate, 0.15, "Vertical gain at threshold (Zone 3). Build climbing endurance."))
             }
         }
 
@@ -73,12 +96,12 @@ extension SessionTemplateGenerator {
 
         if wantsB2B {
             templates += [
-                tplTime(5, .longRun, .easy, 0.25, "Back-to-back day 1. Moderate long run building fatigue for tomorrow."),
-                tplTime(6, .backToBack, .easy, 0.30, "Back-to-back day 2. Long run on tired legs to simulate ultra fatigue."),
+                tplTime(5, .longRun, .easy, 0.25, "B2B Day 1: Long run building fatigue for tomorrow. Easy pace (Zone 2)."),
+                tplTime(6, .backToBack, .easy, 0.30, "B2B Day 2: Long run on tired legs. Simulate ultra fatigue. Easy pace (Zone 2)."),
             ]
         } else {
             templates += [
-                tplTime(5, .longRun, .easy, 0.30, "Long run on trail terrain. Include elevation if possible. Practice nutrition."),
+                tplTime(5, .longRun, .easy, 0.30, "Long run on trail terrain (Zone 2). Include elevation. Practice nutrition."),
                 crossTrainingOrAlternative(day: 6, experience: experience),
             ]
         }
@@ -97,20 +120,20 @@ extension SessionTemplateGenerator {
 
         if wantsB2B {
             templates += [
-                tpl(1, .intervals, .hard, 0.10, "Short sharp intervals. Maintain sharpness."),
-                tpl(2, .recovery, .easy, 0.08, "Easy recovery run. Focus on form and relaxation."),
-                tpl(3, .recovery, .easy, 0.07, "Light recovery jog. Keep legs loose."),
+                tpl(1, .intervals, .hard, 0.10, "Short sharp intervals at VO2max (Zone 4). Maintain sharpness."),
+                tpl(2, .recovery, .easy, 0.08, "Easy recovery run (Zone 2). Focus on form."),
+                tpl(3, .recovery, .easy, 0.07, "Light recovery jog (Zone 2). Keep legs loose."),
                 tpl(4, .rest, .easy, 0, "Rest day. Pre-hydrate for the weekend block."),
-                tplTime(5, .longRun, .moderate, 0.22, "Back-to-back day 1. Steady effort building fatigue."),
-                tplTime(6, .backToBack, .moderate, 0.28, "Back-to-back day 2. Peak simulation on tired legs. Full nutrition rehearsal."),
+                tplTime(5, .longRun, .moderate, 0.22, "B2B Day 1: Long run at steady effort (Zone 3). Building fatigue."),
+                tplTime(6, .backToBack, .moderate, 0.28, "B2B Day 2: Long run on tired legs (Zone 3). Full nutrition rehearsal."),
             ]
         } else {
             templates += [
-                tpl(1, .intervals, .hard, 0.10, "Short sharp intervals. Maintain sharpness."),
-                tpl(2, .recovery, .easy, 0.08, "Easy recovery run. Focus on form and relaxation."),
-                tpl(3, .verticalGain, .hard, 0.12, "Vertical gain work on steep terrain. Practice power hiking."),
-                tpl(4, .rest, .easy, 0, "Rest day. Pre-hydrate for the weekend block."),
-                tplTime(5, .longRun, .moderate, 0.30, "Peak long run simulating race conditions. Full nutrition rehearsal."),
+                tpl(1, .intervals, .hard, 0.10, "Intervals at VO2max (Zone 4). Stay sharp."),
+                tpl(2, .recovery, .easy, 0.08, "Easy recovery run (Zone 2). Focus on form."),
+                tpl(3, .verticalGain, .hard, 0.12, "Vertical gain at VO2max (Zone 4). Power hiking."),
+                tpl(4, .rest, .easy, 0, "Rest day. Pre-hydrate for the weekend."),
+                tplTime(5, .longRun, .moderate, 0.30, "Peak long run (Zone 2-3). Simulate race conditions. Full nutrition rehearsal."),
                 crossTrainingOrAlternative(day: 6, experience: experience),
             ]
         }
@@ -187,11 +210,12 @@ extension SessionTemplateGenerator {
 
     static func shouldHaveB2B(phase: TrainingPhase, experience: ExperienceLevel, raceEffectiveKm: Double) -> Bool {
         switch (phase, experience) {
-        case (.peak, .intermediate): raceEffectiveKm >= 100
-        case (.peak, .advanced):     raceEffectiveKm >= 80
-        case (.peak, .elite):        raceEffectiveKm >= 80
-        case (.build, .advanced):    raceEffectiveKm >= 100
-        case (.build, .elite):       raceEffectiveKm >= 80
+        case (.peak, .intermediate): raceEffectiveKm >= 80
+        case (.peak, .advanced):     raceEffectiveKm >= 60
+        case (.peak, .elite):        raceEffectiveKm >= 60
+        case (.build, .intermediate): raceEffectiveKm >= 100
+        case (.build, .advanced):    raceEffectiveKm >= 80
+        case (.build, .elite):       raceEffectiveKm >= 60
         default: false
         }
     }

@@ -39,12 +39,14 @@ enum SessionTemplateGenerator {
         }
 
         let adapted = adaptTemplates(templates, preferredRuns: preferredRunsPerWeek)
+        // Ensure long runs/B2B are always at the end of the week
+        let finalTemplates = ensureLongRunsLast(adapted)
         // Use fractions directly — do NOT divide by totalFraction to avoid inflation
         // when rest days reduce the sum below 1.0
         // Weekly time budget: estimate from volume at ~6.5 min/km avg pace
         let weeklyTimeBudget = volume.targetVolumeKm * 6.5 * 60.0 // seconds
 
-        let sessions = adapted.map { template in
+        let sessions = finalTemplates.map { template in
             let distance: Double
             let duration: TimeInterval
             let elevation: Double
@@ -67,6 +69,7 @@ enum SessionTemplateGenerator {
 
             // Generate workout for quality sessions
             var workoutId: UUID?
+            var sessionDescription = template.description
             if template.type == .intervals || template.type == .verticalGain {
                 let workout = WorkoutProgressionEngine.workout(
                     type: template.type,
@@ -77,6 +80,8 @@ enum SessionTemplateGenerator {
                 )
                 workouts.append(workout)
                 workoutId = workout.id
+                // Use the specific workout format as the description
+                sessionDescription = workout.descriptionText
             }
 
             return TrainingSession(
@@ -87,7 +92,7 @@ enum SessionTemplateGenerator {
                 plannedElevationGainM: (elevation * 10).rounded() / 10,
                 plannedDuration: duration,
                 intensity: template.intensity,
-                description: template.description,
+                description: sessionDescription,
                 nutritionNotes: nutritionNotes(duration: duration, distance: distance),
                 isCompleted: false,
                 isSkipped: false,
@@ -241,6 +246,35 @@ enum SessionTemplateGenerator {
         }
 
         return result
+    }
+
+    // MARK: - Ensure Long Runs Last
+
+    /// Re-sort a full 7-day week so long runs and B2B sessions occupy the latest day slots.
+    private static func ensureLongRunsLast(_ templates: [SessionTemplate]) -> [SessionTemplate] {
+        guard templates.count == 7 else { return templates }
+
+        // Find long run / B2B templates and non-long-run active templates
+        var longRuns: [SessionTemplate] = []
+        var others: [SessionTemplate] = []
+        var rests: [SessionTemplate] = []
+
+        for t in templates {
+            if t.type == .longRun || t.type == .backToBack {
+                longRuns.append(t)
+            } else if t.type == .rest || t.volumeFraction == 0 {
+                rests.append(t)
+            } else {
+                others.append(t)
+            }
+        }
+
+        // If long runs are already on the last active days, keep as-is
+        if longRuns.isEmpty { return templates }
+
+        // Rebuild: others first, then long runs, fill rest
+        let active = others + longRuns
+        return buildWeek(from: active)
     }
 
     // MARK: - Helpers
