@@ -10,6 +10,8 @@ struct DashboardHeroCard: View {
     let weeklyProgress: (completed: Int, total: Int)
     let weeklyDistanceKm: Double
     let weeklyTargetDistanceKm: Double
+    var fitnessStatus: String?
+    var formDescription: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.md) {
@@ -63,6 +65,16 @@ struct DashboardHeroCard: View {
                 }
                 .font(.caption)
                 .foregroundStyle(.white.opacity(0.85))
+
+                if let fitness = fitnessStatus {
+                    Label(fitness, systemImage: "heart.fill")
+                        .font(.caption.bold())
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(.white.opacity(0.2))
+                        .clipShape(Capsule())
+                }
             }
         }
         .padding(Theme.Spacing.lg)
@@ -76,16 +88,25 @@ struct DashboardHeroCard: View {
     private var progressRing: some View {
         ZStack {
             Circle()
-                .stroke(.white.opacity(0.3), lineWidth: 4)
+                .stroke(.white.opacity(0.2), lineWidth: 5)
             Circle()
                 .trim(from: 0, to: progressFraction)
-                .stroke(.white, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                .stroke(
+                    .white,
+                    style: StrokeStyle(lineWidth: 5, lineCap: .round)
+                )
                 .rotationEffect(.degrees(-90))
-            Text("\(weeklyProgress.completed)/\(weeklyProgress.total)")
-                .font(.caption2.bold())
-                .foregroundStyle(.white)
+                .shadow(color: .white.opacity(0.5), radius: 4)
+            VStack(spacing: 0) {
+                Text("\(weeklyProgress.completed)")
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                Text("/\(weeklyProgress.total)")
+                    .font(.system(size: 10, weight: .medium, design: .rounded))
+                    .opacity(0.8)
+            }
+            .foregroundStyle(.white)
         }
-        .frame(width: 52, height: 52)
+        .frame(width: 56, height: 56)
     }
 
     private var progressFraction: Double {

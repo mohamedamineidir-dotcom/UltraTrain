@@ -16,6 +16,7 @@ final class TrainingPlanViewModel {
     let fitnessRepository: any FitnessRepository
     let widgetDataWriter: WidgetDataWriter
     private let hapticService: any HapticServiceProtocol
+    private let subscriptionService: (any SubscriptionServiceProtocol)?
 
     // MARK: - State
 
@@ -27,6 +28,7 @@ final class TrainingPlanViewModel {
     var isGenerating = false
     var error: String?
     var showRegenerateConfirmation = false
+    var subscriptionStatus: SubscriptionStatus?
     var adjustmentRecommendations: [PlanAdjustmentRecommendation] = []
     var dismissedRecommendationIds: Set<UUID> = []
     var isApplyingAdjustment = false
@@ -42,7 +44,8 @@ final class TrainingPlanViewModel {
         nutritionAdvisor: any SessionNutritionAdvisor,
         fitnessRepository: any FitnessRepository,
         widgetDataWriter: WidgetDataWriter,
-        hapticService: any HapticServiceProtocol
+        hapticService: any HapticServiceProtocol,
+        subscriptionService: (any SubscriptionServiceProtocol)? = nil
     ) {
         self.planRepository = planRepository
         self.athleteRepository = athleteRepository
@@ -53,6 +56,7 @@ final class TrainingPlanViewModel {
         self.fitnessRepository = fitnessRepository
         self.widgetDataWriter = widgetDataWriter
         self.hapticService = hapticService
+        self.subscriptionService = subscriptionService
     }
 
     // MARK: - Load
@@ -70,6 +74,8 @@ final class TrainingPlanViewModel {
             self.error = error.localizedDescription
             Logger.training.error("Failed to load plan: \(error)")
         }
+
+        subscriptionStatus = await subscriptionService?.refreshStatus()
 
         isLoading = false
         checkForAdjustments()
@@ -138,6 +144,50 @@ final class TrainingPlanViewModel {
         }
 
         isGenerating = false
+    }
+
+    // MARK: - Subscription-based Visibility
+
+    var visibleWeeks: [TrainingWeek] {
+        guard let plan else { return [] }
+
+        // No subscription service → show all (e.g. debug/dev)
+        guard let status = subscriptionStatus else { return plan.weeks }
+
+        // Inactive subscription → teaser (first week only)
+        guard status.isActive else {
+            return Array(plan.weeks.prefix(1))
+        }
+
+        guard let period = status.period else { return plan.weeks }
+
+        switch period {
+        case .yearly:
+            return plan.weeks
+        case .monthly:
+            return weeksInWindow(plan: plan, futureWeekCount: 4)
+        case .quarterly:
+            return weeksInWindow(plan: plan, futureWeekCount: 12)
+        }
+    }
+
+    var hasLockedWeeks: Bool {
+        guard let plan else { return false }
+        return visibleWeeks.count < plan.weeks.count
+    }
+
+    var lockedWeekCount: Int {
+        guard let plan else { return 0 }
+        return plan.weeks.count - visibleWeeks.count
+    }
+
+    private func weeksInWindow(plan: TrainingPlan, futureWeekCount: Int) -> [TrainingWeek] {
+        guard let currentIndex = plan.weeks.firstIndex(where: { $0.containsToday }) else {
+            // Before plan start → show first (futureWeekCount + 1) weeks
+            return Array(plan.weeks.prefix(futureWeekCount + 1))
+        }
+        let endIndex = min(currentIndex + futureWeekCount + 1, plan.weeks.count)
+        return Array(plan.weeks[0..<endIndex])
     }
 
     // MARK: - Computed

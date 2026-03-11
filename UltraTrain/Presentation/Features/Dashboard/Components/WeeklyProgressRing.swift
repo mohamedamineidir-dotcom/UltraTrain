@@ -16,19 +16,23 @@ struct WeeklyProgressRing: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(Theme.Colors.secondaryLabel.opacity(0.2), lineWidth: 6)
+                .stroke(Theme.Colors.secondaryLabel.opacity(0.12), lineWidth: 6)
 
             Circle()
                 .trim(from: 0, to: progress)
-                .stroke(progressColor, style: StrokeStyle(lineWidth: 6, lineCap: .round))
+                .stroke(
+                    progressGradient,
+                    style: StrokeStyle(lineWidth: 6, lineCap: .round)
+                )
                 .rotationEffect(.degrees(-90))
-                .animation(.easeInOut(duration: 0.5), value: progress)
+                .shadow(color: progressColor.opacity(0.4), radius: 3)
+                .animation(.easeInOut(duration: 0.6), value: progress)
 
             VStack(spacing: 0) {
                 Text(percentText)
-                    .font(.system(.caption, design: .rounded).bold())
+                    .font(.system(size: 15, weight: .bold, design: .rounded))
                 Text("km")
-                    .font(.system(.caption2, design: .rounded))
+                    .font(.system(size: 10, design: .rounded))
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
         }
@@ -37,9 +41,18 @@ struct WeeklyProgressRing: View {
         .accessibilityLabel("\(Int(progress * 100)) percent of weekly distance target, \(String(format: "%.1f", actual)) of \(String(format: "%.1f", target)) kilometers")
     }
 
+    private var progressGradient: AngularGradient {
+        AngularGradient(
+            colors: [progressColor.opacity(0.6), progressColor],
+            center: .center,
+            startAngle: .degrees(-90),
+            endAngle: .degrees(-90 + 360 * progress)
+        )
+    }
+
     private var progressColor: Color {
         if progress >= 0.8 { return Theme.Colors.success }
         if progress >= 0.5 { return Theme.Colors.warning }
-        return Theme.Colors.primary
+        return Theme.Colors.accentColor
     }
 }

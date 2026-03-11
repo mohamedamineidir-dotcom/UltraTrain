@@ -8,6 +8,8 @@ struct SettingsView: View {
     let appSettingsRepository: any AppSettingsRepository
     let emergencyContactRepository: (any EmergencyContactRepository)?
     let referralRepository: (any ReferralRepository)?
+    let subscriptionService: (any SubscriptionServiceProtocol)?
+    @State var showingPaywall = false
     var onLogout: (() -> Void)?
 
     init(
@@ -26,6 +28,7 @@ struct SettingsView: View {
         healthKitImportService: (any HealthKitImportServiceProtocol)? = nil,
         emergencyContactRepository: (any EmergencyContactRepository)? = nil,
         referralRepository: (any ReferralRepository)? = nil,
+        subscriptionService: (any SubscriptionServiceProtocol)? = nil,
         authService: (any AuthServiceProtocol)? = nil,
         privacyTrackingService: (any PrivacyTrackingServiceProtocol)? = nil,
         onLogout: (() -> Void)? = nil
@@ -33,6 +36,7 @@ struct SettingsView: View {
         self.appSettingsRepository = appSettingsRepository
         self.emergencyContactRepository = emergencyContactRepository
         self.referralRepository = referralRepository
+        self.subscriptionService = subscriptionService
         self.onLogout = onLogout
         _viewModel = State(initialValue: SettingsViewModel(
             athleteRepository: athleteRepository,
@@ -75,6 +79,9 @@ struct SettingsView: View {
                 dataManagementSection
                 if referralRepository != nil {
                     referralSection
+                }
+                if subscriptionService != nil {
+                    subscriptionSection
                 }
                 accountSection
                 aboutSection

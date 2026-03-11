@@ -9,8 +9,15 @@ struct HeartRateStepView: View {
                 // Header
                 VStack(spacing: Theme.Spacing.sm) {
                     Image(systemName: "heart.fill")
-                        .font(.system(size: 48))
-                        .foregroundStyle(.red)
+                        .font(.system(size: 32))
+                        .foregroundStyle(.white)
+                        .frame(width: 64, height: 64)
+                        .background(
+                            Circle().fill(
+                                LinearGradient(colors: [.red, Color(red: 0.85, green: 0.2, blue: 0.2)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                            )
+                        )
+                        .shadow(color: Color.red.opacity(0.3), radius: 8, y: 4)
 
                     Text("Heart Rate")
                         .font(.title.bold())
@@ -34,7 +41,7 @@ struct HeartRateStepView: View {
                             .font(.caption)
                             .foregroundStyle(Theme.Colors.secondaryLabel)
                     }
-                    .cardStyle()
+                    .onboardingCardStyle()
 
                     VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                         LabeledIntStepper(
@@ -47,7 +54,7 @@ struct HeartRateStepView: View {
                             .font(.caption)
                             .foregroundStyle(Theme.Colors.secondaryLabel)
                     }
-                    .cardStyle()
+                    .onboardingCardStyle()
                 }
                 .padding(.horizontal, Theme.Spacing.lg)
             }

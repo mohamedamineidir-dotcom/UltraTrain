@@ -71,6 +71,7 @@ extension AppDependencyContainer {
         )
         apiClient = client
         authService = auth
+        subscriptionService = SubscriptionService()
         syncService = sync
         syncStatusMonitor = SyncStatusMonitor(syncQueueService: sync)
         deviceTokenService = DeviceTokenService(apiClient: client)

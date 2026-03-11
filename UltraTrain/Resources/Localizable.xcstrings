@@ -64,6 +64,12 @@
         }
       }
     },
+    "/ %@" : {
+
+    },
+    "/%lld" : {
+
+    },
     "#%lld" : {
       "localizations" : {
         "fr" : {
@@ -1080,6 +1086,9 @@
         }
       }
     },
+    "%lld locked weeks. Upgrade to view." : {
+
+    },
     "%lld m D+" : {
       "localizations" : {
         "fr" : {
@@ -1149,6 +1158,9 @@
           }
         }
       }
+    },
+    "%lld more weeks" : {
+
     },
     "%lld ms" : {
       "localizations" : {
@@ -1605,6 +1617,9 @@
         }
       }
     },
+    "|" : {
+
+    },
     "~%lld kcal consumed" : {
       "localizations" : {
         "fr" : {
@@ -1793,6 +1808,9 @@
           }
         }
       }
+    },
+    "A-Race" : {
+
     },
     "Abandon" : {
       "localizations" : {
@@ -2988,6 +3006,9 @@
         }
       }
     },
+    "Biological Sex" : {
+
+    },
     "Body Metrics" : {
       "localizations" : {
         "fr" : {
@@ -4099,9 +4120,6 @@
           }
         }
       }
-    },
-    "Date achieved" : {
-
     },
     "Date of Birth" : {
       "localizations" : {
@@ -5232,6 +5250,9 @@
         }
       }
     },
+    "Enter at least one PB to calibrate your training paces." : {
+
+    },
     "Enter the 6-digit code and your new password" : {
       "localizations" : {
         "fr" : {
@@ -5557,6 +5578,9 @@
           }
         }
       }
+    },
+    "Female" : {
+
     },
     "Fetches the latest heart rate, weight, and workout data from Apple Health" : {
       "localizations" : {
@@ -6246,9 +6270,6 @@
           }
         }
       }
-    },
-    "Help us calibrate your training paces. Recent results are weighted more heavily." : {
-
     },
     "Helps us calibrate your training zones and nutrition." : {
 
@@ -7466,6 +7487,9 @@
         }
       }
     },
+    "Male" : {
+
+    },
     "Manage contacts who will be notified in an emergency" : {
       "localizations" : {
         "fr" : {
@@ -8433,9 +8457,6 @@
         }
       }
     },
-    "Not set" : {
-
-    },
     "Notes" : {
       "localizations" : {
         "fr" : {
@@ -8499,7 +8520,7 @@
         }
       }
     },
-    "Now" : {
+    "NOW" : {
 
     },
     "Nutrition" : {
@@ -8728,6 +8749,7 @@
       }
     },
     "Opens achievements view" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -9323,6 +9345,457 @@
         }
       }
     },
+    "paywall.feature.coaching" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nutrition strategy, finish predictions & coaching"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nutrition, prédictions de temps et coaching"
+          }
+        }
+      }
+    },
+    "paywall.feature.plans" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personalized training plans for any ultra distance"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plans d'entraînement personnalisés pour toute distance"
+          }
+        }
+      }
+    },
+    "paywall.feature.sync" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sync with Apple Watch, Strava, and HealthKit"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Synchronise avec Apple Watch, Strava et HealthKit"
+          }
+        }
+      }
+    },
+    "paywall.freeWeek" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(1 week free)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(1 semaine gratuite)"
+          }
+        }
+      }
+    },
+    "paywall.loadError" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not load subscription plans. Please check your connection."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de charger les abonnements. Vérifie ta connexion."
+          }
+        }
+      }
+    },
+    "paywall.monthly" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monthly"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mensuel"
+          }
+        }
+      }
+    },
+    "paywall.noSubscriptionFound" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No active subscription found."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun abonnement actif trouvé."
+          }
+        }
+      }
+    },
+    "paywall.perWeek %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@/week"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@/semaine"
+          }
+        }
+      }
+    },
+    "paywall.pricesInEUR" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All prices shown in EUR"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tous les prix sont indiqués en EUR"
+          }
+        }
+      }
+    },
+    "paywall.purchaseError" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Purchase failed. Please try again."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'achat a échoué. Réessaie."
+          }
+        }
+      }
+    },
+    "paywall.quarterly" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quarterly"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trimestriel"
+          }
+        }
+      }
+    },
+    "paywall.restore" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore Purchases"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restaurer les achats"
+          }
+        }
+      }
+    },
+    "paywall.restoreError" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore failed. Please try again."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La restauration a échoué. Réessaie."
+          }
+        }
+      }
+    },
+    "paywall.save %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save %lld%%"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Économise %lld%%"
+          }
+        }
+      }
+    },
+    "paywall.startTrial" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start Free Trial"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer l'essai gratuit"
+          }
+        }
+      }
+    },
+    "paywall.step.billing" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Day 7 — Billing starts"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour 7 — Début de la facturation"
+          }
+        }
+      }
+    },
+    "paywall.step.billingDetail" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can cancel anytime."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu peux te désabonner à tout moment."
+          }
+        }
+      }
+    },
+    "paywall.step.program" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create your program"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crée ton programme"
+          }
+        }
+      }
+    },
+    "paywall.step.programDone" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done! Your plan is ready."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fait ! Ton plan est prêt."
+          }
+        }
+      }
+    },
+    "paywall.step.reminder" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Day 5 — Reminder"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour 5 — Rappel"
+          }
+        }
+      }
+    },
+    "paywall.step.reminderDetail" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We'll remind you before billing. Cancel 24 hours before if you don't want to be charged."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On te rappellera avant la facturation. Annule 24h avant si tu ne veux pas être facturé."
+          }
+        }
+      }
+    },
+    "paywall.step.today" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today — Instant access"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aujourd'hui — Accès instantané"
+          }
+        }
+      }
+    },
+    "paywall.step.todayDetail" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start training immediately."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commence l'entraînement immédiatement."
+          }
+        }
+      }
+    },
+    "paywall.subscribe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscribe Now"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "S'abonner"
+          }
+        }
+      }
+    },
+    "paywall.subtitle %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, start your personalized training journey"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, commence ton parcours d'entraînement personnalisé"
+          }
+        }
+      }
+    },
+    "paywall.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock UltraTrain"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Débloque UltraTrain"
+          }
+        }
+      }
+    },
+    "paywall.trialTitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How your free trial works"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comment fonctionne ton essai gratuit"
+          }
+        }
+      }
+    },
+    "paywall.yearly" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yearly"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annuel"
+          }
+        }
+      }
+    },
+    "Peak: %@" : {
+
+    },
     "Pending" : {
       "localizations" : {
         "fr" : {
@@ -9855,6 +10328,7 @@
       }
     },
     "Profile Summary" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -11859,6 +12333,38 @@
         }
       }
     },
+    "settings.manageSubscription" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manage Subscription"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gérer l'abonnement"
+          }
+        }
+      }
+    },
+    "settings.subscription" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscription"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abonnement"
+          }
+        }
+      }
+    },
     "Setup" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -12577,6 +13083,7 @@
       }
     },
     "Sync heart rate, body weight, and running workouts." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -12585,6 +13092,9 @@
           }
         }
       }
+    },
+    "Sync heart rate, weight, and workouts." : {
+
     },
     "Sync Queue" : {
       "localizations" : {
@@ -12656,6 +13166,9 @@
         }
       }
     },
+    "Tap to add" : {
+
+    },
     "Tap to cancel the SOS countdown" : {
       "localizations" : {
         "fr" : {
@@ -12717,6 +13230,7 @@
       }
     },
     "Target: %@ · %@ D+" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12764,6 +13278,9 @@
           }
         }
       }
+    },
+    "Terms" : {
+
     },
     "Terms of Service" : {
       "localizations" : {
@@ -12977,6 +13494,9 @@
           }
         }
       }
+    },
+    "Time is faster than the world record" : {
+
     },
     "Time Mode" : {
       "localizations" : {
@@ -13637,6 +14157,9 @@
         }
       }
     },
+    "Upgrade your plan to see your full training schedule" : {
+
+    },
     "Upload failed: %@" : {
       "localizations" : {
         "fr" : {
@@ -13676,6 +14199,9 @@
           }
         }
       }
+    },
+    "Used for accurate calorie calculations." : {
+
     },
     "Used for weather forecasts in your race day estimate." : {
 
@@ -14128,6 +14654,9 @@
         }
       }
     },
+    "Weekly Progress" : {
+
+    },
     "Weekly Summary" : {
       "localizations" : {
         "fr" : {
@@ -14345,6 +14874,9 @@
         }
       }
     },
+    "Workouts will be imported on launch." : {
+
+    },
     "Worst" : {
       "localizations" : {
         "fr" : {
@@ -14459,10 +14991,10 @@
         }
       }
     },
-    "Your Race Times" : {
+    "Your Profile" : {
 
     },
-    "Your recent running workouts will be imported when you tap Get Started." : {
+    "Your Race Times" : {
 
     },
     "Your Referral Code" : {
@@ -14487,6 +15019,9 @@
           }
         }
       }
+    },
+    "Your training journey starts now" : {
+
     },
     "Your ultra trail training companion" : {
       "extractionState" : "stale",

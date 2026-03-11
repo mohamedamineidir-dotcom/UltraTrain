@@ -239,6 +239,7 @@ schemes:
         UltraTrainClip: all
     run:
       config: Debug
+      storeKitConfiguration: UltraTrain/Resources/UltraTrain.storekit
     test:
       config: Debug
       gatherCoverageData: true

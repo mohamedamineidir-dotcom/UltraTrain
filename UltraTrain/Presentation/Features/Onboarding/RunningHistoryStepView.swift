@@ -44,8 +44,8 @@ struct RunningHistoryStepView: View {
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
         }
-        .tint(Theme.Colors.primary)
-        .cardStyle()
+        .tint(Theme.Colors.warmCoral)
+        .onboardingCardStyle()
         .accessibilityHint("When enabled, skips running history questions")
         .accessibilityIdentifier("onboarding.newRunnerToggle")
     }
@@ -66,7 +66,7 @@ struct RunningHistoryStepView: View {
                     in: isImperial ? 3...124 : 5...200,
                     step: isImperial ? 3 : 5
                 )
-                .tint(Theme.Colors.primary)
+                .tint(Theme.Colors.warmCoral)
                 .accessibilityLabel("Weekly distance")
                 .accessibilityValue(AccessibilityFormatters.distance(viewModel.weeklyVolumeKm, unit: viewModel.preferredUnit))
                 Text("\(Int(UnitFormatter.distanceValue(viewModel.weeklyVolumeKm, unit: viewModel.preferredUnit))) \(UnitFormatter.distanceLabel(viewModel.preferredUnit))")
@@ -75,7 +75,7 @@ struct RunningHistoryStepView: View {
                     .accessibilityHidden(true)
             }
         }
-        .cardStyle()
+        .onboardingCardStyle()
     }
 
     private var longestRunSection: some View {
@@ -92,7 +92,7 @@ struct RunningHistoryStepView: View {
                     in: isImperial ? 3...186 : 5...300,
                     step: isImperial ? 3 : 5
                 )
-                .tint(Theme.Colors.primary)
+                .tint(Theme.Colors.warmCoral)
                 .accessibilityLabel("Longest run distance")
                 .accessibilityValue(AccessibilityFormatters.distance(viewModel.longestRunKm, unit: viewModel.preferredUnit))
                 Text("\(Int(UnitFormatter.distanceValue(viewModel.longestRunKm, unit: viewModel.preferredUnit))) \(UnitFormatter.distanceLabel(viewModel.preferredUnit))")
@@ -101,7 +101,7 @@ struct RunningHistoryStepView: View {
                     .accessibilityHidden(true)
             }
         }
-        .cardStyle()
+        .onboardingCardStyle()
     }
 
     private var weeklyVolumeBinding: Binding<Double> {
@@ -155,7 +155,7 @@ struct RunningHistoryStepView: View {
                             .foregroundStyle(Theme.Colors.warning)
                     }
                 }
-                .cardStyle()
+                .onboardingCardStyle()
 
             case .loading:
                 HStack(spacing: Theme.Spacing.sm) {
@@ -165,7 +165,7 @@ struct RunningHistoryStepView: View {
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .cardStyle()
+                .onboardingCardStyle()
 
             case .imported(let weeklyKm, let longestKm):
                 VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
@@ -185,7 +185,7 @@ struct RunningHistoryStepView: View {
                         .font(.caption2)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
-                .cardStyle()
+                .onboardingCardStyle()
 
             case .noWorkouts:
                 HStack(spacing: Theme.Spacing.sm) {
@@ -200,7 +200,7 @@ struct RunningHistoryStepView: View {
                             .foregroundStyle(Theme.Colors.secondaryLabel)
                     }
                 }
-                .cardStyle()
+                .onboardingCardStyle()
             }
         }
     }

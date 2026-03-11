@@ -16,6 +16,7 @@ enum AthleteSwiftDataMapper {
         } ?? []
         let philosophy = TrainingPhilosophy(rawValue: model.trainingPhilosophyRaw) ?? .balanced
         let weightGoal = WeightGoal(rawValue: model.weightGoalRaw) ?? .maintain
+        let biologicalSex = BiologicalSex(rawValue: model.biologicalSexRaw) ?? .male
         return Athlete(
             id: model.id,
             firstName: model.firstName,
@@ -37,7 +38,12 @@ enum AthleteSwiftDataMapper {
             bio: model.bio,
             profilePhotoData: model.profilePhotoData,
             isPublicProfile: model.isPublicProfile,
-            weightGoal: weightGoal
+            weightGoal: weightGoal,
+            biologicalSex: biologicalSex,
+            vo2max: model.vo2max,
+            vmaKmh: model.vmaKmh,
+            thresholdPace60MinPerKm: model.thresholdPace60MinPerKm,
+            thresholdPace30MinPerKm: model.thresholdPace30MinPerKm
         )
     }
 
@@ -67,7 +73,12 @@ enum AthleteSwiftDataMapper {
             bio: athlete.bio,
             profilePhotoData: athlete.profilePhotoData,
             isPublicProfile: athlete.isPublicProfile,
-            weightGoalRaw: athlete.weightGoal.rawValue
+            weightGoalRaw: athlete.weightGoal.rawValue,
+            biologicalSexRaw: athlete.biologicalSex.rawValue,
+            vo2max: athlete.vo2max,
+            vmaKmh: athlete.vmaKmh,
+            thresholdPace60MinPerKm: athlete.thresholdPace60MinPerKm,
+            thresholdPace30MinPerKm: athlete.thresholdPace30MinPerKm
         )
     }
 }

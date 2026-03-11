@@ -9,8 +9,11 @@ struct ExperienceStepView: View {
                 // Header
                 VStack(spacing: Theme.Spacing.sm) {
                     Image(systemName: "figure.run")
-                        .font(.system(size: 48))
-                        .foregroundStyle(Color.accentColor)
+                        .font(.system(size: 32))
+                        .foregroundStyle(.white)
+                        .frame(width: 64, height: 64)
+                        .background(Circle().fill(Theme.Gradients.warmCoralCTA))
+                        .shadow(color: Theme.Colors.warmCoral.opacity(0.3), radius: 8, y: 4)
 
                     Text("Experience Level")
                         .font(.title.bold())
@@ -44,7 +47,7 @@ struct ExperienceStepView: View {
                         }
                         .pickerStyle(.segmented)
                     }
-                    .cardStyle()
+                    .onboardingCardStyle()
                 }
                 .padding(.horizontal, Theme.Spacing.lg)
             }

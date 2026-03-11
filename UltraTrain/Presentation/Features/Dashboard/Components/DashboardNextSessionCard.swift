@@ -28,7 +28,7 @@ struct DashboardNextSessionCard: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .cardStyle()
+        .appCardStyle()
     }
 
     private func sessionContent(_ session: TrainingSession) -> some View {
@@ -74,9 +74,10 @@ struct DashboardNextSessionCard: View {
                 Label("Start Run", systemImage: "figure.run")
                     .font(.subheadline.bold())
                     .frame(maxWidth: .infinity)
+                    .padding(.vertical, 4)
             }
             .buttonStyle(.borderedProminent)
-            .controlSize(.small)
+            .controlSize(.regular)
             .accessibilityIdentifier("dashboard.startRunButton")
             .accessibilityHint("Starts GPS tracking for this session")
         }

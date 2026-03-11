@@ -17,6 +17,7 @@ struct EditAthleteSheet: View {
     @State private var longestRunKm: Double
     @State private var preferredUnit: UnitPreference
     @State private var weightGoal: WeightGoal
+    @State private var biologicalSex: BiologicalSex
 
     init(athlete: Athlete, onSave: @escaping (Athlete) -> Void) {
         self.athlete = athlete
@@ -33,6 +34,7 @@ struct EditAthleteSheet: View {
         _longestRunKm = State(initialValue: athlete.longestRunKm)
         _preferredUnit = State(initialValue: athlete.preferredUnit)
         _weightGoal = State(initialValue: athlete.weightGoal)
+        _biologicalSex = State(initialValue: athlete.biologicalSex)
     }
 
     var body: some View {
@@ -40,6 +42,7 @@ struct EditAthleteSheet: View {
             Form {
                 nameSection
                 dateOfBirthSection
+                biologicalSexSection
                 bodyMetricsSection
                 weightGoalSection
                 heartRateSection
@@ -85,6 +88,16 @@ struct EditAthleteSheet: View {
                 displayedComponents: .date
             )
             .labelsHidden()
+        }
+    }
+
+    private var biologicalSexSection: some View {
+        Section("Biological Sex") {
+            Picker("Biological Sex", selection: $biologicalSex) {
+                Text("Male").tag(BiologicalSex.male)
+                Text("Female").tag(BiologicalSex.female)
+            }
+            .pickerStyle(.segmented)
         }
     }
 
@@ -232,7 +245,8 @@ struct EditAthleteSheet: View {
             weeklyVolumeKm: weeklyVolumeKm,
             longestRunKm: longestRunKm,
             preferredUnit: preferredUnit,
-            weightGoal: weightGoal
+            weightGoal: weightGoal,
+            biologicalSex: biologicalSex
         )
         onSave(updated)
         dismiss()

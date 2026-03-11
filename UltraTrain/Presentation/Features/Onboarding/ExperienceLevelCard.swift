@@ -10,13 +10,13 @@ struct ExperienceLevelCard: View {
             HStack(spacing: Theme.Spacing.md) {
                 Image(systemName: iconName)
                     .font(.title2)
-                    .foregroundStyle(isSelected ? Theme.Colors.primary : Theme.Colors.secondaryLabel)
+                    .foregroundStyle(isSelected ? Theme.Colors.warmCoral : Theme.Colors.secondaryLabel)
                     .frame(width: 32)
 
                 VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                     Text(level.rawValue.capitalized)
                         .font(.headline)
-                        .foregroundStyle(Theme.Colors.label)
+                        .foregroundStyle(isSelected ? Theme.Colors.warmCoral : Theme.Colors.label)
                     Text(levelDescription)
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
@@ -27,15 +27,15 @@ struct ExperienceLevelCard: View {
 
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(Theme.Colors.primary)
+                        .foregroundStyle(Theme.Colors.warmCoral)
                 }
             }
             .padding(Theme.Spacing.md)
-            .background(isSelected ? Theme.Colors.primary.opacity(0.1) : Theme.Colors.secondaryBackground)
+            .background(isSelected ? Theme.Colors.warmCoral.opacity(0.12) : Theme.Colors.secondaryBackground.opacity(0.6))
             .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                    .stroke(isSelected ? Theme.Colors.primary : .clear, lineWidth: 2)
+                    .stroke(isSelected ? Theme.Colors.warmCoral : Theme.Colors.secondaryLabel.opacity(0.2), lineWidth: isSelected ? 2 : 1)
             )
         }
         .buttonStyle(.plain)

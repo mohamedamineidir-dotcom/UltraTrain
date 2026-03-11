@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct WelcomeClubView: View {
+    @Environment(\.colorScheme) private var colorScheme
     let firstName: String
     let referralRepository: any ReferralRepository
     let onContinue: () -> Void
@@ -10,69 +11,109 @@ struct WelcomeClubView: View {
     @State private var isApplyingCode = false
     @State private var referralSuccess = false
     @State private var referralError: String?
+    @State private var showContent = false
 
     var body: some View {
         ZStack {
-            Theme.Colors.background.ignoresSafeArea()
+            background
+            content
+        }
+        .navigationBarBackButtonHidden()
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.6).delay(0.1)) {
+                showContent = true
+            }
+        }
+    }
 
-            VStack(spacing: Theme.Spacing.xxl) {
-                Spacer()
+    private var background: some View {
+        Group {
+            if colorScheme == .dark {
+                Theme.Gradients.premiumBackground
+            } else {
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.97, green: 0.96, blue: 0.94),
+                        Color(red: 1.0, green: 0.97, blue: 0.95)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
+        }
+        .ignoresSafeArea()
+    }
 
-                // Welcome illustration
-                Image(systemName: "figure.run.circle.fill")
-                    .font(.system(size: 80))
-                    .foregroundStyle(Color.accentColor)
+    private var content: some View {
+        VStack(spacing: Theme.Spacing.xxl) {
+            Spacer()
 
-                // Welcome text
+            // Welcome illustration + text
+            VStack(spacing: Theme.Spacing.lg) {
+                ZStack {
+                    Circle()
+                        .fill(Theme.Colors.warmCoral.opacity(0.12))
+                        .frame(width: 110, height: 110)
+
+                    Image(systemName: "figure.run")
+                        .font(.system(size: 44, weight: .semibold))
+                        .foregroundStyle(Theme.Colors.warmCoral)
+                }
+                .shadow(color: Theme.Colors.warmCoral.opacity(0.2), radius: 20, y: 6)
+                .scaleEffect(showContent ? 1 : 0.6)
+                .opacity(showContent ? 1 : 0)
+
                 VStack(spacing: Theme.Spacing.sm) {
                     Text("Welcome to the club\(firstName.isEmpty ? "" : ",")")
-                        .font(.title)
+                        .font(.title2)
                         .fontWeight(.bold)
 
                     if !firstName.isEmpty {
                         Text("\(firstName)!")
                             .font(.largeTitle)
                             .fontWeight(.bold)
-                            .foregroundStyle(Color.accentColor)
+                            .foregroundStyle(Theme.Colors.warmCoral)
                     }
 
                     Text("You're about to start your trail running journey.")
                         .font(.subheadline)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                         .multilineTextAlignment(.center)
+                        .padding(.horizontal, Theme.Spacing.lg)
                         .padding(.top, Theme.Spacing.xs)
                 }
-
-                Spacer()
-
-                // Referral section
-                VStack(spacing: Theme.Spacing.md) {
-                    if !showReferralField {
-                        Button {
-                            withAnimation { showReferralField = true }
-                        } label: {
-                            HStack(spacing: Theme.Spacing.sm) {
-                                Image(systemName: "ticket.fill")
-                                Text("Have a friend's code?")
-                            }
-                            .font(.subheadline)
-                            .foregroundStyle(Color.accentColor)
-                        }
-                    } else {
-                        referralInputSection
-                    }
-                }
-                .padding(.horizontal, Theme.Spacing.lg)
-
-                // Continue button
-                PrimaryOnboardingButton(title: "Let's Get Started") {
-                    onContinue()
-                }
-                .padding(.horizontal, Theme.Spacing.lg)
-                .padding(.bottom, Theme.Spacing.lg)
+                .opacity(showContent ? 1 : 0)
+                .offset(y: showContent ? 0 : 12)
             }
+
+            Spacer()
+
+            // Referral section
+            VStack(spacing: Theme.Spacing.md) {
+                if !showReferralField {
+                    Button {
+                        withAnimation { showReferralField = true }
+                    } label: {
+                        HStack(spacing: Theme.Spacing.sm) {
+                            Image(systemName: "ticket.fill")
+                            Text("Have a friend's code?")
+                        }
+                        .font(.subheadline)
+                        .foregroundStyle(Theme.Colors.warmCoral)
+                    }
+                } else {
+                    referralInputSection
+                }
+            }
+            .padding(.horizontal, Theme.Spacing.lg)
+
+            // Continue button
+            PrimaryOnboardingButton(title: "Let's Get Started") {
+                onContinue()
+            }
+            .padding(.horizontal, Theme.Spacing.lg)
+            .padding(.bottom, Theme.Spacing.lg)
         }
-        .navigationBarBackButtonHidden()
     }
 
     private var referralInputSection: some View {
@@ -95,7 +136,7 @@ struct WelcomeClubView: View {
                             .font(.subheadline)
                             .fontWeight(.semibold)
                             .frame(width: 70, height: 52)
-                            .background(Color.accentColor)
+                            .background(Theme.Gradients.warmCoralCTA)
                             .foregroundStyle(.white)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                     }

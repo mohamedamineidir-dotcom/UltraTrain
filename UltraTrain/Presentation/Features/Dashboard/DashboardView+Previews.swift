@@ -140,23 +140,6 @@ private struct PreviewChecklistRepository: RacePrepChecklistRepository, @uncheck
     func deleteChecklist(for raceId: UUID) async throws {}
 }
 
-// @unchecked Sendable: stateless preview stub
-private struct PreviewChallengeRepository: ChallengeRepository, @unchecked Sendable {
-    func getEnrollments() async throws -> [ChallengeEnrollment] { [] }
-    func getActiveEnrollments() async throws -> [ChallengeEnrollment] { [] }
-    func saveEnrollment(_ enrollment: ChallengeEnrollment) async throws {}
-    func updateEnrollment(_ enrollment: ChallengeEnrollment) async throws {}
-    func deleteEnrollment(id: UUID) async throws {}
-}
-
-// @unchecked Sendable: stateless preview stub
-private struct PreviewGoalRepository: GoalRepository, @unchecked Sendable {
-    func getActiveGoal(period: GoalPeriod) async throws -> TrainingGoal? { nil }
-    func getGoalHistory(period: GoalPeriod, limit: Int) async throws -> [TrainingGoal] { [] }
-    func saveGoal(_ goal: TrainingGoal) async throws {}
-    func deleteGoal(id: UUID) async throws {}
-}
-
 #Preview("Dashboard") {
     DashboardView(
         selectedTab: .constant(.dashboard),
@@ -174,9 +157,7 @@ private struct PreviewGoalRepository: GoalRepository, @unchecked Sendable {
         healthKitService: PreviewHealthKitService(),
         recoveryRepository: PreviewRecoveryRepository(),
         checklistRepository: PreviewChecklistRepository(),
-        locationService: LocationService(),
-        challengeRepository: PreviewChallengeRepository(),
-        goalRepository: PreviewGoalRepository()
+        locationService: LocationService()
     )
 }
 #endif

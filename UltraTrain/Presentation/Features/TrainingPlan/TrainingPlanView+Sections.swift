@@ -28,7 +28,8 @@ extension TrainingPlanView {
 
                 PlanVolumeChartsSection(plan: plan)
 
-                ForEach(Array(plan.weeks.enumerated()), id: \.element.id) { weekIndex, week in
+                ForEach(viewModel.visibleWeeks, id: \.id) { week in
+                    let weekIndex = plan.weeks.firstIndex(where: { $0.id == week.id }) ?? 0
                     WeekCardView(
                         week: week,
                         weekIndex: weekIndex,
@@ -95,9 +96,33 @@ extension TrainingPlanView {
                         }
                     )
                 }
+
+                if viewModel.hasLockedWeeks {
+                    lockedWeeksBanner
+                }
             }
             .padding()
         }
+    }
+
+    var lockedWeeksBanner: some View {
+        HStack(spacing: Theme.Spacing.md) {
+            Image(systemName: "lock.fill")
+                .font(.title3)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("\(viewModel.lockedWeekCount) more weeks")
+                    .font(.subheadline.bold())
+                Text("Upgrade your plan to see your full training schedule")
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+            Spacer()
+            Image(systemName: "chevron.right")
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+        }
+        .appCardStyle()
+        .accessibilityLabel("\(viewModel.lockedWeekCount) locked weeks. Upgrade to view.")
     }
 
     func planHeader(_ plan: TrainingPlan) -> some View {
@@ -126,7 +151,7 @@ extension TrainingPlanView {
                 }
             }
         }
-        .cardStyle()
+        .appCardStyle()
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(planHeaderAccessibilityLabel(plan))
     }

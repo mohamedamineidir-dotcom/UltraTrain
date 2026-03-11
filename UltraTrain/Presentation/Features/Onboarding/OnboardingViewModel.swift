@@ -64,6 +64,7 @@ final class OnboardingViewModel {
     var restingHeartRate: Int = 60
     var maxHeartRate: Int = 185
     var weightGoal: WeightGoal = .maintain
+    var biologicalSex: BiologicalSex = .male
 
     // MARK: - Step 5: Race Goal
 
@@ -92,6 +93,42 @@ final class OnboardingViewModel {
         self.initialFirstName = initialFirstName
         if let name = initialFirstName, !name.isEmpty {
             self.firstName = name
+        }
+    }
+
+    // MARK: - Personal Bests Helpers
+
+    /// Whether the user has entered at least one PB.
+    var hasAnyPB: Bool {
+        !buildCurrentPBs().isEmpty
+    }
+
+    /// Builds PB entries from the current form values (only non-zero entries).
+    func buildCurrentPBs() -> [PersonalBest] {
+        var bests: [PersonalBest] = []
+        let entries: [(PersonalBestDistance, Int, Int, Int, Date)] = [
+            (.fiveK, pb5kHours, pb5kMinutes, pb5kSeconds, pb5kDate),
+            (.tenK, pb10kHours, pb10kMinutes, pb10kSeconds, pb10kDate),
+            (.halfMarathon, pbHalfHours, pbHalfMinutes, pbHalfSeconds, pbHalfDate),
+            (.marathon, pbMarathonHours, pbMarathonMinutes, pbMarathonSeconds, pbMarathonDate),
+        ]
+        for (distance, h, m, s, date) in entries {
+            let total = TimeInterval(h * 3600 + m * 60 + s)
+            let minAllowed = Self.worldRecordMinSeconds(for: distance)
+            if total > 0, total >= TimeInterval(minAllowed) {
+                bests.append(PersonalBest(id: UUID(), distance: distance, timeSeconds: total, date: date))
+            }
+        }
+        return bests
+    }
+
+    /// Minimum allowed time per distance (world record minus 60 seconds).
+    static func worldRecordMinSeconds(for distance: PersonalBestDistance) -> Int {
+        switch distance {
+        case .fiveK: return 695          // WR 12:35 - 60s
+        case .tenK: return 1511          // WR 26:11 - 60s
+        case .halfMarathon: return 3391  // WR 57:31 - 60s
+        case .marathon: return 7175      // WR 2:00:35 - 60s
         }
     }
 
@@ -184,7 +221,9 @@ final class OnboardingViewModel {
     }
 
     private func buildAthlete() -> Athlete {
-        Athlete(
+        let pbs = buildPersonalBests()
+        let metrics = PerformanceEstimator.deriveMetrics(from: pbs)
+        return Athlete(
             id: UUID(),
             firstName: firstName.trimmingCharacters(in: .whitespaces),
             lastName: lastName.trimmingCharacters(in: .whitespaces),
@@ -197,28 +236,23 @@ final class OnboardingViewModel {
             weeklyVolumeKm: isNewRunner ? 0 : weeklyVolumeKm,
             longestRunKm: isNewRunner ? 0 : longestRunKm,
             preferredUnit: preferredUnit,
-            personalBests: buildPersonalBests(),
+            personalBests: pbs,
             trainingPhilosophy: trainingPhilosophy,
             preferredRunsPerWeek: preferredRunsPerWeek,
-            weightGoal: weightGoal
+            weightGoal: weightGoal,
+            biologicalSex: biologicalSex,
+            vo2max: metrics?.vo2max,
+            vmaKmh: metrics?.vmaKmh,
+            thresholdPace60MinPerKm: metrics?.thresholdPace60MinPerKm,
+            thresholdPace30MinPerKm: metrics?.thresholdPace30MinPerKm
         )
     }
 
     private func buildPersonalBests() -> [PersonalBest] {
-        var bests: [PersonalBest] = []
-        let entries: [(PersonalBestDistance, Int, Int, Int, Date)] = [
-            (.fiveK, pb5kHours, pb5kMinutes, pb5kSeconds, pb5kDate),
-            (.tenK, pb10kHours, pb10kMinutes, pb10kSeconds, pb10kDate),
-            (.halfMarathon, pbHalfHours, pbHalfMinutes, pbHalfSeconds, pbHalfDate),
-            (.marathon, pbMarathonHours, pbMarathonMinutes, pbMarathonSeconds, pbMarathonDate),
-        ]
-        for (distance, h, m, s, date) in entries {
-            let total = TimeInterval(h * 3600 + m * 60 + s)
-            if total > 0 {
-                bests.append(PersonalBest(id: UUID(), distance: distance, timeSeconds: total, date: date))
-            }
-        }
-        return bests
+        let known = buildCurrentPBs()
+        guard !known.isEmpty else { return [] }
+        // Deduce missing PBs from entered ones using Riegel formula
+        return PerformanceEstimator.deduceMissingPBs(from: known)
     }
 
     private func buildRace() -> Race {

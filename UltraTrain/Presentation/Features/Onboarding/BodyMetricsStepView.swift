@@ -11,8 +11,11 @@ struct BodyMetricsStepView: View {
                 // Header
                 VStack(spacing: Theme.Spacing.sm) {
                     Image(systemName: "figure.stand")
-                        .font(.system(size: 48))
-                        .foregroundStyle(Color.accentColor)
+                        .font(.system(size: 32))
+                        .foregroundStyle(.white)
+                        .frame(width: 64, height: 64)
+                        .background(Circle().fill(Theme.Gradients.warmCoralCTA))
+                        .shadow(color: Theme.Colors.warmCoral.opacity(0.3), radius: 8, y: 4)
 
                     Text("Body Metrics")
                         .font(.title.bold())
@@ -26,6 +29,20 @@ struct BodyMetricsStepView: View {
 
                 // Metrics
                 VStack(spacing: Theme.Spacing.lg) {
+                    VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                        Text("Biological Sex")
+                            .font(.headline)
+                        Text("Used for accurate calorie calculations.")
+                            .font(.caption)
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
+                        Picker("Biological Sex", selection: $viewModel.biologicalSex) {
+                            Text("Male").tag(BiologicalSex.male)
+                            Text("Female").tag(BiologicalSex.female)
+                        }
+                        .pickerStyle(.segmented)
+                    }
+                    .onboardingCardStyle()
+
                     LabeledStepper(
                         label: "Weight",
                         value: weightBinding,
@@ -33,7 +50,7 @@ struct BodyMetricsStepView: View {
                         step: isImperial ? 1 : 0.5,
                         unit: UnitFormatter.weightLabel(viewModel.preferredUnit)
                     )
-                    .cardStyle()
+                    .onboardingCardStyle()
 
                     LabeledStepper(
                         label: "Height",
@@ -42,7 +59,7 @@ struct BodyMetricsStepView: View {
                         step: 1,
                         unit: isImperial ? "in" : "cm"
                     )
-                    .cardStyle()
+                    .onboardingCardStyle()
 
                     VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                         Text("Weight Goal")
@@ -57,7 +74,7 @@ struct BodyMetricsStepView: View {
                         }
                         .pickerStyle(.segmented)
                     }
-                    .cardStyle()
+                    .onboardingCardStyle()
                 }
                 .padding(.horizontal, Theme.Spacing.lg)
             }

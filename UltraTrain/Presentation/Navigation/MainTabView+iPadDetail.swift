@@ -25,9 +25,6 @@ extension MainTabView {
                 checklistRepository: checklistRepository,
                 weatherService: weatherService,
                 locationService: locationService,
-                challengeRepository: challengeRepository,
-                goalRepository: goalRepository,
-                achievementRepository: achievementRepository,
                 morningCheckInRepository: morningCheckInRepository
             )
 
@@ -42,7 +39,8 @@ extension MainTabView {
                 fitnessRepository: fitnessRepository,
                 widgetDataWriter: widgetDataWriter,
                 workoutRecipeRepository: workoutRecipeRepository,
-                runRepository: runRepository
+                runRepository: runRepository,
+                subscriptionService: subscriptionService
             )
 
         case .run:
@@ -123,6 +121,7 @@ extension MainTabView {
                 emergencyContactRepository: emergencyContactRepository,
                 raceReflectionRepository: raceReflectionRepository,
                 referralRepository: referralRepository,
+                subscriptionService: subscriptionService,
                 authService: authService,
                 onLogout: onLogout
             )

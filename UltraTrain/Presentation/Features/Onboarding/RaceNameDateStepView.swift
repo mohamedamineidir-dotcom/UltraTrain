@@ -9,8 +9,11 @@ struct RaceNameDateStepView: View {
                 // Header
                 VStack(spacing: Theme.Spacing.sm) {
                     Image(systemName: "flag.checkered")
-                        .font(.system(size: 48))
-                        .foregroundStyle(Color.accentColor)
+                        .font(.system(size: 32))
+                        .foregroundStyle(.white)
+                        .frame(width: 64, height: 64)
+                        .background(Circle().fill(Theme.Gradients.warmCoralCTA))
+                        .shadow(color: Theme.Colors.warmCoral.opacity(0.3), radius: 8, y: 4)
 
                     Text("Your A-Race")
                         .font(.title.bold())
@@ -35,7 +38,7 @@ struct RaceNameDateStepView: View {
                             }
                         }
                     }
-                    .cardStyle()
+                    .onboardingCardStyle()
 
                     VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                         Text("Race Date")
@@ -49,7 +52,7 @@ struct RaceNameDateStepView: View {
                         .datePickerStyle(.graphical)
                         .labelsHidden()
                     }
-                    .cardStyle()
+                    .onboardingCardStyle()
                 }
                 .padding(.horizontal, Theme.Spacing.lg)
             }

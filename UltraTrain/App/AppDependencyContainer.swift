@@ -67,6 +67,10 @@ struct AppDependencyContainer {
     let sessionNutritionAdvisor: any SessionNutritionAdvisor
     let runImportUseCase: DefaultRunImportUseCase
 
+    // MARK: - Subscription
+
+    let subscriptionService: SubscriptionService
+
     // MARK: - Services
 
     let locationService: LocationService

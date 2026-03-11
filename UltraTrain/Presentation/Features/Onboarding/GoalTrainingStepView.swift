@@ -9,8 +9,11 @@ struct GoalTrainingStepView: View {
                 // Header
                 VStack(spacing: Theme.Spacing.sm) {
                     Image(systemName: "target")
-                        .font(.system(size: 48))
-                        .foregroundStyle(Color.accentColor)
+                        .font(.system(size: 32))
+                        .foregroundStyle(.white)
+                        .frame(width: 64, height: 64)
+                        .background(Circle().fill(Theme.Gradients.warmCoralCTA))
+                        .shadow(color: Theme.Colors.warmCoral.opacity(0.3), radius: 8, y: 4)
 
                     Text("Goal & Training")
                         .font(.title.bold())
@@ -36,7 +39,7 @@ struct GoalTrainingStepView: View {
 
                         if viewModel.raceGoalType == .targetTime {
                             HStack(spacing: Theme.Spacing.md) {
-                                LabeledIntStepper(label: "Hours", value: $viewModel.raceTargetTimeHours, range: 0...100, unit: "h")
+                                LabeledIntStepper(label: "Hrs", value: $viewModel.raceTargetTimeHours, range: 0...100, unit: "h")
                                 LabeledIntStepper(label: "Min", value: $viewModel.raceTargetTimeMinutes, range: 0...59, unit: "m")
                             }
                         }
@@ -44,7 +47,7 @@ struct GoalTrainingStepView: View {
                             LabeledIntStepper(label: "Target Position", value: $viewModel.raceTargetRanking, range: 1...5000, unit: "")
                         }
                     }
-                    .cardStyle()
+                    .onboardingCardStyle()
                     .animation(.easeInOut(duration: 0.2), value: viewModel.raceGoalType)
 
                     goalRealisticnessWarning
@@ -61,7 +64,7 @@ struct GoalTrainingStepView: View {
                                 HStack(spacing: Theme.Spacing.md) {
                                     Image(systemName: philosophy.iconName)
                                         .font(.title2)
-                                        .foregroundStyle(viewModel.trainingPhilosophy == philosophy ? .white : Theme.Colors.primary)
+                                        .foregroundStyle(viewModel.trainingPhilosophy == philosophy ? .white : Theme.Colors.warmCoral)
                                         .frame(width: 36)
 
                                     VStack(alignment: .leading, spacing: 2) {
@@ -82,7 +85,7 @@ struct GoalTrainingStepView: View {
                                 .padding(Theme.Spacing.md)
                                 .background(
                                     viewModel.trainingPhilosophy == philosophy
-                                        ? AnyShapeStyle(Theme.Colors.primary)
+                                        ? AnyShapeStyle(Theme.Colors.warmCoral)
                                         : AnyShapeStyle(Theme.Colors.secondaryBackground)
                                 )
                                 .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
@@ -90,7 +93,7 @@ struct GoalTrainingStepView: View {
                             .buttonStyle(.plain)
                         }
                     }
-                    .cardStyle()
+                    .onboardingCardStyle()
                     .animation(.easeInOut(duration: 0.2), value: viewModel.trainingPhilosophy)
 
                     // Runs per week
@@ -107,7 +110,7 @@ struct GoalTrainingStepView: View {
                             .font(.caption)
                             .foregroundStyle(Theme.Colors.secondaryLabel)
                     }
-                    .cardStyle()
+                    .onboardingCardStyle()
                 }
                 .padding(.horizontal, Theme.Spacing.lg)
             }

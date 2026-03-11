@@ -48,7 +48,7 @@ struct LastRunCard: View {
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .cardStyle()
+            .appCardStyle()
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(accessibilityDescription(for: run))
         }
@@ -66,13 +66,14 @@ struct LastRunCard: View {
     }
 
     private func statColumn(value: String, label: String) -> some View {
-        VStack(spacing: 2) {
+        VStack(spacing: 3) {
             Text(value)
-                .font(.title3.bold())
+                .font(.system(.title3, design: .rounded, weight: .bold))
             Text(label)
                 .font(.caption2)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
+        .frame(maxWidth: .infinity)
     }
 
     private func formattedDuration(_ duration: TimeInterval) -> String {

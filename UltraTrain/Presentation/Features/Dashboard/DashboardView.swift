@@ -4,8 +4,6 @@ struct DashboardView: View {
     @Environment(\.syncStatusMonitor) private var syncStatusMonitor
     @Environment(\.syncService) private var syncService
     @State var viewModel: DashboardViewModel
-    @State var showFitnessTrend = false
-    @State private var showGoalSetting = false
     @State private var showSyncQueue = false
     @Binding var selectedTab: Tab
 
@@ -25,9 +23,6 @@ struct DashboardView: View {
     let checklistRepository: any RacePrepChecklistRepository
     let weatherService: (any WeatherServiceProtocol)?
     let locationService: LocationService
-    let challengeRepository: any ChallengeRepository
-    let goalRepository: any GoalRepository
-    let achievementRepository: (any AchievementRepository)?
     let morningCheckInRepository: (any MorningCheckInRepository)?
 
     init(
@@ -48,9 +43,6 @@ struct DashboardView: View {
         checklistRepository: any RacePrepChecklistRepository,
         weatherService: (any WeatherServiceProtocol)? = nil,
         locationService: LocationService,
-        challengeRepository: any ChallengeRepository,
-        goalRepository: any GoalRepository,
-        achievementRepository: (any AchievementRepository)? = nil,
         morningCheckInRepository: (any MorningCheckInRepository)? = nil
     ) {
         _selectedTab = selectedTab
@@ -70,9 +62,6 @@ struct DashboardView: View {
         self.checklistRepository = checklistRepository
         self.weatherService = weatherService
         self.locationService = locationService
-        self.challengeRepository = challengeRepository
-        self.goalRepository = goalRepository
-        self.achievementRepository = achievementRepository
         self.morningCheckInRepository = morningCheckInRepository
         _viewModel = State(initialValue: DashboardViewModel(
             planRepository: planRepository,
@@ -86,9 +75,7 @@ struct DashboardView: View {
             healthKitService: healthKitService,
             recoveryRepository: recoveryRepository,
             weatherService: weatherService,
-            locationService: locationService,
-            challengeRepository: challengeRepository,
-            goalRepository: goalRepository
+            locationService: locationService
         ))
     }
 
@@ -102,23 +89,27 @@ struct DashboardView: View {
                         .transition(.opacity)
                 }
 
-                AdaptiveGrid(spacing: Theme.Spacing.md) {
-                    // 1. Hero card — visual focal point
+                VStack(spacing: Theme.Spacing.md) {
+                    // Hero card
                     DashboardHeroCard(
                         daysUntilRace: viewModel.daysUntilRace,
                         raceName: viewModel.raceName,
                         currentPhase: viewModel.currentPhase,
                         weeklyProgress: viewModel.weeklyProgress,
                         weeklyDistanceKm: viewModel.weeklyDistanceKm,
-                        weeklyTargetDistanceKm: viewModel.weeklyTargetDistanceKm
+                        weeklyTargetDistanceKm: viewModel.weeklyTargetDistanceKm,
+                        fitnessStatus: viewModel.fitnessStatusLabel,
+                        formDescription: viewModel.formDescription
                     )
 
-                    // 2. Safety alerts
+                    // Safety alerts
                     if !viewModel.injuryRiskAlerts.isEmpty {
                         InjuryRiskAlertBanner(alerts: viewModel.injuryRiskAlerts)
                     }
 
-                    // 3. Next session — actionable
+                    // Today
+                    DashboardSectionHeader(title: "Today")
+
                     DashboardNextSessionCard(
                         session: viewModel.nextSession,
                         hasPlan: viewModel.plan != nil,
@@ -127,7 +118,9 @@ struct DashboardView: View {
                     )
                     .accessibilityIdentifier("dashboard.nextSessionCard")
 
-                    // 4. Weekly stats
+                    // This Week
+                    DashboardSectionHeader(title: "This Week")
+
                     DashboardWeeklyStatsCard(
                         progress: viewModel.weeklyProgress,
                         distanceKm: viewModel.weeklyDistanceKm,
@@ -138,26 +131,8 @@ struct DashboardView: View {
                     )
                     .accessibilityIdentifier("dashboard.weeklyStatsCard")
 
-                    // 5. Last run — immediate feedback
                     LastRunCard(lastRun: viewModel.lastRun)
 
-                    // 6. Fitness sparkline
-                    fitnessSection
-
-                    // 7. Coaching & AI
-                    if !viewModel.coachingInsights.isEmpty {
-                        CoachingInsightCard(insights: viewModel.coachingInsights)
-                    }
-
-                    if let optimalSession = viewModel.optimalSession {
-                        OptimalSessionCard(session: optimalSession)
-                    }
-
-                    if !viewModel.fatiguePatterns.isEmpty {
-                        FatigueAlertCard(patterns: viewModel.fatiguePatterns)
-                    }
-
-                    // 8. Weather
                     DashboardWeatherCard(
                         currentWeather: viewModel.currentWeather,
                         sessionForecast: viewModel.sessionForecast,
@@ -165,40 +140,15 @@ struct DashboardView: View {
                         isLoading: viewModel.isLoading
                     )
 
-                    // 9. Goals & Zones
-                    DashboardGoalProgressCard(
-                        weeklyProgress: viewModel.weeklyGoalProgress,
-                        monthlyProgress: viewModel.monthlyGoalProgress,
-                        onSetGoal: { showGoalSetting = true }
-                    )
+                    // Your Race
+                    DashboardSectionHeader(title: "Your Race")
 
-                    goalHistoryLink
-
-                    DashboardZoneDistributionCard(
-                        distribution: viewModel.weeklyZoneDistribution
-                    )
-
-                    // 10. Finish estimate
                     finishEstimateSection
-
-                    // 11. Recovery
-                    recoveryLink
-
-                    // 12. Social & achievements
-                    challengeLink
-                    achievementLink
-                    personalRecordsLink
-
-                    // 13. Trends
-                    if !viewModel.performanceTrends.isEmpty {
-                        ForEach(viewModel.performanceTrends) { trend in
-                            PerformanceTrendSparkline(trend: trend)
-                        }
-                    }
-
-                    // 14. Upcoming races & progress
                     UpcomingRacesCard(races: viewModel.upcomingRaces)
-                    progressSection
+
+                    // Recovery
+                    DashboardSectionHeader(title: "Recovery")
+                    recoveryLink
                 }
                 .padding()
             }
@@ -224,12 +174,6 @@ struct DashboardView: View {
                     SyncQueueView(syncService: svc)
                 }
             }
-            .navigationDestination(isPresented: $showFitnessTrend) {
-                FitnessTrendView(
-                    snapshots: viewModel.fitnessHistory,
-                    currentSnapshot: viewModel.fitnessSnapshot
-                )
-            }
             .task {
                 await viewModel.load()
                 await syncStatusMonitor?.refresh()
@@ -242,11 +186,6 @@ struct DashboardView: View {
                 Button("OK") { viewModel.fitnessError = nil }
             } message: {
                 Text(viewModel.fitnessError ?? "")
-            }
-            .sheet(isPresented: $showGoalSetting) {
-                GoalSettingView(goalRepository: goalRepository) {
-                    Task { await viewModel.load() }
-                }
             }
         }
     }

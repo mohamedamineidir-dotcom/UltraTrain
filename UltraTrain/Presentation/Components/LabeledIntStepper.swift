@@ -11,10 +11,11 @@ struct LabeledIntStepper: View {
     @FocusState private var isFocused: Bool
 
     var body: some View {
-        HStack {
+        HStack(spacing: 6) {
             Text(label)
                 .font(.subheadline)
-            Spacer()
+                .fixedSize()
+            Spacer(minLength: 2)
             Button {
                 value = max(range.lowerBound, value - 1)
             } label: {
@@ -29,7 +30,7 @@ struct LabeledIntStepper: View {
                     .keyboardType(.numberPad)
                     .font(.body.monospacedDigit())
                     .multilineTextAlignment(.center)
-                    .frame(minWidth: 70)
+                    .frame(minWidth: 44)
                     .focused($isFocused)
                     .onSubmit { commitEdit() }
                     .onChange(of: isFocused) { _, focused in
@@ -38,7 +39,7 @@ struct LabeledIntStepper: View {
             } else {
                 Text("\(value) \(unit)")
                     .font(.body.monospacedDigit())
-                    .frame(minWidth: 70)
+                    .frame(minWidth: 44)
                     .multilineTextAlignment(.center)
                     .contentShape(Rectangle())
                     .onTapGesture { beginEdit() }

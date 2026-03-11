@@ -36,6 +36,7 @@ struct ProfileView: View {
     private let emergencyContactRepository: (any EmergencyContactRepository)?
     let raceReflectionRepository: any RaceReflectionRepository
     private let referralRepository: (any ReferralRepository)?
+    private let subscriptionService: (any SubscriptionServiceProtocol)?
     private let authService: (any AuthServiceProtocol)?
     var onLogout: (() -> Void)?
 
@@ -75,6 +76,7 @@ struct ProfileView: View {
         emergencyContactRepository: (any EmergencyContactRepository)? = nil,
         raceReflectionRepository: any RaceReflectionRepository,
         referralRepository: (any ReferralRepository)? = nil,
+        subscriptionService: (any SubscriptionServiceProtocol)? = nil,
         authService: (any AuthServiceProtocol)? = nil,
         onLogout: (() -> Void)? = nil
     ) {
@@ -118,6 +120,7 @@ struct ProfileView: View {
         self.emergencyContactRepository = emergencyContactRepository
         self.raceReflectionRepository = raceReflectionRepository
         self.referralRepository = referralRepository
+        self.subscriptionService = subscriptionService
         self.authService = authService
         self.onLogout = onLogout
     }
@@ -163,6 +166,7 @@ struct ProfileView: View {
                             healthKitImportService: healthKitImportService,
                             emergencyContactRepository: emergencyContactRepository,
                             referralRepository: referralRepository,
+                            subscriptionService: subscriptionService,
                             authService: authService,
                             onLogout: onLogout
                         )

@@ -16,7 +16,15 @@ final class LocalRaceRepository: RaceRepository, @unchecked Sendable {
             sortBy: [SortDescriptor(\.date)]
         )
         let results = try context.fetch(descriptor)
-        return results.compactMap { RaceSwiftDataMapper.toDomain($0) }
+        let races = results.compactMap { RaceSwiftDataMapper.toDomain($0) }
+
+        // Deduplicate by ID (CloudKit sync can create duplicate records)
+        var seenIds = Set<UUID>()
+        return races.filter { race in
+            guard !seenIds.contains(race.id) else { return false }
+            seenIds.insert(race.id)
+            return true
+        }
     }
 
     func getRace(id: UUID) async throws -> Race? {
@@ -33,8 +41,18 @@ final class LocalRaceRepository: RaceRepository, @unchecked Sendable {
 
     func saveRace(_ race: Race) async throws {
         let context = ModelContext(modelContainer)
-        let model = RaceSwiftDataMapper.toSwiftData(race)
-        context.insert(model)
+        let targetId = race.id
+        var descriptor = FetchDescriptor<RaceSwiftDataModel>(
+            predicate: #Predicate { $0.id == targetId }
+        )
+        descriptor.fetchLimit = 1
+
+        if let existing = try context.fetch(descriptor).first {
+            applyFields(from: race, to: existing)
+        } else {
+            let model = RaceSwiftDataMapper.toSwiftData(race)
+            context.insert(model)
+        }
         try context.save()
         Logger.persistence.info("Race saved: \(race.name)")
     }
@@ -51,6 +69,12 @@ final class LocalRaceRepository: RaceRepository, @unchecked Sendable {
             throw DomainError.raceNotFound
         }
 
+        applyFields(from: race, to: existing)
+        try context.save()
+        Logger.persistence.info("Race updated: \(race.name)")
+    }
+
+    private func applyFields(from race: Race, to existing: RaceSwiftDataModel) {
         existing.name = race.name
         existing.date = race.date
         existing.distanceKm = race.distanceKm
@@ -64,9 +88,6 @@ final class LocalRaceRepository: RaceRepository, @unchecked Sendable {
         let (goalTypeRaw, goalValue) = encodeGoal(race.goalType)
         existing.goalTypeRaw = goalTypeRaw
         existing.goalValue = goalValue
-
-        try context.save()
-        Logger.persistence.info("Race updated: \(race.name)")
     }
 
     func deleteRace(id: UUID) async throws {

@@ -9,8 +9,11 @@ struct AboutYouStepView: View {
                 // Header
                 VStack(spacing: Theme.Spacing.sm) {
                     Image(systemName: "person.crop.circle")
-                        .font(.system(size: 48))
-                        .foregroundStyle(Color.accentColor)
+                        .font(.system(size: 32))
+                        .foregroundStyle(.white)
+                        .frame(width: 64, height: 64)
+                        .background(Circle().fill(Theme.Gradients.warmCoralCTA))
+                        .shadow(color: Theme.Colors.warmCoral.opacity(0.3), radius: 8, y: 4)
 
                     Text("About You")
                         .font(.title.bold())

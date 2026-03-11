@@ -25,6 +25,11 @@ final class AthleteSwiftDataModel {
     @Attribute(.externalStorage) var profilePhotoData: Data? = nil
     var isPublicProfile: Bool = false
     var weightGoalRaw: String = "maintain"
+    var biologicalSexRaw: String = "male"
+    var vo2max: Double? = nil
+    var vmaKmh: Double? = nil
+    var thresholdPace60MinPerKm: Double? = nil
+    var thresholdPace30MinPerKm: Double? = nil
 
     init(
         id: UUID = UUID(),
@@ -48,7 +53,12 @@ final class AthleteSwiftDataModel {
         bio: String? = nil,
         profilePhotoData: Data? = nil,
         isPublicProfile: Bool = false,
-        weightGoalRaw: String = "maintain"
+        weightGoalRaw: String = "maintain",
+        biologicalSexRaw: String = "male",
+        vo2max: Double? = nil,
+        vmaKmh: Double? = nil,
+        thresholdPace60MinPerKm: Double? = nil,
+        thresholdPace30MinPerKm: Double? = nil
     ) {
         self.id = id
         self.firstName = firstName
@@ -72,5 +82,10 @@ final class AthleteSwiftDataModel {
         self.profilePhotoData = profilePhotoData
         self.isPublicProfile = isPublicProfile
         self.weightGoalRaw = weightGoalRaw
+        self.biologicalSexRaw = biologicalSexRaw
+        self.vo2max = vo2max
+        self.vmaKmh = vmaKmh
+        self.thresholdPace60MinPerKm = thresholdPace60MinPerKm
+        self.thresholdPace30MinPerKm = thresholdPace30MinPerKm
     }
 }

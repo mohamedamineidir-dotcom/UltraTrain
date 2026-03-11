@@ -12,13 +12,13 @@ struct DashboardWeeklyStatsCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             HStack {
-                Text("This Week")
+                Text("Weekly Progress")
                     .font(.headline)
                 Spacer()
                 if progress.total > 0 {
                     Text("\(progress.completed)/\(progress.total) sessions")
-                        .font(.caption)
-                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                        .font(.caption.bold().monospacedDigit())
+                        .foregroundStyle(Theme.Colors.accentColor)
                 }
             }
 
@@ -27,45 +27,58 @@ struct DashboardWeeklyStatsCard: View {
                     WeeklyProgressRing(actual: distanceKm, target: targetDistanceKm)
                 }
 
-                VStack(spacing: Theme.Spacing.sm) {
-                    HStack(spacing: Theme.Spacing.md) {
-                        StatCard(
-                            title: "Distance",
-                            value: String(format: "%.1f", UnitFormatter.distanceValue(distanceKm, unit: units)),
-                            unit: UnitFormatter.distanceLabel(units)
-                        )
-                        StatCard(
-                            title: "Elevation",
-                            value: String(format: "%.0f", UnitFormatter.elevationValue(elevationM, unit: units)),
-                            unit: UnitFormatter.elevationLabel(units)
-                        )
-                    }
+                HStack(spacing: Theme.Spacing.sm) {
+                    statPill(
+                        icon: "figure.run",
+                        value: String(format: "%.1f", UnitFormatter.distanceValue(distanceKm, unit: units)),
+                        unit: UnitFormatter.distanceLabel(units),
+                        target: targetDistanceKm > 0
+                            ? UnitFormatter.formatDistance(targetDistanceKm, unit: units, decimals: 0)
+                            : nil
+                    )
+                    statPill(
+                        icon: "mountain.2.fill",
+                        value: String(format: "%.0f", UnitFormatter.elevationValue(elevationM, unit: units)),
+                        unit: UnitFormatter.elevationLabel(units),
+                        target: targetElevationM > 0
+                            ? UnitFormatter.formatElevation(targetElevationM, unit: units)
+                            : nil
+                    )
                 }
-            }
-
-            if targetDistanceKm > 0 {
-                HStack(spacing: Theme.Spacing.xs) {
-                    Image(systemName: "target")
-                        .font(.caption2)
-                        .accessibilityHidden(true)
-                    Text("Target: \(UnitFormatter.formatDistance(targetDistanceKm, unit: units, decimals: 0)) · \(UnitFormatter.formatElevation(targetElevationM, unit: units)) D+")
-                        .font(.caption)
-                }
-                .foregroundStyle(Theme.Colors.secondaryLabel)
-                .accessibilityElement(children: .combine)
             }
 
             if let weeksLeft = weeksUntilRace {
-                HStack {
+                HStack(spacing: Theme.Spacing.xs) {
                     Image(systemName: "flag.checkered")
+                        .font(.caption2)
                         .accessibilityHidden(true)
                     Text("\(weeksLeft) weeks until race day")
                         .font(.caption)
                 }
                 .foregroundStyle(Theme.Colors.secondaryLabel)
-                .accessibilityElement(children: .combine)
             }
         }
-        .cardStyle()
+        .appCardStyle()
+    }
+
+    private func statPill(icon: String, value: String, unit: String, target: String?) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.caption2)
+                    .foregroundStyle(Theme.Colors.accentColor)
+                Text(value)
+                    .font(.system(.title3, design: .rounded, weight: .bold))
+            }
+            Text(unit)
+                .font(.caption2)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+            if let target {
+                Text("/ \(target)")
+                    .font(.caption2)
+                    .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.7))
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

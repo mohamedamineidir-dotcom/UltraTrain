@@ -22,6 +22,18 @@ struct Athlete: Identifiable, Equatable, Sendable {
     var profilePhotoData: Data? = nil
     var isPublicProfile: Bool = false
     var weightGoal: WeightGoal = .maintain
+    var biologicalSex: BiologicalSex = .male
+
+    // MARK: - Derived Fitness Metrics (from PBs)
+
+    /// Estimated VO2max in ml/kg/min.
+    var vo2max: Double?
+    /// Maximal Aerobic Speed (VMA) in km/h.
+    var vmaKmh: Double?
+    /// Pace at ~60 min threshold (seuil 60) in seconds/km.
+    var thresholdPace60MinPerKm: Double?
+    /// Pace at ~30 min threshold (seuil 30) in seconds/km.
+    var thresholdPace30MinPerKm: Double?
 
     var age: Int {
         Calendar.current.dateComponents([.year], from: dateOfBirth, to: .now).year ?? 0

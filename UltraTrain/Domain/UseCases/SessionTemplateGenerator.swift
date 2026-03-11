@@ -166,7 +166,7 @@ enum SessionTemplateGenerator {
                 }
             }
 
-            return buildWeek(from: kept)
+            return buildWeek(from: sortLongRunsLast(kept))
         }
 
         // currentCount < preferred: add easy/recovery sessions to fill
@@ -190,7 +190,23 @@ enum SessionTemplateGenerator {
                                             isTimeBased: false))
         }
 
-        return buildWeek(from: expanded)
+        return buildWeek(from: sortLongRunsLast(expanded))
+    }
+
+    /// Sort active templates so longRun and backToBack are always last in the array.
+    /// Since buildWeek assigns sessions to days in array order, last items get the last day slots.
+    private static func sortLongRunsLast(_ templates: [SessionTemplate]) -> [SessionTemplate] {
+        templates.sorted { a, b in
+            longRunWeight(a.type) < longRunWeight(b.type)
+        }
+    }
+
+    private static func longRunWeight(_ type: SessionType) -> Int {
+        switch type {
+        case .longRun:    100
+        case .backToBack: 101
+        default:          0
+        }
     }
 
     /// Arrange active sessions into a 7-day week with rest days filling gaps

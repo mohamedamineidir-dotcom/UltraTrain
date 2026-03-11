@@ -61,11 +61,18 @@ struct WeekCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             headerButton
+            weekProgressBar
             if isExpanded {
                 sessionsList
             }
         }
-        .cardStyle()
+        .appCardStyle()
+        .overlay(alignment: .leading) {
+            RoundedRectangle(cornerRadius: 2)
+                .fill(phaseAccentColor)
+                .frame(width: 3)
+                .padding(.vertical, 8)
+        }
         .accessibilityIdentifier("trainingPlan.weekCard.\(week.weekNumber)")
     }
 
@@ -233,6 +240,33 @@ struct WeekCardView: View {
         let active = week.sessions.filter { $0.type != .rest && !$0.isSkipped }
         let done = active.filter(\.isCompleted).count
         return "\(done)/\(active.count) done"
+    }
+
+    private var weekProgressBar: some View {
+        let active = week.sessions.filter { $0.type != .rest && !$0.isSkipped }
+        let done = active.filter(\.isCompleted).count
+        let fraction = active.isEmpty ? 0.0 : Double(done) / Double(active.count)
+        return GeometryReader { geo in
+            ZStack(alignment: .leading) {
+                Rectangle()
+                    .fill(Theme.Colors.secondaryLabel.opacity(0.1))
+                Rectangle()
+                    .fill(phaseAccentColor)
+                    .frame(width: geo.size.width * fraction)
+            }
+        }
+        .frame(height: 2)
+    }
+
+    private var phaseAccentColor: Color {
+        switch week.phase {
+        case .base:     .blue
+        case .build:    .orange
+        case .peak:     .red
+        case .taper:    .green
+        case .recovery: .mint
+        case .race:     .purple
+        }
     }
 }
 

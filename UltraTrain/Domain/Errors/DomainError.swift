@@ -42,6 +42,8 @@ enum DomainError: Error, Equatable, Sendable {
     case crewTrackingUnavailable
     case validationFailed(field: String, reason: String)
     case invalidGPSData(reason: String)
+    case subscriptionRequired
+    case purchaseFailed(reason: String)
     case unknown(message: String)
 }
 
@@ -130,6 +132,10 @@ extension DomainError: LocalizedError {
             return "Invalid \(field): \(reason)"
         case .invalidGPSData(let reason):
             return "Invalid GPS data: \(reason)"
+        case .subscriptionRequired:
+            return "A subscription is required to use UltraTrain."
+        case .purchaseFailed(let reason):
+            return "Purchase failed: \(reason)"
         case .unknown(let message):
             return "An unexpected error occurred: \(message)"
         }

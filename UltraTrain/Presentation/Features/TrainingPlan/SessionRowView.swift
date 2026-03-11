@@ -8,21 +8,26 @@ struct SessionRowView: View {
     var body: some View {
         HStack(spacing: Theme.Spacing.sm) {
             Button(action: onToggle) {
-                Image(systemName: statusIcon)
-                    .foregroundStyle(statusColor)
-                    .font(.title3)
+                Circle()
+                    .fill(toggleBackground)
+                    .frame(width: 28, height: 28)
+                    .overlay {
+                        Image(systemName: toggleIcon)
+                            .font(.caption.bold())
+                            .foregroundStyle(toggleForeground)
+                    }
             }
             .buttonStyle(.plain)
             .accessibilityLabel(statusAccessibilityLabel)
             .accessibilityHint("Double-tap to toggle completion")
 
-            Image(systemName: session.type.icon)
-                .foregroundStyle(session.isSkipped ? Theme.Colors.secondaryLabel : session.intensity.color)
-                .frame(width: 24)
-                .accessibilityHidden(true)
-
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: Theme.Spacing.xs) {
+                    Image(systemName: session.type.icon)
+                        .foregroundStyle(session.isSkipped ? Theme.Colors.secondaryLabel : session.intensity.color)
+                        .font(.caption)
+                        .accessibilityHidden(true)
+
                     Text(session.type.displayName)
                         .font(.subheadline)
                         .fontWeight(.medium)
@@ -66,13 +71,46 @@ struct SessionRowView: View {
 
             Spacer()
 
-            Text(session.date.formatted(.dateTime.weekday(.abbreviated)))
-                .font(.caption)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
+            dayLabel
         }
         .padding(.vertical, Theme.Spacing.xs)
+        .padding(.horizontal, session.isKeySession && !session.isSkipped && !session.isCompleted ? Theme.Spacing.xs : 0)
+        .background(
+            session.isKeySession && !session.isSkipped && !session.isCompleted
+                ? Theme.Colors.primary.opacity(0.04)
+                : Color.clear
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 6))
         .opacity(session.type == .rest || session.isSkipped ? 0.5 : 1.0)
         .accessibilityElement(children: .combine)
+    }
+
+    private var dayLabel: some View {
+        let isToday = Calendar.current.isDateInToday(session.date)
+        return Text(session.date.formatted(.dateTime.weekday(.abbreviated)))
+            .font(.caption.weight(isToday ? .bold : .regular))
+            .foregroundStyle(isToday ? .white : Theme.Colors.secondaryLabel)
+            .padding(.horizontal, isToday ? 8 : 0)
+            .padding(.vertical, isToday ? 3 : 0)
+            .background(isToday ? Theme.Colors.accentColor : .clear, in: Capsule())
+    }
+
+    private var toggleBackground: Color {
+        if session.isCompleted { return Theme.Colors.success }
+        if session.isSkipped { return .orange.opacity(0.2) }
+        return session.intensity.color.opacity(0.15)
+    }
+
+    private var toggleForeground: Color {
+        if session.isCompleted { return .white }
+        if session.isSkipped { return .orange }
+        return session.intensity.color
+    }
+
+    private var toggleIcon: String {
+        if session.isCompleted { return "checkmark" }
+        if session.isSkipped { return "forward.fill" }
+        return ""
     }
 
     private var isTimeBased: Bool {

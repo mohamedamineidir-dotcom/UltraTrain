@@ -12,7 +12,7 @@ struct DashboardWeatherCard: View {
             content
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .cardStyle()
+        .appCardStyle()
     }
 
     // MARK: - Header

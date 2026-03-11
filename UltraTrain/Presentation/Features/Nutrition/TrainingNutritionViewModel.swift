@@ -59,12 +59,14 @@ final class TrainingNutritionViewModel {
             let phase = findCurrentPhase(in: plan)
             currentPhase = phase
 
+            let weeklySessions = findCurrentWeekSessions(in: plan)
             let preferences = try await nutritionRepository.getNutritionPreferences()
 
             var target = DailyNutritionCalculator.calculateTarget(
                 athlete: athlete,
                 trainingPhase: phase,
-                session: session,
+                weeklySessions: weeklySessions,
+                todaySession: session,
                 preferences: preferences
             )
 
@@ -147,6 +149,14 @@ final class TrainingNutritionViewModel {
         return plan.weeks
             .flatMap(\.sessions)
             .first { calendar.startOfDay(for: $0.date) == today }
+    }
+
+    private func findCurrentWeekSessions(in plan: TrainingPlan?) -> [TrainingSession] {
+        guard let plan else { return [] }
+        guard let week = plan.weeks.first(where: { $0.containsToday }) else {
+            return []
+        }
+        return week.sessions
     }
 
     private func findCurrentPhase(in plan: TrainingPlan?) -> TrainingPhase {

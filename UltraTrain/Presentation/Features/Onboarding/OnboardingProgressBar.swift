@@ -8,8 +8,9 @@ struct OnboardingProgressBar: View {
         HStack(spacing: 4) {
             ForEach(0..<total, id: \.self) { index in
                 RoundedRectangle(cornerRadius: 2)
-                    .fill(index <= current ? Color.accentColor : Theme.Colors.tertiaryLabel.opacity(0.25))
-                    .frame(height: 3)
+                    .fill(index <= current ? Theme.Colors.warmCoral : Theme.Colors.tertiaryLabel.opacity(0.25))
+                    .frame(height: 4)
+                    .shadow(color: index <= current ? Theme.Colors.warmCoral.opacity(0.5) : .clear, radius: 4)
             }
         }
         .animation(.easeInOut(duration: 0.25), value: current)

@@ -11,8 +11,11 @@ struct RaceProfileStepView: View {
                 // Header
                 VStack(spacing: Theme.Spacing.sm) {
                     Image(systemName: "mountain.2.fill")
-                        .font(.system(size: 48))
-                        .foregroundStyle(Color.accentColor)
+                        .font(.system(size: 32))
+                        .foregroundStyle(.white)
+                        .frame(width: 64, height: 64)
+                        .background(Circle().fill(Theme.Gradients.warmCoralCTA))
+                        .shadow(color: Theme.Colors.warmCoral.opacity(0.3), radius: 8, y: 4)
 
                     Text("Race Profile")
                         .font(.title.bold())
@@ -32,7 +35,7 @@ struct RaceProfileStepView: View {
                         step: isImperial ? 3 : 5,
                         unit: UnitFormatter.distanceLabel(viewModel.preferredUnit)
                     )
-                    .cardStyle()
+                    .onboardingCardStyle()
 
                     VStack(alignment: .leading, spacing: Theme.Spacing.md) {
                         Text("Elevation")
@@ -53,7 +56,7 @@ struct RaceProfileStepView: View {
                             unit: UnitFormatter.elevationShortLabel(viewModel.preferredUnit)
                         )
                     }
-                    .cardStyle()
+                    .onboardingCardStyle()
 
                     // Terrain
                     VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
@@ -66,7 +69,7 @@ struct RaceProfileStepView: View {
                         }
                         .pickerStyle(.segmented)
                     }
-                    .cardStyle()
+                    .onboardingCardStyle()
 
                     trainingDurationWarning
                 }

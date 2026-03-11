@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct OnboardingView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @State private var viewModel: OnboardingViewModel
     var onComplete: () -> Void
     private let healthKitService: (any HealthKitServiceProtocol)?
@@ -27,7 +28,21 @@ struct OnboardingView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Theme.Colors.background.ignoresSafeArea()
+                Group {
+                    if colorScheme == .dark {
+                        Theme.Gradients.premiumBackground
+                    } else {
+                        LinearGradient(
+                            colors: [
+                                Color(red: 0.97, green: 0.96, blue: 0.94),
+                                Color(red: 1.0, green: 0.97, blue: 0.95)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    }
+                }
+                .ignoresSafeArea()
 
                 VStack(spacing: 0) {
                     OnboardingProgressBar(
@@ -93,6 +108,13 @@ struct OnboardingView: View {
         }
     }
 
+    private var pbStepButtonTitle: String {
+        if viewModel.currentStep == 2 {
+            return viewModel.hasAnyPB ? "Continue" : "Skip"
+        }
+        return "Continue"
+    }
+
     // MARK: - Bottom Bar
 
     @ViewBuilder
@@ -103,7 +125,7 @@ struct OnboardingView: View {
             VStack(spacing: 0) {
                 Divider()
                 PrimaryOnboardingButton(
-                    title: viewModel.currentStep == 2 ? "Skip" : "Continue",
+                    title: pbStepButtonTitle,
                     isEnabled: viewModel.canAdvance
                 ) {
                     viewModel.advance()
@@ -112,7 +134,11 @@ struct OnboardingView: View {
                 .padding(.horizontal, Theme.Spacing.lg)
                 .padding(.vertical, Theme.Spacing.md)
             }
-            .background(Theme.Colors.background)
+            .background(
+                colorScheme == .dark
+                    ? Color(red: 0.039, green: 0.086, blue: 0.157)
+                    : Color(red: 1.0, green: 0.97, blue: 0.95)
+            )
         }
     }
 }

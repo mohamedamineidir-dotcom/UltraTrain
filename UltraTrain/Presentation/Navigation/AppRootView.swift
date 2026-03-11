@@ -16,7 +16,10 @@ struct AppRootView: View {
     @State private var isDeviceCompromised = false
     @Environment(\.networkMonitor) private var networkMonitor
     @State var pendingFirstName: String?
+    @State var hasActiveSubscription: Bool?
+    @State var cachedFirstName: String?
     let authService: any AuthServiceProtocol
+    let subscriptionService: any SubscriptionServiceProtocol
     let referralRepository: any ReferralRepository
     let deepLinkRouter: DeepLinkRouter
     private let deviceIntegrityChecker: (any DeviceIntegrityCheckerProtocol)?
@@ -78,6 +81,7 @@ struct AppRootView: View {
 
     init(
         authService: any AuthServiceProtocol,
+        subscriptionService: any SubscriptionServiceProtocol,
         referralRepository: any ReferralRepository,
         deepLinkRouter: DeepLinkRouter,
         athleteRepository: any AthleteRepository,
@@ -137,6 +141,7 @@ struct AppRootView: View {
         deviceIntegrityChecker: (any DeviceIntegrityCheckerProtocol)? = nil
     ) {
         self.authService = authService
+        self.subscriptionService = subscriptionService
         self.referralRepository = referralRepository
         self.deepLinkRouter = deepLinkRouter
         self.deviceIntegrityChecker = deviceIntegrityChecker
@@ -242,6 +247,7 @@ struct AppRootView: View {
             if ProcessInfo.processInfo.arguments.contains("-UITestSkipOnboarding") {
                 isAuthenticated = true
                 hasCompletedOnboarding = true
+                hasActiveSubscription = true
                 return
             }
             if ProcessInfo.processInfo.arguments.contains("-UITestMode") {
@@ -254,6 +260,7 @@ struct AppRootView: View {
             if isAuthenticated == true {
                 await checkBiometricLockSetting()
                 await checkOnboardingStatus()
+                await checkSubscriptionStatus()
                 await loadUnitPreference()
                 await widgetDataWriter.writeAll()
                 await performAutoImportIfNeeded()

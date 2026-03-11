@@ -31,7 +31,7 @@ struct OnboardingTextField: View {
         .overlay(
             RoundedRectangle(cornerRadius: 12)
                 .stroke(
-                    isFocused ? Color.accentColor : Theme.Colors.tertiaryLabel.opacity(0.2),
+                    isFocused ? Theme.Colors.warmCoral : Theme.Colors.tertiaryLabel.opacity(0.2),
                     lineWidth: isFocused ? 2 : 1
                 )
         )

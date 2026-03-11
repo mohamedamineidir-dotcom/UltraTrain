@@ -14,6 +14,7 @@ struct HeroLandingView: View {
                 backgroundGradient
                 content
             }
+            .preferredColorScheme(.dark)
             .navigationDestination(isPresented: $showSignUp) {
                 SignUpView(
                     authService: authService,
@@ -33,8 +34,9 @@ struct HeroLandingView: View {
     private var backgroundGradient: some View {
         LinearGradient(
             colors: [
-                Theme.Colors.heroGradientTop,
-                Theme.Colors.heroGradientBottom
+                Color(red: 0.05, green: 0.04, blue: 0.18),
+                Color(red: 0.08, green: 0.06, blue: 0.22),
+                Color(red: 0.04, green: 0.09, blue: 0.16)
             ],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
@@ -47,20 +49,35 @@ struct HeroLandingView: View {
             Spacer()
 
             // Hero section
-            VStack(spacing: Theme.Spacing.md) {
-                Image(systemName: "mountain.2.fill")
-                    .font(.system(size: 64))
-                    .foregroundStyle(.white.opacity(0.9))
+            VStack(spacing: Theme.Spacing.lg) {
+                ZStack {
+                    Circle()
+                        .fill(Theme.Colors.warmCoral.opacity(0.12))
+                        .frame(width: 120, height: 120)
 
-                Text("UltraTrain")
-                    .font(.system(size: 40, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
+                    Image(systemName: "mountain.2.fill")
+                        .font(.system(size: 56))
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [.white, .white.opacity(0.8)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                }
+                .shadow(color: Theme.Colors.warmCoral.opacity(0.2), radius: 24, y: 8)
 
-                Text("Train for the trails.\nGo the distance.")
-                    .font(.title3)
-                    .fontWeight(.medium)
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(.white.opacity(0.85))
+                VStack(spacing: Theme.Spacing.sm) {
+                    Text("UltraTrain")
+                        .font(.system(size: 38, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+
+                    Text("Train for the trails.\nGo the distance.")
+                        .font(.title3)
+                        .fontWeight(.medium)
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(.white.opacity(0.7))
+                }
             }
 
             Spacer()
@@ -90,11 +107,11 @@ struct HeroLandingView: View {
             // Footer
             HStack(spacing: Theme.Spacing.xs) {
                 Link("Privacy Policy", destination: URL(string: "https://ultratrain.app/privacy")!)
-                Text("·").foregroundStyle(.white.opacity(0.5))
+                Text("·").foregroundStyle(.white.opacity(0.3))
                 Link("Terms of Service", destination: URL(string: "https://ultratrain.app/terms")!)
             }
             .font(.caption)
-            .foregroundStyle(.white.opacity(0.5))
+            .foregroundStyle(.white.opacity(0.4))
             .padding(.top, Theme.Spacing.md)
             .padding(.bottom, Theme.Spacing.sm)
         }
@@ -105,7 +122,7 @@ struct HeroLandingView: View {
             Image(systemName: icon)
                 .font(.title3)
                 .frame(width: 28)
-                .foregroundStyle(.white.opacity(0.9))
+                .foregroundStyle(Theme.Colors.warmCoral)
             Text(text)
                 .font(.subheadline)
                 .foregroundStyle(.white.opacity(0.85))

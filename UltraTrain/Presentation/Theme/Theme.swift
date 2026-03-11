@@ -26,6 +26,17 @@ enum Theme {
         /// Adaptive map annotation background — contrasts with map in both modes.
         static let mapAnnotationBackground = Color(.systemBackground)
 
+        // MARK: - Premium Palette (Paywall & Onboarding)
+
+        static let premiumBgTop = Color(red: 0.051, green: 0.043, blue: 0.180)
+        static let premiumBgMid = Color(red: 0.102, green: 0.067, blue: 0.271)
+        static let premiumBgBottom = Color(red: 0.039, green: 0.086, blue: 0.157)
+        static let warmCoral = Color(red: 1.0, green: 0.42, blue: 0.42)
+        static let warmCoralDeep = Color(red: 0.933, green: 0.314, blue: 0.314)
+        static let goldAccent = Color(red: 1.0, green: 0.784, blue: 0.235)
+        static let goldAccentDeep = Color(red: 0.961, green: 0.651, blue: 0.137)
+        static let amberAccent = Color(red: 1.0, green: 0.690, blue: 0.231)
+
         // MARK: - Feature-specific
 
         static let heatmapHigh = Color(red: 0.85, green: 0.1, blue: 0.1)
@@ -43,6 +54,24 @@ enum Theme {
     }
 
     enum Gradients {
+        static let premiumBackground = LinearGradient(
+            colors: [Theme.Colors.premiumBgTop, Theme.Colors.premiumBgMid, Theme.Colors.premiumBgBottom],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+
+        static let warmCoralCTA = LinearGradient(
+            colors: [Theme.Colors.warmCoral, Theme.Colors.warmCoralDeep],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+
+        static let goldPremium = LinearGradient(
+            colors: [Theme.Colors.goldAccent, Theme.Colors.goldAccentDeep],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+
         static func phaseGradient(_ phase: TrainingPhase) -> LinearGradient {
             let colors: [Color]
             switch phase {

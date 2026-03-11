@@ -26,15 +26,11 @@ final class DashboardViewModel {
     let recoveryRepository: any RecoveryRepository
     let weatherService: (any WeatherServiceProtocol)?
     let locationService: LocationService?
-    let challengeRepository: (any ChallengeRepository)?
-    let goalRepository: (any GoalRepository)?
-
     // MARK: - State
 
     var plan: TrainingPlan?
     var fitnessSnapshot: FitnessSnapshot?
     var fitnessHistory: [FitnessSnapshot] = []
-    var runCount = 0
     var isLoading = false
     var fitnessError: String?
     var finishEstimate: FinishEstimate?
@@ -42,22 +38,12 @@ final class DashboardViewModel {
     var lastRun: CompletedRun?
     var upcomingRaces: [Race] = []
     var injuryRiskAlerts: [InjuryRiskAlert] = []
-    var coachingInsights: [CoachingInsight] = []
     var currentWeather: WeatherSnapshot?
     var sessionForecast: WeatherSnapshot?
     var recoveryScore: RecoveryScore?
     var readinessScore: ReadinessScore?
     var hrvTrend: HRVAnalyzer.HRVTrend?
     var sleepHistory: [SleepEntry] = []
-    var weeklyZoneDistribution: [HeartRateZoneDistribution] = []
-    var currentStreak: Int = 0
-    var nearestChallengeProgress: ChallengeProgressCalculator.ChallengeProgress?
-    var personalRecords: [PersonalRecord] = []
-    var weeklyGoalProgress: GoalProgress?
-    var monthlyGoalProgress: GoalProgress?
-    var optimalSession: OptimalSession?
-    var fatiguePatterns: [FatiguePattern] = []
-    var performanceTrends: [PerformanceTrend] = []
 
     // MARK: - Init
 
@@ -73,9 +59,7 @@ final class DashboardViewModel {
         healthKitService: any HealthKitServiceProtocol,
         recoveryRepository: any RecoveryRepository,
         weatherService: (any WeatherServiceProtocol)? = nil,
-        locationService: LocationService? = nil,
-        challengeRepository: (any ChallengeRepository)? = nil,
-        goalRepository: (any GoalRepository)? = nil
+        locationService: LocationService? = nil
     ) {
         self.planRepository = planRepository
         self.runRepository = runRepository
@@ -89,8 +73,6 @@ final class DashboardViewModel {
         self.recoveryRepository = recoveryRepository
         self.weatherService = weatherService
         self.locationService = locationService
-        self.challengeRepository = challengeRepository
-        self.goalRepository = goalRepository
     }
 
     // MARK: - Load
@@ -108,12 +90,9 @@ final class DashboardViewModel {
         async let lastRunTask: () = loadLastRun()
         async let racesTask: () = loadUpcomingRaces()
         async let weatherTask: () = loadWeather()
-        async let challengesTask: () = loadChallenges()
-        async let goalsTask: () = loadGoals()
-        _ = await (fitnessTask, estimateTask, lastRunTask, racesTask, weatherTask, challengesTask, goalsTask)
+        _ = await (fitnessTask, estimateTask, lastRunTask, racesTask, weatherTask)
 
         await loadRecovery()
-        await loadAICoach()
 
         isLoading = false
     }
@@ -122,8 +101,6 @@ final class DashboardViewModel {
         do {
             guard let athlete = try await athleteRepository.getAthlete() else { return }
             let runs = try await runRepository.getRuns(for: athlete.id)
-            runCount = runs.count
-            personalRecords = PersonalRecordCalculator.computeAll(from: runs)
             guard !runs.isEmpty else {
                 fitnessSnapshot = nil
                 return
@@ -138,25 +115,6 @@ final class DashboardViewModel {
                 currentACR: snapshot.acuteToChronicRatio,
                 monotony: snapshot.monotony
             )
-
-            coachingInsights = CoachingInsightCalculator.generate(
-                fitness: snapshot,
-                plan: plan,
-                weeklyVolumes: volumes,
-                nextRace: upcomingRaces.first,
-                adherencePercent: adherencePercent,
-                recoveryScore: recoveryScore,
-                hrvTrend: hrvTrend,
-                readinessScore: readinessScore
-            )
-
-            let weekResult = WeeklyZoneDistributionCalculator.calculate(
-                runs: runs,
-                weekStartDate: Date.now.startOfWeek,
-                maxHeartRate: athlete.maxHeartRate,
-                customThresholds: athlete.customZoneThresholds
-            )
-            weeklyZoneDistribution = weekResult.distributions
 
             let from = Date.now.adding(days: -28)
             fitnessHistory = try await fitnessRepository.getSnapshots(from: from, to: .now)

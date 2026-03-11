@@ -7,53 +7,83 @@ struct DashboardFinishEstimateCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             HStack {
-                Text("Race Estimate")
-                    .font(.headline)
-                    .foregroundStyle(Theme.Colors.label)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Race Estimate")
+                        .font(.headline)
+                    Text(race.name)
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.caption)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .foregroundStyle(Theme.Colors.tertiaryLabel)
                     .accessibilityHidden(true)
             }
 
-            Text(race.name)
-                .font(.subheadline)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
-
-            HStack(spacing: Theme.Spacing.md) {
+            HStack(spacing: 0) {
                 scenarioColumn(
                     time: FinishEstimate.formatDuration(estimate.optimisticTime),
                     label: "Best",
-                    color: Theme.Colors.success,
-                    font: .caption
+                    color: Theme.Colors.success
                 )
-                scenarioColumn(
-                    time: estimate.expectedTimeFormatted,
-                    label: "Expected",
-                    color: Theme.Colors.primary,
-                    font: .title2.bold()
-                )
+
+                Spacer()
+
+                VStack(spacing: 4) {
+                    Text(estimate.expectedTimeFormatted)
+                        .font(.system(.title2, design: .rounded, weight: .bold))
+                        .foregroundStyle(Theme.Colors.primary)
+                    Text("Expected")
+                        .font(.caption2)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
+
+                Spacer()
+
                 scenarioColumn(
                     time: FinishEstimate.formatDuration(estimate.conservativeTime),
                     label: "Safe",
-                    color: Theme.Colors.warning,
-                    font: .caption
+                    color: Theme.Colors.warning
                 )
             }
-            .frame(maxWidth: .infinity)
+            .padding(.vertical, Theme.Spacing.xs)
 
-            HStack(spacing: Theme.Spacing.xs) {
-                ProgressView(value: estimate.confidencePercent, total: 100)
-                    .tint(Theme.Colors.primary)
-                Text("\(Int(estimate.confidencePercent))%")
-                    .font(.caption2)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            // Confidence bar
+            VStack(spacing: 4) {
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Capsule()
+                            .fill(Theme.Colors.secondaryLabel.opacity(0.1))
+                        Capsule()
+                            .fill(confidenceGradient)
+                            .frame(width: geo.size.width * estimate.confidencePercent / 100)
+                    }
+                }
+                .frame(height: 4)
+
+                HStack {
+                    Text("Confidence")
+                        .font(.caption2)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                    Spacer()
+                    Text("\(Int(estimate.confidencePercent))%")
+                        .font(.caption2.bold().monospacedDigit())
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
             }
         }
-        .cardStyle()
+        .appCardStyle()
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityDescription)
+    }
+
+    private var confidenceGradient: LinearGradient {
+        LinearGradient(
+            colors: [Theme.Colors.accentColor.opacity(0.6), Theme.Colors.accentColor],
+            startPoint: .leading,
+            endPoint: .trailing
+        )
     }
 
     private var accessibilityDescription: String {
@@ -63,10 +93,10 @@ struct DashboardFinishEstimateCard: View {
         return "Race estimate for \(race.name). Best case \(best). Expected \(expected). Safe case \(safe). Confidence \(Int(estimate.confidencePercent)) percent."
     }
 
-    private func scenarioColumn(time: String, label: String, color: Color, font: Font) -> some View {
-        VStack(spacing: 2) {
+    private func scenarioColumn(time: String, label: String, color: Color) -> some View {
+        VStack(spacing: 4) {
             Text(time)
-                .font(font)
+                .font(.system(.footnote, design: .rounded, weight: .semibold).monospacedDigit())
                 .foregroundStyle(color)
             Text(label)
                 .font(.caption2)

@@ -26,6 +26,7 @@ struct UltraTrainApp: App {
         WindowGroup {
             AppRootView(
                 authService: container.authService,
+                subscriptionService: container.subscriptionService,
                 referralRepository: container.referralRepository,
                 deepLinkRouter: container.deepLinkRouter,
                 athleteRepository: container.athleteRepository,

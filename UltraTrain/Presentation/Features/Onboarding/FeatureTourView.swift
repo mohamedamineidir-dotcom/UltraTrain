@@ -35,8 +35,10 @@ struct FeatureTourView: View {
                             .font(.system(size: pageIconSize))
                             .foregroundStyle(page.color)
                             .frame(width: 140, height: 140)
-                            .background(page.color.opacity(0.12))
-                            .clipShape(Circle())
+                            .background(
+                                Circle().fill(page.color.opacity(0.15))
+                            )
+                            .shadow(color: page.color.opacity(0.3), radius: 12, y: 4)
                             .accessibilityHidden(true)
 
                         Text(page.title)
@@ -65,14 +67,28 @@ struct FeatureTourView: View {
                 }
             } label: {
                 Text(currentPage < pages.count - 1 ? "Next" : "Let's Go!")
+                    .font(.headline.bold())
                     .frame(maxWidth: .infinity)
+                    .frame(height: 56)
+                    .background(Theme.Gradients.warmCoralCTA)
+                    .foregroundStyle(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                    .shadow(color: Theme.Colors.warmCoral.opacity(0.3), radius: 8, y: 4)
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
             .padding(.horizontal, Theme.Spacing.xl)
             .padding(.bottom, Theme.Spacing.xl)
             .accessibilityHint(currentPage < pages.count - 1 ? "Shows the next feature" : "Closes the tour and opens the main app")
         }
-        .background(Theme.Colors.background)
+        .background(
+            LinearGradient(
+                colors: [
+                    Color(red: 0.97, green: 0.96, blue: 0.94),
+                    Color(red: 1.0, green: 0.97, blue: 0.95)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+        )
     }
 }

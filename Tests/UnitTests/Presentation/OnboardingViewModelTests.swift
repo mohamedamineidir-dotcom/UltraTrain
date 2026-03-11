@@ -15,6 +15,9 @@ struct OnboardingViewModelTests {
     }
 
     // MARK: - Navigation
+    // Steps: 0=Experience, 1=RunningHistory, 2=PersonalBests, 3=AboutYou,
+    //        4=BodyMetrics, 5=HeartRate, 6=RaceName, 7=RaceProfile,
+    //        8=GoalTraining, 9=Complete
 
     @Test("Initial state is step 0")
     @MainActor
@@ -26,10 +29,13 @@ struct OnboardingViewModelTests {
         #expect(vm.error == nil)
     }
 
-    @Test("Can advance from welcome step")
+    @Test("Can advance from experience step after selection")
     @MainActor
-    func advanceFromWelcome() {
+    func advanceFromExperience() {
         let (vm, _, _) = makeViewModel()
+        // Step 0: Experience — need to select a level
+        #expect(vm.canAdvance == false)
+        vm.experienceLevel = .intermediate
         #expect(vm.canAdvance == true)
         vm.advance()
         #expect(vm.currentStep == 1)
@@ -39,9 +45,9 @@ struct OnboardingViewModelTests {
     @MainActor
     func cannotAdvancePastEnd() {
         let (vm, _, _) = makeViewModel()
-        vm.currentStep = 6
+        vm.currentStep = vm.totalSteps - 1
         vm.advance()
-        #expect(vm.currentStep == 6)
+        #expect(vm.currentStep == vm.totalSteps - 1)
     }
 
     @Test("Go back decrements step")
@@ -61,25 +67,25 @@ struct OnboardingViewModelTests {
         #expect(vm.currentStep == 0)
     }
 
-    // MARK: - Step 1 Validation (Experience)
+    // MARK: - Step 0 Validation (Experience)
 
-    @Test("Cannot advance from step 1 without experience level")
+    @Test("Cannot advance from step 0 without experience level")
     @MainActor
     func experienceRequired() {
         let (vm, _, _) = makeViewModel()
-        vm.currentStep = 1
+        vm.currentStep = 0
         #expect(vm.canAdvance == false)
         vm.experienceLevel = .intermediate
         #expect(vm.canAdvance == true)
     }
 
-    // MARK: - Step 2 Validation (Running History)
+    // MARK: - Step 1 Validation (Running History)
 
-    @Test("New runner can always advance from step 2")
+    @Test("New runner can always advance from running history step")
     @MainActor
     func newRunnerSkipsHistory() {
         let (vm, _, _) = makeViewModel()
-        vm.currentStep = 2
+        vm.currentStep = 1
         vm.isNewRunner = true
         vm.weeklyVolumeKm = 0
         vm.longestRunKm = 0
@@ -90,7 +96,7 @@ struct OnboardingViewModelTests {
     @MainActor
     func experiencedRunnerNeedsVolume() {
         let (vm, _, _) = makeViewModel()
-        vm.currentStep = 2
+        vm.currentStep = 1
         vm.isNewRunner = false
         vm.weeklyVolumeKm = 0
         vm.longestRunKm = 20
@@ -99,23 +105,33 @@ struct OnboardingViewModelTests {
         #expect(vm.canAdvance == true)
     }
 
-    // MARK: - Step 3 Validation (Personal Bests - Optional)
+    // MARK: - Step 2 Validation (Personal Bests - Optional)
 
     @Test("Can always advance from personal bests step")
     @MainActor
     func personalBestsOptional() {
         let (vm, _, _) = makeViewModel()
-        vm.currentStep = 3
+        vm.currentStep = 2
         #expect(vm.canAdvance == true)
     }
 
-    // MARK: - Step 4 Validation (Physical Data)
+    @Test("hasAnyPB is true when at least one PB is entered")
+    @MainActor
+    func hasAnyPBDetection() {
+        let (vm, _, _) = makeViewModel()
+        #expect(vm.hasAnyPB == false)
+        vm.pb5kMinutes = 24
+        vm.pb5kSeconds = 30
+        #expect(vm.hasAnyPB == true)
+    }
+
+    // MARK: - Step 3 Validation (About You)
 
     @Test("Cannot advance with empty first name")
     @MainActor
     func nameRequired() {
         let (vm, _, _) = makeViewModel()
-        vm.currentStep = 4
+        vm.currentStep = 3
         vm.firstName = ""
         vm.lastName = "Runner"
         #expect(vm.canAdvance == false)
@@ -123,27 +139,38 @@ struct OnboardingViewModelTests {
         #expect(vm.canAdvance == true)
     }
 
-    @Test("Max HR must be greater than resting HR")
+    // MARK: - Step 4 Validation (Body Metrics)
+
+    @Test("Body metrics must be in valid range")
     @MainActor
-    func heartRateValidation() {
+    func bodyMetricsValidation() {
         let (vm, _, _) = makeViewModel()
         vm.currentStep = 4
-        vm.firstName = "Test"
-        vm.lastName = "Runner"
-        vm.restingHeartRate = 60
-        vm.maxHeartRate = 50
+        // Defaults are valid (70 kg, 175 cm)
+        #expect(vm.canAdvance == true)
+        vm.weightKg = 10 // too low
         #expect(vm.canAdvance == false)
-        vm.maxHeartRate = 185
+        vm.weightKg = 70
         #expect(vm.canAdvance == true)
     }
 
-    // MARK: - Step 5 Validation (Race Goal)
+    // MARK: - Step 5 Validation (Heart Rate)
+
+    @Test("Heart rate step always allows advancing with defaults")
+    @MainActor
+    func heartRateDefaults() {
+        let (vm, _, _) = makeViewModel()
+        vm.currentStep = 5
+        #expect(vm.canAdvance == true)
+    }
+
+    // MARK: - Step 6 Validation (Race Name)
 
     @Test("Cannot advance with empty race name")
     @MainActor
     func raceNameRequired() {
         let (vm, _, _) = makeViewModel()
-        vm.currentStep = 5
+        vm.currentStep = 6
         vm.raceName = ""
         #expect(vm.canAdvance == false)
         vm.raceName = "UTMB"
@@ -213,5 +240,55 @@ struct OnboardingViewModelTests {
 
         #expect(athleteRepo.savedAthlete?.weeklyVolumeKm == 0)
         #expect(athleteRepo.savedAthlete?.longestRunKm == 0)
+    }
+
+    @Test("PB deduction fills missing distances from entered PBs")
+    @MainActor
+    func pbDeductionFromSinglePB() async {
+        let athleteRepo = MockAthleteRepository()
+        let raceRepo = MockRaceRepository()
+        let (vm, _, _) = makeViewModel(athleteRepo: athleteRepo, raceRepo: raceRepo)
+
+        vm.experienceLevel = .intermediate
+        vm.firstName = "Test"
+        vm.lastName = "Runner"
+        vm.raceName = "My Ultra"
+        // Enter only a 10K PB
+        vm.pb10kMinutes = 45
+        vm.pb10kSeconds = 0
+
+        await vm.completeOnboarding()
+
+        let pbs = athleteRepo.savedAthlete?.personalBests ?? []
+        #expect(pbs.count == 4, "All 4 PB distances should be filled")
+        // The entered 10K should be preserved
+        let tenK = pbs.first(where: { $0.distance == .tenK })
+        #expect(tenK?.timeSeconds == 2700) // 45 min
+    }
+
+    @Test("Derived metrics are stored on athlete when PBs entered")
+    @MainActor
+    func derivedMetricsStored() async {
+        let athleteRepo = MockAthleteRepository()
+        let raceRepo = MockRaceRepository()
+        let (vm, _, _) = makeViewModel(athleteRepo: athleteRepo, raceRepo: raceRepo)
+
+        vm.experienceLevel = .intermediate
+        vm.firstName = "Test"
+        vm.lastName = "Runner"
+        vm.raceName = "My Ultra"
+        vm.pb5kMinutes = 22
+        vm.pb5kSeconds = 0
+
+        await vm.completeOnboarding()
+
+        let athlete = athleteRepo.savedAthlete
+        #expect(athlete?.vo2max != nil)
+        #expect(athlete?.vmaKmh != nil)
+        #expect(athlete?.thresholdPace60MinPerKm != nil)
+        #expect(athlete?.thresholdPace30MinPerKm != nil)
+        // A 22 min 5K corresponds to roughly VO2max ~50-55
+        #expect((athlete?.vo2max ?? 0) > 40)
+        #expect((athlete?.vo2max ?? 0) < 65)
     }
 }

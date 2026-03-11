@@ -7,6 +7,7 @@ struct TrainingPlanView: View {
     private let workoutRecipeRepository: any WorkoutRecipeRepository
     private let runRepository: any RunRepository
     private let athleteRepository: any AthleteRepository
+    private let subscriptionService: (any SubscriptionServiceProtocol)?
 
     init(
         planRepository: any TrainingPlanRepository,
@@ -19,13 +20,15 @@ struct TrainingPlanView: View {
         widgetDataWriter: WidgetDataWriter,
         workoutRecipeRepository: any WorkoutRecipeRepository,
         runRepository: any RunRepository,
-        hapticService: any HapticServiceProtocol = HapticService()
+        hapticService: any HapticServiceProtocol = HapticService(),
+        subscriptionService: (any SubscriptionServiceProtocol)? = nil
     ) {
         self.raceRepository = raceRepository
         self.planRepository = planRepository
         self.workoutRecipeRepository = workoutRecipeRepository
         self.runRepository = runRepository
         self.athleteRepository = athleteRepository
+        self.subscriptionService = subscriptionService
         _viewModel = State(initialValue: TrainingPlanViewModel(
             planRepository: planRepository,
             athleteRepository: athleteRepository,
@@ -35,7 +38,8 @@ struct TrainingPlanView: View {
             nutritionAdvisor: sessionNutritionAdvisor,
             fitnessRepository: fitnessRepository,
             widgetDataWriter: widgetDataWriter,
-            hapticService: hapticService
+            hapticService: hapticService,
+            subscriptionService: subscriptionService
         ))
     }
 

@@ -42,9 +42,6 @@ extension MainTabView {
                 checklistRepository: checklistRepository,
                 weatherService: weatherService,
                 locationService: locationService,
-                challengeRepository: challengeRepository,
-                goalRepository: goalRepository,
-                achievementRepository: achievementRepository,
                 morningCheckInRepository: morningCheckInRepository
             )
                 .tabItem {
@@ -62,7 +59,8 @@ extension MainTabView {
                 fitnessRepository: fitnessRepository,
                 widgetDataWriter: widgetDataWriter,
                 workoutRecipeRepository: workoutRecipeRepository,
-                runRepository: runRepository
+                runRepository: runRepository,
+                subscriptionService: subscriptionService
             )
                 .tabItem {
                     Label("Plan", systemImage: "calendar")
@@ -152,6 +150,7 @@ extension MainTabView {
                 emergencyContactRepository: emergencyContactRepository,
                 raceReflectionRepository: raceReflectionRepository,
                 referralRepository: referralRepository,
+                subscriptionService: subscriptionService,
                 authService: authService,
                 onLogout: onLogout
             )

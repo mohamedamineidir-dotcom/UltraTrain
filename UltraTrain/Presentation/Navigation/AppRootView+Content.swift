@@ -19,68 +19,86 @@ extension AppRootView {
                 case .none:
                     ProgressView("Loading...")
                 case .some(true):
-                    MainTabView(
-                        deepLinkRouter: deepLinkRouter,
-                        athleteRepository: athleteRepository,
-                        raceRepository: raceRepository,
-                        planRepository: planRepository,
-                        planGenerator: planGenerator,
-                        nutritionRepository: nutritionRepository,
-                        nutritionGenerator: nutritionGenerator,
-                        runRepository: runRepository,
-                        locationService: locationService,
-                        fitnessRepository: fitnessRepository,
-                        fitnessCalculator: fitnessCalculator,
-                        finishTimeEstimator: finishTimeEstimator,
-                        appSettingsRepository: appSettingsRepository,
-                        clearAllDataUseCase: clearAllDataUseCase,
-                        healthKitService: healthKitService,
-                        hapticService: hapticService,
-                        trainingLoadCalculator: trainingLoadCalculator,
-                        sessionNutritionAdvisor: sessionNutritionAdvisor,
-                        connectivityService: connectivityService,
-                        widgetDataWriter: widgetDataWriter,
-                        exportService: exportService,
-                        runImportUseCase: runImportUseCase,
-                        stravaAuthService: stravaAuthService,
-                        stravaUploadService: stravaUploadService,
-                        stravaUploadQueueService: stravaUploadQueueService,
-                        stravaImportService: stravaImportService,
-                        notificationService: notificationService,
-                        biometricAuthService: biometricAuthService,
-                        gearRepository: gearRepository,
-                        finishEstimateRepository: finishEstimateRepository,
-                        planAutoAdjustmentService: planAutoAdjustmentService,
-                        healthKitImportService: healthKitImportService,
-                        weatherService: weatherService,
-                        recoveryRepository: recoveryRepository,
-                        checklistRepository: checklistRepository,
-                        challengeRepository: challengeRepository,
-                        workoutRecipeRepository: workoutRecipeRepository,
-                        goalRepository: goalRepository,
-                        socialProfileRepository: socialProfileRepository,
-                        friendRepository: friendRepository,
-                        sharedRunRepository: sharedRunRepository,
-                        activityFeedRepository: activityFeedRepository,
-                        groupChallengeRepository: groupChallengeRepository,
-                        crewService: crewService,
-                        routeRepository: routeRepository,
-                        intervalWorkoutRepository: intervalWorkoutRepository,
-                        emergencyContactRepository: emergencyContactRepository,
-                        motionService: motionService,
-                        foodLogRepository: foodLogRepository,
-                        foodDatabaseService: foodDatabaseService,
-                        raceReflectionRepository: raceReflectionRepository,
-                        achievementRepository: achievementRepository,
-                        morningCheckInRepository: morningCheckInRepository,
-                        referralRepository: referralRepository,
-                        authService: authService,
-                        onLogout: { isAuthenticated = false }
-                    )
-                    .fullScreenCover(isPresented: $showFeatureTour) {
-                        FeatureTourView {
-                            hasSeenFeatureTour = true
-                            showFeatureTour = false
+                    switch hasActiveSubscription {
+                    case .none:
+                        ProgressView("Loading...")
+                    case .some(false):
+                        PaywallView(
+                            subscriptionService: subscriptionService,
+                            firstName: cachedFirstName ?? pendingFirstName ?? "Runner",
+                            isDismissable: false,
+                            onSubscribed: {
+                                hasActiveSubscription = true
+                                if !hasSeenFeatureTour {
+                                    showFeatureTour = true
+                                }
+                            }
+                        )
+                    case .some(true):
+                        MainTabView(
+                            deepLinkRouter: deepLinkRouter,
+                            athleteRepository: athleteRepository,
+                            raceRepository: raceRepository,
+                            planRepository: planRepository,
+                            planGenerator: planGenerator,
+                            nutritionRepository: nutritionRepository,
+                            nutritionGenerator: nutritionGenerator,
+                            runRepository: runRepository,
+                            locationService: locationService,
+                            fitnessRepository: fitnessRepository,
+                            fitnessCalculator: fitnessCalculator,
+                            finishTimeEstimator: finishTimeEstimator,
+                            appSettingsRepository: appSettingsRepository,
+                            clearAllDataUseCase: clearAllDataUseCase,
+                            healthKitService: healthKitService,
+                            hapticService: hapticService,
+                            trainingLoadCalculator: trainingLoadCalculator,
+                            sessionNutritionAdvisor: sessionNutritionAdvisor,
+                            connectivityService: connectivityService,
+                            widgetDataWriter: widgetDataWriter,
+                            exportService: exportService,
+                            runImportUseCase: runImportUseCase,
+                            stravaAuthService: stravaAuthService,
+                            stravaUploadService: stravaUploadService,
+                            stravaUploadQueueService: stravaUploadQueueService,
+                            stravaImportService: stravaImportService,
+                            notificationService: notificationService,
+                            biometricAuthService: biometricAuthService,
+                            gearRepository: gearRepository,
+                            finishEstimateRepository: finishEstimateRepository,
+                            planAutoAdjustmentService: planAutoAdjustmentService,
+                            healthKitImportService: healthKitImportService,
+                            weatherService: weatherService,
+                            recoveryRepository: recoveryRepository,
+                            checklistRepository: checklistRepository,
+                            challengeRepository: challengeRepository,
+                            workoutRecipeRepository: workoutRecipeRepository,
+                            goalRepository: goalRepository,
+                            socialProfileRepository: socialProfileRepository,
+                            friendRepository: friendRepository,
+                            sharedRunRepository: sharedRunRepository,
+                            activityFeedRepository: activityFeedRepository,
+                            groupChallengeRepository: groupChallengeRepository,
+                            crewService: crewService,
+                            routeRepository: routeRepository,
+                            intervalWorkoutRepository: intervalWorkoutRepository,
+                            emergencyContactRepository: emergencyContactRepository,
+                            motionService: motionService,
+                            foodLogRepository: foodLogRepository,
+                            foodDatabaseService: foodDatabaseService,
+                            raceReflectionRepository: raceReflectionRepository,
+                            achievementRepository: achievementRepository,
+                            morningCheckInRepository: morningCheckInRepository,
+                            referralRepository: referralRepository,
+                            subscriptionService: subscriptionService,
+                            authService: authService,
+                            onLogout: { isAuthenticated = false }
+                        )
+                        .fullScreenCover(isPresented: $showFeatureTour) {
+                            FeatureTourView {
+                                hasSeenFeatureTour = true
+                                showFeatureTour = false
+                            }
                         }
                     }
                 case .some(false):
@@ -91,11 +109,8 @@ extension AppRootView {
                         healthKitImportService: healthKitImportService,
                         initialFirstName: pendingFirstName,
                         onComplete: {
-                            pendingFirstName = nil
                             hasCompletedOnboarding = true
-                            if !hasSeenFeatureTour {
-                                showFeatureTour = true
-                            }
+                            hasActiveSubscription = false
                         }
                     )
                 }
@@ -119,10 +134,16 @@ extension AppRootView {
         do {
             let athlete = try await athleteRepository.getAthlete()
             hasCompletedOnboarding = athlete != nil
+            cachedFirstName = athlete?.firstName
         } catch {
             Logger.app.error("Failed to check onboarding status: \(error)")
             hasCompletedOnboarding = false
         }
+    }
+
+    func checkSubscriptionStatus() async {
+        let status = await subscriptionService.refreshStatus()
+        hasActiveSubscription = status.isActive
     }
 
     func performAutoImportIfNeeded() async {
