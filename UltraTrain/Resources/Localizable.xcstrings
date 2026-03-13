@@ -126,6 +126,16 @@
         }
       }
     },
+    "%@ - %@ /km" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ - %2$@ /km"
+          }
+        }
+      }
+    },
     "%@ – %@" : {
       "localizations" : {
         "en" : {
@@ -861,6 +871,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld"
+          }
+        }
+      }
+    },
+    "%lld - %lld bpm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld - %2$lld bpm"
           }
         }
       }
@@ -3228,12 +3248,150 @@
         }
       }
     },
+    "Changing the language requires restarting the app." : {
+
+    },
     "Changing this setting requires an app restart to take effect." : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ce changement nécessite un redémarrage de l'app pour prendre effet."
+          }
+        }
+      }
+    },
+    "chart.avgPerWeek" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Avg / week"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Moy / sem."
+          }
+        }
+      }
+    },
+    "chart.distance" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Distance"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Distance"
+          }
+        }
+      }
+    },
+    "chart.duration" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Duration"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Durée"
+          }
+        }
+      }
+    },
+    "chart.elevation" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Elevation"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dénivelé"
+          }
+        }
+      }
+    },
+    "chart.peak %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peak: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pic : %@"
+          }
+        }
+      }
+    },
+    "chart.total" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Total"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Total"
+          }
+        }
+      }
+    },
+    "chart.trainingVolume" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Training Volume"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Volume d'entraînement"
+          }
+        }
+      }
+    },
+    "chart.weeksDone" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Weeks done"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Semaines faites"
           }
         }
       }
@@ -3387,6 +3545,9 @@
         }
       }
     },
+    "Choose the app language" : {
+
+    },
     "Choose your race goal: finish, target time, or target ranking" : {
       "localizations" : {
         "fr" : {
@@ -3433,6 +3594,264 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ferme la visite et ouvre l'application"
+          }
+        }
+      }
+    },
+    "Coach" : {
+
+    },
+    "coach.backToBack" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Today you run on yesterday's fatigue. This is ultra-specific. Start easy and stay patient."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aujourd'hui vous courez sur la fatigue d'hier. C'est spécifique ultra. Démarrez doucement."
+          }
+        }
+      }
+    },
+    "coach.crossTraining" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Keep it light and enjoyable. Different movement patterns help recovery and adaptation."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Gardez ça léger et agréable. Les mouvements variés aident la récupération et l'adaptation."
+          }
+        }
+      }
+    },
+    "coach.intervals" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Full recovery between reps matters more than speed. If form breaks down, stop the set."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "La récupération complète entre les répétitions compte plus que la vitesse. Si la forme se dégrade, arrêtez la série."
+          }
+        }
+      }
+    },
+    "coach.longRun.easy" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Focus on time on feet, not pace. Walk uphills if needed — save your legs for the flats."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Concentrez-vous sur le temps debout, pas l'allure. Marchez en montée si besoin."
+          }
+        }
+      }
+    },
+    "coach.longRun.hard" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Push the pace on this one but stay controlled. Practice fueling at race effort."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Poussez l'allure mais restez contrôlé. Pratiquez le ravitaillement à l'effort de course."
+          }
+        }
+      }
+    },
+    "coach.longRun.moderate" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Steady state run. Lock into a rhythm and practice your race nutrition strategy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sortie régulière. Trouvez votre rythme et pratiquez votre stratégie nutritionnelle de course."
+          }
+        }
+      }
+    },
+    "coach.recovery" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "If in doubt, go slower. This run is about blood flow, not fitness gains."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "En cas de doute, ralentissez. Cette sortie sert à la circulation sanguine, pas aux gains de forme."
+          }
+        }
+      }
+    },
+    "coach.rest" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Active rest: foam roll, walk, stretch. Quality sleep tonight is your biggest performance gain."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Repos actif : rouleau, marche, étirements. Un bon sommeil est votre meilleur allié performance."
+          }
+        }
+      }
+    },
+    "coach.tempo" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Find a rhythm you can hold for the whole session. If you can't finish a sentence, slow down slightly."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Trouvez un rythme tenable sur toute la séance. Si vous ne pouvez plus parler, ralentissez un peu."
+          }
+        }
+      }
+    },
+    "coach.vg.hill" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Find a hill with 3-5 min of sustained climbing. Focus on maintaining cadence and posture."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Trouvez une côte de 3-5 min de montée soutenue. Maintenez la cadence et la posture."
+          }
+        }
+      }
+    },
+    "coach.vg.mixed" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Alternate outdoor hills and treadmill. Focus on consistent effort regardless of terrain."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Alternez côtes extérieures et tapis. Visez un effort constant quel que soit le terrain."
+          }
+        }
+      }
+    },
+    "coach.vg.mountain" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Find a trail with sustained climbing. Power hike the steepest sections — hands on thighs, short steps."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Trouvez un sentier avec une montée soutenue. Marchez en puissance les sections les plus raides."
+          }
+        }
+      }
+    },
+    "coach.vg.treadmill.easy" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Set incline to 8-10%. Walk at a brisk pace. Reduce to 0% for recovery between reps."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Inclinaison 8-10%. Marche rapide. Réduisez à 0% pour la récupération entre les répétitions."
+          }
+        }
+      }
+    },
+    "coach.vg.treadmill.hard" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Set incline to 10-15%. Walk at a brisk pace. Reduce to 0% for recovery between reps."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Inclinaison 10-15%. Marche rapide. Réduisez à 0% pour la récupération entre les répétitions."
+          }
+        }
+      }
+    },
+    "coach.vg.treadmill.max" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Set incline to 15%+. Maximum effort climbs. Full flat recovery between reps."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Inclinaison 15%+. Montées à effort maximum. Récupération complète à plat entre les répétitions."
           }
         }
       }
@@ -5004,6 +5423,9 @@
         }
       }
     },
+    "Effort & Heart Rate Targets" : {
+
+    },
     "Effort Load" : {
       "localizations" : {
         "fr" : {
@@ -5240,6 +5662,9 @@
         }
       }
     },
+    "English" : {
+
+    },
     "Enter a name for your new route." : {
       "localizations" : {
         "fr" : {
@@ -5303,6 +5728,9 @@
         }
       }
     },
+    "Environment" : {
+
+    },
     "Error" : {
       "localizations" : {
         "fr" : {
@@ -5332,6 +5760,9 @@
           }
         }
       }
+    },
+    "Estimated Finish Time" : {
+
     },
     "Event Announcements" : {
       "localizations" : {
@@ -5395,6 +5826,142 @@
     },
     "Experience Level" : {
 
+    },
+    "experience.advanced" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Advanced"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Avancé"
+          }
+        }
+      }
+    },
+    "experience.advanced.description" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "3+ years, completed ultras, consistent 50+ km weeks"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "3+ ans, ultras complétés, 50+ km par semaine"
+          }
+        }
+      }
+    },
+    "experience.beginner" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Beginner"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Débutant"
+          }
+        }
+      }
+    },
+    "experience.beginner.description" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "New to running or less than 1 year of regular training"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nouveau en course à pied ou moins d'1 an d'entraînement régulier"
+          }
+        }
+      }
+    },
+    "experience.elite" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Elite"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Élite"
+          }
+        }
+      }
+    },
+    "experience.elite.description" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Competitive ultra runner, podium finishes, 80+ km weeks"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ultra-traileur compétitif, podiums, 80+ km par semaine"
+          }
+        }
+      }
+    },
+    "experience.intermediate" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Intermediate"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Intermédiaire"
+          }
+        }
+      }
+    },
+    "experience.intermediate.description" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "1-3 years running, completed races up to marathon distance"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "1-3 ans de course, compétitions jusqu'au marathon"
+          }
+        }
+      }
     },
     "Export" : {
       "localizations" : {
@@ -5847,6 +6414,9 @@
         }
       }
     },
+    "Français" : {
+
+    },
     "Friend request sent!" : {
       "localizations" : {
         "fr" : {
@@ -5921,6 +6491,9 @@
           }
         }
       }
+    },
+    "General Fitness Plan" : {
+
     },
     "Generate a personalized training plan based on your profile and race goal." : {
       "localizations" : {
@@ -6529,6 +7102,9 @@
         }
       }
     },
+    "I don't have a race" : {
+
+    },
     "I'm just getting started" : {
       "localizations" : {
         "fr" : {
@@ -6838,6 +7414,74 @@
         }
       }
     },
+    "intensity.easy" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Easy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Facile"
+          }
+        }
+      }
+    },
+    "intensity.hard" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Hard"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Intense"
+          }
+        }
+      }
+    },
+    "intensity.maxEffort" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Max Effort"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Effort max"
+          }
+        }
+      }
+    },
+    "intensity.moderate" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Moderate"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Modéré"
+          }
+        }
+      }
+    },
     "Interactive map showing the run route. Drag on the elevation chart above to highlight a position on the map." : {
       "localizations" : {
         "fr" : {
@@ -7003,6 +7647,9 @@
         }
       }
     },
+    "Just build my fitness" : {
+
+    },
     "Keep Data For" : {
       "localizations" : {
         "fr" : {
@@ -7012,9 +7659,6 @@
           }
         }
       }
-    },
-    "Key" : {
-
     },
     "Key takeaways" : {
       "localizations" : {
@@ -7065,6 +7709,9 @@
           }
         }
       }
+    },
+    "Language" : {
+
     },
     "Last Name" : {
       "localizations" : {
@@ -8255,6 +8902,9 @@
     "No plan data" : {
 
     },
+    "No problem! We'll build a general fitness plan to keep you progressing. You can add a target race anytime later." : {
+
+    },
     "No Profile" : {
       "localizations" : {
         "fr" : {
@@ -9175,6 +9825,9 @@
         }
       }
     },
+    "Pace & Heart Rate Targets" : {
+
+    },
     "Pace Distribution" : {
       "localizations" : {
         "fr" : {
@@ -9793,9 +10446,6 @@
         }
       }
     },
-    "Peak: %@" : {
-
-    },
     "Pending" : {
       "localizations" : {
         "fr" : {
@@ -9955,12 +10605,182 @@
         }
       }
     },
+    "phase.base" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Base"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Préparation"
+          }
+        }
+      }
+    },
+    "phase.build" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Build"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Construction"
+          }
+        }
+      }
+    },
+    "phase.peak" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Peak"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pic"
+          }
+        }
+      }
+    },
+    "phase.race" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Race"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Course"
+          }
+        }
+      }
+    },
+    "phase.recovery" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Recovery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Récupération"
+          }
+        }
+      }
+    },
+    "phase.taper" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Taper"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Affûtage"
+          }
+        }
+      }
+    },
     "Phases" : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Phases"
+          }
+        }
+      }
+    },
+    "phaseType.coolDown" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cool Down"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Retour au calme"
+          }
+        }
+      }
+    },
+    "phaseType.recovery" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Recovery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Récupération"
+          }
+        }
+      }
+    },
+    "phaseType.warmUp" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Warm Up"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Échauffement"
+          }
+        }
+      }
+    },
+    "phaseType.work" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Work"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Travail"
           }
         }
       }
@@ -10867,9 +11687,6 @@
           }
         }
       }
-    },
-    "Recovery: %@" : {
-
     },
     "Refer a Friend" : {
 
@@ -11900,6 +12717,9 @@
         }
       }
     },
+    "Searching online..." : {
+
+    },
     "Searching trails..." : {
       "localizations" : {
         "fr" : {
@@ -11911,6 +12731,7 @@
       }
     },
     "Searching..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -12216,6 +13037,9 @@
         }
       }
     },
+    "Session Structure" : {
+
+    },
     "Session Type" : {
       "localizations" : {
         "fr" : {
@@ -12242,6 +13066,176 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Séance améliorée"
+          }
+        }
+      }
+    },
+    "session.backToBack" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Long Run (B2B)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sortie longue (B2B)"
+          }
+        }
+      }
+    },
+    "session.crossTraining" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cross-Training"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cross-training"
+          }
+        }
+      }
+    },
+    "session.intervals" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Intervals"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Intervalles"
+          }
+        }
+      }
+    },
+    "session.key" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Key"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Clé"
+          }
+        }
+      }
+    },
+    "session.longRun" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Long Run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sortie longue"
+          }
+        }
+      }
+    },
+    "session.recovery" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Recovery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Récupération"
+          }
+        }
+      }
+    },
+    "session.rest" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Rest"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Repos"
+          }
+        }
+      }
+    },
+    "session.skipped" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Skipped"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Passée"
+          }
+        }
+      }
+    },
+    "session.tempo" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tempo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tempo"
+          }
+        }
+      }
+    },
+    "session.verticalGain" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Vertical Gain"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dénivelé"
           }
         }
       }
@@ -12514,6 +13508,9 @@
           }
         }
       }
+    },
+    "Showing offline results only" : {
+
     },
     "Shows a countdown notification as race day approaches" : {
       "localizations" : {
@@ -13136,6 +14133,9 @@
         }
       }
     },
+    "System" : {
+
+    },
     "Taken" : {
       "localizations" : {
         "fr" : {
@@ -13188,6 +14188,9 @@
           }
         }
       }
+    },
+    "Target Effort" : {
+
     },
     "Target heart rate zone %lld" : {
       "localizations" : {
@@ -13938,9 +14941,6 @@
     "Training Style" : {
 
     },
-    "Training Volume" : {
-
-    },
     "Training volume chart" : {
 
     },
@@ -13988,6 +14988,7 @@
 
     },
     "Type a food name to search the Open Food Facts database." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -13996,6 +14997,9 @@
           }
         }
       }
+    },
+    "Type a food name to search." : {
+
     },
     "UltraTrain" : {
       "localizations" : {
@@ -14006,6 +15010,12 @@
           }
         }
       }
+    },
+    "UltraTrain is built for trail and ultra-distance races. For shorter road events, features like altitude training and nutrition planning shine most on longer distances." : {
+
+    },
+    "UltraTrain is built for trail and ultra-distance races. For shorter road events, features like altitude training and nutrition planning shine most on longer distances. You can still create a plan — but to get the most out of this app, consider using it for your next trail or long-distance adventure!" : {
+
     },
     "UltraTrain is Locked" : {
       "localizations" : {
@@ -14158,6 +15168,9 @@
       }
     },
     "Upgrade your plan to see your full training schedule" : {
+
+    },
+    "Uphill Training" : {
 
     },
     "Upload failed: %@" : {
@@ -14429,6 +15442,9 @@
         }
       }
     },
+    "We don't have data for this race. Please estimate the finish time for your target ranking so we can calibrate your plan." : {
+
+    },
     "We sent a 6-digit verification code to your email address." : {
       "localizations" : {
         "fr" : {
@@ -14540,6 +15556,55 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Semaine %1$lld, phase %2$@. %3$lld sur %4$lld séances terminées. %5$lld courses ce mois-ci."
+          }
+        }
+      }
+    },
+    "week.progress %lld %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld/%lld done"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld/%lld fait"
+          }
+        }
+      }
+    },
+    "week.recovery" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Recovery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Récupération"
+          }
+        }
+      }
+    },
+    "week.title %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week %lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semaine %lld"
           }
         }
       }
@@ -14801,6 +15866,9 @@
         }
       }
     },
+    "Where do you do your uphill training?" : {
+
+    },
     "Work Intervals" : {
       "localizations" : {
         "fr" : {
@@ -14810,9 +15878,6 @@
           }
         }
       }
-    },
-    "Work: %@" : {
-
     },
     "Work:Rest Ratio" : {
       "localizations" : {
@@ -14870,6 +15935,90 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nom de la séance"
+          }
+        }
+      }
+    },
+    "workout.easyPace" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Easy pace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Allure facile"
+          }
+        }
+      }
+    },
+    "workout.repeatTimes %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repeat %lld times"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répéter %lld fois"
+          }
+        }
+      }
+    },
+    "workout.title" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Workout"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Entraînement"
+          }
+        }
+      }
+    },
+    "workout.totalRecovery" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Recovery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Récupération"
+          }
+        }
+      }
+    },
+    "workout.totalWork" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Work"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Travail"
           }
         }
       }
@@ -15092,6 +16241,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zone %1$lld — %2$@"
+          }
+        }
+      }
+    },
+    "Zone %lld (%@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Zone %1$lld (%2$@)"
           }
         }
       }
