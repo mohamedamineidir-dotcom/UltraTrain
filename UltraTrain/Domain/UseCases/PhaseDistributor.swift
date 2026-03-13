@@ -25,10 +25,10 @@ enum PhaseDistributor {
         peakWeeks = max(peakWeeks, 1)
         taperWeeks = max(taperWeeks, 1)
 
-        // Adjust to match total — absorb difference into base
+        // Adjust to match total — absorb difference into build (longest phase)
         let sum = baseWeeks + buildWeeks + peakWeeks + taperWeeks
-        baseWeeks += (totalWeeks - sum)
-        baseWeeks = max(baseWeeks, 1)
+        buildWeeks += (totalWeeks - sum)
+        buildWeeks = max(buildWeeks, 1)
 
         return [
             PhaseAllocation(phase: .base, weekCount: baseWeeks),
@@ -48,13 +48,13 @@ enum PhaseDistributor {
     private static func fractions(for experience: ExperienceLevel) -> Fractions {
         switch experience {
         case .beginner:
-            Fractions(base: 0.45, build: 0.25, peak: 0.15, taper: 0.15)
+            Fractions(base: 0.30, build: 0.30, peak: 0.15, taper: 0.25)
         case .intermediate:
-            Fractions(base: 0.40, build: 0.30, peak: 0.15, taper: 0.15)
+            Fractions(base: 0.25, build: 0.35, peak: 0.20, taper: 0.20)
         case .advanced:
-            Fractions(base: 0.35, build: 0.30, peak: 0.20, taper: 0.15)
+            Fractions(base: 0.20, build: 0.40, peak: 0.20, taper: 0.20)
         case .elite:
-            Fractions(base: 0.30, build: 0.35, peak: 0.20, taper: 0.15)
+            Fractions(base: 0.15, build: 0.45, peak: 0.20, taper: 0.20)
         }
     }
 }

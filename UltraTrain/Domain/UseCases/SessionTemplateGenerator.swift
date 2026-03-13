@@ -130,11 +130,11 @@ enum SessionTemplateGenerator {
     ) -> [SessionTemplate] {
         switch phase {
         case .base:
-            return standardWeekTemplates(volume: volume, experience: experience, phase: .base)
+            return standardWeekTemplates(volume: volume, experience: experience, phase: .base, weekInPhase: weekNumberInPhase)
         case .build:
-            return standardWeekTemplates(volume: volume, experience: experience, phase: .build)
+            return standardWeekTemplates(volume: volume, experience: experience, phase: .build, weekInPhase: weekNumberInPhase)
         case .peak:
-            return standardWeekTemplates(volume: volume, experience: experience, phase: .peak)
+            return standardWeekTemplates(volume: volume, experience: experience, phase: .peak, weekInPhase: weekNumberInPhase)
         case .taper:
             return taperTemplates(volume: volume)
         case .recovery, .race:
@@ -147,7 +147,8 @@ enum SessionTemplateGenerator {
     private static func standardWeekTemplates(
         volume: VolumeCalculator.WeekVolume,
         experience: ExperienceLevel,
-        phase: TrainingPhase
+        phase: TrainingPhase,
+        weekInPhase: Int = 0
     ) -> [SessionTemplate] {
         let base = volume.baseSessionDurations
         let vgIntensity: Intensity = (experience == .advanced || experience == .elite) ? .hard : .moderate
@@ -178,7 +179,7 @@ enum SessionTemplateGenerator {
             tpl(1, .recovery, .easy, base.easyRun1Seconds, 0.05,
                 SessionDescriptionGenerator.easyRun(isRecoveryWeek: false)),
             tpl(2, .intervals, intervalIntensity, base.intervalSeconds, 0.10,
-                SessionDescriptionGenerator.intervals(phase: phase, isRecoveryWeek: false)),
+                SessionDescriptionGenerator.intervals(phase: phase, isRecoveryWeek: false, weekInPhase: weekInPhase)),
             tpl(3, .verticalGain, vgIntensity, base.vgSeconds, 0.25,
                 SessionDescriptionGenerator.verticalGain(phase: phase, isRecoveryWeek: false)),
             tpl(4, .rest, .easy, 0, 0,

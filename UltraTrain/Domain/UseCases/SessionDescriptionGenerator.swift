@@ -68,15 +68,18 @@ enum SessionDescriptionGenerator {
 
     // MARK: - Intervals
 
-    static func intervals(phase: TrainingPhase, isRecoveryWeek: Bool) -> String {
+    static func intervals(phase: TrainingPhase, isRecoveryWeek: Bool, weekInPhase: Int = 0) -> String {
         if isRecoveryWeek {
             return "Recovery week: no intervals. Easy effort only."
         }
         switch phase {
         case .base:
-            return "Threshold intervals (Zone 3). Focus on form and rhythm. Full recovery between reps."
+            return "Hill threshold intervals — 30min total work at tempo (Zone 3) on moderate hills. Full recovery between reps."
         case .build:
-            return "VO2max intervals (Zone 4). Push hard but controlled. Complete all reps with quality."
+            if weekInPhase < 6 {
+                return "VO2max hill repeats (Zone 4). Short intense climbs with full recovery. Push hard but controlled."
+            }
+            return "Sustained threshold — 60min total work at race effort (Zone 3-4) on rolling terrain. Practice fueling."
         case .peak:
             return "Short sharp intervals (Zone 4-5). Maximum quality. Race sharpness work."
         case .taper:

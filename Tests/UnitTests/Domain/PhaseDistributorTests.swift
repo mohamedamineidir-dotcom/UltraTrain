@@ -44,6 +44,26 @@ struct PhaseDistributorTests {
         #expect(beginnerBase > eliteBase)
     }
 
+    @Test("Advanced 26-week plan has short base and long build+peak")
+    func advancedCampusCoachAlignment() {
+        let result = PhaseDistributor.distribute(totalWeeks: 26, experience: .advanced)
+        let base = result.first { $0.phase == .base }!.weekCount
+        let build = result.first { $0.phase == .build }!.weekCount
+        let peak = result.first { $0.phase == .peak }!.weekCount
+        let taper = result.first { $0.phase == .taper }!.weekCount
+
+        #expect(base <= 7, "Base should be short for advanced, got \(base)")
+        #expect(build + peak >= 12, "Build+peak should be long for advanced, got \(build + peak)")
+        #expect(taper >= 4, "Taper should be >= 4 weeks for advanced, got \(taper)")
+    }
+
+    @Test("Elite 26-week plan has minimal base")
+    func eliteMinimalBase() {
+        let result = PhaseDistributor.distribute(totalWeeks: 26, experience: .elite)
+        let base = result.first { $0.phase == .base }!.weekCount
+        #expect(base <= 5, "Elite base should be minimal, got \(base)")
+    }
+
     @Test("Short plan (less than 4 weeks) returns base + taper")
     func shortPlan() {
         let result = PhaseDistributor.distribute(totalWeeks: 3, experience: .intermediate)

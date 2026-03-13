@@ -31,7 +31,7 @@ enum CoachAdviceGenerator {
         case .tempo:
             baseAdvice = tempoAdvice(phase: phase)
         case .intervals:
-            baseAdvice = intervalAdvice(phase: phase)
+            baseAdvice = intervalAdvice(phase: phase, weekInPhase: weekInPhase)
         case .verticalGain:
             baseAdvice = verticalGainAdvice(phase: phase, intensity: intensity, environment: verticalGainEnvironment)
         }
@@ -121,12 +121,15 @@ enum CoachAdviceGenerator {
 
     // MARK: - Intervals (Phase-Aware)
 
-    private static func intervalAdvice(phase: TrainingPhase) -> String {
+    private static func intervalAdvice(phase: TrainingPhase, weekInPhase: Int = 0) -> String {
         switch phase {
         case .base:
-            return "Threshold intervals at controlled effort. Full recovery between reps. Focus on smooth form and consistent splits — speed comes from patience."
+            return "Hill threshold repeats — 3×10min at tempo effort on moderate gradient. Full recovery between reps. Focus on smooth form and consistent splits."
         case .build:
-            return "VO2max intervals — push hard but stay controlled. Complete every rep with quality. If form breaks down, stop the set. Better to do 4 perfect than 6 sloppy."
+            if weekInPhase < 6 {
+                return "VO2max hill repeats — short, intense efforts on steep gradients. Push hard but stay controlled. If form breaks down, stop the set. Better to do 4 perfect than 6 sloppy."
+            }
+            return "Sustained threshold — 2×30min or 1×45min at race effort on rolling terrain. This is the bread and butter of ultra preparation. Stay controlled and fuel on schedule."
         case .peak:
             return "Short, sharp race-sharpening intervals. Maximum quality over maximum quantity. These are fine-tuning sessions — you're already fit."
         case .taper:

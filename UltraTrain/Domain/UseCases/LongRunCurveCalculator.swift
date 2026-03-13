@@ -96,18 +96,15 @@ enum LongRunCurveCalculator {
             b2bDay2 = combined * AppConfiguration.Training.b2bDay2Split
             longRun = b2bDay1 + b2bDay2
 
-            // Budget approach: keep total volume close to non-B2B baseline (+5%)
-            let targetTotal = normalTotal * 1.05
-            let nonLongRunBudget = targetTotal - longRun
-            let nonLongRunTotal = easy1 + easy2 + interval + vg
-
-            if nonLongRunBudget > 0 && nonLongRunTotal > 0 {
-                let scale = min(nonLongRunBudget / nonLongRunTotal, 1.0)
-                easy1 *= scale
-                easy2 *= scale
-                interval *= scale
-                vg *= scale
-            }
+            // Floor-based approach: reduce supporting sessions on B2B weeks, with minimum floors
+            let easyFloor: TimeInterval = 30 * 60   // 30 min
+            let intervalFloor: TimeInterval = 40 * 60 // 40 min
+            let vgFloor: TimeInterval = 40 * 60       // 40 min
+            let b2bScale = 0.70 // Keep 70% of normal supporting sessions
+            easy1 = max(easy1 * b2bScale, easy1 > 0 ? easyFloor : 0)
+            easy2 = max(easy2 * b2bScale, easy2 > 0 ? easyFloor : 0)
+            interval = max(interval * b2bScale, interval > 0 ? intervalFloor : 0)
+            vg = max(vg * b2bScale, vg > 0 ? vgFloor : 0)
         } else {
             longRun = rawLongRun
         }
@@ -235,9 +232,10 @@ enum LongRunCurveCalculator {
         raceDurationSeconds: TimeInterval
     ) -> TimeInterval {
         let startCombined = AppConfiguration.Training.b2bStartCombinedHours * 3600
+        let maxCapHours = AppConfiguration.Training.peakB2BMaxHours[experience.rawValue] ?? 16.0
         let peakCombined = min(
             raceDurationSeconds * AppConfiguration.Training.peakB2BCombinedFraction,
-            AppConfiguration.Training.peakB2BCombinedMaxHours * 3600
+            maxCapHours * 3600
         )
 
         let buildWeekCount = max(totalWeeks - taperWeekEstimate(totalWeeks), 1)

@@ -64,13 +64,17 @@ enum AppConfiguration {
             "beginner": 0.40, "intermediate": 0.50, "advanced": 0.55, "elite": 0.60
         ]
         static let peakSingleLRMaxHours: Double = 10.0
-        static let peakB2BCombinedFraction: Double = 0.85
-        static let peakB2BCombinedMaxHours: Double = 14.0
+        static let peakB2BCombinedFraction: Double = 0.55
+        static let peakB2BMaxHours: [String: Double] = [
+            "intermediate": 12.0,
+            "advanced": 16.0,
+            "elite": 20.0
+        ]
         static let b2bStartCombinedHours: Double = 3.0
         static let longRunCurveExponent: Double = 2.0
         static let b2bDay1Split: Double = 0.43
         static let b2bDay2Split: Double = 0.57
-        static let b2bEasyReduction: Double = 0.60
+        static let b2bSupportingSessionScale: Double = 0.70
 
         // Base session durations (minutes)
         static let easyRunStartMinutes: Double = 45

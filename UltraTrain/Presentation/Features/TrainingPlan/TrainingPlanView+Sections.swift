@@ -28,8 +28,26 @@ extension TrainingPlanView {
 
                 PlanVolumeChartsSection(plan: plan)
 
-                ForEach(viewModel.visibleWeeks, id: \.id) { week in
+                ForEach(Array(viewModel.visibleWeeks.enumerated()), id: \.element.id) { visibleIndex, week in
                     let weekIndex = plan.weeks.firstIndex(where: { $0.id == week.id }) ?? 0
+
+                    // Phase header at phase transitions
+                    if visibleIndex == 0 || week.phase != viewModel.visibleWeeks[visibleIndex - 1].phase {
+                        let phaseWeeks = plan.weeks.filter { $0.phase == week.phase }
+                        let completedWeeks = phaseWeeks.filter { w in
+                            w.sessions.filter { $0.type != .rest && !$0.isSkipped }.allSatisfy(\.isCompleted)
+                        }.count
+                        let firstNum = phaseWeeks.first?.weekNumber ?? 1
+                        let lastNum = phaseWeeks.last?.weekNumber ?? 1
+                        PhaseHeaderCard(
+                            phase: week.phase,
+                            weekRange: "Weeks \(firstNum)-\(lastNum)",
+                            completedWeeks: completedWeeks,
+                            totalWeeks: phaseWeeks.count,
+                            description: PhaseHeaderCard.description(for: week.phase)
+                        )
+                    }
+
                     WeekCardView(
                         week: week,
                         weekIndex: weekIndex,
@@ -93,6 +111,26 @@ extension TrainingPlanView {
                                     sessionIndexB: target.sessionIndex
                                 )
                             }
+                        },
+                        onValidateSession: { sessionIndex in
+                            Task {
+                                await viewModel.toggleSessionCompletion(
+                                    weekIndex: weekIndex,
+                                    sessionIndex: sessionIndex
+                                )
+                            }
+                        },
+                        onLinkSessionToRun: { sessionIndex, runId in
+                            Task {
+                                await viewModel.linkSessionToRun(
+                                    weekIndex: weekIndex,
+                                    sessionIndex: sessionIndex,
+                                    runId: runId
+                                )
+                            }
+                        },
+                        recentRunsProvider: { date in
+                            await viewModel.recentUnlinkedRuns(near: date)
                         }
                     )
                 }

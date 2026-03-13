@@ -150,6 +150,7 @@ struct SessionRowView: View {
                 }
         }
         .buttonStyle(.plain)
+        .sensoryFeedback(.impact(flexibility: .soft), trigger: session.isCompleted)
         .accessibilityLabel(statusAccessibilityLabel)
         .accessibilityHint("Double-tap to toggle completion")
     }

@@ -14,10 +14,14 @@ struct SessionDetailView: View {
     var onUnskip: (() -> Void)?
     var onReschedule: ((Date) -> Void)?
     var onSwap: ((SwapCandidate) -> Void)?
+    var onValidate: (() -> Void)?
+    var onLinkRun: ((UUID) -> Void)?
+    var recentRuns: [CompletedRun] = []
 
     @State private var showSkipConfirmation = false
     @State private var showRescheduleSheet = false
     @State private var showSwapSheet = false
+    @State private var showValidateSheet = false
 
     var body: some View {
         ScrollView {
@@ -86,39 +90,63 @@ struct SessionDetailView: View {
                 onSwap: { candidate in onSwap?(candidate) }
             )
         }
+        .sheet(isPresented: $showValidateSheet) {
+            ValidateSessionSheet(
+                session: session,
+                recentRuns: recentRuns,
+                connectedServices: [],
+                onManualComplete: { onValidate?() },
+                onLinkRun: { runId in onLinkRun?(runId) },
+                onConnectService: { _ in }
+            )
+        }
     }
 
     // MARK: - Header
 
     private var headerSection: some View {
-        HStack {
-            Image(systemName: session.type.icon)
-                .font(.largeTitle)
-                .foregroundStyle(session.isSkipped ? Theme.Colors.secondaryLabel : session.intensity.color)
-                .accessibilityHidden(true)
+        VStack(alignment: .leading, spacing: 0) {
+            // Gradient intensity bar
+            RoundedRectangle(cornerRadius: 2)
+                .fill(
+                    LinearGradient(
+                        colors: [session.intensity.color.opacity(0.6), session.intensity.color],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .frame(height: 4)
+                .padding(.bottom, Theme.Spacing.sm)
 
-            VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-                Text(session.type.displayName)
-                    .font(.title2)
-                    .fontWeight(.bold)
-                Text(session.date.formatted(.dateTime.weekday(.wide).month().day()))
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-            }
+            HStack {
+                Image(systemName: session.type.icon)
+                    .font(.largeTitle)
+                    .foregroundStyle(session.isSkipped ? Theme.Colors.secondaryLabel : session.intensity.color)
+                    .accessibilityHidden(true)
 
-            Spacer()
+                VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+                    Text(session.type.displayName)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    Text(session.date.formatted(.dateTime.weekday(.wide).month().day()))
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
 
-            VStack(spacing: Theme.Spacing.xs) {
-                Text(session.intensity.displayName)
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, Theme.Spacing.sm)
-                    .padding(.vertical, Theme.Spacing.xs)
-                    .background(session.isSkipped ? Color.gray : session.intensity.color)
-                    .clipShape(Capsule())
+                Spacer()
 
-                if let zone = session.targetHeartRateZone {
-                    SessionZoneTargetBadge(zone: zone)
+                VStack(spacing: Theme.Spacing.xs) {
+                    Text(session.intensity.displayName)
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, Theme.Spacing.sm)
+                        .padding(.vertical, Theme.Spacing.xs)
+                        .background(session.isSkipped ? Color.gray : session.intensity.color)
+                        .clipShape(Capsule())
+
+                    if let zone = session.targetHeartRateZone {
+                        SessionZoneTargetBadge(zone: zone)
+                    }
                 }
             }
         }
@@ -388,6 +416,21 @@ struct SessionDetailView: View {
 
     private var actionsSection: some View {
         VStack(spacing: Theme.Spacing.sm) {
+            if !session.isCompleted && !session.isSkipped && session.type != .rest {
+                Button {
+                    showValidateSheet = true
+                } label: {
+                    Label("Validate Session", systemImage: "checkmark.circle.fill")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(Theme.Colors.success)
+                .accessibilityHint("Double-tap to validate this session as completed")
+            }
+
+            Divider()
+
             if !session.isCompleted && !session.isSkipped {
                 Button {
                     showSkipConfirmation = true

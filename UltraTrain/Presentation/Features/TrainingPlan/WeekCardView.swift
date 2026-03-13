@@ -17,10 +17,15 @@ struct WeekCardView: View {
     let onSwapSession: (Int, SwapCandidate) -> Void
     let onReorderSession: (Int, Int, SwapCandidate) -> Void
     var workouts: [IntervalWorkout] = []
+    var onValidateSession: ((Int) -> Void)?
+    var onLinkSessionToRun: ((Int, UUID) -> Void)?
+    var recentRunsProvider: ((Date) async -> [CompletedRun])?
 
     @State private var isExpanded: Bool
     @State private var contextRescheduleItem: ContextSheetItem?
     @State private var contextSwapItem: ContextSheetItem?
+    @State private var validateItem: ContextSheetItem?
+    @State private var validateRecentRuns: [CompletedRun] = []
 
     init(
         week: TrainingWeek,
@@ -38,7 +43,10 @@ struct WeekCardView: View {
         onRescheduleSession: @escaping (Int, Date) -> Void,
         onSwapSession: @escaping (Int, SwapCandidate) -> Void,
         workouts: [IntervalWorkout] = [],
-        onReorderSession: @escaping (Int, Int, SwapCandidate) -> Void
+        onReorderSession: @escaping (Int, Int, SwapCandidate) -> Void,
+        onValidateSession: ((Int) -> Void)? = nil,
+        onLinkSessionToRun: ((Int, UUID) -> Void)? = nil,
+        recentRunsProvider: ((Date) async -> [CompletedRun])? = nil
     ) {
         self.week = week
         self.weekIndex = weekIndex
@@ -55,15 +63,25 @@ struct WeekCardView: View {
         self.onSwapSession = onSwapSession
         self.workouts = workouts
         self.onReorderSession = onReorderSession
+        self.onValidateSession = onValidateSession
+        self.onLinkSessionToRun = onLinkSessionToRun
+        self.recentRunsProvider = recentRunsProvider
         _isExpanded = State(initialValue: isCurrentWeek)
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            headerButton
-            weekProgressBar
-            if isExpanded {
-                sessionsList
+        HStack(spacing: 0) {
+            // Left phase accent border
+            RoundedRectangle(cornerRadius: 2)
+                .fill(phaseAccentColor)
+                .frame(width: 4)
+
+            VStack(alignment: .leading, spacing: 0) {
+                headerButton
+                weekProgressBar
+                if isExpanded {
+                    sessionsList
+                }
             }
         }
         .appCardStyle()
@@ -84,14 +102,18 @@ extension WeekCardView {
             }
         } label: {
             VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-                // Line 1: Phase dot + Week N + progress fraction
+                // Line 1: Week N + phase badge + progress fraction
                 HStack {
-                    Circle()
-                        .fill(phaseAccentColor)
-                        .frame(width: 8, height: 8)
                     Text("Week \(week.weekNumber)")
                         .font(.title3.bold())
                         .foregroundStyle(Theme.Colors.label)
+                    Text(week.phase.displayName)
+                        .font(.caption2.bold())
+                        .foregroundStyle(phaseAccentColor)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(phaseAccentColor.opacity(0.12))
+                        .clipShape(Capsule())
                     if week.isRecoveryWeek {
                         Text(String(localized: "week.recovery", defaultValue: "Recovery"))
                             .font(.caption2)
@@ -112,16 +134,10 @@ extension WeekCardView {
                         .accessibilityHidden(true)
                 }
 
-                // Line 2: Phase name + date range
-                HStack(spacing: Theme.Spacing.xs) {
-                    Text(week.phase.displayName)
-                        .foregroundStyle(phaseAccentColor)
-                    Text("·")
-                        .foregroundStyle(Theme.Colors.secondaryLabel)
-                    Text(weekDateRange)
-                        .foregroundStyle(Theme.Colors.secondaryLabel)
-                }
-                .font(.caption)
+                // Line 2: Date range
+                Text(weekDateRange)
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
 
                 // Line 3: Duration (primary) + Elevation
                 HStack(spacing: Theme.Spacing.md) {
@@ -204,7 +220,14 @@ extension WeekCardView {
 
                 NavigationLink(destination: sessionDetailView(for: session, at: sessionIndex)) {
                     SessionRowView(session: session) {
-                        onToggleSession(sessionIndex)
+                        if !session.isCompleted && onValidateSession != nil {
+                            Task {
+                                validateRecentRuns = await recentRunsProvider?(session.date) ?? []
+                                validateItem = ContextSheetItem(sessionIndex: sessionIndex, session: session)
+                            }
+                        } else {
+                            onToggleSession(sessionIndex)
+                        }
                     }
                 }
                 .buttonStyle(.plain)
@@ -238,13 +261,38 @@ extension WeekCardView {
                 onSwap: { candidate in onSwapSession(item.sessionIndex, candidate) }
             )
         }
+        .sheet(item: $validateItem) { item in
+            ValidateSessionSheet(
+                session: item.session,
+                recentRuns: validateRecentRuns,
+                connectedServices: [],
+                onManualComplete: {
+                    onValidateSession?(item.sessionIndex)
+                },
+                onLinkRun: { runId in
+                    onLinkSessionToRun?(item.sessionIndex, runId)
+                },
+                onConnectService: { _ in }
+            )
+        }
     }
 
     @ViewBuilder
     private func sessionContextMenu(for session: TrainingSession, at index: Int) -> some View {
         if !session.isCompleted && !session.isSkipped {
-            Button { onToggleSession(index) } label: {
-                Label("Mark Complete", systemImage: "checkmark.circle")
+            if onValidateSession != nil {
+                Button {
+                    Task {
+                        validateRecentRuns = await recentRunsProvider?(session.date) ?? []
+                        validateItem = ContextSheetItem(sessionIndex: index, session: session)
+                    }
+                } label: {
+                    Label("Validate Session", systemImage: "checkmark.circle.fill")
+                }
+            } else {
+                Button { onToggleSession(index) } label: {
+                    Label("Mark Complete", systemImage: "checkmark.circle")
+                }
             }
             Button { onSkipSession(index) } label: {
                 Label("Skip Session", systemImage: "forward.fill")
@@ -285,7 +333,10 @@ extension WeekCardView {
             onSkip: { onSkipSession(sessionIndex) },
             onUnskip: session.isSkipped ? { onUnskipSession(sessionIndex) } : nil,
             onReschedule: { newDate in onRescheduleSession(sessionIndex, newDate) },
-            onSwap: { candidate in onSwapSession(sessionIndex, candidate) }
+            onSwap: { candidate in onSwapSession(sessionIndex, candidate) },
+            onValidate: onValidateSession != nil ? { onValidateSession?(sessionIndex) } : nil,
+            onLinkRun: onLinkSessionToRun != nil ? { runId in onLinkSessionToRun?(sessionIndex, runId) } : nil,
+            recentRuns: validateRecentRuns
         )
     }
 

@@ -301,7 +301,7 @@ struct LongRunCurveCalculatorTests {
         let totalWeeks = 26
         let raceDuration: TimeInterval = 50400 // ~14h HK100
 
-        var totals: [(week: Int, total: TimeInterval, recovery: Bool)] = []
+        var totals: [(week: Int, total: TimeInterval, recovery: Bool, isB2B: Bool)] = []
 
         for week in 0..<totalWeeks {
             let phase: TrainingPhase
@@ -324,34 +324,109 @@ struct LongRunCurveCalculatorTests {
                 raceEffectiveKm: 156,
                 preferredRunsPerWeek: 5
             )
-            totals.append((week, d.totalSeconds, isRecovery))
+            totals.append((week, d.totalSeconds, isRecovery, d.isB2B))
         }
 
-        // Check: between consecutive non-recovery, non-taper weeks,
+        // Check: between consecutive non-recovery, non-taper, same-B2B-status weeks,
         // volume should not drop by more than 10%
+        // B2B weeks are expected to be higher volume than non-B2B, so skip B2B→non-B2B transitions
         var prevWeek: Int?
         var prevTotal: TimeInterval?
+        var prevB2B: Bool?
         var violations: [String] = []
 
         for entry in totals {
-            if entry.recovery { prevWeek = nil; prevTotal = nil; continue }
+            if entry.recovery { prevWeek = nil; prevTotal = nil; prevB2B = nil; continue }
             // Skip taper weeks
             if entry.week >= 23 { continue }
 
-            if let pw = prevWeek, let pt = prevTotal {
-                let dropPercent = (pt - entry.total) / pt * 100
-                if dropPercent > 10 {
-                    violations.append(
-                        "W\(entry.week + 1): \(Int(entry.total / 60))min dropped \(Int(dropPercent))% from W\(pw + 1): \(Int(pt / 60))min"
-                    )
+            if let pw = prevWeek, let pt = prevTotal, let pb = prevB2B {
+                // Only compare same B2B status weeks (B2B weeks naturally have different totals)
+                if pb == entry.isB2B {
+                    let dropPercent = (pt - entry.total) / pt * 100
+                    if dropPercent > 10 {
+                        violations.append(
+                            "W\(entry.week + 1): \(Int(entry.total / 60))min dropped \(Int(dropPercent))% from W\(pw + 1): \(Int(pt / 60))min"
+                        )
+                    }
                 }
             }
             prevWeek = entry.week
             prevTotal = entry.total
+            prevB2B = entry.isB2B
         }
 
         #expect(violations.isEmpty,
                 "Volume should not zigzag between non-recovery weeks: \(violations.joined(separator: "; "))")
+    }
+
+    // MARK: - B2B Experience-Based Caps
+
+    @Test("B2B peak combined for 35h race scales by experience")
+    func b2bPeakByExperience() {
+        let raceDuration: TimeInterval = 126000 // ~35h DDF
+        let totalWeeks = 26
+        // Use near-peak week (buildWeekCount=23, halfPoint=11, so peak B2B at week ~22)
+        let peakWeek = 22
+
+        let advanced = LongRunCurveCalculator.b2bCombinedDuration(
+            weekIndex: peakWeek,
+            totalWeeks: totalWeeks,
+            experience: .advanced,
+            raceDurationSeconds: raceDuration
+        )
+        let elite = LongRunCurveCalculator.b2bCombinedDuration(
+            weekIndex: peakWeek,
+            totalWeeks: totalWeeks,
+            experience: .elite,
+            raceDurationSeconds: raceDuration
+        )
+
+        let advancedHours = advanced / 3600
+        let eliteHours = elite / 3600
+        #expect(advancedHours >= 10 && advancedHours <= 18,
+                "Advanced DDF peak B2B should be 10-18h, got \(advancedHours)h")
+        #expect(eliteHours >= 14 && eliteHours <= 22,
+                "Elite DDF peak B2B should be 14-22h, got \(eliteHours)h")
+        #expect(elite > advanced, "Elite should have higher B2B cap than advanced")
+    }
+
+    @Test("B2B peak for 14h race remains reasonable")
+    func b2bPeakFor14hRace() {
+        let raceDuration: TimeInterval = 50400 // ~14h HK100
+        let combined = LongRunCurveCalculator.b2bCombinedDuration(
+            weekIndex: 20,
+            totalWeeks: 26,
+            experience: .advanced,
+            raceDurationSeconds: raceDuration
+        )
+        let hours = combined / 3600
+        #expect(hours >= 5 && hours <= 10,
+                "HK100 advanced peak B2B should be 5-10h, got \(hours)h")
+    }
+
+    @Test("B2B weeks have non-zero easy and interval sessions")
+    func b2bWeeksHaveNonZeroSupportingSessions() {
+        let d = LongRunCurveCalculator.durations(
+            weekIndex: 15,
+            totalWeeks: 20,
+            phase: .build,
+            isRecoveryWeek: false,
+            experience: .advanced,
+            philosophy: .balanced,
+            raceDurationSeconds: 126000,
+            raceEffectiveKm: 270,
+            preferredRunsPerWeek: 5
+        )
+
+        if d.isB2B {
+            #expect(d.easyRun1Seconds >= 1800,
+                    "B2B easy run should be >= 30min, got \(d.easyRun1Seconds / 60)min")
+            #expect(d.intervalSeconds >= 2400,
+                    "B2B interval should be >= 40min, got \(d.intervalSeconds / 60)min")
+            #expect(d.vgSeconds >= 2400,
+                    "B2B VG should be >= 40min, got \(d.vgSeconds / 60)min")
+        }
     }
 
     // MARK: - Campus Coach Reference Validation
