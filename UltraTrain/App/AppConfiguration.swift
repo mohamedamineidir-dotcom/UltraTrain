@@ -55,6 +55,30 @@ enum AppConfiguration {
         static let accumulatedMissedVolumeThresholdKm: Double = 30.0
         static let accumulatedMissedVolumeReductionPercent: Double = 15.0
         static let redistributionLookbackWeeks: Int = 2
+
+        // Long run progression
+        static let longRunStartMinutes: [String: Double] = [
+            "beginner": 45, "intermediate": 60, "advanced": 75, "elite": 90
+        ]
+        static let peakSingleLRFraction: [String: Double] = [
+            "beginner": 0.40, "intermediate": 0.50, "advanced": 0.55, "elite": 0.60
+        ]
+        static let peakSingleLRMaxHours: Double = 10.0
+        static let peakB2BCombinedFraction: Double = 0.85
+        static let peakB2BCombinedMaxHours: Double = 14.0
+        static let b2bStartCombinedHours: Double = 3.0
+        static let longRunCurveExponent: Double = 2.0
+        static let b2bDay1Split: Double = 0.43
+        static let b2bDay2Split: Double = 0.57
+        static let b2bEasyReduction: Double = 0.60
+
+        // Base session durations (minutes)
+        static let easyRunStartMinutes: Double = 45
+        static let easyRunGrowthMinutes: Double = 20
+        static let intervalStartMinutes: Double = 50
+        static let intervalGrowthMinutes: Double = 25
+        static let vgStartMinutes: Double = 50
+        static let vgGrowthMinutes: Double = 30
     }
 
     enum RunTracking {

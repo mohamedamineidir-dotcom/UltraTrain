@@ -185,18 +185,31 @@ struct NutritionPlanGeneratorTests {
         #expect(plan.gutTrainingSessionIds.isEmpty)
     }
 
-    @Test("Throws for race under 1 hour")
-    func throwsForShortRace() async {
+    @Test("Very short race returns minimal hydration-only plan")
+    func veryShortRaceReturnsMinimalPlan() async throws {
         let generator = NutritionPlanGenerator()
         let athlete = makeAthlete()
         let race = makeRace(distanceKm: 5)
 
-        do {
-            _ = try await generator.execute(athlete: athlete, race: race, estimatedDuration: 30 * 60, preferences: .default)
-            #expect(Bool(false), "Should have thrown")
-        } catch {
-            #expect(error is DomainError)
-        }
+        let plan = try await generator.execute(athlete: athlete, race: race, estimatedDuration: 25 * 60, preferences: .default)
+        #expect(plan.entries.isEmpty, "Sub-30min race needs no in-race nutrition")
+        #expect(plan.hydrationMlPerHour == 400)
+        #expect(plan.caloriesPerHour == 0)
+    }
+
+    @Test("Short race under 90 min gets simplified schedule")
+    func shortRaceSimplifiedSchedule() async throws {
+        let generator = NutritionPlanGenerator()
+        let athlete = makeAthlete()
+        let race = makeRace(distanceKm: 21.1) // half marathon
+
+        let plan = try await generator.execute(athlete: athlete, race: race, estimatedDuration: 80 * 60, preferences: .default)
+        // Short race: gels + electrolyte drink, no salt capsules, no real food
+        let saltEntries = plan.entries.filter { $0.product.type == .salt }
+        let solidEntries = plan.entries.filter { $0.product.type == .bar || $0.product.type == .realFood }
+        #expect(saltEntries.isEmpty, "No salt capsules for short races")
+        #expect(solidEntries.isEmpty, "No solid food for short races")
+        #expect(!plan.entries.isEmpty, "Should still have gel/drink entries")
     }
 
     @Test("Entries are sorted by timing")

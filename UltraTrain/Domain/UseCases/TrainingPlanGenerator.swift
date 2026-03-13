@@ -30,13 +30,18 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         )
 
         // 3. Calculate volumes
+        let raceDuration = targetRace.estimatedDuration(experience: athlete.experienceLevel)
+        let raceEffectiveKm = targetRace.effectiveDistanceKm
         let volumes = VolumeCalculator.calculate(
             skeletons: skeletons,
             currentWeeklyVolumeKm: athlete.weeklyVolumeKm,
             raceDistanceKm: targetRace.distanceKm,
             raceElevationGainM: targetRace.elevationGainM,
             experience: athlete.experienceLevel,
-            philosophy: athlete.trainingPhilosophy
+            philosophy: athlete.trainingPhilosophy,
+            raceDurationSeconds: raceDuration,
+            raceEffectiveKm: raceEffectiveKm,
+            preferredRunsPerWeek: athlete.preferredRunsPerWeek ?? 5
         )
 
         // 4. Compute intermediate race overrides
@@ -49,7 +54,6 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         let phaseCounters = computeWeekNumbersInPhase(skeletons: skeletons)
 
         // 6. Generate sessions for each week
-        let raceEffectiveKm = targetRace.effectiveDistanceKm
         var allWorkouts: [IntervalWorkout] = []
 
         let weeks: [TrainingWeek] = zip(skeletons, volumes).enumerated().map { index, pair in
@@ -63,7 +67,9 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 raceEffectiveKm: raceEffectiveKm,
                 weekNumberInPhase: phaseCounters[index],
                 raceOverride: override,
-                preferredRunsPerWeek: athlete.preferredRunsPerWeek
+                preferredRunsPerWeek: athlete.preferredRunsPerWeek,
+                verticalGainEnvironment: athlete.verticalGainEnvironment,
+                expectedRaceDuration: raceDuration
             )
 
             allWorkouts.append(contentsOf: result.workouts)
@@ -77,7 +83,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 sessions: result.sessions,
                 isRecoveryWeek: skeleton.isRecoveryWeek || override?.behavior == .postRaceRecovery,
                 targetVolumeKm: volume.targetVolumeKm,
-                targetElevationGainM: volume.targetElevationGainM
+                targetElevationGainM: volume.targetElevationGainM,
+                targetDurationSeconds: volume.targetDurationSeconds
             )
         }
 

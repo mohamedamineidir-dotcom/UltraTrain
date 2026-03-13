@@ -2,10 +2,23 @@ import Foundation
 
 enum VolumeCalculator {
 
+    struct BaseSessionDurations: Equatable, Sendable {
+        let easyRun1Seconds: TimeInterval
+        let easyRun2Seconds: TimeInterval
+        let intervalSeconds: TimeInterval
+        let vgSeconds: TimeInterval
+    }
+
     struct WeekVolume: Equatable, Sendable {
         let weekNumber: Int
         let targetVolumeKm: Double
         let targetElevationGainM: Double
+        let targetDurationSeconds: TimeInterval
+        let targetLongRunDurationSeconds: TimeInterval
+        let isB2BWeek: Bool
+        let b2bDay1Seconds: TimeInterval
+        let b2bDay2Seconds: TimeInterval
+        let baseSessionDurations: BaseSessionDurations
     }
 
     static func calculate(
@@ -15,90 +28,69 @@ enum VolumeCalculator {
         raceElevationGainM: Double,
         experience: ExperienceLevel,
         philosophy: TrainingPhilosophy = .balanced,
+        raceDurationSeconds: TimeInterval = 0,
+        raceEffectiveKm: Double = 0,
+        preferredRunsPerWeek: Int = 5,
         maxIncreasePercent: Double = AppConfiguration.Training.maxWeeklyVolumeIncreasePercent,
         recoveryReductionPercent: Double = AppConfiguration.Training.recoveryWeekVolumeReductionPercent
     ) -> [WeekVolume] {
         guard !skeletons.isEmpty else { return [] }
 
-        let peakFraction = peakFraction(for: experience)
-        let peakVolume = raceDistanceKm * peakFraction * philosophyMultiplier(for: philosophy)
-        // Start from current fitness but cap at a safe fraction of peak to avoid
-        // dangerously high volumes in early weeks
-        let safeMaxStart = peakVolume * 0.5
-        let startVolume = min(max(currentWeeklyVolumeKm, 10.0), safeMaxStart)
+        let totalWeeks = skeletons.count
 
-        // Find the last non-taper, non-recovery week index for peak target
-        let buildWeeks = skeletons.filter { $0.phase != .taper && !$0.isRecoveryWeek }
-        let buildWeekCount = buildWeeks.count
-
-        // Calculate progressive volumes
+        // Compute duration-based volumes via LongRunCurveCalculator
         var volumes: [WeekVolume] = []
-        var previousNonRecoveryVolume = startVolume
-        var buildWeekIndex = 0
 
-        for skeleton in skeletons {
-            let volume: Double
-            let elevation: Double
+        for (index, skeleton) in skeletons.enumerated() {
+            let durations = LongRunCurveCalculator.durations(
+                weekIndex: index,
+                totalWeeks: totalWeeks,
+                phase: skeleton.phase,
+                isRecoveryWeek: skeleton.isRecoveryWeek,
+                experience: experience,
+                philosophy: philosophy,
+                raceDurationSeconds: raceDurationSeconds,
+                raceEffectiveKm: raceEffectiveKm,
+                preferredRunsPerWeek: preferredRunsPerWeek
+            )
 
-            if skeleton.isRecoveryWeek {
-                volume = previousNonRecoveryVolume * (1.0 - recoveryReductionPercent / 100.0)
-                elevation = elevationForVolume(volume, raceDistanceKm: raceDistanceKm, raceElevationGainM: raceElevationGainM)
-            } else if skeleton.phase == .taper {
-                let taperWeeks = skeletons.filter { $0.phase == .taper }
-                let taperIndex = taperWeeks.firstIndex(where: { $0.weekNumber == skeleton.weekNumber }) ?? 0
-                let taperTotal = taperWeeks.count
-                // Progressive reduction: from ~80% to ~50% of peak
-                let taperFraction = 0.8 - (Double(taperIndex) / Double(max(taperTotal - 1, 1))) * 0.3
-                volume = previousNonRecoveryVolume * taperFraction
-                elevation = elevationForVolume(volume, raceDistanceKm: raceDistanceKm, raceElevationGainM: raceElevationGainM)
-            } else {
-                // Progressive overload toward peak
-                let targetAtStep: Double
-                if buildWeekCount > 1 {
-                    let progress = Double(buildWeekIndex) / Double(buildWeekCount - 1)
-                    targetAtStep = startVolume + (peakVolume - startVolume) * progress
-                } else {
-                    targetAtStep = peakVolume
-                }
+            // Derive km from duration using average pace (~6.5 min/km)
+            let avgPaceSecPerKm: Double = 390 // 6.5 min/km
+            let derivedKm = durations.totalSeconds / avgPaceSecPerKm
 
-                // Cap at 10% increase from last non-recovery week
-                let maxAllowed = previousNonRecoveryVolume * (1.0 + maxIncreasePercent / 100.0)
-                volume = min(targetAtStep, maxAllowed)
-
-                previousNonRecoveryVolume = volume
-                buildWeekIndex += 1
-                elevation = elevationForVolume(volume, raceDistanceKm: raceDistanceKm, raceElevationGainM: raceElevationGainM)
-            }
+            // Elevation: proportional to derived km with race elevation density
+            let elevation = elevationForVolume(
+                derivedKm,
+                raceDistanceKm: raceDistanceKm,
+                raceElevationGainM: raceElevationGainM
+            )
 
             volumes.append(WeekVolume(
                 weekNumber: skeleton.weekNumber,
-                targetVolumeKm: (volume * 10).rounded() / 10,
-                targetElevationGainM: (elevation * 10).rounded() / 10
+                targetVolumeKm: (derivedKm * 10).rounded() / 10,
+                targetElevationGainM: (elevation * 10).rounded() / 10,
+                targetDurationSeconds: durations.totalSeconds,
+                targetLongRunDurationSeconds: durations.longRunSeconds,
+                isB2BWeek: durations.isB2B,
+                b2bDay1Seconds: durations.b2bDay1Seconds,
+                b2bDay2Seconds: durations.b2bDay2Seconds,
+                baseSessionDurations: BaseSessionDurations(
+                    easyRun1Seconds: durations.easyRun1Seconds,
+                    easyRun2Seconds: durations.easyRun2Seconds,
+                    intervalSeconds: durations.intervalSeconds,
+                    vgSeconds: durations.vgSeconds
+                )
             ))
         }
         return volumes
     }
 
-    private static func peakFraction(for experience: ExperienceLevel) -> Double {
-        switch experience {
-        case .beginner:     0.40
-        case .intermediate: 0.50
-        case .advanced:     0.60
-        case .elite:        0.70
-        }
-    }
-
-    private static func philosophyMultiplier(for philosophy: TrainingPhilosophy) -> Double {
-        switch philosophy {
-        case .enjoyment:    0.80
-        case .balanced:     1.00
-        case .performance:  1.15
-        }
-    }
-
     private static func elevationForVolume(_ volume: Double, raceDistanceKm: Double, raceElevationGainM: Double) -> Double {
         guard raceDistanceKm > 0 else { return 0 }
-        let elevationPerKm = raceElevationGainM / raceDistanceKm
-        return volume * elevationPerKm
+        let raceElevationPerKm = raceElevationGainM / raceDistanceKm
+        // Cap training elevation density at 60 m/km to prevent extreme values
+        // for short, steep races (e.g., 13km/1500D+ = 115 m/km)
+        let trainingElevationPerKm = min(raceElevationPerKm, 60.0)
+        return volume * trainingElevationPerKm
     }
 }

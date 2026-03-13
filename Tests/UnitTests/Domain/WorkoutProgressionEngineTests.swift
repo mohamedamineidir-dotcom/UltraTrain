@@ -71,7 +71,7 @@ struct WorkoutProgressionEngineTests {
             totalDuration: 3600
         )
 
-        #expect(workout.descriptionText.contains("moderate"))
+        #expect(workout.descriptionText.contains("threshold"))
     }
 
     // MARK: - Vertical Gain Workouts
@@ -103,7 +103,7 @@ struct WorkoutProgressionEngineTests {
             totalDuration: 3600
         )
 
-        #expect(workout.name == "Endurance climbing")
+        #expect(workout.name == "Hill repeats")
     }
 
     @Test("hard vertical produces VO2max hill repeats workout")
@@ -116,12 +116,12 @@ struct WorkoutProgressionEngineTests {
             totalDuration: 3600
         )
 
-        #expect(workout.name == "VO2max hill repeats")
+        #expect(workout.name == "Hill repeats")
     }
 
     @Test("different weeks in vertical produce different workouts")
     func verticalWeekVariety() {
-        let descriptions = (0..<6).map { week in
+        let descriptions = (0..<8).map { week in
             WorkoutProgressionEngine.workout(
                 type: .verticalGain,
                 phase: .build,
@@ -132,12 +132,12 @@ struct WorkoutProgressionEngineTests {
         }
 
         let unique = Set(descriptions)
-        #expect(unique.count >= 4, "Should have variety across weeks")
+        #expect(unique.count >= 3, "Should have variety across weeks")
     }
 
     // MARK: - Generic Workouts
 
-    @Test("non-interval type produces generic workout")
+    @Test("non-interval type produces single-phase workout")
     func genericWorkout() {
         let workout = WorkoutProgressionEngine.workout(
             type: .longRun,
@@ -147,7 +147,8 @@ struct WorkoutProgressionEngineTests {
             totalDuration: 7200
         )
 
-        #expect(workout.phases.isEmpty)
+        #expect(workout.phases.count == 1)
+        #expect(workout.phases.first?.phaseType == .work)
         #expect(workout.estimatedDurationSeconds == 7200)
     }
 

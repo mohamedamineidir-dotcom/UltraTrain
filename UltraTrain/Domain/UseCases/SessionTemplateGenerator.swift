@@ -6,9 +6,9 @@ enum SessionTemplateGenerator {
         let dayOffset: Int // 0 = Monday, 6 = Sunday
         let type: SessionType
         let intensity: Intensity
-        let volumeFraction: Double
+        let durationSeconds: TimeInterval
+        let elevationFraction: Double
         let description: String
-        let isTimeBased: Bool
     }
 
     // MARK: - Public
@@ -20,84 +20,70 @@ enum SessionTemplateGenerator {
         raceEffectiveKm: Double = 0,
         weekNumberInPhase: Int = 0,
         raceOverride: IntermediateRaceHandler.RaceWeekOverride? = nil,
-        preferredRunsPerWeek: Int? = nil
+        preferredRunsPerWeek: Int? = nil,
+        verticalGainEnvironment: VerticalGainEnvironment = .mountain,
+        expectedRaceDuration: TimeInterval = 0
     ) -> (sessions: [TrainingSession], workouts: [IntervalWorkout]) {
         let templates: [SessionTemplate]
         var workouts: [IntervalWorkout] = []
 
         if let override = raceOverride {
-            templates = overrideTemplates(for: override.behavior, experience: experience)
+            templates = overrideTemplates(for: override.behavior, volume: volume)
         } else if skeleton.isRecoveryWeek {
-            templates = recoveryTemplates(experience: experience)
+            templates = recoveryTemplates(volume: volume)
         } else {
             templates = phaseTemplates(
                 for: skeleton.phase,
+                volume: volume,
                 experience: experience,
-                raceEffectiveKm: raceEffectiveKm,
-                weekInPhase: weekNumberInPhase
+                weekNumberInPhase: weekNumberInPhase
             )
         }
 
-        let adapted = adaptTemplates(templates, preferredRuns: preferredRunsPerWeek)
-        // Ensure long runs/B2B are always at the end of the week
-        let finalTemplates = ensureLongRunsLast(adapted)
-        // Use fractions directly — do NOT divide by totalFraction to avoid inflation
-        // when rest days reduce the sum below 1.0
-        // Weekly time budget: estimate from volume at ~6.5 min/km avg pace
-        let weeklyTimeBudget = volume.targetVolumeKm * 6.5 * 60.0 // seconds
-
-        let sessions = finalTemplates.map { template in
-            let distance: Double
-            let duration: TimeInterval
-            let elevation: Double
-
-            if template.isTimeBased {
-                // Time-based sessions (long runs, B2B): use duration + elevation only
-                duration = weeklyTimeBudget * template.volumeFraction
-                elevation = volume.targetElevationGainM * template.volumeFraction
-                // No distance target for time-based sessions
-                distance = 0
-            } else if template.volumeFraction > 0 {
-                distance = volume.targetVolumeKm * template.volumeFraction
-                elevation = volume.targetElevationGainM * template.volumeFraction
-                duration = estimateDuration(distanceKm: distance, intensity: template.intensity)
-            } else {
-                distance = 0
-                elevation = 0
-                duration = 0
-            }
+        let sessions = templates.map { template in
+            let duration = template.durationSeconds
+            let elevation = volume.targetElevationGainM * template.elevationFraction
 
             // Generate workout for quality sessions
             var workoutId: UUID?
             var sessionDescription = template.description
-            if template.type == .intervals || template.type == .verticalGain {
+            let shouldGenerateWorkout = template.type != .rest
+            if shouldGenerateWorkout {
                 let workout = WorkoutProgressionEngine.workout(
                     type: template.type,
                     phase: skeleton.phase,
                     weekInPhase: weekNumberInPhase,
                     intensity: template.intensity,
-                    totalDuration: duration
+                    totalDuration: duration,
+                    expectedRaceDuration: expectedRaceDuration
                 )
                 workouts.append(workout)
                 workoutId = workout.id
-                // Use the specific workout format as the description
                 sessionDescription = workout.descriptionText
             }
+
+            let advice = CoachAdviceGenerator.advice(
+                for: template.type,
+                intensity: template.intensity,
+                phase: skeleton.phase,
+                verticalGainEnvironment: verticalGainEnvironment
+            )
 
             return TrainingSession(
                 id: UUID(),
                 date: skeleton.startDate.adding(days: template.dayOffset),
                 type: template.type,
-                plannedDistanceKm: (distance * 10).rounded() / 10,
+                plannedDistanceKm: 0,
                 plannedElevationGainM: (elevation * 10).rounded() / 10,
                 plannedDuration: duration,
                 intensity: template.intensity,
                 description: sessionDescription,
-                nutritionNotes: nutritionNotes(duration: duration, distance: distance),
+                nutritionNotes: nutritionNotes(duration: duration),
                 isCompleted: false,
                 isSkipped: false,
                 linkedRunId: nil,
-                intervalWorkoutId: workoutId
+                intervalWorkoutId: workoutId,
+                coachAdvice: advice
             )
         }
 
@@ -105,24 +91,17 @@ enum SessionTemplateGenerator {
         return (markedSessions, workouts)
     }
 
-    /// Mark the most important sessions as key ("do not miss").
-    /// Normal weeks: 3 key sessions. Peak/build weeks: 4. Race week: 5.
+    // MARK: - Mark Key Sessions
+
     private static func markKeySessions(_ sessions: [TrainingSession], phase: TrainingPhase) -> [TrainingSession] {
         let keyCount: Int
         switch phase {
-        case .peak:
-            keyCount = 4
-        case .build:
-            keyCount = 4
-        case .race:
-            keyCount = 5
-        default:
-            keyCount = 3
+        case .peak, .build: keyCount = 4
+        case .race: keyCount = 5
+        default: keyCount = 3
         }
 
-        // Priority: longRun/backToBack > intervals/verticalGain > tempo > recovery
         let keyPriority: [SessionType] = [.longRun, .backToBack, .intervals, .verticalGain, .tempo, .recovery]
-
         let activeSessions = sessions.enumerated().filter { $0.element.type != .rest }
         let sorted = activeSessions.sorted { a, b in
             let aPriority = keyPriority.firstIndex(of: a.element.type) ?? keyPriority.count
@@ -131,7 +110,6 @@ enum SessionTemplateGenerator {
         }
 
         let keyIndices = Set(sorted.prefix(min(keyCount, sorted.count)).map { $0.offset })
-
         return sessions.enumerated().map { idx, session in
             var s = session
             s.isKeySession = keyIndices.contains(idx)
@@ -139,187 +117,175 @@ enum SessionTemplateGenerator {
         }
     }
 
-    // MARK: - Runs Per Week Adaptation
+    // MARK: - Phase Dispatch
 
-    static func adaptTemplates(
-        _ templates: [SessionTemplate],
-        preferredRuns: Int?
+    static func phaseTemplates(
+        for phase: TrainingPhase,
+        volume: VolumeCalculator.WeekVolume,
+        experience: ExperienceLevel,
+        weekNumberInPhase: Int
     ) -> [SessionTemplate] {
-        guard let preferred = preferredRuns else { return templates }
+        switch phase {
+        case .base:
+            return standardWeekTemplates(volume: volume, experience: experience, phase: .base)
+        case .build:
+            return standardWeekTemplates(volume: volume, experience: experience, phase: .build)
+        case .peak:
+            return standardWeekTemplates(volume: volume, experience: experience, phase: .peak)
+        case .taper:
+            return taperTemplates(volume: volume)
+        case .recovery, .race:
+            return recoveryTemplates(volume: volume)
+        }
+    }
 
-        // Split into active sessions and rest days
-        let active = templates.filter { $0.type != .rest && $0.volumeFraction > 0 }
-        let currentCount = active.count
+    // MARK: - Standard Week (2 easy + 1 VG + 1 interval + 1 longRun OR B2B variant)
 
-        if currentCount == preferred {
-            return templates
+    private static func standardWeekTemplates(
+        volume: VolumeCalculator.WeekVolume,
+        experience: ExperienceLevel,
+        phase: TrainingPhase
+    ) -> [SessionTemplate] {
+        let base = volume.baseSessionDurations
+        let vgIntensity: Intensity = (experience == .advanced || experience == .elite) ? .hard : .moderate
+
+        if volume.isB2BWeek {
+            // B2B week: 2 easy (shorter) + 1 VG + B2B day1 + B2B day2
+            return [
+                tpl(0, .rest, .easy, 0, 0, "Rest day. Prioritize sleep for adaptation."),
+                tpl(1, .recovery, .easy, base.easyRun1Seconds, 0.05,
+                    "Easy run at conversational pace (Zone 2)."),
+                tpl(2, .verticalGain, vgIntensity, base.vgSeconds, 0.30,
+                    "Vertical gain session. Build climbing power."),
+                tpl(3, .recovery, .easy, base.easyRun2Seconds, 0.05,
+                    "Easy run. Keep it relaxed before the weekend block."),
+                tpl(4, .rest, .easy, 0, 0, "Rest day. Hydrate well for B2B."),
+                tpl(5, .longRun, .easy, volume.b2bDay1Seconds, 0.25,
+                    "B2B Day 1: Long run building fatigue for tomorrow. Easy pace (Zone 2)."),
+                tpl(6, .backToBack, .easy, volume.b2bDay2Seconds, 0.30,
+                    "B2B Day 2: Long run on tired legs. Simulate ultra fatigue (Zone 2)."),
+            ]
         }
 
-        if currentCount > preferred {
-            // Remove lowest-priority sessions first
-            let removalPriority: [SessionType] = [.crossTraining, .recovery, .tempo]
-            var kept = active
-            var toRemove = currentCount - preferred
-
-            for typeToRemove in removalPriority where toRemove > 0 {
-                kept = kept.enumerated().compactMap { idx, t in
-                    if toRemove > 0 && t.type == typeToRemove {
-                        toRemove -= 1
-                        return nil
-                    }
-                    return t
-                }
-            }
-
-            return buildWeek(from: sortLongRunsLast(kept))
-        }
-
-        // currentCount < preferred: add easy/recovery sessions to fill
-        var expanded = active
-        let additionalTypes: [(SessionType, Intensity, String)] = [
-            (.recovery, .easy, "Easy recovery run. Conversational pace, Zone 1-2."),
-            (.recovery, .easy, "Light aerobic run. Keep it relaxed."),
-            (.tempo, .moderate, "Moderate tempo effort to build aerobic capacity."),
+        // Non-B2B: 2 easy + 1 interval + 1 VG + 1 long run
+        let intervalIntensity: Intensity = phase == .base ? .moderate : .hard
+        return [
+            tpl(0, .rest, .easy, 0, 0, "Rest day. Recovery is part of training."),
+            tpl(1, .recovery, .easy, base.easyRun1Seconds, 0.05,
+                "Easy run at conversational pace (Zone 2)."),
+            tpl(2, .intervals, intervalIntensity, base.intervalSeconds, 0.10,
+                "Intervals at \(intervalIntensity == .hard ? "VO2max (Zone 4)" : "threshold (Zone 3)"). Build speed."),
+            tpl(3, .verticalGain, vgIntensity, base.vgSeconds, 0.25,
+                "Vertical gain session. Build climbing strength."),
+            tpl(4, .rest, .easy, 0, 0, "Rest day. Prepare for the weekend."),
+            tpl(5, .recovery, .easy, base.easyRun2Seconds, 0.05,
+                "Easy run. Loosen up before the long run."),
+            tpl(6, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.20,
+                "Long run (Zone 2). Practice race-day nutrition. Include elevation."),
         ]
-        var addIndex = 0
-        while expanded.count < preferred && addIndex < additionalTypes.count {
-            let (type, intensity, desc) = additionalTypes[addIndex]
-            expanded.append(SessionTemplate(dayOffset: 0, type: type, intensity: intensity,
-                                            volumeFraction: 0.08, description: desc, isTimeBased: false))
-            addIndex += 1
-        }
-        // If still not enough, add more recovery runs
-        while expanded.count < preferred {
-            expanded.append(SessionTemplate(dayOffset: 0, type: .recovery, intensity: .easy,
-                                            volumeFraction: 0.06, description: "Easy run. Keep effort comfortable.",
-                                            isTimeBased: false))
-        }
-
-        return buildWeek(from: sortLongRunsLast(expanded))
     }
 
-    /// Sort active templates so longRun and backToBack are always last in the array.
-    /// Since buildWeek assigns sessions to days in array order, last items get the last day slots.
-    private static func sortLongRunsLast(_ templates: [SessionTemplate]) -> [SessionTemplate] {
-        templates.sorted { a, b in
-            longRunWeight(a.type) < longRunWeight(b.type)
-        }
-    }
+    // MARK: - Taper
 
-    private static func longRunWeight(_ type: SessionType) -> Int {
-        switch type {
-        case .longRun:    100
-        case .backToBack: 101
-        default:          0
-        }
-    }
-
-    /// Arrange active sessions into a 7-day week with rest days filling gaps
-    private static func buildWeek(from active: [SessionTemplate]) -> [SessionTemplate] {
-        let count = active.count
-        guard count > 0 && count <= 7 else { return active }
-
-        // Spread sessions across the week with rest days between hard efforts
-        let dayAssignments: [[Int]] = [
-            [],                          // 0 sessions (unused)
-            [5],                         // 1 session
-            [2, 5],                      // 2 sessions
-            [1, 3, 5],                   // 3 sessions
-            [1, 3, 5, 6],               // 4 sessions
-            [1, 2, 3, 5, 6],            // 5 sessions
-            [0, 1, 2, 3, 5, 6],         // 6 sessions
-            [0, 1, 2, 3, 4, 5, 6],      // 7 sessions
+    private static func taperTemplates(volume: VolumeCalculator.WeekVolume) -> [SessionTemplate] {
+        let base = volume.baseSessionDurations
+        return [
+            tpl(0, .rest, .easy, 0, 0, "Rest day. Enjoy the taper — trust your training."),
+            tpl(1, .intervals, .moderate, base.intervalSeconds, 0.10,
+                "Short opener intervals. Stay sharp without fatiguing."),
+            tpl(2, .rest, .easy, 0, 0, "Rest day. Light stretching and foam rolling."),
+            tpl(3, .recovery, .easy, base.easyRun1Seconds, 0.05,
+                "Easy shakeout run. Keep it short and comfortable."),
+            tpl(4, .rest, .easy, 0, 0, "Rest day. Final gear and nutrition prep."),
+            tpl(5, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.15,
+                "Reduced long run at easy effort. Save it for race day."),
+            tpl(6, .rest, .easy, 0, 0, "Full rest. Sleep, hydrate, visualize your race."),
         ]
-
-        let days = dayAssignments[min(count, 7)]
-        var result: [SessionTemplate] = []
-
-        for day in 0...6 {
-            if let idx = days.firstIndex(of: day), idx < active.count {
-                let t = active[idx]
-                result.append(SessionTemplate(dayOffset: day, type: t.type, intensity: t.intensity,
-                                              volumeFraction: t.volumeFraction, description: t.description,
-                                              isTimeBased: t.isTimeBased))
-            } else {
-                result.append(tpl(day, .rest, .easy, 0, "Rest day. Recovery is part of training."))
-            }
-        }
-
-        return result
     }
 
-    // MARK: - Ensure Long Runs Last
+    // MARK: - Recovery
 
-    /// Re-sort a full 7-day week so long runs and B2B sessions occupy the latest day slots.
-    private static func ensureLongRunsLast(_ templates: [SessionTemplate]) -> [SessionTemplate] {
-        guard templates.count == 7 else { return templates }
+    static func recoveryTemplates(volume: VolumeCalculator.WeekVolume) -> [SessionTemplate] {
+        let base = volume.baseSessionDurations
+        return [
+            tpl(0, .rest, .easy, 0, 0, "Recovery week. Let your body absorb the training."),
+            tpl(1, .recovery, .easy, base.easyRun1Seconds, 0.08,
+                "Easy recovery jog. Very comfortable pace, Zone 1 only."),
+            tpl(2, .rest, .easy, 0, 0, "Rest day. Focus on nutrition and sleep quality."),
+            tpl(3, .verticalGain, .easy, base.vgSeconds, 0.15,
+                "Light vertical gain. Easy effort, enjoy the trail."),
+            tpl(4, .rest, .easy, 0, 0, "Rest day. Stretching and mobility work."),
+            tpl(5, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.15,
+                "Reduced long run at very easy pace. Enjoy the scenery."),
+            tpl(6, .rest, .easy, 0, 0, "Full rest day. You've earned it."),
+        ]
+    }
 
-        // Find long run / B2B templates and non-long-run active templates
-        var longRuns: [SessionTemplate] = []
-        var others: [SessionTemplate] = []
-        var rests: [SessionTemplate] = []
+    // MARK: - Race Override Templates
 
-        for t in templates {
-            if t.type == .longRun || t.type == .backToBack {
-                longRuns.append(t)
-            } else if t.type == .rest || t.volumeFraction == 0 {
-                rests.append(t)
-            } else {
-                others.append(t)
-            }
+    static func overrideTemplates(
+        for behavior: IntermediateRaceHandler.Behavior,
+        volume: VolumeCalculator.WeekVolume
+    ) -> [SessionTemplate] {
+        switch behavior {
+        case .miniTaper:
+            return taperTemplates(volume: volume)
+        case .raceWeek(let priority):
+            return priority == .cRace ? cRaceWeekTemplates() : bRaceWeekTemplates()
+        case .postRaceRecovery:
+            return recoveryTemplates(volume: volume)
         }
+    }
 
-        // If long runs are already on the last active days, keep as-is
-        if longRuns.isEmpty { return templates }
+    static func bRaceWeekTemplates() -> [SessionTemplate] {
+        [
+            tpl(0, .rest, .easy, 0, 0, "Rest before race. Stay off your feet."),
+            tpl(1, .recovery, .easy, 1200, 0, "Short shakeout run. 15-20 min at easy pace."),
+            tpl(2, .rest, .easy, 0, 0, "Rest day. Carb-load and hydrate."),
+            tpl(3, .rest, .easy, 0, 0, "Rest day. Final race prep and gear check."),
+            tpl(4, .rest, .easy, 0, 0, "Rest day. Visualize your race plan."),
+            tpl(5, .rest, .maxEffort, 0, 0, "RACE DAY! Execute your plan."),
+            tpl(6, .rest, .easy, 0, 0, "Post-race recovery. Walk, stretch, refuel."),
+        ]
+    }
 
-        // Rebuild: others first, then long runs, fill rest
-        let active = others + longRuns
-        return buildWeek(from: active)
+    static func cRaceWeekTemplates() -> [SessionTemplate] {
+        [
+            tpl(0, .rest, .easy, 0, 0, "Rest day. Easy start to race week."),
+            tpl(1, .recovery, .easy, 1800, 0, "Easy run at conversational pace."),
+            tpl(2, .rest, .easy, 0, 0, "Rest day. Light stretching."),
+            tpl(3, .tempo, .moderate, 2400, 0.05, "Short tempo effort. Stay sharp."),
+            tpl(4, .rest, .easy, 0, 0, "Rest day. Prepare race gear and nutrition."),
+            tpl(5, .rest, .maxEffort, 0, 0, "RACE DAY! Use as a hard training effort."),
+            tpl(6, .recovery, .easy, 1500, 0, "Easy recovery run. Shake out race-day legs."),
+        ]
     }
 
     // MARK: - Helpers
 
-    static func tpl(_ day: Int, _ type: SessionType, _ intensity: Intensity, _ fraction: Double, _ desc: String) -> SessionTemplate {
-        SessionTemplate(dayOffset: day, type: type, intensity: intensity, volumeFraction: fraction, description: desc, isTimeBased: false)
+    static func tpl(
+        _ day: Int, _ type: SessionType, _ intensity: Intensity,
+        _ duration: TimeInterval, _ elevFraction: Double, _ desc: String
+    ) -> SessionTemplate {
+        SessionTemplate(
+            dayOffset: day, type: type, intensity: intensity,
+            durationSeconds: duration, elevationFraction: elevFraction,
+            description: desc
+        )
     }
 
-    static func tplTime(_ day: Int, _ type: SessionType, _ intensity: Intensity, _ fraction: Double, _ desc: String) -> SessionTemplate {
-        SessionTemplate(dayOffset: day, type: type, intensity: intensity, volumeFraction: fraction, description: desc, isTimeBased: true)
-    }
-
-    private static func paceForIntensity(_ intensity: Intensity) -> Double {
-        switch intensity {
-        case .easy:      7.0
-        case .moderate:  6.0
-        case .hard:      5.5
-        case .maxEffort: 5.0
-        }
-    }
-
-    private static func estimateDuration(distanceKm: Double, intensity: Intensity) -> TimeInterval {
-        guard distanceKm > 0 else { return 0 }
-        return distanceKm * paceForIntensity(intensity) * 60.0
-    }
-
-    private static func nutritionNotes(duration: TimeInterval, distance: Double) -> String? {
+    private static func nutritionNotes(duration: TimeInterval) -> String? {
         let hours = duration / 3600.0
         guard hours > 1.0 else { return nil }
 
         var notes = "Carry water and fuel for this session."
 
         if hours > 1.5 {
-            let carbsPerHour = 60
-            notes += " Aim for ~\(carbsPerHour)g carbs/hour (gels, bars, or real food)."
+            notes += " Aim for ~60g carbs/hour (gels, bars, or real food)."
         }
-
         if hours > 2.0 {
             notes += " Practice your race-day nutrition plan. Train your gut."
         }
-
-        if distance > 30 {
-            notes += " Consider electrolyte supplementation (~600mg sodium/hour)."
-        }
-
         return notes
     }
 }

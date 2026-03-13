@@ -81,14 +81,14 @@ struct RunReflectionEditViewModelTests {
 
         vm.rpe = 8
         vm.perceivedFeeling = .great
-        vm.terrainType = .mountain
+        vm.terrainType = .trail
         vm.notes = "learned a lot"
 
         await vm.save()
 
         #expect(repo.updatedRun?.rpe == 8)
         #expect(repo.updatedRun?.perceivedFeeling == .great)
-        #expect(repo.updatedRun?.terrainType == .mountain)
+        #expect(repo.updatedRun?.terrainType == .trail)
         #expect(repo.updatedRun?.notes == "learned a lot")
     }
 

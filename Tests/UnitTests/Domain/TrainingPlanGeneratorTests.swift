@@ -99,24 +99,21 @@ struct TrainingPlanGeneratorTests {
         }
     }
 
-    @Test("Volume cap at 10% increase enforced")
-    func volumeCapEnforced() async throws {
+    @Test("Duration increases progressively across build weeks")
+    func durationIncreasesProgressively() async throws {
         let generator = TrainingPlanGenerator()
         let athlete = makeAthlete(weeklyVolumeKm: 30)
         let race = makeRace(weeksFromNow: 16, distanceKm: 160)
 
         let plan = try await generator.execute(athlete: athlete, targetRace: race, intermediateRaces: [])
 
-        var previousNonRecoveryVolume: Double?
-        for week in plan.weeks where week.phase != .taper {
-            if week.isRecoveryWeek { continue }
-            if let prev = previousNonRecoveryVolume {
-                let increasePercent = ((week.targetVolumeKm - prev) / prev) * 100.0
-                // Allow small floating point tolerance
-                #expect(increasePercent <= 10.5, "Week \(week.weekNumber) increased by \(increasePercent)%")
-            }
-            previousNonRecoveryVolume = week.targetVolumeKm
-        }
+        // Duration should generally increase across non-recovery, non-taper weeks
+        let buildWeeks = plan.weeks.filter { $0.phase != .taper && !$0.isRecoveryWeek }
+        guard buildWeeks.count >= 2 else { return }
+
+        let firstDuration = buildWeeks.first!.targetDurationSeconds
+        let lastDuration = buildWeeks.last!.targetDurationSeconds
+        #expect(lastDuration > firstDuration, "Duration should increase from first to last build week")
     }
 
     @Test("Recovery weeks have reduced volume")

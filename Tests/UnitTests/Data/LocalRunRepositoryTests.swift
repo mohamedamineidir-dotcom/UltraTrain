@@ -201,7 +201,7 @@ struct LocalRunRepositoryTests {
         run.notes = "Updated notes"
         run.rpe = 8
         run.perceivedFeeling = .tough
-        run.terrainType = .mountain
+        run.terrainType = .trail
         run.stravaActivityId = 12345
         run.isStravaImport = true
         run.isHealthKitImport = true
@@ -213,7 +213,7 @@ struct LocalRunRepositoryTests {
         #expect(fetched?.notes == "Updated notes")
         #expect(fetched?.rpe == 8)
         #expect(fetched?.perceivedFeeling == .tough)
-        #expect(fetched?.terrainType == .mountain)
+        #expect(fetched?.terrainType == .trail)
         #expect(fetched?.stravaActivityId == 12345)
         #expect(fetched?.isStravaImport == true)
         #expect(fetched?.isHealthKitImport == true)

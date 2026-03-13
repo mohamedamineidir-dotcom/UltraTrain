@@ -13,6 +13,7 @@ final class TrainingWeekSwiftDataModel {
     var isRecoveryWeek: Bool = false
     var targetVolumeKm: Double = 0
     var targetElevationGainM: Double = 0
+    var targetDurationSeconds: Double = 0
     var plan: TrainingPlanSwiftDataModel?
     var updatedAt: Date = Date()
 
@@ -26,6 +27,7 @@ final class TrainingWeekSwiftDataModel {
         isRecoveryWeek: Bool = false,
         targetVolumeKm: Double = 0,
         targetElevationGainM: Double = 0,
+        targetDurationSeconds: Double = 0,
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -37,6 +39,7 @@ final class TrainingWeekSwiftDataModel {
         self.isRecoveryWeek = isRecoveryWeek
         self.targetVolumeKm = targetVolumeKm
         self.targetElevationGainM = targetElevationGainM
+        self.targetDurationSeconds = targetDurationSeconds
         self.updatedAt = updatedAt
     }
 }

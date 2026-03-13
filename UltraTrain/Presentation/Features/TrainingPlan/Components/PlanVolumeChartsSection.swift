@@ -2,15 +2,23 @@ import SwiftUI
 import Charts
 
 enum VolumeChartMetric: String, CaseIterable {
-    case distance = "Distance"
     case duration = "Duration"
     case elevation = "Elevation"
+    case distance = "Distance"
+
+    var localizedName: String {
+        switch self {
+        case .duration:  String(localized: "chart.duration", defaultValue: "Duration")
+        case .elevation: String(localized: "chart.elevation", defaultValue: "Elevation")
+        case .distance:  String(localized: "chart.distance", defaultValue: "Distance")
+        }
+    }
 }
 
 struct PlanVolumeChartsSection: View {
     @Environment(\.unitPreference) private var units
     let plan: TrainingPlan
-    @State private var selectedMetric: VolumeChartMetric = .distance
+    @State private var selectedMetric: VolumeChartMetric = .duration
     @State private var selectedWeek: WeekChartDataPoint?
 
     private var dataPoints: [WeekChartDataPoint] {
@@ -39,11 +47,11 @@ struct PlanVolumeChartsSection: View {
 
     private var headerRow: some View {
         HStack {
-            Text("Training Volume")
+            Text(String(localized: "chart.trainingVolume", defaultValue: "Training Volume"))
                 .font(.headline)
             Spacer()
-            if let peak = peakWeekValue {
-                Text("Peak: \(peak)")
+            if selectedMetric != .distance, let peak = peakWeekValue {
+                Text("chart.peak \(peak)")
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
@@ -55,7 +63,7 @@ struct PlanVolumeChartsSection: View {
     private var metricPicker: some View {
         Picker("Metric", selection: $selectedMetric) {
             ForEach(VolumeChartMetric.allCases, id: \.self) { metric in
-                Text(metric.rawValue).tag(metric)
+                Text(metric.localizedName).tag(metric)
             }
         }
         .pickerStyle(.segmented)
@@ -67,17 +75,17 @@ struct PlanVolumeChartsSection: View {
         HStack(spacing: 0) {
             summaryStatItem(
                 value: totalFormattedValue,
-                label: "Total"
+                label: String(localized: "chart.total", defaultValue: "Total")
             )
             Spacer()
             summaryStatItem(
                 value: avgFormattedValue,
-                label: "Avg / week"
+                label: String(localized: "chart.avgPerWeek", defaultValue: "Avg / week")
             )
             Spacer()
             summaryStatItem(
                 value: "\(completedWeeks)/\(dataPoints.count)",
-                label: "Weeks done"
+                label: String(localized: "chart.weeksDone", defaultValue: "Weeks done")
             )
         }
     }
@@ -97,40 +105,40 @@ struct PlanVolumeChartsSection: View {
     private var chartView: some View {
         Chart {
             ForEach(dataPoints) { point in
-                // Rich area gradient fill
-                AreaMark(
-                    x: .value("Week", "W\(point.weekNumber)"),
-                    y: .value("Planned", plannedValue(for: point))
-                )
-                .foregroundStyle(
-                    .linearGradient(
-                        colors: [
-                            Theme.Colors.accentColor.opacity(0.35),
-                            Theme.Colors.accentColor.opacity(0.12),
-                            Theme.Colors.accentColor.opacity(0.02)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
+                // Planned curve — hidden for distance (trail plans don't pre-plan distance)
+                if selectedMetric != .distance {
+                    AreaMark(
+                        x: .value("Week", "W\(point.weekNumber)"),
+                        y: .value("Planned", plannedValue(for: point))
                     )
-                )
-                .interpolationMethod(.catmullRom)
+                    .foregroundStyle(
+                        .linearGradient(
+                            colors: [
+                                Theme.Colors.accentColor.opacity(0.35),
+                                Theme.Colors.accentColor.opacity(0.12),
+                                Theme.Colors.accentColor.opacity(0.02)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .interpolationMethod(.catmullRom)
 
-                // Glow line — 3pt with shadow
-                LineMark(
-                    x: .value("Week", "W\(point.weekNumber)"),
-                    y: .value("Planned", plannedValue(for: point))
-                )
-                .foregroundStyle(Theme.Colors.accentColor)
-                .lineStyle(StrokeStyle(lineWidth: 3))
-                .interpolationMethod(.catmullRom)
+                    LineMark(
+                        x: .value("Week", "W\(point.weekNumber)"),
+                        y: .value("Planned", plannedValue(for: point))
+                    )
+                    .foregroundStyle(Theme.Colors.accentColor)
+                    .lineStyle(StrokeStyle(lineWidth: 3))
+                    .interpolationMethod(.catmullRom)
 
-                // Point markers at each week
-                PointMark(
-                    x: .value("Week", "W\(point.weekNumber)"),
-                    y: .value("Planned", plannedValue(for: point))
-                )
-                .symbolSize(point.isCurrentWeek ? 50 : 30)
-                .foregroundStyle(Theme.Colors.accentColor)
+                    PointMark(
+                        x: .value("Week", "W\(point.weekNumber)"),
+                        y: .value("Planned", plannedValue(for: point))
+                    )
+                    .symbolSize(point.isCurrentWeek ? 50 : 30)
+                    .foregroundStyle(Theme.Colors.accentColor)
+                }
 
                 // Completed bars — gradient capsule
                 if completedValue(for: point) > 0 {
@@ -177,7 +185,7 @@ struct PlanVolumeChartsSection: View {
             }
         }
         .chartXAxis {
-            AxisMarks { _ in
+            AxisMarks(values: visibleWeekLabels) { _ in
                 AxisValueLabel()
                     .font(.system(size: 10, weight: .medium, design: .rounded))
                     .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.7))
@@ -226,7 +234,7 @@ struct PlanVolumeChartsSection: View {
                     if let xPos = proxy.position(forX: "W\(selected.weekNumber)") {
                         annotationCard(for: selected)
                             .offset(
-                                x: min(max(xPos - 60, 0), plotFrame.width - 120),
+                                x: min(max(xPos - 90, 0), plotFrame.width - 180),
                                 y: -8
                             )
                     }
@@ -235,55 +243,106 @@ struct PlanVolumeChartsSection: View {
         }
     }
 
+    // MARK: - Visible Week Labels
+
+    private var visibleWeekLabels: [String] {
+        let total = dataPoints.count
+        let stride: Int
+        switch total {
+        case 0...12: stride = 1
+        case 13...24: stride = 2
+        case 25...36: stride = 4
+        default: stride = 5
+        }
+        return dataPoints.enumerated()
+            .filter { $0.offset % stride == 0 }
+            .map { "W\($0.element.weekNumber)" }
+    }
+
     // MARK: - Annotation
 
     private func annotationCard(for point: WeekChartDataPoint) -> some View {
         HStack(spacing: 0) {
-            // Phase-colored left strip
             RoundedRectangle(cornerRadius: 2)
                 .fill(phaseColor(point.phase))
-                .frame(width: 3)
-                .padding(.vertical, 4)
+                .frame(width: 4)
+                .padding(.vertical, 6)
 
-            VStack(alignment: .leading, spacing: 3) {
-                Text("Week \(point.weekNumber)")
-                    .font(.system(size: 11, weight: .bold, design: .rounded))
-                HStack(spacing: 10) {
-                    VStack(alignment: .leading, spacing: 1) {
-                        Text("Plan")
-                            .font(.system(size: 9))
-                            .foregroundStyle(Theme.Colors.secondaryLabel)
-                        Text(formattedPlannedValue(for: point))
-                            .font(.system(size: 12, weight: .bold, design: .rounded).monospacedDigit())
-                    }
-                    if completedValue(for: point) > 0 {
-                        VStack(alignment: .leading, spacing: 1) {
-                            Text("Done")
-                                .font(.system(size: 9))
-                                .foregroundStyle(Theme.Colors.secondaryLabel)
-                            Text(formattedCompletedValue(for: point))
-                                .font(.system(size: 12, weight: .bold, design: .rounded).monospacedDigit())
-                                .foregroundStyle(phaseColor(point.phase))
-                        }
-                    }
+            VStack(alignment: .leading, spacing: 6) {
+                // Header: week number + phase badge
+                HStack(spacing: 6) {
+                    Text("Week \(point.weekNumber)")
+                        .font(.system(size: 12, weight: .bold, design: .rounded))
+                    Text(point.phase.displayName)
+                        .font(.system(size: 9, weight: .semibold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(phaseColor(point.phase))
+                        .clipShape(Capsule())
+                }
+
+                // All 3 metrics
+                VStack(alignment: .leading, spacing: 4) {
+                    annotationMetricRow(
+                        icon: "figure.run",
+                        plan: UnitFormatter.formatDistance(point.plannedDistanceKm, unit: units),
+                        done: point.completedDistanceKm > 0 ? UnitFormatter.formatDistance(point.completedDistanceKm, unit: units) : nil,
+                        color: phaseColor(point.phase)
+                    )
+                    annotationMetricRow(
+                        icon: "mountain.2.fill",
+                        plan: UnitFormatter.formatElevation(point.plannedElevationM, unit: units),
+                        done: point.completedElevationM > 0 ? UnitFormatter.formatElevation(point.completedElevationM, unit: units) : nil,
+                        color: phaseColor(point.phase)
+                    )
+                    annotationMetricRow(
+                        icon: "clock",
+                        plan: formatAnnotationDuration(point.plannedDurationSeconds),
+                        done: point.completedDurationSeconds > 0 ? formatAnnotationDuration(point.completedDurationSeconds) : nil,
+                        color: phaseColor(point.phase)
+                    )
                 }
             }
-            .padding(.leading, 8)
+            .padding(.leading, 10)
         }
-        .padding(10)
+        .padding(12)
+        .frame(minWidth: 160)
         .background(
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: 12)
                 .fill(.ultraThinMaterial)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: 12)
                         .fill(Color.white.opacity(0.06))
                 )
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: 12)
                 .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
         )
         .shadow(color: phaseColor(point.phase).opacity(0.15), radius: 8, y: 4)
+    }
+
+    private func annotationMetricRow(icon: String, plan: String, done: String?, color: Color) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: icon)
+                .font(.system(size: 9))
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+                .frame(width: 12)
+            Text(plan)
+                .font(.system(size: 11, weight: .semibold, design: .rounded).monospacedDigit())
+            if let done {
+                Text("/ \(done)")
+                    .font(.system(size: 11, weight: .bold, design: .rounded).monospacedDigit())
+                    .foregroundStyle(color)
+            }
+        }
+    }
+
+    private func formatAnnotationDuration(_ seconds: TimeInterval) -> String {
+        let hours = Int(seconds / 3600)
+        let mins = Int(seconds.truncatingRemainder(dividingBy: 3600) / 60)
+        return "\(hours)h\(String(format: "%02d", mins))"
     }
 
     // MARK: - Summary Calculations
@@ -291,7 +350,8 @@ struct PlanVolumeChartsSection: View {
     private var totalFormattedValue: String {
         switch selectedMetric {
         case .distance:
-            let total = dataPoints.reduce(0) { $0 + $1.plannedDistanceKm }
+            let total = dataPoints.reduce(0) { $0 + $1.completedDistanceKm }
+            if total == 0 { return "-" }
             return UnitFormatter.formatDistance(total, unit: units, decimals: 0)
         case .duration:
             let totalSec = dataPoints.reduce(0) { $0 + $1.plannedDurationSeconds }
@@ -308,8 +368,10 @@ struct PlanVolumeChartsSection: View {
         let count = Double(dataPoints.count)
         switch selectedMetric {
         case .distance:
-            let avg = dataPoints.reduce(0) { $0 + $1.plannedDistanceKm } / count
-            return UnitFormatter.formatDistance(avg, unit: units)
+            let total = dataPoints.reduce(0) { $0 + $1.completedDistanceKm }
+            let completedCount = Double(dataPoints.filter { $0.completedDistanceKm > 0 }.count)
+            if completedCount == 0 { return "-" }
+            return UnitFormatter.formatDistance(total / completedCount, unit: units)
         case .duration:
             let avgSec = dataPoints.reduce(0) { $0 + $1.plannedDurationSeconds } / count
             let hours = Int(avgSec / 3600)

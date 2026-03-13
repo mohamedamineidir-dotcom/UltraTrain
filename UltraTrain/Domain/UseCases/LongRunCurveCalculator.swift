@@ -1,0 +1,298 @@
+import Foundation
+
+enum LongRunCurveCalculator {
+
+    struct WeekDurations: Equatable, Sendable {
+        let longRunSeconds: TimeInterval
+        let isB2B: Bool
+        let b2bDay1Seconds: TimeInterval
+        let b2bDay2Seconds: TimeInterval
+        let easyRun1Seconds: TimeInterval
+        let easyRun2Seconds: TimeInterval
+        let intervalSeconds: TimeInterval
+        let vgSeconds: TimeInterval
+        let totalSeconds: TimeInterval
+    }
+
+    // MARK: - Public
+
+    static func durations(
+        weekIndex: Int,
+        totalWeeks: Int,
+        phase: TrainingPhase,
+        isRecoveryWeek: Bool,
+        experience: ExperienceLevel,
+        philosophy: TrainingPhilosophy,
+        raceDurationSeconds: TimeInterval,
+        raceEffectiveKm: Double,
+        preferredRunsPerWeek: Int
+    ) -> WeekDurations {
+        let planProgress = totalWeeks > 1
+            ? Double(weekIndex) / Double(totalWeeks - 1)
+            : 1.0
+
+        // --- Long run ---
+        let rawLongRun = longRunDuration(
+            weekIndex: weekIndex,
+            totalWeeks: totalWeeks,
+            phase: phase,
+            experience: experience,
+            raceDurationSeconds: raceDurationSeconds
+        )
+
+        // --- B2B decision ---
+        let b2b = isB2BWeek(
+            weekIndex: weekIndex,
+            totalWeeks: totalWeeks,
+            phase: phase,
+            isRecoveryWeek: isRecoveryWeek,
+            experience: experience,
+            raceEffectiveKm: raceEffectiveKm,
+            raceDurationSeconds: raceDurationSeconds
+        )
+
+        // --- Base sessions ---
+        let philMultiplier = philosophyBaseMultiplier(philosophy)
+        var easy1 = baseEasyDuration(planProgress) * philMultiplier
+        var easy2 = baseEasyDuration(planProgress) * philMultiplier
+        var interval = baseIntervalDuration(planProgress) * philMultiplier
+        var vg = baseVGDuration(planProgress) * philMultiplier
+
+        // Adapt for runs per week
+        if preferredRunsPerWeek <= 3 {
+            // 3/week: VG + easy/interval alternate + long run
+            easy2 = 0
+            // alternate: even weeks = easy, odd = interval
+            if weekIndex % 2 == 0 {
+                interval = 0
+            } else {
+                easy1 = 0
+            }
+        } else if preferredRunsPerWeek == 4 {
+            // 4/week: easy + VG + interval + long run
+            easy2 = 0
+        }
+        // 5/week: all sessions present
+
+        // B2B adjustments
+        var longRun: TimeInterval
+        var b2bDay1: TimeInterval = 0
+        var b2bDay2: TimeInterval = 0
+
+        if b2b {
+            let combined = b2bCombinedDuration(
+                weekIndex: weekIndex,
+                totalWeeks: totalWeeks,
+                experience: experience,
+                raceDurationSeconds: raceDurationSeconds
+            )
+            b2bDay1 = combined * AppConfiguration.Training.b2bDay1Split
+            b2bDay2 = combined * AppConfiguration.Training.b2bDay2Split
+            longRun = b2bDay1 + b2bDay2
+
+            // Shorten easy runs on B2B weeks
+            easy1 *= AppConfiguration.Training.b2bEasyReduction
+            easy2 *= AppConfiguration.Training.b2bEasyReduction
+
+            // Drop intervals on B2B weeks to make room
+            interval = 0
+        } else {
+            longRun = rawLongRun
+        }
+
+        // Recovery week reductions
+        if isRecoveryWeek {
+            easy1 *= 0.75
+            easy2 *= 0.75
+            interval *= 0.75
+            vg *= 0.75
+            if b2b {
+                b2bDay1 *= 0.65
+                b2bDay2 *= 0.65
+                longRun = b2bDay1 + b2bDay2
+            } else {
+                longRun *= 0.65
+            }
+        }
+
+        // Taper reductions
+        if phase == .taper {
+            let taperProgress = planProgress // already near end
+            let taperFraction = 0.80 - taperProgress * 0.30 // 80% → 50%
+            easy1 *= taperFraction
+            easy2 *= taperFraction
+            interval *= taperFraction
+            vg *= taperFraction
+            longRun *= taperFraction
+            b2bDay1 = 0
+            b2bDay2 = 0
+        }
+
+        let total = easy1 + easy2 + interval + vg + longRun
+
+        return WeekDurations(
+            longRunSeconds: round(longRun),
+            isB2B: b2b && phase != .taper,
+            b2bDay1Seconds: round(b2bDay1),
+            b2bDay2Seconds: round(b2bDay2),
+            easyRun1Seconds: round(easy1),
+            easyRun2Seconds: round(easy2),
+            intervalSeconds: round(interval),
+            vgSeconds: round(vg),
+            totalSeconds: round(total)
+        )
+    }
+
+    // MARK: - Long Run Curve (Quadratic)
+
+    static func longRunDuration(
+        weekIndex: Int,
+        totalWeeks: Int,
+        phase: TrainingPhase,
+        experience: ExperienceLevel,
+        raceDurationSeconds: TimeInterval
+    ) -> TimeInterval {
+        guard phase != .taper else {
+            // Taper long runs handled by taper reduction in main function
+            let start = longRunStart(experience)
+            let peak = peakSingleLongRun(experience, raceDurationSeconds: raceDurationSeconds)
+            return (start + peak) * 0.5 // mid-range for taper base
+        }
+
+        let start = longRunStart(experience)
+        let peak = peakSingleLongRun(experience, raceDurationSeconds: raceDurationSeconds)
+
+        // Build weeks only (base + build + peak, excluding taper)
+        let buildWeekCount = max(totalWeeks - taperWeekEstimate(totalWeeks), 1)
+        let clampedIndex = min(weekIndex, buildWeekCount - 1)
+
+        let progress: Double
+        if buildWeekCount > 1 {
+            progress = Double(clampedIndex) / Double(buildWeekCount - 1)
+        } else {
+            progress = 1.0
+        }
+
+        let exponent = AppConfiguration.Training.longRunCurveExponent
+        let curved = pow(progress, exponent)
+        return start + (peak - start) * curved
+    }
+
+    // MARK: - B2B Scheduling
+
+    static func isB2BWeek(
+        weekIndex: Int,
+        totalWeeks: Int,
+        phase: TrainingPhase,
+        isRecoveryWeek: Bool,
+        experience: ExperienceLevel,
+        raceEffectiveKm: Double,
+        raceDurationSeconds: TimeInterval
+    ) -> Bool {
+        // Never in base or taper
+        guard phase == .build || phase == .peak else { return false }
+        guard !isRecoveryWeek else { return false }
+
+        // Beginners don't get B2B
+        guard experience != .beginner else { return false }
+
+        // Race must be long enough
+        let minEffectiveKm: Double
+        switch experience {
+        case .beginner: return false
+        case .intermediate: minEffectiveKm = 80
+        case .advanced: minEffectiveKm = 60
+        case .elite: minEffectiveKm = 50
+        }
+        guard raceEffectiveKm >= minEffectiveKm else { return false }
+
+        // Only in second half of non-taper weeks
+        let buildWeekCount = max(totalWeeks - taperWeekEstimate(totalWeeks), 1)
+        let halfPoint = buildWeekCount / 2
+        guard weekIndex >= halfPoint else { return false }
+
+        // Alternate: every other eligible week
+        let indexFromHalf = weekIndex - halfPoint
+        return indexFromHalf % 2 == 0
+    }
+
+    static func b2bCombinedDuration(
+        weekIndex: Int,
+        totalWeeks: Int,
+        experience: ExperienceLevel,
+        raceDurationSeconds: TimeInterval
+    ) -> TimeInterval {
+        let startCombined = AppConfiguration.Training.b2bStartCombinedHours * 3600
+        let peakCombined = min(
+            raceDurationSeconds * AppConfiguration.Training.peakB2BCombinedFraction,
+            AppConfiguration.Training.peakB2BCombinedMaxHours * 3600
+        )
+
+        let buildWeekCount = max(totalWeeks - taperWeekEstimate(totalWeeks), 1)
+        let halfPoint = buildWeekCount / 2
+        let b2bWeekIndex = max(weekIndex - halfPoint, 0)
+        let b2bTotalWeeks = max(buildWeekCount - halfPoint, 1)
+
+        let progress: Double
+        if b2bTotalWeeks > 1 {
+            progress = Double(b2bWeekIndex) / Double(b2bTotalWeeks - 1)
+        } else {
+            progress = 1.0
+        }
+
+        let exponent = AppConfiguration.Training.longRunCurveExponent
+        let curved = pow(progress, exponent)
+        return startCombined + (peakCombined - startCombined) * curved
+    }
+
+    // MARK: - Base Session Durations
+
+    private static func baseEasyDuration(_ planProgress: Double) -> TimeInterval {
+        let minutes = AppConfiguration.Training.easyRunStartMinutes
+            + AppConfiguration.Training.easyRunGrowthMinutes * planProgress
+        return minutes * 60
+    }
+
+    private static func baseIntervalDuration(_ planProgress: Double) -> TimeInterval {
+        let minutes = AppConfiguration.Training.intervalStartMinutes
+            + AppConfiguration.Training.intervalGrowthMinutes * planProgress
+        return minutes * 60
+    }
+
+    private static func baseVGDuration(_ planProgress: Double) -> TimeInterval {
+        let minutes = AppConfiguration.Training.vgStartMinutes
+            + AppConfiguration.Training.vgGrowthMinutes * planProgress
+        return minutes * 60
+    }
+
+    // MARK: - Helpers
+
+    private static func longRunStart(_ experience: ExperienceLevel) -> TimeInterval {
+        let key = experience.rawValue
+        let minutes = AppConfiguration.Training.longRunStartMinutes[key] ?? 60
+        return minutes * 60
+    }
+
+    private static func peakSingleLongRun(
+        _ experience: ExperienceLevel,
+        raceDurationSeconds: TimeInterval
+    ) -> TimeInterval {
+        let key = experience.rawValue
+        let fraction = AppConfiguration.Training.peakSingleLRFraction[key] ?? 0.50
+        let maxSeconds = AppConfiguration.Training.peakSingleLRMaxHours * 3600
+        return min(raceDurationSeconds * fraction, maxSeconds)
+    }
+
+    private static func taperWeekEstimate(_ totalWeeks: Int) -> Int {
+        // Taper is typically ~10-15% of plan, min 2 weeks
+        max(Int(Double(totalWeeks) * 0.12), 2)
+    }
+
+    private static func philosophyBaseMultiplier(_ philosophy: TrainingPhilosophy) -> Double {
+        switch philosophy {
+        case .enjoyment:   0.85
+        case .balanced:    1.00
+        case .performance: 1.10
+        }
+    }
+}

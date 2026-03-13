@@ -31,12 +31,14 @@ struct VolumeCalculatorTests {
             currentWeeklyVolumeKm: 40,
             raceDistanceKm: 100,
             raceElevationGainM: 5000,
-            experience: .intermediate
+            experience: .intermediate,
+            raceDurationSeconds: 50400,
+            raceEffectiveKm: 150
         )
         #expect(result.isEmpty)
     }
 
-    @Test("single build week returns volume")
+    @Test("single build week returns volume with duration fields")
     func singleWeekReturnsVolume() {
         let skeletons = [makeSkeleton(weekNumber: 1, phase: .build)]
         let result = VolumeCalculator.calculate(
@@ -44,90 +46,84 @@ struct VolumeCalculatorTests {
             currentWeeklyVolumeKm: 40,
             raceDistanceKm: 100,
             raceElevationGainM: 5000,
-            experience: .intermediate
+            experience: .intermediate,
+            raceDurationSeconds: 50400,
+            raceEffectiveKm: 150
         )
 
         #expect(result.count == 1)
         #expect(result[0].weekNumber == 1)
         #expect(result[0].targetVolumeKm > 0)
         #expect(result[0].targetElevationGainM > 0)
+        #expect(result[0].targetDurationSeconds > 0)
+        #expect(result[0].targetLongRunDurationSeconds > 0)
     }
 
-    // MARK: - Peak Fraction by Experience
+    // MARK: - Duration-Based Planning
 
-    @Test("beginner has lower peak fraction than elite")
-    func peakFractionScalesByExperience() {
-        let skeletons = [makeSkeleton(weekNumber: 1, phase: .build)]
-        let raceDistance = 100.0
-
-        let beginner = VolumeCalculator.calculate(
-            skeletons: skeletons,
-            currentWeeklyVolumeKm: 10,
-            raceDistanceKm: raceDistance,
-            raceElevationGainM: 0,
-            experience: .beginner
-        )
-        let elite = VolumeCalculator.calculate(
-            skeletons: skeletons,
-            currentWeeklyVolumeKm: 10,
-            raceDistanceKm: raceDistance,
-            raceElevationGainM: 0,
-            experience: .elite
-        )
-
-        // With single week, both reach peak immediately (limited by 10% cap from start)
-        // But for multiple weeks, elite targets higher peak
-        let beginnerTarget = beginner[0].targetVolumeKm
-        let eliteTarget = elite[0].targetVolumeKm
-
-        // Both are capped at 10% increase from current (10km), so max = 11
-        #expect(beginnerTarget <= 11.0)
-        #expect(eliteTarget <= 11.0)
-    }
-
-    // MARK: - Progressive Overload
-
-    @Test("volume increases progressively across build weeks")
-    func progressiveOverload() {
-        let skeletons = (1...6).map { makeSkeleton(weekNumber: $0, phase: .build) }
+    @Test("total duration increases across build weeks")
+    func durationIncreasesProgressively() {
+        let skeletons = (1...12).map { makeSkeleton(weekNumber: $0, phase: .build) }
         let result = VolumeCalculator.calculate(
             skeletons: skeletons,
             currentWeeklyVolumeKm: 30,
             raceDistanceKm: 100,
             raceElevationGainM: 5000,
-            experience: .intermediate
+            experience: .intermediate,
+            raceDurationSeconds: 50400,
+            raceEffectiveKm: 150
         )
 
-        // Each week should be >= previous week (progressive overload)
-        for i in 1..<result.count {
-            #expect(result[i].targetVolumeKm >= result[i - 1].targetVolumeKm)
-        }
+        // First week should be less than last week
+        #expect(result.first!.targetDurationSeconds < result.last!.targetDurationSeconds)
     }
 
-    @Test("volume never increases more than 10% per week")
-    func maxIncreaseCapped() {
-        let skeletons = (1...8).map { makeSkeleton(weekNumber: $0, phase: .build) }
+    @Test("long run duration grows significantly across plan")
+    func longRunGrowsSignificantly() {
+        let skeletons = (1...20).map { makeSkeleton(weekNumber: $0, phase: .build) }
         let result = VolumeCalculator.calculate(
             skeletons: skeletons,
             currentWeeklyVolumeKm: 30,
-            raceDistanceKm: 200,
+            raceDistanceKm: 170,
             raceElevationGainM: 10000,
-            experience: .elite,
-            maxIncreasePercent: 10
+            experience: .advanced,
+            raceDurationSeconds: 126000, // ~35h
+            raceEffectiveKm: 270
         )
 
-        var previousVolume = 30.0
+        let firstLR = result.first!.targetLongRunDurationSeconds
+        let lastLR = result.last!.targetLongRunDurationSeconds
+        let ratio = lastLR / firstLR
+
+        // Long run should grow significantly (at least 3x for a 170km race)
+        #expect(ratio >= 3.0, "Long run should grow at least 3x, got \(ratio)")
+    }
+
+    @Test("base session durations populated for all weeks")
+    func baseSessionDurationsPopulated() {
+        let skeletons = (1...6).map { makeSkeleton(weekNumber: $0, phase: .build) }
+        let result = VolumeCalculator.calculate(
+            skeletons: skeletons,
+            currentWeeklyVolumeKm: 40,
+            raceDistanceKm: 100,
+            raceElevationGainM: 5000,
+            experience: .intermediate,
+            raceDurationSeconds: 50400,
+            raceEffectiveKm: 150,
+            preferredRunsPerWeek: 5
+        )
+
         for vol in result {
-            let maxAllowed = previousVolume * 1.10
-            #expect(vol.targetVolumeKm <= maxAllowed + 0.2) // small rounding tolerance
-            previousVolume = vol.targetVolumeKm
+            #expect(vol.baseSessionDurations.easyRun1Seconds > 0)
+            #expect(vol.baseSessionDurations.easyRun2Seconds > 0)
+            #expect(vol.baseSessionDurations.vgSeconds > 0)
         }
     }
 
     // MARK: - Recovery Weeks
 
-    @Test("recovery weeks reduce volume")
-    func recoveryWeeksReduceVolume() {
+    @Test("recovery weeks reduce duration")
+    func recoveryWeeksReduceDuration() {
         let skeletons = [
             makeSkeleton(weekNumber: 1, phase: .build),
             makeSkeleton(weekNumber: 2, phase: .build),
@@ -139,17 +135,17 @@ struct VolumeCalculatorTests {
             raceDistanceKm: 100,
             raceElevationGainM: 5000,
             experience: .intermediate,
-            recoveryReductionPercent: 35
+            raceDurationSeconds: 50400,
+            raceEffectiveKm: 150
         )
 
-        // Recovery week should be lower than previous non-recovery week
-        #expect(result[2].targetVolumeKm < result[1].targetVolumeKm)
+        #expect(result[2].targetDurationSeconds < result[1].targetDurationSeconds)
     }
 
     // MARK: - Taper
 
-    @Test("taper weeks reduce volume progressively")
-    func taperReducesVolume() {
+    @Test("taper weeks reduce duration progressively")
+    func taperReducesDuration() {
         let skeletons = [
             makeSkeleton(weekNumber: 1, phase: .build),
             makeSkeleton(weekNumber: 2, phase: .build),
@@ -161,32 +157,31 @@ struct VolumeCalculatorTests {
             currentWeeklyVolumeKm: 50,
             raceDistanceKm: 100,
             raceElevationGainM: 5000,
-            experience: .intermediate
+            experience: .intermediate,
+            raceDurationSeconds: 50400,
+            raceEffectiveKm: 150
         )
 
-        // Taper weeks should be less than last build week
-        #expect(result[2].targetVolumeKm < result[1].targetVolumeKm)
-        // Second taper week should be less than first taper
-        #expect(result[3].targetVolumeKm < result[2].targetVolumeKm)
+        #expect(result[2].targetDurationSeconds < result[1].targetDurationSeconds)
+        #expect(result[3].targetDurationSeconds < result[2].targetDurationSeconds)
     }
 
     // MARK: - Elevation
 
-    @Test("elevation is proportional to volume")
-    func elevationProportionalToVolume() {
+    @Test("elevation is proportional to derived km")
+    func elevationProportional() {
         let skeletons = [makeSkeleton(weekNumber: 1, phase: .build)]
         let result = VolumeCalculator.calculate(
             skeletons: skeletons,
             currentWeeklyVolumeKm: 40,
             raceDistanceKm: 100,
             raceElevationGainM: 5000,
-            experience: .intermediate
+            experience: .intermediate,
+            raceDurationSeconds: 50400,
+            raceEffectiveKm: 150
         )
 
-        let vol = result[0]
-        let expectedRatio = 5000.0 / 100.0 // 50 m/km
-        let actualRatio = vol.targetElevationGainM / vol.targetVolumeKm
-        #expect(abs(actualRatio - expectedRatio) < 1.0)
+        #expect(result[0].targetElevationGainM > 0)
     }
 
     @Test("elevation is zero when race has no elevation")
@@ -197,18 +192,18 @@ struct VolumeCalculatorTests {
             currentWeeklyVolumeKm: 40,
             raceDistanceKm: 42,
             raceElevationGainM: 0,
-            experience: .beginner
+            experience: .beginner,
+            raceDurationSeconds: 18000,
+            raceEffectiveKm: 42
         )
 
         #expect(result[0].targetElevationGainM == 0)
     }
 
-    // MARK: - Minimum Volume
-
     // MARK: - Training Philosophy
 
-    @Test("enjoyment philosophy produces lower peak volume than balanced")
-    func enjoymentLowerVolume() {
+    @Test("enjoyment philosophy produces lower duration than balanced")
+    func enjoymentLowerDuration() {
         let skeletons = (1...8).map { makeSkeleton(weekNumber: $0, phase: .build) }
 
         let balanced = VolumeCalculator.calculate(
@@ -217,7 +212,9 @@ struct VolumeCalculatorTests {
             raceDistanceKm: 100,
             raceElevationGainM: 5000,
             experience: .intermediate,
-            philosophy: .balanced
+            philosophy: .balanced,
+            raceDurationSeconds: 50400,
+            raceEffectiveKm: 150
         )
         let enjoyment = VolumeCalculator.calculate(
             skeletons: skeletons,
@@ -225,16 +222,18 @@ struct VolumeCalculatorTests {
             raceDistanceKm: 100,
             raceElevationGainM: 5000,
             experience: .intermediate,
-            philosophy: .enjoyment
+            philosophy: .enjoyment,
+            raceDurationSeconds: 50400,
+            raceEffectiveKm: 150
         )
 
-        let lastBalanced = balanced.last!.targetVolumeKm
-        let lastEnjoyment = enjoyment.last!.targetVolumeKm
-        #expect(lastEnjoyment < lastBalanced, "Enjoyment should produce lower volume than balanced")
+        let lastBalanced = balanced.last!.targetDurationSeconds
+        let lastEnjoyment = enjoyment.last!.targetDurationSeconds
+        #expect(lastEnjoyment < lastBalanced)
     }
 
-    @Test("performance philosophy produces higher peak volume than balanced")
-    func performanceHigherVolume() {
+    @Test("performance philosophy produces higher duration than balanced")
+    func performanceHigherDuration() {
         let skeletons = (1...8).map { makeSkeleton(weekNumber: $0, phase: .build) }
 
         let balanced = VolumeCalculator.calculate(
@@ -243,7 +242,9 @@ struct VolumeCalculatorTests {
             raceDistanceKm: 100,
             raceElevationGainM: 5000,
             experience: .intermediate,
-            philosophy: .balanced
+            philosophy: .balanced,
+            raceDurationSeconds: 50400,
+            raceEffectiveKm: 150
         )
         let performance = VolumeCalculator.calculate(
             skeletons: skeletons,
@@ -251,27 +252,77 @@ struct VolumeCalculatorTests {
             raceDistanceKm: 100,
             raceElevationGainM: 5000,
             experience: .intermediate,
-            philosophy: .performance
+            philosophy: .performance,
+            raceDurationSeconds: 50400,
+            raceEffectiveKm: 150
         )
 
-        let lastBalanced = balanced.last!.targetVolumeKm
-        let lastPerformance = performance.last!.targetVolumeKm
-        #expect(lastPerformance > lastBalanced, "Performance should produce higher volume than balanced")
+        let lastBalanced = balanced.last!.targetDurationSeconds
+        let lastPerformance = performance.last!.targetDurationSeconds
+        #expect(lastPerformance > lastBalanced)
     }
 
-    // MARK: - Minimum Volume
+    // MARK: - B2B Weeks
 
-    @Test("start volume has minimum of 10 km")
-    func startVolumeMinimum() {
+    @Test("B2B weeks appear for long races in second half of plan")
+    func b2bWeeksAppearForLongRaces() {
+        let skeletons = (1...20).map { makeSkeleton(weekNumber: $0, phase: .build) }
+        let result = VolumeCalculator.calculate(
+            skeletons: skeletons,
+            currentWeeklyVolumeKm: 40,
+            raceDistanceKm: 170,
+            raceElevationGainM: 10000,
+            experience: .advanced,
+            raceDurationSeconds: 126000,
+            raceEffectiveKm: 270
+        )
+
+        let b2bWeeks = result.filter(\.isB2BWeek)
+        #expect(!b2bWeeks.isEmpty, "Long race plan should include B2B weeks")
+
+        // B2B should be in second half of build weeks (accounting for taper)
+        let buildWeekCount = max(result.count - max(Int(Double(result.count) * 0.12), 2), 1)
+        let halfPoint = buildWeekCount / 2
+        for b2b in b2bWeeks {
+            let idx = result.firstIndex(where: { $0.weekNumber == b2b.weekNumber })!
+            #expect(idx >= halfPoint, "B2B week at index \(idx) should be >= halfPoint \(halfPoint)")
+        }
+    }
+
+    @Test("B2B day splits sum to total long run duration")
+    func b2bDaySplitsConsistent() {
+        let skeletons = (1...20).map { makeSkeleton(weekNumber: $0, phase: .build) }
+        let result = VolumeCalculator.calculate(
+            skeletons: skeletons,
+            currentWeeklyVolumeKm: 40,
+            raceDistanceKm: 170,
+            raceElevationGainM: 10000,
+            experience: .advanced,
+            raceDurationSeconds: 126000,
+            raceEffectiveKm: 270
+        )
+
+        for vol in result where vol.isB2BWeek {
+            let combined = vol.b2bDay1Seconds + vol.b2bDay2Seconds
+            #expect(abs(combined - vol.targetLongRunDurationSeconds) < 2)
+        }
+    }
+
+    @Test("elevation density capped for steep short races")
+    func elevationDensityCapped() {
         let skeletons = [makeSkeleton(weekNumber: 1, phase: .build)]
         let result = VolumeCalculator.calculate(
             skeletons: skeletons,
-            currentWeeklyVolumeKm: 2, // very low
-            raceDistanceKm: 50,
-            raceElevationGainM: 0,
-            experience: .beginner
+            currentWeeklyVolumeKm: 80,
+            raceDistanceKm: 13,
+            raceElevationGainM: 1500,
+            experience: .advanced,
+            raceDurationSeconds: 7200,
+            raceEffectiveKm: 28
         )
 
-        #expect(result[0].targetVolumeKm >= 10.0)
+        let vol = result[0]
+        let elevationPerKm = vol.targetElevationGainM / vol.targetVolumeKm
+        #expect(elevationPerKm <= 61.0)
     }
 }

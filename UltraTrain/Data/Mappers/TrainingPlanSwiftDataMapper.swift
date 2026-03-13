@@ -47,7 +47,8 @@ enum TrainingPlanSwiftDataMapper {
             sessions: sessions,
             isRecoveryWeek: model.isRecoveryWeek,
             targetVolumeKm: model.targetVolumeKm,
-            targetElevationGainM: model.targetElevationGainM
+            targetElevationGainM: model.targetElevationGainM,
+            targetDurationSeconds: model.targetDurationSeconds
         )
     }
 
@@ -70,7 +71,8 @@ enum TrainingPlanSwiftDataMapper {
             linkedRunId: model.linkedRunId,
             targetHeartRateZone: model.targetHeartRateZone,
             intervalWorkoutId: model.intervalWorkoutId,
-            isKeySession: model.isKeySession
+            isKeySession: model.isKeySession,
+            coachAdvice: model.coachAdvice
         )
     }
 
@@ -101,7 +103,8 @@ enum TrainingPlanSwiftDataMapper {
             sessions: sessionModels,
             isRecoveryWeek: week.isRecoveryWeek,
             targetVolumeKm: week.targetVolumeKm,
-            targetElevationGainM: week.targetElevationGainM
+            targetElevationGainM: week.targetElevationGainM,
+            targetDurationSeconds: week.targetDurationSeconds
         )
     }
 
@@ -121,7 +124,8 @@ enum TrainingPlanSwiftDataMapper {
             linkedRunId: session.linkedRunId,
             targetHeartRateZone: session.targetHeartRateZone,
             intervalWorkoutId: session.intervalWorkoutId,
-            isKeySession: session.isKeySession
+            isKeySession: session.isKeySession,
+            coachAdvice: session.coachAdvice
         )
     }
 }

@@ -27,7 +27,9 @@ enum PlanVolumeChartData {
                 phase: week.phase,
                 plannedDistanceKm: week.targetVolumeKm,
                 completedDistanceKm: completedSessions.reduce(0) { $0 + $1.plannedDistanceKm },
-                plannedDurationSeconds: activeSessions.reduce(0) { $0 + $1.plannedDuration },
+                plannedDurationSeconds: week.targetDurationSeconds > 0
+                    ? week.targetDurationSeconds
+                    : activeSessions.reduce(0) { $0 + $1.plannedDuration },
                 completedDurationSeconds: completedSessions.reduce(0) { $0 + $1.plannedDuration },
                 plannedElevationM: week.targetElevationGainM,
                 completedElevationM: completedSessions.reduce(0) { $0 + $1.plannedElevationGainM },

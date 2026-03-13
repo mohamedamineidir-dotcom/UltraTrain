@@ -10,6 +10,7 @@ struct TrainingWeek: Identifiable, Equatable, Sendable, Codable {
     var isRecoveryWeek: Bool
     var targetVolumeKm: Double
     var targetElevationGainM: Double
+    var targetDurationSeconds: TimeInterval = 0
 
     func contains(date: Date) -> Bool {
         let calendar = Calendar.current
