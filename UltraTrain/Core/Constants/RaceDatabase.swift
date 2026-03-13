@@ -8,6 +8,7 @@ enum RaceDatabase {
         + americas
         + europe
         + asiaPacific
+        + roadRaces
 
     static func search(query: String) -> [KnownRace] {
         guard !query.isEmpty else { return [] }
