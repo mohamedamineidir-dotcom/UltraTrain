@@ -122,7 +122,7 @@ enum CompletedRunSwiftDataMapper {
             weatherAtStart: weather,
             rpe: model.rpe,
             perceivedFeeling: model.perceivedFeelingRaw.flatMap { PerceivedFeeling(rawValue: $0) },
-            terrainType: model.terrainTypeRaw.flatMap { TerrainType(rawValue: $0) },
+            terrainType: model.terrainTypeRaw.flatMap { TerrainType(rawValue: $0) ?? ($0 == "mountain" ? .trail : nil) },
             trainingStressScore: model.trainingStressScore,
             activityType: ActivityType(rawValue: model.activityTypeRaw) ?? .running,
             intervalSplits: intervalSplits,

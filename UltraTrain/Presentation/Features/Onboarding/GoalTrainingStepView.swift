@@ -26,7 +26,8 @@ struct GoalTrainingStepView: View {
                 .padding(.top, Theme.Spacing.xl)
 
                 VStack(spacing: Theme.Spacing.lg) {
-                    // Goal type
+                    // Goal type (hidden when no race)
+                    if !viewModel.hasNoRace {
                     VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                         Text("Race Goal")
                             .font(.headline)
@@ -45,12 +46,28 @@ struct GoalTrainingStepView: View {
                         }
                         if viewModel.raceGoalType == .targetRanking {
                             LabeledIntStepper(label: "Target Position", value: $viewModel.raceTargetRanking, range: 1...5000, unit: "")
+
+                            if !viewModel.isKnownRace {
+                                VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+                                    Text("Estimated Finish Time")
+                                        .font(.subheadline.bold())
+                                    Text("We don't have data for this race. Please estimate the finish time for your target ranking so we can calibrate your plan.")
+                                        .font(.caption)
+                                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                                    HStack(spacing: Theme.Spacing.md) {
+                                        LabeledIntStepper(label: "Hrs", value: $viewModel.targetRankingEstimatedTimeHours, range: 0...100, unit: "h")
+                                        LabeledIntStepper(label: "Min", value: $viewModel.targetRankingEstimatedTimeMinutes, range: 0...59, unit: "m")
+                                    }
+                                }
+                                .padding(.top, Theme.Spacing.xs)
+                            }
                         }
                     }
                     .onboardingCardStyle()
                     .animation(.easeInOut(duration: 0.2), value: viewModel.raceGoalType)
 
                     goalRealisticnessWarning
+                    } // end if !hasNoRace
 
                     // Training philosophy
                     VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
@@ -111,6 +128,24 @@ struct GoalTrainingStepView: View {
                             .foregroundStyle(Theme.Colors.secondaryLabel)
                     }
                     .onboardingCardStyle()
+
+                    // Vertical gain environment
+                    if viewModel.raceElevationGainM > 500 || viewModel.hasNoRace {
+                        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                            Text("Uphill Training")
+                                .font(.headline)
+                            Text("Where do you do your uphill training?")
+                                .font(.subheadline)
+                                .foregroundStyle(Theme.Colors.secondaryLabel)
+                            Picker("Environment", selection: $viewModel.verticalGainEnvironment) {
+                                ForEach(VerticalGainEnvironment.allCases, id: \.self) { env in
+                                    Text(env.displayName).tag(env)
+                                }
+                            }
+                            .pickerStyle(.segmented)
+                        }
+                        .onboardingCardStyle()
+                    }
                 }
                 .padding(.horizontal, Theme.Spacing.lg)
             }

@@ -9,7 +9,8 @@ enum WorkoutProgressionEngine {
         phase: TrainingPhase,
         weekInPhase: Int,
         intensity: Intensity,
-        totalDuration: TimeInterval
+        totalDuration: TimeInterval,
+        expectedRaceDuration: TimeInterval = 0
     ) -> IntervalWorkout {
         let phases: [IntervalPhase]
         let name: String
@@ -26,12 +27,24 @@ enum WorkoutProgressionEngine {
             phases = template.phases
             name = template.name
             description = template.description
+        case .tempo:
+            let template = tempoTemplate(phase: phase, weekInPhase: weekInPhase, intensity: intensity)
+            phases = template.phases
+            name = template.name
+            description = template.description
+        case .longRun where phase == .peak && totalDuration >= 2 * 3600:
+            let template = longRunPeakTemplate(totalDuration: totalDuration, expectedRaceDuration: expectedRaceDuration)
+            phases = template.phases
+            name = template.name
+            description = template.description
         default:
             return makeGenericWorkout(type: type, duration: totalDuration, intensity: intensity)
         }
 
         let totalDur = phases.reduce(0.0) { $0 + $1.totalDuration }
-        let category: WorkoutCategory = type == .verticalGain ? .hillTraining : .speedWork
+        let category: WorkoutCategory = type == .verticalGain ? .hillTraining
+            : type == .longRun ? .trailSpecific
+            : .speedWork
 
         return IntervalWorkout(
             id: UUID(),
@@ -176,6 +189,98 @@ enum WorkoutProgressionEngine {
         )
     }
 
+    // MARK: - Tempo Templates
+
+    private static func tempoTemplate(phase trainingPhase: TrainingPhase, weekInPhase: Int, intensity: Intensity) -> WorkoutTemplate {
+        let warmUp = phase(.warmUp, duration: 900, intensity: .easy, reps: 1, notes: "Easy jog, build gradually")
+        let coolDown = phase(.coolDown, duration: 600, intensity: .easy, reps: 1, notes: "Easy jog, stretching")
+
+        let workPhases: (reps: Int, workSec: Double, restSec: Double, desc: String, name: String)
+
+        switch trainingPhase {
+        case .base:
+            let variants: [(Int, Double, Double, String, String)] = [
+                (2, 600, 180, "2×10min at threshold (Z3) / 3min jog", "Threshold tempo"),
+                (2, 720, 180, "2×12min at threshold (Z3) / 3min jog", "Threshold tempo"),
+                (2, 900, 300, "2×15min at threshold (Z3) / 5min jog", "Sustained tempo"),
+                (2, 900, 240, "2×15min at threshold (Z3) / 4min jog", "Sustained tempo"),
+                (3, 600, 180, "3×10min at threshold (Z3) / 3min jog", "Sustained tempo"),
+                (2, 1200, 300, "2×20min at threshold (Z3) / 5min jog", "Long tempo"),
+            ]
+            workPhases = variants[min(weekInPhase, variants.count - 1)]
+
+        case .build:
+            let variants: [(Int, Double, Double, String, String)] = [
+                (2, 1200, 300, "2×20min at tempo (Z3-Z4) / 5min jog", "Tempo run"),
+                (3, 900, 240, "3×15min at tempo (Z3-Z4) / 4min jog", "Tempo run"),
+                (2, 1500, 300, "2×25min at tempo (Z3-Z4) / 5min jog", "Long tempo"),
+                (3, 1200, 300, "3×20min at tempo (Z3-Z4) / 5min jog", "Long tempo"),
+            ]
+            workPhases = variants[weekInPhase % variants.count]
+
+        case .peak:
+            let variants: [(Int, Double, Double, String, String)] = [
+                (3, 600, 180, "3×10min at race pace (Z4) / 3min jog", "Race-pace tempo"),
+                (4, 480, 150, "4×8min at race pace (Z4) / 2min30 jog", "Race-pace tempo"),
+                (3, 720, 180, "3×12min at race pace (Z4) / 3min jog", "Race-pace tempo"),
+            ]
+            workPhases = variants[weekInPhase % variants.count]
+
+        case .taper:
+            workPhases = (1, 900, 0, "1×15min at threshold (Z3)", "Maintenance tempo")
+
+        default:
+            workPhases = (2, 600, 180, "2×10min at threshold (Z3) / 3min jog", "Threshold tempo")
+        }
+
+        let work = self.phase(.work, duration: workPhases.workSec, intensity: intensity, reps: workPhases.reps, notes: nil)
+        let recovery: IntervalPhase? = workPhases.restSec > 0
+            ? self.phase(.recovery, duration: workPhases.restSec, intensity: .easy, reps: max(workPhases.reps - 1, 1), notes: nil)
+            : nil
+
+        var phases = [warmUp, work]
+        if let recovery { phases.append(recovery) }
+        phases.append(coolDown)
+
+        return WorkoutTemplate(
+            name: workPhases.name,
+            description: workPhases.desc,
+            phases: phases
+        )
+    }
+
+    // MARK: - Long Run Peak Template
+
+    /// Structured long run for peak phase with race-pace blocks.
+    /// Work duration is capped at 40% of expected race duration to keep it realistic.
+    private static func longRunPeakTemplate(totalDuration: TimeInterval, expectedRaceDuration: TimeInterval) -> WorkoutTemplate {
+        let warmUp = phase(.warmUp, duration: 1800, intensity: .easy, reps: 1, notes: "Easy pace, settle in")
+        let coolDown = phase(.coolDown, duration: 1200, intensity: .easy, reps: 1, notes: "Easy pace to finish")
+
+        let availableTime = totalDuration - 1800 - 1200
+        let recoveryBetween: TimeInterval = 1800
+        let blockCount = 2
+        let totalRecovery = recoveryBetween * Double(blockCount - 1)
+
+        // Cap total race-pace work at 40% of expected race duration
+        let rawWorkPerBlock = (availableTime - totalRecovery) / Double(blockCount)
+        let maxRacePaceTotal = expectedRaceDuration > 0 ? expectedRaceDuration * 0.40 : .infinity
+        let cappedWork = min(rawWorkPerBlock, maxRacePaceTotal / Double(blockCount))
+        let workPerBlock = max(900, cappedWork) // min 15min per block
+
+        let work = phase(.work, duration: workPerBlock, intensity: .moderate, reps: blockCount, notes: "Race effort — maintain steady rhythm")
+        let recovery = phase(.recovery, duration: recoveryBetween, intensity: .easy, reps: 1, notes: "Easy jog, recover fully")
+
+        let workMin = Int(workPerBlock) / 60
+        let desc = "\(blockCount)×\(workMin)min at race effort / 30min easy"
+
+        return WorkoutTemplate(
+            name: "Peak long run",
+            description: desc,
+            phases: [warmUp, work, recovery, coolDown]
+        )
+    }
+
     // MARK: - Helpers
 
     private static func phase(
@@ -196,12 +301,13 @@ enum WorkoutProgressionEngine {
     }
 
     private static func makeGenericWorkout(type: SessionType, duration: TimeInterval, intensity: Intensity) -> IntervalWorkout {
-        IntervalWorkout(
+        let work = phase(.work, duration: duration, intensity: intensity, reps: 1, notes: nil)
+        return IntervalWorkout(
             id: UUID(),
             name: type.displayName,
-            descriptionText: "Steady effort at \(intensity.displayName) intensity.",
-            phases: [],
-            category: .trailSpecific,
+            descriptionText: "Steady \(intensity.displayName) effort",
+            phases: [work],
+            category: type == .recovery ? .recovery : .trailSpecific,
             estimatedDurationSeconds: duration,
             estimatedDistanceKm: 0,
             isUserCreated: false

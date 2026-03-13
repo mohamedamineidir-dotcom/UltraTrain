@@ -23,6 +23,7 @@ struct Athlete: Identifiable, Equatable, Sendable {
     var isPublicProfile: Bool = false
     var weightGoal: WeightGoal = .maintain
     var biologicalSex: BiologicalSex = .male
+    var verticalGainEnvironment: VerticalGainEnvironment = .mountain
 
     // MARK: - Derived Fitness Metrics (from PBs)
 

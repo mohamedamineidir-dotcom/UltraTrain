@@ -86,6 +86,29 @@ enum PerformanceEstimator {
         )
     }
 
+    // MARK: - PB Age Adjustment
+
+    /// Adjusts old PBs assuming the athlete has made slight progress.
+    /// Conservative: 0.5% faster per year of age, capped at 5 years (~2.5% max).
+    /// PBs less than 1 year old are returned unchanged.
+    static func adjustPBsForTrainingProgress(_ pbs: [PersonalBest]) -> [PersonalBest] {
+        pbs.map { pb in
+            let daysSince = Date.now.timeIntervalSince(pb.date) / 86400.0
+            guard daysSince > 365 else { return pb }
+
+            let yearsAgo = min(daysSince / 365.0, 5.0)
+            let improvementFactor = pow(1.005, yearsAgo)
+            let adjustedTime = pb.timeSeconds / improvementFactor
+
+            return PersonalBest(
+                id: pb.id,
+                distance: pb.distance,
+                timeSeconds: adjustedTime,
+                date: pb.date
+            )
+        }
+    }
+
     // MARK: - Riegel Formula
 
     /// Riegel's formula: T2 = T1 × (D2/D1)^1.06

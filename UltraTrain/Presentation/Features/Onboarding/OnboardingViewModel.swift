@@ -80,6 +80,15 @@ final class OnboardingViewModel {
     var raceTargetTimeMinutes: Int = 0
     var raceTargetRanking: Int = 50
     var raceTerrainDifficulty: TerrainDifficulty = .moderate
+    var isKnownRace: Bool = false
+    var targetRankingEstimatedTimeHours: Int = 10
+    var targetRankingEstimatedTimeMinutes: Int = 0
+    var verticalGainEnvironment: VerticalGainEnvironment = .mountain
+    var hasNoRace = false
+
+    var isShortRoadRace: Bool {
+        raceElevationGainM < 100 && raceDistanceKm < 42.195 && raceDistanceKm > 0
+    }
 
     // MARK: - Init
 
@@ -145,9 +154,9 @@ final class OnboardingViewModel {
         case 3: isAboutYouValid
         case 4: isBodyMetricsValid
         case 5: true // Heart rate has sane defaults
-        case 6: isRaceNameValid
-        case 7: isRaceProfileValid
-        case 8: isGoalTrainingValid
+        case 6: hasNoRace || isRaceNameValid
+        case 7: hasNoRace || isRaceProfileValid
+        case 8: hasNoRace ? true : isGoalTrainingValid
         default: true
         }
     }
@@ -188,13 +197,21 @@ final class OnboardingViewModel {
     func advance() {
         guard canAdvance, currentStep < totalSteps - 1 else { return }
         error = nil
-        currentStep += 1
+        if hasNoRace && currentStep == 6 {
+            currentStep = 8 // Skip race profile (7) and go straight to goal/training
+        } else {
+            currentStep += 1
+        }
     }
 
     func goBack() {
         guard currentStep > 0 else { return }
         error = nil
-        currentStep -= 1
+        if hasNoRace && currentStep == 8 {
+            currentStep = 6 // Go back to race name step (where no-race toggle is)
+        } else {
+            currentStep -= 1
+        }
     }
 
     // MARK: - Save
@@ -206,9 +223,11 @@ final class OnboardingViewModel {
 
         do {
             let athlete = buildAthlete()
-            let race = buildRace()
             try await athleteRepository.saveAthlete(athlete)
-            try await raceRepository.saveRace(race)
+            if !hasNoRace {
+                let race = buildRace()
+                try await raceRepository.saveRace(race)
+            }
             savedAthleteId = athlete.id
             isCompleted = true
             Logger.app.info("Onboarding completed for \(athlete.firstName)")
@@ -241,6 +260,7 @@ final class OnboardingViewModel {
             preferredRunsPerWeek: preferredRunsPerWeek,
             weightGoal: weightGoal,
             biologicalSex: biologicalSex,
+            verticalGainEnvironment: verticalGainEnvironment,
             vo2max: metrics?.vo2max,
             vmaKmh: metrics?.vmaKmh,
             thresholdPace60MinPerKm: metrics?.thresholdPace60MinPerKm,
@@ -251,8 +271,10 @@ final class OnboardingViewModel {
     private func buildPersonalBests() -> [PersonalBest] {
         let known = buildCurrentPBs()
         guard !known.isEmpty else { return [] }
-        // Deduce missing PBs from entered ones using Riegel formula
-        return PerformanceEstimator.deduceMissingPBs(from: known)
+        // Adjust old PBs assuming slight improvement from training
+        let adjusted = PerformanceEstimator.adjustPBsForTrainingProgress(known)
+        // Deduce missing PBs from adjusted ones using Riegel formula
+        return PerformanceEstimator.deduceMissingPBs(from: adjusted)
     }
 
     private func buildRace() -> Race {

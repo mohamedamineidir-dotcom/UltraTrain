@@ -40,6 +40,7 @@ enum AthleteSwiftDataMapper {
             isPublicProfile: model.isPublicProfile,
             weightGoal: weightGoal,
             biologicalSex: biologicalSex,
+            verticalGainEnvironment: VerticalGainEnvironment(rawValue: model.verticalGainEnvironmentRaw) ?? .mountain,
             vo2max: model.vo2max,
             vmaKmh: model.vmaKmh,
             thresholdPace60MinPerKm: model.thresholdPace60MinPerKm,
@@ -78,7 +79,8 @@ enum AthleteSwiftDataMapper {
             vo2max: athlete.vo2max,
             vmaKmh: athlete.vmaKmh,
             thresholdPace60MinPerKm: athlete.thresholdPace60MinPerKm,
-            thresholdPace30MinPerKm: athlete.thresholdPace30MinPerKm
+            thresholdPace30MinPerKm: athlete.thresholdPace30MinPerKm,
+            verticalGainEnvironmentRaw: athlete.verticalGainEnvironment.rawValue
         )
     }
 }

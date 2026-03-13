@@ -8,10 +8,10 @@ enum IntervalPhaseType: String, CaseIterable, Sendable, Codable {
 
     var displayName: String {
         switch self {
-        case .warmUp: return "Warm Up"
-        case .work: return "Work"
-        case .recovery: return "Recovery"
-        case .coolDown: return "Cool Down"
+        case .warmUp: return String(localized: "phaseType.warmUp", defaultValue: "Warm Up")
+        case .work: return String(localized: "phaseType.work", defaultValue: "Work")
+        case .recovery: return String(localized: "phaseType.recovery", defaultValue: "Recovery")
+        case .coolDown: return String(localized: "phaseType.coolDown", defaultValue: "Cool Down")
         }
     }
 

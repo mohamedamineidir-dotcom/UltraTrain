@@ -26,7 +26,11 @@ struct OnboardingCompleteStepView: View {
                 // Summary cards
                 VStack(spacing: Theme.Spacing.md) {
                     athleteCard
-                    raceCard
+                    if viewModel.hasNoRace {
+                        generalFitnessPlanCard
+                    } else {
+                        raceCard
+                    }
                     healthKitCard
                 }
                 .padding(.horizontal, Theme.Spacing.lg)
@@ -161,6 +165,44 @@ struct OnboardingCompleteStepView: View {
                 color: Theme.Colors.goldAccent,
                 label: "Goal",
                 value: viewModel.raceGoalType.displayName
+            )
+        }
+        .onboardingCardStyle()
+        .accessibilityElement(children: .combine)
+    }
+
+    // MARK: - General Fitness Plan Card
+
+    private var generalFitnessPlanCard: some View {
+        VStack(spacing: Theme.Spacing.sm) {
+            HStack(spacing: Theme.Spacing.sm) {
+                Image(systemName: "figure.run")
+                    .font(.title2)
+                    .foregroundStyle(Theme.Colors.goldAccent)
+                Text("General Fitness Plan")
+                    .font(.headline)
+                Spacer()
+            }
+
+            Divider()
+
+            summaryIconRow(
+                icon: "calendar",
+                color: Theme.Colors.goldAccent,
+                label: "Duration",
+                value: "12 weeks"
+            )
+            summaryIconRow(
+                icon: "arrow.up.right",
+                color: Theme.Colors.goldAccent,
+                label: "Focus",
+                value: "Build endurance & fitness"
+            )
+            summaryIconRow(
+                icon: "plus.circle",
+                color: Theme.Colors.goldAccent,
+                label: "Race",
+                value: "Add one anytime later"
             )
         }
         .onboardingCardStyle()

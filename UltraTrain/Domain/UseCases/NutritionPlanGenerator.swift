@@ -11,9 +11,12 @@ struct NutritionPlanGenerator: GenerateNutritionPlanUseCase {
     ) async throws -> NutritionPlan {
         let durationMinutes = Int(estimatedDuration / 60)
 
-        guard durationMinutes >= 60 else {
-            throw DomainError.invalidTrainingPlan(
-                reason: "Race duration must be at least 1 hour for a nutrition plan."
+        // Short races (< 60 min) get a minimal hydration-only plan
+        guard durationMinutes >= 30 else {
+            return NutritionPlan(
+                id: UUID(), raceId: race.id,
+                caloriesPerHour: 0, hydrationMlPerHour: 400, sodiumMgPerHour: 0,
+                entries: [], gutTrainingSessionIds: []
             )
         }
 
@@ -30,11 +33,13 @@ struct NutritionPlanGenerator: GenerateNutritionPlanUseCase {
 
         let isUltra = race.distanceKm > 50
         let isLongUltra = estimatedDuration > 6 * 3600
+        let isShortRace = durationMinutes < 90
 
         let entries = buildSchedule(
             durationMinutes: durationMinutes,
             isUltra: isUltra,
             isLongUltra: isLongUltra,
+            isShortRace: isShortRace,
             preferences: preferences
         )
 
@@ -78,9 +83,16 @@ struct NutritionPlanGenerator: GenerateNutritionPlanUseCase {
         durationMinutes: Int,
         isUltra: Bool,
         isLongUltra: Bool,
+        isShortRace: Bool = false,
         preferences: NutritionPreferences
     ) -> [NutritionEntry] {
         var entries: [NutritionEntry] = []
+
+        // Short races (< 90 min): simple strategy — 1-2 gels + water
+        if isShortRace {
+            return buildShortRaceSchedule(durationMinutes: durationMinutes, preferences: preferences)
+        }
+
         let intervalMinutes = 20
         let startMinute = intervalMinutes
         let endMinute = durationMinutes - 20
@@ -145,6 +157,47 @@ struct NutritionPlanGenerator: GenerateNutritionPlanUseCase {
                     ))
                 }
             }
+        }
+
+        entries.sort { $0.timingMinutes < $1.timingMinutes }
+        return entries
+    }
+
+    /// Simplified nutrition for short races (10K, half marathon, short trail).
+    /// Focus on pre-race carbs + minimal in-race fueling.
+    private func buildShortRaceSchedule(
+        durationMinutes: Int,
+        preferences: NutritionPreferences
+    ) -> [NutritionEntry] {
+        var entries: [NutritionEntry] = []
+
+        // Races under 60 min: just water, maybe 1 gel at halfway
+        if durationMinutes < 60 {
+            if durationMinutes >= 40, let gel = resolve(DefaultProducts.gel, preferences: preferences) {
+                entries.append(makeEntry(
+                    product: gel,
+                    timingMinutes: durationMinutes / 2,
+                    notes: "Optional — take only if needed"
+                ))
+            }
+            return entries
+        }
+
+        // Races 60-90 min: 1 gel every 30 min + electrolyte drink at halfway
+        let gelInterval = 30
+        for minute in stride(from: gelInterval, through: durationMinutes - 15, by: gelInterval) {
+            if let gel = resolve(DefaultProducts.gel, preferences: preferences) {
+                entries.append(makeEntry(product: gel, timingMinutes: minute, notes: "Take with water"))
+            }
+        }
+
+        let halfway = durationMinutes / 2
+        if let drink = resolve(DefaultProducts.drink, preferences: preferences) {
+            entries.append(makeEntry(
+                product: drink,
+                timingMinutes: halfway,
+                notes: "Sip electrolyte drink"
+            ))
         }
 
         entries.sort { $0.timingMinutes < $1.timingMinutes }

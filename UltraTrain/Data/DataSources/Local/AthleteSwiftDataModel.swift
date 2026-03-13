@@ -30,6 +30,7 @@ final class AthleteSwiftDataModel {
     var vmaKmh: Double? = nil
     var thresholdPace60MinPerKm: Double? = nil
     var thresholdPace30MinPerKm: Double? = nil
+    var verticalGainEnvironmentRaw: String = "mountain"
 
     init(
         id: UUID = UUID(),
@@ -58,7 +59,8 @@ final class AthleteSwiftDataModel {
         vo2max: Double? = nil,
         vmaKmh: Double? = nil,
         thresholdPace60MinPerKm: Double? = nil,
-        thresholdPace30MinPerKm: Double? = nil
+        thresholdPace30MinPerKm: Double? = nil,
+        verticalGainEnvironmentRaw: String = "mountain"
     ) {
         self.id = id
         self.firstName = firstName
@@ -87,5 +89,6 @@ final class AthleteSwiftDataModel {
         self.vmaKmh = vmaKmh
         self.thresholdPace60MinPerKm = thresholdPace60MinPerKm
         self.thresholdPace30MinPerKm = thresholdPace30MinPerKm
+        self.verticalGainEnvironmentRaw = verticalGainEnvironmentRaw
     }
 }

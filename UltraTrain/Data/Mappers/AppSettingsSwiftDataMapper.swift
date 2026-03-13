@@ -51,7 +51,8 @@ enum AppSettingsSwiftDataMapper {
             quietHoursStart: model.quietHoursStart,
             quietHoursEnd: model.quietHoursEnd,
             dataRetentionMonths: model.dataRetentionMonths,
-            notificationSoundPreferences: notificationSoundPreferences
+            notificationSoundPreferences: notificationSoundPreferences,
+            preferredLanguage: model.preferredLanguageCode
         )
     }
 
@@ -84,6 +85,7 @@ enum AppSettingsSwiftDataMapper {
         model.voiceCoachingConfigData = try? JSONEncoder().encode(settings.voiceCoachingConfig)
         model.safetyConfigData = try? JSONEncoder().encode(settings.safetyConfig)
         model.notificationSoundPreferencesData = try? JSONEncoder().encode(settings.notificationSoundPreferences)
+        model.preferredLanguageCode = settings.preferredLanguage
         return model
     }
 }

@@ -14,7 +14,7 @@ struct ExperienceLevelCard: View {
                     .frame(width: 32)
 
                 VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-                    Text(level.rawValue.capitalized)
+                    Text(level.displayName)
                         .font(.headline)
                         .foregroundStyle(isSelected ? Theme.Colors.warmCoral : Theme.Colors.label)
                     Text(levelDescription)
@@ -58,10 +58,10 @@ struct ExperienceLevelCard: View {
 
     private var levelDescription: String {
         switch level {
-        case .beginner: return "New to running or less than 1 year of regular training"
-        case .intermediate: return "1-3 years running, completed races up to marathon distance"
-        case .advanced: return "3+ years, completed ultras, consistent 50+ km weeks"
-        case .elite: return "Competitive ultra runner, podium finishes, 80+ km weeks"
+        case .beginner: return String(localized: "experience.beginner.description", defaultValue: "New to running or less than 1 year of regular training")
+        case .intermediate: return String(localized: "experience.intermediate.description", defaultValue: "1-3 years running, completed races up to marathon distance")
+        case .advanced: return String(localized: "experience.advanced.description", defaultValue: "3+ years, completed ultras, consistent 50+ km weeks")
+        case .elite: return String(localized: "experience.elite.description", defaultValue: "Competitive ultra runner, podium finishes, 80+ km weeks")
         }
     }
 }

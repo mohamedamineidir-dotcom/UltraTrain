@@ -16,6 +16,7 @@ struct TrainingSession: Identifiable, Equatable, Sendable, Codable {
     var targetHeartRateZone: Int? = nil
     var intervalWorkoutId: UUID? = nil
     var isKeySession: Bool = false
+    var coachAdvice: String? = nil
 
     var isGutTrainingRecommended: Bool {
         (type == .longRun || type == .backToBack) && plannedDuration >= 7200

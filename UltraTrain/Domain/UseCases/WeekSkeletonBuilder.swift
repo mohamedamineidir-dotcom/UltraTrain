@@ -28,6 +28,7 @@ enum WeekSkeletonBuilder {
         var nonRecoveryCount = 0
 
         for allocation in phases {
+            nonRecoveryCount = 0
             for phaseWeekIndex in 0..<allocation.weekCount {
                 let startDate = planStartDate.adding(weeks: weekIndex)
                 let endDate = startDate.adding(days: 6)
