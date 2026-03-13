@@ -294,6 +294,66 @@ struct LongRunCurveCalculatorTests {
         #expect(recovery.easyRun1Seconds < normal.easyRun1Seconds)
     }
 
+    // MARK: - Volume Smoothness
+
+    @Test("consecutive non-recovery weeks have smoothly increasing total volume")
+    func volumeSmoothnessNoZigzag() {
+        let totalWeeks = 26
+        let raceDuration: TimeInterval = 50400 // ~14h HK100
+
+        var totals: [(week: Int, total: TimeInterval, recovery: Bool)] = []
+
+        for week in 0..<totalWeeks {
+            let phase: TrainingPhase
+            if week < 7 { phase = .base }
+            else if week < 20 { phase = .build }
+            else if week < 23 { phase = .peak }
+            else { phase = .taper }
+
+            // Mark recovery every 4th week (3:1)
+            let isRecovery = (week + 1) % 4 == 0 && phase != .taper
+
+            let d = LongRunCurveCalculator.durations(
+                weekIndex: week,
+                totalWeeks: totalWeeks,
+                phase: phase,
+                isRecoveryWeek: isRecovery,
+                experience: .advanced,
+                philosophy: .balanced,
+                raceDurationSeconds: raceDuration,
+                raceEffectiveKm: 156,
+                preferredRunsPerWeek: 5
+            )
+            totals.append((week, d.totalSeconds, isRecovery))
+        }
+
+        // Check: between consecutive non-recovery, non-taper weeks,
+        // volume should not drop by more than 10%
+        var prevWeek: Int?
+        var prevTotal: TimeInterval?
+        var violations: [String] = []
+
+        for entry in totals {
+            if entry.recovery { prevWeek = nil; prevTotal = nil; continue }
+            // Skip taper weeks
+            if entry.week >= 23 { continue }
+
+            if let pw = prevWeek, let pt = prevTotal {
+                let dropPercent = (pt - entry.total) / pt * 100
+                if dropPercent > 10 {
+                    violations.append(
+                        "W\(entry.week + 1): \(Int(entry.total / 60))min dropped \(Int(dropPercent))% from W\(pw + 1): \(Int(pt / 60))min"
+                    )
+                }
+            }
+            prevWeek = entry.week
+            prevTotal = entry.total
+        }
+
+        #expect(violations.isEmpty,
+                "Volume should not zigzag between non-recovery weeks: \(violations.joined(separator: "; "))")
+    }
+
     // MARK: - Campus Coach Reference Validation
 
     @Test("26-week HK100 plan matches Campus Coach range")

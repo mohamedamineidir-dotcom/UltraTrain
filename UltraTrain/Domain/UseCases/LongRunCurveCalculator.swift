@@ -62,17 +62,23 @@ enum LongRunCurveCalculator {
         if preferredRunsPerWeek <= 3 {
             // 3/week: VG + easy/interval alternate + long run
             easy2 = 0
-            // alternate: even weeks = easy, odd = interval
+            // Unify durations so alternation doesn't change weekly total
+            let midpoint = (easy1 + interval) / 2
             if weekIndex % 2 == 0 {
                 interval = 0
+                easy1 = midpoint
             } else {
                 easy1 = 0
+                interval = midpoint
             }
         } else if preferredRunsPerWeek == 4 {
             // 4/week: easy + VG + interval + long run
             easy2 = 0
         }
         // 5/week: all sessions present
+
+        // Save non-B2B total before B2B modifications (smooth baseline)
+        let normalTotal = easy1 + easy2 + interval + vg + rawLongRun
 
         // B2B adjustments
         var longRun: TimeInterval
@@ -90,12 +96,18 @@ enum LongRunCurveCalculator {
             b2bDay2 = combined * AppConfiguration.Training.b2bDay2Split
             longRun = b2bDay1 + b2bDay2
 
-            // Shorten easy runs on B2B weeks
-            easy1 *= AppConfiguration.Training.b2bEasyReduction
-            easy2 *= AppConfiguration.Training.b2bEasyReduction
+            // Budget approach: keep total volume close to non-B2B baseline (+5%)
+            let targetTotal = normalTotal * 1.05
+            let nonLongRunBudget = targetTotal - longRun
+            let nonLongRunTotal = easy1 + easy2 + interval + vg
 
-            // Drop intervals on B2B weeks to make room
-            interval = 0
+            if nonLongRunBudget > 0 && nonLongRunTotal > 0 {
+                let scale = min(nonLongRunBudget / nonLongRunTotal, 1.0)
+                easy1 *= scale
+                easy2 *= scale
+                interval *= scale
+                vg *= scale
+            }
         } else {
             longRun = rawLongRun
         }
