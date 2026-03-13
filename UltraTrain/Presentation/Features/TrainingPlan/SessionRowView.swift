@@ -6,105 +6,152 @@ struct SessionRowView: View {
     let onToggle: () -> Void
 
     var body: some View {
+        if session.type == .rest {
+            restRow
+        } else {
+            activeRow
+        }
+    }
+
+    // MARK: - Rest Row (minimal)
+
+    private var restRow: some View {
         HStack(spacing: Theme.Spacing.sm) {
-            Button(action: onToggle) {
-                Circle()
-                    .fill(toggleBackground)
-                    .frame(width: 28, height: 28)
-                    .overlay {
-                        Image(systemName: toggleIcon)
-                            .font(.caption.bold())
-                            .foregroundStyle(toggleForeground)
-                    }
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(statusAccessibilityLabel)
-            .accessibilityHint("Double-tap to toggle completion")
+            Circle()
+                .fill(Theme.Colors.secondaryLabel.opacity(0.1))
+                .frame(width: 24, height: 24)
 
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(spacing: Theme.Spacing.sm) {
-                    Image(systemName: session.type.icon)
-                        .font(.caption)
-                        .foregroundStyle(session.isSkipped ? Theme.Colors.secondaryLabel : .white)
-                        .frame(width: 24, height: 24)
-                        .background(
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(session.isSkipped ? Theme.Colors.secondaryLabel.opacity(0.2) : session.intensity.color.opacity(0.85))
-                        )
-                        .accessibilityHidden(true)
-
-                    Text(session.type.displayName)
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .strikethrough(session.isCompleted || session.isSkipped)
-
-                    if session.isSkipped {
-                        Text(String(localized: "session.skipped", defaultValue: "Skipped"))
-                            .font(.caption2)
-                            .foregroundStyle(.orange)
-                            .padding(.horizontal, 4)
-                            .padding(.vertical, 1)
-                            .background(.orange.opacity(0.15))
-                            .clipShape(Capsule())
-                    } else if session.type != .rest && !session.isCompleted {
-                        Text(session.intensity.displayName)
-                            .font(.caption2)
-                            .foregroundStyle(session.intensity.color)
-                            .padding(.horizontal, 5)
-                            .padding(.vertical, 1)
-                            .background(session.intensity.color.opacity(0.12))
-                            .clipShape(Capsule())
-                    }
-                }
-
-                if hasWorkoutDescription {
-                    Text(session.description)
-                        .font(.caption)
-                        .foregroundStyle(session.intensity.color)
-                        .lineLimit(1)
-                } else if isTimeBased && session.plannedDuration > 0 {
-                    Text(formattedTimeBased)
-                        .font(.caption)
-                        .foregroundStyle(Theme.Colors.secondaryLabel)
-                } else if session.plannedDistanceKm > 0 {
-                    Text(UnitFormatter.formatDistance(session.plannedDistanceKm, unit: units))
-                        .font(.caption)
-                        .foregroundStyle(Theme.Colors.secondaryLabel)
-                }
-
-                if hasBadges {
-                    HStack(spacing: Theme.Spacing.xs) {
-                        if session.isKeySession && !session.isSkipped && !session.isCompleted {
-                            Text(String(localized: "session.key", defaultValue: "Key"))
-                                .font(.caption2.bold())
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 1)
-                                .background(Theme.Colors.primary)
-                                .clipShape(Capsule())
-                        }
-
-                        if session.isGutTrainingRecommended && !session.isSkipped {
-                            GutTrainingBadge()
-                        }
-                    }
-                }
-            }
+            Text(session.type.displayName)
+                .font(.subheadline)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
 
             Spacer()
 
             dayLabel
         }
-        .padding(.vertical, session.type == .rest ? Theme.Spacing.xs : Theme.Spacing.sm)
-        .padding(.horizontal, session.isKeySession && !session.isSkipped && !session.isCompleted ? Theme.Spacing.xs : 0)
-        .background(
-            session.isKeySession && !session.isSkipped && !session.isCompleted
-                ? Theme.Colors.primary.opacity(0.04)
-                : Color.clear
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 6))
-        .opacity(session.type == .rest || session.isSkipped ? 0.4 : 1.0)
+        .padding(.vertical, Theme.Spacing.xs)
+        .opacity(0.5)
         .accessibilityElement(children: .combine)
+    }
+
+    // MARK: - Active Session Row
+
+    private var activeRow: some View {
+        HStack(spacing: 0) {
+            // Intensity accent bar
+            RoundedRectangle(cornerRadius: 1.5)
+                .fill(accentColor)
+                .frame(width: 3)
+                .padding(.vertical, 4)
+
+            HStack(spacing: Theme.Spacing.sm) {
+                // Completion toggle
+                toggleButton
+
+                // Session info
+                VStack(alignment: .leading, spacing: 2) {
+                    topLine
+                    bottomLine
+                }
+
+                Spacer()
+
+                // Duration + Day
+                VStack(alignment: .trailing, spacing: 2) {
+                    if session.plannedDuration > 0 {
+                        Text(formattedDuration)
+                            .font(.subheadline.monospacedDigit())
+                            .fontWeight(.medium)
+                            .foregroundStyle(session.isCompleted || session.isSkipped
+                                ? Theme.Colors.secondaryLabel : Theme.Colors.label)
+                    }
+                    dayLabel
+                }
+            }
+            .padding(.leading, Theme.Spacing.sm)
+        }
+        .padding(.vertical, Theme.Spacing.sm)
+        .padding(.trailing, Theme.Spacing.xs)
+        .background(keySessionBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .opacity(session.isSkipped ? 0.5 : 1.0)
+        .accessibilityElement(children: .combine)
+    }
+
+    // MARK: - Top Line (icon + name + badges)
+
+    private var topLine: some View {
+        HStack(spacing: Theme.Spacing.xs) {
+            Image(systemName: session.type.icon)
+                .font(.caption2)
+                .foregroundStyle(accentColor)
+                .accessibilityHidden(true)
+
+            Text(session.type.displayName)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(Theme.Colors.label)
+                .strikethrough(session.isCompleted || session.isSkipped)
+
+            if session.isSkipped {
+                skippedBadge
+            }
+
+            if session.isKeySession && !session.isSkipped && !session.isCompleted {
+                keyBadge
+            }
+
+            if session.linkedRunId != nil {
+                Image(systemName: "link.circle.fill")
+                    .font(.caption2)
+                    .foregroundStyle(Theme.Colors.success)
+                    .accessibilityLabel("Linked to activity")
+            }
+        }
+    }
+
+    // MARK: - Bottom Line (elevation + gut training)
+
+    private var bottomLine: some View {
+        HStack(spacing: Theme.Spacing.xs) {
+            if !session.isSkipped && !session.isCompleted {
+                Text(session.intensity.displayName)
+                    .font(.caption2)
+                    .foregroundStyle(accentColor)
+            }
+
+            if session.plannedElevationGainM > 0 {
+                Text("·")
+                    .font(.caption2)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                Text("\(UnitFormatter.formatElevation(session.plannedElevationGainM, unit: units)) D+")
+                    .font(.caption2)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+
+            if session.isGutTrainingRecommended && !session.isSkipped {
+                GutTrainingBadge()
+            }
+        }
+    }
+
+    // MARK: - Components
+
+    private var toggleButton: some View {
+        Button(action: onToggle) {
+            Circle()
+                .fill(toggleBackground)
+                .frame(width: 26, height: 26)
+                .overlay {
+                    if !toggleIcon.isEmpty {
+                        Image(systemName: toggleIcon)
+                            .font(.caption2.bold())
+                            .foregroundStyle(toggleForeground)
+                    }
+                }
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(statusAccessibilityLabel)
+        .accessibilityHint("Double-tap to toggle completion")
     }
 
     private var dayLabel: some View {
@@ -116,6 +163,50 @@ struct SessionRowView: View {
             .padding(.vertical, isToday ? 3 : 0)
             .background(isToday ? Theme.Colors.accentColor : .clear, in: Capsule())
     }
+
+    private var skippedBadge: some View {
+        Text(String(localized: "session.skipped", defaultValue: "Skipped"))
+            .font(.caption2)
+            .foregroundStyle(.orange)
+            .padding(.horizontal, 4)
+            .padding(.vertical, 1)
+            .background(.orange.opacity(0.15))
+            .clipShape(Capsule())
+    }
+
+    private var keyBadge: some View {
+        Text(String(localized: "session.key", defaultValue: "Key"))
+            .font(.caption2.bold())
+            .foregroundStyle(.white)
+            .padding(.horizontal, 5)
+            .padding(.vertical, 1)
+            .background(Theme.Colors.primary)
+            .clipShape(Capsule())
+    }
+
+    @ViewBuilder
+    private var keySessionBackground: some View {
+        if session.isKeySession && !session.isSkipped && !session.isCompleted {
+            Theme.Colors.primary.opacity(0.04)
+        } else {
+            Color.clear
+        }
+    }
+
+    // MARK: - Formatting
+
+    private var formattedDuration: String {
+        let total = Int(session.plannedDuration)
+        let hours = total / 3600
+        let minutes = (total % 3600) / 60
+        return hours > 0 ? "\(hours)h\(String(format: "%02d", minutes))" : "\(minutes)min"
+    }
+
+    private var accentColor: Color {
+        session.isSkipped ? Theme.Colors.secondaryLabel : session.intensity.color
+    }
+
+    // MARK: - Toggle State
 
     private var toggleBackground: Color {
         if session.isCompleted { return Theme.Colors.success }
@@ -135,50 +226,14 @@ struct SessionRowView: View {
         return ""
     }
 
-    private var hasBadges: Bool {
-        (session.isKeySession && !session.isSkipped && !session.isCompleted)
-            || (session.isGutTrainingRecommended && !session.isSkipped)
-    }
-
-    private var hasWorkoutDescription: Bool {
-        (session.type == .intervals || session.type == .verticalGain || session.type == .tempo)
-            && session.intervalWorkoutId != nil
-            && session.description.contains("×")
-    }
-
-    private var isTimeBased: Bool {
-        session.type == .longRun || session.type == .backToBack
-    }
-
-    private var formattedTimeBased: String {
-        let hours = Int(session.plannedDuration) / 3600
-        let minutes = (Int(session.plannedDuration) % 3600) / 60
-        let timeStr = hours > 0 ? "\(hours)h\(String(format: "%02d", minutes))" : "\(minutes)min"
-        if session.plannedElevationGainM > 0 {
-            let elev = UnitFormatter.formatElevation(session.plannedElevationGainM, unit: units)
-            return "\(timeStr) · \(elev) D+"
-        }
-        return timeStr
-    }
-
-    private var statusIcon: String {
-        if session.isCompleted { return "checkmark.circle.fill" }
-        if session.isSkipped { return "forward.circle.fill" }
-        return "circle"
-    }
-
     private var statusAccessibilityLabel: String {
         if session.isCompleted { return "\(session.type.displayName), completed" }
         if session.isSkipped { return "\(session.type.displayName), skipped" }
         return "Mark \(session.type.displayName) as completed"
     }
-
-    private var statusColor: Color {
-        if session.isCompleted { return Theme.Colors.success }
-        if session.isSkipped { return .orange }
-        return Theme.Colors.secondaryLabel
-    }
 }
+
+// MARK: - SessionType Extensions
 
 extension SessionType {
     var displayName: String {
@@ -207,6 +262,8 @@ extension SessionType {
         }
     }
 }
+
+// MARK: - Intensity Extensions
 
 extension Intensity {
     var color: Color {

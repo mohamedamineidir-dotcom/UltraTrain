@@ -66,6 +66,9 @@ enum SessionTemplateGenerator {
                 for: template.type,
                 intensity: template.intensity,
                 phase: skeleton.phase,
+                weekInPhase: weekNumberInPhase,
+                isB2BDay2: template.type == .backToBack,
+                isRecoveryWeek: skeleton.isRecoveryWeek,
                 verticalGainEnvironment: verticalGainEnvironment
             )
 
@@ -150,38 +153,40 @@ enum SessionTemplateGenerator {
         let vgIntensity: Intensity = (experience == .advanced || experience == .elite) ? .hard : .moderate
 
         if volume.isB2BWeek {
-            // B2B week: 2 easy (shorter) + 1 VG + B2B day1 + B2B day2
             return [
-                tpl(0, .rest, .easy, 0, 0, "Rest day. Prioritize sleep for adaptation."),
+                tpl(0, .rest, .easy, 0, 0,
+                    SessionDescriptionGenerator.rest(isRecoveryWeek: false)),
                 tpl(1, .recovery, .easy, base.easyRun1Seconds, 0.05,
-                    "Easy run at conversational pace (Zone 2)."),
+                    SessionDescriptionGenerator.easyRun(isRecoveryWeek: false)),
                 tpl(2, .verticalGain, vgIntensity, base.vgSeconds, 0.30,
-                    "Vertical gain session. Build climbing power."),
+                    SessionDescriptionGenerator.verticalGain(phase: phase, isRecoveryWeek: false)),
                 tpl(3, .recovery, .easy, base.easyRun2Seconds, 0.05,
-                    "Easy run. Keep it relaxed before the weekend block."),
-                tpl(4, .rest, .easy, 0, 0, "Rest day. Hydrate well for B2B."),
+                    SessionDescriptionGenerator.easyRun(isRecoveryWeek: false, isPreLongRun: true)),
+                tpl(4, .rest, .easy, 0, 0,
+                    SessionDescriptionGenerator.rest(isRecoveryWeek: false)),
                 tpl(5, .longRun, .easy, volume.b2bDay1Seconds, 0.25,
-                    "B2B Day 1: Long run building fatigue for tomorrow. Easy pace (Zone 2)."),
+                    SessionDescriptionGenerator.b2bDay1(phase: phase)),
                 tpl(6, .backToBack, .easy, volume.b2bDay2Seconds, 0.30,
-                    "B2B Day 2: Long run on tired legs. Simulate ultra fatigue (Zone 2)."),
+                    SessionDescriptionGenerator.b2bDay2(phase: phase)),
             ]
         }
 
-        // Non-B2B: 2 easy + 1 interval + 1 VG + 1 long run
         let intervalIntensity: Intensity = phase == .base ? .moderate : .hard
         return [
-            tpl(0, .rest, .easy, 0, 0, "Rest day. Recovery is part of training."),
+            tpl(0, .rest, .easy, 0, 0,
+                SessionDescriptionGenerator.rest(isRecoveryWeek: false)),
             tpl(1, .recovery, .easy, base.easyRun1Seconds, 0.05,
-                "Easy run at conversational pace (Zone 2)."),
+                SessionDescriptionGenerator.easyRun(isRecoveryWeek: false)),
             tpl(2, .intervals, intervalIntensity, base.intervalSeconds, 0.10,
-                "Intervals at \(intervalIntensity == .hard ? "VO2max (Zone 4)" : "threshold (Zone 3)"). Build speed."),
+                SessionDescriptionGenerator.intervals(phase: phase, isRecoveryWeek: false)),
             tpl(3, .verticalGain, vgIntensity, base.vgSeconds, 0.25,
-                "Vertical gain session. Build climbing strength."),
-            tpl(4, .rest, .easy, 0, 0, "Rest day. Prepare for the weekend."),
+                SessionDescriptionGenerator.verticalGain(phase: phase, isRecoveryWeek: false)),
+            tpl(4, .rest, .easy, 0, 0,
+                SessionDescriptionGenerator.rest(isRecoveryWeek: false)),
             tpl(5, .recovery, .easy, base.easyRun2Seconds, 0.05,
-                "Easy run. Loosen up before the long run."),
+                SessionDescriptionGenerator.easyRun(isRecoveryWeek: false, isPreLongRun: true)),
             tpl(6, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.20,
-                "Long run (Zone 2). Practice race-day nutrition. Include elevation."),
+                SessionDescriptionGenerator.longRun(phase: phase, isRecoveryWeek: false)),
         ]
     }
 
@@ -190,16 +195,20 @@ enum SessionTemplateGenerator {
     private static func taperTemplates(volume: VolumeCalculator.WeekVolume) -> [SessionTemplate] {
         let base = volume.baseSessionDurations
         return [
-            tpl(0, .rest, .easy, 0, 0, "Rest day. Enjoy the taper — trust your training."),
+            tpl(0, .rest, .easy, 0, 0,
+                SessionDescriptionGenerator.rest(isRecoveryWeek: false)),
             tpl(1, .intervals, .moderate, base.intervalSeconds, 0.10,
-                "Short opener intervals. Stay sharp without fatiguing."),
-            tpl(2, .rest, .easy, 0, 0, "Rest day. Light stretching and foam rolling."),
+                SessionDescriptionGenerator.intervals(phase: .taper, isRecoveryWeek: false)),
+            tpl(2, .rest, .easy, 0, 0,
+                SessionDescriptionGenerator.rest(isRecoveryWeek: false)),
             tpl(3, .recovery, .easy, base.easyRun1Seconds, 0.05,
-                "Easy shakeout run. Keep it short and comfortable."),
-            tpl(4, .rest, .easy, 0, 0, "Rest day. Final gear and nutrition prep."),
+                SessionDescriptionGenerator.easyRun(isRecoveryWeek: false)),
+            tpl(4, .rest, .easy, 0, 0,
+                SessionDescriptionGenerator.rest(isRecoveryWeek: false, isPreRace: true)),
             tpl(5, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.15,
-                "Reduced long run at easy effort. Save it for race day."),
-            tpl(6, .rest, .easy, 0, 0, "Full rest. Sleep, hydrate, visualize your race."),
+                SessionDescriptionGenerator.longRun(phase: .taper, isRecoveryWeek: false)),
+            tpl(6, .rest, .easy, 0, 0,
+                SessionDescriptionGenerator.rest(isRecoveryWeek: false)),
         ]
     }
 
@@ -208,16 +217,20 @@ enum SessionTemplateGenerator {
     static func recoveryTemplates(volume: VolumeCalculator.WeekVolume) -> [SessionTemplate] {
         let base = volume.baseSessionDurations
         return [
-            tpl(0, .rest, .easy, 0, 0, "Recovery week. Let your body absorb the training."),
+            tpl(0, .rest, .easy, 0, 0,
+                SessionDescriptionGenerator.rest(isRecoveryWeek: true)),
             tpl(1, .recovery, .easy, base.easyRun1Seconds, 0.08,
-                "Easy recovery jog. Very comfortable pace, Zone 1 only."),
-            tpl(2, .rest, .easy, 0, 0, "Rest day. Focus on nutrition and sleep quality."),
+                SessionDescriptionGenerator.easyRun(isRecoveryWeek: true)),
+            tpl(2, .rest, .easy, 0, 0,
+                SessionDescriptionGenerator.rest(isRecoveryWeek: true)),
             tpl(3, .verticalGain, .easy, base.vgSeconds, 0.15,
-                "Light vertical gain. Easy effort, enjoy the trail."),
-            tpl(4, .rest, .easy, 0, 0, "Rest day. Stretching and mobility work."),
+                SessionDescriptionGenerator.verticalGain(phase: .recovery, isRecoveryWeek: true)),
+            tpl(4, .rest, .easy, 0, 0,
+                SessionDescriptionGenerator.rest(isRecoveryWeek: true)),
             tpl(5, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.15,
-                "Reduced long run at very easy pace. Enjoy the scenery."),
-            tpl(6, .rest, .easy, 0, 0, "Full rest day. You've earned it."),
+                SessionDescriptionGenerator.longRun(phase: .recovery, isRecoveryWeek: true)),
+            tpl(6, .rest, .easy, 0, 0,
+                SessionDescriptionGenerator.rest(isRecoveryWeek: true)),
         ]
     }
 

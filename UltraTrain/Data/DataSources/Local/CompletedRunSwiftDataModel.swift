@@ -35,6 +35,7 @@ final class CompletedRunSwiftDataModel {
     var trainingStressScore: Double?
     var activityTypeRaw: String = "running"
     @Attribute(.externalStorage) var intervalSplitsData: Data = Data()
+    var importSourceRaw: String?
 
     init(
         id: UUID = UUID(),
@@ -67,7 +68,8 @@ final class CompletedRunSwiftDataModel {
         terrainTypeRaw: String? = nil,
         trainingStressScore: Double? = nil,
         activityTypeRaw: String = "running",
-        intervalSplitsData: Data = Data()
+        intervalSplitsData: Data = Data(),
+        importSourceRaw: String? = nil
     ) {
         self.id = id
         self.athleteId = athleteId
@@ -100,5 +102,6 @@ final class CompletedRunSwiftDataModel {
         self.trainingStressScore = trainingStressScore
         self.activityTypeRaw = activityTypeRaw
         self.intervalSplitsData = intervalSplitsData
+        self.importSourceRaw = importSourceRaw
     }
 }

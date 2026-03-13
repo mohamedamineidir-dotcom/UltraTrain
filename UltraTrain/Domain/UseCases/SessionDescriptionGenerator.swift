@@ -1,0 +1,112 @@
+import Foundation
+
+enum SessionDescriptionGenerator {
+
+    // MARK: - Long Run
+
+    static func longRun(phase: TrainingPhase, isRecoveryWeek: Bool) -> String {
+        if isRecoveryWeek {
+            return "Recovery week long run. Easy effort throughout. Enjoy the trail — no pace targets."
+        }
+        switch phase {
+        case .base:
+            return "Long run at easy effort (Zone 2). Focus on building time on feet. Walk all uphills freely."
+        case .build:
+            return "Long run with race-effort blocks. Include 20-30min at goal race pace mid-run. Practice nutrition."
+        case .peak:
+            return "Race simulation long run. Start easy, build to race effort. Full nutrition and gear rehearsal."
+        case .taper:
+            return "Reduced long run. Easy effort. Trust your fitness — save it for race day."
+        case .recovery, .race:
+            return "Easy long run. Conversational pace only. Focus on recovery and movement quality."
+        }
+    }
+
+    // MARK: - B2B
+
+    static func b2bDay1(phase: TrainingPhase) -> String {
+        switch phase {
+        case .build:
+            return "B2B Day 1: Long run building fatigue for tomorrow. Easy pace (Zone 2). Practice fueling."
+        case .peak:
+            return "B2B Day 1: Long effort building toward race intensity. Include terrain-specific sections."
+        default:
+            return "B2B Day 1: Long run at easy pace. Fuel well — tomorrow runs on today's fatigue."
+        }
+    }
+
+    static func b2bDay2(phase: TrainingPhase) -> String {
+        switch phase {
+        case .build:
+            return "B2B Day 2: Run on tired legs. First hour very easy, then build to race effort. Ultra-specific fatigue training."
+        case .peak:
+            return "B2B Day 2: Start on yesterday's fatigue. Build from easy to race effort. Full race simulation."
+        default:
+            return "B2B Day 2: Long run on tired legs. Simulate ultra fatigue. Stay patient (Zone 2)."
+        }
+    }
+
+    // MARK: - Vertical Gain
+
+    static func verticalGain(phase: TrainingPhase, isRecoveryWeek: Bool) -> String {
+        if isRecoveryWeek {
+            return "Light vertical gain session. Easy effort climbs. Enjoy the trail without pushing."
+        }
+        switch phase {
+        case .base:
+            return "Vertical gain: hill repeats at moderate effort. Focus on form, cadence, and power hiking technique."
+        case .build:
+            return "Vertical gain: sustained climbing at threshold effort. Build race-specific climbing endurance."
+        case .peak:
+            return "Vertical gain: race-specific climbing. Short steep repeats mimicking your race profile."
+        case .taper:
+            return "Light vertical gain. Short climbs to stay sharp. Controlled effort."
+        case .recovery, .race:
+            return "Easy vertical gain. Light climbing at comfortable effort."
+        }
+    }
+
+    // MARK: - Intervals
+
+    static func intervals(phase: TrainingPhase, isRecoveryWeek: Bool) -> String {
+        if isRecoveryWeek {
+            return "Recovery week: no intervals. Easy effort only."
+        }
+        switch phase {
+        case .base:
+            return "Threshold intervals (Zone 3). Focus on form and rhythm. Full recovery between reps."
+        case .build:
+            return "VO2max intervals (Zone 4). Push hard but controlled. Complete all reps with quality."
+        case .peak:
+            return "Short sharp intervals (Zone 4-5). Maximum quality. Race sharpness work."
+        case .taper:
+            return "Opener intervals. Short efforts to stay sharp without fatiguing."
+        case .recovery, .race:
+            return "Easy effort. No hard intervals this week."
+        }
+    }
+
+    // MARK: - Easy Run
+
+    static func easyRun(isRecoveryWeek: Bool, isPreLongRun: Bool = false) -> String {
+        if isRecoveryWeek {
+            return "Recovery week: easy jog at conversational pace. Focus on blood flow, not fitness."
+        }
+        if isPreLongRun {
+            return "Easy run. Loosen up before the long run. Keep effort conversational (Zone 2)."
+        }
+        return "Easy run at conversational pace (Zone 2). Active recovery between quality sessions."
+    }
+
+    // MARK: - Rest
+
+    static func rest(isRecoveryWeek: Bool, isPreRace: Bool = false) -> String {
+        if isPreRace {
+            return "Rest day. Final gear check, carb-load, and visualize your race plan."
+        }
+        if isRecoveryWeek {
+            return "Recovery week rest. Sleep well, eat well. Your body is adapting."
+        }
+        return "Rest day. Recovery is part of training. Prioritize sleep."
+    }
+}

@@ -20,6 +20,7 @@ struct PlanVolumeChartsSection: View {
     let plan: TrainingPlan
     @State private var selectedMetric: VolumeChartMetric = .duration
     @State private var selectedWeek: WeekChartDataPoint?
+    @State private var sheetWeek: WeekChartDataPoint?
 
     private var dataPoints: [WeekChartDataPoint] {
         PlanVolumeChartData.extract(from: plan.weeks)
@@ -222,24 +223,15 @@ struct PlanVolumeChartsSection: View {
                                 }
                             }
                             .onEnded { _ in
+                                sheetWeek = selectedWeek
                                 selectedWeek = nil
                             }
                     )
             }
         }
-        .chartBackground { proxy in
-            GeometryReader { geo in
-                if let selected = selectedWeek {
-                    let plotFrame = geo[proxy.plotFrame!]
-                    if let xPos = proxy.position(forX: "W\(selected.weekNumber)") {
-                        annotationCard(for: selected)
-                            .offset(
-                                x: min(max(xPos - 90, 0), plotFrame.width - 180),
-                                y: -8
-                            )
-                    }
-                }
-            }
+        .sheet(item: $sheetWeek) { point in
+            let matchingWeek = plan.weeks.first { $0.weekNumber == point.weekNumber }
+            WeekSummarySheet(point: point, week: matchingWeek)
         }
     }
 
@@ -257,92 +249,6 @@ struct PlanVolumeChartsSection: View {
         return dataPoints.enumerated()
             .filter { $0.offset % stride == 0 }
             .map { "W\($0.element.weekNumber)" }
-    }
-
-    // MARK: - Annotation
-
-    private func annotationCard(for point: WeekChartDataPoint) -> some View {
-        HStack(spacing: 0) {
-            RoundedRectangle(cornerRadius: 2)
-                .fill(phaseColor(point.phase))
-                .frame(width: 4)
-                .padding(.vertical, 6)
-
-            VStack(alignment: .leading, spacing: 6) {
-                // Header: week number + phase badge
-                HStack(spacing: 6) {
-                    Text("Week \(point.weekNumber)")
-                        .font(.system(size: 12, weight: .bold, design: .rounded))
-                    Text(point.phase.displayName)
-                        .font(.system(size: 9, weight: .semibold))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(phaseColor(point.phase))
-                        .clipShape(Capsule())
-                }
-
-                // All 3 metrics
-                VStack(alignment: .leading, spacing: 4) {
-                    annotationMetricRow(
-                        icon: "figure.run",
-                        plan: UnitFormatter.formatDistance(point.plannedDistanceKm, unit: units),
-                        done: point.completedDistanceKm > 0 ? UnitFormatter.formatDistance(point.completedDistanceKm, unit: units) : nil,
-                        color: phaseColor(point.phase)
-                    )
-                    annotationMetricRow(
-                        icon: "mountain.2.fill",
-                        plan: UnitFormatter.formatElevation(point.plannedElevationM, unit: units),
-                        done: point.completedElevationM > 0 ? UnitFormatter.formatElevation(point.completedElevationM, unit: units) : nil,
-                        color: phaseColor(point.phase)
-                    )
-                    annotationMetricRow(
-                        icon: "clock",
-                        plan: formatAnnotationDuration(point.plannedDurationSeconds),
-                        done: point.completedDurationSeconds > 0 ? formatAnnotationDuration(point.completedDurationSeconds) : nil,
-                        color: phaseColor(point.phase)
-                    )
-                }
-            }
-            .padding(.leading, 10)
-        }
-        .padding(12)
-        .frame(minWidth: 160)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(.ultraThinMaterial)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.white.opacity(0.06))
-                )
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
-        )
-        .shadow(color: phaseColor(point.phase).opacity(0.15), radius: 8, y: 4)
-    }
-
-    private func annotationMetricRow(icon: String, plan: String, done: String?, color: Color) -> some View {
-        HStack(spacing: 6) {
-            Image(systemName: icon)
-                .font(.system(size: 9))
-                .foregroundStyle(Theme.Colors.secondaryLabel)
-                .frame(width: 12)
-            Text(plan)
-                .font(.system(size: 11, weight: .semibold, design: .rounded).monospacedDigit())
-            if let done {
-                Text("/ \(done)")
-                    .font(.system(size: 11, weight: .bold, design: .rounded).monospacedDigit())
-                    .foregroundStyle(color)
-            }
-        }
-    }
-
-    private func formatAnnotationDuration(_ seconds: TimeInterval) -> String {
-        let hours = Int(seconds / 3600)
-        let mins = Int(seconds.truncatingRemainder(dividingBy: 3600) / 60)
-        return "\(hours)h\(String(format: "%02d", mins))"
     }
 
     // MARK: - Summary Calculations

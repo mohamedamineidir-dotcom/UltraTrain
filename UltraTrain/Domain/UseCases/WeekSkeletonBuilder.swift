@@ -42,7 +42,7 @@ enum WeekSkeletonBuilder {
                     isRecovery = false
                 } else {
                     nonRecoveryCount += 1
-                    if nonRecoveryCount >= recoveryCycle && !isLastPhaseWeek {
+                    if nonRecoveryCount > recoveryCycle && !isLastPhaseWeek {
                         isRecovery = true
                         nonRecoveryCount = 0
                     } else {

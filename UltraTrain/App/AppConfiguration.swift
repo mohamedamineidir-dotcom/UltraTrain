@@ -198,6 +198,29 @@ enum AppConfiguration {
         static let requiredScopes = "read,activity:read_all,activity:write"
     }
 
+    enum Garmin {
+        static let clientId: String = Bundle.main.infoDictionary?["GARMIN_CLIENT_ID"] as? String ?? ""
+        static let clientSecret: String = Bundle.main.infoDictionary?["GARMIN_CLIENT_SECRET"] as? String ?? ""
+    }
+
+    enum Coros {
+        static let clientId: String = Bundle.main.infoDictionary?["COROS_CLIENT_ID"] as? String ?? ""
+        static let clientSecret: String = Bundle.main.infoDictionary?["COROS_CLIENT_SECRET"] as? String ?? ""
+    }
+
+    enum Suunto {
+        static let clientId: String = Bundle.main.infoDictionary?["SUUNTO_CLIENT_ID"] as? String ?? ""
+        static let clientSecret: String = Bundle.main.infoDictionary?["SUUNTO_CLIENT_SECRET"] as? String ?? ""
+    }
+
+    // Convenience accessors for services
+    static var garminClientId: String { Garmin.clientId }
+    static var garminClientSecret: String { Garmin.clientSecret }
+    static var corosClientId: String { Coros.clientId }
+    static var corosClientSecret: String { Coros.clientSecret }
+    static var suuntoClientId: String { Suunto.clientId }
+    static var suuntoClientSecret: String { Suunto.clientSecret }
+
     enum IntervalGuidance {
         static let countdownSeconds: Int = 3
         static let phaseTransitionBannerDismissSeconds: TimeInterval = 5

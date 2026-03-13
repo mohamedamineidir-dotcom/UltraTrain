@@ -224,6 +224,7 @@
 		2155332377B71ACE1DD31A23 /* SocialProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E4B274FDA10A3ADB47CC6B /* SocialProfile.swift */; };
 		2195D628BE0E044DDDB73B23 /* SessionTemplateGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3091E87D3A6F8FAD34668802 /* SessionTemplateGeneratorTests.swift */; };
 		2195E10927C28395CEAEAC55 /* ShareRunSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F851B9D3EA2F76205F35A1E3 /* ShareRunSheet.swift */; };
+		222C92880093D8FF2360DF9E /* SuuntoAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7026D9D82D95C89BDD416486 /* SuuntoAuthService.swift */; };
 		2233D146F1503F146B15B308 /* ZoneDriftAlertBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E879B38CE27062F469110A /* ZoneDriftAlertBanner.swift */; };
 		224315A651149B7C8B44BC6C /* GearListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28967746EDF2C4D6D4A70626 /* GearListViewModelTests.swift */; };
 		22588307059742A94C32FFC6 /* RecoveryRecommendationEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA756F826EF20F4A1DAC492 /* RecoveryRecommendationEngineTests.swift */; };
@@ -288,6 +289,7 @@
 		2C4BDB6677D9A5ECDA1A0E63 /* TrainingDurationValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC83BF3B5F75D703EBE1A8E /* TrainingDurationValidator.swift */; };
 		2C5C309029C674C5BADAB174 /* LeaderboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00F65E27365AF039BB72E10B /* LeaderboardView.swift */; };
 		2C796E8923C697C10D7BDC19 /* MockNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E3657EE1D967971AC5042B3 /* MockNotificationService.swift */; };
+		2CB771EDC58934BA96FE946A /* ExternalService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DF3F5E2A0EE3FBBC4337F0 /* ExternalService.swift */; };
 		2CF461112B68606EF0048EB5 /* NutritionEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7573DDA38DFDC21EDEA05087 /* NutritionEndpoints.swift */; };
 		2CFE5B0A2D04296E400A4225 /* SubscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3414F100E68C7BCF6EDE955 /* SubscriptionService.swift */; };
 		2D0A2A11323F8B8C6C088471 /* RouteComparisonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45F57D5889EFD1F38C67A578 /* RouteComparisonView.swift */; };
@@ -456,6 +458,7 @@
 		482B253D8335F9E1725BC0B4 /* LocalRouteRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F68ADC9A7C61FBF66D176B /* LocalRouteRepositoryTests.swift */; };
 		483EEE14867FB23C38F291DD /* DistanceMarkerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 774256D230C6D02428E58C5F /* DistanceMarkerTests.swift */; };
 		483F71F7C2DA1DA93F4517F6 /* GradientCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 361845E34AFD8277E5C594B5 /* GradientCategory.swift */; };
+		4852504BD27FE5630E565B54 /* CorosImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14F7643B0F47E70696E92853 /* CorosImportService.swift */; };
 		48DA47DE72E93F5CC86438E7 /* EmergencyContactRelationship.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98F6EA430FFB5038E83BB25C /* EmergencyContactRelationship.swift */; };
 		497CF8264F10E6FFCBAB8EAF /* WeatherCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = A379FCEC77F748DE4ACA3C4B /* WeatherCache.swift */; };
 		49A080DE6ECA9339F6EC51B3 /* PlanComparison.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9049F1832F9C4E41031CD4ED /* PlanComparison.swift */; };
@@ -685,6 +688,7 @@
 		6D81E40E903CAD8C203405B4 /* DashboardView+Previews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41A1E27283E201DCB0076B29 /* DashboardView+Previews.swift */; };
 		6DD29AA4ADD64F5BA472C0D2 /* RunAnalysisViewModelExportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC0A1AAD75DCAE3D0336BE6 /* RunAnalysisViewModelExportTests.swift */; };
 		6DDF8B3FA81FD9DB1B991054 /* GearListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28998CC159A37F9935BFC989 /* GearListViewModel.swift */; };
+		6E0BEA45ED94FB03050751D5 /* GarminImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04CC150F9796BEF9203683B7 /* GarminImportService.swift */; };
 		6E0D7092CEA19E27A1E02B9E /* EmergencyContactsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D3DA401E8F33EC6EA59636 /* EmergencyContactsViewModel.swift */; };
 		6E35BBA5B7AFB7344652A5A1 /* DashboardFitnessCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8658C1CDB72E32C2FCF86 /* DashboardFitnessCard.swift */; };
 		6E369DC5023F3C10AE140BE7 /* PacingAlertSeverity.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDDD6E3EC85ECD960A7A1D5 /* PacingAlertSeverity.swift */; };
@@ -756,6 +760,7 @@
 		795DA904A8D08DE005CEC3C1 /* PlanProgressPreserverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273EF64516376F5CA6475280 /* PlanProgressPreserverTests.swift */; };
 		7970111C562C9B109D1FB020 /* RaceSyncServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 359F1AB451C0E55B9EEE54C2 /* RaceSyncServiceTests.swift */; };
 		7981A5A63E30D8D3CCB0E54B /* RemoteNutritionDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FBC90851AF1F5ECC25BD41D /* RemoteNutritionDataSource.swift */; };
+		7A03A956CF5C552B4F44F89C /* ValidateSessionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08FE0067831969C07EECDCA0 /* ValidateSessionSheet.swift */; };
 		7A0AB11111289D1FBBC91446 /* NutritionSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F73B63EDA878B65FFE24C40 /* NutritionSyncService.swift */; };
 		7A12CB2765AB5DAD86C0296C /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6320426986ADF3A84FBEB4BA /* APIClient.swift */; };
 		7A28A5C29A496EE38ED239D6 /* AddFriendSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DF8A9BFF6EAC3231D6AF002 /* AddFriendSheet.swift */; };
@@ -870,6 +875,7 @@
 		8BA6E0558736982D5C1752B3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6BDA6E880F3FBA83458CACF6 /* InfoPlist.strings */; };
 		8BB20690FA1CDC15656AA3BA /* WidgetDataKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D7817E939E1BC2A2E011683 /* WidgetDataKeys.swift */; };
 		8BCA46126926A4D211342188 /* PrivacyTrackingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B0939720928F82F02C3100 /* PrivacyTrackingService.swift */; };
+		8BD0C1B5EEED6D49A64F97B4 /* GarminAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095FB2D9F03FA816B0EF9469 /* GarminAuthService.swift */; };
 		8BD193261CC937BB34B8D8AC /* WatchNutritionReminderScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC048E83912AD8CC3D9A91F /* WatchNutritionReminderScheduler.swift */; };
 		8BE06CA2CBAB777697783278 /* FinishEstimateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6093D04E8C8A5E37F55EAE /* FinishEstimateTests.swift */; };
 		8BF3691C9B7E058D7148B022 /* PaywallViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 243FF9FF0727B6DEF2C6F581 /* PaywallViewModel.swift */; };
@@ -879,6 +885,7 @@
 		8C536391A3FB88D0F546002E /* BiometricAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C875E64F06D48FD97E9FE4EE /* BiometricAuthService.swift */; };
 		8C90962C7CBFE273001A6613 /* FoodLogSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90A631183D0323EF5A1F139 /* FoodLogSection.swift */; };
 		8CA28870B871F3F37E2EF325 /* RouteLibraryViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70039A2728CD297C545D002C /* RouteLibraryViewModelTests.swift */; };
+		8CB79F26EEF000E353C01441 /* CorosAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BB68A5EFCF9461E119986C /* CorosAuthService.swift */; };
 		8CCC22E4FF53B3627491211E /* WatchComplicationDataKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A0B36EF71261C7530C1C21C /* WatchComplicationDataKeys.swift */; };
 		8CE70AA24AFBD7BBF8332E43 /* PersonalRecordType.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3414E805342CEF1D4B160F6 /* PersonalRecordType.swift */; };
 		8CE9041F815C843863375B61 /* GenerateNutritionPlanUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EC8B912DEC9FD97724C0 /* GenerateNutritionPlanUseCase.swift */; };
@@ -1030,12 +1037,14 @@
 		A037EFDD73445AD61805B199 /* RunHistoryViewModelFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F3B9908FE6BAFD6A742CCE /* RunHistoryViewModelFilterTests.swift */; };
 		A06B5A54C243E39DAC08F356 /* HRVIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 321BE265ACB1887C0AA1C119 /* HRVIndicator.swift */; };
 		A0868AA947F7BFC597314B9F /* SafetyAlertStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6CF4801D382E9871ED8CB73 /* SafetyAlertStatus.swift */; };
+		A098268626D1907A93892624 /* SessionDescriptionGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B092558B4E9ABDAEEF66191F /* SessionDescriptionGenerator.swift */; };
 		A0BF4131F5311BDB0B12AEB1 /* RecoveryScoreCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D7232FDB7814A812A8F93E /* RecoveryScoreCalculatorTests.swift */; };
 		A0F4DFBD4E8304CFF69CF606 /* SplitSwiftDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795FF9531E04FEF5A0585B95 /* SplitSwiftDataModel.swift */; };
 		A0F80B8B43A035A1C0DBCC64 /* NutritionPreferencesSwiftDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15FD667E51928258DC790E8F /* NutritionPreferencesSwiftDataModel.swift */; };
 		A11432C16CF2B4851A6BCC03 /* ChallengeProgressCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB01C30E44612C7B7A75966 /* ChallengeProgressCalculator.swift */; };
 		A1312BE0E769DF094970C385 /* CheckpointSwiftDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC950BB9BF8960B45FA20BAB /* CheckpointSwiftDataModel.swift */; };
 		A15933552C8452D918FDA366 /* NotificationServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA68C3DFE69EDB19FFE6560 /* NotificationServiceProtocol.swift */; };
+		A15A87AB8F351534140ABD5A /* SuuntoImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 893DED175F296A3E77BB752C /* SuuntoImportService.swift */; };
 		A17611ABAE5BEF7AE15C8918 /* SyncedNutritionRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8188BCBA6751355FBB820EA9 /* SyncedNutritionRepositoryTests.swift */; };
 		A190A5B3194DC614A705C2A9 /* EditRaceSheet+Sections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A30509F4B3F5693228084B5 /* EditRaceSheet+Sections.swift */; };
 		A1A5BB64321C148E0201E8BB /* GoalHistoryViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75E8E1C1FB7B10E52DD2120B /* GoalHistoryViewModelTests.swift */; };
@@ -1246,6 +1255,7 @@
 		C527ACBC21B244D4F0954110 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 94ADBB8597D27BC0986B0456 /* PrivacyInfo.xcprivacy */; };
 		C52B110B5510796FA3553C14 /* PerformanceEstimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365F0542FF9BAE9B6723B6C1 /* PerformanceEstimator.swift */; };
 		C52D262E91EFE5CD8052AD16 /* StartCrewSharingSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B45091496DB6D8586E8E19 /* StartCrewSharingSheet.swift */; };
+		C53387C0081DC3D53435D9FC /* WeekSummarySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7FFBB95DA8B6D0F236DA23 /* WeekSummarySheet.swift */; };
 		C538ECFE8E69523D7FA77C75 /* SettingsView+Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADDE71BA6BF7B25360C91FA /* SettingsView+Notifications.swift */; };
 		C5B80A655D3F2C36ABAD34CA /* MockExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F65EFED8852BAF7DC8B28C9 /* MockExportService.swift */; };
 		C5BB2CF91AD2FF03129E4672 /* notification_nutrition.caf in Resources */ = {isa = PBXBuildFile; fileRef = 77B48D68351D69B5F520FFB5 /* notification_nutrition.caf */; };
@@ -1776,6 +1786,7 @@
 		0490BAF60AC2B4FB6BA199D1 /* InteractiveElevationMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveElevationMapView.swift; sourceTree = "<group>"; };
 		04B273DD814284928630AEE8 /* ZoneDriftAlertCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoneDriftAlertCalculatorTests.swift; sourceTree = "<group>"; };
 		04C9BAE7FA1E71ADF7D940A9 /* NextSessionLockScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextSessionLockScreenView.swift; sourceTree = "<group>"; };
+		04CC150F9796BEF9203683B7 /* GarminImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarminImportService.swift; sourceTree = "<group>"; };
 		04EEDAE404E199BFECF82826 /* TrainingWeekSwiftDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingWeekSwiftDataModel.swift; sourceTree = "<group>"; };
 		0532A6BE3367D9C982406B53 /* StravaImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StravaImportService.swift; sourceTree = "<group>"; };
 		053483FB10534436B1FFBFCE /* CloudKitDeduplicationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitDeduplicationTests.swift; sourceTree = "<group>"; };
@@ -1797,7 +1808,9 @@
 		08D65860792FE04F4EFF0E9A /* RunReflectionEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunReflectionEditViewModel.swift; sourceTree = "<group>"; };
 		08F1E25CDFFCA82756DA49DA /* GoalProgressCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalProgressCalculator.swift; sourceTree = "<group>"; };
 		08F985942C9A90B66DDE8424 /* RetryInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryInterceptor.swift; sourceTree = "<group>"; };
+		08FE0067831969C07EECDCA0 /* ValidateSessionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidateSessionSheet.swift; sourceTree = "<group>"; };
 		0951014EB0D5633A77756432 /* VoiceCoachingSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCoachingSettingsView.swift; sourceTree = "<group>"; };
+		095FB2D9F03FA816B0EF9469 /* GarminAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarminAuthService.swift; sourceTree = "<group>"; };
 		0980DC9CB0E7D0697943989C /* JailbreakWarningBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JailbreakWarningBanner.swift; sourceTree = "<group>"; };
 		09B9621089280561DD868131 /* SharedRunRemoteMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedRunRemoteMapper.swift; sourceTree = "<group>"; };
 		0A07830AFDE7CB0956E9BDE3 /* WeeklyLoadData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyLoadData.swift; sourceTree = "<group>"; };
@@ -1871,6 +1884,7 @@
 		14720428107E8C7277F3567B /* TrainingPlanView+Sections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrainingPlanView+Sections.swift"; sourceTree = "<group>"; };
 		149A81D68E8B119C0830E47A /* MockSharedRunRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSharedRunRepository.swift; sourceTree = "<group>"; };
 		149ABE404A8A56FC179637FF /* RacePacingAlertCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RacePacingAlertCalculator.swift; sourceTree = "<group>"; };
+		14F7643B0F47E70696E92853 /* CorosImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorosImportService.swift; sourceTree = "<group>"; };
 		150881532CCDB394CC9BD444 /* TrainingPlanDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingPlanDTO.swift; sourceTree = "<group>"; };
 		15563D87794EAEA76A9B6C95 /* ChallengeDefinitionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeDefinitionCard.swift; sourceTree = "<group>"; };
 		156137615C14DD77B9D9141F /* SafetySettingsViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafetySettingsViewModelTests.swift; sourceTree = "<group>"; };
@@ -2438,6 +2452,7 @@
 		6FB6B7F57599B947C49F3A54 /* ClipNutritionDataReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipNutritionDataReader.swift; sourceTree = "<group>"; };
 		6FE93BBCF9BB885A81484BB7 /* NotificationCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCategory.swift; sourceTree = "<group>"; };
 		70039A2728CD297C545D002C /* RouteLibraryViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteLibraryViewModelTests.swift; sourceTree = "<group>"; };
+		7026D9D82D95C89BDD416486 /* SuuntoAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuuntoAuthService.swift; sourceTree = "<group>"; };
 		703EEBC1310D91BEFFD255FB /* LiveNutritionTrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveNutritionTrackerTests.swift; sourceTree = "<group>"; };
 		7051EAE7C9F168D12EDA21A6 /* Split.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Split.swift; sourceTree = "<group>"; };
 		706469BE0776B6B39FF9E0AC /* AthleteRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AthleteRepository.swift; sourceTree = "<group>"; };
@@ -2485,6 +2500,7 @@
 		77632C8B78629D0E526F86C9 /* BiometricAuthServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricAuthServiceProtocol.swift; sourceTree = "<group>"; };
 		777E7467743C43E061B67933 /* WeeklyLoadChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyLoadChartView.swift; sourceTree = "<group>"; };
 		77B48D68351D69B5F520FFB5 /* notification_nutrition.caf */ = {isa = PBXFileReference; path = notification_nutrition.caf; sourceTree = "<group>"; };
+		77BB68A5EFCF9461E119986C /* CorosAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorosAuthService.swift; sourceTree = "<group>"; };
 		77FAB1017177C0A29CF48427 /* PlanComparisonCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanComparisonCard.swift; sourceTree = "<group>"; };
 		7803897707666C6844510ECF /* EmergencyContactsViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmergencyContactsViewModelTests.swift; sourceTree = "<group>"; };
 		780726C2238AB1EE6C50EA9F /* RaceDayPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceDayPlanView.swift; sourceTree = "<group>"; };
@@ -2565,6 +2581,7 @@
 		86AF38EFA868C59499E48189 /* FatiguePatternDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FatiguePatternDetectorTests.swift; sourceTree = "<group>"; };
 		86B59CB063CF29DF0609824E /* SafetyHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafetyHandler.swift; sourceTree = "<group>"; };
 		86DD71DAFA3B18A332E63C13 /* SharedRun.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedRun.swift; sourceTree = "<group>"; };
+		86DF3F5E2A0EE3FBBC4337F0 /* ExternalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalService.swift; sourceTree = "<group>"; };
 		87434C6C6255D69360C93CB1 /* TrainingPlanRemoteMapperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingPlanRemoteMapperTests.swift; sourceTree = "<group>"; };
 		87728E9C5CD2EBC282F92B6A /* HeatmapCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatmapCalculatorTests.swift; sourceTree = "<group>"; };
 		879B4E987F48E68A5CB625F1 /* NutritionPerformanceCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionPerformanceCard.swift; sourceTree = "<group>"; };
@@ -2582,6 +2599,7 @@
 		891DD15971C6E83A1EE7D2D5 /* CloudKitSharingServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitSharingServiceProtocol.swift; sourceTree = "<group>"; };
 		89270AC1FC6F6153D65072EA /* TrainingLoadCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingLoadCalculatorTests.swift; sourceTree = "<group>"; };
 		89313AA4DE6699ED607FE4E4 /* SharedRunSwiftDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedRunSwiftDataModel.swift; sourceTree = "<group>"; };
+		893DED175F296A3E77BB752C /* SuuntoImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuuntoImportService.swift; sourceTree = "<group>"; };
 		899BD6DE3C5C18477A8C586C /* AdaptiveReminderAdjuster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveReminderAdjuster.swift; sourceTree = "<group>"; };
 		89C4B2B05C504C6228BFCE90 /* SubscriptionPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionPlan.swift; sourceTree = "<group>"; };
 		89DF54D9109B0EC84B431F88 /* NotificationSoundPickerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSoundPickerRow.swift; sourceTree = "<group>"; };
@@ -2843,6 +2861,7 @@
 		B017DCDAC7101D2C50FC2D99 /* CertificatePinningDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificatePinningDelegate.swift; sourceTree = "<group>"; };
 		B03BD1A722AA8E5244A46944 /* UltraTrainClip.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = UltraTrainClip.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B061D358D9D11C779DE83CF7 /* RaceCourseMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceCourseMapView.swift; sourceTree = "<group>"; };
+		B092558B4E9ABDAEEF66191F /* SessionDescriptionGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDescriptionGenerator.swift; sourceTree = "<group>"; };
 		B0C37E2F9A3FB6CAFAB58CC6 /* XCUIElement+Waiters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+Waiters.swift"; sourceTree = "<group>"; };
 		B0D4B7F02F9B0B65BD12D9B2 /* MockAchievementRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAchievementRepository.swift; sourceTree = "<group>"; };
 		B0D531034998D3E38D1CEB76 /* PrivacyTrackingServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyTrackingServiceTests.swift; sourceTree = "<group>"; };
@@ -3020,6 +3039,7 @@
 		C9DABA6638463984C8D8C4D9 /* SyncedSocialProfileRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncedSocialProfileRepositoryTests.swift; sourceTree = "<group>"; };
 		C9FC16722D3C5E92D1D0170D /* IntervalAnalysisCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntervalAnalysisCard.swift; sourceTree = "<group>"; };
 		CA2E74416C75522DFB8CF286 /* SocialAuthButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialAuthButton.swift; sourceTree = "<group>"; };
+		CA7FFBB95DA8B6D0F236DA23 /* WeekSummarySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekSummarySheet.swift; sourceTree = "<group>"; };
 		CAB2757DE37CFCE60CC55A97 /* WatchSessionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionData.swift; sourceTree = "<group>"; };
 		CABACF379E57A0309585574E /* ActiveRunViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveRunViewModel.swift; sourceTree = "<group>"; };
 		CBC048E83912AD8CC3D9A91F /* WatchNutritionReminderScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchNutritionReminderScheduler.swift; sourceTree = "<group>"; };
@@ -4119,6 +4139,8 @@
 				B297B2C1AD2E33C618FE1528 /* CloudKitRecordConverter+CrewChallenge.swift */,
 				640FBF0906427E97D51D734F /* CloudKitSharingService.swift */,
 				9093C1DC4E535FBB7DD90707 /* CloudKitSyncMonitor.swift */,
+				77BB68A5EFCF9461E119986C /* CorosAuthService.swift */,
+				14F7643B0F47E70696E92853 /* CorosImportService.swift */,
 				51A9F1D56A9D4C24BB39485D /* CrashReporterService.swift */,
 				17CF6A27D659578F5589F82F /* CrewTrackingService.swift */,
 				1EAB3532F7B56A07348C077F /* DefaultPlanAutoAdjustmentService.swift */,
@@ -4130,6 +4152,8 @@
 				17DA006C9C131767FFD9D88B /* FinishTimeMLService.swift */,
 				E5DD312C6ED04E60140321DB /* FitnessSyncService.swift */,
 				CC973DF9F13A63D07BF79A14 /* FoodDatabaseService.swift */,
+				095FB2D9F03FA816B0EF9469 /* GarminAuthService.swift */,
+				04CC150F9796BEF9203683B7 /* GarminImportService.swift */,
 				6E4535E0BB060C0EA83A4AF3 /* HapticService.swift */,
 				8EBAB5DF2FB00573A62C1BC1 /* HealthKitImportService.swift */,
 				C18CB88A3B58229A130B78A7 /* HealthKitQueryHelper.swift */,
@@ -4156,6 +4180,8 @@
 				D68CE68C76CFC61238042A66 /* StravaUploadQueueService.swift */,
 				DD7B3B476B29062AF7737F43 /* StravaUploadService.swift */,
 				F3414F100E68C7BCF6EDE955 /* SubscriptionService.swift */,
+				7026D9D82D95C89BDD416486 /* SuuntoAuthService.swift */,
+				893DED175F296A3E77BB752C /* SuuntoImportService.swift */,
 				C37D4E40FE7828737F5FB3A7 /* SyncService.swift */,
 				1FFBCCD37B29769B1E33942C /* SyncStatusMonitor.swift */,
 				88AC5273FB4E8B4F7C1A5462 /* TrainingPlanSyncService.swift */,
@@ -4278,6 +4304,7 @@
 				2862D903FC759C44AC2FCCD7 /* RunImportUseCase.swift */,
 				BA378F1C00BCED82729EEB07 /* RunStatisticsCalculator.swift */,
 				3C6BFC19B1625C3FAA3E7A00 /* RunStatisticsCalculator+Segments.swift */,
+				B092558B4E9ABDAEEF66191F /* SessionDescriptionGenerator.swift */,
 				A427C63C8438824DDE13BAE0 /* SessionMatcher.swift */,
 				7434881CABD95D2603A40349 /* SessionNutritionAdvisor.swift */,
 				338299913A694F29E23EFCE8 /* SessionOptimizer.swift */,
@@ -4499,6 +4526,7 @@
 				A4E8DB3D8492DA0B7BC3A777 /* EmergencyContact.swift */,
 				98F6EA430FFB5038E83BB25C /* EmergencyContactRelationship.swift */,
 				19C59C65DB464F170EA57609 /* ExperienceLevel.swift */,
+				86DF3F5E2A0EE3FBBC4337F0 /* ExternalService.swift */,
 				A24A51FDB374C0B992EFFB26 /* FatigueEvidence.swift */,
 				348604781923E14C674E4F9C /* FatiguePattern.swift */,
 				799AD0674055175FF7F4C995 /* FatiguePatternType.swift */,
@@ -4808,6 +4836,7 @@
 				F5DFB119B3884CFF730EA9E4 /* TrainingPlanViewModel.swift */,
 				C593A72158D19FC2A9B1B970 /* TrainingPlanViewModel+Adjustments.swift */,
 				62D96B003DCB8AFB23FC1F1F /* TrainingPlanViewModel+SessionActions.swift */,
+				08FE0067831969C07EECDCA0 /* ValidateSessionSheet.swift */,
 				226CB1E88F58FE36EF8A66FA /* WeekCardView.swift */,
 			);
 			path = TrainingPlan;
@@ -5216,6 +5245,7 @@
 				F934A6BF8CCB60BD81117917 /* TrainingCalendarDayDetail.swift */,
 				95CFD9DDF1387640EF454DA0 /* TrainingCalendarGridView.swift */,
 				57C0AD9096806DF650BE9AF0 /* TrainingCalendarLegend.swift */,
+				CA7FFBB95DA8B6D0F236DA23 /* WeekSummarySheet.swift */,
 				9595748397145B2638490D34 /* WorkoutBlockCard.swift */,
 				6B4EE51E0E7E0FDD688BAFC9 /* WorkoutBlocksSection.swift */,
 			);
@@ -6648,6 +6678,8 @@
 				15960C1DCEDE7FBE30615EC1 /* CompletedRunSwiftDataModel.swift in Sources */,
 				3C6107CF88AE5D1F3D9BDB30 /* ConnectivityHandler.swift in Sources */,
 				DDA33BFABD30B3510971198C /* ConvertRunToRouteUseCase.swift in Sources */,
+				8CB79F26EEF000E353C01441 /* CorosAuthService.swift in Sources */,
+				4852504BD27FE5630E565B54 /* CorosImportService.swift in Sources */,
 				1686564A1EDC91B5AE477CCC /* Course3DCameraControls.swift in Sources */,
 				D88886CF4529BD7F7B650B9A /* CourseGradientCalculator.swift in Sources */,
 				B571AC987C2EC243BA392DE3 /* CourseGuidanceHandler.swift in Sources */,
@@ -6750,6 +6782,7 @@
 				3D47CDC99145C207B4C16F52 /* ExperienceStepView.swift in Sources */,
 				0E301958210E2708338629AC /* ExportService.swift in Sources */,
 				40670F31819AA4AAB800BCB5 /* ExportServiceProtocol.swift in Sources */,
+				2CB771EDC58934BA96FE946A /* ExternalService.swift in Sources */,
 				D3B67A7C6A46484207D06A78 /* FallDetectionAlgorithm.swift in Sources */,
 				14071C037BC2345D36EDFF62 /* FatigueAlertCard.swift in Sources */,
 				CA982697CDDF29F62F5A8A7C /* FatigueEvidence.swift in Sources */,
@@ -6820,6 +6853,8 @@
 				29039BB6E9B017BBDF77194E /* GPXExporter.swift in Sources */,
 				B050AC19D358B53685F63E45 /* GPXParseResult.swift in Sources */,
 				D3AA6AE5B7835B46C2C9BCA7 /* GPXParser.swift in Sources */,
+				8BD0C1B5EEED6D49A64F97B4 /* GarminAuthService.swift in Sources */,
+				6E0BEA45ED94FB03050751D5 /* GarminImportService.swift in Sources */,
 				4DCC004758C36461F5B25AB8 /* GearDetailView.swift in Sources */,
 				6F4184BD9690C60AC45B6D09 /* GearItem.swift in Sources */,
 				BB2FB8010C3E17EB8C9C0A0B /* GearItemSwiftDataMapper.swift in Sources */,
@@ -7337,6 +7372,7 @@
 				D84A64BD7592C3641C2B6982 /* SecondaryOnboardingButton.swift in Sources */,
 				C80FCE2AD0EF574CB5EAA42D /* SegmentDetail.swift in Sources */,
 				0823C19B09CD87A8BE842E6E /* SegmentDetailPopup.swift in Sources */,
+				A098268626D1907A93892624 /* SessionDescriptionGenerator.swift in Sources */,
 				15D63F9E486E630F79E1FDEA /* SessionDetailView.swift in Sources */,
 				F58F0084FAEFFCE826594AAA /* SessionDragData.swift in Sources */,
 				01F3E35C2AAD2E622A0D1FE0 /* SessionIntensityRecommendation.swift in Sources */,
@@ -7430,6 +7466,8 @@
 				2CFE5B0A2D04296E400A4225 /* SubscriptionService.swift in Sources */,
 				DA35DC89EF15B2E3A55976FD /* SubscriptionServiceProtocol.swift in Sources */,
 				CACD4E910AC6CE66A25D0034 /* SubscriptionStatus.swift in Sources */,
+				222C92880093D8FF2360DF9E /* SuuntoAuthService.swift in Sources */,
+				A15A87AB8F351534140ABD5A /* SuuntoImportService.swift in Sources */,
 				162E271DCFE8AFD727102179 /* SwapSessionSheet.swift in Sources */,
 				250EF8A0046649FDFAC7D0F1 /* SyncOperationType.swift in Sources */,
 				C7F56C121A9B21DCD71A90D4 /* SyncQueueItem.swift in Sources */,
@@ -7514,6 +7552,7 @@
 				FDA94CDEAF38DC09E39278B7 /* UnlockedAchievementSwiftDataModel.swift in Sources */,
 				63A02F7D1AD6EFBB03B0F6E3 /* UpcomingRaceRow.swift in Sources */,
 				DB1B771734858C2E1784660C /* UpcomingRacesCard.swift in Sources */,
+				7A03A956CF5C552B4F44F89C /* ValidateSessionSheet.swift in Sources */,
 				A9F14B142882B40751B8877D /* VerticalGainEnvironment.swift in Sources */,
 				257D3958EF065A6D7B213DEB /* VoiceCoachingConfig.swift in Sources */,
 				32B8A3D05C0DB75EA74FE24C /* VoiceCoachingHandler.swift in Sources */,
@@ -7554,6 +7593,7 @@
 				302EB7A875D5EAB082C5DC92 /* WeatherSnapshot.swift in Sources */,
 				D651D39DE6983011FA0B6E72 /* WeekCardView.swift in Sources */,
 				8233BC1F97256C5B1FE2E642 /* WeekSkeletonBuilder.swift in Sources */,
+				C53387C0081DC3D53435D9FC /* WeekSummarySheet.swift in Sources */,
 				00BB55D3DA87A127349F6BA1 /* WeeklyAdherence.swift in Sources */,
 				CBD53DCD55DF822FBD60902F /* WeeklyDistanceChartView.swift in Sources */,
 				13EA5EFF915E7EE7229ADA57 /* WeeklyDurationChartView.swift in Sources */,

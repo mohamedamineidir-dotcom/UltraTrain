@@ -80,7 +80,8 @@ enum CompletedRunSwiftDataMapper {
             terrainTypeRaw: run.terrainType?.rawValue,
             trainingStressScore: run.trainingStressScore,
             activityTypeRaw: run.activityType.rawValue,
-            intervalSplitsData: intervalData
+            intervalSplitsData: intervalData,
+            importSourceRaw: run.importSource?.rawValue
         )
     }
 
@@ -126,7 +127,8 @@ enum CompletedRunSwiftDataMapper {
             trainingStressScore: model.trainingStressScore,
             activityType: ActivityType(rawValue: model.activityTypeRaw) ?? .running,
             intervalSplits: intervalSplits,
-            serverUpdatedAt: model.serverUpdatedAt
+            serverUpdatedAt: model.serverUpdatedAt,
+            importSource: model.importSourceRaw.flatMap { ExternalService(rawValue: $0) }
         )
     }
 

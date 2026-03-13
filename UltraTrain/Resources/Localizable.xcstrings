@@ -1106,7 +1106,7 @@
         }
       }
     },
-    "%lld locked weeks. Upgrade to view." : {
+    "%lld locked weeks. Upgrade or wait for your next billing cycle to view." : {
 
     },
     "%lld m D+" : {
@@ -3602,7 +3602,7 @@
 
     },
     "coach.backToBack" : {
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3619,7 +3619,7 @@
       }
     },
     "coach.crossTraining" : {
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3636,7 +3636,7 @@
       }
     },
     "coach.intervals" : {
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3653,7 +3653,7 @@
       }
     },
     "coach.longRun.easy" : {
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3670,7 +3670,7 @@
       }
     },
     "coach.longRun.hard" : {
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3687,7 +3687,7 @@
       }
     },
     "coach.longRun.moderate" : {
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3704,7 +3704,7 @@
       }
     },
     "coach.recovery" : {
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3721,7 +3721,7 @@
       }
     },
     "coach.rest" : {
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3738,7 +3738,7 @@
       }
     },
     "coach.tempo" : {
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3755,7 +3755,7 @@
       }
     },
     "coach.vg.hill" : {
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3772,7 +3772,7 @@
       }
     },
     "coach.vg.mixed" : {
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3789,7 +3789,7 @@
       }
     },
     "coach.vg.mountain" : {
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3806,7 +3806,7 @@
       }
     },
     "coach.vg.treadmill.easy" : {
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3823,7 +3823,7 @@
       }
     },
     "coach.vg.treadmill.hard" : {
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3840,7 +3840,7 @@
       }
     },
     "coach.vg.treadmill.max" : {
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4069,6 +4069,9 @@
         }
       }
     },
+    "Connect More Services" : {
+
+    },
     "Connect to Strava" : {
       "localizations" : {
         "fr" : {
@@ -4078,6 +4081,9 @@
           }
         }
       }
+    },
+    "Connected" : {
+
     },
     "Connected Services" : {
       "localizations" : {
@@ -7853,6 +7859,9 @@
         }
       }
     },
+    "Linked to activity" : {
+
+    },
     "Load" : {
       "localizations" : {
         "fr" : {
@@ -8187,6 +8196,9 @@
         }
       }
     },
+    "Mark Complete Manually" : {
+
+    },
     "Mark Incomplete" : {
       "localizations" : {
         "fr" : {
@@ -8206,6 +8218,9 @@
           }
         }
       }
+    },
+    "Mark this session as done without linking to a recorded activity." : {
+
     },
     "Marks this checkpoint as having an aid station with supplies" : {
       "localizations" : {
@@ -11581,6 +11596,9 @@
           }
         }
       }
+    },
+    "Recent Activities" : {
+
     },
     "Recent Runs (%lld)" : {
       "localizations" : {
@@ -15167,7 +15185,7 @@
         }
       }
     },
-    "Upgrade your plan to see your full training schedule" : {
+    "Upgrade your plan or wait for your next billing cycle to unlock more weeks" : {
 
     },
     "Uphill Training" : {
@@ -15242,6 +15260,9 @@
           }
         }
       }
+    },
+    "Validate Session" : {
+
     },
     "Value" : {
       "localizations" : {
@@ -15561,6 +15582,7 @@
       }
     },
     "week.progress %lld %lld" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -15594,6 +15616,7 @@
       }
     },
     "week.title %lld" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

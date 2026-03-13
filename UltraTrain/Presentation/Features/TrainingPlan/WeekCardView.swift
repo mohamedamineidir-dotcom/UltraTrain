@@ -67,14 +67,15 @@ struct WeekCardView: View {
             }
         }
         .appCardStyle()
-        .overlay(alignment: .leading) {
-            RoundedRectangle(cornerRadius: 2)
-                .fill(phaseAccentColor)
-                .frame(width: 4)
-                .padding(.vertical, 6)
-        }
+        .background(recoveryBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
         .accessibilityIdentifier("trainingPlan.weekCard.\(week.weekNumber)")
     }
+}
+
+// MARK: - Header
+
+extension WeekCardView {
 
     private var headerButton: some View {
         Button {
@@ -82,46 +83,53 @@ struct WeekCardView: View {
                 isExpanded.toggle()
             }
         } label: {
-            HStack {
-                VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-                    HStack(spacing: Theme.Spacing.sm) {
-                        Text("week.title \(week.weekNumber)")
-                            .font(.headline)
-                            .foregroundStyle(Theme.Colors.label)
-                        PhaseBadge(phase: week.phase)
-                        if week.isRecoveryWeek {
-                            Text(String(localized: "week.recovery", defaultValue: "Recovery"))
-                                .font(.caption2)
-                                .foregroundStyle(.green)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(.green.opacity(0.15))
-                                .clipShape(Capsule())
-                        }
+            VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+                // Line 1: Phase dot + Week N + progress fraction
+                HStack {
+                    Circle()
+                        .fill(phaseAccentColor)
+                        .frame(width: 8, height: 8)
+                    Text("Week \(week.weekNumber)")
+                        .font(.title3.bold())
+                        .foregroundStyle(Theme.Colors.label)
+                    if week.isRecoveryWeek {
+                        Text(String(localized: "week.recovery", defaultValue: "Recovery"))
+                            .font(.caption2)
+                            .foregroundStyle(.mint)
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 2)
+                            .background(.mint.opacity(0.15))
+                            .clipShape(Capsule())
                     }
-
-                    Text(weekDateRange)
-                        .font(.caption)
+                    Spacer()
+                    Text(progressText)
+                        .font(.subheadline.monospacedDigit().weight(.medium))
                         .foregroundStyle(Theme.Colors.secondaryLabel)
-
-                    HStack(spacing: Theme.Spacing.md) {
-                        Label(UnitFormatter.formatDistance(week.targetVolumeKm, unit: units, decimals: 0), systemImage: "figure.run")
-                        Label("\(UnitFormatter.formatElevation(week.targetElevationGainM, unit: units))", systemImage: "mountain.2.fill")
-                        Spacer()
-                        Text(progressText)
-                            .fontWeight(.medium)
-                    }
-                    .font(.caption)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                    Image(systemName: "chevron.right")
+                        .font(.caption2)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                        .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                        .accessibilityHidden(true)
                 }
 
-                Spacer()
+                // Line 2: Phase name + date range
+                HStack(spacing: Theme.Spacing.xs) {
+                    Text(week.phase.displayName)
+                        .foregroundStyle(phaseAccentColor)
+                    Text("·")
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                    Text(weekDateRange)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
+                .font(.caption)
 
-                Image(systemName: "chevron.right")
-                    .font(.caption)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-                    .rotationEffect(.degrees(isExpanded ? 90 : 0))
-                    .accessibilityHidden(true)
+                // Line 3: Duration (primary) + Elevation
+                HStack(spacing: Theme.Spacing.md) {
+                    Label(formattedWeekDuration, systemImage: "clock")
+                    Label(UnitFormatter.formatElevation(week.targetElevationGainM, unit: units), systemImage: "mountain.2.fill")
+                }
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
             }
         }
         .buttonStyle(.plain)
@@ -133,14 +141,55 @@ struct WeekCardView: View {
 
     private var weekHeaderAccessibilityLabel: String {
         var label = "Week \(week.weekNumber), \(week.phase.displayName) phase"
-        if week.isRecoveryWeek {
-            label += ", recovery week"
-        }
-        label += ". \(UnitFormatter.formatDistance(week.targetVolumeKm, unit: units, decimals: 0))"
+        if week.isRecoveryWeek { label += ", recovery week" }
+        label += ". \(formattedWeekDuration)"
         label += ", \(UnitFormatter.formatElevation(week.targetElevationGainM, unit: units)) elevation"
         label += ". \(progressText)"
         return label
     }
+
+    private var formattedWeekDuration: String {
+        let total = Int(week.targetDurationSeconds)
+        let hours = total / 3600
+        let minutes = (total % 3600) / 60
+        if hours > 0 {
+            return minutes > 0 ? "\(hours)h\(String(format: "%02d", minutes))" : "\(hours)h"
+        }
+        return "\(minutes)min"
+    }
+}
+
+// MARK: - Progress Bar
+
+extension WeekCardView {
+
+    private var weekProgressBar: some View {
+        let active = week.sessions.filter { $0.type != .rest && !$0.isSkipped }
+        let done = active.filter(\.isCompleted).count
+        let fraction = active.isEmpty ? 0.0 : Double(done) / Double(active.count)
+        return GeometryReader { geo in
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(Theme.Colors.secondaryLabel.opacity(0.08))
+                Capsule()
+                    .fill(
+                        LinearGradient(
+                            colors: [phaseAccentColor.opacity(0.7), phaseAccentColor],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .frame(width: geo.size.width * fraction)
+            }
+        }
+        .frame(height: 4)
+        .clipShape(Capsule())
+    }
+}
+
+// MARK: - Sessions List
+
+extension WeekCardView {
 
     private var sessionsList: some View {
         VStack(spacing: 0) {
@@ -216,6 +265,11 @@ struct WeekCardView: View {
             }
         }
     }
+}
+
+// MARK: - Navigation & Data
+
+extension WeekCardView {
 
     private func sessionDetailView(for session: TrainingSession, at sessionIndex: Int) -> SessionDetailView {
         let candidates = buildSwapCandidates(excluding: session)
@@ -246,11 +300,16 @@ struct WeekCardView: View {
         }
         return candidates
     }
+}
+
+// MARK: - Computed Properties
+
+extension WeekCardView {
 
     private var progressText: String {
         let active = week.sessions.filter { $0.type != .rest && !$0.isSkipped }
         let done = active.filter(\.isCompleted).count
-        return String(localized: "week.progress \(done) \(active.count)")
+        return "\(done)/\(active.count)"
     }
 
     private var weekDateRange: String {
@@ -260,40 +319,21 @@ struct WeekCardView: View {
         return "\(formatter.string(from: first.date)) – \(formatter.string(from: last.date))"
     }
 
-    private var weekProgressBar: some View {
-        let active = week.sessions.filter { $0.type != .rest && !$0.isSkipped }
-        let done = active.filter(\.isCompleted).count
-        let fraction = active.isEmpty ? 0.0 : Double(done) / Double(active.count)
-        return GeometryReader { geo in
-            ZStack(alignment: .leading) {
-                Capsule()
-                    .fill(Theme.Colors.secondaryLabel.opacity(0.08))
-                Capsule()
-                    .fill(
-                        LinearGradient(
-                            colors: [phaseAccentColor.opacity(0.7), phaseAccentColor],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .frame(width: geo.size.width * fraction)
-            }
-        }
-        .frame(height: 4)
-        .clipShape(Capsule())
+    private var phaseAccentColor: Color {
+        week.phase.color
     }
 
-    private var phaseAccentColor: Color {
-        switch week.phase {
-        case .base:     .blue
-        case .build:    .orange
-        case .peak:     .red
-        case .taper:    .green
-        case .recovery: .mint
-        case .race:     .purple
+    @ViewBuilder
+    private var recoveryBackground: some View {
+        if week.isRecoveryWeek {
+            Color.mint.opacity(0.04)
+        } else {
+            Color.clear
         }
     }
 }
+
+// MARK: - Context Sheet Item
 
 private struct ContextSheetItem: Identifiable {
     let id = UUID()

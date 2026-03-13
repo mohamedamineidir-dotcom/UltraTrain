@@ -67,16 +67,39 @@ struct WeekSkeletonBuilderTests {
 
     // MARK: - Recovery Weeks
 
-    @Test("recovery weeks inserted every N-th week")
+    @Test("recovery weeks follow 3:1 pattern (3 normal then 1 recovery)")
     func recoveryWeeksInserted() {
         let phases = makePhases([(.base, 9)]) // 9 weeks with cycle of 3
         let skeletons = WeekSkeletonBuilder.build(raceDate: raceDate, phases: phases, recoveryCycle: 3)
 
-        // Weeks 3, 6 should be recovery (every 3rd), but not the last phase week
-        let recoveryWeeks = skeletons.filter { $0.isRecoveryWeek }
-        #expect(recoveryWeeks.count >= 2)
-        #expect(skeletons[2].isRecoveryWeek == true)  // Week 3
-        #expect(skeletons[5].isRecoveryWeek == true)  // Week 6
+        // 3:1 pattern: 3 normal + 1 recovery → recovery at indices 3, 7
+        let recoveryIndices = skeletons.enumerated()
+            .filter { $0.element.isRecoveryWeek }
+            .map { $0.offset }
+        #expect(recoveryIndices == [3, 7],
+                "Expected recovery at weeks 4,8 (indices 3,7), got \(recoveryIndices)")
+    }
+
+    @Test("3:1 pattern verified across 16 weeks")
+    func threeToOnePatternLongPlan() {
+        let phases = makePhases([(.base, 4), (.build, 12)])
+        let skeletons = WeekSkeletonBuilder.build(raceDate: raceDate, phases: phases, recoveryCycle: 3)
+
+        // Base phase: 4 weeks, counter resets per phase
+        // Base recovery at index 3 (week 4 = 4th normal week triggers recovery? no — counter resets)
+        // Build phase: 12 weeks, recovery at build indices 3, 7, 11
+        let baseRecovery = skeletons[0..<4].enumerated()
+            .filter { $0.element.isRecoveryWeek }
+            .map { $0.offset }
+        let buildRecovery = skeletons[4..<16].enumerated()
+            .filter { $0.element.isRecoveryWeek }
+            .map { $0.offset + 4 }
+
+        // Base: 4 weeks, counter goes 1,2,3,4→recovery but index 3 is last phase week → no recovery
+        #expect(baseRecovery.isEmpty, "4-week base with no recovery (last week excluded)")
+        // Build: 12 weeks, recovery at build-internal indices 3,7,11 → global 7,11 (11 is last → excluded)
+        #expect(buildRecovery == [7, 11] || buildRecovery == [7],
+                "Build recovery at week 8 and/or 12, got \(buildRecovery)")
     }
 
     @Test("taper weeks are never marked as recovery")

@@ -31,6 +31,7 @@ struct CompletedRun: Identifiable, Equatable, Sendable {
     var activityType: ActivityType = .running
     var intervalSplits: [IntervalSplit] = []
     var serverUpdatedAt: Date? = nil
+    var importSource: ExternalService? = nil
 
     var isRunningActivity: Bool {
         activityType == .running || activityType == .trailRunning

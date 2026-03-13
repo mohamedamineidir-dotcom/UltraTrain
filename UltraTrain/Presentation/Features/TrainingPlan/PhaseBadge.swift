@@ -32,9 +32,9 @@ extension TrainingPhase {
         case .base:     .blue
         case .build:    .orange
         case .peak:     .red
-        case .taper:    .purple
-        case .recovery: .green
-        case .race:     .yellow
+        case .taper:    .green
+        case .recovery: .mint
+        case .race:     .purple
         }
     }
 }

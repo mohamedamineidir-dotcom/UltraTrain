@@ -17,6 +17,7 @@ final class TrainingPlanViewModel {
     let widgetDataWriter: WidgetDataWriter
     private let hapticService: any HapticServiceProtocol
     private let subscriptionService: (any SubscriptionServiceProtocol)?
+    let runRepository: (any RunRepository)?
 
     // MARK: - State
 
@@ -45,7 +46,8 @@ final class TrainingPlanViewModel {
         fitnessRepository: any FitnessRepository,
         widgetDataWriter: WidgetDataWriter,
         hapticService: any HapticServiceProtocol,
-        subscriptionService: (any SubscriptionServiceProtocol)? = nil
+        subscriptionService: (any SubscriptionServiceProtocol)? = nil,
+        runRepository: (any RunRepository)? = nil
     ) {
         self.planRepository = planRepository
         self.athleteRepository = athleteRepository
@@ -57,6 +59,7 @@ final class TrainingPlanViewModel {
         self.widgetDataWriter = widgetDataWriter
         self.hapticService = hapticService
         self.subscriptionService = subscriptionService
+        self.runRepository = runRepository
     }
 
     // MARK: - Load

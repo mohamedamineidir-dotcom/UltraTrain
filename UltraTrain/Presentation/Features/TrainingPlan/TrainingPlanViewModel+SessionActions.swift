@@ -123,4 +123,41 @@ extension TrainingPlanViewModel {
             Logger.training.error("Failed to swap sessions: \(error)")
         }
     }
+
+    // MARK: - Link Session to Run
+
+    func linkSessionToRun(weekIndex: Int, sessionIndex: Int, runId: UUID) async {
+        guard var currentPlan = plan else { return }
+        guard weekIndex < currentPlan.weeks.count,
+              sessionIndex < currentPlan.weeks[weekIndex].sessions.count else { return }
+
+        do {
+            currentPlan.weeks[weekIndex].sessions[sessionIndex].linkedRunId = runId
+            currentPlan.weeks[weekIndex].sessions[sessionIndex].isCompleted = true
+            try await planRepository.savePlan(currentPlan)
+            try await runRepository?.updateLinkedSession(runId: runId, sessionId: currentPlan.weeks[weekIndex].sessions[sessionIndex].id)
+            plan = currentPlan
+            await updateWidgets()
+            Logger.training.info("Linked run \(runId) to session")
+        } catch {
+            self.error = error.localizedDescription
+            Logger.training.error("Failed to link run: \(error)")
+        }
+    }
+
+    func recentUnlinkedRuns(near date: Date, limit: Int = 10) async -> [CompletedRun] {
+        guard let repo = runRepository else { return [] }
+        do {
+            let runs = try await repo.getRecentRuns(limit: limit * 2)
+            let threeDays: TimeInterval = 3 * 24 * 3600
+            return runs.filter {
+                $0.linkedSessionId == nil && abs($0.date.timeIntervalSince(date)) <= threeDays
+            }
+            .prefix(limit)
+            .map { $0 }
+        } catch {
+            Logger.training.error("Failed to load recent runs: \(error)")
+            return []
+        }
+    }
 }

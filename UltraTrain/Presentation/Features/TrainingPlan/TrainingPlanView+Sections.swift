@@ -113,7 +113,7 @@ extension TrainingPlanView {
             VStack(alignment: .leading, spacing: 2) {
                 Text("\(viewModel.lockedWeekCount) more weeks")
                     .font(.subheadline.bold())
-                Text("Upgrade your plan to see your full training schedule")
+                Text("Upgrade your plan or wait for your next billing cycle to unlock more weeks")
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
@@ -122,7 +122,7 @@ extension TrainingPlanView {
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
         .appCardStyle()
-        .accessibilityLabel("\(viewModel.lockedWeekCount) locked weeks. Upgrade to view.")
+        .accessibilityLabel("\(viewModel.lockedWeekCount) locked weeks. Upgrade or wait for your next billing cycle to view.")
     }
 
     func planHeader(_ plan: TrainingPlan) -> some View {
