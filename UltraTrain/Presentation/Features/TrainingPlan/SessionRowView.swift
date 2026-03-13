@@ -21,11 +21,16 @@ struct SessionRowView: View {
             .accessibilityLabel(statusAccessibilityLabel)
             .accessibilityHint("Double-tap to toggle completion")
 
-            VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: Theme.Spacing.xs) {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: Theme.Spacing.sm) {
                     Image(systemName: session.type.icon)
-                        .foregroundStyle(session.isSkipped ? Theme.Colors.secondaryLabel : session.intensity.color)
                         .font(.caption)
+                        .foregroundStyle(session.isSkipped ? Theme.Colors.secondaryLabel : .white)
+                        .frame(width: 24, height: 24)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(session.isSkipped ? Theme.Colors.secondaryLabel.opacity(0.2) : session.intensity.color.opacity(0.85))
+                        )
                         .accessibilityHidden(true)
 
                     Text(session.type.displayName)
@@ -34,27 +39,21 @@ struct SessionRowView: View {
                         .strikethrough(session.isCompleted || session.isSkipped)
 
                     if session.isSkipped {
-                        Text("Skipped")
+                        Text(String(localized: "session.skipped", defaultValue: "Skipped"))
                             .font(.caption2)
                             .foregroundStyle(.orange)
                             .padding(.horizontal, 4)
                             .padding(.vertical, 1)
                             .background(.orange.opacity(0.15))
                             .clipShape(Capsule())
-                    }
-
-                    if session.isKeySession && !session.isSkipped && !session.isCompleted {
-                        Text("Key")
-                            .font(.caption2.bold())
-                            .foregroundStyle(.white)
+                    } else if session.type != .rest && !session.isCompleted {
+                        Text(session.intensity.displayName)
+                            .font(.caption2)
+                            .foregroundStyle(session.intensity.color)
                             .padding(.horizontal, 5)
                             .padding(.vertical, 1)
-                            .background(Theme.Colors.primary)
+                            .background(session.intensity.color.opacity(0.12))
                             .clipShape(Capsule())
-                    }
-
-                    if session.isGutTrainingRecommended && !session.isSkipped {
-                        GutTrainingBadge()
                     }
                 }
 
@@ -72,13 +71,31 @@ struct SessionRowView: View {
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
+
+                if hasBadges {
+                    HStack(spacing: Theme.Spacing.xs) {
+                        if session.isKeySession && !session.isSkipped && !session.isCompleted {
+                            Text(String(localized: "session.key", defaultValue: "Key"))
+                                .font(.caption2.bold())
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 1)
+                                .background(Theme.Colors.primary)
+                                .clipShape(Capsule())
+                        }
+
+                        if session.isGutTrainingRecommended && !session.isSkipped {
+                            GutTrainingBadge()
+                        }
+                    }
+                }
             }
 
             Spacer()
 
             dayLabel
         }
-        .padding(.vertical, Theme.Spacing.xs)
+        .padding(.vertical, session.type == .rest ? Theme.Spacing.xs : Theme.Spacing.sm)
         .padding(.horizontal, session.isKeySession && !session.isSkipped && !session.isCompleted ? Theme.Spacing.xs : 0)
         .background(
             session.isKeySession && !session.isSkipped && !session.isCompleted
@@ -86,7 +103,7 @@ struct SessionRowView: View {
                 : Color.clear
         )
         .clipShape(RoundedRectangle(cornerRadius: 6))
-        .opacity(session.type == .rest || session.isSkipped ? 0.5 : 1.0)
+        .opacity(session.type == .rest || session.isSkipped ? 0.4 : 1.0)
         .accessibilityElement(children: .combine)
     }
 
@@ -118,8 +135,13 @@ struct SessionRowView: View {
         return ""
     }
 
+    private var hasBadges: Bool {
+        (session.isKeySession && !session.isSkipped && !session.isCompleted)
+            || (session.isGutTrainingRecommended && !session.isSkipped)
+    }
+
     private var hasWorkoutDescription: Bool {
-        (session.type == .intervals || session.type == .verticalGain)
+        (session.type == .intervals || session.type == .verticalGain || session.type == .tempo)
             && session.intervalWorkoutId != nil
             && session.description.contains("×")
     }
@@ -161,14 +183,14 @@ struct SessionRowView: View {
 extension SessionType {
     var displayName: String {
         switch self {
-        case .longRun:       "Long Run"
-        case .tempo:         "Tempo"
-        case .intervals:     "Intervals"
-        case .verticalGain:  "Vertical Gain"
-        case .backToBack:    "Long Run (B2B)"
-        case .recovery:      "Recovery"
-        case .crossTraining: "Cross-Training"
-        case .rest:          "Rest"
+        case .longRun:       String(localized: "session.longRun", defaultValue: "Long Run")
+        case .tempo:         String(localized: "session.tempo", defaultValue: "Tempo")
+        case .intervals:     String(localized: "session.intervals", defaultValue: "Intervals")
+        case .verticalGain:  String(localized: "session.verticalGain", defaultValue: "Vertical Gain")
+        case .backToBack:    String(localized: "session.backToBack", defaultValue: "Long Run (B2B)")
+        case .recovery:      String(localized: "session.recovery", defaultValue: "Recovery")
+        case .crossTraining: String(localized: "session.crossTraining", defaultValue: "Cross-Training")
+        case .rest:          String(localized: "session.rest", defaultValue: "Rest")
         }
     }
 
@@ -198,10 +220,10 @@ extension Intensity {
 
     var displayName: String {
         switch self {
-        case .easy:      "Easy"
-        case .moderate:  "Moderate"
-        case .hard:      "Hard"
-        case .maxEffort: "Max Effort"
+        case .easy:      String(localized: "intensity.easy", defaultValue: "Easy")
+        case .moderate:  String(localized: "intensity.moderate", defaultValue: "Moderate")
+        case .hard:      String(localized: "intensity.hard", defaultValue: "Hard")
+        case .maxEffort: String(localized: "intensity.maxEffort", defaultValue: "Max Effort")
         }
     }
 }

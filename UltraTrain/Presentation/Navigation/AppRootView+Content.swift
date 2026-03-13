@@ -92,7 +92,13 @@ extension AppRootView {
                             referralRepository: referralRepository,
                             subscriptionService: subscriptionService,
                             authService: authService,
-                            onLogout: { isAuthenticated = false }
+                            onLogout: {
+                                hasCompletedOnboarding = nil
+                                hasActiveSubscription = nil
+                                cachedFirstName = nil
+                                pendingFirstName = nil
+                                isAuthenticated = false
+                            }
                         )
                         .fullScreenCover(isPresented: $showFeatureTour) {
                             FeatureTourView {

@@ -30,12 +30,21 @@ struct SessionDetailView: View {
 
                 statsSection
 
+                if let athlete, session.type != .rest {
+                    paceTargetsSection(athlete: athlete)
+                }
+
                 if let workoutId = session.intervalWorkoutId,
                    let workout = workouts.first(where: { $0.id == workoutId }),
                    !workout.phases.isEmpty {
-                    WorkoutBlocksSection(workout: workout)
+                    sessionStructureSummary(workout: workout)
+                    WorkoutBlocksSection(workout: workout, athlete: athlete)
                 } else {
                     descriptionSection
+                }
+
+                if let advice = session.coachAdvice {
+                    coachAdviceSection(advice)
                 }
 
                 if let athlete,
@@ -225,6 +234,18 @@ struct SessionDetailView: View {
         .cardStyle()
     }
 
+    private func coachAdviceSection(_ advice: String) -> some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            Label("Coach", systemImage: "quote.bubble.fill")
+                .font(.headline)
+                .foregroundStyle(Theme.Colors.warmCoral)
+            Text(advice)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .cardStyle()
+    }
+
     private func nutritionSection(_ notes: String) -> some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             Label("Nutrition", systemImage: "fork.knife")
@@ -234,6 +255,133 @@ struct SessionDetailView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .cardStyle()
+    }
+
+    // MARK: - Pace & HR Targets
+
+    @ViewBuilder
+    private func paceTargetsSection(athlete: Athlete) -> some View {
+        if let thresholdPace = athlete.thresholdPace60MinPerKm, thresholdPace > 0 {
+            let hrRange = PaceCalculator.heartRateRange(
+                for: session.intensity,
+                restingHR: athlete.restingHeartRate,
+                maxHR: athlete.maxHeartRate
+            )
+
+            VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                if showsEffortInsteadOfPace {
+                    Label("Effort & Heart Rate Targets", systemImage: "speedometer")
+                        .font(.headline)
+                } else {
+                    Label("Pace & Heart Rate Targets", systemImage: "speedometer")
+                        .font(.headline)
+                }
+
+                HStack(spacing: Theme.Spacing.lg) {
+                    if showsEffortInsteadOfPace {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Target Effort")
+                                .font(.caption)
+                                .foregroundStyle(Theme.Colors.secondaryLabel)
+                            Text(effortDescription(for: session.intensity))
+                                .font(.subheadline.bold())
+                                .foregroundStyle(session.intensity.color)
+                        }
+                    } else {
+                        let range = PaceCalculator.paceRange(for: session.intensity, thresholdPacePerKm: thresholdPace)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Target Pace")
+                                .font(.caption)
+                                .foregroundStyle(Theme.Colors.secondaryLabel)
+                            Text("\(PaceCalculator.formatPace(range.min)) - \(PaceCalculator.formatPace(range.max)) /km")
+                                .font(.subheadline.bold().monospacedDigit())
+                                .foregroundStyle(session.intensity.color)
+                        }
+                    }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Heart Rate")
+                            .font(.caption)
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
+                        Text("\(hrRange.min) - \(hrRange.max) bpm")
+                            .font(.subheadline.bold().monospacedDigit())
+                            .foregroundStyle(session.intensity.color)
+                    }
+                }
+
+                if let zone = session.targetHeartRateZone {
+                    Text("Zone \(zone) (\(session.intensity.displayName))")
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .cardStyle()
+        }
+    }
+
+    private var showsEffortInsteadOfPace: Bool {
+        session.type == .verticalGain || session.type == .longRun || session.type == .backToBack
+    }
+
+    private func effortDescription(for intensity: Intensity) -> String {
+        switch intensity {
+        case .easy:      "Easy pace"
+        case .moderate:  "Threshold effort"
+        case .hard:      "VO2max effort"
+        case .maxEffort: "All-out effort"
+        }
+    }
+
+    // MARK: - Session Structure Summary
+
+    private func sessionStructureSummary(workout: IntervalWorkout) -> some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            Label("Session Structure", systemImage: "list.bullet.rectangle")
+                .font(.headline)
+            Text(buildStructureSummary(workout: workout))
+                .font(.subheadline)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .cardStyle()
+    }
+
+    private func buildStructureSummary(workout: IntervalWorkout) -> String {
+        var parts: [String] = []
+        for phase in workout.phases {
+            let perRepSeconds: Int
+            if case .duration(let sec) = phase.trigger {
+                perRepSeconds = Int(sec)
+            } else {
+                perRepSeconds = 0
+            }
+            switch phase.phaseType {
+            case .warmUp:
+                let mins = Int(phase.totalDuration) / 60
+                parts.append("Warmup \(mins)min")
+            case .coolDown:
+                let mins = Int(phase.totalDuration) / 60
+                parts.append("Cooldown \(mins)min")
+            case .work:
+                let mins = perRepSeconds / 60
+                let secs = perRepSeconds % 60
+                let timeStr = secs > 0 ? "\(mins)m\(secs)s" : "\(mins)min"
+                if phase.repeatCount > 1 {
+                    parts.append("\(phase.repeatCount)×\(timeStr) @ \(phase.targetIntensity.displayName)")
+                } else {
+                    parts.append("\(timeStr) @ \(phase.targetIntensity.displayName)")
+                }
+            case .recovery:
+                let mins = perRepSeconds / 60
+                let secs = perRepSeconds % 60
+                if mins > 0 || secs > 0 {
+                    let timeStr = secs > 0 ? "\(mins)m\(secs)s" : "\(mins)min"
+                    parts.append("\(timeStr) jog")
+                }
+            }
+        }
+        return parts.joined(separator: " → ")
     }
 
     // MARK: - Actions

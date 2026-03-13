@@ -2,11 +2,13 @@ import SwiftUI
 
 struct WorkoutBlockCard: View {
     let phase: IntervalPhase
+    var easyPaceLabel: String?
 
     private var phaseColor: Color {
         switch phase.phaseType {
-        case .warmUp, .coolDown: Theme.Colors.success
-        case .work: phase.targetIntensity.color
+        case .warmUp:   .orange
+        case .coolDown: .teal
+        case .work:     phase.targetIntensity.color
         case .recovery: Theme.Colors.zone2
         }
     }
@@ -31,6 +33,12 @@ struct WorkoutBlockCard: View {
                     Text(repDescription)
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
+
+                if let easyPaceLabel {
+                    Text("\(String(localized: "workout.easyPace", defaultValue: "Easy pace")): \(easyPaceLabel)")
+                        .font(.caption)
+                        .foregroundStyle(phaseColor)
                 }
 
                 if let notes = phase.notes {

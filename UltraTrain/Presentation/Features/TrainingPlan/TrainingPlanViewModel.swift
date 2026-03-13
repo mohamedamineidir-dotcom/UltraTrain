@@ -104,9 +104,8 @@ final class TrainingPlanViewModel {
             }
 
             let allRaces = try await raceRepository.getRaces()
-            guard let targetRace = allRaces.first(where: { $0.priority == .aRace }) else {
-                throw DomainError.raceNotFound
-            }
+            let targetRace = allRaces.first(where: { $0.priority == .aRace })
+                ?? Race.generalFitness(startingFrom: .now)
 
             let intermediateRaces = allRaces.filter { $0.priority != .aRace && $0.date < targetRace.date }
 
@@ -217,7 +216,12 @@ final class TrainingPlanViewModel {
     }
 
     var isPlanStale: Bool {
-        guard let plan, let target = targetRace else { return false }
+        guard let plan else { return false }
+        // If user added an A-race after generating a no-race plan, mark stale
+        if let target = targetRace, plan.targetRaceId != target.id {
+            return true
+        }
+        guard let target = targetRace else { return false }
         let currentIntermediates = races
             .filter { $0.priority != .aRace && $0.date < target.date }
 

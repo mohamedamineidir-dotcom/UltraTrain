@@ -83,6 +83,31 @@ extension SettingsView {
         }
     }
 
+    // MARK: - Language Section
+
+    @ViewBuilder
+    var languageSection: some View {
+        if viewModel.appSettings != nil {
+            Section {
+                Picker("Language", selection: Binding(
+                    get: { viewModel.selectedLanguage },
+                    set: { newLang in
+                        Task { await viewModel.updatePreferredLanguage(newLang) }
+                    }
+                )) {
+                    Text("System").tag("system")
+                    Text("English").tag("en")
+                    Text("Français").tag("fr")
+                }
+                .accessibilityHint("Choose the app language")
+            } header: {
+                Text("Language")
+            } footer: {
+                Text("Changing the language requires restarting the app.")
+            }
+        }
+    }
+
     // MARK: - Run Tracking Section
 
     @ViewBuilder

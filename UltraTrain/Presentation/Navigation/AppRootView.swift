@@ -223,8 +223,13 @@ struct AppRootView: View {
                         isAuthenticated = true
                         if isNewUser {
                             hasCompletedOnboarding = false
+                            hasActiveSubscription = nil
                         }
                         Task {
+                            if isNewUser {
+                                // Clear all local data from any previous account
+                                try? await clearAllDataUseCase.execute()
+                            }
                             await checkBiometricLockSetting()
                             if !isNewUser {
                                 await checkOnboardingStatus()

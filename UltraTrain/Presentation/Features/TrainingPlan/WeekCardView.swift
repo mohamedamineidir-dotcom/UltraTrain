@@ -70,8 +70,8 @@ struct WeekCardView: View {
         .overlay(alignment: .leading) {
             RoundedRectangle(cornerRadius: 2)
                 .fill(phaseAccentColor)
-                .frame(width: 3)
-                .padding(.vertical, 8)
+                .frame(width: 4)
+                .padding(.vertical, 6)
         }
         .accessibilityIdentifier("trainingPlan.weekCard.\(week.weekNumber)")
     }
@@ -85,12 +85,12 @@ struct WeekCardView: View {
             HStack {
                 VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                     HStack(spacing: Theme.Spacing.sm) {
-                        Text("Week \(week.weekNumber)")
+                        Text("week.title \(week.weekNumber)")
                             .font(.headline)
                             .foregroundStyle(Theme.Colors.label)
                         PhaseBadge(phase: week.phase)
                         if week.isRecoveryWeek {
-                            Text("Recovery")
+                            Text(String(localized: "week.recovery", defaultValue: "Recovery"))
                                 .font(.caption2)
                                 .foregroundStyle(.green)
                                 .padding(.horizontal, 6)
@@ -100,10 +100,16 @@ struct WeekCardView: View {
                         }
                     }
 
+                    Text(weekDateRange)
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+
                     HStack(spacing: Theme.Spacing.md) {
                         Label(UnitFormatter.formatDistance(week.targetVolumeKm, unit: units, decimals: 0), systemImage: "figure.run")
                         Label("\(UnitFormatter.formatElevation(week.targetElevationGainM, unit: units))", systemImage: "mountain.2.fill")
+                        Spacer()
                         Text(progressText)
+                            .fontWeight(.medium)
                     }
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
@@ -142,6 +148,11 @@ struct WeekCardView: View {
                 .padding(.vertical, Theme.Spacing.sm)
 
             ForEach(Array(week.sessions.enumerated()), id: \.element.id) { sessionIndex, session in
+                if sessionIndex > 0 {
+                    Divider()
+                        .padding(.leading, 40)
+                }
+
                 NavigationLink(destination: sessionDetailView(for: session, at: sessionIndex)) {
                     SessionRowView(session: session) {
                         onToggleSession(sessionIndex)
@@ -239,7 +250,14 @@ struct WeekCardView: View {
     private var progressText: String {
         let active = week.sessions.filter { $0.type != .rest && !$0.isSkipped }
         let done = active.filter(\.isCompleted).count
-        return "\(done)/\(active.count) done"
+        return String(localized: "week.progress \(done) \(active.count)")
+    }
+
+    private var weekDateRange: String {
+        guard let first = week.sessions.first, let last = week.sessions.last else { return "" }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d"
+        return "\(formatter.string(from: first.date)) – \(formatter.string(from: last.date))"
     }
 
     private var weekProgressBar: some View {
@@ -248,14 +266,21 @@ struct WeekCardView: View {
         let fraction = active.isEmpty ? 0.0 : Double(done) / Double(active.count)
         return GeometryReader { geo in
             ZStack(alignment: .leading) {
-                Rectangle()
-                    .fill(Theme.Colors.secondaryLabel.opacity(0.1))
-                Rectangle()
-                    .fill(phaseAccentColor)
+                Capsule()
+                    .fill(Theme.Colors.secondaryLabel.opacity(0.08))
+                Capsule()
+                    .fill(
+                        LinearGradient(
+                            colors: [phaseAccentColor.opacity(0.7), phaseAccentColor],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
                     .frame(width: geo.size.width * fraction)
             }
         }
-        .frame(height: 2)
+        .frame(height: 4)
+        .clipShape(Capsule())
     }
 
     private var phaseAccentColor: Color {

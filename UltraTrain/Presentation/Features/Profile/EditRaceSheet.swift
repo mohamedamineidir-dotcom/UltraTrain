@@ -114,6 +114,17 @@ struct EditRaceSheet: View {
         NavigationStack {
             Form {
                 raceInfoSection
+                if isShortRoadRace {
+                    Section {
+                        HStack(alignment: .top, spacing: 8) {
+                            Image(systemName: "info.circle.fill")
+                                .foregroundStyle(.blue)
+                            Text("UltraTrain is built for trail and ultra-distance races. For shorter road events, features like altitude training and nutrition planning shine most on longer distances.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
                 locationSection
                 elevationSection
                 prioritySection
@@ -189,6 +200,10 @@ struct EditRaceSheet: View {
     @Environment(\.unitPreference) var units
 
     var isImperial: Bool { units == .imperial }
+
+    private var isShortRoadRace: Bool {
+        elevationGainM < 100 && distanceKm < 42.195 && distanceKm > 0
+    }
 
     private var raceInfoSection: some View {
         Section("Race Info") {

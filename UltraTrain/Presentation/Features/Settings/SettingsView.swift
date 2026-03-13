@@ -65,6 +65,7 @@ struct SettingsView: View {
                 unitsSection
                 trainingPreferencesSection
                 appearanceSection
+                languageSection
                 runTrackingSection
                 safetySection
                 securitySection

@@ -18,12 +18,12 @@ struct PhaseBadge: View {
 extension TrainingPhase {
     var displayName: String {
         switch self {
-        case .base:     "Base"
-        case .build:    "Build"
-        case .peak:     "Peak"
-        case .taper:    "Taper"
-        case .recovery: "Recovery"
-        case .race:     "Race"
+        case .base:     String(localized: "phase.base", defaultValue: "Base")
+        case .build:    String(localized: "phase.build", defaultValue: "Build")
+        case .peak:     String(localized: "phase.peak", defaultValue: "Peak")
+        case .taper:    String(localized: "phase.taper", defaultValue: "Taper")
+        case .recovery: String(localized: "phase.recovery", defaultValue: "Recovery")
+        case .race:     String(localized: "phase.race", defaultValue: "Race")
         }
     }
 

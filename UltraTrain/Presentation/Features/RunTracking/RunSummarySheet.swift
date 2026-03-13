@@ -186,7 +186,6 @@ struct RunSummarySheet: View {
         switch terrain {
         case .road: "Road"
         case .trail: "Trail"
-        case .mountain: "Mountain"
         case .mixed: "Mixed"
         }
     }

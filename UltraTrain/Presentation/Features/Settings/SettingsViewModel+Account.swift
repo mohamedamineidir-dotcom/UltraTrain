@@ -52,9 +52,12 @@ extension SettingsViewModel {
         guard let authService else { return }
         do {
             try await authService.logout()
+            // Clear all local data so the next account starts fresh
+            try await clearAllDataUseCase.execute()
             didLogout = true
         } catch {
-            self.error = error.localizedDescription
+            // Even if data clearing fails, still log out
+            didLogout = true
             Logger.settings.error("Logout failed: \(error)")
         }
     }
@@ -130,6 +133,32 @@ extension SettingsViewModel {
         } catch {
             self.error = error.localizedDescription
             Logger.settings.error("Failed to update data retention: \(error)")
+        }
+    }
+
+    // MARK: - Language
+
+    var selectedLanguage: String {
+        appSettings?.preferredLanguage ?? "system"
+    }
+
+    func updatePreferredLanguage(_ language: String) async {
+        guard var settings = appSettings else { return }
+        let lang: String? = language == "system" ? nil : language
+        settings.preferredLanguage = lang
+        do {
+            try await appSettingsRepository.updateSettings(settings)
+            appSettings = settings
+            if let lang {
+                UserDefaults.standard.set([lang], forKey: "AppleLanguages")
+            } else {
+                UserDefaults.standard.removeObject(forKey: "AppleLanguages")
+            }
+            showRestartAlert = true
+            Logger.settings.info("Language preference changed to \(language). Restart required.")
+        } catch {
+            self.error = error.localizedDescription
+            Logger.settings.error("Failed to update language preference: \(error)")
         }
     }
 }

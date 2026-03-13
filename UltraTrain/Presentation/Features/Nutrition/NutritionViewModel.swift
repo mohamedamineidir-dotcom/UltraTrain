@@ -189,8 +189,8 @@ final class NutritionViewModel {
         case .technical: 1.25
         case .extreme:   1.4
         }
-        let elevationPenalty = race.elevationGainM / 100.0
-        let minutesEstimate = race.distanceKm * paceMinPerKm * terrainMultiplier + elevationPenalty
+        let effectiveKm = race.distanceKm + (race.elevationGainM / 100.0)
+        let minutesEstimate = effectiveKm * paceMinPerKm * terrainMultiplier
         return minutesEstimate * 60
     }
 }

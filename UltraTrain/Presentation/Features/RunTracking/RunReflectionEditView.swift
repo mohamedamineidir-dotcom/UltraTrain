@@ -255,7 +255,6 @@ struct RunReflectionEditView: View {
         switch terrain {
         case .road: "road.lanes"
         case .trail: "figure.hiking"
-        case .mountain: "mountain.2.fill"
         case .mixed: "arrow.triangle.branch"
         }
     }
@@ -264,7 +263,6 @@ struct RunReflectionEditView: View {
         switch terrain {
         case .road: "Road"
         case .trail: "Trail"
-        case .mountain: "Mountain"
         case .mixed: "Mixed"
         }
     }
