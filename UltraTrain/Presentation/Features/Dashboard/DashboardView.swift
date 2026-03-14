@@ -195,15 +195,8 @@ struct DashboardView: View {
     @ViewBuilder
     private var dashboardBackground: some View {
         if colorScheme == .dark {
-            LinearGradient(
-                colors: [
-                    Color(red: 0.04, green: 0.04, blue: 0.06),
-                    Color(red: 0.06, green: 0.05, blue: 0.09)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+            Color(red: 0.04, green: 0.04, blue: 0.06)
+                .ignoresSafeArea()
         }
     }
 }

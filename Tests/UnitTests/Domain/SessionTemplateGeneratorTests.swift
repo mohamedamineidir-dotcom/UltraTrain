@@ -17,7 +17,8 @@ struct SessionTemplateGeneratorTests {
             startDate: start,
             endDate: start.addingTimeInterval(6 * 86400),
             phase: phase,
-            isRecoveryWeek: isRecovery
+            isRecoveryWeek: isRecovery,
+            phaseFocus: phase.defaultFocus
         )
     }
 
@@ -310,7 +311,6 @@ struct SessionTemplateGeneratorTests {
             weekNumberInPhase: 1
         )
 
-        // Find the interval session workouts specifically
         let interval0 = result0.sessions.first { $0.type == .intervals }
         let interval1 = result1.sessions.first { $0.type == .intervals }
         #expect(interval0 != nil && interval1 != nil)
@@ -321,8 +321,8 @@ struct SessionTemplateGeneratorTests {
 
     // MARK: - Session Structure
 
-    @Test("standard week has 2 easy + 1 VG + 1 interval + 1 long run")
-    func standardWeekSessionStructure() {
+    @Test("default 5/week has 5 active + 2 rest")
+    func defaultFivePerWeek() {
         let result = SessionTemplateGenerator.sessions(
             for: makeSkeleton(phase: .build),
             volume: makeVolume(),
@@ -330,17 +330,11 @@ struct SessionTemplateGeneratorTests {
         )
 
         let types = result.sessions.map(\.type)
-        let recovery = types.filter { $0 == .recovery }.count
-        let vg = types.filter { $0 == .verticalGain }.count
-        let intervals = types.filter { $0 == .intervals }.count
-        let longRun = types.filter { $0 == .longRun }.count
+        let active = types.filter { $0 != .rest }.count
         let rest = types.filter { $0 == .rest }.count
 
-        #expect(recovery == 2, "Should have 2 easy/recovery runs")
-        #expect(vg == 1, "Should have 1 VG session")
-        #expect(intervals == 1, "Should have 1 interval session")
-        #expect(longRun == 1, "Should have 1 long run")
-        #expect(rest == 2, "Should have 2 rest days")
+        #expect(active == 5, "Default should have 5 active sessions, got \(active)")
+        #expect(rest == 2, "Default should have 2 rest days, got \(rest)")
     }
 
     @Test("B2B week has long run + back-to-back instead of intervals + long run")
@@ -378,5 +372,128 @@ struct SessionTemplateGeneratorTests {
         let longRun = result.sessions.first { $0.type == .longRun }
         #expect(longRun != nil)
         #expect(longRun?.plannedDuration == expectedDuration)
+    }
+
+    // MARK: - Preferred Runs Per Week
+
+    @Test("3/week produces 3 active + 4 rest")
+    func threePerWeek() {
+        let result = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(phase: .build),
+            volume: makeVolume(),
+            experience: .intermediate,
+            preferredRunsPerWeek: 3
+        )
+
+        let types = result.sessions.map(\.type)
+        let active = types.filter { $0 != .rest }.count
+        let rest = types.filter { $0 == .rest }.count
+
+        #expect(result.sessions.count == 7, "Should always produce 7 day slots")
+        #expect(active == 3, "3/week should have 3 active, got \(active)")
+        #expect(rest == 4, "3/week should have 4 rest, got \(rest)")
+    }
+
+    @Test("3/week includes longRun, intervals, and VG")
+    func threePerWeekSessionTypes() {
+        let result = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(phase: .build),
+            volume: makeVolume(),
+            experience: .intermediate,
+            preferredRunsPerWeek: 3
+        )
+
+        let types = Set(result.sessions.map(\.type))
+        #expect(types.contains(.longRun), "3/week should include longRun")
+        #expect(types.contains(.intervals), "3/week should include intervals")
+        #expect(types.contains(.verticalGain), "3/week should include VG")
+    }
+
+    @Test("6/week produces 6 active + 1 rest on normal week")
+    func sixPerWeekNormal() {
+        let result = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(phase: .build),
+            volume: makeVolume(),
+            experience: .intermediate,
+            preferredRunsPerWeek: 6
+        )
+
+        let types = result.sessions.map(\.type)
+        let active = types.filter { $0 != .rest }.count
+        let rest = types.filter { $0 == .rest }.count
+
+        #expect(active == 6, "6/week normal should have 6 active, got \(active)")
+        #expect(rest == 1, "6/week normal should have 1 rest, got \(rest)")
+    }
+
+    @Test("6/week produces 5 active on recovery week")
+    func sixPerWeekRecovery() {
+        let result = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(phase: .build, isRecovery: true),
+            volume: makeVolume(),
+            experience: .intermediate,
+            preferredRunsPerWeek: 6
+        )
+
+        let types = result.sessions.map(\.type)
+        let active = types.filter { $0 != .rest }.count
+
+        #expect(active == 5, "6/week recovery should have 5 active, got \(active)")
+    }
+
+    @Test("7/week produces 7 active on normal week")
+    func sevenPerWeekNormal() {
+        let result = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(phase: .build),
+            volume: makeVolume(),
+            experience: .advanced,
+            preferredRunsPerWeek: 7
+        )
+
+        let types = result.sessions.map(\.type)
+        let active = types.filter { $0 != .rest }.count
+
+        #expect(active == 7, "7/week normal should have 7 active, got \(active)")
+    }
+
+    @Test("7/week produces 6 active on recovery week")
+    func sevenPerWeekRecovery() {
+        let result = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(phase: .build, isRecovery: true),
+            volume: makeVolume(),
+            experience: .advanced,
+            preferredRunsPerWeek: 7
+        )
+
+        let types = result.sessions.map(\.type)
+        let active = types.filter { $0 != .rest }.count
+
+        #expect(active == 6, "7/week recovery should have 6 active, got \(active)")
+    }
+
+    @Test("3-5/week recovery keeps same session count")
+    func threeToFiveRecoverySameCount() {
+        for preferred in 3...5 {
+            let normal = SessionTemplateGenerator.sessions(
+                for: makeSkeleton(phase: .build),
+                volume: makeVolume(),
+                experience: .intermediate,
+                preferredRunsPerWeek: preferred
+            )
+            let recovery = SessionTemplateGenerator.sessions(
+                for: makeSkeleton(phase: .build, isRecovery: true),
+                volume: makeVolume(),
+                experience: .intermediate,
+                preferredRunsPerWeek: preferred
+            )
+
+            let normalActive = normal.sessions.filter { $0.type != .rest }.count
+            let recoveryActive = recovery.sessions.filter { $0.type != .rest }.count
+
+            #expect(
+                normalActive == recoveryActive,
+                "\(preferred)/week: normal (\(normalActive)) and recovery (\(recoveryActive)) should match for 3-5"
+            )
+        }
     }
 }

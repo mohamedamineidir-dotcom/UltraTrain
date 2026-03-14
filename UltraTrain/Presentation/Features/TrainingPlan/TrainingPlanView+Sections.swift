@@ -44,7 +44,8 @@ extension TrainingPlanView {
                             weekRange: "Weeks \(firstNum)-\(lastNum)",
                             completedWeeks: completedWeeks,
                             totalWeeks: phaseWeeks.count,
-                            description: PhaseHeaderCard.description(for: week.phase)
+                            description: PhaseHeaderCard.description(for: week.phase, focus: week.phaseFocus),
+                            phaseFocus: week.phaseFocus
                         )
                     }
 

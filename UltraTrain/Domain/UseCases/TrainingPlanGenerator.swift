@@ -84,7 +84,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 isRecoveryWeek: skeleton.isRecoveryWeek || override?.behavior == .postRaceRecovery,
                 targetVolumeKm: volume.targetVolumeKm,
                 targetElevationGainM: volume.targetElevationGainM,
-                targetDurationSeconds: volume.targetDurationSeconds
+                targetDurationSeconds: volume.targetDurationSeconds,
+                phaseFocus: skeleton.phaseFocus
             )
         }
 

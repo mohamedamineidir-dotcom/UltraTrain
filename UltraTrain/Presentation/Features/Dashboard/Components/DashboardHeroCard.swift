@@ -20,20 +20,20 @@ struct DashboardHeroCard: View {
                     if let days = daysUntilRace {
                         Text("\(days)")
                             .font(.system(size: daysCounterSize, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Theme.Colors.label)
                         Text("days to go")
                             .font(.subheadline)
-                            .foregroundStyle(.white.opacity(0.85))
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
                     } else {
                         Text("Training")
                             .font(.system(size: trainingTitleSize, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Theme.Colors.label)
                     }
 
                     if let name = raceName {
                         Text(name)
                             .font(.headline)
-                            .foregroundStyle(.white.opacity(0.9))
+                            .foregroundStyle(Theme.Colors.label.opacity(0.9))
                             .lineLimit(1)
                     }
                 }
@@ -46,16 +46,16 @@ struct DashboardHeroCard: View {
             }
 
             Divider()
-                .overlay(.white.opacity(0.3))
+                .overlay(Theme.Colors.secondaryLabel.opacity(0.2))
 
             HStack(spacing: Theme.Spacing.lg) {
                 if let phase = currentPhase {
                     Label(phase.displayName, systemImage: "chart.line.uptrend.xyaxis")
                         .font(.caption.bold())
-                        .foregroundStyle(.white)
+                        .foregroundStyle(phaseAccentColor)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(.white.opacity(0.2))
+                        .background(phaseAccentColor.opacity(0.12))
                         .clipShape(Capsule())
                 }
 
@@ -64,34 +64,27 @@ struct DashboardHeroCard: View {
                     Text(String(format: "%.0f / %.0f km", weeklyDistanceKm, weeklyTargetDistanceKm))
                 }
                 .font(.caption)
-                .foregroundStyle(.white.opacity(0.85))
+                .foregroundStyle(Theme.Colors.secondaryLabel)
 
                 if let fitness = fitnessStatus {
                     Label(fitness, systemImage: "heart.fill")
                         .font(.caption.bold())
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Theme.Colors.label)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(.white.opacity(0.2))
+                        .background(Theme.Colors.secondaryLabel.opacity(0.12))
                         .clipShape(Capsule())
                 }
             }
         }
         .padding(Theme.Spacing.lg)
-        .background(
-            ZStack {
-                gradientBackground
-                // Thin glass overlay to soften gradient and connect to card family
-                RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                    .fill(.ultraThinMaterial.opacity(0.15))
-            }
-        )
+        .background(heroBackground)
         .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.lg))
         .overlay(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
+                .stroke(Theme.Colors.secondaryLabel.opacity(0.12), lineWidth: 0.5)
         )
-        .shadow(color: Theme.Colors.shadow, radius: 6, y: 3)
+        .shadow(color: Theme.Colors.shadow, radius: 4, y: 2)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityDescription)
     }
@@ -99,15 +92,15 @@ struct DashboardHeroCard: View {
     private var progressRing: some View {
         ZStack {
             Circle()
-                .stroke(.white.opacity(0.2), lineWidth: 5)
+                .stroke(Theme.Colors.secondaryLabel.opacity(0.15), lineWidth: 5)
             Circle()
                 .trim(from: 0, to: progressFraction)
                 .stroke(
-                    .white,
+                    phaseAccentColor,
                     style: StrokeStyle(lineWidth: 5, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
-                .shadow(color: .white.opacity(0.5), radius: 4)
+                .shadow(color: phaseAccentColor.opacity(0.4), radius: 3)
             VStack(spacing: 0) {
                 Text("\(weeklyProgress.completed)")
                     .font(.system(size: 16, weight: .bold, design: .rounded))
@@ -115,7 +108,7 @@ struct DashboardHeroCard: View {
                     .font(.system(size: 10, weight: .medium, design: .rounded))
                     .opacity(0.8)
             }
-            .foregroundStyle(.white)
+            .foregroundStyle(Theme.Colors.label)
         }
         .frame(width: 56, height: 56)
     }
@@ -125,14 +118,18 @@ struct DashboardHeroCard: View {
         return Double(weeklyProgress.completed) / Double(weeklyProgress.total)
     }
 
-    private var gradientBackground: some View {
-        Group {
-            if let phase = currentPhase {
-                Theme.Gradients.phaseGradient(phase)
-            } else {
-                LinearGradient(colors: [.blue, .purple], startPoint: .topLeading, endPoint: .bottomTrailing)
-            }
-        }
+    private var phaseAccentColor: Color {
+        currentPhase?.color ?? Theme.Colors.accentColor
+    }
+
+    @ViewBuilder
+    private var heroBackground: some View {
+        RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+            .fill(.ultraThinMaterial)
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                    .fill(phaseAccentColor.opacity(0.10))
+            )
     }
 
     private var accessibilityDescription: String {

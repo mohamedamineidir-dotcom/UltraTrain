@@ -229,6 +229,7 @@
 		224315A651149B7C8B44BC6C /* GearListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28967746EDF2C4D6D4A70626 /* GearListViewModelTests.swift */; };
 		22588307059742A94C32FFC6 /* RecoveryRecommendationEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA756F826EF20F4A1DAC492 /* RecoveryRecommendationEngineTests.swift */; };
 		225AE8B13BEC57F7FA0F75A9 /* ExportServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CEBCF824174D5A90392AD29 /* ExportServiceTests.swift */; };
+		2289BDF64EE6EEC616834A75 /* PlanGenerationLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5DEBDF1312D3C3991378D29 /* PlanGenerationLoadingView.swift */; };
 		22F1E79C01F2F9A801056F56 /* MonthlyVolumeCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D165E77AF05EFE2A6911E3E5 /* MonthlyVolumeCalculatorTests.swift */; };
 		2314E673A56608C385279980 /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5714F4AB49B9F343C1CA34 /* WeatherService.swift */; };
 		23242C5E85A230F76A876284 /* IntervalWorkoutPreviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5C36F35A233DA92CC4573C /* IntervalWorkoutPreviewViewModel.swift */; };
@@ -1647,6 +1648,7 @@
 		FDA94CDEAF38DC09E39278B7 /* UnlockedAchievementSwiftDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFD8D0E5E160C518C4407CF /* UnlockedAchievementSwiftDataModel.swift */; };
 		FDB2C27E5EF4C69D7EFE2343 /* IntervalBuilderViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13855EF35391314AE71DA2E /* IntervalBuilderViewModelTests.swift */; };
 		FDC481BB97CF1CA46067B270 /* FitnessEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F01BE590A4D024CEB747A04 /* FitnessEndpoints.swift */; };
+		FE0CC8BCE2B19512742C61BA /* PhaseFocus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28D609FFC91D0A83273CD1D6 /* PhaseFocus.swift */; };
 		FE174E47D563E309B2B64609 /* RunImportUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2862D903FC759C44AC2FCCD7 /* RunImportUseCase.swift */; };
 		FE294BC735D2F8EE2D68F06D /* NutritionAnalysisCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11B204D27092A7FC5A367D4 /* NutritionAnalysisCalculatorTests.swift */; };
 		FE4B8A3120150F1A7A371F88 /* PacingAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ED9C55EF4079BA12A8E8780 /* PacingAlert.swift */; };
@@ -2007,6 +2009,7 @@
 		28B64E4D97A7A6F1D816DFB5 /* SessionRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionRowView.swift; sourceTree = "<group>"; };
 		28D1D56DA6D089B84CD7CF73 /* ActivityFeedViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityFeedViewModelTests.swift; sourceTree = "<group>"; };
 		28D55BCD1613D90A49EE0349 /* TrainingPhilosophy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingPhilosophy.swift; sourceTree = "<group>"; };
+		28D609FFC91D0A83273CD1D6 /* PhaseFocus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhaseFocus.swift; sourceTree = "<group>"; };
 		290ED427C49E18FB8A2C967C /* NutritionQuickTapBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionQuickTapBar.swift; sourceTree = "<group>"; };
 		29156E0F659F92DE9A856A14 /* CrossTrainingLogViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossTrainingLogViewModelTests.swift; sourceTree = "<group>"; };
 		293E293A1E89402C3E1429E3 /* EditGearSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditGearSheet.swift; sourceTree = "<group>"; };
@@ -3196,6 +3199,7 @@
 		E5A2685E2195565D9B15B794 /* notification_weeklySummary.caf */ = {isa = PBXFileReference; path = notification_weeklySummary.caf; sourceTree = "<group>"; };
 		E5DC53A9D00DA577A9D5AD8C /* ACRTrendChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRTrendChartView.swift; sourceTree = "<group>"; };
 		E5DD312C6ED04E60140321DB /* FitnessSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitnessSyncService.swift; sourceTree = "<group>"; };
+		E5DEBDF1312D3C3991378D29 /* PlanGenerationLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanGenerationLoadingView.swift; sourceTree = "<group>"; };
 		E5E88E109F2DF0BCF86C3578 /* MockGroupChallengeRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockGroupChallengeRepository.swift; sourceTree = "<group>"; };
 		E63B858BE3E1124BC8B93F1E /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		E65FEF8065A3AE14EF249395 /* SharedRunDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedRunDTO.swift; sourceTree = "<group>"; };
@@ -4607,6 +4611,7 @@
 				DBADAAA7D1629853C7C1864A /* PersonalRecord.swift */,
 				A3414E805342CEF1D4B160F6 /* PersonalRecordType.swift */,
 				3F17E7145CA6798ED7CFB4C4 /* PhaseBlock.swift */,
+				28D609FFC91D0A83273CD1D6 /* PhaseFocus.swift */,
 				9DB74EDF3EE3C28F6703B074 /* PlanAdjustmentRecommendation.swift */,
 				EB39932026E64822D86A2B2D /* PlanAdjustmentType.swift */,
 				9049F1832F9C4E41031CD4ED /* PlanComparison.swift */,
@@ -5241,6 +5246,7 @@
 			children = (
 				CA6D8FFA706B45DCDA641A77 /* PhaseHeaderCard.swift */,
 				3F63AB0E4AEB7A801C28E400 /* PlanAdjustmentBanner.swift */,
+				E5DEBDF1312D3C3991378D29 /* PlanGenerationLoadingView.swift */,
 				8F3AC92AE2811E75225B5AA0 /* PlanVolumeChartData.swift */,
 				6596C8AD8C0207E60A615898 /* PlanVolumeChartsSection.swift */,
 				EBC5E34C8F9836B51E12EAA9 /* SessionZoneTargetBadge.swift */,
@@ -7150,6 +7156,7 @@
 				979C70E02C6ECED96E943D18 /* PhaseBadge.swift in Sources */,
 				E7AB425C00AD2C55A278C95D /* PhaseBlock.swift in Sources */,
 				792CBFC9498982B1E0363C9D /* PhaseDistributor.swift in Sources */,
+				FE0CC8BCE2B19512742C61BA /* PhaseFocus.swift in Sources */,
 				9FE0AC981E6C0581A7EE514B /* PhaseHeaderCard.swift in Sources */,
 				90CF7C2DD651E824D5D8D1FD /* PhaseTimelineView.swift in Sources */,
 				9B7BF2FFF5DB1C38DEFD92DF /* PhaseVisualizationCalculator.swift in Sources */,
@@ -7162,6 +7169,7 @@
 				D9741A6647F8BA60EBDF73D5 /* PlanAutoAdjustmentService.swift in Sources */,
 				49A080DE6ECA9339F6EC51B3 /* PlanComparison.swift in Sources */,
 				C7BFD1B8D8BC5FCAFD03964E /* PlanComparisonCard.swift in Sources */,
+				2289BDF64EE6EEC616834A75 /* PlanGenerationLoadingView.swift in Sources */,
 				EB51E1D3A73A3DED05C9D501 /* PlanProgressPreserver.swift in Sources */,
 				C6C1D78D511BACEBB77C8E79 /* PlanVolumeChartData.swift in Sources */,
 				EDCC2938BD317C23CF376872 /* PlanVolumeChartsSection.swift in Sources */,

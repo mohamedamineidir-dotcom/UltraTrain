@@ -74,7 +74,7 @@ struct WeekCardView: View {
             // Left phase accent border
             RoundedRectangle(cornerRadius: 2)
                 .fill(phaseAccentColor)
-                .frame(width: 4)
+                .frame(width: 5)
 
             VStack(alignment: .leading, spacing: 0) {
                 headerButton
@@ -195,6 +195,7 @@ extension WeekCardView {
                             endPoint: .trailing
                         )
                     )
+                    .shadow(color: phaseAccentColor.opacity(0.3), radius: 2, y: 0)
                     .frame(width: geo.size.width * fraction)
             }
         }

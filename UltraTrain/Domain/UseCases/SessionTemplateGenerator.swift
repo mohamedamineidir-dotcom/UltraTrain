@@ -24,19 +24,21 @@ enum SessionTemplateGenerator {
         verticalGainEnvironment: VerticalGainEnvironment = .mountain,
         expectedRaceDuration: TimeInterval = 0
     ) -> (sessions: [TrainingSession], workouts: [IntervalWorkout]) {
+        let runsPerWeek = preferredRunsPerWeek ?? 5
         let templates: [SessionTemplate]
         var workouts: [IntervalWorkout] = []
 
         if let override = raceOverride {
             templates = overrideTemplates(for: override.behavior, volume: volume)
         } else if skeleton.isRecoveryWeek {
-            templates = recoveryTemplates(volume: volume)
+            templates = recoveryTemplates(volume: volume, preferredRunsPerWeek: runsPerWeek)
         } else {
             templates = phaseTemplates(
                 for: skeleton.phase,
                 volume: volume,
                 experience: experience,
-                weekNumberInPhase: weekNumberInPhase
+                weekNumberInPhase: weekNumberInPhase,
+                preferredRunsPerWeek: runsPerWeek
             )
         }
 
@@ -44,18 +46,21 @@ enum SessionTemplateGenerator {
             let duration = template.durationSeconds
             let elevation = volume.targetElevationGainM * template.elevationFraction
 
-            // Generate workout for quality sessions
+            // Generate workout for active sessions
             var workoutId: UUID?
             var sessionDescription = template.description
             let shouldGenerateWorkout = template.type != .rest
             if shouldGenerateWorkout {
+                let isB2BDay1 = volume.isB2BWeek && template.type == .longRun
                 let workout = WorkoutProgressionEngine.workout(
                     type: template.type,
                     phase: skeleton.phase,
                     weekInPhase: weekNumberInPhase,
                     intensity: template.intensity,
                     totalDuration: duration,
-                    expectedRaceDuration: expectedRaceDuration
+                    expectedRaceDuration: expectedRaceDuration,
+                    isB2BDay1: isB2BDay1,
+                    phaseFocus: skeleton.phaseFocus
                 )
                 workouts.append(workout)
                 workoutId = workout.id
@@ -126,113 +131,204 @@ enum SessionTemplateGenerator {
         for phase: TrainingPhase,
         volume: VolumeCalculator.WeekVolume,
         experience: ExperienceLevel,
-        weekNumberInPhase: Int
+        weekNumberInPhase: Int,
+        preferredRunsPerWeek: Int = 5
     ) -> [SessionTemplate] {
         switch phase {
-        case .base:
-            return standardWeekTemplates(volume: volume, experience: experience, phase: .base, weekInPhase: weekNumberInPhase)
-        case .build:
-            return standardWeekTemplates(volume: volume, experience: experience, phase: .build, weekInPhase: weekNumberInPhase)
-        case .peak:
-            return standardWeekTemplates(volume: volume, experience: experience, phase: .peak, weekInPhase: weekNumberInPhase)
+        case .base, .build, .peak:
+            return standardWeekTemplates(
+                volume: volume, experience: experience, phase: phase,
+                weekInPhase: weekNumberInPhase, preferredRunsPerWeek: preferredRunsPerWeek
+            )
         case .taper:
-            return taperTemplates(volume: volume)
+            return taperTemplates(volume: volume, preferredRunsPerWeek: preferredRunsPerWeek)
         case .recovery, .race:
-            return recoveryTemplates(volume: volume)
+            return recoveryTemplates(volume: volume, preferredRunsPerWeek: preferredRunsPerWeek)
         }
     }
 
-    // MARK: - Standard Week (2 easy + 1 VG + 1 interval + 1 longRun OR B2B variant)
+    // MARK: - Standard Week (dynamic session count)
 
     private static func standardWeekTemplates(
         volume: VolumeCalculator.WeekVolume,
         experience: ExperienceLevel,
         phase: TrainingPhase,
-        weekInPhase: Int = 0
+        weekInPhase: Int = 0,
+        preferredRunsPerWeek: Int = 5
     ) -> [SessionTemplate] {
         let base = volume.baseSessionDurations
         let vgIntensity: Intensity = (experience == .advanced || experience == .elite) ? .hard : .moderate
+        let intervalIntensity: Intensity = phase == .base ? .moderate : .hard
 
         if volume.isB2BWeek {
-            return [
-                tpl(0, .rest, .easy, 0, 0,
-                    SessionDescriptionGenerator.rest(isRecoveryWeek: false)),
-                tpl(1, .recovery, .easy, base.easyRun1Seconds, 0.05,
-                    SessionDescriptionGenerator.easyRun(isRecoveryWeek: false)),
-                tpl(2, .verticalGain, vgIntensity, base.vgSeconds, 0.30,
-                    SessionDescriptionGenerator.verticalGain(phase: phase, isRecoveryWeek: false)),
-                tpl(3, .recovery, .easy, base.easyRun2Seconds, 0.05,
-                    SessionDescriptionGenerator.easyRun(isRecoveryWeek: false, isPreLongRun: true)),
-                tpl(4, .rest, .easy, 0, 0,
-                    SessionDescriptionGenerator.rest(isRecoveryWeek: false)),
-                tpl(5, .longRun, .easy, volume.b2bDay1Seconds, 0.25,
-                    SessionDescriptionGenerator.b2bDay1(phase: phase)),
-                tpl(6, .backToBack, .easy, volume.b2bDay2Seconds, 0.30,
-                    SessionDescriptionGenerator.b2bDay2(phase: phase)),
-            ]
+            return b2bWeekTemplates(
+                volume: volume, base: base, vgIntensity: vgIntensity,
+                phase: phase, weekInPhase: weekInPhase,
+                preferredRunsPerWeek: preferredRunsPerWeek
+            )
         }
 
-        let intervalIntensity: Intensity = phase == .base ? .moderate : .hard
-        return [
-            tpl(0, .rest, .easy, 0, 0,
-                SessionDescriptionGenerator.rest(isRecoveryWeek: false)),
-            tpl(1, .recovery, .easy, base.easyRun1Seconds, 0.05,
-                SessionDescriptionGenerator.easyRun(isRecoveryWeek: false)),
-            tpl(2, .intervals, intervalIntensity, base.intervalSeconds, 0.10,
-                SessionDescriptionGenerator.intervals(phase: phase, isRecoveryWeek: false, weekInPhase: weekInPhase)),
-            tpl(3, .verticalGain, vgIntensity, base.vgSeconds, 0.25,
-                SessionDescriptionGenerator.verticalGain(phase: phase, isRecoveryWeek: false)),
-            tpl(4, .rest, .easy, 0, 0,
-                SessionDescriptionGenerator.rest(isRecoveryWeek: false)),
-            tpl(5, .recovery, .easy, base.easyRun2Seconds, 0.05,
-                SessionDescriptionGenerator.easyRun(isRecoveryWeek: false, isPreLongRun: true)),
-            tpl(6, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.20,
-                SessionDescriptionGenerator.longRun(phase: phase, isRecoveryWeek: false)),
+        // Build pool of active sessions in priority order
+        // Priority: longRun > intervals > VG > easy1 > easy2 > tempo > crossTraining
+        var pool: [(day: Int, template: SessionTemplate)] = [
+            (6, tpl(6, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.20,
+                    SessionDescriptionGenerator.longRun(phase: phase, isRecoveryWeek: false))),
+            (2, tpl(2, .intervals, intervalIntensity, base.intervalSeconds, 0.10,
+                    SessionDescriptionGenerator.intervals(phase: phase, isRecoveryWeek: false, weekInPhase: weekInPhase))),
+            (3, tpl(3, .verticalGain, vgIntensity, base.vgSeconds, 0.25,
+                    SessionDescriptionGenerator.verticalGain(phase: phase, isRecoveryWeek: false))),
+            (1, tpl(1, .recovery, .easy, base.easyRun1Seconds, 0.05,
+                    SessionDescriptionGenerator.easyRun(isRecoveryWeek: false))),
+            (5, tpl(5, .recovery, .easy, base.easyRun2Seconds, 0.05,
+                    SessionDescriptionGenerator.easyRun(isRecoveryWeek: false, isPreLongRun: true))),
+            (4, tpl(4, .tempo, .moderate, base.intervalSeconds, 0.08,
+                    SessionDescriptionGenerator.tempo(phase: phase))),
+            (0, tpl(0, .crossTraining, .easy, base.easyRun1Seconds, 0.02,
+                    SessionDescriptionGenerator.crossTraining())),
         ]
+
+        // Take only the number of active sessions the user wants
+        let activeCount = min(preferredRunsPerWeek, pool.count)
+        let activeSlots = pool.prefix(activeCount)
+        let activeDays = Set(activeSlots.map(\.day))
+
+        // Build full 7-day week: active sessions + rest days
+        var templates: [SessionTemplate] = []
+        for day in 0...6 {
+            if let slot = activeSlots.first(where: { $0.day == day }) {
+                templates.append(slot.template)
+            } else {
+                templates.append(tpl(day, .rest, .easy, 0, 0,
+                    SessionDescriptionGenerator.rest(isRecoveryWeek: false)))
+            }
+        }
+        return templates
     }
 
-    // MARK: - Taper
+    // MARK: - B2B Week (dynamic session count)
 
-    private static func taperTemplates(volume: VolumeCalculator.WeekVolume) -> [SessionTemplate] {
-        let base = volume.baseSessionDurations
-        return [
-            tpl(0, .rest, .easy, 0, 0,
-                SessionDescriptionGenerator.rest(isRecoveryWeek: false)),
-            tpl(1, .intervals, .moderate, base.intervalSeconds, 0.10,
-                SessionDescriptionGenerator.intervals(phase: .taper, isRecoveryWeek: false)),
-            tpl(2, .rest, .easy, 0, 0,
-                SessionDescriptionGenerator.rest(isRecoveryWeek: false)),
-            tpl(3, .recovery, .easy, base.easyRun1Seconds, 0.05,
-                SessionDescriptionGenerator.easyRun(isRecoveryWeek: false)),
-            tpl(4, .rest, .easy, 0, 0,
-                SessionDescriptionGenerator.rest(isRecoveryWeek: false, isPreRace: true)),
-            tpl(5, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.15,
-                SessionDescriptionGenerator.longRun(phase: .taper, isRecoveryWeek: false)),
-            tpl(6, .rest, .easy, 0, 0,
-                SessionDescriptionGenerator.rest(isRecoveryWeek: false)),
+    private static func b2bWeekTemplates(
+        volume: VolumeCalculator.WeekVolume,
+        base: VolumeCalculator.BaseSessionDurations,
+        vgIntensity: Intensity,
+        phase: TrainingPhase,
+        weekInPhase: Int,
+        preferredRunsPerWeek: Int
+    ) -> [SessionTemplate] {
+        // B2B days are always included (day 5 + day 6)
+        let pool: [(day: Int, template: SessionTemplate)] = [
+            (5, tpl(5, .longRun, .easy, volume.b2bDay1Seconds, 0.25,
+                    SessionDescriptionGenerator.b2bDay1(phase: phase))),
+            (6, tpl(6, .backToBack, .easy, volume.b2bDay2Seconds, 0.30,
+                    SessionDescriptionGenerator.b2bDay2(phase: phase))),
+            (2, tpl(2, .verticalGain, vgIntensity, base.vgSeconds, 0.30,
+                    SessionDescriptionGenerator.verticalGain(phase: phase, isRecoveryWeek: false))),
+            (1, tpl(1, .recovery, .easy, base.easyRun1Seconds, 0.05,
+                    SessionDescriptionGenerator.easyRun(isRecoveryWeek: false))),
+            (3, tpl(3, .recovery, .easy, base.easyRun2Seconds, 0.05,
+                    SessionDescriptionGenerator.easyRun(isRecoveryWeek: false, isPreLongRun: true))),
+            (4, tpl(4, .intervals, .moderate, base.intervalSeconds, 0.05,
+                    SessionDescriptionGenerator.intervals(phase: phase, isRecoveryWeek: false, weekInPhase: weekInPhase))),
+            (0, tpl(0, .recovery, .easy, base.easyRun1Seconds, 0.02,
+                    SessionDescriptionGenerator.easyRun(isRecoveryWeek: false))),
         ]
+
+        let activeCount = min(preferredRunsPerWeek, pool.count)
+        let activeSlots = pool.prefix(activeCount)
+
+        var templates: [SessionTemplate] = []
+        for day in 0...6 {
+            if let slot = activeSlots.first(where: { $0.day == day }) {
+                templates.append(slot.template)
+            } else {
+                templates.append(tpl(day, .rest, .easy, 0, 0,
+                    SessionDescriptionGenerator.rest(isRecoveryWeek: false)))
+            }
+        }
+        return templates
     }
 
-    // MARK: - Recovery
+    // MARK: - Taper (dynamic session count)
 
-    static func recoveryTemplates(volume: VolumeCalculator.WeekVolume) -> [SessionTemplate] {
+    private static func taperTemplates(
+        volume: VolumeCalculator.WeekVolume,
+        preferredRunsPerWeek: Int = 5
+    ) -> [SessionTemplate] {
         let base = volume.baseSessionDurations
-        return [
-            tpl(0, .rest, .easy, 0, 0,
-                SessionDescriptionGenerator.rest(isRecoveryWeek: true)),
-            tpl(1, .recovery, .easy, base.easyRun1Seconds, 0.08,
-                SessionDescriptionGenerator.easyRun(isRecoveryWeek: true)),
-            tpl(2, .rest, .easy, 0, 0,
-                SessionDescriptionGenerator.rest(isRecoveryWeek: true)),
-            tpl(3, .verticalGain, .easy, base.vgSeconds, 0.15,
-                SessionDescriptionGenerator.verticalGain(phase: .recovery, isRecoveryWeek: true)),
-            tpl(4, .rest, .easy, 0, 0,
-                SessionDescriptionGenerator.rest(isRecoveryWeek: true)),
-            tpl(5, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.15,
-                SessionDescriptionGenerator.longRun(phase: .recovery, isRecoveryWeek: true)),
-            tpl(6, .rest, .easy, 0, 0,
-                SessionDescriptionGenerator.rest(isRecoveryWeek: true)),
+
+        let pool: [(day: Int, template: SessionTemplate)] = [
+            (5, tpl(5, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.15,
+                    SessionDescriptionGenerator.longRun(phase: .taper, isRecoveryWeek: false))),
+            (1, tpl(1, .intervals, .moderate, base.intervalSeconds, 0.10,
+                    SessionDescriptionGenerator.intervals(phase: .taper, isRecoveryWeek: false))),
+            (3, tpl(3, .recovery, .easy, base.easyRun1Seconds, 0.05,
+                    SessionDescriptionGenerator.easyRun(isRecoveryWeek: false))),
+            (4, tpl(4, .recovery, .easy, base.easyRun2Seconds, 0.05,
+                    SessionDescriptionGenerator.easyRun(isRecoveryWeek: false, isPreRace: true))),
+            (2, tpl(2, .verticalGain, .easy, base.vgSeconds, 0.08,
+                    SessionDescriptionGenerator.verticalGain(phase: .taper, isRecoveryWeek: false))),
         ]
+
+        let activeCount = min(preferredRunsPerWeek, pool.count)
+        let activeSlots = pool.prefix(activeCount)
+
+        var templates: [SessionTemplate] = []
+        for day in 0...6 {
+            if let slot = activeSlots.first(where: { $0.day == day }) {
+                templates.append(slot.template)
+            } else {
+                templates.append(tpl(day, .rest, .easy, 0, 0,
+                    SessionDescriptionGenerator.rest(isRecoveryWeek: false)))
+            }
+        }
+        return templates
+    }
+
+    // MARK: - Recovery (dynamic session count)
+
+    static func recoveryTemplates(
+        volume: VolumeCalculator.WeekVolume,
+        preferredRunsPerWeek: Int = 5
+    ) -> [SessionTemplate] {
+        let base = volume.baseSessionDurations
+
+        // Recovery week count: 3-5 → same, 6 → 5, 7 → 6
+        let recoveryCount: Int
+        switch preferredRunsPerWeek {
+        case ...5:  recoveryCount = preferredRunsPerWeek
+        case 6:     recoveryCount = 5
+        default:    recoveryCount = 6
+        }
+
+        // All sessions at easy/recovery intensity
+        let pool: [(day: Int, template: SessionTemplate)] = [
+            (5, tpl(5, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.15,
+                    SessionDescriptionGenerator.longRun(phase: .recovery, isRecoveryWeek: true))),
+            (3, tpl(3, .verticalGain, .easy, base.vgSeconds, 0.15,
+                    SessionDescriptionGenerator.verticalGain(phase: .recovery, isRecoveryWeek: true))),
+            (1, tpl(1, .recovery, .easy, base.easyRun1Seconds, 0.08,
+                    SessionDescriptionGenerator.easyRun(isRecoveryWeek: true))),
+            (4, tpl(4, .recovery, .easy, base.easyRun2Seconds, 0.05,
+                    SessionDescriptionGenerator.easyRun(isRecoveryWeek: true))),
+            (2, tpl(2, .recovery, .easy, base.easyRun1Seconds, 0.05,
+                    SessionDescriptionGenerator.easyRun(isRecoveryWeek: true))),
+            (6, tpl(6, .recovery, .easy, base.easyRun2Seconds, 0.04,
+                    SessionDescriptionGenerator.easyRun(isRecoveryWeek: true))),
+        ]
+
+        let activeCount = min(recoveryCount, pool.count)
+        let activeSlots = pool.prefix(activeCount)
+
+        var templates: [SessionTemplate] = []
+        for day in 0...6 {
+            if let slot = activeSlots.first(where: { $0.day == day }) {
+                templates.append(slot.template)
+            } else {
+                templates.append(tpl(day, .rest, .easy, 0, 0,
+                    SessionDescriptionGenerator.rest(isRecoveryWeek: true)))
+            }
+        }
+        return templates
     }
 
     // MARK: - Race Override Templates

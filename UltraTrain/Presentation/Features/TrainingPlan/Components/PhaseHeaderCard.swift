@@ -6,6 +6,7 @@ struct PhaseHeaderCard: View {
     let completedWeeks: Int
     let totalWeeks: Int
     let description: String
+    var phaseFocus: PhaseFocus?
 
     var body: some View {
         HStack(spacing: 0) {
@@ -18,11 +19,15 @@ struct PhaseHeaderCard: View {
                         endPoint: .bottom
                     )
                 )
-                .frame(width: 4)
+                .frame(width: 5)
 
             VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                 HStack {
-                    Text(phase.displayName.uppercased())
+                    Image(systemName: phaseIcon)
+                        .font(.caption)
+                        .foregroundStyle(phase.color)
+
+                    Text(focusDisplayName.uppercased())
                         .font(.subheadline.bold())
                         .tracking(1.2)
                         .foregroundStyle(phase.color)
@@ -51,11 +56,32 @@ struct PhaseHeaderCard: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 10)
-                .fill(phase.color.opacity(0.06))
+                .fill(
+                    LinearGradient(
+                        colors: [phase.color.opacity(0.04), phase.color.opacity(0.08)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
         )
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(phase.displayName) phase, \(weekRange), \(completedWeeks) of \(totalWeeks) weeks completed")
+        .accessibilityLabel("\(focusDisplayName) phase, \(weekRange), \(completedWeeks) of \(totalWeeks) weeks completed")
+    }
+
+    private var focusDisplayName: String {
+        phaseFocus?.displayName ?? phase.displayName
+    }
+
+    private var phaseIcon: String {
+        switch phase {
+        case .base:     "figure.walk"
+        case .build:    "flame.fill"
+        case .peak:     "bolt.fill"
+        case .taper:    "leaf.fill"
+        case .recovery: "heart.fill"
+        case .race:     "flag.fill"
+        }
     }
 
     private var completionRing: some View {
@@ -71,20 +97,23 @@ struct PhaseHeaderCard: View {
         .frame(width: 14, height: 14)
     }
 
-    static func description(for phase: TrainingPhase) -> String {
+    static func description(for phase: TrainingPhase, focus: PhaseFocus? = nil) -> String {
+        if let focus {
+            return focus.shortDescription
+        }
         switch phase {
         case .base:
-            "Hill threshold foundation — 30-minute tempo efforts on hills"
+            return "Hill threshold foundation — 30-minute tempo efforts on hills"
         case .build:
-            "Race-specific intensity with progressive long runs and B2Bs"
+            return "VO2max intervals on steep climbs — short, intense hill repeats"
         case .peak:
-            "Race simulation and final sharpening"
+            return "Sustained threshold on rolling terrain — race-specific endurance"
         case .taper:
-            "Volume reduction, freshness for race day"
+            return "Volume reduction, freshness for race day"
         case .recovery:
-            "Active recovery and adaptation"
+            return "Active recovery and adaptation"
         case .race:
-            "Race week"
+            return "Race week"
         }
     }
 }

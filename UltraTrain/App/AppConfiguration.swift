@@ -75,6 +75,8 @@ enum AppConfiguration {
         static let b2bDay1Split: Double = 0.43
         static let b2bDay2Split: Double = 0.57
         static let b2bSupportingSessionScale: Double = 0.70
+        static let b2bIntroductionSessionScale: Double = 0.60
+        static let b2bIntroductionWeekCount: Int = 2
 
         // Base session durations (minutes)
         static let easyRunStartMinutes: Double = 45

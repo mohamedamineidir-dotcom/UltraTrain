@@ -38,6 +38,8 @@ enum TrainingPlanSwiftDataMapper {
 
         guard sessions.count == model.sessions.count else { return nil }
 
+        let phaseFocus: PhaseFocus? = model.phaseFocusRaw.flatMap { PhaseFocus(rawValue: $0) }
+
         return TrainingWeek(
             id: model.id,
             weekNumber: model.weekNumber,
@@ -48,7 +50,8 @@ enum TrainingPlanSwiftDataMapper {
             isRecoveryWeek: model.isRecoveryWeek,
             targetVolumeKm: model.targetVolumeKm,
             targetElevationGainM: model.targetElevationGainM,
-            targetDurationSeconds: model.targetDurationSeconds
+            targetDurationSeconds: model.targetDurationSeconds,
+            phaseFocus: phaseFocus
         )
     }
 
@@ -104,7 +107,8 @@ enum TrainingPlanSwiftDataMapper {
             isRecoveryWeek: week.isRecoveryWeek,
             targetVolumeKm: week.targetVolumeKm,
             targetElevationGainM: week.targetElevationGainM,
-            targetDurationSeconds: week.targetDurationSeconds
+            targetDurationSeconds: week.targetDurationSeconds,
+            phaseFocusRaw: week.phaseFocus?.rawValue
         )
     }
 

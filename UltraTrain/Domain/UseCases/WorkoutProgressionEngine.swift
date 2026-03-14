@@ -10,7 +10,9 @@ enum WorkoutProgressionEngine {
         weekInPhase: Int,
         intensity: Intensity,
         totalDuration: TimeInterval,
-        expectedRaceDuration: TimeInterval = 0
+        expectedRaceDuration: TimeInterval = 0,
+        isB2BDay1: Bool = false,
+        phaseFocus: PhaseFocus? = nil
     ) -> IntervalWorkout {
         let phases: [IntervalPhase]
         let name: String
@@ -18,7 +20,7 @@ enum WorkoutProgressionEngine {
 
         switch type {
         case .intervals:
-            let template = intervalTemplate(phase: phase, weekInPhase: weekInPhase, intensity: intensity)
+            let template = intervalTemplate(phase: phase, weekInPhase: weekInPhase, intensity: intensity, phaseFocus: phaseFocus)
             phases = template.phases
             name = template.name
             description = template.description
@@ -32,18 +34,39 @@ enum WorkoutProgressionEngine {
             phases = template.phases
             name = template.name
             description = template.description
+        case .longRun where isB2BDay1:
+            let template = b2bDay1Template(totalDuration: totalDuration)
+            phases = template.phases
+            name = template.name
+            description = template.description
         case .longRun where phase == .peak && totalDuration >= 2 * 3600:
             let template = longRunPeakTemplate(totalDuration: totalDuration, expectedRaceDuration: expectedRaceDuration)
             phases = template.phases
             name = template.name
             description = template.description
-        default:
+        case .longRun:
+            let template = longRunTemplate(totalDuration: totalDuration)
+            phases = template.phases
+            name = template.name
+            description = template.description
+        case .backToBack:
+            let template = b2bDay2Template(totalDuration: totalDuration)
+            phases = template.phases
+            name = template.name
+            description = template.description
+        case .recovery:
+            let template = recoveryRunTemplate(totalDuration: totalDuration)
+            phases = template.phases
+            name = template.name
+            description = template.description
+        case .crossTraining, .rest:
             return makeGenericWorkout(type: type, duration: totalDuration, intensity: intensity)
         }
 
         let totalDur = phases.reduce(0.0) { $0 + $1.totalDuration }
         let category: WorkoutCategory = type == .verticalGain ? .hillTraining
-            : type == .longRun ? .trailSpecific
+            : type == .longRun || type == .backToBack ? .trailSpecific
+            : type == .recovery ? .recovery
             : .speedWork
 
         return IntervalWorkout(
@@ -58,6 +81,109 @@ enum WorkoutProgressionEngine {
         )
     }
 
+    // MARK: - Recovery Run Template
+
+    private static func recoveryRunTemplate(totalDuration: TimeInterval) -> WorkoutTemplate {
+        let warmUpDuration: TimeInterval = min(600, totalDuration * 0.25)  // 10min or 25%
+        let coolDownDuration: TimeInterval = min(300, totalDuration * 0.15) // 5min or 15%
+        let mainDuration = max(totalDuration - warmUpDuration - coolDownDuration, 300)
+
+        let warmUp = phase(.warmUp, duration: warmUpDuration, intensity: .easy, reps: 1,
+                           notes: "Easy jog to warm up")
+        let main = phase(.work, duration: mainDuration, intensity: .easy, reps: 1,
+                         notes: "Easy conversational pace. Focus on blood flow, not fitness.")
+        let coolDown = phase(.coolDown, duration: coolDownDuration, intensity: .easy, reps: 1,
+                             notes: "Walk/jog and stretching")
+
+        let mainMin = Int(mainDuration) / 60
+        return WorkoutTemplate(
+            name: "Recovery run",
+            description: "Recovery: warmup → \(mainMin)min easy → cooldown",
+            phases: [warmUp, main, coolDown]
+        )
+    }
+
+    // MARK: - Long Run Template (non-peak)
+
+    private static func longRunTemplate(totalDuration: TimeInterval) -> WorkoutTemplate {
+        let warmUpDuration: TimeInterval = min(900, totalDuration * 0.15)  // 15min or 15%
+        let coolDownDuration: TimeInterval = min(600, totalDuration * 0.10) // 10min or 10%
+        let mainDuration = max(totalDuration - warmUpDuration - coolDownDuration, 600)
+
+        let warmUp = phase(.warmUp, duration: warmUpDuration, intensity: .easy, reps: 1,
+                           notes: "Progressive warmup — start walking, build to easy jog")
+
+        // Split main effort into nutrition segments (~45min each)
+        let segmentLength: TimeInterval = 2700 // 45min
+        let segmentCount = max(Int(mainDuration / segmentLength), 1)
+        let actualSegment = mainDuration / Double(segmentCount)
+
+        let main = phase(.work, duration: actualSegment, intensity: .easy, reps: segmentCount,
+                         notes: segmentCount > 1
+                             ? "Easy pace. Eat/drink at each segment break."
+                             : "Easy pace throughout.")
+
+        let coolDown = phase(.coolDown, duration: coolDownDuration, intensity: .easy, reps: 1,
+                             notes: "Walk to cool down. Stretch. Refuel within 30min.")
+
+        let totalMin = Int(totalDuration) / 60
+        return WorkoutTemplate(
+            name: "Long run",
+            description: "Long run \(totalMin)min: warmup → \(segmentCount)×\(Int(actualSegment)/60)min → cooldown",
+            phases: [warmUp, main, coolDown]
+        )
+    }
+
+    // MARK: - B2B Day 1 Template
+
+    private static func b2bDay1Template(totalDuration: TimeInterval) -> WorkoutTemplate {
+        let warmUpDuration: TimeInterval = min(900, totalDuration * 0.12)
+        let coolDownDuration: TimeInterval = min(600, totalDuration * 0.08)
+        let remaining = max(totalDuration - warmUpDuration - coolDownDuration, 1200)
+        let negativeSplitDuration = remaining / 3
+        let steadyDuration = remaining - negativeSplitDuration
+
+        let warmUp = phase(.warmUp, duration: warmUpDuration, intensity: .easy, reps: 1,
+                           notes: "Progressive warmup")
+        let steady = phase(.work, duration: steadyDuration, intensity: .easy, reps: 1,
+                           notes: "Steady effort at easy pace. Fuel consistently.")
+        let negativeSplit = phase(.work, duration: negativeSplitDuration, intensity: .moderate, reps: 1,
+                                  notes: "Negative split — build effort in the last third")
+        let coolDown = phase(.coolDown, duration: coolDownDuration, intensity: .easy, reps: 1,
+                             notes: "Cool down. Refuel well — tomorrow runs on today's fatigue.")
+
+        return WorkoutTemplate(
+            name: "B2B Day 1",
+            description: "B2B Day 1: warmup → steady → negative split last third → cooldown",
+            phases: [warmUp, steady, negativeSplit, coolDown]
+        )
+    }
+
+    // MARK: - B2B Day 2 Template
+
+    private static func b2bDay2Template(totalDuration: TimeInterval) -> WorkoutTemplate {
+        let warmUpDuration: TimeInterval = min(1200, totalDuration * 0.15) // 20min extra-long
+        let coolDownDuration: TimeInterval = min(600, totalDuration * 0.08)
+        let remaining = max(totalDuration - warmUpDuration - coolDownDuration, 1200)
+        let pushDuration = remaining * 0.20
+        let mainDuration = remaining - pushDuration
+
+        let warmUp = phase(.warmUp, duration: warmUpDuration, intensity: .easy, reps: 1,
+                           notes: "Extra-long warmup on tired legs. Walk → jog → easy run.")
+        let main = phase(.work, duration: mainDuration, intensity: .easy, reps: 1,
+                         notes: "Steady fatigued effort at easy pace. Embrace the discomfort.")
+        let push = phase(.work, duration: pushDuration, intensity: .moderate, reps: 1,
+                         notes: "Push section — build to race effort in the last 20%")
+        let coolDown = phase(.coolDown, duration: coolDownDuration, intensity: .easy, reps: 1,
+                             notes: "Walk to cool down. Refuel immediately.")
+
+        return WorkoutTemplate(
+            name: "B2B Day 2",
+            description: "B2B Day 2: warmup → fatigued effort → push last 20% → cooldown",
+            phases: [warmUp, main, push, coolDown]
+        )
+    }
+
     // MARK: - Interval Templates
 
     private struct WorkoutTemplate {
@@ -66,14 +192,22 @@ enum WorkoutProgressionEngine {
         let phases: [IntervalPhase]
     }
 
-    private static func intervalTemplate(phase trainingPhase: TrainingPhase, weekInPhase: Int, intensity: Intensity) -> WorkoutTemplate {
+    private static func intervalTemplate(
+        phase trainingPhase: TrainingPhase,
+        weekInPhase: Int,
+        intensity: Intensity,
+        phaseFocus: PhaseFocus? = nil
+    ) -> WorkoutTemplate {
         let warmUp = phase(.warmUp, duration: 900, intensity: .easy, reps: 1, notes: "Easy jog, progressive pace")
         let coolDown = phase(.coolDown, duration: 600, intensity: .easy, reps: 1, notes: "Easy jog, stretching")
 
         let workPhases: (reps: Int, workSec: Double, restSec: Double, desc: String)
 
-        switch trainingPhase {
-        case .base:
+        // Dispatch on PhaseFocus if available, otherwise fallback to TrainingPhase
+        let effectiveFocus = phaseFocus ?? trainingPhase.defaultFocus
+
+        switch effectiveFocus {
+        case .threshold30:
             // Progressive threshold intervals — moderate intensity, building volume
             let variants: [(Int, Double, Double, String)] = [
                 (4, 180, 120, "4×3min at threshold (Z3) / 2min jog"),
@@ -85,7 +219,7 @@ enum WorkoutProgressionEngine {
             ]
             workPhases = variants[min(weekInPhase, variants.count - 1)]
 
-        case .build:
+        case .vo2max:
             // VO2max intervals — hard intensity, progressive
             let variants: [(Int, Double, Double, String)] = [
                 (6, 180, 120, "6×3min at VO2max (Z4) / 2min jog"),
@@ -97,21 +231,22 @@ enum WorkoutProgressionEngine {
             ]
             workPhases = variants[weekInPhase % variants.count]
 
-        case .peak:
-            // Short sharp intervals — high intensity, race-specific
+        case .threshold60:
+            // Sustained threshold — long blocks at race effort
             let variants: [(Int, Double, Double, String)] = [
-                (10, 60, 60,  "10×1min at VO2max (Z4-5) / 1min jog"),
-                (8, 90, 60,   "8×90s at VO2max (Z4-5) / 1min jog"),
-                (12, 45, 75,  "12×45s max effort (Z5) / 1min15 jog"),
-                (6, 120, 60,  "6×2min at VO2max (Z4) / 1min jog"),
-                (10, 60, 45,  "10×1min at VO2max (Z4-5) / 45s jog"),
+                (2, 900, 300,  "2×15min at threshold (Z3-4) / 5min jog"),
+                (2, 1200, 300, "2×20min at threshold (Z3-4) / 5min jog"),
+                (3, 900, 240,  "3×15min at threshold (Z3-4) / 4min jog"),
+                (2, 1500, 300, "2×25min at threshold (Z3-4) / 5min jog"),
+                (3, 1200, 300, "3×20min at threshold (Z3-4) / 5min jog"),
+                (2, 1800, 300, "2×30min at threshold (Z3-4) / 5min jog"),
             ]
             workPhases = variants[weekInPhase % variants.count]
 
-        case .taper:
+        case .sharpening:
             workPhases = (4, 120, 120, "4×2min at threshold (Z3) / 2min jog")
 
-        default:
+        case .postRaceRecovery:
             workPhases = (5, 180, 120, "5×3min at threshold (Z3) / 2min jog")
         }
 
@@ -119,7 +254,7 @@ enum WorkoutProgressionEngine {
         let recovery = self.phase(.recovery, duration: workPhases.restSec, intensity: .easy, reps: workPhases.reps, notes: nil)
 
         return WorkoutTemplate(
-            name: "VO2max intervals",
+            name: "Interval session",
             description: workPhases.desc,
             phases: [warmUp, work, recovery, coolDown]
         )
@@ -135,7 +270,6 @@ enum WorkoutProgressionEngine {
 
         switch trainingPhase {
         case .base:
-            // Aerobic climbing at threshold — progressive reps and duration
             switch weekInPhase {
             case 0...1:
                 workPhases = (3, 480, 300, "3×8min climb at threshold (Z3) / 5min jog down", "Aerobic climbing")
@@ -148,7 +282,6 @@ enum WorkoutProgressionEngine {
             }
 
         case .build:
-            // VO2max climbing — increasing grade and intensity
             switch weekInPhase {
             case 0...1:
                 workPhases = (4, 240, 180, "4×4min climb at VO2max (Z4) / 3min jog down", "Hill repeats")
@@ -161,7 +294,6 @@ enum WorkoutProgressionEngine {
             }
 
         case .peak:
-            // Short explosive efforts — steep grade, race-specific
             switch weekInPhase {
             case 0...1:
                 workPhases = (6, 180, 120, "6×3min climb at VO2max (Z4) / 2min jog down", "Power climbing")
@@ -251,8 +383,6 @@ enum WorkoutProgressionEngine {
 
     // MARK: - Long Run Peak Template
 
-    /// Structured long run for peak phase with race-pace blocks.
-    /// Work duration is capped at 40% of expected race duration to keep it realistic.
     private static func longRunPeakTemplate(totalDuration: TimeInterval, expectedRaceDuration: TimeInterval) -> WorkoutTemplate {
         let warmUp = phase(.warmUp, duration: 1800, intensity: .easy, reps: 1, notes: "Easy pace, settle in")
         let coolDown = phase(.coolDown, duration: 1200, intensity: .easy, reps: 1, notes: "Easy pace to finish")
@@ -262,11 +392,10 @@ enum WorkoutProgressionEngine {
         let blockCount = 2
         let totalRecovery = recoveryBetween * Double(blockCount - 1)
 
-        // Cap total race-pace work at 40% of expected race duration
         let rawWorkPerBlock = (availableTime - totalRecovery) / Double(blockCount)
         let maxRacePaceTotal = expectedRaceDuration > 0 ? expectedRaceDuration * 0.40 : .infinity
         let cappedWork = min(rawWorkPerBlock, maxRacePaceTotal / Double(blockCount))
-        let workPerBlock = max(900, cappedWork) // min 15min per block
+        let workPerBlock = max(900, cappedWork)
 
         let work = phase(.work, duration: workPerBlock, intensity: .moderate, reps: blockCount, notes: "Race effort — maintain steady rhythm")
         let recovery = phase(.recovery, duration: recoveryBetween, intensity: .easy, reps: 1, notes: "Easy jog, recover fully")

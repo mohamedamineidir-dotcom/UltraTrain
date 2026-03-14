@@ -8,6 +8,7 @@ enum WeekSkeletonBuilder {
         let endDate: Date
         let phase: TrainingPhase
         let isRecoveryWeek: Bool
+        let phaseFocus: PhaseFocus
     }
 
     static func build(
@@ -55,7 +56,8 @@ enum WeekSkeletonBuilder {
                     startDate: startDate,
                     endDate: endDate,
                     phase: allocation.phase,
-                    isRecoveryWeek: isRecovery
+                    isRecoveryWeek: isRecovery,
+                    phaseFocus: allocation.phaseFocus
                 ))
                 weekIndex += 1
             }

@@ -8,7 +8,7 @@ struct WeekSkeletonBuilderTests {
     // MARK: - Helpers
 
     private func makePhases(_ specs: [(TrainingPhase, Int)]) -> [PhaseDistributor.PhaseAllocation] {
-        specs.map { PhaseDistributor.PhaseAllocation(phase: $0.0, weekCount: $0.1) }
+        specs.map { PhaseDistributor.PhaseAllocation(phase: $0.0, weekCount: $0.1, phaseFocus: $0.0.defaultFocus) }
     }
 
     private var raceDate: Date {

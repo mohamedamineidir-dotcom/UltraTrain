@@ -14,6 +14,7 @@ final class TrainingWeekSwiftDataModel {
     var targetVolumeKm: Double = 0
     var targetElevationGainM: Double = 0
     var targetDurationSeconds: Double = 0
+    var phaseFocusRaw: String?
     var plan: TrainingPlanSwiftDataModel?
     var updatedAt: Date = Date()
 
@@ -28,6 +29,7 @@ final class TrainingWeekSwiftDataModel {
         targetVolumeKm: Double = 0,
         targetElevationGainM: Double = 0,
         targetDurationSeconds: Double = 0,
+        phaseFocusRaw: String? = nil,
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -40,6 +42,7 @@ final class TrainingWeekSwiftDataModel {
         self.targetVolumeKm = targetVolumeKm
         self.targetElevationGainM = targetElevationGainM
         self.targetDurationSeconds = targetDurationSeconds
+        self.phaseFocusRaw = phaseFocusRaw
         self.updatedAt = updatedAt
     }
 }

@@ -89,11 +89,37 @@ enum SessionDescriptionGenerator {
         }
     }
 
+    // MARK: - Tempo
+
+    static func tempo(phase: TrainingPhase) -> String {
+        switch phase {
+        case .base:
+            return "Tempo run at threshold effort (Zone 3). Build sustained race pace ability."
+        case .build:
+            return "Tempo blocks at race effort (Zone 3-4). Practice pacing and fueling."
+        case .peak:
+            return "Race-pace tempo. Run at target race effort on varied terrain."
+        case .taper:
+            return "Short tempo to stay sharp. Controlled effort, don't push."
+        default:
+            return "Easy tempo at comfortable effort."
+        }
+    }
+
+    // MARK: - Cross-Training
+
+    static func crossTraining() -> String {
+        "Cross-training: cycling, swimming, hiking, or yoga. Active recovery without impact."
+    }
+
     // MARK: - Easy Run
 
-    static func easyRun(isRecoveryWeek: Bool, isPreLongRun: Bool = false) -> String {
+    static func easyRun(isRecoveryWeek: Bool, isPreLongRun: Bool = false, isPreRace: Bool = false) -> String {
         if isRecoveryWeek {
             return "Recovery week: easy jog at conversational pace. Focus on blood flow, not fitness."
+        }
+        if isPreRace {
+            return "Pre-race shakeout. Short, easy jog. Stay loose and relaxed."
         }
         if isPreLongRun {
             return "Easy run. Loosen up before the long run. Keep effort conversational (Zone 2)."

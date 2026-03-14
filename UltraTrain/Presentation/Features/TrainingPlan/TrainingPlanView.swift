@@ -46,8 +46,11 @@ struct TrainingPlanView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if viewModel.isLoading {
-                    ProgressView("Loading plan...")
+                if viewModel.isGenerating {
+                    PlanGenerationLoadingView()
+                } else if viewModel.isLoading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, minHeight: 200)
                 } else if let plan = viewModel.plan {
                     planContent(plan)
                 } else {
@@ -106,6 +109,7 @@ struct TrainingPlanView: View {
                 }
             }
             .animation(.easeInOut(duration: 0.3), value: viewModel.isLoading)
+            .animation(.easeInOut(duration: 0.3), value: viewModel.isGenerating)
             .task {
                 await viewModel.loadPlan()
             }

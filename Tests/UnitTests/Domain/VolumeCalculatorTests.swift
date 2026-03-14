@@ -18,7 +18,8 @@ struct VolumeCalculatorTests {
             startDate: start,
             endDate: start.addingTimeInterval(6 * 86400),
             phase: phase,
-            isRecoveryWeek: isRecovery
+            isRecoveryWeek: isRecovery,
+            phaseFocus: phase.defaultFocus
         )
     }
 

@@ -336,6 +336,16 @@
         }
       }
     },
+    "%@ phase, %@, %lld of %lld weeks completed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ phase, %2$@, %3$lld of %4$lld weeks completed"
+          }
+        }
+      }
+    },
     "%@ progress: %lld percent" : {
       "localizations" : {
         "en" : {
@@ -1504,6 +1514,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$lld/%2$lld séances"
+          }
+        }
+      }
+    },
+    "%lld/%lld weeks" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld/%2$lld weeks"
           }
         }
       }
@@ -5188,6 +5208,9 @@
           }
         }
       }
+    },
+    "Double-tap to validate this session as completed" : {
+
     },
     "Double-tap to view all personal records" : {
       "localizations" : {

@@ -27,7 +27,8 @@ struct IntermediateRaceHandlerTests {
             startDate: start,
             endDate: end,
             phase: phase,
-            isRecoveryWeek: isRecovery
+            isRecoveryWeek: isRecovery,
+            phaseFocus: phase.defaultFocus
         )
     }
 

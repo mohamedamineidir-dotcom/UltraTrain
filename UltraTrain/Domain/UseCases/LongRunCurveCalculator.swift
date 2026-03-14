@@ -58,27 +58,8 @@ enum LongRunCurveCalculator {
         var interval = baseIntervalDuration(planProgress) * philMultiplier
         var vg = baseVGDuration(planProgress) * philMultiplier
 
-        // Adapt for runs per week
-        if preferredRunsPerWeek <= 3 {
-            // 3/week: VG + easy/interval alternate + long run
-            easy2 = 0
-            // Unify durations so alternation doesn't change weekly total
-            let midpoint = (easy1 + interval) / 2
-            if weekIndex % 2 == 0 {
-                interval = 0
-                easy1 = midpoint
-            } else {
-                easy1 = 0
-                interval = midpoint
-            }
-        } else if preferredRunsPerWeek == 4 {
-            // 4/week: easy + VG + interval + long run
-            easy2 = 0
-        }
-        // 5/week: all sessions present
-
-        // Save non-B2B total before B2B modifications (smooth baseline)
-        let normalTotal = easy1 + easy2 + interval + vg + rawLongRun
+        // Session count is now handled by SessionTemplateGenerator.
+        // All durations remain non-zero; unused sessions are simply not included.
 
         // B2B adjustments
         var longRun: TimeInterval
@@ -100,7 +81,18 @@ enum LongRunCurveCalculator {
             let easyFloor: TimeInterval = 30 * 60   // 30 min
             let intervalFloor: TimeInterval = 40 * 60 // 40 min
             let vgFloor: TimeInterval = 40 * 60       // 40 min
-            let b2bScale = 0.70 // Keep 70% of normal supporting sessions
+
+            // First 2 B2B weeks get stronger reduction for body adaptation
+            let buildWeekCount = max(totalWeeks - taperWeekEstimate(totalWeeks), 1)
+            let halfPoint = buildWeekCount / 2
+            let b2bWeekIndex = max(weekIndex - halfPoint, 0) / 2 // B2B weeks alternate, so divide by 2
+            let b2bScale: Double
+            if b2bWeekIndex < AppConfiguration.Training.b2bIntroductionWeekCount {
+                b2bScale = AppConfiguration.Training.b2bIntroductionSessionScale
+            } else {
+                b2bScale = AppConfiguration.Training.b2bSupportingSessionScale
+            }
+
             easy1 = max(easy1 * b2bScale, easy1 > 0 ? easyFloor : 0)
             easy2 = max(easy2 * b2bScale, easy2 > 0 ? easyFloor : 0)
             interval = max(interval * b2bScale, interval > 0 ? intervalFloor : 0)

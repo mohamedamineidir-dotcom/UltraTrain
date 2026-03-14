@@ -80,4 +80,58 @@ struct PhaseDistributorTests {
         let sum = result.reduce(0) { $0 + $1.weekCount }
         #expect(sum >= 1)
     }
+
+    // MARK: - PhaseFocus Tests
+
+    @Test("Each allocation has correct PhaseFocus")
+    func allocationsHaveCorrectFocus() {
+        let result = PhaseDistributor.distribute(totalWeeks: 20, experience: .intermediate)
+        let expectedFocuses: [TrainingPhase: PhaseFocus] = [
+            .base: .threshold30,
+            .build: .vo2max,
+            .peak: .threshold60,
+            .taper: .sharpening
+        ]
+        for allocation in result {
+            #expect(
+                allocation.phaseFocus == expectedFocuses[allocation.phase],
+                "\(allocation.phase) should have focus \(expectedFocuses[allocation.phase]!), got \(allocation.phaseFocus)"
+            )
+        }
+    }
+
+    @Test("Advanced 26-week produces Campus Coach distribution: 4+4+12+6")
+    func advancedCampusCoach26Weeks() {
+        let result = PhaseDistributor.distribute(totalWeeks: 26, experience: .advanced)
+        let base = result.first { $0.phase == .base }!.weekCount
+        let build = result.first { $0.phase == .build }!.weekCount
+        let peak = result.first { $0.phase == .peak }!.weekCount
+        let taper = result.first { $0.phase == .taper }!.weekCount
+
+        // Campus Coach: ~15% base, ~15% build, ~46% peak, ~24% taper
+        #expect(base == 4, "Base (Seuil30) should be 4, got \(base)")
+        #expect(build == 4, "Build (VO2max) should be 4, got \(build)")
+        #expect(peak == 12, "Peak (Seuil60) should be 12, got \(peak)")
+        #expect(taper == 6, "Taper (Affutage) should be 6, got \(taper)")
+    }
+
+    @Test("Short plan still has correct PhaseFocus")
+    func shortPlanFocus() {
+        let result = PhaseDistributor.distribute(totalWeeks: 3, experience: .intermediate)
+        #expect(result[0].phaseFocus == .threshold30)
+        #expect(result[1].phaseFocus == .sharpening)
+    }
+
+    @Test("All experience levels produce valid 8-week allocation")
+    func eightWeekAllExperiences() {
+        for experience in ExperienceLevel.allCases {
+            let result = PhaseDistributor.distribute(totalWeeks: 8, experience: experience)
+            let sum = result.reduce(0) { $0 + $1.weekCount }
+            #expect(sum == 8, "\(experience) 8-week plan should total 8 weeks, got \(sum)")
+            // All allocations should have a phaseFocus
+            for allocation in result {
+                #expect(PhaseFocus.allCases.contains(allocation.phaseFocus))
+            }
+        }
+    }
 }
