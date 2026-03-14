@@ -107,7 +107,9 @@ struct NutritionView: View {
 
     private var raceDayContent: some View {
         Group {
-            if viewModel.isLoading {
+            if viewModel.isGenerating {
+                NutritionGenerationLoadingView()
+            } else if viewModel.isLoading {
                 ProgressView("Loading nutrition plan...")
             } else if let plan = viewModel.plan {
                 planContent(plan)

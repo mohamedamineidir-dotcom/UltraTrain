@@ -58,7 +58,7 @@ struct DashboardWeeklyStatsCard: View {
                 .foregroundStyle(Theme.Colors.secondaryLabel)
             }
         }
-        .appCardStyle()
+        .futuristicGlassStyle()
     }
 
     private func statPill(icon: String, value: String, unit: String, target: String?) -> some View {
@@ -80,5 +80,9 @@ struct DashboardWeeklyStatsCard: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(Theme.Spacing.sm)
+        .background(.ultraThinMaterial)
+        .overlay(Color.white.opacity(0.04))
+        .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
     }
 }

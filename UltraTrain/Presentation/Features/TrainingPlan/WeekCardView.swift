@@ -2,6 +2,7 @@ import SwiftUI
 
 struct WeekCardView: View {
     @Environment(\.unitPreference) private var units
+    @State private var currentWeekPulse = false
     let week: TrainingWeek
     let weekIndex: Int
     let planStartDate: Date
@@ -69,12 +70,23 @@ struct WeekCardView: View {
         _isExpanded = State(initialValue: isCurrentWeek)
     }
 
+    private var isCurrentWeek: Bool {
+        week.containsToday
+    }
+
     var body: some View {
         HStack(spacing: 0) {
-            // Left phase accent border
+            // Left phase accent border with gradient
             RoundedRectangle(cornerRadius: 2)
-                .fill(phaseAccentColor)
+                .fill(
+                    LinearGradient(
+                        colors: [phaseAccentColor.opacity(0.6), phaseAccentColor],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
                 .frame(width: 5)
+                .shadow(color: phaseAccentColor.opacity(0.3), radius: 3, x: 2)
 
             VStack(alignment: .leading, spacing: 0) {
                 headerButton
@@ -84,10 +96,27 @@ struct WeekCardView: View {
                 }
             }
         }
-        .appCardStyle()
+        .futuristicGlassStyle(phaseTint: phaseAccentColor)
         .background(recoveryBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .overlay(currentWeekBorder)
+        .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.lg))
+        .onAppear {
+            if isCurrentWeek {
+                withAnimation(.pulseGlow) { currentWeekPulse = true }
+            }
+        }
         .accessibilityIdentifier("trainingPlan.weekCard.\(week.weekNumber)")
+    }
+
+    @ViewBuilder
+    private var currentWeekBorder: some View {
+        if isCurrentWeek {
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                .stroke(
+                    phaseAccentColor.opacity(currentWeekPulse ? 0.4 : 0.15),
+                    lineWidth: 1.5
+                )
+        }
     }
 }
 

@@ -1,16 +1,18 @@
 import SwiftUI
 
-struct PlanGenerationLoadingView: View {
+struct NutritionGenerationLoadingView: View {
     @State private var currentStep = 0
     @State private var progress: Double = 0
     @State private var ringRotation: Double = 0
     @State private var glowPulse = false
 
+    private let accentColor = Theme.Colors.success
+
     private let steps: [(icon: String, title: String, subtitle: String)] = [
-        ("person.fill", "Analyzing your profile", "Experience, fitness history & goals"),
-        ("calendar.badge.clock", "Building periodization", "Base, build, peak & taper phases"),
-        ("figure.run", "Generating sessions", "Long runs, intervals & recovery"),
-        ("fork.knife", "Preparing nutrition plan", "Race-day fueling strategy")
+        ("figure.run", "Analyzing race profile", "Distance, elevation & expected duration"),
+        ("bolt.fill", "Calculating energy needs", "Calories, carbs & fat oxidation rates"),
+        ("drop.fill", "Building hydration strategy", "Fluid intake & electrolyte balance"),
+        ("fork.knife", "Finalizing nutrition plan", "Products, timing & gut training schedule")
     ]
 
     private let stepDuration: TimeInterval = 2.0
@@ -33,12 +35,10 @@ struct PlanGenerationLoadingView: View {
         }
     }
 
-    // MARK: - Background
-
     private var backgroundGradient: some View {
         RadialGradient(
             colors: [
-                Theme.Colors.accentColor.opacity(glowPulse ? 0.08 : 0.03),
+                accentColor.opacity(glowPulse ? 0.08 : 0.03),
                 Theme.Colors.futuristicBgDark,
                 Color.black
             ],
@@ -48,8 +48,6 @@ struct PlanGenerationLoadingView: View {
         )
         .ignoresSafeArea()
     }
-
-    // MARK: - Content
 
     private var content: some View {
         VStack(spacing: Theme.Spacing.xl) {
@@ -62,24 +60,17 @@ struct PlanGenerationLoadingView: View {
         }
     }
 
-    // MARK: - Progress Ring
-
     private var progressRing: some View {
         ZStack {
-            // Track
             Circle()
                 .stroke(Color.white.opacity(0.06), lineWidth: 5)
                 .frame(width: 140, height: 140)
 
-            // Comet-tail arc
             Circle()
                 .trim(from: 0, to: 0.3)
                 .stroke(
                     AngularGradient(
-                        colors: [
-                            Theme.Colors.accentColor.opacity(0),
-                            Theme.Colors.accentColor
-                        ],
+                        colors: [accentColor.opacity(0), accentColor],
                         center: .center
                     ),
                     style: StrokeStyle(lineWidth: 5, lineCap: .round)
@@ -87,32 +78,28 @@ struct PlanGenerationLoadingView: View {
                 .frame(width: 140, height: 140)
                 .rotationEffect(.degrees(ringRotation))
 
-            // Progress arc
             Circle()
                 .trim(from: 0, to: progress)
                 .stroke(
-                    Theme.Colors.accentColor.opacity(0.3),
+                    accentColor.opacity(0.3),
                     style: StrokeStyle(lineWidth: 3, lineCap: .round)
                 )
                 .frame(width: 130, height: 130)
                 .rotationEffect(.degrees(-90))
 
-            // Center icon
             Image(systemName: steps[currentStep].icon)
                 .font(.system(size: 36, weight: .light))
-                .foregroundStyle(Theme.Colors.accentColor)
-                .shadow(color: Theme.Colors.accentColor.opacity(0.5), radius: 8)
+                .foregroundStyle(accentColor)
+                .shadow(color: accentColor.opacity(0.5), radius: 8)
                 .id(currentStep)
                 .transition(.asymmetric(
                     insertion: .scale(scale: 0.5).combined(with: .opacity),
                     removal: .scale(scale: 1.3).combined(with: .opacity)
                 ))
         }
-        .shadow(color: Theme.Colors.accentColor.opacity(glowPulse ? 0.3 : 0.1), radius: 20)
+        .shadow(color: accentColor.opacity(glowPulse ? 0.3 : 0.1), radius: 20)
         .animation(.easeInOut(duration: 0.5), value: currentStep)
     }
-
-    // MARK: - Step Text
 
     private var stepText: some View {
         VStack(spacing: Theme.Spacing.xs) {
@@ -132,15 +119,11 @@ struct PlanGenerationLoadingView: View {
         .animation(.easeInOut(duration: 0.4), value: currentStep)
     }
 
-    // MARK: - Percentage
-
     private var percentageText: some View {
         Text("\(Int(progress * 100))%")
             .font(.caption.monospacedDigit())
             .foregroundStyle(Color.white.opacity(0.35))
     }
-
-    // MARK: - Step Indicator (capsule bars)
 
     private var stepIndicator: some View {
         HStack(spacing: 6) {
@@ -150,7 +133,7 @@ struct PlanGenerationLoadingView: View {
                     .frame(width: capsuleWidth(for: index), height: 4)
                     .shadow(
                         color: index == currentStep
-                            ? Theme.Colors.accentColor.opacity(0.5) : .clear,
+                            ? accentColor.opacity(0.5) : .clear,
                         radius: 4
                     )
                     .animation(.easeInOut(duration: 0.3), value: currentStep)
@@ -159,11 +142,7 @@ struct PlanGenerationLoadingView: View {
     }
 
     private func capsuleFill(for index: Int) -> Color {
-        if index < currentStep {
-            return Theme.Colors.accentColor
-        } else if index == currentStep {
-            return Theme.Colors.accentColor
-        }
+        if index <= currentStep { return accentColor }
         return Color.white.opacity(0.15)
     }
 
@@ -172,8 +151,6 @@ struct PlanGenerationLoadingView: View {
         if index < currentStep { return 20 }
         return 12
     }
-
-    // MARK: - Step Runner
 
     private func runSteps() async {
         for step in 0..<steps.count {

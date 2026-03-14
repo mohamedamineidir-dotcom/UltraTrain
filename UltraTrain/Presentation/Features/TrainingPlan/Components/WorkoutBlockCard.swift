@@ -33,6 +33,7 @@ struct WorkoutBlockCard: View {
                     Image(systemName: phaseIcon)
                         .font(.caption2)
                         .foregroundStyle(phaseColor)
+                        .shadow(color: phaseColor.opacity(0.4), radius: 3)
                     Text(phase.phaseType.displayName)
                         .font(.subheadline.bold())
                     if phase.repeatCount > 1 {
@@ -41,8 +42,12 @@ struct WorkoutBlockCard: View {
                             .foregroundStyle(phaseColor)
                             .padding(.horizontal, 5)
                             .padding(.vertical, 1)
-                            .background(phaseColor.opacity(0.15))
-                            .clipShape(Capsule())
+                            .background(
+                                Capsule()
+                                    .fill(.ultraThinMaterial)
+                                    .overlay(Capsule().stroke(phaseColor.opacity(0.2), lineWidth: 0.5))
+                            )
+                            .shadow(color: phaseColor.opacity(0.2), radius: 2)
                     }
                     Spacer()
                     Text(durationText)
@@ -70,7 +75,18 @@ struct WorkoutBlockCard: View {
             }
         }
         .padding(Theme.Spacing.sm)
-        .background(phaseColor.opacity(0.06))
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                        .fill(phaseColor.opacity(0.06))
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                .stroke(phaseColor.opacity(0.1), lineWidth: 0.5)
+        )
         .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
     }
 

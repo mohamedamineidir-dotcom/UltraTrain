@@ -51,6 +51,15 @@ enum Theme {
         static let heroGradientTop = Color("HeroGradientTop")
         /// Bottom color for the hero gradient (dark: teal-black, light: light peach)
         static let heroGradientBottom = Color("HeroGradientBottom")
+
+        // MARK: - Futuristic UI
+
+        static let futuristicBgDark = Color(red: 0.03, green: 0.03, blue: 0.06)
+        static let futuristicBgMid = Color(red: 0.05, green: 0.05, blue: 0.10)
+        static let futuristicBgLight = Color(red: 0.97, green: 0.96, blue: 0.95)
+        static let neonAccent = Color.cyan.opacity(0.15)
+        static let glassBorder = Color.white.opacity(0.12)
+        static let glassBorderLight = Color.black.opacity(0.06)
     }
 
     enum Gradients {
@@ -72,6 +81,37 @@ enum Theme {
             endPoint: .bottomTrailing
         )
 
+        static func futuristicBackground(colorScheme: ColorScheme) -> LinearGradient {
+            if colorScheme == .dark {
+                return LinearGradient(
+                    colors: [
+                        Theme.Colors.futuristicBgDark,
+                        Theme.Colors.futuristicBgMid,
+                        Theme.Colors.futuristicBgDark
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
+            return LinearGradient(
+                colors: [
+                    Theme.Colors.futuristicBgLight,
+                    Color(red: 0.95, green: 0.94, blue: 0.92),
+                    Theme.Colors.futuristicBgLight
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        }
+
+        static func glowBorder(color: Color) -> LinearGradient {
+            LinearGradient(
+                colors: [color.opacity(0.4), color.opacity(0.1), color.opacity(0.3)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
+
         static func phaseGradient(_ phase: TrainingPhase) -> LinearGradient {
             let colors: [Color]
             switch phase {
@@ -84,6 +124,11 @@ enum Theme {
             }
             return LinearGradient(colors: colors, startPoint: .topLeading, endPoint: .bottomTrailing)
         }
+    }
+
+    enum LetterSpacing {
+        static let tracked: CGFloat = 1.5
+        static let tight: CGFloat = 0.8
     }
 
     enum Spacing {

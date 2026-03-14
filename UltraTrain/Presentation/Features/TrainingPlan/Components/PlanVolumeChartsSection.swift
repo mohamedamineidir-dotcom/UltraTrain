@@ -39,7 +39,7 @@ struct PlanVolumeChartsSection: View {
                 chartView
             }
         }
-        .appCardStyle()
+        .futuristicGlassStyle()
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Training volume chart")
     }
@@ -123,7 +123,7 @@ struct PlanVolumeChartsSection: View {
                             endPoint: .bottom
                         )
                     )
-                    .interpolationMethod(.catmullRom)
+                    .interpolationMethod(.linear)
 
                     LineMark(
                         x: .value("Week", "W\(point.weekNumber)"),
@@ -131,14 +131,15 @@ struct PlanVolumeChartsSection: View {
                     )
                     .foregroundStyle(Theme.Colors.accentColor)
                     .lineStyle(StrokeStyle(lineWidth: 3))
-                    .interpolationMethod(.catmullRom)
+                    .interpolationMethod(.linear)
 
                     PointMark(
                         x: .value("Week", "W\(point.weekNumber)"),
                         y: .value("Planned", plannedValue(for: point))
                     )
-                    .symbolSize(point.isCurrentWeek ? 50 : 30)
-                    .foregroundStyle(Theme.Colors.accentColor)
+                    .symbol(point.isRecoveryWeek ? .diamond : .circle)
+                    .symbolSize(point.isRecoveryWeek ? 50 : (point.isCurrentWeek ? 50 : 30))
+                    .foregroundStyle(point.isRecoveryWeek ? .mint : Theme.Colors.accentColor)
                 }
 
                 // Completed bars — gradient capsule
@@ -157,6 +158,17 @@ struct PlanVolumeChartsSection: View {
                     )
                     .clipShape(Capsule())
                 }
+            }
+
+            // Recovery week background shading
+            ForEach(dataPoints.filter(\.isRecoveryWeek)) { point in
+                RectangleMark(
+                    x: .value("Week", "W\(point.weekNumber)"),
+                    yStart: .value("Start", 0),
+                    yEnd: .value("End", maxPlannedValue * 1.05),
+                    width: .ratio(1)
+                )
+                .foregroundStyle(Color.mint.opacity(0.08))
             }
 
             // Current week — filled accent pill
@@ -295,6 +307,10 @@ struct PlanVolumeChartsSection: View {
                 .sessions.filter { $0.type != .rest && !$0.isSkipped } ?? []
             return !active.isEmpty && active.allSatisfy(\.isCompleted)
         }.count
+    }
+
+    private var maxPlannedValue: Double {
+        dataPoints.map { plannedValue(for: $0) }.max() ?? 1
     }
 
     private var peakWeekValue: String? {

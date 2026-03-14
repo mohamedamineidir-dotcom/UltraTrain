@@ -90,7 +90,7 @@ struct DashboardView: View {
                         .transition(.opacity)
                 }
 
-                VStack(spacing: Theme.Spacing.md) {
+                VStack(spacing: Theme.Spacing.xl) {
                     // Hero card
                     DashboardHeroCard(
                         daysUntilRace: viewModel.daysUntilRace,
@@ -192,11 +192,8 @@ struct DashboardView: View {
         }
     }
 
-    @ViewBuilder
     private var dashboardBackground: some View {
-        if colorScheme == .dark {
-            Color(red: 0.04, green: 0.04, blue: 0.06)
-                .ignoresSafeArea()
-        }
+        Theme.Gradients.futuristicBackground(colorScheme: colorScheme)
+            .ignoresSafeArea()
     }
 }

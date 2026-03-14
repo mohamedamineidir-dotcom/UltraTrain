@@ -7959,6 +7959,7 @@
       }
     },
     "Loading plan..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {

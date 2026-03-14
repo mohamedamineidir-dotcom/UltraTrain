@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct PhaseHeaderCard: View {
+    @Environment(\.colorScheme) private var colorScheme
     let phase: TrainingPhase
     let weekRange: String
     let completedWeeks: Int
@@ -9,60 +10,49 @@ struct PhaseHeaderCard: View {
     var phaseFocus: PhaseFocus?
 
     var body: some View {
-        HStack(spacing: 0) {
-            // Left accent bar
-            RoundedRectangle(cornerRadius: 2)
-                .fill(
-                    LinearGradient(
-                        colors: [phase.color.opacity(0.8), phase.color],
-                        startPoint: .top,
-                        endPoint: .bottom
+        VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+            HStack {
+                Image(systemName: phaseIcon)
+                    .font(.body)
+                    .foregroundStyle(phase.color)
+                    .shadow(color: phase.color.opacity(0.5), radius: 4)
+
+                Text(focusDisplayName.uppercased())
+                    .font(.subheadline.bold())
+                    .tracking(Theme.LetterSpacing.tracked)
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [phase.color, phase.color.opacity(0.7)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
                     )
-                )
-                .frame(width: 5)
 
-            VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-                HStack {
-                    Image(systemName: phaseIcon)
-                        .font(.caption)
-                        .foregroundStyle(phase.color)
+                Spacer()
 
-                    Text(focusDisplayName.uppercased())
-                        .font(.subheadline.bold())
-                        .tracking(1.2)
-                        .foregroundStyle(phase.color)
-
-                    Spacer()
-
-                    Text(weekRange)
-                        .font(.caption)
-                        .foregroundStyle(Theme.Colors.secondaryLabel)
-                }
-
-                HStack {
-                    completionRing
-                    Text("\(completedWeeks)/\(totalWeeks) weeks")
-                        .font(.caption)
-                        .foregroundStyle(Theme.Colors.secondaryLabel)
-                }
-
-                Text(description)
+                Text(weekRange)
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
-                    .lineLimit(2)
             }
-            .padding(.horizontal, Theme.Spacing.md)
-            .padding(.vertical, Theme.Spacing.sm)
+
+            HStack {
+                completionRing
+                Text("\(completedWeeks)/\(totalWeeks) weeks")
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+
+            Text(description)
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+                .lineLimit(2)
         }
-        .background(
+        .padding(.horizontal, Theme.Spacing.md)
+        .padding(.vertical, Theme.Spacing.sm)
+        .background(phaseBackground)
+        .overlay(
             RoundedRectangle(cornerRadius: 10)
-                .fill(
-                    LinearGradient(
-                        colors: [phase.color.opacity(0.04), phase.color.opacity(0.08)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
+                .stroke(phase.color.opacity(0.15), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .accessibilityElement(children: .ignore)
@@ -75,26 +65,42 @@ struct PhaseHeaderCard: View {
 
     private var phaseIcon: String {
         switch phase {
-        case .base:     "figure.walk"
-        case .build:    "flame.fill"
-        case .peak:     "bolt.fill"
-        case .taper:    "leaf.fill"
-        case .recovery: "heart.fill"
-        case .race:     "flag.fill"
+        case .base:     return "figure.walk"
+        case .build:    return "flame.fill"
+        case .peak:     return "bolt.fill"
+        case .taper:    return "leaf.fill"
+        case .recovery: return "heart.fill"
+        case .race:     return "flag.fill"
         }
+    }
+
+    private var phaseBackground: some View {
+        RoundedRectangle(cornerRadius: 10)
+            .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(
+                        LinearGradient(
+                            colors: [phase.color.opacity(0.12), phase.color.opacity(0.02)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+            )
     }
 
     private var completionRing: some View {
         let fraction = totalWeeks > 0 ? Double(completedWeeks) / Double(totalWeeks) : 0
         return ZStack {
             Circle()
-                .stroke(phase.color.opacity(0.2), lineWidth: 2)
+                .stroke(phase.color.opacity(0.15), lineWidth: 2.5)
             Circle()
                 .trim(from: 0, to: fraction)
-                .stroke(phase.color, style: StrokeStyle(lineWidth: 2, lineCap: .round))
+                .stroke(phase.color, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
                 .rotationEffect(.degrees(-90))
+                .shadow(color: phase.color.opacity(0.4), radius: 3)
         }
-        .frame(width: 14, height: 14)
+        .frame(width: 20, height: 20)
     }
 
     static func description(for phase: TrainingPhase, focus: PhaseFocus? = nil) -> String {

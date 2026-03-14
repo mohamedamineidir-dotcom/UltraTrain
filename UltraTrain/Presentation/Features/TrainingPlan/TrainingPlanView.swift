@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct TrainingPlanView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @State var viewModel: TrainingPlanViewModel
     private let raceRepository: any RaceRepository
     private let planRepository: any TrainingPlanRepository
@@ -57,6 +58,7 @@ struct TrainingPlanView: View {
                     emptyState
                 }
             }
+            .background(Theme.Gradients.futuristicBackground(colorScheme: colorScheme).ignoresSafeArea())
             .navigationTitle("Training Plan")
             .toolbar {
                 if viewModel.plan != nil {

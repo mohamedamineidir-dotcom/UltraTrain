@@ -10,9 +10,11 @@ struct LastRunCard: View {
                 Text("Last Run")
                     .font(.headline)
 
-                HStack(spacing: Theme.Spacing.md) {
+                HStack(spacing: 0) {
                     statColumn(value: String(format: "%.1f", UnitFormatter.distanceValue(run.distanceKm, unit: units)), label: UnitFormatter.distanceLabel(units))
+                    Divider().frame(height: 30).opacity(0.15)
                     statColumn(value: RunStatisticsCalculator.formatPace(run.averagePaceSecondsPerKm, unit: units), label: "pace")
+                    Divider().frame(height: 30).opacity(0.15)
                     statColumn(value: formattedDuration(run.duration), label: "time")
                 }
 
@@ -28,7 +30,9 @@ struct LastRunCard: View {
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
                                 .background(
-                                    Capsule().fill(Theme.Colors.secondaryBackground)
+                                    Capsule()
+                                        .fill(.ultraThinMaterial)
+                                        .overlay(Capsule().stroke(Theme.Colors.glassBorder, lineWidth: 0.5))
                                 )
                         }
                         if let terrain = run.terrainType {
@@ -37,7 +41,9 @@ struct LastRunCard: View {
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
                                 .background(
-                                    Capsule().fill(Theme.Colors.secondaryBackground)
+                                    Capsule()
+                                        .fill(.ultraThinMaterial)
+                                        .overlay(Capsule().stroke(Theme.Colors.glassBorder, lineWidth: 0.5))
                                 )
                         }
                     }
@@ -48,7 +54,7 @@ struct LastRunCard: View {
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .appCardStyle()
+            .futuristicGlassStyle()
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(accessibilityDescription(for: run))
         }

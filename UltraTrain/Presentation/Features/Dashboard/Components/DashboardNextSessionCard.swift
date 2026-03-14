@@ -28,7 +28,7 @@ struct DashboardNextSessionCard: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .appCardStyle()
+        .futuristicGlassStyle(phaseTint: currentPhase?.color)
     }
 
     private func sessionContent(_ session: TrainingSession) -> some View {
@@ -37,13 +37,20 @@ struct DashboardNextSessionCard: View {
                 // Icon glow circle
                 ZStack {
                     Circle()
-                        .fill(session.intensity.color.opacity(0.12))
-                        .frame(width: 44, height: 44)
+                        .fill(
+                            LinearGradient(
+                                colors: [session.intensity.color.opacity(0.2), session.intensity.color.opacity(0.08)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 52, height: 52)
                     Image(systemName: session.type.icon)
                         .font(.title3)
                         .foregroundStyle(session.intensity.color)
+                        .shadow(color: session.intensity.color.opacity(0.4), radius: 3)
                 }
-                .shadow(color: session.intensity.color.opacity(0.3), radius: 4)
+                .shadow(color: session.intensity.color.opacity(0.2), radius: 6)
                 .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 2) {
@@ -72,6 +79,7 @@ struct DashboardNextSessionCard: View {
                     .padding(.vertical, Theme.Spacing.xs)
                     .background(session.intensity.color)
                     .clipShape(Capsule())
+                    .shadow(color: session.intensity.color.opacity(0.4), radius: 4)
             }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(sessionAccessibilityLabel(session))

@@ -6,7 +6,7 @@ extension TrainingPlanView {
 
     func planContent(_ plan: TrainingPlan) -> some View {
         ScrollView {
-            LazyVStack(spacing: Theme.Spacing.sm) {
+            LazyVStack(spacing: Theme.Spacing.md) {
                 if viewModel.isPlanStale {
                     stalePlanBanner
                 }
@@ -160,7 +160,7 @@ extension TrainingPlanView {
             Image(systemName: "chevron.right")
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
-        .appCardStyle()
+        .futuristicGlassStyle()
         .accessibilityLabel("\(viewModel.lockedWeekCount) locked weeks. Upgrade or wait for your next billing cycle to view.")
     }
 
@@ -190,7 +190,7 @@ extension TrainingPlanView {
                 }
             }
         }
-        .appCardStyle()
+        .futuristicGlassStyle()
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(planHeaderAccessibilityLabel(plan))
     }

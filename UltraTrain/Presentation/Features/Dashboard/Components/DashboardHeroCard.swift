@@ -1,8 +1,10 @@
 import SwiftUI
 
 struct DashboardHeroCard: View {
+    @Environment(\.colorScheme) private var colorScheme
     @ScaledMetric(relativeTo: .largeTitle) private var daysCounterSize: CGFloat = 52
     @ScaledMetric(relativeTo: .largeTitle) private var trainingTitleSize: CGFloat = 32
+    @State private var borderPulse = false
 
     let daysUntilRace: Int?
     let raceName: String?
@@ -16,102 +18,152 @@ struct DashboardHeroCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.md) {
             HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-                    if let days = daysUntilRace {
-                        Text("\(days)")
-                            .font(.system(size: daysCounterSize, weight: .bold, design: .rounded))
-                            .foregroundStyle(Theme.Colors.label)
-                        Text("days to go")
-                            .font(.subheadline)
-                            .foregroundStyle(Theme.Colors.secondaryLabel)
-                    } else {
-                        Text("Training")
-                            .font(.system(size: trainingTitleSize, weight: .bold, design: .rounded))
-                            .foregroundStyle(Theme.Colors.label)
-                    }
-
-                    if let name = raceName {
-                        Text(name)
-                            .font(.headline)
-                            .foregroundStyle(Theme.Colors.label.opacity(0.9))
-                            .lineLimit(1)
-                    }
-                }
-
+                daysSection
                 Spacer()
-
-                if weeklyProgress.total > 0 {
-                    progressRing
-                }
+                if weeklyProgress.total > 0 { progressRing }
             }
 
-            Divider()
-                .overlay(Theme.Colors.secondaryLabel.opacity(0.2))
+            gradientSeparator
 
             HStack(spacing: Theme.Spacing.lg) {
-                if let phase = currentPhase {
-                    Label(phase.displayName, systemImage: "chart.line.uptrend.xyaxis")
-                        .font(.caption.bold())
-                        .foregroundStyle(phaseAccentColor)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(phaseAccentColor.opacity(0.12))
-                        .clipShape(Capsule())
-                }
-
-                HStack(spacing: 4) {
-                    Image(systemName: "figure.run")
-                    Text(String(format: "%.0f / %.0f km", weeklyDistanceKm, weeklyTargetDistanceKm))
-                }
-                .font(.caption)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
-
-                if let fitness = fitnessStatus {
-                    Label(fitness, systemImage: "heart.fill")
-                        .font(.caption.bold())
-                        .foregroundStyle(Theme.Colors.label)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Theme.Colors.secondaryLabel.opacity(0.12))
-                        .clipShape(Capsule())
-                }
+                if let phase = currentPhase { phaseBadge(phase) }
+                distanceLabel
+                if let fitness = fitnessStatus { fitnessBadge(fitness) }
             }
         }
         .padding(Theme.Spacing.lg)
-        .background(heroBackground)
-        .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.lg))
-        .overlay(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                .stroke(Theme.Colors.secondaryLabel.opacity(0.12), lineWidth: 0.5)
-        )
-        .shadow(color: Theme.Colors.shadow, radius: 4, y: 2)
+        .futuristicGlassStyle(phaseTint: phaseAccentColor)
+        .overlay(animatedBorder)
+        .onAppear {
+            withAnimation(.pulseGlow) { borderPulse = true }
+        }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityDescription)
     }
 
+    // MARK: - Days Section
+
+    private var daysSection: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+            if let days = daysUntilRace {
+                Text("\(days)")
+                    .font(.system(size: daysCounterSize, weight: .bold, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [Theme.Colors.label, Theme.Colors.label.opacity(0.7)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                Text("days to go")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            } else {
+                Text("Training")
+                    .font(.system(size: trainingTitleSize, weight: .bold, design: .rounded))
+                    .foregroundStyle(Theme.Colors.label)
+            }
+
+            if let name = raceName {
+                Text(name)
+                    .font(.headline)
+                    .tracking(Theme.LetterSpacing.tight)
+                    .foregroundStyle(Theme.Colors.label.opacity(0.9))
+                    .lineLimit(1)
+            }
+        }
+    }
+
+    // MARK: - Progress Ring
+
     private var progressRing: some View {
         ZStack {
             Circle()
-                .stroke(Theme.Colors.secondaryLabel.opacity(0.15), lineWidth: 5)
+                .stroke(Theme.Colors.secondaryLabel.opacity(0.1), lineWidth: 5)
             Circle()
                 .trim(from: 0, to: progressFraction)
                 .stroke(
-                    phaseAccentColor,
+                    AngularGradient(
+                        colors: [phaseAccentColor.opacity(0.3), phaseAccentColor],
+                        center: .center
+                    ),
                     style: StrokeStyle(lineWidth: 5, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
-                .shadow(color: phaseAccentColor.opacity(0.4), radius: 3)
+                .shadow(color: phaseAccentColor.opacity(0.4), radius: 4)
             VStack(spacing: 0) {
                 Text("\(weeklyProgress.completed)")
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
                 Text("/\(weeklyProgress.total)")
-                    .font(.system(size: 10, weight: .medium, design: .rounded))
-                    .opacity(0.8)
+                    .font(.system(size: 11, weight: .medium, design: .rounded))
+                    .opacity(0.7)
             }
             .foregroundStyle(Theme.Colors.label)
         }
-        .frame(width: 56, height: 56)
+        .frame(width: 72, height: 72)
     }
+
+    // MARK: - Separator & Badges
+
+    private var gradientSeparator: some View {
+        Rectangle()
+            .fill(
+                LinearGradient(
+                    colors: [phaseAccentColor.opacity(0.3), Theme.Colors.secondaryLabel.opacity(0.1)],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .frame(height: 1)
+    }
+
+    private func phaseBadge(_ phase: TrainingPhase) -> some View {
+        Label(phase.displayName, systemImage: "chart.line.uptrend.xyaxis")
+            .font(.caption.bold())
+            .foregroundStyle(phaseAccentColor)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(
+                LinearGradient(
+                    colors: [phaseAccentColor.opacity(0.15), phaseAccentColor.opacity(0.06)],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .clipShape(Capsule())
+    }
+
+    private var distanceLabel: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "figure.run")
+            Text(String(format: "%.0f / %.0f km", weeklyDistanceKm, weeklyTargetDistanceKm))
+        }
+        .font(.caption)
+        .foregroundStyle(Theme.Colors.secondaryLabel)
+    }
+
+    private func fitnessBadge(_ fitness: String) -> some View {
+        Label(fitness, systemImage: "heart.fill")
+            .font(.caption.bold())
+            .foregroundStyle(Theme.Colors.label)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(Theme.Colors.secondaryLabel.opacity(0.12))
+            .clipShape(Capsule())
+    }
+
+    // MARK: - Animated Border
+
+    private var animatedBorder: some View {
+        RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+            .stroke(
+                Theme.Gradients.glowBorder(color: phaseAccentColor),
+                lineWidth: borderPulse ? 1.0 : 0.5
+            )
+            .opacity(borderPulse ? 0.8 : 0.3)
+    }
+
+    // MARK: - Helpers
 
     private var progressFraction: Double {
         guard weeklyProgress.total > 0 else { return 0 }
@@ -120,16 +172,6 @@ struct DashboardHeroCard: View {
 
     private var phaseAccentColor: Color {
         currentPhase?.color ?? Theme.Colors.accentColor
-    }
-
-    @ViewBuilder
-    private var heroBackground: some View {
-        RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-            .fill(.ultraThinMaterial)
-            .overlay(
-                RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                    .fill(phaseAccentColor.opacity(0.10))
-            )
     }
 
     private var accessibilityDescription: String {

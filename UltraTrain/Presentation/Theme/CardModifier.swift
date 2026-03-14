@@ -25,6 +25,10 @@ extension View {
     func onboardingCardStyle() -> some View {
         modifier(OnboardingCardModifier())
     }
+
+    func futuristicGlassStyle(phaseTint: Color? = nil) -> some View {
+        modifier(FuturisticGlassCardModifier(phaseTint: phaseTint))
+    }
 }
 
 struct AppCardModifier: ViewModifier {
@@ -89,6 +93,55 @@ struct GlassCardModifier: ViewModifier {
                         lineWidth: 1
                     )
             )
+    }
+}
+
+struct FuturisticGlassCardModifier: ViewModifier {
+    @Environment(\.colorScheme) private var colorScheme
+    var phaseTint: Color?
+
+    func body(content: Content) -> some View {
+        content
+            .padding(Theme.Spacing.md)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                    .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                            .fill(tintOverlay)
+                    )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                    .stroke(borderStyle, lineWidth: 1)
+            )
+            .shadow(
+                color: shadowColor,
+                radius: colorScheme == .dark ? 12 : 8,
+                y: colorScheme == .dark ? 4 : 3
+            )
+    }
+
+    private var tintOverlay: Color {
+        if let tint = phaseTint, colorScheme == .dark {
+            return tint.opacity(0.06)
+        }
+        return colorScheme == .dark ? Color.white.opacity(0.04) : Color.white.opacity(0.7)
+    }
+
+    private var borderStyle: some ShapeStyle {
+        colorScheme == .dark
+            ? Theme.Colors.glassBorder
+            : Theme.Colors.glassBorderLight
+    }
+
+    private var shadowColor: Color {
+        if let tint = phaseTint, colorScheme == .dark {
+            return tint.opacity(0.08)
+        }
+        return colorScheme == .dark
+            ? Color(red: 0.1, green: 0.1, blue: 0.3).opacity(0.12)
+            : .black.opacity(0.05)
     }
 }
 

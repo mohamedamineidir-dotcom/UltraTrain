@@ -12,6 +12,7 @@ struct WeekChartDataPoint: Identifiable {
     let plannedElevationM: Double
     let completedElevationM: Double
     let isCurrentWeek: Bool
+    let isRecoveryWeek: Bool
 }
 
 enum PlanVolumeChartData {
@@ -33,7 +34,8 @@ enum PlanVolumeChartData {
                 completedDurationSeconds: completedSessions.reduce(0) { $0 + $1.plannedDuration },
                 plannedElevationM: week.targetElevationGainM,
                 completedElevationM: completedSessions.reduce(0) { $0 + $1.plannedElevationGainM },
-                isCurrentWeek: week.containsToday
+                isCurrentWeek: week.containsToday,
+                isRecoveryWeek: week.isRecoveryWeek
             )
         }
     }
