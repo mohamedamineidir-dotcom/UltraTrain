@@ -27,6 +27,37 @@ extension TrainingPlanViewModel {
         }
     }
 
+    // MARK: - Manual Complete with Stats
+
+    func completeSessionManually(
+        weekIndex: Int,
+        sessionIndex: Int,
+        distanceKm: Double?,
+        durationSeconds: TimeInterval?,
+        elevationGainM: Double?
+    ) async {
+        guard var currentPlan = plan else { return }
+        guard weekIndex < currentPlan.weeks.count,
+              sessionIndex < currentPlan.weeks[weekIndex].sessions.count else { return }
+
+        var session = currentPlan.weeks[weekIndex].sessions[sessionIndex]
+        session.isCompleted = true
+        session.actualDistanceKm = distanceKm
+        session.actualDurationSeconds = durationSeconds
+        session.actualElevationGainM = elevationGainM
+        currentPlan.weeks[weekIndex].sessions[sessionIndex] = session
+
+        do {
+            try await planRepository.updateSession(session)
+            plan = currentPlan
+            await updateWidgets()
+            checkForAdjustments()
+        } catch {
+            self.error = error.localizedDescription
+            Logger.training.error("Failed to complete session manually: \(error)")
+        }
+    }
+
     // MARK: - Skip
 
     func skipSession(weekIndex: Int, sessionIndex: Int) async {

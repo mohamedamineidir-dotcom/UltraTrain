@@ -19,6 +19,7 @@ struct WeekCardView: View {
     let onReorderSession: (Int, Int, SwapCandidate) -> Void
     var workouts: [IntervalWorkout] = []
     var onValidateSession: ((Int) -> Void)?
+    var onValidateSessionWithStats: ((Int, Double?, TimeInterval?, Double?) -> Void)?
     var onLinkSessionToRun: ((Int, UUID) -> Void)?
     var recentRunsProvider: ((Date) async -> [CompletedRun])?
 
@@ -46,6 +47,7 @@ struct WeekCardView: View {
         workouts: [IntervalWorkout] = [],
         onReorderSession: @escaping (Int, Int, SwapCandidate) -> Void,
         onValidateSession: ((Int) -> Void)? = nil,
+        onValidateSessionWithStats: ((Int, Double?, TimeInterval?, Double?) -> Void)? = nil,
         onLinkSessionToRun: ((Int, UUID) -> Void)? = nil,
         recentRunsProvider: ((Date) async -> [CompletedRun])? = nil
     ) {
@@ -65,6 +67,7 @@ struct WeekCardView: View {
         self.workouts = workouts
         self.onReorderSession = onReorderSession
         self.onValidateSession = onValidateSession
+        self.onValidateSessionWithStats = onValidateSessionWithStats
         self.onLinkSessionToRun = onLinkSessionToRun
         self.recentRunsProvider = recentRunsProvider
         _isExpanded = State(initialValue: isCurrentWeek)
@@ -299,6 +302,9 @@ extension WeekCardView {
                 onManualComplete: {
                     onValidateSession?(item.sessionIndex)
                 },
+                onManualCompleteWithStats: { dist, dur, elev in
+                    onValidateSessionWithStats?(item.sessionIndex, dist, dur, elev)
+                },
                 onLinkRun: { runId in
                     onLinkSessionToRun?(item.sessionIndex, runId)
                 },
@@ -365,6 +371,9 @@ extension WeekCardView {
             onReschedule: { newDate in onRescheduleSession(sessionIndex, newDate) },
             onSwap: { candidate in onSwapSession(sessionIndex, candidate) },
             onValidate: onValidateSession != nil ? { onValidateSession?(sessionIndex) } : nil,
+            onValidateWithStats: onValidateSessionWithStats != nil ? { dist, dur, elev in
+                onValidateSessionWithStats?(sessionIndex, dist, dur, elev)
+            } : nil,
             onLinkRun: onLinkSessionToRun != nil ? { runId in onLinkSessionToRun?(sessionIndex, runId) } : nil,
             recentRuns: validateRecentRuns
         )

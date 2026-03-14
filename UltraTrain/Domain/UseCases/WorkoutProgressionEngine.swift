@@ -84,22 +84,13 @@ enum WorkoutProgressionEngine {
     // MARK: - Recovery Run Template
 
     private static func recoveryRunTemplate(totalDuration: TimeInterval) -> WorkoutTemplate {
-        let warmUpDuration: TimeInterval = min(600, totalDuration * 0.25)  // 10min or 25%
-        let coolDownDuration: TimeInterval = min(300, totalDuration * 0.15) // 5min or 15%
-        let mainDuration = max(totalDuration - warmUpDuration - coolDownDuration, 300)
-
-        let warmUp = phase(.warmUp, duration: warmUpDuration, intensity: .easy, reps: 1,
-                           notes: "Easy jog to warm up")
-        let main = phase(.work, duration: mainDuration, intensity: .easy, reps: 1,
-                         notes: "Easy conversational pace. Focus on blood flow, not fitness.")
-        let coolDown = phase(.coolDown, duration: coolDownDuration, intensity: .easy, reps: 1,
-                             notes: "Walk/jog and stretching")
-
-        let mainMin = Int(mainDuration) / 60
+        let totalMin = Int(totalDuration) / 60
+        let main = phase(.work, duration: totalDuration, intensity: .easy, reps: 1,
+                         notes: "Easy conversational pace (Zone 2). Focus on recovery and blood flow.")
         return WorkoutTemplate(
-            name: "Recovery run",
-            description: "Recovery: warmup → \(mainMin)min easy → cooldown",
-            phases: [warmUp, main, coolDown]
+            name: "Easy run",
+            description: "Easy run: \(totalMin)min at conversational pace",
+            phases: [main]
         )
     }
 

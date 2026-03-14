@@ -6,8 +6,11 @@ struct ValidateSessionSheet: View {
     let recentRuns: [CompletedRun]
     let connectedServices: Set<ExternalService>
     let onManualComplete: () -> Void
+    let onManualCompleteWithStats: ((Double?, TimeInterval?, Double?) -> Void)?
     let onLinkRun: (UUID) -> Void
     let onConnectService: (ExternalService) -> Void
+
+    @State private var showStatsEntry = false
 
     var body: some View {
         NavigationStack {
@@ -34,14 +37,24 @@ struct ValidateSessionSheet: View {
     private var manualSection: some View {
         Section {
             Button {
-                onManualComplete()
-                dismiss()
+                if onManualCompleteWithStats != nil {
+                    showStatsEntry = true
+                } else {
+                    onManualComplete()
+                    dismiss()
+                }
             } label: {
                 Label("Mark Complete Manually", systemImage: "checkmark.circle.fill")
                     .foregroundStyle(Theme.Colors.success)
             }
         } footer: {
-            Text("Mark this session as done without linking to a recorded activity.")
+            Text("Mark this session as done and enter your stats.")
+        }
+        .sheet(isPresented: $showStatsEntry) {
+            ManualStatsEntrySheet(session: session) { dist, dur, elev in
+                onManualCompleteWithStats?(dist, dur, elev)
+                dismiss()
+            }
         }
     }
 

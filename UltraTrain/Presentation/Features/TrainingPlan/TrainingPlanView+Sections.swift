@@ -121,6 +121,17 @@ extension TrainingPlanView {
                                 )
                             }
                         },
+                        onValidateSessionWithStats: { sessionIndex, dist, dur, elev in
+                            Task {
+                                await viewModel.completeSessionManually(
+                                    weekIndex: weekIndex,
+                                    sessionIndex: sessionIndex,
+                                    distanceKm: dist,
+                                    durationSeconds: dur,
+                                    elevationGainM: elev
+                                )
+                            }
+                        },
                         onLinkSessionToRun: { sessionIndex, runId in
                             Task {
                                 await viewModel.linkSessionToRun(

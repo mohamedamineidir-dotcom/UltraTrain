@@ -244,7 +244,7 @@ extension SessionType {
         case .intervals:     String(localized: "session.intervals", defaultValue: "Intervals")
         case .verticalGain:  String(localized: "session.verticalGain", defaultValue: "Vertical Gain")
         case .backToBack:    String(localized: "session.backToBack", defaultValue: "Long Run (B2B)")
-        case .recovery:      String(localized: "session.recovery", defaultValue: "Recovery")
+        case .recovery:      String(localized: "session.recovery", defaultValue: "Easy Run")
         case .crossTraining: String(localized: "session.crossTraining", defaultValue: "Cross-Training")
         case .rest:          String(localized: "session.rest", defaultValue: "Rest")
         }
@@ -257,7 +257,7 @@ extension SessionType {
         case .intervals:     "timer"
         case .verticalGain:  "mountain.2.fill"
         case .backToBack:    "arrow.triangle.2.circlepath"
-        case .recovery:      "heart.fill"
+        case .recovery:      "figure.walk"
         case .crossTraining: "figure.mixed.cardio"
         case .rest:          "bed.double.fill"
         }

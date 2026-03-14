@@ -935,6 +935,7 @@
 		91D315542AFB66E8AA1740DE /* PhoneConnectivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBBF8647BF4D7567663C12D3 /* PhoneConnectivityService.swift */; };
 		91F5EBC6FD6E1C6F94E8FDC1 /* WatchMessageCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5E86B58A373F909B4DE6A5 /* WatchMessageCoder.swift */; };
 		92018A27AAC478933D04741F /* ShareRunViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7498365566D1ACEBB445936 /* ShareRunViewModel.swift */; };
+		920A8ABC6D657F837220CB3C /* ManualStatsEntrySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E7FE828A9E51C94A06902C /* ManualStatsEntrySheet.swift */; };
 		92114CFF57019428BB1260E5 /* CrashReporterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A9F1D56A9D4C24BB39485D /* CrashReporterService.swift */; };
 		92168D5EEAAE01903AF9EBEB /* FitnessCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F658CBE74CFB91A52E033E8B /* FitnessCalculatorTests.swift */; };
 		9267C9706573DFC83EB811E6 /* NutritionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C94BD974F8DC19E2C8856EF /* NutritionUITests.swift */; };
@@ -2154,6 +2155,7 @@
 		40B17335DBDD44ECDC267F40 /* HeroLandingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroLandingView.swift; sourceTree = "<group>"; };
 		40C6E355DDCBA13F32DA466B /* FitnessSyncServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitnessSyncServiceTests.swift; sourceTree = "<group>"; };
 		40E4360F38F22A74BD5AE5D2 /* TerrainDifficulty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerrainDifficulty.swift; sourceTree = "<group>"; };
+		40E7FE828A9E51C94A06902C /* ManualStatsEntrySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualStatsEntrySheet.swift; sourceTree = "<group>"; };
 		41029E4BAD035F04F730B7C0 /* RaceSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceSyncService.swift; sourceTree = "<group>"; };
 		4105E67C5DC48C7FEE80A4FA /* BackgroundTaskServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundTaskServiceTests.swift; sourceTree = "<group>"; };
 		4127CA0ED6B49819FFB0360D /* DeviceTokenServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTokenServiceTests.swift; sourceTree = "<group>"; };
@@ -4830,6 +4832,7 @@
 			isa = PBXGroup;
 			children = (
 				C4C20A01440FA0E58E2EE863 /* Components */,
+				40E7FE828A9E51C94A06902C /* ManualStatsEntrySheet.swift */,
 				4B311A22E1C688E2B19245F1 /* PhaseBadge.swift */,
 				16D997EE803794D8E39D9108 /* RaceCalendarRow.swift */,
 				5D241B91353F0FEAD71F67E7 /* RaceCalendarView.swift */,
@@ -7029,6 +7032,7 @@
 				B13FC8A98BF5CEB35CA5AAB9 /* MainTabView+Tabs.swift in Sources */,
 				48044CFDFDBD1A5094ED2D5D /* MainTabView+iPadDetail.swift in Sources */,
 				06B8C73EF60C0636E85C9DC3 /* MainTabView.swift in Sources */,
+				920A8ABC6D657F837220CB3C /* ManualStatsEntrySheet.swift in Sources */,
 				4D1B2A4CB46608760F2ACE83 /* MapRecenterButton.swift in Sources */,
 				F06CFB700B2E2EF50AEA6131 /* MapStylePreference.swift in Sources */,
 				00D52E54EC2E8FD88052885B /* MapStyleResolver.swift in Sources */,

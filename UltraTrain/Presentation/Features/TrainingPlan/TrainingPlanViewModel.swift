@@ -100,6 +100,7 @@ final class TrainingPlanViewModel {
         guard !isGenerating else { return }
         isGenerating = true
         error = nil
+        let generationStart = ContinuousClock.now
 
         do {
             guard let athlete = try await athleteRepository.getAthlete() else {
@@ -143,6 +144,13 @@ final class TrainingPlanViewModel {
         } catch {
             self.error = error.localizedDescription
             Logger.training.error("Failed to generate plan: \(error)")
+        }
+
+        // Let the loading animation finish its current cycle (~8.5s total)
+        let elapsed = ContinuousClock.now - generationStart
+        let minimumDuration = Duration.seconds(8.5)
+        if elapsed < minimumDuration {
+            try? await Task.sleep(for: minimumDuration - elapsed)
         }
 
         isGenerating = false

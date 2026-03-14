@@ -15,6 +15,7 @@ struct SessionDetailView: View {
     var onReschedule: ((Date) -> Void)?
     var onSwap: ((SwapCandidate) -> Void)?
     var onValidate: (() -> Void)?
+    var onValidateWithStats: ((Double?, TimeInterval?, Double?) -> Void)?
     var onLinkRun: ((UUID) -> Void)?
     var recentRuns: [CompletedRun] = []
 
@@ -38,13 +39,13 @@ struct SessionDetailView: View {
                     paceTargetsSection(athlete: athlete)
                 }
 
+                descriptionSection
+
                 if let workoutId = session.intervalWorkoutId,
                    let workout = workouts.first(where: { $0.id == workoutId }),
                    !workout.phases.isEmpty {
                     sessionStructureSummary(workout: workout)
                     WorkoutBlocksSection(workout: workout, athlete: athlete)
-                } else {
-                    descriptionSection
                 }
 
                 if let advice = session.coachAdvice {
@@ -96,6 +97,9 @@ struct SessionDetailView: View {
                 recentRuns: recentRuns,
                 connectedServices: [],
                 onManualComplete: { onValidate?() },
+                onManualCompleteWithStats: onValidateWithStats != nil ? { dist, dur, elev in
+                    onValidateWithStats?(dist, dur, elev)
+                } : nil,
                 onLinkRun: { runId in onLinkRun?(runId) },
                 onConnectService: { _ in }
             )
