@@ -121,14 +121,16 @@ extension TrainingPlanView {
                                 )
                             }
                         },
-                        onValidateSessionWithStats: { sessionIndex, dist, dur, elev in
+                        onValidateSessionWithStats: { sessionIndex, dist, dur, elev, feeling, exertion in
                             Task {
                                 await viewModel.completeSessionManually(
                                     weekIndex: weekIndex,
                                     sessionIndex: sessionIndex,
                                     distanceKm: dist,
                                     durationSeconds: dur,
-                                    elevationGainM: elev
+                                    elevationGainM: elev,
+                                    feeling: feeling,
+                                    exertion: exertion
                                 )
                             }
                         },

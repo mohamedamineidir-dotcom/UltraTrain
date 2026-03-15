@@ -11,6 +11,7 @@ final class TrainingPlanSwiftDataModel {
     var weeks: [TrainingWeekSwiftDataModel] = []
     var intermediateRaceIds: [UUID] = []
     var intermediateRaceSnapshotsData: Data?
+    var workoutsData: Data?
     var updatedAt: Date = Date()
 
     init(
@@ -21,6 +22,7 @@ final class TrainingPlanSwiftDataModel {
         weeks: [TrainingWeekSwiftDataModel] = [],
         intermediateRaceIds: [UUID] = [],
         intermediateRaceSnapshotsData: Data? = nil,
+        workoutsData: Data? = nil,
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -30,6 +32,7 @@ final class TrainingPlanSwiftDataModel {
         self.weeks = weeks
         self.intermediateRaceIds = intermediateRaceIds
         self.intermediateRaceSnapshotsData = intermediateRaceSnapshotsData
+        self.workoutsData = workoutsData
         self.updatedAt = updatedAt
     }
 }

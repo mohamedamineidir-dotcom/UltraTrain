@@ -275,7 +275,7 @@ final class WidgetDataWriter: @unchecked Sendable {
         case .intervals:     "Intervals"
         case .verticalGain:  "Vertical Gain"
         case .backToBack:    "Back-to-Back"
-        case .recovery:      "Recovery"
+        case .recovery:      "Base Endurance"
         case .crossTraining: "Cross-Training"
         case .rest:          "Rest"
         }

@@ -15,7 +15,7 @@ struct SessionDetailView: View {
     var onReschedule: ((Date) -> Void)?
     var onSwap: ((SwapCandidate) -> Void)?
     var onValidate: (() -> Void)?
-    var onValidateWithStats: ((Double?, TimeInterval?, Double?) -> Void)?
+    var onValidateWithStats: ((Double?, TimeInterval?, Double?, PerceivedFeeling?, Int?) -> Void)?
     var onLinkRun: ((UUID) -> Void)?
     var recentRuns: [CompletedRun] = []
 
@@ -92,16 +92,17 @@ struct SessionDetailView: View {
             )
         }
         .sheet(isPresented: $showValidateSheet) {
-            ValidateSessionSheet(
+            SessionValidationView(
                 session: session,
                 recentRuns: recentRuns,
-                connectedServices: [],
-                onManualComplete: { onValidate?() },
-                onManualCompleteWithStats: onValidateWithStats != nil ? { dist, dur, elev in
-                    onValidateWithStats?(dist, dur, elev)
-                } : nil,
-                onLinkRun: { runId in onLinkRun?(runId) },
-                onConnectService: { _ in }
+                onComplete: { dist, dur, elev, feeling, exertion in
+                    if dist != nil || dur != nil || elev != nil || feeling != nil || exertion != nil {
+                        onValidateWithStats?(dist, dur, elev, feeling, exertion)
+                    } else {
+                        onValidate?()
+                    }
+                },
+                onLinkRun: { runId in onLinkRun?(runId) }
             )
         }
     }

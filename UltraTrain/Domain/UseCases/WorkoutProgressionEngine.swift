@@ -88,8 +88,8 @@ enum WorkoutProgressionEngine {
         let main = phase(.work, duration: totalDuration, intensity: .easy, reps: 1,
                          notes: "Easy conversational pace (Zone 2). Focus on recovery and blood flow.")
         return WorkoutTemplate(
-            name: "Easy run",
-            description: "Easy run: \(totalMin)min at conversational pace",
+            name: "Base Endurance",
+            description: "Base Endurance: \(totalMin)min at conversational pace",
             phases: [main]
         )
     }
@@ -199,14 +199,14 @@ enum WorkoutProgressionEngine {
 
         switch effectiveFocus {
         case .threshold30:
-            // Progressive threshold intervals — moderate intensity, building volume
+            // Short high-intensity uphill intervals — 30s to 2:30, with equal or slightly longer rest
             let variants: [(Int, Double, Double, String)] = [
-                (4, 180, 120, "4×3min at threshold (Z3) / 2min jog"),
-                (5, 180, 120, "5×3min at threshold (Z3) / 2min jog"),
-                (5, 240, 120, "5×4min at threshold (Z3) / 2min jog"),
-                (6, 240, 120, "6×4min at threshold (Z3) / 2min jog"),
-                (6, 300, 120, "6×5min at threshold (Z3) / 2min jog"),
-                (5, 360, 150, "5×6min at threshold (Z3) / 2min30 jog"),
+                (8,  30,  30, "8×30s hard uphill (Z4) / 30s jog down"),
+                (6,  60,  90, "6×1min uphill at threshold (Z3-4) / 1:30 jog"),
+                (6, 120, 150, "6×2min uphill at threshold (Z3-4) / 2:30 jog"),
+                (8,  90, 120, "8×1:30 uphill at threshold (Z3-4) / 2min jog"),
+                (10, 60,  60, "10×1min hard uphill (Z4) / 1min jog down"),
+                (7, 150, 150, "7×2:30 uphill at threshold (Z3-4) / 2:30 jog"),
             ]
             workPhases = variants[min(weekInPhase, variants.count - 1)]
 
@@ -223,14 +223,14 @@ enum WorkoutProgressionEngine {
             workPhases = variants[weekInPhase % variants.count]
 
         case .threshold60:
-            // Sustained threshold — long blocks at race effort
+            // Medium sustained threshold intervals — 3 to 10min, shorter rest relative to work
             let variants: [(Int, Double, Double, String)] = [
-                (2, 900, 300,  "2×15min at threshold (Z3-4) / 5min jog"),
-                (2, 1200, 300, "2×20min at threshold (Z3-4) / 5min jog"),
-                (3, 900, 240,  "3×15min at threshold (Z3-4) / 4min jog"),
-                (2, 1500, 300, "2×25min at threshold (Z3-4) / 5min jog"),
-                (3, 1200, 300, "3×20min at threshold (Z3-4) / 5min jog"),
-                (2, 1800, 300, "2×30min at threshold (Z3-4) / 5min jog"),
+                (5, 180,  90, "5×3min at threshold (Z3-4) / 1:30 jog"),
+                (6, 240, 120, "6×4min at threshold (Z3-4) / 2min jog"),
+                (4, 360, 120, "4×6min at threshold (Z3-4) / 2min jog"),
+                (8, 240, 120, "8×4min at threshold (Z3-4) / 2min jog"),
+                (5, 480, 150, "5×8min at threshold (Z3-4) / 2:30 jog"),
+                (3, 600, 180, "3×10min at threshold (Z3-4) / 3min jog"),
             ]
             workPhases = variants[weekInPhase % variants.count]
 

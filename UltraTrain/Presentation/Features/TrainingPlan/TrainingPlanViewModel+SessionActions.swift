@@ -34,7 +34,9 @@ extension TrainingPlanViewModel {
         sessionIndex: Int,
         distanceKm: Double?,
         durationSeconds: TimeInterval?,
-        elevationGainM: Double?
+        elevationGainM: Double?,
+        feeling: PerceivedFeeling? = nil,
+        exertion: Int? = nil
     ) async {
         guard var currentPlan = plan else { return }
         guard weekIndex < currentPlan.weeks.count,
@@ -45,6 +47,8 @@ extension TrainingPlanViewModel {
         session.actualDistanceKm = distanceKm
         session.actualDurationSeconds = durationSeconds
         session.actualElevationGainM = elevationGainM
+        session.perceivedFeeling = feeling
+        session.perceivedExertion = exertion
         currentPlan.weeks[weekIndex].sessions[sessionIndex] = session
 
         do {

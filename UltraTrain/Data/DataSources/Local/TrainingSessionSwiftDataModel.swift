@@ -20,6 +20,11 @@ final class TrainingSessionSwiftDataModel {
     var week: TrainingWeekSwiftDataModel?
     var isKeySession: Bool = false
     var coachAdvice: String?
+    var actualDistanceKm: Double?
+    var actualDurationSeconds: Double?
+    var actualElevationGainM: Double?
+    var perceivedFeelingRaw: String?
+    var perceivedExertion: Int?
     var updatedAt: Date = Date()
 
     init(
@@ -39,6 +44,11 @@ final class TrainingSessionSwiftDataModel {
         intervalWorkoutId: UUID? = nil,
         isKeySession: Bool = false,
         coachAdvice: String? = nil,
+        actualDistanceKm: Double? = nil,
+        actualDurationSeconds: Double? = nil,
+        actualElevationGainM: Double? = nil,
+        perceivedFeelingRaw: String? = nil,
+        perceivedExertion: Int? = nil,
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -57,6 +67,11 @@ final class TrainingSessionSwiftDataModel {
         self.intervalWorkoutId = intervalWorkoutId
         self.isKeySession = isKeySession
         self.coachAdvice = coachAdvice
+        self.actualDistanceKm = actualDistanceKm
+        self.actualDurationSeconds = actualDurationSeconds
+        self.actualElevationGainM = actualElevationGainM
+        self.perceivedFeelingRaw = perceivedFeelingRaw
+        self.perceivedExertion = perceivedExertion
         self.updatedAt = updatedAt
     }
 }

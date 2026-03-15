@@ -1,6 +1,6 @@
 import Foundation
 
-enum PerceivedFeeling: String, CaseIterable, Sendable {
+enum PerceivedFeeling: String, CaseIterable, Sendable, Codable {
     case great
     case good
     case ok

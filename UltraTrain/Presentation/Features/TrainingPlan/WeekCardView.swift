@@ -19,7 +19,7 @@ struct WeekCardView: View {
     let onReorderSession: (Int, Int, SwapCandidate) -> Void
     var workouts: [IntervalWorkout] = []
     var onValidateSession: ((Int) -> Void)?
-    var onValidateSessionWithStats: ((Int, Double?, TimeInterval?, Double?) -> Void)?
+    var onValidateSessionWithStats: ((Int, Double?, TimeInterval?, Double?, PerceivedFeeling?, Int?) -> Void)?
     var onLinkSessionToRun: ((Int, UUID) -> Void)?
     var recentRunsProvider: ((Date) async -> [CompletedRun])?
 
@@ -47,7 +47,7 @@ struct WeekCardView: View {
         workouts: [IntervalWorkout] = [],
         onReorderSession: @escaping (Int, Int, SwapCandidate) -> Void,
         onValidateSession: ((Int) -> Void)? = nil,
-        onValidateSessionWithStats: ((Int, Double?, TimeInterval?, Double?) -> Void)? = nil,
+        onValidateSessionWithStats: ((Int, Double?, TimeInterval?, Double?, PerceivedFeeling?, Int?) -> Void)? = nil,
         onLinkSessionToRun: ((Int, UUID) -> Void)? = nil,
         recentRunsProvider: ((Date) async -> [CompletedRun])? = nil
     ) {
@@ -295,20 +295,20 @@ extension WeekCardView {
             )
         }
         .sheet(item: $validateItem) { item in
-            ValidateSessionSheet(
+            SessionValidationView(
                 session: item.session,
                 recentRuns: validateRecentRuns,
-                connectedServices: [],
-                onManualComplete: {
-                    onValidateSession?(item.sessionIndex)
-                },
-                onManualCompleteWithStats: { dist, dur, elev in
-                    onValidateSessionWithStats?(item.sessionIndex, dist, dur, elev)
+                onComplete: { dist, dur, elev, feeling, exertion in
+                    if dist != nil || dur != nil || elev != nil || feeling != nil || exertion != nil {
+                        onValidateSessionWithStats?(item.sessionIndex, dist, dur, elev, feeling, exertion)
+                    } else {
+                        onValidateSession?(item.sessionIndex)
+                    }
                 },
                 onLinkRun: { runId in
                     onLinkSessionToRun?(item.sessionIndex, runId)
                 },
-                onConnectService: { _ in }
+                recentRunsProvider: recentRunsProvider
             )
         }
     }
@@ -371,8 +371,8 @@ extension WeekCardView {
             onReschedule: { newDate in onRescheduleSession(sessionIndex, newDate) },
             onSwap: { candidate in onSwapSession(sessionIndex, candidate) },
             onValidate: onValidateSession != nil ? { onValidateSession?(sessionIndex) } : nil,
-            onValidateWithStats: onValidateSessionWithStats != nil ? { dist, dur, elev in
-                onValidateSessionWithStats?(sessionIndex, dist, dur, elev)
+            onValidateWithStats: onValidateSessionWithStats != nil ? { dist, dur, elev, feeling, exertion in
+                onValidateSessionWithStats?(sessionIndex, dist, dur, elev, feeling, exertion)
             } : nil,
             onLinkRun: onLinkSessionToRun != nil ? { runId in onLinkSessionToRun?(sessionIndex, runId) } : nil,
             recentRuns: validateRecentRuns

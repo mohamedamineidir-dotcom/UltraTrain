@@ -1617,6 +1617,9 @@
         }
       }
     },
+    "%lldh" : {
+
+    },
     "%lldm" : {
       "localizations" : {
         "fr" : {
@@ -5707,6 +5710,9 @@
     "Enter at least one PB to calibrate your training paces." : {
 
     },
+    "Enter Stats" : {
+
+    },
     "Enter the 6-digit code and your new password" : {
       "localizations" : {
         "fr" : {
@@ -6952,6 +6958,9 @@
         }
       }
     },
+    "Hours" : {
+
+    },
     "Hours: %lld" : {
       "localizations" : {
         "fr" : {
@@ -8141,6 +8150,9 @@
         }
       }
     },
+    "m D+" : {
+
+    },
     "Macronutrients (optional)" : {
       "localizations" : {
         "fr" : {
@@ -8243,7 +8255,7 @@
         }
       }
     },
-    "Mark this session as done without linking to a recorded activity." : {
+    "Mark this session as done and enter your stats." : {
 
     },
     "Marks this checkpoint as having an aid station with supplies" : {
@@ -8418,6 +8430,9 @@
           }
         }
       }
+    },
+    "Minutes" : {
+
     },
     "Minutes: %lld" : {
       "localizations" : {
@@ -12463,6 +12478,9 @@
         }
       }
     },
+    "Save & Complete" : {
+
+    },
     "Save a route first from the Routes library." : {
       "localizations" : {
         "fr" : {
@@ -13079,6 +13097,9 @@
         }
       }
     },
+    "Session Stats" : {
+
+    },
     "Session Structure" : {
 
     },
@@ -13203,7 +13224,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Recovery"
+            "value" : "Easy Run"
           }
         },
         "fr" : {
@@ -13616,6 +13637,9 @@
           }
         }
       }
+    },
+    "Skip — Mark Complete Without Stats" : {
+
     },
     "Skip for now" : {
       "localizations" : {

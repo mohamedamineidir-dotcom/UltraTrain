@@ -74,14 +74,14 @@ enum SessionDescriptionGenerator {
         }
         switch phase {
         case .base:
-            return "Hill threshold intervals — 30min total work at tempo (Zone 3) on moderate hills. Full recovery between reps."
+            return "Short uphill threshold intervals — 30min total at tempo (Zone 3-4). Short reps with equal recovery on hills."
         case .build:
             if weekInPhase < 6 {
                 return "VO2max hill repeats (Zone 4). Short intense climbs with full recovery. Push hard but controlled."
             }
             return "Sustained threshold — 60min total work at race effort (Zone 3-4) on rolling terrain. Practice fueling."
         case .peak:
-            return "Short sharp intervals (Zone 4-5). Maximum quality. Race sharpness work."
+            return "Sustained threshold intervals — 60min total at race effort (Zone 3-4). Medium reps building endurance."
         case .taper:
             return "Opener intervals. Short efforts to stay sharp without fatiguing."
         case .recovery, .race:

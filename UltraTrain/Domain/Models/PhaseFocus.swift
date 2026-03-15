@@ -9,9 +9,9 @@ enum PhaseFocus: String, CaseIterable, Sendable, Codable {
 
     var displayName: String {
         switch self {
-        case .threshold30:      "Hill Threshold 30"
+        case .threshold30:      "30' Threshold"
         case .vo2max:           "VO2max Hills"
-        case .threshold60:      "Sustained Threshold 60"
+        case .threshold60:      "60' Threshold"
         case .sharpening:       "Sharpening"
         case .postRaceRecovery: "Post-Race Recovery"
         }

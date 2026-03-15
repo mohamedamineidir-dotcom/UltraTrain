@@ -18,7 +18,14 @@ enum TrainingPlanSwiftDataMapper {
             snapshots = []
         }
 
-        return TrainingPlan(
+        let workouts: [IntervalWorkout]
+        if let data = model.workoutsData {
+            workouts = (try? JSONDecoder().decode([IntervalWorkout].self, from: data)) ?? []
+        } else {
+            workouts = []
+        }
+
+        var plan = TrainingPlan(
             id: model.id,
             athleteId: model.athleteId,
             targetRaceId: model.targetRaceId,
@@ -27,6 +34,8 @@ enum TrainingPlanSwiftDataMapper {
             intermediateRaceIds: model.intermediateRaceIds,
             intermediateRaceSnapshots: snapshots
         )
+        plan.workouts = workouts
+        return plan
     }
 
     static func weekToDomain(_ model: TrainingWeekSwiftDataModel) -> TrainingWeek? {
@@ -75,7 +84,12 @@ enum TrainingPlanSwiftDataMapper {
             targetHeartRateZone: model.targetHeartRateZone,
             intervalWorkoutId: model.intervalWorkoutId,
             isKeySession: model.isKeySession,
-            coachAdvice: model.coachAdvice
+            coachAdvice: model.coachAdvice,
+            actualDistanceKm: model.actualDistanceKm,
+            actualDurationSeconds: model.actualDurationSeconds,
+            actualElevationGainM: model.actualElevationGainM,
+            perceivedFeeling: model.perceivedFeelingRaw.flatMap { PerceivedFeeling(rawValue: $0) },
+            perceivedExertion: model.perceivedExertion
         )
     }
 
@@ -84,6 +98,7 @@ enum TrainingPlanSwiftDataMapper {
     static func toSwiftData(_ plan: TrainingPlan) -> TrainingPlanSwiftDataModel {
         let weekModels = plan.weeks.map { weekToSwiftData($0) }
         let snapshotsData = try? JSONEncoder().encode(plan.intermediateRaceSnapshots)
+        let workoutsData = try? JSONEncoder().encode(plan.workouts)
         return TrainingPlanSwiftDataModel(
             id: plan.id,
             athleteId: plan.athleteId,
@@ -91,7 +106,8 @@ enum TrainingPlanSwiftDataMapper {
             createdAt: plan.createdAt,
             weeks: weekModels,
             intermediateRaceIds: plan.intermediateRaceIds,
-            intermediateRaceSnapshotsData: snapshotsData
+            intermediateRaceSnapshotsData: snapshotsData,
+            workoutsData: workoutsData
         )
     }
 
@@ -129,7 +145,12 @@ enum TrainingPlanSwiftDataMapper {
             targetHeartRateZone: session.targetHeartRateZone,
             intervalWorkoutId: session.intervalWorkoutId,
             isKeySession: session.isKeySession,
-            coachAdvice: session.coachAdvice
+            coachAdvice: session.coachAdvice,
+            actualDistanceKm: session.actualDistanceKm,
+            actualDurationSeconds: session.actualDurationSeconds,
+            actualElevationGainM: session.actualElevationGainM,
+            perceivedFeelingRaw: session.perceivedFeeling?.rawValue,
+            perceivedExertion: session.perceivedExertion
         )
     }
 }

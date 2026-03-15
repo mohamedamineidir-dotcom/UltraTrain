@@ -101,7 +101,7 @@ private extension SessionType {
         case .intervals: "Intervals"
         case .verticalGain: "Vertical"
         case .backToBack: "Back-to-Back"
-        case .recovery: "Recovery"
+        case .recovery: "Base Endurance"
         case .crossTraining: "Cross-Training"
         case .rest: "Rest"
         }
