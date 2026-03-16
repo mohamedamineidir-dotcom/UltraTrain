@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct HeroLandingView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @State private var showSignUp = false
     @State private var showSignIn = false
 
@@ -14,7 +15,6 @@ struct HeroLandingView: View {
                 backgroundGradient
                 content
             }
-            .preferredColorScheme(.dark)
             .navigationDestination(isPresented: $showSignUp) {
                 SignUpView(
                     authService: authService,
@@ -32,15 +32,29 @@ struct HeroLandingView: View {
     }
 
     private var backgroundGradient: some View {
-        LinearGradient(
-            colors: [
-                Color(red: 0.05, green: 0.04, blue: 0.18),
-                Color(red: 0.08, green: 0.06, blue: 0.22),
-                Color(red: 0.04, green: 0.09, blue: 0.16)
-            ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
+        Group {
+            if colorScheme == .dark {
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.05, green: 0.04, blue: 0.18),
+                        Color(red: 0.08, green: 0.06, blue: 0.22),
+                        Color(red: 0.04, green: 0.09, blue: 0.16)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            } else {
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.96, green: 0.95, blue: 1.0),
+                        Color(red: 0.97, green: 0.96, blue: 1.0),
+                        Color(red: 0.95, green: 0.97, blue: 0.99)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            }
+        }
         .ignoresSafeArea()
     }
 
@@ -59,7 +73,9 @@ struct HeroLandingView: View {
                         .font(.system(size: 56))
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [.white, .white.opacity(0.8)],
+                                colors: colorScheme == .dark
+                                    ? [.white, .white.opacity(0.8)]
+                                    : [Theme.Colors.warmCoral, Theme.Colors.warmCoral.opacity(0.7)],
                                 startPoint: .top,
                                 endPoint: .bottom
                             )
@@ -70,13 +86,13 @@ struct HeroLandingView: View {
                 VStack(spacing: Theme.Spacing.sm) {
                     Text("UltraTrain")
                         .font(.system(size: 38, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.primary)
 
                     Text("Train for the trails.\nGo the distance.")
                         .font(.title3)
                         .fontWeight(.medium)
                         .multilineTextAlignment(.center)
-                        .foregroundStyle(.white.opacity(0.7))
+                        .foregroundStyle(.secondary)
                 }
             }
 
@@ -107,11 +123,11 @@ struct HeroLandingView: View {
             // Footer
             HStack(spacing: Theme.Spacing.xs) {
                 Link("Privacy Policy", destination: URL(string: "https://ultratrain.app/privacy")!)
-                Text("·").foregroundStyle(.white.opacity(0.3))
+                Text("·").foregroundStyle(.tertiary)
                 Link("Terms of Service", destination: URL(string: "https://ultratrain.app/terms")!)
             }
             .font(.caption)
-            .foregroundStyle(.white.opacity(0.4))
+            .foregroundStyle(.tertiary)
             .padding(.top, Theme.Spacing.md)
             .padding(.bottom, Theme.Spacing.sm)
         }
@@ -125,7 +141,7 @@ struct HeroLandingView: View {
                 .foregroundStyle(Theme.Colors.warmCoral)
             Text(text)
                 .font(.subheadline)
-                .foregroundStyle(.white.opacity(0.85))
+                .foregroundStyle(.primary.opacity(0.85))
             Spacer()
         }
     }

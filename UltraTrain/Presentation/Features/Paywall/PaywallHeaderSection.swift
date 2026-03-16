@@ -11,7 +11,7 @@ struct PaywallHeaderSection: View {
                     .foregroundStyle(Theme.Gradients.goldPremium)
                 Image(systemName: "figure.run")
                     .font(.system(size: 28, weight: .semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.primary)
                     .offset(y: -6)
             }
             .shadow(color: Theme.Colors.goldAccent.opacity(0.5), radius: 16, y: 4)
@@ -21,12 +21,12 @@ struct PaywallHeaderSection: View {
 
             Text("paywall.title")
                 .font(.title.bold())
-                .foregroundStyle(.white)
+                .foregroundStyle(.primary)
                 .multilineTextAlignment(.center)
 
             Text("paywall.subtitle \(firstName)")
                 .font(.subheadline)
-                .foregroundStyle(.white.opacity(0.7))
+                .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, Theme.Spacing.lg)
         }

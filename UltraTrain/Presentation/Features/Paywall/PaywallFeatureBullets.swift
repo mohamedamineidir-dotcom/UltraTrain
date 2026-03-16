@@ -19,7 +19,7 @@ struct PaywallFeatureBullets: View {
                 .accessibilityHidden(true)
             Text(key)
                 .font(.subheadline)
-                .foregroundStyle(.white.opacity(0.9))
+                .foregroundStyle(.primary.opacity(0.9))
                 .lineLimit(1)
                 .minimumScaleFactor(0.85)
         }

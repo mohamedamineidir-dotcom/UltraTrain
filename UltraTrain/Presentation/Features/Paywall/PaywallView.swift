@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct PaywallView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @State var viewModel: PaywallViewModel
     var onSubscribed: () -> Void
     var onDismiss: (() -> Void)?
@@ -23,12 +24,26 @@ struct PaywallView: View {
 
     var body: some View {
         ZStack {
-            Theme.Gradients.premiumBackground
-                .ignoresSafeArea()
+            Group {
+                if colorScheme == .dark {
+                    Theme.Gradients.premiumBackground
+                } else {
+                    LinearGradient(
+                        colors: [
+                            Color(red: 0.96, green: 0.95, blue: 1.0),
+                            Color(red: 0.97, green: 0.96, blue: 1.0),
+                            Color(red: 0.95, green: 0.97, blue: 0.99)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                }
+            }
+            .ignoresSafeArea()
 
             if viewModel.isLoading {
                 ProgressView()
-                    .tint(.white)
+                    .tint(Color.primary)
             } else {
                 ScrollView {
                     VStack(spacing: Theme.Spacing.lg) {
@@ -40,7 +55,7 @@ struct PaywallView: View {
                         )
                         Text("paywall.pricesInEUR")
                             .font(.caption)
-                            .foregroundStyle(.white.opacity(0.4))
+                            .foregroundStyle(.secondary)
                         PaywallTrialTimeline()
 
                         if let error = viewModel.error {
@@ -64,12 +79,11 @@ struct PaywallView: View {
                 } label: {
                     Image(systemName: "xmark.circle.fill")
                         .font(.title2)
-                        .foregroundStyle(.white.opacity(0.7))
+                        .foregroundStyle(.secondary)
                 }
                 .padding(Theme.Spacing.md)
             }
         }
-        .preferredColorScheme(.dark)
         .task {
             await viewModel.loadPlans()
         }

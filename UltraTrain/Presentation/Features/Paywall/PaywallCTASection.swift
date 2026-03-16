@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct PaywallCTASection: View {
+    @Environment(\.colorScheme) private var colorScheme
     let viewModel: PaywallViewModel
 
     var body: some View {
@@ -37,11 +38,11 @@ struct PaywallCTASection: View {
                 } label: {
                     if viewModel.isRestoring {
                         ProgressView()
-                            .tint(.white.opacity(0.6))
+                            .tint(Color.secondary)
                     } else {
                         Text("paywall.restore")
                             .font(.caption)
-                            .foregroundStyle(.white.opacity(0.6))
+                            .foregroundStyle(.secondary)
                     }
                 }
                 .disabled(viewModel.isRestoring)
@@ -50,16 +51,16 @@ struct PaywallCTASection: View {
                 // Legal links
                 HStack(spacing: Theme.Spacing.md) {
                     Link("Terms", destination: URL(string: "https://ultratrain.app/terms")!)
-                    Text("|").foregroundStyle(.white.opacity(0.3))
+                    Text("|").foregroundStyle(.tertiary)
                     Link("Privacy", destination: URL(string: "https://ultratrain.app/privacy")!)
                 }
                 .font(.caption2)
-                .foregroundStyle(.white.opacity(0.4))
+                .foregroundStyle(.tertiary)
             }
             .padding(.vertical, Theme.Spacing.md)
             .background(
                 LinearGradient(
-                    colors: [Color.clear, Theme.Colors.premiumBgBottom],
+                    colors: [Color.clear, colorScheme == .dark ? Theme.Colors.premiumBgBottom : Color(red: 0.95, green: 0.97, blue: 0.99)],
                     startPoint: .top,
                     endPoint: .center
                 )

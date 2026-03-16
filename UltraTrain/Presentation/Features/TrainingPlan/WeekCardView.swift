@@ -247,8 +247,10 @@ extension WeekCardView {
 
             ForEach(Array(week.sessions.enumerated()), id: \.element.id) { sessionIndex, session in
                 if sessionIndex > 0 {
-                    Divider()
-                        .padding(.leading, 40)
+                    Rectangle()
+                        .fill(Theme.Colors.tertiaryLabel.opacity(0.15))
+                        .frame(height: 0.5)
+                        .padding(.leading, 48)
                 }
 
                 NavigationLink(destination: sessionDetailView(for: session, at: sessionIndex)) {

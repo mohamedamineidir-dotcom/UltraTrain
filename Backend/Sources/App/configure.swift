@@ -5,6 +5,10 @@ import JWT
 import VaporAPNS
 import APNSCore
 
+struct APNSConfiguredKey: StorageKey {
+    typealias Value = Bool
+}
+
 func configure(_ app: Application) async throws {
     // MARK: - Database
 
@@ -144,6 +148,7 @@ func configure(_ app: Application) async throws {
                     teamIdentifier: apnsTeamId
                 )
             )
+            app.storage[APNSConfiguredKey.self] = true
             app.logger.notice("APNs configured successfully")
         } catch {
             app.logger.error("Failed to configure APNs: \(error). Verify APNS_KEY_CONTENT is a valid .p8 private key.")

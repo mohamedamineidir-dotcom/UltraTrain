@@ -34,12 +34,12 @@ struct PaywallPlanCard: View {
                 HStack(spacing: Theme.Spacing.sm) {
                     Text(plan.period.displayNameLocalized)
                         .font(.headline)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.primary)
 
                     if plan.trialDays != nil {
                         Text("paywall.freeWeek")
                             .font(.caption2)
-                            .foregroundStyle(.white.opacity(0.7))
+                            .foregroundStyle(.secondary)
                     }
 
                     if let savings = plan.savingsPercent {
@@ -56,14 +56,14 @@ struct PaywallPlanCard: View {
                 }
                 Text("paywall.perWeek \(plan.displayPricePerWeek)")
                     .font(.caption)
-                    .foregroundStyle(.white.opacity(0.6))
+                    .foregroundStyle(.secondary)
             }
 
             Spacer()
 
             Text(plan.displayPrice)
                 .font(.title3.bold())
-                .foregroundStyle(.white)
+                .foregroundStyle(.primary)
         }
         .padding(Theme.Spacing.md)
         .background(
@@ -73,12 +73,12 @@ struct PaywallPlanCard: View {
         )
         .background(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                .fill(isSelected ? Color.white.opacity(0.15) : Color.white.opacity(0.05))
+                .fill(Color.primary.opacity(isSelected ? 0.1 : 0.03))
         )
         .overlay(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .stroke(
-                    isSelected ? Theme.Colors.warmCoral : Color.white.opacity(0.12),
+                    isSelected ? Theme.Colors.warmCoral : Color.primary.opacity(0.12),
                     lineWidth: isSelected ? 2 : 1
                 )
         )

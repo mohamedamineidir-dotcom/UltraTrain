@@ -3952,6 +3952,9 @@
         }
       }
     },
+    "Complete Session" : {
+
+    },
     "Complete some runs to see your fitness trend" : {
       "localizations" : {
         "fr" : {
@@ -4092,9 +4095,6 @@
         }
       }
     },
-    "Connect More Services" : {
-
-    },
     "Connect to Strava" : {
       "localizations" : {
         "fr" : {
@@ -4104,9 +4104,6 @@
           }
         }
       }
-    },
-    "Connected" : {
-
     },
     "Connected Services" : {
       "localizations" : {
@@ -5708,9 +5705,6 @@
       }
     },
     "Enter at least one PB to calibrate your training paces." : {
-
-    },
-    "Enter Stats" : {
 
     },
     "Enter the 6-digit code and your new password" : {
@@ -7698,6 +7692,9 @@
         }
       }
     },
+    "Key" : {
+
+    },
     "Key takeaways" : {
       "localizations" : {
         "fr" : {
@@ -7870,6 +7867,9 @@
           }
         }
       }
+    },
+    "Link to a Recent Run" : {
+
     },
     "Link to Recorded Run (Optional)" : {
       "localizations" : {
@@ -8232,9 +8232,6 @@
         }
       }
     },
-    "Mark Complete Manually" : {
-
-    },
     "Mark Incomplete" : {
       "localizations" : {
         "fr" : {
@@ -8254,9 +8251,6 @@
           }
         }
       }
-    },
-    "Mark this session as done and enter your stats." : {
-
     },
     "Marks this checkpoint as having an aid station with supplies" : {
       "localizations" : {
@@ -11577,6 +11571,9 @@
         }
       }
     },
+    "Rate Your Effort (RPE)" : {
+
+    },
     "Re-center" : {
       "localizations" : {
         "fr" : {
@@ -11635,9 +11632,6 @@
           }
         }
       }
-    },
-    "Recent Activities" : {
-
     },
     "Recent Runs (%lld)" : {
       "localizations" : {
@@ -12478,9 +12472,6 @@
         }
       }
     },
-    "Save & Complete" : {
-
-    },
     "Save a route first from the Routes library." : {
       "localizations" : {
         "fr" : {
@@ -13224,7 +13215,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Easy Run"
+            "value" : "Base Endurance"
           }
         },
         "fr" : {
@@ -13638,9 +13629,6 @@
         }
       }
     },
-    "Skip — Mark Complete Without Stats" : {
-
-    },
     "Skip for now" : {
       "localizations" : {
         "fr" : {
@@ -13670,6 +13658,9 @@
           }
         }
       }
+    },
+    "Skip Stats — Mark Complete" : {
+
     },
     "Skip this nutrition reminder" : {
       "localizations" : {

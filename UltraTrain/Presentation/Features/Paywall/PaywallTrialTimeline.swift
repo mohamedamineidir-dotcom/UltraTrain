@@ -8,7 +8,7 @@ struct PaywallTrialTimeline: View {
          "paywall.step.today", "paywall.step.todayDetail"),
         ("bell.circle.fill", Theme.Colors.amberAccent,
          "paywall.step.reminder", "paywall.step.reminderDetail"),
-        ("creditcard.circle.fill", .white.opacity(0.6),
+        ("creditcard.circle.fill", Color.secondary,
          "paywall.step.billing", "paywall.step.billingDetail")
     ]
 
@@ -16,7 +16,7 @@ struct PaywallTrialTimeline: View {
         VStack(alignment: .leading, spacing: 0) {
             Text("paywall.trialTitle")
                 .font(.headline)
-                .foregroundStyle(.white)
+                .foregroundStyle(.primary)
                 .padding(.bottom, Theme.Spacing.md)
 
             ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
@@ -27,7 +27,7 @@ struct PaywallTrialTimeline: View {
                             .foregroundStyle(step.iconColor)
                         if index < steps.count - 1 {
                             Rectangle()
-                                .fill(.white.opacity(0.2))
+                                .fill(Color.primary.opacity(0.15))
                                 .frame(width: 2, height: 32)
                         }
                     }
@@ -36,10 +36,10 @@ struct PaywallTrialTimeline: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(step.title)
                             .font(.subheadline.bold())
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.primary)
                         Text(step.subtitle)
                             .font(.caption)
-                            .foregroundStyle(.white.opacity(0.6))
+                            .foregroundStyle(.secondary)
                     }
                     .padding(.bottom, index < steps.count - 1 ? Theme.Spacing.sm : 0)
                 }

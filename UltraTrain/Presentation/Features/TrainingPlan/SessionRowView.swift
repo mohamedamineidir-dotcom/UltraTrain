@@ -37,60 +37,90 @@ struct SessionRowView: View {
     // MARK: - Active Session Row
 
     private var activeRow: some View {
-        HStack(spacing: 0) {
-            // Intensity accent bar
-            RoundedRectangle(cornerRadius: 1.5)
-                .fill(accentColor)
-                .frame(width: 3)
-                .padding(.vertical, 4)
+        HStack(spacing: Theme.Spacing.sm) {
+            // Icon glow circle with toggle overlay
+            iconGlow
 
-            HStack(spacing: Theme.Spacing.sm) {
-                // Completion toggle
-                toggleButton
-
-                // Session info
-                VStack(alignment: .leading, spacing: 2) {
-                    topLine
-                    bottomLine
-                }
-
-                Spacer()
-
-                // Duration + Day
-                VStack(alignment: .trailing, spacing: 2) {
-                    if session.plannedDuration > 0 {
-                        Text(formattedDuration)
-                            .font(.subheadline.monospacedDigit())
-                            .fontWeight(.medium)
-                            .foregroundStyle(session.isCompleted || session.isSkipped
-                                ? Theme.Colors.secondaryLabel : Theme.Colors.label)
-                    }
-                    dayLabel
-                }
+            // Session info
+            VStack(alignment: .leading, spacing: 3) {
+                topLine
+                bottomLine
             }
-            .padding(.leading, Theme.Spacing.sm)
+
+            Spacer()
+
+            // Metrics + Day
+            VStack(alignment: .trailing, spacing: 3) {
+                if session.plannedDistanceKm > 0 {
+                    Text(UnitFormatter.formatDistance(session.plannedDistanceKm, unit: units))
+                        .font(.subheadline.monospacedDigit().weight(.semibold))
+                        .foregroundStyle(session.isCompleted || session.isSkipped
+                            ? Theme.Colors.secondaryLabel : Theme.Colors.label)
+                } else if session.plannedDuration > 0 {
+                    Text(formattedDuration)
+                        .font(.subheadline.monospacedDigit().weight(.semibold))
+                        .foregroundStyle(session.isCompleted || session.isSkipped
+                            ? Theme.Colors.secondaryLabel : Theme.Colors.label)
+                }
+                dayLabel
+            }
         }
         .padding(.vertical, Theme.Spacing.sm)
-        .padding(.trailing, Theme.Spacing.xs)
-        .background(keySessionBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .padding(.horizontal, Theme.Spacing.xs)
+        .background(rowBackground)
+        .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
         .opacity(session.isSkipped ? 0.5 : 1.0)
         .accessibilityElement(children: .combine)
+    }
+
+    private var iconGlow: some View {
+        Button(action: onToggle) {
+            ZStack {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: session.isCompleted
+                                ? [Theme.Colors.success.opacity(0.25), Theme.Colors.success.opacity(0.1)]
+                                : [accentColor.opacity(0.15), accentColor.opacity(0.06)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 36, height: 36)
+
+                if session.isCompleted {
+                    Image(systemName: "checkmark")
+                        .font(.caption.bold())
+                        .foregroundStyle(Theme.Colors.success)
+                } else if session.isSkipped {
+                    Image(systemName: "forward.fill")
+                        .font(.caption2)
+                        .foregroundStyle(.orange)
+                } else {
+                    Image(systemName: session.type.icon)
+                        .font(.caption)
+                        .foregroundStyle(accentColor)
+                }
+            }
+            .shadow(color: session.isCompleted
+                ? Theme.Colors.success.opacity(0.3) : accentColor.opacity(0.15),
+                radius: 4)
+        }
+        .buttonStyle(.plain)
+        .sensoryFeedback(.impact(flexibility: .soft), trigger: session.isCompleted)
+        .accessibilityLabel(statusAccessibilityLabel)
+        .accessibilityHint("Double-tap to toggle completion")
     }
 
     // MARK: - Top Line (icon + name + badges)
 
     private var topLine: some View {
         HStack(spacing: Theme.Spacing.xs) {
-            Image(systemName: session.type.icon)
-                .font(.caption2)
-                .foregroundStyle(accentColor)
-                .accessibilityHidden(true)
-
             Text(session.type.displayName)
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(Theme.Colors.label)
-                .strikethrough(session.isCompleted || session.isSkipped)
+                .foregroundStyle(session.isCompleted || session.isSkipped
+                    ? Theme.Colors.secondaryLabel : Theme.Colors.label)
+                .strikethrough(session.isSkipped)
 
             if session.isSkipped {
                 skippedBadge
@@ -115,15 +145,20 @@ struct SessionRowView: View {
         HStack(spacing: Theme.Spacing.xs) {
             if !session.isSkipped && !session.isCompleted {
                 Text(session.intensity.displayName)
-                    .font(.caption2)
+                    .font(.caption2.weight(.medium))
                     .foregroundStyle(accentColor)
             }
 
-            if session.plannedElevationGainM > 0 {
-                Text("·")
+            if session.plannedDuration > 0 && session.plannedDistanceKm > 0 {
+                Text("·").font(.caption2).foregroundStyle(Theme.Colors.tertiaryLabel)
+                Text(formattedDuration)
                     .font(.caption2)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
-                Text("\(UnitFormatter.formatElevation(session.plannedElevationGainM, unit: units)) D+")
+            }
+
+            if session.plannedElevationGainM > 0 {
+                Text("·").font(.caption2).foregroundStyle(Theme.Colors.tertiaryLabel)
+                Label("\(UnitFormatter.formatElevation(session.plannedElevationGainM, unit: units))", systemImage: "mountain.2.fill")
                     .font(.caption2)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
@@ -135,25 +170,6 @@ struct SessionRowView: View {
     }
 
     // MARK: - Components
-
-    private var toggleButton: some View {
-        Button(action: onToggle) {
-            Circle()
-                .fill(toggleBackground)
-                .frame(width: 26, height: 26)
-                .overlay {
-                    if !toggleIcon.isEmpty {
-                        Image(systemName: toggleIcon)
-                            .font(.caption2.bold())
-                            .foregroundStyle(toggleForeground)
-                    }
-                }
-        }
-        .buttonStyle(.plain)
-        .sensoryFeedback(.impact(flexibility: .soft), trigger: session.isCompleted)
-        .accessibilityLabel(statusAccessibilityLabel)
-        .accessibilityHint("Double-tap to toggle completion")
-    }
 
     private var dayLabel: some View {
         let isToday = Calendar.current.isDateInToday(session.date)
@@ -186,8 +202,10 @@ struct SessionRowView: View {
     }
 
     @ViewBuilder
-    private var keySessionBackground: some View {
-        if session.isKeySession && !session.isSkipped && !session.isCompleted {
+    private var rowBackground: some View {
+        if session.isCompleted {
+            Theme.Colors.success.opacity(0.04)
+        } else if session.isKeySession && !session.isSkipped {
             Theme.Colors.primary.opacity(0.04)
         } else {
             Color.clear
@@ -208,24 +226,6 @@ struct SessionRowView: View {
     }
 
     // MARK: - Toggle State
-
-    private var toggleBackground: Color {
-        if session.isCompleted { return Theme.Colors.success }
-        if session.isSkipped { return .orange.opacity(0.2) }
-        return session.intensity.color.opacity(0.15)
-    }
-
-    private var toggleForeground: Color {
-        if session.isCompleted { return .white }
-        if session.isSkipped { return .orange }
-        return session.intensity.color
-    }
-
-    private var toggleIcon: String {
-        if session.isCompleted { return "checkmark" }
-        if session.isSkipped { return "forward.fill" }
-        return ""
-    }
 
     private var statusAccessibilityLabel: String {
         if session.isCompleted { return "\(session.type.displayName), completed" }

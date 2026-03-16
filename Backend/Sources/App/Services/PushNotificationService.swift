@@ -5,16 +5,18 @@ import APNSCore
 struct PushNotificationService {
     let app: Application
 
+    var isConfigured: Bool {
+        app.storage[APNSConfiguredKey.self] == true
+    }
+
     private func apnsClient(for environment: String?) -> APNSGenericClient {
-        switch environment {
-        case "sandbox", "development":
-            return app.apns.client(.development)
-        default:
-            return app.apns.client(.production)
-        }
+        // VaporAPNS configures a single default container;
+        // sandbox vs production is handled by the APNS endpoint in configuration
+        return app.apns.client(.default)
     }
 
     func sendTrainingReminder(to deviceToken: String, apnsEnvironment: String? = nil, sessionTitle: String) async throws {
+        guard isConfigured else { app.logger.warning("APNs not configured, skipping push"); return }
         let alert = APNSAlertNotification(
             alert: .init(title: .raw("Training Reminder"), body: .raw("Time for: \(sessionTitle)")),
             expiration: .immediately,
@@ -26,6 +28,7 @@ struct PushNotificationService {
     }
 
     func sendSyncAvailable(to deviceToken: String, apnsEnvironment: String? = nil) async throws {
+        guard isConfigured else { app.logger.warning("APNs not configured, skipping push"); return }
         let alert = APNSAlertNotification(
             alert: .init(title: .raw("Sync Available"), body: .raw("New training data is ready to sync.")),
             expiration: .immediately,
@@ -37,6 +40,7 @@ struct PushNotificationService {
     }
 
     func sendWeeklySummary(to deviceToken: String, apnsEnvironment: String? = nil, distanceKm: Double, elevationM: Double, runCount: Int) async throws {
+        guard isConfigured else { app.logger.warning("APNs not configured, skipping push"); return }
         let body = String(format: "This week: %.1f km, %.0f m D+ across %d run%@. Keep it up!",
                           distanceKm, elevationM, runCount, runCount == 1 ? "" : "s")
         let alert = APNSAlertNotification(
@@ -50,6 +54,7 @@ struct PushNotificationService {
     }
 
     func sendInactivityNudge(to deviceToken: String, apnsEnvironment: String? = nil, daysSinceLastRun: Int) async throws {
+        guard isConfigured else { app.logger.warning("APNs not configured, skipping push"); return }
         let body = "It's been \(daysSinceLastRun) days since your last run. A short recovery run can do wonders!"
         let alert = APNSAlertNotification(
             alert: .init(title: .raw("Time to Run?"), body: .raw(body)),
@@ -62,6 +67,7 @@ struct PushNotificationService {
     }
 
     func sendRaceCountdown(to deviceToken: String, apnsEnvironment: String? = nil, raceName: String, daysRemaining: Int) async throws {
+        guard isConfigured else { app.logger.warning("APNs not configured, skipping push"); return }
         let body = daysRemaining == 1
             ? "\(raceName) is tomorrow! You've got this."
             : "\(daysRemaining) days until \(raceName). Stay focused."
