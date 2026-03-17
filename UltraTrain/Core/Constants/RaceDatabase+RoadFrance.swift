@@ -1,0 +1,107 @@
+import Foundation
+
+// swiftlint:disable:next identifier_name
+private func _d(_ year: Int, _ month: Int, _ day: Int) -> Date {
+    DateComponents(calendar: .current, year: year, month: month, day: day).date!
+}
+
+// MARK: - French Road Races
+
+extension RaceDatabase {
+
+    static let frenchRoadRaces: [KnownRace] = frenchMarathons + frenchHalfMarathons + frenchShortRoad
+
+    // MARK: French Marathons
+
+    private static let frenchMarathons: [KnownRace] = [
+        KnownRace(name: "Marathon de Paris", shortName: "Paris Marathon", distanceKm: 42.195, elevationGainM: 50,
+                  elevationLossM: 50, country: "France", nextEditionDate: _d(2026, 4, 5), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Marathon de Lyon", shortName: nil, distanceKm: 42.195, elevationGainM: 50, elevationLossM: 50,
+                  country: "France", nextEditionDate: _d(2026, 10, 4), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Marathon de Bordeaux", shortName: nil, distanceKm: 42.195, elevationGainM: 30, elevationLossM: 30,
+                  country: "France", nextEditionDate: _d(2026, 4, 19), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Marathon de Toulouse", shortName: nil, distanceKm: 42.195, elevationGainM: 40, elevationLossM: 40,
+                  country: "France", nextEditionDate: _d(2026, 10, 25), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Marathon de Nantes", shortName: nil, distanceKm: 42.195, elevationGainM: 30, elevationLossM: 30,
+                  country: "France", nextEditionDate: _d(2026, 4, 26), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Marathon de Marseille", shortName: nil, distanceKm: 42.195, elevationGainM: 60, elevationLossM: 60,
+                  country: "France", nextEditionDate: _d(2026, 3, 29), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Nice-Cannes Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 30, elevationLossM: 30,
+                  country: "France", nextEditionDate: _d(2026, 11, 8), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Marathon du Médoc", shortName: nil, distanceKm: 42.195, elevationGainM: 20, elevationLossM: 20,
+                  country: "France", nextEditionDate: _d(2026, 9, 12), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Marathon de Strasbourg", shortName: nil, distanceKm: 42.195, elevationGainM: 20, elevationLossM: 20,
+                  country: "France", nextEditionDate: _d(2026, 5, 17), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Marathon de Lille", shortName: nil, distanceKm: 42.195, elevationGainM: 20, elevationLossM: 20,
+                  country: "France", nextEditionDate: _d(2026, 3, 22), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Marathon de Montpellier", shortName: nil, distanceKm: 42.195, elevationGainM: 30, elevationLossM: 30,
+                  country: "France", nextEditionDate: _d(2026, 3, 15), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Marathon Vert Rennes", shortName: nil, distanceKm: 42.195, elevationGainM: 50, elevationLossM: 50,
+                  country: "France", nextEditionDate: _d(2026, 10, 18), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Marathon d'Annecy", shortName: nil, distanceKm: 42.195, elevationGainM: 40, elevationLossM: 40,
+                  country: "France", nextEditionDate: _d(2026, 4, 19), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Marathon de La Rochelle", shortName: nil, distanceKm: 42.195, elevationGainM: 10, elevationLossM: 10,
+                  country: "France", nextEditionDate: _d(2026, 11, 29), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Marathon de Metz", shortName: nil, distanceKm: 42.195, elevationGainM: 40, elevationLossM: 40,
+                  country: "France", nextEditionDate: _d(2026, 10, 11), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Marathon International du Beaujolais", shortName: nil, distanceKm: 42.195, elevationGainM: 60,
+                  elevationLossM: 60, country: "France", nextEditionDate: _d(2026, 11, 21), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Marathon de Tours", shortName: nil, distanceKm: 42.195, elevationGainM: 30, elevationLossM: 30,
+                  country: "France", nextEditionDate: _d(2026, 9, 20), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Marathon de Vannes", shortName: nil, distanceKm: 42.195, elevationGainM: 40, elevationLossM: 40,
+                  country: "France", nextEditionDate: _d(2026, 10, 4), terrainDifficulty: .easy, raceType: .road),
+    ]
+
+    // MARK: French Half Marathons
+
+    private static let frenchHalfMarathons: [KnownRace] = [
+        KnownRace(name: "Semi de Paris", shortName: "Paris Half Marathon", distanceKm: 21.1, elevationGainM: 30,
+                  elevationLossM: 30, country: "France", nextEditionDate: _d(2026, 3, 1), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Semi de Boulogne-Billancourt", shortName: "Semi de Boulogne", distanceKm: 21.1,
+                  elevationGainM: 20, elevationLossM: 20, country: "France", nextEditionDate: _d(2026, 11, 22),
+                  terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Semi de Lille", shortName: nil, distanceKm: 21.1, elevationGainM: 10, elevationLossM: 10,
+                  country: "France", nextEditionDate: _d(2026, 9, 6), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Semi de Lyon", shortName: nil, distanceKm: 21.1, elevationGainM: 30, elevationLossM: 30,
+                  country: "France", nextEditionDate: _d(2026, 9, 27), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Semi de Marseille", shortName: nil, distanceKm: 21.1, elevationGainM: 30, elevationLossM: 30,
+                  country: "France", nextEditionDate: _d(2026, 11, 1), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Semi de Nice", shortName: nil, distanceKm: 21.1, elevationGainM: 20, elevationLossM: 20,
+                  country: "France", nextEditionDate: _d(2026, 4, 26), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Semi de Montpellier", shortName: nil, distanceKm: 21.1, elevationGainM: 20, elevationLossM: 20,
+                  country: "France", nextEditionDate: _d(2026, 11, 8), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Semi de Strasbourg", shortName: nil, distanceKm: 21.1, elevationGainM: 10, elevationLossM: 10,
+                  country: "France", nextEditionDate: _d(2026, 10, 25), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Semi de Nantes", shortName: nil, distanceKm: 21.1, elevationGainM: 20, elevationLossM: 20,
+                  country: "France", nextEditionDate: _d(2026, 3, 8), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Semi de Bordeaux", shortName: nil, distanceKm: 21.1, elevationGainM: 20, elevationLossM: 20,
+                  country: "France", nextEditionDate: _d(2026, 3, 22), terrainDifficulty: .easy, raceType: .road),
+    ]
+
+    // MARK: French Short Road Races (10K, 20K, other)
+
+    private static let frenchShortRoad: [KnownRace] = [
+        KnownRace(name: "Marseille-Cassis", shortName: nil, distanceKm: 20.0, elevationGainM: 180, elevationLossM: 180,
+                  country: "France", nextEditionDate: _d(2026, 10, 25), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "20km de Paris", shortName: nil, distanceKm: 20.0, elevationGainM: 30, elevationLossM: 30,
+                  country: "France", nextEditionDate: _d(2026, 10, 11), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Paris-Versailles", shortName: nil, distanceKm: 16.2, elevationGainM: 80, elevationLossM: 80,
+                  country: "France", nextEditionDate: _d(2026, 9, 27), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "10km de Paris", shortName: "Paris 10K", distanceKm: 10.0, elevationGainM: 10, elevationLossM: 10,
+                  country: "France", nextEditionDate: _d(2026, 6, 7), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "10km de Lyon", shortName: nil, distanceKm: 10.0, elevationGainM: 20, elevationLossM: 20,
+                  country: "France", nextEditionDate: _d(2026, 6, 14), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "10km de Cannes", shortName: nil, distanceKm: 10.0, elevationGainM: 10, elevationLossM: 10,
+                  country: "France", nextEditionDate: _d(2026, 11, 15), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Corrida de Houilles", shortName: nil, distanceKm: 10.0, elevationGainM: 0, elevationLossM: 0,
+                  country: "France", nextEditionDate: _d(2026, 12, 13), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Corrida de Langueux", shortName: nil, distanceKm: 10.0, elevationGainM: 30, elevationLossM: 30,
+                  country: "France", nextEditionDate: _d(2026, 6, 25), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "La Parisienne", shortName: nil, distanceKm: 6.7, elevationGainM: 10, elevationLossM: 10,
+                  country: "France", nextEditionDate: _d(2026, 9, 13), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Cross du Figaro", shortName: nil, distanceKm: 10.0, elevationGainM: 40, elevationLossM: 40,
+                  country: "France", nextEditionDate: _d(2026, 11, 22), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Foulées de Vincennes", shortName: nil, distanceKm: 10.0, elevationGainM: 10, elevationLossM: 10,
+                  country: "France", nextEditionDate: _d(2026, 1, 18), terrainDifficulty: .easy, raceType: .road),
+    ]
+}
