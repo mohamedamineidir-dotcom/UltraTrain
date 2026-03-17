@@ -1116,7 +1116,7 @@
         }
       }
     },
-    "%lld locked weeks. Upgrade or wait for your next billing cycle to view." : {
+    "%lld locked weeks. Upgrade to view." : {
 
     },
     "%lld m D+" : {
@@ -1189,7 +1189,7 @@
         }
       }
     },
-    "%lld more weeks" : {
+    "%lld More Weeks" : {
 
     },
     "%lld ms" : {
@@ -1421,6 +1421,7 @@
       }
     },
     "%lld weeks" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -1518,16 +1519,6 @@
         }
       }
     },
-    "%lld/%lld weeks" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld/%2$lld weeks"
-          }
-        }
-      }
-    },
     "%lld/5" : {
       "localizations" : {
         "fr" : {
@@ -1616,9 +1607,6 @@
           }
         }
       }
-    },
-    "%lldh" : {
-
     },
     "%lldm" : {
       "localizations" : {
@@ -6524,7 +6512,11 @@
     "General Fitness Plan" : {
 
     },
+    "Generate a personalized plan based on\nyour profile and race goals." : {
+
+    },
     "Generate a personalized training plan based on your profile and race goal." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -6951,9 +6943,6 @@
           }
         }
       }
-    },
-    "Hours" : {
-
     },
     "Hours: %lld" : {
       "localizations" : {
@@ -8425,9 +8414,6 @@
         }
       }
     },
-    "Minutes" : {
-
-    },
     "Minutes: %lld" : {
       "localizations" : {
         "fr" : {
@@ -9810,6 +9796,9 @@
         }
       }
     },
+    "Overall Progress" : {
+
+    },
     "Overall Records" : {
       "localizations" : {
         "fr" : {
@@ -10920,6 +10909,7 @@
       }
     },
     "Plan may be outdated" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -10928,6 +10918,9 @@
           }
         }
       }
+    },
+    "Plan May Be Outdated" : {
+
     },
     "Planned" : {
       "localizations" : {
@@ -15184,6 +15177,9 @@
         }
       }
     },
+    "Update" : {
+
+    },
     "Update Plan" : {
       "localizations" : {
         "fr" : {
@@ -15224,7 +15220,7 @@
         }
       }
     },
-    "Upgrade your plan or wait for your next billing cycle to unlock more weeks" : {
+    "Upgrade to unlock the full training plan" : {
 
     },
     "Uphill Training" : {

@@ -31,6 +31,9 @@ extension RaceDatabase {
         KnownRace(name: "ETC - Évasion Trail du Courmayeur", shortName: "ETC",
                   distanceKm: 15, elevationGainM: 1000, elevationLossM: 1000, country: "Italy",
                   nextEditionDate: _d(2026, 8, 25), terrainDifficulty: .technical),
+        KnownRace(name: "La Petite Trotte à Léon", shortName: "PTL",
+                  distanceKm: 300, elevationGainM: 25000, elevationLossM: 25000, country: "France",
+                  nextEditionDate: _d(2026, 8, 25), terrainDifficulty: .extreme),
 
         // MARK: Western States 100 (USA)
 

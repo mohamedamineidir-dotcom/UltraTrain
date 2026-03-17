@@ -185,24 +185,8 @@ enum CommonFoodDatabase {
             FoodEntry(name: "Smoothie, Fruit", nameFr: "Smoothie aux fruits", brand: nil, caloriesPer100g: 55, carbsPer100g: 12.0, proteinPer100g: 1.0, fatPer100g: 0.3, sodiumMgPer100g: 10, servingSizeGrams: 300, category: "Beverages"),
         ])
 
-        // MARK: Sports Nutrition
-        foods.append(contentsOf: [
-            FoodEntry(name: "Energy Gel", nameFr: "Gel énergétique", brand: "Generic", caloriesPer100g: 250, carbsPer100g: 62.5, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 200, servingSizeGrams: 40, category: "Sports"),
-            FoodEntry(name: "Energy Gel (Caffeinated)", nameFr: "Gel énergétique (caféiné)", brand: "Generic", caloriesPer100g: 250, carbsPer100g: 62.5, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 200, servingSizeGrams: 40, category: "Sports"),
-            FoodEntry(name: "Energy Bar", nameFr: "Barre énergétique", brand: "Generic", caloriesPer100g: 350, carbsPer100g: 50.0, proteinPer100g: 10.0, fatPer100g: 12.0, sodiumMgPer100g: 200, servingSizeGrams: 55, category: "Sports"),
-            FoodEntry(name: "Energy Chews", nameFr: "Gommes énergétiques", brand: "Generic", caloriesPer100g: 312, carbsPer100g: 78.0, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 156, servingSizeGrams: 50, category: "Sports"),
-            FoodEntry(name: "Electrolyte Powder", nameFr: "Poudre d'électrolytes", brand: "Generic", caloriesPer100g: 100, carbsPer100g: 25.0, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 5000, servingSizeGrams: 10, category: "Sports"),
-            FoodEntry(name: "Electrolyte Tablets", nameFr: "Pastilles d'électrolytes", brand: "Generic", caloriesPer100g: 50, carbsPer100g: 12.5, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 7500, servingSizeGrams: 4, category: "Sports"),
-            FoodEntry(name: "Maltodextrin Powder", nameFr: "Maltodextrine en poudre", brand: "Generic", caloriesPer100g: 380, carbsPer100g: 95.0, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 10, servingSizeGrams: 30, category: "Sports"),
-            FoodEntry(name: "Isotonic Drink Mix", nameFr: "Boisson isotonique", brand: "Generic", caloriesPer100g: 160, carbsPer100g: 40.0, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 2000, servingSizeGrams: 40, category: "Sports"),
-            FoodEntry(name: "Recovery Drink Mix", nameFr: "Boisson de récupération", brand: "Generic", caloriesPer100g: 300, carbsPer100g: 50.0, proteinPer100g: 15.0, fatPer100g: 3.0, sodiumMgPer100g: 300, servingSizeGrams: 50, category: "Sports"),
-            FoodEntry(name: "Protein Bar", nameFr: "Barre protéinée", brand: "Generic", caloriesPer100g: 370, carbsPer100g: 30.0, proteinPer100g: 30.0, fatPer100g: 12.0, sodiumMgPer100g: 250, servingSizeGrams: 60, category: "Sports"),
-            FoodEntry(name: "Clif Bar", nameFr: nil, brand: "Clif", caloriesPer100g: 365, carbsPer100g: 59.0, proteinPer100g: 14.7, fatPer100g: 8.8, sodiumMgPer100g: 382, servingSizeGrams: 68, category: "Sports"),
-            FoodEntry(name: "Maurten Gel 100", nameFr: nil, brand: "Maurten", caloriesPer100g: 250, carbsPer100g: 62.5, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 200, servingSizeGrams: 40, category: "Sports"),
-            FoodEntry(name: "Tailwind Endurance Fuel", nameFr: nil, brand: "Tailwind", caloriesPer100g: 340, carbsPer100g: 85.0, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 2600, servingSizeGrams: 27, category: "Sports"),
-            FoodEntry(name: "SIS Go Gel", nameFr: nil, brand: "Science in Sport", caloriesPer100g: 136, carbsPer100g: 34.0, proteinPer100g: 0.0, fatPer100g: 0.1, sodiumMgPer100g: 18, servingSizeGrams: 60, category: "Sports"),
-            FoodEntry(name: "Boiled Potato (salted)", nameFr: "Pomme de terre bouillie (salée)", brand: nil, caloriesPer100g: 87, carbsPer100g: 20.1, proteinPer100g: 1.9, fatPer100g: 0.1, sodiumMgPer100g: 240, servingSizeGrams: 150, category: "Sports"),
-        ])
+        // MARK: Sports Nutrition (see CommonFoodDatabase+SportsNutrition.swift)
+        foods.append(contentsOf: Self.sportsNutritionProducts)
 
         // MARK: Oils & Fats
         foods.append(contentsOf: [
@@ -260,16 +244,8 @@ enum CommonFoodDatabase {
             FoodEntry(name: "Semoule, cuite", nameFr: nil, brand: nil, caloriesPer100g: 112, carbsPer100g: 23.5, proteinPer100g: 3.8, fatPer100g: 0.2, sodiumMgPer100g: 5, servingSizeGrams: 200, category: "Grains"),
         ])
 
-        // MARK: Supplements & Gainers
-        foods.append(contentsOf: [
-            FoodEntry(name: "Mass Gainer", nameFr: "Gainer", brand: nil, caloriesPer100g: 380, carbsPer100g: 65.0, proteinPer100g: 20.0, fatPer100g: 5.0, sodiumMgPer100g: 150, servingSizeGrams: 150, category: "Sports"),
-            FoodEntry(name: "BCAA Powder", nameFr: "BCAA en poudre", brand: nil, caloriesPer100g: 0, carbsPer100g: 0.0, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 0, servingSizeGrams: 10, category: "Sports"),
-            FoodEntry(name: "Creatine Monohydrate", nameFr: "Créatine monohydrate", brand: nil, caloriesPer100g: 0, carbsPer100g: 0.0, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 0, servingSizeGrams: 5, category: "Sports"),
-            FoodEntry(name: "Näak Ultra Energy Bar", nameFr: nil, brand: "Näak", caloriesPer100g: 370, carbsPer100g: 51.0, proteinPer100g: 10.0, fatPer100g: 14.0, sodiumMgPer100g: 220, servingSizeGrams: 65, category: "Sports"),
-            FoodEntry(name: "Clif Bloks", nameFr: nil, brand: "Clif", caloriesPer100g: 312, carbsPer100g: 78.0, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 156, servingSizeGrams: 10, category: "Sports"),
-            FoodEntry(name: "Maurten Gel 100 CAF", nameFr: nil, brand: "Maurten", caloriesPer100g: 250, carbsPer100g: 62.5, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 200, servingSizeGrams: 40, category: "Sports"),
-            FoodEntry(name: "Maurten Drink Mix 320", nameFr: nil, brand: "Maurten", caloriesPer100g: 400, carbsPer100g: 100.0, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 250, servingSizeGrams: 80, category: "Sports"),
-        ])
+        // MARK: Aid Station Foods (see CommonFoodDatabase+AidStation.swift)
+        foods.append(contentsOf: Self.aidStationFoods)
 
         // MARK: Beverages (additional)
         foods.append(contentsOf: [

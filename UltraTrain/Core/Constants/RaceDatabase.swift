@@ -5,9 +5,11 @@ enum RaceDatabase {
     static let races: [KnownRace] =
         worldTrailMajors
         + utmbWorldSeries
-        + americas
+        + franceTrails
         + europe
+        + americas
         + asiaPacific
+        + africa
         + roadRaces
 
     static func search(query: String) -> [KnownRace] {
