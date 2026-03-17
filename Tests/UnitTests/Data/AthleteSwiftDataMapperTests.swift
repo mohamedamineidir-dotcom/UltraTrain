@@ -8,7 +8,7 @@ struct AthleteSwiftDataMapperTests {
     private func makeAthlete(
         id: UUID = UUID(),
         philosophy: TrainingPhilosophy = .balanced,
-        preferredRunsPerWeek: Int? = nil,
+        preferredRunsPerWeek: Int = 5,
         personalBests: [PersonalBest] = [],
         customZones: [Int]? = nil
     ) -> Athlete {
@@ -70,12 +70,26 @@ struct AthleteSwiftDataMapperTests {
         #expect(restored?.preferredRunsPerWeek == 5)
     }
 
-    @Test("Round-trip preserves nil preferred runs per week")
-    func roundTripNilPreferredRuns() {
-        let athlete = makeAthlete(preferredRunsPerWeek: nil)
-        let model = AthleteSwiftDataMapper.toSwiftData(athlete)
+    @Test("Nil preferred runs in SwiftData defaults to 5")
+    func nilPreferredRunsDefaultsTo5() {
+        // Simulate a legacy SwiftData model where preferredRunsPerWeek was nil
+        let model = AthleteSwiftDataModel(
+            id: UUID(),
+            firstName: "Test",
+            lastName: "Runner",
+            dateOfBirth: Date(timeIntervalSince1970: 700_000_000),
+            weightKg: 72,
+            heightCm: 178,
+            restingHeartRate: 52,
+            maxHeartRate: 190,
+            experienceLevelRaw: "advanced",
+            weeklyVolumeKm: 60,
+            longestRunKm: 42,
+            preferredUnitRaw: "metric",
+            preferredRunsPerWeek: nil
+        )
         let restored = AthleteSwiftDataMapper.toDomain(model)
-        #expect(restored?.preferredRunsPerWeek == nil)
+        #expect(restored?.preferredRunsPerWeek == 5)
     }
 
     @Test("Round-trip preserves personal bests")

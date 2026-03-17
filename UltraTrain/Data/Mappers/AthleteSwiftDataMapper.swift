@@ -33,7 +33,7 @@ enum AthleteSwiftDataMapper {
             customZoneThresholds: customZones,
             personalBests: personalBests,
             trainingPhilosophy: philosophy,
-            preferredRunsPerWeek: model.preferredRunsPerWeek,
+            preferredRunsPerWeek: model.preferredRunsPerWeek ?? 5,
             displayName: model.displayName,
             bio: model.bio,
             profilePhotoData: model.profilePhotoData,

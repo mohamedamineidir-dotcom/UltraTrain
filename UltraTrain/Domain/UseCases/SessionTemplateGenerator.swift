@@ -20,11 +20,11 @@ enum SessionTemplateGenerator {
         raceEffectiveKm: Double = 0,
         weekNumberInPhase: Int = 0,
         raceOverride: IntermediateRaceHandler.RaceWeekOverride? = nil,
-        preferredRunsPerWeek: Int? = nil,
+        preferredRunsPerWeek: Int = 5,
         verticalGainEnvironment: VerticalGainEnvironment = .mountain,
         expectedRaceDuration: TimeInterval = 0
     ) -> (sessions: [TrainingSession], workouts: [IntervalWorkout]) {
-        let runsPerWeek = preferredRunsPerWeek ?? 5
+        let runsPerWeek = preferredRunsPerWeek
         let templates: [SessionTemplate]
         var workouts: [IntervalWorkout] = []
 

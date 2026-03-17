@@ -16,7 +16,7 @@ struct Athlete: Identifiable, Equatable, Sendable {
     var customZoneThresholds: [Int]?
     var personalBests: [PersonalBest] = []
     var trainingPhilosophy: TrainingPhilosophy = .balanced
-    var preferredRunsPerWeek: Int? = nil
+    var preferredRunsPerWeek: Int = 5
     var displayName: String? = nil
     var bio: String? = nil
     var profilePhotoData: Data? = nil

@@ -23,6 +23,7 @@ enum LongRunCurveCalculator {
         isRecoveryWeek: Bool,
         experience: ExperienceLevel,
         philosophy: TrainingPhilosophy,
+        raceGoal: RaceGoal = .finish,
         raceDurationSeconds: TimeInterval,
         raceEffectiveKm: Double,
         preferredRunsPerWeek: Int
@@ -53,13 +54,14 @@ enum LongRunCurveCalculator {
 
         // --- Base sessions ---
         let philMultiplier = philosophyBaseMultiplier(philosophy)
-        var easy1 = baseEasyDuration(planProgress) * philMultiplier
-        var easy2 = baseEasyDuration(planProgress) * philMultiplier
-        var interval = baseIntervalDuration(planProgress) * philMultiplier
-        var vg = baseVGDuration(planProgress) * philMultiplier
-
-        // Session count is now handled by SessionTemplateGenerator.
-        // All durations remain non-zero; unused sessions are simply not included.
+        let goalMultiplier = raceGoalBaseMultiplier(raceGoal)
+        let combinedMultiplier = philMultiplier * goalMultiplier
+        // Scale supporting sessions based on runs/week to keep total volume proportional
+        let sessionScale = Double(preferredRunsPerWeek) / 5.0
+        var easy1 = baseEasyDuration(planProgress) * combinedMultiplier * sessionScale
+        var easy2 = baseEasyDuration(planProgress) * combinedMultiplier * sessionScale
+        var interval = baseIntervalDuration(planProgress) * combinedMultiplier * sessionScale
+        var vg = baseVGDuration(planProgress) * combinedMultiplier * sessionScale
 
         // B2B adjustments
         var longRun: TimeInterval
@@ -295,6 +297,14 @@ enum LongRunCurveCalculator {
         case .enjoyment:   0.85
         case .balanced:    1.00
         case .performance: 1.10
+        }
+    }
+
+    private static func raceGoalBaseMultiplier(_ goal: RaceGoal) -> Double {
+        switch goal {
+        case .finish:          0.90  // Conservative — focus on completing
+        case .targetTime:      1.00  // Moderate — balanced approach
+        case .targetRanking:   1.10  // Aggressive — competitive volume
         }
     }
 }

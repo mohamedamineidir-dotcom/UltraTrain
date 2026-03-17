@@ -28,6 +28,7 @@ enum VolumeCalculator {
         raceElevationGainM: Double,
         experience: ExperienceLevel,
         philosophy: TrainingPhilosophy = .balanced,
+        raceGoal: RaceGoal = .finish,
         raceDurationSeconds: TimeInterval = 0,
         raceEffectiveKm: Double = 0,
         preferredRunsPerWeek: Int = 5,
@@ -49,6 +50,7 @@ enum VolumeCalculator {
                 isRecoveryWeek: skeleton.isRecoveryWeek,
                 experience: experience,
                 philosophy: philosophy,
+                raceGoal: raceGoal,
                 raceDurationSeconds: raceDurationSeconds,
                 raceEffectiveKm: raceEffectiveKm,
                 preferredRunsPerWeek: preferredRunsPerWeek

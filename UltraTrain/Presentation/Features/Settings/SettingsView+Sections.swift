@@ -43,9 +43,9 @@ extension SettingsView {
                 .accessibilityHint("Choose how hard you want to train: enjoyment, balanced, or performance")
 
                 Stepper(
-                    "Runs per week: \(athlete.preferredRunsPerWeek ?? 4)",
+                    "Runs per week: \(athlete.preferredRunsPerWeek)",
                     value: Binding(
-                        get: { athlete.preferredRunsPerWeek ?? 4 },
+                        get: { athlete.preferredRunsPerWeek },
                         set: { newValue in
                             Task { await viewModel.updatePreferredRunsPerWeek(newValue) }
                         }
