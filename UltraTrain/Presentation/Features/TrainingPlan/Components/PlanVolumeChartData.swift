@@ -1,5 +1,13 @@
 import Foundation
 
+struct SessionTypeSlice: Identifiable {
+    let id = UUID()
+    let type: SessionType
+    let durationSeconds: TimeInterval
+    let distanceKm: Double
+    let elevationM: Double
+}
+
 struct WeekChartDataPoint: Identifiable {
     let id: Int
     let weekNumber: Int
@@ -13,6 +21,7 @@ struct WeekChartDataPoint: Identifiable {
     let completedElevationM: Double
     let isCurrentWeek: Bool
     let isRecoveryWeek: Bool
+    let completedByType: [SessionTypeSlice]
 }
 
 enum PlanVolumeChartData {
@@ -20,6 +29,16 @@ enum PlanVolumeChartData {
         weeks.map { week in
             let activeSessions = week.sessions.filter { $0.type != .rest && !$0.isSkipped }
             let completedSessions = activeSessions.filter(\.isCompleted)
+
+            let typeGroups = Dictionary(grouping: completedSessions, by: \.type)
+            let slices = typeGroups.map { type, sessions in
+                SessionTypeSlice(
+                    type: type,
+                    durationSeconds: sessions.reduce(0) { $0 + ($1.actualDurationSeconds ?? $1.plannedDuration) },
+                    distanceKm: sessions.reduce(0) { $0 + ($1.actualDistanceKm ?? $1.plannedDistanceKm) },
+                    elevationM: sessions.reduce(0) { $0 + ($1.actualElevationGainM ?? $1.plannedElevationGainM) }
+                )
+            }.sorted { $0.type.stackOrder < $1.type.stackOrder }
 
             return WeekChartDataPoint(
                 id: week.weekNumber,
@@ -35,8 +54,24 @@ enum PlanVolumeChartData {
                 plannedElevationM: week.targetElevationGainM,
                 completedElevationM: completedSessions.reduce(0) { $0 + ($1.actualElevationGainM ?? $1.plannedElevationGainM) },
                 isCurrentWeek: week.containsToday,
-                isRecoveryWeek: week.isRecoveryWeek
+                isRecoveryWeek: week.isRecoveryWeek,
+                completedByType: slices
             )
+        }
+    }
+}
+
+extension SessionType {
+    var stackOrder: Int {
+        switch self {
+        case .recovery:      0
+        case .crossTraining: 1
+        case .longRun:       2
+        case .backToBack:    3
+        case .tempo:         4
+        case .verticalGain:  5
+        case .intervals:     6
+        case .rest:          7
         }
     }
 }

@@ -159,53 +159,141 @@ extension TrainingPlanView {
 
     var lockedWeeksBanner: some View {
         HStack(spacing: Theme.Spacing.md) {
-            Image(systemName: "lock.fill")
-                .font(.title3)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
-            VStack(alignment: .leading, spacing: 2) {
-                Text("\(viewModel.lockedWeekCount) more weeks")
+            ZStack {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [Theme.Colors.goldAccent.opacity(0.2), Theme.Colors.goldAccent.opacity(0.05)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 40, height: 40)
+                Image(systemName: "lock.fill")
+                    .font(.body)
+                    .foregroundStyle(Theme.Colors.goldAccent)
+                    .shadow(color: Theme.Colors.goldAccent.opacity(0.4), radius: 3)
+            }
+            VStack(alignment: .leading, spacing: 3) {
+                Text("\(viewModel.lockedWeekCount) More Weeks")
                     .font(.subheadline.bold())
-                Text("Upgrade your plan or wait for your next billing cycle to unlock more weeks")
+                Text("Upgrade to unlock the full training plan")
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
             Spacer()
             Image(systemName: "chevron.right")
-                .foregroundStyle(Theme.Colors.secondaryLabel)
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.goldAccent.opacity(0.6))
         }
         .futuristicGlassStyle()
-        .accessibilityLabel("\(viewModel.lockedWeekCount) locked weeks. Upgrade or wait for your next billing cycle to view.")
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                .stroke(Theme.Colors.goldAccent.opacity(0.15), lineWidth: 1)
+        )
+        .accessibilityLabel("\(viewModel.lockedWeekCount) locked weeks. Upgrade to view.")
     }
 
     func planHeader(_ plan: TrainingPlan) -> some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            HStack {
+        VStack(spacing: Theme.Spacing.md) {
+            HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-                    Text("\(plan.totalWeeks) weeks")
-                        .font(.title2)
-                        .fontWeight(.bold)
+                    Text("\(plan.totalWeeks)-Week Plan")
+                        .font(.title3.bold())
+
                     if let currentWeek = viewModel.currentWeek {
-                        Text("Week \(currentWeek.weekNumber) — \(currentWeek.phase.displayName)")
-                            .foregroundStyle(Theme.Colors.secondaryLabel)
+                        HStack(spacing: Theme.Spacing.xs) {
+                            Circle()
+                                .fill(currentWeek.phase.color)
+                                .frame(width: 8, height: 8)
+                                .shadow(color: currentWeek.phase.color.opacity(0.5), radius: 3)
+                            Text("Week \(currentWeek.weekNumber)")
+                                .font(.subheadline.weight(.semibold))
+                            Text("·")
+                                .foregroundStyle(Theme.Colors.tertiaryLabel)
+                            Text(currentWeek.phase.displayName)
+                                .font(.subheadline)
+                                .foregroundStyle(currentWeek.phase.color)
+                        }
                     }
                 }
                 Spacer()
                 let progress = viewModel.weeklyProgress
                 if progress.total > 0 {
-                    VStack(alignment: .trailing, spacing: Theme.Spacing.xs) {
-                        Text("\(progress.completed)/\(progress.total)")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                        Text("this week")
-                            .font(.caption)
-                            .foregroundStyle(Theme.Colors.secondaryLabel)
-                    }
+                    weekProgressRing(completed: progress.completed, total: progress.total)
                 }
             }
+
+            // Overall progress bar
+            overallProgressBar(plan: plan)
         }
         .futuristicGlassStyle()
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(planHeaderAccessibilityLabel(plan))
+    }
+
+    private func weekProgressRing(completed: Int, total: Int) -> some View {
+        let fraction = total > 0 ? Double(completed) / Double(total) : 0
+        return ZStack {
+            Circle()
+                .stroke(Theme.Colors.secondaryLabel.opacity(0.1), lineWidth: 4)
+            Circle()
+                .trim(from: 0, to: fraction)
+                .stroke(
+                    LinearGradient(
+                        colors: [Theme.Colors.success, Theme.Colors.success.opacity(0.6)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    ),
+                    style: StrokeStyle(lineWidth: 4, lineCap: .round)
+                )
+                .rotationEffect(.degrees(-90))
+                .shadow(color: Theme.Colors.success.opacity(0.3), radius: 4)
+            VStack(spacing: 0) {
+                Text("\(completed)/\(total)")
+                    .font(.system(size: 13, weight: .bold, design: .rounded).monospacedDigit())
+                Text("this week")
+                    .font(.system(size: 8, weight: .medium))
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+        }
+        .frame(width: 56, height: 56)
+    }
+
+    private func overallProgressBar(plan: TrainingPlan) -> some View {
+        let totalSessions = plan.weeks.flatMap(\.sessions).filter { $0.type != .rest && !$0.isSkipped }
+        let done = totalSessions.filter(\.isCompleted).count
+        let total = totalSessions.count
+        let fraction = total > 0 ? Double(done) / Double(total) : 0
+        return VStack(spacing: Theme.Spacing.xs) {
+            HStack {
+                Text("Overall Progress")
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                Spacer()
+                Text("\(done)/\(total) sessions")
+                    .font(.caption.monospacedDigit().weight(.medium))
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(Theme.Colors.secondaryLabel.opacity(0.08))
+                    Capsule()
+                        .fill(
+                            LinearGradient(
+                                colors: [Theme.Colors.success.opacity(0.7), Theme.Colors.success],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .shadow(color: Theme.Colors.success.opacity(0.3), radius: 3)
+                        .frame(width: geo.size.width * fraction)
+                }
+            }
+            .frame(height: 6)
+            .clipShape(Capsule())
+        }
     }
 
     func planHeaderAccessibilityLabel(_ plan: TrainingPlan) -> String {
@@ -221,29 +309,44 @@ extension TrainingPlanView {
     }
 
     var stalePlanBanner: some View {
-        HStack(spacing: Theme.Spacing.sm) {
-            Image(systemName: "exclamationmark.triangle.fill")
-                .foregroundStyle(Theme.Colors.warning)
-                .accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Plan may be outdated")
+        HStack(spacing: Theme.Spacing.md) {
+            ZStack {
+                Circle()
+                    .fill(Theme.Colors.warning.opacity(0.15))
+                    .frame(width: 36, height: 36)
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.body)
+                    .foregroundStyle(Theme.Colors.warning)
+                    .shadow(color: Theme.Colors.warning.opacity(0.4), radius: 3)
+            }
+            .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Plan May Be Outdated")
                     .font(.subheadline.bold())
                 Text(staleBannerDescription)
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
             Spacer()
-            Button("Update Plan") {
+            Button {
                 viewModel.showRegenerateConfirmation = true
+            } label: {
+                Text("Update")
+                    .font(.caption.bold())
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, Theme.Spacing.sm)
+                    .padding(.vertical, 6)
+                    .background(Theme.Colors.warning)
+                    .clipShape(Capsule())
             }
-            .font(.caption.bold())
-            .buttonStyle(.borderedProminent)
-            .controlSize(.small)
+            .buttonStyle(.plain)
             .accessibilityHint("Double-tap to regenerate your training plan")
         }
-        .padding(Theme.Spacing.sm)
-        .background(Theme.Colors.warning.opacity(0.1))
-        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .futuristicGlassStyle()
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                .stroke(Theme.Colors.warning.opacity(0.15), lineWidth: 1)
+        )
     }
 
     var staleBannerDescription: String {
@@ -279,25 +382,60 @@ extension TrainingPlanView {
     }
 
     var emptyState: some View {
-        ContentUnavailableView {
-            Label("No Training Plan", systemImage: "calendar.badge.plus")
-        } description: {
-            Text("Generate a personalized training plan based on your profile and race goal.")
-        } actions: {
+        VStack(spacing: Theme.Spacing.xl) {
+            Spacer()
+            ZStack {
+                Circle()
+                    .fill(Theme.Colors.accentColor.opacity(0.1))
+                    .frame(width: 100, height: 100)
+                Circle()
+                    .fill(Theme.Colors.accentColor.opacity(0.05))
+                    .frame(width: 140, height: 140)
+                Image(systemName: "calendar.badge.plus")
+                    .font(.system(size: 40))
+                    .foregroundStyle(Theme.Colors.accentColor)
+                    .shadow(color: Theme.Colors.accentColor.opacity(0.3), radius: 8)
+            }
+
+            VStack(spacing: Theme.Spacing.sm) {
+                Text("No Training Plan")
+                    .font(.title2.bold())
+                Text("Generate a personalized plan based on\nyour profile and race goals.")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .multilineTextAlignment(.center)
+            }
+
             Button {
                 Task { await viewModel.generatePlan() }
             } label: {
                 if viewModel.isGenerating {
                     ProgressView()
-                        .padding(.horizontal)
+                        .tint(.white)
+                        .padding(.horizontal, Theme.Spacing.xl)
                 } else {
-                    Text("Generate Plan")
+                    Label("Generate Plan", systemImage: "sparkles")
+                        .font(.headline)
                 }
             }
-            .buttonStyle(.borderedProminent)
+            .foregroundStyle(.white)
+            .padding(.horizontal, Theme.Spacing.xl)
+            .padding(.vertical, Theme.Spacing.md)
+            .background(
+                LinearGradient(
+                    colors: [Theme.Colors.accentColor, Theme.Colors.accentColor.opacity(0.8)],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .clipShape(Capsule())
+            .shadow(color: Theme.Colors.accentColor.opacity(0.3), radius: 8, y: 4)
             .disabled(viewModel.isGenerating)
             .accessibilityIdentifier("trainingPlan.generateButton")
+
+            Spacer()
         }
+        .frame(maxWidth: .infinity)
         .accessibilityIdentifier("trainingPlan.emptyState")
     }
 }

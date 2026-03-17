@@ -10,51 +10,74 @@ struct PhaseHeaderCard: View {
     var phaseFocus: PhaseFocus?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-            HStack {
-                Image(systemName: phaseIcon)
-                    .font(.body)
-                    .foregroundStyle(phase.color)
-                    .shadow(color: phase.color.opacity(0.5), radius: 4)
-
-                Text(focusDisplayName.uppercased())
-                    .font(.subheadline.bold())
-                    .tracking(Theme.LetterSpacing.tracked)
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [phase.color, phase.color.opacity(0.7)],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
+        HStack(spacing: 0) {
+            // Phase accent bar
+            RoundedRectangle(cornerRadius: 2)
+                .fill(
+                    LinearGradient(
+                        colors: [phase.color, phase.color.opacity(0.5)],
+                        startPoint: .top,
+                        endPoint: .bottom
                     )
+                )
+                .frame(width: 4)
+                .shadow(color: phase.color.opacity(0.3), radius: 3, x: 2)
 
-                Spacer()
+            VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                HStack {
+                    // Icon with glow
+                    ZStack {
+                        Circle()
+                            .fill(phase.color.opacity(0.12))
+                            .frame(width: 32, height: 32)
+                        Image(systemName: phaseIcon)
+                            .font(.caption.bold())
+                            .foregroundStyle(phase.color)
+                    }
+                    .shadow(color: phase.color.opacity(0.3), radius: 4)
 
-                Text(weekRange)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(focusDisplayName.uppercased())
+                            .font(.caption.bold())
+                            .tracking(Theme.LetterSpacing.tracked)
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [phase.color, phase.color.opacity(0.7)],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                        Text(weekRange)
+                            .font(.caption2)
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
+                    }
+
+                    Spacer()
+
+                    // Completion ring + label
+                    HStack(spacing: 6) {
+                        completionRing
+                        Text("\(completedWeeks)/\(totalWeeks)")
+                            .font(.caption.bold().monospacedDigit())
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
+                    }
+                }
+
+                // Description
+                Text(description)
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .lineLimit(2)
             }
-
-            HStack {
-                completionRing
-                Text("\(completedWeeks)/\(totalWeeks) weeks")
-                    .font(.caption)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-            }
-
-            Text(description)
-                .font(.caption)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
-                .lineLimit(2)
+            .padding(.horizontal, Theme.Spacing.md)
+            .padding(.vertical, Theme.Spacing.sm)
         }
-        .padding(.horizontal, Theme.Spacing.md)
-        .padding(.vertical, Theme.Spacing.sm)
         .background(phaseBackground)
         .overlay(
-            RoundedRectangle(cornerRadius: 10)
-                .stroke(phase.color.opacity(0.15), lineWidth: 1)
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .stroke(phase.color.opacity(0.12), lineWidth: 1)
         )
-        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(focusDisplayName) phase, \(weekRange), \(completedWeeks) of \(totalWeeks) weeks completed")
     }
@@ -75,13 +98,13 @@ struct PhaseHeaderCard: View {
     }
 
     private var phaseBackground: some View {
-        RoundedRectangle(cornerRadius: 10)
+        RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
             .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
             .overlay(
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                     .fill(
                         LinearGradient(
-                            colors: [phase.color.opacity(0.12), phase.color.opacity(0.02)],
+                            colors: [phase.color.opacity(0.08), phase.color.opacity(0.02)],
                             startPoint: .leading,
                             endPoint: .trailing
                         )

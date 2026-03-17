@@ -13,6 +13,7 @@ struct SessionValidationView: View {
     @State private var distanceText: String
     @State private var hours: Int
     @State private var minutes: Int
+    @State private var seconds: Int
     @State private var elevationText: String
     @State private var feeling: PerceivedFeeling?
     @State private var rpe: Int?
@@ -35,6 +36,7 @@ struct SessionValidationView: View {
             ? String(format: "%.1f", session.plannedDistanceKm) : "")
         _hours = State(initialValue: Int(planned) / 3600)
         _minutes = State(initialValue: (Int(planned) % 3600) / 60)
+        _seconds = State(initialValue: 0)
         _elevationText = State(initialValue: session.plannedElevationGainM > 0
             ? String(format: "%.0f", session.plannedElevationGainM) : "")
     }
@@ -137,24 +139,13 @@ struct SessionValidationView: View {
                 .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
 
                 // Duration
-                HStack {
+                HStack(spacing: 4) {
                     Label("Duration", systemImage: "clock")
                         .font(.subheadline)
                     Spacer()
-                    Picker("Hours", selection: $hours) {
-                        ForEach(0..<24, id: \.self) { h in
-                            Text("\(h)h").tag(h)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .frame(width: 65)
-                    Picker("Minutes", selection: $minutes) {
-                        ForEach(0..<60, id: \.self) { m in
-                            Text("\(m)m").tag(m)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .frame(width: 65)
+                    durationField(value: $hours, label: "h", range: 0..<24)
+                    durationField(value: $minutes, label: "m", range: 0..<60)
+                    durationField(value: $seconds, label: "s", range: 0..<60)
                 }
                 .padding(Theme.Spacing.sm)
                 .background(Theme.Colors.secondaryBackground)
@@ -331,7 +322,7 @@ struct SessionValidationView: View {
     private var completeButton: some View {
         Button {
             let dist = Double(distanceText.replacingOccurrences(of: ",", with: "."))
-            let dur = TimeInterval(hours * 3600 + minutes * 60)
+            let dur = TimeInterval(hours * 3600 + minutes * 60 + seconds)
             let elev = Double(elevationText)
             onComplete(dist, dur > 0 ? dur : nil, elev, feeling, rpe)
             dismiss()
@@ -360,6 +351,22 @@ struct SessionValidationView: View {
     }
 
     // MARK: - Helpers
+
+    private func durationField(value: Binding<Int>, label: String, range: Range<Int>) -> some View {
+        HStack(spacing: 1) {
+            Picker(label, selection: value) {
+                ForEach(range, id: \.self) { v in
+                    Text(String(format: "%02d", v)).tag(v)
+                }
+            }
+            .pickerStyle(.menu)
+            .labelsHidden()
+            .fixedSize()
+            Text(label)
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+        }
+    }
 
     private func emoji(for feeling: PerceivedFeeling) -> String {
         switch feeling {

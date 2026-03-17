@@ -43,8 +43,26 @@ enum SessionTemplateGenerator {
         }
 
         let sessions = templates.map { template in
-            let duration = template.durationSeconds
-            let elevation = volume.targetElevationGainM * template.elevationFraction
+            let rawDuration = template.durationSeconds
+            let rawElevation = volume.targetElevationGainM * template.elevationFraction
+
+            // Round duration to nearest 5min for non-precise session types
+            let duration: TimeInterval
+            switch template.type {
+            case .intervals, .verticalGain, .rest:
+                duration = rawDuration
+            default:
+                duration = roundToNearest5Min(rawDuration)
+            }
+
+            // Round elevation to nearest 10m for long runs
+            let elevation: Double
+            switch template.type {
+            case .longRun, .backToBack:
+                elevation = roundToNearest10(rawElevation)
+            default:
+                elevation = rawElevation
+            }
 
             // Generate workout for active sessions
             var workoutId: UUID?
@@ -82,7 +100,7 @@ enum SessionTemplateGenerator {
                 date: skeleton.startDate.adding(days: template.dayOffset),
                 type: template.type,
                 plannedDistanceKm: 0,
-                plannedElevationGainM: (elevation * 10).rounded() / 10,
+                plannedElevationGainM: elevation,
                 plannedDuration: duration,
                 intensity: template.intensity,
                 description: sessionDescription,
@@ -170,20 +188,21 @@ enum SessionTemplateGenerator {
 
         // Build pool of active sessions in priority order
         // Priority: longRun > intervals > VG > easy1 > easy2 > tempo > crossTraining
+        // D+ concentrated on long run only
         var pool: [(day: Int, template: SessionTemplate)] = [
-            (6, tpl(6, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.20,
+            (6, tpl(6, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.75,
                     SessionDescriptionGenerator.longRun(phase: phase, isRecoveryWeek: false))),
-            (2, tpl(2, .intervals, intervalIntensity, base.intervalSeconds, 0.10,
+            (2, tpl(2, .intervals, intervalIntensity, base.intervalSeconds, 0,
                     SessionDescriptionGenerator.intervals(phase: phase, isRecoveryWeek: false, weekInPhase: weekInPhase))),
-            (3, tpl(3, .verticalGain, vgIntensity, base.vgSeconds, 0.25,
+            (3, tpl(3, .verticalGain, vgIntensity, base.vgSeconds, 0,
                     SessionDescriptionGenerator.verticalGain(phase: phase, isRecoveryWeek: false))),
-            (1, tpl(1, .recovery, .easy, base.easyRun1Seconds, 0.05,
+            (1, tpl(1, .recovery, .easy, base.easyRun1Seconds, 0,
                     SessionDescriptionGenerator.easyRun(isRecoveryWeek: false))),
-            (5, tpl(5, .recovery, .easy, base.easyRun2Seconds, 0.05,
+            (5, tpl(5, .recovery, .easy, base.easyRun2Seconds, 0,
                     SessionDescriptionGenerator.easyRun(isRecoveryWeek: false, isPreLongRun: true))),
-            (4, tpl(4, .tempo, .moderate, base.intervalSeconds, 0.08,
+            (4, tpl(4, .tempo, .moderate, base.intervalSeconds, 0,
                     SessionDescriptionGenerator.tempo(phase: phase))),
-            (0, tpl(0, .crossTraining, .easy, base.easyRun1Seconds, 0.02,
+            (0, tpl(0, .crossTraining, .easy, base.easyRun1Seconds, 0,
                     SessionDescriptionGenerator.crossTraining())),
         ]
 
@@ -216,20 +235,21 @@ enum SessionTemplateGenerator {
         preferredRunsPerWeek: Int
     ) -> [SessionTemplate] {
         // B2B days are always included (day 5 + day 6)
+        // D+ split between the two long runs (40/60)
         let pool: [(day: Int, template: SessionTemplate)] = [
-            (5, tpl(5, .longRun, .easy, volume.b2bDay1Seconds, 0.25,
+            (5, tpl(5, .longRun, .easy, volume.b2bDay1Seconds, 0.40,
                     SessionDescriptionGenerator.b2bDay1(phase: phase))),
-            (6, tpl(6, .backToBack, .easy, volume.b2bDay2Seconds, 0.30,
+            (6, tpl(6, .backToBack, .easy, volume.b2bDay2Seconds, 0.60,
                     SessionDescriptionGenerator.b2bDay2(phase: phase))),
-            (2, tpl(2, .verticalGain, vgIntensity, base.vgSeconds, 0.30,
+            (2, tpl(2, .verticalGain, vgIntensity, base.vgSeconds, 0,
                     SessionDescriptionGenerator.verticalGain(phase: phase, isRecoveryWeek: false))),
-            (1, tpl(1, .recovery, .easy, base.easyRun1Seconds, 0.05,
+            (1, tpl(1, .recovery, .easy, base.easyRun1Seconds, 0,
                     SessionDescriptionGenerator.easyRun(isRecoveryWeek: false))),
-            (3, tpl(3, .recovery, .easy, base.easyRun2Seconds, 0.05,
+            (3, tpl(3, .recovery, .easy, base.easyRun2Seconds, 0,
                     SessionDescriptionGenerator.easyRun(isRecoveryWeek: false, isPreLongRun: true))),
-            (4, tpl(4, .intervals, .moderate, base.intervalSeconds, 0.05,
+            (4, tpl(4, .intervals, .moderate, base.intervalSeconds, 0,
                     SessionDescriptionGenerator.intervals(phase: phase, isRecoveryWeek: false, weekInPhase: weekInPhase))),
-            (0, tpl(0, .recovery, .easy, base.easyRun1Seconds, 0.02,
+            (0, tpl(0, .recovery, .easy, base.easyRun1Seconds, 0,
                     SessionDescriptionGenerator.easyRun(isRecoveryWeek: false))),
         ]
 
@@ -256,16 +276,17 @@ enum SessionTemplateGenerator {
     ) -> [SessionTemplate] {
         let base = volume.baseSessionDurations
 
+        // D+ concentrated on long run only
         let pool: [(day: Int, template: SessionTemplate)] = [
-            (5, tpl(5, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.15,
+            (5, tpl(5, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.43,
                     SessionDescriptionGenerator.longRun(phase: .taper, isRecoveryWeek: false))),
-            (1, tpl(1, .intervals, .moderate, base.intervalSeconds, 0.10,
+            (1, tpl(1, .intervals, .moderate, base.intervalSeconds, 0,
                     SessionDescriptionGenerator.intervals(phase: .taper, isRecoveryWeek: false))),
-            (3, tpl(3, .recovery, .easy, base.easyRun1Seconds, 0.05,
+            (3, tpl(3, .recovery, .easy, base.easyRun1Seconds, 0,
                     SessionDescriptionGenerator.easyRun(isRecoveryWeek: false))),
-            (4, tpl(4, .recovery, .easy, base.easyRun2Seconds, 0.05,
+            (4, tpl(4, .recovery, .easy, base.easyRun2Seconds, 0,
                     SessionDescriptionGenerator.easyRun(isRecoveryWeek: false, isPreRace: true))),
-            (2, tpl(2, .verticalGain, .easy, base.vgSeconds, 0.08,
+            (2, tpl(2, .verticalGain, .easy, base.vgSeconds, 0,
                     SessionDescriptionGenerator.verticalGain(phase: .taper, isRecoveryWeek: false))),
         ]
 
@@ -301,18 +322,19 @@ enum SessionTemplateGenerator {
         }
 
         // All sessions at easy/recovery intensity
+        // D+ concentrated on long run only
         let pool: [(day: Int, template: SessionTemplate)] = [
-            (5, tpl(5, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.15,
+            (5, tpl(5, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.52,
                     SessionDescriptionGenerator.longRun(phase: .recovery, isRecoveryWeek: true))),
-            (3, tpl(3, .verticalGain, .easy, base.vgSeconds, 0.15,
+            (3, tpl(3, .verticalGain, .easy, base.vgSeconds, 0,
                     SessionDescriptionGenerator.verticalGain(phase: .recovery, isRecoveryWeek: true))),
-            (1, tpl(1, .recovery, .easy, base.easyRun1Seconds, 0.08,
+            (1, tpl(1, .recovery, .easy, base.easyRun1Seconds, 0,
                     SessionDescriptionGenerator.easyRun(isRecoveryWeek: true))),
-            (4, tpl(4, .recovery, .easy, base.easyRun2Seconds, 0.05,
+            (4, tpl(4, .recovery, .easy, base.easyRun2Seconds, 0,
                     SessionDescriptionGenerator.easyRun(isRecoveryWeek: true))),
-            (2, tpl(2, .recovery, .easy, base.easyRun1Seconds, 0.05,
+            (2, tpl(2, .recovery, .easy, base.easyRun1Seconds, 0,
                     SessionDescriptionGenerator.easyRun(isRecoveryWeek: true))),
-            (6, tpl(6, .recovery, .easy, base.easyRun2Seconds, 0.04,
+            (6, tpl(6, .recovery, .easy, base.easyRun2Seconds, 0,
                     SessionDescriptionGenerator.easyRun(isRecoveryWeek: true))),
         ]
 
@@ -382,6 +404,18 @@ enum SessionTemplateGenerator {
             durationSeconds: duration, elevationFraction: elevFraction,
             description: desc
         )
+    }
+
+    /// Rounds seconds to the nearest 5-minute boundary (300s).
+    private static func roundToNearest5Min(_ seconds: TimeInterval) -> TimeInterval {
+        guard seconds > 0 else { return 0 }
+        return (seconds / 300.0).rounded() * 300.0
+    }
+
+    /// Rounds meters to the nearest 10m.
+    private static func roundToNearest10(_ meters: Double) -> Double {
+        guard meters > 0 else { return 0 }
+        return (meters / 10.0).rounded() * 10.0
     }
 
     private static func nutritionNotes(duration: TimeInterval) -> String? {

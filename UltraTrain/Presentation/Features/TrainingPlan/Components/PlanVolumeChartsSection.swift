@@ -37,6 +37,7 @@ struct PlanVolumeChartsSection: View {
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             } else {
                 chartView
+                chartLegend
             }
         }
         .futuristicGlassStyle()
@@ -142,21 +143,22 @@ struct PlanVolumeChartsSection: View {
                     .foregroundStyle(point.isRecoveryWeek ? .mint : Theme.Colors.accentColor)
                 }
 
-                // Completed bars — gradient capsule
-                if completedValue(for: point) > 0 {
+                // Completed bars — stacked by session type
+                ForEach(point.completedByType) { slice in
                     BarMark(
                         x: .value("Week", "W\(point.weekNumber)"),
-                        y: .value("Completed", completedValue(for: point)),
-                        width: .fixed(10)
+                        y: .value("Completed", sliceValue(for: slice)),
+                        width: .fixed(12),
+                        stacking: .standard
                     )
                     .foregroundStyle(
                         .linearGradient(
-                            colors: [phaseColor(point.phase), phaseColor(point.phase).opacity(0.5)],
+                            colors: [sessionTypeColor(slice.type), sessionTypeColor(slice.type).opacity(0.5)],
                             startPoint: .top,
                             endPoint: .bottom
                         )
                     )
-                    .clipShape(Capsule())
+                    .clipShape(RoundedRectangle(cornerRadius: 3))
                 }
             }
 
@@ -245,6 +247,40 @@ struct PlanVolumeChartsSection: View {
             let matchingWeek = plan.weeks.first { $0.weekNumber == point.weekNumber }
             WeekSummarySheet(point: point, week: matchingWeek)
         }
+    }
+
+    // MARK: - Chart Legend
+
+    private var chartLegend: some View {
+        let types = activeSessionTypes
+        let legendItems: [(String, Color)] = types.map { ($0.displayName, sessionTypeColor($0)) }
+            + (selectedMetric != .distance ? [("Planned", Theme.Colors.accentColor.opacity(0.3))] : [])
+        return ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: Theme.Spacing.sm) {
+                ForEach(Array(legendItems.enumerated()), id: \.offset) { _, item in
+                    HStack(spacing: 4) {
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(item.1)
+                            .frame(width: 10, height: 10)
+                        Text(item.0)
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
+                    }
+                }
+            }
+        }
+    }
+
+    private var activeSessionTypes: [SessionType] {
+        var seen = Set<SessionType>()
+        var result: [SessionType] = []
+        for point in dataPoints {
+            for slice in point.completedByType where !seen.contains(slice.type) {
+                seen.insert(slice.type)
+                result.append(slice.type)
+            }
+        }
+        return result
     }
 
     // MARK: - Visible Week Labels
@@ -378,6 +414,30 @@ struct PlanVolumeChartsSection: View {
         case .taper: .green
         case .recovery: .mint
         case .race: .purple
+        }
+    }
+
+    private func sliceValue(for slice: SessionTypeSlice) -> Double {
+        switch selectedMetric {
+        case .distance:
+            return UnitFormatter.distanceValue(slice.distanceKm, unit: units)
+        case .duration:
+            return slice.durationSeconds / 3600.0
+        case .elevation:
+            return UnitFormatter.elevationValue(slice.elevationM, unit: units)
+        }
+    }
+
+    private func sessionTypeColor(_ type: SessionType) -> Color {
+        switch type {
+        case .longRun:       .indigo
+        case .tempo:         .blue
+        case .intervals:     .orange
+        case .verticalGain:  .red
+        case .backToBack:    .purple
+        case .recovery:      .mint
+        case .crossTraining: .teal
+        case .rest:          .gray
         }
     }
 }

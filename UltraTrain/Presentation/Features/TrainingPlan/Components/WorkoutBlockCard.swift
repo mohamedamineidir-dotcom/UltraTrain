@@ -36,19 +36,6 @@ struct WorkoutBlockCard: View {
                         .shadow(color: phaseColor.opacity(0.4), radius: 3)
                     Text(phase.phaseType.displayName)
                         .font(.subheadline.bold())
-                    if phase.repeatCount > 1 {
-                        Text("\(phase.repeatCount)x")
-                            .font(.caption2.bold().monospacedDigit())
-                            .foregroundStyle(phaseColor)
-                            .padding(.horizontal, 5)
-                            .padding(.vertical, 1)
-                            .background(
-                                Capsule()
-                                    .fill(.ultraThinMaterial)
-                                    .overlay(Capsule().stroke(phaseColor.opacity(0.2), lineWidth: 0.5))
-                            )
-                            .shadow(color: phaseColor.opacity(0.2), radius: 2)
-                    }
                     Spacer()
                     Text(durationText)
                         .font(.subheadline.monospacedDigit())
@@ -105,9 +92,9 @@ struct WorkoutBlockCard: View {
             let perRep = Int(seconds) / 60
             let secRemainder = Int(seconds) % 60
             let repText = secRemainder > 0 ? "\(perRep)m\(secRemainder)s" : "\(perRep)min"
-            return "\(phase.repeatCount) \u{00d7} \(repText) at \(phase.targetIntensity.displayName)"
+            return "\(repText) per rep at \(phase.targetIntensity.displayName)"
         case .distance(let km):
-            return "\(phase.repeatCount) \u{00d7} \(String(format: "%.1f", km))km"
+            return "\(String(format: "%.1f", km))km per rep"
         }
     }
 }
