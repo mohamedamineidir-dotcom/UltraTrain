@@ -4,8 +4,8 @@ enum APIError: Error, Equatable, Sendable {
     case invalidURL
     case invalidResponse
     case unauthorized
-    case conflict
-    case clientError(statusCode: Int)
+    case conflict(reason: String?)
+    case clientError(statusCode: Int, reason: String?)
     case serverError(statusCode: Int)
     case decodingError
     case networkError(message: String)
@@ -20,11 +20,11 @@ extension APIError: LocalizedError {
         case .invalidResponse:
             return "Invalid server response."
         case .unauthorized:
-            return "Unauthorized. Please sign in again."
-        case .conflict:
-            return "Data was modified on another device. Please refresh and try again."
-        case .clientError(let code):
-            return "Request failed with status \(code)."
+            return "Invalid email or password."
+        case .conflict(let reason):
+            return reason ?? "Conflict. Please try again."
+        case .clientError(_, let reason):
+            return reason ?? "Request failed."
         case .serverError(let code):
             return "Server error (\(code)). Please try again."
         case .decodingError:

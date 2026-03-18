@@ -101,14 +101,14 @@ struct PlanGenerationLoadingView: View {
             Image(systemName: steps[currentStep].icon)
                 .font(.system(size: 36, weight: .light))
                 .foregroundStyle(Theme.Colors.accentColor)
-                .shadow(color: Theme.Colors.accentColor.opacity(0.5), radius: 8)
+                .shadow(color: Theme.Colors.accentColor.opacity(0.25), radius: 12)
                 .id(currentStep)
                 .transition(.asymmetric(
                     insertion: .scale(scale: 0.5).combined(with: .opacity),
                     removal: .scale(scale: 1.3).combined(with: .opacity)
                 ))
         }
-        .shadow(color: Theme.Colors.accentColor.opacity(glowPulse ? 0.3 : 0.1), radius: 20)
+        .shadow(color: Theme.Colors.accentColor.opacity(glowPulse ? 0.15 : 0.05), radius: 24)
         .animation(.easeInOut(duration: 0.5), value: currentStep)
     }
 
@@ -150,8 +150,8 @@ struct PlanGenerationLoadingView: View {
                     .frame(width: capsuleWidth(for: index), height: 4)
                     .shadow(
                         color: index == currentStep
-                            ? Theme.Colors.accentColor.opacity(0.5) : .clear,
-                        radius: 4
+                            ? Theme.Colors.accentColor.opacity(0.2) : .clear,
+                        radius: 6
                     )
                     .animation(.easeInOut(duration: 0.3), value: currentStep)
             }

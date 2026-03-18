@@ -218,7 +218,7 @@ final class SyncService: SyncQueueServiceProtocol, @unchecked Sendable {
                 mutable.retryCount = 5
                 mutable.errorMessage = "Conflict: data was modified on another device"
                 Logger.network.warning("SyncService: conflict for \(item.operationType.rawValue) \(item.entityId) — server has newer version")
-            case .clientError, .unauthorized, .invalidURL, .decodingError:
+            case .clientError(_, _), .unauthorized, .invalidURL, .decodingError:
                 mutable.status = .failed
                 mutable.retryCount = 5
                 mutable.errorMessage = error.localizedDescription

@@ -35,7 +35,7 @@ struct AuthController: RouteCollection {
             .first()
 
         guard existingUser == nil else {
-            throw Abort(.conflict, reason: "Registration failed")
+            throw Abort(.conflict, reason: "An account with this email already exists. Please sign in instead.")
         }
 
         let passwordHash = try Bcrypt.hash(body.password)

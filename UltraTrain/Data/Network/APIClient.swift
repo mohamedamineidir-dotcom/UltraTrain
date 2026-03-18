@@ -259,13 +259,18 @@ actor APIClient {
         case 401:
             throw APIError.unauthorized
         case 409:
-            throw APIError.conflict
+            throw APIError.conflict(reason: parseErrorReason(from: data))
         case 400...499:
-            throw APIError.clientError(statusCode: statusCode)
+            throw APIError.clientError(statusCode: statusCode, reason: parseErrorReason(from: data))
         case 500...599:
             throw APIError.serverError(statusCode: statusCode)
         default:
             throw APIError.unknown(statusCode: statusCode)
         }
+    }
+
+    private func parseErrorReason(from data: Data) -> String? {
+        struct ServerError: Decodable { let reason: String }
+        return try? JSONDecoder().decode(ServerError.self, from: data).reason
     }
 }
