@@ -136,6 +136,10 @@ final class AuthService: AuthServiceProtocol, @unchecked Sendable {
         token != nil
     }
 
+    func clearLocalSession() {
+        clearLocalToken()
+    }
+
     // MARK: - Private
 
     private func performRefresh(expired: AuthToken) async throws -> AuthToken {

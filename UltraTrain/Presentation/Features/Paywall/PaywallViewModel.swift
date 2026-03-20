@@ -19,6 +19,10 @@ final class PaywallViewModel {
     var error: String?
     var purchaseSucceeded = false
 
+    // MARK: - Callbacks
+
+    var onSubscribed: (() -> Void)?
+
     // MARK: - User Info
 
     let firstName: String
@@ -62,6 +66,7 @@ final class PaywallViewModel {
             let status = try await subscriptionService.purchase(productId: planId)
             if status.isActive {
                 purchaseSucceeded = true
+                onSubscribed?()
             }
         } catch {
             self.error = String(localized: "paywall.purchaseError")
@@ -80,6 +85,7 @@ final class PaywallViewModel {
             let status = try await subscriptionService.restorePurchases()
             if status.isActive {
                 purchaseSucceeded = true
+                onSubscribed?()
             } else {
                 self.error = String(localized: "paywall.noSubscriptionFound")
             }

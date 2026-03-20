@@ -261,6 +261,15 @@ struct AppRootView: View {
                 return
             }
             #endif
+            // Detect fresh install: Keychain persists across simulator reinstalls
+            // so stale tokens can make the app skip login. Clear them on first launch.
+            if !UserDefaults.standard.bool(forKey: "hasLaunchedBefore") {
+                UserDefaults.standard.set(true, forKey: "hasLaunchedBefore")
+                authService.clearLocalSession()
+                UserDefaults.standard.removeObject(forKey: "subscription_is_active")
+                UserDefaults.standard.removeObject(forKey: "subscription_product_id")
+                UserDefaults.standard.removeObject(forKey: "subscription_expiration")
+            }
             isAuthenticated = authService.isAuthenticated()
             if isAuthenticated == true {
                 await checkBiometricLockSetting()

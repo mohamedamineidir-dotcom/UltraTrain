@@ -13,6 +13,10 @@ protocol AuthServiceProtocol: Sendable {
     func resendVerificationCode() async throws
     func isAuthenticated() -> Bool
 
+    /// Clears local auth tokens without contacting the server.
+    /// Used on fresh install to wipe stale Keychain data.
+    func clearLocalSession()
+
     /// Returns `true` if the user is new (needs onboarding).
     func signInWithApple(identityToken: String, firstName: String?, lastName: String?) async throws -> Bool
     /// Returns `true` if the user is new (needs onboarding).

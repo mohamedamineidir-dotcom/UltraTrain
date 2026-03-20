@@ -131,4 +131,11 @@ final class MockAuthService: AuthServiceProtocol, @unchecked Sendable {
     func isAuthenticated() -> Bool {
         isLoggedIn
     }
+
+    var clearLocalSessionCallCount = 0
+
+    func clearLocalSession() {
+        clearLocalSessionCallCount += 1
+        isLoggedIn = false
+    }
 }

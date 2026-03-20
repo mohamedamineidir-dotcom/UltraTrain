@@ -85,6 +85,7 @@ struct PaywallView: View {
             }
         }
         .task {
+            viewModel.onSubscribed = onSubscribed
             await viewModel.loadPlans()
         }
         .onChange(of: viewModel.purchaseSucceeded) { _, succeeded in
