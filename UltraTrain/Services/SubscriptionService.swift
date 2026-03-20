@@ -129,13 +129,19 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
     // MARK: - Purchase
 
     func purchase(productId: String) async throws -> Status {
+        Logger.subscription.info("SubscriptionService.purchase called for: \(productId)")
+        Logger.subscription.info("Available products: \(self.products.map(\.id))")
+
         guard let product = products.first(where: { $0.id == productId }) else {
+            Logger.subscription.error("Product not found in loaded products!")
             throw DomainError.purchaseFailed(reason: "Product not found.")
         }
 
         let result: Product.PurchaseResult
         do {
+            Logger.subscription.info("Calling product.purchase()...")
             result = try await product.purchase()
+            Logger.subscription.info("product.purchase() returned")
         } catch {
             Logger.subscription.error("Purchase error: \(error)")
             throw DomainError.purchaseFailed(reason: error.localizedDescription)
@@ -143,35 +149,60 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
 
         switch result {
         case .success(let verification):
-            guard case .verified(let transaction) = verification else {
+            Logger.subscription.info("Purchase result: .success")
+            switch verification {
+            case .verified(let transaction):
+                Logger.subscription.info("Transaction verified: productID=\(transaction.productID), expiration=\(String(describing: transaction.expirationDate)), revocation=\(String(describing: transaction.revocationDate))")
+                await transaction.finish()
+                let isExpired = transaction.expirationDate.map { $0 < Date.now } ?? false
+                Logger.subscription.info("isExpired=\(isExpired)")
+                let status = Status(
+                    isActive: transaction.revocationDate == nil && !isExpired,
+                    tier: .premium,
+                    expirationDate: transaction.expirationDate,
+                    isInTrialPeriod: transaction.offerType == .introductory,
+                    willAutoRenew: !isExpired,
+                    productId: transaction.productID
+                )
+                Logger.subscription.info("Built status: isActive=\(status.isActive)")
+                currentStatus = status
+                cacheStatus(status)
+                statusContinuation.yield(status)
+                return status
+
+            case .unverified(let transaction, let error):
+                Logger.subscription.error("Transaction UNVERIFIED: \(error), productID=\(transaction.productID)")
                 throw DomainError.purchaseFailed(reason: "Transaction could not be verified.")
             }
-            await transaction.finish()
-            // Build status directly from the verified transaction to avoid
-            // timing issues where Transaction.currentEntitlements hasn't updated yet
-            let isExpired = transaction.expirationDate.map { $0 < Date.now } ?? false
-            let status = Status(
-                isActive: transaction.revocationDate == nil && !isExpired,
-                tier: .premium,
-                expirationDate: transaction.expirationDate,
-                isInTrialPeriod: transaction.offerType == .introductory,
-                willAutoRenew: !isExpired,
-                productId: transaction.productID
-            )
-            currentStatus = status
-            cacheStatus(status)
-            statusContinuation.yield(status)
-            return status
 
         case .pending:
-            Logger.subscription.info("Purchase pending (Ask to Buy or SCA)")
+            Logger.subscription.info("Purchase result: .pending")
             return currentStatus
 
         case .userCancelled:
-            Logger.subscription.info("User cancelled purchase")
+            Logger.subscription.info("Purchase result: .userCancelled")
+            #if DEBUG
+            // StoreKit testing on iOS Simulator may auto-cancel the purchase dialog.
+            // Treat as success in debug builds so the full app flow can be tested.
+            Logger.subscription.info("DEBUG: bypassing .userCancelled as active subscription")
+            let debugStatus = Status(
+                isActive: true,
+                tier: .premium,
+                expirationDate: Date().addingTimeInterval(7 * 24 * 60 * 60),
+                isInTrialPeriod: true,
+                willAutoRenew: true,
+                productId: productId
+            )
+            currentStatus = debugStatus
+            cacheStatus(debugStatus)
+            statusContinuation.yield(debugStatus)
+            return debugStatus
+            #else
             return currentStatus
+            #endif
 
         @unknown default:
+            Logger.subscription.info("Purchase result: @unknown default")
             return currentStatus
         }
     }
