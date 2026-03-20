@@ -128,7 +128,18 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
                 throw DomainError.purchaseFailed(reason: "Transaction could not be verified.")
             }
             await transaction.finish()
-            let status = await refreshStatus()
+            // Build status directly from the verified transaction to avoid
+            // timing issues where Transaction.currentEntitlements hasn't updated yet
+            let isExpired = transaction.expirationDate.map { $0 < Date.now } ?? false
+            let status = Status(
+                isActive: transaction.revocationDate == nil && !isExpired,
+                tier: .premium,
+                expirationDate: transaction.expirationDate,
+                isInTrialPeriod: transaction.offerType == .introductory,
+                willAutoRenew: !isExpired,
+                productId: transaction.productID
+            )
+            currentStatus = status
             statusContinuation.yield(status)
             return status
 

@@ -272,6 +272,14 @@ struct AppRootView: View {
                 await registerForPushNotifications()
             }
         }
+        .task {
+            // Listen for subscription status changes (e.g. after purchase completes)
+            for await status in subscriptionService.statusUpdates {
+                if status.isActive {
+                    hasActiveSubscription = true
+                }
+            }
+        }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
                 Task {
