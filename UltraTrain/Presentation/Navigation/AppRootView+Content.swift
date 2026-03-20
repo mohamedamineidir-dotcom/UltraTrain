@@ -148,6 +148,11 @@ extension AppRootView {
     }
 
     func checkSubscriptionStatus() async {
+        // Use cached status first so user isn't blocked by a slow StoreKit query
+        if subscriptionService.currentStatus.isActive {
+            hasActiveSubscription = true
+        }
+        // Then verify with StoreKit (updates cache if status changed)
         let status = await subscriptionService.refreshStatus()
         hasActiveSubscription = status.isActive
     }

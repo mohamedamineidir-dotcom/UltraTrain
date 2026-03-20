@@ -16,6 +16,12 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
         "com.ultratrain.app.premium.yearly"
     ]
 
+    // MARK: - Cache Keys
+
+    private static let cachedActiveKey = "subscription_is_active"
+    private static let cachedProductIdKey = "subscription_product_id"
+    private static let cachedExpirationKey = "subscription_expiration"
+
     // MARK: - State
 
     private(set) var currentStatus: Status = .inactive
@@ -30,6 +36,19 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
         let (stream, continuation) = AsyncStream<Status>.makeStream()
         self.statusUpdates = stream
         self.statusContinuation = continuation
+
+        // Restore cached status so the app doesn't show the paywall on relaunch
+        // while StoreKit verifies in the background
+        if UserDefaults.standard.bool(forKey: Self.cachedActiveKey) {
+            currentStatus = Status(
+                isActive: true,
+                tier: .premium,
+                expirationDate: UserDefaults.standard.object(forKey: Self.cachedExpirationKey) as? Date,
+                isInTrialPeriod: false,
+                willAutoRenew: true,
+                productId: UserDefaults.standard.string(forKey: Self.cachedProductIdKey)
+            )
+        }
 
         updateTask = Task(priority: .background) { [weak self] in
             for await result in Transaction.updates {
@@ -140,6 +159,7 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
                 productId: transaction.productID
             )
             currentStatus = status
+            cacheStatus(status)
             statusContinuation.yield(status)
             return status
 
@@ -183,6 +203,7 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
 
         guard let transaction = latestTransaction else {
             currentStatus = .inactive
+            cacheStatus(.inactive)
             return .inactive
         }
 
@@ -196,6 +217,7 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
             productId: transaction.productID
         )
         currentStatus = status
+        cacheStatus(status)
         return status
     }
 
@@ -219,6 +241,12 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
         formatter.locale = locale
         formatter.maximumFractionDigits = 2
         return formatter.string(from: price as NSDecimalNumber) ?? "\(price)"
+    }
+
+    private func cacheStatus(_ status: Status) {
+        UserDefaults.standard.set(status.isActive, forKey: Self.cachedActiveKey)
+        UserDefaults.standard.set(status.productId, forKey: Self.cachedProductIdKey)
+        UserDefaults.standard.set(status.expirationDate, forKey: Self.cachedExpirationKey)
     }
 }
 
