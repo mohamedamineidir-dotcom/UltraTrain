@@ -236,22 +236,38 @@ enum SessionTemplateGenerator {
     ) -> [SessionTemplate] {
         // B2B days are always included (day 5 + day 6)
         // D+ split between the two long runs (40/60)
-        let pool: [(day: Int, template: SessionTemplate)] = [
+        var pool: [(day: Int, template: SessionTemplate)] = [
             (5, tpl(5, .longRun, .easy, volume.b2bDay1Seconds, 0.40,
                     SessionDescriptionGenerator.b2bDay1(phase: phase))),
             (6, tpl(6, .backToBack, .easy, volume.b2bDay2Seconds, 0.60,
                     SessionDescriptionGenerator.b2bDay2(phase: phase))),
-            (2, tpl(2, .verticalGain, vgIntensity, base.vgSeconds, 0,
-                    SessionDescriptionGenerator.verticalGain(phase: phase, isRecoveryWeek: false))),
-            (1, tpl(1, .recovery, .easy, base.easyRun1Seconds, 0,
-                    SessionDescriptionGenerator.easyRun(isRecoveryWeek: false))),
-            (3, tpl(3, .recovery, .easy, base.easyRun2Seconds, 0,
-                    SessionDescriptionGenerator.easyRun(isRecoveryWeek: false, isPreLongRun: true))),
-            (4, tpl(4, .intervals, .moderate, base.intervalSeconds, 0,
-                    SessionDescriptionGenerator.intervals(phase: phase, isRecoveryWeek: false, weekInPhase: weekInPhase))),
-            (0, tpl(0, .recovery, .easy, base.easyRun1Seconds, 0,
-                    SessionDescriptionGenerator.easyRun(isRecoveryWeek: false))),
         ]
+
+        // VG: include only if duration > 0 (dropped on hardest B2B weeks)
+        if base.vgSeconds > 0 {
+            pool.append((2, tpl(2, .verticalGain, vgIntensity, base.vgSeconds, 0,
+                    SessionDescriptionGenerator.verticalGain(phase: phase, isRecoveryWeek: false))))
+        } else {
+            pool.append((2, tpl(2, .recovery, .easy, base.easyRun1Seconds, 0,
+                    SessionDescriptionGenerator.easyRun(isRecoveryWeek: false))))
+        }
+
+        pool.append((1, tpl(1, .recovery, .easy, base.easyRun1Seconds, 0,
+                SessionDescriptionGenerator.easyRun(isRecoveryWeek: false))))
+        pool.append((3, tpl(3, .recovery, .easy, base.easyRun2Seconds, 0,
+                SessionDescriptionGenerator.easyRun(isRecoveryWeek: false, isPreLongRun: true))))
+
+        // Intervals: replaced by easy run on B2B weeks (intervalSeconds = 0)
+        if base.intervalSeconds > 0 {
+            pool.append((4, tpl(4, .intervals, .moderate, base.intervalSeconds, 0,
+                    SessionDescriptionGenerator.intervals(phase: phase, isRecoveryWeek: false, weekInPhase: weekInPhase))))
+        } else {
+            pool.append((4, tpl(4, .recovery, .easy, base.easyRun1Seconds, 0,
+                    SessionDescriptionGenerator.easyRun(isRecoveryWeek: false))))
+        }
+
+        pool.append((0, tpl(0, .recovery, .easy, base.easyRun1Seconds, 0,
+                SessionDescriptionGenerator.easyRun(isRecoveryWeek: false))))
 
         let activeCount = min(preferredRunsPerWeek, pool.count)
         let activeSlots = pool.prefix(activeCount)

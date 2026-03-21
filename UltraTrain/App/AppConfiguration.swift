@@ -74,9 +74,13 @@ enum AppConfiguration {
         static let longRunCurveExponent: Double = 2.0
         static let b2bDay1Split: Double = 0.43
         static let b2bDay2Split: Double = 0.57
-        static let b2bSupportingSessionScale: Double = 0.90
-        static let b2bIntroductionSessionScale: Double = 0.75
         static let b2bIntroductionWeekCount: Int = 2
+
+        // B2B volume distribution targets
+        static let b2bTargetFractionOfTotal: Double = 0.85   // B2B days = 85% of week total
+        static let b2bIntroVolumeRatio: Double = 0.935        // intro B2B = 93.5% of prev week
+        static let b2bMinExceedPreviousRatio: Double = 1.02   // regular B2B >= 102% of prev week
+        static let b2bHardestWeekCount: Int = 2               // last N B2B weeks drop all quality
 
         // Base session durations (minutes)
         static let easyRunStartMinutes: Double = 45

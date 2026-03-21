@@ -228,8 +228,8 @@ struct LongRunCurveCalculatorTests {
                 "Long run growth (\(lrRatio)x) should exceed easy run growth (\(easyRatio)x)")
     }
 
-    @Test("B2B weeks shorten easy runs")
-    func b2bWeeksShortenEasyRuns() {
+    @Test("B2B weeks concentrate volume in long run days and drop intervals")
+    func b2bWeeksConcentrateVolume() {
         // Non-B2B: use short race that won't qualify for B2B
         let nonB2B = LongRunCurveCalculator.durations(
             weekIndex: 15,
@@ -258,8 +258,14 @@ struct LongRunCurveCalculatorTests {
 
         #expect(b2b.isB2B, "Should be a B2B week with long race")
         #expect(nonB2B.isB2B == false, "Short race should not produce B2B")
-        #expect(b2b.easyRun1Seconds < nonB2B.easyRun1Seconds,
-                "B2B easy runs should be shorter")
+        // B2B weeks drop intervals
+        #expect(b2b.intervalSeconds == 0,
+                "B2B weeks should drop intervals")
+        #expect(nonB2B.intervalSeconds > 0,
+                "Non-B2B weeks should have intervals")
+        // B2B long run (combined) should be much larger than non-B2B
+        #expect(b2b.longRunSeconds > nonB2B.longRunSeconds * 2,
+                "B2B long run should be much larger than non-B2B")
     }
 
     // MARK: - Recovery Week Reductions
@@ -302,6 +308,7 @@ struct LongRunCurveCalculatorTests {
         let raceDuration: TimeInterval = 50400 // ~14h HK100
 
         var totals: [(week: Int, total: TimeInterval, recovery: Bool, isB2B: Bool)] = []
+        var previousNonRecoveryWeekTotal: TimeInterval = 0
 
         for week in 0..<totalWeeks {
             let phase: TrainingPhase
@@ -322,8 +329,14 @@ struct LongRunCurveCalculatorTests {
                 philosophy: .balanced,
                 raceDurationSeconds: raceDuration,
                 raceEffectiveKm: 156,
-                preferredRunsPerWeek: 5
+                preferredRunsPerWeek: 5,
+                previousNonRecoveryWeekTotal: previousNonRecoveryWeekTotal
             )
+
+            if !isRecovery {
+                previousNonRecoveryWeekTotal = d.totalSeconds
+            }
+
             totals.append((week, d.totalSeconds, isRecovery, d.isB2B))
         }
 
@@ -405,7 +418,7 @@ struct LongRunCurveCalculatorTests {
                 "HK100 advanced peak B2B should be 5-10h, got \(hours)h")
     }
 
-    @Test("B2B weeks have non-zero easy and interval sessions")
+    @Test("B2B weeks have non-zero easy runs and drop intervals")
     func b2bWeeksHaveNonZeroSupportingSessions() {
         let d = LongRunCurveCalculator.durations(
             weekIndex: 15,
@@ -422,11 +435,289 @@ struct LongRunCurveCalculatorTests {
         if d.isB2B {
             #expect(d.easyRun1Seconds >= 1800,
                     "B2B easy run should be >= 30min, got \(d.easyRun1Seconds / 60)min")
-            #expect(d.intervalSeconds >= 2400,
-                    "B2B interval should be >= 40min, got \(d.intervalSeconds / 60)min")
-            #expect(d.vgSeconds >= 2400,
-                    "B2B VG should be >= 40min, got \(d.vgSeconds / 60)min")
+            #expect(d.easyRun2Seconds >= 1800,
+                    "B2B easy run 2 should be >= 30min, got \(d.easyRun2Seconds / 60)min")
+            // Intervals are dropped on all B2B weeks
+            #expect(d.intervalSeconds == 0,
+                    "B2B weeks should drop intervals, got \(d.intervalSeconds / 60)min")
+            // B2B combined should be ~85% of total
+            let b2bCombined = d.b2bDay1Seconds + d.b2bDay2Seconds
+            let b2bFraction = b2bCombined / d.totalSeconds
+            #expect(b2bFraction >= 0.70 && b2bFraction <= 0.95,
+                    "B2B days should be ~85% of total, got \(Int(b2bFraction * 100))%")
         }
+    }
+
+    // MARK: - Campus Coach Reference Validation
+
+    // MARK: - B2B Volume Distribution
+
+    @Test("introduction B2B week volume is ~93.5% of previous non-recovery week")
+    func b2bIntroductionWeekVolume() {
+        // 24-week plan for advanced athlete, long race → B2B eligible
+        let totalWeeks = 24
+        let raceDuration: TimeInterval = 126000 // ~35h
+        let raceEffKm: Double = 270
+
+        // Simulate weeks to find the first B2B week with proper previousNonRecoveryWeekTotal
+        var previousNonRecoveryTotal: TimeInterval = 0
+
+        for week in 0..<totalWeeks {
+            let phase: TrainingPhase
+            if week < 6 { phase = .base }
+            else if week < 19 { phase = .build }
+            else if week < 22 { phase = .peak }
+            else { phase = .taper }
+
+            let isRecovery = (week + 1) % 4 == 0 && phase != .taper
+
+            let d = LongRunCurveCalculator.durations(
+                weekIndex: week,
+                totalWeeks: totalWeeks,
+                phase: phase,
+                isRecoveryWeek: isRecovery,
+                experience: .advanced,
+                philosophy: .balanced,
+                raceDurationSeconds: raceDuration,
+                raceEffectiveKm: raceEffKm,
+                preferredRunsPerWeek: 5,
+                previousNonRecoveryWeekTotal: previousNonRecoveryTotal
+            )
+
+            if d.isB2B && previousNonRecoveryTotal > 0 {
+                // First B2B week found — check it's an intro week near 93.5% of prev
+                let ratio = d.totalSeconds / previousNonRecoveryTotal
+                #expect(ratio >= 0.85 && ratio <= 1.0,
+                        "Intro B2B total should be ~92-95% of previous, got \(Int(ratio * 100))%")
+                return
+            }
+
+            if !isRecovery {
+                previousNonRecoveryTotal = d.totalSeconds
+            }
+        }
+        // If no B2B found at all, fail
+        #expect(Bool(false), "Should have found at least one B2B week in a 24-week plan for advanced 270 effKm race")
+    }
+
+    @Test("regular B2B week total exceeds previous non-B2B week total")
+    func b2bRegularWeekExceedsPrevious() {
+        let totalWeeks = 24
+        let raceDuration: TimeInterval = 126000
+        let raceEffKm: Double = 270
+
+        var previousNonRecoveryTotal: TimeInterval = 0
+        var b2bCount = 0
+
+        for week in 0..<totalWeeks {
+            let phase: TrainingPhase
+            if week < 6 { phase = .base }
+            else if week < 19 { phase = .build }
+            else if week < 22 { phase = .peak }
+            else { phase = .taper }
+
+            let isRecovery = (week + 1) % 4 == 0 && phase != .taper
+
+            let d = LongRunCurveCalculator.durations(
+                weekIndex: week,
+                totalWeeks: totalWeeks,
+                phase: phase,
+                isRecoveryWeek: isRecovery,
+                experience: .advanced,
+                philosophy: .balanced,
+                raceDurationSeconds: raceDuration,
+                raceEffectiveKm: raceEffKm,
+                preferredRunsPerWeek: 5,
+                previousNonRecoveryWeekTotal: previousNonRecoveryTotal
+            )
+
+            if d.isB2B {
+                b2bCount += 1
+                let introCount = LongRunCurveCalculator.effectiveIntroCount(totalWeeks: totalWeeks)
+                // After intro weeks, regular B2B should exceed previous
+                if b2bCount > introCount && previousNonRecoveryTotal > 0 {
+                    #expect(d.totalSeconds >= previousNonRecoveryTotal,
+                            "Regular B2B W\(week) total \(Int(d.totalSeconds / 60))min should exceed prev \(Int(previousNonRecoveryTotal / 60))min")
+                }
+            }
+
+            if !isRecovery {
+                previousNonRecoveryTotal = d.totalSeconds
+            }
+        }
+    }
+
+    @Test("B2B days are approximately 85% of total week volume")
+    func b2bDaysAre85PercentOfTotal() {
+        let totalWeeks = 24
+        let raceDuration: TimeInterval = 126000
+        var previousNonRecoveryTotal: TimeInterval = 0
+        var b2bCount = 0
+
+        for week in 0..<totalWeeks {
+            let phase: TrainingPhase
+            if week < 6 { phase = .base }
+            else if week < 19 { phase = .build }
+            else if week < 22 { phase = .peak }
+            else { phase = .taper }
+
+            let isRecovery = (week + 1) % 4 == 0 && phase != .taper
+
+            let d = LongRunCurveCalculator.durations(
+                weekIndex: week,
+                totalWeeks: totalWeeks,
+                phase: phase,
+                isRecoveryWeek: isRecovery,
+                experience: .advanced,
+                philosophy: .balanced,
+                raceDurationSeconds: raceDuration,
+                raceEffectiveKm: 270,
+                preferredRunsPerWeek: 5,
+                previousNonRecoveryWeekTotal: previousNonRecoveryTotal
+            )
+
+            if d.isB2B {
+                b2bCount += 1
+                let introCount = LongRunCurveCalculator.effectiveIntroCount(totalWeeks: totalWeeks)
+                // Check fraction for regular (non-intro) B2B weeks
+                if b2bCount > introCount {
+                    let b2bCombined = d.b2bDay1Seconds + d.b2bDay2Seconds
+                    let fraction = b2bCombined / d.totalSeconds
+                    #expect(fraction >= 0.75 && fraction <= 0.92,
+                            "B2B days should be ~85% of total, got \(Int(fraction * 100))% at W\(week)")
+                }
+            }
+
+            if !isRecovery {
+                previousNonRecoveryTotal = d.totalSeconds
+            }
+        }
+
+        #expect(b2bCount > 0, "Should find at least one B2B week")
+    }
+
+    @Test("hardest B2B weeks drop all quality sessions (intervals and VG)")
+    func b2bHardestWeeksDropAllQuality() {
+        let totalWeeks = 24
+        let raceDuration: TimeInterval = 126000
+        var previousNonRecoveryTotal: TimeInterval = 0
+
+        // Use the same hardest detection formula as the calculator
+        let buildWeekCount = max(totalWeeks - max(Int(Double(totalWeeks) * 0.12), 2), 1)
+        let halfPoint = buildWeekCount / 2
+        let totalB2B = LongRunCurveCalculator.totalB2BWeekCount(totalWeeks: totalWeeks)
+        let hardestCount = AppConfiguration.Training.b2bHardestWeekCount
+
+        var hardestFound = 0
+        var nonHardestB2BFound = 0
+
+        for week in 0..<totalWeeks {
+            let phase: TrainingPhase
+            if week < 6 { phase = .base }
+            else if week < 19 { phase = .build }
+            else if week < 22 { phase = .peak }
+            else { phase = .taper }
+
+            let isRecovery = (week + 1) % 4 == 0 && phase != .taper
+
+            let d = LongRunCurveCalculator.durations(
+                weekIndex: week,
+                totalWeeks: totalWeeks,
+                phase: phase,
+                isRecoveryWeek: isRecovery,
+                experience: .advanced,
+                philosophy: .balanced,
+                raceDurationSeconds: raceDuration,
+                raceEffectiveKm: 270,
+                preferredRunsPerWeek: 5,
+                previousNonRecoveryWeekTotal: previousNonRecoveryTotal
+            )
+
+            if d.isB2B {
+                let b2bIdx = max(week - halfPoint, 0) / 2
+                let isHardest = b2bIdx >= totalB2B - hardestCount
+
+                if isHardest {
+                    hardestFound += 1
+                    #expect(d.intervalSeconds == 0,
+                            "Hardest B2B W\(week) should have intervals=0, got \(d.intervalSeconds / 60)min")
+                    #expect(d.vgSeconds == 0,
+                            "Hardest B2B W\(week) should have VG=0, got \(d.vgSeconds / 60)min")
+                } else {
+                    nonHardestB2BFound += 1
+                }
+            }
+
+            if !isRecovery {
+                previousNonRecoveryTotal = d.totalSeconds
+            }
+        }
+
+        #expect(hardestFound >= 1,
+                "Should find at least 1 hardest B2B week, found \(hardestFound)")
+        #expect(nonHardestB2BFound >= 1,
+                "Should also find non-hardest B2B weeks, found \(nonHardestB2BFound)")
+    }
+
+    @Test("regular B2B weeks drop intervals but keep VG")
+    func b2bRegularWeeksDropIntervals() {
+        let totalWeeks = 24
+        let raceDuration: TimeInterval = 126000
+        var previousNonRecoveryTotal: TimeInterval = 0
+        var b2bWeekDurations: [(week: Int, durations: LongRunCurveCalculator.WeekDurations)] = []
+
+        for week in 0..<totalWeeks {
+            let phase: TrainingPhase
+            if week < 6 { phase = .base }
+            else if week < 19 { phase = .build }
+            else if week < 22 { phase = .peak }
+            else { phase = .taper }
+
+            let isRecovery = (week + 1) % 4 == 0 && phase != .taper
+
+            let d = LongRunCurveCalculator.durations(
+                weekIndex: week,
+                totalWeeks: totalWeeks,
+                phase: phase,
+                isRecoveryWeek: isRecovery,
+                experience: .advanced,
+                philosophy: .balanced,
+                raceDurationSeconds: raceDuration,
+                raceEffectiveKm: 270,
+                preferredRunsPerWeek: 5,
+                previousNonRecoveryWeekTotal: previousNonRecoveryTotal
+            )
+
+            if d.isB2B {
+                b2bWeekDurations.append((week, d))
+            }
+
+            if !isRecovery {
+                previousNonRecoveryTotal = d.totalSeconds
+            }
+        }
+
+        let hardestCount = AppConfiguration.Training.b2bHardestWeekCount
+        // Non-hardest B2B weeks should have intervals=0 but VG > 0
+        let regularB2B = b2bWeekDurations.dropLast(hardestCount)
+        for entry in regularB2B {
+            #expect(entry.durations.intervalSeconds == 0,
+                    "Regular B2B W\(entry.week) should drop intervals, got \(entry.durations.intervalSeconds / 60)min")
+            #expect(entry.durations.vgSeconds > 0,
+                    "Regular B2B W\(entry.week) should keep VG, got \(entry.durations.vgSeconds / 60)min")
+        }
+    }
+
+    @Test("short plans (≤18 weeks) have only 1 intro B2B week")
+    func b2bShortPlanHasOneIntroWeek() {
+        let shortIntro = LongRunCurveCalculator.effectiveIntroCount(totalWeeks: 16)
+        #expect(shortIntro == 1, "16-week plan should have 1 intro B2B week, got \(shortIntro)")
+
+        let shortBoundary = LongRunCurveCalculator.effectiveIntroCount(totalWeeks: 18)
+        #expect(shortBoundary == 1, "18-week plan should have 1 intro B2B week, got \(shortBoundary)")
+
+        let longPlan = LongRunCurveCalculator.effectiveIntroCount(totalWeeks: 20)
+        #expect(longPlan == 2, "20-week plan should have 2 intro B2B weeks, got \(longPlan)")
     }
 
     // MARK: - Campus Coach Reference Validation

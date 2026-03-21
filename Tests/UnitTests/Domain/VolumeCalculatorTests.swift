@@ -117,7 +117,10 @@ struct VolumeCalculatorTests {
         for vol in result {
             #expect(vol.baseSessionDurations.easyRun1Seconds > 0)
             #expect(vol.baseSessionDurations.easyRun2Seconds > 0)
-            #expect(vol.baseSessionDurations.vgSeconds > 0)
+            // VG can be 0 on hardest B2B weeks (quality sessions dropped)
+            if !vol.isB2BWeek {
+                #expect(vol.baseSessionDurations.vgSeconds > 0)
+            }
         }
     }
 
@@ -205,27 +208,28 @@ struct VolumeCalculatorTests {
 
     @Test("enjoyment philosophy produces lower duration than balanced")
     func enjoymentLowerDuration() {
+        // Use short race (effKm < 80) to avoid B2B which overrides philosophy effects
         let skeletons = (1...8).map { makeSkeleton(weekNumber: $0, phase: .build) }
 
         let balanced = VolumeCalculator.calculate(
             skeletons: skeletons,
             currentWeeklyVolumeKm: 30,
-            raceDistanceKm: 100,
-            raceElevationGainM: 5000,
+            raceDistanceKm: 42,
+            raceElevationGainM: 1000,
             experience: .intermediate,
             philosophy: .balanced,
-            raceDurationSeconds: 50400,
-            raceEffectiveKm: 150
+            raceDurationSeconds: 18000,
+            raceEffectiveKm: 52
         )
         let enjoyment = VolumeCalculator.calculate(
             skeletons: skeletons,
             currentWeeklyVolumeKm: 30,
-            raceDistanceKm: 100,
-            raceElevationGainM: 5000,
+            raceDistanceKm: 42,
+            raceElevationGainM: 1000,
             experience: .intermediate,
             philosophy: .enjoyment,
-            raceDurationSeconds: 50400,
-            raceEffectiveKm: 150
+            raceDurationSeconds: 18000,
+            raceEffectiveKm: 52
         )
 
         let lastBalanced = balanced.last!.targetDurationSeconds
@@ -235,27 +239,28 @@ struct VolumeCalculatorTests {
 
     @Test("performance philosophy produces higher duration than balanced")
     func performanceHigherDuration() {
+        // Use short race (effKm < 80) to avoid B2B which overrides philosophy effects
         let skeletons = (1...8).map { makeSkeleton(weekNumber: $0, phase: .build) }
 
         let balanced = VolumeCalculator.calculate(
             skeletons: skeletons,
             currentWeeklyVolumeKm: 30,
-            raceDistanceKm: 100,
-            raceElevationGainM: 5000,
+            raceDistanceKm: 42,
+            raceElevationGainM: 1000,
             experience: .intermediate,
             philosophy: .balanced,
-            raceDurationSeconds: 50400,
-            raceEffectiveKm: 150
+            raceDurationSeconds: 18000,
+            raceEffectiveKm: 52
         )
         let performance = VolumeCalculator.calculate(
             skeletons: skeletons,
             currentWeeklyVolumeKm: 30,
-            raceDistanceKm: 100,
-            raceElevationGainM: 5000,
+            raceDistanceKm: 42,
+            raceElevationGainM: 1000,
             experience: .intermediate,
             philosophy: .performance,
-            raceDurationSeconds: 50400,
-            raceEffectiveKm: 150
+            raceDurationSeconds: 18000,
+            raceEffectiveKm: 52
         )
 
         let lastBalanced = balanced.last!.targetDurationSeconds

@@ -41,6 +41,7 @@ enum VolumeCalculator {
 
         // Compute duration-based volumes via LongRunCurveCalculator
         var volumes: [WeekVolume] = []
+        var previousNonRecoveryWeekTotal: TimeInterval = 0
 
         for (index, skeleton) in skeletons.enumerated() {
             let durations = LongRunCurveCalculator.durations(
@@ -53,8 +54,13 @@ enum VolumeCalculator {
                 raceGoal: raceGoal,
                 raceDurationSeconds: raceDurationSeconds,
                 raceEffectiveKm: raceEffectiveKm,
-                preferredRunsPerWeek: preferredRunsPerWeek
+                preferredRunsPerWeek: preferredRunsPerWeek,
+                previousNonRecoveryWeekTotal: previousNonRecoveryWeekTotal
             )
+
+            if !skeleton.isRecoveryWeek {
+                previousNonRecoveryWeekTotal = durations.totalSeconds
+            }
 
             // Derive km from duration using average pace (~6.5 min/km)
             let avgPaceSecPerKm: Double = 390 // 6.5 min/km

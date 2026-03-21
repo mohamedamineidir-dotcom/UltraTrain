@@ -26,7 +26,8 @@ enum LongRunCurveCalculator {
         raceGoal: RaceGoal = .finish,
         raceDurationSeconds: TimeInterval,
         raceEffectiveKm: Double,
-        preferredRunsPerWeek: Int
+        preferredRunsPerWeek: Int,
+        previousNonRecoveryWeekTotal: TimeInterval = 0
     ) -> WeekDurations {
         let planProgress = totalWeeks > 1
             ? Double(weekIndex) / Double(totalWeeks - 1)
@@ -56,7 +57,6 @@ enum LongRunCurveCalculator {
         let philMultiplier = philosophyBaseMultiplier(philosophy)
         let goalMultiplier = raceGoalBaseMultiplier(raceGoal)
         let combinedMultiplier = philMultiplier * goalMultiplier
-        // Scale supporting sessions based on runs/week to keep total volume proportional
         let sessionScale = Double(preferredRunsPerWeek) / 5.0
         var easy1 = baseEasyDuration(planProgress) * combinedMultiplier * sessionScale
         var easy2 = baseEasyDuration(planProgress) * combinedMultiplier * sessionScale
@@ -79,26 +79,55 @@ enum LongRunCurveCalculator {
             b2bDay2 = combined * AppConfiguration.Training.b2bDay2Split
             longRun = b2bDay1 + b2bDay2
 
-            // Floor-based approach: reduce supporting sessions on B2B weeks, with minimum floors
-            let easyFloor: TimeInterval = 30 * 60   // 30 min
-            let intervalFloor: TimeInterval = 40 * 60 // 40 min
-            let vgFloor: TimeInterval = 40 * 60       // 40 min
+            let easyFloor: TimeInterval = 30 * 60
+            let vgFloor: TimeInterval = 40 * 60
 
-            // First 2 B2B weeks get stronger reduction for body adaptation
             let buildWeekCount = max(totalWeeks - taperWeekEstimate(totalWeeks), 1)
             let halfPoint = buildWeekCount / 2
-            let b2bWeekIndex = max(weekIndex - halfPoint, 0) / 2 // B2B weeks alternate, so divide by 2
-            let b2bScale: Double
-            if b2bWeekIndex < AppConfiguration.Training.b2bIntroductionWeekCount {
-                b2bScale = AppConfiguration.Training.b2bIntroductionSessionScale
+            let b2bIdx = max(weekIndex - halfPoint, 0) / 2
+            let introCount = effectiveIntroCount(totalWeeks: totalWeeks)
+            let totalB2B = totalB2BWeekCount(totalWeeks: totalWeeks)
+            let isHardest = b2bIdx >= totalB2B - AppConfiguration.Training.b2bHardestWeekCount
+
+            // Compute target-based supporting budget
+            let supportingBudget: TimeInterval
+
+            if b2bIdx < introCount {
+                // Introduction B2B: ~93.5% of previous non-recovery week volume
+                if previousNonRecoveryWeekTotal > 0 {
+                    let targetTotal = previousNonRecoveryWeekTotal * AppConfiguration.Training.b2bIntroVolumeRatio
+                    supportingBudget = max(targetTotal - combined, 0)
+                } else {
+                    // Fallback when no previous week data: 15% of combined as supporting
+                    supportingBudget = combined * 0.18
+                }
             } else {
-                b2bScale = AppConfiguration.Training.b2bSupportingSessionScale
+                // Regular B2B: B2B days = 85% of total → supporting = 15%
+                let rawTarget = combined / AppConfiguration.Training.b2bTargetFractionOfTotal
+                let targetTotal: TimeInterval
+                if previousNonRecoveryWeekTotal > 0 {
+                    targetTotal = max(rawTarget, previousNonRecoveryWeekTotal * AppConfiguration.Training.b2bMinExceedPreviousRatio)
+                } else {
+                    targetTotal = rawTarget
+                }
+                supportingBudget = max(targetTotal - combined, 0)
             }
 
-            easy1 = max(easy1 * b2bScale, easy1 > 0 ? easyFloor : 0)
-            easy2 = max(easy2 * b2bScale, easy2 > 0 ? easyFloor : 0)
-            interval = max(interval * b2bScale, interval > 0 ? intervalFloor : 0)
-            vg = max(vg * b2bScale, vg > 0 ? vgFloor : 0)
+            // Distribute supporting budget: drop intervals, keep VG (unless hardest)
+            interval = 0
+
+            if isHardest {
+                // Hardest B2B weeks: all supporting = easy runs
+                vg = 0
+                easy1 = max(supportingBudget * 0.5, easyFloor)
+                easy2 = max(supportingBudget * 0.5, easyFloor)
+            } else {
+                // Regular/intro B2B: keep VG, rest to easy runs
+                vg = max(min(supportingBudget * 0.35, 50 * 60), supportingBudget > vgFloor ? vgFloor : 0)
+                let easyBudget = max(supportingBudget - vg, 0)
+                easy1 = max(easyBudget * 0.5, easyFloor)
+                easy2 = max(easyBudget * 0.5, easyFloor)
+            }
         } else {
             longRun = rawLongRun
         }
@@ -247,6 +276,20 @@ enum LongRunCurveCalculator {
         let exponent = AppConfiguration.Training.longRunCurveExponent
         let curved = pow(progress, exponent)
         return startCombined + (peakCombined - startCombined) * curved
+    }
+
+    // MARK: - B2B Helpers
+
+    static func effectiveIntroCount(totalWeeks: Int) -> Int {
+        totalWeeks <= 18 ? 1 : AppConfiguration.Training.b2bIntroductionWeekCount
+    }
+
+    static func totalB2BWeekCount(totalWeeks: Int) -> Int {
+        let buildWeekCount = max(totalWeeks - taperWeekEstimate(totalWeeks), 1)
+        let halfPoint = buildWeekCount / 2
+        let eligibleRange = buildWeekCount - halfPoint
+        // B2B alternates every other week
+        return max((eligibleRange + 1) / 2, 1)
     }
 
     // MARK: - Base Session Durations
