@@ -99,7 +99,7 @@ private extension SessionType {
         case .longRun: "Long Run"
         case .tempo: "Tempo"
         case .intervals: "Intervals"
-        case .verticalGain: "Vertical"
+        case .verticalGain: "Uphill Int."
         case .backToBack: "Back-to-Back"
         case .recovery: "Base Endurance"
         case .crossTraining: "Cross-Training"

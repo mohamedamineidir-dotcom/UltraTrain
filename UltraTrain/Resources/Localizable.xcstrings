@@ -10180,6 +10180,7 @@
       }
     },
     "paywall.purchaseError" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -13276,13 +13277,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Vertical Gain"
+            "value" : "Uphill Intervals"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Dénivelé"
+            "state" : "translated",
+            "value" : "Fractionné en côte"
           }
         }
       }

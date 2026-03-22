@@ -46,23 +46,23 @@ enum SessionDescriptionGenerator {
         }
     }
 
-    // MARK: - Vertical Gain
+    // MARK: - Uphill Intervals
 
     static func verticalGain(phase: TrainingPhase, isRecoveryWeek: Bool) -> String {
         if isRecoveryWeek {
-            return "Light vertical gain session. Easy effort climbs. Enjoy the trail without pushing."
+            return "Light uphill intervals. Easy effort climbs. Enjoy the trail without pushing."
         }
         switch phase {
         case .base:
-            return "Vertical gain: hill repeats at moderate effort. Focus on form, cadence, and power hiking technique."
+            return "Uphill intervals: hill repeats at moderate effort. Focus on form, cadence, and power hiking technique."
         case .build:
-            return "Vertical gain: sustained climbing at threshold effort. Build race-specific climbing endurance."
+            return "Uphill intervals: sustained climbing at threshold effort. Build race-specific climbing endurance."
         case .peak:
-            return "Vertical gain: race-specific climbing. Short steep repeats mimicking your race profile."
+            return "Uphill intervals: race-specific climbing. Short steep repeats mimicking your race profile."
         case .taper:
-            return "Light vertical gain. Short climbs to stay sharp. Controlled effort."
+            return "Light uphill intervals. Short climbs to stay sharp. Controlled effort."
         case .recovery, .race:
-            return "Easy vertical gain. Light climbing at comfortable effort."
+            return "Easy uphill intervals. Light climbing at comfortable effort."
         }
     }
 

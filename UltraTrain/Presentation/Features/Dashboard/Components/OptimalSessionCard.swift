@@ -79,7 +79,7 @@ struct OptimalSessionCard: View {
         case .longRun: return "Long Run"
         case .tempo: return "Tempo"
         case .intervals: return "Intervals"
-        case .verticalGain: return "Vertical Gain"
+        case .verticalGain: return "Uphill Intervals"
         case .backToBack: return "Back-to-Back"
         case .recovery: return "Base Endurance"
         case .crossTraining: return "Cross Training"

@@ -242,7 +242,7 @@ extension SessionType {
         case .longRun:       String(localized: "session.longRun", defaultValue: "Long Run")
         case .tempo:         String(localized: "session.tempo", defaultValue: "Tempo")
         case .intervals:     String(localized: "session.intervals", defaultValue: "Intervals")
-        case .verticalGain:  String(localized: "session.verticalGain", defaultValue: "Vertical Gain")
+        case .verticalGain:  String(localized: "session.verticalGain", defaultValue: "Uphill Intervals")
         case .backToBack:    String(localized: "session.backToBack", defaultValue: "Long Run (B2B)")
         case .recovery:      String(localized: "session.recovery", defaultValue: "Base Endurance")
         case .crossTraining: String(localized: "session.crossTraining", defaultValue: "Cross-Training")
