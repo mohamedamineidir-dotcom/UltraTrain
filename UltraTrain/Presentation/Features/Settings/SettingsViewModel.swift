@@ -22,6 +22,7 @@ final class SettingsViewModel {
     let healthKitImportService: (any HealthKitImportServiceProtocol)?
     let authService: (any AuthServiceProtocol)?
     let privacyTrackingService: (any PrivacyTrackingServiceProtocol)?
+    let planPreferenceReframer: any ReframePlanForPreferencesUseCase
 
     // MARK: - State
 
@@ -36,6 +37,8 @@ final class SettingsViewModel {
     var healthKitBodyWeight: Double?
     var isRequestingHealthKit = false
     var showHealthKitExplanation = false
+    var isReframingPlan = false
+    var planReframeSucceeded = false
     var isExporting = false
     var exportedFileURL: URL?
     var stravaStatus: StravaConnectionStatus = .disconnected
@@ -129,7 +132,8 @@ final class SettingsViewModel {
         biometricAuthService: any BiometricAuthServiceProtocol,
         healthKitImportService: (any HealthKitImportServiceProtocol)? = nil,
         authService: (any AuthServiceProtocol)? = nil,
-        privacyTrackingService: (any PrivacyTrackingServiceProtocol)? = nil
+        privacyTrackingService: (any PrivacyTrackingServiceProtocol)? = nil,
+        planPreferenceReframer: any ReframePlanForPreferencesUseCase = PlanPreferenceReframer()
     ) {
         self.athleteRepository = athleteRepository
         self.appSettingsRepository = appSettingsRepository
@@ -146,6 +150,7 @@ final class SettingsViewModel {
         self.healthKitImportService = healthKitImportService
         self.authService = authService
         self.privacyTrackingService = privacyTrackingService
+        self.planPreferenceReframer = planPreferenceReframer
         if let privacyTrackingService {
             self.trackingStatus = privacyTrackingService.authorizationStatus
         }
@@ -222,11 +227,15 @@ final class SettingsViewModel {
 
     func updateTrainingPhilosophy(_ philosophy: TrainingPhilosophy) async {
         guard var athlete else { return }
+        let oldValue = athlete.trainingPhilosophy
         athlete.trainingPhilosophy = philosophy
 
         do {
             try await athleteRepository.updateAthlete(athlete)
             self.athlete = athlete
+            if oldValue != philosophy {
+                await reframePlanIfNeeded()
+            }
         } catch {
             self.error = error.localizedDescription
             Logger.settings.error("Failed to update training philosophy: \(error)")
@@ -237,11 +246,15 @@ final class SettingsViewModel {
 
     func updatePreferredRunsPerWeek(_ count: Int) async {
         guard var athlete else { return }
+        let oldValue = athlete.preferredRunsPerWeek
         athlete.preferredRunsPerWeek = count
 
         do {
             try await athleteRepository.updateAthlete(athlete)
             self.athlete = athlete
+            if oldValue != count {
+                await reframePlanIfNeeded()
+            }
         } catch {
             self.error = error.localizedDescription
             Logger.settings.error("Failed to update preferred runs per week: \(error)")
@@ -294,6 +307,44 @@ final class SettingsViewModel {
         } catch {
             self.error = error.localizedDescription
             Logger.settings.error("Failed to update pacing alerts setting: \(error)")
+        }
+    }
+
+    // MARK: - Plan Reframe
+
+    private func reframePlanIfNeeded() async {
+        guard let athlete,
+              let plan = try? await planRepository.getActivePlan()
+        else { return }
+
+        isReframingPlan = true
+        defer { isReframingPlan = false }
+
+        do {
+            let races = try await raceRepository.getRaces()
+            guard let targetRace = races.first(where: { $0.id == plan.targetRaceId })
+            else { return }
+            let intermediateRaces = races.filter {
+                plan.intermediateRaceIds.contains($0.id)
+            }
+
+            if let reframed = try await planPreferenceReframer.execute(
+                currentPlan: plan,
+                updatedAthlete: athlete,
+                targetRace: targetRace,
+                intermediateRaces: intermediateRaces
+            ) {
+                try await planRepository.updatePlan(reframed)
+                planReframeSucceeded = true
+                Logger.settings.info("Plan reframed: \(reframed.weeks.count) weeks")
+                Task {
+                    try? await Task.sleep(for: .seconds(3))
+                    planReframeSucceeded = false
+                }
+            }
+        } catch {
+            self.error = "Plan update failed: \(error.localizedDescription)"
+            Logger.settings.error("Plan reframe failed: \(error)")
         }
     }
 }

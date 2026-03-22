@@ -40,6 +40,7 @@ extension SettingsView {
                         Text(philosophy.displayName).tag(philosophy)
                     }
                 }
+                .disabled(viewModel.isReframingPlan)
                 .accessibilityHint("Choose how hard you want to train: enjoyment, balanced, or performance")
 
                 Stepper(
@@ -52,11 +53,25 @@ extension SettingsView {
                     ),
                     in: 3...6
                 )
+                .disabled(viewModel.isReframingPlan)
                 .accessibilityHint("Set how many running sessions per week you prefer")
             } header: {
                 Text("Training Preferences")
             } footer: {
-                Text("These preferences affect how your training plan is generated. Regenerate your plan to apply changes.")
+                Group {
+                    if viewModel.isReframingPlan {
+                        HStack(spacing: 6) {
+                            ProgressView()
+                                .controlSize(.small)
+                            Text("Updating your training plan...")
+                        }
+                    } else if viewModel.planReframeSucceeded {
+                        Label("Training plan updated", systemImage: "checkmark.circle.fill")
+                            .foregroundStyle(Theme.Colors.success)
+                    } else {
+                        Text("Changes automatically update your future training sessions.")
+                    }
+                }
             }
         }
     }
