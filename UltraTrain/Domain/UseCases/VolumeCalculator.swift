@@ -19,6 +19,8 @@ enum VolumeCalculator {
         let b2bDay1Seconds: TimeInterval
         let b2bDay2Seconds: TimeInterval
         let baseSessionDurations: BaseSessionDurations
+        let weekNumberInTaper: Int
+        let taperProfile: TaperProfile?
     }
 
     static func calculate(
@@ -33,7 +35,8 @@ enum VolumeCalculator {
         raceEffectiveKm: Double = 0,
         preferredRunsPerWeek: Int = 5,
         maxIncreasePercent: Double = AppConfiguration.Training.maxWeeklyVolumeIncreasePercent,
-        recoveryReductionPercent: Double = AppConfiguration.Training.recoveryWeekVolumeReductionPercent
+        recoveryReductionPercent: Double = AppConfiguration.Training.recoveryWeekVolumeReductionPercent,
+        taperProfile: TaperProfile? = nil
     ) -> [WeekVolume] {
         guard !skeletons.isEmpty else { return [] }
 
@@ -42,8 +45,11 @@ enum VolumeCalculator {
         // Compute duration-based volumes via LongRunCurveCalculator
         var volumes: [WeekVolume] = []
         var previousNonRecoveryWeekTotal: TimeInterval = 0
+        var taperWeekCounter = 0
 
         for (index, skeleton) in skeletons.enumerated() {
+            let weekInTaper = skeleton.phase == .taper ? taperWeekCounter : 0
+
             let durations = LongRunCurveCalculator.durations(
                 weekIndex: index,
                 totalWeeks: totalWeeks,
@@ -55,8 +61,14 @@ enum VolumeCalculator {
                 raceDurationSeconds: raceDurationSeconds,
                 raceEffectiveKm: raceEffectiveKm,
                 preferredRunsPerWeek: preferredRunsPerWeek,
-                previousNonRecoveryWeekTotal: previousNonRecoveryWeekTotal
+                previousNonRecoveryWeekTotal: previousNonRecoveryWeekTotal,
+                taperProfile: taperProfile,
+                weekNumberInTaper: weekInTaper
             )
+
+            if skeleton.phase == .taper {
+                taperWeekCounter += 1
+            }
 
             if !skeleton.isRecoveryWeek {
                 previousNonRecoveryWeekTotal = durations.totalSeconds
@@ -87,7 +99,9 @@ enum VolumeCalculator {
                     easyRun2Seconds: durations.easyRun2Seconds,
                     intervalSeconds: durations.intervalSeconds,
                     vgSeconds: durations.vgSeconds
-                )
+                ),
+                weekNumberInTaper: weekInTaper,
+                taperProfile: taperProfile
             ))
         }
         return volumes

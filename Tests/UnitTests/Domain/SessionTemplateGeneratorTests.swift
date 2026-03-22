@@ -33,7 +33,9 @@ struct SessionTemplateGeneratorTests {
         easy1: TimeInterval = 2700,
         easy2: TimeInterval = 2700,
         interval: TimeInterval = 3000,
-        vg: TimeInterval = 3000
+        vg: TimeInterval = 3000,
+        weekNumberInTaper: Int = 0,
+        taperProfile: TaperProfile? = nil
     ) -> VolumeCalculator.WeekVolume {
         VolumeCalculator.WeekVolume(
             weekNumber: 1,
@@ -49,7 +51,9 @@ struct SessionTemplateGeneratorTests {
                 easyRun2Seconds: easy2,
                 intervalSeconds: interval,
                 vgSeconds: vg
-            )
+            ),
+            weekNumberInTaper: weekNumberInTaper,
+            taperProfile: taperProfile
         )
     }
 
@@ -495,5 +499,40 @@ struct SessionTemplateGeneratorTests {
                 "\(preferred)/week: normal (\(normalActive)) and recovery (\(recoveryActive)) should match for 3-5"
             )
         }
+    }
+
+    // MARK: - Taper Sub-Phase Templates
+
+    @Test("True taper week has no VG sessions")
+    func trueTaperNoVG() {
+        let profile = TaperProfile.forRace(effectiveKm: 170)
+        let vol = makeVolume(
+            interval: 0, vg: 0,
+            weekNumberInTaper: 3, taperProfile: profile
+        )
+        let result = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(phase: .taper),
+            volume: vol,
+            experience: .advanced
+        )
+        let vgSessions = result.sessions.filter { $0.type == .verticalGain }
+        #expect(vgSessions.isEmpty, "True taper should have no VG sessions")
+    }
+
+    @Test("Volume transition taper week keeps quality sessions")
+    func volumeTransitionKeepsQuality() {
+        let profile = TaperProfile.forRace(effectiveKm: 170)
+        let vol = makeVolume(
+            weekNumberInTaper: 0, taperProfile: profile
+        )
+        let result = SessionTemplateGenerator.sessions(
+            for: makeSkeleton(phase: .taper),
+            volume: vol,
+            experience: .advanced
+        )
+        let intervals = result.sessions.filter { $0.type == .intervals }
+        let vg = result.sessions.filter { $0.type == .verticalGain }
+        #expect(!intervals.isEmpty, "Volume transition should have intervals")
+        #expect(!vg.isEmpty, "Volume transition should have VG")
     }
 }

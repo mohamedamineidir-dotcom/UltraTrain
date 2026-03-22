@@ -134,4 +134,54 @@ struct PhaseDistributorTests {
             }
         }
     }
+
+    // MARK: - Taper Profile Integration
+
+    @Test("100K+ race gets 5 taper weeks with profile")
+    func taperProfile100K() {
+        let profile = TaperProfile.forRace(effectiveKm: 170)
+        let result = PhaseDistributor.distribute(totalWeeks: 26, experience: .advanced, taperProfile: profile)
+        let taper = result.first { $0.phase == .taper }!.weekCount
+        #expect(taper == 5, "100K+ should get 5 taper weeks, got \(taper)")
+        let sum = result.reduce(0) { $0 + $1.weekCount }
+        #expect(sum == 26, "Total should still be 26, got \(sum)")
+    }
+
+    @Test("50-99K race gets 4 taper weeks with profile")
+    func taperProfile50K() {
+        let profile = TaperProfile.forRace(effectiveKm: 80)
+        let result = PhaseDistributor.distribute(totalWeeks: 20, experience: .intermediate, taperProfile: profile)
+        let taper = result.first { $0.phase == .taper }!.weekCount
+        #expect(taper == 4, "50-99K should get 4 taper weeks, got \(taper)")
+    }
+
+    @Test("Marathon gets 2 taper weeks with profile")
+    func taperProfileMarathon() {
+        let profile = TaperProfile.forRace(effectiveKm: 42)
+        let result = PhaseDistributor.distribute(totalWeeks: 16, experience: .intermediate, taperProfile: profile)
+        let taper = result.first { $0.phase == .taper }!.weekCount
+        #expect(taper == 2, "Marathon should get 2 taper weeks, got \(taper)")
+    }
+
+    @Test("10K race gets 1 taper week with profile")
+    func taperProfile10K() {
+        let profile = TaperProfile.forRace(effectiveKm: 10)
+        let result = PhaseDistributor.distribute(totalWeeks: 12, experience: .beginner, taperProfile: profile)
+        let taper = result.first { $0.phase == .taper }!.weekCount
+        #expect(taper == 1, "10K should get 1 taper week, got \(taper)")
+    }
+
+    @Test("Taper profile total weeks still sum correctly across all categories")
+    func taperProfileTotals() {
+        let cases: [(effKm: Double, weeks: Int, exp: ExperienceLevel)] = [
+            (170, 26, .advanced), (80, 20, .intermediate),
+            (42, 16, .intermediate), (10, 12, .beginner)
+        ]
+        for c in cases {
+            let profile = TaperProfile.forRace(effectiveKm: c.effKm)
+            let result = PhaseDistributor.distribute(totalWeeks: c.weeks, experience: c.exp, taperProfile: profile)
+            let sum = result.reduce(0) { $0 + $1.weekCount }
+            #expect(sum == c.weeks, "effKm=\(c.effKm), weeks=\(c.weeks): sum=\(sum)")
+        }
+    }
 }

@@ -27,7 +27,9 @@ enum LongRunCurveCalculator {
         raceDurationSeconds: TimeInterval,
         raceEffectiveKm: Double,
         preferredRunsPerWeek: Int,
-        previousNonRecoveryWeekTotal: TimeInterval = 0
+        previousNonRecoveryWeekTotal: TimeInterval = 0,
+        taperProfile: TaperProfile? = nil,
+        weekNumberInTaper: Int = 0
     ) -> WeekDurations {
         let planProgress = totalWeeks > 1
             ? Double(weekIndex) / Double(totalWeeks - 1)
@@ -39,7 +41,8 @@ enum LongRunCurveCalculator {
             totalWeeks: totalWeeks,
             phase: phase,
             experience: experience,
-            raceDurationSeconds: raceDurationSeconds
+            raceDurationSeconds: raceDurationSeconds,
+            taperProfile: taperProfile
         )
 
         // --- B2B decision ---
@@ -50,7 +53,8 @@ enum LongRunCurveCalculator {
             isRecoveryWeek: isRecoveryWeek,
             experience: experience,
             raceEffectiveKm: raceEffectiveKm,
-            raceDurationSeconds: raceDurationSeconds
+            raceDurationSeconds: raceDurationSeconds,
+            taperProfile: taperProfile
         )
 
         // --- Base sessions ---
@@ -73,7 +77,8 @@ enum LongRunCurveCalculator {
                 weekIndex: weekIndex,
                 totalWeeks: totalWeeks,
                 experience: experience,
-                raceDurationSeconds: raceDurationSeconds
+                raceDurationSeconds: raceDurationSeconds,
+                taperProfile: taperProfile
             )
             b2bDay1 = combined * AppConfiguration.Training.b2bDay1Split
             b2bDay2 = combined * AppConfiguration.Training.b2bDay2Split
@@ -82,11 +87,11 @@ enum LongRunCurveCalculator {
             let easyFloor: TimeInterval = 30 * 60
             let vgFloor: TimeInterval = 40 * 60
 
-            let buildWeekCount = max(totalWeeks - taperWeekEstimate(totalWeeks), 1)
+            let buildWeekCount = max(totalWeeks - taperWeekEstimate(totalWeeks, taperProfile: taperProfile), 1)
             let halfPoint = buildWeekCount / 2
             let b2bIdx = max(weekIndex - halfPoint, 0) / 2
             let introCount = effectiveIntroCount(totalWeeks: totalWeeks)
-            let totalB2B = totalB2BWeekCount(totalWeeks: totalWeeks)
+            let totalB2B = totalB2BWeekCount(totalWeeks: totalWeeks, taperProfile: taperProfile)
             let isHardest = b2bIdx >= totalB2B - AppConfiguration.Training.b2bHardestWeekCount
 
             // Compute target-based supporting budget
@@ -149,13 +154,26 @@ enum LongRunCurveCalculator {
 
         // Taper reductions
         if phase == .taper {
-            let taperProgress = planProgress // already near end
-            let taperFraction = 0.80 - taperProgress * 0.30 // 80% → 50%
-            easy1 *= taperFraction
-            easy2 *= taperFraction
-            interval *= taperFraction
-            vg *= taperFraction
-            longRun *= taperFraction
+            let fraction: Double
+            if let profile = taperProfile {
+                fraction = profile.volumeFraction(forWeekInTaper: weekNumberInTaper)
+            } else {
+                let taperProgress = planProgress
+                fraction = 0.80 - taperProgress * 0.30 // legacy fallback
+            }
+
+            easy1 *= fraction
+            easy2 *= fraction
+            longRun *= fraction
+
+            if let profile = taperProfile, !profile.isQualityAllowed(forWeekInTaper: weekNumberInTaper) {
+                interval = 0
+                vg = 0
+            } else {
+                interval *= fraction
+                vg *= fraction
+            }
+
             b2bDay1 = 0
             b2bDay2 = 0
         }
@@ -182,20 +200,20 @@ enum LongRunCurveCalculator {
         totalWeeks: Int,
         phase: TrainingPhase,
         experience: ExperienceLevel,
-        raceDurationSeconds: TimeInterval
+        raceDurationSeconds: TimeInterval,
+        taperProfile: TaperProfile? = nil
     ) -> TimeInterval {
         guard phase != .taper else {
-            // Taper long runs handled by taper reduction in main function
-            let start = longRunStart(experience)
+            // Taper base = 85% of peak → then durations() multiplies by weekly fraction
             let peak = peakSingleLongRun(experience, raceDurationSeconds: raceDurationSeconds)
-            return (start + peak) * 0.5 // mid-range for taper base
+            return peak * AppConfiguration.Training.taperLongRunPeakFraction
         }
 
         let start = longRunStart(experience)
         let peak = peakSingleLongRun(experience, raceDurationSeconds: raceDurationSeconds)
 
         // Build weeks only (base + build + peak, excluding taper)
-        let buildWeekCount = max(totalWeeks - taperWeekEstimate(totalWeeks), 1)
+        let buildWeekCount = max(totalWeeks - taperWeekEstimate(totalWeeks, taperProfile: taperProfile), 1)
         let clampedIndex = min(weekIndex, buildWeekCount - 1)
 
         let progress: Double
@@ -219,7 +237,8 @@ enum LongRunCurveCalculator {
         isRecoveryWeek: Bool,
         experience: ExperienceLevel,
         raceEffectiveKm: Double,
-        raceDurationSeconds: TimeInterval
+        raceDurationSeconds: TimeInterval,
+        taperProfile: TaperProfile? = nil
     ) -> Bool {
         // Never in base or taper
         guard phase == .build || phase == .peak else { return false }
@@ -239,7 +258,7 @@ enum LongRunCurveCalculator {
         guard raceEffectiveKm >= minEffectiveKm else { return false }
 
         // Only in second half of non-taper weeks
-        let buildWeekCount = max(totalWeeks - taperWeekEstimate(totalWeeks), 1)
+        let buildWeekCount = max(totalWeeks - taperWeekEstimate(totalWeeks, taperProfile: taperProfile), 1)
         let halfPoint = buildWeekCount / 2
         guard weekIndex >= halfPoint else { return false }
 
@@ -252,7 +271,8 @@ enum LongRunCurveCalculator {
         weekIndex: Int,
         totalWeeks: Int,
         experience: ExperienceLevel,
-        raceDurationSeconds: TimeInterval
+        raceDurationSeconds: TimeInterval,
+        taperProfile: TaperProfile? = nil
     ) -> TimeInterval {
         let startCombined = AppConfiguration.Training.b2bStartCombinedHours * 3600
         let maxCapHours = AppConfiguration.Training.peakB2BMaxHours[experience.rawValue] ?? 16.0
@@ -261,7 +281,7 @@ enum LongRunCurveCalculator {
             maxCapHours * 3600
         )
 
-        let buildWeekCount = max(totalWeeks - taperWeekEstimate(totalWeeks), 1)
+        let buildWeekCount = max(totalWeeks - taperWeekEstimate(totalWeeks, taperProfile: taperProfile), 1)
         let halfPoint = buildWeekCount / 2
         let b2bWeekIndex = max(weekIndex - halfPoint, 0)
         let b2bTotalWeeks = max(buildWeekCount - halfPoint, 1)
@@ -284,8 +304,8 @@ enum LongRunCurveCalculator {
         totalWeeks <= 18 ? 1 : AppConfiguration.Training.b2bIntroductionWeekCount
     }
 
-    static func totalB2BWeekCount(totalWeeks: Int) -> Int {
-        let buildWeekCount = max(totalWeeks - taperWeekEstimate(totalWeeks), 1)
+    static func totalB2BWeekCount(totalWeeks: Int, taperProfile: TaperProfile? = nil) -> Int {
+        let buildWeekCount = max(totalWeeks - taperWeekEstimate(totalWeeks, taperProfile: taperProfile), 1)
         let halfPoint = buildWeekCount / 2
         let eligibleRange = buildWeekCount - halfPoint
         // B2B alternates every other week
@@ -330,9 +350,12 @@ enum LongRunCurveCalculator {
         return min(raceDurationSeconds * fraction, maxSeconds)
     }
 
-    private static func taperWeekEstimate(_ totalWeeks: Int) -> Int {
-        // Taper is typically ~10-15% of plan, min 2 weeks
-        max(Int(Double(totalWeeks) * 0.12), 2)
+    static func taperWeekEstimate(_ totalWeeks: Int, taperProfile: TaperProfile? = nil) -> Int {
+        if let profile = taperProfile {
+            return min(profile.totalTaperWeeks, totalWeeks / 2)
+        }
+        // Legacy: ~10-15% of plan, min 2 weeks
+        return max(Int(Double(totalWeeks) * 0.12), 2)
     }
 
     private static func philosophyBaseMultiplier(_ philosophy: TrainingPhilosophy) -> Double {

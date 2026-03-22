@@ -127,6 +127,48 @@ enum SessionDescriptionGenerator {
         return "Easy run at conversational pace (Zone 2). Active recovery between quality sessions."
     }
 
+    // MARK: - Taper Sub-Phase
+
+    static func taperLongRun(subPhase: TaperProfile.SubPhase) -> String {
+        switch subPhase {
+        case .volumeTransition:
+            return "Taper long run. Reduced volume, easy effort. Practice nutrition strategy one last time."
+        case .trueTaper:
+            return "Short taper long run. Easy effort. The hay is in the barn — trust your fitness."
+        }
+    }
+
+    static func taperIntervals(subPhase: TaperProfile.SubPhase) -> String {
+        switch subPhase {
+        case .volumeTransition:
+            return "Taper intervals. Maintain sharpness with reduced volume. Short reps at race effort."
+        case .trueTaper:
+            return "Opener strides. 4-6 × 20s pickups. Stay sharp without fatiguing."
+        }
+    }
+
+    static func taperVerticalGain(subPhase: TaperProfile.SubPhase) -> String {
+        switch subPhase {
+        case .volumeTransition:
+            return "Light uphill intervals. Short climbs at moderate effort. Maintain climbing legs."
+        case .trueTaper:
+            return "No quality climbing this week. Easy terrain only."
+        }
+    }
+
+    static func taperEasyRun(subPhase: TaperProfile.SubPhase) -> String {
+        switch subPhase {
+        case .volumeTransition:
+            return "Easy taper run. Volume dropping by design — don't add extra."
+        case .trueTaper:
+            return "Short easy run. Conversational pace. Keep legs loose for race day."
+        }
+    }
+
+    static func taperStrides() -> String {
+        "Opener strides: 4-6 × 20s pickups at fast but controlled effort. Full recovery between reps."
+    }
+
     // MARK: - Rest
 
     static func rest(isRecoveryWeek: Bool, isPreRace: Bool = false) -> String {

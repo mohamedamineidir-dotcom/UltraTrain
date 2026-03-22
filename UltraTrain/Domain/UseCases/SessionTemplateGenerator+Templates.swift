@@ -29,7 +29,9 @@ extension SessionTemplateGenerator {
             isB2BWeek: false,
             b2bDay1Seconds: 0,
             b2bDay2Seconds: 0,
-            baseSessionDurations: defaultDurations
+            baseSessionDurations: defaultDurations,
+            weekNumberInTaper: 0,
+            taperProfile: nil
         )
         return phaseTemplates(
             for: phase,
@@ -55,7 +57,9 @@ extension SessionTemplateGenerator {
             isB2BWeek: false,
             b2bDay1Seconds: 0,
             b2bDay2Seconds: 0,
-            baseSessionDurations: defaultDurations
+            baseSessionDurations: defaultDurations,
+            weekNumberInTaper: 0,
+            taperProfile: nil
         )
         return recoveryTemplates(volume: defaultVolume)
     }

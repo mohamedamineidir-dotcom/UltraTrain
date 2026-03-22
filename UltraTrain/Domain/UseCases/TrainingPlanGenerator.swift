@@ -17,10 +17,12 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             )
         }
 
-        // 1. Distribute phases
+        // 1. Distribute phases (race-aware taper)
+        let taperProfile = TaperProfile.forRace(effectiveKm: targetRace.effectiveDistanceKm)
         let phases = PhaseDistributor.distribute(
             totalWeeks: totalWeeks,
-            experience: athlete.experienceLevel
+            experience: athlete.experienceLevel,
+            taperProfile: taperProfile
         )
 
         // 2. Build week skeletons
@@ -42,7 +44,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             raceGoal: targetRace.goalType,
             raceDurationSeconds: raceDuration,
             raceEffectiveKm: raceEffectiveKm,
-            preferredRunsPerWeek: athlete.preferredRunsPerWeek
+            preferredRunsPerWeek: athlete.preferredRunsPerWeek,
+            taperProfile: taperProfile
         )
 
         // 4. Compute intermediate race overrides

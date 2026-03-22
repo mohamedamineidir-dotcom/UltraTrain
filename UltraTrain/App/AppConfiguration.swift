@@ -82,6 +82,9 @@ enum AppConfiguration {
         static let b2bMinExceedPreviousRatio: Double = 1.02   // regular B2B >= 102% of prev week
         static let b2bHardestWeekCount: Int = 2               // last N B2B weeks drop all quality
 
+        // Taper
+        static let taperLongRunPeakFraction: Double = 0.85   // taper LR base = 85% of peak LR
+
         // Base session durations (minutes)
         static let easyRunStartMinutes: Double = 45
         static let easyRunGrowthMinutes: Double = 20

@@ -762,4 +762,85 @@ struct LongRunCurveCalculatorTests {
         #expect(weekMid.longRunSeconds >= 7200,
                 "W14 long run should be >= 2h, got \(weekMid.longRunSeconds / 60)min")
     }
+
+    // MARK: - Race-Aware Taper
+
+    @Test("100K+ taper volume progression follows profile: 80% → 40%")
+    func taperVolumeProgression100K() {
+        let totalWeeks = 26
+        let raceDuration: TimeInterval = 126000  // ~35h
+        let profile = TaperProfile.forRace(effectiveKm: 170)
+
+        var taperTotals: [TimeInterval] = []
+        for weekInTaper in 0..<profile.totalTaperWeeks {
+            let weekIndex = totalWeeks - profile.totalTaperWeeks + weekInTaper
+            let d = LongRunCurveCalculator.durations(
+                weekIndex: weekIndex,
+                totalWeeks: totalWeeks,
+                phase: .taper,
+                isRecoveryWeek: false,
+                experience: .advanced,
+                philosophy: .balanced,
+                raceDurationSeconds: raceDuration,
+                raceEffectiveKm: 170,
+                preferredRunsPerWeek: 5,
+                taperProfile: profile,
+                weekNumberInTaper: weekInTaper
+            )
+            taperTotals.append(d.totalSeconds)
+        }
+
+        // Each successive taper week should have less total volume
+        for i in 1..<taperTotals.count {
+            #expect(taperTotals[i] < taperTotals[i - 1],
+                    "Taper week \(i) (\(taperTotals[i]/60)min) should be less than week \(i-1) (\(taperTotals[i-1]/60)min)")
+        }
+    }
+
+    @Test("True taper weeks (week 2+) drop quality sessions to zero for 100K+")
+    func trueTaperDropsQuality100K() {
+        let profile = TaperProfile.forRace(effectiveKm: 170)
+
+        // Week 2 in taper = first true taper week (index 2)
+        let d = LongRunCurveCalculator.durations(
+            weekIndex: 23,
+            totalWeeks: 26,
+            phase: .taper,
+            isRecoveryWeek: false,
+            experience: .advanced,
+            philosophy: .balanced,
+            raceDurationSeconds: 126000,
+            raceEffectiveKm: 170,
+            preferredRunsPerWeek: 5,
+            taperProfile: profile,
+            weekNumberInTaper: 2
+        )
+
+        #expect(d.intervalSeconds == 0, "True taper should have no intervals, got \(d.intervalSeconds/60)min")
+        #expect(d.vgSeconds == 0, "True taper should have no VG, got \(d.vgSeconds/60)min")
+        #expect(d.longRunSeconds > 0, "True taper should still have a long run")
+        #expect(d.easyRun1Seconds > 0, "True taper should still have easy runs")
+    }
+
+    @Test("Volume transition weeks (week 0-1) keep quality sessions for 100K+")
+    func volumeTransitionKeepsQuality100K() {
+        let profile = TaperProfile.forRace(effectiveKm: 170)
+
+        let d = LongRunCurveCalculator.durations(
+            weekIndex: 21,
+            totalWeeks: 26,
+            phase: .taper,
+            isRecoveryWeek: false,
+            experience: .advanced,
+            philosophy: .balanced,
+            raceDurationSeconds: 126000,
+            raceEffectiveKm: 170,
+            preferredRunsPerWeek: 5,
+            taperProfile: profile,
+            weekNumberInTaper: 0
+        )
+
+        #expect(d.intervalSeconds > 0, "Volume transition should keep intervals, got \(d.intervalSeconds/60)min")
+        #expect(d.vgSeconds > 0, "Volume transition should keep VG, got \(d.vgSeconds/60)min")
+    }
 }

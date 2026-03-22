@@ -719,6 +719,7 @@
 		72B121186A5912AE29DAC23F /* ChallengesViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124D8EE87C96F76DC9BFEDBF /* ChallengesViewModelTests.swift */; };
 		72B8469124DA3F5886D2D559 /* TrainingCalendarHeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C389781BE342F1CE1BEEF3 /* TrainingCalendarHeatmapView.swift */; };
 		72BFA318E417590BCFEC07A1 /* FitnessRemoteMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A708E071C4B31C6B448287DD /* FitnessRemoteMapper.swift */; };
+		72C7E1EF5327B70A6EC35E71 /* TaperProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2BC5C0ED80A1510D705805 /* TaperProfileTests.swift */; };
 		72C8B3B9F7BAFC9EECEB96BA /* IntervalWorkoutSwiftDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3279400E4EDB72EBF639E81F /* IntervalWorkoutSwiftDataModel.swift */; };
 		72CEABB905531E3536BF6FF5 /* WorkoutTemplateLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD78A428C7DFE7E7E65AD5A2 /* WorkoutTemplateLibraryTests.swift */; };
 		7327400F1551F70DA52ACEEA /* NutritionPlanSwiftDataMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686DD1484B1C3D88D8CFD3FF /* NutritionPlanSwiftDataMapper.swift */; };
@@ -1625,6 +1626,7 @@
 		F93EFE4E0857618976903AD8 /* DeviceIntegrityChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E629A916D291B20F4B23D0A /* DeviceIntegrityChecker.swift */; };
 		F95C5A6BEA19DE1C6C98017D /* WatchNutritionBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F4AFA8A7AA350512C5CA93 /* WatchNutritionBanner.swift */; };
 		F973DD7B8D45FC115F2AF141 /* OnboardingViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE6AF748468B2756CD24383 /* OnboardingViewModelTests.swift */; };
+		F9792C8550811B4A48E6514F /* TaperProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C4CC1938F46994588B718C1 /* TaperProfile.swift */; };
 		F97F23F59549D241ADC410A8 /* LastRunWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E913411D3913474D877AAD78 /* LastRunWidget.swift */; };
 		F98123AF314AFD69FBAE9AE1 /* SyncedAthleteRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B87E7B126D9CD53193DDF5 /* SyncedAthleteRepositoryTests.swift */; };
 		F9C1E5493AB31CADDC185536 /* WatchSplit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EF4559395A612CD5A5520BB /* WatchSplit.swift */; };
@@ -1933,6 +1935,7 @@
 		1B7B3FCA3A558AD7FC7D0004 /* WeightGoal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightGoal.swift; sourceTree = "<group>"; };
 		1BE122884EB27DC182693D2B /* IntervalPhaseEditSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntervalPhaseEditSheet.swift; sourceTree = "<group>"; };
 		1BFD20A17961B2DCB6910889 /* TabNavigationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabNavigationUITests.swift; sourceTree = "<group>"; };
+		1C4CC1938F46994588B718C1 /* TaperProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaperProfile.swift; sourceTree = "<group>"; };
 		1C6FE1EB86F8E05A8FA48093 /* NutritionPlanGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionPlanGeneratorTests.swift; sourceTree = "<group>"; };
 		1CB71F69C66FFD6F02DCA0ED /* RaceDayWeatherCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceDayWeatherCard.swift; sourceTree = "<group>"; };
 		1CC0A1AAD75DCAE3D0336BE6 /* RunAnalysisViewModelExportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunAnalysisViewModelExportTests.swift; sourceTree = "<group>"; };
@@ -2242,6 +2245,7 @@
 		4B78B30975752760384AC0D4 /* CrewTrackingMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrewTrackingMapView.swift; sourceTree = "<group>"; };
 		4BDF08541592EE6603C2D557 /* PacingAlertCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacingAlertCalculator.swift; sourceTree = "<group>"; };
 		4BF7DA39E0466E88074811B7 /* PacingAlertType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacingAlertType.swift; sourceTree = "<group>"; };
+		4C2BC5C0ED80A1510D705805 /* TaperProfileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaperProfileTests.swift; sourceTree = "<group>"; };
 		4C4BA9EF30D3055F969F648C /* RacePerformanceComparisonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RacePerformanceComparisonTests.swift; sourceTree = "<group>"; };
 		4C4F130F27FAE9EBB5A6DA53 /* OrDividerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrDividerView.swift; sourceTree = "<group>"; };
 		4C5992721E1CAFC198B38DA0 /* IntervalPhaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntervalPhaseTests.swift; sourceTree = "<group>"; };
@@ -4689,6 +4693,7 @@
 				A2917DE44A2F6F465EB2EBD1 /* SyncOperationType.swift */,
 				F7D9686239E37538BDB19361 /* SyncQueueItem.swift */,
 				1A96540F50F38956DCB2A6A1 /* SyncQueueItemStatus.swift */,
+				1C4CC1938F46994588B718C1 /* TaperProfile.swift */,
 				40E4360F38F22A74BD5AE5D2 /* TerrainDifficulty.swift */,
 				8260F01BE6A2228344854CD9 /* TerrainType.swift */,
 				B6352CF507DE3AD358EDB2D8 /* TrackPoint.swift */,
@@ -5586,6 +5591,7 @@
 				E479C6965EF7084C3C07F616 /* SharedRunTests.swift */,
 				3AF1C932E5B0F5395DF2D9DD /* SocialProfileTests.swift */,
 				2E46716872F057B9B679FD9F /* StravaUploadQueueItemTests.swift */,
+				4C2BC5C0ED80A1510D705805 /* TaperProfileTests.swift */,
 				CD88977C329D9920FBB0809D /* TerrainAdaptivePacingCalculatorTests.swift */,
 				A1DF538440870C0FBB3C1413 /* TrainingCalendarHeatmapCalculatorTests.swift */,
 				C7FCC2B5E794CABB3F76BE7B /* TrainingDurationValidatorTests.swift */,
@@ -6492,6 +6498,7 @@
 				BBD92662C0D02F5317A9D7DC /* SyncedSharedRunRepositoryTests.swift in Sources */,
 				F455D290B851AB67CFAA3ED0 /* SyncedSocialProfileRepositoryTests.swift in Sources */,
 				B05FCDCCD81929DE4CF00243 /* SyncedTrainingPlanRepositoryTests.swift in Sources */,
+				72C7E1EF5327B70A6EC35E71 /* TaperProfileTests.swift in Sources */,
 				DB191E1598EB47ADA489BD10 /* TerrainAdaptivePacingCalculatorTests.swift in Sources */,
 				0BF4F4DF213DD8530AE7DF5D /* TrainingCalendarHeatmapCalculatorTests.swift in Sources */,
 				8E1A42546EC4C91653D97718 /* TrainingCalendarViewModelTests.swift in Sources */,
@@ -7534,6 +7541,7 @@
 				BC26463A6345C4556F94899F /* SyncedSharedRunRepository.swift in Sources */,
 				8513BB42850BF3CF5441DF49 /* SyncedSocialProfileRepository.swift in Sources */,
 				E37EF68439A8EB3EF7BD1AF9 /* SyncedTrainingPlanRepository.swift in Sources */,
+				F9792C8550811B4A48E6514F /* TaperProfile.swift in Sources */,
 				F6CBF3AB3B79B42D4055F412 /* TerrainAdaptivePacingCalculator+Calibration.swift in Sources */,
 				BBBC21EEB10615B93C67A7A2 /* TerrainAdaptivePacingCalculator.swift in Sources */,
 				708D0EC02F75AD130C68821A /* TerrainDifficulty.swift in Sources */,

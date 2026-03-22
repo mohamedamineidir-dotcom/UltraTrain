@@ -10,7 +10,11 @@ enum PhaseDistributor {
 
     /// Distributes weeks across 4 training phases using Campus Coach 5-block cycle:
     /// Seuil 30 (base) → VO2max (build) → Seuil 60 (peak) → Affûtage (taper)
-    static func distribute(totalWeeks: Int, experience: ExperienceLevel) -> [PhaseAllocation] {
+    static func distribute(
+        totalWeeks: Int,
+        experience: ExperienceLevel,
+        taperProfile: TaperProfile? = nil
+    ) -> [PhaseAllocation] {
         guard totalWeeks >= 4 else {
             return [
                 PhaseAllocation(phase: .base, weekCount: max(totalWeeks - 1, 1), phaseFocus: .threshold30),
@@ -19,6 +23,25 @@ enum PhaseDistributor {
         }
 
         let fracs = focusFractions(for: experience)
+
+        if let profile = taperProfile {
+            // Race-aware taper: use profile's week count
+            let sharp = min(profile.totalTaperWeeks, totalWeeks / 2)
+            let remaining = totalWeeks - sharp
+            let nonTaperSum = fracs.threshold30 + fracs.vo2max + fracs.threshold60
+            let t30 = max(Int(round(Double(remaining) * fracs.threshold30 / nonTaperSum)), 1)
+            let vo2 = max(Int(round(Double(remaining) * fracs.vo2max / nonTaperSum)), 1)
+            let t60 = max(remaining - t30 - vo2, 1)
+
+            return [
+                PhaseAllocation(phase: .base, weekCount: t30, phaseFocus: .threshold30),
+                PhaseAllocation(phase: .build, weekCount: vo2, phaseFocus: .vo2max),
+                PhaseAllocation(phase: .peak, weekCount: t60, phaseFocus: .threshold60),
+                PhaseAllocation(phase: .taper, weekCount: sharp, phaseFocus: .sharpening)
+            ]
+        }
+
+        // Legacy behavior when no taper profile
         let t30 = max(Int(round(Double(totalWeeks) * fracs.threshold30)), 1)
         let vo2 = max(Int(round(Double(totalWeeks) * fracs.vo2max)), 1)
         var t60 = max(Int(round(Double(totalWeeks) * fracs.threshold60)), 1)
