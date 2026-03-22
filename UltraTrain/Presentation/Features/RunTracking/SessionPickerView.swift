@@ -70,15 +70,7 @@ private struct SessionPickerRow: View {
                 .foregroundStyle(intensityColor)
                 .clipShape(Capsule())
         }
-        .padding(Theme.Spacing.md)
-        .background(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                .fill(isSelected ? Theme.Colors.primary.opacity(0.08) : Theme.Colors.secondaryBackground)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                .stroke(isSelected ? Theme.Colors.primary : .clear, lineWidth: 1.5)
-        )
+        .glassCardStyle(isSelected: isSelected)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(session.type.rawValue.capitalized) session, \(UnitFormatter.formatDistance(session.plannedDistanceKm, unit: units)), \(session.intensity.rawValue) intensity\(isSelected ? ", selected" : "")")
     }

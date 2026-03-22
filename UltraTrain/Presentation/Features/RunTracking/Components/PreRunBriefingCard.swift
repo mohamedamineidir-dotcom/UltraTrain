@@ -33,22 +33,22 @@ struct PreRunBriefingCard: View {
                 infoRow(icon: "chart.bar.fill", text: summary)
             }
         }
-        .padding(Theme.Spacing.md)
-        .background(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                .fill(Theme.Colors.secondaryBackground)
-        )
-        .padding(.horizontal, Theme.Spacing.md)
+        .appCardStyle()
     }
 
     // MARK: - Subviews
 
     private var headerRow: some View {
         HStack {
-            Image(systemName: "brain.head.profile")
-                .font(.title3)
-                .foregroundStyle(Theme.Colors.primary)
-                .accessibilityHidden(true)
+            ZStack {
+                Circle()
+                    .fill(Theme.Colors.primary.opacity(0.15))
+                    .frame(width: 32, height: 32)
+                Image(systemName: "brain.head.profile")
+                    .font(.body)
+                    .foregroundStyle(Theme.Colors.primary)
+            }
+            .accessibilityHidden(true)
             Text("Pre-Run Briefing")
                 .font(.headline)
             Spacer()

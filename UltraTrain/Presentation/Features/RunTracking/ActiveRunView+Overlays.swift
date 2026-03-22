@@ -11,7 +11,15 @@ extension ActiveRunView {
             Text(viewModel.formattedTime)
                 .font(.system(size: timerFontSize, weight: .bold, design: .monospaced))
                 .monospacedDigit()
-                .foregroundStyle(timerColor)
+                .foregroundStyle(
+                    viewModel.runState == .running
+                        ? AnyShapeStyle(LinearGradient(
+                            colors: [Theme.Colors.label, Theme.Colors.label.opacity(0.7)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                          ))
+                        : AnyShapeStyle(timerColor)
+                )
                 .accessibilityIdentifier("runTracking.timerDisplay")
                 .accessibilityLabel("Elapsed time, \(viewModel.formattedTime)")
 
@@ -133,6 +141,7 @@ extension ActiveRunView {
                     .foregroundStyle(.white)
                     .background(color)
                     .clipShape(Circle())
+                    .shadow(color: color.opacity(0.4), radius: 8, y: 3)
                 Text(label)
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)

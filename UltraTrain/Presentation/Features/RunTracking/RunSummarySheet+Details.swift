@@ -25,8 +25,12 @@ extension RunSummarySheet {
                                     RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
                                         .fill(
                                             rpe == value
-                                                ? rpeColor(value)
-                                                : Theme.Colors.secondaryBackground
+                                                ? AnyShapeStyle(LinearGradient(
+                                                    colors: [rpeColor(value), rpeColor(value).opacity(0.7)],
+                                                    startPoint: .top,
+                                                    endPoint: .bottom
+                                                  ))
+                                                : AnyShapeStyle(Theme.Colors.secondaryBackground)
                                         )
                                 )
                                 .foregroundStyle(
@@ -59,24 +63,7 @@ extension RunSummarySheet {
                                     .font(.caption2)
                             }
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 6)
-                            .background(
-                                RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
-                                    .fill(
-                                        perceivedFeeling == feeling
-                                            ? Theme.Colors.primary.opacity(0.15)
-                                            : Theme.Colors.secondaryBackground
-                                    )
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
-                                    .stroke(
-                                        perceivedFeeling == feeling
-                                            ? Theme.Colors.primary
-                                            : .clear,
-                                        lineWidth: 1.5
-                                    )
-                            )
+                            .glassCardStyle(isSelected: perceivedFeeling == feeling)
                         }
                         .buttonStyle(.plain)
                         .accessibilityLabel("\(feelingLabel(feeling))\(perceivedFeeling == feeling ? ", selected" : "")")
@@ -98,24 +85,7 @@ extension RunSummarySheet {
                             Text(terrainLabel(terrain))
                                 .font(.caption)
                                 .frame(maxWidth: .infinity)
-                                .padding(.vertical, 6)
-                                .background(
-                                    RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
-                                        .fill(
-                                            terrainType == terrain
-                                                ? Theme.Colors.primary.opacity(0.15)
-                                                : Theme.Colors.secondaryBackground
-                                        )
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
-                                        .stroke(
-                                            terrainType == terrain
-                                                ? Theme.Colors.primary
-                                                : .clear,
-                                            lineWidth: 1.5
-                                        )
-                                )
+                                .glassCardStyle(isSelected: terrainType == terrain)
                         }
                         .buttonStyle(.plain)
                         .accessibilityLabel("\(terrainLabel(terrain))\(terrainType == terrain ? ", selected" : "")")
@@ -156,9 +126,14 @@ extension RunSummarySheet {
     var linkedSessionBanner: some View {
         if let session = viewModel.linkedSession {
             HStack(spacing: Theme.Spacing.sm) {
-                Image(systemName: "link.circle.fill")
-                    .foregroundStyle(Theme.Colors.primary)
-                    .accessibilityHidden(true)
+                ZStack {
+                    Circle()
+                        .fill(Theme.Colors.primary.opacity(0.15))
+                        .frame(width: 32, height: 32)
+                    Image(systemName: "link.circle.fill")
+                        .foregroundStyle(Theme.Colors.primary)
+                }
+                .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Linked Session")
                         .font(.caption.bold())
@@ -171,11 +146,7 @@ extension RunSummarySheet {
                     .foregroundStyle(Theme.Colors.success)
                     .accessibilityHidden(true)
             }
-            .padding(Theme.Spacing.md)
-            .background(
-                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                    .fill(Theme.Colors.primary.opacity(0.08))
-            )
+            .appCardStyle()
             .padding(.horizontal, Theme.Spacing.md)
         }
     }
@@ -186,9 +157,14 @@ extension RunSummarySheet {
     var autoMatchBanner: some View {
         if didSave, let match = viewModel.autoMatchedSession, viewModel.linkedSession == nil {
             HStack(spacing: Theme.Spacing.sm) {
-                Image(systemName: "sparkles")
-                    .foregroundStyle(Theme.Colors.primary)
-                    .accessibilityHidden(true)
+                ZStack {
+                    Circle()
+                        .fill(Theme.Colors.primary.opacity(0.15))
+                        .frame(width: 32, height: 32)
+                    Image(systemName: "sparkles")
+                        .foregroundStyle(Theme.Colors.primary)
+                }
+                .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Auto-Linked to Session")
                         .font(.caption.bold())
@@ -201,11 +177,7 @@ extension RunSummarySheet {
                     .foregroundStyle(Theme.Colors.success)
                     .accessibilityHidden(true)
             }
-            .padding(Theme.Spacing.md)
-            .background(
-                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                    .fill(Theme.Colors.primary.opacity(0.08))
-            )
+            .appCardStyle()
             .padding(.horizontal, Theme.Spacing.md)
         }
     }
@@ -224,11 +196,7 @@ extension RunSummarySheet {
                     .font(.subheadline)
             }
             .frame(maxWidth: .infinity)
-            .padding(Theme.Spacing.md)
-            .background(
-                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                    .fill(Color.orange.opacity(0.1))
-            )
+            .appCardStyle()
             .padding(.horizontal, Theme.Spacing.md)
             .accessibilityElement(children: .combine)
         case .success:
@@ -240,11 +208,7 @@ extension RunSummarySheet {
                     .font(.subheadline.bold())
             }
             .frame(maxWidth: .infinity)
-            .padding(Theme.Spacing.md)
-            .background(
-                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                    .fill(Color.green.opacity(0.1))
-            )
+            .appCardStyle()
             .padding(.horizontal, Theme.Spacing.md)
             .accessibilityElement(children: .combine)
         case .failed(let reason):
@@ -267,11 +231,7 @@ extension RunSummarySheet {
                 .accessibilityHint("Retry uploading run to Strava")
             }
             .frame(maxWidth: .infinity)
-            .padding(Theme.Spacing.md)
-            .background(
-                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                    .fill(Theme.Colors.warning.opacity(0.1))
-            )
+            .appCardStyle()
             .padding(.horizontal, Theme.Spacing.md)
         }
     }

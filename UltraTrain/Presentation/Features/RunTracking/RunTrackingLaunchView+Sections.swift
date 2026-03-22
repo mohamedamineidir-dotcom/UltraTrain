@@ -35,8 +35,7 @@ extension RunTrackingLaunchView {
             Text(message).font(.subheadline).multilineTextAlignment(.center).foregroundStyle(Theme.Colors.warning)
             Button(buttonLabel, action: action).buttonStyle(.bordered)
         }
-        .padding(Theme.Spacing.md)
-        .background(RoundedRectangle(cornerRadius: Theme.CornerRadius.md).fill(Theme.Colors.warning.opacity(0.1)))
+        .appCardStyle()
         .padding(.horizontal, Theme.Spacing.md)
     }
 
@@ -44,39 +43,78 @@ extension RunTrackingLaunchView {
 
     var heroSection: some View {
         VStack(spacing: Theme.Spacing.md) {
-            Image(systemName: "figure.run")
-                .font(.system(size: heroIconSize))
-                .foregroundStyle(Theme.Colors.primary)
-                .accessibilityHidden(true)
+            ZStack {
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [Theme.Colors.primary.opacity(0.3), .clear],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: 40
+                        )
+                    )
+                    .frame(width: 80, height: 80)
+                Image(systemName: "figure.run")
+                    .font(.system(size: heroIconSize))
+                    .foregroundStyle(Theme.Colors.primary)
+            }
+            .shadow(color: Theme.Colors.primary.opacity(0.3), radius: 12)
+            .accessibilityHidden(true)
+
             Text("Ready to Run?")
                 .font(.title.bold())
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [Theme.Colors.label, Theme.Colors.label.opacity(0.7)],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
             Text("Track your run with GPS, pace, and elevation.")
                 .font(.subheadline)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
                 .multilineTextAlignment(.center)
         }
-        .padding(.top, Theme.Spacing.xl)
+        .padding(.vertical, Theme.Spacing.lg)
+        .padding(.horizontal, Theme.Spacing.md)
+        .futuristicGlassStyle()
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                .stroke(
+                    Theme.Gradients.glowBorder(color: Theme.Colors.primary),
+                    lineWidth: heroBorderPulse ? 1.0 : 0.5
+                )
+                .opacity(heroBorderPulse ? 0.8 : 0.3)
+        )
+        .padding(.horizontal, Theme.Spacing.md)
+        .onAppear {
+            withAnimation(.pulseGlow) { heroBorderPulse = true }
+        }
     }
 
     // MARK: - Start
 
     var startButton: some View {
-        Button {
+        let isDisabled = viewModel.athlete == nil
+            || locationService.authorizationStatus == .denied
+            || locationService.authorizationStatus == .notDetermined
+
+        return Button {
             viewModel.startRun()
         } label: {
             Label("Start Run", systemImage: "play.fill")
-                .font(.headline)
+                .font(.headline.bold())
+                .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, Theme.Spacing.md)
+                .background(Theme.Gradients.warmCoralCTA)
+                .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
+                .shadow(color: Theme.Colors.warmCoral.opacity(0.4), radius: 8, y: 4)
         }
-        .buttonStyle(.borderedProminent)
-        .controlSize(.large)
+        .buttonStyle(.plain)
         .padding(.horizontal, Theme.Spacing.md)
-        .disabled(
-            viewModel.athlete == nil
-            || locationService.authorizationStatus == .denied
-            || locationService.authorizationStatus == .notDetermined
-        )
+        .disabled(isDisabled)
+        .opacity(isDisabled ? 0.5 : 1.0)
         .accessibilityIdentifier("runTracking.startButton")
         .accessibilityHint("Double tap to begin GPS run tracking")
     }
@@ -85,7 +123,15 @@ extension RunTrackingLaunchView {
 
     func raceDayBanner(race: Race) -> some View {
         HStack(spacing: Theme.Spacing.sm) {
-            Image(systemName: "flag.checkered").font(.title3).accessibilityHidden(true)
+            ZStack {
+                Circle()
+                    .fill(Theme.Colors.primary.opacity(0.15))
+                    .frame(width: 36, height: 36)
+                Image(systemName: "flag.checkered")
+                    .font(.body)
+                    .foregroundStyle(Theme.Colors.primary)
+            }
+            .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Text("Race Day: \(race.name)").font(.subheadline.bold())
                 Text("This run will be linked to your race for finish time calibration.")
@@ -93,8 +139,7 @@ extension RunTrackingLaunchView {
             }
             Spacer()
         }
-        .padding(Theme.Spacing.md)
-        .background(RoundedRectangle(cornerRadius: Theme.CornerRadius.md).fill(Theme.Colors.primary.opacity(0.1)))
+        .appCardStyle()
         .padding(.horizontal, Theme.Spacing.md)
     }
 
@@ -102,7 +147,15 @@ extension RunTrackingLaunchView {
 
     var gutTrainingBanner: some View {
         HStack(spacing: Theme.Spacing.sm) {
-            Image(systemName: "fork.knife").font(.title3).accessibilityHidden(true)
+            ZStack {
+                Circle()
+                    .fill(Theme.Colors.primary.opacity(0.15))
+                    .frame(width: 36, height: 36)
+                Image(systemName: "fork.knife")
+                    .font(.body)
+                    .foregroundStyle(Theme.Colors.primary)
+            }
+            .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Text("Gut Training Session").font(.subheadline.bold())
                 Text("Practice your race-day nutrition during this run.")
@@ -110,8 +163,7 @@ extension RunTrackingLaunchView {
             }
             Spacer()
         }
-        .padding(Theme.Spacing.md)
-        .background(RoundedRectangle(cornerRadius: Theme.CornerRadius.md).fill(Theme.Colors.primary.opacity(0.08)))
+        .appCardStyle()
         .padding(.horizontal, Theme.Spacing.md)
     }
 
@@ -123,11 +175,19 @@ extension RunTrackingLaunchView {
         } label: {
             Label("Log Cross-Training", systemImage: "figure.mixed.cardio")
                 .font(.headline)
+                .foregroundStyle(Theme.Colors.label)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, Theme.Spacing.md)
+                .background(
+                    RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                        .fill(.ultraThinMaterial)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                                .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                        )
+                )
         }
-        .buttonStyle(.bordered)
-        .controlSize(.large)
+        .buttonStyle(.plain)
         .padding(.horizontal, Theme.Spacing.md)
         .sheet(isPresented: $showCrossTrainingSheet) {
             CrossTrainingLogView(
@@ -167,13 +227,9 @@ extension RunTrackingLaunchView {
                     .foregroundStyle(Theme.Colors.secondaryLabel)
                     .accessibilityHidden(true)
             }
-            .padding(Theme.Spacing.md)
-            .background(
-                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                    .fill(Theme.Colors.secondaryBackground)
-            )
         }
         .buttonStyle(.plain)
+        .appCardStyle()
         .padding(.horizontal, Theme.Spacing.md)
     }
 }

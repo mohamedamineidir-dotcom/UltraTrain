@@ -91,19 +91,43 @@ struct RunSummarySheet: View {
     // MARK: - Header & Stats
 
     private var headerSection: some View {
-        VStack(spacing: Theme.Spacing.xs) {
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: headerIconSize))
-                .foregroundStyle(Theme.Colors.success)
-                .accessibilityHidden(true)
+        VStack(spacing: Theme.Spacing.sm) {
+            ZStack {
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [Theme.Colors.success.opacity(0.3), .clear],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: 32
+                        )
+                    )
+                    .frame(width: 64, height: 64)
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: headerIconSize))
+                    .foregroundStyle(Theme.Colors.success)
+            }
+            .shadow(color: Theme.Colors.success.opacity(0.3), radius: 8)
+            .accessibilityHidden(true)
+
             Text(didSave ? "Run Saved!" : "Great Run!")
                 .font(.title2.bold())
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [Theme.Colors.label, Theme.Colors.label.opacity(0.7)],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
             Text(viewModel.formattedTime)
                 .font(.title3.monospacedDigit())
                 .foregroundStyle(Theme.Colors.secondaryLabel)
                 .accessibilityLabel("Duration, \(viewModel.formattedTime)")
         }
-        .padding(.top, Theme.Spacing.md)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, Theme.Spacing.md)
+        .futuristicGlassStyle()
+        .padding(.horizontal, Theme.Spacing.md)
     }
 
     private var statsSection: some View {
@@ -135,7 +159,15 @@ struct RunSummarySheet: View {
         .padding(Theme.Spacing.md)
         .background(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                .fill(Theme.Colors.secondaryBackground)
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                        .fill(Color.white.opacity(0.08))
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .stroke(Color.white.opacity(0.12), lineWidth: 1)
         )
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(label), \(value)")

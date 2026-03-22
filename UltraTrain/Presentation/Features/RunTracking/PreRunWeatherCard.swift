@@ -10,16 +10,21 @@ struct PreRunWeatherCard: View {
             content
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .cardStyle()
+        .appCardStyle()
     }
 
     // MARK: - Header
 
     private var headerRow: some View {
         HStack(spacing: Theme.Spacing.sm) {
-            Image(systemName: "cloud.sun.fill")
-                .foregroundStyle(Theme.Colors.primary)
-                .accessibilityHidden(true)
+            ZStack {
+                Circle()
+                    .fill(Theme.Colors.primary.opacity(0.15))
+                    .frame(width: 32, height: 32)
+                Image(systemName: "cloud.sun.fill")
+                    .foregroundStyle(Theme.Colors.primary)
+            }
+            .accessibilityHidden(true)
             Text("Conditions")
                 .font(.headline)
             Spacer()

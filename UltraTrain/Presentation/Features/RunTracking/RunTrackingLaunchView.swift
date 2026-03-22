@@ -4,6 +4,7 @@ struct RunTrackingLaunchView: View {
     @ScaledMetric(relativeTo: .largeTitle) var heroIconSize: CGFloat = 60
     @State var viewModel: RunTrackingLaunchViewModel
     @State var showCrossTrainingSheet = false
+    @State var heroBorderPulse = false
     let athleteRepository: any AthleteRepository
     let locationService: LocationService
     private let healthKitService: any HealthKitServiceProtocol

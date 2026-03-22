@@ -51,7 +51,15 @@ private struct StatTile: View {
         .padding(Theme.Spacing.md)
         .background(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                .fill(Theme.Colors.secondaryBackground)
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                        .fill(Color.white.opacity(0.08))
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .stroke(Color.white.opacity(0.12), lineWidth: 1)
         )
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(unit.isEmpty ? "\(label), \(value)" : "\(label), \(value) \(unit)")
