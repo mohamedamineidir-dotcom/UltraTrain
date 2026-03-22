@@ -18,6 +18,15 @@ extension MainTabView {
         .onChange(of: deepLinkRouter.pendingDeepLink) { _, _ in
             handleDeepLink()
         }
+        .task { await checkWeeklyReview() }
+        .fullScreenCover(isPresented: $showWeeklyReview) {
+            if let vm = weeklyReviewViewModel {
+                WeeklyReviewSheet(viewModel: vm) {
+                    showWeeklyReview = false
+                    weeklyReviewViewModel = nil
+                }
+            }
+        }
     }
 
     // MARK: - Compact (iPhone)
@@ -162,6 +171,28 @@ extension MainTabView {
     }
 
     // MARK: - Deep Link
+
+    // MARK: - Weekly Review
+
+    func checkWeeklyReview() async {
+        guard let plan = try? await planRepository.getActivePlan() else { return }
+        let result = WeeklyReviewHandler.checkReviewNeeded(
+            plan: plan,
+            lastReviewedWeekNumber: lastReviewedWeekNumber
+        )
+        guard result.isNeeded,
+              let pwi = result.previousWeekIndex,
+              let pwn = result.previousWeekNumber else { return }
+        weeklyReviewViewModel = WeeklyReviewViewModel(
+            planRepository: planRepository,
+            plan: plan,
+            previousWeekIndex: pwi,
+            previousWeekNumber: pwn,
+            nonRestSessions: result.nonRestSessions
+        )
+        lastReviewedWeekNumber = pwn
+        showWeeklyReview = true
+    }
 
     func handleDeepLink() {
         guard let link = deepLinkRouter.consume() else { return }

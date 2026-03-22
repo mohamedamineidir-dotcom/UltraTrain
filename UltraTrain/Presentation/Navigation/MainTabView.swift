@@ -3,6 +3,9 @@ import SwiftUI
 struct MainTabView: View {
     @Environment(\.horizontalSizeClass) var sizeClass
     @State var selectedTab: Tab = .dashboard
+    @State var showWeeklyReview = false
+    @State var weeklyReviewViewModel: WeeklyReviewViewModel?
+    @AppStorage("lastReviewedWeekNumber") var lastReviewedWeekNumber = 0
 
     let deepLinkRouter: DeepLinkRouter
 
