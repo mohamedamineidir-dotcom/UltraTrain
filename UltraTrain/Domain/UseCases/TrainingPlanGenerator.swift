@@ -69,11 +69,13 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 volume: volume,
                 experience: athlete.experienceLevel,
                 raceEffectiveKm: raceEffectiveKm,
+                raceElevationGainM: targetRace.elevationGainM,
+                totalWeeks: totalWeeks,
+                philosophy: athlete.trainingPhilosophy,
                 weekNumberInPhase: phaseCounters[index],
                 raceOverride: override,
                 preferredRunsPerWeek: athlete.preferredRunsPerWeek,
                 verticalGainEnvironment: athlete.verticalGainEnvironment,
-
                 expectedRaceDuration: raceDuration
             )
 

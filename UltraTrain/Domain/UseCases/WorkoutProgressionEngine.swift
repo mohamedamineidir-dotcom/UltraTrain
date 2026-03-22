@@ -12,7 +12,8 @@ enum WorkoutProgressionEngine {
         totalDuration: TimeInterval,
         expectedRaceDuration: TimeInterval = 0,
         isB2BDay1: Bool = false,
-        phaseFocus: PhaseFocus? = nil
+        phaseFocus: PhaseFocus? = nil,
+        progressionContext: ProgressionContext? = nil
     ) -> IntervalWorkout {
         let phases: [IntervalPhase]
         let name: String
@@ -20,12 +21,18 @@ enum WorkoutProgressionEngine {
 
         switch type {
         case .intervals:
-            let template = intervalTemplate(phase: phase, weekInPhase: weekInPhase, intensity: intensity, phaseFocus: phaseFocus)
+            let template = intervalTemplate(
+                phase: phase, weekInPhase: weekInPhase, intensity: intensity,
+                phaseFocus: phaseFocus, progressionContext: progressionContext
+            )
             phases = template.phases
             name = template.name
             description = template.description
         case .verticalGain:
-            let template = verticalTemplate(phase: phase, weekInPhase: weekInPhase, intensity: intensity)
+            let template = verticalTemplate(
+                phase: phase, weekInPhase: weekInPhase, intensity: intensity,
+                phaseFocus: phaseFocus, progressionContext: progressionContext
+            )
             phases = template.phases
             name = template.name
             description = template.description
@@ -187,19 +194,84 @@ enum WorkoutProgressionEngine {
         phase trainingPhase: TrainingPhase,
         weekInPhase: Int,
         intensity: Intensity,
-        phaseFocus: PhaseFocus? = nil
+        phaseFocus: PhaseFocus? = nil,
+        progressionContext: ProgressionContext? = nil
+    ) -> WorkoutTemplate {
+        let effectiveFocus = phaseFocus ?? trainingPhase.defaultFocus
+
+        // Dynamic progressive overload when context is available
+        guard let ctx = progressionContext else {
+            return legacyIntervalTemplate(
+                effectiveFocus: effectiveFocus, weekInPhase: weekInPhase, intensity: intensity
+            )
+        }
+
+        let warmUp = phase(.warmUp, duration: 900, intensity: .easy, reps: 1, notes: "Easy jog, progressive pace")
+        let coolDown = phase(.coolDown, duration: 600, intensity: .easy, reps: 1, notes: "Easy jog, stretching")
+
+        // Fixed templates for sharpening / recovery
+        if effectiveFocus == .sharpening {
+            return fixedIntervalTemplate(
+                reps: 4, workSec: 120, restSec: 120, focus: .sharpening,
+                warmUp: warmUp, coolDown: coolDown
+            )
+        }
+        if effectiveFocus == .postRaceRecovery {
+            return fixedIntervalTemplate(
+                reps: 5, workSec: 180, restSec: 120, focus: .postRaceRecovery,
+                warmUp: warmUp, coolDown: coolDown
+            )
+        }
+
+        let planProgress = Double(ctx.weekIndexInPlan) / max(Double(ctx.totalWeeks - 1), 1.0)
+        let multiplier = intervalRaceScale(ctx.raceEffectiveKm)
+            * experienceFactor(ctx.experience)
+            * philosophyFactor(ctx.philosophy)
+
+        let starterWork = 10.0 * 60.0 * multiplier
+        let peakWork = 40.0 * 60.0 * multiplier
+        let totalWorkSec = starterWork + (peakWork - starterWork) * planProgress
+
+        let params = intervalFocusParams(effectiveFocus, planProgress: planProgress)
+        let reps = min(max(Int((totalWorkSec / params.setDurationSec).rounded()), 2), params.maxReps)
+        let actualSetSec = roundToNearest15(totalWorkSec / Double(reps))
+        let restSec = roundToNearest15(actualSetSec / params.workRestRatio)
+
+        let desc = formatIntervalDescription(
+            reps: reps, workSec: actualSetSec, restSec: restSec, focus: effectiveFocus
+        )
+
+        let work = self.phase(.work, duration: actualSetSec, intensity: params.intensity, reps: reps, notes: nil)
+        let recovery = self.phase(.recovery, duration: restSec, intensity: .easy, reps: reps, notes: nil)
+
+        return WorkoutTemplate(name: "Interval session", description: desc, phases: [warmUp, work, recovery, coolDown])
+    }
+
+    private static func fixedIntervalTemplate(
+        reps: Int, workSec: Double, restSec: Double, focus: PhaseFocus,
+        warmUp: IntervalPhase, coolDown: IntervalPhase
+    ) -> WorkoutTemplate {
+        let params = intervalFocusParams(focus, planProgress: 0)
+        let desc = formatIntervalDescription(reps: reps, workSec: workSec, restSec: restSec, focus: focus)
+        let work = phase(.work, duration: workSec, intensity: params.intensity, reps: reps, notes: nil)
+        let recovery = phase(.recovery, duration: restSec, intensity: .easy, reps: reps, notes: nil)
+        return WorkoutTemplate(name: "Interval session", description: desc, phases: [warmUp, work, recovery, coolDown])
+    }
+
+    // MARK: - Legacy Interval Template (backward compat when no ProgressionContext)
+
+    private static func legacyIntervalTemplate(
+        effectiveFocus: PhaseFocus,
+        weekInPhase: Int,
+        intensity: Intensity
     ) -> WorkoutTemplate {
         let warmUp = phase(.warmUp, duration: 900, intensity: .easy, reps: 1, notes: "Easy jog, progressive pace")
         let coolDown = phase(.coolDown, duration: 600, intensity: .easy, reps: 1, notes: "Easy jog, stretching")
 
         let workPhases: (reps: Int, workSec: Double, restSec: Double, desc: String)
 
-        // Dispatch on PhaseFocus if available, otherwise fallback to TrainingPhase
-        let effectiveFocus = phaseFocus ?? trainingPhase.defaultFocus
-
         switch effectiveFocus {
         case .threshold30:
-            // Short high-intensity uphill intervals — 30s to 2:30, with equal or slightly longer rest
             let variants: [(Int, Double, Double, String)] = [
                 (8,  30,  30, "8×30s hard uphill (Z4) / 30s jog down"),
                 (6,  60,  90, "6×1min uphill at threshold (Z3-4) / 1:30 jog"),
@@ -209,9 +281,7 @@ enum WorkoutProgressionEngine {
                 (7, 150, 150, "7×2:30 uphill at threshold (Z3-4) / 2:30 jog"),
             ]
             workPhases = variants[min(weekInPhase, variants.count - 1)]
-
         case .vo2max:
-            // VO2max intervals — hard intensity, progressive
             let variants: [(Int, Double, Double, String)] = [
                 (6, 180, 120, "6×3min at VO2max (Z4) / 2min jog"),
                 (7, 180, 90,  "7×3min at VO2max (Z4) / 90s jog"),
@@ -221,9 +291,7 @@ enum WorkoutProgressionEngine {
                 (10, 120, 60, "10×2min at VO2max (Z4) / 1min jog"),
             ]
             workPhases = variants[weekInPhase % variants.count]
-
         case .threshold60:
-            // Medium sustained threshold intervals — 3 to 10min, shorter rest relative to work
             let variants: [(Int, Double, Double, String)] = [
                 (5, 180,  90, "5×3min at threshold (Z3-4) / 1:30 jog"),
                 (6, 240, 120, "6×4min at threshold (Z3-4) / 2min jog"),
@@ -233,10 +301,8 @@ enum WorkoutProgressionEngine {
                 (3, 600, 180, "3×10min at threshold (Z3-4) / 3min jog"),
             ]
             workPhases = variants[weekInPhase % variants.count]
-
         case .sharpening:
             workPhases = (4, 120, 120, "4×2min at threshold (Z3) / 2min jog")
-
         case .postRaceRecovery:
             workPhases = (5, 180, 120, "5×3min at threshold (Z3) / 2min jog")
         }
@@ -251,9 +317,93 @@ enum WorkoutProgressionEngine {
         )
     }
 
-    // MARK: - Vertical Gain Templates (Progressive Overload)
+    // MARK: - Vertical Gain Templates
 
-    private static func verticalTemplate(phase trainingPhase: TrainingPhase, weekInPhase: Int, intensity: Intensity) -> WorkoutTemplate {
+    private static func verticalTemplate(
+        phase trainingPhase: TrainingPhase,
+        weekInPhase: Int,
+        intensity: Intensity,
+        phaseFocus: PhaseFocus? = nil,
+        progressionContext: ProgressionContext? = nil
+    ) -> WorkoutTemplate {
+        let effectiveFocus = phaseFocus ?? trainingPhase.defaultFocus
+
+        guard let ctx = progressionContext else {
+            return legacyVerticalTemplate(
+                trainingPhase: trainingPhase, weekInPhase: weekInPhase, intensity: intensity
+            )
+        }
+
+        let warmUp = phase(.warmUp, duration: 900, intensity: .easy, reps: 1, notes: "Easy jog to the climb")
+        let coolDown = phase(.coolDown, duration: 600, intensity: .easy, reps: 1, notes: "Easy jog back, stretching")
+
+        // Fixed templates for sharpening / recovery
+        if effectiveFocus == .sharpening {
+            return fixedVGTemplate(
+                reps: 3, workSec: 180, restSec: 180, focus: .sharpening,
+                warmUp: warmUp, coolDown: coolDown
+            )
+        }
+        if effectiveFocus == .postRaceRecovery {
+            return fixedVGTemplate(
+                reps: 2, workSec: 240, restSec: 240, focus: .postRaceRecovery,
+                warmUp: warmUp, coolDown: coolDown
+            )
+        }
+
+        let planProgress = Double(ctx.weekIndexInPlan) / max(Double(ctx.totalWeeks - 1), 1.0)
+        let elevDensity = vgElevDensityFactor(elevationGainM: ctx.raceElevationGainM, effectiveKm: ctx.raceEffectiveKm)
+        let vgMultiplier = intervalRaceScale(ctx.raceEffectiveKm)
+            * experienceFactor(ctx.experience)
+            * philosophyFactor(ctx.philosophy)
+            * elevDensity
+
+        let starterWork = 12.0 * 60.0 * vgMultiplier
+        let peakWork = 36.0 * 60.0 * vgMultiplier
+        let totalWorkSec = starterWork + (peakWork - starterWork) * planProgress
+
+        let params = vgFocusParams(effectiveFocus, planProgress: planProgress)
+        let reps = min(max(Int((totalWorkSec / params.setDurationSec).rounded()), 2), params.maxReps)
+        let actualSetSec = roundToNearest15(totalWorkSec / Double(reps))
+        let restSec = roundToNearest15(actualSetSec / params.workRestRatio)
+
+        let desc = formatVGDescription(
+            reps: reps, workSec: actualSetSec, restSec: restSec, focus: effectiveFocus
+        )
+
+        let vgName = vgWorkoutName(for: effectiveFocus)
+        let work = self.phase(.work, duration: actualSetSec, intensity: params.intensity, reps: reps, notes: "Climb at steady effort")
+        let recovery = self.phase(.recovery, duration: restSec, intensity: .easy, reps: reps, notes: "Jog/walk descent")
+
+        return WorkoutTemplate(name: vgName, description: desc, phases: [warmUp, work, recovery, coolDown])
+    }
+
+    private static func fixedVGTemplate(
+        reps: Int, workSec: Double, restSec: Double, focus: PhaseFocus,
+        warmUp: IntervalPhase, coolDown: IntervalPhase
+    ) -> WorkoutTemplate {
+        let params = vgFocusParams(focus, planProgress: 0)
+        let desc = formatVGDescription(reps: reps, workSec: workSec, restSec: restSec, focus: focus)
+        let work = phase(.work, duration: workSec, intensity: params.intensity, reps: reps, notes: "Climb at steady effort")
+        let recovery = phase(.recovery, duration: restSec, intensity: .easy, reps: reps, notes: "Jog/walk descent")
+        return WorkoutTemplate(name: vgWorkoutName(for: focus), description: desc, phases: [warmUp, work, recovery, coolDown])
+    }
+
+    private static func vgWorkoutName(for focus: PhaseFocus) -> String {
+        switch focus {
+        case .threshold30:      "Aerobic climbing"
+        case .vo2max:           "Hill repeats"
+        case .threshold60:      "Endurance climbing"
+        case .sharpening:       "Maintenance climbing"
+        case .postRaceRecovery: "Easy climbing"
+        }
+    }
+
+    // MARK: - Legacy Vertical Template (backward compat when no ProgressionContext)
+
+    private static func legacyVerticalTemplate(
+        trainingPhase: TrainingPhase, weekInPhase: Int, intensity: Intensity
+    ) -> WorkoutTemplate {
         let warmUp = phase(.warmUp, duration: 900, intensity: .easy, reps: 1, notes: "Easy jog to the climb")
         let coolDown = phase(.coolDown, duration: 600, intensity: .easy, reps: 1, notes: "Easy jog back, stretching")
 
@@ -271,7 +421,6 @@ enum WorkoutProgressionEngine {
             default:
                 workPhases = (5, 600, 360, "5×10min climb at threshold (Z3) / 6min jog down", "Endurance climbing")
             }
-
         case .build:
             switch weekInPhase {
             case 0...1:
@@ -283,7 +432,6 @@ enum WorkoutProgressionEngine {
             default:
                 workPhases = (7, 180, 120, "7×3min steep climb at VO2max (Z4) / 2min jog down", "Steep repeats")
             }
-
         case .peak:
             switch weekInPhase {
             case 0...1:
@@ -293,10 +441,8 @@ enum WorkoutProgressionEngine {
             default:
                 workPhases = (10, 90, 90, "10×90s max effort climb (Z5) / 90s jog down", "Sprint climbing")
             }
-
         case .taper:
             workPhases = (3, 180, 180, "3×3min climb at threshold (Z3) / 3min jog down", "Maintenance climbing")
-
         case .recovery, .race:
             workPhases = (2, 240, 240, "2×4min easy climb (Z2) / 4min jog down", "Easy climbing")
         }

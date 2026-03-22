@@ -18,6 +18,9 @@ enum SessionTemplateGenerator {
         volume: VolumeCalculator.WeekVolume,
         experience: ExperienceLevel,
         raceEffectiveKm: Double = 0,
+        raceElevationGainM: Double = 0,
+        totalWeeks: Int = 0,
+        philosophy: TrainingPhilosophy = .balanced,
         weekNumberInPhase: Int = 0,
         raceOverride: IntermediateRaceHandler.RaceWeekOverride? = nil,
         preferredRunsPerWeek: Int = 5,
@@ -41,6 +44,17 @@ enum SessionTemplateGenerator {
                 preferredRunsPerWeek: runsPerWeek
             )
         }
+
+        let progressionContext: WorkoutProgressionEngine.ProgressionContext? = totalWeeks > 0
+            ? .init(
+                raceEffectiveKm: raceEffectiveKm,
+                raceElevationGainM: raceElevationGainM,
+                totalWeeks: totalWeeks,
+                weekIndexInPlan: skeleton.weekNumber,
+                experience: experience,
+                philosophy: philosophy
+            )
+            : nil
 
         let sessions = templates.map { template in
             let rawDuration = template.durationSeconds
@@ -78,7 +92,8 @@ enum SessionTemplateGenerator {
                     totalDuration: duration,
                     expectedRaceDuration: expectedRaceDuration,
                     isB2BDay1: isB2BDay1,
-                    phaseFocus: skeleton.phaseFocus
+                    phaseFocus: skeleton.phaseFocus,
+                    progressionContext: progressionContext
                 )
                 workouts.append(workout)
                 workoutId = workout.id
