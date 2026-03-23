@@ -164,6 +164,11 @@ final class TrainingPlanViewModel {
         // No subscription service → show all (e.g. debug/dev)
         guard let status = subscriptionStatus else { return plan.weeks }
 
+        // Free trial → show first 3 weeks as a preview
+        if status.isInTrialPeriod {
+            return Array(plan.weeks.prefix(3))
+        }
+
         // Inactive subscription → teaser (first week only)
         guard status.isActive else {
             return Array(plan.weeks.prefix(1))
@@ -189,6 +194,16 @@ final class TrainingPlanViewModel {
     var lockedWeekCount: Int {
         guard let plan else { return 0 }
         return plan.weeks.count - visibleWeeks.count
+    }
+
+    var lockedWeeksBannerSubtitle: String {
+        guard let status = subscriptionStatus else {
+            return "Upgrade to unlock the full training plan"
+        }
+        if status.isActive && !status.isInTrialPeriod {
+            return "Upgrade your plan to see more, or wait for your subscription to renew"
+        }
+        return "Upgrade to unlock the full training plan"
     }
 
     private func weeksInWindow(plan: TrainingPlan, futureWeekCount: Int) -> [TrainingWeek] {

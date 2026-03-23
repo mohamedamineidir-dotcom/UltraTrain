@@ -177,7 +177,7 @@ extension TrainingPlanView {
             VStack(alignment: .leading, spacing: 3) {
                 Text("\(viewModel.lockedWeekCount) More Weeks")
                     .font(.subheadline.bold())
-                Text("Upgrade to unlock the full training plan")
+                Text(viewModel.lockedWeeksBannerSubtitle)
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
