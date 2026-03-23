@@ -14,7 +14,6 @@ struct RunSummarySheet: View {
     @State var didSave = false
     @State private var exportFileURL: URL?
     @State private var showingShareSheet = false
-    @State private var showPostSaveLoading = false
 
     var body: some View {
         NavigationStack {
@@ -72,7 +71,6 @@ struct RunSummarySheet: View {
                                     terrain: terrainType
                                 )
                                 didSave = true
-                                showPostSaveLoading = true
                             }
                         }
                         .bold()
@@ -86,9 +84,6 @@ struct RunSummarySheet: View {
                 if let url = exportFileURL {
                     ShareSheet(activityItems: [url])
                 }
-            }
-            .fullScreenCover(isPresented: $showPostSaveLoading) {
-                PostSaveLoadingView { showPostSaveLoading = false }
             }
         }
     }

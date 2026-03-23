@@ -218,7 +218,6 @@
 		1FF05CE7F1AC9C8EE453497A /* FriendConnectionRemoteMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1284AE0B1A5B11439C63BC7A /* FriendConnectionRemoteMapper.swift */; };
 		2033B1EF7E27BF339EFBFA38 /* ChallengeLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5D5730A19A08997B730053 /* ChallengeLibrary.swift */; };
 		203B863705CA4171F2423E94 /* SharedRunCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFCBA3747112D539E6EF693F /* SharedRunCard.swift */; };
-		2082C5E7E137142B8B0DBBB5 /* PostSaveLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C71DC29D7118E50F6AF81D2 /* PostSaveLoadingView.swift */; };
 		2084AF5A5A5D835187E376DC /* PostRaceWizardViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B150EB750670D80A54F2BAF /* PostRaceWizardViewModelTests.swift */; };
 		211D7290A6B6241BCC9FCBE5 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C0E95B211DFF769822417BB2 /* Localizable.xcstrings */; };
 		2134726419688736A074FF1F /* NutritionTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECA0B1DBB7FC6F925AFF0AC /* NutritionTimerView.swift */; };
@@ -2665,7 +2664,6 @@
 		8C0936A3C14410B2B08FABBE /* WorkoutLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutLibraryView.swift; sourceTree = "<group>"; };
 		8C484EEA90924A61ABF718FC /* AnalyticsServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsServiceProtocol.swift; sourceTree = "<group>"; };
 		8C6067F3AE2C6B6782F6DF03 /* SocialSyncHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialSyncHandler.swift; sourceTree = "<group>"; };
-		8C71DC29D7118E50F6AF81D2 /* PostSaveLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostSaveLoadingView.swift; sourceTree = "<group>"; };
 		8C86F976468572A510F3A02A /* MorningCheckInMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MorningCheckInMapper.swift; sourceTree = "<group>"; };
 		8C97A22AEA5E3F1ED10C00A8 /* VolumeCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeCalculator.swift; sourceTree = "<group>"; };
 		8CD3BBA172B575F086DECDF7 /* UnitFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitFormatterTests.swift; sourceTree = "<group>"; };
@@ -3586,7 +3584,6 @@
 				5EA49339030AAEF8A111B93E /* NutritionReminderBanner.swift */,
 				33340374471087E369330E3F /* NutritionReminderHandler.swift */,
 				A7E7EC3313A2A20293CF757F /* PacingAlertBanner.swift */,
-				8C71DC29D7118E50F6AF81D2 /* PostSaveLoadingView.swift */,
 				F270F8343A80DC8C75399402 /* PreRunWeatherCard.swift */,
 				0FE1B45C3D7B1F1F8E342855 /* RacePacingGuidancePanel.swift */,
 				8F7C5073EE6EE96FCE876192 /* RacePacingHandler.swift */,
@@ -7270,7 +7267,6 @@
 				DD10EAACB6BD0B097C7B3223 /* PostRaceWizardView.swift in Sources */,
 				33D903AA504440AC3398BB68 /* PostRaceWizardViewModel.swift in Sources */,
 				7D96E85F36A47A434B2AF704 /* PostRunAdvice.swift in Sources */,
-				2082C5E7E137142B8B0DBBB5 /* PostSaveLoadingView.swift in Sources */,
 				65FD2F9F1AFC139268AD67FE /* PreRunAdvice.swift in Sources */,
 				778770852B8FE0A1FF984CB9 /* PreRunBriefing.swift in Sources */,
 				2EDF95A119BBA992B198FD23 /* PreRunBriefingBuilder.swift in Sources */,

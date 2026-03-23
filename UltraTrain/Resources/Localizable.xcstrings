@@ -13090,6 +13090,9 @@
         }
       }
     },
+    "Session Complete!" : {
+
+    },
     "Session ID" : {
       "localizations" : {
         "fr" : {
@@ -14002,6 +14005,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Étape %1$lld sur %2$lld"
+          }
+        }
+      }
+    },
+    "STEP %lld OF %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "STEP %1$lld OF %2$lld"
           }
         }
       }
