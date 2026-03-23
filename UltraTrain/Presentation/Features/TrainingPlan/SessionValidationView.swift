@@ -18,6 +18,7 @@ struct SessionValidationView: View {
     @State private var feeling: PerceivedFeeling?
     @State private var rpe: Int?
     @State private var loadedRuns: [CompletedRun]?
+    @State private var showCompletion = false
 
     init(
         session: TrainingSession,
@@ -46,6 +47,16 @@ struct SessionValidationView: View {
     }
 
     var body: some View {
+        if showCompletion {
+            SessionCompletionLoadingView {
+                dismiss()
+            }
+        } else {
+            formContent
+        }
+    }
+
+    private var formContent: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: Theme.Spacing.lg) {
@@ -321,11 +332,7 @@ struct SessionValidationView: View {
 
     private var completeButton: some View {
         Button {
-            let dist = Double(distanceText.replacingOccurrences(of: ",", with: "."))
-            let dur = TimeInterval(hours * 3600 + minutes * 60 + seconds)
-            let elev = Double(elevationText)
-            onComplete(dist, dur > 0 ? dur : nil, elev, feeling, rpe)
-            dismiss()
+            submitCompletion(withStats: true)
         } label: {
             Label("Complete Session", systemImage: "checkmark.circle.fill")
                 .font(.headline)
@@ -340,14 +347,26 @@ struct SessionValidationView: View {
 
     private var skipButton: some View {
         Button {
-            onComplete(nil, nil, nil, feeling, rpe)
-            dismiss()
+            submitCompletion(withStats: false)
         } label: {
             Text("Skip Stats — Mark Complete")
                 .font(.subheadline)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
         .padding(.bottom, Theme.Spacing.lg)
+    }
+
+    private func submitCompletion(withStats: Bool) {
+        let dist = withStats ? Double(distanceText.replacingOccurrences(of: ",", with: ".")) : nil
+        let dur: TimeInterval? = withStats ? {
+            let total = TimeInterval(hours * 3600 + minutes * 60 + seconds)
+            return total > 0 ? total : nil
+        }() : nil
+        let elev = withStats ? Double(elevationText) : nil
+        onComplete(dist, dur, elev, feeling, rpe)
+        withAnimation(.easeInOut(duration: 0.3)) {
+            showCompletion = true
+        }
     }
 
     // MARK: - Helpers
