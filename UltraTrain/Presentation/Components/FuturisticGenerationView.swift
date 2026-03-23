@@ -11,6 +11,7 @@ struct FuturisticGenerationView: View {
     @State private var progress: Double = 0
     @State private var ringRotation: Double = 0
     @State private var glowPulse = false
+    @State private var meshPhase = false
 
     init(
         steps: [(icon: String, title: String, subtitle: String)],
@@ -47,21 +48,60 @@ struct FuturisticGenerationView: View {
 
     private var backgroundLayers: some View {
         ZStack {
-            RadialGradient(
-                colors: [
-                    accentColor.opacity(glowPulse ? 0.08 : 0.03),
-                    Theme.Colors.futuristicBgDark,
-                    Color.black
-                ],
-                center: .center,
-                startRadius: 20,
-                endRadius: 400
-            )
-            .ignoresSafeArea()
+            // Base: deep dark gradient (not pure black)
+            Theme.Colors.futuristicBgDark
+                .ignoresSafeArea()
 
+            // Ambient gradient orbs that drift slowly
+            ambientOrbs
+
+            // Scanlines for the holographic feel
             scanlines
+
+            // Floating particles
             FloatingParticlesView(color: accentColor)
         }
+    }
+
+    private var ambientOrbs: some View {
+        GeometryReader { geo in
+            let cx = geo.size.width / 2
+            let cy = geo.size.height * 0.42
+
+            // Primary orb (centered on the ring area)
+            RadialGradient(
+                colors: [accentColor.opacity(0.07), Color.clear],
+                center: UnitPoint(
+                    x: (cx + (meshPhase ? 20 : -20)) / geo.size.width,
+                    y: (cy + (meshPhase ? -15 : 15)) / geo.size.height
+                ),
+                startRadius: 10,
+                endRadius: 220
+            )
+
+            // Secondary orb (upper-right, subtle)
+            RadialGradient(
+                colors: [accentColor.opacity(0.035), Color.clear],
+                center: UnitPoint(
+                    x: (geo.size.width * 0.75 + (meshPhase ? -25 : 25)) / geo.size.width,
+                    y: (geo.size.height * 0.2 + (meshPhase ? 20 : -20)) / geo.size.height
+                ),
+                startRadius: 5,
+                endRadius: 160
+            )
+
+            // Tertiary orb (lower-left, warm tint)
+            RadialGradient(
+                colors: [Color.purple.opacity(0.025), Color.clear],
+                center: UnitPoint(
+                    x: (geo.size.width * 0.2 + (meshPhase ? 15 : -15)) / geo.size.width,
+                    y: (geo.size.height * 0.75 + (meshPhase ? -10 : 10)) / geo.size.height
+                ),
+                startRadius: 5,
+                endRadius: 140
+            )
+        }
+        .ignoresSafeArea()
     }
 
     private var scanlines: some View {
@@ -124,18 +164,16 @@ struct FuturisticGenerationView: View {
                 .overlay(Circle().stroke(Color.white.opacity(0.1), lineWidth: 0.5))
                 .frame(width: 90, height: 90)
 
-            // Icon
+            // Icon (no shadow)
             Image(systemName: steps[currentStep].icon)
                 .font(.system(size: 32, weight: .light))
                 .foregroundStyle(accentColor)
-                .shadow(color: accentColor.opacity(0.4), radius: 16)
                 .id(currentStep)
                 .transition(.asymmetric(
                     insertion: .scale(scale: 0.5).combined(with: .opacity),
                     removal: .scale(scale: 1.3).combined(with: .opacity)
                 ))
         }
-        .shadow(color: accentColor.opacity(glowPulse ? 0.2 : 0.06), radius: 30)
         .animation(.easeInOut(duration: 0.5), value: currentStep)
     }
 
@@ -187,6 +225,9 @@ struct FuturisticGenerationView: View {
         }
         withAnimation(.pulseGlow) {
             glowPulse = true
+        }
+        withAnimation(.easeInOut(duration: 8).repeatForever(autoreverses: true)) {
+            meshPhase = true
         }
     }
 
