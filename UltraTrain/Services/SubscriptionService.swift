@@ -234,6 +234,12 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
         }
 
         guard let transaction = latestTransaction else {
+            #if DEBUG
+            // Preserve the debug bypass status when no real StoreKit entitlements exist
+            if currentStatus.isActive {
+                return currentStatus
+            }
+            #endif
             currentStatus = .inactive
             cacheStatus(.inactive)
             return .inactive
