@@ -34,21 +34,6 @@ extension View {
 struct AppCardModifier: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
 
-    private var borderGradient: LinearGradient {
-        if colorScheme == .dark {
-            return LinearGradient(
-                colors: [Color.white.opacity(0.1), Color.white.opacity(0.04)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        }
-        return LinearGradient(
-            colors: [Color.black.opacity(0.04), Color.black.opacity(0.04)],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-    }
-
     func body(content: Content) -> some View {
         content
             .padding(Theme.Spacing.md)
@@ -60,15 +45,50 @@ struct AppCardModifier: ViewModifier {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                    .stroke(borderGradient, lineWidth: 0.5)
+                    .fill(sheenGradient)
+                    .allowsHitTesting(false)
             )
-            .shadow(
-                color: colorScheme == .dark
-                    ? Color(red: 0.1, green: 0.1, blue: 0.3).opacity(0.15)
-                    : .black.opacity(0.06),
-                radius: colorScheme == .dark ? 8 : 12,
-                y: colorScheme == .dark ? 3 : 4
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                    .stroke(edgeLightGradient, lineWidth: 0.5)
             )
+    }
+
+    private var sheenGradient: LinearGradient {
+        if colorScheme == .dark {
+            return LinearGradient(
+                stops: [
+                    .init(color: Color.white.opacity(0.06), location: 0.0),
+                    .init(color: Color.white.opacity(0.01), location: 0.3),
+                    .init(color: Color.clear, location: 0.5)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
+        return LinearGradient(
+            stops: [
+                .init(color: Color(red: 0.7, green: 0.85, blue: 1.0).opacity(0.06), location: 0.0),
+                .init(color: Color.clear, location: 0.35)
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
+    private var edgeLightGradient: LinearGradient {
+        if colorScheme == .dark {
+            return LinearGradient(
+                colors: [Color.white.opacity(0.12), Color.white.opacity(0.03)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
+        return LinearGradient(
+            colors: [Color.black.opacity(0.03), Color.black.opacity(0.08)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
     }
 }
 
@@ -113,12 +133,12 @@ struct FuturisticGlassCardModifier: ViewModifier {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                    .stroke(borderStyle, lineWidth: 1)
+                    .fill(sheenGradient)
+                    .allowsHitTesting(false)
             )
-            .shadow(
-                color: shadowColor,
-                radius: colorScheme == .dark ? 12 : 8,
-                y: colorScheme == .dark ? 4 : 3
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                    .stroke(edgeLightGradient, lineWidth: colorScheme == .dark ? 1 : 0.5)
             )
     }
 
@@ -129,19 +149,42 @@ struct FuturisticGlassCardModifier: ViewModifier {
         return colorScheme == .dark ? Color.white.opacity(0.04) : Color.white.opacity(0.7)
     }
 
-    private var borderStyle: some ShapeStyle {
-        colorScheme == .dark
-            ? Theme.Colors.glassBorder
-            : Theme.Colors.glassBorderLight
+    private var sheenGradient: LinearGradient {
+        let tint = phaseTint ?? Theme.Colors.accentColor
+        if colorScheme == .dark {
+            return LinearGradient(
+                stops: [
+                    .init(color: Color.white.opacity(0.07), location: 0.0),
+                    .init(color: Color.white.opacity(0.015), location: 0.3),
+                    .init(color: Color.clear, location: 0.5)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
+        return LinearGradient(
+            stops: [
+                .init(color: tint.opacity(0.06), location: 0.0),
+                .init(color: Color.clear, location: 0.35)
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
     }
 
-    private var shadowColor: Color {
-        if let tint = phaseTint, colorScheme == .dark {
-            return tint.opacity(0.08)
+    private var edgeLightGradient: LinearGradient {
+        if colorScheme == .dark {
+            return LinearGradient(
+                colors: [Color.white.opacity(0.16), Color.white.opacity(0.04)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
         }
-        return colorScheme == .dark
-            ? Color(red: 0.1, green: 0.1, blue: 0.3).opacity(0.12)
-            : .black.opacity(0.05)
+        return LinearGradient(
+            colors: [Color.black.opacity(0.03), Color.black.opacity(0.08)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
     }
 }
 
