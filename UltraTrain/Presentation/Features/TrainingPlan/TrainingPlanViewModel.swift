@@ -197,13 +197,7 @@ final class TrainingPlanViewModel {
     }
 
     var lockedWeeksBannerSubtitle: String {
-        guard let status = subscriptionStatus else {
-            return "Upgrade to unlock the full training plan"
-        }
-        if status.isActive && !status.isInTrialPeriod {
-            return "Upgrade your plan to see more, or wait for your subscription to renew"
-        }
-        return "Upgrade to unlock the full training plan"
+        "Upgrade your plan to see more, or wait for your subscription to renew"
     }
 
     private func weeksInWindow(plan: TrainingPlan, futureWeekCount: Int) -> [TrainingWeek] {

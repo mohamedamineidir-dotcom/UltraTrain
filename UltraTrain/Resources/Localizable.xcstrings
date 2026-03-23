@@ -1628,6 +1628,9 @@
         }
       }
     },
+    "•" : {
+
+    },
     "• %@" : {
       "localizations" : {
         "fr" : {
@@ -3249,6 +3252,9 @@
         }
       }
     },
+    "Changes automatically update your future training sessions." : {
+
+    },
     "Changes run sort order" : {
       "localizations" : {
         "fr" : {
@@ -4052,6 +4058,9 @@
           }
         }
       }
+    },
+    "Confirm" : {
+
     },
     "Confirm New Password" : {
       "localizations" : {
@@ -7017,6 +7026,9 @@
     "How should we build your plan?" : {
 
     },
+    "How was last week?" : {
+
+    },
     "How Was Your Nutrition?" : {
       "localizations" : {
         "fr" : {
@@ -7682,6 +7694,9 @@
       }
     },
     "Key" : {
+
+    },
+    "KEY" : {
 
     },
     "Key takeaways" : {
@@ -12922,6 +12937,9 @@
         }
       }
     },
+    "Select Sessions" : {
+
+    },
     "Select the terrain difficulty of your race course" : {
       "localizations" : {
         "fr" : {
@@ -14396,9 +14414,6 @@
         }
       }
     },
-    "These preferences affect how your training plan is generated. Regenerate your plan to apply changes." : {
-
-    },
     "This device may be compromised. Your training and health data could be at risk." : {
       "localizations" : {
         "fr" : {
@@ -15221,7 +15236,7 @@
         }
       }
     },
-    "Upgrade to unlock the full training plan" : {
+    "Updating your training plan..." : {
 
     },
     "Uphill Training" : {
@@ -15601,6 +15616,16 @@
         }
       }
     },
+    "Week %lld had %lld planned sessions with no recorded runs." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Week %1$lld had %2$lld planned sessions with no recorded runs."
+          }
+        }
+      }
+    },
     "Week %lld, %@ phase. %lld of %lld sessions completed. %lld runs this month." : {
       "localizations" : {
         "en" : {
@@ -15926,6 +15951,9 @@
       }
     },
     "Where do you do your uphill training?" : {
+
+    },
+    "Which sessions did you complete?" : {
 
     },
     "Work Intervals" : {

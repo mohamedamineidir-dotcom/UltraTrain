@@ -21,6 +21,7 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
     private static let cachedActiveKey = "subscription_is_active"
     private static let cachedProductIdKey = "subscription_product_id"
     private static let cachedExpirationKey = "subscription_expiration"
+    private static let cachedTrialKey = "subscription_is_trial"
 
     // MARK: - State
 
@@ -44,7 +45,7 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
                 isActive: true,
                 tier: .premium,
                 expirationDate: UserDefaults.standard.object(forKey: Self.cachedExpirationKey) as? Date,
-                isInTrialPeriod: false,
+                isInTrialPeriod: UserDefaults.standard.bool(forKey: Self.cachedTrialKey),
                 willAutoRenew: true,
                 productId: UserDefaults.standard.string(forKey: Self.cachedProductIdKey)
             )
@@ -278,6 +279,7 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
         UserDefaults.standard.set(status.isActive, forKey: Self.cachedActiveKey)
         UserDefaults.standard.set(status.productId, forKey: Self.cachedProductIdKey)
         UserDefaults.standard.set(status.expirationDate, forKey: Self.cachedExpirationKey)
+        UserDefaults.standard.set(status.isInTrialPeriod, forKey: Self.cachedTrialKey)
     }
 }
 
