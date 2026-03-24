@@ -27,6 +27,7 @@ enum LongRunCurveCalculator {
         raceDurationSeconds: TimeInterval,
         raceEffectiveKm: Double,
         preferredRunsPerWeek: Int,
+        currentWeeklyVolumeKm: Double = 40,
         previousNonRecoveryWeekTotal: TimeInterval = 0,
         taperProfile: TaperProfile? = nil,
         weekNumberInTaper: Int = 0
@@ -41,6 +42,10 @@ enum LongRunCurveCalculator {
             totalWeeks: totalWeeks,
             phase: phase,
             experience: experience,
+            philosophy: philosophy,
+            raceGoal: raceGoal,
+            preferredRunsPerWeek: preferredRunsPerWeek,
+            currentWeeklyVolumeKm: currentWeeklyVolumeKm,
             raceDurationSeconds: raceDurationSeconds,
             taperProfile: taperProfile
         )
@@ -77,6 +82,8 @@ enum LongRunCurveCalculator {
                 weekIndex: weekIndex,
                 totalWeeks: totalWeeks,
                 experience: experience,
+                philosophy: philosophy,
+                raceGoal: raceGoal,
                 raceDurationSeconds: raceDurationSeconds,
                 taperProfile: taperProfile
             )
@@ -132,6 +139,18 @@ enum LongRunCurveCalculator {
                 let easyBudget = max(supportingBudget - vg, 0)
                 easy1 = max(easyBudget * 0.5, easyFloor)
                 easy2 = max(easyBudget * 0.5, easyFloor)
+            }
+            // Cap easy runs during B2B weeks and redistribute excess to B2B days
+            let b2bEasyMax = AppConfiguration.Training.b2bEasyRunMaxMinutes * 60
+            let excess1 = max(easy1 - b2bEasyMax, 0)
+            let excess2 = max(easy2 - b2bEasyMax, 0)
+            easy1 = min(easy1, b2bEasyMax)
+            easy2 = min(easy2, b2bEasyMax)
+            let totalExcess = excess1 + excess2
+            if totalExcess > 0 {
+                b2bDay1 += totalExcess * AppConfiguration.Training.b2bDay1Split
+                b2bDay2 += totalExcess * AppConfiguration.Training.b2bDay2Split
+                longRun = b2bDay1 + b2bDay2
             }
         } else {
             longRun = rawLongRun
@@ -200,17 +219,31 @@ enum LongRunCurveCalculator {
         totalWeeks: Int,
         phase: TrainingPhase,
         experience: ExperienceLevel,
+        philosophy: TrainingPhilosophy = .balanced,
+        raceGoal: RaceGoal = .finish,
+        preferredRunsPerWeek: Int = 5,
+        currentWeeklyVolumeKm: Double = 40,
         raceDurationSeconds: TimeInterval,
         taperProfile: TaperProfile? = nil
     ) -> TimeInterval {
         guard phase != .taper else {
             // Taper base = 85% of peak → then durations() multiplies by weekly fraction
-            let peak = peakSingleLongRun(experience, raceDurationSeconds: raceDurationSeconds)
+            let peak = peakSingleLongRun(
+                experience, raceDurationSeconds: raceDurationSeconds,
+                philosophy: philosophy, raceGoal: raceGoal
+            )
             return peak * AppConfiguration.Training.taperLongRunPeakFraction
         }
 
-        let start = longRunStart(experience)
-        let peak = peakSingleLongRun(experience, raceDurationSeconds: raceDurationSeconds)
+        let start = longRunStart(
+            experience,
+            currentWeeklyVolumeKm: currentWeeklyVolumeKm,
+            preferredRunsPerWeek: preferredRunsPerWeek
+        )
+        let peak = peakSingleLongRun(
+            experience, raceDurationSeconds: raceDurationSeconds,
+            philosophy: philosophy, raceGoal: raceGoal
+        )
 
         // Build weeks only (base + build + peak, excluding taper)
         let buildWeekCount = max(totalWeeks - taperWeekEstimate(totalWeeks, taperProfile: taperProfile), 1)
@@ -271,13 +304,20 @@ enum LongRunCurveCalculator {
         weekIndex: Int,
         totalWeeks: Int,
         experience: ExperienceLevel,
+        philosophy: TrainingPhilosophy = .balanced,
+        raceGoal: RaceGoal = .finish,
         raceDurationSeconds: TimeInterval,
         taperProfile: TaperProfile? = nil
     ) -> TimeInterval {
         let startCombined = AppConfiguration.Training.b2bStartCombinedHours * 3600
         let maxCapHours = AppConfiguration.Training.peakB2BMaxHours[experience.rawValue] ?? 16.0
+
+        // Philosophy/goal shift B2B peak
+        let philMult = AppConfiguration.Training.philosophyPeakMultiplier[philosophy.rawValue] ?? 1.0
+        let goalMult = AppConfiguration.Training.goalPeakMultiplier[raceGoalConfigKey(raceGoal)] ?? 1.0
+
         let peakCombined = min(
-            raceDurationSeconds * AppConfiguration.Training.peakB2BCombinedFraction,
+            raceDurationSeconds * AppConfiguration.Training.peakB2BCombinedFraction * philMult * goalMult,
             maxCapHours * 3600
         )
 
@@ -334,20 +374,42 @@ enum LongRunCurveCalculator {
 
     // MARK: - Helpers
 
-    private static func longRunStart(_ experience: ExperienceLevel) -> TimeInterval {
-        let key = experience.rawValue
-        let minutes = AppConfiguration.Training.longRunStartMinutes[key] ?? 60
-        return minutes * 60
+    private static func longRunStart(
+        _ experience: ExperienceLevel,
+        currentWeeklyVolumeKm: Double = 40,
+        preferredRunsPerWeek: Int = 5
+    ) -> TimeInterval {
+        let baseMinutes = AppConfiguration.Training.longRunStartMinutes[experience.rawValue] ?? 60
+
+        // Estimate current long run as ~30% of weekly volume at 6.5 min/km pace
+        let estimatedCurrentLRMinutes = currentWeeklyVolumeKm * 0.30 * 6.5
+
+        // Use the higher of base or estimated current, so we don't regress
+        let startMinutes = max(baseMinutes, estimatedCurrentLRMinutes)
+
+        // Scale by runs/week: fewer runs → longer each run (cap at 1.3×)
+        let runsScale = 5.0 / max(Double(preferredRunsPerWeek), 3.0)
+        let scaled = startMinutes * min(runsScale, 1.3)
+
+        return scaled * 60
     }
 
     private static func peakSingleLongRun(
         _ experience: ExperienceLevel,
-        raceDurationSeconds: TimeInterval
+        raceDurationSeconds: TimeInterval,
+        philosophy: TrainingPhilosophy = .balanced,
+        raceGoal: RaceGoal = .finish
     ) -> TimeInterval {
         let key = experience.rawValue
         let fraction = AppConfiguration.Training.peakSingleLRFraction[key] ?? 0.50
-        let maxSeconds = AppConfiguration.Training.peakSingleLRMaxHours * 3600
-        return min(raceDurationSeconds * fraction, maxSeconds)
+        let maxSeconds = (AppConfiguration.Training.peakSingleLRMaxHours[key] ?? 10.0) * 3600
+
+        // Philosophy and goal shift the peak target
+        let philMult = AppConfiguration.Training.philosophyPeakMultiplier[philosophy.rawValue] ?? 1.0
+        let goalMult = AppConfiguration.Training.goalPeakMultiplier[raceGoalConfigKey(raceGoal)] ?? 1.0
+        let personalizedFraction = fraction * philMult * goalMult
+
+        return min(raceDurationSeconds * personalizedFraction, maxSeconds)
     }
 
     static func taperWeekEstimate(_ totalWeeks: Int, taperProfile: TaperProfile? = nil) -> Int {
@@ -371,6 +433,14 @@ enum LongRunCurveCalculator {
         case .finish:          0.90  // Conservative — focus on completing
         case .targetTime:      1.00  // Moderate — balanced approach
         case .targetRanking:   1.10  // Aggressive — competitive volume
+        }
+    }
+
+    private static func raceGoalConfigKey(_ goal: RaceGoal) -> String {
+        switch goal {
+        case .finish:          "finish"
+        case .targetTime:      "targetTime"
+        case .targetRanking:   "targetRanking"
         }
     }
 }

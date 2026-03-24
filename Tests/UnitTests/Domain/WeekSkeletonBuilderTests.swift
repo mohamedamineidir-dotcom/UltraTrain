@@ -85,21 +85,30 @@ struct WeekSkeletonBuilderTests {
         let phases = makePhases([(.base, 4), (.build, 12)])
         let skeletons = WeekSkeletonBuilder.build(raceDate: raceDate, phases: phases, recoveryCycle: 3)
 
-        // Base phase: 4 weeks, counter resets per phase
-        // Base recovery at index 3 (week 4 = 4th normal week triggers recovery? no — counter resets)
-        // Build phase: 12 weeks, recovery at build indices 3, 7, 11
-        let baseRecovery = skeletons[0..<4].enumerated()
+        let recoveryIndices = skeletons.enumerated()
             .filter { $0.element.isRecoveryWeek }
             .map { $0.offset }
-        let buildRecovery = skeletons[4..<16].enumerated()
-            .filter { $0.element.isRecoveryWeek }
-            .map { $0.offset + 4 }
 
-        // Base: 4 weeks, counter goes 1,2,3,4→recovery but index 3 is last phase week → no recovery
-        #expect(baseRecovery.isEmpty, "4-week base with no recovery (last week excluded)")
-        // Build: 12 weeks, recovery at build-internal indices 3,7,11 → global 7,11 (11 is last → excluded)
-        #expect(buildRecovery == [7, 11] || buildRecovery == [7],
-                "Build recovery at week 8 and/or 12, got \(buildRecovery)")
+        // Counter persists across phases: recovery at every 4th week globally
+        // Index 15 would be recovery but it's the last non-taper week
+        #expect(recoveryIndices == [3, 7, 11],
+                "Expected recovery at weeks 4,8,12 (indices 3,7,11), got \(recoveryIndices)")
+    }
+
+    @Test("recovery counter persists across phase boundaries")
+    func recoveryPersistsAcrossPhases() {
+        // 3-week base + 9-week build = 12 weeks total
+        let phases = makePhases([(.base, 3), (.build, 9)])
+        let skeletons = WeekSkeletonBuilder.build(raceDate: raceDate, phases: phases, recoveryCycle: 3)
+
+        let recoveryIndices = skeletons.enumerated()
+            .filter { $0.element.isRecoveryWeek }
+            .map { $0.offset }
+
+        // Counter carries through: recovery at index 3 (crosses base→build boundary) and 7
+        // Index 11 is last non-taper week → no recovery
+        #expect(recoveryIndices == [3, 7],
+                "Expected recovery at indices 3,7 across phases, got \(recoveryIndices)")
     }
 
     @Test("taper weeks are never marked as recovery")
@@ -111,12 +120,18 @@ struct WeekSkeletonBuilderTests {
         #expect(taperSkeletons.allSatisfy { !$0.isRecoveryWeek })
     }
 
-    @Test("last week of a phase is not marked as recovery")
-    func lastPhaseWeekNotRecovery() {
-        let phases = makePhases([(.base, 3)]) // With cycle 3, week 3 is the last → not recovery
+    @Test("last non-taper week is not marked as recovery")
+    func lastNonTaperWeekNotRecovery() {
+        // 4 build + 2 taper: last non-taper week is index 3
+        let phases = makePhases([(.build, 4), (.taper, 2)])
         let skeletons = WeekSkeletonBuilder.build(raceDate: raceDate, phases: phases, recoveryCycle: 3)
 
-        #expect(skeletons.last?.isRecoveryWeek == false)
+        // Index 3 is the last non-taper week — should NOT be recovery even though count=4 > 3
+        #expect(skeletons[3].isRecoveryWeek == false,
+                "Last week before taper should not be recovery")
+        // Taper weeks also not recovery
+        #expect(skeletons[4].isRecoveryWeek == false)
+        #expect(skeletons[5].isRecoveryWeek == false)
     }
 
     // MARK: - Dates

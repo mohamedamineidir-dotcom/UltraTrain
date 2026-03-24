@@ -7,7 +7,7 @@ struct LongRunCurveCalculatorTests {
 
     // MARK: - Long Run Progression
 
-    @Test("long run starts at experience-based duration")
+    @Test("long run starts at fitness-anchored duration")
     func longRunStartDuration() {
         let d = LongRunCurveCalculator.durations(
             weekIndex: 0,
@@ -18,11 +18,12 @@ struct LongRunCurveCalculatorTests {
             philosophy: .balanced,
             raceDurationSeconds: 50400,
             raceEffectiveKm: 150,
-            preferredRunsPerWeek: 5
+            preferredRunsPerWeek: 5,
+            currentWeeklyVolumeKm: 40
         )
-        // Intermediate starts at 60min = 3600s
-        #expect(d.longRunSeconds >= 3500 && d.longRunSeconds <= 4000,
-                "Intermediate long run should start around 60min, got \(d.longRunSeconds / 60)min")
+        // Intermediate with 40km/week: estimated LR = 40 × 0.30 × 6.5 = 78min
+        #expect(d.longRunSeconds >= 4200 && d.longRunSeconds <= 5400,
+                "Intermediate 40km/week long run should start around 75-80min, got \(d.longRunSeconds / 60)min")
     }
 
     @Test("long run grows quadratically across plan")
@@ -583,8 +584,8 @@ struct LongRunCurveCalculatorTests {
                 if b2bCount > introCount {
                     let b2bCombined = d.b2bDay1Seconds + d.b2bDay2Seconds
                     let fraction = b2bCombined / d.totalSeconds
-                    #expect(fraction >= 0.75 && fraction <= 0.92,
-                            "B2B days should be ~85% of total, got \(Int(fraction * 100))% at W\(week)")
+                    #expect(fraction >= 0.75 && fraction <= 0.95,
+                            "B2B days should be ~85-90% of total, got \(Int(fraction * 100))% at W\(week)")
                 }
             }
 
@@ -708,6 +709,69 @@ struct LongRunCurveCalculatorTests {
         }
     }
 
+    @Test("B2B easy runs are capped at 50 minutes")
+    func b2bEasyRunsCappedAt50Min() {
+        // Use a very large previousNonRecoveryWeekTotal to inflate supporting budget
+        let d = LongRunCurveCalculator.durations(
+            weekIndex: 18,
+            totalWeeks: 24,
+            phase: .build,
+            isRecoveryWeek: false,
+            experience: .advanced,
+            philosophy: .balanced,
+            raceDurationSeconds: 126000,
+            raceEffectiveKm: 270,
+            preferredRunsPerWeek: 5,
+            previousNonRecoveryWeekTotal: 80000 // ~22h previous week to inflate budget
+        )
+
+        if d.isB2B {
+            let maxEasySeconds = AppConfiguration.Training.b2bEasyRunMaxMinutes * 60
+            #expect(d.easyRun1Seconds <= maxEasySeconds,
+                    "B2B easy run 1 should be ≤ \(maxEasySeconds/60)min, got \(d.easyRun1Seconds/60)min")
+            #expect(d.easyRun2Seconds <= maxEasySeconds,
+                    "B2B easy run 2 should be ≤ \(maxEasySeconds/60)min, got \(d.easyRun2Seconds/60)min")
+        }
+    }
+
+    @Test("B2B excess from capped easy runs is redistributed to B2B days")
+    func b2bExcessRedistributedToB2BRuns() {
+        // Compare B2B with normal vs inflated previous week
+        let normalPrev = LongRunCurveCalculator.durations(
+            weekIndex: 18,
+            totalWeeks: 24,
+            phase: .build,
+            isRecoveryWeek: false,
+            experience: .advanced,
+            philosophy: .balanced,
+            raceDurationSeconds: 126000,
+            raceEffectiveKm: 270,
+            preferredRunsPerWeek: 5,
+            previousNonRecoveryWeekTotal: 30000 // modest previous week
+        )
+        let inflatedPrev = LongRunCurveCalculator.durations(
+            weekIndex: 18,
+            totalWeeks: 24,
+            phase: .build,
+            isRecoveryWeek: false,
+            experience: .advanced,
+            philosophy: .balanced,
+            raceDurationSeconds: 126000,
+            raceEffectiveKm: 270,
+            preferredRunsPerWeek: 5,
+            previousNonRecoveryWeekTotal: 80000 // inflated previous week
+        )
+
+        if normalPrev.isB2B && inflatedPrev.isB2B {
+            // When easy runs are capped, excess goes to B2B days
+            // So inflated should have higher B2B but same or lower easy runs
+            let inflatedB2B = inflatedPrev.b2bDay1Seconds + inflatedPrev.b2bDay2Seconds
+            let normalB2B = normalPrev.b2bDay1Seconds + normalPrev.b2bDay2Seconds
+            #expect(inflatedB2B >= normalB2B,
+                    "Inflated B2B combined (\(inflatedB2B/60)min) should be >= normal (\(normalB2B/60)min)")
+        }
+    }
+
     @Test("short plans (≤18 weeks) have only 1 intro B2B week")
     func b2bShortPlanHasOneIntroWeek() {
         let shortIntro = LongRunCurveCalculator.effectiveIntroCount(totalWeeks: 16)
@@ -820,6 +884,151 @@ struct LongRunCurveCalculatorTests {
         #expect(d.vgSeconds == 0, "True taper should have no VG, got \(d.vgSeconds/60)min")
         #expect(d.longRunSeconds > 0, "True taper should still have a long run")
         #expect(d.easyRun1Seconds > 0, "True taper should still have easy runs")
+    }
+
+    // MARK: - Volume Personalization
+
+    @Test("performance philosophy produces higher peak LR than enjoyment")
+    func performancePeakHigherThanEnjoyment() {
+        let totalWeeks = 20
+        let peakWeek = 17 // near end of build
+        let raceDuration: TimeInterval = 50400 // ~14h
+
+        let performance = LongRunCurveCalculator.longRunDuration(
+            weekIndex: peakWeek,
+            totalWeeks: totalWeeks,
+            phase: .build,
+            experience: .intermediate,
+            philosophy: .performance,
+            raceGoal: .finish,
+            raceDurationSeconds: raceDuration
+        )
+        let enjoyment = LongRunCurveCalculator.longRunDuration(
+            weekIndex: peakWeek,
+            totalWeeks: totalWeeks,
+            phase: .build,
+            experience: .intermediate,
+            philosophy: .enjoyment,
+            raceGoal: .finish,
+            raceDurationSeconds: raceDuration
+        )
+
+        #expect(performance > enjoyment,
+                "Performance LR (\(performance/60)min) should exceed enjoyment (\(enjoyment/60)min)")
+        let ratio = performance / enjoyment
+        #expect(ratio >= 1.2, "Performance should be at least 20% higher, got \(Int((ratio - 1) * 100))%")
+    }
+
+    @Test("targetRanking goal produces higher peak LR than finish goal")
+    func goalRankingHigherThanFinish() {
+        let totalWeeks = 20
+        let peakWeek = 17
+        let raceDuration: TimeInterval = 50400
+
+        let ranking = LongRunCurveCalculator.longRunDuration(
+            weekIndex: peakWeek,
+            totalWeeks: totalWeeks,
+            phase: .build,
+            experience: .advanced,
+            raceGoal: .targetRanking(50),
+            raceDurationSeconds: raceDuration
+        )
+        let finish = LongRunCurveCalculator.longRunDuration(
+            weekIndex: peakWeek,
+            totalWeeks: totalWeeks,
+            phase: .build,
+            experience: .advanced,
+            raceGoal: .finish,
+            raceDurationSeconds: raceDuration
+        )
+
+        #expect(ranking > finish,
+                "Ranking LR (\(ranking/60)min) should exceed finish (\(finish/60)min)")
+    }
+
+    @Test("high volume runner starts with higher long run than low volume runner")
+    func highVolumeRunnerStartsHigher() {
+        let totalWeeks = 20
+        let raceDuration: TimeInterval = 50400
+
+        let highVolume = LongRunCurveCalculator.longRunDuration(
+            weekIndex: 0,
+            totalWeeks: totalWeeks,
+            phase: .base,
+            experience: .intermediate,
+            currentWeeklyVolumeKm: 80,
+            raceDurationSeconds: raceDuration
+        )
+        let lowVolume = LongRunCurveCalculator.longRunDuration(
+            weekIndex: 0,
+            totalWeeks: totalWeeks,
+            phase: .base,
+            experience: .intermediate,
+            currentWeeklyVolumeKm: 30,
+            raceDurationSeconds: raceDuration
+        )
+
+        #expect(highVolume > lowVolume,
+                "80km/wk runner LR start (\(highVolume/60)min) should exceed 30km/wk (\(lowVolume/60)min)")
+        let ratio = highVolume / lowVolume
+        #expect(ratio >= 1.5, "High volume start should be at least 50% higher, got \(Int((ratio - 1) * 100))%")
+    }
+
+    @Test("per-experience LR cap applied: beginner capped lower than advanced")
+    func perExperienceLRCapApplied() {
+        let totalWeeks = 20
+        let peakWeek = 17
+        let raceDuration: TimeInterval = 216000 // 60h ultra
+
+        let beginner = LongRunCurveCalculator.longRunDuration(
+            weekIndex: peakWeek,
+            totalWeeks: totalWeeks,
+            phase: .build,
+            experience: .beginner,
+            raceDurationSeconds: raceDuration
+        )
+        let advanced = LongRunCurveCalculator.longRunDuration(
+            weekIndex: peakWeek,
+            totalWeeks: totalWeeks,
+            phase: .build,
+            experience: .advanced,
+            raceDurationSeconds: raceDuration
+        )
+
+        // Beginner cap = 5h, Advanced cap = 10h
+        #expect(beginner <= 5.0 * 3600 + 1,
+                "Beginner LR should be capped at 5h, got \(beginner/3600)h")
+        #expect(advanced <= 10.0 * 3600 + 1,
+                "Advanced LR should be capped at 10h, got \(advanced/3600)h")
+        #expect(advanced > beginner,
+                "Advanced peak LR (\(advanced/3600)h) should exceed beginner (\(beginner/3600)h)")
+    }
+
+    @Test("B2B combined duration varies by philosophy")
+    func b2bCombinedVariesByPhilosophy() {
+        let totalWeeks = 24
+        let peakWeek = 20
+        let raceDuration: TimeInterval = 126000
+
+        let performance = LongRunCurveCalculator.b2bCombinedDuration(
+            weekIndex: peakWeek,
+            totalWeeks: totalWeeks,
+            experience: .advanced,
+            philosophy: .performance,
+            raceGoal: .targetRanking(50),
+            raceDurationSeconds: raceDuration
+        )
+        let enjoyment = LongRunCurveCalculator.b2bCombinedDuration(
+            weekIndex: peakWeek,
+            totalWeeks: totalWeeks,
+            experience: .advanced,
+            philosophy: .enjoyment,
+            raceGoal: .finish,
+            raceDurationSeconds: raceDuration
+        )
+
+        #expect(performance > enjoyment,
+                "Performance B2B (\(performance/3600)h) should exceed enjoyment (\(enjoyment/3600)h)")
     }
 
     @Test("Volume transition weeks (week 0-1) keep quality sessions for 100K+")

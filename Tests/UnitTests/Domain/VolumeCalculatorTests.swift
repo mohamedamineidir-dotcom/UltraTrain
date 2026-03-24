@@ -314,6 +314,118 @@ struct VolumeCalculatorTests {
         }
     }
 
+    @Test("elevation progressively ramps up across the plan")
+    func elevationProgressivelyRampsUp() {
+        let skeletons = (1...20).map { makeSkeleton(weekNumber: $0, phase: .build) }
+        let result = VolumeCalculator.calculate(
+            skeletons: skeletons,
+            currentWeeklyVolumeKm: 30,
+            raceDistanceKm: 170,
+            raceElevationGainM: 10000,
+            experience: .intermediate,
+            raceDurationSeconds: 50400,
+            raceEffectiveKm: 220
+        )
+
+        let firstElev = result.first!.targetElevationGainM
+        let lastElev = result.last!.targetElevationGainM
+        // First week elevation density should be ~30% of peak
+        // Even accounting for lower km in week 1, the ratio should be > 2x
+        #expect(lastElev / firstElev > 2.0,
+                "Peak elevation (\(lastElev)m) should be at least 2x first week (\(firstElev)m)")
+    }
+
+    @Test("early week elevation matches low volume — no excessive D+")
+    func earlyWeekElevationIsReasonable() {
+        // Simulate a mountainous UTMB-like race: 170km, 10000m D+ (58.8 m/km)
+        let skeletons = (1...24).map { makeSkeleton(weekNumber: $0, phase: .build) }
+        let result = VolumeCalculator.calculate(
+            skeletons: skeletons,
+            currentWeeklyVolumeKm: 30,
+            raceDistanceKm: 170,
+            raceElevationGainM: 10000,
+            experience: .intermediate,
+            raceDurationSeconds: 126000,
+            raceEffectiveKm: 270
+        )
+
+        let firstWeekElev = result.first!.targetElevationGainM
+        let firstWeekHours = result.first!.targetDurationSeconds / 3600
+        // For a ~3.5h first week, D+ should be < 800m (not 2000m)
+        #expect(firstWeekElev < 800,
+                "First week (\(firstWeekHours)h) D+ should be < 800m, got \(firstWeekElev)m")
+    }
+
+    // MARK: - Volume Personalization
+
+    @Test("different profiles produce different peak week totals")
+    func differentProfilesProduceDifferentPeaks() {
+        let skeletons = (1...20).map { makeSkeleton(weekNumber: $0, phase: .build) }
+
+        let performanceHigh = VolumeCalculator.calculate(
+            skeletons: skeletons,
+            currentWeeklyVolumeKm: 80,
+            raceDistanceKm: 170,
+            raceElevationGainM: 10000,
+            experience: .advanced,
+            philosophy: .performance,
+            raceGoal: .targetRanking(50),
+            raceDurationSeconds: 126000,
+            raceEffectiveKm: 270,
+            preferredRunsPerWeek: 6
+        )
+        let enjoymentLow = VolumeCalculator.calculate(
+            skeletons: skeletons,
+            currentWeeklyVolumeKm: 30,
+            raceDistanceKm: 170,
+            raceElevationGainM: 10000,
+            experience: .intermediate,
+            philosophy: .enjoyment,
+            raceGoal: .finish,
+            raceDurationSeconds: 126000,
+            raceEffectiveKm: 270,
+            preferredRunsPerWeek: 4
+        )
+
+        let perfPeak = performanceHigh.last!.targetDurationSeconds
+        let enjoyPeak = enjoymentLow.last!.targetDurationSeconds
+        let ratio = perfPeak / enjoyPeak
+
+        #expect(ratio >= 1.2,
+                "Performance peak (\(perfPeak/3600)h) should be at least 20% more than enjoyment (\(enjoyPeak/3600)h), ratio=\(ratio)")
+    }
+
+    @Test("current weekly volume affects week 1 total")
+    func currentVolumeAffectsWeek1() {
+        let skeletons = (1...12).map { makeSkeleton(weekNumber: $0, phase: .build) }
+
+        let highVolume = VolumeCalculator.calculate(
+            skeletons: skeletons,
+            currentWeeklyVolumeKm: 80,
+            raceDistanceKm: 100,
+            raceElevationGainM: 5000,
+            experience: .intermediate,
+            raceDurationSeconds: 50400,
+            raceEffectiveKm: 150,
+            preferredRunsPerWeek: 5
+        )
+        let lowVolume = VolumeCalculator.calculate(
+            skeletons: skeletons,
+            currentWeeklyVolumeKm: 25,
+            raceDistanceKm: 100,
+            raceElevationGainM: 5000,
+            experience: .intermediate,
+            raceDurationSeconds: 50400,
+            raceEffectiveKm: 150,
+            preferredRunsPerWeek: 5
+        )
+
+        let highW1 = highVolume.first!.targetDurationSeconds
+        let lowW1 = lowVolume.first!.targetDurationSeconds
+        #expect(highW1 > lowW1,
+                "80km/wk runner W1 (\(highW1/60)min) should exceed 25km/wk (\(lowW1/60)min)")
+    }
+
     @Test("elevation density capped for steep short races")
     func elevationDensityCapped() {
         let skeletons = [makeSkeleton(weekNumber: 1, phase: .build)]

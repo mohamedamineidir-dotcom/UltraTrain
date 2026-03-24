@@ -61,6 +61,7 @@ enum VolumeCalculator {
                 raceDurationSeconds: raceDurationSeconds,
                 raceEffectiveKm: raceEffectiveKm,
                 preferredRunsPerWeek: preferredRunsPerWeek,
+                currentWeeklyVolumeKm: currentWeeklyVolumeKm,
                 previousNonRecoveryWeekTotal: previousNonRecoveryWeekTotal,
                 taperProfile: taperProfile,
                 weekNumberInTaper: weekInTaper
@@ -79,10 +80,14 @@ enum VolumeCalculator {
             let derivedKm = durations.totalSeconds / avgPaceSecPerKm
 
             // Elevation: proportional to derived km with race elevation density
+            // Progressive ramp prevents excessive D+ in early low-volume weeks
+            let planProgress = totalWeeks > 1
+                ? Double(index) / Double(totalWeeks - 1) : 1.0
             let elevation = elevationForVolume(
                 derivedKm,
                 raceDistanceKm: raceDistanceKm,
-                raceElevationGainM: raceElevationGainM
+                raceElevationGainM: raceElevationGainM,
+                planProgress: planProgress
             )
 
             volumes.append(WeekVolume(
@@ -107,12 +112,19 @@ enum VolumeCalculator {
         return volumes
     }
 
-    private static func elevationForVolume(_ volume: Double, raceDistanceKm: Double, raceElevationGainM: Double) -> Double {
+    private static func elevationForVolume(
+        _ volume: Double,
+        raceDistanceKm: Double,
+        raceElevationGainM: Double,
+        planProgress: Double
+    ) -> Double {
         guard raceDistanceKm > 0 else { return 0 }
         let raceElevationPerKm = raceElevationGainM / raceDistanceKm
         // Cap training elevation density at 60 m/km to prevent extreme values
         // for short, steep races (e.g., 13km/1500D+ = 115 m/km)
         let trainingElevationPerKm = min(raceElevationPerKm, 60.0)
-        return volume * trainingElevationPerKm
+        // Progressive ramp: 30% density at plan start → 100% at peak
+        let progressFactor = 0.30 + 0.70 * planProgress
+        return volume * trainingElevationPerKm * progressFactor
     }
 }

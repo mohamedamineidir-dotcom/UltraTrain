@@ -63,7 +63,17 @@ enum AppConfiguration {
         static let peakSingleLRFraction: [String: Double] = [
             "beginner": 0.40, "intermediate": 0.50, "advanced": 0.55, "elite": 0.60
         ]
-        static let peakSingleLRMaxHours: Double = 10.0
+        static let peakSingleLRMaxHours: [String: Double] = [
+            "beginner": 5.0, "intermediate": 8.0, "advanced": 10.0, "elite": 12.0
+        ]
+
+        // Peak volume personalization multipliers (wider spread than base session multipliers)
+        static let philosophyPeakMultiplier: [String: Double] = [
+            "enjoyment": 0.80, "balanced": 1.00, "performance": 1.15
+        ]
+        static let goalPeakMultiplier: [String: Double] = [
+            "finish": 0.85, "targetTime": 1.00, "targetRanking": 1.10
+        ]
         static let peakB2BCombinedFraction: Double = 0.75
         static let peakB2BMaxHours: [String: Double] = [
             "intermediate": 14.0,
@@ -81,6 +91,7 @@ enum AppConfiguration {
         static let b2bIntroVolumeRatio: Double = 0.935        // intro B2B = 93.5% of prev week
         static let b2bMinExceedPreviousRatio: Double = 1.02   // regular B2B >= 102% of prev week
         static let b2bHardestWeekCount: Int = 2               // last N B2B weeks drop all quality
+        static let b2bEasyRunMaxMinutes: Double = 50            // max easy run duration in B2B weeks
 
         // Taper
         static let taperLongRunPeakFraction: Double = 0.85   // taper LR base = 85% of peak LR
