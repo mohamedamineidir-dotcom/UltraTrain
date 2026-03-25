@@ -230,10 +230,14 @@ enum WorkoutProgressionEngine {
 
         let starterWork = 10.0 * 60.0 * multiplier
         let peakWork = 40.0 * 60.0 * multiplier
-        let totalWorkSec = starterWork + (peakWork - starterWork) * planProgress
+        let rawTotalWork = starterWork + (peakWork - starterWork) * planProgress
+        let totalWorkSec = min(rawTotalWork, maxTotalWorkSeconds(for: effectiveFocus))
 
         let params = intervalFocusParams(effectiveFocus, planProgress: planProgress)
-        let reps = min(max(Int((totalWorkSec / params.setDurationSec).rounded()), 2), params.maxReps)
+        // Micro-variation: shift target set duration on odd weeks to prevent identical consecutive sessions
+        let weekVariation: Double = ctx.weekIndexInPlan % 2 == 1 ? 15.0 : 0.0
+        let targetSetDuration = params.setDurationSec + weekVariation
+        let reps = min(max(Int((totalWorkSec / targetSetDuration).rounded()), 2), params.maxReps)
         let actualSetSec = roundToNearest15(totalWorkSec / Double(reps))
         let restSec = roundToNearest15(actualSetSec / params.workRestRatio)
 
@@ -360,10 +364,14 @@ enum WorkoutProgressionEngine {
 
         let starterWork = 12.0 * 60.0 * vgMultiplier
         let peakWork = 36.0 * 60.0 * vgMultiplier
-        let totalWorkSec = starterWork + (peakWork - starterWork) * planProgress
+        let rawTotalWork = starterWork + (peakWork - starterWork) * planProgress
+        let totalWorkSec = min(rawTotalWork, maxTotalWorkSeconds(for: effectiveFocus))
 
         let params = vgFocusParams(effectiveFocus, planProgress: planProgress)
-        let reps = min(max(Int((totalWorkSec / params.setDurationSec).rounded()), 2), params.maxReps)
+        // Micro-variation: shift target set duration on odd weeks to prevent identical consecutive sessions
+        let weekVariation: Double = ctx.weekIndexInPlan % 2 == 1 ? 15.0 : 0.0
+        let targetSetDuration = params.setDurationSec + weekVariation
+        let reps = min(max(Int((totalWorkSec / targetSetDuration).rounded()), 2), params.maxReps)
         let actualSetSec = roundToNearest15(totalWorkSec / Double(reps))
         let restSec = roundToNearest15(actualSetSec / params.workRestRatio)
 

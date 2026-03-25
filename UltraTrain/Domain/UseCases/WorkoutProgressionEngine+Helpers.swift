@@ -72,10 +72,10 @@ extension WorkoutProgressionEngine {
         switch focus {
         case .threshold30:
             FocusParams(
-                setDurationSec: 360 + planProgress * 240,    // 6min → 10min climb
-                intensity: .moderate,
-                workRestRatio: 1.5,                           // 1.5:1 work:rest
-                maxReps: 8
+                setDurationSec: 120 + planProgress * 120,    // 2min → 4min climb (between VO2max & threshold60)
+                intensity: .hard,
+                workRestRatio: 1.0,                           // 1:1 rest (jog descent ≈ climb time)
+                maxReps: 12
             )
         case .vo2max:
             FocusParams(
@@ -105,6 +105,21 @@ extension WorkoutProgressionEngine {
                 workRestRatio: 1.0,
                 maxReps: 2
             )
+        }
+    }
+
+    // MARK: - Total Work Caps
+
+    /// Maximum total set work (excluding warmup/cooldown/rest) per bloc type.
+    /// 30'Threshold: runner can sustain this pace ~30min → sets ≤ 23min total
+    /// 60'Threshold: runner can sustain this pace ~60min → sets ≤ 50min total
+    static func maxTotalWorkSeconds(for focus: PhaseFocus) -> Double {
+        switch focus {
+        case .threshold30:      1380   // 23 minutes
+        case .threshold60:      3000   // 50 minutes
+        case .vo2max:           1200   // 20 minutes
+        case .sharpening:       600    // 10 minutes
+        case .postRaceRecovery: 900    // 15 minutes
         }
     }
 

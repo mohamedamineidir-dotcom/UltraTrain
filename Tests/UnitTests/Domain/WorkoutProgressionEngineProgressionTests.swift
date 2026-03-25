@@ -137,20 +137,21 @@ struct WorkoutProgressionEngineProgressionTests {
         #expect(perf.totalWorkDuration > enjoy.totalWorkDuration)
     }
 
-    // MARK: - 7. VG with threshold30 = Aerobic Climbing
+    // MARK: - 7. VG with threshold30 = Threshold Climbing (2-4min)
 
-    @Test("VG with threshold30 focus produces moderate aerobic climbing")
+    @Test("VG with threshold30 focus produces hard threshold climbing (2-4min sets)")
     func vgThreshold30AerobicClimbing() {
         let workout = WorkoutProgressionEngine.workout(
-            type: .verticalGain, phase: .base, weekInPhase: 0, intensity: .moderate,
+            type: .verticalGain, phase: .base, weekInPhase: 0, intensity: .hard,
             totalDuration: 3600, phaseFocus: .threshold30,
             progressionContext: ctx(weekIndex: 2)
         )
         let setDur = workPhaseDuration(workout)
-        // Threshold30 VG: longer moderate climbs (>=5min at even early progress)
-        #expect(setDur >= 300)
+        // threshold30 VG: 2-4min climbs (between VO2max 1.5-3min and threshold60 5-8min)
+        #expect(setDur >= 90 && setDur <= 300,
+                "VG threshold30 sets should be 1.5-5min, got \(setDur / 60)min")
         let workPhase = workout.phases.first { $0.phaseType == .work }
-        #expect(workPhase?.targetIntensity == .moderate)
+        #expect(workPhase?.targetIntensity == .hard)
     }
 
     // MARK: - 8. VG with vo2max = Short Steep Reps
@@ -232,5 +233,64 @@ struct WorkoutProgressionEngineProgressionTests {
         #expect(!workout.phases.isEmpty)
         let hasWork = workout.phases.contains { $0.phaseType == .work }
         #expect(hasWork)
+    }
+
+    // MARK: - 13. VG threshold30 shorter than VG threshold60
+
+    @Test("VG threshold30 sets are shorter than VG threshold60 sets")
+    func vgThreshold30ShorterThanThreshold60() {
+        let t30 = WorkoutProgressionEngine.workout(
+            type: .verticalGain, phase: .build, weekInPhase: 2, intensity: .hard,
+            totalDuration: 3600, phaseFocus: .threshold30,
+            progressionContext: ctx(weekIndex: 10)
+        )
+        let t60 = WorkoutProgressionEngine.workout(
+            type: .verticalGain, phase: .build, weekInPhase: 2, intensity: .moderate,
+            totalDuration: 3600, phaseFocus: .threshold60,
+            progressionContext: ctx(weekIndex: 10)
+        )
+        let t30Set = workPhaseDuration(t30)
+        let t60Set = workPhaseDuration(t60)
+        #expect(t30Set < t60Set,
+                "VG threshold30 (\(t30Set / 60)min) should have shorter sets than threshold60 (\(t60Set / 60)min)")
+    }
+
+    // MARK: - 14. Threshold30 total work capped at 23 minutes
+
+    @Test("threshold30 total work does not exceed 23 minutes")
+    func threshold30TotalWorkCapped() {
+        let workout = WorkoutProgressionEngine.workout(
+            type: .intervals, phase: .peak, weekInPhase: 5, intensity: .hard,
+            totalDuration: 4500, phaseFocus: .threshold30,
+            progressionContext: ctx(effectiveKm: 200, weekIndex: 23, experience: .elite, philosophy: .performance)
+        )
+        // 1380s = 23 minutes cap for threshold30
+        #expect(workout.totalWorkDuration <= 1380 + 1,
+                "Threshold30 total work should be ≤23min, got \(workout.totalWorkDuration / 60)min")
+    }
+
+    // MARK: - 15. Consecutive weeks produce different sessions
+
+    @Test("consecutive weeks with same focus produce different sessions")
+    func consecutiveWeeksDifferentSessions() {
+        let week8 = WorkoutProgressionEngine.workout(
+            type: .intervals, phase: .build, weekInPhase: 3, intensity: .hard,
+            totalDuration: 3600, phaseFocus: .threshold30,
+            progressionContext: ctx(weekIndex: 8)
+        )
+        let week9 = WorkoutProgressionEngine.workout(
+            type: .intervals, phase: .build, weekInPhase: 4, intensity: .hard,
+            totalDuration: 3600, phaseFocus: .threshold30,
+            progressionContext: ctx(weekIndex: 9)
+        )
+        let set8 = workPhaseDuration(week8)
+        let set9 = workPhaseDuration(week9)
+        let reps8 = week8.phases.first { $0.phaseType == .work }?.repeatCount ?? 0
+        let reps9 = week9.phases.first { $0.phaseType == .work }?.repeatCount ?? 0
+
+        // At least one of set duration or rep count should differ
+        let different = (set8 != set9) || (reps8 != reps9)
+        #expect(different,
+                "Consecutive weeks should not be identical: W8=\(reps8)×\(set8 / 60)min, W9=\(reps9)×\(set9 / 60)min")
     }
 }
