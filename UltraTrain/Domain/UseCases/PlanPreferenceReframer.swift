@@ -140,7 +140,7 @@ struct PlanPreferenceReframer: ReframePlanForPreferencesUseCase {
         return VolumeCalculator.WeekVolume(
             weekNumber: original.weekNumber,
             targetVolumeKm: (original.targetVolumeKm * scale * 10).rounded() / 10,
-            targetElevationGainM: (original.targetElevationGainM * scale * 10).rounded() / 10,
+            targetElevationGainM: ((original.targetElevationGainM * scale) / 5.0).rounded() * 5.0,
             targetDurationSeconds: clampedDuration,
             targetLongRunDurationSeconds: original.targetLongRunDurationSeconds * scale,
             isB2BWeek: original.isB2BWeek,

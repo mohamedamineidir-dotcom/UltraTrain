@@ -93,7 +93,7 @@ enum VolumeCalculator {
             volumes.append(WeekVolume(
                 weekNumber: skeleton.weekNumber,
                 targetVolumeKm: (derivedKm * 10).rounded() / 10,
-                targetElevationGainM: (elevation * 10).rounded() / 10,
+                targetElevationGainM: elevation,
                 targetDurationSeconds: durations.totalSeconds,
                 targetLongRunDurationSeconds: durations.longRunSeconds,
                 isB2BWeek: durations.isB2B,
@@ -123,9 +123,15 @@ enum VolumeCalculator {
         // Cap training elevation density at 60 m/km to prevent extreme values
         // for short, steep races (e.g., 13km/1500D+ = 115 m/km)
         let trainingElevationPerKm = min(raceElevationPerKm, 60.0)
-        // Progressive ramp: 20% density at plan start → 90% at peak
-        // These are minimum targets — athletes can always exceed them
-        let progressFactor = 0.20 + 0.70 * planProgress
-        return volume * trainingElevationPerKm * progressFactor
+        // Progressive ramp: 15% density at plan start → 70% at peak
+        // Keeps D+ manageable through build/peak phases
+        let progressFactor = 0.15 + 0.55 * planProgress
+        let raw = volume * trainingElevationPerKm * progressFactor
+        return roundToNearest5(raw)
+    }
+
+    /// Rounds a value to the nearest 5 (e.g., 1003→1005, 1101→1100).
+    private static func roundToNearest5(_ value: Double) -> Double {
+        (value / 5.0).rounded() * 5.0
     }
 }

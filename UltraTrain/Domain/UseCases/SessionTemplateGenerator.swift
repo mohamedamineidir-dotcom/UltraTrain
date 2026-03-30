@@ -69,14 +69,8 @@ enum SessionTemplateGenerator {
                 duration = roundToNearest5Min(rawDuration)
             }
 
-            // Round elevation to nearest 10m for long runs
-            let elevation: Double
-            switch template.type {
-            case .longRun, .backToBack:
-                elevation = roundToNearest10(rawElevation)
-            default:
-                elevation = rawElevation
-            }
+            // Round all session elevation to nearest 5m for clean numbers
+            let elevation = roundToNearest5(rawElevation)
 
             // Generate workout for active sessions
             var workoutId: UUID?
@@ -471,10 +465,10 @@ enum SessionTemplateGenerator {
         return (seconds / 300.0).rounded() * 300.0
     }
 
-    /// Rounds meters to the nearest 10m.
-    private static func roundToNearest10(_ meters: Double) -> Double {
+    /// Rounds meters to the nearest 5m for clean D+ numbers.
+    private static func roundToNearest5(_ meters: Double) -> Double {
         guard meters > 0 else { return 0 }
-        return (meters / 10.0).rounded() * 10.0
+        return (meters / 5.0).rounded() * 5.0
     }
 
     private static func nutritionNotes(duration: TimeInterval) -> String? {

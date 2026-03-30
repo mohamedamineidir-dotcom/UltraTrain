@@ -144,7 +144,7 @@ enum SessionOptimizer {
             id: UUID(),
             recommendedType: recommendedType,
             distanceKm: max(0, distanceKm.rounded(toPlaces: 1)),
-            elevationGainM: max(0, elevationGainM.rounded(toPlaces: 0)),
+            elevationGainM: max(0, ((elevationGainM / 5.0).rounded() * 5.0)),
             duration: max(0, duration),
             intensity: intensity,
             targetHeartRateZone: targetHRZone,
