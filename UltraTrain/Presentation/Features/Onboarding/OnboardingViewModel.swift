@@ -13,7 +13,7 @@ final class OnboardingViewModel {
     // MARK: - Navigation State
 
     var currentStep = 0
-    let totalSteps = 10
+    let totalSteps = 13
     var isCompleted = false
     var isSaving = false
     var error: String?
@@ -80,11 +80,26 @@ final class OnboardingViewModel {
     var raceTargetTimeMinutes: Int = 0
     var raceTargetRanking: Int = 50
     var raceTerrainDifficulty: TerrainDifficulty = .moderate
+    var raceType: RaceType = .trail
     var isKnownRace: Bool = false
     var targetRankingEstimatedTimeHours: Int = 10
     var targetRankingEstimatedTimeMinutes: Int = 0
     var verticalGainEnvironment: VerticalGainEnvironment = .mountain
     var hasNoRace = false
+
+    // MARK: - Step 6: Injury & Strength Training
+
+    var painFrequency: PainFrequency = .never
+    var injuryCountLastYear: InjuryCount = .none
+    var hasRecentInjury: Bool = false
+    var strengthTrainingPreference: StrengthTrainingPreference = .no
+    var strengthTrainingLocation: StrengthTrainingLocation = .home
+
+    // MARK: - GoalTraining additions
+
+    var runningTerrain: TerrainType = .trail
+    var uphillDuration: UphillDuration? = nil
+    var treadmillMaxIncline: TreadmillIncline? = nil
 
     var isShortRoadRace: Bool {
         raceElevationGainM < 100 && raceDistanceKm < 42.195 && raceDistanceKm > 0
@@ -143,8 +158,23 @@ final class OnboardingViewModel {
 
     // MARK: - Validation
     // Steps: 0=Experience, 1=RunningHistory, 2=PersonalBests, 3=AboutYou,
-    //        4=BodyMetrics, 5=HeartRate, 6=RaceName, 7=RaceProfile,
-    //        8=GoalTraining, 9=Complete
+    //        4=BodyMetrics, 5=HeartRate, 6=InjuryStrength, 7=RaceName,
+    //        8=RaceProfile, 9=GoalTraining, 10=UphillDetails, 11=VolumePreview, 12=Complete
+
+    /// Whether the uphill details step is relevant (elevation-heavy race or VG training needed).
+    var needsUphillDetailsStep: Bool {
+        raceElevationGainM > 500 || hasNoRace
+    }
+
+    var trainingDurationValidation: TrainingDurationValidation? {
+        guard !hasNoRace else { return nil }
+        return TrainingDurationValidator.validate(
+            distanceKm: raceDistanceKm,
+            elevationGainM: raceElevationGainM,
+            raceDate: raceDate,
+            experienceLevel: experienceLevel ?? .beginner
+        )
+    }
 
     var canAdvance: Bool {
         switch currentStep {
@@ -154,9 +184,12 @@ final class OnboardingViewModel {
         case 3: isAboutYouValid
         case 4: isBodyMetricsValid
         case 5: true // Heart rate has sane defaults
-        case 6: hasNoRace || isRaceNameValid
-        case 7: hasNoRace || isRaceProfileValid
-        case 8: hasNoRace ? true : isGoalTrainingValid
+        case 6: true // Injury/strength has sane defaults
+        case 7: hasNoRace || isRaceNameValid
+        case 8: hasNoRace || (isRaceProfileValid && (trainingDurationValidation?.isSufficient ?? true))
+        case 9: hasNoRace ? true : isGoalTrainingValid
+        case 10: true // Uphill details has sane defaults
+        case 11: true // Volume preview
         default: true
         }
     }
@@ -197,8 +230,12 @@ final class OnboardingViewModel {
     func advance() {
         guard canAdvance, currentStep < totalSteps - 1 else { return }
         error = nil
-        if hasNoRace && currentStep == 6 {
-            currentStep = 8 // Skip race profile (7) and go straight to goal/training
+        if hasNoRace && currentStep == 7 {
+            currentStep = 9 // Skip race profile (8), go to goal/training
+        } else if hasNoRace && currentStep == 9 {
+            currentStep = 12 // No race → skip uphill, volume preview → complete
+        } else if currentStep == 9 && !needsUphillDetailsStep {
+            currentStep = 11 // Skip uphill details (10), go to volume preview
         } else {
             currentStep += 1
         }
@@ -207,8 +244,12 @@ final class OnboardingViewModel {
     func goBack() {
         guard currentStep > 0 else { return }
         error = nil
-        if hasNoRace && currentStep == 8 {
-            currentStep = 6 // Go back to race name step (where no-race toggle is)
+        if hasNoRace && currentStep == 12 {
+            currentStep = 9 // No race → back to goal/training
+        } else if hasNoRace && currentStep == 9 {
+            currentStep = 7 // Back to race name
+        } else if currentStep == 11 && !needsUphillDetailsStep {
+            currentStep = 9 // Back to goal/training (skipped uphill)
         } else {
             currentStep -= 1
         }
@@ -261,6 +302,14 @@ final class OnboardingViewModel {
             weightGoal: weightGoal,
             biologicalSex: biologicalSex,
             verticalGainEnvironment: verticalGainEnvironment,
+            painFrequency: painFrequency,
+            injuryCountLastYear: injuryCountLastYear,
+            hasRecentInjury: hasRecentInjury,
+            strengthTrainingPreference: strengthTrainingPreference,
+            strengthTrainingLocation: strengthTrainingLocation,
+            runningTerrain: runningTerrain,
+            uphillDuration: uphillDuration,
+            treadmillMaxIncline: treadmillMaxIncline,
             vo2max: metrics?.vo2max,
             vmaKmh: metrics?.vmaKmh,
             thresholdPace60MinPerKm: metrics?.thresholdPace60MinPerKm,
@@ -277,6 +326,98 @@ final class OnboardingViewModel {
         return PerformanceEstimator.deduceMissingPBs(from: adjusted)
     }
 
+    // MARK: - Volume Preview
+
+    struct VolumeEstimate: Identifiable {
+        let runsPerWeek: Int
+        let weeklyKmMin: Int
+        let weeklyKmMax: Int
+        let isRecommended: Bool
+        var id: Int { runsPerWeek }
+    }
+
+    var volumePreviewData: [VolumeEstimate] {
+        let experience = experienceLevel ?? .beginner
+        let effectiveKm = raceDistanceKm + raceElevationGainM / 100.0
+        let totalWeeks = max(Date.now.weeksBetween(raceDate), 8)
+        let raceGoal = buildRaceGoal()
+
+        let raceDuration: TimeInterval = {
+            if case .targetTime(let time) = raceGoal { return time }
+            let paceMinPerKm: Double = switch experience {
+            case .elite:        8.0
+            case .advanced:     9.0
+            case .intermediate: 10.0
+            case .beginner:     12.0
+            }
+            return effectiveKm * paceMinPerKm * 60
+        }()
+
+        let phases = PhaseDistributor.distribute(
+            totalWeeks: totalWeeks,
+            experience: experience
+        )
+        let skeletons = WeekSkeletonBuilder.build(
+            raceDate: raceDate,
+            phases: phases
+        )
+
+        let currentVolume = isNewRunner ? 0 : weeklyVolumeKm
+        let avgPaceSecPerKm: Double = 390
+
+        var estimates: [VolumeEstimate] = []
+        var closestDiff = Double.infinity
+        var recommendedRuns = 4
+
+        for runs in 3...7 {
+            let weeksToCheck = min(4, skeletons.count)
+            var weekKms: [Double] = []
+
+            for i in 0..<weeksToCheck {
+                let skeleton = skeletons[i]
+                let durations = LongRunCurveCalculator.durations(
+                    weekIndex: i,
+                    totalWeeks: totalWeeks,
+                    phase: skeleton.phase,
+                    isRecoveryWeek: skeleton.isRecoveryWeek,
+                    experience: experience,
+                    philosophy: trainingPhilosophy,
+                    raceGoal: raceGoal,
+                    raceDurationSeconds: raceDuration,
+                    raceEffectiveKm: effectiveKm,
+                    preferredRunsPerWeek: runs,
+                    currentWeeklyVolumeKm: currentVolume
+                )
+                weekKms.append(durations.totalSeconds / avgPaceSecPerKm)
+            }
+
+            let minKm = Int((weekKms.min() ?? 0).rounded())
+            let maxKm = Int((weekKms.max() ?? 0).rounded())
+            let avgKm = weekKms.reduce(0, +) / Double(weekKms.count)
+            let diff = abs(avgKm - currentVolume)
+            if diff < closestDiff {
+                closestDiff = diff
+                recommendedRuns = runs
+            }
+
+            estimates.append(VolumeEstimate(
+                runsPerWeek: runs,
+                weeklyKmMin: minKm,
+                weeklyKmMax: maxKm,
+                isRecommended: false
+            ))
+        }
+
+        return estimates.map { est in
+            VolumeEstimate(
+                runsPerWeek: est.runsPerWeek,
+                weeklyKmMin: est.weeklyKmMin,
+                weeklyKmMax: est.weeklyKmMax,
+                isRecommended: est.runsPerWeek == recommendedRuns
+            )
+        }
+    }
+
     private func buildRace() -> Race {
         Race(
             id: UUID(),
@@ -288,7 +429,8 @@ final class OnboardingViewModel {
             priority: .aRace,
             goalType: buildRaceGoal(),
             checkpoints: [],
-            terrainDifficulty: raceTerrainDifficulty
+            terrainDifficulty: raceTerrainDifficulty,
+            raceType: raceType
         )
     }
 

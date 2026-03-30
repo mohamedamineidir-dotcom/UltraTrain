@@ -11,6 +11,7 @@ struct Race: Identifiable, Equatable, Sendable, Codable {
     var goalType: RaceGoal
     var checkpoints: [Checkpoint]
     var terrainDifficulty: TerrainDifficulty
+    var raceType: RaceType = .trail
     var actualFinishTime: TimeInterval?
     var linkedRunId: UUID?
     var locationLatitude: Double? = nil
@@ -61,7 +62,8 @@ struct Race: Identifiable, Equatable, Sendable, Codable {
             priority: .aRace,
             goalType: .finish,
             checkpoints: [],
-            terrainDifficulty: .easy
+            terrainDifficulty: .easy,
+            raceType: .trail
         )
     }
 }

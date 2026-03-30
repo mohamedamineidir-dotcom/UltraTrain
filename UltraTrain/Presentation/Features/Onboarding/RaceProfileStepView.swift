@@ -28,6 +28,19 @@ struct RaceProfileStepView: View {
                 .padding(.top, Theme.Spacing.xl)
 
                 VStack(spacing: Theme.Spacing.lg) {
+                    // Race Type
+                    VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                        Text("Race Type")
+                            .font(.headline)
+                        Picker("Race Type", selection: $viewModel.raceType) {
+                            ForEach(RaceType.allCases, id: \.self) { type in
+                                Text(type.displayName).tag(type)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                    }
+                    .onboardingCardStyle()
+
                     LabeledStepper(
                         label: "Distance",
                         value: distanceBinding,
@@ -80,22 +93,21 @@ struct RaceProfileStepView: View {
 
     @ViewBuilder
     private var trainingDurationWarning: some View {
-        let validation = TrainingDurationValidator.validate(
-            distanceKm: viewModel.raceDistanceKm,
-            elevationGainM: viewModel.raceElevationGainM,
-            raceDate: viewModel.raceDate,
-            experienceLevel: viewModel.experienceLevel ?? .beginner
-        )
-        if let message = validation.warningMessage {
+        if let validation = viewModel.trainingDurationValidation,
+           let message = validation.warningMessage {
             HStack(alignment: .top, spacing: Theme.Spacing.sm) {
-                Image(systemName: "exclamationmark.triangle.fill")
-                    .foregroundStyle(Theme.Colors.warning)
-                Text(message)
-                    .font(.caption)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                Image(systemName: "xmark.octagon.fill")
+                    .foregroundStyle(Theme.Colors.danger)
+                VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+                    Text("Insufficient Preparation Time")
+                        .font(.caption.bold())
+                    Text(message)
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
             }
             .padding(Theme.Spacing.md)
-            .background(Theme.Colors.warning.opacity(0.1))
+            .background(Theme.Colors.danger.opacity(0.1))
             .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
         }
     }

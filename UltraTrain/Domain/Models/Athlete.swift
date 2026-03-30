@@ -25,6 +25,20 @@ struct Athlete: Identifiable, Equatable, Sendable {
     var biologicalSex: BiologicalSex = .male
     var verticalGainEnvironment: VerticalGainEnvironment = .mountain
 
+    // MARK: - Injury & Strength Training
+
+    var painFrequency: PainFrequency = .never
+    var injuryCountLastYear: InjuryCount = .none
+    var hasRecentInjury: Bool = false
+    var strengthTrainingPreference: StrengthTrainingPreference = .no
+    var strengthTrainingLocation: StrengthTrainingLocation = .home
+
+    // MARK: - Terrain & Environment
+
+    var runningTerrain: TerrainType = .trail
+    var uphillDuration: UphillDuration? = nil
+    var treadmillMaxIncline: TreadmillIncline? = nil
+
     // MARK: - Derived Fitness Metrics (from PBs)
 
     /// Estimated VO2max in ml/kg/min.

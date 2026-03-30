@@ -38,15 +38,15 @@ enum TrainingDurationValidator {
         case (.hundredK, .beginner):            20
         case (.hundredK, .intermediate):        16
         case (.hundredK, .advanced):            12
-        case (.hundredK, .elite):                8
+        case (.hundredK, .elite):               12
         case (.hundredMiles, .beginner):        28
-        case (.hundredMiles, .intermediate):    20
-        case (.hundredMiles, .advanced):        16
+        case (.hundredMiles, .intermediate):    18
+        case (.hundredMiles, .advanced):        18
         case (.hundredMiles, .elite):           12
         case (.ultraLong, .beginner):           36
         case (.ultraLong, .intermediate):       28
         case (.ultraLong, .advanced):           20
-        case (.ultraLong, .elite):              16
+        case (.ultraLong, .elite):              12
         }
     }
 }

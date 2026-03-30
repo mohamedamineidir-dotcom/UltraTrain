@@ -53,6 +53,19 @@ final class LocalAthleteRepository: AthleteRepository, @unchecked Sendable {
         existing.weeklyVolumeKm = athlete.weeklyVolumeKm
         existing.longestRunKm = athlete.longestRunKm
         existing.preferredUnitRaw = athlete.preferredUnit.rawValue
+        existing.trainingPhilosophyRaw = athlete.trainingPhilosophy.rawValue
+        existing.preferredRunsPerWeek = athlete.preferredRunsPerWeek
+        existing.weightGoalRaw = athlete.weightGoal.rawValue
+        existing.biologicalSexRaw = athlete.biologicalSex.rawValue
+        existing.verticalGainEnvironmentRaw = athlete.verticalGainEnvironment.rawValue
+        existing.painFrequencyRaw = athlete.painFrequency.rawValue
+        existing.injuryCountLastYearRaw = athlete.injuryCountLastYear.rawValue
+        existing.hasRecentInjury = athlete.hasRecentInjury
+        existing.strengthTrainingPreferenceRaw = athlete.strengthTrainingPreference.rawValue
+        existing.strengthTrainingLocationRaw = athlete.strengthTrainingLocation.rawValue
+        existing.runningTerrainRaw = athlete.runningTerrain.rawValue
+        existing.uphillDurationRaw = athlete.uphillDuration?.rawValue
+        existing.treadmillMaxInclineRaw = athlete.treadmillMaxIncline?.rawValue
 
         try context.save()
         Logger.persistence.info("Athlete updated: \(athlete.firstName) \(athlete.lastName)")

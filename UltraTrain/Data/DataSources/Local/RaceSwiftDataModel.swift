@@ -13,6 +13,7 @@ final class RaceSwiftDataModel {
     var goalTypeRaw: String = "finish"
     var goalValue: Double?
     var terrainDifficultyRaw: String = "moderate"
+    var raceTypeRaw: String = "trail"
     @Relationship(deleteRule: .cascade, inverse: \CheckpointSwiftDataModel.race)
     var checkpointModels: [CheckpointSwiftDataModel] = []
     var actualFinishTime: Double?
@@ -37,6 +38,7 @@ final class RaceSwiftDataModel {
         goalTypeRaw: String = "finish",
         goalValue: Double? = nil,
         terrainDifficultyRaw: String = "moderate",
+        raceTypeRaw: String = "trail",
         checkpointModels: [CheckpointSwiftDataModel] = [],
         actualFinishTime: Double? = nil,
         linkedRunId: UUID? = nil,
@@ -59,6 +61,7 @@ final class RaceSwiftDataModel {
         self.goalTypeRaw = goalTypeRaw
         self.goalValue = goalValue
         self.terrainDifficultyRaw = terrainDifficultyRaw
+        self.raceTypeRaw = raceTypeRaw
         self.checkpointModels = checkpointModels
         self.actualFinishTime = actualFinishTime
         self.linkedRunId = linkedRunId

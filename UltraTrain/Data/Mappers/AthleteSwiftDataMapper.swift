@@ -41,6 +41,14 @@ enum AthleteSwiftDataMapper {
             weightGoal: weightGoal,
             biologicalSex: biologicalSex,
             verticalGainEnvironment: VerticalGainEnvironment(rawValue: model.verticalGainEnvironmentRaw) ?? .mountain,
+            painFrequency: PainFrequency(rawValue: model.painFrequencyRaw) ?? .never,
+            injuryCountLastYear: InjuryCount(rawValue: model.injuryCountLastYearRaw) ?? .none,
+            hasRecentInjury: model.hasRecentInjury,
+            strengthTrainingPreference: StrengthTrainingPreference(rawValue: model.strengthTrainingPreferenceRaw) ?? .no,
+            strengthTrainingLocation: StrengthTrainingLocation(rawValue: model.strengthTrainingLocationRaw) ?? .home,
+            runningTerrain: TerrainType(rawValue: model.runningTerrainRaw) ?? .trail,
+            uphillDuration: model.uphillDurationRaw.flatMap { UphillDuration(rawValue: $0) },
+            treadmillMaxIncline: model.treadmillMaxInclineRaw.flatMap { TreadmillIncline(rawValue: $0) },
             vo2max: model.vo2max,
             vmaKmh: model.vmaKmh,
             thresholdPace60MinPerKm: model.thresholdPace60MinPerKm,
@@ -80,7 +88,15 @@ enum AthleteSwiftDataMapper {
             vmaKmh: athlete.vmaKmh,
             thresholdPace60MinPerKm: athlete.thresholdPace60MinPerKm,
             thresholdPace30MinPerKm: athlete.thresholdPace30MinPerKm,
-            verticalGainEnvironmentRaw: athlete.verticalGainEnvironment.rawValue
+            verticalGainEnvironmentRaw: athlete.verticalGainEnvironment.rawValue,
+            painFrequencyRaw: athlete.painFrequency.rawValue,
+            injuryCountLastYearRaw: athlete.injuryCountLastYear.rawValue,
+            hasRecentInjury: athlete.hasRecentInjury,
+            strengthTrainingPreferenceRaw: athlete.strengthTrainingPreference.rawValue,
+            strengthTrainingLocationRaw: athlete.strengthTrainingLocation.rawValue,
+            runningTerrainRaw: athlete.runningTerrain.rawValue,
+            uphillDurationRaw: athlete.uphillDuration?.rawValue,
+            treadmillMaxInclineRaw: athlete.treadmillMaxIncline?.rawValue
         )
     }
 }

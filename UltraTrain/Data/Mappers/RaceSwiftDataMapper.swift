@@ -16,6 +16,7 @@ enum RaceSwiftDataMapper {
               let goal = parseGoal(typeRaw: model.goalTypeRaw, value: model.goalValue) else {
             return nil
         }
+        let raceType = RaceType(rawValue: model.raceTypeRaw) ?? .trail
         let checkpoints = model.checkpointModels
             .map { cp in
                 Checkpoint(
@@ -41,6 +42,7 @@ enum RaceSwiftDataMapper {
             goalType: goal,
             checkpoints: checkpoints,
             terrainDifficulty: terrain,
+            raceType: raceType,
             actualFinishTime: model.actualFinishTime,
             linkedRunId: model.linkedRunId,
             locationLatitude: model.locationLatitude,
@@ -77,6 +79,7 @@ enum RaceSwiftDataMapper {
             goalTypeRaw: goalTypeRaw,
             goalValue: goalValue,
             terrainDifficultyRaw: race.terrainDifficulty.rawValue,
+            raceTypeRaw: race.raceType.rawValue,
             checkpointModels: checkpointModels,
             actualFinishTime: race.actualFinishTime,
             linkedRunId: race.linkedRunId,

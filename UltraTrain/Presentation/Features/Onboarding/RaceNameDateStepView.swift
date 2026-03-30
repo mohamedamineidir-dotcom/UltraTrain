@@ -35,6 +35,7 @@ struct RaceNameDateStepView: View {
                             viewModel.raceElevationGainM = race.elevationGainM
                             viewModel.raceElevationLossM = race.elevationLossM
                             viewModel.raceTerrainDifficulty = race.terrainDifficulty
+                            viewModel.raceType = race.raceType
                             viewModel.isKnownRace = true
                             if let date = race.nextEditionDate, date > Date.now {
                                 viewModel.raceDate = date

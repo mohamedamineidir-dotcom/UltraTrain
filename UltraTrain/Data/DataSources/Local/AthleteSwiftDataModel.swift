@@ -31,6 +31,14 @@ final class AthleteSwiftDataModel {
     var thresholdPace60MinPerKm: Double? = nil
     var thresholdPace30MinPerKm: Double? = nil
     var verticalGainEnvironmentRaw: String = "mountain"
+    var painFrequencyRaw: String = "never"
+    var injuryCountLastYearRaw: String = "none"
+    var hasRecentInjury: Bool = false
+    var strengthTrainingPreferenceRaw: String = "no"
+    var strengthTrainingLocationRaw: String = "home"
+    var runningTerrainRaw: String = "trail"
+    var uphillDurationRaw: String? = nil
+    var treadmillMaxInclineRaw: String? = nil
 
     init(
         id: UUID = UUID(),
@@ -60,7 +68,15 @@ final class AthleteSwiftDataModel {
         vmaKmh: Double? = nil,
         thresholdPace60MinPerKm: Double? = nil,
         thresholdPace30MinPerKm: Double? = nil,
-        verticalGainEnvironmentRaw: String = "mountain"
+        verticalGainEnvironmentRaw: String = "mountain",
+        painFrequencyRaw: String = "never",
+        injuryCountLastYearRaw: String = "none",
+        hasRecentInjury: Bool = false,
+        strengthTrainingPreferenceRaw: String = "no",
+        strengthTrainingLocationRaw: String = "home",
+        runningTerrainRaw: String = "trail",
+        uphillDurationRaw: String? = nil,
+        treadmillMaxInclineRaw: String? = nil
     ) {
         self.id = id
         self.firstName = firstName
@@ -90,5 +106,13 @@ final class AthleteSwiftDataModel {
         self.thresholdPace60MinPerKm = thresholdPace60MinPerKm
         self.thresholdPace30MinPerKm = thresholdPace30MinPerKm
         self.verticalGainEnvironmentRaw = verticalGainEnvironmentRaw
+        self.painFrequencyRaw = painFrequencyRaw
+        self.injuryCountLastYearRaw = injuryCountLastYearRaw
+        self.hasRecentInjury = hasRecentInjury
+        self.strengthTrainingPreferenceRaw = strengthTrainingPreferenceRaw
+        self.strengthTrainingLocationRaw = strengthTrainingLocationRaw
+        self.runningTerrainRaw = runningTerrainRaw
+        self.uphillDurationRaw = uphillDurationRaw
+        self.treadmillMaxInclineRaw = treadmillMaxInclineRaw
     }
 }

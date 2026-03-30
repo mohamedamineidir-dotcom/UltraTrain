@@ -129,6 +129,22 @@ struct GoalTrainingStepView: View {
                     }
                     .onboardingCardStyle()
 
+                    // Running terrain
+                    VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                        Text("Running Terrain")
+                            .font(.headline)
+                        Text("What surface do you primarily run on?")
+                            .font(.caption)
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
+                        Picker("Terrain", selection: $viewModel.runningTerrain) {
+                            ForEach(TerrainType.allCases, id: \.self) { terrain in
+                                Text(terrain.displayName).tag(terrain)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                    }
+                    .onboardingCardStyle()
+
                     // Vertical gain environment
                     if viewModel.raceElevationGainM > 500 || viewModel.hasNoRace {
                         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {

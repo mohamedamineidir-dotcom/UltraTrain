@@ -123,8 +123,9 @@ enum VolumeCalculator {
         // Cap training elevation density at 60 m/km to prevent extreme values
         // for short, steep races (e.g., 13km/1500D+ = 115 m/km)
         let trainingElevationPerKm = min(raceElevationPerKm, 60.0)
-        // Progressive ramp: 30% density at plan start → 100% at peak
-        let progressFactor = 0.30 + 0.70 * planProgress
+        // Progressive ramp: 20% density at plan start → 90% at peak
+        // These are minimum targets — athletes can always exceed them
+        let progressFactor = 0.20 + 0.70 * planProgress
         return volume * trainingElevationPerKm * progressFactor
     }
 }

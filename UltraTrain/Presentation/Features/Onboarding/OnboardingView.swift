@@ -84,7 +84,7 @@ struct OnboardingView: View {
         }
     }
 
-    // MARK: - Steps 0-9
+    // MARK: - Steps 0-11
 
     @ViewBuilder
     private var stepContent: some View {
@@ -95,10 +95,13 @@ struct OnboardingView: View {
         case 3: AboutYouStepView(viewModel: viewModel)
         case 4: BodyMetricsStepView(viewModel: viewModel)
         case 5: HeartRateStepView(viewModel: viewModel)
-        case 6: RaceNameDateStepView(viewModel: viewModel)
-        case 7: RaceProfileStepView(viewModel: viewModel)
-        case 8: GoalTrainingStepView(viewModel: viewModel)
-        case 9: OnboardingCompleteStepView(
+        case 6: InjuryStrengthStepView(viewModel: viewModel)
+        case 7: RaceNameDateStepView(viewModel: viewModel)
+        case 8: RaceProfileStepView(viewModel: viewModel)
+        case 9: GoalTrainingStepView(viewModel: viewModel)
+        case 10: UphillDetailsStepView(viewModel: viewModel)
+        case 11: VolumePreviewStepView(viewModel: viewModel)
+        case 12: OnboardingCompleteStepView(
             viewModel: viewModel,
             onComplete: onComplete,
             healthKitService: healthKitService,
