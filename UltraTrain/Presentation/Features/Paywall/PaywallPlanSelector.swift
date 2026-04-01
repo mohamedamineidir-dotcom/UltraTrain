@@ -38,8 +38,12 @@ struct PaywallPlanCard: View {
 
                     if plan.trialDays != nil {
                         Text("paywall.freeWeek")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
+                            .font(.caption2.bold())
+                            .foregroundStyle(Theme.Colors.warmCoral)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 2)
+                            .background(Theme.Colors.warmCoral.opacity(0.12))
+                            .clipShape(Capsule())
                     }
 
                     if let savings = plan.savingsPercent {
