@@ -364,10 +364,12 @@ final class OnboardingViewModel {
 
         let currentVolume = isNewRunner ? 0 : weeklyVolumeKm
         let avgPaceSecPerKm: Double = 390
+        let recommendedRuns = recommendedRunsPerWeek(
+            experience: experience,
+            effectiveKm: effectiveKm
+        )
 
         var estimates: [VolumeEstimate] = []
-        var closestDiff = Double.infinity
-        var recommendedRuns = 4
 
         for runs in 3...7 {
             let weeksToCheck = min(4, skeletons.count)
@@ -393,29 +395,69 @@ final class OnboardingViewModel {
 
             let minKm = Int((weekKms.min() ?? 0).rounded())
             let maxKm = Int((weekKms.max() ?? 0).rounded())
-            let avgKm = weekKms.reduce(0, +) / Double(weekKms.count)
-            let diff = abs(avgKm - currentVolume)
-            if diff < closestDiff {
-                closestDiff = diff
-                recommendedRuns = runs
-            }
 
             estimates.append(VolumeEstimate(
                 runsPerWeek: runs,
                 weeklyKmMin: minKm,
                 weeklyKmMax: maxKm,
-                isRecommended: false
+                isRecommended: runs == recommendedRuns
             ))
         }
 
-        return estimates.map { est in
-            VolumeEstimate(
-                runsPerWeek: est.runsPerWeek,
-                weeklyKmMin: est.weeklyKmMin,
-                weeklyKmMax: est.weeklyKmMax,
-                isRecommended: est.runsPerWeek == recommendedRuns
-            )
+        return estimates
+    }
+
+    /// Smart recommendation based on athlete profile, race, philosophy, and injury risk.
+    private func recommendedRunsPerWeek(
+        experience: ExperienceLevel,
+        effectiveKm: Double
+    ) -> Int {
+        let raceCategory = RaceCategory.from(effectiveDistanceKm: effectiveKm)
+
+        // Base recommendation per experience level
+        var base: Int = switch experience {
+        case .beginner:     3
+        case .intermediate: 4
+        case .advanced:     5
+        case .elite:        5
         }
+
+        // Race distance adjustments
+        switch raceCategory {
+        case .trail, .fiftyK:
+            break // no change for shorter races
+        case .hundredK:
+            base += 1
+        case .hundredMiles, .ultraLong:
+            base += 1
+        }
+
+        // Philosophy adjustments
+        switch trainingPhilosophy {
+        case .enjoyment:    base -= 1
+        case .balanced:     break
+        case .performance:  base += 1
+        }
+
+        // Injury risk: reduce if pain is frequent or multiple recent injuries
+        if painFrequency == .often || injuryCountLastYear == .threeOrMore {
+            base -= 1
+        } else if painFrequency == .sometimes && injuryCountLastYear != .none {
+            base -= 1
+        }
+
+        // New runner cap
+        if isNewRunner { base = min(base, 4) }
+
+        // Experience caps
+        switch experience {
+        case .beginner:     base = min(base, 4)
+        case .intermediate: base = min(base, 5)
+        case .advanced:     base = min(base, 6)
+        case .elite:        break
+        }
+
+        return max(3, min(base, 7))
     }
 
     private func buildRace() -> Race {

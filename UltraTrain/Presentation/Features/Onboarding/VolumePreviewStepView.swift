@@ -124,7 +124,7 @@ struct VolumePreviewStepView: View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             Text("Weekly Volume Estimate")
                 .font(.headline)
-            Text("Select your preferred training frequency")
+            Text("Approximate range for the first month of your plan. Pick the frequency that suits you best.")
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
 
@@ -165,7 +165,7 @@ struct VolumePreviewStepView: View {
                                 .clipShape(Capsule())
                         }
                     }
-                    Text("\(estimate.weeklyKmMin)–\(estimate.weeklyKmMax) km/week")
+                    Text("~\(estimate.weeklyKmMin)–\(estimate.weeklyKmMax) km/week (1st month)")
                         .font(.caption)
                         .foregroundStyle(isSelected ? .white.opacity(0.85) : Theme.Colors.secondaryLabel)
                 }
