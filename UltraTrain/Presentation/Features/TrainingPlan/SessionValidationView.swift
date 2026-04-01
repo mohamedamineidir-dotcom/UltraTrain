@@ -9,6 +9,8 @@ struct SessionValidationView: View {
     let onComplete: (Double?, TimeInterval?, Double?, PerceivedFeeling?, Int?) -> Void
     let onLinkRun: (UUID) -> Void
     var recentRunsProvider: ((Date) async -> [CompletedRun])?
+    var stravaActivitiesProvider: ((Date) async -> [StravaActivity])?
+    var onLinkStravaActivity: ((StravaActivity) -> Void)?
 
     @State private var distanceText: String
     @State private var hours: Int
@@ -18,6 +20,8 @@ struct SessionValidationView: View {
     @State private var feeling: PerceivedFeeling?
     @State private var rpe: Int?
     @State private var loadedRuns: [CompletedRun]?
+    @State private var stravaActivities: [StravaActivity] = []
+    @State private var isLoadingStrava = false
     @State private var showCompletion = false
 
     init(
@@ -25,13 +29,17 @@ struct SessionValidationView: View {
         recentRuns: [CompletedRun] = [],
         onComplete: @escaping (Double?, TimeInterval?, Double?, PerceivedFeeling?, Int?) -> Void,
         onLinkRun: @escaping (UUID) -> Void,
-        recentRunsProvider: ((Date) async -> [CompletedRun])? = nil
+        recentRunsProvider: ((Date) async -> [CompletedRun])? = nil,
+        stravaActivitiesProvider: ((Date) async -> [StravaActivity])? = nil,
+        onLinkStravaActivity: ((StravaActivity) -> Void)? = nil
     ) {
         self.session = session
         self.recentRuns = recentRuns
         self.onComplete = onComplete
         self.onLinkRun = onLinkRun
         self.recentRunsProvider = recentRunsProvider
+        self.stravaActivitiesProvider = stravaActivitiesProvider
+        self.onLinkStravaActivity = onLinkStravaActivity
         let planned = session.plannedDuration
         _distanceText = State(initialValue: session.plannedDistanceKm > 0
             ? String(format: "%.1f", session.plannedDistanceKm) : "")
@@ -64,6 +72,9 @@ struct SessionValidationView: View {
                     statsEntrySection
                     feelingSection
                     rpeSection
+                    if stravaActivitiesProvider != nil {
+                        stravaActivitiesSection
+                    }
                     if !runs.isEmpty {
                         recentRunsSection
                     }
@@ -83,6 +94,11 @@ struct SessionValidationView: View {
             .task {
                 if let provider = recentRunsProvider {
                     loadedRuns = await provider(session.date)
+                }
+                if let stravaProvider = stravaActivitiesProvider {
+                    isLoadingStrava = true
+                    stravaActivities = await stravaProvider(session.date)
+                    isLoadingStrava = false
                 }
             }
         }
@@ -273,11 +289,93 @@ struct SessionValidationView: View {
         .futuristicGlassStyle()
     }
 
+    // MARK: - Strava Activities
+
+    private var stravaActivitiesSection: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            HStack(spacing: Theme.Spacing.xs) {
+                Image(systemName: "figure.run")
+                    .font(.caption)
+                    .foregroundStyle(.white)
+                    .frame(width: 22, height: 22)
+                    .background(
+                        RoundedRectangle(cornerRadius: 5)
+                            .fill(Color.orange)
+                    )
+                Text("Strava Activities")
+                    .font(.headline)
+            }
+
+            if isLoadingStrava {
+                HStack {
+                    Spacer()
+                    ProgressView()
+                        .padding(.vertical, Theme.Spacing.md)
+                    Spacer()
+                }
+            } else if stravaActivities.isEmpty {
+                Text("No recent Strava activities found")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .padding(.vertical, Theme.Spacing.sm)
+            } else {
+                ForEach(stravaActivities) { activity in
+                    Button {
+                        onLinkStravaActivity?(activity)
+                        dismiss()
+                    } label: {
+                        HStack(spacing: Theme.Spacing.sm) {
+                            Image(systemName: "figure.run")
+                                .font(.caption)
+                                .foregroundStyle(.white)
+                                .frame(width: 28, height: 28)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .fill(Color.orange)
+                                )
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(activity.name)
+                                    .font(.subheadline.weight(.medium))
+                                    .lineLimit(1)
+                                HStack(spacing: Theme.Spacing.xs) {
+                                    Text(activity.startDate.formatted(
+                                        .dateTime.month(.abbreviated).day().hour().minute()
+                                    ))
+                                    if activity.distanceKm > 0 {
+                                        Text("·")
+                                        Text(String(format: "%.1f km", activity.distanceKm))
+                                    }
+                                    if activity.totalElevationGain > 0 {
+                                        Text("·")
+                                        Text(String(format: "%.0fm D+", activity.totalElevationGain))
+                                    }
+                                }
+                                .font(.caption)
+                                .foregroundStyle(Theme.Colors.secondaryLabel)
+                            }
+
+                            Spacer()
+
+                            Image(systemName: "link.badge.plus")
+                                .foregroundStyle(Color.orange)
+                        }
+                        .padding(Theme.Spacing.sm)
+                        .background(Theme.Colors.secondaryBackground)
+                        .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        .futuristicGlassStyle()
+    }
+
     // MARK: - Recent Runs
 
     private var recentRunsSection: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("Link to a Recent Run")
+            Text("In-App Runs")
                 .font(.headline)
 
             ForEach(runs) { run in

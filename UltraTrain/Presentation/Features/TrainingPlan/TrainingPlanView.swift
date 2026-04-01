@@ -9,6 +9,8 @@ struct TrainingPlanView: View {
     private let runRepository: any RunRepository
     private let athleteRepository: any AthleteRepository
     private let subscriptionService: (any SubscriptionServiceProtocol)?
+    private let stravaAuthService: (any StravaAuthServiceProtocol)?
+    private let stravaImportService: (any StravaImportServiceProtocol)?
 
     init(
         planRepository: any TrainingPlanRepository,
@@ -22,7 +24,9 @@ struct TrainingPlanView: View {
         workoutRecipeRepository: any WorkoutRecipeRepository,
         runRepository: any RunRepository,
         hapticService: any HapticServiceProtocol = HapticService(),
-        subscriptionService: (any SubscriptionServiceProtocol)? = nil
+        subscriptionService: (any SubscriptionServiceProtocol)? = nil,
+        stravaAuthService: (any StravaAuthServiceProtocol)? = nil,
+        stravaImportService: (any StravaImportServiceProtocol)? = nil
     ) {
         self.raceRepository = raceRepository
         self.planRepository = planRepository
@@ -30,6 +34,8 @@ struct TrainingPlanView: View {
         self.runRepository = runRepository
         self.athleteRepository = athleteRepository
         self.subscriptionService = subscriptionService
+        self.stravaAuthService = stravaAuthService
+        self.stravaImportService = stravaImportService
         _viewModel = State(initialValue: TrainingPlanViewModel(
             planRepository: planRepository,
             athleteRepository: athleteRepository,
@@ -40,7 +46,10 @@ struct TrainingPlanView: View {
             fitnessRepository: fitnessRepository,
             widgetDataWriter: widgetDataWriter,
             hapticService: hapticService,
-            subscriptionService: subscriptionService
+            subscriptionService: subscriptionService,
+            runRepository: runRepository,
+            stravaAuthService: stravaAuthService,
+            stravaImportService: stravaImportService
         ))
     }
 

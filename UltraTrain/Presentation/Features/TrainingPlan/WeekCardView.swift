@@ -22,6 +22,8 @@ struct WeekCardView: View {
     var onValidateSessionWithStats: ((Int, Double?, TimeInterval?, Double?, PerceivedFeeling?, Int?) -> Void)?
     var onLinkSessionToRun: ((Int, UUID) -> Void)?
     var recentRunsProvider: ((Date) async -> [CompletedRun])?
+    var stravaActivitiesProvider: ((Date) async -> [StravaActivity])?
+    var onLinkStravaActivity: ((Int, StravaActivity) -> Void)?
 
     @State private var isExpanded: Bool
     @State private var contextRescheduleItem: ContextSheetItem?
@@ -49,7 +51,9 @@ struct WeekCardView: View {
         onValidateSession: ((Int) -> Void)? = nil,
         onValidateSessionWithStats: ((Int, Double?, TimeInterval?, Double?, PerceivedFeeling?, Int?) -> Void)? = nil,
         onLinkSessionToRun: ((Int, UUID) -> Void)? = nil,
-        recentRunsProvider: ((Date) async -> [CompletedRun])? = nil
+        recentRunsProvider: ((Date) async -> [CompletedRun])? = nil,
+        stravaActivitiesProvider: ((Date) async -> [StravaActivity])? = nil,
+        onLinkStravaActivity: ((Int, StravaActivity) -> Void)? = nil
     ) {
         self.week = week
         self.weekIndex = weekIndex
@@ -70,6 +74,8 @@ struct WeekCardView: View {
         self.onValidateSessionWithStats = onValidateSessionWithStats
         self.onLinkSessionToRun = onLinkSessionToRun
         self.recentRunsProvider = recentRunsProvider
+        self.stravaActivitiesProvider = stravaActivitiesProvider
+        self.onLinkStravaActivity = onLinkStravaActivity
         _isExpanded = State(initialValue: isCurrentWeek)
     }
 
@@ -310,7 +316,11 @@ extension WeekCardView {
                 onLinkRun: { runId in
                     onLinkSessionToRun?(item.sessionIndex, runId)
                 },
-                recentRunsProvider: recentRunsProvider
+                recentRunsProvider: recentRunsProvider,
+                stravaActivitiesProvider: stravaActivitiesProvider,
+                onLinkStravaActivity: { activity in
+                    onLinkStravaActivity?(item.sessionIndex, activity)
+                }
             )
         }
     }

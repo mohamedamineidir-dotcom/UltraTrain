@@ -145,6 +145,18 @@ extension TrainingPlanView {
                         },
                         recentRunsProvider: { date in
                             await viewModel.recentUnlinkedRuns(near: date)
+                        },
+                        stravaActivitiesProvider: { date in
+                            await viewModel.recentStravaActivities(near: date)
+                        },
+                        onLinkStravaActivity: { sessionIndex, activity in
+                            Task {
+                                await viewModel.importAndLinkStravaActivity(
+                                    weekIndex: weekIndex,
+                                    sessionIndex: sessionIndex,
+                                    activity: activity
+                                )
+                            }
                         }
                     )
                 }

@@ -18,6 +18,8 @@ final class TrainingPlanViewModel {
     private let hapticService: any HapticServiceProtocol
     private let subscriptionService: (any SubscriptionServiceProtocol)?
     let runRepository: (any RunRepository)?
+    let stravaAuthService: (any StravaAuthServiceProtocol)?
+    let stravaImportService: (any StravaImportServiceProtocol)?
 
     // MARK: - State
 
@@ -47,7 +49,9 @@ final class TrainingPlanViewModel {
         widgetDataWriter: WidgetDataWriter,
         hapticService: any HapticServiceProtocol,
         subscriptionService: (any SubscriptionServiceProtocol)? = nil,
-        runRepository: (any RunRepository)? = nil
+        runRepository: (any RunRepository)? = nil,
+        stravaAuthService: (any StravaAuthServiceProtocol)? = nil,
+        stravaImportService: (any StravaImportServiceProtocol)? = nil
     ) {
         self.planRepository = planRepository
         self.athleteRepository = athleteRepository
@@ -60,6 +64,8 @@ final class TrainingPlanViewModel {
         self.hapticService = hapticService
         self.subscriptionService = subscriptionService
         self.runRepository = runRepository
+        self.stravaAuthService = stravaAuthService
+        self.stravaImportService = stravaImportService
     }
 
     // MARK: - Load

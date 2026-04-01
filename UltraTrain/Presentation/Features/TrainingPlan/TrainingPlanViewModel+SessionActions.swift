@@ -184,15 +184,47 @@ extension TrainingPlanViewModel {
         guard let repo = runRepository else { return [] }
         do {
             let runs = try await repo.getRecentRuns(limit: limit * 2)
-            let threeDays: TimeInterval = 3 * 24 * 3600
+            let threeWeeks: TimeInterval = 21 * 24 * 3600
             return runs.filter {
-                $0.linkedSessionId == nil && abs($0.date.timeIntervalSince(date)) <= threeDays
+                $0.linkedSessionId == nil && abs($0.date.timeIntervalSince(date)) <= threeWeeks
             }
             .prefix(limit)
             .map { $0 }
         } catch {
             Logger.training.error("Failed to load recent runs: \(error)")
             return []
+        }
+    }
+
+    // MARK: - Strava Activities
+
+    func recentStravaActivities(near date: Date) async -> [StravaActivity] {
+        guard let authService = stravaAuthService, authService.isConnected(),
+              let importService = stravaImportService else { return [] }
+        do {
+            let activities = try await importService.fetchActivities(page: 1, perPage: 50)
+            let threeWeeks: TimeInterval = 21 * 24 * 3600
+            return activities.filter {
+                $0.type.lowercased().contains("run") &&
+                abs($0.startDate.timeIntervalSince(date)) <= threeWeeks
+            }
+        } catch {
+            Logger.training.error("Failed to fetch Strava activities: \(error)")
+            return []
+        }
+    }
+
+    func importAndLinkStravaActivity(
+        weekIndex: Int, sessionIndex: Int, activity: StravaActivity
+    ) async {
+        guard let importService = stravaImportService else { return }
+        guard let athlete else { return }
+        do {
+            let run = try await importService.importActivity(activity, athleteId: athlete.id)
+            await linkSessionToRun(weekIndex: weekIndex, sessionIndex: sessionIndex, runId: run.id)
+        } catch {
+            self.error = "Failed to import Strava activity: \(error.localizedDescription)"
+            Logger.training.error("Failed to import Strava activity: \(error)")
         }
     }
 }

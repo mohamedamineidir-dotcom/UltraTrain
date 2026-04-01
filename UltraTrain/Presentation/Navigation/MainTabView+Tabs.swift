@@ -69,7 +69,9 @@ extension MainTabView {
                 widgetDataWriter: widgetDataWriter,
                 workoutRecipeRepository: workoutRecipeRepository,
                 runRepository: runRepository,
-                subscriptionService: subscriptionService
+                subscriptionService: subscriptionService,
+                stravaAuthService: stravaAuthService,
+                stravaImportService: stravaImportService
             )
                 .tabItem {
                     Label("Plan", systemImage: "calendar")
