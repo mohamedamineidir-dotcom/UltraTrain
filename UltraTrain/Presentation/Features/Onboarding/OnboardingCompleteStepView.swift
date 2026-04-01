@@ -6,36 +6,33 @@ struct OnboardingCompleteStepView: View {
     var onComplete: () -> Void
     let healthKitService: (any HealthKitServiceProtocol)?
     let healthKitImportService: (any HealthKitImportServiceProtocol)?
-    @ScaledMetric(relativeTo: .largeTitle) private var sealSize: CGFloat = 56
+
     @State private var isRequestingHealthKit = false
     @State private var healthKitConnected = false
     @State private var isImportingWorkouts = false
     @State private var importResult: HealthKitImportResult?
-    @State private var showSeal = false
+    @State private var showRunner = false
     @State private var showContent = false
     @State private var showButton = false
 
     var body: some View {
         ScrollView {
-            VStack(spacing: Theme.Spacing.lg) {
-                // Hero section
+            VStack(spacing: Theme.Spacing.xxl) {
                 heroSection
-                    .scaleEffect(showSeal ? 1 : 0.8)
-                    .opacity(showSeal ? 1 : 0)
+                    .scaleEffect(showRunner ? 1 : 0.5)
+                    .opacity(showRunner ? 1 : 0)
 
-                // Summary cards
+                titleSection
+                    .opacity(showContent ? 1 : 0)
+                    .offset(y: showContent ? 0 : 16)
+
                 VStack(spacing: Theme.Spacing.md) {
-                    athleteCard
-                    if viewModel.hasNoRace {
-                        generalFitnessPlanCard
-                    } else {
-                        raceCard
-                    }
+                    summaryCard
                     healthKitCard
                 }
                 .padding(.horizontal, Theme.Spacing.lg)
                 .opacity(showContent ? 1 : 0)
-                .offset(y: showContent ? 0 : 20)
+                .offset(y: showContent ? 0 : 16)
 
                 if let error = viewModel.error {
                     ErrorBannerView(message: error) {
@@ -51,227 +48,146 @@ struct OnboardingCompleteStepView: View {
             .padding(.bottom, Theme.Spacing.xl)
         }
         .onAppear {
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.7).delay(0.1)) {
-                showSeal = true
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.7).delay(0.1)) {
+                showRunner = true
             }
-            withAnimation(.easeOut(duration: 0.5).delay(0.4)) {
+            withAnimation(.easeOut(duration: 0.5).delay(0.5)) {
                 showContent = true
             }
-            withAnimation(.easeOut(duration: 0.4).delay(0.8)) {
+            withAnimation(.easeOut(duration: 0.4).delay(0.9)) {
                 showButton = true
             }
         }
     }
 
-    // MARK: - Hero Section
+    // MARK: - Hero
 
     private var heroSection: some View {
-        VStack(spacing: Theme.Spacing.sm) {
-            ZStack {
-                Circle()
-                    .fill(Theme.Colors.goldAccent.opacity(0.12))
-                    .frame(width: 100, height: 100)
-
-                Image(systemName: "checkmark.seal.fill")
-                    .font(.system(size: sealSize))
-                    .foregroundStyle(Theme.Gradients.goldPremium)
-                    .shadow(color: Theme.Colors.goldAccent.opacity(0.4), radius: 16, y: 4)
-            }
+        RunnerLogoView(size: 220)
+            .padding(.top, Theme.Spacing.xxl)
             .accessibilityHidden(true)
+    }
 
-            Text("You're All Set!")
-                .font(.title.bold())
+    // MARK: - Title
 
-            Text("Your training journey starts now")
+    private var titleSection: some View {
+        VStack(spacing: Theme.Spacing.sm) {
+            Text("You're All Set")
+                .font(.largeTitle.bold())
+
+            Text(viewModel.hasNoRace
+                 ? "Your fitness journey starts now"
+                 : "Your personalized plan is ready")
                 .font(.subheadline)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .multilineTextAlignment(.center)
         }
-        .padding(.top, Theme.Spacing.lg)
     }
 
-    // MARK: - Athlete Card
+    // MARK: - Summary
 
-    private var athleteCard: some View {
+    private var summaryCard: some View {
         VStack(spacing: Theme.Spacing.sm) {
-            HStack(spacing: Theme.Spacing.sm) {
-                Image(systemName: "person.crop.circle.fill")
-                    .font(.title2)
-                    .foregroundStyle(Theme.Colors.warmCoral)
-                Text("Your Profile")
-                    .font(.headline)
-                Spacer()
-            }
-
-            Divider()
-
-            summaryIconRow(
-                icon: "person.fill",
-                color: Theme.Colors.warmCoral,
-                label: "Name",
-                value: "\(viewModel.firstName) \(viewModel.lastName)"
-            )
-            summaryIconRow(
+            summaryRow(
                 icon: "figure.run",
-                color: Theme.Colors.warmCoral,
-                label: "Level",
-                value: viewModel.experienceLevel?.rawValue.capitalized ?? "--"
+                text: [
+                    viewModel.experienceLevel?.rawValue.capitalized ?? "Beginner",
+                    "\(viewModel.preferredRunsPerWeek) runs/week",
+                    viewModel.trainingPhilosophy.displayName,
+                ].joined(separator: " · ")
             )
-            summaryIconRow(
-                icon: "chart.bar.fill",
-                color: Theme.Colors.warmCoral,
-                label: "Volume",
-                value: viewModel.isNewRunner ? "Just starting" : UnitFormatter.formatDistance(viewModel.weeklyVolumeKm, unit: viewModel.preferredUnit, decimals: 0) + "/week"
-            )
-        }
-        .onboardingCardStyle()
-        .accessibilityElement(children: .combine)
-    }
 
-    // MARK: - Race Card
-
-    private var raceCard: some View {
-        VStack(spacing: Theme.Spacing.sm) {
-            HStack(spacing: Theme.Spacing.sm) {
-                Image(systemName: "flag.checkered")
-                    .font(.title2)
-                    .foregroundStyle(Theme.Colors.goldAccent)
-                Text("A-Race")
-                    .font(.headline)
-                Spacer()
+            if viewModel.hasNoRace {
+                summaryRow(
+                    icon: "arrow.up.right",
+                    text: "General fitness · 12 weeks"
+                )
+            } else {
+                summaryRow(
+                    icon: "flag.checkered",
+                    text: [
+                        viewModel.raceName,
+                        UnitFormatter.formatDistance(
+                            viewModel.raceDistanceKm,
+                            unit: viewModel.preferredUnit,
+                            decimals: 0
+                        ),
+                        "D+ \(UnitFormatter.formatElevation(viewModel.raceElevationGainM, unit: viewModel.preferredUnit))",
+                    ].joined(separator: " · ")
+                )
+                summaryRow(
+                    icon: "calendar",
+                    text: viewModel.raceDate.formatted(.dateTime.day().month(.wide).year()) + weeksToGoLabel
+                )
             }
-
-            Divider()
-
-            summaryIconRow(
-                icon: "mappin.and.ellipse",
-                color: Theme.Colors.goldAccent,
-                label: "Race",
-                value: viewModel.raceName
-            )
-            summaryIconRow(
-                icon: "point.topleft.down.to.point.bottomright.curvepath",
-                color: Theme.Colors.goldAccent,
-                label: "Distance",
-                value: UnitFormatter.formatDistance(viewModel.raceDistanceKm, unit: viewModel.preferredUnit, decimals: 0)
-            )
-            summaryIconRow(
-                icon: "mountain.2.fill",
-                color: Theme.Colors.goldAccent,
-                label: "Elevation",
-                value: "D+ \(UnitFormatter.formatElevation(viewModel.raceElevationGainM, unit: viewModel.preferredUnit))"
-            )
-            summaryIconRow(
-                icon: "target",
-                color: Theme.Colors.goldAccent,
-                label: "Goal",
-                value: viewModel.raceGoalType.displayName
-            )
         }
-        .onboardingCardStyle()
-        .accessibilityElement(children: .combine)
+        .futuristicGlassStyle()
     }
 
-    // MARK: - General Fitness Plan Card
-
-    private var generalFitnessPlanCard: some View {
-        VStack(spacing: Theme.Spacing.sm) {
-            HStack(spacing: Theme.Spacing.sm) {
-                Image(systemName: "figure.run")
-                    .font(.title2)
-                    .foregroundStyle(Theme.Colors.goldAccent)
-                Text("General Fitness Plan")
-                    .font(.headline)
-                Spacer()
-            }
-
-            Divider()
-
-            summaryIconRow(
-                icon: "calendar",
-                color: Theme.Colors.goldAccent,
-                label: "Duration",
-                value: "12 weeks"
-            )
-            summaryIconRow(
-                icon: "arrow.up.right",
-                color: Theme.Colors.goldAccent,
-                label: "Focus",
-                value: "Build endurance & fitness"
-            )
-            summaryIconRow(
-                icon: "plus.circle",
-                color: Theme.Colors.goldAccent,
-                label: "Race",
-                value: "Add one anytime later"
-            )
-        }
-        .onboardingCardStyle()
-        .accessibilityElement(children: .combine)
+    private var weeksToGoLabel: String {
+        let weeks = Calendar.current.dateComponents(
+            [.weekOfYear], from: .now, to: viewModel.raceDate
+        ).weekOfYear ?? 0
+        return weeks > 0 ? " · \(weeks) weeks to go" : ""
     }
 
-    // MARK: - HealthKit Card
+    private func summaryRow(icon: String, text: String) -> some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            Image(systemName: icon)
+                .font(.subheadline)
+                .foregroundStyle(Theme.Colors.goldAccent)
+                .frame(width: 20)
+            Text(text)
+                .font(.subheadline)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+                .lineLimit(1)
+            Spacer()
+        }
+    }
+
+    // MARK: - HealthKit
 
     @ViewBuilder
     private var healthKitCard: some View {
         if let service = healthKitService, service.authorizationStatus != .unavailable {
-            VStack(spacing: Theme.Spacing.sm) {
-                HStack(spacing: Theme.Spacing.sm) {
-                    Image(systemName: healthKitConnected ? "heart.circle.fill" : "heart.circle")
-                        .font(.title2)
-                        .foregroundStyle(healthKitConnected ? Theme.Colors.success : Theme.Colors.warmCoral)
+            HStack(spacing: Theme.Spacing.sm) {
+                Image(systemName: healthKitConnected ? "heart.circle.fill" : "heart.circle")
+                    .font(.title2)
+                    .foregroundStyle(healthKitConnected ? Theme.Colors.success : Theme.Colors.warmCoral)
 
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(healthKitConnected ? "Apple Health Connected" : "Connect Apple Health")
-                            .font(.subheadline.bold())
-                            .foregroundStyle(healthKitConnected ? Theme.Colors.success : Theme.Colors.label)
-                        Text(healthKitConnected
-                             ? "Workouts will be imported on launch."
-                             : "Sync heart rate, weight, and workouts.")
-                            .font(.caption)
-                            .foregroundStyle(Theme.Colors.secondaryLabel)
-                    }
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(healthKitConnected ? "Apple Health Connected" : "Connect Apple Health")
+                        .font(.subheadline.bold())
+                        .foregroundStyle(healthKitConnected ? Theme.Colors.success : Theme.Colors.label)
+                    Text(healthKitConnected
+                         ? "Workouts will be imported on launch."
+                         : "Sync heart rate, weight, and workouts.")
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
 
-                    Spacer()
+                Spacer()
 
-                    if !healthKitConnected {
-                        Button {
-                            Task { await connectHealthKit() }
-                        } label: {
-                            if isRequestingHealthKit {
-                                ProgressView()
-                                    .controlSize(.small)
-                            } else {
-                                Text("Connect")
-                                    .font(.subheadline.bold())
-                            }
+                if !healthKitConnected {
+                    Button {
+                        Task { await connectHealthKit() }
+                    } label: {
+                        if isRequestingHealthKit {
+                            ProgressView()
+                                .controlSize(.small)
+                        } else {
+                            Text("Connect")
+                                .font(.subheadline.bold())
                         }
-                        .buttonStyle(.borderedProminent)
-                        .tint(Theme.Colors.warmCoral)
-                        .controlSize(.small)
-                        .disabled(isRequestingHealthKit)
-                        .accessibilityHint("Connects to Apple Health to sync heart rate and workouts")
                     }
+                    .buttonStyle(.borderedProminent)
+                    .tint(Theme.Colors.warmCoral)
+                    .controlSize(.small)
+                    .disabled(isRequestingHealthKit)
+                    .accessibilityHint("Connects to Apple Health to sync heart rate and workouts")
                 }
             }
-            .onboardingCardStyle()
-        }
-    }
-
-    // MARK: - Helpers
-
-    private func summaryIconRow(icon: String, color: Color, label: String, value: String) -> some View {
-        HStack(spacing: Theme.Spacing.sm) {
-            Image(systemName: icon)
-                .font(.subheadline)
-                .foregroundStyle(color)
-                .frame(width: 20)
-            Text(label)
-                .font(.subheadline)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
-            Spacer()
-            Text(value)
-                .font(.subheadline.bold())
-                .lineLimit(1)
+            .futuristicGlassStyle()
         }
     }
 
@@ -287,7 +203,7 @@ struct OnboardingCompleteStepView: View {
         isRequestingHealthKit = false
     }
 
-    // MARK: - Get Started Button
+    // MARK: - Get Started
 
     private var getStartedButton: some View {
         Button {
