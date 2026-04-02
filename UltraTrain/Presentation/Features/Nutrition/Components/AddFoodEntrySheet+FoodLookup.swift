@@ -8,21 +8,32 @@ extension AddFoodEntrySheet {
 
     @ViewBuilder
     var quickAddSection: some View {
-        if foodDatabaseService != nil {
+        if foodDatabaseService != nil || foodPhotoAnalysisService != nil {
             Section("Quick Add") {
-                Button {
-                    showingBarcodeScanner = true
-                } label: {
-                    Label("Scan Barcode", systemImage: "barcode.viewfinder")
+                if foodPhotoAnalysisService != nil {
+                    Button {
+                        showingFoodPhotoCamera = true
+                    } label: {
+                        Label("Scan Food with AI", systemImage: "camera.fill")
+                    }
+                    .accessibilityIdentifier("addFood.scanFoodButton")
                 }
-                .accessibilityIdentifier("addFood.scanBarcodeButton")
 
-                Button {
-                    showingFoodSearch = true
-                } label: {
-                    Label("Search Food Database", systemImage: "magnifyingglass")
+                if foodDatabaseService != nil {
+                    Button {
+                        showingBarcodeScanner = true
+                    } label: {
+                        Label("Scan Barcode", systemImage: "barcode.viewfinder")
+                    }
+                    .accessibilityIdentifier("addFood.scanBarcodeButton")
+
+                    Button {
+                        showingFoodSearch = true
+                    } label: {
+                        Label("Search Food Database", systemImage: "magnifyingglass")
+                    }
+                    .accessibilityIdentifier("addFood.searchFoodButton")
                 }
-                .accessibilityIdentifier("addFood.searchFoodButton")
             }
         }
     }
@@ -119,6 +130,40 @@ extension AddFoodEntrySheet {
         if basePer100g.carbs != nil || basePer100g.protein != nil || basePer100g.fat != nil {
             showMacros = true
         }
+    }
+
+    // MARK: - Food Photo Analysis
+
+    @MainActor
+    func analyzePhoto(_ photoData: Data) async {
+        guard let service = foodPhotoAnalysisService else { return }
+        isAnalyzing = true
+        showingPhotoResults = true
+        do {
+            analyzedItems = try await service.analyzePhoto(photoData)
+        } catch {
+            lookupError = "Could not analyze photo: \(error.localizedDescription)"
+            showingPhotoResults = false
+        }
+        isAnalyzing = false
+    }
+
+    func addAnalyzedItem(_ item: AnalyzedFoodItem) {
+        let entry = FoodLogEntry(
+            id: UUID(),
+            date: Date.now,
+            mealType: selectedMealType,
+            description: item.name,
+            caloriesEstimate: item.calories,
+            carbsGrams: item.carbsGrams > 0 ? item.carbsGrams : nil,
+            proteinGrams: item.proteinGrams > 0 ? item.proteinGrams : nil,
+            fatGrams: item.fatGrams > 0 ? item.fatGrams : nil,
+            hydrationMl: nil,
+            productId: nil,
+            portionGrams: item.portionGrams,
+            foodSearchResultId: nil
+        )
+        onSave(entry)
     }
 
     // MARK: - Save

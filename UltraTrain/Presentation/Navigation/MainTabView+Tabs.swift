@@ -118,7 +118,8 @@ extension MainTabView {
                 nutritionGenerator: nutritionGenerator,
                 foodLogRepository: foodLogRepository,
                 sessionNutritionAdvisor: sessionNutritionAdvisor,
-                foodDatabaseService: foodDatabaseService
+                foodDatabaseService: foodDatabaseService,
+                foodPhotoAnalysisService: foodPhotoAnalysisService
             )
                 .tabItem {
                     Label("Nutrition", systemImage: "fork.knife")

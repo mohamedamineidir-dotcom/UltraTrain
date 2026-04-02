@@ -3,6 +3,7 @@ import SwiftUI
 struct TrainingNutritionView: View {
     @State private var viewModel: TrainingNutritionViewModel
     private let foodDatabaseService: (any FoodDatabaseServiceProtocol)?
+    private let foodPhotoAnalysisService: (any FoodPhotoAnalysisServiceProtocol)?
 
     init(
         athleteRepository: any AthleteRepository,
@@ -10,9 +11,11 @@ struct TrainingNutritionView: View {
         nutritionRepository: any NutritionRepository,
         foodLogRepository: any FoodLogRepository,
         sessionNutritionAdvisor: any SessionNutritionAdvisor,
-        foodDatabaseService: (any FoodDatabaseServiceProtocol)? = nil
+        foodDatabaseService: (any FoodDatabaseServiceProtocol)? = nil,
+        foodPhotoAnalysisService: (any FoodPhotoAnalysisServiceProtocol)? = nil
     ) {
         self.foodDatabaseService = foodDatabaseService
+        self.foodPhotoAnalysisService = foodPhotoAnalysisService
         _viewModel = State(initialValue: TrainingNutritionViewModel(
             athleteRepository: athleteRepository,
             planRepository: planRepository,
@@ -36,7 +39,10 @@ struct TrainingNutritionView: View {
             await viewModel.load()
         }
         .sheet(isPresented: $viewModel.showingAddEntry) {
-            AddFoodEntrySheet(foodDatabaseService: foodDatabaseService) { entry in
+            AddFoodEntrySheet(
+                foodDatabaseService: foodDatabaseService,
+                foodPhotoAnalysisService: foodPhotoAnalysisService
+            ) { entry in
                 Task { await viewModel.addEntry(entry) }
             }
         }

@@ -83,7 +83,8 @@ extension MainTabView {
                 nutritionGenerator: nutritionGenerator,
                 foodLogRepository: foodLogRepository,
                 sessionNutritionAdvisor: sessionNutritionAdvisor,
-                foodDatabaseService: foodDatabaseService
+                foodDatabaseService: foodDatabaseService,
+                foodPhotoAnalysisService: foodPhotoAnalysisService
             )
 
         case .profile:

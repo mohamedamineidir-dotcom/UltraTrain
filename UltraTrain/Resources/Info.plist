@@ -69,7 +69,7 @@
     <key>NSHealthUpdateUsageDescription</key>
     <string>UltraTrain saves your completed runs as workouts in Apple Health.</string>
     <key>NSCameraUsageDescription</key>
-    <string>UltraTrain uses the camera to scan food product barcodes for quick nutrition entry.</string>
+    <string>UltraTrain uses the camera to scan food barcodes and take photos of meals for AI-powered nutrition analysis.</string>
     <key>NSMotionUsageDescription</key>
     <string>UltraTrain uses motion data to detect your cadence and running dynamics during tracked runs.</string>
     <key>NSFaceIDUsageDescription</key>
@@ -90,6 +90,8 @@
     <string>$(HMAC_SIGNING_SECRET)</string>
     <key>GOOGLE_CLIENT_ID</key>
     <string>$(GOOGLE_CLIENT_ID)</string>
+    <key>OPENAI_API_KEY</key>
+    <string>$(OPENAI_API_KEY)</string>
     <key>CFBundleURLTypes</key>
     <array>
         <dict>

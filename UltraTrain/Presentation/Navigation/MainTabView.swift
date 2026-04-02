@@ -58,6 +58,7 @@ struct MainTabView: View {
     let motionService: (any MotionServiceProtocol)?
     let foodLogRepository: any FoodLogRepository
     let foodDatabaseService: (any FoodDatabaseServiceProtocol)?
+    let foodPhotoAnalysisService: (any FoodPhotoAnalysisServiceProtocol)?
     let raceReflectionRepository: any RaceReflectionRepository
     let achievementRepository: (any AchievementRepository)?
     let morningCheckInRepository: (any MorningCheckInRepository)?
@@ -117,6 +118,7 @@ struct MainTabView: View {
         motionService: (any MotionServiceProtocol)? = nil,
         foodLogRepository: any FoodLogRepository,
         foodDatabaseService: (any FoodDatabaseServiceProtocol)? = nil,
+        foodPhotoAnalysisService: (any FoodPhotoAnalysisServiceProtocol)? = nil,
         raceReflectionRepository: any RaceReflectionRepository,
         achievementRepository: (any AchievementRepository)? = nil,
         morningCheckInRepository: (any MorningCheckInRepository)? = nil,
@@ -175,6 +177,7 @@ struct MainTabView: View {
         self.motionService = motionService
         self.foodLogRepository = foodLogRepository
         self.foodDatabaseService = foodDatabaseService
+        self.foodPhotoAnalysisService = foodPhotoAnalysisService
         self.raceReflectionRepository = raceReflectionRepository
         self.achievementRepository = achievementRepository
         self.morningCheckInRepository = morningCheckInRepository

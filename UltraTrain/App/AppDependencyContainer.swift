@@ -92,6 +92,7 @@ struct AppDependencyContainer {
     let weatherService: AppleWeatherKitService
     let motionService: MotionService
     let foodDatabaseService: FoodDatabaseService
+    let foodPhotoAnalysisService: FoodPhotoAnalysisService
 
     // MARK: - CloudKit
 

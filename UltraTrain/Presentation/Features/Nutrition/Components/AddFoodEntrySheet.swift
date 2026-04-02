@@ -19,14 +19,24 @@ struct AddFoodEntrySheet: View {
     @State var basePer100g: (cal: Int?, carbs: Double?, protein: Double?, fat: Double?) = (nil, nil, nil, nil)
     @State var selectedFoodResultId: String?
 
+    // Food Photo AI
+    @State var showingFoodPhotoCamera = false
+    @State var showingPhotoResults = false
+    @State var capturedPhotoData: Data?
+    @State var analyzedItems: [AnalyzedFoodItem] = []
+    @State var isAnalyzing = false
+
     let foodDatabaseService: (any FoodDatabaseServiceProtocol)?
+    let foodPhotoAnalysisService: (any FoodPhotoAnalysisServiceProtocol)?
     let onSave: (FoodLogEntry) -> Void
 
     init(
         foodDatabaseService: (any FoodDatabaseServiceProtocol)? = nil,
+        foodPhotoAnalysisService: (any FoodPhotoAnalysisServiceProtocol)? = nil,
         onSave: @escaping (FoodLogEntry) -> Void
     ) {
         self.foodDatabaseService = foodDatabaseService
+        self.foodPhotoAnalysisService = foodPhotoAnalysisService
         self.onSave = onSave
     }
 
@@ -78,6 +88,29 @@ struct AddFoodEntrySheet: View {
                         applySearchResult(result)
                     }
                 }
+            }
+            .fullScreenCover(isPresented: $showingFoodPhotoCamera) {
+                FoodPhotoCameraView { photoData in
+                    showingFoodPhotoCamera = false
+                    capturedPhotoData = photoData
+                    Task { await analyzePhoto(photoData) }
+                }
+            }
+            .sheet(isPresented: $showingPhotoResults) {
+                FoodPhotoResultsView(
+                    items: $analyzedItems,
+                    photoData: capturedPhotoData,
+                    isAnalyzing: isAnalyzing,
+                    onAddItem: { item in
+                        addAnalyzedItem(item)
+                    },
+                    onAddAll: {
+                        for item in analyzedItems {
+                            addAnalyzedItem(item)
+                        }
+                        dismiss()
+                    }
+                )
             }
             .alert("Lookup Failed", isPresented: .init(
                 get: { lookupError != nil },

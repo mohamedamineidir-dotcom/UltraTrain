@@ -79,6 +79,7 @@ struct UltraTrainApp: App {
                 motionService: container.motionService,
                 foodLogRepository: container.foodLogRepository,
                 foodDatabaseService: container.foodDatabaseService,
+                foodPhotoAnalysisService: container.foodPhotoAnalysisService,
                 raceReflectionRepository: container.raceReflectionRepository,
                 achievementRepository: container.achievementRepository,
                 morningCheckInRepository: container.morningCheckInRepository,

@@ -86,6 +86,7 @@ extension AppRootView {
                             motionService: motionService,
                             foodLogRepository: foodLogRepository,
                             foodDatabaseService: foodDatabaseService,
+                            foodPhotoAnalysisService: foodPhotoAnalysisService,
                             raceReflectionRepository: raceReflectionRepository,
                             achievementRepository: achievementRepository,
                             morningCheckInRepository: morningCheckInRepository,

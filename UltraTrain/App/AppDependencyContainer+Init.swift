@@ -182,6 +182,7 @@ extension AppDependencyContainer {
         emergencyContactRepository = LocalEmergencyContactRepository(modelContainer: modelContainer)
         foodLogRepository = LocalFoodLogRepository(modelContainer: modelContainer)
         foodDatabaseService = FoodDatabaseService()
+        foodPhotoAnalysisService = FoodPhotoAnalysisService()
         raceReflectionRepository = LocalRaceReflectionRepository(modelContainer: modelContainer)
         achievementRepository = LocalAchievementRepository(modelContainer: modelContainer)
         morningCheckInRepository = LocalMorningCheckInRepository(modelContainer: modelContainer)

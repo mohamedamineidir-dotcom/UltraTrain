@@ -212,6 +212,15 @@ enum AppConfiguration {
         }()
     }
 
+    enum OpenAI {
+        static let apiKey: String = Bundle.main.infoDictionary?["OPENAI_API_KEY"] as? String ?? ""
+        static let visionModel = "gpt-4o"
+        static let maxTokens = 1024
+        static let apiURL = "https://api.openai.com/v1/chat/completions"
+        static let maxImageDimension: CGFloat = 1024
+        static let jpegCompressionQuality: CGFloat = 0.8
+    }
+
     enum Strava {
         static let clientId: String = Bundle.main.infoDictionary?["STRAVA_CLIENT_ID"] as? String ?? ""
         static let clientSecret: String = Bundle.main.infoDictionary?["STRAVA_CLIENT_SECRET"] as? String ?? ""
