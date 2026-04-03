@@ -14,6 +14,10 @@ enum AthleteSwiftDataMapper {
             guard let data = raw.data(using: .utf8) else { return nil }
             return try? JSONDecoder().decode([PersonalBest].self, from: data)
         } ?? []
+        let trailPersonalBests: [TrailPersonalBest] = model.trailPersonalBestsRaw.flatMap { raw in
+            guard let data = raw.data(using: .utf8) else { return nil }
+            return try? JSONDecoder().decode([TrailPersonalBest].self, from: data)
+        } ?? []
         let philosophy = TrainingPhilosophy(rawValue: model.trainingPhilosophyRaw) ?? .balanced
         let weightGoal = WeightGoal(rawValue: model.weightGoalRaw) ?? .maintain
         let biologicalSex = BiologicalSex(rawValue: model.biologicalSexRaw) ?? .male
@@ -32,6 +36,7 @@ enum AthleteSwiftDataMapper {
             preferredUnit: unit,
             customZoneThresholds: customZones,
             personalBests: personalBests,
+            trailPersonalBests: trailPersonalBests,
             trainingPhilosophy: philosophy,
             preferredRunsPerWeek: model.preferredRunsPerWeek ?? 5,
             displayName: model.displayName,
@@ -59,6 +64,10 @@ enum AthleteSwiftDataMapper {
     static func toSwiftData(_ athlete: Athlete) -> AthleteSwiftDataModel {
         let pbRaw: String? = athlete.personalBests.isEmpty ? nil : {
             guard let data = try? JSONEncoder().encode(athlete.personalBests) else { return nil }
+            return String(data: data, encoding: .utf8)
+        }()
+        let trailPbRaw: String? = athlete.trailPersonalBests.isEmpty ? nil : {
+            guard let data = try? JSONEncoder().encode(athlete.trailPersonalBests) else { return nil }
             return String(data: data, encoding: .utf8)
         }()
         return AthleteSwiftDataModel(
@@ -96,7 +105,8 @@ enum AthleteSwiftDataMapper {
             strengthTrainingLocationRaw: athlete.strengthTrainingLocation.rawValue,
             runningTerrainRaw: athlete.runningTerrain.rawValue,
             uphillDurationRaw: athlete.uphillDuration?.rawValue,
-            treadmillMaxInclineRaw: athlete.treadmillMaxIncline?.rawValue
+            treadmillMaxInclineRaw: athlete.treadmillMaxIncline?.rawValue,
+            trailPersonalBestsRaw: trailPbRaw
         )
     }
 }

@@ -25,8 +25,9 @@ enum SessionTemplateGenerator {
         raceOverride: IntermediateRaceHandler.RaceWeekOverride? = nil,
         preferredRunsPerWeek: Int = 5,
         verticalGainEnvironment: VerticalGainEnvironment = .mountain,
-        expectedRaceDuration: TimeInterval = 0
-    ) -> (sessions: [TrainingSession], workouts: [IntervalWorkout]) {
+        expectedRaceDuration: TimeInterval = 0,
+        strengthConfig: StrengthSessionGenerator.Config? = nil
+    ) -> (sessions: [TrainingSession], workouts: [IntervalWorkout], strengthWorkouts: [StrengthWorkout]) {
         let runsPerWeek = preferredRunsPerWeek
         let templates: [SessionTemplate]
         var workouts: [IntervalWorkout] = []
@@ -123,7 +124,159 @@ enum SessionTemplateGenerator {
         }
 
         let markedSessions = markKeySessions(sessions, phase: skeleton.phase)
-        return (markedSessions, workouts)
+
+        // Generate S&C sessions if athlete opted in
+        var strengthWorkouts: [StrengthWorkout] = []
+        var allSessions = markedSessions
+        if let sConfig = strengthConfig {
+            let scCount = StrengthSessionGenerator.sessionsPerWeek(config: sConfig)
+            if scCount > 0 {
+                let availableDays = StrengthSessionGenerator.availableDayOffsets(
+                    runningSessions: templates, config: sConfig
+                )
+                let scDays = pickSCDays(
+                    availableDays: availableDays,
+                    count: scCount,
+                    existingSessions: templates
+                )
+                for (i, dayOffset) in scDays.enumerated() {
+                    let workout = StrengthSessionGenerator.generateWorkout(
+                        config: sConfig, sessionIndex: i
+                    )
+                    strengthWorkouts.append(workout)
+
+                    let scSession = TrainingSession(
+                        id: UUID(),
+                        date: skeleton.startDate.adding(days: dayOffset),
+                        type: .strengthConditioning,
+                        plannedDistanceKm: 0,
+                        plannedElevationGainM: 0,
+                        plannedDuration: TimeInterval(workout.estimatedDurationMinutes * 60),
+                        intensity: .easy,
+                        description: formatSCDescription(workout),
+                        nutritionNotes: nil,
+                        isCompleted: false,
+                        isSkipped: false,
+                        linkedRunId: nil,
+                        strengthWorkoutId: workout.id,
+                        coachAdvice: scCoachAdvice(config: sConfig, category: workout.category)
+                    )
+                    allSessions.append(scSession)
+                }
+            }
+        }
+
+        // Sort all sessions by date
+        allSessions.sort { $0.date < $1.date }
+
+        return (allSessions, workouts, strengthWorkouts)
+    }
+
+    // MARK: - S&C Day Placement
+
+    /// Picks the best days for S&C sessions from available slots.
+    /// Prefers rest days first, then easy run days. Spreads them apart.
+    private static func pickSCDays(
+        availableDays: [Int],
+        count: Int,
+        existingSessions: [SessionTemplate]
+    ) -> [Int] {
+        guard !availableDays.isEmpty, count > 0 else { return [] }
+
+        // Prefer rest days, then recovery/easy days, then any available
+        let restDays = availableDays.filter { day in
+            existingSessions.first(where: { $0.dayOffset == day })?.type == .rest
+        }
+        let easyDays = availableDays.filter { day in
+            let sessionType = existingSessions.first(where: { $0.dayOffset == day })?.type
+            return sessionType == .recovery || sessionType == .crossTraining
+        }
+
+        var candidates = restDays + easyDays + availableDays
+        // Remove duplicates while preserving order
+        var seen = Set<Int>()
+        candidates = candidates.filter { seen.insert($0).inserted }
+
+        if count == 1 {
+            // Single session: prefer mid-week (day 0=Mon or 3=Thu)
+            let preferred = candidates.min(by: { abs($0 - 3) < abs($1 - 3) })
+            return [preferred ?? candidates[0]]
+        }
+
+        if count >= 2, candidates.count >= 2 {
+            // Spread sessions apart: pick first and one ~3 days later
+            let first = candidates[0]
+            let second = candidates.first(where: { abs($0 - first) >= 2 }) ?? candidates[1]
+            var result = [first, second]
+
+            if count >= 3, candidates.count >= 3 {
+                let third = candidates.first(where: {
+                    $0 != first && $0 != second && abs($0 - first) >= 2 && abs($0 - second) >= 2
+                }) ?? candidates.first(where: { $0 != first && $0 != second })
+                if let t = third { result.append(t) }
+            }
+
+            return Array(result.prefix(count))
+        }
+
+        return Array(candidates.prefix(count))
+    }
+
+    // MARK: - S&C Description & Advice
+
+    private static func formatSCDescription(_ workout: StrengthWorkout) -> String {
+        var lines: [String] = []
+        lines.append(workout.name)
+        lines.append("Duration: ~\(workout.estimatedDurationMinutes) min")
+        lines.append("")
+        lines.append(workout.warmUpNotes)
+        lines.append("")
+
+        let grouped = Dictionary(grouping: workout.exercises, by: { $0.category })
+        for category in StrengthExerciseCategory.allCases {
+            guard let exercises = grouped[category], !exercises.isEmpty else { continue }
+            lines.append("▸ \(category.displayName):")
+            for ex in exercises {
+                lines.append("  • \(ex.name) — \(ex.sets)×\(ex.reps)")
+                if !ex.notes.isEmpty {
+                    lines.append("    \(ex.notes)")
+                }
+            }
+            lines.append("")
+        }
+
+        lines.append(workout.coolDownNotes)
+        return lines.joined(separator: "\n")
+    }
+
+    private static func scCoachAdvice(
+        config: StrengthSessionGenerator.Config,
+        category: StrengthSessionCategory
+    ) -> String {
+        switch category {
+        case .full:
+            switch config.phase {
+            case .base:
+                return "Foundation phase: focus on learning proper form with moderate loads. Build the strength base that will support harder training later. Take 60-90 sec rest between sets."
+            case .build:
+                return "Build phase: increase weight or difficulty. Add power movements. Quality over quantity — stop if form breaks down. Allow 4-6 hours between running and this session."
+            case .peak:
+                return "Peak maintenance: keep loads moderate, reduce volume. You're preserving strength, not building it. 2-3 sets max per exercise."
+            default:
+                return "Keep it controlled and focused. Listen to your body."
+            }
+        case .maintenance:
+            return "Quick maintenance session: hit the key movements with reduced volume. 2-3 sets, don't push to failure. Keep the neuromuscular connection alive."
+        case .activation:
+            switch config.phase {
+            case .taper:
+                return "Light activation only. No soreness allowed — your race is close. These movements keep muscles firing without creating fatigue."
+            case .recovery:
+                return "Gentle activation to promote blood flow and recovery. Stop immediately if anything feels off."
+            default:
+                return "Light activation routine. Wake up the stabilizers before your next run."
+            }
+        }
     }
 
     // MARK: - Mark Key Sessions

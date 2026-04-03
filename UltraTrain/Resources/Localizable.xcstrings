@@ -1490,16 +1490,6 @@
         }
       }
     },
-    "%lld–%lld km/week" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld–%2$lld km/week"
-          }
-        }
-      }
-    },
     "%lld/%lld" : {
       "localizations" : {
         "en" : {
@@ -1605,6 +1595,16 @@
     "%lldg" : {
 
     },
+    "%lldg · %lld kcal" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lldg · %2$lld kcal"
+          }
+        }
+      }
+    },
     "%lldg / %lldg (%lld%%)" : {
       "localizations" : {
         "en" : {
@@ -1673,6 +1673,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "~%lld kcal consommées"
+          }
+        }
+      }
+    },
+    "~%lld–%lld km/week (1st month)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "~%1$lld–%2$lld km/week (1st month)"
           }
         }
       }
@@ -1855,9 +1865,6 @@
           }
         }
       }
-    },
-    "A-Race" : {
-
     },
     "Abandon" : {
       "localizations" : {
@@ -2083,6 +2090,12 @@
           }
         }
       }
+    },
+    "Add %@" : {
+
+    },
+    "Add All Items" : {
+
     },
     "Add Checkpoint" : {
       "localizations" : {
@@ -2410,6 +2423,9 @@
         }
       }
     },
+    "AI is identifying items and estimating nutrition" : {
+
+    },
     "AI Suggested Session" : {
       "localizations" : {
         "fr" : {
@@ -2590,6 +2606,9 @@
         }
       }
     },
+    "Analyzing your food..." : {
+
+    },
     "Analyzing..." : {
       "localizations" : {
         "fr" : {
@@ -2729,6 +2748,9 @@
           }
         }
       }
+    },
+    "Approximate range for the first month of your plan. Pick the frequency that suits you best." : {
+
     },
     "Are you dealing with an injury right now?" : {
 
@@ -3134,6 +3156,16 @@
     },
     "C: %lldg" : {
 
+    },
+    "C: %lldg · P: %lldg · F: %lldg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "C: %1$lldg · P: %2$lldg · F: %3$lldg"
+          }
+        }
+      }
     },
     "Caffeinated" : {
       "localizations" : {
@@ -4745,6 +4777,9 @@
         }
       }
     },
+    "Detected Items (%lld)" : {
+
+    },
     "Disabled" : {
       "localizations" : {
         "fr" : {
@@ -6340,6 +6375,9 @@
         }
       }
     },
+    "Food Analysis" : {
+
+    },
     "Food description" : {
       "localizations" : {
         "fr" : {
@@ -6536,9 +6574,6 @@
           }
         }
       }
-    },
-    "General Fitness Plan" : {
-
     },
     "Generate a personalized plan based on\nyour profile and race goals." : {
 
@@ -7421,6 +7456,9 @@
         }
       }
     },
+    "In-App Runs" : {
+
+    },
     "Include Location" : {
       "localizations" : {
         "fr" : {
@@ -7917,9 +7955,6 @@
           }
         }
       }
-    },
-    "Link to a Recent Run" : {
-
     },
     "Link to Recorded Run (Optional)" : {
       "localizations" : {
@@ -8837,6 +8872,9 @@
         }
       }
     },
+    "No Food Detected" : {
+
+    },
     "No friends to invite yet." : {
       "localizations" : {
         "fr" : {
@@ -9032,6 +9070,9 @@
           }
         }
       }
+    },
+    "No recent Strava activities found" : {
+
     },
     "No Records Yet" : {
       "localizations" : {
@@ -12662,6 +12703,9 @@
         }
       }
     },
+    "Scan Food with AI" : {
+
+    },
     "Schedule" : {
       "localizations" : {
         "fr" : {
@@ -13010,9 +13054,6 @@
           }
         }
       }
-    },
-    "Select your preferred training frequency" : {
-
     },
     "Select your running experience level" : {
       "localizations" : {
@@ -14129,6 +14170,9 @@
         }
       }
     },
+    "Strava Activities" : {
+
+    },
     "Strava upload failed" : {
       "localizations" : {
         "fr" : {
@@ -14865,6 +14909,9 @@
         }
       }
     },
+    "Total" : {
+
+    },
     "Total Duration" : {
       "localizations" : {
         "fr" : {
@@ -15128,6 +15175,9 @@
           }
         }
       }
+    },
+    "Try taking a clearer photo with better lighting." : {
+
     },
     "Type" : {
       "localizations" : {
@@ -16253,7 +16303,11 @@
     "You're about to start your trail running journey." : {
 
     },
+    "You're All Set" : {
+
+    },
     "You're All Set!" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -16290,6 +16344,9 @@
         }
       }
     },
+    "Your fitness journey starts now" : {
+
+    },
     "Your local training data will remain on this device." : {
       "localizations" : {
         "fr" : {
@@ -16319,6 +16376,9 @@
           }
         }
       }
+    },
+    "Your personalized plan is ready" : {
+
     },
     "Your Physical Data" : {
       "extractionState" : "stale",
@@ -16362,9 +16422,6 @@
           }
         }
       }
-    },
-    "Your training journey starts now" : {
-
     },
     "Your Training Preview" : {
 

@@ -387,3 +387,20 @@ FitnessSnapshot  — daily CTL/ATL/TSB, weekly volume summary
 - Do NOT import the entire module when you need one type — use `@_exported` sparingly.
 - Do NOT create god objects. No manager/helper/utility class over 200 lines.
 - Do NOT use third-party libraries without checking their license, maintenance status, and security track record.
+
+---
+
+## 12. gstack — AI Development Team Skills
+
+Use gstack skills for structured development workflows. For all web browsing, use the `/browse` skill — never use `mcp__claude-in-chrome__*` tools.
+
+### Available Skills
+
+**Planning:** `/office-hours`, `/plan-ceo-review`, `/plan-eng-review`, `/plan-design-review`, `/design-consultation`, `/design-shotgun`, `/autoplan`
+**Building:** `/design-html`, `/design-review`
+**Review:** `/review`, `/investigate`, `/codex`
+**Testing:** `/qa`, `/qa-only`, `/cso`, `/benchmark`
+**Shipping:** `/ship`, `/land-and-deploy`, `/canary`, `/document-release`
+**Utilities:** `/browse`, `/connect-chrome`, `/setup-browser-cookies`, `/setup-deploy`, `/retro`, `/learn`, `/careful`, `/freeze`, `/guard`, `/unfreeze`, `/gstack-upgrade`
+
+If gstack skills aren't working, run: `cd ~/.claude/skills/gstack && ./setup`

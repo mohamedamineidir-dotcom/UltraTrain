@@ -53,6 +53,51 @@ final class OnboardingViewModel {
     var pbMarathonSeconds: Int = 0
     var pbMarathonDate: Date = .now
 
+    // MARK: - Step 3: Trail Personal Bests (Optional)
+
+    struct TrailPBEntry: Identifiable {
+        let id = UUID()
+        var distanceKm: Double = 50
+        var elevationGainM: Double = 2000
+        var hours: Int = 0
+        var minutes: Int = 0
+        var seconds: Int = 0
+        var date: Date = .now
+
+        var totalSeconds: TimeInterval {
+            TimeInterval(hours * 3600 + minutes * 60 + seconds)
+        }
+
+        var isValid: Bool {
+            distanceKm > 0 && elevationGainM >= 0 && totalSeconds > 0
+        }
+    }
+
+    var trailPBEntries: [TrailPBEntry] = []
+
+    func addTrailPBEntry() {
+        guard trailPBEntries.count < 5 else { return }
+        trailPBEntries.append(TrailPBEntry())
+    }
+
+    func removeTrailPBEntry(at index: Int) {
+        guard trailPBEntries.indices.contains(index) else { return }
+        trailPBEntries.remove(at: index)
+    }
+
+    func buildTrailPBs() -> [TrailPersonalBest] {
+        trailPBEntries.compactMap { entry in
+            guard entry.isValid else { return nil }
+            return TrailPersonalBest(
+                id: UUID(),
+                distanceKm: entry.distanceKm,
+                elevationGainM: entry.elevationGainM,
+                timeSeconds: entry.totalSeconds,
+                date: entry.date
+            )
+        }
+    }
+
     // MARK: - Step 4: Physical Data
 
     var firstName = ""
@@ -282,6 +327,7 @@ final class OnboardingViewModel {
 
     private func buildAthlete() -> Athlete {
         let pbs = buildPersonalBests()
+        let trailPbs = buildTrailPBs()
         let metrics = PerformanceEstimator.deriveMetrics(from: pbs)
         return Athlete(
             id: UUID(),
@@ -297,6 +343,7 @@ final class OnboardingViewModel {
             longestRunKm: isNewRunner ? 0 : longestRunKm,
             preferredUnit: preferredUnit,
             personalBests: pbs,
+            trailPersonalBests: trailPbs,
             trainingPhilosophy: trainingPhilosophy,
             preferredRunsPerWeek: preferredRunsPerWeek,
             weightGoal: weightGoal,

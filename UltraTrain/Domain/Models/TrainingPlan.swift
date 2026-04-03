@@ -9,6 +9,7 @@ struct TrainingPlan: Identifiable, Equatable, Sendable, Codable {
     var intermediateRaceIds: [UUID]
     var intermediateRaceSnapshots: [RaceSnapshot]
     var workouts: [IntervalWorkout] = []
+    var strengthWorkouts: [StrengthWorkout] = []
 
     var totalWeeks: Int { weeks.count }
     var currentWeekIndex: Int? {

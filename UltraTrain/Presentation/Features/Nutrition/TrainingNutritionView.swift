@@ -228,6 +228,7 @@ private extension SessionType {
         case .backToBack: return "Back-to-Back"
         case .recovery: return "Recovery Run"
         case .crossTraining: return "Cross Training"
+        case .strengthConditioning: return "S&C"
         case .rest: return "Rest"
         }
     }

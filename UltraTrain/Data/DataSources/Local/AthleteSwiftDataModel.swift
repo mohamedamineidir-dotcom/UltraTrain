@@ -39,6 +39,7 @@ final class AthleteSwiftDataModel {
     var runningTerrainRaw: String = "trail"
     var uphillDurationRaw: String? = nil
     var treadmillMaxInclineRaw: String? = nil
+    var trailPersonalBestsRaw: String? = nil
 
     init(
         id: UUID = UUID(),
@@ -76,7 +77,8 @@ final class AthleteSwiftDataModel {
         strengthTrainingLocationRaw: String = "home",
         runningTerrainRaw: String = "trail",
         uphillDurationRaw: String? = nil,
-        treadmillMaxInclineRaw: String? = nil
+        treadmillMaxInclineRaw: String? = nil,
+        trailPersonalBestsRaw: String? = nil
     ) {
         self.id = id
         self.firstName = firstName
@@ -114,5 +116,6 @@ final class AthleteSwiftDataModel {
         self.runningTerrainRaw = runningTerrainRaw
         self.uphillDurationRaw = uphillDurationRaw
         self.treadmillMaxInclineRaw = treadmillMaxInclineRaw
+        self.trailPersonalBestsRaw = trailPersonalBestsRaw
     }
 }

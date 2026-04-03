@@ -66,7 +66,7 @@ enum WorkoutProgressionEngine {
             phases = template.phases
             name = template.name
             description = template.description
-        case .crossTraining, .rest:
+        case .crossTraining, .rest, .strengthConditioning:
             return makeGenericWorkout(type: type, duration: totalDuration, intensity: intensity)
         }
 

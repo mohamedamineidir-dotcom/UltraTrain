@@ -27,7 +27,7 @@ enum CoachingInsightCalculator {
                 type: .raceWeek,
                 category: .guidance,
                 title: "Race Week",
-                message: "\(race.name) is in \(days) day\(days == 1 ? "" : "s"). Reduce volume, keep legs fresh. Trust your training.",
+                message: "\(race.name) is in \(days) day\(days == 1 ? "" : "s"). Keep the volume low, legs fresh. You've done the work.",
                 icon: "flag.checkered"
             ))
         }
@@ -40,7 +40,7 @@ enum CoachingInsightCalculator {
                 type: .readyToRace,
                 category: .positive,
                 title: "Race Ready",
-                message: "You're in great shape for \(race.name). Form is strong — confidence is high.",
+                message: "You're in great shape for \(race.name). Your form is strong right now.",
                 icon: "star.fill"
             ))
         }
@@ -53,7 +53,7 @@ enum CoachingInsightCalculator {
                 type: .taperGuidance,
                 category: .guidance,
                 title: "Taper Phase",
-                message: "Reduce volume 30-40% but maintain some intensity. Feeling flat is normal — your body is absorbing the training.",
+                message: "Cut the volume but keep some intensity. Feeling flat or restless is totally normal during taper.",
                 icon: "arrow.down.right.circle"
             ))
         }
@@ -66,7 +66,7 @@ enum CoachingInsightCalculator {
                 type: .formPeaking,
                 category: .positive,
                 title: "Form is Peaking",
-                message: "Your fitness-to-fatigue balance is excellent. Great time for a quality long run or tempo session.",
+                message: "Your fitness-to-fatigue balance is excellent right now. Great day for a quality session.",
                 icon: "bolt.fill"
             ))
         }
@@ -78,7 +78,7 @@ enum CoachingInsightCalculator {
                 type: .recoveryNeeded,
                 category: .warning,
                 title: "Recovery Needed",
-                message: "Fatigue is high. Prioritize sleep, nutrition, and easy sessions this week.",
+                message: "Fatigue is piling up. Prioritize sleep, good food, and easy sessions this week.",
                 icon: "bed.double.fill"
             ))
         }
@@ -90,7 +90,7 @@ enum CoachingInsightCalculator {
                 type: .detrainingRisk,
                 category: .warning,
                 title: "Detraining Risk",
-                message: "Training load is dropping. Maintain consistency to protect your fitness gains.",
+                message: "Training load has been dropping. Stay consistent to protect what you've built.",
                 icon: "arrow.down.circle"
             ))
         }
@@ -116,7 +116,7 @@ enum CoachingInsightCalculator {
                 type: .consistentTraining,
                 category: .positive,
                 title: "Great Consistency",
-                message: "You're nailing the plan this week. Keep up the excellent work.",
+                message: "You're nailing the plan this week. Keep it up.",
                 icon: "checkmark.seal.fill"
             ))
         }
@@ -130,7 +130,7 @@ enum CoachingInsightCalculator {
                     type: .volumeOnTrack,
                     category: .positive,
                     title: "Volume on Track",
-                    message: "Weekly distance is hitting targets. Your preparation is solid.",
+                    message: "Weekly distance is right where it needs to be. Solid work.",
                     icon: "chart.bar.fill"
                 ))
             }
@@ -146,7 +146,7 @@ enum CoachingInsightCalculator {
                     type: .longRunReminder,
                     category: .guidance,
                     title: "Long Run Ahead",
-                    message: "Your long run is still ahead this week. Plan your route and nutrition in advance.",
+                    message: "Your long run is still coming this week. Plan your route and nutrition in advance.",
                     icon: "figure.run"
                 ))
             }
@@ -170,7 +170,7 @@ enum CoachingInsightCalculator {
                     type: .sleepDeficit,
                     category: .warning,
                     title: "Sleep Deficit",
-                    message: "Sleep quality is low. Prioritize an earlier bedtime and avoid screens before bed.",
+                    message: "Sleep quality has been low. Try getting to bed earlier tonight.",
                     icon: "bed.double.fill"
                 ))
             } else if recovery.overallScore >= 80 {
@@ -179,7 +179,7 @@ enum CoachingInsightCalculator {
                     type: .goodRecovery,
                     category: .positive,
                     title: "Well Recovered",
-                    message: "Recovery score is \(recovery.overallScore)/100. Great day for a quality session.",
+                    message: "Recovery score is \(recovery.overallScore)/100. Good day for a quality session.",
                     icon: "battery.100.bolt"
                 ))
             }
@@ -192,7 +192,7 @@ enum CoachingInsightCalculator {
                 type: .hrvDeclining,
                 category: .warning,
                 title: "HRV Declining",
-                message: "Heart rate variability has dropped significantly. Consider reducing training intensity.",
+                message: "Your heart rate variability has dropped. Consider going easier this week.",
                 icon: "heart.text.square"
             ))
         }
@@ -204,7 +204,7 @@ enum CoachingInsightCalculator {
                 type: .hrvImproving,
                 category: .positive,
                 title: "HRV Improving",
-                message: "Your HRV trend is positive — your body is adapting well to training.",
+                message: "HRV is trending up. Your body is responding well to the training.",
                 icon: "heart.text.square"
             ))
         }
@@ -256,15 +256,15 @@ enum CoachingInsightCalculator {
     private static func phaseGuidance(_ phase: TrainingPhase) -> String {
         switch phase {
         case .base:
-            "Focus on building your aerobic foundation. Keep most runs easy and gradually increase volume."
+            "Building your aerobic foundation. Keep most runs easy and gradually increase volume."
         case .build:
-            "Time to add race-specific intensity. Include tempo and vertical gain sessions alongside your long runs."
+            "Time to add race-specific work. Tempo, climbing, and longer efforts alongside your long runs."
         case .peak:
-            "Quality over quantity now. Your hardest sessions happen here, but total volume starts to level off."
+            "Quality over quantity now. Your hardest sessions happen here, but total volume levels off."
         case .taper:
-            "Reduce volume 30-40% but maintain some intensity. Your body is absorbing the training."
+            "Cutting volume but keeping some intensity. Your body is absorbing everything you've built."
         case .recovery:
-            "Easy effort only. Let your body fully recover before the next training block."
+            "Easy effort only. Let your body fully recover before the next block."
         case .race:
             "Race week. Stay loose, eat well, hydrate, and trust your preparation."
         }

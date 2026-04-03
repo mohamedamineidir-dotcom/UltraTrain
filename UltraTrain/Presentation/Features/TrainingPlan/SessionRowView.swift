@@ -246,20 +246,32 @@ extension SessionType {
         case .backToBack:    String(localized: "session.backToBack", defaultValue: "Long Run (B2B)")
         case .recovery:      String(localized: "session.recovery", defaultValue: "Base Endurance")
         case .crossTraining: String(localized: "session.crossTraining", defaultValue: "Cross-Training")
-        case .rest:          String(localized: "session.rest", defaultValue: "Rest")
+        case .rest:                   String(localized: "session.rest", defaultValue: "Rest")
+        case .strengthConditioning:   String(localized: "session.strengthConditioning", defaultValue: "Strength & Conditioning")
         }
     }
 
     var icon: String {
         switch self {
-        case .longRun:       "figure.run"
-        case .tempo:         "speedometer"
-        case .intervals:     "timer"
-        case .verticalGain:  "mountain.2.fill"
-        case .backToBack:    "arrow.triangle.2.circlepath"
-        case .recovery:      "figure.walk"
-        case .crossTraining: "figure.mixed.cardio"
-        case .rest:          "bed.double.fill"
+        case .longRun:               "figure.run"
+        case .tempo:                 "speedometer"
+        case .intervals:             "timer"
+        case .verticalGain:          "mountain.2.fill"
+        case .backToBack:            "arrow.triangle.2.circlepath"
+        case .recovery:              "figure.walk"
+        case .crossTraining:         "figure.mixed.cardio"
+        case .rest:                  "bed.double.fill"
+        case .strengthConditioning:  "dumbbell.fill"
+        }
+    }
+
+    /// Whether this session type is a running activity (for metric calculations).
+    var isRunning: Bool {
+        switch self {
+        case .longRun, .tempo, .intervals, .verticalGain, .backToBack, .recovery:
+            return true
+        case .crossTraining, .rest, .strengthConditioning:
+            return false
         }
     }
 }

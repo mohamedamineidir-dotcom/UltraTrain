@@ -59,10 +59,29 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
 
         // 6. Generate sessions for each week
         var allWorkouts: [IntervalWorkout] = []
+        var allStrengthWorkouts: [StrengthWorkout] = []
+
+        // Build strength config if athlete opted in
+        let wantsStrength = athlete.strengthTrainingPreference == .yes
 
         let weeks: [TrainingWeek] = zip(skeletons, volumes).enumerated().map { index, pair in
             let (skeleton, volume) = pair
             let override = overrides.first { $0.weekNumber == skeleton.weekNumber }
+
+            let strengthConfig: StrengthSessionGenerator.Config? = wantsStrength
+                ? .init(
+                    experience: athlete.experienceLevel,
+                    phase: override?.behavior.isRaceWeek == true ? .race : skeleton.phase,
+                    location: athlete.strengthTrainingLocation,
+                    painFrequency: athlete.painFrequency,
+                    injuryCount: athlete.injuryCountLastYear,
+                    hasRecentInjury: athlete.hasRecentInjury,
+                    preferredRunsPerWeek: athlete.preferredRunsPerWeek,
+                    weekNumberInPhase: phaseCounters[index],
+                    isRecoveryWeek: skeleton.isRecoveryWeek || override?.behavior == .postRaceRecovery,
+                    raceEffectiveKm: raceEffectiveKm
+                )
+                : nil
 
             let result = SessionTemplateGenerator.sessions(
                 for: skeleton,
@@ -76,10 +95,12 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 raceOverride: override,
                 preferredRunsPerWeek: athlete.preferredRunsPerWeek,
                 verticalGainEnvironment: athlete.verticalGainEnvironment,
-                expectedRaceDuration: raceDuration
+                expectedRaceDuration: raceDuration,
+                strengthConfig: strengthConfig
             )
 
             allWorkouts.append(contentsOf: result.workouts)
+            allStrengthWorkouts.append(contentsOf: result.strengthWorkouts)
 
             return TrainingWeek(
                 id: UUID(),
@@ -110,6 +131,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             intermediateRaceSnapshots: snapshots
         )
         plan.workouts = allWorkouts
+        plan.strengthWorkouts = allStrengthWorkouts
 
         return plan
     }

@@ -263,8 +263,9 @@ final class WidgetDataWriter: @unchecked Sendable {
         case .verticalGain:  "mountain.2.fill"
         case .backToBack:    "arrow.triangle.2.circlepath"
         case .recovery:      "heart.fill"
-        case .crossTraining: "figure.mixed.cardio"
-        case .rest:          "bed.double.fill"
+        case .crossTraining:        "figure.mixed.cardio"
+        case .strengthConditioning: "dumbbell.fill"
+        case .rest:                 "bed.double.fill"
         }
     }
 
@@ -276,8 +277,9 @@ final class WidgetDataWriter: @unchecked Sendable {
         case .verticalGain:  "Uphill Intervals"
         case .backToBack:    "Back-to-Back"
         case .recovery:      "Base Endurance"
-        case .crossTraining: "Cross-Training"
-        case .rest:          "Rest"
+        case .crossTraining:        "Cross-Training"
+        case .strengthConditioning: "S&C"
+        case .rest:                 "Rest"
         }
     }
 }

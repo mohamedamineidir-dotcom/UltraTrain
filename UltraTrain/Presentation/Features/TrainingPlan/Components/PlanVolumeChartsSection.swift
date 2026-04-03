@@ -436,8 +436,9 @@ struct PlanVolumeChartsSection: View {
         case .verticalGain:  .red
         case .backToBack:    .purple
         case .recovery:      .mint
-        case .crossTraining: .teal
-        case .rest:          .gray
+        case .crossTraining:        .teal
+        case .strengthConditioning: .mint
+        case .rest:                 .gray
         }
     }
 }

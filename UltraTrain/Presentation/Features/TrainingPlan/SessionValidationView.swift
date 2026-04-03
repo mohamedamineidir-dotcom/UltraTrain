@@ -142,28 +142,34 @@ struct SessionValidationView: View {
 
     // MARK: - Stats Entry
 
+    private var isStrengthSession: Bool {
+        session.type == .strengthConditioning
+    }
+
     private var statsEntrySection: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("Session Stats")
+            Text(isStrengthSession ? "Session Duration" : "Session Stats")
                 .font(.headline)
 
             VStack(spacing: Theme.Spacing.sm) {
-                // Distance
-                HStack {
-                    Label("Distance", systemImage: "point.topleft.down.to.point.bottomright.curvepath")
-                        .font(.subheadline)
-                    Spacer()
-                    TextField("km", text: $distanceText)
-                        .keyboardType(.decimalPad)
-                        .multilineTextAlignment(.trailing)
-                        .frame(width: 80)
-                    Text("km")
-                        .font(.subheadline)
-                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                // Distance (hidden for S&C sessions)
+                if !isStrengthSession {
+                    HStack {
+                        Label("Distance", systemImage: "point.topleft.down.to.point.bottomright.curvepath")
+                            .font(.subheadline)
+                        Spacer()
+                        TextField("km", text: $distanceText)
+                            .keyboardType(.decimalPad)
+                            .multilineTextAlignment(.trailing)
+                            .frame(width: 80)
+                        Text("km")
+                            .font(.subheadline)
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
+                    }
+                    .padding(Theme.Spacing.sm)
+                    .background(Theme.Colors.secondaryBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
                 }
-                .padding(Theme.Spacing.sm)
-                .background(Theme.Colors.secondaryBackground)
-                .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
 
                 // Duration
                 HStack(spacing: 4) {
@@ -178,22 +184,24 @@ struct SessionValidationView: View {
                 .background(Theme.Colors.secondaryBackground)
                 .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
 
-                // Elevation
-                HStack {
-                    Label("Elevation", systemImage: "mountain.2.fill")
-                        .font(.subheadline)
-                    Spacer()
-                    TextField("m", text: $elevationText)
-                        .keyboardType(.numberPad)
-                        .multilineTextAlignment(.trailing)
-                        .frame(width: 80)
-                    Text("m D+")
-                        .font(.subheadline)
-                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                // Elevation (hidden for S&C sessions)
+                if !isStrengthSession {
+                    HStack {
+                        Label("Elevation", systemImage: "mountain.2.fill")
+                            .font(.subheadline)
+                        Spacer()
+                        TextField("m", text: $elevationText)
+                            .keyboardType(.numberPad)
+                            .multilineTextAlignment(.trailing)
+                            .frame(width: 80)
+                        Text("m D+")
+                            .font(.subheadline)
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
+                    }
+                    .padding(Theme.Spacing.sm)
+                    .background(Theme.Colors.secondaryBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
                 }
-                .padding(Theme.Spacing.sm)
-                .background(Theme.Colors.secondaryBackground)
-                .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
             }
         }
         .futuristicGlassStyle()

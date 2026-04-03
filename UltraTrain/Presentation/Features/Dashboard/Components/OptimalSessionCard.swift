@@ -83,6 +83,7 @@ struct OptimalSessionCard: View {
         case .backToBack: return "Back-to-Back"
         case .recovery: return "Base Endurance"
         case .crossTraining: return "Cross Training"
+        case .strengthConditioning: return "Strength & Conditioning"
         case .rest: return "Rest"
         }
     }

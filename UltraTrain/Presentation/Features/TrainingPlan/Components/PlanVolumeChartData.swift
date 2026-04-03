@@ -27,7 +27,8 @@ struct WeekChartDataPoint: Identifiable {
 enum PlanVolumeChartData {
     static func extract(from weeks: [TrainingWeek]) -> [WeekChartDataPoint] {
         weeks.map { week in
-            let activeSessions = week.sessions.filter { $0.type != .rest && !$0.isSkipped }
+            // Exclude rest and S&C from running volume metrics
+            let activeSessions = week.sessions.filter { $0.type != .rest && $0.type != .strengthConditioning && !$0.isSkipped }
             let completedSessions = activeSessions.filter(\.isCompleted)
 
             let typeGroups = Dictionary(grouping: completedSessions, by: \.type)
@@ -71,7 +72,8 @@ extension SessionType {
         case .tempo:         4
         case .verticalGain:  5
         case .intervals:     6
-        case .rest:          7
+        case .rest:                  7
+        case .strengthConditioning:  8
         }
     }
 }

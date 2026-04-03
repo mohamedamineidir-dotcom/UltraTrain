@@ -15,6 +15,7 @@ struct TrainingSession: Identifiable, Equatable, Sendable, Codable {
     var linkedRunId: UUID?
     var targetHeartRateZone: Int? = nil
     var intervalWorkoutId: UUID? = nil
+    var strengthWorkoutId: UUID? = nil
     var isKeySession: Bool = false
     var coachAdvice: String? = nil
     var actualDistanceKm: Double? = nil

@@ -55,6 +55,7 @@ enum DailyNutritionCalculator {
         case .longRun, .backToBack: 1.0
         case .tempo, .intervals: 1.15
         case .verticalGain: 1.25
+        case .strengthConditioning: 0.6
         }
     }
 
@@ -66,6 +67,7 @@ enum DailyNutritionCalculator {
         case .longRun, .backToBack: 7.5
         case .tempo, .intervals: 9.0
         case .verticalGain: 8.5
+        case .strengthConditioning: 4.0
         }
     }
 

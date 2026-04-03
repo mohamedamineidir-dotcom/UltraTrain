@@ -3,11 +3,16 @@ import SwiftUI
 struct PersonalBestsStepView: View {
     @Bindable var viewModel: OnboardingViewModel
     @State private var expandedDistance: PersonalBestDistance?
+    @State private var expandedTrailIndex: Int?
 
     var body: some View {
         ScrollView {
             VStack(spacing: Theme.Spacing.md) {
                 headerSection
+
+                // MARK: - Road Personal Bests
+
+                sectionHeader(title: "Road Races", icon: "road.lanes")
 
                 pbCard(
                     distance: .fiveK,
@@ -42,12 +47,26 @@ struct PersonalBestsStepView: View {
                     maxHours: 12
                 )
 
+                // MARK: - Trail Personal Bests
+
+                sectionHeader(title: "Trail Races", icon: "mountain.2.fill")
+
+                ForEach(viewModel.trailPBEntries.indices, id: \.self) { index in
+                    trailPBCard(index: index)
+                }
+
+                if viewModel.trailPBEntries.count < 5 {
+                    addTrailButton
+                }
+
                 suggestionSection
             }
             .padding(.horizontal, Theme.Spacing.lg)
             .padding(.vertical, Theme.Spacing.md)
         }
     }
+
+    // MARK: - Header
 
     private var headerSection: some View {
         VStack(spacing: Theme.Spacing.xs) {
@@ -60,7 +79,7 @@ struct PersonalBestsStepView: View {
 
             Text("Your Race Times")
                 .font(.title2.bold())
-            Text("Enter at least one PB to calibrate your training paces.")
+            Text("Enter your best performances to calibrate training paces.")
                 .font(.subheadline)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
                 .multilineTextAlignment(.center)
@@ -68,6 +87,23 @@ struct PersonalBestsStepView: View {
         }
         .padding(.bottom, Theme.Spacing.xs)
     }
+
+    // MARK: - Section Header
+
+    private func sectionHeader(title: String, icon: String) -> some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            Image(systemName: icon)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(Theme.Colors.warmCoral)
+            Text(title)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(Theme.Colors.label)
+            Spacer()
+        }
+        .padding(.top, Theme.Spacing.sm)
+    }
+
+    // MARK: - Road PB Card
 
     private func pbCard(
         distance: PersonalBestDistance,
@@ -89,15 +125,63 @@ struct PersonalBestsStepView: View {
             onToggle: {
                 withAnimation(.easeInOut(duration: 0.2)) {
                     expandedDistance = expandedDistance == distance ? nil : distance
+                    expandedTrailIndex = nil
                 }
             }
         )
     }
 
+    // MARK: - Trail PB Card
+
+    private func trailPBCard(index: Int) -> some View {
+        TrailPBEntryCard(
+            entry: $viewModel.trailPBEntries[index],
+            index: index,
+            isExpanded: expandedTrailIndex == index,
+            onToggle: {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    expandedTrailIndex = expandedTrailIndex == index ? nil : index
+                    expandedDistance = nil
+                }
+            },
+            onDelete: {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    if expandedTrailIndex == index { expandedTrailIndex = nil }
+                    viewModel.removeTrailPBEntry(at: index)
+                }
+            }
+        )
+    }
+
+    // MARK: - Add Trail Button
+
+    private var addTrailButton: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                viewModel.addTrailPBEntry()
+                expandedTrailIndex = viewModel.trailPBEntries.count - 1
+                expandedDistance = nil
+            }
+        } label: {
+            HStack(spacing: Theme.Spacing.sm) {
+                Image(systemName: "plus.circle.fill")
+                    .foregroundStyle(Theme.Colors.warmCoral)
+                Text("Add a trail race result")
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(Theme.Colors.warmCoral)
+                Spacer()
+            }
+            .padding(Theme.Spacing.md)
+            .onboardingCardStyle()
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Helpers
+
     private func estimatedTime(for distance: PersonalBestDistance) -> String? {
         let knownPBs = viewModel.buildCurrentPBs()
         guard !knownPBs.isEmpty else { return nil }
-        // Don't show estimate if user already entered this distance
         if knownPBs.contains(where: { $0.distance == distance }) { return nil }
         let allPBs = PerformanceEstimator.deduceMissingPBs(from: knownPBs)
         guard let estimated = allPBs.first(where: { $0.distance == distance }) else { return nil }
@@ -116,7 +200,7 @@ struct PersonalBestsStepView: View {
 
     @ViewBuilder
     private var suggestionSection: some View {
-        if viewModel.buildCurrentPBs().isEmpty {
+        if viewModel.buildCurrentPBs().isEmpty && viewModel.trailPBEntries.allSatisfy({ !$0.isValid }) {
             HStack(spacing: Theme.Spacing.sm) {
                 Image(systemName: "lightbulb.fill")
                     .foregroundStyle(.yellow)
@@ -130,7 +214,133 @@ struct PersonalBestsStepView: View {
     }
 }
 
-// MARK: - PB Entry Card
+// MARK: - Trail PB Entry Card
+
+private struct TrailPBEntryCard: View {
+    @Binding var entry: OnboardingViewModel.TrailPBEntry
+    let index: Int
+    let isExpanded: Bool
+    let onToggle: () -> Void
+    let onDelete: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            // Header row
+            Button(action: onToggle) {
+                HStack {
+                    Text("Trail Race \(index + 1)")
+                        .font(.headline)
+                        .foregroundStyle(Theme.Colors.label)
+                    Spacer()
+                    if entry.isValid {
+                        Text(formattedSummary)
+                            .font(.caption.monospacedDigit().bold())
+                            .foregroundStyle(Theme.Colors.warmCoral)
+                    } else {
+                        Text("Tap to add")
+                            .font(.subheadline)
+                            .foregroundStyle(Theme.Colors.tertiaryLabel)
+                    }
+                    Image(systemName: "chevron.right")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                        .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                }
+            }
+            .buttonStyle(.plain)
+
+            if isExpanded {
+                Divider()
+                    .padding(.vertical, Theme.Spacing.sm)
+
+                // Distance input
+                VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+                    Text("Distance (km)")
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                    HStack {
+                        TextField("Distance", value: $entry.distanceKm, format: .number)
+                            .keyboardType(.decimalPad)
+                            .font(.body.monospacedDigit())
+                            .textFieldStyle(.roundedBorder)
+                            .frame(maxWidth: 120)
+                        Text("km")
+                            .font(.subheadline)
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
+                    }
+                }
+                .padding(.bottom, Theme.Spacing.sm)
+
+                // Elevation gain input
+                VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+                    Text("Elevation Gain (D+)")
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                    HStack {
+                        TextField("Elevation", value: $entry.elevationGainM, format: .number)
+                            .keyboardType(.numberPad)
+                            .font(.body.monospacedDigit())
+                            .textFieldStyle(.roundedBorder)
+                            .frame(maxWidth: 120)
+                        Text("m")
+                            .font(.subheadline)
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
+                    }
+                }
+                .padding(.bottom, Theme.Spacing.sm)
+
+                // Time input
+                VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+                    Text("Finish Time")
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                    HStack(spacing: 0) {
+                        CompactTimeColumn(label: "H", value: $entry.hours, range: 0...99)
+                        CompactTimeColumn(label: "M", value: $entry.minutes, range: 0...59)
+                        CompactTimeColumn(label: "S", value: $entry.seconds, range: 0...59)
+                    }
+                }
+                .padding(.bottom, Theme.Spacing.sm)
+
+                // Date picker
+                DatePicker(
+                    "Date",
+                    selection: $entry.date,
+                    in: ...Date.now,
+                    displayedComponents: .date
+                )
+                .datePickerStyle(.compact)
+                .font(.subheadline)
+                .padding(.bottom, Theme.Spacing.sm)
+
+                // Delete button
+                Button(role: .destructive, action: onDelete) {
+                    HStack {
+                        Image(systemName: "trash")
+                        Text("Remove")
+                    }
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.Colors.danger)
+                }
+            }
+        }
+        .onboardingCardStyle()
+        .accessibilityIdentifier("onboarding.trailPB.\(index)")
+    }
+
+    private var formattedSummary: String {
+        let dist = entry.distanceKm >= 100
+            ? String(format: "%.0fkm", entry.distanceKm)
+            : String(format: "%.1fkm", entry.distanceKm)
+        let elev = String(format: "%.0fm D+", entry.elevationGainM)
+        let h = entry.hours
+        let m = entry.minutes
+        let time = h > 0 ? String(format: "%d:%02d", h, m) : String(format: "%dmin", m)
+        return "\(dist) / \(elev) / \(time)"
+    }
+}
+
+// MARK: - PB Entry Card (Road)
 
 private struct PBEntryCard: View {
     let distance: PersonalBestDistance
@@ -151,13 +361,12 @@ private struct PBEntryCard: View {
         hours * 3600 + minutes * 60 + seconds
     }
 
-    /// Minimum allowed time per distance (world record - 60 seconds).
     private var minAllowedSeconds: Int {
         switch distance {
-        case .fiveK: return 695          // WR 12:35 - 60s
-        case .tenK: return 1511          // WR 26:11 - 60s
-        case .halfMarathon: return 3391  // WR 57:31 - 60s
-        case .marathon: return 7175      // WR 2:00:35 - 60s
+        case .fiveK: return 695
+        case .tenK: return 1511
+        case .halfMarathon: return 3391
+        case .marathon: return 7175
         }
     }
 
@@ -167,7 +376,6 @@ private struct PBEntryCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Header row
             Button(action: onToggle) {
                 HStack {
                     Text(distance.rawValue)
@@ -195,7 +403,6 @@ private struct PBEntryCard: View {
             }
             .buttonStyle(.plain)
 
-            // Expanded time input
             if isExpanded {
                 Divider()
                     .padding(.vertical, Theme.Spacing.sm)
@@ -224,7 +431,6 @@ private struct PBEntryCard: View {
         .accessibilityIdentifier("onboarding.pb.\(distance.rawValue)")
     }
 
-    // Compact time input: 3 columns with +/- buttons and tap-to-type
     private var compactTimeInput: some View {
         HStack(spacing: 0) {
             CompactTimeColumn(label: "H", value: $hours, range: 0...maxHours)
@@ -241,7 +447,7 @@ private struct PBEntryCard: View {
     }
 }
 
-// MARK: - Compact Time Column (tap-to-type + stepper)
+// MARK: - Compact Time Column
 
 private struct CompactTimeColumn: View {
     let label: String
