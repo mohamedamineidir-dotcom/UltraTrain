@@ -16,15 +16,15 @@ extension RaceDatabase {
     // MARK: World Marathon Majors
 
     private static let marathonMajors: [KnownRace] = [
-        KnownRace(name: "Boston Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 140, elevationLossM: 250,
+        KnownRace(name: "Boston Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 248, elevationLossM: 388,
                   country: "USA", nextEditionDate: _d(2026, 4, 20), terrainDifficulty: .easy, raceType: .road),
-        KnownRace(name: "New York City Marathon", shortName: "NYC Marathon", distanceKm: 42.195, elevationGainM: 200,
-                  elevationLossM: 200, country: "USA", nextEditionDate: _d(2026, 11, 1), terrainDifficulty: .easy, raceType: .road),
-        KnownRace(name: "Chicago Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 30, elevationLossM: 30,
+        KnownRace(name: "New York City Marathon", shortName: "NYC Marathon", distanceKm: 42.195, elevationGainM: 247,
+                  elevationLossM: 251, country: "USA", nextEditionDate: _d(2026, 11, 1), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Chicago Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 74, elevationLossM: 73,
                   country: "USA", nextEditionDate: _d(2026, 10, 11), terrainDifficulty: .easy, raceType: .road),
-        KnownRace(name: "London Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 20, elevationLossM: 20,
+        KnownRace(name: "London Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 127, elevationLossM: 161,
                   country: "UK", nextEditionDate: _d(2026, 4, 26), terrainDifficulty: .easy, raceType: .road),
-        KnownRace(name: "Berlin Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 40, elevationLossM: 40,
+        KnownRace(name: "Berlin Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 73, elevationLossM: 79,
                   country: "Germany", nextEditionDate: _d(2026, 9, 27), terrainDifficulty: .easy, raceType: .road),
         KnownRace(name: "Tokyo Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 40, elevationLossM: 40,
                   country: "Japan", nextEditionDate: _d(2027, 3, 7), terrainDifficulty: .easy, raceType: .road),

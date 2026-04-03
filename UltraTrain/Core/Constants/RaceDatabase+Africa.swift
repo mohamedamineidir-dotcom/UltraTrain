@@ -13,8 +13,8 @@ extension RaceDatabase {
 
         // MARK: Morocco
 
-        KnownRace(name: "Marathon des Sables", shortName: "MDS", distanceKm: 250, elevationGainM: 2500,
-                  elevationLossM: 2500, country: "Morocco", nextEditionDate: _d(2026, 4, 3), terrainDifficulty: .easy),
+        KnownRace(name: "Marathon des Sables", shortName: "MDS", distanceKm: 250, elevationGainM: 3940,
+                  elevationLossM: 3940, country: "Morocco", nextEditionDate: _d(2026, 4, 3), terrainDifficulty: .easy),
         KnownRace(name: "Ultra Trail Atlas Toubkal", shortName: "UTAT", distanceKm: 105, elevationGainM: 5500,
                   elevationLossM: 5500, country: "Morocco", nextEditionDate: _d(2026, 10, 9), terrainDifficulty: .technical),
         KnownRace(name: "Zagora Sahara Trail", shortName: nil, distanceKm: 100, elevationGainM: 1200,
@@ -22,8 +22,8 @@ extension RaceDatabase {
 
         // MARK: South Africa
 
-        KnownRace(name: "Comrades Marathon (Down Run)", shortName: "Comrades", distanceKm: 87, elevationGainM: 870,
-                  elevationLossM: 1470, country: "South Africa", nextEditionDate: _d(2026, 6, 14), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Comrades Marathon (Up Run)", shortName: "Comrades", distanceKm: 87, elevationGainM: 1800,
+                  elevationLossM: 870, country: "South Africa", nextEditionDate: _d(2026, 6, 14), terrainDifficulty: .easy, raceType: .road),
         KnownRace(name: "Two Oceans Ultra Marathon", shortName: "Two Oceans", distanceKm: 56, elevationGainM: 600,
                   elevationLossM: 600, country: "South Africa", nextEditionDate: _d(2026, 4, 4), terrainDifficulty: .easy, raceType: .road),
         KnownRace(name: "SkyRun 100K", shortName: nil, distanceKm: 100, elevationGainM: 4500,

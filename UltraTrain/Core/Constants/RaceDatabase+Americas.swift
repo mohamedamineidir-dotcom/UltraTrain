@@ -16,15 +16,15 @@ extension RaceDatabase {
         KnownRace(name: "Hardrock Hundred", shortName: "Hardrock 100", distanceKm: 161, elevationGainM: 10088,
                   elevationLossM: 10088, country: "USA", nextEditionDate: _d(2026, 7, 10), terrainDifficulty: .extreme),
         KnownRace(name: "Leadville Trail 100", shortName: "Leadville 100", distanceKm: 161, elevationGainM: 4800,
-                  elevationLossM: 4800, country: "USA", nextEditionDate: _d(2026, 8, 15), terrainDifficulty: .moderate),
+                  elevationLossM: 4800, country: "USA", nextEditionDate: _d(2026, 8, 22), terrainDifficulty: .moderate),
         KnownRace(name: "Barkley Marathons", shortName: "Barkley", distanceKm: 210, elevationGainM: 18000,
                   elevationLossM: 18000, country: "USA", nextEditionDate: _d(2026, 3, 28), terrainDifficulty: .extreme),
         KnownRace(name: "Javelina Jundred", shortName: "Javelina 100", distanceKm: 161, elevationGainM: 1800,
                   elevationLossM: 1800, country: "USA", nextEditionDate: _d(2026, 10, 31), terrainDifficulty: .easy),
         KnownRace(name: "HURT 100", shortName: nil, distanceKm: 161, elevationGainM: 7500,
                   elevationLossM: 7500, country: "USA", nextEditionDate: _d(2026, 1, 17), terrainDifficulty: .technical),
-        KnownRace(name: "Wasatch 100", shortName: nil, distanceKm: 161, elevationGainM: 8000,
-                  elevationLossM: 8000, country: "USA", nextEditionDate: _d(2026, 9, 4), terrainDifficulty: .moderate),
+        KnownRace(name: "Wasatch 100", shortName: nil, distanceKm: 161, elevationGainM: 7315,
+                  elevationLossM: 7102, country: "USA", nextEditionDate: _d(2026, 9, 4), terrainDifficulty: .moderate),
         KnownRace(name: "Bear 100", shortName: nil, distanceKm: 161, elevationGainM: 6700,
                   elevationLossM: 6700, country: "USA", nextEditionDate: _d(2026, 9, 25), terrainDifficulty: .moderate),
         KnownRace(name: "Superior 100", shortName: nil, distanceKm: 161, elevationGainM: 6000,
@@ -56,19 +56,19 @@ extension RaceDatabase {
 
         // MARK: USA — 200+ Milers
 
-        KnownRace(name: "Moab 240", shortName: nil, distanceKm: 386, elevationGainM: 9000,
-                  elevationLossM: 9000, country: "USA", nextEditionDate: _d(2026, 10, 9), terrainDifficulty: .moderate),
-        KnownRace(name: "Tahoe 200", shortName: nil, distanceKm: 330, elevationGainM: 12000,
-                  elevationLossM: 12000, country: "USA", nextEditionDate: _d(2026, 7, 31), terrainDifficulty: .moderate),
-        KnownRace(name: "Cocodona 250", shortName: nil, distanceKm: 402, elevationGainM: 12000,
-                  elevationLossM: 12000, country: "USA", nextEditionDate: _d(2026, 5, 4), terrainDifficulty: .moderate),
+        KnownRace(name: "Moab 240", shortName: nil, distanceKm: 389, elevationGainM: 9620,
+                  elevationLossM: 9620, country: "USA", nextEditionDate: _d(2026, 10, 9), terrainDifficulty: .moderate),
+        KnownRace(name: "Tahoe 200", shortName: nil, distanceKm: 322, elevationGainM: 11234,
+                  elevationLossM: 11234, country: "USA", nextEditionDate: _d(2026, 6, 12), terrainDifficulty: .moderate),
+        KnownRace(name: "Cocodona 250", shortName: nil, distanceKm: 407, elevationGainM: 11823,
+                  elevationLossM: 10328, country: "USA", nextEditionDate: _d(2026, 5, 4), terrainDifficulty: .moderate),
         KnownRace(name: "Bigfoot 200", shortName: nil, distanceKm: 330, elevationGainM: 14000,
                   elevationLossM: 14000, country: "USA", nextEditionDate: _d(2026, 8, 7), terrainDifficulty: .moderate),
 
         // MARK: USA — Desert & Extreme
 
         KnownRace(name: "Badwater 135", shortName: nil, distanceKm: 217, elevationGainM: 4450,
-                  elevationLossM: 1859, country: "USA", nextEditionDate: _d(2026, 7, 13), terrainDifficulty: .moderate),
+                  elevationLossM: 1859, country: "USA", nextEditionDate: _d(2026, 7, 27), terrainDifficulty: .moderate),
 
         // MARK: USA — 50+ Milers
 
@@ -76,10 +76,10 @@ extension RaceDatabase {
                   elevationLossM: 2100, country: "USA", nextEditionDate: _d(2026, 11, 21), terrainDifficulty: .easy),
         KnownRace(name: "Rim to Rim to Rim Grand Canyon", shortName: "R2R2R", distanceKm: 68, elevationGainM: 3200,
                   elevationLossM: 3200, country: "USA", terrainDifficulty: .moderate),
-        KnownRace(name: "Pikes Peak Marathon", shortName: nil, distanceKm: 42, elevationGainM: 2380,
-                  elevationLossM: 2380, country: "USA", nextEditionDate: _d(2026, 8, 16), terrainDifficulty: .moderate),
-        KnownRace(name: "Black Canyon 100K", shortName: nil, distanceKm: 100, elevationGainM: 2500,
-                  elevationLossM: 2500, country: "USA", nextEditionDate: _d(2026, 2, 14), terrainDifficulty: .moderate),
+        KnownRace(name: "Pikes Peak Marathon", shortName: nil, distanceKm: 42, elevationGainM: 2382,
+                  elevationLossM: 2382, country: "USA", nextEditionDate: _d(2026, 9, 19), terrainDifficulty: .moderate),
+        KnownRace(name: "Black Canyon 100K", shortName: nil, distanceKm: 100, elevationGainM: 1610,
+                  elevationLossM: 2260, country: "USA", nextEditionDate: _d(2026, 2, 14), terrainDifficulty: .moderate),
         KnownRace(name: "Bandera 100K", shortName: nil, distanceKm: 100, elevationGainM: 3300,
                   elevationLossM: 3300, country: "USA", nextEditionDate: _d(2026, 1, 10), terrainDifficulty: .moderate),
         KnownRace(name: "Sean O'Brien 100K", shortName: nil, distanceKm: 100, elevationGainM: 4600,

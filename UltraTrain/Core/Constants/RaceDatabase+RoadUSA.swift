@@ -60,6 +60,23 @@ extension RaceDatabase {
                   country: "USA", nextEditionDate: _d(2026, 12, 6), terrainDifficulty: .easy, raceType: .road),
         KnownRace(name: "Jacksonville Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 10, elevationLossM: 10,
                   country: "USA", nextEditionDate: _d(2026, 2, 8), terrainDifficulty: .easy, raceType: .road),
+        // Additional US Marathons
+        KnownRace(name: "Miami Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 20, elevationLossM: 20,
+                  country: "USA", nextEditionDate: _d(2026, 2, 1), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Seattle Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 150, elevationLossM: 150,
+                  country: "USA", nextEditionDate: _d(2026, 11, 29), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Denver Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 100, elevationLossM: 100,
+                  country: "USA", nextEditionDate: _d(2026, 10, 18), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Atlanta Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 150, elevationLossM: 150,
+                  country: "USA", nextEditionDate: _d(2026, 3, 1), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Dallas Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 80, elevationLossM: 80,
+                  country: "USA", nextEditionDate: _d(2026, 12, 13), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Richmond Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 80, elevationLossM: 80,
+                  country: "USA", nextEditionDate: _d(2026, 11, 14), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Indianapolis Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 40, elevationLossM: 40,
+                  country: "USA", nextEditionDate: _d(2026, 11, 7), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Columbus Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 60, elevationLossM: 60,
+                  country: "USA", nextEditionDate: _d(2026, 10, 18), terrainDifficulty: .easy, raceType: .road),
     ]
 
     // MARK: US Half Marathons
@@ -83,6 +100,21 @@ extension RaceDatabase {
                   country: "USA", nextEditionDate: _d(2026, 3, 14), terrainDifficulty: .easy, raceType: .road),
         KnownRace(name: "Indianapolis Mini Marathon", shortName: "Indy Mini", distanceKm: 21.1, elevationGainM: 30,
                   elevationLossM: 30, country: "USA", nextEditionDate: _d(2026, 5, 2), terrainDifficulty: .easy, raceType: .road),
+        // Additional US Halfs
+        KnownRace(name: "Philadelphia Half Marathon", shortName: "Philly Half", distanceKm: 21.1, elevationGainM: 50,
+                  elevationLossM: 50, country: "USA", nextEditionDate: _d(2026, 11, 22), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Chicago Half Marathon", shortName: nil, distanceKm: 21.1, elevationGainM: 20, elevationLossM: 20,
+                  country: "USA", nextEditionDate: _d(2026, 9, 27), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "LA Half Marathon", shortName: nil, distanceKm: 21.1, elevationGainM: 60, elevationLossM: 60,
+                  country: "USA", nextEditionDate: _d(2026, 3, 8), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Seattle Half Marathon", shortName: nil, distanceKm: 21.1, elevationGainM: 80, elevationLossM: 80,
+                  country: "USA", nextEditionDate: _d(2026, 11, 29), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Denver Half Marathon", shortName: nil, distanceKm: 21.1, elevationGainM: 50, elevationLossM: 50,
+                  country: "USA", nextEditionDate: _d(2026, 10, 18), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "San Francisco Half Marathon", shortName: "SF Half", distanceKm: 21.1, elevationGainM: 120,
+                  elevationLossM: 120, country: "USA", nextEditionDate: _d(2026, 7, 26), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Miami Half Marathon", shortName: nil, distanceKm: 21.1, elevationGainM: 10, elevationLossM: 10,
+                  country: "USA", nextEditionDate: _d(2026, 2, 1), terrainDifficulty: .easy, raceType: .road),
     ]
 
     // MARK: US 10K Races
@@ -102,5 +134,14 @@ extension RaceDatabase {
                   country: "USA", nextEditionDate: _d(2026, 5, 3), terrainDifficulty: .easy, raceType: .road),
         KnownRace(name: "Crescent City Classic", shortName: nil, distanceKm: 10.0, elevationGainM: 5, elevationLossM: 5,
                   country: "USA", nextEditionDate: _d(2026, 3, 28), terrainDifficulty: .easy, raceType: .road),
+        // Additional US 10Ks
+        KnownRace(name: "Falmouth Road Race", shortName: nil, distanceKm: 11.3, elevationGainM: 50, elevationLossM: 50,
+                  country: "USA", nextEditionDate: _d(2026, 8, 16), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Cherry Blossom 10 Mile", shortName: nil, distanceKm: 16.1, elevationGainM: 40, elevationLossM: 40,
+                  country: "USA", nextEditionDate: _d(2026, 4, 12), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Manchester Road Race", shortName: nil, distanceKm: 7.7, elevationGainM: 40, elevationLossM: 40,
+                  country: "USA", nextEditionDate: _d(2026, 11, 26), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Hot Chocolate 15K Chicago", shortName: nil, distanceKm: 15.0, elevationGainM: 15, elevationLossM: 15,
+                  country: "USA", nextEditionDate: _d(2026, 11, 1), terrainDifficulty: .easy, raceType: .road),
     ]
 }

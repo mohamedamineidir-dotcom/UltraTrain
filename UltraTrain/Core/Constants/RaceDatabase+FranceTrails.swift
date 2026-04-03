@@ -13,23 +13,21 @@ extension RaceDatabase {
 
         // MARK: Réunion — Grand Raid
 
-        KnownRace(name: "Diagonale des Fous", shortName: "Grand Raid", distanceKm: 165, elevationGainM: 9576,
-                  elevationLossM: 9576, country: "France", nextEditionDate: _d(2026, 10, 22), terrainDifficulty: .extreme),
-        KnownRace(name: "Trail de Bourbon", shortName: nil, distanceKm: 111, elevationGainM: 6433,
-                  elevationLossM: 6433, country: "France", nextEditionDate: _d(2026, 10, 23), terrainDifficulty: .technical),
-        KnownRace(name: "Mascareignes", shortName: nil, distanceKm: 65, elevationGainM: 3505,
-                  elevationLossM: 3505, country: "France", nextEditionDate: _d(2026, 10, 23), terrainDifficulty: .moderate),
-        KnownRace(name: "Zembrocal Trail", shortName: nil, distanceKm: 42, elevationGainM: 2100,
-                  elevationLossM: 2100, country: "France", nextEditionDate: _d(2026, 10, 22), terrainDifficulty: .moderate),
+        KnownRace(name: "Diagonale des Fous", shortName: "Grand Raid", distanceKm: 180, elevationGainM: 10200,
+                  elevationLossM: 10200, country: "France", nextEditionDate: _d(2026, 10, 15), terrainDifficulty: .extreme),
+        KnownRace(name: "Trail de Bourbon", shortName: nil, distanceKm: 105, elevationGainM: 6200,
+                  elevationLossM: 6200, country: "France", nextEditionDate: _d(2026, 10, 16), terrainDifficulty: .technical),
+        KnownRace(name: "Mascareignes", shortName: nil, distanceKm: 73, elevationGainM: 3800,
+                  elevationLossM: 3800, country: "France", nextEditionDate: _d(2026, 10, 16), terrainDifficulty: .moderate),
 
         // MARK: Marathon du Mont-Blanc
 
-        KnownRace(name: "90km du Mont-Blanc", shortName: "90K MdMB", distanceKm: 90, elevationGainM: 6000,
-                  elevationLossM: 6000, country: "France", nextEditionDate: _d(2026, 6, 26), terrainDifficulty: .technical),
-        KnownRace(name: "Marathon du Mont-Blanc 42K", shortName: "MMB 42K", distanceKm: 42, elevationGainM: 2730,
-                  elevationLossM: 2730, country: "France", nextEditionDate: _d(2026, 6, 26), terrainDifficulty: .technical),
-        KnownRace(name: "23K du Mont-Blanc", shortName: "23K MdMB", distanceKm: 23, elevationGainM: 1300,
-                  elevationLossM: 1300, country: "France", nextEditionDate: _d(2026, 6, 25), terrainDifficulty: .moderate),
+        KnownRace(name: "90km du Mont-Blanc", shortName: "90K MdMB", distanceKm: 92, elevationGainM: 6330,
+                  elevationLossM: 6330, country: "France", nextEditionDate: _d(2026, 6, 26), terrainDifficulty: .technical),
+        KnownRace(name: "Marathon du Mont-Blanc 42K", shortName: "MMB 42K", distanceKm: 42, elevationGainM: 2540,
+                  elevationLossM: 2540, country: "France", nextEditionDate: _d(2026, 6, 28), terrainDifficulty: .technical),
+        KnownRace(name: "23K du Mont-Blanc", shortName: "23K MdMB", distanceKm: 23, elevationGainM: 1680,
+                  elevationLossM: 870, country: "France", nextEditionDate: _d(2026, 6, 27), terrainDifficulty: .moderate),
         KnownRace(name: "Kilomètre Vertical du Mont-Blanc", shortName: "KV MdMB", distanceKm: 3.8, elevationGainM: 1000,
                   elevationLossM: 0, country: "France", nextEditionDate: _d(2026, 6, 25), terrainDifficulty: .technical),
         KnownRace(name: "10K du Mont-Blanc", shortName: "10K MdMB", distanceKm: 10, elevationGainM: 500,
@@ -37,70 +35,68 @@ extension RaceDatabase {
 
         // MARK: Iconic French Trails
 
-        KnownRace(name: "Échappée Belle", shortName: nil, distanceKm: 144, elevationGainM: 11000,
-                  elevationLossM: 11000, country: "France", nextEditionDate: _d(2026, 8, 21), terrainDifficulty: .technical),
-        KnownRace(name: "Ultra-Trail du Vercors 100 Miles", shortName: "UTV", distanceKm: 160, elevationGainM: 9500,
-                  elevationLossM: 9500, country: "France", nextEditionDate: _d(2026, 6, 13), terrainDifficulty: .technical),
-        KnownRace(name: "SaintéLyon", shortName: nil, distanceKm: 76, elevationGainM: 1800,
-                  elevationLossM: 1800, country: "France", nextEditionDate: _d(2026, 11, 29), terrainDifficulty: .easy),
-        KnownRace(name: "Ultra-Trail Côte d'Azur 130K", shortName: "UTCA", distanceKm: 130, elevationGainM: 6600,
-                  elevationLossM: 6600, country: "France", nextEditionDate: _d(2026, 2, 7), terrainDifficulty: .moderate),
-        KnownRace(name: "Ultra-Trail Côte d'Azur 80K", shortName: nil, distanceKm: 80, elevationGainM: 4000,
-                  elevationLossM: 4000, country: "France", nextEditionDate: _d(2026, 2, 7), terrainDifficulty: .moderate),
-        KnownRace(name: "Maxi-Race 88K", shortName: nil, distanceKm: 88, elevationGainM: 5200,
-                  elevationLossM: 5200, country: "France", nextEditionDate: _d(2026, 5, 30), terrainDifficulty: .moderate),
-        KnownRace(name: "Maxi-Race 45K", shortName: nil, distanceKm: 45, elevationGainM: 2700,
-                  elevationLossM: 2700, country: "France", nextEditionDate: _d(2026, 5, 30), terrainDifficulty: .moderate),
+        KnownRace(name: "Échappée Belle", shortName: nil, distanceKm: 152, elevationGainM: 11390,
+                  elevationLossM: 11390, country: "France", nextEditionDate: _d(2026, 8, 21), terrainDifficulty: .technical),
+        KnownRace(name: "Ultra-Trail du Vercors", shortName: "UTV", distanceKm: 84, elevationGainM: 4200,
+                  elevationLossM: 4200, country: "France", nextEditionDate: _d(2026, 9, 12), terrainDifficulty: .moderate),
+        KnownRace(name: "SaintéLyon", shortName: nil, distanceKm: 80, elevationGainM: 1950,
+                  elevationLossM: 2265, country: "France", nextEditionDate: _d(2026, 11, 29), terrainDifficulty: .easy),
+        KnownRace(name: "Ultra-Trail Côte d'Azur Mercantour 120K", shortName: "UTCAM", distanceKm: 120, elevationGainM: 7800,
+                  elevationLossM: 7800, country: "France", nextEditionDate: _d(2026, 7, 4), terrainDifficulty: .technical),
+        KnownRace(name: "Ultra-Trail Côte d'Azur SkyUltra 75K", shortName: nil, distanceKm: 75, elevationGainM: 5100,
+                  elevationLossM: 5100, country: "France", nextEditionDate: _d(2026, 7, 4), terrainDifficulty: .moderate),
+        KnownRace(name: "Maxi-Race Tour du Lac 94K", shortName: nil, distanceKm: 94, elevationGainM: 5300,
+                  elevationLossM: 5300, country: "France", nextEditionDate: _d(2026, 5, 30), terrainDifficulty: .moderate),
+        KnownRace(name: "Maxi-Race Marathon 42K", shortName: nil, distanceKm: 42, elevationGainM: 2500,
+                  elevationLossM: 2500, country: "France", nextEditionDate: _d(2026, 5, 30), terrainDifficulty: .moderate),
 
         // MARK: Trail des Templiers (Festival des Templiers, Millau)
 
-        KnownRace(name: "Trail des Templiers", shortName: nil, distanceKm: 78, elevationGainM: 3600,
-                  elevationLossM: 3600, country: "France", nextEditionDate: _d(2026, 10, 18), terrainDifficulty: .moderate),
-        KnownRace(name: "Endurance Trail des Templiers", shortName: nil, distanceKm: 105, elevationGainM: 5500,
-                  elevationLossM: 5500, country: "France", nextEditionDate: _d(2026, 10, 18), terrainDifficulty: .moderate),
+        KnownRace(name: "Trail des Templiers", shortName: nil, distanceKm: 80, elevationGainM: 3530,
+                  elevationLossM: 3530, country: "France", nextEditionDate: _d(2026, 10, 18), terrainDifficulty: .moderate),
+        KnownRace(name: "Endurance Trail des Templiers", shortName: nil, distanceKm: 100, elevationGainM: 4300,
+                  elevationLossM: 4300, country: "France", nextEditionDate: _d(2026, 10, 16), terrainDifficulty: .moderate),
 
         // MARK: Grand Raid des Pyrénées
 
-        KnownRace(name: "Grand Raid des Pyrénées Ultra", shortName: "GRP Ultra", distanceKm: 220, elevationGainM: 13000,
-                  elevationLossM: 13000, country: "France", nextEditionDate: _d(2026, 8, 21), terrainDifficulty: .technical),
-        KnownRace(name: "Grand Raid des Pyrénées 160K", shortName: "GRP 160K", distanceKm: 160, elevationGainM: 10000,
-                  elevationLossM: 10000, country: "France", nextEditionDate: _d(2026, 8, 22), terrainDifficulty: .technical),
-        KnownRace(name: "Grand Raid des Pyrénées 80K", shortName: "GRP 80K", distanceKm: 80, elevationGainM: 5000,
+        KnownRace(name: "Grand Raid des Pyrénées Ultra Tour 160K", shortName: "GRP Ultra", distanceKm: 160, elevationGainM: 10000,
+                  elevationLossM: 10000, country: "France", nextEditionDate: _d(2026, 8, 21), terrainDifficulty: .technical),
+        KnownRace(name: "Grand Raid des Pyrénées Tour des Cirques 120K", shortName: "GRP 120K", distanceKm: 120, elevationGainM: 7500,
+                  elevationLossM: 7500, country: "France", nextEditionDate: _d(2026, 8, 22), terrainDifficulty: .technical),
+        KnownRace(name: "Grand Raid des Pyrénées Tour des Lacs 80K", shortName: "GRP 80K", distanceKm: 80, elevationGainM: 5000,
                   elevationLossM: 5000, country: "France", nextEditionDate: _d(2026, 8, 22), terrainDifficulty: .moderate),
         KnownRace(name: "Grand Raid des Pyrénées 40K", shortName: "GRP 40K", distanceKm: 40, elevationGainM: 2500,
                   elevationLossM: 2500, country: "France", nextEditionDate: _d(2026, 8, 22), terrainDifficulty: .moderate),
 
         // MARK: Ut4M (Ultra Tour des 4 Massifs, Grenoble)
 
-        KnownRace(name: "Ut4M 170K", shortName: nil, distanceKm: 170, elevationGainM: 11000,
-                  elevationLossM: 11000, country: "France", nextEditionDate: _d(2026, 7, 17), terrainDifficulty: .technical),
-        KnownRace(name: "Ut4M 100K", shortName: nil, distanceKm: 100, elevationGainM: 6500,
-                  elevationLossM: 6500, country: "France", nextEditionDate: _d(2026, 7, 18), terrainDifficulty: .moderate),
+        KnownRace(name: "Ut4M 180 Xtrem", shortName: nil, distanceKm: 177, elevationGainM: 11700,
+                  elevationLossM: 11700, country: "France", nextEditionDate: _d(2026, 7, 17), terrainDifficulty: .technical),
+        KnownRace(name: "Ut4M 100 Master", shortName: nil, distanceKm: 97, elevationGainM: 5900,
+                  elevationLossM: 5900, country: "France", nextEditionDate: _d(2026, 7, 18), terrainDifficulty: .moderate),
         KnownRace(name: "Ut4M 40K", shortName: nil, distanceKm: 40, elevationGainM: 2500,
                   elevationLossM: 2500, country: "France", nextEditionDate: _d(2026, 7, 18), terrainDifficulty: .moderate),
 
         // MARK: Ultra Marin (Golfe du Morbihan)
 
-        KnownRace(name: "Ultra Marin 177K", shortName: nil, distanceKm: 177, elevationGainM: 2600,
-                  elevationLossM: 2600, country: "France", nextEditionDate: _d(2026, 2, 28), terrainDifficulty: .easy),
-        KnownRace(name: "Ultra Marin 57K", shortName: nil, distanceKm: 57, elevationGainM: 800,
-                  elevationLossM: 800, country: "France", nextEditionDate: _d(2026, 2, 28), terrainDifficulty: .easy),
+        KnownRace(name: "Ultra Marin 175K", shortName: nil, distanceKm: 175, elevationGainM: 1450,
+                  elevationLossM: 1450, country: "France", nextEditionDate: _d(2026, 6, 26), terrainDifficulty: .easy),
+        KnownRace(name: "Ultra Marin L'Arvor 56K", shortName: nil, distanceKm: 56, elevationGainM: 500,
+                  elevationLossM: 500, country: "France", nextEditionDate: _d(2026, 6, 27), terrainDifficulty: .easy),
 
         // MARK: Grand Trail des Écrins
 
-        KnownRace(name: "Grand Trail des Écrins 130K", shortName: "GTE 130K", distanceKm: 130, elevationGainM: 8000,
-                  elevationLossM: 8000, country: "France", nextEditionDate: _d(2026, 7, 4), terrainDifficulty: .technical),
-        KnownRace(name: "Grand Trail des Écrins 80K", shortName: "GTE 80K", distanceKm: 80, elevationGainM: 5000,
-                  elevationLossM: 5000, country: "France", nextEditionDate: _d(2026, 7, 4), terrainDifficulty: .moderate),
-        KnownRace(name: "Grand Trail des Écrins 50K", shortName: "GTE 50K", distanceKm: 50, elevationGainM: 3000,
-                  elevationLossM: 3000, country: "France", nextEditionDate: _d(2026, 7, 4), terrainDifficulty: .moderate),
+        KnownRace(name: "Trans'Écrins 59K", shortName: "GTE", distanceKm: 59, elevationGainM: 3400,
+                  elevationLossM: 3400, country: "France", nextEditionDate: _d(2026, 6, 20), terrainDifficulty: .moderate),
+        KnownRace(name: "Trail des Écrins 34K", shortName: nil, distanceKm: 34, elevationGainM: 2000,
+                  elevationLossM: 2000, country: "France", nextEditionDate: _d(2026, 6, 20), terrainDifficulty: .moderate),
 
         // MARK: More French Ultras & Trails
 
         KnownRace(name: "6000D - La Course des Géants", shortName: "6000D", distanceKm: 68, elevationGainM: 3800,
                   elevationLossM: 3800, country: "France", nextEditionDate: _d(2026, 7, 4), terrainDifficulty: .moderate),
-        KnownRace(name: "Infernal Trail des Vosges 185K", shortName: nil, distanceKm: 185, elevationGainM: 9000,
-                  elevationLossM: 9000, country: "France", nextEditionDate: _d(2026, 9, 5), terrainDifficulty: .moderate),
+        KnownRace(name: "Infernal Trail des Vosges 200K", shortName: "IT 200", distanceKm: 205, elevationGainM: 10500,
+                  elevationLossM: 10500, country: "France", nextEditionDate: _d(2026, 9, 10), terrainDifficulty: .moderate),
         KnownRace(name: "Trophée des Vosges", shortName: nil, distanceKm: 57, elevationGainM: 2800,
                   elevationLossM: 2800, country: "France", nextEditionDate: _d(2026, 9, 5), terrainDifficulty: .moderate),
         KnownRace(name: "MiL'K 100 Miles", shortName: nil, distanceKm: 160, elevationGainM: 9000,
@@ -138,8 +134,8 @@ extension RaceDatabase {
 
         // MARK: Corsica
 
-        KnownRace(name: "Restonica Trail 75K", shortName: nil, distanceKm: 75, elevationGainM: 4700,
-                  elevationLossM: 4700, country: "France", nextEditionDate: _d(2026, 7, 25), terrainDifficulty: .technical),
+        KnownRace(name: "Restonica Trail 68K", shortName: nil, distanceKm: 68, elevationGainM: 4000,
+                  elevationLossM: 4000, country: "France", nextEditionDate: _d(2026, 7, 11), terrainDifficulty: .technical),
         KnownRace(name: "Ultra Trail di Corsica 100K", shortName: nil, distanceKm: 100, elevationGainM: 6000,
                   elevationLossM: 6000, country: "France", nextEditionDate: _d(2026, 7, 4), terrainDifficulty: .technical),
 

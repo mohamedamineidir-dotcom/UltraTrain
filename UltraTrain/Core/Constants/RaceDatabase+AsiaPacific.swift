@@ -83,11 +83,11 @@ extension RaceDatabase {
 
         // MARK: Oman
 
-        KnownRace(name: "UTMB Oman 170K", shortName: "UTMB Oman", distanceKm: 170, elevationGainM: 8000,
-                  elevationLossM: 8000, country: "Oman", nextEditionDate: _d(2026, 12, 3), terrainDifficulty: .technical),
-        KnownRace(name: "UTMB Oman 100K", shortName: nil, distanceKm: 100, elevationGainM: 5000,
-                  elevationLossM: 5000, country: "Oman", nextEditionDate: _d(2026, 12, 3), terrainDifficulty: .moderate),
-        KnownRace(name: "UTMB Oman 50K", shortName: nil, distanceKm: 50, elevationGainM: 2500,
-                  elevationLossM: 2500, country: "Oman", nextEditionDate: _d(2026, 12, 4), terrainDifficulty: .moderate),
+        KnownRace(name: "Oman by UTMB Hajar Ultra 154K", shortName: "UTMB Oman", distanceKm: 154, elevationGainM: 8000,
+                  elevationLossM: 8000, country: "Oman", nextEditionDate: _d(2026, 12, 10), terrainDifficulty: .technical),
+        KnownRace(name: "Oman by UTMB Jabal Classic 103K", shortName: nil, distanceKm: 103, elevationGainM: 5000,
+                  elevationLossM: 5000, country: "Oman", nextEditionDate: _d(2026, 12, 10), terrainDifficulty: .moderate),
+        KnownRace(name: "Oman by UTMB 50K", shortName: nil, distanceKm: 50, elevationGainM: 2500,
+                  elevationLossM: 2500, country: "Oman", nextEditionDate: _d(2026, 12, 11), terrainDifficulty: .moderate),
     ]
 }
