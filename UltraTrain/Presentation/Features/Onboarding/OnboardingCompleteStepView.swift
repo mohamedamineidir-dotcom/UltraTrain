@@ -63,7 +63,10 @@ struct OnboardingCompleteStepView: View {
     // MARK: - Hero
 
     private var heroSection: some View {
-        RunnerLogoView(size: 220)
+        Image("LaunchIcon")
+            .resizable()
+            .scaledToFit()
+            .frame(width: 180, height: 180)
             .padding(.top, Theme.Spacing.xxl)
             .accessibilityHidden(true)
     }
