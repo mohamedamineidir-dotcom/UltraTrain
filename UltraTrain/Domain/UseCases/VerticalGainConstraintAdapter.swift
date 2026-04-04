@@ -137,10 +137,15 @@ enum VerticalGainConstraintAdapter {
         let repDuration = longestWorkRepDuration(in: workout)
         let maxUphill = config.maxUphillSeconds
 
-        // If athlete has unconstrained hill access, no adaptation needed
+        // If athlete has outdoor hill access
         if config.environment.hasOutdoorHill {
             if let max = maxUphill, max > 0, repDuration > max {
-                // Hill is shorter than the generated rep duration
+                // Hill is shorter than the generated rep duration.
+                // If the hill covers less than half the target rep, prefer treadmill
+                // when available (capping to very short reps degrades quality).
+                if max < repDuration * 0.5, config.environment.hasTreadmill {
+                    return .redirectToTreadmill
+                }
                 let capped = capRepDuration(workout: workout, maxSec: max)
                 let preFatigue = preFatigueMinutes(hillMaxSec: max, targetRepSec: repDuration)
                 return .capRepsWithPreFatigue(workout: capped, preFatigueMinutes: preFatigue)
