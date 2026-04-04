@@ -41,12 +41,12 @@ struct PaywallPlanCard: View {
         HStack(spacing: Theme.Spacing.md) {
             // Left: plan info
             VStack(alignment: .leading, spacing: 4) {
-                // Row 1: Plan name + badges
+                // Row 1: Plan name
                 HStack(spacing: 6) {
                     Text(plan.period.displayNameLocalized)
                         .font(.headline)
                         .foregroundStyle(.primary)
-                        .layoutPriority(1)
+                        .lineLimit(1)
 
                     if plan.trialDays != nil {
                         badge(
@@ -55,7 +55,10 @@ struct PaywallPlanCard: View {
                             background: Theme.Colors.warmCoral.opacity(0.12)
                         )
                     }
+                }
 
+                // Row 2: Save badge + per-week price
+                HStack(spacing: 6) {
                     if let savings = plan.savingsPercent {
                         badge(
                             text: String(localized: "paywall.save \(savings)"),
@@ -64,12 +67,11 @@ struct PaywallPlanCard: View {
                             gradient: Theme.Gradients.goldPremium
                         )
                     }
-                }
 
-                // Row 2: per-week price
-                Text("paywall.perWeek \(plan.displayPricePerWeek)")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    Text("paywall.perWeek \(plan.displayPricePerWeek)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
 
             Spacer(minLength: Theme.Spacing.sm)
