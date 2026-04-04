@@ -4,9 +4,18 @@ struct PaywallPlanSelector: View {
     let plans: [SubscriptionPlan]
     @Binding var selectedPlanId: String?
 
+    private var sortedPlans: [SubscriptionPlan] {
+        let order: [SubscriptionPeriod] = [.monthly, .quarterly, .yearly]
+        return plans.sorted { a, b in
+            let ai = order.firstIndex(of: a.period) ?? 99
+            let bi = order.firstIndex(of: b.period) ?? 99
+            return ai < bi
+        }
+    }
+
     var body: some View {
         VStack(spacing: Theme.Spacing.sm) {
-            ForEach(plans) { plan in
+            ForEach(sortedPlans) { plan in
                 PaywallPlanCard(
                     plan: plan,
                     isSelected: selectedPlanId == plan.id
@@ -40,6 +49,8 @@ struct PaywallPlanCard: View {
                         Text("paywall.freeWeek")
                             .font(.caption2.bold())
                             .foregroundStyle(Theme.Colors.warmCoral)
+                            .lineLimit(1)
+                            .fixedSize()
                             .padding(.horizontal, 8)
                             .padding(.vertical, 2)
                             .background(Theme.Colors.warmCoral.opacity(0.12))

@@ -121,6 +121,9 @@ struct InjuryStrengthStepView: View {
                     isSelected: viewModel.strengthTrainingPreference == pref
                 ) {
                     viewModel.strengthTrainingPreference = pref
+                    if pref == .no {
+                        viewModel.strengthTrainingLocation = nil
+                    }
                 }
             }
         }

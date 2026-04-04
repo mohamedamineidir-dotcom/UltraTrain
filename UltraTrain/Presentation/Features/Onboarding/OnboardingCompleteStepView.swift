@@ -7,6 +7,7 @@ struct OnboardingCompleteStepView: View {
     let healthKitService: (any HealthKitServiceProtocol)?
     let healthKitImportService: (any HealthKitImportServiceProtocol)?
 
+    @Environment(\.colorScheme) private var colorScheme
     @State private var isRequestingHealthKit = false
     @State private var healthKitConnected = false
     @State private var isImportingWorkouts = false
@@ -17,7 +18,7 @@ struct OnboardingCompleteStepView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: Theme.Spacing.xxl) {
+            VStack(spacing: Theme.Spacing.lg) {
                 heroSection
                     .scaleEffect(showRunner ? 1 : 0.5)
                     .opacity(showRunner ? 1 : 0)
@@ -26,13 +27,14 @@ struct OnboardingCompleteStepView: View {
                     .opacity(showContent ? 1 : 0)
                     .offset(y: showContent ? 0 : 16)
 
-                VStack(spacing: Theme.Spacing.md) {
-                    summaryCard
-                    healthKitCard
-                }
-                .padding(.horizontal, Theme.Spacing.lg)
-                .opacity(showContent ? 1 : 0)
-                .offset(y: showContent ? 0 : 16)
+                summarySection
+                    .padding(.horizontal, Theme.Spacing.lg)
+                    .opacity(showContent ? 1 : 0)
+                    .offset(y: showContent ? 0 : 16)
+
+                healthKitCard
+                    .padding(.horizontal, Theme.Spacing.lg)
+                    .opacity(showContent ? 1 : 0)
 
                 if let error = viewModel.error {
                     ErrorBannerView(message: error) {
@@ -63,18 +65,22 @@ struct OnboardingCompleteStepView: View {
     // MARK: - Hero
 
     private var heroSection: some View {
-        Image("LaunchIcon")
-            .resizable()
-            .scaledToFit()
-            .frame(width: 180, height: 180)
-            .padding(.top, Theme.Spacing.xxl)
-            .accessibilityHidden(true)
+        VStack(spacing: 0) {
+            Image("LaunchIcon")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 140, height: 140)
+                .colorMultiply(colorScheme == .dark ? .white : Theme.Colors.warmCoral)
+                .shadow(color: Theme.Colors.warmCoral.opacity(0.25), radius: 20, y: 8)
+        }
+        .padding(.top, Theme.Spacing.xxl)
+        .accessibilityHidden(true)
     }
 
     // MARK: - Title
 
     private var titleSection: some View {
-        VStack(spacing: Theme.Spacing.sm) {
+        VStack(spacing: Theme.Spacing.xs) {
             Text("You're All Set")
                 .font(.largeTitle.bold())
 
@@ -89,63 +95,96 @@ struct OnboardingCompleteStepView: View {
 
     // MARK: - Summary
 
-    private var summaryCard: some View {
-        VStack(spacing: Theme.Spacing.sm) {
+    private var summarySection: some View {
+        VStack(spacing: 0) {
+            // Profile row
             summaryRow(
                 icon: "figure.run",
-                text: [
-                    viewModel.experienceLevel?.rawValue.capitalized ?? "Beginner",
-                    "\(viewModel.preferredRunsPerWeek) runs/week",
-                    viewModel.trainingPhilosophy.displayName,
-                ].joined(separator: " · ")
+                iconColor: Theme.Colors.warmCoral,
+                title: viewModel.experienceLevel?.rawValue.capitalized ?? "Beginner",
+                detail: "\(viewModel.preferredRunsPerWeek) runs/week \u{00B7} \(viewModel.trainingPhilosophy.displayName)"
             )
 
-            if viewModel.hasNoRace {
-                summaryRow(
-                    icon: "arrow.up.right",
-                    text: "General fitness · 12 weeks"
-                )
-            } else {
+            if !viewModel.hasNoRace {
+                Divider()
+                    .padding(.horizontal, Theme.Spacing.md)
+
+                // Race row
                 summaryRow(
                     icon: "flag.checkered",
-                    text: [
-                        viewModel.raceName,
-                        UnitFormatter.formatDistance(
-                            viewModel.raceDistanceKm,
-                            unit: viewModel.preferredUnit,
-                            decimals: 0
-                        ),
+                    iconColor: Theme.Colors.goldAccent,
+                    title: viewModel.raceName,
+                    detail: [
+                        UnitFormatter.formatDistance(viewModel.raceDistanceKm, unit: viewModel.preferredUnit, decimals: 0),
                         "D+ \(UnitFormatter.formatElevation(viewModel.raceElevationGainM, unit: viewModel.preferredUnit))",
-                    ].joined(separator: " · ")
+                    ].joined(separator: " \u{00B7} ")
                 )
+
+                Divider()
+                    .padding(.horizontal, Theme.Spacing.md)
+
+                // Date row
                 summaryRow(
                     icon: "calendar",
-                    text: viewModel.raceDate.formatted(.dateTime.day().month(.wide).year()) + weeksToGoLabel
+                    iconColor: Theme.Colors.zone3,
+                    title: viewModel.raceDate.formatted(.dateTime.day().month(.wide).year()),
+                    detail: weeksToGoLabel
+                )
+            } else {
+                Divider()
+                    .padding(.horizontal, Theme.Spacing.md)
+
+                summaryRow(
+                    icon: "arrow.up.right",
+                    iconColor: Theme.Colors.zone3,
+                    title: "General Fitness",
+                    detail: "12-week progressive plan"
                 )
             }
         }
-        .futuristicGlassStyle()
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                .fill(.ultraThinMaterial)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                .stroke(Color.primary.opacity(0.06), lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.lg))
     }
 
     private var weeksToGoLabel: String {
         let weeks = Calendar.current.dateComponents(
             [.weekOfYear], from: .now, to: viewModel.raceDate
         ).weekOfYear ?? 0
-        return weeks > 0 ? " · \(weeks) weeks to go" : ""
+        return weeks > 0 ? "\(weeks) weeks to go" : ""
     }
 
-    private func summaryRow(icon: String, text: String) -> some View {
-        HStack(spacing: Theme.Spacing.sm) {
+    private func summaryRow(icon: String, iconColor: Color, title: String, detail: String) -> some View {
+        HStack(spacing: Theme.Spacing.md) {
             Image(systemName: icon)
-                .font(.subheadline)
-                .foregroundStyle(Theme.Colors.goldAccent)
-                .frame(width: 20)
-            Text(text)
-                .font(.subheadline)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
-                .lineLimit(1)
+                .font(.body.weight(.semibold))
+                .foregroundStyle(iconColor)
+                .frame(width: 28, height: 28)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(iconColor.opacity(0.12))
+                )
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.subheadline.weight(.semibold))
+                    .lineLimit(1)
+                Text(detail)
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .lineLimit(2)
+            }
+
             Spacer()
         }
+        .padding(.horizontal, Theme.Spacing.md)
+        .padding(.vertical, Theme.Spacing.sm + 2)
     }
 
     // MARK: - HealthKit

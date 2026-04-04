@@ -9,6 +9,7 @@ struct VolumePreviewStepView: View {
                 header
                 cards
             }
+            .padding(.bottom, Theme.Spacing.xl)
         }
     }
 
@@ -20,16 +21,8 @@ struct VolumePreviewStepView: View {
                 .font(.system(size: 32))
                 .foregroundStyle(.white)
                 .frame(width: 64, height: 64)
-                .background(
-                    Circle().fill(
-                        LinearGradient(
-                            colors: [Color(red: 0.2, green: 0.5, blue: 0.7), Color(red: 0.15, green: 0.35, blue: 0.55)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                )
-                .shadow(color: Color(red: 0.2, green: 0.5, blue: 0.7).opacity(0.3), radius: 8, y: 4)
+                .background(Circle().fill(Theme.Gradients.warmCoralCTA))
+                .shadow(color: Theme.Colors.warmCoral.opacity(0.3), radius: 8, y: 4)
 
             Text("Your Training Preview")
                 .font(.title.bold())
@@ -56,31 +49,37 @@ struct VolumePreviewStepView: View {
     // MARK: - Race Recap
 
     private var raceRecapCard: some View {
-        VStack(spacing: Theme.Spacing.sm) {
+        VStack(spacing: 0) {
             HStack(spacing: Theme.Spacing.sm) {
                 Image(systemName: "flag.checkered")
-                    .font(.title3)
+                    .font(.body.weight(.semibold))
                     .foregroundStyle(Theme.Colors.goldAccent)
                 Text("Your Race")
                     .font(.headline)
                 Spacer()
             }
+            .padding(.bottom, Theme.Spacing.md)
 
-            Divider()
-
-            summaryRow(label: "Race", value: viewModel.raceName)
-            summaryRow(
-                label: "Date",
-                value: viewModel.raceDate.formatted(.dateTime.day().month(.wide).year())
-            )
-            summaryRow(
-                label: "Distance",
-                value: UnitFormatter.formatDistance(viewModel.raceDistanceKm, unit: viewModel.preferredUnit, decimals: 0)
-            )
-            summaryRow(
-                label: "Elevation",
-                value: "D+ \(UnitFormatter.formatElevation(viewModel.raceElevationGainM, unit: viewModel.preferredUnit))"
-            )
+            VStack(spacing: 0) {
+                summaryRow(label: "Race", value: viewModel.raceName)
+                thinDivider
+                summaryRow(
+                    label: "Date",
+                    value: viewModel.raceDate.formatted(.dateTime.day().month(.wide).year())
+                )
+                thinDivider
+                summaryRow(
+                    label: "Distance",
+                    value: UnitFormatter.formatDistance(
+                        viewModel.raceDistanceKm, unit: viewModel.preferredUnit, decimals: 0
+                    )
+                )
+                thinDivider
+                summaryRow(
+                    label: "Elevation",
+                    value: "D+ \(UnitFormatter.formatElevation(viewModel.raceElevationGainM, unit: viewModel.preferredUnit))"
+                )
+            }
         }
         .onboardingCardStyle()
     }
@@ -88,32 +87,37 @@ struct VolumePreviewStepView: View {
     // MARK: - Current Profile
 
     private var currentProfileCard: some View {
-        VStack(spacing: Theme.Spacing.sm) {
+        VStack(spacing: 0) {
             HStack(spacing: Theme.Spacing.sm) {
                 Image(systemName: "figure.run")
-                    .font(.title3)
+                    .font(.body.weight(.semibold))
                     .foregroundStyle(Theme.Colors.warmCoral)
                 Text("Your Profile")
                     .font(.headline)
                 Spacer()
             }
+            .padding(.bottom, Theme.Spacing.md)
 
-            Divider()
-
-            summaryRow(
-                label: "Level",
-                value: viewModel.experienceLevel?.rawValue.capitalized ?? "Beginner"
-            )
-            summaryRow(
-                label: "Current Volume",
-                value: viewModel.isNewRunner
-                    ? "Just starting"
-                    : UnitFormatter.formatDistance(viewModel.weeklyVolumeKm, unit: viewModel.preferredUnit, decimals: 0) + "/week"
-            )
-            summaryRow(
-                label: "Training Style",
-                value: viewModel.trainingPhilosophy.displayName
-            )
+            VStack(spacing: 0) {
+                summaryRow(
+                    label: "Level",
+                    value: viewModel.experienceLevel?.rawValue.capitalized ?? "Beginner"
+                )
+                thinDivider
+                summaryRow(
+                    label: "Current Volume",
+                    value: viewModel.isNewRunner
+                        ? "Just starting"
+                        : UnitFormatter.formatDistance(
+                            viewModel.weeklyVolumeKm, unit: viewModel.preferredUnit, decimals: 0
+                        ) + "/week"
+                )
+                thinDivider
+                summaryRow(
+                    label: "Training Style",
+                    value: viewModel.trainingPhilosophy.displayName
+                )
+            }
         }
         .onboardingCardStyle()
     }
@@ -121,68 +125,134 @@ struct VolumePreviewStepView: View {
     // MARK: - Volume Estimates
 
     private var volumeEstimateSection: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("Weekly Volume Estimate")
-                .font(.headline)
-            Text("Approximate range for the first month of your plan. Pick the frequency that suits you best.")
-                .font(.caption)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+            VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+                Text("Weekly Volume Estimate")
+                    .font(.headline)
+                Text("Approximate range for the first month of your plan. Pick the frequency that suits you best.")
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
 
-            ForEach(viewModel.volumePreviewData) { estimate in
-                volumeRow(estimate)
+            VStack(spacing: Theme.Spacing.sm) {
+                ForEach(viewModel.volumePreviewData) { estimate in
+                    volumeRow(estimate)
+                }
             }
 
             Text("You can always adjust this later in settings.")
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.tertiaryLabel)
-                .padding(.top, Theme.Spacing.xs)
         }
         .onboardingCardStyle()
     }
+
+    @Environment(\.colorScheme) private var colorScheme
 
     private func volumeRow(_ estimate: OnboardingViewModel.VolumeEstimate) -> some View {
         let isSelected = viewModel.preferredRunsPerWeek == estimate.runsPerWeek
 
         return Button {
-            viewModel.preferredRunsPerWeek = estimate.runsPerWeek
+            withAnimation(.easeInOut(duration: 0.2)) {
+                viewModel.preferredRunsPerWeek = estimate.runsPerWeek
+            }
         } label: {
-            HStack {
+            HStack(spacing: Theme.Spacing.md) {
+                // Selection indicator
+                ZStack {
+                    Circle()
+                        .stroke(
+                            isSelected ? Theme.Colors.warmCoral : Theme.Colors.tertiaryLabel,
+                            lineWidth: isSelected ? 0 : 1.5
+                        )
+                        .frame(width: 22, height: 22)
+
+                    if isSelected {
+                        Circle()
+                            .fill(Theme.Gradients.warmCoralCTA)
+                            .frame(width: 22, height: 22)
+                        Image(systemName: "checkmark")
+                            .font(.caption2.bold())
+                            .foregroundStyle(.white)
+                    }
+                }
+
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: Theme.Spacing.xs) {
                         Text("\(estimate.runsPerWeek) runs/week")
-                            .font(.subheadline.bold())
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(isSelected ? Theme.Colors.warmCoral : .primary)
                         if estimate.isRecommended {
-                            Text("Recommended")
-                                .font(.caption2.bold())
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(
-                                    isSelected
-                                        ? Color.white.opacity(0.25)
-                                        : Theme.Colors.warmCoral.opacity(0.15)
-                                )
-                                .foregroundStyle(isSelected ? .white : Theme.Colors.warmCoral)
-                                .clipShape(Capsule())
+                            recommendedBadge
                         }
                     }
-                    Text("~\(estimate.weeklyKmMin)–\(estimate.weeklyKmMax) km/week (1st month)")
+                    Text("~\(estimate.weeklyKmMin)--\(estimate.weeklyKmMax) km/week")
                         .font(.caption)
-                        .foregroundStyle(isSelected ? .white.opacity(0.85) : Theme.Colors.secondaryLabel)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
 
                 Spacer()
 
                 if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.white)
+                    Text("\(estimate.runsPerWeek)x")
+                        .font(.title3.weight(.bold).monospacedDigit())
+                        .foregroundStyle(Theme.Colors.warmCoral)
                 }
             }
-            .padding(Theme.Spacing.md)
-            .background(isSelected ? AnyShapeStyle(Theme.Colors.warmCoral) : AnyShapeStyle(Theme.Colors.secondaryBackground))
-            .foregroundStyle(isSelected ? .white : .primary)
-            .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
+            .padding(.horizontal, Theme.Spacing.md)
+            .padding(.vertical, Theme.Spacing.md)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                    .fill(
+                        isSelected
+                            ? (colorScheme == .dark
+                                ? Theme.Colors.warmCoral.opacity(0.12)
+                                : Theme.Colors.warmCoral.opacity(0.06))
+                            : (colorScheme == .dark
+                                ? Color.white.opacity(0.03)
+                                : Color.black.opacity(0.02))
+                    )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                    .stroke(
+                        isSelected
+                            ? Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.5 : 0.35)
+                            : (colorScheme == .dark
+                                ? Color.white.opacity(0.06)
+                                : Color.black.opacity(0.06)),
+                        lineWidth: isSelected ? 1.5 : 1
+                    )
+            )
+            .shadow(
+                color: isSelected ? Theme.Colors.warmCoral.opacity(0.15) : .clear,
+                radius: 8,
+                y: 2
+            )
         }
         .buttonStyle(.plain)
+        .animation(.easeInOut(duration: 0.2), value: isSelected)
+    }
+
+    // MARK: - Subviews
+
+    private var recommendedBadge: some View {
+        Text("Recommended")
+            .font(.caption2.bold())
+            .foregroundStyle(Theme.Colors.warmCoral)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 3)
+            .background(
+                Capsule()
+                    .fill(Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.15 : 0.1))
+            )
+    }
+
+    private var thinDivider: some View {
+        Rectangle()
+            .fill(colorScheme == .dark ? Color.white.opacity(0.06) : Color.black.opacity(0.06))
+            .frame(height: 0.5)
+            .padding(.vertical, Theme.Spacing.xs)
     }
 
     // MARK: - Helpers
@@ -194,8 +264,9 @@ struct VolumePreviewStepView: View {
                 .foregroundStyle(Theme.Colors.secondaryLabel)
             Spacer()
             Text(value)
-                .font(.subheadline.bold())
+                .font(.subheadline.weight(.semibold))
                 .lineLimit(1)
         }
+        .padding(.vertical, Theme.Spacing.xs)
     }
 }

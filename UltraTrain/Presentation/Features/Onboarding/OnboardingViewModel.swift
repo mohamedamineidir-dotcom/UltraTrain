@@ -134,11 +134,11 @@ final class OnboardingViewModel {
 
     // MARK: - Step 6: Injury & Strength Training
 
-    var painFrequency: PainFrequency = .never
-    var injuryCountLastYear: InjuryCount = .none
+    var painFrequency: PainFrequency?
+    var injuryCountLastYear: InjuryCount?
     var hasRecentInjury: Bool = false
-    var strengthTrainingPreference: StrengthTrainingPreference = .no
-    var strengthTrainingLocation: StrengthTrainingLocation = .home
+    var strengthTrainingPreference: StrengthTrainingPreference?
+    var strengthTrainingLocation: StrengthTrainingLocation?
 
     // MARK: - GoalTraining additions
 
@@ -230,7 +230,7 @@ final class OnboardingViewModel {
         case 3: isAboutYouValid
         case 4: isBodyMetricsValid
         case 5: true // Heart rate has sane defaults
-        case 6: true // Injury/strength has sane defaults
+        case 6: isInjuryStrengthValid
         case 7: hasNoRace || isRaceNameValid
         case 8: hasNoRace || (isRaceProfileValid && (trainingDurationValidation?.isSufficient ?? true))
         case 9: hasNoRace ? true : isGoalTrainingValid
@@ -247,6 +247,16 @@ final class OnboardingViewModel {
                 let age = Calendar.current.dateComponents([.year], from: dateOfBirth, to: .now).year ?? 0
                 return (16...100).contains(age)
             }()
+    }
+
+    private var isInjuryStrengthValid: Bool {
+        guard painFrequency != nil else { return false }
+        guard injuryCountLastYear != nil else { return false }
+        guard strengthTrainingPreference != nil else { return false }
+        if strengthTrainingPreference == .yes {
+            return strengthTrainingLocation != nil
+        }
+        return true
     }
 
     private var isBodyMetricsValid: Bool {
@@ -350,11 +360,11 @@ final class OnboardingViewModel {
             weightGoal: weightGoal,
             biologicalSex: biologicalSex,
             verticalGainEnvironment: verticalGainEnvironment,
-            painFrequency: painFrequency,
-            injuryCountLastYear: injuryCountLastYear,
+            painFrequency: painFrequency ?? .never,
+            injuryCountLastYear: injuryCountLastYear ?? .none,
             hasRecentInjury: hasRecentInjury,
-            strengthTrainingPreference: strengthTrainingPreference,
-            strengthTrainingLocation: strengthTrainingLocation,
+            strengthTrainingPreference: strengthTrainingPreference ?? .no,
+            strengthTrainingLocation: strengthTrainingLocation ?? .home,
             runningTerrain: runningTerrain,
             uphillDuration: uphillDuration,
             treadmillMaxIncline: treadmillMaxIncline,
