@@ -223,6 +223,8 @@ enum CoachAdviceGenerator {
             envTip = " Find a hill with a few minutes of sustained climbing."
         case .treadmill:
             envTip = treadmillTip(intensity: intensity)
+        case .stairs:
+            envTip = " Use stairwells or outdoor stairs. Short bursts, focus on power and cadence."
         case .mixed:
             envTip = " Mix outdoor and treadmill climbing."
         }

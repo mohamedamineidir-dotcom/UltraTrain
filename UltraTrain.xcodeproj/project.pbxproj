@@ -586,6 +586,7 @@
 		5A46EA4D7FF89C4AAC9FD08B /* FoodSearchSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C38E1BF8C60ED6251EB854 /* FoodSearchSheet.swift */; };
 		5A62CBE8E13C453D92996684 /* SafetyAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04B726FADDC32C2F06CFBB5 /* SafetyAlert.swift */; };
 		5A67F39405420B24F406AB5E /* MonotonyLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12D012F87F539F9598A0C9C /* MonotonyLevel.swift */; };
+		5A93C5FADAEECAEE03295BEE /* VerticalGainConstraintAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E659A1C3DBD08EF2A64C93EA /* VerticalGainConstraintAdapter.swift */; };
 		5ABEBE18C053E49020CBA44E /* RaceDatabase+FranceTrails.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF33CAB1ADB1C487D426A86E /* RaceDatabase+FranceTrails.swift */; };
 		5AF50B0E4DA63D0A9E02C1C2 /* TrainingPlanSyncServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1935DCB403A02B62C8DA0CA4 /* TrainingPlanSyncServiceTests.swift */; };
 		5AFD8ACF5543F9DACA781DB8 /* MockStravaUploadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C602DE015A7D98C8BE53B6C /* MockStravaUploadService.swift */; };
@@ -3285,6 +3286,7 @@
 		E5DEBDF1312D3C3991378D29 /* PlanGenerationLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanGenerationLoadingView.swift; sourceTree = "<group>"; };
 		E5E88E109F2DF0BCF86C3578 /* MockGroupChallengeRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockGroupChallengeRepository.swift; sourceTree = "<group>"; };
 		E63B858BE3E1124BC8B93F1E /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		E659A1C3DBD08EF2A64C93EA /* VerticalGainConstraintAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalGainConstraintAdapter.swift; sourceTree = "<group>"; };
 		E65FEF8065A3AE14EF249395 /* SharedRunDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedRunDTO.swift; sourceTree = "<group>"; };
 		E6A55D1B61BFF10243B45EA7 /* UltraTrainClipApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UltraTrainClipApp.swift; sourceTree = "<group>"; };
 		E6DBBECAFF2DC931C0369718 /* GroupChallengeSwiftDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupChallengeSwiftDataModel.swift; sourceTree = "<group>"; };
@@ -4436,6 +4438,7 @@
 				92976D0E612B33B1671FBFA2 /* TrainingLoadCalculator.swift */,
 				526C93048F1BFE5706778F1A /* TrainingPlanGenerator.swift */,
 				75EF9AB8286A3609C2B963D1 /* TrainingStressCalculator.swift */,
+				E659A1C3DBD08EF2A64C93EA /* VerticalGainConstraintAdapter.swift */,
 				F35B086F0FA6DB05DF2F6D6D /* VoiceCueBuilder.swift */,
 				8C97A22AEA5E3F1ED10C00A8 /* VolumeCalculator.swift */,
 				18135F7DE2373156845F5BF4 /* WeatherImpactCalculator.swift */,
@@ -7736,6 +7739,7 @@
 				DB1B771734858C2E1784660C /* UpcomingRacesCard.swift in Sources */,
 				64633B0D61B15A1A38721B52 /* UphillDetailsStepView.swift in Sources */,
 				73A9D55ABED15562E6BBBD4F /* UphillDuration.swift in Sources */,
+				5A93C5FADAEECAEE03295BEE /* VerticalGainConstraintAdapter.swift in Sources */,
 				A9F14B142882B40751B8877D /* VerticalGainEnvironment.swift in Sources */,
 				257D3958EF065A6D7B213DEB /* VoiceCoachingConfig.swift in Sources */,
 				32B8A3D05C0DB75EA74FE24C /* VoiceCoachingHandler.swift in Sources */,

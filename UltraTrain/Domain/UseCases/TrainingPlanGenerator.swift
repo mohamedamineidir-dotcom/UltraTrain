@@ -111,8 +111,32 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 isRoadRace: targetRace.raceType == .road
             )
 
-            allWorkouts.append(contentsOf: result.workouts)
-            allStrengthWorkouts.append(contentsOf: result.strengthWorkouts)
+            // Apply terrain constraint adaptation for VG sessions (trail/ultra only)
+            let adapted: VerticalGainConstraintAdapter.AdaptedResult
+            if targetRace.raceType == .trail {
+                let vgConfig = VerticalGainConstraintAdapter.Config(
+                    environment: athlete.verticalGainEnvironment,
+                    maxUphillSeconds: athlete.uphillDuration?.maxSeconds,
+                    phase: skeleton.phase,
+                    experience: athlete.experienceLevel
+                )
+                adapted = VerticalGainConstraintAdapter.adapt(
+                    sessions: result.sessions,
+                    workouts: result.workouts,
+                    strengthWorkouts: result.strengthWorkouts,
+                    config: vgConfig
+                )
+            } else {
+                adapted = .init(
+                    sessions: result.sessions,
+                    workouts: result.workouts,
+                    strengthWorkouts: result.strengthWorkouts,
+                    planNote: nil
+                )
+            }
+
+            allWorkouts.append(contentsOf: adapted.workouts)
+            allStrengthWorkouts.append(contentsOf: adapted.strengthWorkouts)
 
             return TrainingWeek(
                 id: UUID(),
@@ -120,7 +144,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 startDate: skeleton.startDate,
                 endDate: skeleton.endDate,
                 phase: override?.behavior.isRaceWeek == true ? .race : skeleton.phase,
-                sessions: result.sessions,
+                sessions: adapted.sessions,
                 isRecoveryWeek: skeleton.isRecoveryWeek || override?.behavior == .postRaceRecovery,
                 targetVolumeKm: volume.targetVolumeKm,
                 targetElevationGainM: volume.targetElevationGainM,

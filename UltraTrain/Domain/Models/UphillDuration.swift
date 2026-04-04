@@ -18,4 +18,16 @@ enum UphillDuration: String, CaseIterable, Sendable, Codable {
         case .over8Min: "8+ min (long climb)"
         }
     }
+
+    /// Maximum uphill duration in seconds. Returns nil for unconstrained (.over8Min).
+    var maxSeconds: TimeInterval? {
+        switch self {
+        case .none:     0
+        case .upTo2Min: 120
+        case .upTo4Min: 240
+        case .upTo6Min: 360
+        case .upTo8Min: 480
+        case .over8Min: nil
+        }
+    }
 }
