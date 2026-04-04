@@ -64,16 +64,6 @@ enum VerticalGainConstraintAdapter {
                     config: config
                 )
 
-            case .redirectToStairs(let cappedWorkout):
-                adaptedSessions[i] = applyWorkoutAdaptation(
-                    session: session,
-                    workout: cappedWorkout,
-                    modality: .stairs,
-                    preFatigueMinutes: 0,
-                    config: config
-                )
-                replaceWorkout(id: session.intervalWorkoutId, with: cappedWorkout, in: &adaptedWorkouts)
-
             case .convertToFlat(let flatWorkout, let companionStrength):
                 adaptedSessions[i] = applyFlatConversion(
                     session: session,
@@ -113,14 +103,12 @@ enum VerticalGainConstraintAdapter {
         case noChange
         case capRepsWithPreFatigue(workout: IntervalWorkout, preFatigueMinutes: Int)
         case redirectToTreadmill
-        case redirectToStairs(workout: IntervalWorkout)
         case convertToFlat(workout: IntervalWorkout, companion: StrengthWorkout?)
     }
 
     private enum Modality {
         case hillCapped
         case treadmill
-        case stairs
         case flat
     }
 
@@ -158,14 +146,7 @@ enum VerticalGainConstraintAdapter {
             return .redirectToTreadmill
         }
 
-        // No treadmill. Try stairs.
-        if config.environment.hasStairs {
-            let stairMaxSec: TimeInterval = 120 // stairs reps capped at 2min
-            let capped = capRepDuration(workout: workout, maxSec: stairMaxSec)
-            return .redirectToStairs(workout: capped)
-        }
-
-        // Nothing. Convert to flat equivalent + companion strength.
+        // No hill and no treadmill. Convert to flat equivalent + companion strength.
         let flat = convertToFlatWorkout(workout: workout)
         let companion = buildCompanionStrength(config: config, originalWorkDuration: workout.totalWorkDuration)
         return .convertToFlat(workout: flat, companion: companion)
@@ -324,8 +305,6 @@ enum VerticalGainConstraintAdapter {
         switch modality {
         case .hillCapped:
             modalityText = "hill repeats (capped to your hill length)"
-        case .stairs:
-            modalityText = "stair repeats"
         default:
             modalityText = ""
         }
@@ -392,11 +371,6 @@ enum VerticalGainConstraintAdapter {
             return "Treadmill gives you full control over the incline and duration. Set the grade to 8-10% for moderate efforts, "
                 + "12-15% for hard efforts. The stimulus is identical to outdoor climbing. Keep your form upright, "
                 + "shorten your stride, and drive your knees."
-
-        case .stairs:
-            return "Stair repeats are an excellent climbing substitute. Focus on quick, powerful steps. "
-                + "Drive your knees, stay light on your feet. Walk back down for recovery. "
-                + "The muscle groups are the same ones you will use climbing on race day."
 
         case .flat:
             return "No hills or treadmill available, so we converted this to flat power intervals. "
