@@ -237,10 +237,12 @@ struct VolumePreviewStepView: View {
     // MARK: - Subviews
 
     private var recommendedBadge: some View {
-        Text("Recommended")
+        Label("Rec.", systemImage: "star.fill")
             .font(.caption2.bold())
             .foregroundStyle(Theme.Colors.warmCoral)
-            .padding(.horizontal, 8)
+            .lineLimit(1)
+            .fixedSize()
+            .padding(.horizontal, 6)
             .padding(.vertical, 3)
             .background(
                 Capsule()
