@@ -54,6 +54,7 @@ enum AthleteSwiftDataMapper {
             runningTerrain: TerrainType(rawValue: model.runningTerrainRaw) ?? .trail,
             uphillDuration: model.uphillDurationRaw.flatMap { UphillDuration(rawValue: $0) },
             treadmillMaxIncline: model.treadmillMaxInclineRaw.flatMap { TreadmillIncline(rawValue: $0) },
+            intervalFocus: IntervalFocus(rawValue: model.intervalFocusRaw) ?? .mixed,
             vo2max: model.vo2max,
             vmaKmh: model.vmaKmh,
             thresholdPace60MinPerKm: model.thresholdPace60MinPerKm,
@@ -106,7 +107,8 @@ enum AthleteSwiftDataMapper {
             runningTerrainRaw: athlete.runningTerrain.rawValue,
             uphillDurationRaw: athlete.uphillDuration?.rawValue,
             treadmillMaxInclineRaw: athlete.treadmillMaxIncline?.rawValue,
-            trailPersonalBestsRaw: trailPbRaw
+            trailPersonalBestsRaw: trailPbRaw,
+            intervalFocusRaw: athlete.intervalFocus.rawValue
         )
     }
 }

@@ -39,6 +39,7 @@ struct Athlete: Identifiable, Equatable, Sendable {
     var runningTerrain: TerrainType = .trail
     var uphillDuration: UphillDuration? = nil
     var treadmillMaxIncline: TreadmillIncline? = nil
+    var intervalFocus: IntervalFocus = .mixed
 
     // MARK: - Derived Fitness Metrics (from PBs)
 

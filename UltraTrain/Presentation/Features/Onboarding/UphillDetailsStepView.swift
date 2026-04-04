@@ -51,6 +51,11 @@ struct UphillDetailsStepView: View {
             if viewModel.verticalGainEnvironment == .treadmill || viewModel.verticalGainEnvironment == .mixed {
                 treadmillInclineCard
             }
+
+            // Interval focus (trail/ultra races only)
+            if !viewModel.isShortRoadRace {
+                intervalFocusCard
+            }
         }
         .padding(.horizontal, Theme.Spacing.lg)
     }
@@ -91,6 +96,47 @@ struct UphillDetailsStepView: View {
                 ) {
                     viewModel.treadmillMaxIncline = incline
                 }
+            }
+        }
+        .onboardingCardStyle()
+    }
+
+    private var intervalFocusCard: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            Text("Quality Session Focus")
+                .font(.headline)
+            Text("For my structured workouts, I want to develop:")
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+            ForEach(IntervalFocus.allCases, id: \.self) { focus in
+                Button {
+                    viewModel.intervalFocus = focus
+                } label: {
+                    HStack(spacing: Theme.Spacing.sm) {
+                        Image(systemName: focus.icon)
+                            .font(.body)
+                            .frame(width: 24)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(focus.displayName)
+                                .font(.subheadline.weight(.medium))
+                            Text(focus.subtitle)
+                                .font(.caption2)
+                                .foregroundStyle(viewModel.intervalFocus == focus ? .white.opacity(0.8) : Theme.Colors.secondaryLabel)
+                        }
+                        Spacer()
+                        if viewModel.intervalFocus == focus {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.white)
+                        }
+                    }
+                    .padding(Theme.Spacing.md)
+                    .background(viewModel.intervalFocus == focus
+                        ? AnyShapeStyle(Theme.Colors.warmCoral)
+                        : AnyShapeStyle(Theme.Colors.secondaryBackground))
+                    .foregroundStyle(viewModel.intervalFocus == focus ? .white : .primary)
+                    .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
+                }
+                .buttonStyle(.plain)
             }
         }
         .onboardingCardStyle()

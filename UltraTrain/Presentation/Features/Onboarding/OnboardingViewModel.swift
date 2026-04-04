@@ -145,6 +145,7 @@ final class OnboardingViewModel {
     var runningTerrain: TerrainType = .trail
     var uphillDuration: UphillDuration? = nil
     var treadmillMaxIncline: TreadmillIncline? = nil
+    var intervalFocus: IntervalFocus = .mixed
 
     var isShortRoadRace: Bool {
         raceElevationGainM < 100 && raceDistanceKm < 42.195 && raceDistanceKm > 0
@@ -357,6 +358,7 @@ final class OnboardingViewModel {
             runningTerrain: runningTerrain,
             uphillDuration: uphillDuration,
             treadmillMaxIncline: treadmillMaxIncline,
+            intervalFocus: intervalFocus,
             vo2max: metrics?.vo2max,
             vmaKmh: metrics?.vmaKmh,
             thresholdPace60MinPerKm: metrics?.thresholdPace60MinPerKm,

@@ -26,7 +26,10 @@ enum SessionTemplateGenerator {
         preferredRunsPerWeek: Int = 5,
         verticalGainEnvironment: VerticalGainEnvironment = .mountain,
         expectedRaceDuration: TimeInterval = 0,
-        strengthConfig: StrengthSessionGenerator.Config? = nil
+        strengthConfig: StrengthSessionGenerator.Config? = nil,
+        qualityRatio: QualitySessionRatioResolver.Ratio? = nil,
+        intervalFocus: IntervalFocus = .mixed,
+        isRoadRace: Bool = false
     ) -> (sessions: [TrainingSession], workouts: [IntervalWorkout], strengthWorkouts: [StrengthWorkout]) {
         let runsPerWeek = preferredRunsPerWeek
         let templates: [SessionTemplate]
@@ -42,7 +45,8 @@ enum SessionTemplateGenerator {
                 volume: volume,
                 experience: experience,
                 weekNumberInPhase: weekNumberInPhase,
-                preferredRunsPerWeek: runsPerWeek
+                preferredRunsPerWeek: runsPerWeek,
+                qualityRatio: qualityRatio
             )
         }
 
@@ -102,7 +106,9 @@ enum SessionTemplateGenerator {
                 weekInPhase: weekNumberInPhase,
                 isB2BDay2: template.type == .backToBack,
                 isRecoveryWeek: skeleton.isRecoveryWeek,
-                verticalGainEnvironment: verticalGainEnvironment
+                verticalGainEnvironment: verticalGainEnvironment,
+                intervalFocus: intervalFocus,
+                isRoadRace: isRoadRace
             )
 
             return TrainingSession(
@@ -312,13 +318,15 @@ enum SessionTemplateGenerator {
         volume: VolumeCalculator.WeekVolume,
         experience: ExperienceLevel,
         weekNumberInPhase: Int,
-        preferredRunsPerWeek: Int = 5
+        preferredRunsPerWeek: Int = 5,
+        qualityRatio: QualitySessionRatioResolver.Ratio? = nil
     ) -> [SessionTemplate] {
         switch phase {
         case .base, .build, .peak:
             return standardWeekTemplates(
                 volume: volume, experience: experience, phase: phase,
-                weekInPhase: weekNumberInPhase, preferredRunsPerWeek: preferredRunsPerWeek
+                weekInPhase: weekNumberInPhase, preferredRunsPerWeek: preferredRunsPerWeek,
+                qualityRatio: qualityRatio
             )
         case .taper:
             return taperTemplates(volume: volume, preferredRunsPerWeek: preferredRunsPerWeek)
@@ -334,7 +342,8 @@ enum SessionTemplateGenerator {
         experience: ExperienceLevel,
         phase: TrainingPhase,
         weekInPhase: Int = 0,
-        preferredRunsPerWeek: Int = 5
+        preferredRunsPerWeek: Int = 5,
+        qualityRatio: QualitySessionRatioResolver.Ratio? = nil
     ) -> [SessionTemplate] {
         let base = volume.baseSessionDurations
         let vgIntensity: Intensity = (experience == .advanced || experience == .elite) ? .hard : .moderate
@@ -348,16 +357,37 @@ enum SessionTemplateGenerator {
             )
         }
 
+        // Determine quality slot types based on ratio
+        let slotAssignment = QualitySessionRatioResolver.assignSlots(
+            ratio: qualityRatio ?? .init(vgFraction: 0.50),
+            qualitySlotCount: 2,
+            weekNumberInPhase: weekInPhase
+        )
+        let slot1IsVG = slotAssignment[0]
+        let slot2IsVG = slotAssignment[1]
+
+        // Quality slot 1 (Tuesday, day 2)
+        let q1Type: SessionType = slot1IsVG ? .verticalGain : .intervals
+        let q1Intensity = slot1IsVG ? vgIntensity : intervalIntensity
+        let q1Duration = slot1IsVG ? base.vgSeconds : base.intervalSeconds
+        let q1Desc = slot1IsVG
+            ? SessionDescriptionGenerator.verticalGain(phase: phase, isRecoveryWeek: false)
+            : SessionDescriptionGenerator.intervals(phase: phase, isRecoveryWeek: false, weekInPhase: weekInPhase)
+
+        // Quality slot 2 (Wednesday, day 3)
+        let q2Type: SessionType = slot2IsVG ? .verticalGain : .intervals
+        let q2Intensity = slot2IsVG ? vgIntensity : intervalIntensity
+        let q2Duration = slot2IsVG ? base.vgSeconds : base.intervalSeconds
+        let q2Desc = slot2IsVG
+            ? SessionDescriptionGenerator.verticalGain(phase: phase, isRecoveryWeek: false)
+            : SessionDescriptionGenerator.intervals(phase: phase, isRecoveryWeek: false, weekInPhase: weekInPhase)
+
         // Build pool of active sessions in priority order
-        // Priority: longRun > intervals > VG > easy1 > easy2 > tempo > crossTraining
-        // D+ concentrated on long run only
         let pool: [(day: Int, template: SessionTemplate)] = [
             (6, tpl(6, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.75,
                     SessionDescriptionGenerator.longRun(phase: phase, isRecoveryWeek: false))),
-            (2, tpl(2, .intervals, intervalIntensity, base.intervalSeconds, 0,
-                    SessionDescriptionGenerator.intervals(phase: phase, isRecoveryWeek: false, weekInPhase: weekInPhase))),
-            (3, tpl(3, .verticalGain, vgIntensity, base.vgSeconds, 0,
-                    SessionDescriptionGenerator.verticalGain(phase: phase, isRecoveryWeek: false))),
+            (2, tpl(2, q1Type, q1Intensity, q1Duration, 0, q1Desc)),
+            (3, tpl(3, q2Type, q2Intensity, q2Duration, 0, q2Desc)),
             (1, tpl(1, .recovery, .easy, base.easyRun1Seconds, 0,
                     SessionDescriptionGenerator.easyRun(isRecoveryWeek: false))),
             (5, tpl(5, .recovery, .easy, base.easyRun2Seconds, 0,

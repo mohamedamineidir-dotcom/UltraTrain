@@ -83,6 +83,15 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 )
                 : nil
 
+            let qualityRatio = QualitySessionRatioResolver.resolve(
+                raceType: targetRace.raceType,
+                intervalFocus: athlete.intervalFocus,
+                phase: override?.behavior.isRaceWeek == true ? .race : skeleton.phase,
+                weekNumberInPhase: phaseCounters[index],
+                raceElevationGainM: targetRace.elevationGainM,
+                raceDistanceKm: targetRace.distanceKm
+            )
+
             let result = SessionTemplateGenerator.sessions(
                 for: skeleton,
                 volume: volume,
@@ -96,7 +105,10 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 preferredRunsPerWeek: athlete.preferredRunsPerWeek,
                 verticalGainEnvironment: athlete.verticalGainEnvironment,
                 expectedRaceDuration: raceDuration,
-                strengthConfig: strengthConfig
+                strengthConfig: strengthConfig,
+                qualityRatio: qualityRatio,
+                intervalFocus: athlete.intervalFocus,
+                isRoadRace: targetRace.raceType == .road
             )
 
             allWorkouts.append(contentsOf: result.workouts)
