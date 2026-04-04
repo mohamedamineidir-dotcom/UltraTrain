@@ -89,13 +89,13 @@ struct WeekCardView: View {
             RoundedRectangle(cornerRadius: 2)
                 .fill(
                     LinearGradient(
-                        colors: [phaseAccentColor.opacity(0.6), phaseAccentColor],
+                        colors: [phaseAccentColor.opacity(0.7), phaseAccentColor],
                         startPoint: .top,
                         endPoint: .bottom
                     )
                 )
-                .frame(width: 5)
-                .shadow(color: phaseAccentColor.opacity(0.3), radius: 3, x: 2)
+                .frame(width: 4)
+                .shadow(color: phaseAccentColor.opacity(0.5), radius: 6, x: 3)
 
             VStack(alignment: .leading, spacing: 0) {
                 headerButton

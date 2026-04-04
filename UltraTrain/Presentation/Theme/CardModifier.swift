@@ -144,18 +144,20 @@ struct FuturisticGlassCardModifier: ViewModifier {
 
     private var tintOverlay: Color {
         if let tint = phaseTint, colorScheme == .dark {
-            return tint.opacity(0.06)
+            return tint.opacity(0.10)
         }
-        return colorScheme == .dark ? Color.white.opacity(0.04) : Color.white.opacity(0.7)
+        return colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.7)
     }
 
     private var sheenGradient: LinearGradient {
         let tint = phaseTint ?? Theme.Colors.accentColor
         if colorScheme == .dark {
+            // Use the phase tint color in the sheen for more warmth/variety
+            let sheenColor = phaseTint ?? Color.white
             return LinearGradient(
                 stops: [
-                    .init(color: Color.white.opacity(0.07), location: 0.0),
-                    .init(color: Color.white.opacity(0.015), location: 0.3),
+                    .init(color: sheenColor.opacity(0.12), location: 0.0),
+                    .init(color: sheenColor.opacity(0.03), location: 0.25),
                     .init(color: Color.clear, location: 0.5)
                 ],
                 startPoint: .topLeading,
@@ -174,8 +176,9 @@ struct FuturisticGlassCardModifier: ViewModifier {
 
     private var edgeLightGradient: LinearGradient {
         if colorScheme == .dark {
+            let edgeColor = phaseTint ?? Color.white
             return LinearGradient(
-                colors: [Color.white.opacity(0.16), Color.white.opacity(0.04)],
+                colors: [edgeColor.opacity(0.25), Color.white.opacity(0.06)],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )

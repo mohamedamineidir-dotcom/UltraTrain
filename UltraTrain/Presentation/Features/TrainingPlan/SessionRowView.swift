@@ -80,8 +80,8 @@ struct SessionRowView: View {
                     .fill(
                         LinearGradient(
                             colors: session.isCompleted
-                                ? [Theme.Colors.success.opacity(0.25), Theme.Colors.success.opacity(0.1)]
-                                : [accentColor.opacity(0.15), accentColor.opacity(0.06)],
+                                ? [Theme.Colors.success.opacity(0.3), Theme.Colors.success.opacity(0.12)]
+                                : [accentColor.opacity(0.22), accentColor.opacity(0.08)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -103,8 +103,8 @@ struct SessionRowView: View {
                 }
             }
             .shadow(color: session.isCompleted
-                ? Theme.Colors.success.opacity(0.3) : accentColor.opacity(0.15),
-                radius: 4)
+                ? Theme.Colors.success.opacity(0.4) : accentColor.opacity(0.25),
+                radius: 6)
         }
         .buttonStyle(.plain)
         .sensoryFeedback(.impact(flexibility: .soft), trigger: session.isCompleted)
