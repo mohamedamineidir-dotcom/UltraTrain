@@ -33,35 +33,44 @@ struct SessionDetailView: View {
                     skippedBanner
                 }
 
-                statsSection
+                if session.type == .strengthConditioning {
+                    // S&C-specific layout
+                    scDurationCard
+                    scExerciseList
+                    if let advice = session.coachAdvice {
+                        coachAdviceSection(advice)
+                    }
+                } else {
+                    statsSection
 
-                if let athlete, session.type != .rest {
-                    paceTargetsSection(athlete: athlete)
-                }
+                    if let athlete, session.type != .rest {
+                        paceTargetsSection(athlete: athlete)
+                    }
 
-                descriptionSection
+                    descriptionSection
 
-                if let workoutId = session.intervalWorkoutId,
-                   let workout = workouts.first(where: { $0.id == workoutId }),
-                   !workout.phases.isEmpty {
-                    sessionStructureSummary(workout: workout)
-                    WorkoutBlocksSection(workout: workout, athlete: athlete)
-                }
+                    if let workoutId = session.intervalWorkoutId,
+                       let workout = workouts.first(where: { $0.id == workoutId }),
+                       !workout.phases.isEmpty {
+                        sessionStructureSummary(workout: workout)
+                        WorkoutBlocksSection(workout: workout, athlete: athlete)
+                    }
 
-                if let advice = session.coachAdvice {
-                    coachAdviceSection(advice)
-                }
+                    if let advice = session.coachAdvice {
+                        coachAdviceSection(advice)
+                    }
 
-                if let athlete,
-                   let advice = nutritionAdvisor.advise(
-                    for: session,
-                    athleteWeightKg: athlete.weightKg,
-                    experienceLevel: athlete.experienceLevel,
-                    preferences: nutritionPreferences
-                   ) {
-                    SessionNutritionSection(advice: advice)
-                } else if let notes = session.nutritionNotes {
-                    nutritionSection(notes)
+                    if let athlete,
+                       let advice = nutritionAdvisor.advise(
+                        for: session,
+                        athleteWeightKg: athlete.weightKg,
+                        experienceLevel: athlete.experienceLevel,
+                        preferences: nutritionPreferences
+                       ) {
+                        SessionNutritionSection(advice: advice)
+                    } else if let notes = session.nutritionNotes {
+                        nutritionSection(notes)
+                    }
                 }
 
                 actionsSection
@@ -252,6 +261,132 @@ struct SessionDetailView: View {
                 }
             }
         }
+    }
+
+    // MARK: - S&C Duration Card
+
+    private var scDurationCard: some View {
+        HStack(spacing: Theme.Spacing.lg) {
+            VStack(spacing: 4) {
+                Image(systemName: "clock")
+                    .font(.title3)
+                    .foregroundStyle(Theme.Colors.zone2)
+                Text(session.plannedDuration.formattedDuration)
+                    .font(.title2.bold().monospacedDigit())
+                Text("Duration")
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+            .frame(maxWidth: .infinity)
+
+            Rectangle()
+                .fill(Theme.Colors.tertiaryLabel.opacity(0.2))
+                .frame(width: 1, height: 40)
+
+            VStack(spacing: 4) {
+                Image(systemName: "dumbbell.fill")
+                    .font(.title3)
+                    .foregroundStyle(Theme.Colors.zone3)
+                Text("\(scExerciseCount)")
+                    .font(.title2.bold().monospacedDigit())
+                Text("Exercises")
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .padding(Theme.Spacing.md)
+        .cardStyle()
+    }
+
+    private var scExerciseCount: Int {
+        // Count bullet points in description as proxy for exercise count
+        session.description.components(separatedBy: "\u{2022}").count - 1
+    }
+
+    // MARK: - S&C Exercise List
+
+    private var scExerciseList: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ForEach(Array(parseSCExercises().enumerated()), id: \.offset) { index, exercise in
+                if index > 0 {
+                    Divider()
+                        .padding(.leading, 48)
+                }
+                scExerciseRow(exercise, number: index + 1)
+            }
+        }
+        .cardStyle()
+    }
+
+    private func scExerciseRow(_ exercise: SCParsedExercise, number: Int) -> some View {
+        HStack(alignment: .top, spacing: Theme.Spacing.md) {
+            // Exercise number circle
+            Text("\(number)")
+                .font(.caption.bold().monospacedDigit())
+                .foregroundStyle(.white)
+                .frame(width: 26, height: 26)
+                .background(
+                    Circle().fill(
+                        LinearGradient(
+                            colors: [Theme.Colors.zone2, Theme.Colors.zone3],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                )
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(exercise.name)
+                    .font(.subheadline.weight(.semibold))
+                Text(exercise.setsReps)
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(Theme.Colors.warmCoral)
+                if !exercise.notes.isEmpty {
+                    Text(exercise.notes)
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
+            }
+
+            Spacer()
+        }
+        .padding(.vertical, Theme.Spacing.sm)
+        .padding(.horizontal, Theme.Spacing.sm)
+    }
+
+    /// Parses the S&C description text into structured exercise data.
+    private func parseSCExercises() -> [SCParsedExercise] {
+        var exercises: [SCParsedExercise] = []
+        let lines = session.description.components(separatedBy: "\n")
+
+        for line in lines {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if trimmed.hasPrefix("\u{2022}") {
+                // Exercise line: "• Exercise Name — 3×10-12"
+                let content = trimmed.dropFirst().trimmingCharacters(in: .whitespaces)
+                let parts = content.components(separatedBy: " \u{2014} ")
+                if parts.count >= 2 {
+                    exercises.append(SCParsedExercise(
+                        name: parts[0].trimmingCharacters(in: .whitespaces),
+                        setsReps: parts[1].trimmingCharacters(in: .whitespaces),
+                        notes: ""
+                    ))
+                } else {
+                    exercises.append(SCParsedExercise(name: content, setsReps: "", notes: ""))
+                }
+            } else if !exercises.isEmpty && !trimmed.isEmpty
+                        && !trimmed.hasPrefix("\u{25B8}") && !trimmed.hasPrefix("Duration")
+                        && !trimmed.contains("warm-up") && !trimmed.contains("cool-down")
+                        && !trimmed.hasPrefix("Foundation") && !trimmed.hasPrefix("Strength")
+                        && !trimmed.hasPrefix("Maintenance") && !trimmed.hasPrefix("Activation")
+                        && !trimmed.hasPrefix("Climbing") {
+                // Notes line under the last exercise
+                exercises[exercises.count - 1].notes = trimmed
+            }
+        }
+
+        return exercises
     }
 
     // MARK: - Description
@@ -472,4 +607,12 @@ struct SessionDetailView: View {
         }
         .padding(.top, Theme.Spacing.sm)
     }
+}
+
+// MARK: - S&C Parsed Exercise
+
+private struct SCParsedExercise {
+    let name: String
+    let setsReps: String
+    var notes: String
 }
