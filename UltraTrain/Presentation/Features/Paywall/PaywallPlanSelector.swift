@@ -38,47 +38,47 @@ struct PaywallPlanCard: View {
     let isSelected: Bool
 
     var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: Theme.Spacing.sm) {
+        HStack(spacing: Theme.Spacing.md) {
+            // Left: plan info
+            VStack(alignment: .leading, spacing: 4) {
+                // Row 1: Plan name + badges
+                HStack(spacing: 6) {
                     Text(plan.period.displayNameLocalized)
                         .font(.headline)
                         .foregroundStyle(.primary)
+                        .layoutPriority(1)
 
                     if plan.trialDays != nil {
-                        Text("paywall.freeWeek")
-                            .font(.caption2.bold())
-                            .foregroundStyle(Theme.Colors.warmCoral)
-                            .lineLimit(1)
-                            .fixedSize()
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 2)
-                            .background(Theme.Colors.warmCoral.opacity(0.12))
-                            .clipShape(Capsule())
+                        badge(
+                            text: String(localized: "paywall.freeWeek"),
+                            foreground: Theme.Colors.warmCoral,
+                            background: Theme.Colors.warmCoral.opacity(0.12)
+                        )
                     }
 
                     if let savings = plan.savingsPercent {
-                        Text("paywall.save \(savings)")
-                            .font(.caption2.bold())
-                            .foregroundStyle(.black)
-                            .lineLimit(1)
-                            .fixedSize()
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 2)
-                            .background(Theme.Gradients.goldPremium)
-                            .clipShape(Capsule())
+                        badge(
+                            text: String(localized: "paywall.save \(savings)"),
+                            foreground: .black,
+                            background: nil,
+                            gradient: Theme.Gradients.goldPremium
+                        )
                     }
                 }
+
+                // Row 2: per-week price
                 Text("paywall.perWeek \(plan.displayPricePerWeek)")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
-            Spacer()
+            Spacer(minLength: Theme.Spacing.sm)
 
+            // Right: total price
             Text(plan.displayPrice)
                 .font(.title3.bold())
                 .foregroundStyle(.primary)
+                .fixedSize()
         }
         .padding(Theme.Spacing.md)
         .background(
@@ -100,5 +100,27 @@ struct PaywallPlanCard: View {
         .shadow(color: isSelected ? Theme.Colors.warmCoral.opacity(0.3) : .clear, radius: 8)
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    private func badge(
+        text: String,
+        foreground: Color,
+        background: Color? = nil,
+        gradient: LinearGradient? = nil
+    ) -> some View {
+        Text(text)
+            .font(.caption2.bold())
+            .foregroundStyle(foreground)
+            .lineLimit(1)
+            .fixedSize()
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background {
+                if let gradient {
+                    Capsule().fill(gradient)
+                } else if let bg = background {
+                    Capsule().fill(bg)
+                }
+            }
     }
 }

@@ -5,17 +5,23 @@ struct PaywallHeaderSection: View {
 
     var body: some View {
         VStack(spacing: Theme.Spacing.md) {
-            ZStack {
+            ZStack(alignment: .bottom) {
+                // Mountains behind
                 Image(systemName: "mountain.2.fill")
-                    .font(.system(size: 52))
+                    .font(.system(size: 60))
                     .foregroundStyle(Theme.Gradients.goldPremium)
-                Image(systemName: "figure.run")
-                    .font(.system(size: 28, weight: .semibold))
-                    .foregroundStyle(.primary)
-                    .offset(y: -6)
+                    .opacity(0.5)
+                    .offset(y: 10)
+
+                // App logo in front
+                Image("LaunchIcon")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 64, height: 64)
+                    .offset(y: -4)
             }
-            .shadow(color: Theme.Colors.goldAccent.opacity(0.5), radius: 16, y: 4)
-            .shadow(color: Theme.Colors.goldAccent.opacity(0.3), radius: 32, y: 8)
+            .frame(height: 80)
+            .shadow(color: Theme.Colors.goldAccent.opacity(0.4), radius: 16, y: 4)
             .padding(.top, Theme.Spacing.xl)
             .accessibilityHidden(true)
 

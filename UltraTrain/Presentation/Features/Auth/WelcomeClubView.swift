@@ -55,9 +55,11 @@ struct WelcomeClubView: View {
                         .fill(Theme.Colors.warmCoral.opacity(0.12))
                         .frame(width: 110, height: 110)
 
-                    Image(systemName: "figure.run")
-                        .font(.system(size: 44, weight: .semibold))
-                        .foregroundStyle(Theme.Colors.warmCoral)
+                    Image("LaunchIcon")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 56, height: 56)
+                        .colorMultiply(Theme.Colors.warmCoral)
                 }
                 .shadow(color: Theme.Colors.warmCoral.opacity(0.2), radius: 20, y: 6)
                 .scaleEffect(showContent ? 1 : 0.6)
