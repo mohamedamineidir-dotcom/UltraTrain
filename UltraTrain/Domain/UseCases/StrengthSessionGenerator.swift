@@ -71,7 +71,7 @@ enum StrengthSessionGenerator {
     ) -> StrengthWorkout {
         let category = categoryForSession(config: config, sessionIndex: sessionIndex)
         let exercises = selectExercises(config: config, category: category)
-        let duration = estimatedDuration(category: category, location: config.location)
+        let duration = estimatedDuration(category: category, exercises: exercises)
 
         let name = workoutName(config: config, category: category, sessionIndex: sessionIndex)
 
@@ -426,18 +426,29 @@ enum StrengthSessionGenerator {
         }
     }
 
-    private static func estimatedDuration(
+    /// Calculates realistic duration based on exercise count, sets, and rest periods.
+    /// Warmup 5min + exercises (sets x ~40sec work + rest) + cooldown 5min.
+    static func estimatedDuration(
         category: StrengthSessionCategory,
-        location: StrengthTrainingLocation
+        exercises: [StrengthExercise]
     ) -> Int {
+        let warmupCooldown = 10 // 5 + 5
+        let restPerSet: Double
         switch category {
-        case .full:
-            return location == .gym ? 40 : 30
-        case .maintenance:
-            return location == .gym ? 25 : 20
-        case .activation:
-            return 15
+        case .full: restPerSet = 75 // 60-90 sec avg
+        case .maintenance: restPerSet = 60
+        case .activation: restPerSet = 30
         }
+
+        var workSeconds: Double = 0
+        for ex in exercises {
+            let workPerSet: Double = 40 // ~40 sec per set of work
+            let totalSets = Double(ex.sets)
+            workSeconds += totalSets * (workPerSet + restPerSet)
+        }
+
+        let totalMinutes = warmupCooldown + Int((workSeconds / 60).rounded())
+        return max(totalMinutes, 15)
     }
 
     private static func workoutName(
