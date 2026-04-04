@@ -218,7 +218,7 @@ extension WeekCardView {
 extension WeekCardView {
 
     private var weekProgressBar: some View {
-        let active = week.sessions.filter { $0.type != .rest && !$0.isSkipped }
+        let active = week.sessions.filter { $0.type != .rest && $0.type != .strengthConditioning && !$0.isSkipped }
         let done = active.filter(\.isCompleted).count
         let fraction = active.isEmpty ? 0.0 : Double(done) / Double(active.count)
         return GeometryReader { geo in
@@ -246,45 +246,46 @@ extension WeekCardView {
 
 extension WeekCardView {
 
+    /// Groups sessions by calendar day so same-day S&C + run appear together.
+    private var dayGroupedSessions: [(day: Date, sessions: [(index: Int, session: TrainingSession)])] {
+        var groups: [(day: Date, sessions: [(index: Int, session: TrainingSession)])] = []
+        for (idx, session) in week.sessions.enumerated() {
+            let day = Calendar.current.startOfDay(for: session.date)
+            if let last = groups.last, last.day == day {
+                groups[groups.count - 1].sessions.append((idx, session))
+            } else {
+                groups.append((day, [(idx, session)]))
+            }
+        }
+        return groups
+    }
+
     private var sessionsList: some View {
         VStack(spacing: 0) {
             Divider()
                 .padding(.vertical, Theme.Spacing.sm)
 
-            ForEach(Array(week.sessions.enumerated()), id: \.element.id) { sessionIndex, session in
-                if sessionIndex > 0 {
+            ForEach(Array(dayGroupedSessions.enumerated()), id: \.offset) { groupIdx, dayGroup in
+                if groupIdx > 0 {
                     Rectangle()
                         .fill(Theme.Colors.tertiaryLabel.opacity(0.15))
                         .frame(height: 0.5)
                         .padding(.leading, 48)
                 }
 
-                NavigationLink(destination: sessionDetailView(for: session, at: sessionIndex)) {
-                    SessionRowView(session: session) {
-                        if !session.isCompleted && onValidateSession != nil {
-                            Task {
-                                validateRecentRuns = await recentRunsProvider?(session.date) ?? []
-                                validateItem = ContextSheetItem(sessionIndex: sessionIndex, session: session)
-                            }
-                        } else {
-                            onToggleSession(sessionIndex)
-                        }
+                // Primary session for this day (first non-SC, or the only session)
+                let primary = dayGroup.sessions.first(where: { $0.session.type != .strengthConditioning })
+                    ?? dayGroup.sessions[0]
+                let scSessions = dayGroup.sessions.filter { $0.session.type == .strengthConditioning }
+
+                VStack(spacing: 0) {
+                    sessionRow(primary.index, primary.session)
+
+                    // Show S&C as compact sub-row under the primary session
+                    ForEach(scSessions, id: \.session.id) { scItem in
+                        scCompactRow(scItem.index, scItem.session)
                     }
                 }
-                .buttonStyle(.plain)
-                .contextMenu { sessionContextMenu(for: session, at: sessionIndex) }
-                .draggable(SessionDragData(
-                    sessionId: session.id,
-                    weekIndex: weekIndex,
-                    sessionIndex: sessionIndex
-                ))
-                .dropDestination(for: SessionDragData.self) { items, _ in
-                    guard let source = items.first, source.sessionId != session.id else { return false }
-                    let target = SwapCandidate(session: session, weekIndex: weekIndex, sessionIndex: sessionIndex)
-                    onReorderSession(source.weekIndex, source.sessionIndex, target)
-                    return true
-                }
-                .accessibilityIdentifier("trainingPlan.sessionRow.\(sessionIndex)")
             }
         }
         .sheet(item: $contextRescheduleItem) { item in
@@ -323,6 +324,73 @@ extension WeekCardView {
                 }
             )
         }
+    }
+
+    private func sessionRow(_ sessionIndex: Int, _ session: TrainingSession) -> some View {
+        NavigationLink(destination: sessionDetailView(for: session, at: sessionIndex)) {
+            SessionRowView(session: session) {
+                if !session.isCompleted && onValidateSession != nil {
+                    Task {
+                        validateRecentRuns = await recentRunsProvider?(session.date) ?? []
+                        validateItem = ContextSheetItem(sessionIndex: sessionIndex, session: session)
+                    }
+                } else {
+                    onToggleSession(sessionIndex)
+                }
+            }
+        }
+        .buttonStyle(.plain)
+        .contextMenu { sessionContextMenu(for: session, at: sessionIndex) }
+        .draggable(SessionDragData(
+            sessionId: session.id, weekIndex: weekIndex, sessionIndex: sessionIndex
+        ))
+        .dropDestination(for: SessionDragData.self) { items, _ in
+            guard let source = items.first, source.sessionId != session.id else { return false }
+            let target = SwapCandidate(session: session, weekIndex: weekIndex, sessionIndex: sessionIndex)
+            onReorderSession(source.weekIndex, source.sessionIndex, target)
+            return true
+        }
+        .accessibilityIdentifier("trainingPlan.sessionRow.\(sessionIndex)")
+    }
+
+    /// Compact S&C sub-row shown indented under the primary session for the same day.
+    private func scCompactRow(_ sessionIndex: Int, _ session: TrainingSession) -> some View {
+        NavigationLink(destination: sessionDetailView(for: session, at: sessionIndex)) {
+            HStack(spacing: Theme.Spacing.sm) {
+                Spacer()
+                    .frame(width: 12)
+                Image(systemName: "dumbbell.fill")
+                    .font(.caption2)
+                    .foregroundStyle(Theme.Colors.zone2)
+                    .frame(width: 20, height: 20)
+                    .background(
+                        Circle().fill(Theme.Colors.zone2.opacity(0.12))
+                    )
+                Text("S&C")
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                Text("\u{00B7}")
+                    .foregroundStyle(Theme.Colors.tertiaryLabel)
+                Text(scDurationText(session))
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                if session.isCompleted {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.caption2)
+                        .foregroundStyle(Theme.Colors.success)
+                }
+                Spacer()
+            }
+            .padding(.vertical, 4)
+        }
+        .buttonStyle(.plain)
+        .contextMenu { sessionContextMenu(for: session, at: sessionIndex) }
+        .accessibilityIdentifier("trainingPlan.scRow.\(sessionIndex)")
+    }
+
+    private func scDurationText(_ session: TrainingSession) -> String {
+        let min = Int(session.plannedDuration / 60)
+        return "\(min)min"
     }
 
     @ViewBuilder
@@ -409,9 +477,10 @@ extension WeekCardView {
 extension WeekCardView {
 
     private var progressText: String {
-        let active = week.sessions.filter { $0.type != .rest && !$0.isSkipped }
-        let done = active.filter(\.isCompleted).count
-        return "\(done)/\(active.count)"
+        // Only count running sessions, not S&C
+        let runs = week.sessions.filter { $0.type != .rest && $0.type != .strengthConditioning && !$0.isSkipped }
+        let done = runs.filter(\.isCompleted).count
+        return "\(done)/\(runs.count)"
     }
 
     private var weekDateRange: String {
