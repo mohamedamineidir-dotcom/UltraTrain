@@ -71,7 +71,7 @@ enum StrengthSessionGenerator {
     ) -> StrengthWorkout {
         let category = categoryForSession(config: config, sessionIndex: sessionIndex)
         let exercises = selectExercises(config: config, category: category)
-        let duration = estimatedDuration(category: category, exercises: exercises)
+        let duration = estimatedDuration(category: category, exercises: exercises, phase: config.phase)
 
         let name = workoutName(config: config, category: category, sessionIndex: sessionIndex)
 
@@ -168,8 +168,22 @@ enum StrengthSessionGenerator {
     // MARK: - Exercise Library: Lower Body
 
     private static func selectLowerBody(isGym: Bool, config: Config) -> [StrengthExercise] {
-        let sets = config.experience == .beginner ? 2 : 3
-        let reps = config.phase == .base ? "10-12" : "6-8"
+        let sets: Int
+        let reps: String
+        switch config.phase {
+        case .base:
+            sets = config.experience == .beginner ? 2 : 3
+            reps = config.experience == .beginner ? "12-15" : "10-12"
+        case .build:
+            sets = config.experience == .beginner ? 3 : 4
+            reps = "6-8"
+        case .peak:
+            sets = 2
+            reps = "6-8"
+        default:
+            sets = config.experience == .beginner ? 2 : 3
+            reps = "10-12"
+        }
 
         if isGym {
             return [
@@ -426,28 +440,39 @@ enum StrengthSessionGenerator {
         }
     }
 
-    /// Calculates realistic duration based on exercise count, sets, and rest periods.
-    /// Warmup 5min + exercises (sets x ~40sec work + rest) + cooldown 5min.
+    /// Calculates realistic duration based on exercise count, sets, rest periods, and phase.
+    /// Warmup 5min + exercises (sets x ~35sec work + rest + 30sec transition) + cooldown 5min.
+    /// Rest varies by phase: base 60s, build 90-120s, peak 60-90s.
     static func estimatedDuration(
         category: StrengthSessionCategory,
-        exercises: [StrengthExercise]
+        exercises: [StrengthExercise],
+        phase: TrainingPhase = .base
     ) -> Int {
         let warmupCooldown = 10 // 5 + 5
-        let restPerSet: Double
+
+        let restBetweenSets: Double
         switch category {
-        case .full: restPerSet = 75 // 60-90 sec avg
-        case .maintenance: restPerSet = 60
-        case .activation: restPerSet = 30
+        case .full:
+            switch phase {
+            case .base: restBetweenSets = 60
+            case .build: restBetweenSets = 105 // heavier loads need more recovery
+            case .peak: restBetweenSets = 75
+            default: restBetweenSets = 60
+            }
+        case .maintenance: restBetweenSets = 60
+        case .activation: restBetweenSets = 30
         }
 
-        var workSeconds: Double = 0
+        var workingBlockSeconds: Double = 0
         for ex in exercises {
-            let workPerSet: Double = 40 // ~40 sec per set of work
-            let totalSets = Double(ex.sets)
-            workSeconds += totalSets * (workPerSet + restPerSet)
+            let workPerSet: Double = 35
+            let sets = Double(ex.sets)
+            let restPeriods = max(sets - 1, 0)
+            let transitionTime: Double = 30
+            workingBlockSeconds += (sets * workPerSet) + (restPeriods * restBetweenSets) + transitionTime
         }
 
-        let totalMinutes = warmupCooldown + Int((workSeconds / 60).rounded())
+        let totalMinutes = warmupCooldown + Int((workingBlockSeconds / 60).rounded())
         return max(totalMinutes, 15)
     }
 
