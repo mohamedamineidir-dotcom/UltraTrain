@@ -198,45 +198,56 @@ enum StrengthSessionGenerator {
             reps = "10-12"
         }
 
+        // Rotate exercises by week to prevent identical sessions
+        let weekVariation = config.weekNumberInPhase
+
         if isGym {
-            return [
-                StrengthExercise(
-                    name: "Back Squat",
-                    category: .lowerBody, sets: sets, reps: reps,
-                    notes: "Control the descent. Knees track over toes.",
-                    requiresEquipment: true
-                ),
-                StrengthExercise(
-                    name: "Romanian Deadlift",
-                    category: .lowerBody, sets: sets, reps: "8-10",
-                    notes: "Hinge at hips, soft knees. Feel the hamstring stretch.",
-                    requiresEquipment: true
-                ),
-                StrengthExercise(
-                    name: "Hip Thrust",
-                    category: .lowerBody, sets: sets, reps: "10-12",
-                    notes: "Squeeze glutes at the top. Pause 1 second.",
-                    requiresEquipment: true
-                ),
+            let pool: [[StrengthExercise]] = [
+                // Week A pattern: squat-focused
+                [
+                    StrengthExercise(name: "Back Squat", category: .lowerBody, sets: sets, reps: reps,
+                                    notes: "Control the descent. Knees track over toes.", requiresEquipment: true),
+                    StrengthExercise(name: "Romanian Deadlift", category: .lowerBody, sets: sets, reps: "8-10",
+                                    notes: "Hinge at hips, soft knees. Feel the hamstring stretch.", requiresEquipment: true),
+                ],
+                // Week B pattern: hinge-focused
+                [
+                    StrengthExercise(name: "Hex Bar Deadlift", category: .lowerBody, sets: sets, reps: reps,
+                                    notes: "Drive through your whole foot. Keep chest up.", requiresEquipment: true),
+                    StrengthExercise(name: "Hip Thrust", category: .lowerBody, sets: sets, reps: "10-12",
+                                    notes: "Squeeze glutes at the top. Pause 1 second.", requiresEquipment: true),
+                ],
+                // Week C pattern: unilateral-focused
+                [
+                    StrengthExercise(name: "Front Squat", category: .lowerBody, sets: sets, reps: reps,
+                                    notes: "Elbows high, core tight. Builds upright climbing posture.", requiresEquipment: true),
+                    StrengthExercise(name: "Walking Lunges", category: .lowerBody, sets: sets, reps: "10 per leg",
+                                    notes: "Long stride, controlled descent. Mimics uphill stride pattern.", requiresEquipment: true),
+                ],
             ]
+            return pool[weekVariation % pool.count]
         } else {
-            return [
-                StrengthExercise(
-                    name: "Goblet Squat",
-                    category: .lowerBody, sets: sets, reps: reps,
-                    notes: "Hold any weight at chest level, or bodyweight. Full depth."
-                ),
-                StrengthExercise(
-                    name: "Single-Leg Romanian Deadlift",
-                    category: .lowerBody, sets: sets, reps: "8-10 per side",
-                    notes: "Keep hips level. Touch floor if flexible enough."
-                ),
-                StrengthExercise(
-                    name: "Glute Bridge",
-                    category: .lowerBody, sets: sets, reps: "12-15",
-                    notes: "Drive through heels. Squeeze glutes at top for 2 seconds."
-                ),
+            let pool: [[StrengthExercise]] = [
+                [
+                    StrengthExercise(name: "Goblet Squat", category: .lowerBody, sets: sets, reps: reps,
+                                    notes: "Hold any weight at chest level, or bodyweight. Full depth."),
+                    StrengthExercise(name: "Single-Leg Romanian Deadlift", category: .lowerBody, sets: sets, reps: "8-10 per side",
+                                    notes: "Keep hips level. Touch floor if flexible enough."),
+                ],
+                [
+                    StrengthExercise(name: "Reverse Lunge", category: .lowerBody, sets: sets, reps: "10 per leg",
+                                    notes: "Step back, lower with control. Drive through front heel."),
+                    StrengthExercise(name: "Glute Bridge", category: .lowerBody, sets: sets, reps: "12-15",
+                                    notes: "Drive through heels. Squeeze glutes at top for 2 seconds."),
+                ],
+                [
+                    StrengthExercise(name: "Pistol Squat Progression", category: .lowerBody, sets: sets, reps: "6-8 per leg",
+                                    notes: "Sit to a chair if needed. Build toward full pistol over weeks."),
+                    StrengthExercise(name: "Single-Leg Hip Thrust", category: .lowerBody, sets: sets, reps: "10 per side",
+                                    notes: "One leg planted, other extended. Max glute activation."),
+                ],
             ]
+            return pool[weekVariation % pool.count]
         }
     }
 
@@ -244,32 +255,33 @@ enum StrengthSessionGenerator {
 
     private static func selectCore(isGym: Bool, config: Config) -> [StrengthExercise] {
         let sets = config.experience == .beginner ? 2 : 3
+        let weekVariation = config.weekNumberInPhase
+
+        // Rotate core exercises for variety
+        let corePool: [(String, String, String)] = [
+            ("Dead Bug", "8-10 per side", "Press lower back into floor. Slow and controlled."),
+            ("Side Plank", "20-30 sec per side", "Stack hips. Keep body in a straight line."),
+            ("Bird Dog", "10 per side", "Extend opposite arm and leg. Hold 2 seconds at full extension."),
+            ("Plank Shoulder Tap", "8-10 per side", "Stay stable through the hips. No rotation."),
+        ]
+
+        let startIdx = weekVariation % corePool.count
         var exercises: [StrengthExercise] = [
-            StrengthExercise(
-                name: "Dead Bug",
-                category: .core, sets: sets, reps: "8-10 per side",
-                notes: "Press lower back into floor. Slow and controlled."
-            ),
-            StrengthExercise(
-                name: "Side Plank",
-                category: .core, sets: sets, reps: "20-30 sec per side",
-                notes: "Stack hips. Keep body in a straight line."
-            ),
+            StrengthExercise(name: corePool[startIdx].0, category: .core, sets: sets,
+                            reps: corePool[startIdx].1, notes: corePool[startIdx].2),
         ]
 
         if isGym {
-            exercises.append(StrengthExercise(
-                name: "Pallof Press",
-                category: .core, sets: sets, reps: "10 per side",
-                notes: "Anti-rotation. Press cable away from chest, hold 2 sec.",
-                requiresEquipment: true
-            ))
+            let gymCore = weekVariation % 2 == 0
+                ? StrengthExercise(name: "Pallof Press", category: .core, sets: sets, reps: "10 per side",
+                                  notes: "Anti-rotation. Press cable away from chest, hold 2 sec.", requiresEquipment: true)
+                : StrengthExercise(name: "Cable Woodchop", category: .core, sets: sets, reps: "10 per side",
+                                  notes: "Rotate from the hips, not the shoulders. Control the return.", requiresEquipment: true)
+            exercises.append(gymCore)
         } else {
-            exercises.append(StrengthExercise(
-                name: "Bird Dog",
-                category: .core, sets: sets, reps: "10 per side",
-                notes: "Extend opposite arm and leg. Hold 2 seconds at full extension."
-            ))
+            let nextIdx = (startIdx + 1) % corePool.count
+            exercises.append(StrengthExercise(name: corePool[nextIdx].0, category: .core, sets: sets,
+                                            reps: corePool[nextIdx].1, notes: corePool[nextIdx].2))
         }
 
         return exercises
@@ -476,6 +488,8 @@ enum StrengthSessionGenerator {
         case .activation: restBetweenSets = 45
         }
 
+        let warmupMinutes = 5.0 // athlete will warm up, include in estimate
+
         var workingBlockSeconds: Double = 0
         for ex in exercises {
             let workPerSet: Double = 50 // 8-10 reps x ~5-6sec each with controlled tempo
@@ -485,8 +499,8 @@ enum StrengthSessionGenerator {
             workingBlockSeconds += (sets * workPerSet) + (restPeriods * restBetweenSets) + transitionTime
         }
 
-        let rawMinutes = Int((workingBlockSeconds / 60).rounded())
-        let rounded = Int((Double(rawMinutes) / 5.0).rounded()) * 5
+        let rawMinutes = warmupMinutes + (workingBlockSeconds / 60)
+        let rounded = Int((rawMinutes / 5.0).rounded()) * 5
         return max(rounded, 20)
     }
 

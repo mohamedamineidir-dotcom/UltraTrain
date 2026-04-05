@@ -328,7 +328,7 @@ extension WeekCardView {
     ) -> some View {
         VStack(spacing: 0) {
             NavigationLink(destination: sessionDetailView(for: session, at: sessionIndex)) {
-                HStack(spacing: 0) {
+                VStack(spacing: 0) {
                     SessionRowView(session: session) {
                         if !session.isCompleted && onValidateSession != nil {
                             Task {
@@ -340,24 +340,25 @@ extension WeekCardView {
                         }
                     }
 
-                    // S&C indicator on the right edge
+                    // S&C indicator as subtle line under the session
                     if let sc = scSessions.first {
                         NavigationLink(destination: sessionDetailView(for: sc.session, at: sc.index)) {
-                            VStack(spacing: 2) {
+                            HStack(spacing: 4) {
+                                Rectangle()
+                                    .fill(Color.clear)
+                                    .frame(width: 36) // align with icon glow width
                                 Image(systemName: "dumbbell.fill")
-                                    .font(.system(size: 10))
-                                Text("\(Int(sc.session.plannedDuration / 60))'")
-                                    .font(.system(size: 9, weight: .semibold).monospacedDigit())
+                                    .font(.system(size: 8))
+                                Text("S&C \(Int(sc.session.plannedDuration / 60))min")
+                                    .font(.system(size: 11, weight: .medium))
+                                if sc.session.isCompleted {
+                                    Image(systemName: "checkmark")
+                                        .font(.system(size: 8, weight: .bold))
+                                }
+                                Spacer()
                             }
-                            .foregroundStyle(sc.session.isCompleted ? Theme.Colors.success : .mint)
-                            .frame(width: 32)
-                            .padding(.vertical, 6)
-                            .background(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .fill(sc.session.isCompleted
-                                        ? Theme.Colors.success.opacity(0.1)
-                                        : Color.mint.opacity(0.1))
-                            )
+                            .foregroundStyle(sc.session.isCompleted ? Theme.Colors.success : Theme.Colors.tertiaryLabel)
+                            .padding(.bottom, 4)
                         }
                         .buttonStyle(.plain)
                     }
