@@ -161,15 +161,17 @@ enum StrengthSessionGenerator {
             return Array(exercises.prefix(6))
 
         case .maintenance:
-            // Target: 3-4 exercises for ~20-25min session
+            // Target: 4-5 exercises for ~30-35min session
             var exercises: [StrengthExercise] = []
-            exercises += selectLowerBody(isGym: isGym, config: config).prefix(1)
+            exercises += selectLowerBody(isGym: isGym, config: config).prefix(2)
             exercises += selectSingleLeg(isGym: isGym, config: config).prefix(1)
             exercises += selectCore(isGym: isGym, config: config).prefix(1)
             if hasInjuryConcern {
                 exercises += selectInjuryPrevention(isGym: isGym, config: config).prefix(1)
+            } else {
+                exercises += selectUpperBody(isGym: isGym, config: config).prefix(1)
             }
-            return Array(exercises.prefix(4))
+            return Array(exercises.prefix(5))
 
         case .activation:
             return selectActivation(isGym: isGym)
@@ -452,8 +454,9 @@ enum StrengthSessionGenerator {
     }
 
     /// Calculates realistic working duration (excluding warmup, user manages their own).
-    /// exercises (sets x ~35sec work + rest + 30sec transition).
-    /// Rest varies by phase: base 60s, build 105s, peak 75s.
+    /// Per set: ~45-50sec work (8 reps x 5-6sec controlled tempo) + rest between sets.
+    /// Plus ~45sec transition between exercises (set up, adjust weight, get in position).
+    /// Rest varies by phase: base 60s, build 90-120s, peak 75s.
     /// Rounds to nearest 5 minutes for clean display.
     static func estimatedDuration(
         category: StrengthSessionCategory,
@@ -464,28 +467,27 @@ enum StrengthSessionGenerator {
         switch category {
         case .full:
             switch phase {
-            case .base: restBetweenSets = 60
-            case .build: restBetweenSets = 105
-            case .peak: restBetweenSets = 75
-            default: restBetweenSets = 60
+            case .base: restBetweenSets = 90 // moderate load, still need recovery
+            case .build: restBetweenSets = 120 // heavy loads, full neural recovery
+            case .peak: restBetweenSets = 90
+            default: restBetweenSets = 90
             }
-        case .maintenance: restBetweenSets = 60
-        case .activation: restBetweenSets = 30
+        case .maintenance: restBetweenSets = 75
+        case .activation: restBetweenSets = 45
         }
 
         var workingBlockSeconds: Double = 0
         for ex in exercises {
-            let workPerSet: Double = 35
+            let workPerSet: Double = 50 // 8-10 reps x ~5-6sec each with controlled tempo
             let sets = Double(ex.sets)
             let restPeriods = max(sets - 1, 0)
-            let transitionTime: Double = 30
+            let transitionTime: Double = 45 // set up equipment, adjust weight, get in position
             workingBlockSeconds += (sets * workPerSet) + (restPeriods * restBetweenSets) + transitionTime
         }
 
         let rawMinutes = Int((workingBlockSeconds / 60).rounded())
-        // Round to nearest 5 minutes
         let rounded = Int((Double(rawMinutes) / 5.0).rounded()) * 5
-        return max(rounded, 15)
+        return max(rounded, 20)
     }
 
     private static func workoutName(

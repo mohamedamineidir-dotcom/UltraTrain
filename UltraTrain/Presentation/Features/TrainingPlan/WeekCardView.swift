@@ -279,12 +279,7 @@ extension WeekCardView {
                 let scSessions = dayGroup.sessions.filter { $0.session.type == .strengthConditioning }
 
                 VStack(spacing: 0) {
-                    sessionRow(primary.index, primary.session)
-
-                    // Show S&C as compact sub-row under the primary session
-                    ForEach(scSessions, id: \.session.id) { scItem in
-                        scCompactRow(scItem.index, scItem.session)
-                    }
+                    sessionRow(primary.index, primary.session, scSessions: scSessions)
                 }
             }
         }
@@ -326,74 +321,63 @@ extension WeekCardView {
         }
     }
 
-    private func sessionRow(_ sessionIndex: Int, _ session: TrainingSession) -> some View {
-        NavigationLink(destination: sessionDetailView(for: session, at: sessionIndex)) {
-            SessionRowView(session: session) {
-                if !session.isCompleted && onValidateSession != nil {
-                    Task {
-                        validateRecentRuns = await recentRunsProvider?(session.date) ?? []
-                        validateItem = ContextSheetItem(sessionIndex: sessionIndex, session: session)
+    private func sessionRow(
+        _ sessionIndex: Int,
+        _ session: TrainingSession,
+        scSessions: [(index: Int, session: TrainingSession)] = []
+    ) -> some View {
+        VStack(spacing: 0) {
+            NavigationLink(destination: sessionDetailView(for: session, at: sessionIndex)) {
+                HStack(spacing: 0) {
+                    SessionRowView(session: session) {
+                        if !session.isCompleted && onValidateSession != nil {
+                            Task {
+                                validateRecentRuns = await recentRunsProvider?(session.date) ?? []
+                                validateItem = ContextSheetItem(sessionIndex: sessionIndex, session: session)
+                            }
+                        } else {
+                            onToggleSession(sessionIndex)
+                        }
                     }
-                } else {
-                    onToggleSession(sessionIndex)
-                }
-            }
-        }
-        .buttonStyle(.plain)
-        .contextMenu { sessionContextMenu(for: session, at: sessionIndex) }
-        .draggable(SessionDragData(
-            sessionId: session.id, weekIndex: weekIndex, sessionIndex: sessionIndex
-        ))
-        .dropDestination(for: SessionDragData.self) { items, _ in
-            guard let source = items.first, source.sessionId != session.id else { return false }
-            let target = SwapCandidate(session: session, weekIndex: weekIndex, sessionIndex: sessionIndex)
-            onReorderSession(source.weekIndex, source.sessionIndex, target)
-            return true
-        }
-        .accessibilityIdentifier("trainingPlan.sessionRow.\(sessionIndex)")
-    }
 
-    /// S&C shown as a small pill/chip attached below the primary session for that day.
-    private func scCompactRow(_ sessionIndex: Int, _ session: TrainingSession) -> some View {
-        NavigationLink(destination: sessionDetailView(for: session, at: sessionIndex)) {
-            HStack(spacing: 6) {
-                Spacer()
-                    .frame(width: 44) // align with text after icon glow
-
-                HStack(spacing: 5) {
-                    Image(systemName: "dumbbell.fill")
-                        .font(.system(size: 9))
-                    Text("+  S&C \u{00B7} \(Int(session.plannedDuration / 60))min")
-                        .font(.caption2.weight(.medium))
-                    if session.isCompleted {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 10))
-                            .foregroundStyle(Theme.Colors.success)
+                    // S&C indicator on the right edge
+                    if let sc = scSessions.first {
+                        NavigationLink(destination: sessionDetailView(for: sc.session, at: sc.index)) {
+                            VStack(spacing: 2) {
+                                Image(systemName: "dumbbell.fill")
+                                    .font(.system(size: 10))
+                                Text("\(Int(sc.session.plannedDuration / 60))'")
+                                    .font(.system(size: 9, weight: .semibold).monospacedDigit())
+                            }
+                            .foregroundStyle(sc.session.isCompleted ? Theme.Colors.success : .mint)
+                            .frame(width: 32)
+                            .padding(.vertical, 6)
+                            .background(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(sc.session.isCompleted
+                                        ? Theme.Colors.success.opacity(0.1)
+                                        : Color.mint.opacity(0.1))
+                            )
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
-                .foregroundStyle(session.isCompleted ? Theme.Colors.success : .mint)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 3)
-                .background(
-                    Capsule().fill(
-                        session.isCompleted ? Theme.Colors.success.opacity(0.1) : Color.mint.opacity(0.1)
-                    )
-                )
-                .overlay(
-                    Capsule().stroke(
-                        session.isCompleted ? Theme.Colors.success.opacity(0.2) : Color.mint.opacity(0.15),
-                        lineWidth: 0.5
-                    )
-                )
-
-                Spacer()
             }
-            .padding(.bottom, 4)
+            .buttonStyle(.plain)
+            .contextMenu { sessionContextMenu(for: session, at: sessionIndex) }
+            .draggable(SessionDragData(
+                sessionId: session.id, weekIndex: weekIndex, sessionIndex: sessionIndex
+            ))
+            .dropDestination(for: SessionDragData.self) { items, _ in
+                guard let source = items.first, source.sessionId != session.id else { return false }
+                let target = SwapCandidate(session: session, weekIndex: weekIndex, sessionIndex: sessionIndex)
+                onReorderSession(source.weekIndex, source.sessionIndex, target)
+                return true
+            }
+            .accessibilityIdentifier("trainingPlan.sessionRow.\(sessionIndex)")
         }
-        .buttonStyle(.plain)
-        .contextMenu { sessionContextMenu(for: session, at: sessionIndex) }
-        .accessibilityIdentifier("trainingPlan.scRow.\(sessionIndex)")
     }
+
 
     @ViewBuilder
     private func sessionContextMenu(for session: TrainingSession, at index: Int) -> some View {
