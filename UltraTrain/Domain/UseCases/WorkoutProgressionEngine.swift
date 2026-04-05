@@ -13,7 +13,8 @@ enum WorkoutProgressionEngine {
         expectedRaceDuration: TimeInterval = 0,
         isB2BDay1: Bool = false,
         phaseFocus: PhaseFocus? = nil,
-        progressionContext: ProgressionContext? = nil
+        progressionContext: ProgressionContext? = nil,
+        isSecondarySession: Bool = false
     ) -> IntervalWorkout {
         let phases: [IntervalPhase]
         let name: String
@@ -23,7 +24,8 @@ enum WorkoutProgressionEngine {
         case .intervals:
             let template = intervalTemplate(
                 phase: phase, weekInPhase: weekInPhase, intensity: intensity,
-                phaseFocus: phaseFocus, progressionContext: progressionContext
+                phaseFocus: phaseFocus, progressionContext: progressionContext,
+                isSecondary: isSecondarySession
             )
             phases = template.phases
             name = template.name
@@ -31,7 +33,8 @@ enum WorkoutProgressionEngine {
         case .verticalGain:
             let template = verticalTemplate(
                 phase: phase, weekInPhase: weekInPhase, intensity: intensity,
-                phaseFocus: phaseFocus, progressionContext: progressionContext
+                phaseFocus: phaseFocus, progressionContext: progressionContext,
+                isSecondary: isSecondarySession
             )
             phases = template.phases
             name = template.name
@@ -195,11 +198,11 @@ enum WorkoutProgressionEngine {
         weekInPhase: Int,
         intensity: Intensity,
         phaseFocus: PhaseFocus? = nil,
-        progressionContext: ProgressionContext? = nil
+        progressionContext: ProgressionContext? = nil,
+        isSecondary: Bool = false
     ) -> WorkoutTemplate {
         let effectiveFocus = phaseFocus ?? trainingPhase.defaultFocus
 
-        // Dynamic progressive overload when context is available
         guard let ctx = progressionContext else {
             return legacyIntervalTemplate(
                 effectiveFocus: effectiveFocus, weekInPhase: weekInPhase, intensity: intensity
@@ -209,8 +212,14 @@ enum WorkoutProgressionEngine {
         let warmUp = phase(.warmUp, duration: 900, intensity: .easy, reps: 1, notes: "Easy jog, progressive pace")
         let coolDown = phase(.coolDown, duration: 600, intensity: .easy, reps: 1, notes: "Easy jog, stretching")
 
-        // Fixed templates for sharpening / recovery
         if effectiveFocus == .sharpening {
+            if isSecondary {
+                // Secondary sharpening: short race-effort strides
+                return fixedIntervalTemplate(
+                    reps: 6, workSec: 60, restSec: 90, focus: .sharpening,
+                    warmUp: warmUp, coolDown: coolDown
+                )
+            }
             return fixedIntervalTemplate(
                 reps: 4, workSec: 120, restSec: 120, focus: .sharpening,
                 warmUp: warmUp, coolDown: coolDown
@@ -234,21 +243,120 @@ enum WorkoutProgressionEngine {
         let totalWorkSec = min(rawTotalWork, maxTotalWorkSeconds(for: effectiveFocus))
 
         let params = intervalFocusParams(effectiveFocus, planProgress: planProgress)
-        // Micro-variation: shift target set duration on odd weeks to prevent identical consecutive sessions
-        let weekVariation: Double = ctx.weekIndexInPlan % 2 == 1 ? 15.0 : 0.0
-        let targetSetDuration = params.setDurationSec + weekVariation
-        let reps = min(max(Int((totalWorkSec / targetSetDuration).rounded()), 2), params.maxReps)
-        let actualSetSec = roundToNearest15(totalWorkSec / Double(reps))
-        let restSec = roundToNearest15(actualSetSec / params.workRestRatio)
 
+        if isSecondary {
+            // Secondary session: different stimulus, same energy system
+            return secondaryIntervalTemplate(
+                focus: effectiveFocus, params: params, totalWorkSec: totalWorkSec,
+                weekInPhase: weekInPhase, warmUp: warmUp, coolDown: coolDown
+            )
+        }
+
+        // Primary session with week-over-week progression variety
+        let progressionMode = weekInPhase % 4
+        let reps: Int
+        let actualSetSec: Double
+        let restSec: Double
+
+        switch progressionMode {
+        case 0:
+            // Mode A: standard reps at target duration
+            let targetSet = params.setDurationSec
+            reps = min(max(Int((totalWorkSec / targetSet).rounded()), 2), params.maxReps)
+            actualSetSec = roundToNearest15(totalWorkSec / Double(reps))
+            restSec = roundToNearest15(actualSetSec / params.workRestRatio)
+        case 1:
+            // Mode B: longer reps, fewer of them (same total volume)
+            let longerSet = params.setDurationSec * 1.4
+            reps = min(max(Int((totalWorkSec / longerSet).rounded()), 2), params.maxReps - 2)
+            actualSetSec = roundToNearest15(totalWorkSec / Double(reps))
+            restSec = roundToNearest15(actualSetSec / params.workRestRatio)
+        case 2:
+            // Mode C: standard reps, reduced rest (higher density)
+            let targetSet = params.setDurationSec
+            reps = min(max(Int((totalWorkSec / targetSet).rounded()), 2), params.maxReps)
+            actualSetSec = roundToNearest15(totalWorkSec / Double(reps))
+            restSec = roundToNearest15(actualSetSec / (params.workRestRatio * 1.3))
+        default:
+            // Mode D: pyramid (ascending then descending durations)
+            let targetSet = params.setDurationSec
+            reps = min(max(Int((totalWorkSec / targetSet).rounded()), 3), params.maxReps)
+            actualSetSec = roundToNearest15(totalWorkSec / Double(reps))
+            restSec = roundToNearest15(actualSetSec / params.workRestRatio)
+        }
+
+        let name = progressionMode == 3 ? "Pyramid intervals" : "Interval session"
         let desc = formatIntervalDescription(
             reps: reps, workSec: actualSetSec, restSec: restSec, focus: effectiveFocus
         )
 
-        let work = self.phase(.work, duration: actualSetSec, intensity: params.intensity, reps: reps, notes: nil)
+        let workNotes = progressionMode == 2 ? "Short rest this week. Stay focused between reps." : nil
+        let work = self.phase(.work, duration: actualSetSec, intensity: params.intensity, reps: reps, notes: workNotes)
         let recovery = self.phase(.recovery, duration: restSec, intensity: .easy, reps: reps, notes: nil)
 
-        return WorkoutTemplate(name: "Interval session", description: desc, phases: [warmUp, work, recovery, coolDown])
+        return WorkoutTemplate(name: name, description: desc, phases: [warmUp, work, recovery, coolDown])
+    }
+
+    /// Secondary interval session: different mechanical stimulus, same energy system.
+    private static func secondaryIntervalTemplate(
+        focus: PhaseFocus,
+        params: FocusParams,
+        totalWorkSec: Double,
+        weekInPhase: Int,
+        warmUp: IntervalPhase,
+        coolDown: IntervalPhase
+    ) -> WorkoutTemplate {
+        let secondaryWork = totalWorkSec * 0.85 // slightly less total volume
+
+        switch focus {
+        case .threshold30:
+            // Shorter reps, denser structure, same threshold zone
+            let repSec: Double = 45
+            let reps = min(max(Int((secondaryWork / repSec).rounded()), 4), 16)
+            let actualRep = roundToNearest15(secondaryWork / Double(reps))
+            let rest = roundToNearest15(actualRep * 0.75) // shorter rest than primary
+            let desc = "\(reps)x\(Int(actualRep))s threshold (Z3-4) / \(Int(rest))s jog"
+            let work = phase(.work, duration: actualRep, intensity: .hard, reps: reps,
+                            notes: "Short and sharp. Stay in threshold zone but keep the tempo high.")
+            let recovery = phase(.recovery, duration: rest, intensity: .easy, reps: reps, notes: nil)
+            return WorkoutTemplate(name: "Threshold repeats", description: desc, phases: [warmUp, work, recovery, coolDown])
+
+        case .vo2max:
+            // Shorter bursts at higher intensity (VMA zone, 30-90s)
+            let repSec: Double = 30 + Double(weekInPhase % 3) * 30 // 30s, 60s, or 90s
+            let reps = min(max(Int((secondaryWork / repSec).rounded()), 4), 14)
+            let actualRep = roundToNearest15(secondaryWork / Double(reps))
+            let rest = roundToNearest15(actualRep * 1.5) // longer rest for higher intensity
+            let desc = "\(reps)x\(Int(actualRep))s at VMA (Z5) / \(Int(rest))s jog"
+            let work = phase(.work, duration: actualRep, intensity: .maxEffort, reps: reps,
+                            notes: "Max effort bursts. These are short for a reason. Go hard.")
+            let recovery = phase(.recovery, duration: rest, intensity: .easy, reps: reps, notes: nil)
+            return WorkoutTemplate(name: "VMA bursts", description: desc, phases: [warmUp, work, recovery, coolDown])
+
+        case .threshold60:
+            // Fragmented into shorter blocks with reduced rest
+            let repSec: Double = 180 // 3min blocks instead of 6-8min
+            let reps = min(max(Int((secondaryWork / repSec).rounded()), 3), 10)
+            let actualRep = roundToNearest15(secondaryWork / Double(reps))
+            let rest: Double = 60 // short rest to keep intensity high
+            let desc = "\(reps)x\(Int(actualRep/60))min threshold / 1min jog"
+            let work = phase(.work, duration: actualRep, intensity: .moderate, reps: reps,
+                            notes: "Shorter blocks, less rest. The accumulated fatigue builds threshold endurance differently than long reps.")
+            let recovery = phase(.recovery, duration: rest, intensity: .easy, reps: reps, notes: nil)
+            return WorkoutTemplate(name: "Tempo fragments", description: desc, phases: [warmUp, work, recovery, coolDown])
+
+        case .sharpening:
+            let desc = "6x1min race effort / 1:30 jog"
+            let work = phase(.work, duration: 60, intensity: .hard, reps: 6, notes: "Race effort strides. Stay smooth.")
+            let recovery = phase(.recovery, duration: 90, intensity: .easy, reps: 6, notes: nil)
+            return WorkoutTemplate(name: "Race strides", description: desc, phases: [warmUp, work, recovery, coolDown])
+
+        case .postRaceRecovery:
+            let desc = "4x2min easy tempo / 2min jog"
+            let work = phase(.work, duration: 120, intensity: .easy, reps: 4, notes: "Gentle tempo. Just waking the legs up.")
+            let recovery = phase(.recovery, duration: 120, intensity: .easy, reps: 4, notes: nil)
+            return WorkoutTemplate(name: "Recovery tempo", description: desc, phases: [warmUp, work, recovery, coolDown])
+        }
     }
 
     private static func fixedIntervalTemplate(
@@ -328,7 +436,8 @@ enum WorkoutProgressionEngine {
         weekInPhase: Int,
         intensity: Intensity,
         phaseFocus: PhaseFocus? = nil,
-        progressionContext: ProgressionContext? = nil
+        progressionContext: ProgressionContext? = nil,
+        isSecondary: Bool = false
     ) -> WorkoutTemplate {
         let effectiveFocus = phaseFocus ?? trainingPhase.defaultFocus
 
@@ -368,19 +477,54 @@ enum WorkoutProgressionEngine {
         let totalWorkSec = min(rawTotalWork, maxTotalWorkSeconds(for: effectiveFocus))
 
         let params = vgFocusParams(effectiveFocus, planProgress: planProgress)
-        // Micro-variation: shift target set duration on odd weeks to prevent identical consecutive sessions
-        let weekVariation: Double = ctx.weekIndexInPlan % 2 == 1 ? 15.0 : 0.0
-        let targetSetDuration = params.setDurationSec + weekVariation
-        let reps = min(max(Int((totalWorkSec / targetSetDuration).rounded()), 2), params.maxReps)
-        let actualSetSec = roundToNearest15(totalWorkSec / Double(reps))
-        let restSec = roundToNearest15(actualSetSec / params.workRestRatio)
 
-        let desc = formatVGDescription(
-            reps: reps, workSec: actualSetSec, restSec: restSec, focus: effectiveFocus
-        )
+        if isSecondary {
+            // Secondary VG: shorter, steeper reps with higher density
+            let secondaryWork = totalWorkSec * 0.85
+            let shortRepSec = max(params.setDurationSec * 0.6, 60)
+            let reps = min(max(Int((secondaryWork / shortRepSec).rounded()), 3), params.maxReps + 2)
+            let actualSetSec = roundToNearest15(secondaryWork / Double(reps))
+            let restSec = roundToNearest15(actualSetSec * 0.8)
+            let desc = formatVGDescription(reps: reps, workSec: actualSetSec, restSec: restSec, focus: effectiveFocus)
+            let work = self.phase(.work, duration: actualSetSec, intensity: params.intensity, reps: reps,
+                                 notes: "Shorter, punchier climbs. Higher cadence than your primary session.")
+            let recovery = self.phase(.recovery, duration: restSec, intensity: .easy, reps: reps, notes: "Quick descent")
+            return WorkoutTemplate(name: "Hill repeats (short)", description: desc, phases: [warmUp, work, recovery, coolDown])
+        }
 
+        // Primary session with week-over-week progression variety
+        let progressionMode = ctx.weekIndexInPlan % 4
+        let reps: Int
+        let actualSetSec: Double
+        let restSec: Double
+
+        switch progressionMode {
+        case 0:
+            let targetSet = params.setDurationSec
+            reps = min(max(Int((totalWorkSec / targetSet).rounded()), 2), params.maxReps)
+            actualSetSec = roundToNearest15(totalWorkSec / Double(reps))
+            restSec = roundToNearest15(actualSetSec / params.workRestRatio)
+        case 1:
+            let longerSet = params.setDurationSec * 1.3
+            reps = min(max(Int((totalWorkSec / longerSet).rounded()), 2), params.maxReps - 1)
+            actualSetSec = roundToNearest15(totalWorkSec / Double(reps))
+            restSec = roundToNearest15(actualSetSec / params.workRestRatio)
+        case 2:
+            let targetSet = params.setDurationSec
+            reps = min(max(Int((totalWorkSec / targetSet).rounded()), 2), params.maxReps)
+            actualSetSec = roundToNearest15(totalWorkSec / Double(reps))
+            restSec = roundToNearest15(actualSetSec / (params.workRestRatio * 1.25))
+        default:
+            let targetSet = params.setDurationSec
+            reps = min(max(Int((totalWorkSec / targetSet).rounded()), 2), params.maxReps)
+            actualSetSec = roundToNearest15(totalWorkSec / Double(reps))
+            restSec = roundToNearest15(actualSetSec / params.workRestRatio)
+        }
+
+        let desc = formatVGDescription(reps: reps, workSec: actualSetSec, restSec: restSec, focus: effectiveFocus)
         let vgName = vgWorkoutName(for: effectiveFocus)
-        let work = self.phase(.work, duration: actualSetSec, intensity: params.intensity, reps: reps, notes: "Climb at steady effort")
+        let climbNotes = progressionMode == 2 ? "Reduced rest this week. The accumulated fatigue builds climbing endurance." : "Climb at steady effort"
+        let work = self.phase(.work, duration: actualSetSec, intensity: params.intensity, reps: reps, notes: climbNotes)
         let recovery = self.phase(.recovery, duration: restSec, intensity: .easy, reps: reps, notes: "Jog/walk descent")
 
         return WorkoutTemplate(name: vgName, description: desc, phases: [warmUp, work, recovery, coolDown])

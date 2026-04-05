@@ -61,6 +61,9 @@ enum SessionTemplateGenerator {
             )
             : nil
 
+        // Track quality session slots to differentiate session 1 vs session 2
+        var qualitySlotCounter: [SessionType: Int] = [:]
+
         let sessions = templates.map { template in
             let rawDuration = template.durationSeconds
             let rawElevation = volume.targetElevationGainM * template.elevationFraction
@@ -83,6 +86,10 @@ enum SessionTemplateGenerator {
             let shouldGenerateWorkout = template.type != .rest
             if shouldGenerateWorkout {
                 let isB2BDay1 = volume.isB2BWeek && template.type == .longRun
+                let isQuality = template.type == .intervals || template.type == .verticalGain
+                let slotIndex = isQuality ? (qualitySlotCounter[template.type, default: 0]) : 0
+                if isQuality { qualitySlotCounter[template.type, default: 0] += 1 }
+
                 let workout = WorkoutProgressionEngine.workout(
                     type: template.type,
                     phase: skeleton.phase,
@@ -92,7 +99,8 @@ enum SessionTemplateGenerator {
                     expectedRaceDuration: expectedRaceDuration,
                     isB2BDay1: isB2BDay1,
                     phaseFocus: skeleton.phaseFocus,
-                    progressionContext: progressionContext
+                    progressionContext: progressionContext,
+                    isSecondarySession: slotIndex > 0
                 )
                 workouts.append(workout)
                 workoutId = workout.id
