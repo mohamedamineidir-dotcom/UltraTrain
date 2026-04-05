@@ -234,7 +234,7 @@ final class OnboardingViewModel {
         case 7: hasNoRace || isRaceNameValid
         case 8: hasNoRace || (isRaceProfileValid && (trainingDurationValidation?.isSufficient ?? true))
         case 9: hasNoRace ? true : isGoalTrainingValid
-        case 10: true // Uphill details has sane defaults
+        case 10: isUphillDetailsValid
         case 11: true // Volume preview
         default: true
         }
@@ -255,6 +255,19 @@ final class OnboardingViewModel {
         guard strengthTrainingPreference != nil else { return false }
         if strengthTrainingPreference == .yes {
             return strengthTrainingLocation != nil
+        }
+        return true
+    }
+
+    private var isUphillDetailsValid: Bool {
+        // If athlete has outdoor hills, they must specify uphill duration
+        if verticalGainEnvironment != .treadmill && uphillDuration == nil {
+            return false
+        }
+        // If athlete uses treadmill, they must specify max incline
+        if (verticalGainEnvironment == .treadmill || verticalGainEnvironment == .mixed)
+            && treadmillMaxIncline == nil {
+            return false
         }
         return true
     }

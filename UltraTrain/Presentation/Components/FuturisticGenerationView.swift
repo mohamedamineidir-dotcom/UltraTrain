@@ -232,9 +232,11 @@ struct FuturisticGenerationView: View {
     }
 
     private func runSteps() async {
+        // First pass: animate from 0% to 90% across all steps
+        let maxFirstPass = 0.90
         for step in 0..<steps.count {
             withAnimation { currentStep = step }
-            let target = Double(step + 1) / Double(steps.count)
+            let target = maxFirstPass * Double(step + 1) / Double(steps.count)
             let start = progress
             let ticks = 30
             let interval = stepDuration / Double(ticks)
@@ -247,12 +249,27 @@ struct FuturisticGenerationView: View {
             }
         }
         if loops {
-            try? await Task.sleep(for: .seconds(0.5))
-            withAnimation {
-                currentStep = 0
-                progress = 0
+            // Don't reset to 0%. Slowly crawl from 90% toward 99%, cycling steps.
+            // This gives the impression of "almost done" while waiting for actual completion.
+            var slowProgress = maxFirstPass
+            while slowProgress < 0.99 {
+                for step in 0..<steps.count {
+                    withAnimation { currentStep = step }
+                    let increment = 0.005 // very slow crawl
+                    let ticks = 20
+                    let interval = stepDuration * 1.5 / Double(ticks) // slower than first pass
+                    for tick in 1...ticks {
+                        try? await Task.sleep(for: .milliseconds(Int(interval * 1000)))
+                        if tick == ticks {
+                            slowProgress = min(slowProgress + increment, 0.99)
+                            withAnimation(.linear(duration: interval)) {
+                                progress = slowProgress
+                            }
+                        }
+                    }
+                    if slowProgress >= 0.99 { break }
+                }
             }
-            await runSteps()
         } else {
             onComplete?()
         }

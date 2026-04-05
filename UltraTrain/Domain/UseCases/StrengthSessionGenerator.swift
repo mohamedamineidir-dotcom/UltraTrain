@@ -488,7 +488,7 @@ enum StrengthSessionGenerator {
         case .activation: restBetweenSets = 45
         }
 
-        let warmupMinutes = 5.0 // athlete will warm up, include in estimate
+        let warmupMinutes = 10.0 // athlete will warm up + settle in, include in estimate
 
         var workingBlockSeconds: Double = 0
         for ex in exercises {
