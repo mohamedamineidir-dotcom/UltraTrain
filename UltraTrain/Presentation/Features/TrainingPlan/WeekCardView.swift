@@ -85,18 +85,20 @@ struct WeekCardView: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            // Left phase accent border with gradient
-            RoundedRectangle(cornerRadius: 2)
+            // Left phase accent bar — outside the card padding for proper spacing
+            RoundedRectangle(cornerRadius: 3)
                 .fill(
                     LinearGradient(
-                        colors: [phaseAccentColor.opacity(0.7), phaseAccentColor],
+                        colors: [phaseAccentColor, phaseAccentColor.opacity(0.5)],
                         startPoint: .top,
                         endPoint: .bottom
                     )
                 )
-                .frame(width: 4)
-                .shadow(color: phaseAccentColor.opacity(0.5), radius: 6, x: 3)
+                .frame(width: 3)
+                .shadow(color: phaseAccentColor.opacity(0.4), radius: 4, x: 2)
+                .padding(.vertical, Theme.Spacing.md)
 
+            // Main content with left spacing from the bar
             VStack(alignment: .leading, spacing: 0) {
                 headerButton
                 weekProgressBar
@@ -104,6 +106,7 @@ struct WeekCardView: View {
                     sessionsList
                 }
             }
+            .padding(.leading, Theme.Spacing.sm)
         }
         .futuristicGlassStyle(phaseTint: phaseAccentColor)
         .background(recoveryBackground)
@@ -268,7 +271,7 @@ extension WeekCardView {
             ForEach(Array(dayGroupedSessions.enumerated()), id: \.offset) { groupIdx, dayGroup in
                 if groupIdx > 0 {
                     Rectangle()
-                        .fill(Theme.Colors.tertiaryLabel.opacity(0.15))
+                        .fill(Theme.Colors.tertiaryLabel.opacity(0.1))
                         .frame(height: 0.5)
                         .padding(.leading, 48)
                 }
@@ -340,25 +343,40 @@ extension WeekCardView {
                         }
                     }
 
-                    // S&C indicator as subtle line under the session
+                    // S&C chip under the session row
                     if let sc = scSessions.first {
                         NavigationLink(destination: sessionDetailView(for: sc.session, at: sc.index)) {
-                            HStack(spacing: 4) {
+                            HStack(spacing: 5) {
                                 Rectangle()
                                     .fill(Color.clear)
-                                    .frame(width: 36) // align with icon glow width
-                                Image(systemName: "dumbbell.fill")
-                                    .font(.system(size: 8))
-                                Text("S&C \(Int(sc.session.plannedDuration / 60))min")
-                                    .font(.system(size: 11, weight: .medium))
-                                if sc.session.isCompleted {
-                                    Image(systemName: "checkmark")
-                                        .font(.system(size: 8, weight: .bold))
+                                    .frame(width: 40)
+
+                                HStack(spacing: 4) {
+                                    Image(systemName: "dumbbell.fill")
+                                        .font(.system(size: 9))
+                                    Text("S&C")
+                                        .font(.system(size: 11, weight: .semibold))
+                                    Text("\(Int(sc.session.plannedDuration / 60))min")
+                                        .font(.system(size: 11, weight: .regular).monospacedDigit())
+                                    if sc.session.isCompleted {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .font(.system(size: 10))
+                                    }
                                 }
+                                .foregroundStyle(sc.session.isCompleted ? Theme.Colors.success : .mint)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(
+                                    Capsule().fill(
+                                        sc.session.isCompleted
+                                            ? Theme.Colors.success.opacity(0.08)
+                                            : Color.mint.opacity(0.08)
+                                    )
+                                )
+
                                 Spacer()
                             }
-                            .foregroundStyle(sc.session.isCompleted ? Theme.Colors.success : Theme.Colors.tertiaryLabel)
-                            .padding(.bottom, 4)
+                            .padding(.bottom, 2)
                         }
                         .buttonStyle(.plain)
                     }

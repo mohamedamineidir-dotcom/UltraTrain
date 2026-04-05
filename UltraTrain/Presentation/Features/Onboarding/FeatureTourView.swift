@@ -49,6 +49,7 @@ struct FeatureTourView: View {
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .always))
+            .indexViewStyle(.page(backgroundDisplayMode: .always))
             .animation(.easeInOut(duration: 0.3), value: currentPage)
 
             Button {
@@ -109,6 +110,7 @@ struct FeatureTourView: View {
             // Title
             Text(page.title)
                 .font(.title.bold())
+                .foregroundStyle(Theme.Colors.label)
                 .opacity(showContent ? 1 : 0)
                 .offset(y: showContent ? 0 : 10)
 
