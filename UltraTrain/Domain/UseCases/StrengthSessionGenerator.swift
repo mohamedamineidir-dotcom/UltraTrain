@@ -79,7 +79,9 @@ enum StrengthSessionGenerator {
             name: name,
             category: category,
             exercises: exercises,
-            estimatedDurationMinutes: duration
+            estimatedDurationMinutes: duration,
+            warmUpNotes: "",
+            coolDownNotes: ""
         )
     }
 
@@ -135,34 +137,43 @@ enum StrengthSessionGenerator {
         category: StrengthSessionCategory
     ) -> [StrengthExercise] {
         let isGym = config.location == .gym
-        var exercises: [StrengthExercise] = []
+        let hasInjuryConcern = config.hasRecentInjury || config.painFrequency == .often || config.painFrequency == .sometimes
 
         switch category {
         case .full:
-            exercises += selectLowerBody(isGym: isGym, config: config)
-            exercises += selectCore(isGym: isGym, config: config)
-            exercises += selectSingleLeg(isGym: isGym, config: config)
-            if config.phase == .build || config.phase == .peak {
-                exercises += selectPlyometrics(config: config)
-            }
-            exercises += selectUpperBody(isGym: isGym, config: config)
-
-        case .maintenance:
-            exercises += selectCore(isGym: isGym, config: config)
+            // Target: 5-6 exercises total for ~40-50min session
+            // Structure: 2 compound lower + 1 single-leg + 1 core + 1 plyo or upper
+            // If injury concern: swap 1 slot for injury prevention
+            var exercises: [StrengthExercise] = []
             exercises += selectLowerBody(isGym: isGym, config: config).prefix(2)
             exercises += selectSingleLeg(isGym: isGym, config: config).prefix(1)
+            exercises += selectCore(isGym: isGym, config: config).prefix(1)
+
+            if hasInjuryConcern {
+                exercises += selectInjuryPrevention(isGym: isGym, config: config).prefix(2)
+            } else if config.phase == .build || config.phase == .peak {
+                exercises += selectPlyometrics(config: config).prefix(1)
+                exercises += selectUpperBody(isGym: isGym, config: config).prefix(1)
+            } else {
+                exercises += selectUpperBody(isGym: isGym, config: config).prefix(1)
+                exercises += selectCore(isGym: isGym, config: config).suffix(1)
+            }
+            return Array(exercises.prefix(6))
+
+        case .maintenance:
+            // Target: 3-4 exercises for ~20-25min session
+            var exercises: [StrengthExercise] = []
+            exercises += selectLowerBody(isGym: isGym, config: config).prefix(1)
+            exercises += selectSingleLeg(isGym: isGym, config: config).prefix(1)
+            exercises += selectCore(isGym: isGym, config: config).prefix(1)
+            if hasInjuryConcern {
+                exercises += selectInjuryPrevention(isGym: isGym, config: config).prefix(1)
+            }
+            return Array(exercises.prefix(4))
 
         case .activation:
-            exercises += selectActivation(isGym: isGym)
+            return selectActivation(isGym: isGym)
         }
-
-        // Add injury prevention exercises if applicable
-        if config.hasRecentInjury || config.painFrequency == .often || config.painFrequency == .sometimes {
-            let rehabExercises = selectInjuryPrevention(isGym: isGym, config: config)
-            exercises += rehabExercises
-        }
-
-        return exercises
     }
 
     // MARK: - Exercise Library: Lower Body
@@ -440,22 +451,21 @@ enum StrengthSessionGenerator {
         }
     }
 
-    /// Calculates realistic duration based on exercise count, sets, rest periods, and phase.
-    /// Warmup 5min + exercises (sets x ~35sec work + rest + 30sec transition) + cooldown 5min.
-    /// Rest varies by phase: base 60s, build 90-120s, peak 60-90s.
+    /// Calculates realistic working duration (excluding warmup, user manages their own).
+    /// exercises (sets x ~35sec work + rest + 30sec transition).
+    /// Rest varies by phase: base 60s, build 105s, peak 75s.
+    /// Rounds to nearest 5 minutes for clean display.
     static func estimatedDuration(
         category: StrengthSessionCategory,
         exercises: [StrengthExercise],
         phase: TrainingPhase = .base
     ) -> Int {
-        let warmupCooldown = 10 // 5 + 5
-
         let restBetweenSets: Double
         switch category {
         case .full:
             switch phase {
             case .base: restBetweenSets = 60
-            case .build: restBetweenSets = 105 // heavier loads need more recovery
+            case .build: restBetweenSets = 105
             case .peak: restBetweenSets = 75
             default: restBetweenSets = 60
             }
@@ -472,8 +482,10 @@ enum StrengthSessionGenerator {
             workingBlockSeconds += (sets * workPerSet) + (restPeriods * restBetweenSets) + transitionTime
         }
 
-        let totalMinutes = warmupCooldown + Int((workingBlockSeconds / 60).rounded())
-        return max(totalMinutes, 15)
+        let rawMinutes = Int((workingBlockSeconds / 60).rounded())
+        // Round to nearest 5 minutes
+        let rounded = Int((Double(rawMinutes) / 5.0).rounded()) * 5
+        return max(rounded, 15)
     }
 
     private static func workoutName(

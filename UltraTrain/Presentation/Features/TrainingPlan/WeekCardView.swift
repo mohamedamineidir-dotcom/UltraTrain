@@ -353,44 +353,46 @@ extension WeekCardView {
         .accessibilityIdentifier("trainingPlan.sessionRow.\(sessionIndex)")
     }
 
-    /// Compact S&C sub-row shown indented under the primary session for the same day.
+    /// S&C shown as a small pill/chip attached below the primary session for that day.
     private func scCompactRow(_ sessionIndex: Int, _ session: TrainingSession) -> some View {
         NavigationLink(destination: sessionDetailView(for: session, at: sessionIndex)) {
-            HStack(spacing: Theme.Spacing.sm) {
+            HStack(spacing: 6) {
                 Spacer()
-                    .frame(width: 12)
-                Image(systemName: "dumbbell.fill")
-                    .font(.caption2)
-                    .foregroundStyle(Theme.Colors.zone2)
-                    .frame(width: 20, height: 20)
-                    .background(
-                        Circle().fill(Theme.Colors.zone2.opacity(0.12))
-                    )
-                Text("S&C")
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-                Text("\u{00B7}")
-                    .foregroundStyle(Theme.Colors.tertiaryLabel)
-                Text(scDurationText(session))
-                    .font(.caption.monospacedDigit())
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-                if session.isCompleted {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.caption2)
-                        .foregroundStyle(Theme.Colors.success)
+                    .frame(width: 44) // align with text after icon glow
+
+                HStack(spacing: 5) {
+                    Image(systemName: "dumbbell.fill")
+                        .font(.system(size: 9))
+                    Text("+  S&C \u{00B7} \(Int(session.plannedDuration / 60))min")
+                        .font(.caption2.weight(.medium))
+                    if session.isCompleted {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 10))
+                            .foregroundStyle(Theme.Colors.success)
+                    }
                 }
+                .foregroundStyle(session.isCompleted ? Theme.Colors.success : .mint)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 3)
+                .background(
+                    Capsule().fill(
+                        session.isCompleted ? Theme.Colors.success.opacity(0.1) : Color.mint.opacity(0.1)
+                    )
+                )
+                .overlay(
+                    Capsule().stroke(
+                        session.isCompleted ? Theme.Colors.success.opacity(0.2) : Color.mint.opacity(0.15),
+                        lineWidth: 0.5
+                    )
+                )
+
                 Spacer()
             }
-            .padding(.vertical, 4)
+            .padding(.bottom, 4)
         }
         .buttonStyle(.plain)
         .contextMenu { sessionContextMenu(for: session, at: sessionIndex) }
         .accessibilityIdentifier("trainingPlan.scRow.\(sessionIndex)")
-    }
-
-    private func scDurationText(_ session: TrainingSession) -> String {
-        let min = Int(session.plannedDuration / 60)
-        return "\(min)min"
     }
 
     @ViewBuilder
