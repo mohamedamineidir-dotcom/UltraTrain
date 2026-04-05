@@ -460,7 +460,12 @@ extension WeekCardView {
                 onValidateSessionWithStats?(sessionIndex, dist, dur, elev, feeling, exertion)
             } : nil,
             onLinkRun: onLinkSessionToRun != nil ? { runId in onLinkSessionToRun?(sessionIndex, runId) } : nil,
-            recentRuns: validateRecentRuns
+            recentRuns: validateRecentRuns,
+            recentRunsProvider: recentRunsProvider,
+            stravaActivitiesProvider: stravaActivitiesProvider,
+            onLinkStravaActivity: onLinkStravaActivity != nil ? { activity in
+                onLinkStravaActivity?(sessionIndex, activity)
+            } : nil
         )
     }
 

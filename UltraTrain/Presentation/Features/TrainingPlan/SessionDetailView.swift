@@ -18,6 +18,9 @@ struct SessionDetailView: View {
     var onValidateWithStats: ((Double?, TimeInterval?, Double?, PerceivedFeeling?, Int?) -> Void)?
     var onLinkRun: ((UUID) -> Void)?
     var recentRuns: [CompletedRun] = []
+    var recentRunsProvider: ((Date) async -> [CompletedRun])?
+    var stravaActivitiesProvider: ((Date) async -> [StravaActivity])?
+    var onLinkStravaActivity: ((StravaActivity) -> Void)?
 
     @State private var showSkipConfirmation = false
     @State private var showRescheduleSheet = false
@@ -111,7 +114,10 @@ struct SessionDetailView: View {
                         onValidate?()
                     }
                 },
-                onLinkRun: { runId in onLinkRun?(runId) }
+                onLinkRun: { runId in onLinkRun?(runId) },
+                recentRunsProvider: recentRunsProvider,
+                stravaActivitiesProvider: stravaActivitiesProvider,
+                onLinkStravaActivity: onLinkStravaActivity
             )
         }
     }

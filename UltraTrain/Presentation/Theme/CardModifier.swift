@@ -93,6 +93,7 @@ struct AppCardModifier: ViewModifier {
 }
 
 struct GlassCardModifier: ViewModifier {
+    @Environment(\.colorScheme) private var colorScheme
     var isSelected: Bool = false
 
     func body(content: Content) -> some View {
@@ -100,19 +101,35 @@ struct GlassCardModifier: ViewModifier {
             .padding(Theme.Spacing.md)
             .background(
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                    .fill(.ultraThinMaterial)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                            .fill(isSelected ? Color.white.opacity(0.15) : Color.white.opacity(0.08))
-                    )
+                    .fill(isSelected ? selectedFill : normalFill)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                     .stroke(
-                        isSelected ? Color.white.opacity(0.25) : Color.white.opacity(0.12),
-                        lineWidth: 1
+                        isSelected ? Theme.Colors.warmCoral : borderColor,
+                        lineWidth: isSelected ? 2 : 1
                     )
             )
+    }
+
+    private var selectedFill: AnyShapeStyle {
+        if colorScheme == .dark {
+            AnyShapeStyle(Theme.Colors.warmCoral.opacity(0.15))
+        } else {
+            AnyShapeStyle(Theme.Colors.warmCoral.opacity(0.08))
+        }
+    }
+
+    private var normalFill: AnyShapeStyle {
+        if colorScheme == .dark {
+            AnyShapeStyle(.ultraThinMaterial)
+        } else {
+            AnyShapeStyle(Color.primary.opacity(0.04))
+        }
+    }
+
+    private var borderColor: Color {
+        colorScheme == .dark ? Color.white.opacity(0.12) : Color.primary.opacity(0.1)
     }
 }
 
