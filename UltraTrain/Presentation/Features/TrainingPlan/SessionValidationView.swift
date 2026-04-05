@@ -3,6 +3,7 @@ import SwiftUI
 struct SessionValidationView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.unitPreference) private var units
+    @Environment(\.colorScheme) private var colorScheme
 
     let session: TrainingSession
     let recentRuns: [CompletedRun]
@@ -12,17 +13,14 @@ struct SessionValidationView: View {
     var stravaActivitiesProvider: ((Date) async -> [StravaActivity])?
     var onLinkStravaActivity: ((StravaActivity) -> Void)?
 
-    @State private var distanceText: String
-    @State private var hours: Int
-    @State private var minutes: Int
-    @State private var seconds: Int
-    @State private var elevationText: String
-    @State private var feeling: PerceivedFeeling?
-    @State private var rpe: Int?
-    @State private var loadedRuns: [CompletedRun]?
-    @State private var stravaActivities: [StravaActivity] = []
-    @State private var isLoadingStrava = false
     @State private var showCompletion = false
+    @State private var selectedMode: ValidationMode?
+
+    enum ValidationMode: Identifiable {
+        case manual
+        case syncApp
+        var id: Self { self }
+    }
 
     init(
         session: TrainingSession,
@@ -40,18 +38,6 @@ struct SessionValidationView: View {
         self.recentRunsProvider = recentRunsProvider
         self.stravaActivitiesProvider = stravaActivitiesProvider
         self.onLinkStravaActivity = onLinkStravaActivity
-        let planned = session.plannedDuration
-        _distanceText = State(initialValue: session.plannedDistanceKm > 0
-            ? String(format: "%.1f", session.plannedDistanceKm) : "")
-        _hours = State(initialValue: Int(planned) / 3600)
-        _minutes = State(initialValue: (Int(planned) % 3600) / 60)
-        _seconds = State(initialValue: 0)
-        _elevationText = State(initialValue: session.plannedElevationGainM > 0
-            ? String(format: "%.0f", session.plannedElevationGainM) : "")
-    }
-
-    private var runs: [CompletedRun] {
-        loadedRuns ?? recentRuns
     }
 
     var body: some View {
@@ -60,51 +46,101 @@ struct SessionValidationView: View {
                 dismiss()
             }
         } else {
-            formContent
-        }
-    }
-
-    private var formContent: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: Theme.Spacing.lg) {
-                    sessionHeader
-                    statsEntrySection
-                    feelingSection
-                    rpeSection
-                    if stravaActivitiesProvider != nil {
-                        stravaActivitiesSection
+            NavigationStack {
+                choicePage
+                    .navigationTitle("Validate Session")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button("Cancel") { dismiss() }
+                        }
                     }
-                    if !runs.isEmpty {
-                        recentRunsSection
+                    .navigationDestination(item: $selectedMode) { mode in
+                        switch mode {
+                        case .manual:
+                            ManualValidationPage(
+                                session: session,
+                                onComplete: { dist, dur, elev, feeling, rpe in
+                                    onComplete(dist, dur, elev, feeling, rpe)
+                                    withAnimation { showCompletion = true }
+                                }
+                            )
+                        case .syncApp:
+                            SyncAppPickerPage(
+                                session: session,
+                                recentRuns: recentRuns,
+                                recentRunsProvider: recentRunsProvider,
+                                stravaActivitiesProvider: stravaActivitiesProvider,
+                                onLinkRun: { runId in
+                                    onLinkRun(runId)
+                                    dismiss()
+                                },
+                                onLinkStravaActivity: { activity in
+                                    onLinkStravaActivity?(activity)
+                                    dismiss()
+                                }
+                            )
+                        }
                     }
-                    completeButton
-                    skipButton
-                }
-                .padding()
-            }
-            .background(Theme.Colors.background)
-            .navigationTitle("Complete Session")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel") { dismiss() }
-                }
-            }
-            .task {
-                if let provider = recentRunsProvider {
-                    loadedRuns = await provider(session.date)
-                }
-                if let stravaProvider = stravaActivitiesProvider {
-                    isLoadingStrava = true
-                    stravaActivities = await stravaProvider(session.date)
-                    isLoadingStrava = false
-                }
             }
         }
     }
 
-    // MARK: - Session Header
+    // MARK: - Choice Page
+
+    private var choicePage: some View {
+        VStack(spacing: Theme.Spacing.xl) {
+            // Session header
+            sessionHeader
+
+            // Validation options
+            VStack(spacing: Theme.Spacing.md) {
+                Text("How do you want to validate?")
+                    .font(.headline)
+
+                // Manual entry
+                Button {
+                    selectedMode = .manual
+                } label: {
+                    validationOptionCard(
+                        icon: "pencil.and.list.clipboard",
+                        iconColor: Theme.Colors.primary,
+                        title: "Enter manually",
+                        subtitle: "Type your distance, duration, and elevation."
+                    )
+                }
+                .buttonStyle(.plain)
+
+                // Sync with app
+                Button {
+                    selectedMode = .syncApp
+                } label: {
+                    validationOptionCard(
+                        icon: "arrow.triangle.2.circlepath",
+                        iconColor: Theme.Colors.warmCoral,
+                        title: "Sync from an app",
+                        subtitle: "Import from Strava, Garmin, Coros, or Suunto."
+                    )
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.horizontal, Theme.Spacing.lg)
+
+            Spacer()
+
+            // Skip stats shortcut
+            Button {
+                onComplete(nil, nil, nil, nil, nil)
+                withAnimation { showCompletion = true }
+            } label: {
+                Text("Just mark as completed")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+            .padding(.bottom, Theme.Spacing.xl)
+        }
+        .padding(.top, Theme.Spacing.md)
+    }
 
     private var sessionHeader: some View {
         HStack(spacing: Theme.Spacing.md) {
@@ -114,7 +150,7 @@ struct SessionValidationView: View {
                 .frame(width: 48, height: 48)
                 .background(
                     RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                        .fill(session.intensity.color.opacity(0.15))
+                        .fill(session.intensity.color.opacity(0.12))
                 )
 
             VStack(alignment: .leading, spacing: 4) {
@@ -126,356 +162,151 @@ struct SessionValidationView: View {
             }
 
             Spacer()
-
-            if session.isKeySession {
-                Text("Key")
-                    .font(.caption2.bold())
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Theme.Colors.accentColor)
-                    .clipShape(Capsule())
-            }
         }
-        .futuristicGlassStyle()
+        .padding(.horizontal, Theme.Spacing.lg)
     }
 
-    // MARK: - Stats Entry
+    private func validationOptionCard(
+        icon: String,
+        iconColor: Color,
+        title: String,
+        subtitle: String
+    ) -> some View {
+        HStack(spacing: Theme.Spacing.md) {
+            Image(systemName: icon)
+                .font(.title2)
+                .foregroundStyle(iconColor)
+                .frame(width: 48, height: 48)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(iconColor.opacity(colorScheme == .dark ? 0.15 : 0.08))
+                )
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Theme.Colors.label)
+                Text(subtitle)
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(Theme.Colors.tertiaryLabel)
+        }
+        .padding(Theme.Spacing.md)
+        .futuristicGlassStyle()
+    }
+}
+
+// MARK: - Manual Validation Page
+
+private struct ManualValidationPage: View {
+    @Environment(\.unitPreference) private var units
+    let session: TrainingSession
+    let onComplete: (Double?, TimeInterval?, Double?, PerceivedFeeling?, Int?) -> Void
+
+    @State private var distanceText: String
+    @State private var hours: Int
+    @State private var minutes: Int
+    @State private var seconds: Int
+    @State private var elevationText: String
+    @State private var feeling: PerceivedFeeling?
+    @State private var rpe: Int?
+
+    init(session: TrainingSession, onComplete: @escaping (Double?, TimeInterval?, Double?, PerceivedFeeling?, Int?) -> Void) {
+        self.session = session
+        self.onComplete = onComplete
+        let planned = session.plannedDuration
+        _distanceText = State(initialValue: session.plannedDistanceKm > 0
+            ? String(format: "%.1f", session.plannedDistanceKm) : "")
+        _hours = State(initialValue: Int(planned) / 3600)
+        _minutes = State(initialValue: (Int(planned) % 3600) / 60)
+        _seconds = State(initialValue: 0)
+        _elevationText = State(initialValue: session.plannedElevationGainM > 0
+            ? String(format: "%.0f", session.plannedElevationGainM) : "")
+    }
 
     private var isStrengthSession: Bool {
         session.type == .strengthConditioning
     }
 
-    private var statsEntrySection: some View {
+    var body: some View {
+        ScrollView {
+            VStack(spacing: Theme.Spacing.lg) {
+                statsSection
+                feelingSection
+                rpeSection
+                completeButton
+            }
+            .padding()
+        }
+        .navigationTitle("Enter Stats")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    // MARK: - Stats
+
+    private var statsSection: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text(isStrengthSession ? "Session Duration" : "Session Stats")
+            Text("Session Stats")
                 .font(.headline)
 
             VStack(spacing: Theme.Spacing.sm) {
-                // Distance (hidden for S&C sessions)
                 if !isStrengthSession {
-                    HStack {
-                        Label("Distance", systemImage: "point.topleft.down.to.point.bottomright.curvepath")
-                            .font(.subheadline)
-                        Spacer()
-                        TextField("km", text: $distanceText)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: 80)
-                        Text("km")
-                            .font(.subheadline)
-                            .foregroundStyle(Theme.Colors.secondaryLabel)
-                    }
-                    .padding(Theme.Spacing.sm)
-                    .background(Theme.Colors.secondaryBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
-                }
-
-                // Duration
-                HStack(spacing: 4) {
-                    Label("Duration", systemImage: "clock")
-                        .font(.subheadline)
-                    Spacer()
-                    durationField(value: $hours, label: "h", range: 0..<24)
-                    durationField(value: $minutes, label: "m", range: 0..<60)
-                    durationField(value: $seconds, label: "s", range: 0..<60)
-                }
-                .padding(Theme.Spacing.sm)
-                .background(Theme.Colors.secondaryBackground)
-                .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
-
-                // Elevation (hidden for S&C sessions)
-                if !isStrengthSession {
-                    HStack {
-                        Label("Elevation", systemImage: "mountain.2.fill")
-                            .font(.subheadline)
-                        Spacer()
-                        TextField("m", text: $elevationText)
-                            .keyboardType(.numberPad)
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: 80)
-                        Text("m D+")
-                            .font(.subheadline)
-                            .foregroundStyle(Theme.Colors.secondaryLabel)
-                    }
-                    .padding(Theme.Spacing.sm)
-                    .background(Theme.Colors.secondaryBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
-                }
-            }
-        }
-        .futuristicGlassStyle()
-    }
-
-    // MARK: - Feeling Section
-
-    private var feelingSection: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("How Did It Feel?")
-                .font(.headline)
-
-            HStack(spacing: Theme.Spacing.sm) {
-                ForEach(PerceivedFeeling.allCases, id: \.self) { f in
-                    Button {
-                        feeling = feeling == f ? nil : f
-                    } label: {
-                        VStack(spacing: 4) {
-                            Text(emoji(for: f))
-                                .font(.title2)
-                            Text(label(for: f))
-                                .font(.caption2)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, Theme.Spacing.sm)
-                        .background(
-                            RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
-                                .fill(
-                                    feeling == f
-                                        ? Theme.Colors.primary.opacity(0.15)
-                                        : Theme.Colors.secondaryBackground
-                                )
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
-                                .stroke(
-                                    feeling == f ? Theme.Colors.primary : .clear,
-                                    lineWidth: 2
-                                )
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("\(label(for: f))\(feeling == f ? ", selected" : "")")
-                }
-            }
-        }
-        .futuristicGlassStyle()
-    }
-
-    // MARK: - RPE Section
-
-    private var rpeSection: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("Rate Your Effort (RPE)")
-                .font(.headline)
-
-            HStack(spacing: Theme.Spacing.xs) {
-                ForEach(1...10, id: \.self) { value in
-                    Button {
-                        rpe = rpe == value ? nil : value
-                    } label: {
-                        Text("\(value)")
-                            .font(.subheadline.bold())
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, Theme.Spacing.sm)
-                            .background(
-                                RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
-                                    .fill(
-                                        rpe == value
-                                            ? rpeColor(value)
-                                            : Theme.Colors.secondaryBackground
-                                    )
-                            )
-                            .foregroundStyle(
-                                rpe == value ? .white : Theme.Colors.label
-                            )
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("RPE \(value)\(rpe == value ? ", selected" : "")")
-                }
-            }
-
-            HStack {
-                Text("Easy")
-                    .font(.caption2)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-                Spacer()
-                Text("Maximum")
-                    .font(.caption2)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-            }
-        }
-        .futuristicGlassStyle()
-    }
-
-    // MARK: - Strava Activities
-
-    private var stravaActivitiesSection: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            HStack(spacing: Theme.Spacing.xs) {
-                Image(systemName: "figure.run")
-                    .font(.caption)
-                    .foregroundStyle(.white)
-                    .frame(width: 22, height: 22)
-                    .background(
-                        RoundedRectangle(cornerRadius: 5)
-                            .fill(Color.orange)
-                    )
-                Text("Strava Activities")
-                    .font(.headline)
-            }
-
-            if isLoadingStrava {
-                HStack {
-                    Spacer()
-                    ProgressView()
-                        .padding(.vertical, Theme.Spacing.md)
-                    Spacer()
-                }
-            } else if stravaActivities.isEmpty {
-                Text("No recent Strava activities found")
-                    .font(.subheadline)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-                    .padding(.vertical, Theme.Spacing.sm)
-            } else {
-                ForEach(stravaActivities) { activity in
-                    Button {
-                        onLinkStravaActivity?(activity)
-                        dismiss()
-                    } label: {
-                        HStack(spacing: Theme.Spacing.sm) {
-                            Image(systemName: "figure.run")
-                                .font(.caption)
-                                .foregroundStyle(.white)
-                                .frame(width: 28, height: 28)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 6)
-                                        .fill(Color.orange)
-                                )
-
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(activity.name)
-                                    .font(.subheadline.weight(.medium))
-                                    .lineLimit(1)
-                                HStack(spacing: Theme.Spacing.xs) {
-                                    Text(activity.startDate.formatted(
-                                        .dateTime.month(.abbreviated).day().hour().minute()
-                                    ))
-                                    if activity.distanceKm > 0 {
-                                        Text("·")
-                                        Text(String(format: "%.1f km", activity.distanceKm))
-                                    }
-                                    if activity.totalElevationGain > 0 {
-                                        Text("·")
-                                        Text(String(format: "%.0fm D+", activity.totalElevationGain))
-                                    }
-                                }
-                                .font(.caption)
+                    statRow(label: "Distance", icon: "point.topleft.down.to.point.bottomright.curvepath") {
+                        HStack {
+                            TextField("km", text: $distanceText)
+                                .keyboardType(.decimalPad)
+                                .multilineTextAlignment(.trailing)
+                                .frame(width: 80)
+                            Text("km")
+                                .font(.subheadline)
                                 .foregroundStyle(Theme.Colors.secondaryLabel)
-                            }
-
-                            Spacer()
-
-                            Image(systemName: "link.badge.plus")
-                                .foregroundStyle(Color.orange)
                         }
-                        .padding(Theme.Spacing.sm)
-                        .background(Theme.Colors.secondaryBackground)
-                        .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
                     }
-                    .buttonStyle(.plain)
+                }
+
+                statRow(label: "Duration", icon: "clock") {
+                    HStack(spacing: 4) {
+                        durationField(value: $hours, label: "h", range: 0..<24)
+                        durationField(value: $minutes, label: "m", range: 0..<60)
+                        durationField(value: $seconds, label: "s", range: 0..<60)
+                    }
+                }
+
+                if !isStrengthSession {
+                    statRow(label: "Elevation", icon: "mountain.2.fill") {
+                        HStack {
+                            TextField("m", text: $elevationText)
+                                .keyboardType(.numberPad)
+                                .multilineTextAlignment(.trailing)
+                                .frame(width: 80)
+                            Text("m D+")
+                                .font(.subheadline)
+                                .foregroundStyle(Theme.Colors.secondaryLabel)
+                        }
+                    }
                 }
             }
         }
         .futuristicGlassStyle()
     }
 
-    // MARK: - Recent Runs
-
-    private var recentRunsSection: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("In-App Runs")
-                .font(.headline)
-
-            ForEach(runs) { run in
-                Button {
-                    onLinkRun(run.id)
-                    dismiss()
-                } label: {
-                    HStack(spacing: Theme.Spacing.sm) {
-                        Image(systemName: "figure.run")
-                            .font(.caption)
-                            .foregroundStyle(.white)
-                            .frame(width: 28, height: 28)
-                            .background(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .fill(Theme.Colors.secondaryLabel)
-                            )
-
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(run.date.formatted(.dateTime.month(.abbreviated).day().hour().minute()))
-                                .font(.subheadline.weight(.medium))
-                            HStack(spacing: Theme.Spacing.xs) {
-                                Text(formatDuration(run.duration))
-                                if run.distanceKm > 0 {
-                                    Text("·")
-                                    Text(String(format: "%.1f km", run.distanceKm))
-                                }
-                                if run.elevationGainM > 0 {
-                                    Text("·")
-                                    Text(String(format: "%.0fm D+", run.elevationGainM))
-                                }
-                            }
-                            .font(.caption)
-                            .foregroundStyle(Theme.Colors.secondaryLabel)
-                        }
-
-                        Spacer()
-
-                        Image(systemName: "link.badge.plus")
-                            .foregroundStyle(Theme.Colors.accentColor)
-                    }
-                    .padding(Theme.Spacing.sm)
-                    .background(Theme.Colors.secondaryBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
-                }
-                .buttonStyle(.plain)
-            }
-        }
-        .futuristicGlassStyle()
-    }
-
-    // MARK: - Action Buttons
-
-    private var completeButton: some View {
-        Button {
-            submitCompletion(withStats: true)
-        } label: {
-            Label("Complete Session", systemImage: "checkmark.circle.fill")
-                .font(.headline)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, Theme.Spacing.md)
-                .foregroundStyle(.white)
-                .background(Theme.Colors.success)
-                .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
-        }
-        .buttonStyle(.plain)
-    }
-
-    private var skipButton: some View {
-        Button {
-            submitCompletion(withStats: false)
-        } label: {
-            Text("Skip Stats — Mark Complete")
+    private func statRow<Content: View>(label: String, icon: String, @ViewBuilder content: () -> Content) -> some View {
+        HStack {
+            Label(label, systemImage: icon)
                 .font(.subheadline)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
+            Spacer()
+            content()
         }
-        .padding(.bottom, Theme.Spacing.lg)
+        .padding(Theme.Spacing.sm)
+        .background(Theme.Colors.secondaryBackground)
+        .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
     }
-
-    private func submitCompletion(withStats: Bool) {
-        let dist = withStats ? Double(distanceText.replacingOccurrences(of: ",", with: ".")) : nil
-        let dur: TimeInterval? = withStats ? {
-            let total = TimeInterval(hours * 3600 + minutes * 60 + seconds)
-            return total > 0 ? total : nil
-        }() : nil
-        let elev = withStats ? Double(elevationText) : nil
-        onComplete(dist, dur, elev, feeling, rpe)
-        withAnimation(.easeInOut(duration: 0.3)) {
-            showCompletion = true
-        }
-    }
-
-    // MARK: - Helpers
 
     private func durationField(value: Binding<Int>, label: String, range: Range<Int>) -> some View {
         HStack(spacing: 1) {
@@ -493,32 +324,428 @@ struct SessionValidationView: View {
         }
     }
 
+    // MARK: - Feeling
+
+    private var feelingSection: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            Text("How Did It Feel?")
+                .font(.headline)
+            HStack(spacing: Theme.Spacing.sm) {
+                ForEach(PerceivedFeeling.allCases, id: \.self) { f in
+                    Button {
+                        feeling = feeling == f ? nil : f
+                    } label: {
+                        VStack(spacing: 4) {
+                            Text(emoji(for: f)).font(.title2)
+                            Text(label(for: f)).font(.caption2)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .glassCardStyle(isSelected: feeling == f)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        .futuristicGlassStyle()
+    }
+
+    // MARK: - RPE
+
+    private var rpeSection: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            Text("Rate Your Effort (RPE)")
+                .font(.headline)
+            HStack(spacing: Theme.Spacing.xs) {
+                ForEach(1...10, id: \.self) { value in
+                    Button {
+                        rpe = rpe == value ? nil : value
+                    } label: {
+                        Text("\(value)")
+                            .font(.subheadline.bold())
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, Theme.Spacing.sm)
+                            .background(
+                                RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                                    .fill(rpe == value ? rpeColor(value) : Theme.Colors.secondaryBackground)
+                            )
+                            .foregroundStyle(rpe == value ? .white : Theme.Colors.label)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            HStack {
+                Text("Easy").font(.caption2).foregroundStyle(Theme.Colors.secondaryLabel)
+                Spacer()
+                Text("Maximum").font(.caption2).foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+        }
+        .futuristicGlassStyle()
+    }
+
+    // MARK: - Complete
+
+    private var completeButton: some View {
+        Button {
+            let dist = Double(distanceText.replacingOccurrences(of: ",", with: "."))
+            let dur: TimeInterval? = {
+                let total = TimeInterval(hours * 3600 + minutes * 60 + seconds)
+                return total > 0 ? total : nil
+            }()
+            let elev = Double(elevationText)
+            onComplete(dist, dur, elev, feeling, rpe)
+        } label: {
+            Label("Complete Session", systemImage: "checkmark.circle.fill")
+                .font(.headline)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, Theme.Spacing.md)
+                .foregroundStyle(.white)
+                .background(Theme.Colors.success)
+                .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Helpers
+
     private func emoji(for feeling: PerceivedFeeling) -> String {
         switch feeling {
-        case .great: "😀"
-        case .good: "🙂"
-        case .ok: "😐"
-        case .tough: "😤"
-        case .terrible: "😫"
+        case .great: "😀"; case .good: "🙂"; case .ok: "😐"; case .tough: "😤"; case .terrible: "😫"
         }
     }
 
     private func label(for feeling: PerceivedFeeling) -> String {
         switch feeling {
-        case .great: "Great"
-        case .good: "Good"
-        case .ok: "OK"
-        case .tough: "Tough"
-        case .terrible: "Terrible"
+        case .great: "Great"; case .good: "Good"; case .ok: "OK"; case .tough: "Tough"; case .terrible: "Terrible"
         }
     }
 
     private func rpeColor(_ value: Int) -> Color {
         switch value {
-        case 1...3: Theme.Colors.success
-        case 4...6: Theme.Colors.warning
-        case 7...8: .orange
-        default: Theme.Colors.danger
+        case 1...3: Theme.Colors.success; case 4...6: Theme.Colors.warning; case 7...8: .orange; default: Theme.Colors.danger
+        }
+    }
+}
+
+// MARK: - Sync App Picker Page
+
+private struct SyncAppPickerPage: View {
+    @Environment(\.colorScheme) private var colorScheme
+    let session: TrainingSession
+    let recentRuns: [CompletedRun]
+    var recentRunsProvider: ((Date) async -> [CompletedRun])?
+    var stravaActivitiesProvider: ((Date) async -> [StravaActivity])?
+    let onLinkRun: (UUID) -> Void
+    let onLinkStravaActivity: (StravaActivity) -> Void
+
+    @State private var selectedApp: SyncApp?
+
+    enum SyncApp: String, Identifiable {
+        case strava, garmin, coros, suunto, inApp
+        var id: Self { self }
+    }
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: Theme.Spacing.lg) {
+                Text("Choose your source")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                // In-App runs
+                syncAppButton(
+                    title: "In-App Runs",
+                    subtitle: "Runs recorded in UltraTrain",
+                    icon: "figure.run",
+                    iconColor: Theme.Colors.primary,
+                    isAvailable: true,
+                    app: .inApp
+                )
+
+                // Strava
+                syncAppButton(
+                    title: "Strava",
+                    subtitle: stravaActivitiesProvider != nil ? "Connected" : "Connect to import activities",
+                    icon: "figure.run",
+                    iconColor: .orange,
+                    isAvailable: stravaActivitiesProvider != nil,
+                    app: .strava
+                )
+
+                // Coming soon apps
+                syncAppButton(
+                    title: "Garmin Connect",
+                    subtitle: "Coming soon",
+                    icon: "applewatch",
+                    iconColor: .blue,
+                    isAvailable: false,
+                    app: .garmin
+                )
+
+                syncAppButton(
+                    title: "COROS",
+                    subtitle: "Coming soon",
+                    icon: "applewatch",
+                    iconColor: .teal,
+                    isAvailable: false,
+                    app: .coros
+                )
+
+                syncAppButton(
+                    title: "Suunto",
+                    subtitle: "Coming soon",
+                    icon: "applewatch",
+                    iconColor: .red,
+                    isAvailable: false,
+                    app: .suunto
+                )
+            }
+            .padding()
+        }
+        .navigationTitle("Sync from App")
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(item: $selectedApp) { app in
+            switch app {
+            case .strava:
+                SyncActivityListPage(
+                    title: "Strava Activities",
+                    session: session,
+                    stravaProvider: stravaActivitiesProvider,
+                    onLinkStrava: onLinkStravaActivity
+                )
+            case .inApp:
+                InAppRunListPage(
+                    session: session,
+                    recentRuns: recentRuns,
+                    recentRunsProvider: recentRunsProvider,
+                    onLinkRun: onLinkRun
+                )
+            default:
+                EmptyView()
+            }
+        }
+    }
+
+    private func syncAppButton(
+        title: String,
+        subtitle: String,
+        icon: String,
+        iconColor: Color,
+        isAvailable: Bool,
+        app: SyncApp
+    ) -> some View {
+        Button {
+            guard isAvailable else { return }
+            selectedApp = app
+        } label: {
+            HStack(spacing: Theme.Spacing.md) {
+                Image(systemName: icon)
+                    .font(.title3)
+                    .foregroundStyle(isAvailable ? iconColor : Theme.Colors.tertiaryLabel)
+                    .frame(width: 40, height: 40)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(iconColor.opacity(isAvailable ? 0.12 : 0.05))
+                    )
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(isAvailable ? Theme.Colors.label : Theme.Colors.tertiaryLabel)
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundStyle(isAvailable ? Theme.Colors.secondaryLabel : Theme.Colors.tertiaryLabel)
+                }
+
+                Spacer()
+
+                if !isAvailable {
+                    Text("Soon")
+                        .font(.caption2.bold())
+                        .foregroundStyle(Theme.Colors.tertiaryLabel)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(Capsule().fill(Theme.Colors.tertiaryLabel.opacity(0.1)))
+                } else {
+                    Image(systemName: "chevron.right")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(Theme.Colors.tertiaryLabel)
+                }
+            }
+            .padding(Theme.Spacing.md)
+            .futuristicGlassStyle()
+            .opacity(isAvailable ? 1.0 : 0.6)
+        }
+        .buttonStyle(.plain)
+        .disabled(!isAvailable)
+    }
+}
+
+// MARK: - Strava Activity List Page
+
+private struct SyncActivityListPage: View {
+    let title: String
+    let session: TrainingSession
+    var stravaProvider: ((Date) async -> [StravaActivity])?
+    let onLinkStrava: (StravaActivity) -> Void
+
+    @State private var activities: [StravaActivity] = []
+    @State private var isLoading = true
+
+    var body: some View {
+        Group {
+            if isLoading {
+                ProgressView("Loading activities...")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if activities.isEmpty {
+                VStack(spacing: Theme.Spacing.md) {
+                    Image(systemName: "tray")
+                        .font(.largeTitle)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                    Text("No recent activities found")
+                        .font(.headline)
+                    Text("Activities from the last 3 weeks will appear here.")
+                        .font(.subheadline)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                        .multilineTextAlignment(.center)
+                }
+                .padding()
+            } else {
+                List(activities) { activity in
+                    Button {
+                        onLinkStrava(activity)
+                    } label: {
+                        activityRow(activity)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .listStyle(.plain)
+            }
+        }
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.inline)
+        .task {
+            if let provider = stravaProvider {
+                activities = await provider(session.date)
+            }
+            isLoading = false
+        }
+    }
+
+    private func activityRow(_ activity: StravaActivity) -> some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            Image(systemName: "figure.run")
+                .font(.caption)
+                .foregroundStyle(.white)
+                .frame(width: 28, height: 28)
+                .background(RoundedRectangle(cornerRadius: 6).fill(Color.orange))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(activity.name)
+                    .font(.subheadline.weight(.medium))
+                    .lineLimit(1)
+                HStack(spacing: Theme.Spacing.xs) {
+                    Text(activity.startDate.formatted(.dateTime.month(.abbreviated).day().hour().minute()))
+                    if activity.distanceKm > 0 {
+                        Text("\u{00B7}")
+                        Text(String(format: "%.1f km", activity.distanceKm))
+                    }
+                    if activity.totalElevationGain > 0 {
+                        Text("\u{00B7}")
+                        Text(String(format: "%.0fm D+", activity.totalElevationGain))
+                    }
+                }
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+
+            Spacer()
+
+            Image(systemName: "link.badge.plus")
+                .foregroundStyle(Color.orange)
+        }
+    }
+}
+
+// MARK: - In-App Run List Page
+
+private struct InAppRunListPage: View {
+    let session: TrainingSession
+    let recentRuns: [CompletedRun]
+    var recentRunsProvider: ((Date) async -> [CompletedRun])?
+    let onLinkRun: (UUID) -> Void
+
+    @State private var loadedRuns: [CompletedRun]?
+
+    private var runs: [CompletedRun] {
+        loadedRuns ?? recentRuns
+    }
+
+    var body: some View {
+        Group {
+            if runs.isEmpty {
+                VStack(spacing: Theme.Spacing.md) {
+                    Image(systemName: "figure.run.circle")
+                        .font(.largeTitle)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                    Text("No in-app runs found")
+                        .font(.headline)
+                    Text("Record a run in the app, then come back to link it.")
+                        .font(.subheadline)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                        .multilineTextAlignment(.center)
+                }
+                .padding()
+            } else {
+                List(runs) { run in
+                    Button {
+                        onLinkRun(run.id)
+                    } label: {
+                        runRow(run)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .listStyle(.plain)
+            }
+        }
+        .navigationTitle("In-App Runs")
+        .navigationBarTitleDisplayMode(.inline)
+        .task {
+            if let provider = recentRunsProvider {
+                loadedRuns = await provider(session.date)
+            }
+        }
+    }
+
+    private func runRow(_ run: CompletedRun) -> some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            Image(systemName: "figure.run")
+                .font(.caption)
+                .foregroundStyle(.white)
+                .frame(width: 28, height: 28)
+                .background(RoundedRectangle(cornerRadius: 6).fill(Theme.Colors.primary))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(run.date.formatted(.dateTime.month(.abbreviated).day().hour().minute()))
+                    .font(.subheadline.weight(.medium))
+                HStack(spacing: Theme.Spacing.xs) {
+                    Text(formatDuration(run.duration))
+                    if run.distanceKm > 0 {
+                        Text("\u{00B7}")
+                        Text(String(format: "%.1f km", run.distanceKm))
+                    }
+                    if run.elevationGainM > 0 {
+                        Text("\u{00B7}")
+                        Text(String(format: "%.0fm D+", run.elevationGainM))
+                    }
+                }
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+
+            Spacer()
+
+            Image(systemName: "link.badge.plus")
+                .foregroundStyle(Theme.Colors.accentColor)
         }
     }
 
