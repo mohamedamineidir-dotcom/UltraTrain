@@ -92,6 +92,21 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 raceDistanceKm: targetRace.distanceKm
             )
 
+            // Build race context for intermediate race overrides
+            let intermediateRaceContext: SessionTemplateGenerator.RaceContext?
+            if let raceId = override?.raceId,
+               let intRace = intermediateRaces.first(where: { $0.id == raceId }) {
+                intermediateRaceContext = .init(
+                    name: intRace.name,
+                    distanceKm: intRace.distanceKm,
+                    elevationGainM: intRace.elevationGainM,
+                    estimatedDurationSeconds: intRace.estimatedDuration(experience: athlete.experienceLevel),
+                    goalType: intRace.goalType
+                )
+            } else {
+                intermediateRaceContext = nil
+            }
+
             let result = SessionTemplateGenerator.sessions(
                 for: skeleton,
                 volume: volume,
@@ -108,7 +123,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 strengthConfig: strengthConfig,
                 qualityRatio: qualityRatio,
                 intervalFocus: athlete.intervalFocus,
-                isRoadRace: targetRace.raceType == .road
+                isRoadRace: targetRace.raceType == .road,
+                intermediateRaceContext: intermediateRaceContext
             )
 
             // Apply terrain constraint adaptation for VG sessions (trail/ultra only)
@@ -138,6 +154,20 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             allWorkouts.append(contentsOf: adapted.workouts)
             allStrengthWorkouts.append(contentsOf: adapted.strengthWorkouts)
 
+            // For override weeks, recalculate duration from actual sessions
+            let weekDuration: TimeInterval
+            if override != nil {
+                weekDuration = adapted.sessions
+                    .filter { $0.type != .rest && $0.type != .strengthConditioning }
+                    .reduce(0) { $0 + $1.plannedDuration }
+            } else {
+                weekDuration = volume.targetDurationSeconds > 0
+                    ? volume.targetDurationSeconds
+                    : adapted.sessions
+                        .filter { $0.type != .rest && $0.type != .strengthConditioning }
+                        .reduce(0) { $0 + $1.plannedDuration }
+            }
+
             return TrainingWeek(
                 id: UUID(),
                 weekNumber: skeleton.weekNumber,
@@ -148,7 +178,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 isRecoveryWeek: skeleton.isRecoveryWeek || override?.behavior == .postRaceRecovery,
                 targetVolumeKm: volume.targetVolumeKm,
                 targetElevationGainM: volume.targetElevationGainM,
-                targetDurationSeconds: volume.targetDurationSeconds,
+                targetDurationSeconds: weekDuration,
                 phaseFocus: skeleton.phaseFocus
             )
         }
