@@ -206,6 +206,7 @@ struct SessionValidationView: View {
 
 private struct ManualValidationPage: View {
     @Environment(\.unitPreference) private var units
+    @Environment(\.colorScheme) private var colorScheme
     let session: TrainingSession
     let onComplete: (Double?, TimeInterval?, Double?, PerceivedFeeling?, Int?) -> Void
 
@@ -237,10 +238,30 @@ private struct ManualValidationPage: View {
     var body: some View {
         ScrollView {
             VStack(spacing: Theme.Spacing.lg) {
+                // Planned target reminder
+                plannedTargetCard
+
+                // Stats entry
                 statsSection
+
+                // Feeling
                 feelingSection
+
+                // RPE
                 rpeSection
+
+                // Complete
                 completeButton
+
+                // Skip stats
+                Button {
+                    onComplete(nil, nil, nil, nil, nil)
+                } label: {
+                    Text("Skip stats, just complete")
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.tertiaryLabel)
+                }
+                .padding(.bottom, Theme.Spacing.md)
             }
             .padding()
         }
@@ -248,47 +269,105 @@ private struct ManualValidationPage: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    // MARK: - Stats
+    // MARK: - Planned Target
+
+    private var plannedTargetCard: some View {
+        HStack(spacing: Theme.Spacing.lg) {
+            if !isStrengthSession && session.plannedDistanceKm > 0 {
+                targetStat(
+                    value: UnitFormatter.formatDistance(session.plannedDistanceKm, unit: units, decimals: 1),
+                    label: "Planned",
+                    icon: "target"
+                )
+            }
+            targetStat(
+                value: formatPlannedDuration,
+                label: "Target",
+                icon: "clock"
+            )
+            if !isStrengthSession && session.plannedElevationGainM > 0 {
+                targetStat(
+                    value: UnitFormatter.formatElevation(session.plannedElevationGainM, unit: units),
+                    label: "D+",
+                    icon: "arrow.up.right"
+                )
+            }
+        }
+        .padding(Theme.Spacing.md)
+        .frame(maxWidth: .infinity)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                .fill(session.intensity.color.opacity(colorScheme == .dark ? 0.08 : 0.05))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                .stroke(session.intensity.color.opacity(0.15), lineWidth: 1)
+        )
+    }
+
+    private func targetStat(value: String, label: String, icon: String) -> some View {
+        VStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.caption)
+                .foregroundStyle(session.intensity.color)
+            Text(value)
+                .font(.subheadline.bold().monospacedDigit())
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var formatPlannedDuration: String {
+        let total = Int(session.plannedDuration)
+        let h = total / 3600
+        let m = (total % 3600) / 60
+        return h > 0 ? "\(h)h\(String(format: "%02d", m))" : "\(m)min"
+    }
+
+    // MARK: - Stats Entry
 
     private var statsSection: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("Session Stats")
-                .font(.headline)
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+            sectionLabel("Your Actual Stats", icon: "pencil.line")
 
-            VStack(spacing: Theme.Spacing.sm) {
-                if !isStrengthSession {
-                    statRow(label: "Distance", icon: "point.topleft.down.to.point.bottomright.curvepath") {
-                        HStack {
-                            TextField("km", text: $distanceText)
-                                .keyboardType(.decimalPad)
-                                .multilineTextAlignment(.trailing)
-                                .frame(width: 80)
-                            Text("km")
-                                .font(.subheadline)
-                                .foregroundStyle(Theme.Colors.secondaryLabel)
-                        }
+            if !isStrengthSession {
+                inputCard(label: "Distance", icon: "point.topleft.down.to.point.bottomright.curvepath", iconColor: Theme.Colors.primary) {
+                    HStack(spacing: 6) {
+                        TextField("0.0", text: $distanceText)
+                            .keyboardType(.decimalPad)
+                            .font(.title3.bold().monospacedDigit())
+                            .multilineTextAlignment(.trailing)
+                            .frame(width: 80)
+                        Text("km")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
                     }
                 }
+            }
 
-                statRow(label: "Duration", icon: "clock") {
-                    HStack(spacing: 4) {
-                        durationField(value: $hours, label: "h", range: 0..<24)
-                        durationField(value: $minutes, label: "m", range: 0..<60)
-                        durationField(value: $seconds, label: "s", range: 0..<60)
-                    }
+            inputCard(label: "Duration", icon: "clock", iconColor: Theme.Colors.zone3) {
+                HStack(spacing: 2) {
+                    durationPicker(value: $hours, label: "h", range: 0..<24)
+                    Text(":").font(.title3.bold()).foregroundStyle(Theme.Colors.tertiaryLabel)
+                    durationPicker(value: $minutes, label: "m", range: 0..<60)
+                    Text(":").font(.title3.bold()).foregroundStyle(Theme.Colors.tertiaryLabel)
+                    durationPicker(value: $seconds, label: "s", range: 0..<60)
                 }
+            }
 
-                if !isStrengthSession {
-                    statRow(label: "Elevation", icon: "mountain.2.fill") {
-                        HStack {
-                            TextField("m", text: $elevationText)
-                                .keyboardType(.numberPad)
-                                .multilineTextAlignment(.trailing)
-                                .frame(width: 80)
-                            Text("m D+")
-                                .font(.subheadline)
-                                .foregroundStyle(Theme.Colors.secondaryLabel)
-                        }
+            if !isStrengthSession {
+                inputCard(label: "Elevation", icon: "mountain.2.fill", iconColor: Theme.Colors.success) {
+                    HStack(spacing: 6) {
+                        TextField("0", text: $elevationText)
+                            .keyboardType(.numberPad)
+                            .font(.title3.bold().monospacedDigit())
+                            .multilineTextAlignment(.trailing)
+                            .frame(width: 80)
+                        Text("m D+")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
                     }
                 }
             }
@@ -296,51 +375,86 @@ private struct ManualValidationPage: View {
         .futuristicGlassStyle()
     }
 
-    private func statRow<Content: View>(label: String, icon: String, @ViewBuilder content: () -> Content) -> some View {
-        HStack {
-            Label(label, systemImage: icon)
-                .font(.subheadline)
-            Spacer()
-            content()
+    private func sectionLabel(_ text: String, icon: String) -> some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            Image(systemName: icon)
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.warmCoral)
+            Text(text)
+                .font(.headline)
         }
-        .padding(Theme.Spacing.sm)
-        .background(Theme.Colors.secondaryBackground)
-        .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
     }
 
-    private func durationField(value: Binding<Int>, label: String, range: Range<Int>) -> some View {
-        HStack(spacing: 1) {
-            Picker(label, selection: value) {
-                ForEach(range, id: \.self) { v in
-                    Text(String(format: "%02d", v)).tag(v)
-                }
-            }
-            .pickerStyle(.menu)
-            .labelsHidden()
-            .fixedSize()
+    private func inputCard<Content: View>(
+        label: String,
+        icon: String,
+        iconColor: Color,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        HStack(spacing: Theme.Spacing.md) {
+            Image(systemName: icon)
+                .font(.body)
+                .foregroundStyle(iconColor)
+                .frame(width: 28)
+
             Text(label)
-                .font(.subheadline.weight(.medium))
+                .font(.subheadline)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+
+            Spacer()
+
+            content()
         }
+        .padding(.horizontal, Theme.Spacing.md)
+        .padding(.vertical, Theme.Spacing.sm + 2)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                .fill(colorScheme == .dark ? Color.white.opacity(0.04) : Color.primary.opacity(0.03))
+        )
+    }
+
+    private func durationPicker(value: Binding<Int>, label: String, range: Range<Int>) -> some View {
+        Picker(label, selection: value) {
+            ForEach(range, id: \.self) { v in
+                Text(String(format: "%02d", v)).tag(v)
+            }
+        }
+        .pickerStyle(.menu)
+        .labelsHidden()
+        .fixedSize()
     }
 
     // MARK: - Feeling
 
     private var feelingSection: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("How Did It Feel?")
-                .font(.headline)
+            sectionLabel("How Did It Feel?", icon: "face.smiling")
+
             HStack(spacing: Theme.Spacing.sm) {
                 ForEach(PerceivedFeeling.allCases, id: \.self) { f in
                     Button {
-                        feeling = feeling == f ? nil : f
+                        withAnimation(.easeInOut(duration: 0.15)) {
+                            feeling = feeling == f ? nil : f
+                        }
                     } label: {
-                        VStack(spacing: 4) {
-                            Text(emoji(for: f)).font(.title2)
-                            Text(label(for: f)).font(.caption2)
+                        VStack(spacing: 6) {
+                            Text(emoji(for: f))
+                                .font(.title2)
+                            Text(feelingLabel(for: f))
+                                .font(.system(size: 10, weight: .medium))
                         }
                         .frame(maxWidth: .infinity)
-                        .glassCardStyle(isSelected: feeling == f)
+                        .padding(.vertical, Theme.Spacing.sm)
+                        .background(
+                            RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                                .fill(feeling == f
+                                    ? Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.2 : 0.1)
+                                    : (colorScheme == .dark ? Color.white.opacity(0.04) : Color.primary.opacity(0.03)))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                                .stroke(feeling == f ? Theme.Colors.warmCoral : Color.clear, lineWidth: 1.5)
+                        )
                     }
                     .buttonStyle(.plain)
                 }
@@ -353,26 +467,29 @@ private struct ManualValidationPage: View {
 
     private var rpeSection: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("Rate Your Effort (RPE)")
-                .font(.headline)
-            HStack(spacing: Theme.Spacing.xs) {
+            sectionLabel("Rate Your Effort", icon: "flame")
+
+            HStack(spacing: 4) {
                 ForEach(1...10, id: \.self) { value in
                     Button {
-                        rpe = rpe == value ? nil : value
+                        withAnimation(.easeInOut(duration: 0.15)) {
+                            rpe = rpe == value ? nil : value
+                        }
                     } label: {
                         Text("\(value)")
-                            .font(.subheadline.bold())
+                            .font(.caption.bold().monospacedDigit())
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, Theme.Spacing.sm)
+                            .padding(.vertical, 10)
                             .background(
-                                RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
-                                    .fill(rpe == value ? rpeColor(value) : Theme.Colors.secondaryBackground)
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(rpe == value ? rpeColor(value) : (colorScheme == .dark ? Color.white.opacity(0.04) : Color.primary.opacity(0.03)))
                             )
                             .foregroundStyle(rpe == value ? .white : Theme.Colors.label)
                     }
                     .buttonStyle(.plain)
                 }
             }
+
             HStack {
                 Text("Easy").font(.caption2).foregroundStyle(Theme.Colors.secondaryLabel)
                 Spacer()
@@ -382,7 +499,7 @@ private struct ManualValidationPage: View {
         .futuristicGlassStyle()
     }
 
-    // MARK: - Complete
+    // MARK: - Complete Button
 
     private var completeButton: some View {
         Button {
@@ -395,34 +512,29 @@ private struct ManualValidationPage: View {
             onComplete(dist, dur, elev, feeling, rpe)
         } label: {
             Label("Complete Session", systemImage: "checkmark.circle.fill")
-                .font(.headline)
+                .font(.headline.bold())
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, Theme.Spacing.md)
+                .frame(height: 56)
                 .foregroundStyle(.white)
-                .background(Theme.Colors.success)
-                .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
+                .background(Theme.Gradients.warmCoralCTA)
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .shadow(color: Theme.Colors.warmCoral.opacity(0.3), radius: 8, y: 4)
         }
         .buttonStyle(.plain)
     }
 
     // MARK: - Helpers
 
-    private func emoji(for feeling: PerceivedFeeling) -> String {
-        switch feeling {
-        case .great: "😀"; case .good: "🙂"; case .ok: "😐"; case .tough: "😤"; case .terrible: "😫"
-        }
+    private func emoji(for f: PerceivedFeeling) -> String {
+        switch f { case .great: "😀"; case .good: "🙂"; case .ok: "😐"; case .tough: "😤"; case .terrible: "😫" }
     }
 
-    private func label(for feeling: PerceivedFeeling) -> String {
-        switch feeling {
-        case .great: "Great"; case .good: "Good"; case .ok: "OK"; case .tough: "Tough"; case .terrible: "Terrible"
-        }
+    private func feelingLabel(for f: PerceivedFeeling) -> String {
+        switch f { case .great: "Great"; case .good: "Good"; case .ok: "OK"; case .tough: "Tough"; case .terrible: "Terrible" }
     }
 
     private func rpeColor(_ value: Int) -> Color {
-        switch value {
-        case 1...3: Theme.Colors.success; case 4...6: Theme.Colors.warning; case 7...8: .orange; default: Theme.Colors.danger
-        }
+        switch value { case 1...3: Theme.Colors.success; case 4...6: Theme.Colors.warning; case 7...8: .orange; default: Theme.Colors.danger }
     }
 }
 
