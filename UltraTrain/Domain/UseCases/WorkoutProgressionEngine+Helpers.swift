@@ -22,41 +22,48 @@ extension WorkoutProgressionEngine {
         let maxReps: Int
     }
 
+    // MARK: - Interval Focus Parameters
+
     static func intervalFocusParams(
         _ focus: PhaseFocus,
-        planProgress: Double
+        planProgress: Double,
+        experience: ExperienceLevel = .intermediate
     ) -> FocusParams {
         switch focus {
         case .threshold30:
-            FocusParams(
-                setDurationSec: 60 + planProgress * 120,     // 1min → 3min
+            let baseDuration: Double = 180
+            let maxDuration: Double = experience == .advanced || experience == .elite ? 480 : 360
+            return FocusParams(
+                setDurationSec: baseDuration + planProgress * (maxDuration - baseDuration),
                 intensity: .hard,
-                workRestRatio: 1.0,                           // 1:1 rest
-                maxReps: 15
-            )
-        case .vo2max:
-            FocusParams(
-                setDurationSec: 45 + planProgress * 75,      // 45s → 2min
-                intensity: .hard,
-                workRestRatio: 0.8,                           // 1:1.25 rest
-                maxReps: 12
-            )
-        case .threshold60:
-            FocusParams(
-                setDurationSec: 240 + planProgress * 240,    // 4min → 8min
-                intensity: .moderate,
-                workRestRatio: 2.0,                           // 2:1 work:rest
+                workRestRatio: 2.5,                           // 2.5:1 work:rest (short recovery for threshold)
                 maxReps: 8
             )
+        case .vo2max:
+            let maxDuration: Double = experience == .elite ? 180 : 150
+            return FocusParams(
+                setDurationSec: 45 + planProgress * (maxDuration - 45),
+                intensity: .hard,
+                workRestRatio: 0.8,                           // 1:1.25 rest
+                maxReps: 14
+            )
+        case .threshold60:
+            let maxDuration: Double = experience == .advanced || experience == .elite ? 720 : 480
+            return FocusParams(
+                setDurationSec: 240 + planProgress * (maxDuration - 240),
+                intensity: .moderate,
+                workRestRatio: 3.0,                           // 3:1 work:rest (minimal recovery)
+                maxReps: 6
+            )
         case .sharpening:
-            FocusParams(
+            return FocusParams(
                 setDurationSec: 120,
                 intensity: .moderate,
                 workRestRatio: 1.0,
                 maxReps: 4
             )
         case .postRaceRecovery:
-            FocusParams(
+            return FocusParams(
                 setDurationSec: 180,
                 intensity: .easy,
                 workRestRatio: 1.0,
@@ -65,41 +72,47 @@ extension WorkoutProgressionEngine {
         }
     }
 
+    // MARK: - VG Focus Parameters
+
     static func vgFocusParams(
         _ focus: PhaseFocus,
-        planProgress: Double
+        planProgress: Double,
+        experience: ExperienceLevel = .intermediate
     ) -> FocusParams {
         switch focus {
         case .threshold30:
-            FocusParams(
-                setDurationSec: 120 + planProgress * 120,    // 2min → 4min climb (between VO2max & threshold60)
+            let maxDuration: Double = experience == .advanced || experience == .elite ? 420 : 360
+            return FocusParams(
+                setDurationSec: 180 + planProgress * (maxDuration - 180),
                 intensity: .hard,
-                workRestRatio: 1.0,                           // 1:1 rest (jog descent ≈ climb time)
-                maxReps: 12
+                workRestRatio: 1.0,                           // 1:1 (descent = climb time)
+                maxReps: 10
             )
         case .vo2max:
-            FocusParams(
-                setDurationSec: 90 + planProgress * 90,      // 1.5min → 3min steep
+            let maxDuration: Double = experience == .elite ? 240 : 180
+            return FocusParams(
+                setDurationSec: 90 + planProgress * (maxDuration - 90),
                 intensity: .hard,
-                workRestRatio: 0.75,                          // 1:1.33 rest (long descent)
+                workRestRatio: 0.75,                          // 1:1.33 (long descent)
                 maxReps: 12
             )
         case .threshold60:
-            FocusParams(
-                setDurationSec: 300 + planProgress * 180,    // 5min → 8min sustained
+            let maxDuration: Double = experience == .advanced || experience == .elite ? 720 : 480
+            return FocusParams(
+                setDurationSec: 300 + planProgress * (maxDuration - 300),
                 intensity: .moderate,
                 workRestRatio: 1.5,
-                maxReps: 8
+                maxReps: 6
             )
         case .sharpening:
-            FocusParams(
+            return FocusParams(
                 setDurationSec: 180,
                 intensity: .easy,
                 workRestRatio: 1.0,
                 maxReps: 3
             )
         case .postRaceRecovery:
-            FocusParams(
+            return FocusParams(
                 setDurationSec: 240,
                 intensity: .easy,
                 workRestRatio: 1.0,
@@ -111,12 +124,10 @@ extension WorkoutProgressionEngine {
     // MARK: - Total Work Caps
 
     /// Maximum total set work (excluding warmup/cooldown/rest) per bloc type.
-    /// 30'Threshold: runner can sustain this pace ~30min → sets ≤ 23min total
-    /// 60'Threshold: runner can sustain this pace ~60min → sets ≤ 50min total
     static func maxTotalWorkSeconds(for focus: PhaseFocus) -> Double {
         switch focus {
         case .threshold30:      1380   // 23 minutes
-        case .threshold60:      3000   // 50 minutes
+        case .threshold60:      2400   // 40 minutes (reduced from 50)
         case .vo2max:           1200   // 20 minutes
         case .sharpening:       600    // 10 minutes
         case .postRaceRecovery: 900    // 15 minutes
@@ -125,16 +136,25 @@ extension WorkoutProgressionEngine {
 
     // MARK: - Scaling Factors
 
+    /// Race distance scale: peaks around 80-120km effective, flattens for very long ultras.
+    /// Longer ultras need more easy volume, not more intervals (Koop's 90/10 principle).
     static func intervalRaceScale(_ effectiveKm: Double) -> Double {
-        let clamped = min(max(effectiveKm, 40), 250)
-        return 0.65 + (clamped - 40) / (250 - 40) * 0.70
+        let clamped = min(max(effectiveKm, 30), 300)
+        if clamped <= 100 {
+            // 30km→100km: scale from 0.70 to 1.05 (moderate increase)
+            return 0.70 + (clamped - 30) / (100 - 30) * 0.35
+        } else {
+            // 100km→300km: scale from 1.05 down to 0.80 (less intensity for longer races)
+            return 1.05 - (clamped - 100) / (300 - 100) * 0.25
+        }
     }
 
     static func vgElevDensityFactor(elevationGainM: Double, effectiveKm: Double) -> Double {
         guard effectiveKm > 0 else { return 1.0 }
         let density = elevationGainM / effectiveKm
-        let clamped = min(max(density, 20), 100)
-        return 0.8 + (clamped - 20) / (100 - 20) * 0.5
+        let clamped = min(max(density, 15), 120)
+        // Wider range: 0.7 for flat trails to 1.5 for vertical races
+        return 0.7 + (clamped - 15) / (120 - 15) * 0.8
     }
 
     static func experienceFactor(_ experience: ExperienceLevel) -> Double {
@@ -154,6 +174,19 @@ extension WorkoutProgressionEngine {
         }
     }
 
+    // MARK: - Progression Mode
+
+    /// Returns the progression mode for a given week, phase-aware.
+    /// Mode 2 (reduced rest) uses smaller reduction for VO2max to prevent quality degradation.
+    static func progressionRestReduction(for focus: PhaseFocus) -> Double {
+        switch focus {
+        case .vo2max:       1.12  // Only 12% rest reduction (preserve VO2max quality)
+        case .threshold30:  1.25  // 25% rest reduction
+        case .threshold60:  1.30  // 30% rest reduction
+        default:            1.20
+        }
+    }
+
     // MARK: - Description Formatters
 
     static func formatIntervalDescription(
@@ -165,7 +198,7 @@ extension WorkoutProgressionEngine {
         let workText = formatDuration(workSec)
         let restText = formatDuration(restSec)
         let zoneText = zoneLabel(for: focus)
-        return "\(reps)×\(workText) \(zoneText) / \(restText) jog"
+        return "\(reps)\u{00D7}\(workText) \(zoneText) / \(restText) jog"
     }
 
     static func formatVGDescription(
@@ -177,7 +210,7 @@ extension WorkoutProgressionEngine {
         let workText = formatDuration(workSec)
         let restText = formatDuration(restSec)
         let zoneText = vgZoneLabel(for: focus)
-        return "\(reps)×\(workText) \(zoneText) / \(restText) jog down"
+        return "\(reps)\u{00D7}\(workText) \(zoneText) / \(restText) jog down"
     }
 
     // MARK: - Rounding
