@@ -45,6 +45,7 @@ enum LongRunCurveCalculator {
             philosophy: philosophy,
             raceGoal: raceGoal,
             preferredRunsPerWeek: preferredRunsPerWeek,
+            raceEffectiveKm: raceEffectiveKm,
             currentWeeklyVolumeKm: currentWeeklyVolumeKm,
             raceDurationSeconds: raceDurationSeconds,
             taperProfile: taperProfile
@@ -230,6 +231,7 @@ enum LongRunCurveCalculator {
         philosophy: TrainingPhilosophy = .balanced,
         raceGoal: RaceGoal = .finish,
         preferredRunsPerWeek: Int = 5,
+        raceEffectiveKm: Double = 0,
         currentWeeklyVolumeKm: Double = 40,
         raceDurationSeconds: TimeInterval,
         taperProfile: TaperProfile? = nil
@@ -238,7 +240,8 @@ enum LongRunCurveCalculator {
             // Taper base = 85% of peak → then durations() multiplies by weekly fraction
             let peak = peakSingleLongRun(
                 experience, raceDurationSeconds: raceDurationSeconds,
-                philosophy: philosophy, raceGoal: raceGoal
+                philosophy: philosophy, raceGoal: raceGoal,
+                raceEffectiveKm: raceEffectiveKm
             )
             return peak * AppConfiguration.Training.taperLongRunPeakFraction
         }
@@ -250,7 +253,8 @@ enum LongRunCurveCalculator {
         )
         let peak = peakSingleLongRun(
             experience, raceDurationSeconds: raceDurationSeconds,
-            philosophy: philosophy, raceGoal: raceGoal
+            philosophy: philosophy, raceGoal: raceGoal,
+            raceEffectiveKm: raceEffectiveKm
         )
 
         // Build weeks only (base + build + peak, excluding taper)
@@ -417,18 +421,40 @@ enum LongRunCurveCalculator {
         _ experience: ExperienceLevel,
         raceDurationSeconds: TimeInterval,
         philosophy: TrainingPhilosophy = .balanced,
-        raceGoal: RaceGoal = .finish
+        raceGoal: RaceGoal = .finish,
+        raceEffectiveKm: Double = 0
     ) -> TimeInterval {
         let key = experience.rawValue
         let fraction = AppConfiguration.Training.peakSingleLRFraction[key] ?? 0.50
         let maxSeconds = (AppConfiguration.Training.peakSingleLRMaxHours[key] ?? 10.0) * 3600
 
-        // Philosophy and goal shift the peak target
         let philMult = AppConfiguration.Training.philosophyPeakMultiplier[philosophy.rawValue] ?? 1.0
         let goalMult = AppConfiguration.Training.goalPeakMultiplier[raceGoalConfigKey(raceGoal)] ?? 1.0
         let personalizedFraction = fraction * philMult * goalMult
 
-        return min(raceDurationSeconds * personalizedFraction, maxSeconds)
+        var peak = min(raceDurationSeconds * personalizedFraction, maxSeconds)
+
+        // When B2B is eligible, cap the single LR so B2B weeks are always
+        // the biggest volume weeks. Single LR should not exceed B2B Day 1.
+        let b2bEligible = experience != .beginner && raceEffectiveKm >= (
+            experience == .intermediate ? 80 : experience == .advanced ? 60 : 50
+        )
+        if b2bEligible && raceDurationSeconds > 0 {
+            let b2bFraction = VolumeCapCalculator.b2bPeakFraction(
+                experience: experience,
+                philosophy: philosophy,
+                raceEffectiveKm: raceEffectiveKm
+            )
+            let b2bCombinedPeak = min(
+                raceDurationSeconds * b2bFraction * philMult * goalMult,
+                (AppConfiguration.Training.peakB2BMaxHours[key] ?? 16.0) * 3600
+            )
+            let b2bDay1Peak = b2bCombinedPeak * AppConfiguration.Training.b2bDay1Split
+            // Single LR capped at B2B Day 1 so B2B weeks stay the biggest
+            peak = min(peak, b2bDay1Peak * 1.15) // allow slight overshoot for non-B2B peak week
+        }
+
+        return peak
     }
 
     static func taperWeekEstimate(_ totalWeeks: Int, taperProfile: TaperProfile? = nil) -> Int {
