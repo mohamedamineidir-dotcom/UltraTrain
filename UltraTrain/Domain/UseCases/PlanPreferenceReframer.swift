@@ -124,7 +124,7 @@ struct PlanPreferenceReframer: ReframePlanForPreferencesUseCase {
         original: VolumeCalculator.WeekVolume,
         anchorDuration: TimeInterval
     ) -> VolumeCalculator.WeekVolume {
-        let maxChange = AppConfiguration.Training.maxWeeklyVolumeIncreasePercent / 100.0
+        let maxChange = 18.0 / 100.0 // default volume cap
         let newDuration = original.targetDurationSeconds
 
         guard anchorDuration > 0 else { return original }

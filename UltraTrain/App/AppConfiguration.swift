@@ -64,7 +64,7 @@ enum AppConfiguration {
             "beginner": 0.40, "intermediate": 0.50, "advanced": 0.55, "elite": 0.60
         ]
         static let peakSingleLRMaxHours: [String: Double] = [
-            "beginner": 5.0, "intermediate": 8.0, "advanced": 10.0, "elite": 12.0
+            "beginner": 6.0, "intermediate": 8.0, "advanced": 10.0, "elite": 12.0
         ]
 
         // Peak volume personalization multipliers (wider spread than base session multipliers)
@@ -76,9 +76,9 @@ enum AppConfiguration {
         ]
         static let peakB2BCombinedFraction: Double = 0.75
         static let peakB2BMaxHours: [String: Double] = [
-            "intermediate": 14.0,
-            "advanced": 18.0,
-            "elite": 22.0
+            "intermediate": 13.0,
+            "advanced": 16.0,
+            "elite": 20.0
         ]
         static let b2bStartCombinedHours: Double = 3.0
         static let longRunCurveExponent: Double = 2.0
@@ -103,6 +103,14 @@ enum AppConfiguration {
         static let intervalGrowthMinutes: Double = 25
         static let vgStartMinutes: Double = 50
         static let vgGrowthMinutes: Double = 30
+
+        // Experience-based average pace for km derivation (sec/km)
+        static let averagePaceSecPerKm: [String: Double] = [
+            "beginner": 450,      // 7:30 min/km
+            "intermediate": 390,  // 6:30 min/km
+            "advanced": 345,      // 5:45 min/km
+            "elite": 315          // 5:15 min/km
+        ]
     }
 
     enum RunTracking {

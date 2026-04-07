@@ -34,8 +34,8 @@ enum VolumeCalculator {
         raceDurationSeconds: TimeInterval = 0,
         raceEffectiveKm: Double = 0,
         preferredRunsPerWeek: Int = 5,
-        maxIncreasePercent: Double = AppConfiguration.Training.maxWeeklyVolumeIncreasePercent,
-        recoveryReductionPercent: Double = AppConfiguration.Training.recoveryWeekVolumeReductionPercent,
+        raceType: RaceType = .trail,
+        painFrequency: PainFrequency = .never,
         taperProfile: TaperProfile? = nil
     ) -> [WeekVolume] {
         guard !skeletons.isEmpty else { return [] }
@@ -75,8 +75,8 @@ enum VolumeCalculator {
                 previousNonRecoveryWeekTotal = durations.totalSeconds
             }
 
-            // Derive km from duration using average pace (~6.5 min/km)
-            let avgPaceSecPerKm: Double = 390 // 6.5 min/km
+            // Derive km from duration using experience-based pace
+            let avgPaceSecPerKm = AppConfiguration.Training.averagePaceSecPerKm[experience.rawValue] ?? 390
             let derivedKm = durations.totalSeconds / avgPaceSecPerKm
 
             // Elevation: proportional to derived km with race elevation density
@@ -109,7 +109,72 @@ enum VolumeCalculator {
                 taperProfile: taperProfile
             ))
         }
-        return volumes
+        // Post-process: enforce volume cap and week-1 anchoring
+        let volumeCap = VolumeCapCalculator.weeklyVolumeCap(
+            experience: experience,
+            raceType: raceType,
+            raceEffectiveKm: raceEffectiveKm,
+            philosophy: philosophy,
+            painFrequency: painFrequency
+        )
+        let week1Multiplier = VolumeCapCalculator.week1VolumeMultiplier(preferredRunsPerWeek: preferredRunsPerWeek)
+        let week1Baseline = VolumeCapCalculator.week1MinimumBaseline(experience: experience)
+        let currentVolumeSeconds = currentWeeklyVolumeKm * (AppConfiguration.Training.averagePaceSecPerKm[experience.rawValue] ?? 390)
+        let week1MaxTotal = max(currentVolumeSeconds * week1Multiplier, week1Baseline)
+
+        var capped = volumes
+        for i in capped.indices {
+            let skeleton = skeletons[i]
+            let isRecovery = skeleton.isRecoveryWeek
+            let isTaper = skeleton.phase == .taper
+
+            // Week 1 anchoring: don't exceed dynamic multiplier of current volume
+            if i == 0 && capped[i].targetDurationSeconds > week1MaxTotal {
+                let ratio = week1MaxTotal / capped[i].targetDurationSeconds
+                capped[i] = scaleVolume(capped[i], by: ratio)
+            }
+
+            // Volume cap: non-recovery, non-taper weeks
+            if i > 0 && !isRecovery && !isTaper {
+                let prevWasRecovery = skeletons[i - 1].isRecoveryWeek
+                // After recovery week: compare against last non-recovery week (skip the dip)
+                let referenceTotal: TimeInterval
+                if prevWasRecovery, let lastNonRecIdx = (0..<i).reversed().first(where: { !skeletons[$0].isRecoveryWeek }) {
+                    referenceTotal = capped[lastNonRecIdx].targetDurationSeconds
+                } else {
+                    referenceTotal = capped[i - 1].targetDurationSeconds
+                }
+
+                let maxAllowed = referenceTotal * (1.0 + volumeCap / 100.0)
+                if capped[i].targetDurationSeconds > maxAllowed && referenceTotal > 0 {
+                    let ratio = maxAllowed / capped[i].targetDurationSeconds
+                    capped[i] = scaleVolume(capped[i], by: ratio)
+                }
+            }
+        }
+
+        return capped
+    }
+
+    private static func scaleVolume(_ volume: WeekVolume, by ratio: Double) -> WeekVolume {
+        WeekVolume(
+            weekNumber: volume.weekNumber,
+            targetVolumeKm: (volume.targetVolumeKm * ratio * 10).rounded() / 10,
+            targetElevationGainM: volume.targetElevationGainM * ratio,
+            targetDurationSeconds: volume.targetDurationSeconds * ratio,
+            targetLongRunDurationSeconds: volume.targetLongRunDurationSeconds * ratio,
+            isB2BWeek: volume.isB2BWeek,
+            b2bDay1Seconds: volume.b2bDay1Seconds * ratio,
+            b2bDay2Seconds: volume.b2bDay2Seconds * ratio,
+            baseSessionDurations: BaseSessionDurations(
+                easyRun1Seconds: volume.baseSessionDurations.easyRun1Seconds * ratio,
+                easyRun2Seconds: volume.baseSessionDurations.easyRun2Seconds * ratio,
+                intervalSeconds: volume.baseSessionDurations.intervalSeconds * ratio,
+                vgSeconds: volume.baseSessionDurations.vgSeconds * ratio
+            ),
+            weekNumberInTaper: volume.weekNumberInTaper,
+            taperProfile: volume.taperProfile
+        )
     }
 
     private static func elevationForVolume(

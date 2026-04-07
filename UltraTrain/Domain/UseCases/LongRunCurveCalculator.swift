@@ -66,11 +66,13 @@ enum LongRunCurveCalculator {
         let philMultiplier = philosophyBaseMultiplier(philosophy)
         let goalMultiplier = raceGoalBaseMultiplier(raceGoal)
         let combinedMultiplier = philMultiplier * goalMultiplier
-        let sessionScale = Double(preferredRunsPerWeek) / 5.0
-        var easy1 = baseEasyDuration(planProgress) * combinedMultiplier * sessionScale
-        var easy2 = baseEasyDuration(planProgress) * combinedMultiplier * sessionScale
-        var interval = baseIntervalDuration(planProgress) * combinedMultiplier * sessionScale
-        var vg = baseVGDuration(planProgress) * combinedMultiplier * sessionScale
+        // Don't scale session durations by runs/week. SessionTemplateGenerator
+        // handles session count via pool selection. Each session should be its
+        // full proper duration, not shrunk when athlete picks fewer sessions.
+        var easy1 = baseEasyDuration(planProgress) * combinedMultiplier
+        var easy2 = baseEasyDuration(planProgress) * combinedMultiplier
+        var interval = baseIntervalDuration(planProgress) * combinedMultiplier
+        var vg = baseVGDuration(planProgress) * combinedMultiplier
 
         // B2B adjustments
         var longRun: TimeInterval
@@ -85,6 +87,7 @@ enum LongRunCurveCalculator {
                 philosophy: philosophy,
                 raceGoal: raceGoal,
                 raceDurationSeconds: raceDurationSeconds,
+                raceEffectiveKm: raceEffectiveKm,
                 taperProfile: taperProfile
             )
             b2bDay1 = combined * AppConfiguration.Training.b2bDay1Split
@@ -114,8 +117,13 @@ enum LongRunCurveCalculator {
                     supportingBudget = combined * 0.18
                 }
             } else {
-                // Regular B2B: B2B days = 85% of total → supporting = 15%
-                let rawTarget = combined / AppConfiguration.Training.b2bTargetFractionOfTotal
+                // Regular B2B: dynamic B2B fraction of total (70-76%)
+                let b2bWeeklyFrac = VolumeCapCalculator.b2bWeeklyFraction(
+                    experience: experience,
+                    raceEffectiveKm: raceEffectiveKm,
+                    philosophy: philosophy
+                )
+                let rawTarget = combined / b2bWeeklyFrac
                 let targetTotal: TimeInterval
                 if previousNonRecoveryWeekTotal > 0 {
                     targetTotal = max(rawTarget, previousNonRecoveryWeekTotal * AppConfiguration.Training.b2bMinExceedPreviousRatio)
@@ -256,9 +264,13 @@ enum LongRunCurveCalculator {
             progress = 1.0
         }
 
+        // Fix: if athlete's current long run already exceeds peak (elite + short race),
+        // maintain current level rather than regressing
+        let adjustedStart = min(start, peak)
+
         let exponent = AppConfiguration.Training.longRunCurveExponent
         let curved = pow(progress, exponent)
-        return start + (peak - start) * curved
+        return adjustedStart + (peak - adjustedStart) * curved
     }
 
     // MARK: - B2B Scheduling
@@ -307,17 +319,24 @@ enum LongRunCurveCalculator {
         philosophy: TrainingPhilosophy = .balanced,
         raceGoal: RaceGoal = .finish,
         raceDurationSeconds: TimeInterval,
+        raceEffectiveKm: Double = 100,
         taperProfile: TaperProfile? = nil
     ) -> TimeInterval {
         let startCombined = AppConfiguration.Training.b2bStartCombinedHours * 3600
         let maxCapHours = AppConfiguration.Training.peakB2BMaxHours[experience.rawValue] ?? 16.0
 
-        // Philosophy/goal shift B2B peak
+        // Dynamic B2B peak fraction (58-68% of race duration)
+        let b2bFraction = VolumeCapCalculator.b2bPeakFraction(
+            experience: experience,
+            philosophy: philosophy,
+            raceEffectiveKm: raceEffectiveKm
+        )
+
         let philMult = AppConfiguration.Training.philosophyPeakMultiplier[philosophy.rawValue] ?? 1.0
         let goalMult = AppConfiguration.Training.goalPeakMultiplier[raceGoalConfigKey(raceGoal)] ?? 1.0
 
         let peakCombined = min(
-            raceDurationSeconds * AppConfiguration.Training.peakB2BCombinedFraction * philMult * goalMult,
+            raceDurationSeconds * b2bFraction * philMult * goalMult,
             maxCapHours * 3600
         )
 

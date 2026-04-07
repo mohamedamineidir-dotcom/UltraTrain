@@ -25,13 +25,15 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             taperProfile: taperProfile
         )
 
-        // 2. Build week skeletons
+        // 2. Build week skeletons (experience-based recovery cycle)
+        let recoveryCycle = VolumeCapCalculator.recoveryCycle(for: athlete.experienceLevel)
         let skeletons = WeekSkeletonBuilder.build(
             raceDate: raceDate,
-            phases: phases
+            phases: phases,
+            recoveryCycle: recoveryCycle
         )
 
-        // 3. Calculate volumes
+        // 3. Calculate volumes (with dynamic caps and anchoring)
         let raceDuration = targetRace.estimatedDuration(experience: athlete.experienceLevel)
         let raceEffectiveKm = targetRace.effectiveDistanceKm
         let volumes = VolumeCalculator.calculate(
@@ -45,6 +47,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             raceDurationSeconds: raceDuration,
             raceEffectiveKm: raceEffectiveKm,
             preferredRunsPerWeek: athlete.preferredRunsPerWeek,
+            raceType: targetRace.raceType,
+            painFrequency: athlete.painFrequency,
             taperProfile: taperProfile
         )
 

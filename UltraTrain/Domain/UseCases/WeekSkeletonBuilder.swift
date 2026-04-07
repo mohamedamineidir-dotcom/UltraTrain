@@ -14,7 +14,7 @@ enum WeekSkeletonBuilder {
     static func build(
         raceDate: Date,
         phases: [PhaseDistributor.PhaseAllocation],
-        recoveryCycle: Int = AppConfiguration.Training.recoveryWeekCycle
+        recoveryCycle: Int = 3
     ) -> [WeekSkeleton] {
         let totalWeeks = phases.reduce(0) { $0 + $1.weekCount }
 

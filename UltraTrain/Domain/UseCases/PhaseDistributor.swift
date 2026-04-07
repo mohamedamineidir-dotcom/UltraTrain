@@ -26,11 +26,20 @@ enum PhaseDistributor {
 
         if let profile = taperProfile {
             // Race-aware taper: use profile's week count
-            let sharp = min(profile.totalTaperWeeks, totalWeeks / 2)
+            // For short plans (<8 weeks), cap taper at 2 weeks
+            let maxTaper = totalWeeks < 8 ? 2 : totalWeeks / 2
+            let sharp = min(profile.totalTaperWeeks, maxTaper)
             let remaining = totalWeeks - sharp
-            let nonTaperSum = fracs.threshold30 + fracs.vo2max + fracs.threshold60
-            let t30 = max(Int(round(Double(remaining) * fracs.threshold30 / nonTaperSum)), 1)
-            let vo2 = max(Int(round(Double(remaining) * fracs.vo2max / nonTaperSum)), 1)
+
+            // Adaptive build phase fraction based on plan length
+            let adaptiveBuildFrac = VolumeCapCalculator.buildPhaseFraction(totalWeeks: totalWeeks)
+            let adjustedT30 = fracs.threshold30
+            let adjustedVO2 = adaptiveBuildFrac
+            let adjustedT60 = 1.0 - adjustedT30 - adjustedVO2
+            let nonTaperSum = adjustedT30 + adjustedVO2 + adjustedT60
+
+            let t30 = max(Int(round(Double(remaining) * adjustedT30 / nonTaperSum)), 1)
+            let vo2 = max(Int(round(Double(remaining) * adjustedVO2 / nonTaperSum)), 1)
             let t60 = max(remaining - t30 - vo2, 1)
 
             return [
