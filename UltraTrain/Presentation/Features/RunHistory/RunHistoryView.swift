@@ -2,12 +2,14 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct RunHistoryView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @ScaledMetric(relativeTo: .largeTitle) private var emptyIconSize: CGFloat = 48
     @State private var viewModel: RunHistoryViewModel
     @State private var showingDocumentPicker = false
     @State private var importFileURL: URL?
     @State private var showingStravaImport = false
     @State private var showingFilterSheet = false
+    @State private var deleteConfirmation: CompletedRun?
     private let runRepository: any RunRepository
     private let planRepository: any TrainingPlanRepository
     private let athleteRepository: any AthleteRepository
@@ -20,6 +22,7 @@ struct RunHistoryView: View {
     private let stravaConnected: Bool
     private let finishEstimateRepository: any FinishEstimateRepository
     private let gearRepository: (any GearRepository)?
+    private let athleteId: UUID?
 
     init(
         runRepository: any RunRepository,
@@ -33,7 +36,8 @@ struct RunHistoryView: View {
         stravaImportService: (any StravaImportServiceProtocol)? = nil,
         stravaConnected: Bool = false,
         finishEstimateRepository: any FinishEstimateRepository,
-        gearRepository: (any GearRepository)? = nil
+        gearRepository: (any GearRepository)? = nil,
+        athleteId: UUID? = nil
     ) {
         _viewModel = State(initialValue: RunHistoryViewModel(
             runRepository: runRepository,
@@ -52,6 +56,11 @@ struct RunHistoryView: View {
         self.stravaConnected = stravaConnected
         self.finishEstimateRepository = finishEstimateRepository
         self.gearRepository = gearRepository
+        self.athleteId = athleteId
+    }
+
+    private var resolvedAthleteId: UUID {
+        athleteId ?? viewModel.runs.first?.athleteId ?? UUID()
     }
 
     var body: some View {
@@ -102,7 +111,7 @@ struct RunHistoryView: View {
             if let url = importFileURL {
                 ImportRunView(
                     fileURL: url,
-                    athleteId: viewModel.runs.first?.athleteId ?? UUID(),
+                    athleteId: resolvedAthleteId,
                     runImportUseCase: runImportUseCase
                 )
             }
@@ -111,7 +120,7 @@ struct RunHistoryView: View {
             if let service = stravaImportService {
                 StravaImportView(
                     importService: service,
-                    athleteId: viewModel.runs.first?.athleteId ?? UUID()
+                    athleteId: resolvedAthleteId
                 ) {
                     Task { await viewModel.load() }
                 }
@@ -123,6 +132,26 @@ struct RunHistoryView: View {
                 availableSessionTypes: viewModel.availableSessionTypes,
                 availableGear: viewModel.availableGear
             )
+        }
+        .confirmationDialog(
+            "Delete this run?",
+            isPresented: Binding(
+                get: { deleteConfirmation != nil },
+                set: { if !$0 { deleteConfirmation = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("Delete", role: .destructive) {
+                if let run = deleteConfirmation {
+                    Task { await viewModel.deleteRun(id: run.id) }
+                }
+                deleteConfirmation = nil
+            }
+            Button("Cancel", role: .cancel) {
+                deleteConfirmation = nil
+            }
+        } message: {
+            Text("This run will be permanently deleted. This cannot be undone.")
         }
         .task { await viewModel.load() }
         .alert("Error", isPresented: .init(
@@ -138,43 +167,53 @@ struct RunHistoryView: View {
     // MARK: - List
 
     private var runList: some View {
-        List {
-            Section {
+        ScrollView {
+            LazyVStack(spacing: Theme.Spacing.md) {
+                // Filter bar
                 RunHistoryFilterBar(
                     selectedPeriod: $viewModel.selectedTimePeriod,
                     customStartDate: $viewModel.customStartDate,
                     customEndDate: $viewModel.customEndDate
                 )
-                .listRowInsets(EdgeInsets())
-                .listRowBackground(Color.clear)
-            }
+                .padding(.horizontal, Theme.Spacing.md)
 
-            Section {
+                // Summary header
                 RunHistorySummaryHeader(
                     runCount: viewModel.filteredRunCount,
                     totalDistanceKm: viewModel.filteredTotalDistanceKm,
                     totalElevationM: viewModel.filteredTotalElevationM,
                     totalDuration: viewModel.filteredTotalDuration
                 )
-                .listRowInsets(EdgeInsets())
-                .listRowBackground(Color.clear)
-            }
+                .padding(.horizontal, Theme.Spacing.md)
 
-            Section {
-                ForEach(viewModel.filteredRuns) { run in
-                    NavigationLink(value: run.id) {
-                        RunHistoryRow(run: run)
+                // Run list
+                LazyVStack(spacing: 0) {
+                    ForEach(viewModel.filteredRuns) { run in
+                        NavigationLink(value: run.id) {
+                            RunHistoryRow(run: run)
+                                .padding(.horizontal, Theme.Spacing.md)
+                                .padding(.vertical, Theme.Spacing.sm)
+                        }
+                        .buttonStyle(.plain)
+                        .contextMenu {
+                            Button(role: .destructive) {
+                                deleteConfirmation = run
+                            } label: {
+                                Label("Delete Run", systemImage: "trash")
+                            }
+                        }
+
+                        if run.id != viewModel.filteredRuns.last?.id {
+                            Divider()
+                                .padding(.leading, 72)
+                        }
                     }
                 }
-                .onDelete { indexSet in
-                    let filtered = viewModel.filteredRuns
-                    for index in indexSet {
-                        Task { await viewModel.deleteRun(id: filtered[index].id) }
-                    }
-                }
+                .futuristicGlassStyle()
+                .padding(.horizontal, Theme.Spacing.md)
             }
+            .padding(.vertical, Theme.Spacing.sm)
         }
-        .listStyle(.plain)
         .navigationDestination(for: UUID.self) { runId in
             if let run = viewModel.runs.first(where: { $0.id == runId }) {
                 RunDetailView(
@@ -238,17 +277,58 @@ struct RunHistoryView: View {
     // MARK: - Empty States
 
     private var emptyState: some View {
-        VStack(spacing: Theme.Spacing.md) {
-            Image(systemName: "figure.run.circle")
-                .font(.system(size: emptyIconSize))
-                .foregroundStyle(Theme.Colors.secondaryLabel)
-                .accessibilityHidden(true)
-            Text("No runs yet")
-                .font(.headline)
-            Text("Your completed runs will appear here.")
-                .font(.subheadline)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
+        VStack(spacing: Theme.Spacing.lg) {
+            Spacer()
+
+            ZStack {
+                Circle()
+                    .fill(Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.12 : 0.08))
+                    .frame(width: 100, height: 100)
+                Image(systemName: "figure.run.circle")
+                    .font(.system(size: emptyIconSize))
+                    .foregroundStyle(Theme.Colors.warmCoral)
+            }
+
+            VStack(spacing: Theme.Spacing.sm) {
+                Text("No runs yet")
+                    .font(.title3.bold())
+                Text("Your completed runs will appear here.\nRecord a run or import from Strava.")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .multilineTextAlignment(.center)
+            }
+
+            HStack(spacing: Theme.Spacing.md) {
+                Button {
+                    showingDocumentPicker = true
+                } label: {
+                    Label("Import GPX", systemImage: "doc.badge.arrow.up")
+                        .font(.subheadline.weight(.medium))
+                        .padding(.horizontal, Theme.Spacing.md)
+                        .padding(.vertical, Theme.Spacing.sm)
+                        .background(Theme.Colors.secondaryBackground)
+                        .clipShape(Capsule())
+                }
+
+                if stravaConnected {
+                    Button {
+                        showingStravaImport = true
+                    } label: {
+                        Label("Strava", systemImage: "arrow.down.circle")
+                            .font(.subheadline.weight(.medium))
+                            .padding(.horizontal, Theme.Spacing.md)
+                            .padding(.vertical, Theme.Spacing.sm)
+                            .background(Color.orange.opacity(0.15))
+                            .foregroundStyle(.orange)
+                            .clipShape(Capsule())
+                    }
+                }
+            }
+            .padding(.top, Theme.Spacing.sm)
+
+            Spacer()
         }
+        .padding()
     }
 
     private var noResultsState: some View {
@@ -264,12 +344,19 @@ struct RunHistoryView: View {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: emptyIconSize))
                 .foregroundStyle(Theme.Colors.secondaryLabel)
-                .accessibilityHidden(true)
             Text("No matching runs")
-                .font(.headline)
+                .font(.title3.bold())
             Text("Try adjusting your search or filters.")
                 .font(.subheadline)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+
+            Button("Clear Filters") {
+                viewModel.clearFilters()
+            }
+            .font(.subheadline.weight(.medium))
+            .foregroundStyle(Theme.Colors.warmCoral)
+            .padding(.top, Theme.Spacing.sm)
+
             Spacer()
         }
     }

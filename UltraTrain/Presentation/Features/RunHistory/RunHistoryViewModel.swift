@@ -248,4 +248,13 @@ final class RunHistoryViewModel {
     var filteredTotalDuration: TimeInterval {
         filteredRuns.reduce(0) { $0 + $1.duration }
     }
+
+    // MARK: - Actions
+
+    func clearFilters() {
+        searchText = ""
+        debouncedSearchText = ""
+        selectedTimePeriod = .all
+        advancedFilter = RunHistoryAdvancedFilter()
+    }
 }
