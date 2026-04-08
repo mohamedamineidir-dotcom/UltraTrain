@@ -21,6 +21,10 @@ final class MockStravaUploadQueueService: StravaUploadQueueServiceProtocol, @unc
         queueStatuses[runId]
     }
 
+    func getUploadedActivityId(forRunId runId: UUID) async -> Int? {
+        nil
+    }
+
     func getPendingCount() async -> Int {
         pendingCount
     }

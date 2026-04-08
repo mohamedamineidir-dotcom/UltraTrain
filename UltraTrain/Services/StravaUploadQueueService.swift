@@ -72,6 +72,14 @@ final class StravaUploadQueueService: StravaUploadQueueServiceProtocol, @uncheck
         }
     }
 
+    func getUploadedActivityId(forRunId runId: UUID) async -> Int? {
+        do {
+            return try await queueRepository.getItem(forRunId: runId)?.stravaActivityId
+        } catch {
+            return nil
+        }
+    }
+
     func getPendingCount() async -> Int {
         do {
             return try await queueRepository.getPendingCount()

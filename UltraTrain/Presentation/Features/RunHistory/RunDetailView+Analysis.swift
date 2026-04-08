@@ -8,28 +8,31 @@ extension RunDetailView {
 
     func exportGPX() async {
         isExporting = true
+        exportError = nil
         do {
             exportFileURL = try await exportService.exportRunAsGPX(run)
             showingShareSheet = true
         } catch {
-            // Error handled silently — file just won't share
+            exportError = "Failed to export GPX file. Please try again."
         }
         isExporting = false
     }
 
     func exportTrackCSV() async {
         isExporting = true
+        exportError = nil
         do {
             exportFileURL = try await exportService.exportRunTrackAsCSV(run)
             showingShareSheet = true
         } catch {
-            // Error handled silently
+            exportError = "Failed to export CSV file. Please try again."
         }
         isExporting = false
     }
 
     func exportPDF() async {
         isExporting = true
+        exportError = nil
         do {
             let athlete = try await athleteRepository.getAthlete()
             let metrics = AdvancedRunMetricsCalculator.calculate(
@@ -50,7 +53,7 @@ extension RunDetailView {
             )
             showingShareSheet = true
         } catch {
-            // Error handled silently
+            exportError = "Failed to export PDF. Please try again."
         }
         isExporting = false
     }

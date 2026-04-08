@@ -17,6 +17,7 @@ struct RunDetailView: View {
     @State var exportFileURL: URL?
     @State var showingShareSheet = false
     @State var isExporting = false
+    @State var exportError: String?
     @State private var elevationProfile: [ElevationProfilePoint] = []
     @State var displayRun: CompletedRun?
     @State var showReflectionEdit = false
@@ -97,6 +98,14 @@ struct RunDetailView: View {
             if let url = exportFileURL {
                 ShareSheet(activityItems: [url])
             }
+        }
+        .alert("Export Failed", isPresented: Binding(
+            get: { exportError != nil },
+            set: { if !$0 { exportError = nil } }
+        )) {
+            Button("OK") { exportError = nil }
+        } message: {
+            Text(exportError ?? "")
         }
         .task {
             if run.gpsTrack.count >= 2 {

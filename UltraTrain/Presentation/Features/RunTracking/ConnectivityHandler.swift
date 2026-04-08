@@ -123,7 +123,8 @@ final class ConnectivityHandler {
                 await queueService.processQueue()
                 if let status = await queueService.getQueueStatus(forRunId: runId),
                    status == .completed {
-                    self?.stravaUploadStatus = .success(activityId: 0)
+                    let activityId = await queueService.getUploadedActivityId(forRunId: runId) ?? 0
+                    self?.stravaUploadStatus = .success(activityId: activityId)
                 } else {
                     self?.stravaUploadStatus = .idle
                 }
@@ -143,7 +144,8 @@ final class ConnectivityHandler {
             await queueService.processQueue()
             if let status = await queueService.getQueueStatus(forRunId: runId),
                status == .completed {
-                stravaUploadStatus = .success(activityId: 0)
+                let activityId = await queueService.getUploadedActivityId(forRunId: runId) ?? 0
+                stravaUploadStatus = .success(activityId: activityId)
             } else {
                 stravaUploadStatus = .idle
             }

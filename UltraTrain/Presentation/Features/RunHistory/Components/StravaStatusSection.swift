@@ -140,7 +140,8 @@ struct StravaStatusSection: View {
                 await queueService.processQueue()
                 if let status = await queueService.getQueueStatus(forRunId: run.id),
                    status == .completed {
-                    uploadStatus = .success(activityId: 0)
+                    let activityId = await queueService.getUploadedActivityId(forRunId: run.id) ?? 0
+                    uploadStatus = .success(activityId: activityId)
                 } else {
                     uploadStatus = .idle
                     queueStatus = await queueService.getQueueStatus(forRunId: run.id)
