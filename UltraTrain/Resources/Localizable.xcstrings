@@ -41,6 +41,9 @@
         }
       }
     },
+    ":" : {
+
+    },
     "... and %lld more splits" : {
       "localizations" : {
         "fr" : {
@@ -1631,6 +1634,9 @@
         }
       }
     },
+    "%lldmin" : {
+
+    },
     "%lldx" : {
       "localizations" : {
         "fr" : {
@@ -1677,12 +1683,12 @@
         }
       }
     },
-    "~%lld–%lld km/week (1st month)" : {
+    "~%lld--%lld km/week" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "~%1$lld–%2$lld km/week (1st month)"
+            "value" : "~%1$lld--%2$lld km/week"
           }
         }
       }
@@ -1989,6 +1995,9 @@
         }
       }
     },
+    "Activities from the last 3 weeks will appear here." : {
+
+    },
     "Activity" : {
       "localizations" : {
         "fr" : {
@@ -2092,6 +2101,9 @@
       }
     },
     "Add %@" : {
+
+    },
+    "Add a trail race result" : {
 
     },
     "Add All Items" : {
@@ -3623,6 +3635,9 @@
         }
       }
     },
+    "Choose your source" : {
+
+    },
     "Clear All Data" : {
       "localizations" : {
         "fr" : {
@@ -3643,6 +3658,9 @@
         }
       }
     },
+    "Clear Filters" : {
+
+    },
     "Close" : {
       "localizations" : {
         "fr" : {
@@ -3654,6 +3672,7 @@
       }
     },
     "Closes the tour and opens the main app" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -4737,6 +4756,12 @@
         }
       }
     },
+    "Delete Run" : {
+
+    },
+    "Delete this run?" : {
+
+    },
     "Deletes this race" : {
       "localizations" : {
         "fr" : {
@@ -5582,6 +5607,9 @@
         }
       }
     },
+    "Elevation Gain (D+)" : {
+
+    },
     "Elevation Profile" : {
       "localizations" : {
         "fr" : {
@@ -5755,7 +5783,7 @@
         }
       }
     },
-    "Enter at least one PB to calibrate your training paces." : {
+    "Enter Stats" : {
 
     },
     "Enter the 6-digit code and your new password" : {
@@ -5787,6 +5815,9 @@
           }
         }
       }
+    },
+    "Enter your best performances to calibrate training paces." : {
+
     },
     "Enter your email to receive a reset code" : {
       "localizations" : {
@@ -5873,6 +5904,9 @@
           }
         }
       }
+    },
+    "Exercises" : {
+
     },
     "Expand" : {
       "localizations" : {
@@ -6082,6 +6116,9 @@
           }
         }
       }
+    },
+    "Export Failed" : {
+
     },
     "Export Run" : {
       "localizations" : {
@@ -6397,6 +6434,9 @@
           }
         }
       }
+    },
+    "For my structured workouts, I want to develop:" : {
+
     },
     "For your next session" : {
       "localizations" : {
@@ -7063,6 +7103,9 @@
         }
       }
     },
+    "How do you want to validate?" : {
+
+    },
     "How long is the longest uphill near you?" : {
 
     },
@@ -7691,6 +7734,39 @@
         }
       }
     },
+    "intervalFocus.mixed" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Both equally"
+          }
+        }
+      }
+    },
+    "intervalFocus.speed" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Flat speed"
+          }
+        }
+      }
+    },
+    "intervalFocus.uphill" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Climbing strength"
+          }
+        }
+      }
+    },
     "Invite Friends" : {
       "localizations" : {
         "fr" : {
@@ -7767,6 +7843,9 @@
     "Just build my fitness" : {
 
     },
+    "Just mark as completed" : {
+
+    },
     "Keep Data For" : {
       "localizations" : {
         "fr" : {
@@ -7776,9 +7855,6 @@
           }
         }
       }
-    },
-    "Key" : {
-
     },
     "KEY" : {
 
@@ -7998,6 +8074,9 @@
           }
         }
       }
+    },
+    "Loading activities..." : {
+
     },
     "Loading calendar..." : {
       "localizations" : {
@@ -8955,6 +9034,9 @@
         }
       }
     },
+    "No in-app runs found" : {
+
+    },
     "No matching runs" : {
       "localizations" : {
         "fr" : {
@@ -9061,6 +9143,9 @@
         }
       }
     },
+    "No recent activities found" : {
+
+    },
     "No recent runs found near race date" : {
       "localizations" : {
         "fr" : {
@@ -9070,9 +9155,6 @@
           }
         }
       }
-    },
-    "No recent Strava activities found" : {
-
     },
     "No Records Yet" : {
       "localizations" : {
@@ -11375,6 +11457,9 @@
         }
       }
     },
+    "Quality Session Focus" : {
+
+    },
     "Quick Add" : {
       "localizations" : {
         "fr" : {
@@ -11673,9 +11758,6 @@
         }
       }
     },
-    "Rate Your Effort (RPE)" : {
-
-    },
     "Re-center" : {
       "localizations" : {
         "fr" : {
@@ -11735,6 +11817,9 @@
         }
       }
     },
+    "Rec." : {
+
+    },
     "Recent Runs (%lld)" : {
       "localizations" : {
         "fr" : {
@@ -11755,7 +11840,7 @@
         }
       }
     },
-    "Recommended" : {
+    "Record a run in the app, then come back to link it." : {
 
     },
     "Recovery" : {
@@ -12395,6 +12480,9 @@
         }
       }
     },
+    "Run Not Found" : {
+
+    },
     "Run on %@, %@ kilometers" : {
       "localizations" : {
         "en" : {
@@ -12522,6 +12610,9 @@
           }
         }
       }
+    },
+    "S&C" : {
+
     },
     "Safety" : {
       "localizations" : {
@@ -13208,9 +13299,6 @@
         }
       }
     },
-    "Session Stats" : {
-
-    },
     "Session Structure" : {
 
     },
@@ -13329,6 +13417,17 @@
         }
       }
     },
+    "session.race" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Race"
+          }
+        }
+      }
+    },
     "session.recovery" : {
       "extractionState" : "extracted_with_value",
       "localizations" : {
@@ -13376,6 +13475,17 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Passée"
+          }
+        }
+      }
+    },
+    "session.strengthConditioning" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Strength & Conditioning"
           }
         }
       }
@@ -13697,6 +13807,7 @@
       }
     },
     "Shows the next feature" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -13779,7 +13890,7 @@
         }
       }
     },
-    "Skip Stats — Mark Complete" : {
+    "Skip stats, just complete" : {
 
     },
     "Skip this nutrition reminder" : {
@@ -13803,6 +13914,7 @@
       }
     },
     "Skips the feature tour and goes to the main app" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -13887,6 +13999,9 @@
           }
         }
       }
+    },
+    "Soon" : {
+
     },
     "Sort" : {
       "localizations" : {
@@ -14170,9 +14285,6 @@
         }
       }
     },
-    "Strava Activities" : {
-
-    },
     "Strava upload failed" : {
       "localizations" : {
         "fr" : {
@@ -14271,6 +14383,9 @@
           }
         }
       }
+    },
+    "Sync from App" : {
+
     },
     "Sync heart rate, body weight, and running workouts." : {
       "extractionState" : "stale",
@@ -14564,6 +14679,9 @@
         }
       }
     },
+    "This run may have been deleted." : {
+
+    },
     "This run will be linked to your race for finish time calibration." : {
       "localizations" : {
         "fr" : {
@@ -14573,6 +14691,9 @@
           }
         }
       }
+    },
+    "This run will be permanently deleted. This cannot be undone." : {
+
     },
     "This session will be marked as skipped and excluded from your weekly progress." : {
       "localizations" : {
@@ -14971,6 +15092,9 @@
           }
         }
       }
+    },
+    "Trail Race %lld" : {
+
     },
     "Train for the trails.\nGo the distance." : {
 
@@ -16335,6 +16459,7 @@
       }
     },
     "Your completed runs will appear here." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -16343,6 +16468,9 @@
           }
         }
       }
+    },
+    "Your completed runs will appear here.\nRecord a run or import from Strava." : {
+
     },
     "Your fitness journey starts now" : {
 

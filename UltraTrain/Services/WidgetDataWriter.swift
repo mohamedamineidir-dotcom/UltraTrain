@@ -265,6 +265,7 @@ final class WidgetDataWriter: @unchecked Sendable {
         case .recovery:      "heart.fill"
         case .crossTraining:        "figure.mixed.cardio"
         case .strengthConditioning: "dumbbell.fill"
+        case .race:          "flag.checkered"
         case .rest:                 "bed.double.fill"
         }
     }
@@ -279,6 +280,7 @@ final class WidgetDataWriter: @unchecked Sendable {
         case .recovery:      "Base Endurance"
         case .crossTraining:        "Cross-Training"
         case .strengthConditioning: "S&C"
+        case .race:          "Race"
         case .rest:                 "Rest"
         }
     }

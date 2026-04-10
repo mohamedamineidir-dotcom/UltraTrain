@@ -226,7 +226,7 @@ struct SessionTemplateGeneratorTests {
 
     // MARK: - Race Override
 
-    @Test("B-race override uses race week templates")
+    @Test("B-race override uses race week templates with race session")
     func bRaceOverrideTemplates() {
         let override = IntermediateRaceHandler.RaceWeekOverride(
             weekNumber: 1,
@@ -241,8 +241,10 @@ struct SessionTemplateGeneratorTests {
         )
 
         #expect(result.sessions.count == 7)
+        let raceSessions = result.sessions.filter { $0.type == .race }
+        #expect(raceSessions.count == 1, "B-race week should have exactly 1 race session")
         let restSessions = result.sessions.filter { $0.type == .rest }
-        #expect(restSessions.count >= 4)
+        #expect(restSessions.count >= 2, "B-race week should have at least 2 rest days")
     }
 
     @Test("post-race recovery uses recovery templates")

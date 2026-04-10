@@ -38,7 +38,7 @@ struct DefaultSessionNutritionAdvisor: SessionNutritionAdvisor {
     private func buildPreRun(session: TrainingSession, isLong: Bool, isHard: Bool) -> PreRunAdvice {
         let timing = "2-3 hours before"
 
-        if isLong || session.type == .longRun || session.type == .backToBack {
+        if isLong || session.type == .longRun || session.type == .backToBack || session.type == .race {
             return PreRunAdvice(
                 timingDescription: timing,
                 carbsGrams: 100,
@@ -202,7 +202,7 @@ struct DefaultSessionNutritionAdvisor: SessionNutritionAdvisor {
     }
 
     private func recoveryPriority(session: TrainingSession, durationHours: Double, isHard: Bool) -> RecoveryPriority {
-        if session.type == .longRun || session.type == .backToBack || isHard || durationHours >= 2 {
+        if session.type == .longRun || session.type == .backToBack || session.type == .race || isHard || durationHours >= 2 {
             return .high
         }
         if session.type == .tempo || session.type == .intervals || session.type == .verticalGain {
@@ -214,7 +214,7 @@ struct DefaultSessionNutritionAdvisor: SessionNutritionAdvisor {
     // MARK: - Gut Training
 
     private func isGutTrainingSession(_ session: TrainingSession, durationHours: Double) -> Bool {
-        (session.type == .longRun || session.type == .backToBack) && durationHours >= 2
+        (session.type == .longRun || session.type == .backToBack || session.type == .race) && durationHours >= 2
     }
 }
 

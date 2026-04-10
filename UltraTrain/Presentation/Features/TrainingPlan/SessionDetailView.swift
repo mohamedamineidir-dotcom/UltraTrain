@@ -216,7 +216,7 @@ struct SessionDetailView: View {
     // MARK: - Stats
 
     private var isTimeBased: Bool {
-        session.type == .longRun || session.type == .backToBack
+        session.type == .longRun || session.type == .backToBack || session.type == .race
     }
 
     private var statsSection: some View {
@@ -495,7 +495,7 @@ struct SessionDetailView: View {
     }
 
     private var showsEffortInsteadOfPace: Bool {
-        session.type == .verticalGain || session.type == .longRun || session.type == .backToBack
+        session.type == .verticalGain || session.type == .longRun || session.type == .backToBack || session.type == .race
     }
 
     private func effortDescription(for intensity: Intensity) -> String {

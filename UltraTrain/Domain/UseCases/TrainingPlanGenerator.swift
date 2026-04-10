@@ -33,11 +33,35 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             recoveryCycle: recoveryCycle
         )
 
-        // 3. Calculate volumes (with dynamic caps and anchoring)
+        // 3. Compute intermediate race overrides BEFORE volume calculation
+        let overrides = IntermediateRaceHandler.overrides(
+            skeletons: skeletons,
+            intermediateRaces: intermediateRaces
+        )
+
+        // 3b. For volume calculation, clear isRecoveryWeek on override weeks
+        // so that LongRunCurveCalculator doesn't double-reduce them with 0.65-0.75× multipliers.
+        // The override templates control their own volume independently.
+        let overrideWeekNumbers = Set(overrides.map(\.weekNumber))
+        let volumeSkeletons = skeletons.map { skeleton in
+            if overrideWeekNumbers.contains(skeleton.weekNumber) && skeleton.isRecoveryWeek {
+                return WeekSkeletonBuilder.WeekSkeleton(
+                    weekNumber: skeleton.weekNumber,
+                    startDate: skeleton.startDate,
+                    endDate: skeleton.endDate,
+                    phase: skeleton.phase,
+                    isRecoveryWeek: false,
+                    phaseFocus: skeleton.phaseFocus
+                )
+            }
+            return skeleton
+        }
+
+        // 4. Calculate volumes (with dynamic caps and anchoring)
         let raceDuration = targetRace.estimatedDuration(experience: athlete.experienceLevel)
         let raceEffectiveKm = targetRace.effectiveDistanceKm
         let volumes = VolumeCalculator.calculate(
-            skeletons: skeletons,
+            skeletons: volumeSkeletons,
             currentWeeklyVolumeKm: athlete.weeklyVolumeKm,
             raceDistanceKm: targetRace.distanceKm,
             raceElevationGainM: targetRace.elevationGainM,
@@ -50,12 +74,6 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             raceType: targetRace.raceType,
             painFrequency: athlete.painFrequency,
             taperProfile: taperProfile
-        )
-
-        // 4. Compute intermediate race overrides
-        let overrides = IntermediateRaceHandler.overrides(
-            skeletons: skeletons,
-            intermediateRaces: intermediateRaces
         )
 
         // 5. Track week number within each phase

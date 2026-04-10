@@ -10,4 +10,5 @@ enum SessionType: String, CaseIterable, Sendable, Codable {
     case crossTraining
     case rest
     case strengthConditioning
+    case race
 }

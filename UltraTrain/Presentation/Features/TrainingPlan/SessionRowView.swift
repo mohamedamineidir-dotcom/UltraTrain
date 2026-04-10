@@ -248,6 +248,7 @@ extension SessionType {
         case .crossTraining: String(localized: "session.crossTraining", defaultValue: "Cross-Training")
         case .rest:                   String(localized: "session.rest", defaultValue: "Rest")
         case .strengthConditioning:   String(localized: "session.strengthConditioning", defaultValue: "Strength & Conditioning")
+        case .race:          String(localized: "session.race", defaultValue: "Race")
         }
     }
 
@@ -262,13 +263,14 @@ extension SessionType {
         case .crossTraining:         "figure.mixed.cardio"
         case .rest:                  "bed.double.fill"
         case .strengthConditioning:  "dumbbell.fill"
+        case .race:                  "flag.checkered"
         }
     }
 
     /// Whether this session type is a running activity (for metric calculations).
     var isRunning: Bool {
         switch self {
-        case .longRun, .tempo, .intervals, .verticalGain, .backToBack, .recovery:
+        case .longRun, .tempo, .intervals, .verticalGain, .backToBack, .recovery, .race:
             return true
         case .crossTraining, .rest, .strengthConditioning:
             return false

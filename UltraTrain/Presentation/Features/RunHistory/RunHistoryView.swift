@@ -10,6 +10,7 @@ struct RunHistoryView: View {
     @State private var showingStravaImport = false
     @State private var showingFilterSheet = false
     @State private var deleteConfirmation: CompletedRun?
+    @State private var selectedRunId: UUID?
     private let runRepository: any RunRepository
     private let planRepository: any TrainingPlanRepository
     private let athleteRepository: any AthleteRepository
@@ -189,7 +190,9 @@ struct RunHistoryView: View {
                 // Run list
                 LazyVStack(spacing: 0) {
                     ForEach(viewModel.filteredRuns) { run in
-                        NavigationLink(value: run.id) {
+                        Button {
+                            selectedRunId = run.id
+                        } label: {
                             RunHistoryRow(run: run)
                                 .padding(.horizontal, Theme.Spacing.md)
                                 .padding(.vertical, Theme.Spacing.sm)
@@ -214,7 +217,7 @@ struct RunHistoryView: View {
             }
             .padding(.vertical, Theme.Spacing.sm)
         }
-        .navigationDestination(for: UUID.self) { runId in
+        .navigationDestination(item: $selectedRunId) { runId in
             if let run = viewModel.runs.first(where: { $0.id == runId }) {
                 RunDetailView(
                     run: run,
@@ -226,6 +229,12 @@ struct RunHistoryView: View {
                     stravaUploadQueueService: stravaUploadQueueService,
                     stravaConnected: stravaConnected,
                     finishEstimateRepository: finishEstimateRepository
+                )
+            } else {
+                ContentUnavailableView(
+                    "Run Not Found",
+                    systemImage: "exclamationmark.triangle",
+                    description: Text("This run may have been deleted.")
                 )
             }
         }

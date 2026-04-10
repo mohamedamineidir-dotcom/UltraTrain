@@ -37,7 +37,7 @@ enum SessionTemplateGenerator {
         var workouts: [IntervalWorkout] = []
 
         if let override = raceOverride {
-            templates = overrideTemplates(for: override.behavior, volume: volume, raceContext: intermediateRaceContext)
+            templates = overrideTemplates(for: override.behavior, volume: volume, preferredRunsPerWeek: runsPerWeek, raceContext: intermediateRaceContext)
         } else if skeleton.isRecoveryWeek {
             templates = recoveryTemplates(volume: volume, preferredRunsPerWeek: runsPerWeek)
         } else {
@@ -612,58 +612,107 @@ enum SessionTemplateGenerator {
     static func overrideTemplates(
         for behavior: IntermediateRaceHandler.Behavior,
         volume: VolumeCalculator.WeekVolume,
+        preferredRunsPerWeek: Int = 5,
         raceContext: RaceContext? = nil
     ) -> [SessionTemplate] {
+        let raw: [SessionTemplate]
         switch behavior {
         case .miniTaper:
-            return miniTaperTemplates(volume: volume)
+            raw = miniTaperTemplates(volume: volume, raceContext: raceContext)
         case .raceWeek(let priority):
-            return priority == .cRace
-                ? cRaceWeekTemplates(raceContext: raceContext)
-                : bRaceWeekTemplates(raceContext: raceContext)
+            raw = priority == .cRace
+                ? cRaceWeekTemplates(volume: volume, raceContext: raceContext)
+                : bRaceWeekTemplates(volume: volume, raceContext: raceContext)
         case .postRaceRecovery:
-            return postRaceRecoveryTemplates(volume: volume, raceContext: raceContext)
+            raw = postRaceRecoveryTemplates(volume: volume, raceContext: raceContext)
         }
+        return capActiveSessionsForOverride(raw, preferredRunsPerWeek: preferredRunsPerWeek)
+    }
+
+    /// Caps active (non-rest) sessions in override templates to respect preferredRunsPerWeek.
+    /// Converts excess active sessions (from the end of the week) to rest days.
+    /// Never converts race-day or rest sessions.
+    private static func capActiveSessionsForOverride(
+        _ templates: [SessionTemplate],
+        preferredRunsPerWeek: Int
+    ) -> [SessionTemplate] {
+        let activeCount = templates.filter { $0.type != .rest }.count
+        guard activeCount > preferredRunsPerWeek else { return templates }
+
+        var excess = activeCount - preferredRunsPerWeek
+        // Walk backwards, converting recovery sessions to rest (skip race/rest/tempo/intervals)
+        var result = templates
+        for i in result.indices.reversed() where excess > 0 {
+            if result[i].type == .recovery {
+                result[i] = tpl(result[i].dayOffset, .rest, .easy, 0, 0, "Rest day.")
+                excess -= 1
+            }
+        }
+        return result
     }
 
     // MARK: - Mini-Taper (week before B-race)
+    //
+    // Research (Koop, Daniels, Roche):
+    // - Keep normal week structure. Maintain intensity, only reduce volume.
+    // - Volume reduction scales with race distance:
+    //   <20K: ~5-10% reduction (barely noticeable)
+    //   20-40K: ~10-15% reduction
+    //   40-60K: ~15-20% reduction
+    //   60K+: ~20-25% reduction
+    // - Never remove quality sessions. Just shorten them slightly.
 
     private static func miniTaperTemplates(
-        volume: VolumeCalculator.WeekVolume
+        volume: VolumeCalculator.WeekVolume,
+        raceContext: RaceContext? = nil
     ) -> [SessionTemplate] {
         let base = volume.baseSessionDurations
-        // Reduce volume ~40-50%. Keep 1 short quality session early in the week.
-        // Rest the 2 days before the race week starts.
-        let reducedEasy = base.easyRun1Seconds * 0.6
-        let shortIntervals = base.intervalSeconds * 0.5
+        let raceKm = raceContext?.distanceKm ?? 30
+
+        // Volume reduction factor based on race distance
+        let reductionFactor: Double
+        switch raceKm {
+        case ..<20:  reductionFactor = 0.93  // 7% reduction
+        case ..<40:  reductionFactor = 0.88  // 12% reduction
+        case ..<60:  reductionFactor = 0.83  // 17% reduction
+        default:     reductionFactor = 0.78  // 22% reduction
+        }
 
         return [
-            tpl(0, .recovery, .easy, reducedEasy, 0,
-                "Easy shake-out. Keep the legs moving, nothing hard."),
-            tpl(1, .intervals, .moderate, shortIntervals, 0,
-                "Short opener intervals. Stay sharp but don't dig deep. 60-70% effort."),
-            tpl(2, .recovery, .easy, reducedEasy, 0,
-                "Easy run. Last moderate effort before race week."),
-            tpl(3, .rest, .easy, 0, 0,
-                "Rest. Your body is absorbing the work from previous weeks."),
-            tpl(4, .recovery, .easy, reducedEasy * 0.8, 0,
-                "Very short easy run. 15-20 min just to stay loose."),
-            tpl(5, .rest, .easy, 0, 0,
-                "Full rest. Trust your training. You are ready."),
+            tpl(0, .recovery, .easy, base.easyRun1Seconds * reductionFactor, 0,
+                "Easy run. Normal week structure, slightly reduced volume."),
+            tpl(1, .intervals, .moderate, base.intervalSeconds * reductionFactor, 0,
+                "Intervals at normal intensity, slightly reduced volume. Stay sharp."),
+            tpl(2, .recovery, .easy, base.easyRun1Seconds * reductionFactor, 0,
+                "Easy run at conversational pace."),
+            tpl(3, .verticalGain, .moderate, base.vgSeconds * reductionFactor, 0,
+                "Uphill session, slightly reduced. Maintain vertical efficiency."),
+            tpl(4, .recovery, .easy, base.easyRun2Seconds * reductionFactor, 0,
+                "Easy run. Keep legs loose before race week."),
+            tpl(5, .longRun, .easy, volume.targetLongRunDurationSeconds * reductionFactor, 0.5,
+                "Long run at reduced volume. Save energy for race week."),
             tpl(6, .rest, .easy, 0, 0,
                 "Rest day. Race week starts tomorrow."),
         ]
     }
 
     // MARK: - B-Race Week
+    //
+    // Research (Koop, Roche, Magness):
+    // - Adaptation scales with race distance/D+. A 15K race needs almost no change.
+    //   A 60K+ race needs 2-3 days freshening up.
+    // - Keep quality early in the week for shorter races.
+    // - Rest days before race scale: <20K=1 day, 20-40K=1-2 days, 40-60K=2 days, 60K+=2-3 days.
 
-    static func bRaceWeekTemplates(raceContext: RaceContext? = nil) -> [SessionTemplate] {
+    static func bRaceWeekTemplates(
+        volume: VolumeCalculator.WeekVolume? = nil,
+        raceContext: RaceContext? = nil
+    ) -> [SessionTemplate] {
         let raceDuration = raceContext?.estimatedDurationSeconds ?? 0
         let raceName = raceContext?.name ?? "B-Race"
-        let raceDistKm = raceContext?.distanceKm ?? 0
+        let raceDistKm = raceContext?.distanceKm ?? 30
         let raceElevM = raceContext?.elevationGainM ?? 0
 
-        // Race description with details
         let raceDesc: String
         if raceDistKm > 0 {
             let distStr = raceDistKm >= 100 ? String(format: "%.0f km", raceDistKm) : String(format: "%.1f km", raceDistKm)
@@ -673,29 +722,80 @@ enum SessionTemplateGenerator {
             raceDesc = "RACE DAY: \(raceName). Execute your plan. Trust your fitness."
         }
 
-        return [
-            tpl(0, .recovery, .easy, 1800, 0,
-                "Easy 25-30 min run. Keep the legs turning over. Stay relaxed."),
-            tpl(1, .recovery, .easy, 1200, 0,
-                "Short shakeout. 15-20 min with a few strides at the end."),
-            tpl(2, .rest, .easy, 0, 0,
-                "Rest day. Prep your gear, nutrition, and race plan."),
-            tpl(3, .rest, .easy, 0, 0,
-                "Rest day. Carb-load, hydrate, visualize your race."),
-            tpl(4, .rest, .easy, 0, 0,
-                "Rest day. Final gear check. Stay calm and confident."),
-            tpl(5, .longRun, .maxEffort, raceDuration, 0, raceDesc),
-            tpl(6, .rest, .easy, 0, 0,
-                "Post-race recovery. Walk, stretch, refuel. You earned it."),
-        ]
+        let baseEasy = volume?.baseSessionDurations.easyRun1Seconds ?? 2700
+        let baseInterval = volume?.baseSessionDurations.intervalSeconds ?? 3000
+
+        // Stress score: combines distance + elevation to determine adaptation level
+        let stressScore = raceDistKm + (raceElevM / 100)
+
+        if stressScore < 25 {
+            // Short race (<20K, low D+): almost normal week, 1 rest day before
+            return [
+                tpl(0, .recovery, .easy, baseEasy * 0.85, 0,
+                    "Easy run. Normal routine."),
+                tpl(1, .intervals, .moderate, baseInterval * 0.7, 0,
+                    "Short opener intervals. Stay sharp for race."),
+                tpl(2, .recovery, .easy, baseEasy * 0.8, 0,
+                    "Easy run at conversational pace."),
+                tpl(3, .recovery, .easy, baseEasy * 0.7, 0,
+                    "Easy run. Start freshening up."),
+                tpl(4, .rest, .easy, 0, 0,
+                    "Rest day. Prep gear and nutrition."),
+                tpl(5, .race, .maxEffort, raceDuration, 0, raceDesc),
+                tpl(6, .recovery, .easy, baseEasy * 0.6, 0,
+                    "Easy shakeout. Recover from race effort."),
+            ]
+        } else if stressScore < 55 {
+            // Medium race (20-40K or moderate D+): 1-2 rest days before
+            return [
+                tpl(0, .recovery, .easy, baseEasy * 0.8, 0,
+                    "Easy run. Keep routine going."),
+                tpl(1, .recovery, .easy, baseEasy * 0.7, 0,
+                    "Easy run with strides at the end. Stay sharp."),
+                tpl(2, .recovery, .easy, baseEasy * 0.6, 0,
+                    "Short shakeout. Conversational pace."),
+                tpl(3, .rest, .easy, 0, 0,
+                    "Rest day. Prep gear, nutrition, and race plan."),
+                tpl(4, .rest, .easy, 0, 0,
+                    "Rest day. Visualize your race. Stay confident."),
+                tpl(5, .race, .maxEffort, raceDuration, 0, raceDesc),
+                tpl(6, .recovery, .easy, baseEasy * 0.5, 0,
+                    "Easy shakeout if legs allow. Walk/stretch if not."),
+            ]
+        } else {
+            // Long/hard race (50K+ or big D+): 2-3 rest days before
+            return [
+                tpl(0, .recovery, .easy, baseEasy * 0.7, 0,
+                    "Easy run. Keep legs loose."),
+                tpl(1, .recovery, .easy, baseEasy * 0.6, 0,
+                    "Short easy run. Light strides at the end."),
+                tpl(2, .rest, .easy, 0, 0,
+                    "Rest day. Begin carb-loading if needed."),
+                tpl(3, .rest, .easy, 0, 0,
+                    "Rest day. Prep gear, nutrition, race plan."),
+                tpl(4, .recovery, .easy, baseEasy * 0.35, 0,
+                    "Very short shakeout. 10-15 min to stay loose."),
+                tpl(5, .race, .maxEffort, raceDuration, 0, raceDesc),
+                tpl(6, .rest, .easy, 0, 0,
+                    "Complete rest. Body needs recovery after a big effort."),
+            ]
+        }
     }
 
     // MARK: - C-Race Week
+    //
+    // Research (Koop, Jornet, Roche):
+    // - C-races are training races. Minimal disruption.
+    // - Same distance-based scaling as B-race but even less aggressive.
+    // - Short races: keep quality session. Long races: replace quality with easy.
 
-    static func cRaceWeekTemplates(raceContext: RaceContext? = nil) -> [SessionTemplate] {
+    static func cRaceWeekTemplates(
+        volume: VolumeCalculator.WeekVolume? = nil,
+        raceContext: RaceContext? = nil
+    ) -> [SessionTemplate] {
         let raceDuration = raceContext?.estimatedDurationSeconds ?? 0
         let raceName = raceContext?.name ?? "C-Race"
-        let raceDistKm = raceContext?.distanceKm ?? 0
+        let raceDistKm = raceContext?.distanceKm ?? 20
         let raceElevM = raceContext?.elevationGainM ?? 0
 
         let raceDesc: String
@@ -707,66 +807,118 @@ enum SessionTemplateGenerator {
             raceDesc = "RACE DAY: \(raceName). Use as a hard training effort."
         }
 
-        return [
-            tpl(0, .rest, .easy, 0, 0, "Rest day. Easy start to race week."),
-            tpl(1, .recovery, .easy, 1800, 0, "Easy run at conversational pace."),
-            tpl(2, .rest, .easy, 0, 0, "Rest day. Light stretching."),
-            tpl(3, .tempo, .moderate, 2400, 0.05, "Short tempo effort. Stay sharp."),
-            tpl(4, .rest, .easy, 0, 0, "Rest day. Prepare race gear and nutrition."),
-            tpl(5, .longRun, .maxEffort, raceDuration, 0, raceDesc),
-            tpl(6, .recovery, .easy, 1500, 0, "Easy recovery run. Shake out race-day legs."),
-        ]
+        let baseEasy = volume?.baseSessionDurations.easyRun1Seconds ?? 2700
+        let baseInterval = volume?.baseSessionDurations.intervalSeconds ?? 3000
+
+        if raceDistKm < 30 {
+            // Short C-race: keep a quality session, almost normal week
+            return [
+                tpl(0, .recovery, .easy, baseEasy * 0.9, 0, "Easy run. Normal start to the week."),
+                tpl(1, .intervals, .moderate, baseInterval * 0.7, 0, "Opener intervals. Stay sharp for race."),
+                tpl(2, .recovery, .easy, baseEasy * 0.85, 0, "Easy run at conversational pace."),
+                tpl(3, .recovery, .easy, baseEasy * 0.75, 0, "Easy run. Freshening up."),
+                tpl(4, .rest, .easy, 0, 0, "Rest day. Prepare gear."),
+                tpl(5, .race, .maxEffort, raceDuration, 0, raceDesc),
+                tpl(6, .recovery, .easy, baseEasy * 0.6, 0, "Easy recovery run. Shake out race legs."),
+            ]
+        } else {
+            // Longer C-race (30K+): drop quality, more easy days before
+            return [
+                tpl(0, .recovery, .easy, baseEasy * 0.85, 0, "Easy run. Normal start to the week."),
+                tpl(1, .recovery, .easy, baseEasy * 0.8, 0, "Easy run at conversational pace."),
+                tpl(2, .recovery, .easy, baseEasy * 0.7, 0, "Easy run. Starting to freshen up."),
+                tpl(3, .recovery, .easy, baseEasy * 0.5, 0, "Short easy run."),
+                tpl(4, .rest, .easy, 0, 0, "Rest day. Prepare gear and nutrition."),
+                tpl(5, .race, .maxEffort, raceDuration, 0, raceDesc),
+                tpl(6, .recovery, .easy, baseEasy * 0.5, 0, "Easy recovery run. Shake out race legs."),
+            ]
+        }
     }
 
     // MARK: - Post-Race Recovery (week after B-race)
+    //
+    // Research (Koop, Roche, Magness, Canova):
+    // - Progressive return to quality. Not all-easy weeks.
+    // - Rest 1-3 days (based on race distance), then reintroduce:
+    //   easy runs → short quality session (intervals or uphill) → shortened long run.
+    // - Quality reintroduction maintains neuromuscular patterns (Canova).
+    // - Long run at end of week at ~60-75% of normal to rebuild aerobic base.
+    // - Scales with race distance: shorter race = faster return to quality.
 
     private static func postRaceRecoveryTemplates(
         volume: VolumeCalculator.WeekVolume,
         raceContext: RaceContext? = nil
     ) -> [SessionTemplate] {
-        // Recovery depends on race distance:
-        // < 50K: 2-3 rest days, then easy running
-        // 50-100K: 3-4 rest days, very gradual return
-        // > 100K: 4-5 rest days minimum
         let raceKm = raceContext?.distanceKm ?? 50
-        let restDays: Int
-        if raceKm > 100 { restDays = 5 }
-        else if raceKm > 50 { restDays = 4 }
-        else { restDays = 3 }
+        let base = volume.baseSessionDurations
+        let longRun = volume.targetLongRunDurationSeconds
 
-        let shortEasy: TimeInterval = 1500 // 25 min
-        let medEasy: TimeInterval = 2100 // 35 min
-
-        switch restDays {
-        case 5:
+        if raceKm > 100 {
+            // Ultra 100K+: 2 rest days, easy mid-week, short quality Thu, shortened long run
             return [
-                tpl(0, .rest, .easy, 0, 0, "Complete rest. Your body is recovering from a big effort."),
-                tpl(1, .rest, .easy, 0, 0, "Rest. Walk if you feel like it. No running."),
-                tpl(2, .rest, .easy, 0, 0, "Rest. Light walking is fine. Listen to your body."),
-                tpl(3, .rest, .easy, 0, 0, "Rest or very light walk. Start hydrating and eating well."),
-                tpl(4, .rest, .easy, 0, 0, "Rest. Tomorrow you can test the legs."),
-                tpl(5, .recovery, .easy, shortEasy, 0, "First easy jog since the race. Keep it very short and gentle."),
-                tpl(6, .recovery, .easy, shortEasy, 0, "Easy run if yesterday felt OK. Otherwise rest."),
+                tpl(0, .rest, .easy, 0, 0, "Complete rest. Recover from a big effort."),
+                tpl(1, .rest, .easy, 0, 0, "Rest. Walk if you feel like it."),
+                tpl(2, .recovery, .easy, base.easyRun1Seconds * 0.5, 0,
+                    "First easy jog. Very short and gentle."),
+                tpl(3, .recovery, .easy, base.easyRun1Seconds * 0.6, 0,
+                    "Easy run. Gradually rebuilding."),
+                tpl(4, .intervals, .moderate, base.intervalSeconds * 0.5, 0,
+                    "Short intervals at moderate effort. Reawaken leg speed."),
+                tpl(5, .recovery, .easy, base.easyRun2Seconds * 0.6, 0,
+                    "Easy run. Pre-long-run loosener."),
+                tpl(6, .longRun, .easy, longRun * 0.55, 0.4,
+                    "Shortened long run. Rebuild aerobic base gently."),
             ]
-        case 4:
+        } else if raceKm > 50 {
+            // 50-100K: 1 rest day, easy Tue, quality Wed-Thu, shortened long run
             return [
                 tpl(0, .rest, .easy, 0, 0, "Complete rest. Let your body recover."),
-                tpl(1, .rest, .easy, 0, 0, "Rest. Walk if you feel like it. No running."),
-                tpl(2, .rest, .easy, 0, 0, "Rest. Light stretching and walking."),
-                tpl(3, .rest, .easy, 0, 0, "Rest or very easy walk."),
-                tpl(4, .recovery, .easy, shortEasy, 0, "First easy jog. Short and gentle. Stop if anything hurts."),
-                tpl(5, .recovery, .easy, shortEasy, 0, "Easy recovery run if yesterday felt good."),
-                tpl(6, .recovery, .easy, medEasy, 0, "Easy run. Start rebuilding gently."),
+                tpl(1, .recovery, .easy, base.easyRun1Seconds * 0.6, 0,
+                    "First easy jog. Short and gentle."),
+                tpl(2, .recovery, .easy, base.easyRun1Seconds * 0.7, 0,
+                    "Easy recovery run. Keep it relaxed."),
+                tpl(3, .intervals, .moderate, base.intervalSeconds * 0.6, 0,
+                    "Moderate intervals. Reintroduce quality — don't force it."),
+                tpl(4, .recovery, .easy, base.easyRun2Seconds * 0.7, 0,
+                    "Easy run. Legs should be feeling better."),
+                tpl(5, .recovery, .easy, base.easyRun2Seconds * 0.65, 0,
+                    "Easy pre-long-run loosener."),
+                tpl(6, .longRun, .easy, longRun * 0.65, 0.45,
+                    "Shortened long run. Rebuild the aerobic engine."),
             ]
-        default:
+        } else if raceKm > 25 {
+            // 25-50K: 1 rest day, quick return to quality + long run
             return [
-                tpl(0, .rest, .easy, 0, 0, "Complete rest after your race. You earned it."),
-                tpl(1, .rest, .easy, 0, 0, "Rest. Walk and stretch if you feel like it."),
-                tpl(2, .rest, .easy, 0, 0, "Rest. Light movement is fine."),
-                tpl(3, .recovery, .easy, shortEasy, 0, "First easy jog. Keep it short and listen to your body."),
-                tpl(4, .recovery, .easy, shortEasy, 0, "Easy recovery run. Gentle pace."),
-                tpl(5, .recovery, .easy, medEasy, 0, "Easy run. Legs should start feeling better."),
-                tpl(6, .recovery, .easy, medEasy, 0, "Easy run. Back to light training next week."),
+                tpl(0, .rest, .easy, 0, 0, "Rest day after your race."),
+                tpl(1, .recovery, .easy, base.easyRun1Seconds * 0.7, 0,
+                    "Easy jog. Shake out race legs."),
+                tpl(2, .recovery, .easy, base.easyRun1Seconds * 0.75, 0,
+                    "Easy run at conversational pace."),
+                tpl(3, .intervals, .moderate, base.intervalSeconds * 0.65, 0,
+                    "Moderate intervals. Reintroduce leg speed."),
+                tpl(4, .recovery, .easy, base.easyRun2Seconds * 0.75, 0,
+                    "Easy run. Building back."),
+                tpl(5, .recovery, .easy, base.easyRun2Seconds * 0.7, 0,
+                    "Easy pre-long-run loosener."),
+                tpl(6, .longRun, .easy, longRun * 0.7, 0.5,
+                    "Moderately shortened long run. Back toward normal."),
+            ]
+        } else {
+            // < 25K: almost normal week — fast return to quality + near-full long run
+            return [
+                tpl(0, .rest, .easy, 0, 0, "Rest day after your race."),
+                tpl(1, .recovery, .easy, base.easyRun1Seconds * 0.8, 0,
+                    "Easy run. Shake out race effort."),
+                tpl(2, .intervals, .moderate, base.intervalSeconds * 0.7, 0,
+                    "Intervals at moderate effort. Maintain sharpness."),
+                tpl(3, .recovery, .easy, base.easyRun1Seconds * 0.8, 0,
+                    "Easy run at conversational pace."),
+                tpl(4, .verticalGain, .moderate, base.vgSeconds * 0.7, 0,
+                    "Uphill session at moderate effort. Rebuild vertical strength."),
+                tpl(5, .recovery, .easy, base.easyRun2Seconds * 0.8, 0,
+                    "Easy pre-long-run loosener."),
+                tpl(6, .longRun, .easy, longRun * 0.8, 0.55,
+                    "Near-normal long run. Back on track."),
             ]
         }
     }

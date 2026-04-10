@@ -39,6 +39,8 @@ enum CoachAdviceGenerator {
             baseAdvice = verticalGainAdvice(phase: phase, intensity: intensity, environment: verticalGainEnvironment)
         case .strengthConditioning:
             baseAdvice = nil
+        case .race:
+            baseAdvice = "Race day. Trust your training, execute your pacing plan, and stay fueled."
         }
 
         guard let advice = baseAdvice else { return nil }

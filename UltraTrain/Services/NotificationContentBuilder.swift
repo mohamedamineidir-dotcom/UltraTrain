@@ -13,6 +13,7 @@ enum NotificationContentBuilder {
         case .recovery: "Recovery Run"
         case .crossTraining: "Cross Training"
         case .strengthConditioning: "Strength & Conditioning"
+        case .race: "Race Day"
         case .rest: "Rest Day"
         }
         parts.append(typeName)

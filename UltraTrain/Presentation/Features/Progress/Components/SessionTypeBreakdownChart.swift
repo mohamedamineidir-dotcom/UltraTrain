@@ -88,6 +88,7 @@ struct SessionTypeBreakdownChart: View {
         case .crossTraining: .cyan
         case .rest: .gray
         case .strengthConditioning: .mint
+        case .race: .yellow
         }
     }
 }
@@ -106,6 +107,7 @@ private extension SessionType {
         case .crossTraining: "Cross-Training"
         case .rest: "Rest"
         case .strengthConditioning: "S&C"
+        case .race: "Race"
         }
     }
 }

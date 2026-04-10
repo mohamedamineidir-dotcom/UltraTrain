@@ -145,6 +145,8 @@ enum PreRunBriefingBuilder {
             return "Rest day \u{2014} recovery is when adaptation happens."
         case .strengthConditioning:
             return "Strength session \u{2014} focus on form and controlled movement."
+        case .race:
+            return "Race day \u{2014} execute your plan, trust your fitness."
         }
     }
 

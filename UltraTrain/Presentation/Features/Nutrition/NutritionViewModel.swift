@@ -106,7 +106,7 @@ final class NutritionViewModel {
             if let trainingPlan {
                 let longSessions = trainingPlan.weeks
                     .flatMap(\.sessions)
-                    .filter { $0.type == .longRun && $0.plannedDuration > 2 * 3600 }
+                    .filter { ($0.type == .longRun || $0.type == .race) && $0.plannedDuration > 2 * 3600 }
                 newPlan.gutTrainingSessionIds = longSessions.map(\.id)
             }
 

@@ -74,6 +74,7 @@ extension SessionType {
         case .intervals:     6
         case .rest:                  7
         case .strengthConditioning:  8
+        case .race:                  9
         }
     }
 }
