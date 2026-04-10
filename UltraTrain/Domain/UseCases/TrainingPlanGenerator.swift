@@ -345,8 +345,32 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     isRecoveryWeek: skeleton.isRecoveryWeek,
                     paceProfile: paceProfile
                 )
+
+                // Build IntervalWorkout objects for quality sessions
+                let q1Template = RoadIntervalLibrary.selectForSlot(
+                    slotIndex: 0, phase: skeleton.phase, discipline: discipline,
+                    experience: athlete.experienceLevel, weekInPhase: phaseCounters[index]
+                )
+                let q2Template = RoadIntervalLibrary.selectForSlot(
+                    slotIndex: 1, phase: skeleton.phase, discipline: discipline,
+                    experience: athlete.experienceLevel, weekInPhase: phaseCounters[index],
+                    excludeCategory: q1Template?.category
+                )
+
+                let q1Workout = q1Template.map { RoadWorkoutBuilder.build(from: $0, paceProfile: paceProfile, experience: athlete.experienceLevel) }
+                let q2Workout = q2Template.map { RoadWorkoutBuilder.build(from: $0, paceProfile: paceProfile, experience: athlete.experienceLevel) }
+
+                if let w = q1Workout { allWorkouts.append(w) }
+                if let w = q2Workout { allWorkouts.append(w) }
+
                 sessions = templates.enumerated().map { dayIdx, tpl in
                     var session = makeSession(template: tpl, skeleton: skeleton, dayIndex: dayIdx, volume: volume)
+                    // Attach workout to quality sessions
+                    if session.type == .intervals, let w = q1Workout {
+                        session.intervalWorkoutId = w.id
+                    } else if session.type == .tempo, let w = q2Workout {
+                        session.intervalWorkoutId = w.id
+                    }
                     // Road-specific coach advice
                     session.coachAdvice = RoadCoachAdviceGenerator.advice(
                         type: session.type, intensity: session.intensity,

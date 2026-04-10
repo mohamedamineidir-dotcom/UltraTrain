@@ -448,6 +448,7 @@
 		4435554B0DF5834FD582CFA0 /* FileProtectionManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1C44AA1AE4EF581B407EEF /* FileProtectionManagerTests.swift */; };
 		443B6CEBD7E601EE415C8E74 /* PaceDistributionChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB1318790ADF182AA6A7AE3 /* PaceDistributionChart.swift */; };
 		444081B949C781D0C24E5F55 /* RunActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397BBCC3BDE62A3F5296BD1 /* RunActivityAttributes.swift */; };
+		445330575261EDF1561CE523 /* RoadWorkoutBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A619C4A09B8768C02D7D5009 /* RoadWorkoutBuilder.swift */; };
 		44BBEC8BDFB6472E78CEEDC4 /* DuringRunAdvice.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0ECEB787D389604C15B7B51 /* DuringRunAdvice.swift */; };
 		454BE8B0D04E0D2FCF569E32 /* CheckpointArrivalBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282D214455B4FDDD5DF1CFE5 /* CheckpointArrivalBanner.swift */; };
 		45643DD90653CE7C5B873E35 /* MockGoalRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E730CD47696B9D2B655E238 /* MockGoalRepository.swift */; };
@@ -2911,6 +2912,7 @@
 		A56690E598FBBDDB5DB769F9 /* IntervalSplitsChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntervalSplitsChart.swift; sourceTree = "<group>"; };
 		A5957FF2D210AE78ACB96743 /* CourseProgressOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseProgressOverlay.swift; sourceTree = "<group>"; };
 		A5AF764FEAEFF874AAAC469A /* LocalMorningCheckInRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalMorningCheckInRepositoryTests.swift; sourceTree = "<group>"; };
+		A619C4A09B8768C02D7D5009 /* RoadWorkoutBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoadWorkoutBuilder.swift; sourceTree = "<group>"; };
 		A63352CDD411B39EE3042E73 /* SessionTemplateGenerator+Templates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionTemplateGenerator+Templates.swift"; sourceTree = "<group>"; };
 		A63A1C67A3F5ED3D32B79091 /* RunReflectionEditViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunReflectionEditViewModelTests.swift; sourceTree = "<group>"; };
 		A669EEC2E78A2C843A438A37 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
@@ -4444,6 +4446,7 @@
 				E4F9B2C1E703786EFF5A8694 /* RoadPhaseDistributor.swift */,
 				F20CF6E0F379A00C540312BF /* RoadSessionSelector.swift */,
 				0E911127EC0CAF0CF8103562 /* RoadVolumeCalculator.swift */,
+				A619C4A09B8768C02D7D5009 /* RoadWorkoutBuilder.swift */,
 				F78DB512938B0F92655E2130 /* RouteComparisonCalculator.swift */,
 				2862D903FC759C44AC2FCCD7 /* RunImportUseCase.swift */,
 				BA378F1C00BCED82729EEB07 /* RunStatisticsCalculator.swift */,
@@ -7520,6 +7523,7 @@
 				9D4069EB6BA4CD21DAE3C8CE /* RoadPhaseDistributor.swift in Sources */,
 				117FE0FD6A6FD474A2DC96DA /* RoadSessionSelector.swift in Sources */,
 				8A9584AF8720C6696BEA9E0B /* RoadVolumeCalculator.swift in Sources */,
+				445330575261EDF1561CE523 /* RoadWorkoutBuilder.swift in Sources */,
 				828EF198CF446FFAB32F4F04 /* RouteColoringMode.swift in Sources */,
 				EAEF2987D0FD46819E38AE03 /* RouteComparisonCalculator.swift in Sources */,
 				931D03A1F396BE05DFCF52D9 /* RouteComparisonOverlay.swift in Sources */,

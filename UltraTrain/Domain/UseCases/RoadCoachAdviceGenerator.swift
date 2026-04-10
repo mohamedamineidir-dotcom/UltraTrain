@@ -93,23 +93,24 @@ enum RoadCoachAdviceGenerator {
         discipline: RoadRaceDiscipline,
         paceProfile: RoadPaceProfile?
     ) -> String {
-        var advice: String
+        var advice = "Warm-up: 10-15min easy jog + 4-6 strides."
         switch phase {
         case .base:
-            advice = "Speed strides and short reps today. Focus on form and leg turnover, not raw speed."
+            advice += " Speed strides and short reps. Focus on form and leg turnover, not raw speed."
         case .build:
-            advice = "VO2max session. Run the work intervals at a controlled hard effort — you should feel like you're working but not sprinting."
+            advice += " VO2max session. Run the intervals at a controlled hard effort — working hard but not sprinting."
             if let profile = paceProfile {
                 advice += " Target: \(formatPace(profile.intervalPacePerKm))/km."
             }
         case .peak:
-            advice = "Race-specific work. This is your \(discipline.displayName) pace — memorize how it feels."
+            advice += " Race-specific work. This is your \(discipline.displayName) pace — memorize how it feels."
             if let profile = paceProfile {
                 advice += " Target: \(formatPace(profile.racePacePerKm))/km."
             }
         default:
-            advice = "Light speed work to stay sharp."
+            advice += " Light speed work to stay sharp."
         }
+        advice += " Cool-down: 5-10min easy jog."
         return advice
     }
 
@@ -118,21 +119,22 @@ enum RoadCoachAdviceGenerator {
         discipline: RoadRaceDiscipline,
         paceProfile: RoadPaceProfile?
     ) -> String {
-        var advice: String
+        var advice = "Warm-up: 10min easy jog + 4 strides."
         switch phase {
         case .base, .build:
-            advice = "Threshold pace: comfortably hard. You can speak in short phrases but not hold a conversation."
+            advice += " Threshold pace: comfortably hard. Speak in short phrases but not a conversation."
             if let profile = paceProfile {
                 advice += " Target: \(formatPace(profile.thresholdPacePerKm))/km."
             }
         case .peak:
-            advice = "Race-pace threshold work. Sustain your target \(discipline.displayName) pace with control."
+            advice += " Race-pace threshold work. Sustain your target \(discipline.displayName) pace with control."
             if let profile = paceProfile {
                 advice += " Target: \(formatPace(profile.racePacePerKm))/km."
             }
         default:
-            advice = "Easy tempo to maintain feel."
+            advice += " Easy tempo to maintain feel."
         }
+        advice += " Cool-down: 5-10min easy jog."
         return advice
     }
 
