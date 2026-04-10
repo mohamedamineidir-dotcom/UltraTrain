@@ -7,6 +7,15 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         targetRace: Race,
         intermediateRaces: [Race]
     ) async throws -> TrainingPlan {
+        // Road race branch: completely separate pipeline, zero trail logic changes.
+        if targetRace.raceType == .road {
+            return try generateRoadPlan(
+                athlete: athlete,
+                targetRace: targetRace,
+                intermediateRaces: intermediateRaces
+            )
+        }
+
         let today = Date.now.startOfDay
         let raceDate = targetRace.date.startOfDay
 
@@ -222,6 +231,197 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         plan.strengthWorkouts = allStrengthWorkouts
 
         return plan
+    }
+
+    // MARK: - Road Race Plan Generation
+
+    private func generateRoadPlan(
+        athlete: Athlete,
+        targetRace: Race,
+        intermediateRaces: [Race]
+    ) throws -> TrainingPlan {
+        let today = Date.now.startOfDay
+        let raceDate = targetRace.date.startOfDay
+        let totalWeeks = today.weeksBetween(raceDate)
+
+        guard totalWeeks >= 4 else {
+            throw DomainError.invalidTrainingPlan(
+                reason: "Need at least 4 weeks before race day to generate a plan."
+            )
+        }
+
+        let discipline = RoadRaceDiscipline.from(distanceKm: targetRace.distanceKm)
+
+        // 1. Road-specific taper profile
+        let taperProfile = TaperProfile.forRoadRace(distanceKm: targetRace.distanceKm)
+
+        // 2. Road-specific phase distribution
+        let phases = RoadPhaseDistributor.distribute(
+            totalWeeks: totalWeeks,
+            experience: athlete.experienceLevel,
+            raceDistanceKm: targetRace.distanceKm,
+            taperProfile: taperProfile
+        )
+
+        // 3. Build week skeletons (reuse existing builder)
+        let recoveryCycle = VolumeCapCalculator.recoveryCycle(for: athlete.experienceLevel)
+        let skeletons = WeekSkeletonBuilder.build(
+            raceDate: raceDate,
+            phases: phases,
+            recoveryCycle: recoveryCycle
+        )
+
+        // 4. Road-specific volume calculation
+        let volumes = RoadVolumeCalculator.calculate(
+            skeletons: skeletons,
+            athlete: athlete,
+            raceDistanceKm: targetRace.distanceKm,
+            taperProfile: taperProfile
+        )
+
+        // 5. Intermediate race overrides (reuse existing handler)
+        let overrides = IntermediateRaceHandler.overrides(
+            skeletons: skeletons,
+            intermediateRaces: intermediateRaces
+        )
+
+        // 6. Compute pace profile for session descriptions
+        let goalTime: TimeInterval?
+        if case .targetTime(let time) = targetRace.goalType {
+            goalTime = time
+        } else {
+            goalTime = nil
+        }
+        let paceProfile = RoadPaceCalculator.paceProfile(
+            goalTime: goalTime,
+            raceDistanceKm: targetRace.distanceKm,
+            personalBests: athlete.personalBests,
+            vmaKmh: athlete.vmaKmh,
+            experience: athlete.experienceLevel
+        )
+
+        // 7. Phase counters
+        let phaseCounters = computeWeekNumbersInPhase(skeletons: skeletons)
+
+        // 8. Generate sessions for each week
+        var allWorkouts: [IntervalWorkout] = []
+
+        let weeks: [TrainingWeek] = zip(skeletons, volumes).enumerated().map { index, pair in
+            let (skeleton, volume) = pair
+            let override = overrides.first { $0.weekNumber == skeleton.weekNumber }
+
+            let sessions: [TrainingSession]
+            if let override {
+                // Use existing override templates for intermediate race weeks
+                let intermediateRaceContext: SessionTemplateGenerator.RaceContext?
+                let raceId = override.raceId
+                if let intRace = intermediateRaces.first(where: { $0.id == raceId }) {
+                    intermediateRaceContext = .init(
+                        name: intRace.name, distanceKm: intRace.distanceKm,
+                        elevationGainM: intRace.elevationGainM,
+                        estimatedDurationSeconds: intRace.estimatedDuration(experience: athlete.experienceLevel),
+                        goalType: intRace.goalType
+                    )
+                } else {
+                    intermediateRaceContext = nil
+                }
+                let templates = SessionTemplateGenerator.overrideTemplates(
+                    for: override.behavior, volume: volume,
+                    preferredRunsPerWeek: athlete.preferredRunsPerWeek,
+                    raceContext: intermediateRaceContext
+                )
+                sessions = templates.enumerated().map { dayIdx, tpl in
+                    makeSession(template: tpl, skeleton: skeleton, dayIndex: dayIdx, volume: volume)
+                }
+            } else {
+                // Road-specific session selection
+                let templates = RoadSessionSelector.sessions(
+                    phase: skeleton.phase,
+                    volume: volume,
+                    discipline: discipline,
+                    experience: athlete.experienceLevel,
+                    weekInPhase: phaseCounters[index],
+                    preferredRunsPerWeek: athlete.preferredRunsPerWeek,
+                    isRecoveryWeek: skeleton.isRecoveryWeek,
+                    paceProfile: paceProfile
+                )
+                sessions = templates.enumerated().map { dayIdx, tpl in
+                    var session = makeSession(template: tpl, skeleton: skeleton, dayIndex: dayIdx, volume: volume)
+                    // Road-specific coach advice
+                    session.coachAdvice = RoadCoachAdviceGenerator.advice(
+                        type: session.type, intensity: session.intensity,
+                        phase: skeleton.phase, discipline: discipline,
+                        isRecoveryWeek: skeleton.isRecoveryWeek,
+                        paceProfile: paceProfile
+                    )
+                    return session
+                }
+            }
+
+            let weekDuration = sessions
+                .filter { $0.type != .rest && $0.type != .strengthConditioning }
+                .reduce(0) { $0 + $1.plannedDuration }
+
+            return TrainingWeek(
+                id: UUID(),
+                weekNumber: skeleton.weekNumber,
+                startDate: skeleton.startDate,
+                endDate: skeleton.endDate,
+                phase: override?.behavior.isRaceWeek == true ? .race : skeleton.phase,
+                sessions: sessions,
+                isRecoveryWeek: skeleton.isRecoveryWeek,
+                targetVolumeKm: volume.targetVolumeKm,
+                targetElevationGainM: 0,
+                targetDurationSeconds: weekDuration,
+                phaseFocus: skeleton.phaseFocus
+            )
+        }
+
+        let snapshots = intermediateRaces.map { race in
+            RaceSnapshot(id: race.id, date: race.date, priority: race.priority)
+        }
+
+        var plan = TrainingPlan(
+            id: UUID(),
+            athleteId: athlete.id,
+            targetRaceId: targetRace.id,
+            createdAt: .now,
+            weeks: weeks,
+            intermediateRaceIds: intermediateRaces.map(\.id),
+            intermediateRaceSnapshots: snapshots
+        )
+        plan.workouts = allWorkouts
+        return plan
+    }
+
+    /// Creates a TrainingSession from a SessionTemplate (used by road plan).
+    private func makeSession(
+        template: SessionTemplateGenerator.SessionTemplate,
+        skeleton: WeekSkeletonBuilder.WeekSkeleton,
+        dayIndex: Int,
+        volume: VolumeCalculator.WeekVolume
+    ) -> TrainingSession {
+        let sessionDate = Calendar.current.date(
+            byAdding: .day, value: template.dayOffset, to: skeleton.startDate
+        ) ?? skeleton.startDate.addingTimeInterval(TimeInterval(template.dayOffset * 86400))
+
+        let avgPace: Double = 330 // ~5:30/km default
+        let distanceKm = template.durationSeconds > 0 ? template.durationSeconds / avgPace : 0
+        let elevationM = distanceKm * template.elevationFraction * 50 // Minimal for road
+
+        return TrainingSession(
+            id: UUID(),
+            date: sessionDate,
+            type: template.type,
+            plannedDistanceKm: round(distanceKm * 10) / 10,
+            plannedElevationGainM: round(elevationM),
+            plannedDuration: template.durationSeconds,
+            intensity: template.intensity,
+            description: template.description,
+            isCompleted: false,
+            isSkipped: false,
+            isKeySession: template.type == .longRun || template.type == .intervals || template.type == .tempo
+        )
     }
 
     private func computeWeekNumbersInPhase(

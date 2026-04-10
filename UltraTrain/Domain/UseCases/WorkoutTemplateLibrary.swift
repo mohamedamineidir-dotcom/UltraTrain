@@ -4,7 +4,7 @@ enum WorkoutTemplateLibrary {
 
     // MARK: - All Templates
 
-    static let all: [WorkoutTemplate] = trailSpecific + speedWork + hillTraining + recoveryTemplates + racePrep
+    static let all: [WorkoutTemplate] = trailSpecific + speedWork + hillTraining + recoveryTemplates + racePrep + roadSpecificTemplates
 
     // MARK: - Trail Specific
 
@@ -146,6 +146,32 @@ enum WorkoutTemplateLibrary {
             sessionType: .tempo, targetDistanceKm: 15, targetElevationGainM: 200,
             estimatedDuration: 4500, intensity: .moderate, category: .racePrep,
             descriptionText: "Run at your target race pace on similar terrain. Build confidence in your pacing strategy.",
+            isUserCreated: false
+        ),
+    ]
+
+    // MARK: - Road Specific
+
+    private static let roadSpecificTemplates: [WorkoutTemplate] = [
+        WorkoutTemplate(
+            id: "road_tempo_run", name: "Road Tempo Run",
+            sessionType: .tempo, targetDistanceKm: 10, targetElevationGainM: 0,
+            estimatedDuration: 3000, intensity: .moderate, category: .roadSpecific,
+            descriptionText: "Sustained threshold effort on flat terrain. The cornerstone of road race preparation.",
+            isUserCreated: false
+        ),
+        WorkoutTemplate(
+            id: "road_vo2max_intervals", name: "Road VO2max Intervals",
+            sessionType: .intervals, targetDistanceKm: 8, targetElevationGainM: 0,
+            estimatedDuration: 2700, intensity: .hard, category: .roadSpecific,
+            descriptionText: "Track-style VO2max intervals at 5K race pace. Build your aerobic power ceiling.",
+            isUserCreated: false
+        ),
+        WorkoutTemplate(
+            id: "road_race_pace_long", name: "Race-Pace Long Run",
+            sessionType: .longRun, targetDistanceKm: 25, targetElevationGainM: 0,
+            estimatedDuration: 7200, intensity: .moderate, category: .roadSpecific,
+            descriptionText: "Long run with embedded blocks at race pace. Race-day simulation for road events.",
             isUserCreated: false
         ),
     ]

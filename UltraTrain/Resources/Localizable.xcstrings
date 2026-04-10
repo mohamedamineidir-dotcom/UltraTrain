@@ -5246,6 +5246,7 @@
       }
     },
     "Double-tap to skip this session" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -5254,6 +5255,9 @@
           }
         }
       }
+    },
+    "Double-tap to skip this session and explain why" : {
+
     },
     "Double-tap to swap sessions" : {
       "localizations" : {
@@ -13881,6 +13885,7 @@
       }
     },
     "Skip Session?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -14663,6 +14668,9 @@
         }
       }
     },
+    "This helps us adapt your training plan intelligently." : {
+
+    },
     "This helps us adapt your vertical gain sessions to your terrain." : {
 
     },
@@ -14696,6 +14704,7 @@
 
     },
     "This session will be marked as skipped and excluded from your weekly progress." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -16229,6 +16238,9 @@
 
     },
     "Which sessions did you complete?" : {
+
+    },
+    "Why are you skipping this session?" : {
 
     },
     "Work Intervals" : {

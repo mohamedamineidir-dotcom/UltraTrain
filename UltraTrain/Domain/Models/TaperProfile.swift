@@ -83,4 +83,45 @@ extension TaperProfile {
             )
         }
     }
+
+    /// Road race-specific taper profiles.
+    ///
+    /// Research basis:
+    /// - **Mujika & Padilla (2003)**: Optimal taper is 2-3 weeks with 40-60% volume
+    ///   reduction but maintained intensity. Performance gains of 2-3%.
+    /// - **Daniels**: Quality sessions maintained through taper, volume drops sharply.
+    /// - **Pfitzinger**: Marathon taper = 3 weeks (60%→40%→20%). HM = 2 weeks.
+    ///   10K = 7-10 days.
+    static func forRoadRace(distanceKm: Double) -> TaperProfile {
+        let discipline = RoadRaceDiscipline.from(distanceKm: distanceKm)
+        switch discipline {
+        case .road10K:
+            // 10K: 1 week sharp taper. Maintain 1 quality sharpener session.
+            // Daniels: keep one set of I-pace intervals 5 days before race.
+            return TaperProfile(
+                totalTaperWeeks: 1,
+                volumeTransitionWeeks: 0,
+                weeklyVolumeFractions: [0.55],
+                qualityAllowedPerWeek: [true]
+            )
+        case .roadHalf:
+            // Half marathon: 2 weeks. Maintain strides + 1 threshold sharpener.
+            // Pfitzinger: 75% → 50%. Keep one quality session per week.
+            return TaperProfile(
+                totalTaperWeeks: 2,
+                volumeTransitionWeeks: 0,
+                weeklyVolumeFractions: [0.70, 0.45],
+                qualityAllowedPerWeek: [true, true]
+            )
+        case .roadMarathon:
+            // Marathon: 3 weeks. Progressive volume reduction.
+            // Pfitzinger: 75% → 55% → 35%. Quality allowed in first 2 weeks.
+            return TaperProfile(
+                totalTaperWeeks: 3,
+                volumeTransitionWeeks: 1,
+                weeklyVolumeFractions: [0.75, 0.55, 0.35],
+                qualityAllowedPerWeek: [true, true, false]
+            )
+        }
+    }
 }
