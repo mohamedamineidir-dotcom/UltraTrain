@@ -89,7 +89,8 @@ enum TrainingPlanSwiftDataMapper {
             actualDurationSeconds: model.actualDurationSeconds,
             actualElevationGainM: model.actualElevationGainM,
             perceivedFeeling: model.perceivedFeelingRaw.flatMap { PerceivedFeeling(rawValue: $0) },
-            perceivedExertion: model.perceivedExertion
+            perceivedExertion: model.perceivedExertion,
+            skipReason: model.skipReasonRaw.flatMap { SkipReason(rawValue: $0) }
         )
     }
 
@@ -150,7 +151,8 @@ enum TrainingPlanSwiftDataMapper {
             actualDurationSeconds: session.actualDurationSeconds,
             actualElevationGainM: session.actualElevationGainM,
             perceivedFeelingRaw: session.perceivedFeeling?.rawValue,
-            perceivedExertion: session.perceivedExertion
+            perceivedExertion: session.perceivedExertion,
+            skipReasonRaw: session.skipReason?.rawValue
         )
     }
 }

@@ -10,7 +10,7 @@ struct SessionDetailView: View {
     let nutritionAdvisor: any SessionNutritionAdvisor
     let nutritionPreferences: NutritionPreferences
     var workouts: [IntervalWorkout] = []
-    var onSkip: (() -> Void)?
+    var onSkip: ((SkipReason) -> Void)?
     var onUnskip: (() -> Void)?
     var onReschedule: ((Date) -> Void)?
     var onSwap: ((SwapCandidate) -> Void)?
@@ -22,7 +22,7 @@ struct SessionDetailView: View {
     var stravaActivitiesProvider: ((Date) async -> [StravaActivity])?
     var onLinkStravaActivity: ((StravaActivity) -> Void)?
 
-    @State private var showSkipConfirmation = false
+    @State private var showSkipReasonSheet = false
     @State private var showRescheduleSheet = false
     @State private var showSwapSheet = false
     @State private var showValidateSheet = false
@@ -82,11 +82,10 @@ struct SessionDetailView: View {
         }
         .navigationTitle(session.type.displayName)
         .navigationBarTitleDisplayMode(.inline)
-        .alert("Skip Session?", isPresented: $showSkipConfirmation) {
-            Button("Skip", role: .destructive) { onSkip?() }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("This session will be marked as skipped and excluded from your weekly progress.")
+        .sheet(isPresented: $showSkipReasonSheet) {
+            SkipReasonSheet(sessionType: session.type) { reason in
+                onSkip?(reason)
+            }
         }
         .sheet(isPresented: $showRescheduleSheet) {
             RescheduleDateSheet(
@@ -579,14 +578,14 @@ struct SessionDetailView: View {
 
             if !session.isCompleted && !session.isSkipped {
                 Button {
-                    showSkipConfirmation = true
+                    showSkipReasonSheet = true
                 } label: {
                     Label("Skip Session", systemImage: "forward.fill")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
                 .tint(.orange)
-                .accessibilityHint("Double-tap to skip this session")
+                .accessibilityHint("Double-tap to skip this session and explain why")
             }
 
             if !session.isCompleted {

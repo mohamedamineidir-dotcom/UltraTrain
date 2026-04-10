@@ -64,22 +64,69 @@ extension TrainingPlanViewModel {
 
     // MARK: - Skip
 
-    func skipSession(weekIndex: Int, sessionIndex: Int) async {
+    func skipSession(weekIndex: Int, sessionIndex: Int, reason: SkipReason? = nil) async {
         guard var currentPlan = plan else { return }
         guard weekIndex < currentPlan.weeks.count,
               sessionIndex < currentPlan.weeks[weekIndex].sessions.count else { return }
 
         var session = currentPlan.weeks[weekIndex].sessions[sessionIndex]
         session.isSkipped = true
+        session.skipReason = reason
         currentPlan.weeks[weekIndex].sessions[sessionIndex] = session
 
         do {
             try await planRepository.updateSession(session)
             plan = currentPlan
+
+            // Run skip-specific adaptation if reason provided
+            if let reason {
+                analyzeSkipAdaptation(
+                    session: session,
+                    reason: reason,
+                    weekIndex: weekIndex,
+                    plan: currentPlan
+                )
+            }
+
             checkForAdjustments()
         } catch {
             self.error = error.localizedDescription
             Logger.training.error("Failed to skip session: \(error)")
+        }
+    }
+
+    private func analyzeSkipAdaptation(
+        session: TrainingSession,
+        reason: SkipReason,
+        weekIndex: Int,
+        plan: TrainingPlan
+    ) {
+        let currentWeek = plan.weeks[weekIndex]
+        let nextWeek = weekIndex + 1 < plan.weeks.count ? plan.weeks[weekIndex + 1] : nil
+
+        // Gather recent skip reasons from last 3 weeks for pattern detection
+        let lookbackStart = max(0, weekIndex - 2)
+        let recentSkipReasons: [SkipReason] = plan.weeks[lookbackStart..<weekIndex]
+            .flatMap(\.sessions)
+            .filter { $0.isSkipped }
+            .compactMap(\.skipReason)
+
+        let context = SkipAdaptationCalculator.Context(
+            skippedSession: session,
+            reason: reason,
+            currentWeek: currentWeek,
+            nextWeek: nextWeek,
+            experience: athlete?.experienceLevel ?? .intermediate,
+            recentSkipReasons: recentSkipReasons,
+            totalWeeksInPlan: plan.weeks.count,
+            raceDate: plan.weeks.last?.endDate
+        )
+
+        let adaptation = SkipAdaptationCalculator.analyze(context: context)
+
+        // Merge skip-based recommendations into existing recommendations
+        if !adaptation.recommendations.isEmpty {
+            adjustmentRecommendations.append(contentsOf: adaptation.recommendations)
         }
     }
 

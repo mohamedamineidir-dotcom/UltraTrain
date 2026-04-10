@@ -98,6 +98,7 @@ final class LocalTrainingPlanRepository: TrainingPlanRepository, @unchecked Send
         existing.actualElevationGainM = session.actualElevationGainM
         existing.perceivedFeelingRaw = session.perceivedFeeling?.rawValue
         existing.perceivedExertion = session.perceivedExertion
+        existing.skipReasonRaw = session.skipReason?.rawValue
         try context.save()
         Logger.persistence.info("Session updated: \(session.type.rawValue) completed=\(session.isCompleted) skipped=\(session.isSkipped)")
     }

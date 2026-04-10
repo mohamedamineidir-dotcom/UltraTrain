@@ -23,6 +23,7 @@ struct TrainingSession: Identifiable, Equatable, Sendable, Codable {
     var actualElevationGainM: Double? = nil
     var perceivedFeeling: PerceivedFeeling? = nil
     var perceivedExertion: Int? = nil
+    var skipReason: SkipReason? = nil
 
     var isGutTrainingRecommended: Bool {
         (type == .longRun || type == .backToBack || type == .race) && plannedDuration >= 7200

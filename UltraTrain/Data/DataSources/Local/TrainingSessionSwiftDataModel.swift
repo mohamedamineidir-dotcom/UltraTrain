@@ -25,6 +25,7 @@ final class TrainingSessionSwiftDataModel {
     var actualElevationGainM: Double?
     var perceivedFeelingRaw: String?
     var perceivedExertion: Int?
+    var skipReasonRaw: String?
     var updatedAt: Date = Date()
 
     init(
@@ -49,6 +50,7 @@ final class TrainingSessionSwiftDataModel {
         actualElevationGainM: Double? = nil,
         perceivedFeelingRaw: String? = nil,
         perceivedExertion: Int? = nil,
+        skipReasonRaw: String? = nil,
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -72,6 +74,7 @@ final class TrainingSessionSwiftDataModel {
         self.actualElevationGainM = actualElevationGainM
         self.perceivedFeelingRaw = perceivedFeelingRaw
         self.perceivedExertion = perceivedExertion
+        self.skipReasonRaw = skipReasonRaw
         self.updatedAt = updatedAt
     }
 }

@@ -67,11 +67,12 @@ extension TrainingPlanView {
                                 )
                             }
                         },
-                        onSkipSession: { sessionIndex in
+                        onSkipSession: { sessionIndex, reason in
                             Task {
                                 await viewModel.skipSession(
                                     weekIndex: weekIndex,
-                                    sessionIndex: sessionIndex
+                                    sessionIndex: sessionIndex,
+                                    reason: reason
                                 )
                             }
                         },
