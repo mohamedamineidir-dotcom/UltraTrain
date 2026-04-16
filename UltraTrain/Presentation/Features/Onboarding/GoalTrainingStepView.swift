@@ -182,7 +182,8 @@ struct GoalTrainingStepView: View {
                     targetTimeSeconds: seconds,
                     distanceKm: viewModel.raceDistanceKm,
                     elevationGainM: viewModel.raceElevationGainM,
-                    experienceLevel: level
+                    experienceLevel: level,
+                    raceType: viewModel.raceType
                 )
             case .targetRanking:
                 guard viewModel.raceTargetRanking > 0 else { return nil }

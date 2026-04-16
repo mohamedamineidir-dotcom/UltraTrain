@@ -8,6 +8,7 @@ struct PhaseHeaderCard: View {
     let totalWeeks: Int
     let description: String
     var phaseFocus: PhaseFocus?
+    var isRoad: Bool = false
 
     var body: some View {
         HStack(spacing: 0) {
@@ -83,7 +84,7 @@ struct PhaseHeaderCard: View {
     }
 
     private var focusDisplayName: String {
-        phaseFocus?.displayName ?? phase.displayName
+        phaseFocus?.displayName(isRoad: isRoad) ?? phase.displayName
     }
 
     private var phaseIcon: String {
@@ -126,9 +127,19 @@ struct PhaseHeaderCard: View {
         .frame(width: 20, height: 20)
     }
 
-    static func description(for phase: TrainingPhase, focus: PhaseFocus? = nil) -> String {
+    static func description(for phase: TrainingPhase, focus: PhaseFocus? = nil, isRoad: Bool = false) -> String {
         if let focus {
-            return focus.shortDescription
+            return focus.shortDescription(isRoad: isRoad)
+        }
+        if isRoad {
+            switch phase {
+            case .base:     return "Build aerobic foundation with easy running and strides"
+            case .build:    return "VO2max intervals and tempo runs to build speed"
+            case .peak:     return "Race-specific workouts at target pace"
+            case .taper:    return "Volume reduction with race-pace sharpeners"
+            case .recovery: return "Active recovery and adaptation"
+            case .race:     return "Race week"
+            }
         }
         switch phase {
         case .base:

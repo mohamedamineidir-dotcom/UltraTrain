@@ -57,24 +57,45 @@ enum RoadSessionSelector {
         let longRunDesc = longRunDescription(phase: phase, weekInPhase: weekInPhase, discipline: discipline, experience: experience)
         let longRunElev: Double = 0 // Road: no elevation
 
+        // Easy pace description
+        let easyPaceDesc: String
+        if let p = paceProfile {
+            let slow = RoadCoachAdviceGenerator.formatPace(p.easyPacePerKm.upperBound)
+            let fast = RoadCoachAdviceGenerator.formatPace(p.easyPacePerKm.lowerBound)
+            easyPaceDesc = " Target: \(fast)-\(slow)/km."
+        } else {
+            easyPaceDesc = ""
+        }
+
+        // Quality session descriptions with pace targets
+        let q1Desc: String
+        if let t = q1, let p = paceProfile {
+            let pace = paceForZone(t.targetPaceZone, profile: p)
+            q1Desc = "\(t.name). \(t.description) Target: \(RoadCoachAdviceGenerator.formatPace(pace))/km."
+        } else {
+            q1Desc = q1?.description ?? "Quality intervals session."
+        }
+
+        let q2Desc: String
+        if let t = q2, let p = paceProfile {
+            let pace = paceForZone(t.targetPaceZone, profile: p)
+            q2Desc = "\(t.name). \(t.description) Target: \(RoadCoachAdviceGenerator.formatPace(pace))/km."
+        } else {
+            q2Desc = q2?.description ?? "Tempo / threshold session."
+        }
+
         var pool: [(day: Int, template: SessionTemplateGenerator.SessionTemplate)] = [
-            // Long run: always Saturday (day 5)
             (5, tpl(5, .longRun, .easy, longRunDuration, longRunElev, longRunDesc)),
-            // Quality 1: Tuesday (day 1)
-            (1, tpl(1, .intervals, q1Intensity, base.intervalSeconds, 0,
-                    q1?.description ?? "Quality intervals session.")),
-            // Quality 2: Thursday (day 3)
-            (3, tpl(3, .tempo, q2Intensity, base.vgSeconds, 0,
-                    q2?.description ?? "Tempo / threshold session.")),
-            // Easy runs fill remaining days
+            (1, tpl(1, .intervals, q1Intensity, base.intervalSeconds, 0, q1Desc)),
+            (3, tpl(3, .tempo, q2Intensity, base.vgSeconds, 0, q2Desc)),
             (0, tpl(0, .recovery, .easy, base.easyRun1Seconds, 0,
-                    "Easy run. Conversational pace — protect your recovery.")),
+                    "Easy run. Conversational pace.\(easyPaceDesc)")),
             (4, tpl(4, .recovery, .easy, base.easyRun2Seconds, 0,
-                    "Easy run before your long run. Stay relaxed.")),
+                    "Easy run before your long run.\(easyPaceDesc)")),
             (2, tpl(2, .recovery, .easy, base.easyRun1Seconds, 0,
-                    "Easy recovery run between quality sessions.")),
+                    "Easy recovery run.\(easyPaceDesc)")),
             (6, tpl(6, .recovery, .easy, base.easyRun2Seconds, 0,
-                    "Easy run or cross-training. Active recovery.")),
+                    "Easy run or cross-training.\(easyPaceDesc)")),
         ]
 
         // For 6+ runs/week marathon plans: convert day 2 easy to medium-long (Pfitzinger)
@@ -162,6 +183,19 @@ enum RoadSessionSelector {
             return "Two-part long run. First half easy, second half at race pace. Race simulation."
         case .raceSimulation:
             return "Race simulation. Extended block at race pace within the long run. Rehearse race day."
+        }
+    }
+
+    // MARK: - Pace Zone Lookup
+
+    private static func paceForZone(_ zone: RoadIntervalLibrary.PaceZone, profile: RoadPaceProfile) -> Double {
+        switch zone {
+        case .easy:          profile.easyPacePerKm.lowerBound
+        case .marathonPace:  profile.marathonPacePerKm
+        case .threshold:     profile.thresholdPacePerKm
+        case .interval:      profile.intervalPacePerKm
+        case .repetition:    profile.repetitionPacePerKm
+        case .racePace:      profile.racePacePerKm
         }
     }
 }
