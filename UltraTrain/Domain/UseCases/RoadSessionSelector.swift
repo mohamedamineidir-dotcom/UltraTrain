@@ -57,31 +57,38 @@ enum RoadSessionSelector {
         let longRunDesc = longRunDescription(phase: phase, weekInPhase: weekInPhase, discipline: discipline, experience: experience)
         let longRunElev: Double = 0 // Road: no elevation
 
-        // Easy pace description
-        let easyPaceDesc: String
+        // SHORT descriptions — rep format like trail plan display
+        let easyPace: String
         if let p = paceProfile {
-            let slow = RoadCoachAdviceGenerator.formatPace(p.easyPacePerKm.upperBound)
             let fast = RoadCoachAdviceGenerator.formatPace(p.easyPacePerKm.lowerBound)
-            easyPaceDesc = " Target: \(fast)-\(slow)/km."
+            let slow = RoadCoachAdviceGenerator.formatPace(p.easyPacePerKm.upperBound)
+            easyPace = "\(fast)-\(slow)/km"
         } else {
-            easyPaceDesc = ""
+            easyPace = "conversational pace"
         }
 
-        // Quality session descriptions with pace targets
         let q1Desc: String
         if let t = q1, let p = paceProfile {
-            let pace = paceForZone(t.targetPaceZone, profile: p)
-            q1Desc = "\(t.name). \(t.description) Target: \(RoadCoachAdviceGenerator.formatPace(pace))/km."
+            let pace = RoadCoachAdviceGenerator.formatPace(paceForZone(t.targetPaceZone, profile: p))
+            if t.repDistanceM > 0 {
+                q1Desc = "\(t.repCount)×\(t.repDistanceM)m @ \(pace)/km"
+            } else {
+                q1Desc = "\(t.name) @ \(pace)/km"
+            }
         } else {
-            q1Desc = q1?.description ?? "Quality intervals session."
+            q1Desc = q1?.name ?? "Intervals"
         }
 
         let q2Desc: String
         if let t = q2, let p = paceProfile {
-            let pace = paceForZone(t.targetPaceZone, profile: p)
-            q2Desc = "\(t.name). \(t.description) Target: \(RoadCoachAdviceGenerator.formatPace(pace))/km."
+            let pace = RoadCoachAdviceGenerator.formatPace(paceForZone(t.targetPaceZone, profile: p))
+            if t.repDistanceM > 0 {
+                q2Desc = "\(t.repCount)×\(t.repDistanceM)m @ \(pace)/km"
+            } else {
+                q2Desc = "\(t.name) @ \(pace)/km"
+            }
         } else {
-            q2Desc = q2?.description ?? "Tempo / threshold session."
+            q2Desc = q2?.name ?? "Tempo"
         }
 
         var pool: [(day: Int, template: SessionTemplateGenerator.SessionTemplate)] = [
@@ -89,13 +96,13 @@ enum RoadSessionSelector {
             (1, tpl(1, .intervals, q1Intensity, base.intervalSeconds, 0, q1Desc)),
             (3, tpl(3, .tempo, q2Intensity, base.vgSeconds, 0, q2Desc)),
             (0, tpl(0, .recovery, .easy, base.easyRun1Seconds, 0,
-                    "Easy run. Conversational pace.\(easyPaceDesc)")),
+                    "Easy run @ \(easyPace)")),
             (4, tpl(4, .recovery, .easy, base.easyRun2Seconds, 0,
-                    "Easy run before your long run.\(easyPaceDesc)")),
+                    "Easy run @ \(easyPace)")),
             (2, tpl(2, .recovery, .easy, base.easyRun1Seconds, 0,
-                    "Easy recovery run.\(easyPaceDesc)")),
+                    "Recovery run @ \(easyPace)")),
             (6, tpl(6, .recovery, .easy, base.easyRun2Seconds, 0,
-                    "Easy run or cross-training.\(easyPaceDesc)")),
+                    "Easy run @ \(easyPace)")),
         ]
 
         // For 6+ runs/week marathon plans: convert day 2 easy to medium-long (Pfitzinger)

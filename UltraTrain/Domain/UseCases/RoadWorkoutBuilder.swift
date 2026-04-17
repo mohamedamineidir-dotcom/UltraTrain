@@ -33,15 +33,17 @@ enum RoadWorkoutBuilder {
 
         // Work + recovery phases
         if template.repDistanceM > 0 {
-            // Distance-based intervals
+            // Distance-based intervals → convert to DURATION using target pace
+            // This fixes the "0min" display bug in the UI
             let repDistKm = Double(template.repDistanceM) / 1000.0
+            let targetPace = targetPaceSeconds(zone: template.targetPaceZone, profile: paceProfile)
+            let repDurationSeconds = repDistKm * targetPace
 
             for _ in 0..<template.repCount {
-                // Work rep
                 phases.append(IntervalPhase(
                     id: UUID(),
                     phaseType: .work,
-                    trigger: .distance(km: repDistKm),
+                    trigger: .duration(seconds: repDurationSeconds),
                     targetIntensity: intensityForZone(template.targetPaceZone),
                     repeatCount: 1,
                     notes: workNotes(template: template, paceProfile: paceProfile)
@@ -116,9 +118,22 @@ enum RoadWorkoutBuilder {
         let totalDuration = phases.reduce(0.0) { $0 + $1.totalDuration }
         let estimatedKm = totalDuration / (paceProfile?.thresholdPacePerKm ?? 300)
 
+        // Build compact name: "10×200m @ 3:43/km" format
+        let compactName: String
+        if template.repDistanceM > 0 {
+            let pace = targetPaceSeconds(zone: template.targetPaceZone, profile: paceProfile)
+            let paceStr = RoadCoachAdviceGenerator.formatPace(pace)
+            compactName = "\(template.repCount)×\(template.repDistanceM)m @ \(paceStr)/km"
+        } else if template.repCount > 1 {
+            let mins = Int(template.totalWorkMinutes) / template.repCount
+            compactName = "\(template.repCount)×\(mins)min @ T-pace"
+        } else {
+            compactName = template.name
+        }
+
         return IntervalWorkout(
             id: UUID(),
-            name: template.name,
+            name: compactName,
             descriptionText: template.description,
             phases: phases,
             category: categoryMapping(template.category),
@@ -189,11 +204,22 @@ enum RoadWorkoutBuilder {
     }
 
     private static func coolDownNotes(paceProfile: RoadPaceProfile?) -> String {
-        var note = "Easy jog cool-down."
-        if let p = paceProfile {
-            let pace = RoadCoachAdviceGenerator.formatPace(p.easyPacePerKm.upperBound)
-            note += " ~\(pace)/km or slower."
+        "Easy jog cool-down."
+    }
+
+    /// Returns target pace in sec/km for a given pace zone.
+    private static func targetPaceSeconds(
+        zone: RoadIntervalLibrary.PaceZone,
+        profile: RoadPaceProfile?
+    ) -> Double {
+        guard let p = profile else { return 300 } // 5:00/km fallback
+        switch zone {
+        case .easy:          return p.easyPacePerKm.lowerBound
+        case .marathonPace:  return p.marathonPacePerKm
+        case .threshold:     return p.thresholdPacePerKm
+        case .interval:      return p.intervalPacePerKm
+        case .repetition:    return p.repetitionPacePerKm
+        case .racePace:      return p.racePacePerKm
         }
-        return note
     }
 }

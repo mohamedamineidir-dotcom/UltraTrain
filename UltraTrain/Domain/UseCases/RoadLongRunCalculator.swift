@@ -65,14 +65,15 @@ enum RoadLongRunCalculator {
         }
         let capDuration = min(maxDurationSeconds, absoluteMax)
 
-        // Starting long run: ~60% of cap for beginners, ~50% for experienced
+        // Starting long run: 55-65% of cap, minimum 60 min
+        // Ensures long run is always the longest session from week 1
         let startFraction: Double = switch experience {
-        case .beginner:     0.55
-        case .intermediate: 0.50
-        case .advanced:     0.45
-        case .elite:        0.40
+        case .beginner:     0.65
+        case .intermediate: 0.60
+        case .advanced:     0.55
+        case .elite:        0.50
         }
-        let startDuration = capDuration * startFraction
+        let startDuration = max(capDuration * startFraction, 3600) // Minimum 60 min
 
         // Quadratic ramp: reaches peak ~80% through the plan
         let peakWeek = Int(Double(totalWeeks) * 0.80)
