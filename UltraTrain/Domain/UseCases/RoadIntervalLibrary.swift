@@ -76,24 +76,10 @@ enum RoadIntervalLibrary {
 
         guard !available.isEmpty else { return nil }
 
-        // Phase-specific category preference (research-based ordering):
-        let preferred: [Category]
-        switch phase {
-        case .base:
-            preferred = [.speed, .threshold, .progression]
-        case .build:
-            preferred = slotIndex == 0
-                ? [.vo2max, .speed]
-                : [.threshold, .progression]
-        case .peak:
-            preferred = slotIndex == 0
-                ? [.raceSpecific, .vo2max]
-                : [.threshold, .raceSpecific]
-        case .taper:
-            preferred = [.speed, .raceSpecific]
-        default:
-            preferred = [.threshold]
-        }
+        // Distance × phase × slot category preferences (Daniels, Pfitzinger, Canova)
+        let preferred = categoryPreferences(
+            phase: phase, discipline: discipline, slotIndex: slotIndex
+        )
 
         // Pick from preferred category, cycling by weekInPhase for variety
         for cat in preferred {
@@ -107,6 +93,58 @@ enum RoadIntervalLibrary {
         return available[weekInPhase % available.count]
     }
 
+    // MARK: - Distance-Specific Category Preferences
+
+    /// Returns ordered category preferences based on distance, phase, and slot.
+    ///
+    /// Research basis:
+    /// - **10K** (Daniels): Speed → VO2max → race-specific. VO2max is the limiter.
+    /// - **HM** (Pfitzinger): Threshold is the limiter. Extended threshold through peak.
+    /// - **Marathon** (Canova/Pfitzinger): Aerobic base → threshold → MP-specific.
+    ///   Threshold continues through peak phase.
+    private static func categoryPreferences(
+        phase: TrainingPhase,
+        discipline: RoadRaceDiscipline,
+        slotIndex: Int
+    ) -> [Category] {
+        switch (phase, discipline, slotIndex) {
+        // === BASE: All distances — speed + threshold introduction ===
+        case (.base, _, 0):
+            return [.speed, .threshold]
+        case (.base, _, _):
+            return [.threshold, .progression, .speed]
+
+        // === BUILD: Distance-specific ===
+        // 10K: VO2max is the limiter (Daniels)
+        case (.build, .road10K, 0):     return [.vo2max, .speed]
+        case (.build, .road10K, _):     return [.threshold, .vo2max]
+        // HM: Threshold is the limiter (Pfitzinger)
+        case (.build, .roadHalf, 0):    return [.vo2max, .threshold]
+        case (.build, .roadHalf, _):    return [.threshold, .progression]
+        // Marathon: VO2max + threshold equally important (Canova)
+        case (.build, .roadMarathon, 0): return [.vo2max, .speed]
+        case (.build, .roadMarathon, _): return [.threshold, .progression]
+
+        // === PEAK: Distance-specific ===
+        // 10K: Race-specific + VO2max sharpeners
+        case (.peak, .road10K, 0):      return [.raceSpecific, .vo2max]
+        case (.peak, .road10K, _):      return [.vo2max, .raceSpecific]
+        // HM: Threshold CONTINUES + race-specific (Pfitzinger: LT is cornerstone)
+        case (.peak, .roadHalf, 0):     return [.raceSpecific, .threshold]
+        case (.peak, .roadHalf, _):     return [.threshold, .raceSpecific]
+        // Marathon: Race-specific + threshold maintenance (Canova: threshold never stops)
+        case (.peak, .roadMarathon, 0): return [.raceSpecific, .threshold]
+        case (.peak, .roadMarathon, _): return [.threshold, .raceSpecific]
+
+        // === TAPER: Light sharpeners ===
+        case (.taper, _, _):
+            return [.speed, .raceSpecific]
+
+        default:
+            return [.threshold]
+        }
+    }
+
     // MARK: - All Templates
 
     static let allTemplates: [Template] = {
@@ -116,6 +154,7 @@ enum RoadIntervalLibrary {
         t.append(contentsOf: thresholdTemplates)
         t.append(contentsOf: raceSpecificTemplates)
         t.append(contentsOf: progressionTemplates)
+        t.append(contentsOf: auditTemplates)
         return t
     }()
 
@@ -143,7 +182,7 @@ enum RoadIntervalLibrary {
             category: .speed, description: "Longer speed reps bridging to VO2max work.",
             targetPaceZone: .repetition, repDistanceM: 600, repCount: 6,
             recoverySeconds: 90, recoveryType: .jog, totalWorkMinutes: 12,
-            applicablePhases: [.base, .build], applicableDistances: [.road10K, .roadHalf],
+            applicablePhases: [.base, .build], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
             minExperience: .intermediate
         ),
     ]
@@ -172,7 +211,7 @@ enum RoadIntervalLibrary {
             category: .vo2max, description: "4×1200m at I-pace. Extended aerobic power intervals.",
             targetPaceZone: .interval, repDistanceM: 1200, repCount: 4,
             recoverySeconds: 180, recoveryType: .jog, totalWorkMinutes: 20,
-            applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf],
+            applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
             minExperience: .intermediate
         ),
         Template(
@@ -180,7 +219,7 @@ enum RoadIntervalLibrary {
             category: .vo2max, description: "4×1600m at I-pace. Long VO2max intervals for sustained power.",
             targetPaceZone: .interval, repDistanceM: 1600, repCount: 4,
             recoverySeconds: 210, recoveryType: .jog, totalWorkMinutes: 24,
-            applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf],
+            applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
             minExperience: .intermediate
         ),
         Template(
@@ -378,6 +417,124 @@ enum RoadIntervalLibrary {
             minExperience: .advanced
         ),
     ]
+
+    // MARK: - Additional Templates (Audit Fixes)
+
+    /// Templates added from coaching methodology audit:
+    /// Marathon-specific threshold, HM-pace tempo, Billat 30/30,
+    /// progressive tempo, 2Q combos, long run variants.
+    private static var auditTemplates: [Template] {
+        [
+            // Marathon-specific threshold in peak (Pfitzinger: threshold continues through peak)
+            Template(
+                name: "Marathon Threshold 25min",
+                category: .threshold, description: "25min continuous at T-pace. Marathon lactate clearance.",
+                targetPaceZone: .threshold, repDistanceM: 0, repCount: 1,
+                recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 25,
+                applicablePhases: [.peak], applicableDistances: [.roadMarathon],
+                minExperience: .intermediate
+            ),
+            // HM-pace tempo work for peak (Pfitzinger: lock in race rhythm)
+            Template(
+                name: "HM Tempo Run 20min",
+                category: .raceSpecific, description: "20min continuous at HM pace. Race rhythm builder.",
+                targetPaceZone: .racePace, repDistanceM: 0, repCount: 1,
+                recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 20,
+                applicablePhases: [.peak], applicableDistances: [.roadHalf],
+                minExperience: .beginner
+            ),
+            // Progressive tempo (Canova: vary stimulus without intervals)
+            Template(
+                name: "Progressive Tempo 30min",
+                category: .threshold, description: "30min building from easy to T-pace. Canova progressive stimulus.",
+                targetPaceZone: .threshold, repDistanceM: 0, repCount: 1,
+                recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 30,
+                applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
+                minExperience: .intermediate
+            ),
+            // Billat 30/30 VO2max (Billat, INSEP research)
+            Template(
+                name: "Billat 30/30",
+                category: .vo2max, description: "14×(30s hard / 30s easy). VO2max stimulus with minimal recovery.",
+                targetPaceZone: .interval, repDistanceM: 0, repCount: 14,
+                recoverySeconds: 30, recoveryType: .jog, totalWorkMinutes: 14,
+                applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf],
+                minExperience: .advanced
+            ),
+            // Daniels 2Q combo: tempo + VO2max in one session (advanced/elite)
+            Template(
+                name: "2Q Tempo + VO2max",
+                category: .vo2max, description: "15min tempo (T-pace) then 4×3min VO2max (I-pace). Daniels 2Q.",
+                targetPaceZone: .interval, repDistanceM: 0, repCount: 4,
+                recoverySeconds: 180, recoveryType: .jog, totalWorkMinutes: 27,
+                applicablePhases: [.peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
+                minExperience: .advanced
+            ),
+            // Marathon continuous tempo at MP (not threshold — race-specific tempo)
+            Template(
+                name: "Marathon Tempo 30min",
+                category: .raceSpecific, description: "30min continuous at marathon pace. Lock in race rhythm.",
+                targetPaceZone: .marathonPace, repDistanceM: 0, repCount: 1,
+                recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 30,
+                applicablePhases: [.peak], applicableDistances: [.roadMarathon],
+                minExperience: .intermediate
+            ),
+            // Billat threshold 5×5min (lactate clearance)
+            Template(
+                name: "Threshold 5×5min",
+                category: .threshold, description: "5×5min at T-pace, 90s rest. Lactate clearance training.",
+                targetPaceZone: .threshold, repDistanceM: 0, repCount: 5,
+                recoverySeconds: 90, recoveryType: .jog, totalWorkMinutes: 25,
+                applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
+                minExperience: .intermediate
+            ),
+            // Long run + VO2 surges (marathon build)
+            Template(
+                name: "LR + VO2 Surges",
+                category: .longRunVariant, description: "Easy long run with 6×2min surges at I-pace.",
+                targetPaceZone: .interval, repDistanceM: 0, repCount: 6,
+                recoverySeconds: 180, recoveryType: .jog, totalWorkMinutes: 12,
+                applicablePhases: [.build], applicableDistances: [.roadHalf, .roadMarathon],
+                minExperience: .advanced
+            ),
+            // Long run + tempo blocks (marathon peak)
+            Template(
+                name: "LR + Tempo Blocks",
+                category: .longRunVariant, description: "Easy long run with 2×12min blocks at T-pace.",
+                targetPaceZone: .threshold, repDistanceM: 0, repCount: 2,
+                recoverySeconds: 300, recoveryType: .jog, totalWorkMinutes: 24,
+                applicablePhases: [.build, .peak], applicableDistances: [.roadMarathon],
+                minExperience: .intermediate
+            ),
+            // Canova alternating long run (marathon peak, MP blocks)
+            Template(
+                name: "Canova Alternating LR",
+                category: .longRunVariant, description: "Easy + 3×3km MP blocks + easy. Marathon-specific endurance.",
+                targetPaceZone: .marathonPace, repDistanceM: 3000, repCount: 3,
+                recoverySeconds: 300, recoveryType: .jog, totalWorkMinutes: 30,
+                applicablePhases: [.peak], applicableDistances: [.roadMarathon],
+                minExperience: .intermediate
+            ),
+            // Tempo with surges (Pfitzinger near-peak: tempo + surges at 10K pace)
+            Template(
+                name: "Tempo + Surges",
+                category: .threshold, description: "20min tempo with 4×1min surges at 10K pace mid-run.",
+                targetPaceZone: .threshold, repDistanceM: 0, repCount: 1,
+                recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 24,
+                applicablePhases: [.peak], applicableDistances: [.road10K, .roadHalf],
+                minExperience: .advanced
+            ),
+            // 300m repeats (bridge between 200m and 400m)
+            Template(
+                name: "300m Repeats",
+                category: .speed, description: "8×300m at R-pace. Speed rhythm bridge.",
+                targetPaceZone: .repetition, repDistanceM: 300, repCount: 8,
+                recoverySeconds: 75, recoveryType: .jog, totalWorkMinutes: 10,
+                applicablePhases: [.base, .build], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
+                minExperience: .beginner
+            ),
+        ]
+    }
 }
 
 // MARK: - ExperienceLevel Sort Helper

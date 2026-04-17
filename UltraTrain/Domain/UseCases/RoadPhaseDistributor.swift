@@ -70,31 +70,59 @@ enum RoadPhaseDistributor {
 
     /// Phase fractions by distance and experience.
     ///
-    /// 10K: VO2max-heavy build, shorter base. Daniels emphasizes quality over volume.
-    /// Half: Balanced. Pfitzinger: threshold development is the cornerstone.
-    /// Marathon: Long base phase. Pfitzinger: aerobic foundation before adding specifics.
+    /// Research-corrected fractions:
+    /// - **10K** (Daniels): Build is critical (VO2max development). Base 25-30%, Build 35%, Peak 30-35%.
+    /// - **HM** (Pfitzinger): Threshold-limited. Needs long build. Base 28-35%, Build 35%, Peak 25-32%.
+    /// - **Marathon** (Pfitzinger/Canova): Aerobic-limited. Needs LONG base. Base 35-40%, Build 28-32%, Peak 23-28%.
+    ///   Longer distances → proportionally LONGER base (inverted from previous implementation).
     private static func fractions(
         discipline: RoadRaceDiscipline,
         experience: ExperienceLevel
     ) -> Fractions {
         switch (discipline, experience) {
-        // 10K: short base, heavy build+peak for speed development
-        case (.road10K, .beginner):     return Fractions(base: 0.30, build: 0.30, peak: 0.40)
-        case (.road10K, .intermediate): return Fractions(base: 0.25, build: 0.30, peak: 0.45)
-        case (.road10K, .advanced):     return Fractions(base: 0.20, build: 0.30, peak: 0.50)
-        case (.road10K, .elite):        return Fractions(base: 0.15, build: 0.25, peak: 0.60)
+        // 10K: speed-centric. Shorter base, heavy build (VO2max), moderate peak.
+        // Daniels: Base 27%, Quality 40%, Specific 20%
+        case (.road10K, .beginner):     return Fractions(base: 0.30, build: 0.35, peak: 0.35)
+        case (.road10K, .intermediate): return Fractions(base: 0.27, build: 0.35, peak: 0.38)
+        case (.road10K, .advanced):     return Fractions(base: 0.25, build: 0.35, peak: 0.40)
+        case (.road10K, .elite):        return Fractions(base: 0.22, build: 0.35, peak: 0.43)
 
-        // Half marathon: balanced, threshold-heavy
-        case (.roadHalf, .beginner):     return Fractions(base: 0.30, build: 0.30, peak: 0.40)
-        case (.roadHalf, .intermediate): return Fractions(base: 0.25, build: 0.30, peak: 0.45)
-        case (.roadHalf, .advanced):     return Fractions(base: 0.20, build: 0.30, peak: 0.50)
-        case (.roadHalf, .elite):        return Fractions(base: 0.15, build: 0.30, peak: 0.55)
+        // HM: threshold-centric. Pfitzinger: "LT is the HM limiter."
+        // Pfitzinger 18/55: Base 33%, Build 33%, Peak 16%
+        case (.roadHalf, .beginner):     return Fractions(base: 0.35, build: 0.35, peak: 0.30)
+        case (.roadHalf, .intermediate): return Fractions(base: 0.32, build: 0.35, peak: 0.33)
+        case (.roadHalf, .advanced):     return Fractions(base: 0.28, build: 0.37, peak: 0.35)
+        case (.roadHalf, .elite):        return Fractions(base: 0.25, build: 0.37, peak: 0.38)
 
-        // Marathon: longer base, Pfitzinger-style. Canova: build aerobic engine first.
-        case (.roadMarathon, .beginner):     return Fractions(base: 0.35, build: 0.25, peak: 0.40)
-        case (.roadMarathon, .intermediate): return Fractions(base: 0.30, build: 0.30, peak: 0.40)
-        case (.roadMarathon, .advanced):     return Fractions(base: 0.25, build: 0.30, peak: 0.45)
-        case (.roadMarathon, .elite):        return Fractions(base: 0.20, build: 0.30, peak: 0.50)
+        // Marathon: aerobic-centric. Pfitzinger/Canova: long base is non-negotiable.
+        // Pfitzinger 18/70: Base 38%, Build 28%, Peak 22%
+        // Canova: General+Fundamental = 65% of plan
+        case (.roadMarathon, .beginner):     return Fractions(base: 0.40, build: 0.30, peak: 0.30)
+        case (.roadMarathon, .intermediate): return Fractions(base: 0.38, build: 0.32, peak: 0.30)
+        case (.roadMarathon, .advanced):     return Fractions(base: 0.35, build: 0.33, peak: 0.32)
+        case (.roadMarathon, .elite):        return Fractions(base: 0.33, build: 0.35, peak: 0.32)
+        }
+    }
+
+    // MARK: - Mesocycle Sub-Phase
+
+    /// Determines the sub-phase (intro/develop/sharpen) within a training phase.
+    /// Pfitzinger 3-week cycles: introduce new stimulus → develop intensity → sharpen/consolidate.
+    /// Canova: General → Fundamental → Special → Specific progression.
+    enum SubPhase: String, Sendable {
+        case intro    // 40-60% phase intensity — establish new stimulus
+        case develop  // 80-100% intensity — push adaptation
+        case sharpen  // 70-85% intensity — consolidate before next phase
+    }
+
+    /// Returns the sub-phase for a given week within its training phase.
+    static func subPhase(weekInPhase: Int, phaseWeekCount: Int) -> SubPhase {
+        guard phaseWeekCount >= 3 else { return .develop }
+        let fraction = Double(weekInPhase) / Double(phaseWeekCount)
+        switch fraction {
+        case ..<0.33:  return .intro
+        case ..<0.67:  return .develop
+        default:       return .sharpen
         }
     }
 }
