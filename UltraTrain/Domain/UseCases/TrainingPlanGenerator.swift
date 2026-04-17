@@ -335,6 +335,14 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 }
             } else {
                 // Road-specific session selection
+                let roadAthleteContext = RoadSessionSelector.AthleteContext(
+                    philosophy: athlete.trainingPhilosophy,
+                    hasRecentInjury: athlete.hasRecentInjury,
+                    painFrequency: athlete.painFrequency,
+                    age: athlete.age,
+                    weightGoal: athlete.weightGoal,
+                    raceName: targetRace.name
+                )
                 let templates = RoadSessionSelector.sessions(
                     phase: skeleton.phase,
                     volume: volume,
@@ -343,7 +351,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     weekInPhase: phaseCounters[index],
                     preferredRunsPerWeek: athlete.preferredRunsPerWeek,
                     isRecoveryWeek: skeleton.isRecoveryWeek,
-                    paceProfile: paceProfile
+                    paceProfile: paceProfile,
+                    athleteContext: roadAthleteContext
                 )
 
                 // Build IntervalWorkout objects for quality sessions
@@ -357,8 +366,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     excludeCategory: q1Template?.category
                 )
 
-                let q1Workout = q1Template.map { RoadWorkoutBuilder.build(from: $0, paceProfile: paceProfile, experience: athlete.experienceLevel) }
-                let q2Workout = q2Template.map { RoadWorkoutBuilder.build(from: $0, paceProfile: paceProfile, experience: athlete.experienceLevel) }
+                let q1Workout = q1Template.map { RoadWorkoutBuilder.build(from: $0, paceProfile: paceProfile, experience: athlete.experienceLevel, athleteAge: athlete.age) }
+                let q2Workout = q2Template.map { RoadWorkoutBuilder.build(from: $0, paceProfile: paceProfile, experience: athlete.experienceLevel, athleteAge: athlete.age) }
 
                 if let w = q1Workout { allWorkouts.append(w) }
                 if let w = q2Workout { allWorkouts.append(w) }
@@ -376,7 +385,9 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                         type: session.type, intensity: session.intensity,
                         phase: skeleton.phase, discipline: discipline,
                         isRecoveryWeek: skeleton.isRecoveryWeek,
-                        paceProfile: paceProfile
+                        paceProfile: paceProfile,
+                        raceName: targetRace.name,
+                        experience: athlete.experienceLevel
                     )
                     return session
                 }

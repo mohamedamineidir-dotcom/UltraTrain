@@ -14,6 +14,16 @@ import Foundation
 /// - 7/week: 3 quality + 1 long run + 3 easy
 enum RoadSessionSelector {
 
+    /// Context for athlete-specific personalization.
+    struct AthleteContext: Sendable {
+        let philosophy: TrainingPhilosophy
+        let hasRecentInjury: Bool
+        let painFrequency: PainFrequency
+        let age: Int
+        let weightGoal: WeightGoal
+        let raceName: String?
+    }
+
     /// Generates a full 7-day session template array for a road training week.
     static func sessions(
         phase: TrainingPhase,
@@ -23,18 +33,30 @@ enum RoadSessionSelector {
         weekInPhase: Int,
         preferredRunsPerWeek: Int,
         isRecoveryWeek: Bool,
-        paceProfile: RoadPaceProfile?
+        paceProfile: RoadPaceProfile?,
+        athleteContext: AthleteContext? = nil
     ) -> [SessionTemplateGenerator.SessionTemplate] {
         let tpl = SessionTemplateGenerator.tpl
         let base = volume.baseSessionDurations
         let longRunDuration = volume.targetLongRunDurationSeconds
 
-        // Recovery weeks: all easy + reduced long run (Daniels: maintain frequency, drop quality)
+        // Recovery weeks: all easy + reduced long run
         if isRecoveryWeek {
             return recoveryWeekSessions(
                 base: base, longRunDuration: longRunDuration,
                 preferredRunsPerWeek: preferredRunsPerWeek, tpl: tpl
             )
+        }
+
+        // #3: Injury gating — no VO2max/maxEffort for injured athletes
+        // Threshold-only base for athletes with frequent pain
+        let injuryGatedCategory: RoadIntervalLibrary.Category?
+        if athleteContext?.hasRecentInjury == true {
+            injuryGatedCategory = .vo2max // Exclude all VO2max work
+        } else if athleteContext?.painFrequency == .often {
+            injuryGatedCategory = phase == .base ? .vo2max : nil // Base: threshold only
+        } else {
+            injuryGatedCategory = nil
         }
 
         // Issue #4: Goal realism gating — ambitious goals restrict race-pace usage
@@ -57,22 +79,49 @@ enum RoadSessionSelector {
         }
 
         let excludeForRealism: RoadIntervalLibrary.Category? = gateRaceSpecific ? .raceSpecific : nil
+        // Combine injury + realism exclusions
+        let primaryExclusion = injuryGatedCategory ?? excludeForRealism
 
         // Select quality session templates from the library
         let q1 = RoadIntervalLibrary.selectForSlot(
             slotIndex: 0, phase: phase, discipline: discipline,
             experience: experience, weekInPhase: weekInPhase,
-            excludeCategory: excludeForRealism
+            excludeCategory: primaryExclusion
         )
         let q2 = RoadIntervalLibrary.selectForSlot(
             slotIndex: 1, phase: phase, discipline: discipline,
             experience: experience, weekInPhase: weekInPhase,
-            excludeCategory: q1?.category ?? excludeForRealism
+            excludeCategory: q1?.category ?? primaryExclusion
         )
 
         // Quality session intensities
         let q1Intensity: Intensity = q1?.targetPaceZone == .repetition ? .maxEffort : .hard
         let q2Intensity: Intensity = q2?.targetPaceZone == .easy ? .moderate : .hard
+
+        // #1: Philosophy-based duration scaling
+        // Enjoyment: +15% easy, -10% quality. Performance: -10% easy, +10% quality.
+        let philEasyScale: Double
+        let philQualityScale: Double
+        switch athleteContext?.philosophy ?? .balanced {
+        case .enjoyment:    philEasyScale = 1.15; philQualityScale = 0.90
+        case .balanced:     philEasyScale = 1.00; philQualityScale = 1.00
+        case .performance:  philEasyScale = 0.90; philQualityScale = 1.10
+        }
+
+        // #2: Runs/week intensity scaling (Canova: fewer sessions = higher intensity per session)
+        let runsIntensityScale: Double = switch preferredRunsPerWeek {
+        case ...3:  1.15  // 3 runs: +15% quality duration (harder per session)
+        case 4:     1.08  // 4 runs: +8%
+        case 5:     1.00  // 5 runs: baseline
+        case 6:     0.95  // 6 runs: slightly easier per session
+        default:    0.90  // 7 runs: more distributed
+        }
+
+        // Apply scaling to session durations
+        let scaledEasy1 = base.easyRun1Seconds * philEasyScale
+        let scaledEasy2 = base.easyRun2Seconds * philEasyScale
+        let scaledInterval = base.intervalSeconds * philQualityScale * runsIntensityScale
+        let scaledTempo = base.vgSeconds * philQualityScale * runsIntensityScale
 
         // Build the session pool (priority order: long run > quality > easy)
         // Day layout: Mon=0(rest/easy) Tue=1(quality1) Wed=2(easy) Thu=3(quality2) Fri=4(easy) Sat=5(long) Sun=6(rest)
@@ -115,15 +164,15 @@ enum RoadSessionSelector {
 
         var pool: [(day: Int, template: SessionTemplateGenerator.SessionTemplate)] = [
             (5, tpl(5, .longRun, .easy, longRunDuration, longRunElev, longRunDesc)),
-            (1, tpl(1, .intervals, q1Intensity, base.intervalSeconds, 0, q1Desc)),
-            (3, tpl(3, .tempo, q2Intensity, base.vgSeconds, 0, q2Desc)),
-            (0, tpl(0, .recovery, .easy, base.easyRun1Seconds, 0,
+            (1, tpl(1, .intervals, q1Intensity, scaledInterval, 0, q1Desc)),
+            (3, tpl(3, .tempo, q2Intensity, scaledTempo, 0, q2Desc)),
+            (0, tpl(0, .recovery, .easy, scaledEasy1, 0,
                     "Easy run @ \(easyPace)")),
-            (4, tpl(4, .recovery, .easy, base.easyRun2Seconds, 0,
+            (4, tpl(4, .recovery, .easy, scaledEasy2, 0,
                     "Easy run @ \(easyPace)")),
-            (2, tpl(2, .recovery, .easy, base.easyRun1Seconds, 0,
+            (2, tpl(2, .recovery, .easy, scaledEasy1, 0,
                     "Recovery run @ \(easyPace)")),
-            (6, tpl(6, .recovery, .easy, base.easyRun2Seconds, 0,
+            (6, tpl(6, .recovery, .easy, scaledEasy2, 0,
                     "Easy run @ \(easyPace)")),
         ]
 

@@ -14,7 +14,9 @@ enum RoadCoachAdviceGenerator {
         phase: TrainingPhase,
         discipline: RoadRaceDiscipline,
         isRecoveryWeek: Bool,
-        paceProfile: RoadPaceProfile?
+        paceProfile: RoadPaceProfile?,
+        raceName: String? = nil,
+        experience: ExperienceLevel = .intermediate
     ) -> String? {
         if isRecoveryWeek {
             return recoveryWeekAdvice(type: type)

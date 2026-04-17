@@ -87,7 +87,13 @@ enum RoadVolumeCalculator {
         }
 
         let discipline = RoadRaceDiscipline.from(distanceKm: raceDistanceKm)
-        let peakKmCeiling = discipline.peakWeeklyKm(experience: experience)
+        // #7: Weight goal affects peak volume (energy balance for weight loss)
+        let weightScale: Double = switch athlete.weightGoal {
+        case .lose:     0.90  // 10% less peak volume for weight loss
+        case .maintain: 1.00
+        case .gain:     1.05  // Can handle slightly more volume
+        }
+        let peakKmCeiling = discipline.peakWeeklyKm(experience: experience) * weightScale
 
         var volumes: [VolumeCalculator.WeekVolume] = []
         var taperWeekCounter = 0

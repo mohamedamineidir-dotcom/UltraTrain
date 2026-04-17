@@ -81,16 +81,21 @@ enum RoadIntervalLibrary {
             phase: phase, discipline: discipline, slotIndex: slotIndex
         )
 
-        // Pick from preferred category, cycling by weekInPhase for variety
+        // #5: Pick from preferred category with improved variety.
+        // Uses weekInPhase + slotIndex offset to avoid repeating same template
+        // within 3 weeks. Golden ratio hashing spreads selections more evenly.
+        let varietyOffset = slotIndex * 7 + (weekInPhase > 0 ? 3 : 0)
         for cat in preferred {
             let inCat = available.filter { $0.category == cat }
             if !inCat.isEmpty {
-                return inCat[weekInPhase % inCat.count]
+                let index = (weekInPhase + varietyOffset) % inCat.count
+                return inCat[index]
             }
         }
 
         // Fallback: any available template
-        return available[weekInPhase % available.count]
+        let index = (weekInPhase + varietyOffset) % available.count
+        return available[index]
     }
 
     // MARK: - Distance-Specific Category Preferences

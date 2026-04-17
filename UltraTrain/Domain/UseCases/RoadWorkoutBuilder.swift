@@ -16,13 +16,20 @@ enum RoadWorkoutBuilder {
     static func build(
         from template: RoadIntervalLibrary.Template,
         paceProfile: RoadPaceProfile?,
-        experience: ExperienceLevel
+        experience: ExperienceLevel,
+        athleteAge: Int = 30
     ) -> IntervalWorkout {
         var phases: [IntervalPhase] = []
 
-        // Warm-up: 10-15min easy (longer for harder sessions)
-        // All quality sessions get 15min warm-up (Pfitzinger: threshold needs equal prep as VO2max)
-        let warmUpMinutes: Double = 15
+        // #4: Age-based warm-up (older athletes need longer warm-up for injury prevention)
+        let warmUpMinutes: Double
+        switch athleteAge {
+        case ..<25:  warmUpMinutes = 12
+        case ..<35:  warmUpMinutes = 14
+        case ..<45:  warmUpMinutes = 16
+        case ..<55:  warmUpMinutes = 18
+        default:     warmUpMinutes = 20
+        }
         phases.append(IntervalPhase(
             id: UUID(),
             phaseType: .warmUp,
