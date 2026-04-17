@@ -37,15 +37,37 @@ enum RoadSessionSelector {
             )
         }
 
+        // Issue #4: Goal realism gating — ambitious goals restrict race-pace usage
+        // Daniels: don't prescribe paces the athlete can't physiologically sustain
+        let gateRaceSpecific: Bool
+        if let realism = paceProfile?.goalRealismLevel {
+            switch realism {
+            case .realistic:
+                gateRaceSpecific = false // Use race pace freely in peak
+            case .ambitious:
+                // Only allow race-specific in final 40% of peak phase
+                let phaseProgress = Double(weekInPhase) / max(Double(weekInPhase + 2), 1.0)
+                gateRaceSpecific = phase == .peak && phaseProgress < 0.60
+            case .veryAmbitious:
+                // Never use race-specific — use fitness-derived paces only
+                gateRaceSpecific = true
+            }
+        } else {
+            gateRaceSpecific = false
+        }
+
+        let excludeForRealism: RoadIntervalLibrary.Category? = gateRaceSpecific ? .raceSpecific : nil
+
         // Select quality session templates from the library
         let q1 = RoadIntervalLibrary.selectForSlot(
             slotIndex: 0, phase: phase, discipline: discipline,
-            experience: experience, weekInPhase: weekInPhase
+            experience: experience, weekInPhase: weekInPhase,
+            excludeCategory: excludeForRealism
         )
         let q2 = RoadIntervalLibrary.selectForSlot(
             slotIndex: 1, phase: phase, discipline: discipline,
             experience: experience, weekInPhase: weekInPhase,
-            excludeCategory: q1?.category
+            excludeCategory: q1?.category ?? excludeForRealism
         )
 
         // Quality session intensities

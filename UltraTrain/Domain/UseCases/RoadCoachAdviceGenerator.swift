@@ -20,20 +20,31 @@ enum RoadCoachAdviceGenerator {
             return recoveryWeekAdvice(type: type)
         }
 
+        var advice: String?
         switch type {
         case .recovery:
-            return easyRunAdvice(phase: phase, paceProfile: paceProfile)
+            advice = easyRunAdvice(phase: phase, paceProfile: paceProfile)
         case .intervals:
-            return intervalAdvice(phase: phase, discipline: discipline, paceProfile: paceProfile)
+            advice = intervalAdvice(phase: phase, discipline: discipline, paceProfile: paceProfile)
         case .tempo:
-            return tempoAdvice(phase: phase, discipline: discipline, paceProfile: paceProfile)
+            advice = tempoAdvice(phase: phase, discipline: discipline, paceProfile: paceProfile)
         case .longRun:
-            return longRunAdvice(phase: phase, discipline: discipline, paceProfile: paceProfile)
+            advice = longRunAdvice(phase: phase, discipline: discipline, paceProfile: paceProfile)
         case .rest:
-            return "Rest is where adaptation happens. Trust the process."
+            advice = "Rest is where adaptation happens. Trust the process."
         default:
-            return nil
+            break
         }
+
+        // Issue #9: Goal realism warning for ambitious athletes
+        if let realism = paceProfile?.goalRealismLevel, realism != .realistic, phase == .base || phase == .build {
+            let warning = realism == .veryAmbitious
+                ? " Note: your goal is very ambitious vs current fitness. All paces are based on your current ability — we'll introduce goal pace only in late peak."
+                : " Note: your goal is ambitious. Training paces are based on current fitness to build safely toward race day."
+            advice = (advice ?? "") + warning
+        }
+
+        return advice
     }
 
 

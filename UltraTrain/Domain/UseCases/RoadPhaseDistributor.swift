@@ -88,19 +88,19 @@ enum RoadPhaseDistributor {
         case (.road10K, .elite):        return Fractions(base: 0.22, build: 0.35, peak: 0.43)
 
         // HM: threshold-centric. Pfitzinger: "LT is the HM limiter."
-        // Pfitzinger 18/55: Base 33%, Build 33%, Peak 16%
-        case (.roadHalf, .beginner):     return Fractions(base: 0.35, build: 0.35, peak: 0.30)
-        case (.roadHalf, .intermediate): return Fractions(base: 0.32, build: 0.35, peak: 0.33)
-        case (.roadHalf, .advanced):     return Fractions(base: 0.28, build: 0.37, peak: 0.35)
-        case (.roadHalf, .elite):        return Fractions(base: 0.25, build: 0.37, peak: 0.38)
+        // Pfitzinger 18/55: Base 33%, Build 33%, Peak 16%. Peak must be SHORT.
+        case (.roadHalf, .beginner):     return Fractions(base: 0.38, build: 0.38, peak: 0.24)
+        case (.roadHalf, .intermediate): return Fractions(base: 0.35, build: 0.40, peak: 0.25)
+        case (.roadHalf, .advanced):     return Fractions(base: 0.32, build: 0.40, peak: 0.28)
+        case (.roadHalf, .elite):        return Fractions(base: 0.28, build: 0.42, peak: 0.30)
 
         // Marathon: aerobic-centric. Pfitzinger/Canova: long base is non-negotiable.
         // Pfitzinger 18/70: Base 38%, Build 28%, Peak 22%
         // Canova: General+Fundamental = 65% of plan
-        case (.roadMarathon, .beginner):     return Fractions(base: 0.40, build: 0.30, peak: 0.30)
-        case (.roadMarathon, .intermediate): return Fractions(base: 0.38, build: 0.32, peak: 0.30)
-        case (.roadMarathon, .advanced):     return Fractions(base: 0.35, build: 0.33, peak: 0.32)
-        case (.roadMarathon, .elite):        return Fractions(base: 0.33, build: 0.35, peak: 0.32)
+        case (.roadMarathon, .beginner):     return Fractions(base: 0.45, build: 0.30, peak: 0.25)
+        case (.roadMarathon, .intermediate): return Fractions(base: 0.40, build: 0.32, peak: 0.28)
+        case (.roadMarathon, .advanced):     return Fractions(base: 0.38, build: 0.34, peak: 0.28)
+        case (.roadMarathon, .elite):        return Fractions(base: 0.35, build: 0.37, peak: 0.28)
         }
     }
 

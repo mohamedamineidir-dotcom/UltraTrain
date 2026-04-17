@@ -65,12 +65,13 @@ enum RoadLongRunCalculator {
         }
         let capDuration = min(maxDurationSeconds, absoluteMax)
 
-        // Starting long run: 50-55% of cap, minimum 60 min.
+        // Starting long run: 40-55% of cap.
         // Pfitzinger 18/55 starts at ~47% of peak, 18/70 at ~50%.
+        // Beginners start lower to allow more gradual ramp (Lydiard principle).
         let startFraction: Double = switch experience {
-        case .beginner:     0.50
-        case .intermediate: 0.52
-        case .advanced:     0.55
+        case .beginner:     0.42
+        case .intermediate: 0.48
+        case .advanced:     0.52
         case .elite:        0.55
         }
         // Issue #5: Minimum long run by experience (60min too much for 10K beginner)

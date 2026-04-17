@@ -118,8 +118,9 @@ enum RoadIntervalLibrary {
         // 10K: VO2max is the limiter (Daniels)
         case (.build, .road10K, 0):     return [.vo2max, .speed]
         case (.build, .road10K, _):     return [.threshold, .vo2max]
-        // HM: Threshold is the limiter (Pfitzinger)
-        case (.build, .roadHalf, 0):    return [.vo2max, .threshold]
+        // HM: Threshold is the limiter (Pfitzinger: "LT is the HM cornerstone")
+        // Both slots threshold-primary, VO2max secondary
+        case (.build, .roadHalf, 0):    return [.threshold, .vo2max]
         case (.build, .roadHalf, _):    return [.threshold, .progression]
         // Marathon: VO2max + threshold equally important (Canova)
         case (.build, .roadMarathon, 0): return [.vo2max, .speed]
