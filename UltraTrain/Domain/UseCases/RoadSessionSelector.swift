@@ -179,17 +179,17 @@ enum RoadSessionSelector {
 
         switch variant {
         case .easy:
-            return "Easy long run. Conversational pace throughout — build your aerobic engine."
+            return "Easy long run — conversational pace"
         case .progressive:
-            return "Progressive long run. Start easy, build to ~90% race pace in the final third."
+            return "Progressive long run — easy → race pace final 1/3"
         case .fastFinish:
-            return "Fast-finish long run. Easy pace until the last 20%, then surge to race pace."
+            return "Fast-finish long run — last 20% at race pace"
         case .marathonPaceBlocks:
-            return "MP long run. Easy warm-up, then 2-3 blocks at marathon pace with easy jogs between."
+            return "MP long run — 2-3 blocks at marathon pace"
         case .twoPart:
-            return "Two-part long run. First half easy, second half at race pace. Race simulation."
+            return "Two-part long run — easy then race pace"
         case .raceSimulation:
-            return "Race simulation. Extended block at race pace within the long run. Rehearse race day."
+            return "Race simulation — extended block at race pace"
         }
     }
 

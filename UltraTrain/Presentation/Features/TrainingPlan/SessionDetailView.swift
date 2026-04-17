@@ -522,39 +522,64 @@ struct SessionDetailView: View {
 
     private func buildStructureSummary(workout: IntervalWorkout) -> String {
         var parts: [String] = []
-        for phase in workout.phases {
+        let phases = workout.phases
+
+        var i = 0
+        while i < phases.count {
+            let phase = phases[i]
             let perRepSeconds: Int
             if case .duration(let sec) = phase.trigger {
                 perRepSeconds = Int(sec)
             } else {
                 perRepSeconds = 0
             }
+
             switch phase.phaseType {
             case .warmUp:
                 let mins = Int(phase.totalDuration) / 60
                 parts.append("Warmup \(mins)min")
+
             case .coolDown:
                 let mins = Int(phase.totalDuration) / 60
                 parts.append("Cooldown \(mins)min")
+
             case .work:
-                let mins = perRepSeconds / 60
-                let secs = perRepSeconds % 60
-                let timeStr = secs > 0 ? "\(mins)m\(secs)s" : "\(mins)min"
+                let timeStr = formatSeconds(perRepSeconds)
+                var workPart: String
                 if phase.repeatCount > 1 {
-                    parts.append("\(phase.repeatCount)×\(timeStr) @ \(phase.targetIntensity.displayName)")
+                    workPart = "\(phase.repeatCount)×\(timeStr) @ \(phase.targetIntensity.displayName)"
                 } else {
-                    parts.append("\(timeStr) @ \(phase.targetIntensity.displayName)")
+                    workPart = "\(timeStr) @ \(phase.targetIntensity.displayName)"
                 }
+
+                // Inline the next recovery phase if it exists (compact format)
+                if i + 1 < phases.count, phases[i + 1].phaseType == .recovery {
+                    let recPhase = phases[i + 1]
+                    if case .duration(let recSec) = recPhase.trigger, recSec > 0 {
+                        let recStr = formatSeconds(Int(recSec))
+                        workPart += " (\(recStr) jog)"
+                    }
+                    i += 1 // Skip the recovery phase
+                }
+                parts.append(workPart)
+
             case .recovery:
-                let mins = perRepSeconds / 60
-                let secs = perRepSeconds % 60
-                if mins > 0 || secs > 0 {
-                    let timeStr = secs > 0 ? "\(mins)m\(secs)s" : "\(mins)min"
-                    parts.append("\(timeStr) jog")
+                // Only show standalone recovery (not already inlined with work)
+                if perRepSeconds > 0 {
+                    parts.append("\(formatSeconds(perRepSeconds)) jog")
                 }
             }
+            i += 1
         }
         return parts.joined(separator: " → ")
+    }
+
+    private func formatSeconds(_ totalSeconds: Int) -> String {
+        let mins = totalSeconds / 60
+        let secs = totalSeconds % 60
+        if mins == 0 { return "\(secs)s" }
+        if secs > 0 { return "\(mins)m\(secs)s" }
+        return "\(mins)min"
     }
 
     // MARK: - Actions

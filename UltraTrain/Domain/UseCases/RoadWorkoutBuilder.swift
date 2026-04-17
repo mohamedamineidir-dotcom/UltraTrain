@@ -31,71 +31,62 @@ enum RoadWorkoutBuilder {
             notes: warmUpNotes(paceProfile: paceProfile)
         ))
 
-        // Work + recovery phases
+        // Work + recovery: use repeatCount on SINGLE phases (not a loop)
+        // This produces 2-3 phases instead of 2N, giving clean UI display:
+        // "6×2m41s @ Hard (90s jog)" instead of 12 separate entries
+        let workIntensity = intensityForZone(template.targetPaceZone)
+        let paceNotes = workNotes(template: template, paceProfile: paceProfile)
+
         if template.repDistanceM > 0 {
-            // Distance-based intervals → convert to DURATION using target pace
-            // This fixes the "0min" display bug in the UI
+            // Distance-based → convert to duration using target pace
             let repDistKm = Double(template.repDistanceM) / 1000.0
             let targetPace = targetPaceSeconds(zone: template.targetPaceZone, profile: paceProfile)
             let repDurationSeconds = repDistKm * targetPace
 
-            for _ in 0..<template.repCount {
+            phases.append(IntervalPhase(
+                id: UUID(), phaseType: .work,
+                trigger: .duration(seconds: repDurationSeconds),
+                targetIntensity: workIntensity,
+                repeatCount: template.repCount,
+                notes: paceNotes
+            ))
+            if template.recoverySeconds > 0 {
                 phases.append(IntervalPhase(
-                    id: UUID(),
-                    phaseType: .work,
-                    trigger: .duration(seconds: repDurationSeconds),
-                    targetIntensity: intensityForZone(template.targetPaceZone),
-                    repeatCount: 1,
-                    notes: workNotes(template: template, paceProfile: paceProfile)
+                    id: UUID(), phaseType: .recovery,
+                    trigger: .duration(seconds: Double(template.recoverySeconds)),
+                    targetIntensity: .easy,
+                    repeatCount: max(template.repCount - 1, 1),
+                    notes: recoveryNotes(template: template)
                 ))
-                // Recovery (skip after last rep)
-                if template.recoverySeconds > 0 {
-                    phases.append(IntervalPhase(
-                        id: UUID(),
-                        phaseType: .recovery,
-                        trigger: .duration(seconds: Double(template.recoverySeconds)),
-                        targetIntensity: .easy,
-                        repeatCount: 1,
-                        notes: recoveryNotes(template: template)
-                    ))
-                }
+            }
+        } else if template.repCount > 1 {
+            // Multiple duration blocks (e.g., double tempo)
+            let blockDuration = template.totalWorkMinutes * 60 / Double(template.repCount)
+            phases.append(IntervalPhase(
+                id: UUID(), phaseType: .work,
+                trigger: .duration(seconds: blockDuration),
+                targetIntensity: workIntensity,
+                repeatCount: template.repCount,
+                notes: paceNotes
+            ))
+            if template.recoverySeconds > 0 {
+                phases.append(IntervalPhase(
+                    id: UUID(), phaseType: .recovery,
+                    trigger: .duration(seconds: Double(template.recoverySeconds)),
+                    targetIntensity: .easy,
+                    repeatCount: max(template.repCount - 1, 1),
+                    notes: recoveryNotes(template: template)
+                ))
             }
         } else {
-            // Duration-based (tempo, progression)
-            let workDuration = template.totalWorkMinutes * 60
-            if template.repCount > 1 {
-                // Multiple blocks (e.g., double tempo)
-                for _ in 0..<template.repCount {
-                    phases.append(IntervalPhase(
-                        id: UUID(),
-                        phaseType: .work,
-                        trigger: .duration(seconds: workDuration / Double(template.repCount)),
-                        targetIntensity: intensityForZone(template.targetPaceZone),
-                        repeatCount: 1,
-                        notes: workNotes(template: template, paceProfile: paceProfile)
-                    ))
-                    if template.recoverySeconds > 0 {
-                        phases.append(IntervalPhase(
-                            id: UUID(),
-                            phaseType: .recovery,
-                            trigger: .duration(seconds: Double(template.recoverySeconds)),
-                            targetIntensity: .easy,
-                            repeatCount: 1,
-                            notes: recoveryNotes(template: template)
-                        ))
-                    }
-                }
-            } else {
-                // Single continuous block
-                phases.append(IntervalPhase(
-                    id: UUID(),
-                    phaseType: .work,
-                    trigger: .duration(seconds: workDuration),
-                    targetIntensity: intensityForZone(template.targetPaceZone),
-                    repeatCount: 1,
-                    notes: workNotes(template: template, paceProfile: paceProfile)
-                ))
-            }
+            // Single continuous block (tempo, progression)
+            phases.append(IntervalPhase(
+                id: UUID(), phaseType: .work,
+                trigger: .duration(seconds: template.totalWorkMinutes * 60),
+                targetIntensity: workIntensity,
+                repeatCount: 1,
+                notes: paceNotes
+            ))
         }
 
         // Cool-down: 5-10min easy
@@ -109,11 +100,7 @@ enum RoadWorkoutBuilder {
             notes: coolDownNotes(paceProfile: paceProfile)
         ))
 
-        // Remove trailing recovery (before cool-down)
-        if phases.count >= 2,
-           phases[phases.count - 2].phaseType == .recovery {
-            phases.remove(at: phases.count - 2)
-        }
+        // No need to remove trailing recovery — repeatCount handles it
 
         let totalDuration = phases.reduce(0.0) { $0 + $1.totalDuration }
         let estimatedKm = totalDuration / (paceProfile?.thresholdPacePerKm ?? 300)

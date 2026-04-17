@@ -36,44 +36,6 @@ enum RoadCoachAdviceGenerator {
         }
     }
 
-    /// Generates a road-specific session description.
-    static func sessionDescription(
-        type: SessionType,
-        phase: TrainingPhase,
-        discipline: RoadRaceDiscipline,
-        isRecoveryWeek: Bool
-    ) -> String {
-        if isRecoveryWeek {
-            return type == .longRun
-                ? "Easy long run — shorter this week. Recovery is king."
-                : "Easy run. Recovery week — protect your adaptation."
-        }
-
-        switch (type, phase) {
-        case (.intervals, .base):
-            return "Speed development. Short fast reps to build running economy."
-        case (.intervals, .build):
-            return "VO2max intervals. Build your aerobic ceiling for \(discipline.displayName) performance."
-        case (.intervals, .peak):
-            return "Race-specific intervals. Lock in your \(discipline.displayName) rhythm."
-        case (.tempo, .base):
-            return "Threshold introduction. Comfortably hard — you should be able to speak in short phrases."
-        case (.tempo, .build):
-            return "Lactate threshold development. The cornerstone of \(discipline.displayName) performance."
-        case (.tempo, .peak):
-            return "Race-pace threshold work. Sharpen your ability to sustain target pace."
-        case (.longRun, .base):
-            return "Aerobic long run. Easy pace throughout — build your endurance foundation."
-        case (.longRun, .build):
-            return "Structured long run. Building toward race-specific endurance."
-        case (.longRun, .peak):
-            return "Race-specific long run. Practice pacing, fueling, and mental focus."
-        case (.longRun, .taper):
-            return "Reduced long run. Maintain feel without fatigue."
-        default:
-            return "Easy run at conversational pace."
-        }
-    }
 
     // MARK: - Specific Advice
 
