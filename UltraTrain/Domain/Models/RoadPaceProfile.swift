@@ -60,33 +60,39 @@ enum RoadRaceDiscipline: String, Sendable {
     }
 
     /// Maximum long run distance in km, scaled by experience.
+    /// Maximum long run distance in km. Daniels: LR ≤ 25% of weekly volume or distance cap.
+    /// Pfitzinger 18/55: 16mi (26km), 18/70: 20mi (32km), 18/85: 22mi (35km).
     func longRunCapKm(experience: ExperienceLevel) -> Double {
         switch (self, experience) {
-        case (.road10K, .beginner):       14
-        case (.road10K, .intermediate):   16
-        case (.road10K, _):               18
+        case (.road10K, .beginner):       16
+        case (.road10K, .intermediate):   20
+        case (.road10K, .advanced):       24
+        case (.road10K, .elite):          24
         case (.roadHalf, .beginner):      20
-        case (.roadHalf, .intermediate):  22
-        case (.roadHalf, _):              25
+        case (.roadHalf, .intermediate):  23
+        case (.roadHalf, .advanced):      26
+        case (.roadHalf, .elite):         26
         case (.roadMarathon, .beginner):  30
         case (.roadMarathon, .intermediate): 32
-        case (.roadMarathon, _):          35
+        case (.roadMarathon, .advanced):  35
+        case (.roadMarathon, .elite):     40
         }
     }
 
-    /// Peak weekly volume in km, scaled by experience (Pfitzinger guidelines).
+    /// Peak weekly volume in km (Pfitzinger plans as reference).
+    /// 10K: 16/30 → 16/60. HM: 12/50 → 16/80. Marathon: 18/55 → 18/85+.
     func peakWeeklyKm(experience: ExperienceLevel) -> Double {
         switch (self, experience) {
         case (.road10K, .beginner):       40
         case (.road10K, .intermediate):   55
         case (.road10K, .advanced):       70
         case (.road10K, .elite):          85
-        case (.roadHalf, .beginner):      50
+        case (.roadHalf, .beginner):      55
         case (.roadHalf, .intermediate):  70
         case (.roadHalf, .advanced):      90
         case (.roadHalf, .elite):         110
         case (.roadMarathon, .beginner):  55
-        case (.roadMarathon, .intermediate): 80
+        case (.roadMarathon, .intermediate): 85
         case (.roadMarathon, .advanced):  110
         case (.roadMarathon, .elite):     140
         }

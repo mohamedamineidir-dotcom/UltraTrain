@@ -101,7 +101,7 @@ extension TaperProfile {
             return TaperProfile(
                 totalTaperWeeks: 1,
                 volumeTransitionWeeks: 0,
-                weeklyVolumeFractions: [0.55],
+                weeklyVolumeFractions: [0.65],
                 qualityAllowedPerWeek: [true]
             )
         case .roadHalf:
@@ -110,7 +110,7 @@ extension TaperProfile {
             return TaperProfile(
                 totalTaperWeeks: 2,
                 volumeTransitionWeeks: 0,
-                weeklyVolumeFractions: [0.70, 0.45],
+                weeklyVolumeFractions: [0.70, 0.50],
                 qualityAllowedPerWeek: [true, true]
             )
         case .roadMarathon:

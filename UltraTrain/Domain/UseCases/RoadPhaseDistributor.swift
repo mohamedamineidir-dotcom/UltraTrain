@@ -35,9 +35,11 @@ enum RoadPhaseDistributor {
         let discipline = RoadRaceDiscipline.from(distanceKm: raceDistanceKm)
         let fracs = fractions(discipline: discipline, experience: experience)
 
-        // Taper weeks from road-specific profile
-        let maxTaper = totalWeeks < 8 ? min(taperProfile.totalTaperWeeks, 2) : taperProfile.totalTaperWeeks
-        let taperWeeks = min(maxTaper, totalWeeks / 3)
+        // Taper weeks: use profile directly (discipline-driven, not plan-length-driven)
+        // Pfitzinger: 10K=1wk, HM=2wk, Marathon=3wk — fixed per discipline
+        let taperWeeks = totalWeeks < 8
+            ? min(taperProfile.totalTaperWeeks, 2)
+            : min(taperProfile.totalTaperWeeks, totalWeeks - 3) // Leave at least 3 non-taper weeks
         let remaining = totalWeeks - taperWeeks
 
         // Distribute remaining across base/build/peak

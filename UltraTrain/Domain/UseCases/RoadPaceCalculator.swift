@@ -85,8 +85,8 @@ enum RoadPaceCalculator {
         let fiveK = fitness5KPace
 
         return RoadPaceProfile(
-            easyPacePerKm: (fiveK * 1.30)...(fiveK * 1.50),
-            marathonPacePerKm: fiveK * 1.15,
+            easyPacePerKm: (fiveK * 1.30)...(fiveK * 1.40),
+            marathonPacePerKm: fiveK * 1.12,
             thresholdPacePerKm: fiveK * 1.07,
             intervalPacePerKm: fiveK * 1.00,
             repetitionPacePerKm: fiveK * 0.93,

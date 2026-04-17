@@ -50,7 +50,7 @@ enum RoadSessionSelector {
 
         // Quality session intensities
         let q1Intensity: Intensity = q1?.targetPaceZone == .repetition ? .maxEffort : .hard
-        let q2Intensity: Intensity = q2?.targetPaceZone == .threshold ? .moderate : .hard
+        let q2Intensity: Intensity = q2?.targetPaceZone == .easy ? .moderate : .hard
 
         // Build the session pool (priority order: long run > quality > easy)
         // Day layout: Mon=0(rest/easy) Tue=1(quality1) Wed=2(easy) Thu=3(quality2) Fri=4(easy) Sat=5(long) Sun=6(rest)
@@ -107,7 +107,7 @@ enum RoadSessionSelector {
 
         // For 6+ runs/week marathon plans: convert day 2 easy to medium-long (Pfitzinger)
         if preferredRunsPerWeek >= 6 && discipline == .roadMarathon && phase != .base {
-            let medLongDuration = longRunDuration * 0.6
+            let medLongDuration = longRunDuration * 0.75
             pool[5] = (2, tpl(2, .recovery, .easy, medLongDuration, 0,
                     "Medium-long run. Pfitzinger aerobic builder. Easy-moderate pace."))
         }
@@ -137,7 +137,7 @@ enum RoadSessionSelector {
         tpl: (Int, SessionType, Intensity, TimeInterval, Double, String) -> SessionTemplateGenerator.SessionTemplate
     ) -> [SessionTemplateGenerator.SessionTemplate] {
         // Recovery: all easy + reduced long run + optional strides
-        let recoveryCount = min(preferredRunsPerWeek, 5) // Max 5 on recovery weeks
+        let recoveryCount = preferredRunsPerWeek > 4 ? preferredRunsPerWeek - 1 : preferredRunsPerWeek
         let pool: [(day: Int, template: SessionTemplateGenerator.SessionTemplate)] = [
             (5, tpl(5, .longRun, .easy, longRunDuration, 0,
                     "Easy long run. Recovery week — shorter than usual.")),

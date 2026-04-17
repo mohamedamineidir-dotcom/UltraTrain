@@ -21,7 +21,8 @@ enum RoadWorkoutBuilder {
         var phases: [IntervalPhase] = []
 
         // Warm-up: 10-15min easy (longer for harder sessions)
-        let warmUpMinutes: Double = template.category == .speed || template.category == .vo2max ? 15 : 10
+        // All quality sessions get 15min warm-up (Pfitzinger: threshold needs equal prep as VO2max)
+        let warmUpMinutes: Double = 15
         phases.append(IntervalPhase(
             id: UUID(),
             phaseType: .warmUp,
@@ -90,7 +91,8 @@ enum RoadWorkoutBuilder {
         }
 
         // Cool-down: 5-10min easy
-        let coolDownMinutes: Double = template.category == .speed ? 10 : 8
+        // Speed: shorter cool-down (neuromuscular). Threshold/VO2max: longer (metabolic recovery)
+        let coolDownMinutes: Double = template.category == .speed ? 8 : 10
         phases.append(IntervalPhase(
             id: UUID(),
             phaseType: .coolDown,

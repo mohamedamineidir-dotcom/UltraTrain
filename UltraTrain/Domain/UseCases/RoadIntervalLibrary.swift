@@ -206,17 +206,17 @@ enum RoadIntervalLibrary {
     private static let thresholdTemplates: [Template] = [
         Template(
             name: "Cruise Intervals 1K",
-            category: .threshold, description: "5×1000m at T-pace, 60s rest. Daniels cruise intervals.",
+            category: .threshold, description: "5×1000m at T-pace, 90s rest. Daniels cruise intervals.",
             targetPaceZone: .threshold, repDistanceM: 1000, repCount: 5,
-            recoverySeconds: 60, recoveryType: .standing, totalWorkMinutes: 20,
+            recoverySeconds: 90, recoveryType: .standing, totalWorkMinutes: 20,
             applicablePhases: [.base, .build, .peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
             minExperience: .beginner
         ),
         Template(
             name: "Cruise Intervals 1600m",
-            category: .threshold, description: "4×1600m at T-pace, 75s rest. Extended cruise intervals.",
+            category: .threshold, description: "4×1600m at T-pace, 3min rest. Extended cruise intervals.",
             targetPaceZone: .threshold, repDistanceM: 1600, repCount: 4,
-            recoverySeconds: 75, recoveryType: .standing, totalWorkMinutes: 24,
+            recoverySeconds: 180, recoveryType: .standing, totalWorkMinutes: 24,
             applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
             minExperience: .intermediate
         ),
@@ -246,11 +246,19 @@ enum RoadIntervalLibrary {
         ),
         Template(
             name: "Norwegian Double Threshold",
-            category: .threshold, description: "2×4000m at T-pace, 2min jog. Ingebrigtsen system.",
+            category: .threshold, description: "2×4000m at T-pace, 4min jog. Ingebrigtsen system.",
             targetPaceZone: .threshold, repDistanceM: 4000, repCount: 2,
-            recoverySeconds: 120, recoveryType: .jog, totalWorkMinutes: 28,
+            recoverySeconds: 240, recoveryType: .jog, totalWorkMinutes: 28,
             applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf],
             minExperience: .advanced
+        ),
+        Template(
+            name: "Threshold Ladder 2K",
+            category: .threshold, description: "3×2000m at T-pace, 2min jog. Marathon lactate endurance.",
+            targetPaceZone: .threshold, repDistanceM: 2000, repCount: 3,
+            recoverySeconds: 120, recoveryType: .jog, totalWorkMinutes: 24,
+            applicablePhases: [.build], applicableDistances: [.roadMarathon],
+            minExperience: .intermediate
         ),
     ]
 
@@ -279,6 +287,14 @@ enum RoadIntervalLibrary {
             category: .raceSpecific, description: "3×3000m at 10K pace, 3min jog. Advanced 10K simulation.",
             targetPaceZone: .racePace, repDistanceM: 3000, repCount: 3,
             recoverySeconds: 180, recoveryType: .jog, totalWorkMinutes: 30,
+            applicablePhases: [.peak], applicableDistances: [.road10K],
+            minExperience: .advanced
+        ),
+        Template(
+            name: "10K Tempo Simulation",
+            category: .raceSpecific, description: "Continuous 8-10min at 10K race pace. Full-system rehearsal.",
+            targetPaceZone: .racePace, repDistanceM: 0, repCount: 1,
+            recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 9,
             applicablePhases: [.peak], applicableDistances: [.road10K],
             minExperience: .advanced
         ),

@@ -65,13 +65,13 @@ enum RoadLongRunCalculator {
         }
         let capDuration = min(maxDurationSeconds, absoluteMax)
 
-        // Starting long run: 55-65% of cap, minimum 60 min
-        // Ensures long run is always the longest session from week 1
+        // Starting long run: 50-55% of cap, minimum 60 min.
+        // Pfitzinger 18/55 starts at ~47% of peak, 18/70 at ~50%.
         let startFraction: Double = switch experience {
-        case .beginner:     0.65
-        case .intermediate: 0.60
+        case .beginner:     0.50
+        case .intermediate: 0.52
         case .advanced:     0.55
-        case .elite:        0.50
+        case .elite:        0.55
         }
         let startDuration = max(capDuration * startFraction, 3600) // Minimum 60 min
 
@@ -123,7 +123,7 @@ enum RoadLongRunCalculator {
         switch phase {
         case .base:
             // Base: easy long runs. Introduce progressive in late base for experienced.
-            if weekInPhase >= 2 && (experience == .advanced || experience == .elite) {
+            if weekInPhase >= 2 && experience != .beginner {
                 return .progressive
             }
             return .easy

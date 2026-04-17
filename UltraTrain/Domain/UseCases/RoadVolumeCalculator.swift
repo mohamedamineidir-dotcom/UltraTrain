@@ -33,8 +33,8 @@ enum RoadVolumeCalculator {
     private static func easyParams(experience: ExperienceLevel) -> SessionParams {
         switch experience {
         case .beginner:     SessionParams(startMinutes: 30, peakMinutes: 42)
-        case .intermediate: SessionParams(startMinutes: 35, peakMinutes: 48)
-        case .advanced:     SessionParams(startMinutes: 40, peakMinutes: 55)
+        case .intermediate: SessionParams(startMinutes: 35, peakMinutes: 50)
+        case .advanced:     SessionParams(startMinutes: 40, peakMinutes: 60)
         case .elite:        SessionParams(startMinutes: 45, peakMinutes: 60)
         }
     }
