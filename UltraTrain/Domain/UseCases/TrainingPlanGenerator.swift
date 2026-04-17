@@ -263,8 +263,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             taperProfile: taperProfile
         )
 
-        // 3. Build week skeletons (reuse existing builder)
-        let recoveryCycle = VolumeCapCalculator.recoveryCycle(for: athlete.experienceLevel)
+        // 3. Build week skeletons — road-specific recovery cycle
+        let recoveryCycle = VolumeCapCalculator.roadRecoveryCycle(for: athlete.experienceLevel, discipline: discipline)
         let skeletons = WeekSkeletonBuilder.build(
             raceDate: raceDate,
             phases: phases,

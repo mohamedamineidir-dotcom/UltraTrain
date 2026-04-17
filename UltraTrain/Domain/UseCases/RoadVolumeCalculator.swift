@@ -27,39 +27,67 @@ enum RoadVolumeCalculator {
         let peakMinutes: Double
     }
 
-    /// Easy run durations by experience level.
-    /// Daniels: E runs should be 30-75% of longest run, never longer than long run.
-    /// Pfitzinger: 40-60 min easy for most plans.
-    private static func easyParams(experience: ExperienceLevel) -> SessionParams {
-        switch experience {
+    /// Easy run durations by experience AND distance.
+    ///
+    /// Marathon easy runs are LONGER than 10K easy runs at the same experience level.
+    /// Pfitzinger 18/70 marathon: GA runs 60-90min. 10K plans: 40-60min.
+    /// The aerobic volume requirement scales with race distance.
+    private static func easyParams(experience: ExperienceLevel, discipline: RoadRaceDiscipline) -> SessionParams {
+        let distanceMultiplier: Double = switch discipline {
+        case .road10K:      1.0
+        case .roadHalf:     1.15
+        case .roadMarathon: 1.35  // Marathon easy runs ~35% longer than 10K
+        }
+        let base: SessionParams = switch experience {
         case .beginner:     SessionParams(startMinutes: 30, peakMinutes: 42)
         case .intermediate: SessionParams(startMinutes: 35, peakMinutes: 50)
-        case .advanced:     SessionParams(startMinutes: 40, peakMinutes: 60)
-        case .elite:        SessionParams(startMinutes: 45, peakMinutes: 60)
+        case .advanced:     SessionParams(startMinutes: 40, peakMinutes: 58)
+        case .elite:        SessionParams(startMinutes: 45, peakMinutes: 62)
         }
+        return SessionParams(
+            startMinutes: base.startMinutes * distanceMultiplier,
+            peakMinutes: base.peakMinutes * distanceMultiplier
+        )
     }
 
-    /// Interval session durations (total including warm-up + cool-down).
-    /// Daniels: warm-up 10-15min, cool-down 5-10min, work portion 10-30min.
-    /// Total: 40-75 min depending on phase and experience.
-    private static func intervalParams(experience: ExperienceLevel) -> SessionParams {
-        switch experience {
+    /// Interval session durations by experience AND distance.
+    /// Marathon intervals (including warm-up/cool-down) are longer because
+    /// warm-up is more important and work blocks can be 20-40min at MP.
+    private static func intervalParams(experience: ExperienceLevel, discipline: RoadRaceDiscipline) -> SessionParams {
+        let distanceMultiplier: Double = switch discipline {
+        case .road10K:      1.0
+        case .roadHalf:     1.08
+        case .roadMarathon: 1.18  // Marathon quality sessions ~18% longer
+        }
+        let base: SessionParams = switch experience {
         case .beginner:     SessionParams(startMinutes: 40, peakMinutes: 52)
         case .intermediate: SessionParams(startMinutes: 42, peakMinutes: 60)
         case .advanced:     SessionParams(startMinutes: 45, peakMinutes: 70)
         case .elite:        SessionParams(startMinutes: 48, peakMinutes: 78)
         }
+        return SessionParams(
+            startMinutes: base.startMinutes * distanceMultiplier,
+            peakMinutes: base.peakMinutes * distanceMultiplier
+        )
     }
 
-    /// Tempo session durations (total including warm-up + cool-down).
-    /// Daniels: T work = 10% of weekly volume, typical 20-40min work + warm-up/cool-down.
-    private static func tempoParams(experience: ExperienceLevel) -> SessionParams {
-        switch experience {
+    /// Tempo session durations by experience AND distance.
+    private static func tempoParams(experience: ExperienceLevel, discipline: RoadRaceDiscipline) -> SessionParams {
+        let distanceMultiplier: Double = switch discipline {
+        case .road10K:      1.0
+        case .roadHalf:     1.10
+        case .roadMarathon: 1.20  // Marathon tempo ~20% longer (more threshold work)
+        }
+        let base: SessionParams = switch experience {
         case .beginner:     SessionParams(startMinutes: 35, peakMinutes: 48)
         case .intermediate: SessionParams(startMinutes: 38, peakMinutes: 55)
         case .advanced:     SessionParams(startMinutes: 42, peakMinutes: 65)
         case .elite:        SessionParams(startMinutes: 45, peakMinutes: 72)
         }
+        return SessionParams(
+            startMinutes: base.startMinutes * distanceMultiplier,
+            peakMinutes: base.peakMinutes * distanceMultiplier
+        )
     }
 
     // MARK: - Public
@@ -74,10 +102,11 @@ enum RoadVolumeCalculator {
 
         let experience = athlete.experienceLevel
         let totalWeeks = skeletons.count
+        let discipline = RoadRaceDiscipline.from(distanceKm: raceDistanceKm)
 
-        let easyP = easyParams(experience: experience)
-        let intervalP = intervalParams(experience: experience)
-        let tempoP = tempoParams(experience: experience)
+        let easyP = easyParams(experience: experience, discipline: discipline)
+        let intervalP = intervalParams(experience: experience, discipline: discipline)
+        let tempoP = tempoParams(experience: experience, discipline: discipline)
 
         let avgPaceSecPerKm: Double = switch experience {
         case .beginner:     370
@@ -85,8 +114,6 @@ enum RoadVolumeCalculator {
         case .advanced:     295
         case .elite:        265
         }
-
-        let discipline = RoadRaceDiscipline.from(distanceKm: raceDistanceKm)
         // #7: Weight goal affects peak volume (energy balance for weight loss)
         let weightScale: Double = switch athlete.weightGoal {
         case .lose:     0.90  // 10% less peak volume for weight loss
@@ -144,12 +171,13 @@ enum RoadVolumeCalculator {
             easy1Seconds = min(easy1Seconds, longRunSeconds * 0.75)
             easy2Seconds = min(easy2Seconds, longRunSeconds * 0.70)
 
-            // Recovery weeks: reduce from current level, not from peak
+            // Recovery weeks: gentle reduction — Pfitzinger uses ~75-80% of load week
+            // Previous 0.70 on quality was too aggressive for road plans
             if skeleton.isRecoveryWeek {
-                easy1Seconds *= 0.80
-                easy2Seconds *= 0.80
-                intervalSeconds *= 0.70
-                tempoSeconds *= 0.70
+                easy1Seconds *= 0.82
+                easy2Seconds *= 0.82
+                intervalSeconds *= 0.78
+                tempoSeconds *= 0.78
             }
 
             // Taper: apply profile fractions

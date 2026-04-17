@@ -113,13 +113,28 @@ enum VolumeCapCalculator {
         }
     }
 
-    /// Recovery week cycle by experience.
+    /// Recovery week cycle by experience (trail/ultra default).
     static func recoveryCycle(for experience: ExperienceLevel) -> Int {
         switch experience {
         case .beginner: return 2     // 2:1 (2 hard + 1 recovery)
         case .intermediate: return 3 // 3:1
         case .advanced: return 3     // 3:1
         case .elite: return 3        // 3:1
+        }
+    }
+
+    /// Road-specific recovery cycle — marathon runners need longer blocks.
+    /// Pfitzinger: uses 3-week cycles in 18-week plans (3 load + natural deload).
+    /// For road, advanced+ athletes can sustain 4:1 for marathon prep.
+    static func roadRecoveryCycle(for experience: ExperienceLevel, discipline: RoadRaceDiscipline) -> Int {
+        switch (experience, discipline) {
+        case (.beginner, _):                     return 2 // 2:1
+        case (.intermediate, .roadMarathon):     return 3 // 3:1
+        case (.intermediate, _):                 return 3 // 3:1
+        case (.advanced, .roadMarathon):         return 4 // 4:1 (longer blocks for marathon)
+        case (.advanced, _):                     return 3 // 3:1
+        case (.elite, .roadMarathon):            return 4 // 4:1
+        case (.elite, _):                        return 3 // 3:1
         }
     }
 
