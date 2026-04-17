@@ -75,7 +75,7 @@ enum RoadRaceDiscipline: String, Sendable {
         case (.roadMarathon, .beginner):  30
         case (.roadMarathon, .intermediate): 32
         case (.roadMarathon, .advanced):  35
-        case (.roadMarathon, .elite):     40
+        case (.roadMarathon, .elite):     35
         }
     }
 

@@ -7,7 +7,9 @@ enum AdaptiveSessionAdjuster {
         readiness: ReadinessScore?,
         recoveryScore: RecoveryScore?,
         fatiguePatterns: [FatiguePattern],
-        weather: WeatherSnapshot?
+        weather: WeatherSnapshot?,
+        raceType: RaceType = .trail,
+        phase: TrainingPhase = .build
     ) -> AdaptiveSessionAdjustment? {
         // Decision matrix:
         // 1. Compound fatigue -> force recovery/rest
@@ -42,10 +44,20 @@ enum AdaptiveSessionAdjuster {
         }
 
         // 5. Extreme weather
+        // Issue #12: Don't downgrade in taper — intensity maintenance is critical (Mujika 2003)
+        if phase == .taper {
+            // Only weather adjustment applies in taper (safety concern)
+            if let adjustment = weatherAdjustment(for: session, weather: weather, isHardSession: isHardSession, raceType: raceType) {
+                return adjustment
+            }
+            return nil
+        }
+
         if let adjustment = weatherAdjustment(
             for: session,
             weather: weather,
-            isHardSession: isHardSession
+            isHardSession: isHardSession,
+            raceType: raceType
         ) {
             return adjustment
         }
@@ -181,9 +193,12 @@ enum AdaptiveSessionAdjuster {
     private static func weatherAdjustment(
         for session: TrainingSession,
         weather: WeatherSnapshot?,
-        isHardSession: Bool
+        isHardSession: Bool,
+        raceType: RaceType = .trail
     ) -> AdaptiveSessionAdjustment? {
-        guard let weather, weather.temperatureCelsius > 30, isHardSession else {
+        // Issue #8: Road surfaces are 2-5°C hotter than air — lower threshold for road
+        let heatThreshold: Double = raceType == .road ? 25.0 : 30.0
+        guard let weather, weather.temperatureCelsius > heatThreshold, isHardSession else {
             return nil
         }
 
@@ -197,7 +212,7 @@ enum AdaptiveSessionAdjuster {
             adjustedDistanceKm: session.plannedDistanceKm * 0.85,
             adjustedDuration: session.plannedDuration * 0.85,
             reason: .weatherConditions,
-            reasonText: "High heat (\(Int(weather.temperatureCelsius))\u{00B0}C). Reducing intensity and volume.",
+            reasonText: "High heat (\(Int(weather.temperatureCelsius))\u{00B0}C). Reducing intensity and volume by 15%.",
             confidencePercent: 80
         )
     }

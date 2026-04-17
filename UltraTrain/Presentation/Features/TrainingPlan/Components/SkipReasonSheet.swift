@@ -103,6 +103,7 @@ extension SkipReason {
         case .soreness:     "Muscle soreness or pain"
         case .illness:      "Feeling unwell or sick"
         case .weather:      "Bad weather or conditions"
+        case .injury:       "I have an injury or sharp pain"
         case .other:        "Other reason"
         }
     }
@@ -114,6 +115,7 @@ extension SkipReason {
         case .noMotivation: "Mentally not feeling it today"
         case .soreness:     "Joint discomfort or muscle tightness"
         case .illness:      "Cold, flu, or general malaise"
+        case .injury:       "Strain, sprain, or acute pain"
         case .weather:      "Rain, extreme heat, unsafe trail"
         case .other:        "Something else"
         }
@@ -126,6 +128,7 @@ extension SkipReason {
         case .noMotivation: "brain.head.profile"
         case .soreness:     "bandage"
         case .illness:      "cross.case"
+        case .injury:       "exclamationmark.triangle"
         case .weather:      "cloud.rain"
         case .other:        "ellipsis.circle"
         }
@@ -138,6 +141,7 @@ extension SkipReason {
         case .noMotivation: .purple
         case .soreness:     .red
         case .illness:      .pink
+        case .injury:       .red
         case .weather:      .cyan
         case .other:        .gray
         }

@@ -169,12 +169,18 @@ enum PlanAdjustmentCalculator {
         guard !affectedIds.isEmpty else { return }
 
         let pct = Int(AppConfiguration.Training.lowAdherenceVolumeReductionPercent)
+        // Issue #13: Escalate severity in peak/taper phase (Canova: peak is irreplaceable)
+        let severity: AdjustmentSeverity = (currentWeek.phase == .peak || currentWeek.phase == .taper)
+            ? .urgent : .recommended
+        let peakNote = severity == .urgent
+            ? " You're in the peak phase — every session counts toward race day."
+            : ""
         recommendations.append(PlanAdjustmentRecommendation(
             id: UUID(),
             type: .reduceVolumeAfterLowAdherence,
-            severity: .recommended,
+            severity: severity,
             title: "Reduce This Week's Volume",
-            message: "Last week's adherence was \(Int(adherence * 100))%. Reduce remaining sessions by \(pct)% to ease back in.",
+            message: "Last week's adherence was \(Int(adherence * 100))%. Reduce remaining sessions by \(pct)% to ease back in.\(peakNote)",
             actionLabel: "Reduce Volume",
             affectedSessionIds: affectedIds
         ))

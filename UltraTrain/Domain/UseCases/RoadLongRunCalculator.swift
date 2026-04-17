@@ -73,7 +73,14 @@ enum RoadLongRunCalculator {
         case .advanced:     0.55
         case .elite:        0.55
         }
-        let startDuration = max(capDuration * startFraction, 3600) // Minimum 60 min
+        // Issue #5: Minimum long run by experience (60min too much for 10K beginner)
+        let minimumLongRun: TimeInterval = switch experience {
+        case .beginner:     2400  // 40 min
+        case .intermediate: 3000  // 50 min
+        case .advanced:     3600  // 60 min
+        case .elite:        3600  // 60 min
+        }
+        let startDuration = max(capDuration * startFraction, minimumLongRun)
 
         // Quadratic ramp: reaches peak ~80% through the plan
         let peakWeek = Int(Double(totalWeeks) * 0.80)
@@ -92,7 +99,7 @@ enum RoadLongRunCalculator {
             duration *= 0.70
         }
 
-        // Taper reduction
+        // Taper: keep 60% of current duration (40% reduction per Mujika 2003)
         if phase == .taper {
             duration *= 0.60
         }

@@ -26,6 +26,9 @@ enum SkipReason: String, CaseIterable, Sendable, Codable {
     /// Bad weather or unsafe conditions — purely external, no fitness implication.
     case weather
 
+    /// Acute injury — strain, sprain, sharp pain. Needs aggressive rest protocol.
+    case injury
+
     /// Catch-all for reasons not listed above.
     case other
 }

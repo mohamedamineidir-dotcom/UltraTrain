@@ -46,41 +46,84 @@ enum SkipAdaptationCalculator {
         let isFirstHalf = isFirstHalfOfWeek(session: session, week: context.currentWeek)
         let isKeySession = session.type == .longRun || session.type == .intervals
             || session.type == .verticalGain || session.isKeySession
-        let pattern = detectSkipPattern(context.recentSkipReasons, currentReason: reason)
+        let isLongRun = session.type == .longRun
+        // Issue #7: Scale pattern thresholds by plan length
+        let pattern = detectSkipPattern(
+            context.recentSkipReasons, currentReason: reason,
+            totalWeeks: context.totalWeeksInPlan
+        )
+        // Issue #6: Phase-aware severity escalation
+        let isPeakOrTaper = context.currentWeek.phase == .peak || context.currentWeek.phase == .taper
+
+        var result: Adaptation
 
         switch reason {
         case .illness:
-            return handleIllness(context: context, isFirstHalf: isFirstHalf)
+            result = handleIllness(context: context, isFirstHalf: isFirstHalf)
+
+        case .injury:
+            // Issue #4: Injury protocol — aggressive rest + cross-training
+            result = handleInjury(context: context, isFirstHalf: isFirstHalf)
 
         case .fatigue:
-            return handleFatigue(
+            result = handleFatigue(
                 context: context, isFirstHalf: isFirstHalf,
                 isKeySession: isKeySession, pattern: pattern
             )
 
         case .soreness:
-            return handleSoreness(
+            result = handleSoreness(
                 context: context, isFirstHalf: isFirstHalf, pattern: pattern
             )
 
         case .noMotivation:
-            return handleNoMotivation(context: context, pattern: pattern)
+            result = handleNoMotivation(context: context, pattern: pattern)
 
         case .noTime:
-            return handleNoTime(
+            result = handleNoTime(
                 context: context, isFirstHalf: isFirstHalf,
                 isKeySession: isKeySession, pattern: pattern
             )
 
         case .weather:
-            return Adaptation(
+            result = Adaptation(
                 recommendations: [],
                 note: "Skipped due to weather. No training adaptation needed."
             )
 
         case .other:
-            return handleOther(context: context, pattern: pattern)
+            result = handleOther(context: context, pattern: pattern)
         }
+
+        // Issue #3: Long run skips — special handling (Pfitzinger: "most important session")
+        if isLongRun && reason != .weather && reason != .injury && reason != .illness {
+            let lrNote = " The long run is the most important session for endurance development. Consider rescheduling to another day this week if possible."
+            result = Adaptation(
+                recommendations: result.recommendations + longRunRescheduleRecommendation(context: context),
+                note: result.note + lrNote
+            )
+        }
+
+        // Issue #6: Escalate severity in peak/taper phase
+        if isPeakOrTaper && isKeySession && !result.recommendations.isEmpty {
+            result = Adaptation(
+                recommendations: result.recommendations.map { rec in
+                    var upgraded = rec
+                    if rec.severity == .suggestion {
+                        upgraded = PlanAdjustmentRecommendation(
+                            id: rec.id, type: rec.type, severity: .recommended,
+                            title: rec.title, message: rec.message + " (Peak phase — every session counts.)",
+                            actionLabel: rec.actionLabel, affectedSessionIds: rec.affectedSessionIds,
+                            volumeAdjustments: rec.volumeAdjustments
+                        )
+                    }
+                    return upgraded
+                },
+                note: result.note
+            )
+        }
+
+        return result
     }
 
     // MARK: - Illness
@@ -397,16 +440,28 @@ enum SkipAdaptationCalculator {
     }
 
     /// Detects skip patterns from recent history.
-    /// Thresholds are deliberately high because single skips are meaningless (Mujika, Koop).
+    /// Issue #7: Thresholds scale by plan length — shorter plans need tighter detection.
+    /// A 12-week 10K plan can't afford the same skip tolerance as a 28-week marathon.
     private static func detectSkipPattern(
-        _ recentReasons: [SkipReason], currentReason: SkipReason
+        _ recentReasons: [SkipReason], currentReason: SkipReason,
+        totalWeeks: Int
     ) -> PatternLevel {
         let allReasons = recentReasons + [currentReason]
-        let physiological = allReasons.filter { $0 == .fatigue || $0 == .soreness || $0 == .illness }
+        let physiological = allReasons.filter {
+            $0 == .fatigue || $0 == .soreness || $0 == .illness || $0 == .injury
+        }
         let meaningful = allReasons.filter { $0 != .weather && $0 != .other }
 
-        if physiological.count >= 3 || meaningful.count >= 5 { return .elevated }
-        if physiological.count >= 2 || meaningful.count >= 3 { return .mild }
+        // Scale thresholds: shorter plans → lower thresholds
+        // 28-week marathon: physio≥3 = elevated. 12-week 10K: physio≥2 = elevated.
+        let scale = max(Double(totalWeeks) / 28.0, 0.5)
+        let elevatedPhysio = max(Int(3.0 * scale), 2)
+        let elevatedTotal = max(Int(5.0 * scale), 3)
+        let mildPhysio = max(Int(2.0 * scale), 1)
+        let mildTotal = max(Int(3.0 * scale), 2)
+
+        if physiological.count >= elevatedPhysio || meaningful.count >= elevatedTotal { return .elevated }
+        if physiological.count >= mildPhysio || meaningful.count >= mildTotal { return .mild }
         return .none
     }
 
@@ -444,6 +499,84 @@ enum SkipAdaptationCalculator {
         // No pattern — should not reach here
         case (.none, _):                 return 1.0
         }
+    }
+
+    // MARK: - Injury (Issue #4)
+    //
+    // Acute injury requires aggressive protocol — NOT just "ease next hard session."
+    // Protocol: 48-72hr full rest → cross-training only → gradual return.
+    // Volume reduction 30-40% for next week (much more than fatigue/soreness).
+
+    private static func handleInjury(
+        context: Context, isFirstHalf: Bool
+    ) -> Adaptation {
+        var recs: [PlanAdjustmentRecommendation] = []
+
+        // Cancel ALL remaining sessions this week (not just hard ones)
+        let remaining = context.currentWeek.sessions.filter {
+            $0.date > context.skippedSession.date && !$0.isCompleted && !$0.isSkipped && $0.type != .rest
+        }
+        if !remaining.isEmpty {
+            recs.append(PlanAdjustmentRecommendation(
+                id: UUID(),
+                type: .swapToRecovery,
+                severity: .urgent,
+                title: "Rest — injury reported",
+                message: "All remaining sessions this week should be rest or gentle cross-training (swimming, cycling). Do not run through an injury.",
+                actionLabel: "Cancel remaining",
+                affectedSessionIds: remaining.map(\.id)
+            ))
+        }
+
+        // Aggressive next-week reduction (30-40% based on experience)
+        if let nextWeek = context.nextWeek {
+            let factor: Double = switch context.experience {
+            case .beginner:     0.60  // 40% reduction
+            case .intermediate: 0.65  // 35% reduction
+            case .advanced:     0.70  // 30% reduction
+            case .elite:        0.70  // 30% reduction
+            }
+            let volumeAdj = nextWeekVolumeReduction(nextWeek: nextWeek, factor: factor)
+            if !volumeAdj.isEmpty {
+                let pct = Int((1.0 - factor) * 100)
+                recs.append(PlanAdjustmentRecommendation(
+                    id: UUID(),
+                    type: .reduceFatigueLoad,
+                    severity: .urgent,
+                    title: "Reduced load after injury",
+                    message: "Reducing next week by ~\(pct)%. Return to running only when pain-free. Consider cross-training (swimming, cycling) to maintain fitness.",
+                    actionLabel: "Reduce volume",
+                    affectedSessionIds: volumeAdj.map(\.sessionId),
+                    volumeAdjustments: volumeAdj
+                ))
+            }
+        }
+
+        return Adaptation(
+            recommendations: recs,
+            note: "Injury reported. All remaining sessions cancelled. Next week significantly reduced. Do NOT run through pain — cross-train if possible. See a professional if pain persists beyond 48-72h."
+        )
+    }
+
+    // MARK: - Long Run Reschedule (Issue #3)
+
+    private static func longRunRescheduleRecommendation(
+        context: Context
+    ) -> [PlanAdjustmentRecommendation] {
+        let restSlots = context.currentWeek.sessions.filter {
+            $0.type == .rest && $0.date > context.skippedSession.date && !$0.isCompleted && !$0.isSkipped
+        }
+        guard let slot = restSlots.first else { return [] }
+
+        return [PlanAdjustmentRecommendation(
+            id: UUID(),
+            type: .rescheduleKeySession,
+            severity: .recommended,
+            title: "Reschedule long run?",
+            message: "The long run builds endurance that can't be replaced by other sessions. Move it to \(slot.date.formatted(.dateTime.weekday(.wide))) if possible.",
+            actionLabel: "Reschedule",
+            affectedSessionIds: [context.skippedSession.id, slot.id]
+        )]
     }
 
     // MARK: - Helpers

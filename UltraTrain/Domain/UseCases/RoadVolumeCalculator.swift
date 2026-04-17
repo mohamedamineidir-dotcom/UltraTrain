@@ -86,22 +86,44 @@ enum RoadVolumeCalculator {
         case .elite:        265
         }
 
+        let discipline = RoadRaceDiscipline.from(distanceKm: raceDistanceKm)
+        let peakKmCeiling = discipline.peakWeeklyKm(experience: experience)
+
         var volumes: [VolumeCalculator.WeekVolume] = []
         var taperWeekCounter = 0
         let taperStart = totalWeeks - taperProfile.totalTaperWeeks
+        var previousNonRecoveryKm: Double = 0 // Track for 10% cap and post-recovery baseline
 
         for (index, skeleton) in skeletons.enumerated() {
-            // Plan progress: 0.0 at start → 1.0 at peak (just before taper)
+            // Tiered progress by phase (Daniels/Canova: build fast in base, hold in peak)
+            // Base: 0→0.5 progress, Build: 0.5→0.9 progress, Peak: 0.9→1.0 (near-hold)
             let peakWeekIndex = max(taperStart - 1, 1)
-            let progress = min(Double(index) / Double(peakWeekIndex), 1.0)
+            let rawProgress = min(Double(index) / Double(peakWeekIndex), 1.0)
+            let progress: Double
+            switch skeleton.phase {
+            case .base:
+                // Accelerated: reach 50% of growth by end of base
+                let baseEnd = Double(skeletons.firstIndex { $0.phase != .base } ?? totalWeeks) / Double(peakWeekIndex)
+                let inPhaseProgress = min(rawProgress / max(baseEnd, 0.01), 1.0)
+                progress = inPhaseProgress * 0.50
+            case .build:
+                // Steady: 50% → 90% of growth
+                progress = 0.50 + (rawProgress - 0.30) / 0.70 * 0.40
+            case .peak:
+                // Near-hold: 90% → 100%
+                progress = min(0.90 + (rawProgress - 0.70) / 0.30 * 0.10, 1.0)
+            default:
+                progress = rawProgress
+            }
+            let clampedProgress = max(min(progress, 1.0), 0.0)
 
-            // Compute each session duration independently (linear growth)
-            var easy1Seconds = linearDuration(params: easyP, progress: progress)
-            var easy2Seconds = linearDuration(params: easyP, progress: progress) * 0.9 // 2nd easy slightly shorter
-            var intervalSeconds = linearDuration(params: intervalP, progress: progress)
-            var tempoSeconds = linearDuration(params: tempoP, progress: progress)
+            // Compute each session duration with tiered progress
+            var easy1Seconds = linearDuration(params: easyP, progress: clampedProgress)
+            var easy2Seconds = linearDuration(params: easyP, progress: clampedProgress) * 0.9
+            var intervalSeconds = linearDuration(params: intervalP, progress: clampedProgress)
+            var tempoSeconds = linearDuration(params: tempoP, progress: clampedProgress)
 
-            // Long run: computed by RoadLongRunCalculator (quadratic growth)
+            // Long run: quadratic growth (delegated)
             let longRunSeconds = RoadLongRunCalculator.longRunDuration(
                 weekIndex: index,
                 totalWeeks: totalWeeks,
@@ -116,7 +138,7 @@ enum RoadVolumeCalculator {
             easy1Seconds = min(easy1Seconds, longRunSeconds * 0.75)
             easy2Seconds = min(easy2Seconds, longRunSeconds * 0.70)
 
-            // Recovery weeks: reduce all by 20%, keep 1 quality session light
+            // Recovery weeks: reduce from current level, not from peak
             if skeleton.isRecoveryWeek {
                 easy1Seconds *= 0.80
                 easy2Seconds *= 0.80
@@ -141,15 +163,31 @@ enum RoadVolumeCalculator {
             intervalSeconds = roundTo5Min(intervalSeconds)
             tempoSeconds = roundTo5Min(tempoSeconds)
 
-            // Weekly total = sum of all sessions (session-first approach)
+            // Weekly total = sum of all sessions
             let totalSeconds = easy1Seconds + easy2Seconds + intervalSeconds + tempoSeconds + longRunSeconds
-            let totalKm = totalSeconds / avgPaceSecPerKm
+            var totalKm = totalSeconds / avgPaceSecPerKm
+
+            // Issue #10: Peak volume ceiling — don't exceed discipline target
+            totalKm = min(totalKm, peakKmCeiling)
+
+            // Issue #2: 10% weekly growth cap (Canova: "never >10% week-on-week")
+            // Issue #11: Post-recovery uses pre-recovery baseline, not recovery volume
+            if !skeleton.isRecoveryWeek && skeleton.phase != .taper {
+                if previousNonRecoveryKm > 0 {
+                    let maxAllowed = previousNonRecoveryKm * 1.10
+                    totalKm = min(totalKm, maxAllowed)
+                }
+                previousNonRecoveryKm = totalKm
+            }
+
+            // Recalculate totalSeconds if km was capped
+            let finalTotalSeconds = totalKm * avgPaceSecPerKm
 
             volumes.append(VolumeCalculator.WeekVolume(
                 weekNumber: skeleton.weekNumber,
                 targetVolumeKm: round(totalKm * 10) / 10,
                 targetElevationGainM: 0,
-                targetDurationSeconds: round(totalSeconds),
+                targetDurationSeconds: round(finalTotalSeconds),
                 targetLongRunDurationSeconds: round(longRunSeconds),
                 isB2BWeek: false,
                 b2bDay1Seconds: 0,
