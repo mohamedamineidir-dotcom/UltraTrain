@@ -142,7 +142,7 @@ enum RoadSessionSelector {
         if let t = q1, let p = paceProfile {
             let pace = RoadCoachAdviceGenerator.formatPace(paceForZone(t.targetPaceZone, profile: p))
             if t.repDistanceM > 0 {
-                q1Desc = "\(t.repCount)×\(t.repDistanceM)m @ \(pace)/km"
+                q1Desc = "\(t.name) — \(t.repCount)×\(t.repDistanceM)m @ \(pace)/km"
             } else {
                 q1Desc = "\(t.name) @ \(pace)/km"
             }
@@ -154,7 +154,7 @@ enum RoadSessionSelector {
         if let t = q2, let p = paceProfile {
             let pace = RoadCoachAdviceGenerator.formatPace(paceForZone(t.targetPaceZone, profile: p))
             if t.repDistanceM > 0 {
-                q2Desc = "\(t.repCount)×\(t.repDistanceM)m @ \(pace)/km"
+                q2Desc = "\(t.name) — \(t.repCount)×\(t.repDistanceM)m @ \(pace)/km"
             } else {
                 q2Desc = "\(t.name) @ \(pace)/km"
             }

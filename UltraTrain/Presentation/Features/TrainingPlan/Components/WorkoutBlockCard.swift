@@ -78,6 +78,13 @@ struct WorkoutBlockCard: View {
     }
 
     private var durationText: String {
+        // For distance triggers, show total distance. For duration, show time.
+        if case .distance(let km) = phase.trigger {
+            let totalMeters = Int(km * 1000) * phase.repeatCount
+            return totalMeters >= 1000
+                ? String(format: "%.1fkm", Double(totalMeters) / 1000.0)
+                : "\(totalMeters)m"
+        }
         let totalSec = phase.totalDuration
         let mins = Int(totalSec) / 60
         if mins >= 60 {
@@ -94,7 +101,8 @@ struct WorkoutBlockCard: View {
             let repText = secRemainder > 0 ? "\(perRep)m\(secRemainder)s" : "\(perRep)min"
             return "\(repText) per rep at \(phase.targetIntensity.displayName)"
         case .distance(let km):
-            return "\(String(format: "%.1f", km))km per rep"
+            let meters = Int(km * 1000)
+            return "\(meters)m per rep at \(phase.targetIntensity.displayName)"
         }
     }
 }

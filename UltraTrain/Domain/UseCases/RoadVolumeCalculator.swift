@@ -167,17 +167,18 @@ enum RoadVolumeCalculator {
                 isRecoveryWeek: skeleton.isRecoveryWeek
             )
 
-            // HARD CAP: Easy runs must NEVER exceed long run
-            easy1Seconds = min(easy1Seconds, longRunSeconds * 0.75)
-            easy2Seconds = min(easy2Seconds, longRunSeconds * 0.70)
+            // HARD CAP: Easy runs must NEVER exceed long run, and absolute max 90min
+            let easyAbsoluteMax: TimeInterval = 5400 // 90 min — no easy run should be 2h+
+            easy1Seconds = min(easy1Seconds, longRunSeconds * 0.65, easyAbsoluteMax)
+            easy2Seconds = min(easy2Seconds, longRunSeconds * 0.58, easyAbsoluteMax)
 
-            // Recovery weeks: gentle reduction — Pfitzinger uses ~75-80% of load week
-            // Previous 0.70 on quality was too aggressive for road plans
+            // Recovery weeks: Pfitzinger uses ~80-85% of load week volume
+            // Keep the reduction gentle — recovery should feel like a lighter week, not a shutdown
             if skeleton.isRecoveryWeek {
-                easy1Seconds *= 0.82
-                easy2Seconds *= 0.82
-                intervalSeconds *= 0.78
-                tempoSeconds *= 0.78
+                easy1Seconds *= 0.87
+                easy2Seconds *= 0.87
+                intervalSeconds *= 0.85
+                tempoSeconds *= 0.85
             }
 
             // Taper: apply profile fractions
@@ -191,11 +192,11 @@ enum RoadVolumeCalculator {
                 taperWeekCounter += 1
             }
 
-            // Round to nearest 5 minutes
-            easy1Seconds = roundTo5Min(easy1Seconds)
-            easy2Seconds = roundTo5Min(easy2Seconds)
-            intervalSeconds = roundTo5Min(intervalSeconds)
-            tempoSeconds = roundTo5Min(tempoSeconds)
+            // Round to nearest MINUTE (not 5 minutes — 5min rounding causes identical consecutive weeks)
+            easy1Seconds = (easy1Seconds / 60).rounded() * 60
+            easy2Seconds = (easy2Seconds / 60).rounded() * 60
+            intervalSeconds = (intervalSeconds / 60).rounded() * 60
+            tempoSeconds = (tempoSeconds / 60).rounded() * 60
 
             // Weekly total = sum of all sessions
             let totalSeconds = easy1Seconds + easy2Seconds + intervalSeconds + tempoSeconds + longRunSeconds

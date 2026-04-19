@@ -46,14 +46,12 @@ enum RoadWorkoutBuilder {
         let paceNotes = workNotes(template: template, paceProfile: paceProfile)
 
         if template.repDistanceM > 0 {
-            // Distance-based → convert to duration using target pace
+            // Distance-based intervals: use .distance trigger so UI shows "200m" not "0m41s"
             let repDistKm = Double(template.repDistanceM) / 1000.0
-            let targetPace = targetPaceSeconds(zone: template.targetPaceZone, profile: paceProfile)
-            let repDurationSeconds = repDistKm * targetPace
 
             phases.append(IntervalPhase(
                 id: UUID(), phaseType: .work,
-                trigger: .duration(seconds: repDurationSeconds),
+                trigger: .distance(km: repDistKm),
                 targetIntensity: workIntensity,
                 repeatCount: template.repCount,
                 notes: paceNotes
@@ -111,7 +109,16 @@ enum RoadWorkoutBuilder {
 
         // No need to remove trailing recovery — repeatCount handles it
 
-        let totalDuration = phases.reduce(0.0) { $0 + $1.totalDuration }
+        // Compute total duration (account for distance phases using target pace)
+        let targetPace = targetPaceSeconds(zone: template.targetPaceZone, profile: paceProfile)
+        var totalDuration: TimeInterval = 0
+        for phase in phases {
+            if case .distance(let km) = phase.trigger {
+                totalDuration += km * targetPace * Double(phase.repeatCount)
+            } else {
+                totalDuration += phase.totalDuration
+            }
+        }
         let estimatedKm = totalDuration / (paceProfile?.thresholdPacePerKm ?? 300)
 
         // Build compact name: "10×200m @ 3:43/km" format

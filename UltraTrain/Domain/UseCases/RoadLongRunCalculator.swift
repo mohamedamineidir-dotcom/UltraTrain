@@ -95,9 +95,9 @@ enum RoadLongRunCalculator {
 
         var duration = startDuration + (capDuration - startDuration) * progress
 
-        // Recovery week: reduce by 22% (Pfitzinger: 75-80% of load week long run)
+        // Recovery week: reduce by 15% (Pfitzinger: 80-85% of load week long run)
         if isRecoveryWeek {
-            duration *= 0.78
+            duration *= 0.85
         }
 
         // Taper: keep 60% of current duration (40% reduction per Mujika 2003)

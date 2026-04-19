@@ -544,12 +544,19 @@ struct SessionDetailView: View {
                 parts.append("Cooldown \(mins)min")
 
             case .work:
-                let timeStr = formatSeconds(perRepSeconds)
+                // Show distance for distance-based, time for duration-based
+                let repLabel: String
+                if case .distance(let km) = phase.trigger {
+                    let meters = Int(km * 1000)
+                    repLabel = meters >= 1000 ? "\(meters)m" : "\(meters)m"
+                } else {
+                    repLabel = formatSeconds(perRepSeconds)
+                }
                 var workPart: String
                 if phase.repeatCount > 1 {
-                    workPart = "\(phase.repeatCount)×\(timeStr) @ \(phase.targetIntensity.displayName)"
+                    workPart = "\(phase.repeatCount)×\(repLabel) @ \(phase.targetIntensity.displayName)"
                 } else {
-                    workPart = "\(timeStr) @ \(phase.targetIntensity.displayName)"
+                    workPart = "\(repLabel) @ \(phase.targetIntensity.displayName)"
                 }
 
                 // Inline the next recovery phase if it exists (compact format)
