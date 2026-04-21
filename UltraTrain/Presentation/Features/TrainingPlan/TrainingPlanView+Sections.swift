@@ -26,7 +26,9 @@ extension TrainingPlanView {
 
                 planHeader(plan)
 
-                PlanVolumeChartsSection(plan: plan)
+                let isRoadPlan = viewModel.targetRace?.raceType == .road
+
+                PlanVolumeChartsSection(plan: plan, isRoad: isRoadPlan)
 
                 ForEach(Array(viewModel.visibleWeeks.enumerated()), id: \.element.id) { visibleIndex, week in
                     let weekIndex = plan.weeks.firstIndex(where: { $0.id == week.id }) ?? 0
@@ -44,9 +46,9 @@ extension TrainingPlanView {
                             weekRange: "Weeks \(firstNum)-\(lastNum)",
                             completedWeeks: completedWeeks,
                             totalWeeks: phaseWeeks.count,
-                            description: PhaseHeaderCard.description(for: week.phase, focus: week.phaseFocus, isRoad: viewModel.targetRace?.raceType == .road),
+                            description: PhaseHeaderCard.description(for: week.phase, focus: week.phaseFocus, isRoad: isRoadPlan),
                             phaseFocus: week.phaseFocus,
-                            isRoad: viewModel.targetRace?.raceType == .road
+                            isRoad: isRoadPlan
                         )
                     }
 
@@ -58,6 +60,7 @@ extension TrainingPlanView {
                         planEndDate: plan.weeks.last?.endDate ?? .now,
                         allWeeks: plan.weeks,
                         athlete: viewModel.athlete,
+                        isRoad: isRoadPlan,
                         nutritionAdvisor: viewModel.nutritionAdvisor,
                         nutritionPreferences: viewModel.nutritionPreferences,
                         onToggleSession: { sessionIndex in

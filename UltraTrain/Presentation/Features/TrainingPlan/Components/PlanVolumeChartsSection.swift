@@ -18,12 +18,17 @@ enum VolumeChartMetric: String, CaseIterable {
 struct PlanVolumeChartsSection: View {
     @Environment(\.unitPreference) private var units
     let plan: TrainingPlan
+    var isRoad: Bool = false
     @State private var selectedMetric: VolumeChartMetric = .duration
     @State private var selectedWeek: WeekChartDataPoint?
     @State private var sheetWeek: WeekChartDataPoint?
 
     private var dataPoints: [WeekChartDataPoint] {
         PlanVolumeChartData.extract(from: plan.weeks)
+    }
+
+    private var availableMetrics: [VolumeChartMetric] {
+        isRoad ? [.duration, .distance] : VolumeChartMetric.allCases
     }
 
     var body: some View {
@@ -64,11 +69,16 @@ struct PlanVolumeChartsSection: View {
 
     private var metricPicker: some View {
         Picker("Metric", selection: $selectedMetric) {
-            ForEach(VolumeChartMetric.allCases, id: \.self) { metric in
+            ForEach(availableMetrics, id: \.self) { metric in
                 Text(metric.localizedName).tag(metric)
             }
         }
         .pickerStyle(.segmented)
+        .onAppear {
+            if !availableMetrics.contains(selectedMetric) {
+                selectedMetric = .duration
+            }
+        }
     }
 
     // MARK: - Summary Stats
@@ -174,11 +184,21 @@ struct PlanVolumeChartsSection: View {
             }
 
             // Current week — filled accent pill
+            // Shortened RuleMark (yEnd ~60% of max) keeps the NOW badge inside
+            // the plot area so it never overlaps the summary stats above.
             if let currentWeek = dataPoints.first(where: \.isCurrentWeek) {
-                RuleMark(x: .value("Current", "W\(currentWeek.weekNumber)"))
+                RuleMark(
+                    x: .value("Current", "W\(currentWeek.weekNumber)"),
+                    yStart: .value("Start", 0),
+                    yEnd: .value("End", nowRuleMarkYEnd)
+                )
                     .foregroundStyle(Theme.Colors.accentColor.opacity(0.3))
                     .lineStyle(StrokeStyle(lineWidth: 1))
-                    .annotation(position: .top, spacing: 4) {
+                    .annotation(
+                        position: .top,
+                        spacing: 2,
+                        overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))
+                    ) {
                         Text("NOW")
                             .font(.system(size: 9, weight: .heavy, design: .rounded))
                             .foregroundStyle(.white)
@@ -347,6 +367,11 @@ struct PlanVolumeChartsSection: View {
 
     private var maxPlannedValue: Double {
         dataPoints.map { plannedValue(for: $0) }.max() ?? 1
+    }
+
+    private var nowRuleMarkYEnd: Double {
+        let base = max(maxPlannedValue, 1)
+        return base * 0.6
     }
 
     private var peakWeekValue: String? {

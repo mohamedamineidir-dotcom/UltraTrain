@@ -9,6 +9,7 @@ struct WeekCardView: View {
     let planEndDate: Date
     let allWeeks: [TrainingWeek]
     let athlete: Athlete?
+    var isRoad: Bool = false
     let nutritionAdvisor: any SessionNutritionAdvisor
     let nutritionPreferences: NutritionPreferences
     let onToggleSession: (Int) -> Void
@@ -40,6 +41,7 @@ struct WeekCardView: View {
         planEndDate: Date,
         allWeeks: [TrainingWeek],
         athlete: Athlete?,
+        isRoad: Bool = false,
         nutritionAdvisor: any SessionNutritionAdvisor,
         nutritionPreferences: NutritionPreferences,
         onToggleSession: @escaping (Int) -> Void,
@@ -62,6 +64,7 @@ struct WeekCardView: View {
         self.planEndDate = planEndDate
         self.allWeeks = allWeeks
         self.athlete = athlete
+        self.isRoad = isRoad
         self.nutritionAdvisor = nutritionAdvisor
         self.nutritionPreferences = nutritionPreferences
         self.onToggleSession = onToggleSession
@@ -181,10 +184,20 @@ extension WeekCardView {
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
 
-                // Line 3: Duration (primary) + Elevation
+                // Line 3: Duration (primary) + Elevation (trail/ultra) or Distance (road)
                 HStack(spacing: Theme.Spacing.md) {
                     Label(formattedWeekDuration, systemImage: "clock")
-                    Label(UnitFormatter.formatElevation(week.targetElevationGainM, unit: units), systemImage: "mountain.2.fill")
+                    if isRoad {
+                        Label(
+                            UnitFormatter.formatDistance(week.targetVolumeKm, unit: units, decimals: 0),
+                            systemImage: "figure.run"
+                        )
+                    } else {
+                        Label(
+                            UnitFormatter.formatElevation(week.targetElevationGainM, unit: units),
+                            systemImage: "mountain.2.fill"
+                        )
+                    }
                 }
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
@@ -201,7 +214,11 @@ extension WeekCardView {
         var label = "Week \(week.weekNumber), \(week.phase.displayName) phase"
         if week.isRecoveryWeek { label += ", recovery week" }
         label += ". \(formattedWeekDuration)"
-        label += ", \(UnitFormatter.formatElevation(week.targetElevationGainM, unit: units)) elevation"
+        if isRoad {
+            label += ", \(UnitFormatter.formatDistance(week.targetVolumeKm, unit: units, decimals: 0)) distance"
+        } else {
+            label += ", \(UnitFormatter.formatElevation(week.targetElevationGainM, unit: units)) elevation"
+        }
         label += ". \(progressText)"
         return label
     }
