@@ -285,11 +285,22 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             intermediateRaces: intermediateRaces
         )
 
-        // 6. Compute pace profile for session descriptions
+        // 6. Compute pace profile for session descriptions.
+        //
+        // RR-6: `.targetRanking` was silently falling through to `nil`, which
+        // meant ranking-focused athletes got fitness-derived paces identical
+        // to a `.finish` runner. We don't have field-of-runners data to look
+        // up "what top 20 runs at this race", so we derive a stretch time
+        // from the athlete's current fitness (7% faster than the experience
+        // heuristic). Predictable, safe, coach-appropriate.
         let goalTime: TimeInterval?
-        if case .targetTime(let time) = targetRace.goalType {
+        switch targetRace.goalType {
+        case .targetTime(let time):
             goalTime = time
-        } else {
+        case .targetRanking:
+            let baseDuration = targetRace.estimatedDuration(experience: athlete.experienceLevel)
+            goalTime = baseDuration * 0.93
+        case .finish:
             goalTime = nil
         }
         let paceProfile = RoadPaceCalculator.paceProfile(
