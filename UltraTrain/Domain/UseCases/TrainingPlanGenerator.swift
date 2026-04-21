@@ -328,10 +328,15 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 let templates = SessionTemplateGenerator.overrideTemplates(
                     for: override.behavior, volume: volume,
                     preferredRunsPerWeek: athlete.preferredRunsPerWeek,
-                    raceContext: intermediateRaceContext
+                    raceContext: intermediateRaceContext,
+                    isRoadRace: true  // RR-4: strip VG sessions + elevation from road B-race weeks
                 )
                 sessions = templates.enumerated().map { dayIdx, tpl in
-                    makeSession(template: tpl, skeleton: skeleton, dayIndex: dayIdx, volume: volume)
+                    var session = makeSession(template: tpl, skeleton: skeleton, dayIndex: dayIdx, volume: volume)
+                    // RR-4 defense-in-depth: never allow fabricated D+ on road plans
+                    // regardless of what any template says.
+                    session.plannedElevationGainM = 0
+                    return session
                 }
             } else {
                 // Road-specific session selection

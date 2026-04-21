@@ -613,12 +613,13 @@ enum SessionTemplateGenerator {
         for behavior: IntermediateRaceHandler.Behavior,
         volume: VolumeCalculator.WeekVolume,
         preferredRunsPerWeek: Int = 5,
-        raceContext: RaceContext? = nil
+        raceContext: RaceContext? = nil,
+        isRoadRace: Bool = false
     ) -> [SessionTemplate] {
         let raw: [SessionTemplate]
         switch behavior {
         case .miniTaper:
-            raw = miniTaperTemplates(volume: volume, raceContext: raceContext)
+            raw = miniTaperTemplates(volume: volume, raceContext: raceContext, isRoadRace: isRoadRace)
         case .raceWeek(let priority):
             raw = priority == .cRace
                 ? cRaceWeekTemplates(volume: volume, raceContext: raceContext)
@@ -664,7 +665,8 @@ enum SessionTemplateGenerator {
 
     private static func miniTaperTemplates(
         volume: VolumeCalculator.WeekVolume,
-        raceContext: RaceContext? = nil
+        raceContext: RaceContext? = nil,
+        isRoadRace: Bool = false
     ) -> [SessionTemplate] {
         let base = volume.baseSessionDurations
         let raceKm = raceContext?.distanceKm ?? 30
@@ -678,6 +680,15 @@ enum SessionTemplateGenerator {
         default:     reductionFactor = 0.78  // 22% reduction
         }
 
+        // RR-4: For road races the mid-week workout is a threshold tempo,
+        // not a vertical-gain session. Long run goes flat (0 elevation
+        // fraction). Trail races retain the uphill day + hilly long run.
+        let day3Type: SessionType = isRoadRace ? .tempo : .verticalGain
+        let day3Desc: String = isRoadRace
+            ? "Short threshold tempo, dress rehearsal of race effort. Stay sharp."
+            : "Uphill session, slightly reduced. Maintain vertical efficiency."
+        let longRunElevFraction: Double = isRoadRace ? 0 : 0.5
+
         return [
             tpl(0, .recovery, .easy, base.easyRun1Seconds * reductionFactor, 0,
                 "Easy run. Normal week structure, slightly reduced volume."),
@@ -685,11 +696,11 @@ enum SessionTemplateGenerator {
                 "Intervals at normal intensity, slightly reduced volume. Stay sharp."),
             tpl(2, .recovery, .easy, base.easyRun1Seconds * reductionFactor, 0,
                 "Easy run at conversational pace."),
-            tpl(3, .verticalGain, .moderate, base.vgSeconds * reductionFactor, 0,
-                "Uphill session, slightly reduced. Maintain vertical efficiency."),
+            tpl(3, day3Type, .moderate, base.vgSeconds * reductionFactor, 0,
+                day3Desc),
             tpl(4, .recovery, .easy, base.easyRun2Seconds * reductionFactor, 0,
                 "Easy run. Keep legs loose before race week."),
-            tpl(5, .longRun, .easy, volume.targetLongRunDurationSeconds * reductionFactor, 0.5,
+            tpl(5, .longRun, .easy, volume.targetLongRunDurationSeconds * reductionFactor, longRunElevFraction,
                 "Long run at reduced volume. Save energy for race week."),
             tpl(6, .rest, .easy, 0, 0,
                 "Rest day. Race week starts tomorrow."),
