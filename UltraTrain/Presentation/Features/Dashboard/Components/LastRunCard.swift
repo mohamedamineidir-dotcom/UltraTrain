@@ -6,58 +6,87 @@ struct LastRunCard: View {
 
     var body: some View {
         if let run = lastRun {
-            VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-                Text("Last Run")
-                    .font(.headline)
-
-                HStack(spacing: 0) {
-                    statColumn(value: String(format: "%.1f", UnitFormatter.distanceValue(run.distanceKm, unit: units)), label: UnitFormatter.distanceLabel(units))
-                    Divider().frame(height: 30).opacity(0.15)
-                    statColumn(value: RunStatisticsCalculator.formatPace(run.averagePaceSecondsPerKm, unit: units), label: "pace")
-                    Divider().frame(height: 30).opacity(0.15)
-                    statColumn(value: formattedDuration(run.duration), label: "time")
+            VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+                // Header row: title + relative date pill
+                HStack {
+                    Label("Last Run", systemImage: "figure.run")
+                        .font(.headline)
+                    Spacer()
+                    Text(relativeDateString(run.date))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(Theme.Colors.accentColor)
+                        .padding(.horizontal, Theme.Spacing.sm)
+                        .padding(.vertical, 3)
+                        .background(Capsule().fill(Theme.Colors.accentColor.opacity(0.12)))
                 }
 
-                if run.perceivedFeeling != nil || run.rpe != nil {
-                    HStack(spacing: Theme.Spacing.sm) {
+                // Three-column stats with colored icons
+                HStack(spacing: Theme.Spacing.sm) {
+                    statColumn(
+                        icon: "ruler",
+                        iconColor: .cyan,
+                        value: String(format: "%.1f", UnitFormatter.distanceValue(run.distanceKm, unit: units)),
+                        unit: UnitFormatter.distanceLabel(units)
+                    )
+                    statDivider
+                    statColumn(
+                        icon: "speedometer",
+                        iconColor: .orange,
+                        value: RunStatisticsCalculator.formatPace(run.averagePaceSecondsPerKm, unit: units),
+                        unit: "pace"
+                    )
+                    statDivider
+                    statColumn(
+                        icon: "clock.fill",
+                        iconColor: .green,
+                        value: formattedDuration(run.duration),
+                        unit: "time"
+                    )
+                }
+
+                // Tags row
+                if run.perceivedFeeling != nil || run.rpe != nil || run.terrainType != nil {
+                    HStack(spacing: Theme.Spacing.xs) {
                         if let feeling = run.perceivedFeeling {
                             Text(feelingEmoji(feeling))
                                 .font(.caption)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(Capsule().fill(.ultraThinMaterial))
                         }
                         if let rpe = run.rpe {
-                            Text("RPE \(rpe)")
-                                .font(.caption)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(
-                                    Capsule()
-                                        .fill(.ultraThinMaterial)
-                                        .overlay(Capsule().stroke(Theme.Colors.glassBorder, lineWidth: 0.5))
-                                )
+                            tagPill(text: "RPE \(rpe)")
                         }
                         if let terrain = run.terrainType {
-                            Text(terrain.rawValue.capitalized)
-                                .font(.caption)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(
-                                    Capsule()
-                                        .fill(.ultraThinMaterial)
-                                        .overlay(Capsule().stroke(Theme.Colors.glassBorder, lineWidth: 0.5))
-                                )
+                            tagPill(text: terrain.rawValue.capitalized)
                         }
+                        Spacer()
                     }
                 }
-
-                Text(relativeDateString(run.date))
-                    .font(.caption)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .futuristicGlassStyle()
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(accessibilityDescription(for: run))
         }
+    }
+
+    private func tagPill(text: String) -> some View {
+        Text(text)
+            .font(.caption.weight(.medium))
+            .padding(.horizontal, 8)
+            .padding(.vertical, 3)
+            .background(
+                Capsule()
+                    .fill(.ultraThinMaterial)
+                    .overlay(Capsule().stroke(Theme.Colors.glassBorder, lineWidth: 0.5))
+            )
+    }
+
+    private var statDivider: some View {
+        Rectangle()
+            .fill(Theme.Colors.secondaryLabel.opacity(0.12))
+            .frame(width: 1, height: 36)
     }
 
     private func accessibilityDescription(for run: CompletedRun) -> String {
@@ -71,11 +100,22 @@ struct LastRunCard: View {
         return "Last run, \(when). \(dist), pace \(pace), duration \(dur)"
     }
 
-    private func statColumn(value: String, label: String) -> some View {
-        VStack(spacing: 3) {
+    private func statColumn(
+        icon: String,
+        iconColor: Color,
+        value: String,
+        unit: String
+    ) -> some View {
+        VStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.caption)
+                .foregroundStyle(iconColor)
             Text(value)
-                .font(.system(.title3, design: .rounded, weight: .bold))
-            Text(label)
+                .font(.system(.title3, design: .rounded, weight: .bold).monospacedDigit())
+                .foregroundStyle(Theme.Colors.label)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+            Text(unit)
                 .font(.caption2)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }

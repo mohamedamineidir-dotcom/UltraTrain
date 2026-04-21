@@ -62,21 +62,26 @@ struct DashboardWeeklyStatsCard: View {
     }
 
     private func statPill(icon: String, value: String, unit: String, target: String?) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack(spacing: 4) {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 6) {
                 Image(systemName: icon)
-                    .font(.caption2)
+                    .font(.caption)
                     .foregroundStyle(Theme.Colors.accentColor)
-                Text(value)
-                    .font(.system(.title3, design: .rounded, weight: .bold))
+                Spacer(minLength: 0)
             }
-            Text(unit)
-                .font(.caption2)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
+            HStack(alignment: .lastTextBaseline, spacing: 3) {
+                Text(value)
+                    .font(.system(.title3, design: .rounded, weight: .bold).monospacedDigit())
+                    .foregroundStyle(Theme.Colors.label)
+                Text(unit)
+                    .font(.caption2)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
             if let target {
-                Text("/ \(target)")
+                Text("of \(target)")
                     .font(.caption2)
                     .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.7))
+                    .monospacedDigit()
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

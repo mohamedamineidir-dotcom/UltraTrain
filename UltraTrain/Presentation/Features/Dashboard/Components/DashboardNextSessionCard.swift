@@ -6,6 +6,10 @@ struct DashboardNextSessionCard: View {
     let hasPlan: Bool
     let currentPhase: TrainingPhase?
     let onStartRun: () -> Void
+    /// Present the validation sheet (statistics entry, sync app, quick-complete).
+    var onValidate: (() -> Void)? = nil
+    /// Present the skip-reason sheet.
+    var onSkip: (() -> Void)? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
@@ -84,7 +88,7 @@ struct DashboardNextSessionCard: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(sessionAccessibilityLabel(session))
 
-            // Warm coral gradient CTA
+            // Primary CTA — Start Run (warm coral gradient)
             Button(action: onStartRun) {
                 Label("Start Run", systemImage: "figure.run")
                     .font(.subheadline.bold())
@@ -100,6 +104,36 @@ struct DashboardNextSessionCard: View {
             .buttonStyle(.plain)
             .accessibilityIdentifier("dashboard.startRunButton")
             .accessibilityHint("Starts GPS tracking for this session")
+
+            // Secondary row — Validate + Skip. Same flows as the Training Plan
+            // tab; validating opens the stats-entry sheet, skipping opens the
+            // reason picker and feeds the plan-adjustment pipeline.
+            if onValidate != nil || onSkip != nil {
+                HStack(spacing: Theme.Spacing.sm) {
+                    if let onValidate {
+                        Button(action: onValidate) {
+                            Label("Validate", systemImage: "checkmark.circle")
+                                .font(.caption.weight(.semibold))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, Theme.Spacing.xs)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(Theme.Colors.success)
+                        .accessibilityIdentifier("dashboard.validateSessionButton")
+                    }
+                    if let onSkip {
+                        Button(action: onSkip) {
+                            Label("Skip", systemImage: "forward.fill")
+                                .font(.caption.weight(.semibold))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, Theme.Spacing.xs)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(Theme.Colors.warning)
+                        .accessibilityIdentifier("dashboard.skipSessionButton")
+                    }
+                }
+            }
         }
         .accessibilityElement(children: .contain)
     }

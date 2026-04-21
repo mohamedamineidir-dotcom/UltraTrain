@@ -47,7 +47,14 @@ extension DashboardView {
                     checklistRepository: checklistRepository
                 )
             } label: {
-                DashboardFinishEstimateCard(estimate: estimate, race: race)
+                DashboardFinishEstimateCard(
+                    estimate: estimate,
+                    race: race,
+                    onRefresh: {
+                        Task { await viewModel.refreshFinishEstimate() }
+                    },
+                    isRefreshing: viewModel.isRefreshingEstimate
+                )
             }
             .accessibilityHint("Opens detailed finish time estimation")
         }

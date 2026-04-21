@@ -92,13 +92,13 @@ struct DashboardHeroCard: View {
                 .rotationEffect(.degrees(-90))
                 .shadow(color: phaseAccentColor.opacity(0.4), radius: 4)
             VStack(spacing: 0) {
-                Text("\(weeklyProgress.completed)")
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
-                Text("/\(weeklyProgress.total)")
-                    .font(.system(size: 11, weight: .medium, design: .rounded))
-                    .opacity(0.7)
+                Text("\(weeklyProgress.completed)/\(weeklyProgress.total)")
+                    .font(.system(size: 17, weight: .bold, design: .rounded).monospacedDigit())
+                    .foregroundStyle(Theme.Colors.label)
+                Text("sessions")
+                    .font(.system(size: 9, weight: .medium, design: .rounded))
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
             }
-            .foregroundStyle(Theme.Colors.label)
         }
         .frame(width: 72, height: 72)
     }

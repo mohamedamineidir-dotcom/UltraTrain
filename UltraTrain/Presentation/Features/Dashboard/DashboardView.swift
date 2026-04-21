@@ -6,6 +6,9 @@ struct DashboardView: View {
     @Environment(\.colorScheme) private var colorScheme
     @State var viewModel: DashboardViewModel
     @State private var showSyncQueue = false
+    @State private var showValidateSession = false
+    @State private var showSkipSession = false
+    @State private var validateRecentRuns: [CompletedRun] = []
     @Binding var selectedTab: Tab
 
     let planRepository: any TrainingPlanRepository
@@ -115,7 +118,18 @@ struct DashboardView: View {
                         session: viewModel.nextSession,
                         hasPlan: viewModel.plan != nil,
                         currentPhase: viewModel.currentPhase,
-                        onStartRun: { selectedTab = .run }
+                        onStartRun: { selectedTab = .run },
+                        onValidate: viewModel.nextSession == nil ? nil : {
+                            Task {
+                                if let session = viewModel.nextSession {
+                                    validateRecentRuns = await viewModel.recentUnlinkedRuns(near: session.date)
+                                }
+                                showValidateSession = true
+                            }
+                        },
+                        onSkip: viewModel.nextSession == nil ? nil : {
+                            showSkipSession = true
+                        }
                     )
                     .accessibilityIdentifier("dashboard.nextSessionCard")
 
@@ -141,15 +155,14 @@ struct DashboardView: View {
                         isLoading: viewModel.isLoading
                     )
 
-                    // Your Race
-                    DashboardSectionHeader(title: "Your Race")
+                    // Race forecast (replaces the old Recovery section — only a
+                    // minority of users had Apple-Watch recovery data, whereas
+                    // the finish forecast is meaningful for every athlete and
+                    // tightens as training progresses).
+                    DashboardSectionHeader(title: "Race forecast")
 
                     finishEstimateSection
                     UpcomingRacesCard(races: viewModel.upcomingRaces)
-
-                    // Recovery
-                    DashboardSectionHeader(title: "Recovery")
-                    recoveryLink
                 }
                 .padding()
             }
@@ -174,6 +187,38 @@ struct DashboardView: View {
             .navigationDestination(isPresented: $showSyncQueue) {
                 if let svc = syncService {
                     SyncQueueView(syncService: svc)
+                }
+            }
+            .sheet(isPresented: $showValidateSession) {
+                if let session = viewModel.nextSession {
+                    SessionValidationView(
+                        session: session,
+                        recentRuns: validateRecentRuns,
+                        onComplete: { dist, dur, elev, feeling, rpe in
+                            Task {
+                                await viewModel.completeNextSessionManually(
+                                    distanceKm: dist,
+                                    durationSeconds: dur,
+                                    elevationGainM: elev,
+                                    feeling: feeling,
+                                    exertion: rpe
+                                )
+                            }
+                        },
+                        onLinkRun: { runId in
+                            Task { await viewModel.linkNextSessionToRun(runId: runId) }
+                        },
+                        recentRunsProvider: { date in
+                            await viewModel.recentUnlinkedRuns(near: date)
+                        }
+                    )
+                }
+            }
+            .sheet(isPresented: $showSkipSession) {
+                if let session = viewModel.nextSession {
+                    SkipReasonSheet(sessionType: session.type) { reason in
+                        Task { await viewModel.skipNextSession(reason: reason) }
+                    }
                 }
             }
             .task {

@@ -3,18 +3,41 @@ import SwiftUI
 struct DashboardFinishEstimateCard: View {
     let estimate: FinishEstimate
     let race: Race
+    /// Tap to recalculate the forecast from the latest completed training.
+    var onRefresh: (() -> Void)? = nil
+    /// When true (during the async recompute), the refresh icon spins.
+    var isRefreshing: Bool = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Race Estimate")
+                    Text("Predicted finish")
                         .font(.headline)
                     Text(race.name)
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
                 Spacer()
+                if let onRefresh {
+                    Button {
+                        onRefresh()
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.caption.weight(.semibold))
+                            .rotationEffect(.degrees(isRefreshing ? 360 : 0))
+                            .animation(
+                                isRefreshing
+                                    ? .linear(duration: 1).repeatForever(autoreverses: false)
+                                    : .default,
+                                value: isRefreshing
+                            )
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(isRefreshing)
+                    .accessibilityLabel("Refresh forecast")
+                    .accessibilityIdentifier("dashboard.forecastRefreshButton")
+                }
                 Image(systemName: "chevron.right")
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.tertiaryLabel)
@@ -71,11 +94,22 @@ struct DashboardFinishEstimateCard: View {
                         .font(.caption2.bold().monospacedDigit())
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
+
+                Text(rangeHint)
+                    .font(.caption2)
+                    .foregroundStyle(Theme.Colors.tertiaryLabel)
+                    .padding(.top, 2)
             }
         }
         .appCardStyle()
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityDescription)
+    }
+
+    private var rangeHint: String {
+        let best = FinishEstimate.formatDuration(estimate.optimisticTime)
+        let safe = FinishEstimate.formatDuration(estimate.conservativeTime)
+        return "Range \(best)–\(safe). Narrows as you complete sessions."
     }
 
     private var confidenceGradient: LinearGradient {

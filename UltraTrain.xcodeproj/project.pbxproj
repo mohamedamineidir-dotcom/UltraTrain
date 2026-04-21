@@ -1086,6 +1086,7 @@
 		9FE4CE38944D12E4B55B8505 /* CSVExporterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690E95FD7FD664770915916A /* CSVExporterTests.swift */; };
 		9FFEE22E55F6AF992F2438E9 /* ZoneComplianceCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947AA9CD27B3BCA9DA8B68B3 /* ZoneComplianceCard.swift */; };
 		A006625E6CFBE7A7D1686C14 /* RaceCountdownWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F898F630ACEF5F3C3C8CE1 /* RaceCountdownWidget.swift */; };
+		A01C4FBC39B466A303EE7BFC /* DashboardViewModel+SessionActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00BC35C42ACAEA7B1CCA0547 /* DashboardViewModel+SessionActions.swift */; };
 		A037EFDD73445AD61805B199 /* RunHistoryViewModelFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F3B9908FE6BAFD6A742CCE /* RunHistoryViewModelFilterTests.swift */; };
 		A06B5A54C243E39DAC08F356 /* HRVIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 321BE265ACB1887C0AA1C119 /* HRVIndicator.swift */; };
 		A0868AA947F7BFC597314B9F /* SafetyAlertStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6CF4801D382E9871ED8CB73 /* SafetyAlertStatus.swift */; };
@@ -1830,6 +1831,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		00BC35C42ACAEA7B1CCA0547 /* DashboardViewModel+SessionActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DashboardViewModel+SessionActions.swift"; sourceTree = "<group>"; };
 		00CD1F9FD35300BB3A71A0EE /* FitnessTrendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitnessTrendView.swift; sourceTree = "<group>"; };
 		00D502CC0EB9CD31BDF9C662 /* MockCloudKitSharingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCloudKitSharingService.swift; sourceTree = "<group>"; };
 		00F65E27365AF039BB72E10B /* LeaderboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardView.swift; sourceTree = "<group>"; };
@@ -4937,6 +4939,7 @@
 				3128950F41745379C8CEA99B /* DashboardViewModel.swift */,
 				A7A537BBF5F90E4C1FB92E90 /* DashboardViewModel+Features.swift */,
 				99DB496A788625289B84E605 /* DashboardViewModel+Fitness.swift */,
+				00BC35C42ACAEA7B1CCA0547 /* DashboardViewModel+SessionActions.swift */,
 				00CD1F9FD35300BB3A71A0EE /* FitnessTrendView.swift */,
 			);
 			path = Dashboard;
@@ -6971,6 +6974,7 @@
 				906F36F475B416842F8E5CE3 /* DashboardView.swift in Sources */,
 				E4F0A0423B08C029C9B16C85 /* DashboardViewModel+Features.swift in Sources */,
 				30C3EAE28B3318A3BF7E1284 /* DashboardViewModel+Fitness.swift in Sources */,
+				A01C4FBC39B466A303EE7BFC /* DashboardViewModel+SessionActions.swift in Sources */,
 				2D3278DA4D2FF29D6254112F /* DashboardViewModel.swift in Sources */,
 				AD35A4A8EAACA7C007570456 /* DashboardWeatherCard.swift in Sources */,
 				4F8ED51F4DC7138B107996FB /* DashboardWeeklyStatsCard.swift in Sources */,

@@ -32,6 +32,7 @@ final class DashboardViewModel {
     var fitnessSnapshot: FitnessSnapshot?
     var fitnessHistory: [FitnessSnapshot] = []
     var isLoading = false
+    var isRefreshingEstimate = false
     var fitnessError: String?
     var finishEstimate: FinishEstimate?
     var aRace: Race?

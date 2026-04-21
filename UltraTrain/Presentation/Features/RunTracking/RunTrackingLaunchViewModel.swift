@@ -152,6 +152,24 @@ final class RunTrackingLaunchViewModel {
 
     func selectSession(_ session: TrainingSession?) {
         selectedSession = session
+        // Re-fetch the linked structured workout so intervals/tempo/VG sessions
+        // surface phase-by-phase guidance (warmup → work → rest → cooldown)
+        // in ActiveRunView. Without this, users who switch sessions from the
+        // picker would lose the structured playback.
+        Task { await reloadIntervalWorkout() }
+    }
+
+    private func reloadIntervalWorkout() async {
+        guard let workoutId = selectedSession?.intervalWorkoutId,
+              let repo = intervalWorkoutRepository else {
+            intervalWorkout = nil
+            return
+        }
+        do {
+            intervalWorkout = try await repo.getWorkout(id: workoutId)
+        } catch {
+            Logger.tracking.error("Failed to reload interval workout: \(error)")
+        }
     }
 
     func startRun() {
