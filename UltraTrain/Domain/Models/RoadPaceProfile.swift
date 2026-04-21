@@ -18,7 +18,6 @@ struct RoadPaceProfile: Equatable, Sendable {
     let intervalPacePerKm: Double
     let repetitionPacePerKm: Double
     let racePacePerKm: Double
-    let raceDistanceKm: Double
 
     /// Whether the athlete's goal is ambitious relative to current fitness.
     /// Used to gate race-pace usage in early phases (Daniels: don't train at goal

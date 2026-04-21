@@ -206,7 +206,6 @@ enum RoadVolumeCalculator {
                 phase: skeleton.phase,
                 experience: experience,
                 raceDistanceKm: raceDistanceKm,
-                currentWeeklyVolumeKm: athlete.weeklyVolumeKm,
                 currentLongestRunKm: athlete.longestRunKm,
                 isRecoveryWeek: skeleton.isRecoveryWeek
             )
@@ -317,11 +316,6 @@ enum RoadVolumeCalculator {
         return minutes * 60
     }
 
-    /// Rounds seconds to nearest 5-minute boundary.
-    private static func roundTo5Min(_ seconds: TimeInterval) -> TimeInterval {
-        (seconds / 300).rounded() * 300
-    }
-
     // MARK: - RR-1 Anchor
 
     /// Computes the scaling factor applied to easy/interval/tempo session
@@ -363,7 +357,6 @@ enum RoadVolumeCalculator {
             phase: .base,
             experience: experience,
             raceDistanceKm: raceDistanceKm,
-            currentWeeklyVolumeKm: athlete.weeklyVolumeKm,
             currentLongestRunKm: athlete.longestRunKm,
             isRecoveryWeek: false
         )

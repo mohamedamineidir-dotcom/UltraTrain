@@ -104,25 +104,9 @@ enum RoadPhaseDistributor {
         }
     }
 
-    // MARK: - Mesocycle Sub-Phase
-
-    /// Determines the sub-phase (intro/develop/sharpen) within a training phase.
-    /// Pfitzinger 3-week cycles: introduce new stimulus → develop intensity → sharpen/consolidate.
-    /// Canova: General → Fundamental → Special → Specific progression.
-    enum SubPhase: String, Sendable {
-        case intro    // 40-60% phase intensity — establish new stimulus
-        case develop  // 80-100% intensity — push adaptation
-        case sharpen  // 70-85% intensity — consolidate before next phase
-    }
-
-    /// Returns the sub-phase for a given week within its training phase.
-    static func subPhase(weekInPhase: Int, phaseWeekCount: Int) -> SubPhase {
-        guard phaseWeekCount >= 3 else { return .develop }
-        let fraction = Double(weekInPhase) / Double(phaseWeekCount)
-        switch fraction {
-        case ..<0.33:  return .intro
-        case ..<0.67:  return .develop
-        default:       return .sharpen
-        }
-    }
+    // RR-8: Removed unused `SubPhase` enum + `subPhase(weekInPhase:)`
+    // helper. They were designed to model Pfitzinger/Canova intro/develop/
+    // sharpen sub-phases but nothing in the pipeline ever called them.
+    // If we add sub-phase-aware logic in the future we'll reintroduce as
+    // a dedicated type.
 }

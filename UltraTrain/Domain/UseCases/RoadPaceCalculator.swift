@@ -91,7 +91,6 @@ enum RoadPaceCalculator {
             intervalPacePerKm: fiveK * 1.00,
             repetitionPacePerKm: fiveK * 0.93,
             racePacePerKm: goalPacePerKm,
-            raceDistanceKm: raceDistanceKm,
             goalRealismLevel: realism
         )
     }

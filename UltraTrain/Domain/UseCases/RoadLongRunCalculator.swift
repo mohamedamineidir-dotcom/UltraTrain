@@ -41,7 +41,6 @@ enum RoadLongRunCalculator {
         phase: TrainingPhase,
         experience: ExperienceLevel,
         raceDistanceKm: Double,
-        currentWeeklyVolumeKm: Double,
         currentLongestRunKm: Double,
         isRecoveryWeek: Bool
     ) -> TimeInterval {
