@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		00281AB2049EAD0C4DE7D1B9 /* GenerateTrainingPlanUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4C000B9B7DFB626C24ED17 /* GenerateTrainingPlanUseCase.swift */; };
+		00368344631E953EACD3408C /* NutritionTargetsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2C2B25660CF92D3B277EA40 /* NutritionTargetsCard.swift */; };
 		00594527C1E6FCBFB293EB26 /* InjuryStrengthStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7E935C4EA9D6608732765D /* InjuryStrengthStepView.swift */; };
 		006632A379E571673A9F12E9 /* NutritionPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = E729F57B5B5349A3F3684D86 /* NutritionPlan.swift */; };
 		0074C8FC724091675FB84EAF /* Logger+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E813F94D4567DE4B5097C0 /* Logger+App.swift */; };
@@ -362,6 +363,7 @@
 		3439AB12536874C47A0419D4 /* WeeklyVolumeCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EB546EEDE884A595E033B3 /* WeeklyVolumeCalculator.swift */; };
 		346665A90F22F8A54070010E /* AboutYouStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7302EF74E49C90542E874ABE /* AboutYouStepView.swift */; };
 		34E6AE6330E89F3A469B0E22 /* AuthServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4006F3A4BCACA925C8BD065C /* AuthServiceTests.swift */; };
+		34FE330B9C45B48B0FA8375A /* NutritionRaceHeroCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06640100EBADD5DCD9C301FD /* NutritionRaceHeroCard.swift */; };
 		3557E4DDBCCB817A8719C76A /* DefaultPlanAutoAdjustmentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EAB3532F7B56A07348C077F /* DefaultPlanAutoAdjustmentService.swift */; };
 		356C174629627C374843A600 /* OptimalSessionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C667BA3D5CA3DEEDE665C23 /* OptimalSessionCard.swift */; };
 		3590D166A4B80FA7C0EE190D /* VoiceCoachingHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEAC342765A91B8801D3D127 /* VoiceCoachingHandlerTests.swift */; };
@@ -1011,6 +1013,7 @@
 		969808D7F284B8C309A43125 /* FitnessTrendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00CD1F9FD35300BB3A71A0EE /* FitnessTrendView.swift */; };
 		96DEB183E1630A91348ACCFF /* RaceDaySegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80BB5B3B6B2D87151F3D7CA /* RaceDaySegment.swift */; };
 		96E4C5F1384837EC9E2BA3EF /* MockSessionNutritionAdvisor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56BAAB80F939F16A67D1B247 /* MockSessionNutritionAdvisor.swift */; };
+		96E7C07E8AC6CA3EFE915A25 /* NutritionTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB4D83334360BB1118D36430 /* NutritionTimelineView.swift */; };
 		970F683DB5386004CC4A0CC8 /* TrainingGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = A436B9E037A636BA227BFCDA /* TrainingGoal.swift */; };
 		979C70E02C6ECED96E943D18 /* PhaseBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B311A22E1C688E2B19245F1 /* PhaseBadge.swift */; };
 		97A4D162AA74500253829A2B /* OSMTrailService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ADD38CD82892C8EF05BA11 /* OSMTrailService.swift */; };
@@ -1867,6 +1870,7 @@
 		05ED558AB130A5C31F6886E7 /* WeeklyVolume.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyVolume.swift; sourceTree = "<group>"; };
 		05F6446FD6C855017444243C /* RunTrackingLaunchView+Sections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RunTrackingLaunchView+Sections.swift"; sourceTree = "<group>"; };
 		062402C34C83CD37305F6A9E /* SubscriptionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionStatus.swift; sourceTree = "<group>"; };
+		06640100EBADD5DCD9C301FD /* NutritionRaceHeroCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionRaceHeroCard.swift; sourceTree = "<group>"; };
 		0678911E87242D9480077064 /* DashboardGoalProgressCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardGoalProgressCard.swift; sourceTree = "<group>"; };
 		069FF2285AD08CB3B2B194C9 /* OSMTrailSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSMTrailSearchView.swift; sourceTree = "<group>"; };
 		0719F72E11AC7FE3270662F3 /* WatchRunHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchRunHistoryView.swift; sourceTree = "<group>"; };
@@ -2897,6 +2901,7 @@
 		A267D8F69B597E8E5B1ECF6E /* DefaultSessionNutritionAdvisorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultSessionNutritionAdvisorTests.swift; sourceTree = "<group>"; };
 		A2917DE44A2F6F465EB2EBD1 /* SyncOperationType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncOperationType.swift; sourceTree = "<group>"; };
 		A2AE61A1290E147C0DCEB2C3 /* SharedRunEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedRunEndpoints.swift; sourceTree = "<group>"; };
+		A2C2B25660CF92D3B277EA40 /* NutritionTargetsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionTargetsCard.swift; sourceTree = "<group>"; };
 		A2F715836E11512A40B8D621 /* ElevationProfilePoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevationProfilePoint.swift; sourceTree = "<group>"; };
 		A2F898F630ACEF5F3C3C8CE1 /* RaceCountdownWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceCountdownWidget.swift; sourceTree = "<group>"; };
 		A3414E805342CEF1D4B160F6 /* PersonalRecordType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalRecordType.swift; sourceTree = "<group>"; };
@@ -3167,6 +3172,7 @@
 		CA7FFBB95DA8B6D0F236DA23 /* WeekSummarySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekSummarySheet.swift; sourceTree = "<group>"; };
 		CAB2757DE37CFCE60CC55A97 /* WatchSessionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionData.swift; sourceTree = "<group>"; };
 		CABACF379E57A0309585574E /* ActiveRunViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveRunViewModel.swift; sourceTree = "<group>"; };
+		CB4D83334360BB1118D36430 /* NutritionTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionTimelineView.swift; sourceTree = "<group>"; };
 		CBC048E83912AD8CC3D9A91F /* WatchNutritionReminderScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchNutritionReminderScheduler.swift; sourceTree = "<group>"; };
 		CBDF4777CA3D581A85AB8607 /* IntermediateRaceHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntermediateRaceHandler.swift; sourceTree = "<group>"; };
 		CC1E3187CE4F77952C8C10EA /* DietaryRestriction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DietaryRestriction.swift; sourceTree = "<group>"; };
@@ -5305,8 +5311,11 @@
 				CFE5F778BB0D8F1322CA8842 /* AddProductSheet.swift */,
 				54C62430C7D2A629E004D210 /* NutritionEntryRow.swift */,
 				3853C41A85C6D870A2BEF46B /* NutritionOnboardingSheet.swift */,
+				06640100EBADD5DCD9C301FD /* NutritionRaceHeroCard.swift */,
 				53CCD8A93AFA00D40D78B376 /* NutritionScheduleView.swift */,
 				CF4CF08E8C489A1BF388B32C /* NutritionSummaryCard.swift */,
+				A2C2B25660CF92D3B277EA40 /* NutritionTargetsCard.swift */,
+				CB4D83334360BB1118D36430 /* NutritionTimelineView.swift */,
 				988B7AB56DCA26A613F9CC17 /* NutritionView.swift */,
 				A82939589D6A057653F5732F /* NutritionViewModel.swift */,
 				4876ADB4F7A67BF54FB77B88 /* ProductLibraryView.swift */,
@@ -7309,6 +7318,7 @@
 				83A53BBC6A539916314E092C /* NutritionProduct.swift in Sources */,
 				DCE8AAC16F7489444C90611E /* NutritionProductSwiftDataModel.swift in Sources */,
 				9A084BDC24FF3E8326E46C28 /* NutritionQuickTapBar.swift in Sources */,
+				34FE330B9C45B48B0FA8375A /* NutritionRaceHeroCard.swift in Sources */,
 				E70A457156E1DE90AD201D63 /* NutritionReminder.swift in Sources */,
 				3B5B219AC47B61CE8DC7D4D4 /* NutritionReminderBanner.swift in Sources */,
 				EA26DE398E0FE2B62A67A9D0 /* NutritionReminderHandler.swift in Sources */,
@@ -7320,8 +7330,10 @@
 				27F9D710FA12A595922463AC /* NutritionSessionFeedback.swift in Sources */,
 				7B97470EAC3E86010C983952 /* NutritionSummaryCard.swift in Sources */,
 				7A0AB11111289D1FBBC91446 /* NutritionSyncService.swift in Sources */,
+				00368344631E953EACD3408C /* NutritionTargetsCard.swift in Sources */,
 				D365C1A4F070D61463B0D477 /* NutritionTimelineChart.swift in Sources */,
 				2D7C62989D10C88364D08211 /* NutritionTimelineEvent.swift in Sources */,
+				96E7C07E8AC6CA3EFE915A25 /* NutritionTimelineView.swift in Sources */,
 				71BC66AA05126D45F562BFE0 /* NutritionView.swift in Sources */,
 				AAF8729E7A0815CE28082C4B /* NutritionViewModel.swift in Sources */,
 				7EB3DE6259AB62934C7C16D2 /* OSMTrailResult.swift in Sources */,

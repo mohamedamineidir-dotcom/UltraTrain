@@ -19,6 +19,8 @@ final class NutritionViewModel {
     var products: [NutritionProduct] = []
     var preferences: NutritionPreferences = .default
     var targetRace: Race?
+    var estimatedRaceDurationSeconds: TimeInterval = 0
+    var athlete: Athlete?
     var isLoading = false
     var isGenerating = false
     var error: String?
@@ -62,6 +64,10 @@ final class NutritionViewModel {
                 return
             }
             targetRace = race
+            if let athlete = try await athleteRepository.getAthlete() {
+                self.athlete = athlete
+                estimatedRaceDurationSeconds = estimateDuration(race: race, athlete: athlete)
+            }
 
             plan = try await nutritionRepository.getNutritionPlan(for: race.id)
             products = try await nutritionRepository.getProducts()
@@ -209,6 +215,18 @@ final class NutritionViewModel {
     var totalSodiumInPlan: Int {
         guard let plan else { return 0 }
         return plan.entries.reduce(0) { $0 + $1.product.sodiumMgPerServing * $1.quantity }
+    }
+
+    /// Grams of carbohydrate delivered by the scheduled entries across the race.
+    var totalCarbsGrams: Int {
+        guard let plan else { return 0 }
+        return Int(plan.entries.reduce(0.0) { $0 + $1.product.carbsGramsPerServing * Double($1.quantity) })
+    }
+
+    /// Total fluid volume recommended with scheduled products (drinks + flush water).
+    var totalFluidMl: Int {
+        guard let plan else { return 0 }
+        return plan.entries.reduce(0) { $0 + ($1.product.fluidMlPerServing ?? 0) * $1.quantity }
     }
 
     var gutTrainingSessionCount: Int {

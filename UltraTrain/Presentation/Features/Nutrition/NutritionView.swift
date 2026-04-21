@@ -138,35 +138,52 @@ struct NutritionView: View {
 
     private func planContent(_ plan: NutritionPlan) -> some View {
         ScrollView {
-            LazyVStack(spacing: Theme.Spacing.sm) {
-                NutritionSummaryCard(
-                    caloriesPerHour: plan.caloriesPerHour,
+            LazyVStack(spacing: Theme.Spacing.md) {
+                if let race = viewModel.targetRace {
+                    NutritionRaceHeroCard(
+                        raceName: race.name,
+                        raceDate: race.date,
+                        distanceKm: race.distanceKm,
+                        elevationGainM: race.elevationGainM,
+                        estimatedDurationSeconds: viewModel.estimatedRaceDurationSeconds
+                    )
+                }
+
+                NutritionTargetsCard(
+                    carbsPerHour: plan.carbsPerHour,
                     hydrationMlPerHour: plan.hydrationMlPerHour,
                     sodiumMgPerHour: plan.sodiumMgPerHour,
-                    totalCalories: viewModel.totalCaloriesInPlan,
+                    totalCaffeineMg: plan.totalCaffeineMg,
+                    totalCarbsGrams: viewModel.totalCarbsGrams,
+                    estimatedDurationSeconds: viewModel.estimatedRaceDurationSeconds,
                     gutTrainingSessions: viewModel.gutTrainingSessionCount
                 )
 
-                HStack {
+                HStack(spacing: Theme.Spacing.sm) {
                     Button {
                         viewModel.showingNutritionOnboarding = true
                     } label: {
-                        Label("Edit nutrition preferences", systemImage: "slider.horizontal.3")
+                        Label("Edit preferences", systemImage: "slider.horizontal.3")
                             .font(.caption.weight(.medium))
+                            .frame(maxWidth: .infinity)
                     }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
                     .accessibilityIdentifier("nutrition.editPreferencesButton")
-                    Spacer()
+
                     Button {
                         Task { await viewModel.startPlanGeneration() }
                     } label: {
                         Label("Regenerate", systemImage: "arrow.clockwise")
                             .font(.caption.weight(.medium))
+                            .frame(maxWidth: .infinity)
                     }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
                     .accessibilityIdentifier("nutrition.regenerateButton")
                 }
-                .padding(.horizontal, Theme.Spacing.sm)
 
-                NutritionScheduleView(entries: plan.entries)
+                NutritionTimelineView(entries: plan.entries)
             }
             .padding()
         }
