@@ -187,6 +187,56 @@ enum SessionTemplateGenerator {
         return (allSessions, workouts, strengthWorkouts)
     }
 
+    // MARK: - Shared S&C generation helper (RR-5)
+
+    /// Generates S&C TrainingSessions + StrengthWorkouts for a given week.
+    /// Called by both the trail pipeline (internally) and the road pipeline
+    /// (via TrainingPlanGenerator.generateRoadPlan) so road athletes who
+    /// opted into strength training actually get sessions scheduled.
+    static func generateStrengthForWeek(
+        config: StrengthSessionGenerator.Config,
+        weekStartDate: Date,
+        existingRunningSessions: [SessionTemplate]
+    ) -> (sessions: [TrainingSession], workouts: [StrengthWorkout]) {
+        let scCount = StrengthSessionGenerator.sessionsPerWeek(config: config)
+        guard scCount > 0 else { return ([], []) }
+
+        let availableDays = StrengthSessionGenerator.availableDayOffsets(
+            runningSessions: existingRunningSessions,
+            config: config
+        )
+        let scDays = pickSCDays(
+            availableDays: availableDays,
+            count: scCount,
+            existingSessions: existingRunningSessions
+        )
+
+        var sessions: [TrainingSession] = []
+        var workouts: [StrengthWorkout] = []
+        for (i, dayOffset) in scDays.enumerated() {
+            let workout = StrengthSessionGenerator.generateWorkout(config: config, sessionIndex: i)
+            workouts.append(workout)
+
+            sessions.append(TrainingSession(
+                id: UUID(),
+                date: weekStartDate.adding(days: dayOffset),
+                type: .strengthConditioning,
+                plannedDistanceKm: 0,
+                plannedElevationGainM: 0,
+                plannedDuration: TimeInterval(workout.estimatedDurationMinutes * 60),
+                intensity: .easy,
+                description: formatSCDescription(workout),
+                nutritionNotes: nil,
+                isCompleted: false,
+                isSkipped: false,
+                linkedRunId: nil,
+                strengthWorkoutId: workout.id,
+                coachAdvice: scCoachAdvice(config: config, category: workout.category)
+            ))
+        }
+        return (sessions, workouts)
+    }
+
     // MARK: - S&C Day Placement
 
     /// Picks the best days for S&C sessions from available slots.

@@ -305,6 +305,15 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
 
         // 8. Generate sessions for each week
         var allWorkouts: [IntervalWorkout] = []
+        var allStrengthWorkouts: [StrengthWorkout] = []
+
+        // RR-5: Road athletes who opted into strength training need S&C
+        // sessions on the plan. Previously the road branch never called
+        // StrengthSessionGenerator, so opted-in athletes got zero strength
+        // work in their plan. Same Config shape as the trail pipeline.
+        let wantsStrength = athlete.strengthTrainingPreference == .yes
+
+        let raceEffectiveKm = targetRace.distanceKm + (targetRace.elevationGainM / 100.0)
 
         let weeks: [TrainingWeek] = zip(skeletons, volumes).enumerated().map { index, pair in
             let (skeleton, volume) = pair
@@ -430,7 +439,47 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 }
             }
 
-            let weekDuration = sessions
+            // RR-5: Add S&C sessions for athletes who opted in. Uses the same
+            // StrengthSessionGenerator the trail pipeline uses; road-specific
+            // emphasis is inherent to the generator's exercise selection.
+            var finalSessions = sessions
+            if wantsStrength {
+                let strengthConfig = StrengthSessionGenerator.Config(
+                    experience: athlete.experienceLevel,
+                    phase: override?.behavior.isRaceWeek == true ? .race : skeleton.phase,
+                    location: athlete.strengthTrainingLocation,
+                    painFrequency: athlete.painFrequency,
+                    injuryCount: athlete.injuryCountLastYear,
+                    hasRecentInjury: athlete.hasRecentInjury,
+                    preferredRunsPerWeek: athlete.preferredRunsPerWeek,
+                    weekNumberInPhase: phaseCounters[index],
+                    isRecoveryWeek: skeleton.isRecoveryWeek || override?.behavior == .postRaceRecovery,
+                    raceEffectiveKm: raceEffectiveKm
+                )
+                // Convert existing TrainingSessions to SessionTemplates for the helper.
+                // We only need type + dayOffset for availability computation.
+                let runningTemplates: [SessionTemplateGenerator.SessionTemplate] = sessions.map { s in
+                    let dayOffset = Calendar.current.dateComponents([.day], from: skeleton.startDate, to: s.date).day ?? 0
+                    return SessionTemplateGenerator.SessionTemplate(
+                        dayOffset: dayOffset,
+                        type: s.type,
+                        intensity: s.intensity,
+                        durationSeconds: s.plannedDuration,
+                        elevationFraction: 0,
+                        description: s.description
+                    )
+                }
+                let strength = SessionTemplateGenerator.generateStrengthForWeek(
+                    config: strengthConfig,
+                    weekStartDate: skeleton.startDate,
+                    existingRunningSessions: runningTemplates
+                )
+                finalSessions.append(contentsOf: strength.sessions)
+                finalSessions.sort { $0.date < $1.date }
+                allStrengthWorkouts.append(contentsOf: strength.workouts)
+            }
+
+            let weekDuration = finalSessions
                 .filter { $0.type != .rest && $0.type != .strengthConditioning }
                 .reduce(0) { $0 + $1.plannedDuration }
 
@@ -440,7 +489,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 startDate: skeleton.startDate,
                 endDate: skeleton.endDate,
                 phase: override?.behavior.isRaceWeek == true ? .race : skeleton.phase,
-                sessions: sessions,
+                sessions: finalSessions,
                 isRecoveryWeek: skeleton.isRecoveryWeek,
                 targetVolumeKm: volume.targetVolumeKm,
                 targetElevationGainM: 0,
@@ -463,6 +512,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             intermediateRaceSnapshots: snapshots
         )
         plan.workouts = allWorkouts
+        plan.strengthWorkouts = allStrengthWorkouts
         return plan
     }
 
