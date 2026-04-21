@@ -83,8 +83,12 @@ enum RoadLongRunCalculator {
         }
         let startDuration = max(capDuration * startFraction, minimumLongRun)
 
-        // Quadratic ramp: reaches peak ~80% through the plan
-        let peakWeek = Int(Double(totalWeeks) * 0.80)
+        // Quadratic ramp reaches peak just before taper starts (~88% of plan).
+        // Old value 0.80 caused a 3-4 week long-run plateau during the peak
+        // phase (W19 onward at same duration). Pushing the peak to 0.88 keeps
+        // the long run growing through almost all peak-phase weeks before the
+        // taper reduction kicks in.
+        let peakWeek = Int(Double(totalWeeks) * 0.88)
         let progress: Double
         if weekIndex <= peakWeek {
             let t = Double(weekIndex) / max(Double(peakWeek), 1.0)
@@ -105,7 +109,9 @@ enum RoadLongRunCalculator {
             duration *= 0.60
         }
 
-        return round(duration / 300) * 300 // Round to nearest 5 min
+        // Round to nearest 2 minutes (120s). 5-minute rounding erased small
+        // week-to-week growth during peak phase.
+        return round(duration / 120) * 120
     }
 
     // MARK: - Long Run Variant Selection

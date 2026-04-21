@@ -127,24 +127,31 @@ enum RoadVolumeCalculator {
         let taperStart = totalWeeks - taperProfile.totalTaperWeeks
         var previousNonRecoveryKm: Double = 0 // Track for 10% cap and post-recovery baseline
 
+        // Track week-in-phase for explicit peak-phase progressive overload
+        var peakWeekCounter = 0
+
         for (index, skeleton) in skeletons.enumerated() {
             // Tiered progress by phase (Daniels/Canova: build fast in base, hold in peak)
-            // Base: 0→0.5 progress, Build: 0.5→0.9 progress, Peak: 0.9→1.0 (near-hold)
+            // Base: 0→0.45 progress, Build: 0.45→0.78 progress, Peak: 0.78→1.00
+            //
+            // Peak was 0.90→1.00 (10% range) which produced near-identical weeks
+            // after minute-rounding. Pfitzinger/Daniels peak phases show real
+            // week-to-week progression, so we stretch peak to a 22% range.
             let peakWeekIndex = max(taperStart - 1, 1)
             let rawProgress = min(Double(index) / Double(peakWeekIndex), 1.0)
             let progress: Double
             switch skeleton.phase {
             case .base:
-                // Accelerated: reach 50% of growth by end of base
+                // Accelerated: reach 45% of growth by end of base
                 let baseEnd = Double(skeletons.firstIndex { $0.phase != .base } ?? totalWeeks) / Double(peakWeekIndex)
                 let inPhaseProgress = min(rawProgress / max(baseEnd, 0.01), 1.0)
-                progress = inPhaseProgress * 0.50
+                progress = inPhaseProgress * 0.45
             case .build:
-                // Steady: 50% → 90% of growth
-                progress = 0.50 + (rawProgress - 0.30) / 0.70 * 0.40
+                // Steady: 45% → 78% of growth
+                progress = 0.45 + (rawProgress - 0.30) / 0.70 * 0.33
             case .peak:
-                // Near-hold: 90% → 100%
-                progress = min(0.90 + (rawProgress - 0.70) / 0.30 * 0.10, 1.0)
+                // Meaningful progression: 78% → 100% across the peak phase
+                progress = min(0.78 + (rawProgress - 0.70) / 0.30 * 0.22, 1.0)
             default:
                 progress = rawProgress
             }
@@ -155,6 +162,19 @@ enum RoadVolumeCalculator {
             var easy2Seconds = linearDuration(params: easyP, progress: clampedProgress) * 0.9
             var intervalSeconds = linearDuration(params: intervalP, progress: clampedProgress)
             var tempoSeconds = linearDuration(params: tempoP, progress: clampedProgress)
+
+            // Explicit peak-phase progressive overload on quality sessions.
+            // Pfitzinger's LT sessions grow ~1 min/wk in the peak mesocycle;
+            // Daniels' Q-workouts grow in total T/I volume each peak week.
+            // Without this bump, minute-rounding hides progression entirely.
+            if skeleton.phase == .peak && !skeleton.isRecoveryWeek {
+                let bump = Double(peakWeekCounter)
+                intervalSeconds += bump * 90   // +1.5 min per non-recovery peak week
+                tempoSeconds    += bump * 120  // +2.0 min per non-recovery peak week
+                easy1Seconds    += bump * 45   // +0.75 min
+                easy2Seconds    += bump * 30   // +0.50 min
+                peakWeekCounter += 1
+            }
 
             // Long run: quadratic growth (delegated)
             let longRunSeconds = RoadLongRunCalculator.longRunDuration(

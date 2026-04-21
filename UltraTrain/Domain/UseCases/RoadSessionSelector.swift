@@ -40,11 +40,21 @@ enum RoadSessionSelector {
         let base = volume.baseSessionDurations
         let longRunDuration = volume.targetLongRunDurationSeconds
 
-        // Recovery weeks: all easy + reduced long run
+        // Recovery weeks: keep 1 reduced quality session (Pfitzinger/Daniels).
+        // Research: road recovery should preserve intensity while cutting volume
+        // ~15-20%. Stripping all quality creates a "shutdown week" that loses
+        // fitness and feels like a totally different week structure.
         if isRecoveryWeek {
             return recoveryWeekSessions(
-                base: base, longRunDuration: longRunDuration,
-                preferredRunsPerWeek: preferredRunsPerWeek, tpl: tpl
+                base: base,
+                longRunDuration: longRunDuration,
+                preferredRunsPerWeek: preferredRunsPerWeek,
+                phase: phase,
+                discipline: discipline,
+                experience: experience,
+                weekInPhase: weekInPhase,
+                paceProfile: paceProfile,
+                tpl: tpl
             )
         }
 
@@ -205,24 +215,85 @@ enum RoadSessionSelector {
         base: VolumeCalculator.BaseSessionDurations,
         longRunDuration: TimeInterval,
         preferredRunsPerWeek: Int,
+        phase: TrainingPhase,
+        discipline: RoadRaceDiscipline,
+        experience: ExperienceLevel,
+        weekInPhase: Int,
+        paceProfile: RoadPaceProfile?,
         tpl: (Int, SessionType, Intensity, TimeInterval, Double, String) -> SessionTemplateGenerator.SessionTemplate
     ) -> [SessionTemplateGenerator.SessionTemplate] {
-        // Recovery: all easy + reduced long run + optional strides
-        let recoveryCount = preferredRunsPerWeek > 4 ? preferredRunsPerWeek - 1 : preferredRunsPerWeek
+        // Recovery week retains the SAME session count as a normal week but
+        // swaps the two-quality layout for a one-quality layout:
+        //   - 1 reduced tempo/threshold session (threshold preferred — lower
+        //     CNS load than VO2max; Pfitzinger 18/55 recovery weeks)
+        //   - 1 easy long run (already reduced by RoadVolumeCalculator)
+        //   - Remaining easy runs (also already reduced via base durations)
+        //
+        // This keeps the weekly "shape" close to the prior week and avoids the
+        // fitness-losing shutdown feel.
+
+        // Pick a threshold-preferred template from the library for this slot.
+        // Threshold templates exist across all phases and are the safest
+        // quality to preserve during recovery.
+        let quality = RoadIntervalLibrary.selectForSlot(
+            slotIndex: 1, // slot 1 biases toward threshold in most phase prefs
+            phase: phase,
+            discipline: discipline,
+            experience: experience,
+            weekInPhase: weekInPhase,
+            excludeCategory: .vo2max // exclude hard VO2max on recovery week
+        )
+
+        // Quality duration: base.vgSeconds (tempo slot in road plans) is
+        // already cut by RoadVolumeCalculator's recovery multiplier (~0.85).
+        // Keep it as-is; no extra reduction to avoid double-cutting.
+        let qualityDuration = base.vgSeconds
+        let qualityIntensity: Intensity = .hard
+
+        // Build quality description with pace where available.
+        let qualityDesc: String
+        if let t = quality, let p = paceProfile {
+            let pace = RoadCoachAdviceGenerator.formatPace(paceForZone(t.targetPaceZone, profile: p))
+            if t.repDistanceM > 0 {
+                qualityDesc = "\(t.name) — \(t.repCount)×\(t.repDistanceM)m @ \(pace)/km (recovery week — reduced volume)"
+            } else {
+                qualityDesc = "\(t.name) @ \(pace)/km (recovery week — reduced volume)"
+            }
+        } else {
+            qualityDesc = "Tempo run — reduced volume (recovery week)"
+        }
+
+        let easyPace: String
+        if let p = paceProfile {
+            let fast = RoadCoachAdviceGenerator.formatPace(p.easyPacePerKm.lowerBound)
+            let slow = RoadCoachAdviceGenerator.formatPace(p.easyPacePerKm.upperBound)
+            easyPace = "\(fast)-\(slow)/km"
+        } else {
+            easyPace = "conversational pace"
+        }
+
+        // Mirror normal-week layout (Mon=0, Tue=1 quality, Wed=2 easy,
+        // Thu=3 easy, Fri=4 easy, Sat=5 long, Sun=6 rest) with only 1 quality
+        // on Thursday (mid-week) to keep the week's rhythm.
         let pool: [(day: Int, template: SessionTemplateGenerator.SessionTemplate)] = [
             (5, tpl(5, .longRun, .easy, longRunDuration, 0,
-                    "Easy long run. Recovery week — shorter than usual.")),
+                    "Easy long run — recovery week, reduced volume")),
+            (3, tpl(3, .tempo, qualityIntensity, qualityDuration, 0, qualityDesc)),
             (1, tpl(1, .recovery, .easy, base.easyRun1Seconds, 0,
-                    "Easy run with 4-6 strides at the end. Maintain leg speed.")),
-            (3, tpl(3, .recovery, .easy, base.easyRun2Seconds, 0,
-                    "Easy recovery run. Conversational pace.")),
-            (0, tpl(0, .recovery, .easy, base.easyRun1Seconds * 0.8, 0,
-                    "Short easy run. Recovery week.")),
-            (4, tpl(4, .recovery, .easy, base.easyRun2Seconds * 0.8, 0,
-                    "Easy jog. Keep the legs moving.")),
+                    "Easy run with 4-6 strides @ \(easyPace)")),
+            (0, tpl(0, .recovery, .easy, base.easyRun1Seconds, 0,
+                    "Easy run @ \(easyPace)")),
+            (4, tpl(4, .recovery, .easy, base.easyRun2Seconds, 0,
+                    "Easy run @ \(easyPace)")),
+            (2, tpl(2, .recovery, .easy, base.easyRun1Seconds, 0,
+                    "Recovery run @ \(easyPace)")),
+            (6, tpl(6, .recovery, .easy, base.easyRun2Seconds, 0,
+                    "Easy run @ \(easyPace)")),
         ]
 
-        let activeSlots = pool.prefix(recoveryCount)
+        // Same session count as normal week (Pfitzinger: keep the rhythm)
+        let activeCount = min(preferredRunsPerWeek, pool.count)
+        let activeSlots = pool.prefix(activeCount)
         var templates: [SessionTemplateGenerator.SessionTemplate] = []
         for day in 0...6 {
             if let slot = activeSlots.first(where: { $0.day == day }) {
