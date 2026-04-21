@@ -225,14 +225,38 @@ enum RoadVolumeCalculator {
                 tempoSeconds *= 0.85
             }
 
-            // Taper: apply profile fractions
+            // Taper: Mujika 2003 principle — reduce VOLUME, preserve INTENSITY.
+            // Easy runs absorb most of the volume cut; quality sessions either
+            // keep a high fraction of their peak duration (intensity intact via
+            // pace from the template) or get zeroed out when qualityAllowedPerWeek
+            // says so. Race week with qualityAllowed=false → RoadSessionSelector
+            // substitutes a dress-rehearsal (short MP segment) in the tempo slot.
             if skeleton.phase == .taper {
                 let weekInTaper = taperWeekCounter
                 let fraction = taperProfile.volumeFraction(forWeekInTaper: weekInTaper)
+                let qualityAllowed = taperProfile.isQualityAllowed(forWeekInTaper: weekInTaper)
+
+                // Easy runs: full volume cut
                 easy1Seconds *= fraction
                 easy2Seconds *= fraction
-                intervalSeconds *= fraction
-                tempoSeconds *= fraction
+
+                if qualityAllowed {
+                    // Preserve intensity: never cut quality volume below 65% of peak.
+                    // The athlete keeps hitting 5K pace / LT pace, just with fewer/
+                    // shorter reps. Mujika: intensity is the stimulus that matters.
+                    let qualityFraction = max(fraction, 0.65)
+                    intervalSeconds *= qualityFraction
+                    tempoSeconds *= qualityFraction
+                } else {
+                    // True-taper weeks: no hard intervals. Tempo slot may host a
+                    // dress rehearsal instead (handled in RoadSessionSelector); we
+                    // leave a minimal tempo budget so the selector can allocate it.
+                    intervalSeconds = 0
+                    // Leave ~40-50 min for a dress rehearsal session (warm-up +
+                    // 15-20 min MP + cool-down). RoadSessionSelector fills this slot.
+                    tempoSeconds = min(tempoSeconds * 0.50, 45 * 60)
+                }
+
                 taperWeekCounter += 1
             }
 

@@ -172,10 +172,49 @@ enum RoadSessionSelector {
             q2Desc = q2?.name ?? "Tempo"
         }
 
+        // RR-3 Mujika taper: RoadVolumeCalculator zeroes out intervalSeconds
+        // when qualityAllowedPerWeek is false. That signal = "true-taper" week,
+        // where the tempo slot becomes a dress rehearsal (short MP segment at
+        // race pace) instead of a full threshold run. Preserves intensity
+        // feel while cutting volume. Race week dress rehearsal is the classic
+        // Pfitzinger/Daniels pre-race key session.
+        let isTrueTaperWeek = phase == .taper && scaledInterval <= 0
+        let shouldDressRehearse = isTrueTaperWeek && scaledTempo > 0
+
+        let effectiveIntervalSeconds: TimeInterval
+        let effectiveIntervalDesc: String
+        let effectiveIntervalType: SessionType
+        if isTrueTaperWeek {
+            // Replace intervals with an easy + strides shakeout
+            effectiveIntervalSeconds = max(scaledEasy2, 20 * 60)
+            effectiveIntervalDesc = "Shakeout + 4-6 × 20s strides @ \(easyPace)"
+            effectiveIntervalType = .recovery
+        } else {
+            effectiveIntervalSeconds = scaledInterval
+            effectiveIntervalDesc = q1Desc
+            effectiveIntervalType = .intervals
+        }
+
+        let effectiveTempoSeconds: TimeInterval
+        let effectiveTempoDesc: String
+        if shouldDressRehearse {
+            effectiveTempoSeconds = scaledTempo
+            let mpPace: String
+            if let p = paceProfile {
+                mpPace = RoadCoachAdviceGenerator.formatPace(p.marathonPacePerKm) + "/km"
+            } else {
+                mpPace = "marathon effort"
+            }
+            effectiveTempoDesc = "Dress rehearsal — \(Int(scaledTempo / 60)) min easy with 15-20 min @ \(mpPace). Wear race shoes."
+        } else {
+            effectiveTempoSeconds = scaledTempo
+            effectiveTempoDesc = q2Desc
+        }
+
         var pool: [(day: Int, template: SessionTemplateGenerator.SessionTemplate)] = [
             (5, tpl(5, .longRun, .easy, longRunDuration, longRunElev, longRunDesc)),
-            (1, tpl(1, .intervals, q1Intensity, scaledInterval, 0, q1Desc)),
-            (3, tpl(3, .tempo, q2Intensity, scaledTempo, 0, q2Desc)),
+            (1, tpl(1, effectiveIntervalType, isTrueTaperWeek ? .easy : q1Intensity, effectiveIntervalSeconds, 0, effectiveIntervalDesc)),
+            (3, tpl(3, .tempo, q2Intensity, effectiveTempoSeconds, 0, effectiveTempoDesc)),
             (0, tpl(0, .recovery, .easy, scaledEasy1, 0,
                     "Easy run @ \(easyPace)")),
             (4, tpl(4, .recovery, .easy, scaledEasy2, 0,
