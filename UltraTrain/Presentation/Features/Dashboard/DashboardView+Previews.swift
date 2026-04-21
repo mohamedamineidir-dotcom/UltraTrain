@@ -104,7 +104,7 @@ private struct PreviewNutritionRepository: NutritionRepository, @unchecked Senda
 // @unchecked Sendable: stateless preview stub
 private struct PreviewNutritionGenerator: GenerateNutritionPlanUseCase, @unchecked Sendable {
     func execute(athlete: Athlete, race: Race, estimatedDuration: TimeInterval, preferences: NutritionPreferences, weatherAdjustment: WeatherImpactCalculator.NutritionWeatherAdjustment?) async throws -> NutritionPlan {
-        NutritionPlan(id: UUID(), raceId: race.id, caloriesPerHour: 0, hydrationMlPerHour: 0, sodiumMgPerHour: 0, entries: [], gutTrainingSessionIds: [])
+        NutritionPlan(id: UUID(), raceId: race.id, carbsPerHour: 0, caloriesPerHour: 0, hydrationMlPerHour: 0, sodiumMgPerHour: 0, totalCaffeineMg: 0, entries: [], gutTrainingSessionIds: [])
     }
 }
 

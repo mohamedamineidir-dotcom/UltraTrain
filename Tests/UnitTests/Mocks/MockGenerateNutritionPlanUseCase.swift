@@ -25,9 +25,11 @@ final class MockGenerateNutritionPlanUseCase: GenerateNutritionPlanUseCase, @unc
         return NutritionPlan(
             id: UUID(),
             raceId: race.id,
+            carbsPerHour: 70,
             caloriesPerHour: 280,
             hydrationMlPerHour: 500,
             sodiumMgPerHour: 600,
+            totalCaffeineMg: 0,
             entries: [],
             gutTrainingSessionIds: []
         )

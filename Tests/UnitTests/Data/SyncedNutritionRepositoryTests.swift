@@ -32,7 +32,7 @@ struct SyncedNutritionRepositoryTests {
             caloriesPerServing: caloriesPerServing,
             carbsGramsPerServing: 25,
             sodiumMgPerServing: 30,
-            caffeinated: false
+            caffeineMgPerServing: 0
         )
     }
 
@@ -55,9 +55,11 @@ struct SyncedNutritionRepositoryTests {
         NutritionPlan(
             id: id,
             raceId: raceId,
+            carbsPerHour: caloriesPerHour / 4,
             caloriesPerHour: caloriesPerHour,
             hydrationMlPerHour: 500,
             sodiumMgPerHour: 600,
+            totalCaffeineMg: 0,
             entries: entries ?? [makeEntry()],
             gutTrainingSessionIds: []
         )
@@ -157,9 +159,11 @@ struct SyncedNutritionRepositoryTests {
         let updated = NutritionPlan(
             id: planId,
             raceId: raceId,
+            carbsPerHour: 100,
             caloriesPerHour: 400,
             hydrationMlPerHour: 700,
             sodiumMgPerHour: 800,
+            totalCaffeineMg: 0,
             entries: [],
             gutTrainingSessionIds: []
         )
@@ -209,12 +213,8 @@ struct SyncedNutritionRepositoryTests {
     @Test("saveNutritionPreferences persists through synced repository")
     func savePreferencesPersists() async throws {
         let (sut, local) = try makeSUT()
-        let prefs = NutritionPreferences(
-            avoidCaffeine: true,
-            preferRealFood: false,
-            excludedProductIds: [],
-            favoriteProductIds: []
-        )
+        var prefs = NutritionPreferences.default
+        prefs.avoidCaffeine = true
 
         try await sut.saveNutritionPreferences(prefs)
 

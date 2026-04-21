@@ -43,58 +43,135 @@ struct NutritionPlanGeneratorTests {
         )
     }
 
-    // MARK: - Calorie Calculations
+    // MARK: - Carb target (g/hr)
 
-    @Test("Calories scale with athlete weight")
-    func caloriesScaleWithWeight() {
-        let generator = NutritionPlanGenerator()
-        let light = generator.calculateCaloriesPerHour(weightKg: 55, experience: .intermediate)
-        let heavy = generator.calculateCaloriesPerHour(weightKg: 85, experience: .intermediate)
-        #expect(heavy > light)
+    @Test("Carbs/hr scales with duration — marathon > half")
+    func carbsScaleWithDuration() {
+        let half = NutritionTargets.carbsGramsPerHour(
+            durationHours: 1.5, experience: .intermediate, goal: .targetTime,
+            bodyWeightKg: 70, toleranceCeiling: nil
+        )
+        let marathon = NutritionTargets.carbsGramsPerHour(
+            durationHours: 3.5, experience: .intermediate, goal: .targetTime,
+            bodyWeightKg: 70, toleranceCeiling: nil
+        )
+        #expect(marathon > half)
     }
 
-    @Test("Calories increase with experience level")
-    func caloriesIncreaseWithExperience() {
-        let generator = NutritionPlanGenerator()
-        let beginner = generator.calculateCaloriesPerHour(weightKg: 70, experience: .beginner)
-        let elite = generator.calculateCaloriesPerHour(weightKg: 70, experience: .elite)
-        #expect(elite > beginner)
+    @Test("Carbs/hr respects gut-training tolerance ceiling")
+    func carbsRespectTolerance() {
+        let uncapped = NutritionTargets.carbsGramsPerHour(
+            durationHours: 4, experience: .advanced, goal: .competitive,
+            bodyWeightKg: 70, toleranceCeiling: nil
+        )
+        let capped = NutritionTargets.carbsGramsPerHour(
+            durationHours: 4, experience: .advanced, goal: .competitive,
+            bodyWeightKg: 70, toleranceCeiling: 60
+        )
+        #expect(capped <= 60)
+        #expect(capped < uncapped)
     }
 
-    @Test("Calories are within expected range for 70kg intermediate")
-    func caloriesInRange() {
-        let generator = NutritionPlanGenerator()
-        let cal = generator.calculateCaloriesPerHour(weightKg: 70, experience: .intermediate)
-        #expect(cal >= 280)
-        #expect(cal <= 350)
+    @Test("Competitive goal exceeds finish goal at same inputs")
+    func goalAffectsCarbs() {
+        let finish = NutritionTargets.carbsGramsPerHour(
+            durationHours: 3.5, experience: .intermediate, goal: .finishComfortably,
+            bodyWeightKg: 70, toleranceCeiling: nil
+        )
+        let competitive = NutritionTargets.carbsGramsPerHour(
+            durationHours: 3.5, experience: .intermediate, goal: .competitive,
+            bodyWeightKg: 70, toleranceCeiling: nil
+        )
+        #expect(competitive > finish)
     }
 
-    // MARK: - Hydration
-
-    @Test("Hydration increases with race duration")
-    func hydrationScalesWithDuration() {
-        let generator = NutritionPlanGenerator()
-        let short = generator.calculateHydrationPerHour(durationMinutes: 120)
-        let long = generator.calculateHydrationPerHour(durationMinutes: 720)
-        #expect(long > short)
+    @Test("Carbs hard-capped at 120 g/hr absolute")
+    func carbsAbsoluteCap() {
+        let elite = NutritionTargets.carbsGramsPerHour(
+            durationHours: 24, experience: .elite, goal: .competitive,
+            bodyWeightKg: 90, toleranceCeiling: nil
+        )
+        #expect(elite <= 120)
     }
 
-    @Test("Hydration stays within configured bounds")
-    func hydrationInBounds() {
-        let generator = NutritionPlanGenerator()
-        let hydration = generator.calculateHydrationPerHour(durationMinutes: 600)
-        #expect(hydration >= AppConfiguration.Nutrition.hydrationMlPerHourLow)
-        #expect(hydration <= AppConfiguration.Nutrition.hydrationMlPerHourHigh)
+    // MARK: - Hydration (ml/hr) — sweat-profile driven
+
+    @Test("Measured sweat rate drives hydration target (80% replacement)")
+    func hydrationFromSweatRate() {
+        var profile = SweatProfile.unknown
+        profile.sweatRateMlPerHour = 1000
+        let ml = NutritionTargets.hydrationMlPerHour(sweatProfile: profile, bodyWeightKg: 70, weather: nil)
+        #expect(ml == 800) // 80% of 1000
     }
 
-    // MARK: - Sodium
+    @Test("Hydration falls back to weight-adjusted baseline when sweat rate unknown")
+    func hydrationFallback() {
+        let smallAthlete = NutritionTargets.hydrationMlPerHour(
+            sweatProfile: .unknown, bodyWeightKg: 55, weather: nil
+        )
+        let largeAthlete = NutritionTargets.hydrationMlPerHour(
+            sweatProfile: .unknown, bodyWeightKg: 90, weather: nil
+        )
+        #expect(largeAthlete > smallAthlete)
+    }
 
-    @Test("Sodium is higher for 100km+ races")
-    func sodiumHigherForLongRaces() {
-        let generator = NutritionPlanGenerator()
-        let short = generator.calculateSodiumPerHour(distanceKm: 50)
-        let long = generator.calculateSodiumPerHour(distanceKm: 160)
-        #expect(long > short)
+    // MARK: - Sodium (mg/hr)
+
+    @Test("Sodium uses sweat sodium concentration when known")
+    func sodiumFromSweatComposition() {
+        var profile = SweatProfile.unknown
+        profile.sweatSodiumMgPerL = 1200
+        let mg = NutritionTargets.sodiumMgPerHour(
+            sweatProfile: profile, hydrationMlPerHour: 800, durationHours: 3, weather: nil
+        )
+        // 800 ml × 1200 mg/L = 960 mg/hr
+        #expect(mg == 960)
+    }
+
+    @Test("Heavy salty sweater gets elevated sodium")
+    func sodiumHeavySaltySweater() {
+        var profile = SweatProfile.unknown
+        profile.heavySaltySweater = true
+        let heavy = NutritionTargets.sodiumMgPerHour(
+            sweatProfile: profile, hydrationMlPerHour: 600, durationHours: 4, weather: nil
+        )
+        let normal = NutritionTargets.sodiumMgPerHour(
+            sweatProfile: .unknown, hydrationMlPerHour: 600, durationHours: 4, weather: nil
+        )
+        #expect(heavy > normal)
+    }
+
+    @Test("ISSN ultra floor of 575 mg/L applies for races >6h")
+    func sodiumIssnFloor() {
+        // Set an unrealistically low sodium concentration; expect floor to apply.
+        var profile = SweatProfile.unknown
+        profile.sweatSodiumMgPerL = 200
+        let mgOver6h = NutritionTargets.sodiumMgPerHour(
+            sweatProfile: profile, hydrationMlPerHour: 600, durationHours: 8, weather: nil
+        )
+        // 600 ml × 575 mg/L (floor) = 345 mg/hr, minimum clamped to 200
+        #expect(mgOver6h >= 345)
+    }
+
+    // MARK: - Caffeine (total mg)
+
+    @Test("Caffeine is 0 when avoidCaffeine is true")
+    func caffeineZeroWhenAvoided() {
+        var prefs = NutritionPreferences.default
+        prefs.avoidCaffeine = true
+        let mg = NutritionTargets.caffeineTotalMg(for: prefs, bodyWeightKg: 70)
+        #expect(mg == 0)
+    }
+
+    @Test("Caffeine scales with sensitivity")
+    func caffeineScalesWithSensitivity() {
+        var low = NutritionPreferences.default
+        low.caffeineSensitivity = .low
+        var high = NutritionPreferences.default
+        high.caffeineSensitivity = .high
+        let lowMg = NutritionTargets.caffeineTotalMg(for: low, bodyWeightKg: 70)
+        let highMg = NutritionTargets.caffeineTotalMg(for: high, bodyWeightKg: 70)
+        #expect(highMg > lowMg)
     }
 
     // MARK: - Schedule Structure
@@ -123,8 +200,8 @@ struct NutritionPlanGeneratorTests {
         #expect(firstTiming >= 20)
     }
 
-    @Test("Caffeine entries appear after 4 hours")
-    func caffeineAfter4Hours() async throws {
+    @Test("Caffeine entries appear in the back half of ultra races")
+    func caffeineBackLoadedForUltras() async throws {
         let generator = NutritionPlanGenerator()
         let athlete = makeAthlete()
         let race = makeRace()
@@ -133,8 +210,9 @@ struct NutritionPlanGeneratorTests {
 
         let caffeineEntries = plan.entries.filter { $0.product.caffeinated }
         #expect(!caffeineEntries.isEmpty)
+        // Ultra schedule back-loads caffeine from hour 3 onward.
         for entry in caffeineEntries {
-            #expect(entry.timingMinutes >= 240)
+            #expect(entry.timingMinutes >= 180)
         }
     }
 

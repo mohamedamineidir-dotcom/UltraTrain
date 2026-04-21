@@ -14,9 +14,11 @@ enum NutritionPlanSwiftDataMapper {
         return NutritionPlan(
             id: model.id,
             raceId: model.raceId,
+            carbsPerHour: model.caloriesPerHour / 4, // legacy stores only kcal
             caloriesPerHour: model.caloriesPerHour,
             hydrationMlPerHour: model.hydrationMlPerHour,
             sodiumMgPerHour: model.sodiumMgPerHour,
+            totalCaffeineMg: 0, // not stored on legacy rows
             entries: entries,
             gutTrainingSessionIds: model.gutTrainingSessionIds
         )
@@ -32,7 +34,7 @@ enum NutritionPlanSwiftDataMapper {
             caloriesPerServing: model.productCaloriesPerServing,
             carbsGramsPerServing: model.productCarbsGramsPerServing,
             sodiumMgPerServing: model.productSodiumMgPerServing,
-            caffeinated: model.productCaffeinated
+            caffeineMgPerServing: model.productCaffeinated ? 25 : 0
         )
 
         return NutritionEntry(
@@ -53,7 +55,7 @@ enum NutritionPlanSwiftDataMapper {
             caloriesPerServing: model.caloriesPerServing,
             carbsGramsPerServing: model.carbsGramsPerServing,
             sodiumMgPerServing: model.sodiumMgPerServing,
-            caffeinated: model.caffeinated
+            caffeineMgPerServing: model.caffeinated ? 25 : 0
         )
     }
 

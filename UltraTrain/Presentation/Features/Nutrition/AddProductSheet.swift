@@ -45,7 +45,7 @@ struct AddProductSheet: View {
                             caloriesPerServing: calories,
                             carbsGramsPerServing: carbs,
                             sodiumMgPerServing: sodium,
-                            caffeinated: caffeinated
+                            caffeineMgPerServing: caffeinated ? 25 : 0
                         )
                         Task {
                             await viewModel.addProduct(product)

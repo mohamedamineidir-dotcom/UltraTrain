@@ -370,8 +370,9 @@ struct NutritionViewModelTests {
         let vm = makeViewModel()
         vm.plan = plan
 
-        // gel: 100 * 1 + drink: 80 * 1 = 180
-        #expect(vm.totalCaloriesInPlan == 180)
+        // Calories = sum of DefaultProducts.gel + DefaultProducts.drink calories.
+        let expected = DefaultProducts.gel.caloriesPerServing + DefaultProducts.drink.caloriesPerServing
+        #expect(vm.totalCaloriesInPlan == expected)
     }
 
     @Test("Total sodium computed from entries")
@@ -381,8 +382,8 @@ struct NutritionViewModelTests {
         let vm = makeViewModel()
         vm.plan = plan
 
-        // gel: 60 * 1 + drink: 300 * 1 = 360
-        #expect(vm.totalSodiumInPlan == 360)
+        let expected = DefaultProducts.gel.sodiumMgPerServing + DefaultProducts.drink.sodiumMgPerServing
+        #expect(vm.totalSodiumInPlan == expected)
     }
 
     @Test("Gut training session count")

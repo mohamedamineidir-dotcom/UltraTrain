@@ -34,7 +34,7 @@ struct LocalNutritionRepositoryTests {
             caloriesPerServing: caloriesPerServing,
             carbsGramsPerServing: carbsGramsPerServing,
             sodiumMgPerServing: sodiumMgPerServing,
-            caffeinated: caffeinated
+            caffeineMgPerServing: caffeinated ? 25 : 0
         )
     }
 
@@ -64,9 +64,11 @@ struct LocalNutritionRepositoryTests {
         NutritionPlan(
             id: id,
             raceId: raceId,
+            carbsPerHour: caloriesPerHour / 4,
             caloriesPerHour: caloriesPerHour,
             hydrationMlPerHour: hydrationMlPerHour,
             sodiumMgPerHour: sodiumMgPerHour,
+            totalCaffeineMg: 0,
             entries: entries ?? [makeEntry()],
             gutTrainingSessionIds: []
         )
@@ -131,9 +133,11 @@ struct LocalNutritionRepositoryTests {
         let updated = NutritionPlan(
             id: planId,
             raceId: raceId,
+            carbsPerHour: 87,
             caloriesPerHour: 350,
             hydrationMlPerHour: 700,
             sodiumMgPerHour: 800,
+            totalCaffeineMg: 0,
             entries: [],
             gutTrainingSessionIds: []
         )
@@ -203,12 +207,9 @@ struct LocalNutritionRepositoryTests {
         let container = try makeContainer()
         let repo = LocalNutritionRepository(modelContainer: container)
 
-        let prefs = NutritionPreferences(
-            avoidCaffeine: true,
-            preferRealFood: true,
-            excludedProductIds: [],
-            favoriteProductIds: []
-        )
+        var prefs = NutritionPreferences.default
+        prefs.avoidCaffeine = true
+        prefs.preferRealFood = true
         try await repo.saveNutritionPreferences(prefs)
 
         let fetched = try await repo.getNutritionPreferences()
@@ -221,20 +222,12 @@ struct LocalNutritionRepositoryTests {
         let container = try makeContainer()
         let repo = LocalNutritionRepository(modelContainer: container)
 
-        let prefs1 = NutritionPreferences(
-            avoidCaffeine: false,
-            preferRealFood: false,
-            excludedProductIds: [],
-            favoriteProductIds: []
-        )
+        let prefs1 = NutritionPreferences.default
         try await repo.saveNutritionPreferences(prefs1)
 
-        let prefs2 = NutritionPreferences(
-            avoidCaffeine: true,
-            preferRealFood: true,
-            excludedProductIds: [],
-            favoriteProductIds: []
-        )
+        var prefs2 = NutritionPreferences.default
+        prefs2.avoidCaffeine = true
+        prefs2.preferRealFood = true
         try await repo.saveNutritionPreferences(prefs2)
 
         let fetched = try await repo.getNutritionPreferences()
