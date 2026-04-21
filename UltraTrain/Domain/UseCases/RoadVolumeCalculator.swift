@@ -175,22 +175,43 @@ enum RoadVolumeCalculator {
             }
             let clampedProgress = max(min(progress, 1.0), 0.0)
 
-            // Compute each session duration with tiered progress, then apply
-            // the RR-1 Week-1 scaling factor so the whole ramp starts at the
-            // athlete's declared base volume.
-            var easy1Seconds = linearDuration(params: easyP, progress: clampedProgress) * sessionScalingFactor
-            var easy2Seconds = linearDuration(params: easyP, progress: clampedProgress) * 0.9 * sessionScalingFactor
-            var intervalSeconds = linearDuration(params: intervalP, progress: clampedProgress) * sessionScalingFactor
-            var tempoSeconds = linearDuration(params: tempoP, progress: clampedProgress) * sessionScalingFactor
+            // RR-1 anchor (RR-9 correction): the scaling factor shifts only
+            // the STARTING point of each session-duration ramp, not the peak.
+            // Week 1 lands at the athlete's declared base; peak still reaches
+            // the tier ceiling so volume grows naturally over the block. The
+            // original implementation applied the factor to both ends, which
+            // crushed peak volume for athletes whose declared base was well
+            // below tier default (e.g., a 2:40 marathoner declaring 55 km/wk
+            // had peaks of ~5 h/week instead of the 8-9 h tier target).
+            let scaledEasyParams = SessionParams(
+                startMinutes: easyP.startMinutes * sessionScalingFactor,
+                peakMinutes: easyP.peakMinutes
+            )
+            let scaledIntervalParams = SessionParams(
+                startMinutes: intervalP.startMinutes * sessionScalingFactor,
+                peakMinutes: intervalP.peakMinutes
+            )
+            let scaledTempoParams = SessionParams(
+                startMinutes: tempoP.startMinutes * sessionScalingFactor,
+                peakMinutes: tempoP.peakMinutes
+            )
+            var easy1Seconds = linearDuration(params: scaledEasyParams, progress: clampedProgress)
+            var easy2Seconds = linearDuration(params: scaledEasyParams, progress: clampedProgress) * 0.9
+            var intervalSeconds = linearDuration(params: scaledIntervalParams, progress: clampedProgress)
+            var tempoSeconds = linearDuration(params: scaledTempoParams, progress: clampedProgress)
 
             // Explicit peak-phase progressive overload on quality sessions.
             // Pfitzinger's LT sessions grow ~1 min/wk in the peak mesocycle;
             // Daniels' Q-workouts grow in total T/I volume each peak week.
             // Without this bump, minute-rounding hides progression entirely.
-            // Bumps are scaled too so they stay proportional for athletes
-            // with a lower declared base.
+            //
+            // RR-9: bump no longer multiplied by sessionScalingFactor. Peak
+            // is already at tier ceiling, so the bump is proportional to the
+            // tier target, not the athlete's declared base. Low-base athletes
+            // who ramp to tier peak get the same peak progression as athletes
+            // starting higher.
             if skeleton.phase == .peak && !skeleton.isRecoveryWeek {
-                let bump = Double(peakWeekCounter) * sessionScalingFactor
+                let bump = Double(peakWeekCounter)
                 intervalSeconds += bump * 90   // +1.5 min per non-recovery peak week
                 tempoSeconds    += bump * 120  // +2.0 min per non-recovery peak week
                 easy1Seconds    += bump * 45   // +0.75 min

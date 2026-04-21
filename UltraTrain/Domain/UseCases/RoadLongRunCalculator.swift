@@ -92,14 +92,23 @@ enum RoadLongRunCalculator {
         // because it respects the BJSM 2018 rule: never exceed the athlete's
         // longest run by more than ~10% in a single week.
         //
+        // RR-9 correction: the Week 1 long-run cap was originally
+        // `capDuration × 0.85` — way too aggressive. For an ultra-trail
+        // athlete with longestRunKm = 100 doing a road marathon, this anchored
+        // Week 1 LR at ~30 km (85% of the 32 km tier peak). That left too
+        // little budget for the rest of the week under the session-scaling
+        // math, crushing non-long-run volume across ALL weeks.
+        //
+        // Pfitzinger 18/55 starts Week 1 LR at ~12 mi vs 20 mi peak = ~60%
+        // of peak. The cap is now `capDuration × 0.60`, matching Pfitzinger.
+        //
         // - `currentLongestRunKm <= 0` → fall back to tier default.
-        // - Anchor at 90% of declared longest (10% safety buffer).
-        // - Clamp to [minimumLongRun, capDuration * 0.85] so there's still
-        //   headroom to grow across the block.
+        // - Anchor at 90% of declared longest (10% safety buffer vs 10% rule).
+        // - Clamp to [minimumLongRun, capDuration * 0.60].
         let startDuration: TimeInterval
         if currentLongestRunKm > 0 {
             let proposedAnchor = currentLongestRunKm * 0.9 * avgPaceSecPerKm
-            let maxAnchor = capDuration * 0.85
+            let maxAnchor = capDuration * 0.60
             startDuration = max(minimumLongRun, min(proposedAnchor, maxAnchor))
         } else {
             startDuration = max(capDuration * startFraction, minimumLongRun)
