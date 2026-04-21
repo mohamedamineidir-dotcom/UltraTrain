@@ -1201,6 +1201,7 @@
 		B2266E50B6BE367A0CAA1BCB /* FriendRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E1ED33F0033EC27FB9A1B7 /* FriendRepository.swift */; };
 		B2461EC5A993081C9966F783 /* LabeledStepper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EEA3C15AA1ABE6591930902 /* LabeledStepper.swift */; };
 		B2CF7440D6B7162F76D87099 /* ActiveRunViewModel+Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4205110C8CFB12448FE72979 /* ActiveRunViewModel+Location.swift */; };
+		B305E4967D3C02EED059B91A /* RoadLongRunWorkoutBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A33B88EAC70E33CA60177 /* RoadLongRunWorkoutBuilder.swift */; };
 		B34A884DC821A1DCB55544C1 /* PlanAdjustmentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB39932026E64822D86A2B2D /* PlanAdjustmentType.swift */; };
 		B36CAA4243E28EA7D8EA878F /* RaceDayPlanViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3C543710F6165475E7B69D /* RaceDayPlanViewModelTests.swift */; };
 		B393BD4C42F557CABAD74C77 /* CommonFoodDatabase+SportsNutrition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86840CE0332266BDA0D6E2B3 /* CommonFoodDatabase+SportsNutrition.swift */; };
@@ -3178,6 +3179,7 @@
 		C8F9A87519EA011949603690 /* LoginViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModelTests.swift; sourceTree = "<group>"; };
 		C93EF4A7B34222E616874D4C /* MockSyncQueueRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSyncQueueRepository.swift; sourceTree = "<group>"; };
 		C950AE30D88696D12EB9EB7F /* ProgressViewModelTrendsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressViewModelTrendsTests.swift; sourceTree = "<group>"; };
+		C98A33B88EAC70E33CA60177 /* RoadLongRunWorkoutBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoadLongRunWorkoutBuilder.swift; sourceTree = "<group>"; };
 		C9B0939720928F82F02C3100 /* PrivacyTrackingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyTrackingService.swift; sourceTree = "<group>"; };
 		C9DABA6638463984C8D8C4D9 /* SyncedSocialProfileRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncedSocialProfileRepositoryTests.swift; sourceTree = "<group>"; };
 		C9FC16722D3C5E92D1D0170D /* IntervalAnalysisCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntervalAnalysisCard.swift; sourceTree = "<group>"; };
@@ -4482,6 +4484,7 @@
 				93410CD0B831B191B7D0C50A /* RoadCoachAdviceGenerator.swift */,
 				59CCB56B8DE8E48734E58897 /* RoadIntervalLibrary.swift */,
 				E8F895002E9F494EA7505918 /* RoadLongRunCalculator.swift */,
+				C98A33B88EAC70E33CA60177 /* RoadLongRunWorkoutBuilder.swift */,
 				6D2D022E88CD5A6214FABBBD /* RoadPaceCalculator.swift */,
 				E4F9B2C1E703786EFF5A8694 /* RoadPhaseDistributor.swift */,
 				F20CF6E0F379A00C540312BF /* RoadSessionSelector.swift */,
@@ -7593,6 +7596,7 @@
 				6E1F89EBF6D6644E1B7374F4 /* RoadCoachAdviceGenerator.swift in Sources */,
 				062396ADEFFD150DA8AF2F49 /* RoadIntervalLibrary.swift in Sources */,
 				E1F4456194888FDD586D263D /* RoadLongRunCalculator.swift in Sources */,
+				B305E4967D3C02EED059B91A /* RoadLongRunWorkoutBuilder.swift in Sources */,
 				FDE7427810192E17DBD78298 /* RoadPaceCalculator.swift in Sources */,
 				477E2A379289338022FEC8E6 /* RoadPaceProfile.swift in Sources */,
 				9D4069EB6BA4CD21DAE3C8CE /* RoadPhaseDistributor.swift in Sources */,

@@ -372,6 +372,25 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 if let w = q1Workout { allWorkouts.append(w) }
                 if let w = q2Workout { allWorkouts.append(w) }
 
+                // RR-2: Build a structured long-run workout for Canova-style
+                // MP-block / progressive / race-simulation variants so the
+                // athlete gets real phase guidance in ActiveRunView instead
+                // of just a description string.
+                let longRunVariant = RoadLongRunCalculator.variant(
+                    phase: skeleton.phase,
+                    weekInPhase: phaseCounters[index],
+                    raceDistanceKm: targetRace.distanceKm,
+                    experience: athlete.experienceLevel,
+                    isRecoveryWeek: skeleton.isRecoveryWeek
+                )
+                let longRunWorkout = RoadLongRunWorkoutBuilder.build(
+                    variant: longRunVariant,
+                    totalDuration: volume.targetLongRunDurationSeconds,
+                    paceProfile: paceProfile,
+                    weekInPhase: phaseCounters[index]
+                )
+                if let w = longRunWorkout { allWorkouts.append(w) }
+
                 sessions = templates.enumerated().map { dayIdx, tpl in
                     var session = makeSession(template: tpl, skeleton: skeleton, dayIndex: dayIdx, volume: volume)
                     // Attach workout to quality sessions
@@ -379,6 +398,19 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                         session.intervalWorkoutId = w.id
                     } else if session.type == .tempo, let w = q2Workout {
                         session.intervalWorkoutId = w.id
+                    } else if session.type == .longRun, let w = longRunWorkout {
+                        session.intervalWorkoutId = w.id
+                        // Long runs with structured work become moderate/hard
+                        // sessions, not easy. Mark accordingly so the UI surfaces
+                        // them correctly (intensity badges, weekly load calc).
+                        switch longRunVariant {
+                        case .marathonPaceBlocks, .raceSimulation:
+                            session.intensity = .hard
+                        case .progressive, .fastFinish, .twoPart:
+                            session.intensity = .moderate
+                        case .easy:
+                            break // keep .easy
+                        }
                     }
                     // Road-specific coach advice
                     session.coachAdvice = RoadCoachAdviceGenerator.advice(
