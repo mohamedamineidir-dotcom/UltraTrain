@@ -18,12 +18,20 @@ final class NutritionViewModel {
     var plan: NutritionPlan?
     var products: [NutritionProduct] = []
     var preferences: NutritionPreferences = .default
+    var targetRace: Race?
     var isLoading = false
     var isGenerating = false
     var error: String?
     var showingProductLibrary = false
     var showingAddProduct = false
+    var showingNutritionOnboarding = false
     var selectedTab: NutritionTab = .training
+
+    /// True when the athlete hasn't yet completed the pre-plan nutrition
+    /// onboarding. Drives whether `generatePlan` opens the sheet first.
+    var needsNutritionOnboarding: Bool {
+        !preferences.onboardingCompleted
+    }
 
     // MARK: - Init
 
@@ -49,12 +57,13 @@ final class NutritionViewModel {
 
         do {
             let races = try await raceRepository.getRaces()
-            guard let targetRace = races.first(where: { $0.priority == .aRace }) else {
+            guard let race = races.first(where: { $0.priority == .aRace }) else {
                 isLoading = false
                 return
             }
+            targetRace = race
 
-            plan = try await nutritionRepository.getNutritionPlan(for: targetRace.id)
+            plan = try await nutritionRepository.getNutritionPlan(for: race.id)
             products = try await nutritionRepository.getProducts()
             preferences = try await nutritionRepository.getNutritionPreferences()
 
@@ -74,6 +83,32 @@ final class NutritionViewModel {
 
     // MARK: - Generate
 
+    /// Kicks off plan generation. If the athlete hasn't completed the
+    /// pre-plan nutrition onboarding, presents the sheet first — the sheet's
+    /// "Generate" button then calls `generatePlan(with:)` directly.
+    func startPlanGeneration() async {
+        if needsNutritionOnboarding {
+            showingNutritionOnboarding = true
+        } else {
+            await generatePlan()
+        }
+    }
+
+    /// Called by the onboarding sheet on its "Generate my plan" tap. Saves
+    /// the updated preferences (with onboardingCompleted = true) and then
+    /// runs the generator.
+    func generatePlan(with updatedPreferences: NutritionPreferences) async {
+        preferences = updatedPreferences
+        do {
+            try await nutritionRepository.saveNutritionPreferences(updatedPreferences)
+        } catch {
+            self.error = error.localizedDescription
+            Logger.nutrition.error("Failed to save nutrition preferences: \(error)")
+            return
+        }
+        await generatePlan()
+    }
+
     func generatePlan() async {
         guard !isGenerating else { return }
         isGenerating = true
@@ -86,18 +121,19 @@ final class NutritionViewModel {
             }
 
             let races = try await raceRepository.getRaces()
-            guard let targetRace = races.first(where: { $0.priority == .aRace }) else {
+            guard let race = races.first(where: { $0.priority == .aRace }) else {
                 throw DomainError.raceNotFound
             }
+            targetRace = race
 
-            let estimatedDuration = estimateDuration(race: targetRace, athlete: athlete)
+            let estimatedDuration = estimateDuration(race: race, athlete: athlete)
 
             let currentPreferences = try await nutritionRepository.getNutritionPreferences()
             preferences = currentPreferences
 
             var newPlan = try await nutritionGenerator.execute(
                 athlete: athlete,
-                race: targetRace,
+                race: race,
                 estimatedDuration: estimatedDuration,
                 preferences: currentPreferences
             )

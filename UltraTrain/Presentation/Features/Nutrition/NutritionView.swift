@@ -90,6 +90,19 @@ struct NutritionView: View {
             .sheet(isPresented: $viewModel.showingProductLibrary) {
                 ProductLibraryView(viewModel: viewModel)
             }
+            .sheet(isPresented: $viewModel.showingNutritionOnboarding) {
+                if let race = viewModel.targetRace {
+                    NutritionOnboardingSheet(
+                        raceName: race.name,
+                        raceDistanceKm: race.distanceKm,
+                        initialPreferences: viewModel.preferences,
+                        onGenerate: { updatedPreferences in
+                            Task { await viewModel.generatePlan(with: updatedPreferences) }
+                        },
+                        onCancel: { }
+                    )
+                }
+            }
         }
     }
 
@@ -134,6 +147,25 @@ struct NutritionView: View {
                     gutTrainingSessions: viewModel.gutTrainingSessionCount
                 )
 
+                HStack {
+                    Button {
+                        viewModel.showingNutritionOnboarding = true
+                    } label: {
+                        Label("Edit nutrition preferences", systemImage: "slider.horizontal.3")
+                            .font(.caption.weight(.medium))
+                    }
+                    .accessibilityIdentifier("nutrition.editPreferencesButton")
+                    Spacer()
+                    Button {
+                        Task { await viewModel.startPlanGeneration() }
+                    } label: {
+                        Label("Regenerate", systemImage: "arrow.clockwise")
+                            .font(.caption.weight(.medium))
+                    }
+                    .accessibilityIdentifier("nutrition.regenerateButton")
+                }
+                .padding(.horizontal, Theme.Spacing.sm)
+
                 NutritionScheduleView(entries: plan.entries)
             }
             .padding()
@@ -148,7 +180,7 @@ struct NutritionView: View {
             Text("Generate a race-day nutrition strategy based on your profile, race distance, and expected duration.")
         } actions: {
             Button {
-                Task { await viewModel.generatePlan() }
+                Task { await viewModel.startPlanGeneration() }
             } label: {
                 if viewModel.isGenerating {
                     ProgressView()
