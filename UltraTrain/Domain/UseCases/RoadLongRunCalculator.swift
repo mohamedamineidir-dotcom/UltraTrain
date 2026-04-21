@@ -57,12 +57,17 @@ enum RoadLongRunCalculator {
         }
         let maxDurationSeconds = maxDistanceKm * avgPaceSecPerKm
 
-        // Daniels: long run ≤ 2.5 hours regardless of distance
+        // Daniels' "≤ 2.5 h" rule is a beginner-era guideline. Pfitzinger's
+        // intermediate and advanced plans routinely prescribe 18-22 mile long
+        // runs that take 3:00-3:20 at the athlete's declared easy pace. If we
+        // cap at 2:30 for everyone, the stated 32 km intermediate marathon
+        // long run is mathematically unreachable (would need 4:40/km easy pace).
+        // Raise the cap by tier so distance caps are actually achievable.
         let absoluteMax: TimeInterval = switch experience {
-        case .beginner:     9000  // 2h30
-        case .intermediate: 9000  // 2h30
-        case .advanced:     9900  // 2h45
-        case .elite:        10800 // 3h00
+        case .beginner:     9000   // 2h30 — keep conservative (injury prevention)
+        case .intermediate: 10800  // 3h00 — allows 32 km at 5:36/km intermediate easy pace
+        case .advanced:     12000  // 3h20 — allows 35 km at 5:40/km or 22-mi Pfitz 18/70
+        case .elite:        12600  // 3h30 — ultra-capable though usually used road
         }
         let capDuration = min(maxDurationSeconds, absoluteMax)
 

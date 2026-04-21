@@ -211,14 +211,25 @@ enum RoadSessionSelector {
             effectiveTempoDesc = q2Desc
         }
 
+        // RR-7a: Strides on Mon + Fri easy days during build + peak.
+        // Daniels prescribes 4-6 × 20s strides on 2 easy days/week for
+        // neuromuscular sharpness, running economy, leg turnover. Not
+        // added during base (athlete still building aerobic engine) or
+        // taper (already sharp, don't over-do it).
+        let shouldIncludeStrides = (phase == .build || phase == .peak) && !isTrueTaperWeek
+        let mondayEasyDesc = shouldIncludeStrides
+            ? "Easy run @ \(easyPace) + 4-6 × 20s strides after"
+            : "Easy run @ \(easyPace)"
+        let fridayEasyDesc = shouldIncludeStrides
+            ? "Easy run @ \(easyPace) + 4-6 × 20s strides after"
+            : "Easy run @ \(easyPace)"
+
         var pool: [(day: Int, template: SessionTemplateGenerator.SessionTemplate)] = [
             (5, tpl(5, .longRun, .easy, longRunDuration, longRunElev, longRunDesc)),
             (1, tpl(1, effectiveIntervalType, isTrueTaperWeek ? .easy : q1Intensity, effectiveIntervalSeconds, 0, effectiveIntervalDesc)),
             (3, tpl(3, .tempo, q2Intensity, effectiveTempoSeconds, 0, effectiveTempoDesc)),
-            (0, tpl(0, .recovery, .easy, scaledEasy1, 0,
-                    "Easy run @ \(easyPace)")),
-            (4, tpl(4, .recovery, .easy, scaledEasy2, 0,
-                    "Easy run @ \(easyPace)")),
+            (0, tpl(0, .recovery, .easy, scaledEasy1, 0, mondayEasyDesc)),
+            (4, tpl(4, .recovery, .easy, scaledEasy2, 0, fridayEasyDesc)),
             (2, tpl(2, .recovery, .easy, scaledEasy1, 0,
                     "Recovery run @ \(easyPace)")),
             (6, tpl(6, .recovery, .easy, scaledEasy2, 0,

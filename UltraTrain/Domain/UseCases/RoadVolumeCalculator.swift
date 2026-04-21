@@ -114,13 +114,13 @@ enum RoadVolumeCalculator {
         case .advanced:     295
         case .elite:        265
         }
-        // #7: Weight goal affects peak volume (energy balance for weight loss)
-        let weightScale: Double = switch athlete.weightGoal {
-        case .lose:     0.90  // 10% less peak volume for weight loss
-        case .maintain: 1.00
-        case .gain:     1.05  // Can handle slightly more volume
-        }
-        let peakKmCeiling = discipline.peakWeeklyKm(experience: experience) * weightScale
+        // RR-7f: weight goal no longer modifies training volume. UltraTrain is
+        // a race-training app — the race goal drives the plan, and weight
+        // management is a nutrition concern (already handled by the nutrition
+        // pipeline's calorie/hour scaling). Letting weightGoal silently
+        // inflate or shrink peak km compromised the race prescription for
+        // anyone not on .maintain. Race-first.
+        let peakKmCeiling = discipline.peakWeeklyKm(experience: experience)
 
         // RR-1: Anchor Week 1 session volume to the athlete's declared
         // weeklyVolumeKm so the plan starts at their ACTUAL current base,
