@@ -122,6 +122,24 @@ enum RoadVolumeCalculator {
         }
         let peakKmCeiling = discipline.peakWeeklyKm(experience: experience) * weightScale
 
+        // RR-1: Anchor Week 1 session volume to the athlete's declared
+        // weeklyVolumeKm so the plan starts at their ACTUAL current base,
+        // not a tier-generic default. Applied uniformly across all weeks
+        // (preserves the progression shape, shifts the whole ramp up/down).
+        // BJSM 2018 cohort: most reliable injury predictor is single-week
+        // volume jumping more than ~10% above the athlete's recent base.
+        let sessionScalingFactor: Double = computeWeek1ScalingFactor(
+            athlete: athlete,
+            easyP: easyP,
+            intervalP: intervalP,
+            tempoP: tempoP,
+            avgPaceSecPerKm: avgPaceSecPerKm,
+            totalWeeks: totalWeeks,
+            raceDistanceKm: raceDistanceKm,
+            experience: experience,
+            peakKmCeiling: peakKmCeiling
+        )
+
         var volumes: [VolumeCalculator.WeekVolume] = []
         var taperWeekCounter = 0
         let taperStart = totalWeeks - taperProfile.totalTaperWeeks
@@ -157,18 +175,22 @@ enum RoadVolumeCalculator {
             }
             let clampedProgress = max(min(progress, 1.0), 0.0)
 
-            // Compute each session duration with tiered progress
-            var easy1Seconds = linearDuration(params: easyP, progress: clampedProgress)
-            var easy2Seconds = linearDuration(params: easyP, progress: clampedProgress) * 0.9
-            var intervalSeconds = linearDuration(params: intervalP, progress: clampedProgress)
-            var tempoSeconds = linearDuration(params: tempoP, progress: clampedProgress)
+            // Compute each session duration with tiered progress, then apply
+            // the RR-1 Week-1 scaling factor so the whole ramp starts at the
+            // athlete's declared base volume.
+            var easy1Seconds = linearDuration(params: easyP, progress: clampedProgress) * sessionScalingFactor
+            var easy2Seconds = linearDuration(params: easyP, progress: clampedProgress) * 0.9 * sessionScalingFactor
+            var intervalSeconds = linearDuration(params: intervalP, progress: clampedProgress) * sessionScalingFactor
+            var tempoSeconds = linearDuration(params: tempoP, progress: clampedProgress) * sessionScalingFactor
 
             // Explicit peak-phase progressive overload on quality sessions.
             // Pfitzinger's LT sessions grow ~1 min/wk in the peak mesocycle;
             // Daniels' Q-workouts grow in total T/I volume each peak week.
             // Without this bump, minute-rounding hides progression entirely.
+            // Bumps are scaled too so they stay proportional for athletes
+            // with a lower declared base.
             if skeleton.phase == .peak && !skeleton.isRecoveryWeek {
-                let bump = Double(peakWeekCounter)
+                let bump = Double(peakWeekCounter) * sessionScalingFactor
                 intervalSeconds += bump * 90   // +1.5 min per non-recovery peak week
                 tempoSeconds    += bump * 120  // +2.0 min per non-recovery peak week
                 easy1Seconds    += bump * 45   // +0.75 min
@@ -176,7 +198,8 @@ enum RoadVolumeCalculator {
                 peakWeekCounter += 1
             }
 
-            // Long run: quadratic growth (delegated)
+            // Long run: quadratic growth (delegated). Anchored to athlete's
+            // declared longestRunKm inside the calculator (RR-1).
             let longRunSeconds = RoadLongRunCalculator.longRunDuration(
                 weekIndex: index,
                 totalWeeks: totalWeeks,
@@ -184,6 +207,7 @@ enum RoadVolumeCalculator {
                 experience: experience,
                 raceDistanceKm: raceDistanceKm,
                 currentWeeklyVolumeKm: athlete.weeklyVolumeKm,
+                currentLongestRunKm: athlete.longestRunKm,
                 isRecoveryWeek: skeleton.isRecoveryWeek
             )
 
@@ -272,5 +296,69 @@ enum RoadVolumeCalculator {
     /// Rounds seconds to nearest 5-minute boundary.
     private static func roundTo5Min(_ seconds: TimeInterval) -> TimeInterval {
         (seconds / 300).rounded() * 300
+    }
+
+    // MARK: - RR-1 Anchor
+
+    /// Computes the scaling factor applied to easy/interval/tempo session
+    /// durations so Week 1 of the plan lands at ~85% of the athlete's
+    /// declared `weeklyVolumeKm`. Applied uniformly across all weeks — the
+    /// progression SHAPE stays the same, the whole ramp just shifts.
+    ///
+    /// Safety clamps:
+    /// - Floor at 50% of tier-default Week 1 (prevents a starving plan if
+    ///   the athlete declared an unrealistically low value).
+    /// - Ceiling at 80% of tier peak (leaves headroom to grow into peak
+    ///   weeks; if an athlete's declared base is already at peak they
+    ///   probably should be on a higher-experience plan).
+    /// - Falls through to 1.0 when `weeklyVolumeKm <= 0` (no onboarding data).
+    private static func computeWeek1ScalingFactor(
+        athlete: Athlete,
+        easyP: SessionParams,
+        intervalP: SessionParams,
+        tempoP: SessionParams,
+        avgPaceSecPerKm: Double,
+        totalWeeks: Int,
+        raceDistanceKm: Double,
+        experience: ExperienceLevel,
+        peakKmCeiling: Double
+    ) -> Double {
+        guard athlete.weeklyVolumeKm > 0 else { return 1.0 }
+
+        // Unscaled Week 1 non-long-run total (all sessions at startMinutes).
+        let unscaledWeek1Seconds =
+            easyP.startMinutes * 60
+            + easyP.startMinutes * 60 * 0.9
+            + intervalP.startMinutes * 60
+            + tempoP.startMinutes * 60
+
+        // Unscaled Week 1 long run (may itself be anchored to longestRunKm).
+        let unscaledWeek1LongRun = RoadLongRunCalculator.longRunDuration(
+            weekIndex: 0,
+            totalWeeks: totalWeeks,
+            phase: .base,
+            experience: experience,
+            raceDistanceKm: raceDistanceKm,
+            currentWeeklyVolumeKm: athlete.weeklyVolumeKm,
+            currentLongestRunKm: athlete.longestRunKm,
+            isRecoveryWeek: false
+        )
+
+        let unscaledWeek1TotalKm = (unscaledWeek1Seconds + unscaledWeek1LongRun) / avgPaceSecPerKm
+        guard unscaledWeek1TotalKm > 0 else { return 1.0 }
+
+        let targetWeek1Km = athlete.weeklyVolumeKm * 0.85
+        let floor = unscaledWeek1TotalKm * 0.5
+        let ceiling = peakKmCeiling * 0.80
+        let clampedTarget = max(floor, min(ceiling, targetWeek1Km))
+
+        // The long run in Week 1 is already anchored separately, so the
+        // session scaling factor scales only non-long-run time. Compute
+        // what Week 1 non-long-run needs to be to land on clampedTarget:
+        let targetNonLongRunKm = max(0, clampedTarget - (unscaledWeek1LongRun / avgPaceSecPerKm))
+        let unscaledNonLongRunKm = unscaledWeek1Seconds / avgPaceSecPerKm
+        guard unscaledNonLongRunKm > 0 else { return 1.0 }
+
+        return targetNonLongRunKm / unscaledNonLongRunKm
     }
 }

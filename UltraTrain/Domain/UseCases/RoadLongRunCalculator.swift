@@ -42,6 +42,7 @@ enum RoadLongRunCalculator {
         experience: ExperienceLevel,
         raceDistanceKm: Double,
         currentWeeklyVolumeKm: Double,
+        currentLongestRunKm: Double,
         isRecoveryWeek: Bool
     ) -> TimeInterval {
         let discipline = RoadRaceDiscipline.from(distanceKm: raceDistanceKm)
@@ -65,23 +66,40 @@ enum RoadLongRunCalculator {
         }
         let capDuration = min(maxDurationSeconds, absoluteMax)
 
-        // Starting long run: 40-55% of cap.
+        // Starting long run: 40-55% of cap (tier default, used only when the
+        // athlete hasn't declared a longestRunKm in onboarding).
         // Pfitzinger 18/55 starts at ~47% of peak, 18/70 at ~50%.
-        // Beginners start lower to allow more gradual ramp (Lydiard principle).
         let startFraction: Double = switch experience {
         case .beginner:     0.42
         case .intermediate: 0.48
         case .advanced:     0.52
         case .elite:        0.55
         }
-        // Issue #5: Minimum long run by experience (60min too much for 10K beginner)
+        // Minimum long run by experience (60min too much for 10K beginner)
         let minimumLongRun: TimeInterval = switch experience {
         case .beginner:     2400  // 40 min
         case .intermediate: 3000  // 50 min
         case .advanced:     3600  // 60 min
         case .elite:        3600  // 60 min
         }
-        let startDuration = max(capDuration * startFraction, minimumLongRun)
+
+        // RR-1: Anchor the starting long run to the athlete's current
+        // longest run when declared. Safer than a generic tier-based start
+        // because it respects the BJSM 2018 rule: never exceed the athlete's
+        // longest run by more than ~10% in a single week.
+        //
+        // - `currentLongestRunKm <= 0` → fall back to tier default.
+        // - Anchor at 90% of declared longest (10% safety buffer).
+        // - Clamp to [minimumLongRun, capDuration * 0.85] so there's still
+        //   headroom to grow across the block.
+        let startDuration: TimeInterval
+        if currentLongestRunKm > 0 {
+            let proposedAnchor = currentLongestRunKm * 0.9 * avgPaceSecPerKm
+            let maxAnchor = capDuration * 0.85
+            startDuration = max(minimumLongRun, min(proposedAnchor, maxAnchor))
+        } else {
+            startDuration = max(capDuration * startFraction, minimumLongRun)
+        }
 
         // Quadratic ramp reaches peak just before taper starts (~88% of plan).
         // Old value 0.80 caused a 3-4 week long-run plateau during the peak
