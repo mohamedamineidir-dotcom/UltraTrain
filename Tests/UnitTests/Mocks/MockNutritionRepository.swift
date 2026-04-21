@@ -44,4 +44,17 @@ final class MockNutritionRepository: NutritionRepository, @unchecked Sendable {
         if shouldThrow { throw DomainError.persistenceError(message: "Mock error") }
         savedPreferences = preferences
     }
+
+    var feedbacks: [NutritionSessionFeedback] = []
+
+    func saveNutritionFeedback(_ feedback: NutritionSessionFeedback) async throws {
+        if shouldThrow { throw DomainError.persistenceError(message: "Mock error") }
+        feedbacks.removeAll { $0.sessionId == feedback.sessionId }
+        feedbacks.insert(feedback, at: 0)
+    }
+
+    func getNutritionFeedbacks() async throws -> [NutritionSessionFeedback] {
+        if shouldThrow { throw DomainError.persistenceError(message: "Mock error") }
+        return feedbacks
+    }
 }

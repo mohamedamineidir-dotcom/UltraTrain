@@ -99,6 +99,8 @@ private struct PreviewNutritionRepository: NutritionRepository, @unchecked Senda
     func saveProduct(_ product: NutritionProduct) async throws {}
     func getNutritionPreferences() async throws -> NutritionPreferences { .default }
     func saveNutritionPreferences(_ preferences: NutritionPreferences) async throws {}
+    func saveNutritionFeedback(_ feedback: NutritionSessionFeedback) async throws {}
+    func getNutritionFeedbacks() async throws -> [NutritionSessionFeedback] { [] }
 }
 
 // @unchecked Sendable: stateless preview stub

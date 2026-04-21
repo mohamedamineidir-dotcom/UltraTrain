@@ -46,6 +46,14 @@ final class SyncedNutritionRepository: NutritionRepository, @unchecked Sendable 
         try await local.saveNutritionPreferences(preferences)
     }
 
+    func saveNutritionFeedback(_ feedback: NutritionSessionFeedback) async throws {
+        try await local.saveNutritionFeedback(feedback)
+    }
+
+    func getNutritionFeedbacks() async throws -> [NutritionSessionFeedback] {
+        try await local.getNutritionFeedbacks()
+    }
+
     private func restoreIfNeeded(raceId: UUID) async -> NutritionPlan? {
         if let last = lastRestoreAttempt, Date().timeIntervalSince(last) < restoreTTL { return nil }
         lastRestoreAttempt = Date()

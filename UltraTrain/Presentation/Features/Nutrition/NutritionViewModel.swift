@@ -21,12 +21,16 @@ final class NutritionViewModel {
     var targetRace: Race?
     var estimatedRaceDurationSeconds: TimeInterval = 0
     var athlete: Athlete?
+    var gutTrainingSessions: [TrainingSession] = []
+    var feedbacks: [NutritionSessionFeedback] = []
     var isLoading = false
     var isGenerating = false
     var error: String?
     var showingProductLibrary = false
     var showingAddProduct = false
     var showingNutritionOnboarding = false
+    var feedbackTargetSessionId: UUID?
+    var lastRefinementNotes: [String] = []
     var selectedTab: NutritionTab = .training
 
     /// True when the athlete hasn't yet completed the pre-plan nutrition
@@ -72,12 +76,23 @@ final class NutritionViewModel {
             plan = try await nutritionRepository.getNutritionPlan(for: race.id)
             products = try await nutritionRepository.getProducts()
             preferences = try await nutritionRepository.getNutritionPreferences()
+            feedbacks = try await nutritionRepository.getNutritionFeedbacks()
 
             if products.isEmpty {
                 for product in DefaultProducts.all {
                     try await nutritionRepository.saveProduct(product)
                 }
                 products = DefaultProducts.all
+            }
+
+            // Load linked gut-training sessions from the active training plan
+            // so we can list them in the feedback log section.
+            if let trainingPlan = try await planRepository.getActivePlan() {
+                let linkedIds = Set(plan?.gutTrainingSessionIds ?? [])
+                gutTrainingSessions = trainingPlan.weeks
+                    .flatMap(\.sessions)
+                    .filter { linkedIds.contains($0.id) }
+                    .sorted { $0.date < $1.date }
             }
         } catch {
             self.error = error.localizedDescription
@@ -134,7 +149,22 @@ final class NutritionViewModel {
 
             let estimatedDuration = estimateDuration(race: race, athlete: athlete)
 
-            let currentPreferences = try await nutritionRepository.getNutritionPreferences()
+            // Phase 4: refine preferences from accumulated feedback before
+            // generating. If the athlete has logged >= 2 gut-training runs we
+            // tighten the tolerance ceiling, exclude intolerant products, and
+            // promote favorites automatically.
+            let storedPreferences = try await nutritionRepository.getNutritionPreferences()
+            let storedFeedbacks = try await nutritionRepository.getNutritionFeedbacks()
+            let refinement = RefineNutritionPlanFromFeedbackUseCase.refine(
+                preferences: storedPreferences,
+                feedbacks: storedFeedbacks
+            )
+            lastRefinementNotes = refinement.notes
+            let currentPreferences = refinement.refinedPreferences
+
+            if currentPreferences != storedPreferences {
+                try await nutritionRepository.saveNutritionPreferences(currentPreferences)
+            }
             preferences = currentPreferences
 
             var newPlan = try await nutritionGenerator.execute(
@@ -203,6 +233,54 @@ final class NutritionViewModel {
 
     func isProductExcluded(_ productId: UUID) -> Bool {
         preferences.excludedProductIds.contains(productId)
+    }
+
+    // MARK: - Feedback (Phase 4)
+
+    func openFeedbackSheet(for sessionId: UUID) {
+        feedbackTargetSessionId = sessionId
+    }
+
+    func closeFeedbackSheet() {
+        feedbackTargetSessionId = nil
+    }
+
+    /// Persists post-long-run feedback, reloads the cached list, and re-applies
+    /// the refinement rules so the next generate uses the updated tolerance.
+    func saveFeedback(_ feedback: NutritionSessionFeedback) async {
+        do {
+            try await nutritionRepository.saveNutritionFeedback(feedback)
+            feedbacks = try await nutritionRepository.getNutritionFeedbacks()
+            feedbackTargetSessionId = nil
+            Logger.nutrition.info("Nutrition feedback saved and \(self.feedbacks.count) total loaded")
+        } catch {
+            self.error = error.localizedDescription
+            Logger.nutrition.error("Failed to save feedback: \(error)")
+        }
+    }
+
+    /// True when we have enough feedback history to show the refinement banner
+    /// (informs the athlete their plan now reflects their training data).
+    var hasRefinementSignal: Bool {
+        feedbacks.count >= 2 && !lastRefinementNotes.isEmpty
+    }
+
+    /// Returns feedback entry for a specific session if one exists.
+    func feedback(for sessionId: UUID) -> NutritionSessionFeedback? {
+        feedbacks.first { $0.sessionId == sessionId }
+    }
+
+    /// Distinct products currently scheduled in the plan (for the feedback
+    /// sheet's product-tolerance chips).
+    var productsInPlan: [NutritionProduct] {
+        guard let plan else { return [] }
+        var seen = Set<UUID>()
+        var result: [NutritionProduct] = []
+        for entry in plan.entries where !seen.contains(entry.product.id) {
+            seen.insert(entry.product.id)
+            result.append(entry.product)
+        }
+        return result
     }
 
     // MARK: - Computed

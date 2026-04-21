@@ -103,7 +103,35 @@ struct NutritionView: View {
                     )
                 }
             }
+            .sheet(
+                isPresented: Binding(
+                    get: { viewModel.feedbackTargetSessionId != nil },
+                    set: { if !$0 { viewModel.closeFeedbackSheet() } }
+                )
+            ) {
+                if let sessionId = viewModel.feedbackTargetSessionId,
+                   let session = viewModel.gutTrainingSessions.first(where: { $0.id == sessionId }),
+                   let plan = viewModel.plan {
+                    NutritionFeedbackSheet(
+                        sessionId: session.id,
+                        sessionLabel: feedbackSessionLabel(session),
+                        plannedCarbsPerHour: plan.carbsPerHour,
+                        durationMinutes: Int(session.plannedDuration / 60),
+                        availableProducts: viewModel.productsInPlan,
+                        existingFeedback: viewModel.feedback(for: session.id),
+                        onSave: { feedback in
+                            Task { await viewModel.saveFeedback(feedback) }
+                        }
+                    )
+                }
+            }
         }
+    }
+
+    private func feedbackSessionLabel(_ session: TrainingSession) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEE MMM d"
+        return "Gut training · \(formatter.string(from: session.date))"
     }
 
     // MARK: - Tab Picker
@@ -184,6 +212,15 @@ struct NutritionView: View {
                 }
 
                 NutritionTimelineView(entries: plan.entries)
+
+                NutritionGutTrainingLogSection(
+                    sessions: viewModel.gutTrainingSessions,
+                    feedbacks: viewModel.feedbacks,
+                    refinementNotes: viewModel.lastRefinementNotes,
+                    onLogFeedback: { session in
+                        viewModel.openFeedbackSheet(for: session.id)
+                    }
+                )
             }
             .padding()
         }

@@ -19,6 +19,7 @@ enum SchemaV1: VersionedSchema {
             FitnessSnapshotSwiftDataModel.self,
             AppSettingsSwiftDataModel.self,
             NutritionPreferencesSwiftDataModel.self,
+            NutritionSessionFeedbackSwiftDataModel.self,
             GearItemSwiftDataModel.self,
             FinishEstimateSwiftDataModel.self,
             StravaUploadQueueSwiftDataModel.self,

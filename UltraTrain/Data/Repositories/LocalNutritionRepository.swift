@@ -98,4 +98,29 @@ final class LocalNutritionRepository: NutritionRepository, @unchecked Sendable {
         try context.save()
         Logger.nutrition.info("Nutrition preferences saved")
     }
+
+    // MARK: - Feedback
+
+    func saveNutritionFeedback(_ feedback: NutritionSessionFeedback) async throws {
+        let context = ModelContext(modelContainer)
+        let targetSessionId = feedback.sessionId
+        let existing = FetchDescriptor<NutritionSessionFeedbackSwiftDataModel>(
+            predicate: #Predicate { $0.sessionId == targetSessionId }
+        )
+        for old in try context.fetch(existing) {
+            context.delete(old)
+        }
+        let model = NutritionSessionFeedbackMapper.toSwiftData(feedback)
+        context.insert(model)
+        try context.save()
+        Logger.nutrition.info("Nutrition feedback saved for session \(feedback.sessionId)")
+    }
+
+    func getNutritionFeedbacks() async throws -> [NutritionSessionFeedback] {
+        let context = ModelContext(modelContainer)
+        let descriptor = FetchDescriptor<NutritionSessionFeedbackSwiftDataModel>(
+            sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
+        )
+        return try context.fetch(descriptor).map(NutritionSessionFeedbackMapper.toDomain)
+    }
 }
