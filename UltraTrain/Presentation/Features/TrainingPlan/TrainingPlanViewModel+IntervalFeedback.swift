@@ -90,4 +90,20 @@ extension TrainingPlanViewModel {
             self.error = error.localizedDescription
         }
     }
+
+    /// Loads feedback from the last 21 days across both intervals and
+    /// tempo, for IR-2 refinement. The refinement use case applies its
+    /// own windowing, so returning a slightly wider set is safe.
+    func loadRecentIntervalFeedback() async -> [IntervalPerformanceFeedback] {
+        guard let repo = intervalPerformanceRepository else { return [] }
+        let cutoff = Date().addingTimeInterval(-21 * 24 * 3600)
+        do {
+            async let intervals = repo.getRecent(since: cutoff, sessionType: .intervals)
+            async let tempo = repo.getRecent(since: cutoff, sessionType: .tempo)
+            return try await intervals + tempo
+        } catch {
+            Logger.training.error("Failed to load recent feedback for refinement: \(error)")
+            return []
+        }
+    }
 }

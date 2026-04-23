@@ -7,12 +7,27 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         targetRace: Race,
         intermediateRaces: [Race]
     ) async throws -> TrainingPlan {
+        try await execute(
+            athlete: athlete,
+            targetRace: targetRace,
+            intermediateRaces: intermediateRaces,
+            recentIntervalFeedback: []
+        )
+    }
+
+    func execute(
+        athlete: Athlete,
+        targetRace: Race,
+        intermediateRaces: [Race],
+        recentIntervalFeedback: [IntervalPerformanceFeedback]
+    ) async throws -> TrainingPlan {
         // Road race branch: completely separate pipeline, zero trail logic changes.
         if targetRace.raceType == .road {
             return try generateRoadPlan(
                 athlete: athlete,
                 targetRace: targetRace,
-                intermediateRaces: intermediateRaces
+                intermediateRaces: intermediateRaces,
+                recentIntervalFeedback: recentIntervalFeedback
             )
         }
 
@@ -238,7 +253,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
     private func generateRoadPlan(
         athlete: Athlete,
         targetRace: Race,
-        intermediateRaces: [Race]
+        intermediateRaces: [Race],
+        recentIntervalFeedback: [IntervalPerformanceFeedback] = []
     ) throws -> TrainingPlan {
         let today = Date.now.startOfDay
         let raceDate = targetRace.date.startOfDay
@@ -303,11 +319,28 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         case .finish:
             goalTime = nil
         }
-        let paceProfile = RoadPaceCalculator.paceProfile(
+        let basePaceProfile = RoadPaceCalculator.paceProfile(
             goalTime: goalTime,
             raceDistanceKm: targetRace.distanceKm,
             personalBests: athlete.personalBests,
             vmaKmh: athlete.vmaKmh,
+            experience: athlete.experienceLevel
+        )
+
+        // IR-2: blend in recent per-rep feedback to adjust target paces.
+        // When the athlete has been hitting intervals at unsustainable RPE
+        // or bailing on reps, the target slows; when they're clearing work
+        // with headroom, it quickens. Rules in
+        // RefineRoadPaceFromFeedbackUseCase — evidence-gated (≥3 in 21d),
+        // phase-capped (base ±2%, build ±4%, peak ±5%, taper locked),
+        // experience- and distance-dampened, hard-capped at ±8%. The
+        // summary is threaded into coach advice so the athlete sees why
+        // the target changed.
+        let (paceProfile, refinementSummary) = RefineRoadPaceFromFeedbackUseCase.refine(
+            baseProfile: basePaceProfile,
+            feedback: recentIntervalFeedback,
+            raceDate: raceDate,
+            discipline: discipline,
             experience: athlete.experienceLevel
         )
 
@@ -493,7 +526,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                         experience: athlete.experienceLevel,
                         isFirstTimer: isFirstTimer,
                         isShortPrep: isShortPrep,
-                        hotRaceForecast: hotRaceForecast
+                        hotRaceForecast: hotRaceForecast,
+                        refinementSummary: refinementSummary
                     )
                     return session
                 }

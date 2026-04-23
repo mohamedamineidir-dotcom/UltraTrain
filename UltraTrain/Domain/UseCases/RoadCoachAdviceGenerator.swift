@@ -19,7 +19,8 @@ enum RoadCoachAdviceGenerator {
         experience: ExperienceLevel = .intermediate,
         isFirstTimer: Bool = false,
         isShortPrep: Bool = false,
-        hotRaceForecast: Bool = false
+        hotRaceForecast: Bool = false,
+        refinementSummary: RefineRoadPaceFromFeedbackUseCase.PaceRefinementSummary? = nil
     ) -> String? {
         if isRecoveryWeek {
             return recoveryWeekAdvice(type: type)
@@ -71,6 +72,17 @@ enum RoadCoachAdviceGenerator {
             advice = (advice ?? "") + " " + hotRaceAdvice()
         }
 
+        // IR-2: when the target pace was refined from recent feedback,
+        // surface the adjustment transparently so the athlete knows why
+        // the number they see today differs from yesterday. We append
+        // this only on intervals / tempo sessions (the pace types that
+        // get refined) — adding it to easy runs would be noise.
+        if let summary = refinementSummary,
+           let entry = summary.entry(for: type),
+           type == .intervals || type == .tempo {
+            advice = (advice ?? "") + " " + refinementNote(entry: entry)
+        }
+
         // RR-19 (was #9): Goal realism warning. Now applied in ALL phases
         // (the previous base/build-only gate hid the warning during peak,
         // exactly when the athlete sees race-specific work getting gated
@@ -92,6 +104,31 @@ enum RoadCoachAdviceGenerator {
         }
 
         return advice
+    }
+
+    /// IR-2: transparent explanation of a feedback-driven pace refinement.
+    /// Always cites the evidence count and the reason so the athlete can
+    /// trust — or push back on — the change. Silent adjustments would
+    /// erode the athlete's sense of agency over their own training.
+    private static func refinementNote(
+        entry: RefineRoadPaceFromFeedbackUseCase.PaceRefinementSummary.Entry
+    ) -> String {
+        let from = formatPace(entry.originalPacePerKm)
+        let to = formatPace(entry.adjustedPacePerKm)
+        let deltaSeconds = Int(abs(entry.adjustedPacePerKm - entry.originalPacePerKm).rounded())
+        let direction = entry.adjustedPacePerKm > entry.originalPacePerKm ? "slowed" : "quickened"
+        let reasonText: String
+        switch entry.reason {
+        case .slowDownPaceDrift:
+            reasonText = "your recent reps have been running \(Int(entry.meanDeviationSecondsPerKm.rounded()))s/km slower than target"
+        case .slowDownHighRPE:
+            reasonText = "you've been hitting target but at a perceived effort of \(String(format: "%.1f", entry.meanRPE))/10 — unsustainable across a block"
+        case .slowDownIncompleteReps:
+            reasonText = "you've bailed on reps across multiple sessions — the previous target was too hard"
+        case .speedUpFitnessHeadroom:
+            reasonText = "you've been clearing the work at RPE \(String(format: "%.1f", entry.meanRPE))/10 with all reps completed — fitness has room"
+        }
+        return "📊 Target \(direction) \(deltaSeconds)s/km (\(from) → \(to)) based on \(entry.evidenceCount) recent sessions — \(reasonText). The fitness baseline is unchanged; only this session's prescription adapts."
     }
 
     /// RR-22: Hot-race advisory — practical heat-acclimation options the

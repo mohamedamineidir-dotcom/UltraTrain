@@ -125,10 +125,17 @@ final class TrainingPlanViewModel {
             // Snapshot old session progress before regenerating
             let oldProgress = plan.map { PlanProgressPreserver.snapshot($0) } ?? []
 
+            // IR-2: load recent interval / tempo feedback so the generator
+            // can refine target paces if evidence warrants it. Silent
+            // failure — the generator falls back to pure fitness-derived
+            // paces when feedback can't be loaded.
+            let recentFeedback = await loadRecentIntervalFeedback()
+
             var newPlan = try await planGenerator.execute(
                 athlete: athlete,
                 targetRace: targetRace,
-                intermediateRaces: intermediateRaces
+                intermediateRaces: intermediateRaces,
+                recentIntervalFeedback: recentFeedback
             )
 
             // Restore progress from old plan to matching sessions
