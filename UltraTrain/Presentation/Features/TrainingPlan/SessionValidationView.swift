@@ -304,11 +304,11 @@ private struct ManualValidationPage: View {
     let weekProgress: WeekProgress?
     let onComplete: (Double?, TimeInterval?, Double?, PerceivedFeeling?, Int?) -> Void
 
-    @State private var distanceText: String = ""
-    @State private var hours: Int = 0
-    @State private var minutes: Int = 0
-    @State private var seconds: Int = 0
-    @State private var elevationText: String = ""
+    @State private var distanceText: String
+    @State private var hours: Int
+    @State private var minutes: Int
+    @State private var seconds: Int
+    @State private var elevationText: String
     @State private var feeling: PerceivedFeeling?
     @State private var rpe: Int?
     @State private var pulseOn: Bool = false
@@ -326,10 +326,19 @@ private struct ManualValidationPage: View {
         self.hideFeelingAndRPE = hideFeelingAndRPE
         self.weekProgress = weekProgress
         self.onComplete = onComplete
-        // Fields start empty. The status chip below each input surfaces
-        // "↻ Use N km" so a clean-slate one-tap fill is explicit rather
-        // than happening silently at init — better signal that the
-        // athlete actually reviewed the value.
+        // Pre-fill with planned values. First-look is a completed page —
+        // the athlete can tap Continue immediately if they ran to plan
+        // (the common case). Editing surfaces a diff pill below the row;
+        // on-plan stays silent. The previous empty-first design added a
+        // "Use X" CTA chip per row which made the first impression busy.
+        let planned = session.plannedDuration
+        _distanceText = State(initialValue: session.plannedDistanceKm > 0
+            ? String(format: "%.1f", session.plannedDistanceKm) : "")
+        _hours = State(initialValue: Int(planned) / 3600)
+        _minutes = State(initialValue: (Int(planned) % 3600) / 60)
+        _seconds = State(initialValue: 0)
+        _elevationText = State(initialValue: session.plannedElevationGainM > 0
+            ? String(format: "%.0f", session.plannedElevationGainM) : "")
     }
 
     private var isStrengthSession: Bool {
@@ -339,8 +348,10 @@ private struct ManualValidationPage: View {
     var body: some View {
         ScrollView {
             VStack(spacing: Theme.Spacing.md) {
-                plannedTargetCard
-                statsSection
+                // Single unified card: session context on top, stats rows
+                // below. One visual anchor instead of two stacked cards
+                // competing for the first look.
+                unifiedSessionCard
 
                 if !hideFeelingAndRPE {
                     feelingSection
@@ -367,25 +378,20 @@ private struct ManualValidationPage: View {
         .navigationTitle("Enter Stats")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            // Begin the continue-button breathing animation only once all
-            // required fields carry some value — prevents the glow from
-            // pulsing on a page the athlete hasn't touched yet.
             withAnimation(.easeInOut(duration: 1.6).repeatForever(autoreverses: true)) {
                 pulseOn = true
             }
         }
     }
 
-    // MARK: - Planned Target (hero)
-
-    /// Session hero card — icon circle + session type + intensity & date
-    /// on top, planned stats laid out as a thin readout strip below.
-    /// Replaces what was previously a bare stats-only banner; gives the
-    /// page a warm sense of place so it doesn't feel empty after the
-    /// feeling/RPE rows were removed for intervals/tempo.
-    private var plannedTargetCard: some View {
-        VStack(spacing: Theme.Spacing.sm + 2) {
-            // Context row
+    /// Single card holding: session context header, then the 3 input
+    /// rows separated by a subtle hairline. Pre-filled with planned
+    /// values — the athlete's first look is a completed page they can
+    /// either accept or tap to refine. Only diff pills appear below
+    /// rows whose values have been edited away from plan.
+    private var unifiedSessionCard: some View {
+        VStack(spacing: 0) {
+            // Session header
             HStack(spacing: Theme.Spacing.md) {
                 ZStack {
                     Circle()
@@ -397,7 +403,7 @@ private struct ManualValidationPage: View {
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ))
-                        .frame(width: 48, height: 48)
+                        .frame(width: 46, height: 46)
                         .overlay(
                             Circle().stroke(session.intensity.color.opacity(0.35), lineWidth: 0.75)
                         )
@@ -419,56 +425,60 @@ private struct ManualValidationPage: View {
                             .background(
                                 Capsule().fill(session.intensity.color.opacity(0.14))
                             )
-                        Text(session.date.formatted(.dateTime.weekday(.wide).month(.abbreviated).day()))
+                        Text(session.date.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day()))
                             .font(.caption2)
                             .foregroundStyle(Theme.Colors.secondaryLabel)
                     }
                 }
                 Spacer(minLength: 0)
             }
+            .padding(Theme.Spacing.md)
 
-            // Planned readout strip
-            if hasAnyPlannedMetric {
-                Rectangle()
-                    .fill(session.intensity.color.opacity(0.15))
-                    .frame(height: 0.5)
-                HStack(spacing: Theme.Spacing.md) {
-                    if !isStrengthSession && session.plannedDistanceKm > 0 {
-                        targetStat(
-                            value: UnitFormatter.formatDistance(session.plannedDistanceKm, unit: units, decimals: 1),
-                            label: "Planned",
-                            icon: "flag.checkered"
-                        )
-                    }
-                    if !isStrengthSession && session.plannedDistanceKm > 0 && session.plannedDuration > 0 {
-                        divider
-                    }
-                    if session.plannedDuration > 0 {
-                        targetStat(
-                            value: formatPlannedDuration,
-                            label: "Target",
-                            icon: "stopwatch"
-                        )
-                    }
-                    if !isStrengthSession && session.plannedElevationGainM > 0 {
-                        divider
-                        targetStat(
-                            value: UnitFormatter.formatElevation(session.plannedElevationGainM, unit: units),
-                            label: "D+",
-                            icon: "arrow.up.right"
-                        )
-                    }
+            Rectangle()
+                .fill(session.intensity.color.opacity(0.15))
+                .frame(height: 0.5)
+
+            // Input rows — no section label, no inner card background.
+            // Just clean rows inside the same visual block as the header.
+            VStack(spacing: Theme.Spacing.sm) {
+                if !isStrengthSession {
+                    inlineInputRow(
+                        label: "Distance",
+                        icon: "point.topleft.down.to.point.bottomright.curvepath",
+                        iconColor: Theme.Colors.primary,
+                        isFocused: focusedField == .distance,
+                        diffChip: { diffChipDistance },
+                        content: { distanceControl }
+                    )
+                }
+                inlineInputRow(
+                    label: "Duration",
+                    icon: "clock",
+                    iconColor: Theme.Colors.zone3,
+                    isFocused: false,
+                    diffChip: { diffChipDuration },
+                    content: { durationControl }
+                )
+                if !isStrengthSession {
+                    inlineInputRow(
+                        label: "Elevation",
+                        icon: "mountain.2.fill",
+                        iconColor: Theme.Colors.success,
+                        isFocused: focusedField == .elevation,
+                        diffChip: { diffChipElevation },
+                        content: { elevationControl }
+                    )
                 }
             }
+            .padding(.horizontal, Theme.Spacing.md)
+            .padding(.vertical, Theme.Spacing.md)
         }
-        .padding(Theme.Spacing.md)
-        .frame(maxWidth: .infinity)
         .background(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
                 .fill(LinearGradient(
                     colors: [
-                        session.intensity.color.opacity(colorScheme == .dark ? 0.18 : 0.09),
-                        session.intensity.color.opacity(colorScheme == .dark ? 0.04 : 0.02)
+                        session.intensity.color.opacity(colorScheme == .dark ? 0.14 : 0.06),
+                        session.intensity.color.opacity(colorScheme == .dark ? 0.03 : 0.01)
                     ],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
@@ -480,33 +490,146 @@ private struct ManualValidationPage: View {
         )
     }
 
-    private var hasAnyPlannedMetric: Bool {
-        session.plannedDuration > 0 || session.plannedDistanceKm > 0 || session.plannedElevationGainM > 0
-    }
-
-    private var divider: some View {
-        Rectangle()
-            .fill(Theme.Colors.tertiaryLabel.opacity(0.15))
-            .frame(width: 1, height: 24)
-    }
-
-    private func targetStat(value: String, label: String, icon: String) -> some View {
-        VStack(spacing: 2) {
-            HStack(spacing: 4) {
+    /// Input row used inside the unified card. Minimal: icon + label +
+    /// control, plus an optional diff chip that appears only when the
+    /// athlete has edited away from the planned value.
+    @ViewBuilder
+    private func inlineInputRow<Control: View, Chip: View>(
+        label: String,
+        icon: String,
+        iconColor: Color,
+        isFocused: Bool,
+        @ViewBuilder diffChip: () -> Chip,
+        @ViewBuilder content: () -> Control
+    ) -> some View {
+        VStack(spacing: 4) {
+            HStack(spacing: Theme.Spacing.sm) {
                 Image(systemName: icon)
-                    .font(.caption2)
-                    .foregroundStyle(session.intensity.color)
-                Text(label.uppercased())
-                    .font(.caption2.weight(.semibold))
+                    .font(.body)
+                    .foregroundStyle(iconColor)
+                    .frame(width: 22)
+
+                Text(label)
+                    .font(.subheadline)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
-                    .tracking(0.5)
+                    .lineLimit(1)
+                    .fixedSize(horizontal: true, vertical: false)
+
+                Spacer(minLength: Theme.Spacing.sm)
+
+                content()
+                    .frame(width: Self.statsControlWidth, alignment: .trailing)
             }
-            Text(value)
-                .font(.subheadline.weight(.bold).monospacedDigit())
-                .foregroundStyle(Theme.Colors.label)
+            .padding(.horizontal, Theme.Spacing.sm)
+            .padding(.vertical, Theme.Spacing.xs + 2)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                    .fill(isFocused
+                        ? Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.08 : 0.04)
+                        : Color.clear)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                    .stroke(isFocused ? Theme.Colors.warmCoral.opacity(0.5) : Color.clear, lineWidth: 1)
+            )
+            .animation(.easeOut(duration: 0.2), value: isFocused)
+
+            diffChip()
         }
-        .frame(maxWidth: .infinity)
     }
+
+    // MARK: - Control views
+
+    private var distanceControl: some View {
+        HStack(spacing: 4) {
+            Spacer(minLength: 0)
+            TextField("0.0", text: $distanceText)
+                .keyboardType(.decimalPad)
+                .font(.title3.bold().monospacedDigit())
+                .multilineTextAlignment(.trailing)
+                .frame(width: 80)
+                .focused($focusedField, equals: .distance)
+            Text("km")
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+                .frame(width: 38, alignment: .leading)
+        }
+    }
+
+    private var durationControl: some View {
+        HStack(spacing: 2) {
+            Spacer(minLength: 0)
+            durationPicker(value: $hours, label: "h", range: 0..<24)
+            Text(":").font(.subheadline.bold()).foregroundStyle(Theme.Colors.tertiaryLabel)
+            durationPicker(value: $minutes, label: "m", range: 0..<60)
+            Text(":").font(.subheadline.bold()).foregroundStyle(Theme.Colors.tertiaryLabel)
+            durationPicker(value: $seconds, label: "s", range: 0..<60)
+        }
+    }
+
+    private var elevationControl: some View {
+        HStack(spacing: 4) {
+            Spacer(minLength: 0)
+            TextField("0", text: $elevationText)
+                .keyboardType(.numberPad)
+                .font(.title3.bold().monospacedDigit())
+                .multilineTextAlignment(.trailing)
+                .frame(width: 80)
+                .focused($focusedField, equals: .elevation)
+            Text("m D+")
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+                .frame(width: 38, alignment: .leading)
+        }
+    }
+
+    // MARK: - Diff chips (per-row)
+
+    @ViewBuilder
+    private var diffChipDistance: some View {
+        if session.plannedDistanceKm > 0,
+           let entered = Double(distanceText.replacingOccurrences(of: ",", with: ".")),
+           entered > 0 {
+            let diff = entered - session.plannedDistanceKm
+            let ratio = abs(diff) / session.plannedDistanceKm
+            if ratio >= 0.02 {
+                let sign = diff > 0 ? "+" : "−"
+                diffCapsule(text: "\(sign)\(String(format: "%.1f", abs(diff))) km vs plan", ratio: ratio)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var diffChipDuration: some View {
+        if session.plannedDuration > 0 {
+            let currentSeconds = hours * 3600 + minutes * 60 + seconds
+            let plannedSeconds = Int(session.plannedDuration)
+            if currentSeconds > 0 {
+                let diff = currentSeconds - plannedSeconds
+                let ratio = abs(Double(diff)) / Double(plannedSeconds)
+                if ratio >= 0.02 {
+                    let sign = diff > 0 ? "+" : "−"
+                    diffCapsule(text: "\(sign)\(formatDurationDelta(abs(diff))) vs plan", ratio: ratio)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var diffChipElevation: some View {
+        if session.plannedElevationGainM > 0,
+           let entered = Double(elevationText),
+           entered > 0 {
+            let diff = entered - session.plannedElevationGainM
+            let ratio = abs(diff) / session.plannedElevationGainM
+            if ratio >= 0.02 {
+                let sign = diff > 0 ? "+" : "−"
+                diffCapsule(text: "\(sign)\(Int(abs(diff))) m vs plan", ratio: ratio)
+            }
+        }
+    }
+
+    // MARK: - Formatting helpers
 
     private var formatPlannedDuration: String {
         let total = Int(session.plannedDuration)
@@ -523,92 +646,15 @@ private struct ManualValidationPage: View {
     /// and the cards visually balance.
     private static let statsControlWidth: CGFloat = 148
 
-    private var statsSection: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            sectionLabel("Your Actual Stats", icon: "pencil.line")
-
-            if !isStrengthSession {
-                VStack(spacing: 6) {
-                    inputCard(
-                        label: "Distance",
-                        icon: "point.topleft.down.to.point.bottomright.curvepath",
-                        iconColor: Theme.Colors.primary,
-                        isFocused: focusedField == .distance
-                    ) {
-                        HStack(spacing: 4) {
-                            Spacer(minLength: 0)
-                            TextField("0.0", text: $distanceText)
-                                .keyboardType(.decimalPad)
-                                .font(.title3.bold().monospacedDigit())
-                                .multilineTextAlignment(.trailing)
-                                .frame(width: 80)
-                                .focused($focusedField, equals: .distance)
-                            Text("km")
-                                .font(.subheadline.weight(.medium))
-                                .foregroundStyle(Theme.Colors.secondaryLabel)
-                                .frame(width: 38, alignment: .leading)
-                        }
-                    }
-                    if session.plannedDistanceKm > 0 {
-                        distanceStatusChip
-                    }
-                }
-            }
-
-            VStack(spacing: 6) {
-                inputCard(
-                    label: "Duration",
-                    icon: "clock",
-                    iconColor: Theme.Colors.zone3,
-                    isFocused: false
-                ) {
-                    HStack(spacing: 2) {
-                        Spacer(minLength: 0)
-                        durationPicker(value: $hours, label: "h", range: 0..<24)
-                        Text(":").font(.subheadline.bold()).foregroundStyle(Theme.Colors.tertiaryLabel)
-                        durationPicker(value: $minutes, label: "m", range: 0..<60)
-                        Text(":").font(.subheadline.bold()).foregroundStyle(Theme.Colors.tertiaryLabel)
-                        durationPicker(value: $seconds, label: "s", range: 0..<60)
-                    }
-                }
-                if session.plannedDuration > 0 {
-                    durationStatusChip
-                }
-            }
-
-            if !isStrengthSession {
-                VStack(spacing: 6) {
-                    inputCard(
-                        label: "Elevation",
-                        icon: "mountain.2.fill",
-                        iconColor: Theme.Colors.success,
-                        isFocused: focusedField == .elevation
-                    ) {
-                        HStack(spacing: 4) {
-                            Spacer(minLength: 0)
-                            TextField("0", text: $elevationText)
-                                .keyboardType(.numberPad)
-                                .font(.title3.bold().monospacedDigit())
-                                .multilineTextAlignment(.trailing)
-                                .frame(width: 80)
-                                .focused($focusedField, equals: .elevation)
-                            Text("m D+")
-                                .font(.subheadline.weight(.medium))
-                                .foregroundStyle(Theme.Colors.secondaryLabel)
-                                .frame(width: 38, alignment: .leading)
-                        }
-                    }
-                    if session.plannedElevationGainM > 0 {
-                        elevationStatusChip
-                    }
-                }
+    private func durationPicker(value: Binding<Int>, label: String, range: Range<Int>) -> some View {
+        Picker(label, selection: value) {
+            ForEach(range, id: \.self) { v in
+                Text(String(format: "%02d", v)).tag(v)
             }
         }
-        .padding(Theme.Spacing.sm + 2)
-        .background(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                .fill(colorScheme == .dark ? Color.white.opacity(0.04) : Color.primary.opacity(0.03))
-        )
+        .pickerStyle(.menu)
+        .labelsHidden()
+        .fixedSize()
     }
 
     private func sectionLabel(_ text: String, icon: String) -> some View {
@@ -620,54 +666,6 @@ private struct ManualValidationPage: View {
                 .font(.subheadline.weight(.semibold))
         }
         .padding(.horizontal, Theme.Spacing.xs)
-    }
-
-    private func inputCard<Content: View>(
-        label: String,
-        icon: String,
-        iconColor: Color,
-        isFocused: Bool,
-        @ViewBuilder content: () -> Content
-    ) -> some View {
-        HStack(spacing: Theme.Spacing.sm) {
-            Image(systemName: icon)
-                .font(.body)
-                .foregroundStyle(iconColor)
-                .frame(width: 24)
-
-            Text(label)
-                .font(.subheadline)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
-                .lineLimit(1)
-                .fixedSize(horizontal: true, vertical: false)
-
-            Spacer(minLength: Theme.Spacing.sm)
-
-            content()
-                .frame(width: Self.statsControlWidth, alignment: .trailing)
-        }
-        .padding(.horizontal, Theme.Spacing.sm + 2)
-        .padding(.vertical, Theme.Spacing.sm)
-        .background(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
-                .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.6))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
-                .stroke(isFocused ? Theme.Colors.warmCoral.opacity(0.55) : Color.clear, lineWidth: 1)
-        )
-        .animation(.easeOut(duration: 0.2), value: isFocused)
-    }
-
-    private func durationPicker(value: Binding<Int>, label: String, range: Range<Int>) -> some View {
-        Picker(label, selection: value) {
-            ForEach(range, id: \.self) { v in
-                Text(String(format: "%02d", v)).tag(v)
-            }
-        }
-        .pickerStyle(.menu)
-        .labelsHidden()
-        .fixedSize()
     }
 
     // MARK: - Feeling
@@ -794,112 +792,7 @@ private struct ManualValidationPage: View {
         .padding(.top, Theme.Spacing.xs)
     }
 
-    // MARK: - Status chips (match planned / diff pill)
-
-    private var distanceStatusChip: some View {
-        statusChip(
-            currentText: distanceText,
-            plannedValue: session.plannedDistanceKm,
-            parse: { Double($0.replacingOccurrences(of: ",", with: ".")) },
-            format: { UnitFormatter.formatDistance($0, unit: units, decimals: 1) },
-            unitSuffix: "km",
-            setText: { distanceText = String(format: "%.1f", $0) }
-        )
-    }
-
-    private var elevationStatusChip: some View {
-        statusChip(
-            currentText: elevationText,
-            plannedValue: session.plannedElevationGainM,
-            parse: { Double($0) },
-            format: { UnitFormatter.formatElevation($0, unit: units) },
-            unitSuffix: "m D+",
-            setText: { elevationText = String(format: "%.0f", $0) }
-        )
-    }
-
-    private var durationStatusChip: some View {
-        let currentSeconds = hours * 3600 + minutes * 60 + seconds
-        let planned = Int(session.plannedDuration)
-        return durationStatusChipView(currentSeconds: currentSeconds, plannedSeconds: planned)
-    }
-
-    /// Status chip renders BELOW the input row. Silent when on-plan —
-    /// absence of feedback is the signal, and it stops the page from
-    /// looking like a noisy validation form. Two visible states:
-    ///   • Empty + a plan exists → a proper coral capsule "Use X" CTA.
-    ///   • Value off-plan → a colour-tinted diff capsule.
-    @ViewBuilder
-    private func statusChip(
-        currentText: String,
-        plannedValue: Double,
-        parse: (String) -> Double?,
-        format: (Double) -> String,
-        unitSuffix: String,
-        setText: @escaping (Double) -> Void
-    ) -> some View {
-        if let entered = parse(currentText), entered > 0 {
-            let diff = entered - plannedValue
-            let ratio = plannedValue > 0 ? abs(diff) / plannedValue : 1
-            if ratio >= 0.02 {
-                let sign = diff > 0 ? "+" : "−"
-                let absMag = format(abs(diff))
-                    .replacingOccurrences(of: unitSuffix, with: "")
-                    .trimmingCharacters(in: .whitespaces)
-                diffCapsule(text: "\(sign)\(absMag) \(unitSuffix) vs plan", ratio: ratio)
-            }
-            // on-plan → silence
-        } else {
-            matchPlannedCapsule(label: format(plannedValue)) {
-                setText(plannedValue)
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func durationStatusChipView(currentSeconds: Int, plannedSeconds: Int) -> some View {
-        if currentSeconds > 0 {
-            let diff = currentSeconds - plannedSeconds
-            let ratio = plannedSeconds > 0 ? abs(Double(diff)) / Double(plannedSeconds) : 1
-            if ratio >= 0.02 {
-                let sign = diff > 0 ? "+" : "−"
-                diffCapsule(text: "\(sign)\(formatDurationDelta(abs(diff))) vs plan", ratio: ratio)
-            }
-            // on-plan → silence
-        } else {
-            matchPlannedCapsule(label: formatPlannedDuration) {
-                hours = plannedSeconds / 3600
-                minutes = (plannedSeconds % 3600) / 60
-                seconds = plannedSeconds % 60
-            }
-        }
-    }
-
-    /// Coral CTA capsule shown when a field is empty. Tappable: fills
-    /// the field with the planned value. Proper padding + consistent
-    /// typography so it reads as an intentional design element rather
-    /// than a floating annotation.
-    private func matchPlannedCapsule(label: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: 5) {
-                Image(systemName: "arrow.turn.down.left")
-                    .font(.caption2.weight(.bold))
-                Text("Use \(label)")
-                    .font(.caption.weight(.semibold).monospacedDigit())
-            }
-            .foregroundStyle(Theme.Colors.warmCoral)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 5)
-            .background(
-                Capsule().fill(Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.16 : 0.10))
-            )
-            .overlay(
-                Capsule().stroke(Theme.Colors.warmCoral.opacity(0.28), lineWidth: 0.5)
-            )
-        }
-        .buttonStyle(.plain)
-        .frame(maxWidth: .infinity, alignment: .center)
-    }
+    // MARK: - Diff capsule
 
     /// Tinted diff capsule for off-plan values. Colour escalates from
     /// neutral (<5% drift) through secondary grey (<15%) to warning
