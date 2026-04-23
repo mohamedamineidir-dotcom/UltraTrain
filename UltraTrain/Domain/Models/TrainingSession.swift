@@ -16,6 +16,14 @@ struct TrainingSession: Identifiable, Equatable, Sendable, Codable {
     var targetHeartRateZone: Int? = nil
     var intervalWorkoutId: UUID? = nil
     var strengthWorkoutId: UUID? = nil
+    /// Human-readable label for the interval session's physiological
+    /// focus, e.g. "Speed", "VO2max", "Threshold", "Race pace". Populated
+    /// by the road plan pipeline at generation time from
+    /// `RoadIntervalLibrary.Category`. Nil for trail sessions, easy days,
+    /// and sessions without a structured workout attached. Purely
+    /// informational — lets the session row/detail distinguish between
+    /// "Speed intervals" and "Race-pace intervals" at a glance.
+    var intervalFocus: String? = nil
     var isKeySession: Bool = false
     var coachAdvice: String? = nil
     var actualDistanceKm: Double? = nil

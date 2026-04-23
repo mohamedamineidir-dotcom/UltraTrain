@@ -497,11 +497,17 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
 
                 sessions = templates.enumerated().map { dayIdx, tpl in
                     var session = makeSession(template: tpl, skeleton: skeleton, dayIndex: dayIdx, volume: volume)
-                    // Attach workout to quality sessions
+                    // Attach workout to quality sessions. RR-24: also
+                    // surface the interval category (Speed / VO2max /
+                    // Threshold / Race pace / ...) onto the session so
+                    // the row/detail can label it at a glance instead of
+                    // the generic "Intervals" / "Tempo".
                     if session.type == .intervals, let w = q1Workout {
                         session.intervalWorkoutId = w.id
+                        session.intervalFocus = q1Template?.category.displayName
                     } else if session.type == .tempo, let w = q2Workout {
                         session.intervalWorkoutId = w.id
+                        session.intervalFocus = q2Template?.category.displayName
                     } else if session.type == .longRun, let w = longRunWorkout {
                         session.intervalWorkoutId = w.id
                         // Long runs with structured work become moderate/hard

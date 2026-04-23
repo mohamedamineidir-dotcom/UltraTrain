@@ -153,9 +153,24 @@ struct SessionDetailView: View {
                     .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-                    Text(session.type.displayName)
-                        .font(.title2)
-                        .fontWeight(.bold)
+                    HStack(spacing: Theme.Spacing.xs) {
+                        Text(session.type.displayName)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                        // RR-24: interval focus pill next to the type
+                        // title so the detail header reads e.g.
+                        // "Intervals · VO2max" instead of the generic
+                        // "Intervals".
+                        if let focus = session.intervalFocus {
+                            Text(focus)
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(session.intensity.color)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(Capsule().fill(session.intensity.color.opacity(0.14)))
+                                .overlay(Capsule().stroke(session.intensity.color.opacity(0.25), lineWidth: 0.5))
+                        }
+                    }
                     Text(session.date.formatted(.dateTime.weekday(.wide).month().day()))
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }

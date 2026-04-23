@@ -122,6 +122,15 @@ struct SessionRowView: View {
                     ? Theme.Colors.secondaryLabel : Theme.Colors.label)
                 .strikethrough(session.isSkipped)
 
+            // RR-24: Intervals and tempo sessions carry an
+            // `intervalFocus` label populated at plan generation from
+            // the underlying RoadIntervalLibrary.Category. Surface as
+            // a small coloured pill so the athlete can tell VO2max
+            // reps from race-pace reps at a glance.
+            if let focus = session.intervalFocus, !session.isSkipped {
+                focusPill(focus)
+            }
+
             if session.isSkipped {
                 skippedBadge
             }
@@ -137,6 +146,21 @@ struct SessionRowView: View {
                     .accessibilityLabel("Linked to activity")
             }
         }
+    }
+
+    private func focusPill(_ label: String) -> some View {
+        Text(label)
+            .font(.caption2.weight(.semibold))
+            .foregroundStyle(accentColor)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(
+                Capsule().fill(accentColor.opacity(0.14))
+            )
+            .overlay(
+                Capsule().stroke(accentColor.opacity(0.25), lineWidth: 0.5)
+            )
+            .accessibilityLabel("\(label) focus")
     }
 
     // MARK: - Bottom Line (elevation + gut training)

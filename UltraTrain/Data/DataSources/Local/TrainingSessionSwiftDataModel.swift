@@ -17,6 +17,10 @@ final class TrainingSessionSwiftDataModel {
     var linkedRunId: UUID?
     var targetHeartRateZone: Int?
     var intervalWorkoutId: UUID?
+    /// RR-24: physiological focus label for road intervals/tempo
+    /// (e.g. "Speed", "VO2max", "Threshold", "Race pace"). Nil for
+    /// legacy records — the mapper treats that as "no focus".
+    var intervalFocus: String?
     var week: TrainingWeekSwiftDataModel?
     var isKeySession: Bool = false
     var coachAdvice: String?
@@ -43,6 +47,7 @@ final class TrainingSessionSwiftDataModel {
         linkedRunId: UUID? = nil,
         targetHeartRateZone: Int? = nil,
         intervalWorkoutId: UUID? = nil,
+        intervalFocus: String? = nil,
         isKeySession: Bool = false,
         coachAdvice: String? = nil,
         actualDistanceKm: Double? = nil,
@@ -67,6 +72,7 @@ final class TrainingSessionSwiftDataModel {
         self.linkedRunId = linkedRunId
         self.targetHeartRateZone = targetHeartRateZone
         self.intervalWorkoutId = intervalWorkoutId
+        self.intervalFocus = intervalFocus
         self.isKeySession = isKeySession
         self.coachAdvice = coachAdvice
         self.actualDistanceKm = actualDistanceKm

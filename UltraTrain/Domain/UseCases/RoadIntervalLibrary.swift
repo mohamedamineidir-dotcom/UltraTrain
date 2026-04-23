@@ -33,6 +33,22 @@ enum RoadIntervalLibrary {
 
     enum Category: String, Sendable {
         case speed, vo2max, threshold, raceSpecific, progression, longRunVariant
+
+        /// Short human-readable label shown on the session card so the
+        /// athlete can distinguish "Speed intervals" from "VO2max" or
+        /// "Race-pace" intervals at a glance without opening the detail.
+        /// Populated onto `TrainingSession.intervalFocus` at generation
+        /// time by the road plan pipeline (RR-24).
+        var displayName: String {
+            switch self {
+            case .speed:           return "Speed"
+            case .vo2max:          return "VO2max"
+            case .threshold:       return "Threshold"
+            case .raceSpecific:    return "Race pace"
+            case .progression:     return "Progression"
+            case .longRunVariant:  return "Long run"
+            }
+        }
     }
 
     enum PaceZone: String, Sendable {
