@@ -30,7 +30,9 @@ enum SessionTemplateGenerator {
         qualityRatio: QualitySessionRatioResolver.Ratio? = nil,
         intervalFocus: IntervalFocus = .mixed,
         isRoadRace: Bool = false,
-        intermediateRaceContext: RaceContext? = nil
+        intermediateRaceContext: RaceContext? = nil,
+        restingHR: Int? = nil,
+        maxHR: Int? = nil
     ) -> (sessions: [TrainingSession], workouts: [IntervalWorkout], strengthWorkouts: [StrengthWorkout]) {
         let runsPerWeek = preferredRunsPerWeek
         let templates: [SessionTemplate]
@@ -117,7 +119,9 @@ enum SessionTemplateGenerator {
                 isRecoveryWeek: skeleton.isRecoveryWeek,
                 verticalGainEnvironment: verticalGainEnvironment,
                 intervalFocus: intervalFocus,
-                isRoadRace: isRoadRace
+                isRoadRace: isRoadRace,
+                restingHR: restingHR,
+                maxHR: maxHR
             )
 
             return TrainingSession(

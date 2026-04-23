@@ -20,7 +20,9 @@ enum RoadCoachAdviceGenerator {
         isFirstTimer: Bool = false,
         isShortPrep: Bool = false,
         hotRaceForecast: Bool = false,
-        refinementSummary: RefineRoadPaceFromFeedbackUseCase.PaceRefinementSummary? = nil
+        refinementSummary: RefineRoadPaceFromFeedbackUseCase.PaceRefinementSummary? = nil,
+        restingHR: Int? = nil,
+        maxHR: Int? = nil
     ) -> String? {
         if isRecoveryWeek {
             return recoveryWeekAdvice(type: type)
@@ -101,6 +103,20 @@ enum RoadCoachAdviceGenerator {
                 warning = " Note: goal is ambitious. Training paces reflect current fitness to build safely toward race day; race-specific work unlocks in late peak."
             }
             advice = (advice ?? "") + warning
+        }
+
+        // #14: append Karvonen HR range when the athlete has recorded
+        // both resting + max HR. Skips rest days and sessions with no
+        // base advice. Helps athletes who train by HR get the same
+        // guidance their pace-focused peers already get.
+        if type != .rest,
+           let restingHR, let maxHR, restingHR > 0, maxHR > restingHR,
+           var current = advice {
+            let range = PaceCalculator.heartRateRange(
+                for: intensity, restingHR: restingHR, maxHR: maxHR
+            )
+            current += " Target HR: \(range.min)-\(range.max) bpm."
+            advice = current
         }
 
         return advice

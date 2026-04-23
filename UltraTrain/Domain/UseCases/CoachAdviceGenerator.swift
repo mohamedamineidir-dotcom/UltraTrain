@@ -11,7 +11,9 @@ enum CoachAdviceGenerator {
         isRecoveryWeek: Bool = false,
         verticalGainEnvironment: VerticalGainEnvironment = .mountain,
         intervalFocus: IntervalFocus? = nil,
-        isRoadRace: Bool = false
+        isRoadRace: Bool = false,
+        restingHR: Int? = nil,
+        maxHR: Int? = nil
     ) -> String? {
         let recoveryPrefix = isRecoveryWeek
             ? "Recovery week, so keep everything easy. Your body adapts when you rest. "
@@ -47,6 +49,16 @@ enum CoachAdviceGenerator {
         var result = isRecoveryWeek && type != .rest ? recoveryPrefix + advice : advice
         if let prefix = focusPrefix {
             result = prefix + " " + result
+        }
+        // #14: append Karvonen HR range when both resting + max HR are
+        // known. Skips rest days (no meaningful zone) and strength /
+        // cross-training (HR too variable to prescribe a range).
+        if type != .rest, type != .strengthConditioning, type != .crossTraining,
+           let restingHR, let maxHR, restingHR > 0, maxHR > restingHR {
+            let range = PaceCalculator.heartRateRange(
+                for: intensity, restingHR: restingHR, maxHR: maxHR
+            )
+            result += " Target HR: \(range.min)-\(range.max) bpm."
         }
         return result
     }

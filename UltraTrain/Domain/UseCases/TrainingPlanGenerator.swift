@@ -170,7 +170,9 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 qualityRatio: qualityRatio,
                 intervalFocus: athlete.intervalFocus,
                 isRoadRace: targetRace.raceType == .road,
-                intermediateRaceContext: intermediateRaceContext
+                intermediateRaceContext: intermediateRaceContext,
+                restingHR: athlete.restingHeartRate,
+                maxHR: athlete.maxHeartRate
             )
 
             // Apply terrain constraint adaptation for VG sessions (trail/ultra only)
@@ -533,7 +535,9 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                         isFirstTimer: isFirstTimer,
                         isShortPrep: isShortPrep,
                         hotRaceForecast: hotRaceForecast,
-                        refinementSummary: refinementSummary
+                        refinementSummary: refinementSummary,
+                        restingHR: athlete.restingHeartRate,
+                        maxHR: athlete.maxHeartRate
                     )
                     return session
                 }
