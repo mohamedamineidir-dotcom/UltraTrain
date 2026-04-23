@@ -32,6 +32,7 @@ struct SessionDetailView: View {
     @State private var showRescheduleSheet = false
     @State private var showSwapSheet = false
     @State private var showValidateSheet = false
+    @State private var showRestSwapSheet = false
 
     var body: some View {
         ScrollView {
@@ -108,6 +109,13 @@ struct SessionDetailView: View {
                 onSwap: { candidate in onSwap?(candidate) }
             )
         }
+        .sheet(isPresented: $showRestSwapSheet) {
+            RestDaySwapSheet(
+                currentSession: session,
+                weekCandidates: sameWeekCandidates,
+                onSelect: { candidate in onSwap?(candidate) }
+            )
+        }
         .sheet(isPresented: $showValidateSheet) {
             SessionValidationView(
                 session: session,
@@ -127,6 +135,19 @@ struct SessionDetailView: View {
                 onSaveIntervalFeedback: onSaveIntervalFeedback,
                 weekProgress: weekProgress
             )
+        }
+    }
+
+    // MARK: - Same-week candidates
+
+    /// Swap candidates filtered to the same calendar week as the current
+    /// session. Used by RestDaySwapSheet so the athlete only sees days
+    /// from the rest day's own week — cross-week noise would defeat the
+    /// "pick when to rest this week" mental model.
+    private var sameWeekCandidates: [SwapCandidate] {
+        let calendar = Calendar.current
+        return swapCandidates.filter { candidate in
+            calendar.isDate(candidate.session.date, equalTo: session.date, toGranularity: .weekOfYear)
         }
     }
 
@@ -628,6 +649,24 @@ struct SessionDetailView: View {
                 .buttonStyle(.borderedProminent)
                 .tint(Theme.Colors.success)
                 .accessibilityHint("Double-tap to validate this session as completed")
+            }
+
+            // #21: dedicated rest-day move action, prominent on rest
+            // session detail so the flow "I want to rest on a different
+            // day" is discoverable. Internally a regular swap, but the
+            // mental model is inverted — pick your rest day, not swap
+            // two sessions.
+            if session.type == .rest && !session.isCompleted && !session.isSkipped {
+                Button {
+                    showRestSwapSheet = true
+                } label: {
+                    Label("Move Rest Day", systemImage: "arrow.triangle.2.circlepath")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(Theme.Colors.warmCoral)
+                .accessibilityHint("Double-tap to move your rest day to another day this week")
             }
 
             Divider()
