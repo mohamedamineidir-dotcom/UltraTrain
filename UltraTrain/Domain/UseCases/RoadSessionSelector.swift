@@ -224,17 +224,39 @@ enum RoadSessionSelector {
             ? "Easy run @ \(easyPace) + 4-6 × 20s strides after"
             : "Easy run @ \(easyPace)"
 
-        var pool: [(day: Int, template: SessionTemplateGenerator.SessionTemplate)] = [
-            (5, tpl(5, .longRun, .easy, longRunDuration, longRunElev, longRunDesc)),
-            (1, tpl(1, effectiveIntervalType, isTrueTaperWeek ? .easy : q1Intensity, effectiveIntervalSeconds, 0, effectiveIntervalDesc)),
-            (3, tpl(3, .tempo, q2Intensity, effectiveTempoSeconds, 0, effectiveTempoDesc)),
-            (0, tpl(0, .recovery, .easy, scaledEasy1, 0, mondayEasyDesc)),
-            (4, tpl(4, .recovery, .easy, scaledEasy2, 0, fridayEasyDesc)),
-            (2, tpl(2, .recovery, .easy, scaledEasy1, 0,
-                    "Recovery run @ \(easyPace)")),
-            (6, tpl(6, .recovery, .easy, scaledEasy2, 0,
-                    "Easy run @ \(easyPace)")),
-        ]
+        // RR-10: Pool order depends on preferredRunsPerWeek so that low-volume
+        // athletes always get at least one easy run. The previous fixed order
+        // [long, intervals, tempo, easy Mon, ...] meant a 3-days/week athlete
+        // got three hard days (all quality) with zero easy recovery — the
+        // opposite of Daniels / Pfitzinger's prescription for 3-day plans,
+        // which is 1 long + 1 quality + 1 easy.
+        //
+        // - preferredRunsPerWeek <= 2 → long + easy only (no quality; this is
+        //   a maintenance level, not real race prep).
+        // - preferredRunsPerWeek == 3 → long + 1 quality (tempo, threshold —
+        //   lower CNS stress than VO2max for low-volume) + 1 easy.
+        // - preferredRunsPerWeek >= 4 → long + 2 quality + easy runs
+        //   (the original quality-heavy pool).
+        let slotLong   = (5, tpl(5, .longRun, .easy, longRunDuration, longRunElev, longRunDesc))
+        let slotIntervals = (1, tpl(1, effectiveIntervalType, isTrueTaperWeek ? .easy : q1Intensity, effectiveIntervalSeconds, 0, effectiveIntervalDesc))
+        let slotTempo  = (3, tpl(3, .tempo, q2Intensity, effectiveTempoSeconds, 0, effectiveTempoDesc))
+        let slotEasyMon = (0, tpl(0, .recovery, .easy, scaledEasy1, 0, mondayEasyDesc))
+        let slotEasyFri = (4, tpl(4, .recovery, .easy, scaledEasy2, 0, fridayEasyDesc))
+        let slotEasyWed = (2, tpl(2, .recovery, .easy, scaledEasy1, 0, "Recovery run @ \(easyPace)"))
+        let slotEasySun = (6, tpl(6, .recovery, .easy, scaledEasy2, 0, "Easy run @ \(easyPace)"))
+
+        var pool: [(day: Int, template: SessionTemplateGenerator.SessionTemplate)]
+        switch preferredRunsPerWeek {
+        case ...2:
+            // Maintenance-only: long + easy. No quality.
+            pool = [slotLong, slotEasyMon, slotEasyFri, slotEasyWed, slotEasySun, slotTempo, slotIntervals]
+        case 3:
+            // 3-day Daniels/Pfitzinger: 1L + 1Q + 1E.
+            pool = [slotLong, slotTempo, slotEasyMon, slotIntervals, slotEasyFri, slotEasyWed, slotEasySun]
+        default:
+            // 4+ days: quality-heavy pool (original).
+            pool = [slotLong, slotIntervals, slotTempo, slotEasyMon, slotEasyFri, slotEasyWed, slotEasySun]
+        }
 
         // For 6+ runs/week marathon plans: convert day 2 easy to medium-long (Pfitzinger)
         if preferredRunsPerWeek >= 6 && discipline == .roadMarathon && phase != .base {
