@@ -87,29 +87,30 @@ enum RoadLongRunCalculator {
         case .elite:        3600  // 60 min
         }
 
-        // RR-1: Anchor the starting long run to the athlete's current
-        // longest run when declared. Safer than a generic tier-based start
-        // because it respects the BJSM 2018 rule: never exceed the athlete's
-        // longest run by more than ~10% in a single week.
+        // RR-1 / RR-9 / RR-11: Anchor the starting long run to the athlete's
+        // current longest run when declared. Safer than a generic tier-based
+        // start because it respects the BJSM 2018 rule: never exceed the
+        // athlete's longest run by more than ~10% in a single week.
         //
-        // RR-9 correction: the Week 1 long-run cap was originally
-        // `capDuration × 0.85` — way too aggressive. For an ultra-trail
-        // athlete with longestRunKm = 100 doing a road marathon, this anchored
-        // Week 1 LR at ~30 km (85% of the 32 km tier peak). That left too
-        // little budget for the rest of the week under the session-scaling
-        // math, crushing non-long-run volume across ALL weeks.
+        // - `currentLongestRunKm <= 0` (no data) → fall back to tier default
+        //   (capDuration × startFraction, floored at the tier minimum so we
+        //   don't prescribe a trivial long run for a beginner with no signal).
+        // - Declared > 0 → anchor at 90% of declared (10% safety buffer), then
+        //   cap at 60% of capDuration so there's room to grow toward peak
+        //   (Pfitzinger 18/55 starts at ~12 mi vs 20 mi peak = 60%).
         //
-        // Pfitzinger 18/55 starts Week 1 LR at ~12 mi vs 20 mi peak = ~60%
-        // of peak. The cap is now `capDuration × 0.60`, matching Pfitzinger.
-        //
-        // - `currentLongestRunKm <= 0` → fall back to tier default.
-        // - Anchor at 90% of declared longest (10% safety buffer vs 10% rule).
-        // - Clamp to [minimumLongRun, capDuration * 0.60].
+        // RR-11: when a value is declared we no longer clamp up to the tier
+        // `minimumLongRun` floor. A beginner declaring 5 km longest was
+        // being bumped to 40 min (~6.5 km), a 30% jump on Week 1 — exactly
+        // what the BJSM 10% rule is supposed to prevent. Instead we use a
+        // sanity floor of 15 min so the session is still distinct from an
+        // easy run, but we respect declared base down to that floor.
         let startDuration: TimeInterval
         if currentLongestRunKm > 0 {
             let proposedAnchor = currentLongestRunKm * 0.9 * avgPaceSecPerKm
             let maxAnchor = capDuration * 0.60
-            startDuration = max(minimumLongRun, min(proposedAnchor, maxAnchor))
+            let sanityFloor: TimeInterval = 900 // 15 min — below this it's not a long run
+            startDuration = max(sanityFloor, min(proposedAnchor, maxAnchor))
         } else {
             startDuration = max(capDuration * startFraction, minimumLongRun)
         }
