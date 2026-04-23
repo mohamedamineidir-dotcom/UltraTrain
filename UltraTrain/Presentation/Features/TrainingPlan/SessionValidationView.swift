@@ -650,13 +650,11 @@ private struct ManualValidationPage: View {
         .padding(.vertical, Theme.Spacing.sm)
         .background(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
-                .fill(isFocused
-                    ? Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.10 : 0.05)
-                    : (colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.6)))
+                .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.6))
         )
         .overlay(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
-                .stroke(isFocused ? Theme.Colors.warmCoral.opacity(0.6) : Color.clear, lineWidth: 1)
+                .stroke(isFocused ? Theme.Colors.warmCoral.opacity(0.55) : Color.clear, lineWidth: 1)
         )
         .animation(.easeOut(duration: 0.2), value: isFocused)
     }
@@ -826,6 +824,11 @@ private struct ManualValidationPage: View {
         return durationStatusChipView(currentSeconds: currentSeconds, plannedSeconds: planned)
     }
 
+    /// Status chip renders BELOW the input row. Silent when on-plan —
+    /// absence of feedback is the signal, and it stops the page from
+    /// looking like a noisy validation form. Two visible states:
+    ///   • Empty + a plan exists → a proper coral capsule "Use X" CTA.
+    ///   • Value off-plan → a colour-tinted diff capsule.
     @ViewBuilder
     private func statusChip(
         currentText: String,
@@ -838,44 +841,18 @@ private struct ManualValidationPage: View {
         if let entered = parse(currentText), entered > 0 {
             let diff = entered - plannedValue
             let ratio = plannedValue > 0 ? abs(diff) / plannedValue : 1
-            if ratio < 0.02 {
-                Label("On plan", systemImage: "checkmark.circle.fill")
-                    .font(.caption2.weight(.medium))
-                    .foregroundStyle(Theme.Colors.success)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-                    .transition(.opacity)
-            } else {
+            if ratio >= 0.02 {
                 let sign = diff > 0 ? "+" : "−"
-                let absMag = format(abs(diff)).replacingOccurrences(of: unitSuffix, with: "").trimmingCharacters(in: .whitespaces)
-                Text("\(sign)\(absMag) \(unitSuffix) vs plan")
-                    .font(.caption2.weight(.medium).monospacedDigit())
-                    .foregroundStyle(statusChipColor(ratio: ratio))
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
-                    .background(
-                        Capsule().fill(statusChipColor(ratio: ratio).opacity(0.12))
-                    )
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-                    .transition(.opacity)
+                let absMag = format(abs(diff))
+                    .replacingOccurrences(of: unitSuffix, with: "")
+                    .trimmingCharacters(in: .whitespaces)
+                diffCapsule(text: "\(sign)\(absMag) \(unitSuffix) vs plan", ratio: ratio)
             }
+            // on-plan → silence
         } else {
-            Button {
+            matchPlannedCapsule(label: format(plannedValue)) {
                 setText(plannedValue)
-            } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: "arrow.turn.down.left")
-                        .font(.caption2.weight(.bold))
-                    Text("Use \(format(plannedValue))")
-                        .font(.caption2.weight(.semibold).monospacedDigit())
-                }
-                .foregroundStyle(Theme.Colors.warmCoral)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 3)
-                .background(Capsule().fill(Theme.Colors.warmCoral.opacity(0.12)))
             }
-            .buttonStyle(.plain)
-            .frame(maxWidth: .infinity, alignment: .trailing)
-            .transition(.opacity)
         }
     }
 
@@ -884,43 +861,63 @@ private struct ManualValidationPage: View {
         if currentSeconds > 0 {
             let diff = currentSeconds - plannedSeconds
             let ratio = plannedSeconds > 0 ? abs(Double(diff)) / Double(plannedSeconds) : 1
-            if ratio < 0.02 {
-                Label("On plan", systemImage: "checkmark.circle.fill")
-                    .font(.caption2.weight(.medium))
-                    .foregroundStyle(Theme.Colors.success)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-            } else {
+            if ratio >= 0.02 {
                 let sign = diff > 0 ? "+" : "−"
-                Text("\(sign)\(formatDurationDelta(abs(diff))) vs plan")
-                    .font(.caption2.weight(.medium).monospacedDigit())
-                    .foregroundStyle(statusChipColor(ratio: ratio))
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
-                    .background(
-                        Capsule().fill(statusChipColor(ratio: ratio).opacity(0.12))
-                    )
-                    .frame(maxWidth: .infinity, alignment: .trailing)
+                diffCapsule(text: "\(sign)\(formatDurationDelta(abs(diff))) vs plan", ratio: ratio)
             }
+            // on-plan → silence
         } else {
-            Button {
+            matchPlannedCapsule(label: formatPlannedDuration) {
                 hours = plannedSeconds / 3600
                 minutes = (plannedSeconds % 3600) / 60
                 seconds = plannedSeconds % 60
-            } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: "arrow.turn.down.left")
-                        .font(.caption2.weight(.bold))
-                    Text("Use \(formatPlannedDuration)")
-                        .font(.caption2.weight(.semibold).monospacedDigit())
-                }
-                .foregroundStyle(Theme.Colors.warmCoral)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 3)
-                .background(Capsule().fill(Theme.Colors.warmCoral.opacity(0.12)))
             }
-            .buttonStyle(.plain)
-            .frame(maxWidth: .infinity, alignment: .trailing)
         }
+    }
+
+    /// Coral CTA capsule shown when a field is empty. Tappable: fills
+    /// the field with the planned value. Proper padding + consistent
+    /// typography so it reads as an intentional design element rather
+    /// than a floating annotation.
+    private func matchPlannedCapsule(label: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 5) {
+                Image(systemName: "arrow.turn.down.left")
+                    .font(.caption2.weight(.bold))
+                Text("Use \(label)")
+                    .font(.caption.weight(.semibold).monospacedDigit())
+            }
+            .foregroundStyle(Theme.Colors.warmCoral)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(
+                Capsule().fill(Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.16 : 0.10))
+            )
+            .overlay(
+                Capsule().stroke(Theme.Colors.warmCoral.opacity(0.28), lineWidth: 0.5)
+            )
+        }
+        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity, alignment: .center)
+    }
+
+    /// Tinted diff capsule for off-plan values. Colour escalates from
+    /// neutral (<5% drift) through secondary grey (<15%) to warning
+    /// amber beyond. Centered under the row so it doesn't float awkwardly.
+    private func diffCapsule(text: String, ratio: Double) -> some View {
+        let color = statusChipColor(ratio: ratio)
+        return Text(text)
+            .font(.caption.weight(.semibold).monospacedDigit())
+            .foregroundStyle(color)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(
+                Capsule().fill(color.opacity(colorScheme == .dark ? 0.16 : 0.10))
+            )
+            .overlay(
+                Capsule().stroke(color.opacity(0.28), lineWidth: 0.5)
+            )
+            .frame(maxWidth: .infinity, alignment: .center)
     }
 
     private func statusChipColor(ratio: Double) -> Color {
@@ -940,13 +937,21 @@ private struct ManualValidationPage: View {
 
     // MARK: - Week progress footer
 
+    /// Futuristic progress strip: uniform 12pt dots threaded on a thin
+    /// hairline track. Current session gets a coral fill + a soft
+    /// shadow-glow (not a bigger size), so the row stays visually
+    /// balanced. Completed dots carry a tiny white checkmark.
     private func weekProgressFooter(_ progress: WeekProgress) -> some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 5) {
+        VStack(spacing: 10) {
+            HStack(spacing: 0) {
                 ForEach(0..<progress.totalSessions, id: \.self) { idx in
                     weekDot(state: dotState(idx: idx, progress: progress))
+                        .frame(maxWidth: .infinity)
+                        .overlay(trackSegment(idx: idx, total: progress.totalSessions, progress: progress))
                 }
             }
+            .padding(.horizontal, 4)
+
             HStack(spacing: 6) {
                 Text("Session \(progress.currentSessionIndex + 1) of \(progress.totalSessions)")
                     .font(.caption.weight(.semibold).monospacedDigit())
@@ -971,37 +976,82 @@ private struct ManualValidationPage: View {
 
     private func dotState(idx: Int, progress: WeekProgress) -> DotState {
         if idx == progress.currentSessionIndex { return .current }
-        if idx < progress.currentSessionIndex && idx < progress.completedBefore { return .completed }
-        if idx < progress.currentSessionIndex { return .upcoming }
+        if idx < progress.completedBefore { return .completed }
         return .upcoming
+    }
+
+    /// Thin hairline track segments drawn UNDER the dots via overlay.
+    /// Each dot's frame contains half a line on the left and half on
+    /// the right, so when laid out in an HStack the segments meet and
+    /// form one continuous track across the row. The segment is
+    /// coloured based on whether the dot it's connecting to is a
+    /// completed step (green) vs upcoming (neutral).
+    @ViewBuilder
+    private func trackSegment(idx: Int, total: Int, progress: WeekProgress) -> some View {
+        let leftActive = idx <= progress.completedBefore && idx > 0
+        let rightActive = idx < progress.completedBefore
+        ZStack {
+            if idx > 0 {
+                HStack(spacing: 0) {
+                    Rectangle()
+                        .fill(leftActive ? Theme.Colors.success.opacity(0.6) : Theme.Colors.tertiaryLabel.opacity(0.25))
+                        .frame(height: 1.5)
+                    Spacer(minLength: 0)
+                }
+            }
+            if idx < total - 1 {
+                HStack(spacing: 0) {
+                    Spacer(minLength: 0)
+                    Rectangle()
+                        .fill(rightActive ? Theme.Colors.success.opacity(0.6) : Theme.Colors.tertiaryLabel.opacity(0.25))
+                        .frame(height: 1.5)
+                }
+            }
+        }
+        .padding(.horizontal, 6)
+        // Dots live ABOVE the track — zIndex ensures the line slides
+        // behind the dot fill so the dots read cleanly.
+        .zIndex(-1)
     }
 
     @ViewBuilder
     private func weekDot(state: DotState) -> some View {
-        switch state {
-        case .completed:
-            Circle()
-                .fill(Theme.Colors.success)
-                .frame(width: 10, height: 10)
-                .overlay(
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 6, weight: .black))
-                        .foregroundStyle(.white)
-                )
-        case .current:
-            Circle()
-                .fill(Theme.Colors.warmCoral)
-                .frame(width: 14, height: 14)
-                .overlay(
+        ZStack {
+            if state == .current {
+                Circle()
+                    .fill(Theme.Colors.warmCoral.opacity(0.25))
+                    .frame(width: 22, height: 22)
+                    .blur(radius: 3)
+            }
+            Group {
+                switch state {
+                case .completed:
                     Circle()
-                        .stroke(Theme.Colors.warmCoral.opacity(0.35), lineWidth: 3)
-                        .frame(width: 20, height: 20)
-                )
-                .frame(width: 20, height: 14)
-        case .upcoming:
-            Circle()
-                .stroke(Theme.Colors.tertiaryLabel.opacity(0.4), lineWidth: 1)
-                .frame(width: 10, height: 10)
+                        .fill(Theme.Colors.success)
+                        .overlay(
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 6, weight: .black))
+                                .foregroundStyle(.white)
+                        )
+                case .current:
+                    Circle()
+                        .fill(LinearGradient(
+                            colors: [Theme.Colors.warmCoral, Theme.Colors.warmCoral.opacity(0.78)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ))
+                        .overlay(
+                            Circle().stroke(Color.white.opacity(0.65), lineWidth: 1.2)
+                        )
+                case .upcoming:
+                    Circle()
+                        .fill(colorScheme == .dark ? Color.white.opacity(0.04) : Color.white)
+                        .overlay(
+                            Circle().stroke(Theme.Colors.tertiaryLabel.opacity(0.35), lineWidth: 1)
+                        )
+                }
+            }
+            .frame(width: 12, height: 12)
         }
     }
 
