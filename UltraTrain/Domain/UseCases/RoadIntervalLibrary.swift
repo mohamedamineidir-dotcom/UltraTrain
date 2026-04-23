@@ -81,21 +81,31 @@ enum RoadIntervalLibrary {
             phase: phase, discipline: discipline, slotIndex: slotIndex
         )
 
-        // #5: Pick from preferred category with improved variety.
-        // Uses weekInPhase + slotIndex offset to avoid repeating same template
-        // within 3 weeks. Golden ratio hashing spreads selections more evenly.
-        let varietyOffset = slotIndex * 7 + (weekInPhase > 0 ? 3 : 0)
+        // RR-16: Walk forward through the progression within a category,
+        // plateau at the most-advanced template for weeks beyond the end.
+        //
+        // Templates within each category are ordered by progression
+        // (800m → 1000m → 1200m → 1600m → 2000m for VO2max; short cruise
+        // intervals → extended continuous tempo for threshold). Pfitzinger
+        // and Daniels both use this pattern: progress weekly through
+        // increasingly demanding workouts, then consolidate the top session
+        // across remaining peak weeks.
+        //
+        // Previously the code cycled via `(weekInPhase + offset) % count`
+        // which produced random-looking jumps (e.g. W0=800, W1=800, W2=1000,
+        // W3=1200, W4=1600, W5=800 — resetting mid-peak). Walk-forward-
+        // plateau is predictable and matches coach-prescribed progressions.
         for cat in preferred {
             let inCat = available.filter { $0.category == cat }
             if !inCat.isEmpty {
-                let index = (weekInPhase + varietyOffset) % inCat.count
+                let index = min(weekInPhase, inCat.count - 1)
                 return inCat[index]
             }
         }
 
-        // Fallback: any available template
-        let index = (weekInPhase + varietyOffset) % available.count
-        return available[index]
+        // Fallback: any available template — same walk-forward rule.
+        let fallbackIndex = min(weekInPhase, available.count - 1)
+        return available[fallbackIndex]
     }
 
     // MARK: - Distance-Specific Category Preferences
