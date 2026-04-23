@@ -138,9 +138,16 @@ enum RoadSessionSelector {
         let longRunDesc = longRunDescription(phase: phase, weekInPhase: weekInPhase, discipline: discipline, experience: experience)
         let longRunElev: Double = 0 // Road: no elevation
 
+        // RR-17: Prefer effort labels over fabricated paces when the pace
+        // profile is not data-derived (no PRs, no VMA, no goal time). A
+        // coach wouldn't prescribe "5:12/km" to an athlete with no baseline
+        // — they'd say "comfortably hard." Pace-specific descriptions only
+        // fire when the profile is actually anchored to athlete data.
+        let hasDataDerivedPaces = paceProfile?.isDataDerived ?? false
+
         // SHORT descriptions — rep format like trail plan display
         let easyPace: String
-        if let p = paceProfile {
+        if let p = paceProfile, hasDataDerivedPaces {
             let fast = RoadCoachAdviceGenerator.formatPace(p.easyPacePerKm.lowerBound)
             let slow = RoadCoachAdviceGenerator.formatPace(p.easyPacePerKm.upperBound)
             easyPace = "\(fast)-\(slow)/km"
@@ -149,27 +156,41 @@ enum RoadSessionSelector {
         }
 
         let q1Desc: String
-        if let t = q1, let p = paceProfile {
+        if let t = q1, let p = paceProfile, hasDataDerivedPaces {
             let pace = RoadCoachAdviceGenerator.formatPace(paceForZone(t.targetPaceZone, profile: p))
             if t.repDistanceM > 0 {
                 q1Desc = "\(t.name) — \(t.repCount)×\(t.repDistanceM)m @ \(pace)/km"
             } else {
                 q1Desc = "\(t.name) @ \(pace)/km"
             }
+        } else if let t = q1 {
+            let effortLabel = rpeLabel(for: t.targetPaceZone)
+            if t.repDistanceM > 0 {
+                q1Desc = "\(t.name) — \(t.repCount)×\(t.repDistanceM)m at \(effortLabel) effort"
+            } else {
+                q1Desc = "\(t.name) — \(effortLabel) effort"
+            }
         } else {
-            q1Desc = q1?.name ?? "Intervals"
+            q1Desc = "Intervals"
         }
 
         let q2Desc: String
-        if let t = q2, let p = paceProfile {
+        if let t = q2, let p = paceProfile, hasDataDerivedPaces {
             let pace = RoadCoachAdviceGenerator.formatPace(paceForZone(t.targetPaceZone, profile: p))
             if t.repDistanceM > 0 {
                 q2Desc = "\(t.name) — \(t.repCount)×\(t.repDistanceM)m @ \(pace)/km"
             } else {
                 q2Desc = "\(t.name) @ \(pace)/km"
             }
+        } else if let t = q2 {
+            let effortLabel = rpeLabel(for: t.targetPaceZone)
+            if t.repDistanceM > 0 {
+                q2Desc = "\(t.name) — \(t.repCount)×\(t.repDistanceM)m at \(effortLabel) effort"
+            } else {
+                q2Desc = "\(t.name) — \(effortLabel) effort"
+            }
         } else {
-            q2Desc = q2?.name ?? "Tempo"
+            q2Desc = "Tempo"
         }
 
         // RR-3 Mujika taper: RoadVolumeCalculator zeroes out intervalSeconds
@@ -430,6 +451,19 @@ enum RoadSessionSelector {
     }
 
     // MARK: - Pace Zone Lookup
+
+    /// RR-17: effort label used when the pace profile is not data-derived
+    /// (no PRs, no VMA, no goal time). Better than fabricating pace numbers.
+    private static func rpeLabel(for zone: RoadIntervalLibrary.PaceZone) -> String {
+        switch zone {
+        case .easy:          "conversational"
+        case .marathonPace:  "sustained hard (should feel controlled over 2-3 hours)"
+        case .threshold:     "comfortably hard (~1-hour-race effort)"
+        case .interval:      "hard (~5K race effort, unable to hold a conversation)"
+        case .repetition:    "very hard (mile-race effort, quick recovery)"
+        case .racePace:      "race-specific effort"
+        }
+    }
 
     private static func paceForZone(_ zone: RoadIntervalLibrary.PaceZone, profile: RoadPaceProfile) -> Double {
         switch zone {

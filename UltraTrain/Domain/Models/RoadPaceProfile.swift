@@ -23,6 +23,14 @@ struct RoadPaceProfile: Equatable, Sendable {
     /// Used to gate race-pace usage in early phases (Daniels: don't train at goal
     /// pace if it's >10% faster than current fitness supports).
     let goalRealismLevel: GoalRealism
+
+    /// True when the pace values came from actual athlete data (PRs, VMA,
+    /// or a goal time). False when they fell through to a pure experience-
+    /// tier heuristic because the athlete entered no PRs, no VMA, and no
+    /// goal time. UI should prefer RPE/effort labels over specific /km
+    /// paces when this is false — a coach prescribes by effort when there's
+    /// no baseline data, not by fabricated pace numbers.
+    let isDataDerived: Bool
 }
 
 /// Classification of how realistic the athlete's target time is relative to current fitness.

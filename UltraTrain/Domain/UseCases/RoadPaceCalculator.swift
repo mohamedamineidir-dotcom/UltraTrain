@@ -30,6 +30,15 @@ enum RoadPaceCalculator {
         vmaKmh: Double?,
         experience: ExperienceLevel
     ) -> RoadPaceProfile {
+        // RR-17: paces are data-derived when the athlete has ANY of:
+        // a declared goal time, at least one PR, or a measured VMA.
+        // Without any of those we're just guessing from experience tier
+        // and the UI should use effort labels instead of fabricated paces.
+        let hasAnyPR = personalBests.contains { $0.timeSeconds > 0 }
+        let hasVMA = (vmaKmh ?? 0) > 0
+        let hasGoalTime = (goalTime ?? 0) > 0
+        let isDataDerived = hasAnyPR || hasVMA || hasGoalTime
+
         // Step 1: Determine goal race pace (sec/km)
         let goalPacePerKm: Double
         if let goalTime, goalTime > 0 {
@@ -91,7 +100,8 @@ enum RoadPaceCalculator {
             intervalPacePerKm: fiveK * 1.00,
             repetitionPacePerKm: fiveK * 0.93,
             racePacePerKm: goalPacePerKm,
-            goalRealismLevel: realism
+            goalRealismLevel: realism,
+            isDataDerived: isDataDerived
         )
     }
 
