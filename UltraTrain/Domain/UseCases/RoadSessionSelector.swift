@@ -237,8 +237,27 @@ enum RoadSessionSelector {
         //   lower CNS stress than VO2max for low-volume) + 1 easy.
         // - preferredRunsPerWeek >= 4 → long + 2 quality + easy runs
         //   (the original quality-heavy pool).
+        // RR-15: Athletes with a recent injury get the Q1 intervals slot
+        // replaced with a cross-training session (cycling / swim / pool
+        // running) of equivalent duration. Maintains aerobic stimulus without
+        // impact while the injury resolves. Q2 (tempo) stays as a running
+        // session — threshold effort is lower impact than VO2max intervals
+        // and preserves running-specific neuromuscular patterns.
+        // Taper true-taper weeks bypass this: RR-3 already turns that slot
+        // into a shakeout + strides which is the correct pre-race prep
+        // regardless of injury history.
+        let isInjured = athleteContext?.hasRecentInjury == true
+        let replaceWithCrossTraining = isInjured && !isTrueTaperWeek
+
         let slotLong   = (5, tpl(5, .longRun, .easy, longRunDuration, longRunElev, longRunDesc))
-        let slotIntervals = (1, tpl(1, effectiveIntervalType, isTrueTaperWeek ? .easy : q1Intensity, effectiveIntervalSeconds, 0, effectiveIntervalDesc))
+        let slotIntervals: (day: Int, template: SessionTemplateGenerator.SessionTemplate)
+        if replaceWithCrossTraining {
+            let minutes = Int(effectiveIntervalSeconds / 60)
+            slotIntervals = (1, tpl(1, .crossTraining, .moderate, effectiveIntervalSeconds, 0,
+                    "Cross-training \(minutes) min (cycling / swim / pool running) at moderate effort. Zero-impact aerobic work while your injury resolves — replaces intervals."))
+        } else {
+            slotIntervals = (1, tpl(1, effectiveIntervalType, isTrueTaperWeek ? .easy : q1Intensity, effectiveIntervalSeconds, 0, effectiveIntervalDesc))
+        }
         let slotTempo  = (3, tpl(3, .tempo, q2Intensity, effectiveTempoSeconds, 0, effectiveTempoDesc))
         let slotEasyMon = (0, tpl(0, .recovery, .easy, scaledEasy1, 0, mondayEasyDesc))
         let slotEasyFri = (4, tpl(4, .recovery, .easy, scaledEasy2, 0, fridayEasyDesc))
