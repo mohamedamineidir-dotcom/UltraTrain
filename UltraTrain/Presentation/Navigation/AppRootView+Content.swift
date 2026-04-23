@@ -90,6 +90,7 @@ extension AppRootView {
                             raceReflectionRepository: raceReflectionRepository,
                             achievementRepository: achievementRepository,
                             morningCheckInRepository: morningCheckInRepository,
+                            intervalPerformanceRepository: intervalPerformanceRepository,
                             referralRepository: referralRepository,
                             subscriptionService: subscriptionService,
                             authService: authService,

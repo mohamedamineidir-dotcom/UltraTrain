@@ -162,6 +162,15 @@ extension TrainingPlanView {
                                     activity: activity
                                 )
                             }
+                        },
+                        intervalFeedbackContextProvider: { sessionIndex in
+                            await buildIntervalFeedbackContext(
+                                weekIndex: weekIndex,
+                                sessionIndex: sessionIndex
+                            )
+                        },
+                        onSaveIntervalFeedback: { feedback in
+                            Task { await viewModel.saveIntervalFeedback(feedback) }
                         }
                     )
                 }
@@ -172,6 +181,38 @@ extension TrainingPlanView {
             }
             .padding()
         }
+    }
+
+    @MainActor
+    private func buildIntervalFeedbackContext(
+        weekIndex: Int,
+        sessionIndex: Int
+    ) async -> IntervalFeedbackContext? {
+        guard viewModel.sessionQualifiesForIntervalFeedback(
+            weekIndex: weekIndex, sessionIndex: sessionIndex
+        ) else { return nil }
+        guard let pace = viewModel.targetPacePerKm(
+            weekIndex: weekIndex, sessionIndex: sessionIndex
+        ), pace > 0 else { return nil }
+        guard let plan = viewModel.plan,
+              weekIndex < plan.weeks.count,
+              sessionIndex < plan.weeks[weekIndex].sessions.count else { return nil }
+        let session = plan.weeks[weekIndex].sessions[sessionIndex]
+        let reps = viewModel.prescribedRepCount(
+            weekIndex: weekIndex, sessionIndex: sessionIndex
+        )
+        guard reps > 0 else { return nil }
+        let existing = await viewModel.loadIntervalFeedback(sessionId: session.id)
+        let label = "\(session.type.displayName) · \(session.date.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day()))"
+        return IntervalFeedbackContext(
+            id: UUID(),
+            sessionId: session.id,
+            sessionType: session.type,
+            sessionLabel: label,
+            targetPacePerKm: pace,
+            prescribedRepCount: reps,
+            existingFeedback: existing
+        )
     }
 
     var lockedWeeksBanner: some View {

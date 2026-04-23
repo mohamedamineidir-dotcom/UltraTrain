@@ -42,7 +42,8 @@ extension MainTabView {
                 runRepository: runRepository,
                 subscriptionService: subscriptionService,
                 stravaAuthService: stravaAuthService,
-                stravaImportService: stravaImportService
+                stravaImportService: stravaImportService,
+                intervalPerformanceRepository: intervalPerformanceRepository
             )
 
         case .run:

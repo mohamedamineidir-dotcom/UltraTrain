@@ -186,6 +186,7 @@ extension AppDependencyContainer {
         raceReflectionRepository = LocalRaceReflectionRepository(modelContainer: modelContainer)
         achievementRepository = LocalAchievementRepository(modelContainer: modelContainer)
         morningCheckInRepository = LocalMorningCheckInRepository(modelContainer: modelContainer)
+        intervalPerformanceRepository = LocalIntervalPerformanceRepository(modelContainer: modelContainer)
         motionService = MotionService()
         stravaUploadQueueService = StravaUploadQueueService(
             queueRepository: stravaUploadQueueRepository, runRepository: runRepository,

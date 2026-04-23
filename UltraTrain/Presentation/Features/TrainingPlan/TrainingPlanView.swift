@@ -26,7 +26,8 @@ struct TrainingPlanView: View {
         hapticService: any HapticServiceProtocol = HapticService(),
         subscriptionService: (any SubscriptionServiceProtocol)? = nil,
         stravaAuthService: (any StravaAuthServiceProtocol)? = nil,
-        stravaImportService: (any StravaImportServiceProtocol)? = nil
+        stravaImportService: (any StravaImportServiceProtocol)? = nil,
+        intervalPerformanceRepository: (any IntervalPerformanceRepository)? = nil
     ) {
         self.raceRepository = raceRepository
         self.planRepository = planRepository
@@ -49,7 +50,8 @@ struct TrainingPlanView: View {
             subscriptionService: subscriptionService,
             runRepository: runRepository,
             stravaAuthService: stravaAuthService,
-            stravaImportService: stravaImportService
+            stravaImportService: stravaImportService,
+            intervalPerformanceRepository: intervalPerformanceRepository
         ))
     }
 

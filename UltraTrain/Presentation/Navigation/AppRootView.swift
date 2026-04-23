@@ -78,6 +78,7 @@ struct AppRootView: View {
     let raceReflectionRepository: any RaceReflectionRepository
     let achievementRepository: (any AchievementRepository)?
     let morningCheckInRepository: (any MorningCheckInRepository)?
+    let intervalPerformanceRepository: (any IntervalPerformanceRepository)?
     let deviceTokenService: DeviceTokenService?
 
     init(
@@ -139,6 +140,7 @@ struct AppRootView: View {
         raceReflectionRepository: any RaceReflectionRepository,
         achievementRepository: (any AchievementRepository)? = nil,
         morningCheckInRepository: (any MorningCheckInRepository)? = nil,
+        intervalPerformanceRepository: (any IntervalPerformanceRepository)? = nil,
         deviceTokenService: DeviceTokenService? = nil,
         deviceIntegrityChecker: (any DeviceIntegrityCheckerProtocol)? = nil
     ) {
@@ -201,6 +203,7 @@ struct AppRootView: View {
         self.raceReflectionRepository = raceReflectionRepository
         self.achievementRepository = achievementRepository
         self.morningCheckInRepository = morningCheckInRepository
+        self.intervalPerformanceRepository = intervalPerformanceRepository
         self.deviceTokenService = deviceTokenService
     }
 

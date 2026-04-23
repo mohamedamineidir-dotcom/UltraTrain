@@ -22,6 +22,12 @@ struct WeekCardView: View {
     var onValidateSession: ((Int) -> Void)?
     var onValidateSessionWithStats: ((Int, Double?, TimeInterval?, Double?, PerceivedFeeling?, Int?) -> Void)?
     var onLinkSessionToRun: ((Int, UUID) -> Void)?
+    /// Called after the validation sheet dismisses for a road intervals /
+    /// tempo session with a structured workout attached. Parent supplies the
+    /// target pace, rep count, and an optional existing feedback (for re-
+    /// edit). If parent returns nil, no feedback sheet is presented.
+    var intervalFeedbackContextProvider: ((Int) async -> IntervalFeedbackContext?)?
+    var onSaveIntervalFeedback: ((IntervalPerformanceFeedback) -> Void)?
     var recentRunsProvider: ((Date) async -> [CompletedRun])?
     var stravaActivitiesProvider: ((Date) async -> [StravaActivity])?
     var onLinkStravaActivity: ((Int, StravaActivity) -> Void)?
@@ -32,6 +38,7 @@ struct WeekCardView: View {
     @State private var contextSwapItem: ContextSheetItem?
     @State private var validateItem: ContextSheetItem?
     @State private var validateRecentRuns: [CompletedRun] = []
+    @State private var pendingIntervalFeedback: IntervalFeedbackContext?
 
     init(
         week: TrainingWeek,
@@ -56,7 +63,9 @@ struct WeekCardView: View {
         onLinkSessionToRun: ((Int, UUID) -> Void)? = nil,
         recentRunsProvider: ((Date) async -> [CompletedRun])? = nil,
         stravaActivitiesProvider: ((Date) async -> [StravaActivity])? = nil,
-        onLinkStravaActivity: ((Int, StravaActivity) -> Void)? = nil
+        onLinkStravaActivity: ((Int, StravaActivity) -> Void)? = nil,
+        intervalFeedbackContextProvider: ((Int) async -> IntervalFeedbackContext?)? = nil,
+        onSaveIntervalFeedback: ((IntervalPerformanceFeedback) -> Void)? = nil
     ) {
         self.week = week
         self.weekIndex = weekIndex
@@ -80,6 +89,8 @@ struct WeekCardView: View {
         self.recentRunsProvider = recentRunsProvider
         self.stravaActivitiesProvider = stravaActivitiesProvider
         self.onLinkStravaActivity = onLinkStravaActivity
+        self.intervalFeedbackContextProvider = intervalFeedbackContextProvider
+        self.onSaveIntervalFeedback = onSaveIntervalFeedback
         _isExpanded = State(initialValue: isCurrentWeek)
     }
 
@@ -334,6 +345,7 @@ extension WeekCardView {
                     } else {
                         onValidateSession?(item.sessionIndex)
                     }
+                    requestIntervalFeedbackIfEligible(for: item)
                 },
                 onLinkRun: { runId in
                     onLinkSessionToRun?(item.sessionIndex, runId)
@@ -344,6 +356,26 @@ extension WeekCardView {
                     onLinkStravaActivity?(item.sessionIndex, activity)
                 }
             )
+        }
+        .sheet(item: $pendingIntervalFeedback) { context in
+            IntervalPerformanceSheet(
+                sessionId: context.sessionId,
+                sessionLabel: context.sessionLabel,
+                sessionType: context.sessionType,
+                targetPacePerKm: context.targetPacePerKm,
+                prescribedRepCount: context.prescribedRepCount,
+                existingFeedback: context.existingFeedback,
+                onSave: { feedback in onSaveIntervalFeedback?(feedback) }
+            )
+        }
+    }
+
+    private func requestIntervalFeedbackIfEligible(for item: ContextSheetItem) {
+        guard let provider = intervalFeedbackContextProvider else { return }
+        guard item.session.type == .intervals || item.session.type == .tempo else { return }
+        guard item.session.intervalWorkoutId != nil else { return }
+        Task { @MainActor in
+            pendingIntervalFeedback = await provider(item.sessionIndex)
         }
     }
 
@@ -543,4 +575,20 @@ private struct ContextSheetItem: Identifiable {
     let id = UUID()
     let sessionIndex: Int
     let session: TrainingSession
+}
+
+// MARK: - Interval Feedback Context
+
+/// Everything the per-rep feedback sheet needs to present. The view-model
+/// computes this after validation — it carries the target-pace snapshot that
+/// was in effect at prescription time, so IR-2 compares against the same
+/// number the athlete saw on the session.
+struct IntervalFeedbackContext: Identifiable, Equatable {
+    let id: UUID
+    let sessionId: UUID
+    let sessionType: SessionType
+    let sessionLabel: String
+    let targetPacePerKm: Double
+    let prescribedRepCount: Int
+    let existingFeedback: IntervalPerformanceFeedback?
 }

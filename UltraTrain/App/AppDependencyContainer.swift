@@ -43,6 +43,7 @@ struct AppDependencyContainer {
     let raceReflectionRepository: any RaceReflectionRepository
     let achievementRepository: any AchievementRepository
     let morningCheckInRepository: any MorningCheckInRepository
+    let intervalPerformanceRepository: any IntervalPerformanceRepository
 
     // MARK: - Referral
 

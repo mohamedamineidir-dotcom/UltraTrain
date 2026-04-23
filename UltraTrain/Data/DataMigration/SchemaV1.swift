@@ -41,6 +41,7 @@ enum SchemaV1: VersionedSchema {
             RaceReflectionSwiftDataModel.self,
             UnlockedAchievementSwiftDataModel.self,
             MorningCheckInSwiftDataModel.self,
+            IntervalPerformanceFeedbackSwiftDataModel.self,
             SyncQueueSwiftDataModel.self
         ]
     }

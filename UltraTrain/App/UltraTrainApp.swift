@@ -83,6 +83,7 @@ struct UltraTrainApp: App {
                 raceReflectionRepository: container.raceReflectionRepository,
                 achievementRepository: container.achievementRepository,
                 morningCheckInRepository: container.morningCheckInRepository,
+                intervalPerformanceRepository: container.intervalPerformanceRepository,
                 deviceTokenService: container.deviceTokenService,
                 deviceIntegrityChecker: container.deviceIntegrityChecker
             )

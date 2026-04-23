@@ -20,6 +20,7 @@ final class TrainingPlanViewModel {
     let runRepository: (any RunRepository)?
     let stravaAuthService: (any StravaAuthServiceProtocol)?
     let stravaImportService: (any StravaImportServiceProtocol)?
+    let intervalPerformanceRepository: (any IntervalPerformanceRepository)?
 
     // MARK: - State
 
@@ -51,7 +52,8 @@ final class TrainingPlanViewModel {
         subscriptionService: (any SubscriptionServiceProtocol)? = nil,
         runRepository: (any RunRepository)? = nil,
         stravaAuthService: (any StravaAuthServiceProtocol)? = nil,
-        stravaImportService: (any StravaImportServiceProtocol)? = nil
+        stravaImportService: (any StravaImportServiceProtocol)? = nil,
+        intervalPerformanceRepository: (any IntervalPerformanceRepository)? = nil
     ) {
         self.planRepository = planRepository
         self.athleteRepository = athleteRepository
@@ -66,6 +68,7 @@ final class TrainingPlanViewModel {
         self.runRepository = runRepository
         self.stravaAuthService = stravaAuthService
         self.stravaImportService = stravaImportService
+        self.intervalPerformanceRepository = intervalPerformanceRepository
     }
 
     // MARK: - Load
