@@ -38,15 +38,39 @@ enum RoadCoachAdviceGenerator {
             break
         }
 
-        // Issue #9: Goal realism warning for ambitious athletes
-        if let realism = paceProfile?.goalRealismLevel, realism != .realistic, phase == .base || phase == .build {
-            let warning = realism == .veryAmbitious
-                ? " Note: your goal is very ambitious vs current fitness. All paces are based on your current ability — we'll introduce goal pace only in late peak."
-                : " Note: your goal is ambitious. Training paces are based on current fitness to build safely toward race day."
+        // RR-19 (was #9): Goal realism warning. Now applied in ALL phases
+        // (the previous base/build-only gate hid the warning during peak,
+        // exactly when the athlete sees race-specific work getting gated
+        // and most needs to know why). `.veryAmbitious` also names the
+        // recommended realistic target so the athlete has a concrete
+        // alternative, not just a vague warning.
+        if let realism = paceProfile?.goalRealismLevel, realism != .realistic {
+            let warning: String
+            if realism == .veryAmbitious {
+                if let recommended = paceProfile?.recommendedGoalTime {
+                    warning = " ⚠ Goal is very ambitious — >20% faster than current fitness supports. Training paces stay honest (fitness-derived); race-pace work is held back until late peak. Your fitness right now points to ~\(formatFinishTime(recommended)) as a realistic target for this race. If the tune-up time trial doesn't match your declared goal, retarget before race day — chasing an unattainable goal leads to overtraining, not breakthroughs."
+                } else {
+                    warning = " ⚠ Goal is very ambitious vs current fitness. Training paces stay honest — we'll introduce goal pace only in late peak, and only if the tune-up time trial supports it."
+                }
+            } else {
+                warning = " Note: goal is ambitious. Training paces reflect current fitness to build safely toward race day; race-specific work unlocks in late peak."
+            }
             advice = (advice ?? "") + warning
         }
 
         return advice
+    }
+
+    /// Formats a TimeInterval as "H:MM" or "M:SS" for coach advice messages.
+    private static func formatFinishTime(_ seconds: TimeInterval) -> String {
+        let totalSeconds = Int(seconds.rounded())
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        let secs = totalSeconds % 60
+        if hours > 0 {
+            return "\(hours):\(String(format: "%02d", minutes))"
+        }
+        return "\(minutes):\(String(format: "%02d", secs))"
     }
 
 

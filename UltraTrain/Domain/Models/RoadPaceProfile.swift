@@ -31,6 +31,12 @@ struct RoadPaceProfile: Equatable, Sendable {
     /// paces when this is false — a coach prescribes by effort when there's
     /// no baseline data, not by fabricated pace numbers.
     let isDataDerived: Bool
+
+    /// Coach-recommended realistic finish time given the athlete's current
+    /// fitness — fitness-derived pace × race distance. Used by coach advice
+    /// to suggest a retarget when the athlete's declared goal is
+    /// .veryAmbitious. Nil when we have no usable fitness signal.
+    let recommendedGoalTime: TimeInterval?
 }
 
 /// Classification of how realistic the athlete's target time is relative to current fitness.

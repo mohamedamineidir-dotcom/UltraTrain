@@ -82,6 +82,20 @@ enum RoadPaceCalculator {
         )
         let realism = goalRealism(goalPace: goalPacePerKm, fitnessPace: fitnessPaceAtRaceDist)
 
+        // RR-19: surface a coach-recommended realistic target time based
+        // on the athlete's current fitness. Used by coach advice when the
+        // declared goal is flagged .veryAmbitious so the athlete gets a
+        // concrete alternative instead of just a warning.
+        // Only populated when we have fitness signal AND the profile is
+        // genuinely data-derived — we won't fabricate a "realistic" time
+        // from the same tier heuristic we just distrusted.
+        let recommendedGoalTime: TimeInterval?
+        if isDataDerived && fitnessPaceAtRaceDist > 0 {
+            recommendedGoalTime = fitnessPaceAtRaceDist * raceDistanceKm
+        } else {
+            recommendedGoalTime = nil
+        }
+
         // Step 4: Derive all training paces from 5K pace using Daniels ratios
         // Validated against Daniels VDOT tables (VDOT 40-65 range).
         //
@@ -101,7 +115,8 @@ enum RoadPaceCalculator {
             repetitionPacePerKm: fiveK * 0.93,
             racePacePerKm: goalPacePerKm,
             goalRealismLevel: realism,
-            isDataDerived: isDataDerived
+            isDataDerived: isDataDerived,
+            recommendedGoalTime: recommendedGoalTime
         )
     }
 
