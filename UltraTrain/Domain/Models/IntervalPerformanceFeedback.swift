@@ -39,10 +39,18 @@ struct IntervalPerformanceFeedback: Identifiable, Equatable, Sendable, Codable {
     /// the session as on-target across all reps.
     var actualPacesPerKm: [Double]
 
-    /// Whether the athlete completed every prescribed rep. False is a strong
-    /// signal that the target was unsustainable (weighted heavier than pace
-    /// deviation alone in the refinement rules).
+    /// Whether the athlete completed every prescribed rep. Kept for
+    /// backwards compatibility — new code should prefer
+    /// `completedRepCount` which is more granular.
     var completedAllReps: Bool
+
+    /// How many work reps the athlete actually finished. Nil when a legacy
+    /// record was loaded before this field existed — callers should fall
+    /// back to `completedAllReps` in that case (prescribed or 0). A
+    /// specific count (e.g. 8 of 10) lets the refinement use case weight
+    /// the slow-down signal by how many reps were actually dropped rather
+    /// than treating all "didn't finish" cases equally.
+    var completedRepCount: Int?
 
     /// 1-10 perceived effort. Gates the direction of pace adjustment:
     /// fast paces with high RPE do NOT speed the target up (unsustainable

@@ -180,8 +180,28 @@ enum RefineRoadPaceFromFeedbackUseCase {
         let hasPaceSignal = pacedFeedback.count >= 3
 
         let meanRPE = feedback.map { Double($0.perceivedEffort) }.reduce(0, +) / Double(feedback.count)
-        let incompleteCount = feedback.filter { !$0.completedAllReps }.count
+
+        // Completion ratio across the window. When `completedRepCount` is
+        // available we use the actual reps-done / reps-prescribed ratio
+        // (a session that completed 9/10 signals very differently from
+        // 2/10). Legacy records without a count fall back to boolean
+        // all-or-nothing.
+        let totalPrescribed = feedback.reduce(0) { $0 + max(1, $1.prescribedRepCount) }
+        let totalCompleted = feedback.reduce(0) { sum, fb -> Int in
+            if let count = fb.completedRepCount {
+                return sum + min(count, fb.prescribedRepCount)
+            }
+            return sum + (fb.completedAllReps ? fb.prescribedRepCount : 0)
+        }
+        let completionRatio = Double(totalCompleted) / Double(max(1, totalPrescribed))
+        // Incomplete rate for the decision tree: fraction of sessions that
+        // missed at least one rep.
+        let incompleteCount = feedback.filter { fb in
+            if let c = fb.completedRepCount { return c < fb.prescribedRepCount }
+            return !fb.completedAllReps
+        }.count
         let incompleteRate = Double(incompleteCount) / Double(feedback.count)
+        _ = completionRatio  // reserved for future magnitude weighting
 
         // Mean deviation (sec/km, positive = slower than target).
         let meanDeviation: Double

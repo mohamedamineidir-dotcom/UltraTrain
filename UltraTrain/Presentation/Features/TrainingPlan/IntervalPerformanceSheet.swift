@@ -33,7 +33,9 @@ struct IntervalPerformanceContent: View {
     @State private var secondsText: String = ""
     @State private var showPerRep: Bool = false
     @State private var perRepTexts: [String] = []
-    @State private var completedAll: Bool = true
+    /// Source of truth for completion: how many reps were actually
+    /// finished. `completedAll` is derived from this.
+    @State private var completedReps: Int = 0
     @State private var rpe: Int = 7
     @State private var notes: String = ""
     @State private var showNotes: Bool = false
@@ -92,57 +94,70 @@ struct IntervalPerformanceContent: View {
 
     // MARK: - Hero pace card
 
+    /// Two-column comparison: TARGET on the left (read-only), YOUR AVERAGE
+    /// on the right (editable). Keeps the big digits at a comfortable
+    /// 42pt so nothing dominates; the delta pill below is the visual
+    /// anchor for "how close are you", and the chip row below it is for
+    /// one-tap adjustment.
     private var heroPaceCard: some View {
-        VStack(spacing: Theme.Spacing.sm) {
-            // Target chip row
-            HStack(spacing: 6) {
-                Image(systemName: "target")
-                    .font(.caption2)
-                    .foregroundStyle(Theme.Colors.warmCoral)
-                Text("Target")
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-                Spacer()
-                Text("\(formatPace(targetPacePerKm))/km")
-                    .font(.subheadline.bold().monospacedDigit())
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-            }
-
-            // Big editable pace
-            VStack(spacing: 8) {
-                Text("YOUR AVERAGE")
-                    .font(.caption2.weight(.bold))
-                    .tracking(1.2)
-                    .foregroundStyle(Theme.Colors.tertiaryLabel)
-
-                HStack(alignment: .firstTextBaseline, spacing: 0) {
-                    paceDigitField(
-                        text: $minutesText,
-                        placeholder: "4",
-                        field: .minutes,
-                        maxLength: 2
-                    )
-                    Text(":")
-                        .font(.system(size: 54, weight: .bold, design: .rounded).monospacedDigit())
-                        .foregroundStyle(Theme.Colors.tertiaryLabel.opacity(0.6))
-                        .padding(.horizontal, 2)
-                    paceDigitField(
-                        text: $secondsText,
-                        placeholder: "00",
-                        field: .seconds,
-                        maxLength: 2,
-                        zeroPad: true
-                    )
+        VStack(spacing: Theme.Spacing.md) {
+            HStack(alignment: .top, spacing: Theme.Spacing.md) {
+                // Target column
+                VStack(spacing: 6) {
+                    Text("TARGET")
+                        .font(.caption2.weight(.bold))
+                        .tracking(1.0)
+                        .foregroundStyle(Theme.Colors.tertiaryLabel)
+                    HStack(alignment: .firstTextBaseline, spacing: 1) {
+                        Text(formatPace(targetPacePerKm))
+                            .font(.system(size: 34, weight: .semibold, design: .rounded).monospacedDigit())
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
+                    }
                     Text("/km")
-                        .font(.footnote.weight(.medium))
-                        .foregroundStyle(Theme.Colors.secondaryLabel)
-                        .padding(.leading, 6)
-                        .padding(.bottom, 6)
+                        .font(.caption2)
+                        .foregroundStyle(Theme.Colors.tertiaryLabel)
                 }
+                .frame(maxWidth: .infinity)
 
-                deltaPill
+                // Vertical divider
+                Rectangle()
+                    .fill(Theme.Colors.tertiaryLabel.opacity(0.2))
+                    .frame(width: 1)
+                    .padding(.vertical, 4)
+
+                // Your average column — tappable fields
+                VStack(spacing: 6) {
+                    Text("YOUR AVERAGE")
+                        .font(.caption2.weight(.bold))
+                        .tracking(1.0)
+                        .foregroundStyle(Theme.Colors.warmCoral)
+                    HStack(alignment: .firstTextBaseline, spacing: 0) {
+                        paceDigitField(
+                            text: $minutesText,
+                            placeholder: "4",
+                            field: .minutes,
+                            maxLength: 2
+                        )
+                        Text(":")
+                            .font(.system(size: 34, weight: .semibold, design: .rounded).monospacedDigit())
+                            .foregroundStyle(Theme.Colors.tertiaryLabel.opacity(0.6))
+                        paceDigitField(
+                            text: $secondsText,
+                            placeholder: "00",
+                            field: .seconds,
+                            maxLength: 2,
+                            zeroPad: true
+                        )
+                    }
+                    Text("/km")
+                        .font(.caption2)
+                        .foregroundStyle(Theme.Colors.tertiaryLabel)
+                }
+                .frame(maxWidth: .infinity)
             }
-            .padding(.vertical, 4)
+
+            // Delta pill — centred, the primary comparison signal
+            deltaPill
 
             // Quick-set chips
             HStack(spacing: 6) {
@@ -152,8 +167,6 @@ struct IntervalPerformanceContent: View {
                 quickChip(label: "+3s", delta: 3)
                 quickChip(label: "+6s", delta: 6)
             }
-
-            Divider().padding(.vertical, 2)
 
             // Per-rep expand
             Button {
@@ -183,8 +196,8 @@ struct IntervalPerformanceContent: View {
             RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
                 .fill(LinearGradient(
                     colors: [
-                        Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.14 : 0.06),
-                        Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.04 : 0.02)
+                        Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.10 : 0.04),
+                        Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.02 : 0.01)
                     ],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
@@ -192,13 +205,13 @@ struct IntervalPerformanceContent: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                .stroke(Theme.Colors.warmCoral.opacity(0.22), lineWidth: 0.75)
+                .stroke(Theme.Colors.warmCoral.opacity(0.18), lineWidth: 0.75)
         )
     }
 
-    /// Tap-to-edit digit field with big monospaced digits. Focusing brings
-    /// up the numeric keypad; losing focus zero-pads seconds so "3" → "03"
-    /// automatically.
+    /// Tap-to-edit digit field. Numpad keyboard, auto zero-pad on blur
+    /// for the seconds field ("3" → "03"). Compact 42pt-scale typography
+    /// so the hero doesn't overwhelm.
     private func paceDigitField(
         text: Binding<String>,
         placeholder: String,
@@ -208,26 +221,23 @@ struct IntervalPerformanceContent: View {
     ) -> some View {
         TextField(placeholder, text: text)
             .keyboardType(.numberPad)
-            .font(.system(size: 54, weight: .bold, design: .rounded).monospacedDigit())
+            .font(.system(size: 34, weight: .semibold, design: .rounded).monospacedDigit())
             .foregroundStyle(Theme.Colors.label)
             .multilineTextAlignment(.center)
-            .frame(width: 84)
+            .frame(width: 52)
             .focused($focusedField, equals: field)
             .onChange(of: text.wrappedValue) { _, newValue in
-                // Keep to digits and clamp length.
                 let filtered = String(newValue.filter(\.isNumber).prefix(maxLength))
                 if filtered != newValue { text.wrappedValue = filtered }
             }
             .onChange(of: focusedField) { _, newValue in
-                if newValue != field && zeroPad {
-                    if text.wrappedValue.count == 1 {
-                        text.wrappedValue = "0" + text.wrappedValue
-                    }
+                if newValue != field && zeroPad && text.wrappedValue.count == 1 {
+                    text.wrappedValue = "0" + text.wrappedValue
                 }
             }
-            .padding(.vertical, 4)
+            .padding(.vertical, 2)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 8)
                     .fill(focusedField == field
                           ? Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.15 : 0.08)
                           : Color.clear)
@@ -281,6 +291,11 @@ struct IntervalPerformanceContent: View {
 
     // MARK: - Completion
 
+    /// Interactive completion card. Toggle ON = all reps done. Toggle OFF
+    /// reveals tappable pills (tap pill N to declare "I completed N reps
+    /// of the prescribed total"). A partial count persists as
+    /// `completedRepCount` so IR-2 can distinguish "bailed on 1 of 10"
+    /// from "bailed on 5 of 10".
     private var completionCard: some View {
         VStack(spacing: 10) {
             HStack(spacing: Theme.Spacing.md) {
@@ -291,39 +306,43 @@ struct IntervalPerformanceContent: View {
                     .animation(.spring(response: 0.3, dampingFraction: 0.55), value: sealPulse)
                     .frame(width: 28)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(completedAll ? "All \(prescribedRepCount) reps done" : "Bailed on some reps")
+                    Text(completionHeadline)
                         .font(.subheadline.weight(.semibold))
-                    Text(completedAll
-                         ? "Tap if you dropped reps"
-                         : "Incomplete reps is a stronger slow-down signal than pace drift")
+                    Text(completionSubtitle)
                         .font(.caption2)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
                 Spacer()
-                Toggle("", isOn: $completedAll)
-                    .labelsHidden()
-                    .tint(Theme.Colors.success)
-                    .onChange(of: completedAll) { _, _ in
-                        sealPulse = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { sealPulse = false }
+                Toggle("", isOn: Binding(
+                    get: { completedAll },
+                    set: { newValue in
+                        withAnimation(.easeOut(duration: 0.2)) {
+                            completedReps = newValue ? prescribedRepCount : max(0, prescribedRepCount - 1)
+                        }
+                        triggerSealPulse()
                     }
+                ))
+                .labelsHidden()
+                .tint(Theme.Colors.success)
             }
 
-            // Visual strip — one pill per rep, fills when completedAll=true,
-            // shows a subtle unfilled state when not. Gives the athlete a
-            // tactile sense of the count.
+            // Tappable pill row. When all done, pills are purely decorative
+            // (gradient fill). When partial, each pill is a tap target that
+            // sets `completedReps = index + 1`.
             HStack(spacing: 4) {
-                ForEach(0..<prescribedRepCount, id: \.self) { _ in
-                    Capsule()
-                        .fill(completedAll
-                              ? AnyShapeStyle(LinearGradient(
-                                  colors: [Theme.Colors.success, Theme.Colors.success.opacity(0.75)],
-                                  startPoint: .leading, endPoint: .trailing))
-                              : AnyShapeStyle(Theme.Colors.tertiaryLabel.opacity(0.2)))
-                        .frame(height: 4)
+                ForEach(0..<prescribedRepCount, id: \.self) { idx in
+                    pillButton(for: idx)
                 }
             }
-            .animation(.easeOut(duration: 0.25), value: completedAll)
+            .animation(.easeOut(duration: 0.25), value: completedReps)
+
+            if !completedAll {
+                Text("Tap a pill to set how many you completed")
+                    .font(.caption2)
+                    .foregroundStyle(Theme.Colors.tertiaryLabel)
+                    .frame(maxWidth: .infinity)
+                    .transition(.opacity)
+            }
         }
         .padding(Theme.Spacing.md)
         .background(
@@ -334,6 +353,56 @@ struct IntervalPerformanceContent: View {
             RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
                 .stroke(Theme.Colors.tertiaryLabel.opacity(0.12), lineWidth: 0.5)
         )
+    }
+
+    private var completedAll: Bool { completedReps >= prescribedRepCount }
+
+    private var completionHeadline: String {
+        if completedAll { return "All \(prescribedRepCount) reps done" }
+        return "\(completedReps) of \(prescribedRepCount) reps done"
+    }
+
+    private var completionSubtitle: String {
+        if completedAll { return "Tap toggle if you dropped reps" }
+        if completedReps == 0 { return "Tap a pill to record how many you managed" }
+        if completedReps == prescribedRepCount - 1 { return "Missed just the last one — noted" }
+        return "Pace drift + incomplete reps = stronger slow-down signal"
+    }
+
+    @ViewBuilder
+    private func pillButton(for idx: Int) -> some View {
+        let filled = idx < completedReps
+        let tappable = !completedAll
+        Button {
+            guard tappable else { return }
+            withAnimation(.easeOut(duration: 0.2)) {
+                let newCount = idx + 1
+                // Tapping the last filled pill while partial = decrement,
+                // so the athlete can "un-set" a pill tap they made in error.
+                completedReps = (completedReps == newCount && newCount < prescribedRepCount)
+                                ? newCount - 1
+                                : newCount
+            }
+        } label: {
+            Capsule()
+                .fill(filled
+                      ? AnyShapeStyle(LinearGradient(
+                          colors: [Theme.Colors.success, Theme.Colors.success.opacity(0.75)],
+                          startPoint: .leading, endPoint: .trailing))
+                      : AnyShapeStyle(Theme.Colors.tertiaryLabel.opacity(0.18)))
+                .frame(height: tappable ? 10 : 4)
+                .overlay(
+                    Capsule()
+                        .stroke(tappable ? Theme.Colors.success.opacity(0.3) : Color.clear, lineWidth: 0.75)
+                )
+        }
+        .buttonStyle(.plain)
+        .disabled(!tappable)
+    }
+
+    private func triggerSealPulse() {
+        sealPulse = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { sealPulse = false }
     }
 
     // MARK: - Effort
@@ -544,16 +613,28 @@ struct IntervalPerformanceContent: View {
         secondsText = String(format: "%02d", secs)
     }
 
-    /// Interpolates hue along green (120°) → red (0°) so each of the 10
-    /// dots gets its own distinct shade. Avoids the "4 greens + 4 oranges
-    /// + 2 reds" flatness of a switch-based approach.
+    /// Hand-curated 10-colour palette. Linear HSL interpolation across
+    /// hue 120°→0° passed through the muddy yellow-green band (hue 50-80°)
+    /// and looked ugly. Here we jump from a deep mint-green at RPE 4 to
+    /// a vivid amber at RPE 5, skipping the ugly band entirely, and
+    /// continue through deep orange into crimson. Every step is visually
+    /// distinct and each colour feels intentional, not interpolated.
     private func rpeGradientColor(_ value: Int) -> Color {
-        let clamped = max(1, min(10, value))
-        let t = Double(clamped - 1) / 9.0                 // 0.0 → 1.0
-        let hue = (120.0 - t * 120.0) / 360.0             // green → red
-        let saturation: Double = 0.78
-        let brightness: Double = 0.82 - t * 0.12          // slightly deepen toward red
-        return Color(hue: hue, saturation: saturation, brightness: brightness)
+        let palette: [(r: Double, g: Double, b: Double)] = [
+            (0.22, 0.80, 0.68),  // 1 — cyan-mint
+            (0.24, 0.78, 0.56),  // 2 — mint
+            (0.32, 0.78, 0.44),  // 3 — vivid green
+            (0.46, 0.78, 0.32),  // 4 — deep green (last cool shade before warm jump)
+            (0.95, 0.70, 0.22),  // 5 — amber (skips yellow-green mud)
+            (0.98, 0.56, 0.18),  // 6 — bright orange
+            (1.00, 0.42, 0.18),  // 7 — vivid orange
+            (0.96, 0.28, 0.24),  // 8 — red-orange
+            (0.88, 0.20, 0.32),  // 9 — crimson
+            (0.72, 0.16, 0.44)   // 10 — deep crimson-magenta
+        ]
+        let index = max(1, min(10, value)) - 1
+        let c = palette[index]
+        return Color(red: c.r, green: c.g, blue: c.b)
     }
 
     private func rpeDescription(_ value: Int) -> String {
@@ -581,8 +662,15 @@ struct IntervalPerformanceContent: View {
         guard !didSeed else { return }
         didSeed = true
         perRepTexts = Array(repeating: "", count: prescribedRepCount)
+        completedReps = prescribedRepCount   // default: all done
         if let existing = existingFeedback {
-            completedAll = existing.completedAllReps
+            // Prefer the granular count when present; fall back to the
+            // boolean for legacy records.
+            if let count = existing.completedRepCount {
+                completedReps = min(count, prescribedRepCount)
+            } else {
+                completedReps = existing.completedAllReps ? prescribedRepCount : 0
+            }
             rpe = max(1, min(10, existing.perceivedEffort))
             notes = existing.notes ?? ""
             if !notes.isEmpty { showNotes = true }
@@ -626,6 +714,7 @@ struct IntervalPerformanceContent: View {
             prescribedRepCount: prescribedRepCount,
             actualPacesPerKm: actualPaces,
             completedAllReps: completedAll,
+            completedRepCount: completedReps,
             perceivedEffort: rpe,
             notes: notes.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : notes,
             createdAt: existingFeedback?.createdAt ?? Date()

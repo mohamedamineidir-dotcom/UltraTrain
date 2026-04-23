@@ -3,7 +3,11 @@ import Foundation
 enum IntervalPerformanceFeedbackMapper {
 
     static func toDomain(_ model: IntervalPerformanceFeedbackSwiftDataModel) -> IntervalPerformanceFeedback {
-        IntervalPerformanceFeedback(
+        // -1 sentinel means the record pre-dates the completedRepCount
+        // field. Treat the boolean as authoritative in that case so legacy
+        // records don't suddenly report "0 reps done".
+        let count: Int? = model.completedRepCount >= 0 ? model.completedRepCount : nil
+        return IntervalPerformanceFeedback(
             id: model.id,
             sessionId: model.sessionId,
             sessionType: SessionType(rawValue: model.sessionTypeRaw) ?? .intervals,
@@ -11,6 +15,7 @@ enum IntervalPerformanceFeedbackMapper {
             prescribedRepCount: model.prescribedRepCount,
             actualPacesPerKm: decodePaces(from: model.actualPacesData),
             completedAllReps: model.completedAllReps,
+            completedRepCount: count,
             perceivedEffort: model.perceivedEffort,
             notes: model.notes,
             createdAt: model.createdAt
@@ -26,6 +31,7 @@ enum IntervalPerformanceFeedbackMapper {
             prescribedRepCount: feedback.prescribedRepCount,
             actualPacesData: encodePaces(feedback.actualPacesPerKm),
             completedAllReps: feedback.completedAllReps,
+            completedRepCount: feedback.completedRepCount ?? -1,
             perceivedEffort: feedback.perceivedEffort,
             notes: feedback.notes,
             createdAt: feedback.createdAt

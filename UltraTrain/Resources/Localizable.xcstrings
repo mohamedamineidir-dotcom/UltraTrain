@@ -67,6 +67,9 @@
         }
       }
     },
+    "/10" : {
+
+    },
     "/km" : {
 
     },
@@ -7662,7 +7665,7 @@
         }
       }
     },
-    "Incomplete reps slow the target more than pace drift alone" : {
+    "Incomplete reps is a stronger slow-down signal than pace drift" : {
 
     },
     "Injuries (Last 6 Months)" : {
@@ -16695,7 +16698,7 @@
         }
       }
     },
-    "Your average" : {
+    "YOUR AVERAGE" : {
 
     },
     "Your completed runs will appear here." : {

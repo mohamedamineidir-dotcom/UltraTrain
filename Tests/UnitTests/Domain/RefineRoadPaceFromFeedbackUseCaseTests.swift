@@ -51,6 +51,7 @@ struct RefineRoadPaceFromFeedbackUseCaseTests {
                 prescribedRepCount: 6,
                 actualPacesPerKm: [actualPace, actualPace, actualPace, actualPace, actualPace, actualPace],
                 completedAllReps: completedAllReps,
+                completedRepCount: completedAllReps ? 6 : 0,
                 perceivedEffort: perceivedEffort,
                 notes: nil,
                 createdAt: created

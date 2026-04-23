@@ -30,6 +30,7 @@ struct LocalIntervalPerformanceRepositoryTests {
             prescribedRepCount: 6,
             actualPacesPerKm: paces,
             completedAllReps: completed,
+            completedRepCount: completed ? 6 : 0,
             perceivedEffort: rpe,
             notes: nil,
             createdAt: createdAt

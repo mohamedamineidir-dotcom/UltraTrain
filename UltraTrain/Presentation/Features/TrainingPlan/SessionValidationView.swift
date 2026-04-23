@@ -337,43 +337,99 @@ private struct ManualValidationPage: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    // MARK: - Planned Target
+    // MARK: - Planned Target (hero)
 
+    /// Session hero card — icon circle + session type + intensity & date
+    /// on top, planned stats laid out as a thin readout strip below.
+    /// Replaces what was previously a bare stats-only banner; gives the
+    /// page a warm sense of place so it doesn't feel empty after the
+    /// feeling/RPE rows were removed for intervals/tempo.
     private var plannedTargetCard: some View {
-        HStack(spacing: Theme.Spacing.md) {
-            if !isStrengthSession && session.plannedDistanceKm > 0 {
-                targetStat(
-                    value: UnitFormatter.formatDistance(session.plannedDistanceKm, unit: units, decimals: 1),
-                    label: "Planned",
-                    icon: "flag.checkered"
-                )
+        VStack(spacing: Theme.Spacing.sm + 2) {
+            // Context row
+            HStack(spacing: Theme.Spacing.md) {
+                ZStack {
+                    Circle()
+                        .fill(LinearGradient(
+                            colors: [
+                                session.intensity.color.opacity(colorScheme == .dark ? 0.45 : 0.22),
+                                session.intensity.color.opacity(colorScheme == .dark ? 0.18 : 0.08)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ))
+                        .frame(width: 48, height: 48)
+                        .overlay(
+                            Circle().stroke(session.intensity.color.opacity(0.35), lineWidth: 0.75)
+                        )
+                    Image(systemName: session.type.icon)
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(session.intensity.color)
+                }
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(session.type.displayName)
+                        .font(.headline)
+                        .foregroundStyle(Theme.Colors.label)
+                    HStack(spacing: 6) {
+                        Text(session.intensity.displayName.uppercased())
+                            .font(.caption2.weight(.semibold))
+                            .tracking(0.6)
+                            .foregroundStyle(session.intensity.color)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(
+                                Capsule().fill(session.intensity.color.opacity(0.14))
+                            )
+                        Text(session.date.formatted(.dateTime.weekday(.wide).month(.abbreviated).day()))
+                            .font(.caption2)
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
+                    }
+                }
+                Spacer(minLength: 0)
             }
-            if !isStrengthSession && session.plannedDistanceKm > 0 {
-                divider
-            }
-            targetStat(
-                value: formatPlannedDuration,
-                label: "Target",
-                icon: "stopwatch"
-            )
-            if !isStrengthSession && session.plannedElevationGainM > 0 {
-                divider
-                targetStat(
-                    value: UnitFormatter.formatElevation(session.plannedElevationGainM, unit: units),
-                    label: "D+",
-                    icon: "arrow.up.right"
-                )
+
+            // Planned readout strip
+            if hasAnyPlannedMetric {
+                Rectangle()
+                    .fill(session.intensity.color.opacity(0.15))
+                    .frame(height: 0.5)
+                HStack(spacing: Theme.Spacing.md) {
+                    if !isStrengthSession && session.plannedDistanceKm > 0 {
+                        targetStat(
+                            value: UnitFormatter.formatDistance(session.plannedDistanceKm, unit: units, decimals: 1),
+                            label: "Planned",
+                            icon: "flag.checkered"
+                        )
+                    }
+                    if !isStrengthSession && session.plannedDistanceKm > 0 && session.plannedDuration > 0 {
+                        divider
+                    }
+                    if session.plannedDuration > 0 {
+                        targetStat(
+                            value: formatPlannedDuration,
+                            label: "Target",
+                            icon: "stopwatch"
+                        )
+                    }
+                    if !isStrengthSession && session.plannedElevationGainM > 0 {
+                        divider
+                        targetStat(
+                            value: UnitFormatter.formatElevation(session.plannedElevationGainM, unit: units),
+                            label: "D+",
+                            icon: "arrow.up.right"
+                        )
+                    }
+                }
             }
         }
-        .padding(.horizontal, Theme.Spacing.md)
-        .padding(.vertical, Theme.Spacing.sm + 2)
+        .padding(Theme.Spacing.md)
         .frame(maxWidth: .infinity)
         .background(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
                 .fill(LinearGradient(
                     colors: [
                         session.intensity.color.opacity(colorScheme == .dark ? 0.18 : 0.09),
-                        session.intensity.color.opacity(colorScheme == .dark ? 0.06 : 0.03)
+                        session.intensity.color.opacity(colorScheme == .dark ? 0.04 : 0.02)
                     ],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
@@ -381,18 +437,22 @@ private struct ManualValidationPage: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                .stroke(session.intensity.color.opacity(0.2), lineWidth: 0.75)
+                .stroke(session.intensity.color.opacity(0.22), lineWidth: 0.75)
         )
+    }
+
+    private var hasAnyPlannedMetric: Bool {
+        session.plannedDuration > 0 || session.plannedDistanceKm > 0 || session.plannedElevationGainM > 0
     }
 
     private var divider: some View {
         Rectangle()
             .fill(Theme.Colors.tertiaryLabel.opacity(0.15))
-            .frame(width: 1, height: 28)
+            .frame(width: 1, height: 24)
     }
 
     private func targetStat(value: String, label: String, icon: String) -> some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 2) {
             HStack(spacing: 4) {
                 Image(systemName: icon)
                     .font(.caption2)
@@ -403,7 +463,7 @@ private struct ManualValidationPage: View {
                     .tracking(0.5)
             }
             Text(value)
-                .font(.title3.weight(.bold).monospacedDigit())
+                .font(.subheadline.weight(.bold).monospacedDigit())
                 .foregroundStyle(Theme.Colors.label)
         }
         .frame(maxWidth: .infinity)

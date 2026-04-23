@@ -14,6 +14,10 @@ final class IntervalPerformanceFeedbackSwiftDataModel {
     /// used the "hit target consistently" shortcut.
     var actualPacesData: Data = Data()
     var completedAllReps: Bool = false
+    /// -1 is a sentinel for "legacy record written before this field
+    /// existed" — callers derive the count from `completedAllReps` in
+    /// that case (prescribed or 0). Values ≥ 0 are authoritative.
+    var completedRepCount: Int = -1
     var perceivedEffort: Int = 0
     var notes: String?
     var createdAt: Date = Date.distantPast
@@ -26,6 +30,7 @@ final class IntervalPerformanceFeedbackSwiftDataModel {
         prescribedRepCount: Int = 0,
         actualPacesData: Data = Data(),
         completedAllReps: Bool = false,
+        completedRepCount: Int = -1,
         perceivedEffort: Int = 0,
         notes: String? = nil,
         createdAt: Date = Date()
@@ -37,6 +42,7 @@ final class IntervalPerformanceFeedbackSwiftDataModel {
         self.prescribedRepCount = prescribedRepCount
         self.actualPacesData = actualPacesData
         self.completedAllReps = completedAllReps
+        self.completedRepCount = completedRepCount
         self.perceivedEffort = perceivedEffort
         self.notes = notes
         self.createdAt = createdAt
