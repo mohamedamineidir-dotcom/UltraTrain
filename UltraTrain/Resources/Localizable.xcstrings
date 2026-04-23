@@ -840,9 +840,6 @@
         }
       }
     },
-    "%@/km" : {
-
-    },
     "%@%@" : {
       "localizations" : {
         "en" : {
@@ -2569,9 +2566,6 @@
         }
       }
     },
-    "All %lld reps done" : {
-
-    },
     "All challenges started or completed" : {
       "localizations" : {
         "fr" : {
@@ -3112,9 +3106,6 @@
           }
         }
       }
-    },
-    "Bailed on some reps" : {
-
     },
     "Base" : {
       "localizations" : {
@@ -7664,9 +7655,6 @@
           }
         }
       }
-    },
-    "Incomplete reps is a stronger slow-down signal than pace drift" : {
-
     },
     "Injuries (Last 6 Months)" : {
 
@@ -14686,7 +14674,7 @@
         }
       }
     },
-    "Tap if you dropped reps" : {
+    "Tap a pill to set how many you completed" : {
 
     },
     "Tap to add" : {
@@ -14714,6 +14702,9 @@
           }
         }
       }
+    },
+    "TARGET" : {
+
     },
     "Target Effort" : {
 

@@ -26,6 +26,7 @@ struct SessionDetailView: View {
     /// provider returns nil, the follow-up sheet is skipped.
     var intervalFeedbackContextProvider: (() async -> IntervalFeedbackContext?)?
     var onSaveIntervalFeedback: ((IntervalPerformanceFeedback) -> Void)?
+    var weekProgress: WeekProgress?
 
     @State private var showSkipReasonSheet = false
     @State private var showRescheduleSheet = false
@@ -123,7 +124,8 @@ struct SessionDetailView: View {
                 stravaActivitiesProvider: stravaActivitiesProvider,
                 onLinkStravaActivity: onLinkStravaActivity,
                 intervalFeedbackContextProvider: intervalFeedbackContextProvider,
-                onSaveIntervalFeedback: onSaveIntervalFeedback
+                onSaveIntervalFeedback: onSaveIntervalFeedback,
+                weekProgress: weekProgress
             )
         }
     }

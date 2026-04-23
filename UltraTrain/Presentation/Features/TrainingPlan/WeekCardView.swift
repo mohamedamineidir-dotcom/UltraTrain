@@ -356,9 +356,31 @@ extension WeekCardView {
                 intervalFeedbackContextProvider: intervalFeedbackContextProvider != nil ? {
                     await intervalFeedbackContextProvider?(item.sessionIndex)
                 } : nil,
-                onSaveIntervalFeedback: onSaveIntervalFeedback
+                onSaveIntervalFeedback: onSaveIntervalFeedback,
+                weekProgress: makeWeekProgress(for: item.session)
             )
         }
+    }
+
+    /// Builds the WeekProgress footer context for the validation page. We
+    /// count only running sessions (rest + S&C excluded) so the dot row
+    /// matches the athlete's weekly run cadence. The current session isn't
+    /// marked complete yet, so `completedBefore` reflects only prior ones.
+    private func makeWeekProgress(for session: TrainingSession) -> WeekProgress? {
+        let runs = week.sessions.filter { $0.type != .rest && $0.type != .strengthConditioning }
+        guard !runs.isEmpty, let idx = runs.firstIndex(where: { $0.id == session.id }) else {
+            return nil
+        }
+        let completedBefore = runs.prefix(idx).filter(\.isCompleted).count
+        let phaseLabel = week.isRecoveryWeek
+            ? "\(week.phase.displayName) · recovery"
+            : "\(week.phase.displayName) · Week \(week.weekNumber)"
+        return WeekProgress(
+            currentSessionIndex: idx,
+            totalSessions: runs.count,
+            completedBefore: completedBefore,
+            phaseLabel: phaseLabel
+        )
     }
 
     private func sessionRow(
@@ -506,7 +528,8 @@ extension WeekCardView {
             intervalFeedbackContextProvider: intervalFeedbackContextProvider != nil ? {
                 await intervalFeedbackContextProvider?(sessionIndex)
             } : nil,
-            onSaveIntervalFeedback: onSaveIntervalFeedback
+            onSaveIntervalFeedback: onSaveIntervalFeedback,
+            weekProgress: makeWeekProgress(for: session)
         )
     }
 

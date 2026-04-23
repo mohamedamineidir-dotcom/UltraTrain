@@ -1,5 +1,23 @@
 import SwiftUI
 
+/// Context about where this session sits in the athlete's current week.
+/// Surfaced as a progress footer on the validation page so the athlete
+/// sees their weekly trajectory — small "I'm making progress" hit after
+/// completing a session.
+struct WeekProgress: Equatable, Sendable {
+    /// 0-based index of this session among the week's running sessions
+    /// (rest + S&C excluded).
+    let currentSessionIndex: Int
+    /// Total running sessions prescribed this week (rest + S&C excluded).
+    let totalSessions: Int
+    /// Number of running sessions the athlete already completed BEFORE
+    /// this one. The validation flow hasn't marked the current session
+    /// complete yet when this is built.
+    let completedBefore: Int
+    /// Display label for the phase context, e.g. "Peak · Week 7".
+    let phaseLabel: String
+}
+
 struct SessionValidationView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.unitPreference) private var units
@@ -17,6 +35,9 @@ struct SessionValidationView: View {
     /// chains into the feedback page *before* the completion animation.
     var intervalFeedbackContextProvider: (() async -> IntervalFeedbackContext?)?
     var onSaveIntervalFeedback: ((IntervalPerformanceFeedback) -> Void)?
+    /// Optional week context shown as a progress footer on the manual
+    /// stats page. When nil, the footer is hidden.
+    var weekProgress: WeekProgress?
 
     @State private var showCompletion = false
     @State private var path: [ValidationStep] = []
@@ -37,7 +58,8 @@ struct SessionValidationView: View {
         stravaActivitiesProvider: ((Date) async -> [StravaActivity])? = nil,
         onLinkStravaActivity: ((StravaActivity) -> Void)? = nil,
         intervalFeedbackContextProvider: (() async -> IntervalFeedbackContext?)? = nil,
-        onSaveIntervalFeedback: ((IntervalPerformanceFeedback) -> Void)? = nil
+        onSaveIntervalFeedback: ((IntervalPerformanceFeedback) -> Void)? = nil,
+        weekProgress: WeekProgress? = nil
     ) {
         self.session = session
         self.recentRuns = recentRuns
@@ -48,6 +70,7 @@ struct SessionValidationView: View {
         self.onLinkStravaActivity = onLinkStravaActivity
         self.intervalFeedbackContextProvider = intervalFeedbackContextProvider
         self.onSaveIntervalFeedback = onSaveIntervalFeedback
+        self.weekProgress = weekProgress
     }
 
     /// True when this session's type warrants a per-rep feedback page after
@@ -103,6 +126,7 @@ struct SessionValidationView: View {
             ManualValidationPage(
                 session: session,
                 hideFeelingAndRPE: isIntervalOrTempo,
+                weekProgress: weekProgress,
                 onComplete: { dist, dur, elev, feeling, rpe in
                     onComplete(dist, dur, elev, feeling, rpe)
                     if shouldChainFeedback {
@@ -277,32 +301,35 @@ private struct ManualValidationPage: View {
     /// Only applied for intervals/tempo sessions that have a feedback
     /// context — easy / long run / recovery sessions still ask here.
     let hideFeelingAndRPE: Bool
+    let weekProgress: WeekProgress?
     let onComplete: (Double?, TimeInterval?, Double?, PerceivedFeeling?, Int?) -> Void
 
-    @State private var distanceText: String
-    @State private var hours: Int
-    @State private var minutes: Int
-    @State private var seconds: Int
-    @State private var elevationText: String
+    @State private var distanceText: String = ""
+    @State private var hours: Int = 0
+    @State private var minutes: Int = 0
+    @State private var seconds: Int = 0
+    @State private var elevationText: String = ""
     @State private var feeling: PerceivedFeeling?
     @State private var rpe: Int?
+    @State private var pulseOn: Bool = false
+    @FocusState private var focusedField: StatsField?
+
+    enum StatsField: Hashable { case distance, elevation }
 
     init(
         session: TrainingSession,
         hideFeelingAndRPE: Bool = false,
+        weekProgress: WeekProgress? = nil,
         onComplete: @escaping (Double?, TimeInterval?, Double?, PerceivedFeeling?, Int?) -> Void
     ) {
         self.session = session
         self.hideFeelingAndRPE = hideFeelingAndRPE
+        self.weekProgress = weekProgress
         self.onComplete = onComplete
-        let planned = session.plannedDuration
-        _distanceText = State(initialValue: session.plannedDistanceKm > 0
-            ? String(format: "%.1f", session.plannedDistanceKm) : "")
-        _hours = State(initialValue: Int(planned) / 3600)
-        _minutes = State(initialValue: (Int(planned) % 3600) / 60)
-        _seconds = State(initialValue: 0)
-        _elevationText = State(initialValue: session.plannedElevationGainM > 0
-            ? String(format: "%.0f", session.plannedElevationGainM) : "")
+        // Fields start empty. The status chip below each input surfaces
+        // "↻ Use N km" so a clean-slate one-tap fill is explicit rather
+        // than happening silently at init — better signal that the
+        // athlete actually reviewed the value.
     }
 
     private var isStrengthSession: Bool {
@@ -322,6 +349,10 @@ private struct ManualValidationPage: View {
 
                 completeButton
 
+                if let progress = weekProgress {
+                    weekProgressFooter(progress)
+                }
+
                 Button {
                     onComplete(nil, nil, nil, nil, nil)
                 } label: {
@@ -335,6 +366,14 @@ private struct ManualValidationPage: View {
         }
         .navigationTitle("Enter Stats")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            // Begin the continue-button breathing animation only once all
+            // required fields carry some value — prevents the glow from
+            // pulsing on a page the athlete hasn't touched yet.
+            withAnimation(.easeInOut(duration: 1.6).repeatForever(autoreverses: true)) {
+                pulseOn = true
+            }
+        }
     }
 
     // MARK: - Planned Target (hero)
@@ -489,46 +528,78 @@ private struct ManualValidationPage: View {
             sectionLabel("Your Actual Stats", icon: "pencil.line")
 
             if !isStrengthSession {
-                inputCard(label: "Distance", icon: "point.topleft.down.to.point.bottomright.curvepath", iconColor: Theme.Colors.primary) {
-                    HStack(spacing: 4) {
-                        Spacer(minLength: 0)
-                        TextField("0.0", text: $distanceText)
-                            .keyboardType(.decimalPad)
-                            .font(.title3.bold().monospacedDigit())
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: 80)
-                        Text("km")
-                            .font(.subheadline.weight(.medium))
-                            .foregroundStyle(Theme.Colors.secondaryLabel)
-                            .frame(width: 38, alignment: .leading)
+                VStack(spacing: 6) {
+                    inputCard(
+                        label: "Distance",
+                        icon: "point.topleft.down.to.point.bottomright.curvepath",
+                        iconColor: Theme.Colors.primary,
+                        isFocused: focusedField == .distance
+                    ) {
+                        HStack(spacing: 4) {
+                            Spacer(minLength: 0)
+                            TextField("0.0", text: $distanceText)
+                                .keyboardType(.decimalPad)
+                                .font(.title3.bold().monospacedDigit())
+                                .multilineTextAlignment(.trailing)
+                                .frame(width: 80)
+                                .focused($focusedField, equals: .distance)
+                            Text("km")
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(Theme.Colors.secondaryLabel)
+                                .frame(width: 38, alignment: .leading)
+                        }
+                    }
+                    if session.plannedDistanceKm > 0 {
+                        distanceStatusChip
                     }
                 }
             }
 
-            inputCard(label: "Duration", icon: "clock", iconColor: Theme.Colors.zone3) {
-                HStack(spacing: 2) {
-                    Spacer(minLength: 0)
-                    durationPicker(value: $hours, label: "h", range: 0..<24)
-                    Text(":").font(.subheadline.bold()).foregroundStyle(Theme.Colors.tertiaryLabel)
-                    durationPicker(value: $minutes, label: "m", range: 0..<60)
-                    Text(":").font(.subheadline.bold()).foregroundStyle(Theme.Colors.tertiaryLabel)
-                    durationPicker(value: $seconds, label: "s", range: 0..<60)
+            VStack(spacing: 6) {
+                inputCard(
+                    label: "Duration",
+                    icon: "clock",
+                    iconColor: Theme.Colors.zone3,
+                    isFocused: false
+                ) {
+                    HStack(spacing: 2) {
+                        Spacer(minLength: 0)
+                        durationPicker(value: $hours, label: "h", range: 0..<24)
+                        Text(":").font(.subheadline.bold()).foregroundStyle(Theme.Colors.tertiaryLabel)
+                        durationPicker(value: $minutes, label: "m", range: 0..<60)
+                        Text(":").font(.subheadline.bold()).foregroundStyle(Theme.Colors.tertiaryLabel)
+                        durationPicker(value: $seconds, label: "s", range: 0..<60)
+                    }
+                }
+                if session.plannedDuration > 0 {
+                    durationStatusChip
                 }
             }
 
             if !isStrengthSession {
-                inputCard(label: "Elevation", icon: "mountain.2.fill", iconColor: Theme.Colors.success) {
-                    HStack(spacing: 4) {
-                        Spacer(minLength: 0)
-                        TextField("0", text: $elevationText)
-                            .keyboardType(.numberPad)
-                            .font(.title3.bold().monospacedDigit())
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: 80)
-                        Text("m D+")
-                            .font(.subheadline.weight(.medium))
-                            .foregroundStyle(Theme.Colors.secondaryLabel)
-                            .frame(width: 38, alignment: .leading)
+                VStack(spacing: 6) {
+                    inputCard(
+                        label: "Elevation",
+                        icon: "mountain.2.fill",
+                        iconColor: Theme.Colors.success,
+                        isFocused: focusedField == .elevation
+                    ) {
+                        HStack(spacing: 4) {
+                            Spacer(minLength: 0)
+                            TextField("0", text: $elevationText)
+                                .keyboardType(.numberPad)
+                                .font(.title3.bold().monospacedDigit())
+                                .multilineTextAlignment(.trailing)
+                                .frame(width: 80)
+                                .focused($focusedField, equals: .elevation)
+                            Text("m D+")
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(Theme.Colors.secondaryLabel)
+                                .frame(width: 38, alignment: .leading)
+                        }
+                    }
+                    if session.plannedElevationGainM > 0 {
+                        elevationStatusChip
                     }
                 }
             }
@@ -555,6 +626,7 @@ private struct ManualValidationPage: View {
         label: String,
         icon: String,
         iconColor: Color,
+        isFocused: Bool,
         @ViewBuilder content: () -> Content
     ) -> some View {
         HStack(spacing: Theme.Spacing.sm) {
@@ -578,8 +650,15 @@ private struct ManualValidationPage: View {
         .padding(.vertical, Theme.Spacing.sm)
         .background(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
-                .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.6))
+                .fill(isFocused
+                    ? Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.10 : 0.05)
+                    : (colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.6)))
         )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                .stroke(isFocused ? Theme.Colors.warmCoral.opacity(0.6) : Color.clear, lineWidth: 1)
+        )
+        .animation(.easeOut(duration: 0.2), value: isFocused)
     }
 
     private func durationPicker(value: Binding<Int>, label: String, range: Range<Int>) -> some View {
@@ -678,8 +757,20 @@ private struct ManualValidationPage: View {
 
     // MARK: - Complete Button
 
+    /// Ready = at least one meaningful value has been entered. While the
+    /// page is still blank the button dims and the pulse aura is hidden
+    /// so it doesn't beckon before there's anything to submit.
+    private var isReadyToSubmit: Bool {
+        let hasDistance = Double(distanceText.replacingOccurrences(of: ",", with: ".")) ?? 0 > 0
+        let hasDuration = hours * 3600 + minutes * 60 + seconds > 0
+        let hasElevation = Double(elevationText) ?? 0 > 0
+        let hasFeeling = feeling != nil || rpe != nil
+        return hasDistance || hasDuration || hasElevation || hasFeeling
+    }
+
     private var completeButton: some View {
-        Button {
+        let ready = isReadyToSubmit
+        return Button {
             let dist = Double(distanceText.replacingOccurrences(of: ",", with: "."))
             let dur: TimeInterval? = {
                 let total = TimeInterval(hours * 3600 + minutes * 60 + seconds)
@@ -695,10 +786,223 @@ private struct ManualValidationPage: View {
                 .foregroundStyle(.white)
                 .background(Theme.Gradients.warmCoralCTA)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
-                .shadow(color: Theme.Colors.warmCoral.opacity(0.25), radius: 6, y: 3)
+                .shadow(color: Theme.Colors.warmCoral.opacity(
+                    ready ? (pulseOn ? 0.45 : 0.20) : 0.0
+                ), radius: ready ? (pulseOn ? 12 : 6) : 0, y: 3)
+                .opacity(ready ? 1.0 : 0.55)
         }
         .buttonStyle(.plain)
+        .disabled(!ready)
         .padding(.top, Theme.Spacing.xs)
+    }
+
+    // MARK: - Status chips (match planned / diff pill)
+
+    private var distanceStatusChip: some View {
+        statusChip(
+            currentText: distanceText,
+            plannedValue: session.plannedDistanceKm,
+            parse: { Double($0.replacingOccurrences(of: ",", with: ".")) },
+            format: { UnitFormatter.formatDistance($0, unit: units, decimals: 1) },
+            unitSuffix: "km",
+            setText: { distanceText = String(format: "%.1f", $0) }
+        )
+    }
+
+    private var elevationStatusChip: some View {
+        statusChip(
+            currentText: elevationText,
+            plannedValue: session.plannedElevationGainM,
+            parse: { Double($0) },
+            format: { UnitFormatter.formatElevation($0, unit: units) },
+            unitSuffix: "m D+",
+            setText: { elevationText = String(format: "%.0f", $0) }
+        )
+    }
+
+    private var durationStatusChip: some View {
+        let currentSeconds = hours * 3600 + minutes * 60 + seconds
+        let planned = Int(session.plannedDuration)
+        return durationStatusChipView(currentSeconds: currentSeconds, plannedSeconds: planned)
+    }
+
+    @ViewBuilder
+    private func statusChip(
+        currentText: String,
+        plannedValue: Double,
+        parse: (String) -> Double?,
+        format: (Double) -> String,
+        unitSuffix: String,
+        setText: @escaping (Double) -> Void
+    ) -> some View {
+        if let entered = parse(currentText), entered > 0 {
+            let diff = entered - plannedValue
+            let ratio = plannedValue > 0 ? abs(diff) / plannedValue : 1
+            if ratio < 0.02 {
+                Label("On plan", systemImage: "checkmark.circle.fill")
+                    .font(.caption2.weight(.medium))
+                    .foregroundStyle(Theme.Colors.success)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .transition(.opacity)
+            } else {
+                let sign = diff > 0 ? "+" : "−"
+                let absMag = format(abs(diff)).replacingOccurrences(of: unitSuffix, with: "").trimmingCharacters(in: .whitespaces)
+                Text("\(sign)\(absMag) \(unitSuffix) vs plan")
+                    .font(.caption2.weight(.medium).monospacedDigit())
+                    .foregroundStyle(statusChipColor(ratio: ratio))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(
+                        Capsule().fill(statusChipColor(ratio: ratio).opacity(0.12))
+                    )
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .transition(.opacity)
+            }
+        } else {
+            Button {
+                setText(plannedValue)
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "arrow.turn.down.left")
+                        .font(.caption2.weight(.bold))
+                    Text("Use \(format(plannedValue))")
+                        .font(.caption2.weight(.semibold).monospacedDigit())
+                }
+                .foregroundStyle(Theme.Colors.warmCoral)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 3)
+                .background(Capsule().fill(Theme.Colors.warmCoral.opacity(0.12)))
+            }
+            .buttonStyle(.plain)
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .transition(.opacity)
+        }
+    }
+
+    @ViewBuilder
+    private func durationStatusChipView(currentSeconds: Int, plannedSeconds: Int) -> some View {
+        if currentSeconds > 0 {
+            let diff = currentSeconds - plannedSeconds
+            let ratio = plannedSeconds > 0 ? abs(Double(diff)) / Double(plannedSeconds) : 1
+            if ratio < 0.02 {
+                Label("On plan", systemImage: "checkmark.circle.fill")
+                    .font(.caption2.weight(.medium))
+                    .foregroundStyle(Theme.Colors.success)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+            } else {
+                let sign = diff > 0 ? "+" : "−"
+                Text("\(sign)\(formatDurationDelta(abs(diff))) vs plan")
+                    .font(.caption2.weight(.medium).monospacedDigit())
+                    .foregroundStyle(statusChipColor(ratio: ratio))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(
+                        Capsule().fill(statusChipColor(ratio: ratio).opacity(0.12))
+                    )
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+            }
+        } else {
+            Button {
+                hours = plannedSeconds / 3600
+                minutes = (plannedSeconds % 3600) / 60
+                seconds = plannedSeconds % 60
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "arrow.turn.down.left")
+                        .font(.caption2.weight(.bold))
+                    Text("Use \(formatPlannedDuration)")
+                        .font(.caption2.weight(.semibold).monospacedDigit())
+                }
+                .foregroundStyle(Theme.Colors.warmCoral)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 3)
+                .background(Capsule().fill(Theme.Colors.warmCoral.opacity(0.12)))
+            }
+            .buttonStyle(.plain)
+            .frame(maxWidth: .infinity, alignment: .trailing)
+        }
+    }
+
+    private func statusChipColor(ratio: Double) -> Color {
+        if ratio < 0.05 { return Theme.Colors.success }
+        if ratio < 0.15 { return Theme.Colors.secondaryLabel }
+        return Theme.Colors.warning
+    }
+
+    private func formatDurationDelta(_ seconds: Int) -> String {
+        if seconds >= 60 {
+            let m = seconds / 60
+            let s = seconds % 60
+            return s > 0 ? "\(m)m\(s)s" : "\(m)min"
+        }
+        return "\(seconds)s"
+    }
+
+    // MARK: - Week progress footer
+
+    private func weekProgressFooter(_ progress: WeekProgress) -> some View {
+        VStack(spacing: 8) {
+            HStack(spacing: 5) {
+                ForEach(0..<progress.totalSessions, id: \.self) { idx in
+                    weekDot(state: dotState(idx: idx, progress: progress))
+                }
+            }
+            HStack(spacing: 6) {
+                Text("Session \(progress.currentSessionIndex + 1) of \(progress.totalSessions)")
+                    .font(.caption.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(Theme.Colors.label)
+                Text("·")
+                    .foregroundStyle(Theme.Colors.tertiaryLabel)
+                Text(progress.phaseLabel)
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, Theme.Spacing.sm + 2)
+        .padding(.horizontal, Theme.Spacing.md)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .fill(colorScheme == .dark ? Color.white.opacity(0.04) : Color.primary.opacity(0.03))
+        )
+    }
+
+    private enum DotState { case completed, current, upcoming }
+
+    private func dotState(idx: Int, progress: WeekProgress) -> DotState {
+        if idx == progress.currentSessionIndex { return .current }
+        if idx < progress.currentSessionIndex && idx < progress.completedBefore { return .completed }
+        if idx < progress.currentSessionIndex { return .upcoming }
+        return .upcoming
+    }
+
+    @ViewBuilder
+    private func weekDot(state: DotState) -> some View {
+        switch state {
+        case .completed:
+            Circle()
+                .fill(Theme.Colors.success)
+                .frame(width: 10, height: 10)
+                .overlay(
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 6, weight: .black))
+                        .foregroundStyle(.white)
+                )
+        case .current:
+            Circle()
+                .fill(Theme.Colors.warmCoral)
+                .frame(width: 14, height: 14)
+                .overlay(
+                    Circle()
+                        .stroke(Theme.Colors.warmCoral.opacity(0.35), lineWidth: 3)
+                        .frame(width: 20, height: 20)
+                )
+                .frame(width: 20, height: 14)
+        case .upcoming:
+            Circle()
+                .stroke(Theme.Colors.tertiaryLabel.opacity(0.4), lineWidth: 1)
+                .frame(width: 10, height: 10)
+        }
     }
 
     // MARK: - Helpers
