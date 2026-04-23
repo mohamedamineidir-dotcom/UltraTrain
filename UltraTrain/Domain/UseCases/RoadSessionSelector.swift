@@ -258,8 +258,11 @@ enum RoadSessionSelector {
             pool = [slotLong, slotIntervals, slotTempo, slotEasyMon, slotEasyFri, slotEasyWed, slotEasySun]
         }
 
-        // For 6+ runs/week marathon plans: convert day 2 easy to medium-long (Pfitzinger)
-        if preferredRunsPerWeek >= 6 && discipline == .roadMarathon && phase != .base {
+        // RR-14: MLR for 6+/wk marathon AND half-marathon plans (Pfitzinger
+        // prescribes MLR in both). 10K plans don't need a second weekly
+        // aerobic hit — race is short enough that the long run alone covers
+        // the aerobic-engine stimulus.
+        if preferredRunsPerWeek >= 6 && discipline != .road10K && phase != .base {
             let medLongDuration = longRunDuration * 0.75
             pool[5] = (2, tpl(2, .recovery, .easy, medLongDuration, 0,
                     "Medium-long run. Pfitzinger aerobic builder. Easy-moderate pace."))
