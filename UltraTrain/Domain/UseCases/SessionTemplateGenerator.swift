@@ -675,7 +675,7 @@ enum SessionTemplateGenerator {
                 ? cRaceWeekTemplates(volume: volume, raceContext: raceContext)
                 : bRaceWeekTemplates(volume: volume, raceContext: raceContext)
         case .postRaceRecovery:
-            raw = postRaceRecoveryTemplates(volume: volume, raceContext: raceContext)
+            raw = postRaceRecoveryTemplates(volume: volume, raceContext: raceContext, isRoadRace: isRoadRace)
         }
         return capActiveSessionsForOverride(raw, preferredRunsPerWeek: preferredRunsPerWeek)
     }
@@ -908,11 +908,25 @@ enum SessionTemplateGenerator {
 
     private static func postRaceRecoveryTemplates(
         volume: VolumeCalculator.WeekVolume,
-        raceContext: RaceContext? = nil
+        raceContext: RaceContext? = nil,
+        isRoadRace: Bool = false
     ) -> [SessionTemplate] {
         let raceKm = raceContext?.distanceKm ?? 50
         let base = volume.baseSessionDurations
         let longRun = volume.targetLongRunDurationSeconds
+
+        // RR-13: For road races, strip .verticalGain sessions and zero the
+        // long-run elevationFraction. Road athletes returning from a B-race
+        // don't do hill repeats or hilly long runs. The <25K branch's day 4
+        // VG session becomes a moderate tempo instead.
+        let lrElevFraction04: Double = isRoadRace ? 0 : 0.4
+        let lrElevFraction045: Double = isRoadRace ? 0 : 0.45
+        let lrElevFraction05: Double = isRoadRace ? 0 : 0.5
+        let lrElevFraction055: Double = isRoadRace ? 0 : 0.55
+        let day4Type: SessionType = isRoadRace ? .tempo : .verticalGain
+        let day4Desc: String = isRoadRace
+            ? "Moderate tempo. Rebuild threshold feel without overloading fresh-from-race legs."
+            : "Uphill session at moderate effort. Rebuild vertical strength."
 
         if raceKm > 100 {
             // Ultra 100K+: 2 rest days, easy mid-week, short quality Thu, shortened long run
@@ -927,7 +941,7 @@ enum SessionTemplateGenerator {
                     "Short intervals at moderate effort. Reawaken leg speed."),
                 tpl(5, .recovery, .easy, base.easyRun2Seconds * 0.6, 0,
                     "Easy run. Pre-long-run loosener."),
-                tpl(6, .longRun, .easy, longRun * 0.55, 0.4,
+                tpl(6, .longRun, .easy, longRun * 0.55, lrElevFraction04,
                     "Shortened long run. Rebuild aerobic base gently."),
             ]
         } else if raceKm > 50 {
@@ -944,7 +958,7 @@ enum SessionTemplateGenerator {
                     "Easy run. Legs should be feeling better."),
                 tpl(5, .recovery, .easy, base.easyRun2Seconds * 0.65, 0,
                     "Easy pre-long-run loosener."),
-                tpl(6, .longRun, .easy, longRun * 0.65, 0.45,
+                tpl(6, .longRun, .easy, longRun * 0.65, lrElevFraction045,
                     "Shortened long run. Rebuild the aerobic engine."),
             ]
         } else if raceKm > 25 {
@@ -961,7 +975,7 @@ enum SessionTemplateGenerator {
                     "Easy run. Building back."),
                 tpl(5, .recovery, .easy, base.easyRun2Seconds * 0.7, 0,
                     "Easy pre-long-run loosener."),
-                tpl(6, .longRun, .easy, longRun * 0.7, 0.5,
+                tpl(6, .longRun, .easy, longRun * 0.7, lrElevFraction05,
                     "Moderately shortened long run. Back toward normal."),
             ]
         } else {
@@ -974,11 +988,11 @@ enum SessionTemplateGenerator {
                     "Intervals at moderate effort. Maintain sharpness."),
                 tpl(3, .recovery, .easy, base.easyRun1Seconds * 0.8, 0,
                     "Easy run at conversational pace."),
-                tpl(4, .verticalGain, .moderate, base.vgSeconds * 0.7, 0,
-                    "Uphill session at moderate effort. Rebuild vertical strength."),
+                tpl(4, day4Type, .moderate, base.vgSeconds * 0.7, 0,
+                    day4Desc),
                 tpl(5, .recovery, .easy, base.easyRun2Seconds * 0.8, 0,
                     "Easy pre-long-run loosener."),
-                tpl(6, .longRun, .easy, longRun * 0.8, 0.55,
+                tpl(6, .longRun, .easy, longRun * 0.8, lrElevFraction055,
                     "Near-normal long run. Back on track."),
             ]
         }
