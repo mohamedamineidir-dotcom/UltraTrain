@@ -360,6 +360,8 @@ private struct ManualValidationPage: View {
 
                 completeButton
 
+                rationaleCard
+
                 if let progress = weekProgress {
                     weekProgressFooter(progress)
                 }
@@ -828,22 +830,124 @@ private struct ManualValidationPage: View {
         return "\(seconds)s"
     }
 
+    // MARK: - Rationale card
+
+    /// Short session-type-specific rationale card rendered below the
+    /// Continue button. Fills the vertical space the page was wasting
+    /// with something that pays the athlete back: a one-sentence
+    /// "why this session" explanation written in a positive coaching
+    /// tone. No data entry demanded, no chrome — just context.
+    private var rationaleCard: some View {
+        HStack(alignment: .top, spacing: Theme.Spacing.md) {
+            Image(systemName: rationaleIcon)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(Theme.Colors.warmCoral)
+                .frame(width: 24)
+                .padding(.top, 1)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(rationaleTitle)
+                    .font(.caption2.weight(.bold))
+                    .tracking(0.6)
+                    .foregroundStyle(Theme.Colors.warmCoral)
+                Text(rationaleBody)
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .lineSpacing(2)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(Theme.Spacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .fill(LinearGradient(
+                    colors: [
+                        Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.08 : 0.04),
+                        Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.02 : 0.01)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .stroke(Theme.Colors.warmCoral.opacity(0.15), lineWidth: 0.5)
+        )
+    }
+
+    private var rationaleIcon: String {
+        switch session.type {
+        case .intervals:            return "bolt.fill"
+        case .tempo:                return "wave.3.right"
+        case .longRun, .backToBack: return "road.lanes"
+        case .recovery:             return "leaf.fill"
+        case .verticalGain:         return "mountain.2.fill"
+        case .strengthConditioning: return "dumbbell.fill"
+        case .race:                 return "flag.checkered"
+        default:                    return "figure.run"
+        }
+    }
+
+    private var rationaleTitle: String {
+        switch session.type {
+        case .intervals:            return "WHY INTERVALS"
+        case .tempo:                return "WHY TEMPO"
+        case .longRun:              return "WHY THE LONG RUN"
+        case .backToBack:           return "WHY BACK-TO-BACK"
+        case .recovery:             return "WHY RECOVERY"
+        case .verticalGain:         return "WHY VERTICAL"
+        case .strengthConditioning: return "WHY STRENGTH"
+        case .race:                 return "RACE DAY"
+        default:                    return "TODAY'S SESSION"
+        }
+    }
+
+    private var rationaleBody: String {
+        switch session.type {
+        case .intervals:
+            return "Short fast reps develop your VO2max and neuromuscular sharpness — the engine ceiling that caps how fast you can sustain anything. Stay crisp; the recovery between reps is work too."
+        case .tempo:
+            return "Tempo sessions build sustainable race pace. Comfortably hard, not all-out — this is the effort you'll ride on race day."
+        case .longRun:
+            return "The long run builds the aerobic base everything else sits on. Time on feet matters more than speed — go easy, go long, trust the process."
+        case .backToBack:
+            return "Two long days stacked to teach the body to run on tired legs — the single best ultra-specific stimulus you can give yourself."
+        case .recovery:
+            return "Recovery is when the adaptation actually happens. Truly easy — if someone asked you a question you should be able to answer in full sentences."
+        case .verticalGain:
+            return "Vertical work builds climbing-specific strength. Let form dictate pace on the way up; power-hike the steep bits — that's the specificity."
+        case .strengthConditioning:
+            return "Strength work keeps the chassis strong through heavy training. Fewer injuries, better running economy. Worth every minute."
+        case .race:
+            return "Show up, execute the plan, trust the training. The work is already done."
+        default:
+            return "Every session in the plan has a purpose. Show up, stay consistent, trust the process."
+        }
+    }
+
     // MARK: - Week progress footer
 
-    /// Futuristic progress strip: uniform 12pt dots threaded on a thin
-    /// hairline track. Current session gets a coral fill + a soft
-    /// shadow-glow (not a bigger size), so the row stays visually
-    /// balanced. Completed dots carry a tiny white checkmark.
+    /// Clean progress strip: fixed-size 16pt dots alternating with
+    /// flexible-width 2pt track rectangles. The rectangles use
+    /// `frame(maxWidth: .infinity)` so the dots stay evenly spaced no
+    /// matter how many sessions the week contains. Track segments
+    /// take on the success colour from index 0 through the current
+    /// position, neutral beyond — reads as a continuous progress bar.
     private func weekProgressFooter(_ progress: WeekProgress) -> some View {
         VStack(spacing: 10) {
             HStack(spacing: 0) {
                 ForEach(0..<progress.totalSessions, id: \.self) { idx in
+                    if idx > 0 {
+                        Rectangle()
+                            .fill(trackFill(leftIdx: idx - 1, progress: progress))
+                            .frame(height: 2)
+                            .frame(maxWidth: .infinity)
+                    }
                     weekDot(state: dotState(idx: idx, progress: progress))
-                        .frame(maxWidth: .infinity)
-                        .overlay(trackSegment(idx: idx, total: progress.totalSessions, progress: progress))
                 }
             }
-            .padding(.horizontal, 4)
+            .padding(.horizontal, 2)
 
             HStack(spacing: 6) {
                 Text("Session \(progress.currentSessionIndex + 1) of \(progress.totalSessions)")
@@ -873,78 +977,51 @@ private struct ManualValidationPage: View {
         return .upcoming
     }
 
-    /// Thin hairline track segments drawn UNDER the dots via overlay.
-    /// Each dot's frame contains half a line on the left and half on
-    /// the right, so when laid out in an HStack the segments meet and
-    /// form one continuous track across the row. The segment is
-    /// coloured based on whether the dot it's connecting to is a
-    /// completed step (green) vs upcoming (neutral).
-    @ViewBuilder
-    private func trackSegment(idx: Int, total: Int, progress: WeekProgress) -> some View {
-        let leftActive = idx <= progress.completedBefore && idx > 0
-        let rightActive = idx < progress.completedBefore
-        ZStack {
-            if idx > 0 {
-                HStack(spacing: 0) {
-                    Rectangle()
-                        .fill(leftActive ? Theme.Colors.success.opacity(0.6) : Theme.Colors.tertiaryLabel.opacity(0.25))
-                        .frame(height: 1.5)
-                    Spacer(minLength: 0)
-                }
-            }
-            if idx < total - 1 {
-                HStack(spacing: 0) {
-                    Spacer(minLength: 0)
-                    Rectangle()
-                        .fill(rightActive ? Theme.Colors.success.opacity(0.6) : Theme.Colors.tertiaryLabel.opacity(0.25))
-                        .frame(height: 1.5)
-                }
-            }
-        }
-        .padding(.horizontal, 6)
-        // Dots live ABOVE the track — zIndex ensures the line slides
-        // behind the dot fill so the dots read cleanly.
-        .zIndex(-1)
+    /// Segment fill between dot[leftIdx] and dot[leftIdx+1]. Green when
+    /// the segment's right endpoint is still within the "done + current"
+    /// range (so the track fills progressively up to the current dot);
+    /// neutral afterward.
+    private func trackFill(leftIdx: Int, progress: WeekProgress) -> Color {
+        let rightIdx = leftIdx + 1
+        let isFilled = rightIdx <= max(progress.completedBefore, progress.currentSessionIndex)
+        return isFilled
+            ? Theme.Colors.success.opacity(0.55)
+            : Theme.Colors.tertiaryLabel.opacity(0.25)
     }
 
     @ViewBuilder
     private func weekDot(state: DotState) -> some View {
         ZStack {
-            if state == .current {
+            switch state {
+            case .completed:
                 Circle()
-                    .fill(Theme.Colors.warmCoral.opacity(0.25))
-                    .frame(width: 22, height: 22)
-                    .blur(radius: 3)
+                    .fill(Theme.Colors.success)
+                    .frame(width: 16, height: 16)
+                    .overlay(
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 8, weight: .black))
+                            .foregroundStyle(.white)
+                    )
+            case .current:
+                Circle()
+                    .fill(LinearGradient(
+                        colors: [Theme.Colors.warmCoral, Theme.Colors.warmCoral.opacity(0.78)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ))
+                    .frame(width: 16, height: 16)
+                    .overlay(
+                        Circle().stroke(Color.white.opacity(0.65), lineWidth: 1.5)
+                    )
+                    .shadow(color: Theme.Colors.warmCoral.opacity(0.35), radius: 5)
+            case .upcoming:
+                Circle()
+                    .fill(colorScheme == .dark ? Color.white.opacity(0.04) : Color.white)
+                    .frame(width: 16, height: 16)
+                    .overlay(
+                        Circle().stroke(Theme.Colors.tertiaryLabel.opacity(0.35), lineWidth: 1.2)
+                    )
             }
-            Group {
-                switch state {
-                case .completed:
-                    Circle()
-                        .fill(Theme.Colors.success)
-                        .overlay(
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 6, weight: .black))
-                                .foregroundStyle(.white)
-                        )
-                case .current:
-                    Circle()
-                        .fill(LinearGradient(
-                            colors: [Theme.Colors.warmCoral, Theme.Colors.warmCoral.opacity(0.78)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ))
-                        .overlay(
-                            Circle().stroke(Color.white.opacity(0.65), lineWidth: 1.2)
-                        )
-                case .upcoming:
-                    Circle()
-                        .fill(colorScheme == .dark ? Color.white.opacity(0.04) : Color.white)
-                        .overlay(
-                            Circle().stroke(Theme.Colors.tertiaryLabel.opacity(0.35), lineWidth: 1)
-                        )
-                }
-            }
-            .frame(width: 12, height: 12)
         }
     }
 

@@ -13475,6 +13475,16 @@
         }
       }
     },
+    "Session %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Session %1$lld of %2$lld"
+          }
+        }
+      }
+    },
     "Session Adjusted Down" : {
       "localizations" : {
         "fr" : {
