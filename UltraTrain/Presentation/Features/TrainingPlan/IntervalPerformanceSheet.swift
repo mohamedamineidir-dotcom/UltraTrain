@@ -92,6 +92,46 @@ struct IntervalPerformanceContent: View {
         .onAppear(perform: seedStateIfNeeded)
     }
 
+    // MARK: - Tinted glass background
+
+    /// Three-layer tinted-glass card background: diagonal colour tint +
+    /// top-left white sheen + hairline tinted border. Same idea as the
+    /// stats page, but bumped one notch stronger here because this page
+    /// is deeper in the flow and the athlete has earned the richer
+    /// visual language. The effort card passes a DYNAMIC tint that
+    /// shifts hue as RPE changes — the whole surface changes character
+    /// live as the athlete moves between green (easy) and crimson (max).
+    @ViewBuilder
+    private func tintedGlass(tint: Color, corner: CGFloat = Theme.CornerRadius.lg) -> some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: corner)
+                .fill(LinearGradient(
+                    colors: [
+                        tint.opacity(colorScheme == .dark ? 0.28 : 0.14),
+                        tint.opacity(colorScheme == .dark ? 0.06 : 0.03)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ))
+            RoundedRectangle(cornerRadius: corner)
+                .fill(LinearGradient(
+                    stops: [
+                        .init(color: Color.white.opacity(colorScheme == .dark ? 0.12 : 0.50), location: 0.0),
+                        .init(color: Color.white.opacity(colorScheme == .dark ? 0.03 : 0.12), location: 0.30),
+                        .init(color: Color.clear, location: 0.65)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ))
+                .allowsHitTesting(false)
+        }
+    }
+
+    private func tintedGlassBorder(tint: Color, corner: CGFloat = Theme.CornerRadius.lg) -> some View {
+        RoundedRectangle(cornerRadius: corner)
+            .stroke(tint.opacity(0.30), lineWidth: 0.85)
+    }
+
     // MARK: - Hero pace card
 
     /// Two-column comparison: TARGET on the left (read-only), YOUR AVERAGE
@@ -192,21 +232,8 @@ struct IntervalPerformanceContent: View {
             }
         }
         .padding(Theme.Spacing.md)
-        .background(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                .fill(LinearGradient(
-                    colors: [
-                        Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.10 : 0.04),
-                        Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.02 : 0.01)
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                .stroke(Theme.Colors.warmCoral.opacity(0.18), lineWidth: 0.75)
-        )
+        .background(tintedGlass(tint: Theme.Colors.warmCoral))
+        .overlay(tintedGlassBorder(tint: Theme.Colors.warmCoral))
     }
 
     /// Tap-to-edit digit field. Numpad keyboard, auto zero-pad on blur
@@ -345,14 +372,16 @@ struct IntervalPerformanceContent: View {
             }
         }
         .padding(Theme.Spacing.md)
-        .background(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                .fill(colorScheme == .dark ? Color.white.opacity(0.04) : Color.primary.opacity(0.03))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                .stroke(Theme.Colors.tertiaryLabel.opacity(0.12), lineWidth: 0.5)
-        )
+        .background(tintedGlass(tint: completionTint))
+        .overlay(tintedGlassBorder(tint: completionTint))
+        .animation(.easeOut(duration: 0.3), value: completedReps)
+    }
+
+    /// Card tint flips from success-green (all done) to warning-amber
+    /// (any bailed reps). Animated via the ancestor `.animation(...)` so
+    /// the whole surface smoothly shifts character on toggle.
+    private var completionTint: Color {
+        completedAll ? Theme.Colors.success : Theme.Colors.warning
     }
 
     private var completedAll: Bool { completedReps >= prescribedRepCount }
@@ -476,14 +505,9 @@ struct IntervalPerformanceContent: View {
             }
         }
         .padding(Theme.Spacing.md)
-        .background(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                .fill(colorScheme == .dark ? Color.white.opacity(0.04) : Color.primary.opacity(0.03))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                .stroke(Theme.Colors.tertiaryLabel.opacity(0.12), lineWidth: 0.5)
-        )
+        .background(tintedGlass(tint: rpeGradientColor(rpe)))
+        .overlay(tintedGlassBorder(tint: rpeGradientColor(rpe)))
+        .animation(.easeOut(duration: 0.25), value: rpe)
     }
 
     // MARK: - Notes
@@ -516,14 +540,8 @@ struct IntervalPerformanceContent: View {
             }
         }
         .padding(Theme.Spacing.md)
-        .background(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                .fill(colorScheme == .dark ? Color.white.opacity(0.04) : Color.primary.opacity(0.03))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                .stroke(Theme.Colors.tertiaryLabel.opacity(0.12), lineWidth: 0.5)
-        )
+        .background(tintedGlass(tint: Theme.Colors.accentColor))
+        .overlay(tintedGlassBorder(tint: Theme.Colors.accentColor))
     }
 
     // MARK: - Save button
