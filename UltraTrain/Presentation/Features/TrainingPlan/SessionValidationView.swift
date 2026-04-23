@@ -50,12 +50,23 @@ struct SessionValidationView: View {
         self.onSaveIntervalFeedback = onSaveIntervalFeedback
     }
 
-    /// True when the per-rep feedback page should follow manual stats entry.
-    /// Intervals / tempo only, and only when the provider actually returned
-    /// a context (non-data-derived profiles silently skip).
+    /// True when this session's type warrants a per-rep feedback page after
+    /// the basic stats entry. Derived from session.type alone so it is
+    /// synchronous and stable at render time (the async context fetch may
+    /// not have resolved when ManualValidationPage first appears).
+    private var isIntervalOrTempo: Bool {
+        session.type == .intervals || session.type == .tempo
+    }
+
+    /// True when the chain can actually push the feedback page — needs a
+    /// resolved context (fitness-derived target pace). When false for an
+    /// intervals/tempo session, the basic page still skips feeling+RPE
+    /// (user asked us not to show those on intervals/tempo), but we go
+    /// straight to the loading screen on Continue. RPE is then lost for
+    /// that session; this only happens when the athlete has no PRs / VMA /
+    /// goal time, which is rare in practice.
     private var shouldChainFeedback: Bool {
-        guard session.type == .intervals || session.type == .tempo else { return false }
-        return fetchedFeedbackContext != nil
+        isIntervalOrTempo && fetchedFeedbackContext != nil
     }
 
     var body: some View {
@@ -91,7 +102,7 @@ struct SessionValidationView: View {
         case .manual:
             ManualValidationPage(
                 session: session,
-                hideFeelingAndRPE: shouldChainFeedback,
+                hideFeelingAndRPE: isIntervalOrTempo,
                 onComplete: { dist, dur, elev, feeling, rpe in
                     onComplete(dist, dur, elev, feeling, rpe)
                     if shouldChainFeedback {
@@ -329,20 +340,24 @@ private struct ManualValidationPage: View {
     // MARK: - Planned Target
 
     private var plannedTargetCard: some View {
-        HStack(spacing: Theme.Spacing.lg) {
+        HStack(spacing: Theme.Spacing.md) {
             if !isStrengthSession && session.plannedDistanceKm > 0 {
                 targetStat(
                     value: UnitFormatter.formatDistance(session.plannedDistanceKm, unit: units, decimals: 1),
                     label: "Planned",
-                    icon: "target"
+                    icon: "flag.checkered"
                 )
+            }
+            if !isStrengthSession && session.plannedDistanceKm > 0 {
+                divider
             }
             targetStat(
                 value: formatPlannedDuration,
                 label: "Target",
-                icon: "clock"
+                icon: "stopwatch"
             )
             if !isStrengthSession && session.plannedElevationGainM > 0 {
+                divider
                 targetStat(
                     value: UnitFormatter.formatElevation(session.plannedElevationGainM, unit: units),
                     label: "D+",
@@ -350,28 +365,46 @@ private struct ManualValidationPage: View {
                 )
             }
         }
-        .padding(Theme.Spacing.md)
+        .padding(.horizontal, Theme.Spacing.md)
+        .padding(.vertical, Theme.Spacing.sm + 2)
         .frame(maxWidth: .infinity)
         .background(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                .fill(session.intensity.color.opacity(colorScheme == .dark ? 0.08 : 0.05))
+                .fill(LinearGradient(
+                    colors: [
+                        session.intensity.color.opacity(colorScheme == .dark ? 0.18 : 0.09),
+                        session.intensity.color.opacity(colorScheme == .dark ? 0.06 : 0.03)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ))
         )
         .overlay(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                .stroke(session.intensity.color.opacity(0.15), lineWidth: 1)
+                .stroke(session.intensity.color.opacity(0.2), lineWidth: 0.75)
         )
+    }
+
+    private var divider: some View {
+        Rectangle()
+            .fill(Theme.Colors.tertiaryLabel.opacity(0.15))
+            .frame(width: 1, height: 28)
     }
 
     private func targetStat(value: String, label: String, icon: String) -> some View {
         VStack(spacing: 4) {
-            Image(systemName: icon)
-                .font(.caption)
-                .foregroundStyle(session.intensity.color)
+            HStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.caption2)
+                    .foregroundStyle(session.intensity.color)
+                Text(label.uppercased())
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .tracking(0.5)
+            }
             Text(value)
-                .font(.subheadline.bold().monospacedDigit())
-            Text(label)
-                .font(.caption2)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
+                .font(.title3.weight(.bold).monospacedDigit())
+                .foregroundStyle(Theme.Colors.label)
         }
         .frame(maxWidth: .infinity)
     }

@@ -837,6 +837,9 @@
         }
       }
     },
+    "%@/km" : {
+
+    },
     "%@%@" : {
       "localizations" : {
         "en" : {
@@ -2563,6 +2566,9 @@
         }
       }
     },
+    "All %lld reps done" : {
+
+    },
     "All challenges started or completed" : {
       "localizations" : {
         "fr" : {
@@ -2592,9 +2598,6 @@
           }
         }
       }
-    },
-    "All reps within a few seconds of target." : {
-
     },
     "All sessions completed this week!" : {
       "localizations" : {
@@ -3107,7 +3110,7 @@
         }
       }
     },
-    "Bailing on reps is a stronger signal than pace alone." : {
+    "Bailed on some reps" : {
 
     },
     "Base" : {
@@ -4138,9 +4141,6 @@
           }
         }
       }
-    },
-    "Completed all %lld reps" : {
-
     },
     "Completed Runs" : {
       "localizations" : {
@@ -5441,7 +5441,7 @@
         }
       }
     },
-    "e.g. 'felt flat from rep 3', 'windy'" : {
+    "e.g. 'legs heavy from rep 3', 'windy'" : {
 
     },
     "e.g. 5x800m Repeats" : {
@@ -5879,6 +5879,9 @@
           }
         }
       }
+    },
+    "Enter per-rep paces (optional)" : {
+
     },
     "Enter Stats" : {
 
@@ -7092,6 +7095,9 @@
     "Here's what your first weeks will look like" : {
 
     },
+    "Hide per-rep paces" : {
+
+    },
     "High" : {
       "localizations" : {
         "fr" : {
@@ -7211,9 +7217,6 @@
     "How did it go?" : {
 
     },
-    "How did the reps go?" : {
-
-    },
     "How did the run go? Key learnings?" : {
       "localizations" : {
         "fr" : {
@@ -7225,9 +7228,6 @@
       }
     },
     "How do you want to validate?" : {
-
-    },
-    "How hard it felt matters as much as the number on the watch — we use both." : {
 
     },
     "How long is the longest uphill near you?" : {
@@ -7375,9 +7375,6 @@
 
     },
     "I don't have a race" : {
-
-    },
-    "I hit target consistently" : {
 
     },
     "I'm just getting started" : {
@@ -7664,6 +7661,9 @@
           }
         }
       }
+    },
+    "Incomplete reps slow the target more than pace drift alone" : {
+
     },
     "Injuries (Last 6 Months)" : {
 
@@ -8350,9 +8350,6 @@
           }
         }
       }
-    },
-    "Logging actual paces helps us calibrate your next sessions. Skip if you didn't time your reps." : {
-
     },
     "Long press for one and a half seconds to send emergency alert" : {
       "localizations" : {
@@ -10907,6 +10904,9 @@
         }
       }
     },
+    "Per-rep feedback" : {
+
+    },
     "Percentage" : {
       "localizations" : {
         "fr" : {
@@ -12564,9 +12564,6 @@
           }
         }
       }
-    },
-    "RPE (1 easy, 10 max)" : {
-
     },
     "RPE %lld" : {
       "extractionState" : "stale",
@@ -14686,6 +14683,9 @@
         }
       }
     },
+    "Tap if you dropped reps" : {
+
+    },
     "Tap to add" : {
 
     },
@@ -16694,6 +16694,9 @@
           }
         }
       }
+    },
+    "Your average" : {
+
     },
     "Your completed runs will appear here." : {
       "extractionState" : "stale",

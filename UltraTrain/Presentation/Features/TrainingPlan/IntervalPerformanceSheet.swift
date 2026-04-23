@@ -1,17 +1,18 @@
 import SwiftUI
 
-/// Inner content for the per-rep feedback page. Rendered inside the
-/// SessionValidationView NavigationStack right after manual stats entry,
-/// *before* the completion loading animation — athlete flow:
-/// basic stats → per-rep feedback → loading → done.
+/// Inner content for the per-rep feedback page. Rendered inside
+/// SessionValidationView's NavigationStack right after the manual stats
+/// entry — flow: basic stats → per-rep feedback → loading → done.
 ///
 /// Design priorities:
-/// - Capture three signals (pace, effort, completion) with one tap each
-/// - Hero pace comparison card — target vs editable average, quick-set
-///   chips for ±3s / ±6s / on-target so a tired athlete doesn't type
-/// - Per-rep detail is OPTIONAL and collapsed by default
-/// - Tactile dot-row for RPE (no slider dragging when tired)
-/// - Notes field stays small until tapped
+/// - Capture three signals (pace, effort, completion) with minimum taps
+/// - Hero pace card shows target + your average side-by-side with
+///   DIRECTLY-TAPPABLE digit fields (no wheel pickers). Live delta pill
+///   and quick chips for one-tap common deltas.
+/// - Completion: toggle with a visual pill strip (one pill per prescribed
+///   rep) so the athlete sees their count shift in real time.
+/// - Effort: 10 dots each with its own hue along the green→red gradient
+///   so every step feels distinct.
 struct IntervalPerformanceContent: View {
 
     let sessionId: UUID
@@ -24,9 +25,12 @@ struct IntervalPerformanceContent: View {
     let onSkip: () -> Void
 
     @Environment(\.colorScheme) private var colorScheme
+    @FocusState private var focusedField: PaceField?
 
-    @State private var averageMinutes: Int = 4
-    @State private var averageSeconds: Int = 0
+    enum PaceField: Hashable { case minutes, seconds }
+
+    @State private var minutesText: String = ""
+    @State private var secondsText: String = ""
     @State private var showPerRep: Bool = false
     @State private var perRepTexts: [String] = []
     @State private var completedAll: Bool = true
@@ -34,6 +38,7 @@ struct IntervalPerformanceContent: View {
     @State private var notes: String = ""
     @State private var showNotes: Bool = false
     @State private var didSeed: Bool = false
+    @State private var sealPulse: Bool = false
 
     init(
         sessionId: UUID,
@@ -76,6 +81,10 @@ struct IntervalPerformanceContent: View {
                 Button("Skip") { onSkip() }
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") { focusedField = nil }
+            }
         }
         .safeAreaInset(edge: .bottom) { saveButton }
         .onAppear(perform: seedStateIfNeeded)
@@ -85,9 +94,12 @@ struct IntervalPerformanceContent: View {
 
     private var heroPaceCard: some View {
         VStack(spacing: Theme.Spacing.sm) {
-            // Target row
-            HStack {
-                Label("Target", systemImage: "target")
+            // Target chip row
+            HStack(spacing: 6) {
+                Image(systemName: "target")
+                    .font(.caption2)
+                    .foregroundStyle(Theme.Colors.warmCoral)
+                Text("Target")
                     .font(.caption.weight(.medium))
                     .foregroundStyle(Theme.Colors.secondaryLabel)
                 Spacer()
@@ -96,37 +108,47 @@ struct IntervalPerformanceContent: View {
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
 
-            // Your avg row — big and editable
-            VStack(spacing: 6) {
-                Text("Your average")
-                    .font(.caption.weight(.medium))
+            // Big editable pace
+            VStack(spacing: 8) {
+                Text("YOUR AVERAGE")
+                    .font(.caption2.weight(.bold))
+                    .tracking(1.2)
                     .foregroundStyle(Theme.Colors.tertiaryLabel)
-                HStack(spacing: 2) {
-                    paceWheel($averageMinutes, range: 2..<12)
-                    Text(":").font(.largeTitle.bold().monospacedDigit()).foregroundStyle(Theme.Colors.tertiaryLabel)
-                    paceWheel($averageSeconds, range: 0..<60, twoDigit: true)
+
+                HStack(alignment: .firstTextBaseline, spacing: 0) {
+                    paceDigitField(
+                        text: $minutesText,
+                        placeholder: "4",
+                        field: .minutes,
+                        maxLength: 2
+                    )
+                    Text(":")
+                        .font(.system(size: 54, weight: .bold, design: .rounded).monospacedDigit())
+                        .foregroundStyle(Theme.Colors.tertiaryLabel.opacity(0.6))
+                        .padding(.horizontal, 2)
+                    paceDigitField(
+                        text: $secondsText,
+                        placeholder: "00",
+                        field: .seconds,
+                        maxLength: 2,
+                        zeroPad: true
+                    )
                     Text("/km")
                         .font(.footnote.weight(.medium))
                         .foregroundStyle(Theme.Colors.secondaryLabel)
-                        .padding(.leading, 4)
+                        .padding(.leading, 6)
+                        .padding(.bottom, 6)
                 }
-                .frame(height: 56)
 
-                if let delta = currentDeltaSeconds {
-                    Text(deltaLabel(delta))
-                        .font(.caption2.weight(.medium).monospacedDigit())
-                        .foregroundStyle(deltaColor(delta))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 3)
-                        .background(Capsule().fill(deltaColor(delta).opacity(0.12)))
-                }
+                deltaPill
             }
+            .padding(.vertical, 4)
 
             // Quick-set chips
             HStack(spacing: 6) {
                 quickChip(label: "−6s", delta: -6)
                 quickChip(label: "−3s", delta: -3)
-                quickChip(label: "On target", delta: 0)
+                quickChip(label: "On", delta: 0)
                 quickChip(label: "+3s", delta: 3)
                 quickChip(label: "+6s", delta: 6)
             }
@@ -138,8 +160,8 @@ struct IntervalPerformanceContent: View {
                 withAnimation(.easeInOut(duration: 0.2)) { showPerRep.toggle() }
             } label: {
                 HStack(spacing: 4) {
-                    Image(systemName: showPerRep ? "chevron.up.circle.fill" : "chevron.down.circle.fill")
-                        .font(.caption)
+                    Image(systemName: showPerRep ? "chevron.up" : "chevron.down")
+                        .font(.caption2.weight(.bold))
                     Text(showPerRep ? "Hide per-rep paces" : "Enter per-rep paces (optional)")
                         .font(.caption.weight(.medium))
                 }
@@ -157,37 +179,101 @@ struct IntervalPerformanceContent: View {
             }
         }
         .padding(Theme.Spacing.md)
-        .futuristicGlassStyle(phaseTint: Theme.Colors.warmCoral)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                .fill(LinearGradient(
+                    colors: [
+                        Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.14 : 0.06),
+                        Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.04 : 0.02)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                .stroke(Theme.Colors.warmCoral.opacity(0.22), lineWidth: 0.75)
+        )
     }
 
-    private func paceWheel(_ binding: Binding<Int>, range: Range<Int>, twoDigit: Bool = false) -> some View {
-        Picker("", selection: binding) {
-            ForEach(range, id: \.self) { v in
-                Text(twoDigit ? String(format: "%02d", v) : "\(v)")
-                    .font(.largeTitle.bold().monospacedDigit())
-                    .tag(v)
+    /// Tap-to-edit digit field with big monospaced digits. Focusing brings
+    /// up the numeric keypad; losing focus zero-pads seconds so "3" → "03"
+    /// automatically.
+    private func paceDigitField(
+        text: Binding<String>,
+        placeholder: String,
+        field: PaceField,
+        maxLength: Int,
+        zeroPad: Bool = false
+    ) -> some View {
+        TextField(placeholder, text: text)
+            .keyboardType(.numberPad)
+            .font(.system(size: 54, weight: .bold, design: .rounded).monospacedDigit())
+            .foregroundStyle(Theme.Colors.label)
+            .multilineTextAlignment(.center)
+            .frame(width: 84)
+            .focused($focusedField, equals: field)
+            .onChange(of: text.wrappedValue) { _, newValue in
+                // Keep to digits and clamp length.
+                let filtered = String(newValue.filter(\.isNumber).prefix(maxLength))
+                if filtered != newValue { text.wrappedValue = filtered }
             }
+            .onChange(of: focusedField) { _, newValue in
+                if newValue != field && zeroPad {
+                    if text.wrappedValue.count == 1 {
+                        text.wrappedValue = "0" + text.wrappedValue
+                    }
+                }
+            }
+            .padding(.vertical, 4)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(focusedField == field
+                          ? Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.15 : 0.08)
+                          : Color.clear)
+            )
+            .animation(.easeOut(duration: 0.15), value: focusedField)
+    }
+
+    @ViewBuilder
+    private var deltaPill: some View {
+        let delta = currentDeltaSeconds
+        HStack(spacing: 4) {
+            Image(systemName: delta == 0 ? "checkmark.circle.fill"
+                              : (delta > 0 ? "arrow.down.right" : "arrow.up.right"))
+                .font(.caption2.weight(.bold))
+            Text(deltaLabel(delta))
+                .font(.caption.weight(.semibold).monospacedDigit())
         }
-        .pickerStyle(.wheel)
-        .labelsHidden()
-        .frame(width: 70, height: 56)
-        .clipped()
+        .foregroundStyle(deltaColor(delta))
+        .padding(.horizontal, 10)
+        .padding(.vertical, 4)
+        .background(
+            Capsule().fill(deltaColor(delta).opacity(colorScheme == .dark ? 0.18 : 0.12))
+        )
     }
 
     private func quickChip(label: String, delta: Int) -> some View {
-        let newPace = targetPacePerKm + Double(delta)
+        let isActive = isChipActive(delta)
         return Button {
-            setPace(seconds: newPace)
+            setPaceFromDelta(delta)
         } label: {
             Text(label)
                 .font(.caption.weight(.semibold).monospacedDigit())
-                .foregroundStyle(isChipActive(delta) ? .white : Theme.Colors.label)
+                .foregroundStyle(isActive ? .white : Theme.Colors.label)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 7)
+                .padding(.vertical, 8)
                 .background(
-                    Capsule().fill(isChipActive(delta)
-                        ? Theme.Colors.warmCoral
-                        : (colorScheme == .dark ? Color.white.opacity(0.06) : Color.white.opacity(0.7)))
+                    Capsule().fill(isActive
+                        ? AnyShapeStyle(LinearGradient(
+                            colors: [Theme.Colors.warmCoral, Theme.Colors.warmCoral.opacity(0.85)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ))
+                        : AnyShapeStyle(colorScheme == .dark
+                                        ? Color.white.opacity(0.08)
+                                        : Color.primary.opacity(0.05))
+                    )
                 )
         }
         .buttonStyle(.plain)
@@ -196,69 +282,139 @@ struct IntervalPerformanceContent: View {
     // MARK: - Completion
 
     private var completionCard: some View {
-        HStack(spacing: Theme.Spacing.md) {
-            Image(systemName: completedAll ? "checkmark.seal.fill" : "seal")
-                .font(.title2)
-                .foregroundStyle(completedAll ? Theme.Colors.success : Theme.Colors.tertiaryLabel)
-                .frame(width: 32)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(completedAll ? "All \(prescribedRepCount) reps done" : "Bailed on some reps")
-                    .font(.subheadline.weight(.semibold))
-                Text(completedAll
-                     ? "Tap if you dropped reps"
-                     : "Incomplete reps slow the target more than pace drift alone")
-                    .font(.caption2)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
+        VStack(spacing: 10) {
+            HStack(spacing: Theme.Spacing.md) {
+                Image(systemName: completedAll ? "checkmark.seal.fill" : "seal")
+                    .font(.title2)
+                    .foregroundStyle(completedAll ? Theme.Colors.success : Theme.Colors.tertiaryLabel)
+                    .scaleEffect(sealPulse ? 1.2 : 1.0)
+                    .animation(.spring(response: 0.3, dampingFraction: 0.55), value: sealPulse)
+                    .frame(width: 28)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(completedAll ? "All \(prescribedRepCount) reps done" : "Bailed on some reps")
+                        .font(.subheadline.weight(.semibold))
+                    Text(completedAll
+                         ? "Tap if you dropped reps"
+                         : "Incomplete reps is a stronger slow-down signal than pace drift")
+                        .font(.caption2)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
+                Spacer()
+                Toggle("", isOn: $completedAll)
+                    .labelsHidden()
+                    .tint(Theme.Colors.success)
+                    .onChange(of: completedAll) { _, _ in
+                        sealPulse = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { sealPulse = false }
+                    }
             }
-            Spacer()
-            Toggle("", isOn: $completedAll)
-                .labelsHidden()
-                .tint(Theme.Colors.success)
+
+            // Visual strip — one pill per rep, fills when completedAll=true,
+            // shows a subtle unfilled state when not. Gives the athlete a
+            // tactile sense of the count.
+            HStack(spacing: 4) {
+                ForEach(0..<prescribedRepCount, id: \.self) { _ in
+                    Capsule()
+                        .fill(completedAll
+                              ? AnyShapeStyle(LinearGradient(
+                                  colors: [Theme.Colors.success, Theme.Colors.success.opacity(0.75)],
+                                  startPoint: .leading, endPoint: .trailing))
+                              : AnyShapeStyle(Theme.Colors.tertiaryLabel.opacity(0.2)))
+                        .frame(height: 4)
+                }
+            }
+            .animation(.easeOut(duration: 0.25), value: completedAll)
         }
         .padding(Theme.Spacing.md)
-        .futuristicGlassStyle()
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                .fill(colorScheme == .dark ? Color.white.opacity(0.04) : Color.primary.opacity(0.03))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                .stroke(Theme.Colors.tertiaryLabel.opacity(0.12), lineWidth: 0.5)
+        )
     }
 
     // MARK: - Effort
 
     private var effortCard: some View {
         VStack(spacing: Theme.Spacing.sm) {
-            HStack {
-                Label("Effort", systemImage: "flame.fill")
+            HStack(spacing: 6) {
+                Image(systemName: "flame.fill")
+                    .font(.caption)
+                    .foregroundStyle(rpeGradientColor(rpe))
+                Text("Effort")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Theme.Colors.label)
                 Spacer()
-                Text("\(rpe)/10")
-                    .font(.subheadline.bold().monospacedDigit())
-                    .foregroundStyle(rpeColor(rpe))
+                HStack(spacing: 2) {
+                    Text("\(rpe)")
+                        .font(.title3.weight(.bold).monospacedDigit())
+                        .foregroundStyle(rpeGradientColor(rpe))
+                    Text("/10")
+                        .font(.caption.weight(.medium).monospacedDigit())
+                        .foregroundStyle(Theme.Colors.tertiaryLabel)
+                }
             }
+
             HStack(spacing: 5) {
                 ForEach(1...10, id: \.self) { value in
                     Button {
                         withAnimation(.easeOut(duration: 0.12)) { rpe = value }
                     } label: {
-                        Circle()
-                            .fill(value <= rpe ? rpeColor(value) : (colorScheme == .dark ? Color.white.opacity(0.08) : Color.primary.opacity(0.08)))
-                            .frame(height: 22)
-                            .overlay(
+                        ZStack {
+                            // Outer glow for the active dot only
+                            if value == rpe {
                                 Circle()
-                                    .stroke(value == rpe ? rpeColor(value).opacity(0.5) : Color.clear, lineWidth: 3)
-                                    .scaleEffect(1.4)
-                            )
+                                    .fill(rpeGradientColor(value).opacity(0.28))
+                                    .frame(width: 34, height: 34)
+                                    .blur(radius: 5)
+                            }
+                            Circle()
+                                .fill(value <= rpe
+                                      ? AnyShapeStyle(LinearGradient(
+                                          colors: [
+                                              rpeGradientColor(value),
+                                              rpeGradientColor(value).opacity(0.75)
+                                          ],
+                                          startPoint: .topLeading,
+                                          endPoint: .bottomTrailing))
+                                      : AnyShapeStyle(colorScheme == .dark
+                                                      ? Color.white.opacity(0.06)
+                                                      : Color.primary.opacity(0.06)))
+                                .frame(width: value == rpe ? 26 : 22, height: value == rpe ? 26 : 22)
+                                .overlay(
+                                    Circle()
+                                        .stroke(Color.white.opacity(value == rpe ? 0.6 : 0), lineWidth: 1.5)
+                                )
+                        }
+                        .frame(maxWidth: .infinity, minHeight: 34)
                     }
                     .buttonStyle(.plain)
                 }
             }
+
             HStack {
                 Text("Easy").font(.caption2).foregroundStyle(Theme.Colors.tertiaryLabel)
                 Spacer()
-                Text(rpeDescription(rpe)).font(.caption2.weight(.medium)).foregroundStyle(Theme.Colors.secondaryLabel)
+                Text(rpeDescription(rpe))
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(rpeGradientColor(rpe))
+                    .animation(.easeOut(duration: 0.15), value: rpe)
                 Spacer()
                 Text("Max").font(.caption2).foregroundStyle(Theme.Colors.tertiaryLabel)
             }
         }
         .padding(Theme.Spacing.md)
-        .futuristicGlassStyle()
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                .fill(colorScheme == .dark ? Color.white.opacity(0.04) : Color.primary.opacity(0.03))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                .stroke(Theme.Colors.tertiaryLabel.opacity(0.12), lineWidth: 0.5)
+        )
     }
 
     // MARK: - Notes
@@ -269,7 +425,10 @@ struct IntervalPerformanceContent: View {
                 withAnimation(.easeInOut(duration: 0.2)) { showNotes.toggle() }
             } label: {
                 HStack {
-                    Label("Notes", systemImage: "note.text")
+                    Image(systemName: "note.text")
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                    Text("Notes")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(Theme.Colors.label)
                     Spacer()
@@ -288,7 +447,14 @@ struct IntervalPerformanceContent: View {
             }
         }
         .padding(Theme.Spacing.md)
-        .futuristicGlassStyle()
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                .fill(colorScheme == .dark ? Color.white.opacity(0.04) : Color.primary.opacity(0.03))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                .stroke(Theme.Colors.tertiaryLabel.opacity(0.12), lineWidth: 0.5)
+        )
     }
 
     // MARK: - Save button
@@ -344,49 +510,58 @@ struct IntervalPerformanceContent: View {
     // MARK: - Logic helpers
 
     private var currentAveragePaceSeconds: Double {
-        Double(averageMinutes * 60 + averageSeconds)
+        let mins = Int(minutesText) ?? 0
+        let secs = Int(secondsText) ?? 0
+        return Double(mins * 60 + secs)
     }
 
-    private var currentDeltaSeconds: Int? {
-        let d = Int((currentAveragePaceSeconds - targetPacePerKm).rounded())
-        return d == 0 ? nil : d
+    private var currentDeltaSeconds: Int {
+        Int((currentAveragePaceSeconds - targetPacePerKm).rounded())
     }
 
     private func isChipActive(_ delta: Int) -> Bool {
-        let current = Int((currentAveragePaceSeconds - targetPacePerKm).rounded())
-        return current == delta
+        currentDeltaSeconds == delta
     }
 
     private func deltaLabel(_ delta: Int) -> String {
+        if delta == 0 { return "On target" }
         let sign = delta > 0 ? "+" : ""
         return "\(sign)\(delta)s vs target"
     }
 
     private func deltaColor(_ delta: Int) -> Color {
+        if delta == 0 { return Theme.Colors.success }
         if abs(delta) <= 3 { return Theme.Colors.success }
         if delta < 0 { return Theme.Colors.accentColor }
         return Theme.Colors.warning
     }
 
-    private func setPace(seconds: Double) {
-        let total = Int(seconds.rounded())
-        averageMinutes = max(2, min(11, total / 60))
-        averageSeconds = max(0, min(59, total % 60))
+    private func setPaceFromDelta(_ delta: Int) {
+        let total = Int((targetPacePerKm + Double(delta)).rounded())
+        let mins = max(0, total / 60)
+        let secs = max(0, min(59, total % 60))
+        minutesText = "\(mins)"
+        secondsText = String(format: "%02d", secs)
     }
 
-    private func rpeColor(_ value: Int) -> Color {
-        switch value {
-        case 1...4: return Theme.Colors.success
-        case 5...6: return Theme.Colors.warning
-        case 7...8: return .orange
-        default:    return Theme.Colors.danger
-        }
+    /// Interpolates hue along green (120°) → red (0°) so each of the 10
+    /// dots gets its own distinct shade. Avoids the "4 greens + 4 oranges
+    /// + 2 reds" flatness of a switch-based approach.
+    private func rpeGradientColor(_ value: Int) -> Color {
+        let clamped = max(1, min(10, value))
+        let t = Double(clamped - 1) / 9.0                 // 0.0 → 1.0
+        let hue = (120.0 - t * 120.0) / 360.0             // green → red
+        let saturation: Double = 0.78
+        let brightness: Double = 0.82 - t * 0.12          // slightly deepen toward red
+        return Color(hue: hue, saturation: saturation, brightness: brightness)
     }
 
     private func rpeDescription(_ value: Int) -> String {
         switch value {
-        case 1...3: return "Very easy"
-        case 4...5: return "Moderate"
+        case 1...2: return "Very easy"
+        case 3:     return "Easy"
+        case 4:     return "Moderate"
+        case 5:     return "Steady"
         case 6:     return "Controlled"
         case 7:     return "Hard"
         case 8:     return "Very hard"
@@ -413,7 +588,7 @@ struct IntervalPerformanceContent: View {
             if !notes.isEmpty { showNotes = true }
 
             let sourcePace = existing.meanActualPacePerKm ?? existing.targetPacePerKmAtTime
-            setPace(seconds: sourcePace)
+            setPaceDirect(seconds: sourcePace)
 
             if !existing.actualPacesPerKm.isEmpty {
                 showPerRep = true
@@ -422,8 +597,14 @@ struct IntervalPerformanceContent: View {
                 }
             }
         } else {
-            setPace(seconds: targetPacePerKm)
+            setPaceDirect(seconds: targetPacePerKm)
         }
+    }
+
+    private func setPaceDirect(seconds: Double) {
+        let total = Int(seconds.rounded())
+        minutesText = "\(max(0, total / 60))"
+        secondsText = String(format: "%02d", max(0, min(59, total % 60)))
     }
 
     private func submit() {
