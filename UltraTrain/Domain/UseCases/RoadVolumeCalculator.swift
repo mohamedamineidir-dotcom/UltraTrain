@@ -385,8 +385,20 @@ enum RoadVolumeCalculator {
         let unscaledWeek1TotalKm = (unscaledWeek1Seconds + unscaledWeek1LongRun) / avgPaceSecPerKm
         guard unscaledWeek1TotalKm > 0 else { return 1.0 }
 
+        // RR-12: Floor is an absolute sanity minimum (10 km/wk), not a
+        // fraction of the tier-default Week 1. The previous floor of
+        // unscaledWeek1TotalKm × 0.5 overrode the athlete's declared value
+        // whenever their base was below ~60% of tier default — which is
+        // exactly the case we most need to respect (low-base athletes are
+        // the ones at injury risk from a plan that starts too high).
+        //
+        // For a beginner 10K athlete declaring 15 km/wk with tier-default
+        // Week 1 ≈ 40 km, the old floor of 20 km forced Week 1 to 33% above
+        // declared. 10 km/wk is the floor below which a structured plan isn't
+        // really a plan — plan generation itself should warn the athlete to
+        // build base first, but we still produce something.
         let targetWeek1Km = athlete.weeklyVolumeKm * 0.85
-        let floor = unscaledWeek1TotalKm * 0.5
+        let floor: Double = 10  // km/wk absolute minimum
         let ceiling = peakKmCeiling * 0.80
         let clampedTarget = max(floor, min(ceiling, targetWeek1Km))
 
