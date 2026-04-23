@@ -314,6 +314,20 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         // 7. Phase counters
         let phaseCounters = computeWeekNumbersInPhase(skeletons: skeletons)
 
+        // RR-18: auto-insert a tune-up time-trial in a coach-appropriate
+        // week when the athlete has no B-race nearby. Pfitzinger prescribes
+        // a tune-up race at week -5 for marathon, week -3 for HM. Our
+        // insertion targets the week BEFORE the taper starts (less 1 for
+        // HM, less 2 for marathon), skipped entirely for 10K (too short).
+        // If a B-race override already falls within ±1 week of the target,
+        // we skip auto-insertion — athlete already has a sharpening race.
+        let tuneUpWeekNumber = computeTuneUpWeekNumber(
+            skeletons: skeletons,
+            taperProfile: taperProfile,
+            discipline: discipline,
+            existingOverrides: overrides
+        )
+
         // 8. Generate sessions for each week
         var allWorkouts: [IntervalWorkout] = []
         var allStrengthWorkouts: [StrengthWorkout] = []
@@ -450,10 +464,30 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 }
             }
 
+            var sessionsAfterSub = sessions
+
+            // RR-18: on the tune-up week, replace the intervals session with
+            // a time-trial description. Clear the linked interval workout so
+            // ActiveRunView treats it as a free-form GPS run driven by the
+            // coach-advice / description text. Skip when recovery or taper
+            // week (we shouldn't force a TT on a lighter week).
+            if let tuneUpWeekNumber,
+               skeleton.weekNumber == tuneUpWeekNumber,
+               !skeleton.isRecoveryWeek,
+               skeleton.phase != .taper,
+               override == nil,
+               let ttIdx = sessionsAfterSub.firstIndex(where: { $0.type == .intervals }) {
+                let ttDesc = tuneUpTimeTrialDescription(discipline: discipline)
+                sessionsAfterSub[ttIdx].description = ttDesc
+                sessionsAfterSub[ttIdx].intensity = .maxEffort
+                sessionsAfterSub[ttIdx].intervalWorkoutId = nil
+                sessionsAfterSub[ttIdx].coachAdvice = tuneUpTimeTrialCoachAdvice(discipline: discipline)
+            }
+
             // RR-5: Add S&C sessions for athletes who opted in. Uses the same
             // StrengthSessionGenerator the trail pipeline uses; road-specific
             // emphasis is inherent to the generator's exercise selection.
-            var finalSessions = sessions
+            var finalSessions = sessionsAfterSub
             if wantsStrength {
                 let strengthConfig = StrengthSessionGenerator.Config(
                     experience: athlete.experienceLevel,
@@ -566,6 +600,65 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             let current = counters[phase, default: 0]
             counters[phase] = current + 1
             return current
+        }
+    }
+
+    // MARK: - RR-18: Tune-up Time Trial
+
+    /// Returns the weekNumber where a tune-up TT should be auto-inserted, or
+    /// nil if we shouldn't insert one (10K prep, or an existing B-race covers
+    /// the window). The target week is shortly before the taper starts:
+    /// marathon -2 weeks before taper, HM -1 week before.
+    private func computeTuneUpWeekNumber(
+        skeletons: [WeekSkeletonBuilder.WeekSkeleton],
+        taperProfile: TaperProfile,
+        discipline: RoadRaceDiscipline,
+        existingOverrides: [IntermediateRaceHandler.RaceWeekOverride]
+    ) -> Int? {
+        let offsetBeforeTaper: Int
+        switch discipline {
+        case .roadMarathon: offsetBeforeTaper = 2
+        case .roadHalf:     offsetBeforeTaper = 1
+        case .road10K:      return nil // Too short to warrant an auto TT
+        }
+
+        let totalWeeks = skeletons.count
+        let taperStart = totalWeeks - taperProfile.totalTaperWeeks
+        let targetIndex = taperStart - 1 - offsetBeforeTaper
+        guard targetIndex >= 0, targetIndex < skeletons.count else { return nil }
+
+        let target = skeletons[targetIndex]
+
+        // Don't force a TT on a recovery week or during taper.
+        guard !target.isRecoveryWeek, target.phase != .taper else { return nil }
+
+        // Skip if an existing B-race override lands within ±1 week of the target.
+        let targetWeekNumber = target.weekNumber
+        let conflict = existingOverrides.contains { override in
+            override.behavior.isRaceWeek && abs(override.weekNumber - targetWeekNumber) <= 1
+        }
+        return conflict ? nil : targetWeekNumber
+    }
+
+    private func tuneUpTimeTrialDescription(discipline: RoadRaceDiscipline) -> String {
+        switch discipline {
+        case .roadMarathon:
+            return "Tune-up 10K Time Trial — 20 min easy warm-up + 4-6 × 20s strides, then 10K all-out sustained effort (HMP-to-10K pace), then 15 min easy cool-down. Your biggest fitness check of the block — execute like a real race."
+        case .roadHalf:
+            return "Tune-up 5K Time Trial — 15 min easy warm-up + 4-6 × 20s strides, then 5K all-out sustained effort, then 10 min easy cool-down. Ideally on a track or flat route."
+        case .road10K:
+            return "Tune-up time trial."
+        }
+    }
+
+    private func tuneUpTimeTrialCoachAdvice(discipline: RoadRaceDiscipline) -> String {
+        switch discipline {
+        case .roadMarathon:
+            return "This is your race-pace calibration session. If you nail HMP effort comfortably, your target is achievable. If you struggle to hold pace past 7K, scale marathon target back by 1-2%."
+        case .roadHalf:
+            return "5K TT result × 2.11 (Riegel) gives your realistic half marathon target. Use this to validate your goal time."
+        case .road10K:
+            return ""
         }
     }
 }
