@@ -348,6 +348,18 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         }
         let isShortPrep = totalWeeks < shortPrepThreshold
 
+        // RR-22: hot-race flag. Triggered when the race has a forecasted
+        // weather snapshot with temperature >= 22 °C or humidity >= 65%.
+        // Drives a practical heat-acclimation advisory on peak/taper long
+        // runs + tempo sessions. Advisory only — no training-plan changes
+        // (we can't prescribe "run in 30 °C" to someone in a cold climate).
+        let hotRaceForecast: Bool
+        if let fc = targetRace.forecastedWeather {
+            hotRaceForecast = fc.temperatureCelsius >= 22 || fc.humidity >= 65
+        } else {
+            hotRaceForecast = false
+        }
+
         // 8. Generate sessions for each week
         var allWorkouts: [IntervalWorkout] = []
         var allStrengthWorkouts: [StrengthWorkout] = []
@@ -480,7 +492,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                         raceName: targetRace.name,
                         experience: athlete.experienceLevel,
                         isFirstTimer: isFirstTimer,
-                        isShortPrep: isShortPrep
+                        isShortPrep: isShortPrep,
+                        hotRaceForecast: hotRaceForecast
                     )
                     return session
                 }

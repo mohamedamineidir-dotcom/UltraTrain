@@ -18,7 +18,8 @@ enum RoadCoachAdviceGenerator {
         raceName: String? = nil,
         experience: ExperienceLevel = .intermediate,
         isFirstTimer: Bool = false,
-        isShortPrep: Bool = false
+        isShortPrep: Bool = false,
+        hotRaceForecast: Bool = false
     ) -> String? {
         if isRecoveryWeek {
             return recoveryWeekAdvice(type: type)
@@ -59,6 +60,17 @@ enum RoadCoachAdviceGenerator {
             advice = (advice ?? "") + " " + shortPrepAdvice(discipline: discipline)
         }
 
+        // RR-22: Hot-race advisory (heat + humidity). Pure coaching advice —
+        // no training-plan modification. Surfaced during peak + taper on
+        // long runs and tempo sessions, the contexts where the athlete is
+        // thinking about race-day execution. Advice is actionable regardless
+        // of the athlete's home climate: sauna, overdressing, hydration
+        // calibration, pre-cooling — things everyone can do.
+        if hotRaceForecast, phase == .peak || phase == .taper,
+           type == .longRun || type == .tempo {
+            advice = (advice ?? "") + " " + hotRaceAdvice()
+        }
+
         // RR-19 (was #9): Goal realism warning. Now applied in ALL phases
         // (the previous base/build-only gate hid the warning during peak,
         // exactly when the athlete sees race-specific work getting gated
@@ -80,6 +92,15 @@ enum RoadCoachAdviceGenerator {
         }
 
         return advice
+    }
+
+    /// RR-22: Hot-race advisory — practical heat-acclimation options the
+    /// athlete can do wherever they live. Research: passive heat exposure
+    /// (sauna, hot baths) produces ~50-70% of the acclimation adaptations
+    /// of active heat training (Scoon 2007, Zurawlew 2016). Heat acclimation
+    /// starts at 5-7 days but optimal benefit at 10-14 days.
+    private static func hotRaceAdvice() -> String {
+        return "Hot-race advisory: forecast suggests warm/humid race conditions. Practical acclimation you can do wherever you live: (1) sauna sessions 20-30 min at 60-80 °C, 3× per week starting 2 weeks out — passive heat exposure yields ~50-70% of active-heat training benefit; (2) overdress (extra layer) on easy runs during the final 10 days; (3) pre-cool with ice slurry or cold water 15 min before the race if available; (4) expect to pace 10-30 s/km slower than your cool-weather goal pace, and front-load hydration the week before."
     }
 
     /// RR-21: Short-prep advisory for compressed plans. Surfaced only during
