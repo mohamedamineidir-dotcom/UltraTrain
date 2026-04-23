@@ -56,12 +56,28 @@ enum IntermediateRaceHandler {
             ))
 
             if race.priority == .bRace {
-                if let recoveryWeek = skeletons.first(where: { $0.weekNumber == raceWeek.weekNumber + 1 }) {
-                    overrides.append(RaceWeekOverride(
-                        weekNumber: recoveryWeek.weekNumber,
-                        raceId: race.id,
-                        behavior: .postRaceRecovery
-                    ))
+                // RR-23: post-race recovery duration scales with race distance.
+                // Daniels' rule: ~1 easy day per 3 km of race distance.
+                //   10K / HM  → 1 recovery week
+                //   Marathon+ → 2 recovery weeks
+                //   50K+      → 3 recovery weeks
+                // Previously we always inserted exactly 1 recovery week
+                // regardless — a 42 km B-race got the same 7-day return-to-
+                // training as a 10K, insufficient by a factor of 2.
+                let recoveryWeekCount: Int
+                switch race.distanceKm {
+                case ..<30:    recoveryWeekCount = 1
+                case ..<50:    recoveryWeekCount = 2
+                default:       recoveryWeekCount = 3
+                }
+                for offset in 1...recoveryWeekCount {
+                    if let recoveryWeek = skeletons.first(where: { $0.weekNumber == raceWeek.weekNumber + offset }) {
+                        overrides.append(RaceWeekOverride(
+                            weekNumber: recoveryWeek.weekNumber,
+                            raceId: race.id,
+                            behavior: .postRaceRecovery
+                        ))
+                    }
                 }
             }
         }
