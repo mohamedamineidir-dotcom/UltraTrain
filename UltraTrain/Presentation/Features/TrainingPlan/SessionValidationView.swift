@@ -16,6 +16,19 @@ struct WeekProgress: Equatable, Sendable {
     let completedBefore: Int
     /// Display label for the phase context, e.g. "Peak · Week 7".
     let phaseLabel: String
+    /// The next running session in the week AFTER this one. Used to
+    /// surface a forward-looking "Next up" card on the validation page.
+    /// Nil when this is already the last session of the week.
+    let nextSessionPreview: NextSessionPreview?
+}
+
+/// Lightweight snapshot of the week's next run session.
+struct NextSessionPreview: Equatable, Sendable {
+    let type: SessionType
+    let date: Date
+    let durationSeconds: TimeInterval
+    let distanceKm: Double
+    let intensity: Intensity
 }
 
 struct SessionValidationView: View {
@@ -361,6 +374,10 @@ private struct ManualValidationPage: View {
                 completeButton
 
                 rationaleCard
+
+                if let next = weekProgress?.nextSessionPreview {
+                    nextUpCard(next)
+                }
 
                 if let progress = weekProgress {
                     weekProgressFooter(progress)
@@ -906,24 +923,90 @@ private struct ManualValidationPage: View {
     private var rationaleBody: String {
         switch session.type {
         case .intervals:
-            return "Short fast reps develop your VO2max and neuromuscular sharpness — the engine ceiling that caps how fast you can sustain anything. Stay crisp; the recovery between reps is work too."
+            return "Short fast reps push your VO2max ceiling. The recovery between reps is part of the work."
         case .tempo:
-            return "Tempo sessions build sustainable race pace. Comfortably hard, not all-out — this is the effort you'll ride on race day."
+            return "This is race-pace sustainability work. Comfortably hard, not all-out."
         case .longRun:
-            return "The long run builds the aerobic base everything else sits on. Time on feet matters more than speed — go easy, go long, trust the process."
+            return "Time on feet builds the aerobic base everything else sits on. Easy and long wins."
         case .backToBack:
-            return "Two long days stacked to teach the body to run on tired legs — the single best ultra-specific stimulus you can give yourself."
+            return "Two long days stacked trains your legs to run tired. Core ultra-specific stimulus."
         case .recovery:
-            return "Recovery is when the adaptation actually happens. Truly easy — if someone asked you a question you should be able to answer in full sentences."
+            return "Adaptation happens when you recover, not when you train. Keep it genuinely easy."
         case .verticalGain:
-            return "Vertical work builds climbing-specific strength. Let form dictate pace on the way up; power-hike the steep bits — that's the specificity."
+            return "Climbing-specific strength. Power-hike the steep stuff; that's the specificity."
         case .strengthConditioning:
-            return "Strength work keeps the chassis strong through heavy training. Fewer injuries, better running economy. Worth every minute."
+            return "Keeps the chassis strong through heavy weeks. Fewer injuries, better economy."
         case .race:
-            return "Show up, execute the plan, trust the training. The work is already done."
+            return "Execute the plan. Trust the training."
         default:
-            return "Every session in the plan has a purpose. Show up, stay consistent, trust the process."
+            return "Every session has a purpose. Stay consistent."
         }
+    }
+
+    // MARK: - Next up card
+
+    /// Forward-looking card showing the next run session in the same
+    /// week. Fills the remaining page space with context the athlete
+    /// earns by completing this one, and is deliberately distinct from
+    /// what the per-rep feedback page will ask (pace, RPE, completion,
+    /// notes) so it doesn't pre-empt that flow.
+    private func nextUpCard(_ next: NextSessionPreview) -> some View {
+        HStack(spacing: Theme.Spacing.md) {
+            ZStack {
+                Circle()
+                    .fill(next.intensity.color.opacity(colorScheme == .dark ? 0.28 : 0.14))
+                    .frame(width: 36, height: 36)
+                Image(systemName: next.type.icon)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(next.intensity.color)
+            }
+            VStack(alignment: .leading, spacing: 3) {
+                Text("NEXT UP")
+                    .font(.caption2.weight(.bold))
+                    .tracking(0.6)
+                    .foregroundStyle(Theme.Colors.tertiaryLabel)
+                HStack(spacing: 6) {
+                    Text(next.type.displayName)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Theme.Colors.label)
+                    Text("·").foregroundStyle(Theme.Colors.tertiaryLabel)
+                    Text(next.date.formatted(.dateTime.weekday(.wide).month(.abbreviated).day()))
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
+                Text(nextUpSummary(next))
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(Theme.Spacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .fill(colorScheme == .dark ? Color.white.opacity(0.04) : Color.primary.opacity(0.03))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .stroke(Theme.Colors.tertiaryLabel.opacity(0.12), lineWidth: 0.5)
+        )
+    }
+
+    private func nextUpSummary(_ next: NextSessionPreview) -> String {
+        var parts: [String] = []
+        if next.durationSeconds > 0 {
+            let total = Int(next.durationSeconds)
+            let h = total / 3600
+            let m = (total % 3600) / 60
+            parts.append(h > 0
+                         ? (m > 0 ? "\(h)h\(String(format: "%02d", m))" : "\(h)h")
+                         : "\(m) min")
+        }
+        if next.distanceKm > 0 {
+            parts.append(String(format: "%.1f km", next.distanceKm))
+        }
+        parts.append(next.intensity.displayName)
+        return parts.joined(separator: " · ")
     }
 
     // MARK: - Week progress footer

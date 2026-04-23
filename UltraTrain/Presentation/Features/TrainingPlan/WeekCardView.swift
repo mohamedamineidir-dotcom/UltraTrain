@@ -375,11 +375,25 @@ extension WeekCardView {
         let phaseLabel = week.isRecoveryWeek
             ? "\(week.phase.displayName) · recovery"
             : "\(week.phase.displayName) · Week \(week.weekNumber)"
+        // Next run in the same week after this one. Nil when current is
+        // last of the week — the "Next up" card hides in that case and
+        // the page simply shows more breathing room.
+        let nextSession = (idx + 1 < runs.count) ? runs[idx + 1] : nil
+        let nextPreview = nextSession.map {
+            NextSessionPreview(
+                type: $0.type,
+                date: $0.date,
+                durationSeconds: $0.plannedDuration,
+                distanceKm: $0.plannedDistanceKm,
+                intensity: $0.intensity
+            )
+        }
         return WeekProgress(
             currentSessionIndex: idx,
             totalSessions: runs.count,
             completedBefore: completedBefore,
-            phaseLabel: phaseLabel
+            phaseLabel: phaseLabel,
+            nextSessionPreview: nextPreview
         )
     }
 
