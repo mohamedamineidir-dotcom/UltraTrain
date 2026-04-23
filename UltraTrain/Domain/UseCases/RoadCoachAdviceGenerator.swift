@@ -16,7 +16,8 @@ enum RoadCoachAdviceGenerator {
         isRecoveryWeek: Bool,
         paceProfile: RoadPaceProfile?,
         raceName: String? = nil,
-        experience: ExperienceLevel = .intermediate
+        experience: ExperienceLevel = .intermediate,
+        isFirstTimer: Bool = false
     ) -> String? {
         if isRecoveryWeek {
             return recoveryWeekAdvice(type: type)
@@ -36,6 +37,15 @@ enum RoadCoachAdviceGenerator {
             advice = "Rest is where adaptation happens. Trust the process."
         default:
             break
+        }
+
+        // RR-20: First-timer conservative advice. Appended on long runs during
+        // peak + taper (the sessions closest in feel to race day), and never
+        // during base/build (athlete is still building; specificity comes later).
+        // Research: first-time marathoners most often fail in the final 10K
+        // from going out too hard — coaching emphasis = hold back, finish well.
+        if isFirstTimer, type == .longRun, phase == .peak || phase == .taper {
+            advice = (advice ?? "") + " " + firstTimerAdvice(discipline: discipline)
         }
 
         // RR-19 (was #9): Goal realism warning. Now applied in ALL phases
@@ -59,6 +69,20 @@ enum RoadCoachAdviceGenerator {
         }
 
         return advice
+    }
+
+    /// RR-20: First-timer coaching nudge for athletes with no prior PB at the
+    /// target race distance. Kept short and tactical — the athlete sees this
+    /// on long runs in peak + taper, when race-day execution is on their mind.
+    private static func firstTimerAdvice(discipline: RoadRaceDiscipline) -> String {
+        switch discipline {
+        case .roadMarathon:
+            return "First-timer note: prioritize finishing strong over hitting a specific time. First-time marathoners most often blow up in the final 10K from going out too hard — hold marathon pace even when it feels too easy in the first half. The fast target belongs to race #2."
+        case .roadHalf:
+            return "First-timer note: keep the first 15 km conservative — a common first-half-marathon mistake is starting at 10K effort and blowing up at 17 km. Save a little for the final 5 km."
+        case .road10K:
+            return "First-timer note: most first 10Ks go out too hard. Settle into goal pace by 2 km and save a surge for the final 2 km, not the first."
+        }
     }
 
     /// Formats a TimeInterval as "H:MM" or "M:SS" for coach advice messages.

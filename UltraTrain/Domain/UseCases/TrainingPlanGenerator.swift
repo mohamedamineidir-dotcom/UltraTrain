@@ -328,6 +328,14 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             existingOverrides: overrides
         )
 
+        // RR-20: first-timer flag — true when the athlete has no prior PB at
+        // the race distance. Drives tactical coach advice on peak/taper long
+        // runs ("hold back, finish strong, save the fast time for race #2").
+        let isFirstTimer = isFirstTimerAtDistance(
+            personalBests: athlete.personalBests,
+            discipline: discipline
+        )
+
         // 8. Generate sessions for each week
         var allWorkouts: [IntervalWorkout] = []
         var allStrengthWorkouts: [StrengthWorkout] = []
@@ -458,7 +466,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                         isRecoveryWeek: skeleton.isRecoveryWeek,
                         paceProfile: paceProfile,
                         raceName: targetRace.name,
-                        experience: athlete.experienceLevel
+                        experience: athlete.experienceLevel,
+                        isFirstTimer: isFirstTimer
                     )
                     return session
                 }
@@ -638,6 +647,22 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             override.behavior.isRaceWeek && abs(override.weekNumber - targetWeekNumber) <= 1
         }
         return conflict ? nil : targetWeekNumber
+    }
+
+    /// RR-20: first-timer check — true when the athlete has no recorded PB
+    /// at the discipline's distance. A PB with timeSeconds == 0 is treated
+    /// as no PB (placeholder entries from onboarding).
+    private func isFirstTimerAtDistance(
+        personalBests: [PersonalBest],
+        discipline: RoadRaceDiscipline
+    ) -> Bool {
+        let targetDistance: PersonalBestDistance
+        switch discipline {
+        case .road10K:      targetDistance = .tenK
+        case .roadHalf:     targetDistance = .halfMarathon
+        case .roadMarathon: targetDistance = .marathon
+        }
+        return !personalBests.contains { $0.distance == targetDistance && $0.timeSeconds > 0 }
     }
 
     private func tuneUpTimeTrialDescription(discipline: RoadRaceDiscipline) -> String {
