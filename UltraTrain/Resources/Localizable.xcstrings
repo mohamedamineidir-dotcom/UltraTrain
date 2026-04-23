@@ -67,6 +67,9 @@
         }
       }
     },
+    "/km" : {
+
+    },
     "#%lld" : {
       "localizations" : {
         "fr" : {
@@ -2590,6 +2593,9 @@
         }
       }
     },
+    "All reps within a few seconds of target." : {
+
+    },
     "All sessions completed this week!" : {
       "localizations" : {
         "fr" : {
@@ -3100,6 +3106,9 @@
           }
         }
       }
+    },
+    "Bailing on reps is a stronger signal than pace alone." : {
+
     },
     "Base" : {
       "localizations" : {
@@ -4129,6 +4138,9 @@
           }
         }
       }
+    },
+    "Completed all %lld reps" : {
+
     },
     "Completed Runs" : {
       "localizations" : {
@@ -5428,6 +5440,9 @@
           }
         }
       }
+    },
+    "e.g. 'felt flat from rep 3', 'windy'" : {
+
     },
     "e.g. 5x800m Repeats" : {
       "localizations" : {
@@ -7196,6 +7211,9 @@
     "How did it go?" : {
 
     },
+    "How did the reps go?" : {
+
+    },
     "How did the run go? Key learnings?" : {
       "localizations" : {
         "fr" : {
@@ -7207,6 +7225,9 @@
       }
     },
     "How do you want to validate?" : {
+
+    },
+    "How hard it felt matters as much as the number on the watch — we use both." : {
 
     },
     "How long is the longest uphill near you?" : {
@@ -7354,6 +7375,9 @@
 
     },
     "I don't have a race" : {
+
+    },
+    "I hit target consistently" : {
 
     },
     "I'm just getting started" : {
@@ -8327,6 +8351,9 @@
         }
       }
     },
+    "Logging actual paces helps us calibrate your next sessions. Skip if you didn't time your reps." : {
+
+    },
     "Long press for one and a half seconds to send emergency alert" : {
       "localizations" : {
         "fr" : {
@@ -8424,6 +8451,9 @@
       }
     },
     "m D+" : {
+
+    },
+    "m:ss" : {
 
     },
     "Macronutrients (optional)" : {
@@ -12167,6 +12197,9 @@
         }
       }
     },
+    "Rep %lld" : {
+
+    },
     "Repeat: %lldx" : {
       "localizations" : {
         "fr" : {
@@ -12531,6 +12564,9 @@
           }
         }
       }
+    },
+    "RPE (1 easy, 10 max)" : {
+
     },
     "RPE %lld" : {
       "extractionState" : "stale",

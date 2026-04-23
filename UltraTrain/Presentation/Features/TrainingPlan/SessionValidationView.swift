@@ -400,8 +400,10 @@ private struct ManualValidationPage: View {
             Text(label)
                 .font(.subheadline)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
 
-            Spacer()
+            Spacer(minLength: Theme.Spacing.sm)
 
             content()
         }

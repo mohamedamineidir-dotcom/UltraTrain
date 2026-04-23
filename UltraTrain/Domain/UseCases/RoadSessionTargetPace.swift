@@ -13,17 +13,32 @@ enum RoadSessionTargetPace {
 
     /// Returns the target pace in seconds/km, or nil when the session has no
     /// pace prescription (non-road, or non-intervals/non-tempo types).
+    ///
+    /// Threads the athlete's declared goal-time through so the computed
+    /// profile stays data-derived for athletes who have set a goal but no
+    /// PRs / VMA. Without this, the IR-1 feedback sheet would silently
+    /// never appear for those athletes.
     static func target(
         for session: TrainingSession,
         phase: TrainingPhase,
         athlete: Athlete,
-        raceDistanceKm: Double
+        race: Race
     ) -> Double? {
         guard session.type == .intervals || session.type == .tempo else { return nil }
 
+        let goalTime: TimeInterval?
+        switch race.goalType {
+        case .targetTime(let time):
+            goalTime = time
+        case .targetRanking:
+            goalTime = race.estimatedDuration(experience: athlete.experienceLevel) * 0.93
+        case .finish:
+            goalTime = nil
+        }
+
         let profile = RoadPaceCalculator.paceProfile(
-            goalTime: nil,
-            raceDistanceKm: raceDistanceKm,
+            goalTime: goalTime,
+            raceDistanceKm: race.distanceKm,
             personalBests: athlete.personalBests,
             vmaKmh: athlete.vmaKmh,
             experience: athlete.experienceLevel

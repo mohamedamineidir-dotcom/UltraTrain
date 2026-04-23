@@ -10,17 +10,20 @@ import os
 extension TrainingPlanViewModel {
 
     /// Whether this plan is for a road race — gates whether the per-rep
-    /// feedback sheet is offered at all. Derived from the A-race distance.
-    /// Trail / ultra intervals use a different feedback model (RPE + HR +
-    /// VMP rather than pace) and are handled in a separate feature.
+    /// feedback sheet is offered at all. Uses the A-race's raceType field
+    /// (aligned with TrainingPlanView+Sections) so manual and automatic
+    /// road detection agree. Trail / ultra intervals use a different
+    /// feedback model (RPE + HR + VMP rather than pace).
     var isRoadPlan: Bool {
-        guard let race = targetRace else { return false }
-        return race.distanceKm <= 45 && race.elevationGainM < 1000
+        targetRace?.raceType == .road
     }
 
-    /// Returns true when a given road session qualifies for per-rep feedback
-    /// capture: intervals or tempo, structured workout attached, not a rest
-    /// day. The sheet is only offered when this returns true.
+    /// Returns true when a given session qualifies for per-rep feedback:
+    /// intervals or tempo on a road plan. We deliberately do NOT require a
+    /// linked IntervalWorkout — some road tempo sessions don't attach one
+    /// (single-block tempos), but the athlete should still be able to
+    /// reflect on RPE + completion + average pace. rep count falls back to
+    /// 1 in those cases.
     func sessionQualifiesForIntervalFeedback(
         weekIndex: Int,
         sessionIndex: Int
@@ -30,15 +33,13 @@ extension TrainingPlanViewModel {
               weekIndex < plan.weeks.count,
               sessionIndex < plan.weeks[weekIndex].sessions.count else { return false }
         let session = plan.weeks[weekIndex].sessions[sessionIndex]
-        guard session.type == .intervals || session.type == .tempo else { return false }
-        guard session.intervalWorkoutId != nil else { return false }
-        return true
+        return session.type == .intervals || session.type == .tempo
     }
 
-    /// Target pace in sec/km for a given road session, using the athlete's
-    /// current fitness. Returns nil when the pace profile isn't data-derived
-    /// (athlete has no PRs / VMA / goal) — in that case the UI shouldn't
-    /// fabricate a per-km target.
+    /// Target pace in sec/km for a given road session. Feeds the athlete's
+    /// declared goal-time (when present) into the calculator so the profile
+    /// stays data-derived even for athletes without PRs/VMA. Returns nil
+    /// only when the athlete truly has no signal at all.
     func targetPacePerKm(weekIndex: Int, sessionIndex: Int) -> Double? {
         guard let plan, let athlete, let race = targetRace,
               weekIndex < plan.weeks.count,
@@ -49,20 +50,24 @@ extension TrainingPlanViewModel {
             for: session,
             phase: phase,
             athlete: athlete,
-            raceDistanceKm: race.distanceKm
+            race: race
         )
     }
 
-    /// Total prescribed work reps across a session's attached workout.
-    /// Returns 0 when no structured workout exists.
+    /// Total prescribed work reps. Uses the attached IntervalWorkout when
+    /// present, otherwise falls back to 1 so single-block tempo sessions
+    /// still get a feedback sheet (the athlete logs their average pace
+    /// for the one block).
     func prescribedRepCount(weekIndex: Int, sessionIndex: Int) -> Int {
         guard let plan,
               weekIndex < plan.weeks.count,
-              sessionIndex < plan.weeks[weekIndex].sessions.count else { return 0 }
+              sessionIndex < plan.weeks[weekIndex].sessions.count else { return 1 }
         let session = plan.weeks[weekIndex].sessions[sessionIndex]
-        guard let workoutId = session.intervalWorkoutId,
-              let workout = plan.workouts.first(where: { $0.id == workoutId }) else { return 0 }
-        return workout.intervalCount
+        if let workoutId = session.intervalWorkoutId,
+           let workout = plan.workouts.first(where: { $0.id == workoutId }) {
+            return max(1, workout.intervalCount)
+        }
+        return 1
     }
 
     /// Loads an existing feedback entry for a session (so re-opening the

@@ -373,7 +373,6 @@ extension WeekCardView {
     private func requestIntervalFeedbackIfEligible(for item: ContextSheetItem) {
         guard let provider = intervalFeedbackContextProvider else { return }
         guard item.session.type == .intervals || item.session.type == .tempo else { return }
-        guard item.session.intervalWorkoutId != nil else { return }
         Task { @MainActor in
             pendingIntervalFeedback = await provider(item.sessionIndex)
         }
@@ -520,7 +519,11 @@ extension WeekCardView {
             stravaActivitiesProvider: stravaActivitiesProvider,
             onLinkStravaActivity: onLinkStravaActivity != nil ? { activity in
                 onLinkStravaActivity?(sessionIndex, activity)
-            } : nil
+            } : nil,
+            intervalFeedbackContextProvider: intervalFeedbackContextProvider != nil ? {
+                await intervalFeedbackContextProvider?(sessionIndex)
+            } : nil,
+            onSaveIntervalFeedback: onSaveIntervalFeedback
         )
     }
 
