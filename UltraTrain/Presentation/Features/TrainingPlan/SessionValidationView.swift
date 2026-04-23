@@ -12,14 +12,20 @@ struct SessionValidationView: View {
     var recentRunsProvider: ((Date) async -> [CompletedRun])?
     var stravaActivitiesProvider: ((Date) async -> [StravaActivity])?
     var onLinkStravaActivity: ((StravaActivity) -> Void)?
+    /// Supplies the IR-1 per-rep feedback context. When this resolves to a
+    /// non-nil value for an intervals/tempo session, the manual stats page
+    /// chains into the feedback page *before* the completion animation.
+    var intervalFeedbackContextProvider: (() async -> IntervalFeedbackContext?)?
+    var onSaveIntervalFeedback: ((IntervalPerformanceFeedback) -> Void)?
 
     @State private var showCompletion = false
-    @State private var selectedMode: ValidationMode?
+    @State private var path: [ValidationStep] = []
+    @State private var fetchedFeedbackContext: IntervalFeedbackContext?
 
-    enum ValidationMode: Identifiable {
+    enum ValidationStep: Hashable {
         case manual
         case syncApp
-        var id: Self { self }
+        case intervalFeedback
     }
 
     init(
@@ -29,7 +35,9 @@ struct SessionValidationView: View {
         onLinkRun: @escaping (UUID) -> Void,
         recentRunsProvider: ((Date) async -> [CompletedRun])? = nil,
         stravaActivitiesProvider: ((Date) async -> [StravaActivity])? = nil,
-        onLinkStravaActivity: ((StravaActivity) -> Void)? = nil
+        onLinkStravaActivity: ((StravaActivity) -> Void)? = nil,
+        intervalFeedbackContextProvider: (() async -> IntervalFeedbackContext?)? = nil,
+        onSaveIntervalFeedback: ((IntervalPerformanceFeedback) -> Void)? = nil
     ) {
         self.session = session
         self.recentRuns = recentRuns
@@ -38,6 +46,16 @@ struct SessionValidationView: View {
         self.recentRunsProvider = recentRunsProvider
         self.stravaActivitiesProvider = stravaActivitiesProvider
         self.onLinkStravaActivity = onLinkStravaActivity
+        self.intervalFeedbackContextProvider = intervalFeedbackContextProvider
+        self.onSaveIntervalFeedback = onSaveIntervalFeedback
+    }
+
+    /// True when the per-rep feedback page should follow manual stats entry.
+    /// Intervals / tempo only, and only when the provider actually returned
+    /// a context (non-data-derived profiles silently skip).
+    private var shouldChainFeedback: Bool {
+        guard session.type == .intervals || session.type == .tempo else { return false }
+        return fetchedFeedbackContext != nil
     }
 
     var body: some View {
@@ -46,7 +64,7 @@ struct SessionValidationView: View {
                 dismiss()
             }
         } else {
-            NavigationStack {
+            NavigationStack(path: $path) {
                 choicePage
                     .navigationTitle("Validate Session")
                     .navigationBarTitleDisplayMode(.inline)
@@ -55,33 +73,68 @@ struct SessionValidationView: View {
                             Button("Cancel") { dismiss() }
                         }
                     }
-                    .navigationDestination(item: $selectedMode) { mode in
-                        switch mode {
-                        case .manual:
-                            ManualValidationPage(
-                                session: session,
-                                onComplete: { dist, dur, elev, feeling, rpe in
-                                    onComplete(dist, dur, elev, feeling, rpe)
-                                    withAnimation { showCompletion = true }
-                                }
-                            )
-                        case .syncApp:
-                            SyncAppPickerPage(
-                                session: session,
-                                recentRuns: recentRuns,
-                                recentRunsProvider: recentRunsProvider,
-                                stravaActivitiesProvider: stravaActivitiesProvider,
-                                onLinkRun: { runId in
-                                    onLinkRun(runId)
-                                    dismiss()
-                                },
-                                onLinkStravaActivity: { activity in
-                                    onLinkStravaActivity?(activity)
-                                    dismiss()
-                                }
-                            )
-                        }
+                    .navigationDestination(for: ValidationStep.self) { step in
+                        destinationView(for: step)
                     }
+            }
+            .task {
+                if let provider = intervalFeedbackContextProvider, fetchedFeedbackContext == nil {
+                    fetchedFeedbackContext = await provider()
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func destinationView(for step: ValidationStep) -> some View {
+        switch step {
+        case .manual:
+            ManualValidationPage(
+                session: session,
+                hideFeelingAndRPE: shouldChainFeedback,
+                onComplete: { dist, dur, elev, feeling, rpe in
+                    onComplete(dist, dur, elev, feeling, rpe)
+                    if shouldChainFeedback {
+                        path.append(.intervalFeedback)
+                    } else {
+                        withAnimation { showCompletion = true }
+                    }
+                }
+            )
+        case .syncApp:
+            SyncAppPickerPage(
+                session: session,
+                recentRuns: recentRuns,
+                recentRunsProvider: recentRunsProvider,
+                stravaActivitiesProvider: stravaActivitiesProvider,
+                onLinkRun: { runId in
+                    onLinkRun(runId)
+                    dismiss()
+                },
+                onLinkStravaActivity: { activity in
+                    onLinkStravaActivity?(activity)
+                    dismiss()
+                }
+            )
+        case .intervalFeedback:
+            if let ctx = fetchedFeedbackContext {
+                IntervalPerformanceContent(
+                    sessionId: ctx.sessionId,
+                    sessionLabel: ctx.sessionLabel,
+                    sessionType: ctx.sessionType,
+                    targetPacePerKm: ctx.targetPacePerKm,
+                    prescribedRepCount: ctx.prescribedRepCount,
+                    existingFeedback: ctx.existingFeedback,
+                    onSave: { feedback in
+                        onSaveIntervalFeedback?(feedback)
+                        withAnimation { showCompletion = true }
+                    },
+                    onSkip: {
+                        withAnimation { showCompletion = true }
+                    }
+                )
+            } else {
+                EmptyView()
             }
         }
     }
@@ -100,7 +153,7 @@ struct SessionValidationView: View {
 
                 // Manual entry
                 Button {
-                    selectedMode = .manual
+                    path.append(.manual)
                 } label: {
                     validationOptionCard(
                         icon: "pencil.and.list.clipboard",
@@ -113,7 +166,7 @@ struct SessionValidationView: View {
 
                 // Sync with app
                 Button {
-                    selectedMode = .syncApp
+                    path.append(.syncApp)
                 } label: {
                     validationOptionCard(
                         icon: "arrow.triangle.2.circlepath",
@@ -208,6 +261,11 @@ private struct ManualValidationPage: View {
     @Environment(\.unitPreference) private var units
     @Environment(\.colorScheme) private var colorScheme
     let session: TrainingSession
+    /// When true, the in-page Feeling + RPE sections are suppressed because
+    /// a follow-up per-rep feedback page will capture those signals (IR-1).
+    /// Only applied for intervals/tempo sessions that have a feedback
+    /// context — easy / long run / recovery sessions still ask here.
+    let hideFeelingAndRPE: Bool
     let onComplete: (Double?, TimeInterval?, Double?, PerceivedFeeling?, Int?) -> Void
 
     @State private var distanceText: String
@@ -218,8 +276,13 @@ private struct ManualValidationPage: View {
     @State private var feeling: PerceivedFeeling?
     @State private var rpe: Int?
 
-    init(session: TrainingSession, onComplete: @escaping (Double?, TimeInterval?, Double?, PerceivedFeeling?, Int?) -> Void) {
+    init(
+        session: TrainingSession,
+        hideFeelingAndRPE: Bool = false,
+        onComplete: @escaping (Double?, TimeInterval?, Double?, PerceivedFeeling?, Int?) -> Void
+    ) {
         self.session = session
+        self.hideFeelingAndRPE = hideFeelingAndRPE
         self.onComplete = onComplete
         let planned = session.plannedDuration
         _distanceText = State(initialValue: session.plannedDistanceKm > 0
@@ -237,23 +300,17 @@ private struct ManualValidationPage: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: Theme.Spacing.lg) {
-                // Planned target reminder
+            VStack(spacing: Theme.Spacing.md) {
                 plannedTargetCard
-
-                // Stats entry
                 statsSection
 
-                // Feeling
-                feelingSection
+                if !hideFeelingAndRPE {
+                    feelingSection
+                    rpeSection
+                }
 
-                // RPE
-                rpeSection
-
-                // Complete
                 completeButton
 
-                // Skip stats
                 Button {
                     onComplete(nil, nil, nil, nil, nil)
                 } label: {
@@ -261,9 +318,9 @@ private struct ManualValidationPage: View {
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.tertiaryLabel)
                 }
-                .padding(.bottom, Theme.Spacing.md)
+                .padding(.bottom, Theme.Spacing.sm)
             }
-            .padding()
+            .padding(Theme.Spacing.md)
         }
         .navigationTitle("Enter Stats")
         .navigationBarTitleDisplayMode(.inline)
@@ -328,13 +385,20 @@ private struct ManualValidationPage: View {
 
     // MARK: - Stats Entry
 
+    /// Fixed width reserved for the right-side control in every stats row.
+    /// Duration's 3 pickers + 2 colons need ≈ 148pt; we align distance and
+    /// elevation to match so all three rows land on the same trailing edge
+    /// and the cards visually balance.
+    private static let statsControlWidth: CGFloat = 148
+
     private var statsSection: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             sectionLabel("Your Actual Stats", icon: "pencil.line")
 
             if !isStrengthSession {
                 inputCard(label: "Distance", icon: "point.topleft.down.to.point.bottomright.curvepath", iconColor: Theme.Colors.primary) {
-                    HStack(spacing: 6) {
+                    HStack(spacing: 4) {
+                        Spacer(minLength: 0)
                         TextField("0.0", text: $distanceText)
                             .keyboardType(.decimalPad)
                             .font(.title3.bold().monospacedDigit())
@@ -343,23 +407,26 @@ private struct ManualValidationPage: View {
                         Text("km")
                             .font(.subheadline.weight(.medium))
                             .foregroundStyle(Theme.Colors.secondaryLabel)
+                            .frame(width: 38, alignment: .leading)
                     }
                 }
             }
 
             inputCard(label: "Duration", icon: "clock", iconColor: Theme.Colors.zone3) {
                 HStack(spacing: 2) {
+                    Spacer(minLength: 0)
                     durationPicker(value: $hours, label: "h", range: 0..<24)
-                    Text(":").font(.title3.bold()).foregroundStyle(Theme.Colors.tertiaryLabel)
+                    Text(":").font(.subheadline.bold()).foregroundStyle(Theme.Colors.tertiaryLabel)
                     durationPicker(value: $minutes, label: "m", range: 0..<60)
-                    Text(":").font(.title3.bold()).foregroundStyle(Theme.Colors.tertiaryLabel)
+                    Text(":").font(.subheadline.bold()).foregroundStyle(Theme.Colors.tertiaryLabel)
                     durationPicker(value: $seconds, label: "s", range: 0..<60)
                 }
             }
 
             if !isStrengthSession {
                 inputCard(label: "Elevation", icon: "mountain.2.fill", iconColor: Theme.Colors.success) {
-                    HStack(spacing: 6) {
+                    HStack(spacing: 4) {
+                        Spacer(minLength: 0)
                         TextField("0", text: $elevationText)
                             .keyboardType(.numberPad)
                             .font(.title3.bold().monospacedDigit())
@@ -368,11 +435,16 @@ private struct ManualValidationPage: View {
                         Text("m D+")
                             .font(.subheadline.weight(.medium))
                             .foregroundStyle(Theme.Colors.secondaryLabel)
+                            .frame(width: 38, alignment: .leading)
                     }
                 }
             }
         }
-        .futuristicGlassStyle()
+        .padding(Theme.Spacing.sm + 2)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .fill(colorScheme == .dark ? Color.white.opacity(0.04) : Color.primary.opacity(0.03))
+        )
     }
 
     private func sectionLabel(_ text: String, icon: String) -> some View {
@@ -381,8 +453,9 @@ private struct ManualValidationPage: View {
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.warmCoral)
             Text(text)
-                .font(.headline)
+                .font(.subheadline.weight(.semibold))
         }
+        .padding(.horizontal, Theme.Spacing.xs)
     }
 
     private func inputCard<Content: View>(
@@ -391,11 +464,11 @@ private struct ManualValidationPage: View {
         iconColor: Color,
         @ViewBuilder content: () -> Content
     ) -> some View {
-        HStack(spacing: Theme.Spacing.md) {
+        HStack(spacing: Theme.Spacing.sm) {
             Image(systemName: icon)
                 .font(.body)
                 .foregroundStyle(iconColor)
-                .frame(width: 28)
+                .frame(width: 24)
 
             Text(label)
                 .font(.subheadline)
@@ -406,12 +479,13 @@ private struct ManualValidationPage: View {
             Spacer(minLength: Theme.Spacing.sm)
 
             content()
+                .frame(width: Self.statsControlWidth, alignment: .trailing)
         }
-        .padding(.horizontal, Theme.Spacing.md)
-        .padding(.vertical, Theme.Spacing.sm + 2)
+        .padding(.horizontal, Theme.Spacing.sm + 2)
+        .padding(.vertical, Theme.Spacing.sm)
         .background(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
-                .fill(colorScheme == .dark ? Color.white.opacity(0.04) : Color.primary.opacity(0.03))
+                .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.6))
         )
     }
 
@@ -432,26 +506,26 @@ private struct ManualValidationPage: View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             sectionLabel("How Did It Feel?", icon: "face.smiling")
 
-            HStack(spacing: Theme.Spacing.sm) {
+            HStack(spacing: 6) {
                 ForEach(PerceivedFeeling.allCases, id: \.self) { f in
                     Button {
                         withAnimation(.easeInOut(duration: 0.15)) {
                             feeling = feeling == f ? nil : f
                         }
                     } label: {
-                        VStack(spacing: 6) {
+                        VStack(spacing: 4) {
                             Text(emoji(for: f))
-                                .font(.title2)
+                                .font(.title3)
                             Text(feelingLabel(for: f))
                                 .font(.system(size: 10, weight: .medium))
                         }
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, Theme.Spacing.sm)
+                        .padding(.vertical, Theme.Spacing.xs + 2)
                         .background(
                             RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
                                 .fill(feeling == f
                                     ? Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.2 : 0.1)
-                                    : (colorScheme == .dark ? Color.white.opacity(0.04) : Color.primary.opacity(0.03)))
+                                    : (colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.6)))
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
@@ -462,7 +536,11 @@ private struct ManualValidationPage: View {
                 }
             }
         }
-        .futuristicGlassStyle()
+        .padding(Theme.Spacing.sm + 2)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .fill(colorScheme == .dark ? Color.white.opacity(0.04) : Color.primary.opacity(0.03))
+        )
     }
 
     // MARK: - RPE
@@ -481,10 +559,10 @@ private struct ManualValidationPage: View {
                         Text("\(value)")
                             .font(.caption.bold().monospacedDigit())
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
+                            .padding(.vertical, 8)
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .fill(rpe == value ? rpeColor(value) : (colorScheme == .dark ? Color.white.opacity(0.04) : Color.primary.opacity(0.03)))
+                                    .fill(rpe == value ? rpeColor(value) : (colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.6)))
                             )
                             .foregroundStyle(rpe == value ? .white : Theme.Colors.label)
                     }
@@ -498,7 +576,11 @@ private struct ManualValidationPage: View {
                 Text("Maximum").font(.caption2).foregroundStyle(Theme.Colors.secondaryLabel)
             }
         }
-        .futuristicGlassStyle()
+        .padding(Theme.Spacing.sm + 2)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .fill(colorScheme == .dark ? Color.white.opacity(0.04) : Color.primary.opacity(0.03))
+        )
     }
 
     // MARK: - Complete Button
@@ -513,16 +595,17 @@ private struct ManualValidationPage: View {
             let elev = Double(elevationText)
             onComplete(dist, dur, elev, feeling, rpe)
         } label: {
-            Label("Complete Session", systemImage: "checkmark.circle.fill")
-                .font(.headline.bold())
+            Label(hideFeelingAndRPE ? "Continue" : "Complete Session", systemImage: "checkmark.circle.fill")
+                .font(.headline)
                 .frame(maxWidth: .infinity)
-                .frame(height: 56)
+                .frame(height: 48)
                 .foregroundStyle(.white)
                 .background(Theme.Gradients.warmCoralCTA)
-                .clipShape(RoundedRectangle(cornerRadius: 14))
-                .shadow(color: Theme.Colors.warmCoral.opacity(0.3), radius: 8, y: 4)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .shadow(color: Theme.Colors.warmCoral.opacity(0.25), radius: 6, y: 3)
         }
         .buttonStyle(.plain)
+        .padding(.top, Theme.Spacing.xs)
     }
 
     // MARK: - Helpers

@@ -38,7 +38,6 @@ struct WeekCardView: View {
     @State private var contextSwapItem: ContextSheetItem?
     @State private var validateItem: ContextSheetItem?
     @State private var validateRecentRuns: [CompletedRun] = []
-    @State private var pendingIntervalFeedback: IntervalFeedbackContext?
 
     init(
         week: TrainingWeek,
@@ -345,7 +344,6 @@ extension WeekCardView {
                     } else {
                         onValidateSession?(item.sessionIndex)
                     }
-                    requestIntervalFeedbackIfEligible(for: item)
                 },
                 onLinkRun: { runId in
                     onLinkSessionToRun?(item.sessionIndex, runId)
@@ -354,27 +352,12 @@ extension WeekCardView {
                 stravaActivitiesProvider: stravaActivitiesProvider,
                 onLinkStravaActivity: { activity in
                     onLinkStravaActivity?(item.sessionIndex, activity)
-                }
+                },
+                intervalFeedbackContextProvider: intervalFeedbackContextProvider != nil ? {
+                    await intervalFeedbackContextProvider?(item.sessionIndex)
+                } : nil,
+                onSaveIntervalFeedback: onSaveIntervalFeedback
             )
-        }
-        .sheet(item: $pendingIntervalFeedback) { context in
-            IntervalPerformanceSheet(
-                sessionId: context.sessionId,
-                sessionLabel: context.sessionLabel,
-                sessionType: context.sessionType,
-                targetPacePerKm: context.targetPacePerKm,
-                prescribedRepCount: context.prescribedRepCount,
-                existingFeedback: context.existingFeedback,
-                onSave: { feedback in onSaveIntervalFeedback?(feedback) }
-            )
-        }
-    }
-
-    private func requestIntervalFeedbackIfEligible(for item: ContextSheetItem) {
-        guard let provider = intervalFeedbackContextProvider else { return }
-        guard item.session.type == .intervals || item.session.type == .tempo else { return }
-        Task { @MainActor in
-            pendingIntervalFeedback = await provider(item.sessionIndex)
         }
     }
 

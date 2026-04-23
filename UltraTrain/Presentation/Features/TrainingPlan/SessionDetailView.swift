@@ -31,7 +31,6 @@ struct SessionDetailView: View {
     @State private var showRescheduleSheet = false
     @State private var showSwapSheet = false
     @State private var showValidateSheet = false
-    @State private var pendingIntervalFeedback: IntervalFeedbackContext?
 
     var body: some View {
         ScrollView {
@@ -118,32 +117,14 @@ struct SessionDetailView: View {
                     } else {
                         onValidate?()
                     }
-                    requestIntervalFeedbackIfEligible()
                 },
                 onLinkRun: { runId in onLinkRun?(runId) },
                 recentRunsProvider: recentRunsProvider,
                 stravaActivitiesProvider: stravaActivitiesProvider,
-                onLinkStravaActivity: onLinkStravaActivity
+                onLinkStravaActivity: onLinkStravaActivity,
+                intervalFeedbackContextProvider: intervalFeedbackContextProvider,
+                onSaveIntervalFeedback: onSaveIntervalFeedback
             )
-        }
-        .sheet(item: $pendingIntervalFeedback) { context in
-            IntervalPerformanceSheet(
-                sessionId: context.sessionId,
-                sessionLabel: context.sessionLabel,
-                sessionType: context.sessionType,
-                targetPacePerKm: context.targetPacePerKm,
-                prescribedRepCount: context.prescribedRepCount,
-                existingFeedback: context.existingFeedback,
-                onSave: { feedback in onSaveIntervalFeedback?(feedback) }
-            )
-        }
-    }
-
-    private func requestIntervalFeedbackIfEligible() {
-        guard let provider = intervalFeedbackContextProvider else { return }
-        guard session.type == .intervals || session.type == .tempo else { return }
-        Task { @MainActor in
-            pendingIntervalFeedback = await provider()
         }
     }
 
