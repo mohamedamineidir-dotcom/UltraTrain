@@ -492,21 +492,8 @@ private struct ManualValidationPage: View {
             .padding(.horizontal, Theme.Spacing.md)
             .padding(.vertical, Theme.Spacing.md)
         }
-        .background(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                .fill(LinearGradient(
-                    colors: [
-                        session.intensity.color.opacity(colorScheme == .dark ? 0.14 : 0.06),
-                        session.intensity.color.opacity(colorScheme == .dark ? 0.03 : 0.01)
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                .stroke(session.intensity.color.opacity(0.22), lineWidth: 0.75)
-        )
+        .background(tintedGlass(tint: session.intensity.color))
+        .overlay(tintedGlassBorder(tint: session.intensity.color))
     }
 
     /// Input row used inside the unified card. Minimal: icon + label +
@@ -646,6 +633,45 @@ private struct ManualValidationPage: View {
                 diffCapsule(text: "\(sign)\(Int(abs(diff))) m vs plan", ratio: ratio)
             }
         }
+    }
+
+    // MARK: - Tinted glass background
+
+    /// Builds a three-layer card background: a diagonal tint gradient
+    /// (gives each card its colour identity), a top-left white sheen
+    /// (the "glass" highlight that makes the page feel less flat), and
+    /// a hairline tinted border. Applied to every card on the page
+    /// with a different tint per card so the layout carries visual
+    /// variety without being flashy.
+    @ViewBuilder
+    private func tintedGlass(tint: Color, corner: CGFloat = Theme.CornerRadius.lg) -> some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: corner)
+                .fill(LinearGradient(
+                    colors: [
+                        tint.opacity(colorScheme == .dark ? 0.22 : 0.11),
+                        tint.opacity(colorScheme == .dark ? 0.05 : 0.02)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ))
+            RoundedRectangle(cornerRadius: corner)
+                .fill(LinearGradient(
+                    stops: [
+                        .init(color: Color.white.opacity(colorScheme == .dark ? 0.10 : 0.45), location: 0.0),
+                        .init(color: Color.white.opacity(colorScheme == .dark ? 0.02 : 0.10), location: 0.30),
+                        .init(color: Color.clear, location: 0.60)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ))
+                .allowsHitTesting(false)
+        }
+    }
+
+    private func tintedGlassBorder(tint: Color, corner: CGFloat = Theme.CornerRadius.lg) -> some View {
+        RoundedRectangle(cornerRadius: corner)
+            .stroke(tint.opacity(0.25), lineWidth: 0.75)
     }
 
     // MARK: - Formatting helpers
@@ -876,21 +902,8 @@ private struct ManualValidationPage: View {
         }
         .padding(Theme.Spacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                .fill(LinearGradient(
-                    colors: [
-                        Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.08 : 0.04),
-                        Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.02 : 0.01)
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                .stroke(Theme.Colors.warmCoral.opacity(0.15), lineWidth: 0.5)
-        )
+        .background(tintedGlass(tint: Theme.Colors.warmCoral, corner: Theme.CornerRadius.md))
+        .overlay(tintedGlassBorder(tint: Theme.Colors.warmCoral, corner: Theme.CornerRadius.md))
     }
 
     private var rationaleIcon: String {
@@ -982,14 +995,8 @@ private struct ManualValidationPage: View {
         }
         .padding(Theme.Spacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                .fill(colorScheme == .dark ? Color.white.opacity(0.04) : Color.primary.opacity(0.03))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                .stroke(Theme.Colors.tertiaryLabel.opacity(0.12), lineWidth: 0.5)
-        )
+        .background(tintedGlass(tint: next.intensity.color, corner: Theme.CornerRadius.md))
+        .overlay(tintedGlassBorder(tint: next.intensity.color, corner: Theme.CornerRadius.md))
     }
 
     private func nextUpSummary(_ next: NextSessionPreview) -> String {
@@ -1046,10 +1053,8 @@ private struct ManualValidationPage: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, Theme.Spacing.sm + 2)
         .padding(.horizontal, Theme.Spacing.md)
-        .background(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                .fill(colorScheme == .dark ? Color.white.opacity(0.04) : Color.primary.opacity(0.03))
-        )
+        .background(tintedGlass(tint: Theme.Colors.success, corner: Theme.CornerRadius.md))
+        .overlay(tintedGlassBorder(tint: Theme.Colors.success, corner: Theme.CornerRadius.md))
     }
 
     private enum DotState { case completed, current, upcoming }
