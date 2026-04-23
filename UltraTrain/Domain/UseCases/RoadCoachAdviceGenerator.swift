@@ -17,7 +17,8 @@ enum RoadCoachAdviceGenerator {
         paceProfile: RoadPaceProfile?,
         raceName: String? = nil,
         experience: ExperienceLevel = .intermediate,
-        isFirstTimer: Bool = false
+        isFirstTimer: Bool = false,
+        isShortPrep: Bool = false
     ) -> String? {
         if isRecoveryWeek {
             return recoveryWeekAdvice(type: type)
@@ -48,6 +49,16 @@ enum RoadCoachAdviceGenerator {
             advice = (advice ?? "") + " " + firstTimerAdvice(discipline: discipline)
         }
 
+        // RR-21: Short-prep warning. When the plan has fewer weeks than
+        // research-accepted minimums (marathon <12, HM <8, 10K <6), the
+        // base phase is truncated and aerobic fitness won't fully develop.
+        // Surfaced on long runs in base phase only — that's when the athlete
+        // can still reconsider their target or defer. After base, they've
+        // committed.
+        if isShortPrep, type == .longRun, phase == .base {
+            advice = (advice ?? "") + " " + shortPrepAdvice(discipline: discipline)
+        }
+
         // RR-19 (was #9): Goal realism warning. Now applied in ALL phases
         // (the previous base/build-only gate hid the warning during peak,
         // exactly when the athlete sees race-specific work getting gated
@@ -69,6 +80,20 @@ enum RoadCoachAdviceGenerator {
         }
 
         return advice
+    }
+
+    /// RR-21: Short-prep advisory for compressed plans. Surfaced only during
+    /// base phase — after that, the athlete has committed and piling on
+    /// warnings is unhelpful.
+    private static func shortPrepAdvice(discipline: RoadRaceDiscipline) -> String {
+        switch discipline {
+        case .roadMarathon:
+            return "Compressed prep alert: marathon builds typically run 16-18 weeks, with 8 weeks of aerobic base development alone. Your base is truncated, which caps how much aerobic engine you can build before race day. Strongly recommend a conservative finish goal (add 5-10% to your target) or deferring to a later race if the calendar allows."
+        case .roadHalf:
+            return "Compressed prep alert: HM prep benefits from at least 8 weeks for meaningful threshold development. Your plan is running shorter — consider a conservative finish goal, and trust your aerobic base rather than chasing speed."
+        case .road10K:
+            return "Compressed prep alert: 10K plans normally run 6+ weeks. Your base is short — prioritize finishing cleanly over hitting a hard target."
+        }
     }
 
     /// RR-20: First-timer coaching nudge for athletes with no prior PB at the

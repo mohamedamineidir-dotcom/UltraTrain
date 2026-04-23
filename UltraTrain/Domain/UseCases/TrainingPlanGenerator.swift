@@ -336,6 +336,18 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             discipline: discipline
         )
 
+        // RR-21: short-prep flag — true when the plan has fewer weeks than
+        // research-accepted minimums (marathon: 12, HM: 8, 10K: 6). Drives
+        // a coach-advice warning on base-phase long runs so the athlete can
+        // still reconsider the target or defer.
+        let shortPrepThreshold: Int
+        switch discipline {
+        case .road10K:      shortPrepThreshold = 6
+        case .roadHalf:     shortPrepThreshold = 8
+        case .roadMarathon: shortPrepThreshold = 12
+        }
+        let isShortPrep = totalWeeks < shortPrepThreshold
+
         // 8. Generate sessions for each week
         var allWorkouts: [IntervalWorkout] = []
         var allStrengthWorkouts: [StrengthWorkout] = []
@@ -467,7 +479,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                         paceProfile: paceProfile,
                         raceName: targetRace.name,
                         experience: athlete.experienceLevel,
-                        isFirstTimer: isFirstTimer
+                        isFirstTimer: isFirstTimer,
+                        isShortPrep: isShortPrep
                     )
                     return session
                 }
