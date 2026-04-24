@@ -363,6 +363,14 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             existingOverrides: overrides
         )
 
+        // #28: periodic fitness check-ins (2K TTs) inserted through
+        // base + build so the pace targets stay anchored to real
+        // fitness as the athlete improves. Skips the tune-up window.
+        let fitnessCheckInWeeks = PlanFitnessCheckIn.checkInWeekNumbers(
+            skeletons: skeletons,
+            tuneUpWeekNumber: tuneUpWeekNumber
+        )
+
         // RR-20: first-timer flag — true when the athlete has no prior PB at
         // the race distance. Drives tactical coach advice on peak/taper long
         // runs ("hold back, finish strong, save the fast time for race #2").
@@ -561,6 +569,21 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 sessionsAfterSub[ttIdx].intensity = .maxEffort
                 sessionsAfterSub[ttIdx].intervalWorkoutId = nil
                 sessionsAfterSub[ttIdx].coachAdvice = tuneUpTimeTrialCoachAdvice(discipline: discipline)
+            }
+
+            // #28: fitness check-in week — replace the week's intervals
+            // session with a 2K TT. Same treatment pattern as RR-18
+            // but shorter and more frequent, so paces don't drift
+            // stale through a long base/build block.
+            if fitnessCheckInWeeks.contains(skeleton.weekNumber),
+               override == nil,
+               let ttIdx = sessionsAfterSub.firstIndex(where: { $0.type == .intervals }) {
+                sessionsAfterSub[ttIdx].description = PlanFitnessCheckIn.description
+                sessionsAfterSub[ttIdx].intensity = .maxEffort
+                sessionsAfterSub[ttIdx].intervalWorkoutId = nil
+                sessionsAfterSub[ttIdx].coachAdvice = PlanFitnessCheckIn.coachAdvice
+                sessionsAfterSub[ttIdx].intervalFocus = PlanFitnessCheckIn.intervalFocusLabel()
+                sessionsAfterSub[ttIdx].isKeySession = true
             }
 
             // RR-5: Add S&C sessions for athletes who opted in. Uses the same
