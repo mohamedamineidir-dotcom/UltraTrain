@@ -96,6 +96,19 @@ struct SessionDetailView: View {
                             preRaceMealTiming: nutritionPreferences.preRaceMealTiming
                         )
                     }
+
+                    // Palate-timing strategy card. Only for ultra
+                    // distances (≥ 60 km) where flavour fatigue becomes
+                    // a real factor, and only when the athlete told us
+                    // in onboarding when their palate typically shifts.
+                    if session.type == .race,
+                       session.plannedDistanceKm >= 60,
+                       let palateTiming = nutritionPreferences.ultraPalateTiming {
+                        UltraAidStationCard(
+                            palateTiming: palateTiming,
+                            raceDistanceKm: session.plannedDistanceKm
+                        )
+                    }
                 }
 
                 actionsSection

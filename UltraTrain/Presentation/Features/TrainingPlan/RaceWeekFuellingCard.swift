@@ -61,8 +61,8 @@ struct RaceWeekFuellingCard: View {
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .fill(LinearGradient(
                     colors: [
-                        Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.22 : 0.12),
-                        Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.06 : 0.03)
+                        NutritionPalette.tint.opacity(colorScheme == .dark ? 0.22 : 0.12),
+                        NutritionPalette.tint.opacity(colorScheme == .dark ? 0.06 : 0.03)
                     ],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
@@ -82,7 +82,7 @@ struct RaceWeekFuellingCard: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                .stroke(Theme.Colors.warmCoral.opacity(0.28), lineWidth: 0.75)
+                .stroke(NutritionPalette.tint.opacity(0.28), lineWidth: 0.75)
         )
     }
 
@@ -90,11 +90,11 @@ struct RaceWeekFuellingCard: View {
         HStack(spacing: Theme.Spacing.sm) {
             Image(systemName: "fork.knife")
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(Theme.Colors.warmCoral)
+                .foregroundStyle(NutritionPalette.tint)
             Text("RACE WEEK FUELLING")
                 .font(.caption.weight(.bold))
                 .tracking(0.8)
-                .foregroundStyle(Theme.Colors.warmCoral)
+                .foregroundStyle(NutritionPalette.tint)
             Spacer()
             Text("\(Int(athleteWeightKg.rounded())) kg")
                 .font(.caption2.weight(.medium).monospacedDigit())
@@ -114,7 +114,7 @@ struct RaceWeekFuellingCard: View {
                 Spacer()
                 Text("\(phase.carbsGrams) g")
                     .font(.subheadline.weight(.bold).monospacedDigit())
-                    .foregroundStyle(Theme.Colors.warmCoral)
+                    .foregroundStyle(NutritionPalette.tint)
                 Text(String(format: "(%.1f g/kg)", phase.carbsPerKg))
                     .font(.caption2.monospacedDigit())
                     .foregroundStyle(Theme.Colors.tertiaryLabel)

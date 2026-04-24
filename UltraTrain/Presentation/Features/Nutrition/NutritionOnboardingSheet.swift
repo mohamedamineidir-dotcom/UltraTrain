@@ -1,23 +1,5 @@
 import SwiftUI
 
-/// Domain-specific colour palette for the nutrition onboarding.
-/// Uses a clean mint-to-teal green range — reads "nutrition / fresh /
-/// clean" rather than the app's warm-coral brand accent which sits
-/// better on training surfaces. Kept private so this doesn't leak
-/// into general theme decisions; it's a one-surface palette.
-private enum NutritionOnboardingTheme {
-    static let tint = Color(red: 0.18, green: 0.72, blue: 0.55)
-    static let deep = Color(red: 0.12, green: 0.54, blue: 0.40)
-    static let gradient = LinearGradient(
-        colors: [
-            Color(red: 0.22, green: 0.78, blue: 0.60),
-            Color(red: 0.14, green: 0.58, blue: 0.42)
-        ],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
-}
-
 /// Pre-plan nutrition onboarding sheet. Presented before "Generate Plan"
 /// on the Race Day tab.
 ///
@@ -213,7 +195,7 @@ struct NutritionOnboardingSheet: View {
                     .fill(Theme.Colors.tertiaryLabel.opacity(0.15))
                 Capsule()
                     .fill(LinearGradient(
-                        colors: [NutritionOnboardingTheme.tint, NutritionOnboardingTheme.tint.opacity(0.75)],
+                        colors: [NutritionPalette.tint, NutritionPalette.tint.opacity(0.75)],
                         startPoint: .leading, endPoint: .trailing
                     ))
                     .frame(width: geo.size.width * CGFloat(stepIndex + 1) / CGFloat(steps.count))
@@ -232,8 +214,8 @@ struct NutritionOnboardingSheet: View {
                 .font(.system(size: 30, weight: .semibold))
                 .foregroundStyle(.white)
                 .frame(width: 64, height: 64)
-                .background(Circle().fill(NutritionOnboardingTheme.gradient))
-                .shadow(color: NutritionOnboardingTheme.tint.opacity(0.3), radius: 8, y: 4)
+                .background(Circle().fill(NutritionPalette.gradient))
+                .shadow(color: NutritionPalette.tint.opacity(0.3), radius: 8, y: 4)
 
             Text(currentStep.title)
                 .font(.title2.bold())
@@ -445,7 +427,7 @@ struct NutritionOnboardingSheet: View {
                         .foregroundStyle(Theme.Colors.tertiaryLabel)
                 }
             }
-            .tint(NutritionOnboardingTheme.tint)
+            .tint(NutritionPalette.tint)
             .padding(Theme.Spacing.md)
             .background(tintedCard)
 
@@ -523,7 +505,7 @@ struct NutritionOnboardingSheet: View {
             .fill(colorScheme == .dark ? Color.white.opacity(0.06) : Color.white.opacity(0.7))
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                    .stroke(NutritionOnboardingTheme.tint.opacity(0.14), lineWidth: 0.75)
+                    .stroke(NutritionPalette.tint.opacity(0.14), lineWidth: 0.75)
             )
     }
 
@@ -559,9 +541,9 @@ struct NutritionOnboardingSheet: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, Theme.Spacing.sm + 2)
                 .foregroundStyle(.white)
-                .background(NutritionOnboardingTheme.gradient)
+                .background(NutritionPalette.gradient)
                 .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
-                .shadow(color: NutritionOnboardingTheme.tint.opacity(0.3), radius: 6, y: 3)
+                .shadow(color: NutritionPalette.tint.opacity(0.3), radius: 6, y: 3)
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier(isLastStep ? "nutrition.onboarding.generate" : "nutrition.onboarding.continue")
@@ -610,12 +592,12 @@ struct NutritionOnboardingSheet: View {
                     .background(
                         RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                             .fill(isEmpty
-                                  ? AnyShapeStyle(NutritionOnboardingTheme.gradient)
+                                  ? AnyShapeStyle(NutritionPalette.gradient)
                                   : AnyShapeStyle(colorScheme == .dark ? Color.white.opacity(0.06) : Color.white.opacity(0.7)))
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                            .stroke(NutritionOnboardingTheme.tint.opacity(isEmpty ? 0.0 : 0.14), lineWidth: 0.75)
+                            .stroke(NutritionPalette.tint.opacity(isEmpty ? 0.0 : 0.14), lineWidth: 0.75)
                     )
                 }
                 .buttonStyle(.plain)
@@ -650,13 +632,13 @@ private struct SelectableCard: View {
             HStack(alignment: .center, spacing: Theme.Spacing.md) {
                 Image(systemName: icon)
                     .font(.title3.weight(.semibold))
-                    .foregroundStyle(isSelected ? .white : NutritionOnboardingTheme.tint)
+                    .foregroundStyle(isSelected ? .white : NutritionPalette.tint)
                     .frame(width: 38, height: 38)
                     .background(
                         Circle().fill(
                             isSelected
-                                ? AnyShapeStyle(NutritionOnboardingTheme.gradient)
-                                : AnyShapeStyle(NutritionOnboardingTheme.tint.opacity(0.14))
+                                ? AnyShapeStyle(NutritionPalette.gradient)
+                                : AnyShapeStyle(NutritionPalette.tint.opacity(0.14))
                         )
                     )
                 VStack(alignment: .leading, spacing: 2) {
@@ -672,7 +654,7 @@ private struct SelectableCard: View {
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.title3)
-                        .foregroundStyle(NutritionOnboardingTheme.tint)
+                        .foregroundStyle(NutritionPalette.tint)
                 }
             }
             .padding(Theme.Spacing.md)
@@ -683,7 +665,7 @@ private struct SelectableCard: View {
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                     .stroke(
-                        isSelected ? NutritionOnboardingTheme.tint : Theme.Colors.tertiaryLabel.opacity(0.14),
+                        isSelected ? NutritionPalette.tint : Theme.Colors.tertiaryLabel.opacity(0.14),
                         lineWidth: isSelected ? 1.5 : 0.75
                     )
             )
@@ -723,7 +705,7 @@ private struct ChipsGrid<Item: Hashable>: View {
                     .background(
                         Capsule().fill(
                             selected
-                                ? AnyShapeStyle(NutritionOnboardingTheme.gradient)
+                                ? AnyShapeStyle(NutritionPalette.gradient)
                                 : AnyShapeStyle(colorScheme == .dark
                                                 ? Color.white.opacity(0.08)
                                                 : Color.white.opacity(0.7))
