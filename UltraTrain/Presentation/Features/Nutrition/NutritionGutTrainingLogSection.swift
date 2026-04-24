@@ -1,10 +1,9 @@
 import SwiftUI
 
-/// Lists the gut-training long runs linked to the current nutrition plan
-/// and lets the athlete log feedback on each one. Feedback accumulates into
-/// the refinement loop so the race-day plan evolves toward what the athlete's
-/// gut actually tolerates. Futuristic-glass treatment with the nutrition-
-/// domain green tint, consistent with the rest of the Race Day tab.
+/// Collapsed summary of the gut-training sessions linked to the current
+/// nutrition plan. Shows progress (logged / total), the next session, and
+/// opens a dedicated sheet with the full list. Shortens the race-day
+/// scroll so the plan itself is the hero of the Race Day tab.
 struct NutritionGutTrainingLogSection: View {
 
     let sessions: [TrainingSession]
@@ -13,32 +12,29 @@ struct NutritionGutTrainingLogSection: View {
     let onLogFeedback: (TrainingSession) -> Void
 
     @Environment(\.colorScheme) private var colorScheme
+    @State private var showingLog = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm + 2) {
             header
-
             if !refinementNotes.isEmpty {
                 refinementBanner
             }
-
-            if sessions.isEmpty {
-                Text("No gut-training runs linked yet. Generate a plan and we'll flag the long runs worth practicing on.")
-                    .font(.caption)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-                    .padding(.vertical, Theme.Spacing.sm)
-            } else {
-                VStack(spacing: Theme.Spacing.xs + 2) {
-                    ForEach(sessions) { session in
-                        row(for: session)
-                    }
-                }
-            }
+            summaryButton
         }
         .futuristicGlassStyle(phaseTint: NutritionPalette.tint)
+        .sheet(isPresented: $showingLog) {
+            GutTrainingLogSheet(
+                sessions: sessions,
+                feedbacks: feedbacks,
+                onLogFeedback: { session in
+                    onLogFeedback(session)
+                }
+            )
+        }
     }
 
-    // MARK: - Pieces
+    // MARK: - Header
 
     private var header: some View {
         HStack {
@@ -46,7 +42,7 @@ struct NutritionGutTrainingLogSection: View {
                 Image(systemName: "stethoscope")
                     .font(.caption.weight(.bold))
                     .foregroundStyle(NutritionPalette.tint)
-                Text("GUT TRAINING LOG")
+                Text("GUT TRAINING")
                     .font(.caption.weight(.bold))
                     .tracking(1.0)
                     .foregroundStyle(NutritionPalette.tint)
@@ -81,11 +77,179 @@ struct NutritionGutTrainingLogSection: View {
         )
     }
 
+    // MARK: - Summary button
+
+    private var summaryButton: some View {
+        Button {
+            showingLog = true
+        } label: {
+            HStack(spacing: Theme.Spacing.sm + 2) {
+                progressRing
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(primaryLine)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Theme.Colors.label)
+                    Text(secondaryLine)
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                        .lineLimit(2)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(NutritionPalette.tint)
+            }
+            .padding(Theme.Spacing.sm + 2)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                    .fill(colorScheme == .dark
+                          ? Color.white.opacity(0.04)
+                          : Color.white.opacity(0.75))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                    .stroke(NutritionPalette.tint.opacity(0.22), lineWidth: 0.75)
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("nutrition.gutTraining.openLog")
+    }
+
+    private var progressRing: some View {
+        let completion: Double = sessions.isEmpty
+            ? 0
+            : Double(feedbacks.count) / Double(sessions.count)
+        return ZStack {
+            Circle()
+                .stroke(NutritionPalette.tint.opacity(0.18), lineWidth: 3)
+            Circle()
+                .trim(from: 0, to: completion)
+                .stroke(NutritionPalette.tint,
+                        style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+            Text("\(feedbacks.count)")
+                .font(.subheadline.weight(.bold).monospacedDigit())
+                .foregroundStyle(NutritionPalette.tint)
+        }
+        .frame(width: 44, height: 44)
+    }
+
+    private var primaryLine: String {
+        if sessions.isEmpty {
+            return "No practice runs linked yet"
+        }
+        if feedbacks.count >= sessions.count {
+            return "All gut-training runs logged"
+        }
+        return nextSessionTitle ?? "Log your feedback"
+    }
+
+    private var secondaryLine: String {
+        if sessions.isEmpty {
+            return "Generate a plan and we'll flag the long runs worth practicing on."
+        }
+        if feedbacks.count >= sessions.count {
+            return "Feedback loop complete — plan refined."
+        }
+        return "Tap to log feedback and refine your race-day plan"
+    }
+
+    /// Nearest un-logged session label (future-dated preferred, else most recent past).
+    private var nextSessionTitle: String? {
+        let loggedIds = Set(feedbacks.map(\.sessionId))
+        let unLogged = sessions.filter { !loggedIds.contains($0.id) }
+        let next = unLogged.min { lhs, rhs in
+            abs(lhs.date.timeIntervalSinceNow) < abs(rhs.date.timeIntervalSinceNow)
+        }
+        guard let session = next else { return nil }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEE MMM d"
+        let minutes = Int(session.plannedDuration / 60)
+        return "Next: \(formatter.string(from: session.date)) · \(minutes) min"
+    }
+}
+
+// MARK: - Log sheet
+
+/// Full drill-down list of gut-training sessions. Tapping a row opens
+/// the feedback sheet via the parent view-model flow.
+private struct GutTrainingLogSheet: View {
+    let sessions: [TrainingSession]
+    let feedbacks: [NutritionSessionFeedback]
+    let onLogFeedback: (TrainingSession) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: Theme.Spacing.sm + 2) {
+                    introCard
+                    if sessions.isEmpty {
+                        emptyState
+                    } else {
+                        ForEach(sessions) { session in
+                            row(for: session)
+                        }
+                    }
+                }
+                .padding()
+            }
+            .background(Theme.Gradients.futuristicBackground(colorScheme: colorScheme).ignoresSafeArea())
+            .navigationTitle("Gut Training")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { dismiss() }
+                }
+            }
+        }
+    }
+
+    private var introCard: some View {
+        HStack(spacing: Theme.Spacing.sm + 2) {
+            Image(systemName: "stethoscope")
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(.white)
+                .frame(width: 44, height: 44)
+                .background(Circle().fill(NutritionPalette.gradient))
+            VStack(alignment: .leading, spacing: 2) {
+                Text("\(feedbacks.count) of \(sessions.count) runs logged")
+                    .font(.subheadline.weight(.semibold))
+                Text("Each feedback tunes your race-day plan to what your gut actually tolerates.")
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer()
+        }
+        .padding(Theme.Spacing.md)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .fill(NutritionPalette.tint.opacity(0.08))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .stroke(NutritionPalette.tint.opacity(0.22), lineWidth: 0.75)
+        )
+    }
+
+    private var emptyState: some View {
+        Text("No gut-training runs linked yet. Generate a plan and we'll flag the long runs worth practicing on.")
+            .font(.subheadline)
+            .foregroundStyle(Theme.Colors.secondaryLabel)
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
+            .padding(Theme.Spacing.lg)
+    }
+
     private func row(for session: TrainingSession) -> some View {
         let existing = feedbacks.first { $0.sessionId == session.id }
         let logged = existing != nil
         return Button {
             onLogFeedback(session)
+            dismiss()
         } label: {
             HStack(spacing: Theme.Spacing.sm + 2) {
                 statusIcon(session: session, hasFeedback: logged)
@@ -107,7 +271,7 @@ struct NutritionGutTrainingLogSection: View {
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                     .fill(colorScheme == .dark
                           ? Color.white.opacity(0.04)
-                          : Color.white.opacity(0.7))
+                          : Color.white.opacity(0.75))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
@@ -140,8 +304,6 @@ struct NutritionGutTrainingLogSection: View {
                 )
             )
     }
-
-    // MARK: - Helpers
 
     private func statusColor(session: TrainingSession, hasFeedback: Bool) -> Color {
         if hasFeedback { return NutritionPalette.tint }

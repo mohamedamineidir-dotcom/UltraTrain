@@ -114,6 +114,64 @@ enum DefaultProducts {
             caffeineMgPerServing: 0, carbRatio: .twoToOne, fluidMlPerServing: 150,
             dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree]
         ),
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0001-0000-0000-000000000014")!,
+            name: "Canaberry", type: .gel, brand: "Spring Energy",
+            caloriesPerServing: 140, carbsGramsPerServing: 29, sodiumMgPerServing: 40,
+            caffeineMgPerServing: 0, carbRatio: .twoToOne, fluidMlPerServing: 150,
+            dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .containsFructose]
+        ),
+        // Overstim's — major European brand, staple of UTMB / trail-running aid stations
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0001-0000-0000-000000000015")!,
+            name: "Coup de Fouet", type: .gel, brand: "Overstim's",
+            caloriesPerServing: 110, carbsGramsPerServing: 26, sodiumMgPerServing: 40,
+            caffeineMgPerServing: 50, carbRatio: .glucoseOnly, fluidMlPerServing: 150,
+            dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree]
+        ),
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0001-0000-0000-000000000016")!,
+            name: "Gel Antioxydant", type: .gel, brand: "Overstim's",
+            caloriesPerServing: 100, carbsGramsPerServing: 24, sodiumMgPerServing: 30,
+            caffeineMgPerServing: 0, carbRatio: .glucoseOnly, fluidMlPerServing: 150,
+            dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree]
+        ),
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0001-0000-0000-000000000017")!,
+            name: "Gel Long Distance", type: .gel, brand: "Overstim's",
+            caloriesPerServing: 115, carbsGramsPerServing: 27, sodiumMgPerServing: 90,
+            caffeineMgPerServing: 0, carbRatio: .twoToOne, fluidMlPerServing: 150,
+            dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree]
+        ),
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0001-0000-0000-000000000018")!,
+            name: "Gel Caffeiné Long Distance", type: .gel, brand: "Overstim's",
+            caloriesPerServing: 115, carbsGramsPerServing: 27, sodiumMgPerServing: 90,
+            caffeineMgPerServing: 75, carbRatio: .twoToOne, fluidMlPerServing: 150,
+            dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree]
+        ),
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0001-0000-0000-000000000019")!,
+            name: "Gel Endurance", type: .gel, brand: "Overstim's",
+            caloriesPerServing: 90, carbsGramsPerServing: 22, sodiumMgPerServing: 30,
+            caffeineMgPerServing: 0, carbRatio: .glucoseOnly, fluidMlPerServing: 150,
+            dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree]
+        ),
+        // Huma — natural chia-based, popular with ultra-runners who struggle with synthetic gels
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0001-0000-0000-000000000020")!,
+            name: "Original Gel", type: .gel, brand: "Huma",
+            caloriesPerServing: 100, carbsGramsPerServing: 23, sodiumMgPerServing: 105,
+            caffeineMgPerServing: 0, carbRatio: .twoToOne, fluidMlPerServing: 200,
+            dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .containsFructose]
+        ),
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0001-0000-0000-000000000021")!,
+            name: "Plus Double Chia Gel", type: .gel, brand: "Huma",
+            caloriesPerServing: 120, carbsGramsPerServing: 27, sodiumMgPerServing: 250,
+            caffeineMgPerServing: 25, carbRatio: .twoToOne, fluidMlPerServing: 200,
+            dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .containsFructose]
+        ),
     ]
 
     // MARK: - Chews
@@ -159,6 +217,20 @@ enum DefaultProducts {
             name: "PF 30 Chews", type: .chew, brand: "Precision Fuel",
             caloriesPerServing: 120, carbsGramsPerServing: 30, sodiumMgPerServing: 0,
             caffeineMgPerServing: 0, carbRatio: .oneToPointEight, fluidMlPerServing: 250,
+            dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree]
+        ),
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0002-0000-0000-000000000007")!,
+            name: "Organic Chews", type: .chew, brand: "Overstim's",
+            caloriesPerServing: 130, carbsGramsPerServing: 30, sodiumMgPerServing: 50,
+            caffeineMgPerServing: 0, carbRatio: .twoToOne, fluidMlPerServing: 250,
+            dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree]
+        ),
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0002-0000-0000-000000000008")!,
+            name: "Energy Chews", type: .chew, brand: "Näak",
+            caloriesPerServing: 150, carbsGramsPerServing: 35, sodiumMgPerServing: 100,
+            caffeineMgPerServing: 0, carbRatio: .twoToOne, fluidMlPerServing: 250,
             dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree]
         ),
     ]
@@ -222,6 +294,44 @@ enum DefaultProducts {
             caffeineMgPerServing: 0, carbRatio: .oneToPointEight, fluidMlPerServing: 500,
             dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree]
         ),
+        // Overstim's drinks
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0003-0000-0000-000000000009")!,
+            name: "Hydrixir Antioxydant", type: .drink, brand: "Overstim's",
+            caloriesPerServing: 126, carbsGramsPerServing: 31, sodiumMgPerServing: 400,
+            caffeineMgPerServing: 0, carbRatio: .twoToOne, fluidMlPerServing: 500,
+            dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree]
+        ),
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0003-0000-0000-000000000010")!,
+            name: "Hydrixir Long Distance", type: .drink, brand: "Overstim's",
+            caloriesPerServing: 140, carbsGramsPerServing: 34, sodiumMgPerServing: 450,
+            caffeineMgPerServing: 0, carbRatio: .twoToOne, fluidMlPerServing: 500,
+            dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree]
+        ),
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0003-0000-0000-000000000011")!,
+            name: "Hydrixir Ultra", type: .drink, brand: "Overstim's",
+            caloriesPerServing: 144, carbsGramsPerServing: 34, sodiumMgPerServing: 600,
+            caffeineMgPerServing: 0, carbRatio: .twoToOne, fluidMlPerServing: 500,
+            dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree]
+        ),
+        // Maurten sports drink extra sizing
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0003-0000-0000-000000000012")!,
+            name: "Solid C + Sport", type: .drink, brand: "Maurten",
+            caloriesPerServing: 100, carbsGramsPerServing: 25, sodiumMgPerServing: 35,
+            caffeineMgPerServing: 100, carbRatio: .oneToPointEight, fluidMlPerServing: 500,
+            dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .lowFodmap]
+        ),
+        // Näak — Canadian brand popular on UTMB / Western States
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0003-0000-0000-000000000013")!,
+            name: "Hydration Ultra Energy", type: .drink, brand: "Näak",
+            caloriesPerServing: 110, carbsGramsPerServing: 26, sodiumMgPerServing: 350,
+            caffeineMgPerServing: 0, carbRatio: .twoToOne, fluidMlPerServing: 500,
+            dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree]
+        ),
     ]
 
     // MARK: - Bars
@@ -254,6 +364,37 @@ enum DefaultProducts {
             caloriesPerServing: 140, carbsGramsPerServing: 21, sodiumMgPerServing: 60,
             caffeineMgPerServing: 0, carbRatio: .twoToOne,
             dietaryFlags: [.vegetarian]
+        ),
+        // Overstim's — Gatosport is a rice-cake-style pre-race/during-race staple in Europe
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0004-0000-0000-000000000005")!,
+            name: "Gatosport", type: .bar, brand: "Overstim's",
+            caloriesPerServing: 180, carbsGramsPerServing: 36, sodiumMgPerServing: 120,
+            caffeineMgPerServing: 0, carbRatio: .twoToOne,
+            dietaryFlags: [.vegetarian]
+        ),
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0004-0000-0000-000000000006")!,
+            name: "Barre Energétique", type: .bar, brand: "Overstim's",
+            caloriesPerServing: 155, carbsGramsPerServing: 28, sodiumMgPerServing: 55,
+            caffeineMgPerServing: 0, carbRatio: .twoToOne,
+            dietaryFlags: [.vegetarian]
+        ),
+        // Näak
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0004-0000-0000-000000000007")!,
+            name: "Ultra Energy Bar", type: .bar, brand: "Näak",
+            caloriesPerServing: 200, carbsGramsPerServing: 35, sodiumMgPerServing: 110,
+            caffeineMgPerServing: 0, carbRatio: .twoToOne,
+            dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree]
+        ),
+        // Spring Energy
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0004-0000-0000-000000000008")!,
+            name: "Speednut Bar", type: .bar, brand: "Spring Energy",
+            caloriesPerServing: 200, carbsGramsPerServing: 28, sodiumMgPerServing: 80,
+            caffeineMgPerServing: 0, carbRatio: .twoToOne,
+            dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree]
         ),
     ]
 
@@ -355,6 +496,27 @@ enum DefaultProducts {
             caloriesPerServing: 15, carbsGramsPerServing: 4, sodiumMgPerServing: 300,
             caffeineMgPerServing: 0, carbRatio: nil, fluidMlPerServing: 500,
             dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree]
+        ),
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0006-0000-0000-000000000006")!,
+            name: "Elektrolytes", type: .salt, brand: "Overstim's",
+            caloriesPerServing: 0, carbsGramsPerServing: 0, sodiumMgPerServing: 500,
+            caffeineMgPerServing: 0, carbRatio: nil, fluidMlPerServing: 500,
+            dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .lowFodmap]
+        ),
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0006-0000-0000-000000000007")!,
+            name: "Fast Chews", type: .salt, brand: "SaltStick",
+            caloriesPerServing: 10, carbsGramsPerServing: 3, sodiumMgPerServing: 100,
+            caffeineMgPerServing: 0, carbRatio: nil, fluidMlPerServing: 0,
+            dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .lowFodmap]
+        ),
+        NutritionProduct(
+            id: UUID(uuidString: "11111111-0006-0000-0000-000000000008")!,
+            name: "Salt Caps", type: .salt, brand: "SaltStick",
+            caloriesPerServing: 0, carbsGramsPerServing: 0, sodiumMgPerServing: 215,
+            caffeineMgPerServing: 0, carbRatio: nil, fluidMlPerServing: 0,
+            dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .lowFodmap]
         ),
     ]
 

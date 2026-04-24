@@ -35,6 +35,17 @@ struct NutritionPreferences: Equatable, Sendable, Codable {
     /// Product types the athlete prefers. Empty set = no preference (use all).
     var preferredFormats: Set<ProductType>
 
+    /// Per-format brand preferences. Key is the product type; value is the
+    /// set of brand names the athlete explicitly prefers for that format.
+    /// Missing key or empty set means "no preference" for that format —
+    /// the selector will choose freely from the whole catalog.
+    ///
+    /// Captured in the nutrition onboarding after the format step, so the
+    /// plan generator can stick to the athlete's brand ecosystem (e.g. an
+    /// Overstim's user gets Coup de Fouet for caffeine, Gel Long Distance
+    /// for sustained fuelling, Hydrixir Long Distance for their bottles).
+    var brandPreferences: [ProductType: Set<String>]
+
     // MARK: - Hydration / sweat
 
     var sweatProfile: SweatProfile
@@ -72,6 +83,7 @@ struct NutritionPreferences: Equatable, Sendable, Codable {
         giSensitivities: [],
         dietaryRestrictions: [],
         preferredFormats: [],
+        brandPreferences: [:],
         sweatProfile: .unknown,
         preRaceMealTiming: nil,
         ultraPalateTiming: nil,
@@ -98,6 +110,19 @@ struct NutritionPreferences: Equatable, Sendable, Codable {
         self.dietaryRestrictions = diet ?? Set<DietaryRestriction>()
         let formats: Set<ProductType>? = try? c.decode(Set<ProductType>.self, forKey: .preferredFormats)
         self.preferredFormats = formats ?? Set<ProductType>()
+        // Decode brandPreferences from a serialised [String: Set<String>] map
+        // keyed by ProductType.rawValue. Older payloads without the key fall
+        // back to an empty map — the generator treats missing keys as "no
+        // preference", so behaviour is unchanged for existing athletes.
+        if let raw: [String: Set<String>] = try? c.decodeIfPresent([String: Set<String>].self, forKey: .brandPreferences) {
+            var map: [ProductType: Set<String>] = [:]
+            for (k, v) in raw {
+                if let pt = ProductType(rawValue: k) { map[pt] = v }
+            }
+            self.brandPreferences = map
+        } else {
+            self.brandPreferences = [:]
+        }
         self.sweatProfile = (try? c.decode(SweatProfile.self, forKey: .sweatProfile)) ?? .unknown
         self.preRaceMealTiming = (try? c.decodeIfPresent(PreRaceMealTiming.self, forKey: .preRaceMealTiming)) ?? nil
         self.ultraPalateTiming = (try? c.decodeIfPresent(UltraPalateTiming.self, forKey: .ultraPalateTiming)) ?? nil
@@ -117,6 +142,12 @@ struct NutritionPreferences: Equatable, Sendable, Codable {
         try c.encode(giSensitivities, forKey: .giSensitivities)
         try c.encode(dietaryRestrictions, forKey: .dietaryRestrictions)
         try c.encode(preferredFormats, forKey: .preferredFormats)
+        // Serialise brandPreferences as [String: Set<String>] keyed on the
+        // raw value so the payload stays readable and portable.
+        let brandRaw: [String: Set<String>] = Dictionary(
+            uniqueKeysWithValues: brandPreferences.map { ($0.key.rawValue, $0.value) }
+        )
+        try c.encodeIfPresent(brandRaw.isEmpty ? nil : brandRaw, forKey: .brandPreferences)
         try c.encode(sweatProfile, forKey: .sweatProfile)
         try c.encodeIfPresent(preRaceMealTiming, forKey: .preRaceMealTiming)
         try c.encodeIfPresent(ultraPalateTiming, forKey: .ultraPalateTiming)
@@ -135,6 +166,7 @@ struct NutritionPreferences: Equatable, Sendable, Codable {
         giSensitivities: Set<GISensitivity> = [],
         dietaryRestrictions: Set<DietaryRestriction> = [],
         preferredFormats: Set<ProductType> = [],
+        brandPreferences: [ProductType: Set<String>] = [:],
         sweatProfile: SweatProfile = .unknown,
         preRaceMealTiming: PreRaceMealTiming? = nil,
         ultraPalateTiming: UltraPalateTiming? = nil,
@@ -151,6 +183,7 @@ struct NutritionPreferences: Equatable, Sendable, Codable {
         self.giSensitivities = giSensitivities
         self.dietaryRestrictions = dietaryRestrictions
         self.preferredFormats = preferredFormats
+        self.brandPreferences = brandPreferences
         self.sweatProfile = sweatProfile
         self.preRaceMealTiming = preRaceMealTiming
         self.ultraPalateTiming = ultraPalateTiming
@@ -162,6 +195,7 @@ struct NutritionPreferences: Equatable, Sendable, Codable {
         case nutritionGoal, carbsPerHourTolerance
         case caffeineSensitivity, caffeineHabitMgPerDay
         case giSensitivities, dietaryRestrictions, preferredFormats
+        case brandPreferences
         case sweatProfile
         case preRaceMealTiming, ultraPalateTiming
         case onboardingCompleted

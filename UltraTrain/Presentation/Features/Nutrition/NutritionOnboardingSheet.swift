@@ -74,6 +74,7 @@ struct NutritionOnboardingSheet: View {
         case dietary
         case giSensitivities
         case formats
+        case brands
         case preRaceMeal
         case advanced
         case ultraPalate
@@ -84,6 +85,7 @@ struct NutritionOnboardingSheet: View {
             case .dietary:          return "Anything to avoid?"
             case .giSensitivities:  return "Any stomach trouble in past races?"
             case .formats:          return "What do you like to fuel with?"
+            case .brands:           return "Any go-to brands?"
             case .preRaceMeal:      return "Pre-race meal timing"
             case .advanced:         return "Any training data to calibrate?"
             case .ultraPalate:      return "When do you crave savoury food?"
@@ -100,6 +102,8 @@ struct NutritionOnboardingSheet: View {
                 return "Things that have caused issues before — gels, fructose, gluten..."
             case .formats:
                 return "Tap every format you're happy to use on race day."
+            case .brands:
+                return "Pick the brands you already trust per format. We'll build your plan around their exact products. Skip anything where you have no preference."
             case .preRaceMeal:
                 return "How long before race start do you like to eat? Tunes the morning fuelling plan."
             case .advanced:
@@ -115,6 +119,7 @@ struct NutritionOnboardingSheet: View {
             case .dietary:          return "leaf.fill"
             case .giSensitivities:  return "stethoscope"
             case .formats:          return "square.stack.fill"
+            case .brands:           return "bag.fill"
             case .preRaceMeal:      return "sunrise.fill"
             case .advanced:         return "slider.horizontal.3"
             case .ultraPalate:      return "fork.knife"
@@ -130,6 +135,7 @@ struct NutritionOnboardingSheet: View {
         if needsExtendedQuestions {
             s.append(.giSensitivities)
             s.append(.formats)
+            s.append(.brands)
             s.append(.preRaceMeal)
         }
         if needsAdvancedQuestions {
@@ -240,6 +246,7 @@ struct NutritionOnboardingSheet: View {
             case .dietary:         dietaryStep
             case .giSensitivities: giStep
             case .formats:         formatsStep
+            case .brands:          brandsStep
             case .preRaceMeal:     preRaceMealStep
             case .advanced:        advancedStep
             case .ultraPalate:     ultraPalateStep
@@ -365,6 +372,102 @@ struct NutritionOnboardingSheet: View {
                 isEmpty: preferences.giSensitivities.isEmpty,
                 onClear: { preferences.giSensitivities.removeAll() }
             )
+        }
+    }
+
+    // MARK: - Brand preferences
+
+    /// Formats the brand step groups. Derived from the athlete's format
+    /// choice when they made one; otherwise covers the full set so the
+    /// step is still useful. Real food is excluded — it's generic.
+    private var brandStepFormats: [ProductType] {
+        let ordered: [ProductType] = [.gel, .drink, .chew, .bar, .salt]
+        if preferences.preferredFormats.isEmpty {
+            return ordered
+        }
+        return ordered.filter { preferences.preferredFormats.contains($0) }
+    }
+
+    private func brandsAvailable(for format: ProductType) -> [String] {
+        let brands = Set(DefaultProducts.all
+            .filter { $0.type == format }
+            .compactMap { $0.brand }
+            .filter { !$0.isEmpty })
+        return brands.sorted()
+    }
+
+    private var brandsStep: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+            if brandStepFormats.isEmpty {
+                Text("Pick at least one format above and you'll be able to choose brands for it here.")
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.tertiaryLabel)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
+            } else {
+                ForEach(brandStepFormats, id: \.self) { format in
+                    brandGroup(for: format)
+                }
+                Text("Selections are per format. Anything you skip keeps 'no brand preference' and we'll pick the best fit from the full catalog.")
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.tertiaryLabel)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, Theme.Spacing.xs)
+            }
+        }
+    }
+
+    private func brandGroup(for format: ProductType) -> some View {
+        let brands = brandsAvailable(for: format)
+        return VStack(alignment: .leading, spacing: Theme.Spacing.xs + 2) {
+            HStack(spacing: Theme.Spacing.xs + 2) {
+                Image(systemName: formatIcon(format))
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(NutritionPalette.tint)
+                Text(brandSectionTitle(format).uppercased())
+                    .font(.caption.weight(.bold))
+                    .tracking(0.8)
+                    .foregroundStyle(NutritionPalette.tint)
+            }
+            ChipsGrid(
+                items: brands,
+                title: { $0 },
+                icon: { _ in nil },
+                isSelected: { isBrandSelected(format: format, brand: $0) },
+                onToggle: { toggleBrand(format: format, brand: $0) }
+            )
+        }
+        .padding(Theme.Spacing.md)
+        .background(tintedCard)
+    }
+
+    private func brandSectionTitle(_ format: ProductType) -> String {
+        switch format {
+        case .gel:      return "Gels"
+        case .drink:    return "Drinks"
+        case .chew:     return "Chews"
+        case .bar:      return "Bars"
+        case .salt:     return "Salt / electrolytes"
+        case .realFood: return "Real food"
+        }
+    }
+
+    private func isBrandSelected(format: ProductType, brand: String) -> Bool {
+        preferences.brandPreferences[format]?.contains(brand) ?? false
+    }
+
+    private func toggleBrand(format: ProductType, brand: String) {
+        var set = preferences.brandPreferences[format] ?? []
+        if set.contains(brand) {
+            set.remove(brand)
+        } else {
+            set.insert(brand)
+        }
+        if set.isEmpty {
+            preferences.brandPreferences.removeValue(forKey: format)
+        } else {
+            preferences.brandPreferences[format] = set
         }
     }
 

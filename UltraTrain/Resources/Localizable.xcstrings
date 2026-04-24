@@ -1038,7 +1038,10 @@
     "%lld g" : {
 
     },
-    "%lld g carbs" : {
+    "%lld g total" : {
+
+    },
+    "%lld g/hr" : {
 
     },
     "%lld grams" : {
@@ -1060,6 +1063,9 @@
           }
         }
       }
+    },
+    "%lld gut-training runs" : {
+
     },
     "%lld intervals" : {
       "localizations" : {
@@ -1471,9 +1477,6 @@
         }
       }
     },
-    "%lld training runs to practice" : {
-
-    },
     "%lld weeks" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1761,9 +1764,6 @@
         }
       }
     },
-    "0 = none, 10 = severe. Rate each axis." : {
-
-    },
     "0.0" : {
       "localizations" : {
         "fr" : {
@@ -2025,6 +2025,9 @@
           }
         }
       }
+    },
+    "across the race" : {
+
     },
     "Active" : {
       "localizations" : {
@@ -2562,6 +2565,9 @@
         }
       }
     },
+    "AID STATION STRATEGY" : {
+
+    },
     "Alert Settings" : {
       "localizations" : {
         "fr" : {
@@ -2777,9 +2783,6 @@
           }
         }
       }
-    },
-    "Anything else? e.g. 'gel at 1h was too sweet'" : {
-
     },
     "Appearance" : {
       "localizations" : {
@@ -3182,6 +3185,9 @@
           }
         }
       }
+    },
+    "Bonked" : {
+
     },
     "bpm" : {
       "localizations" : {
@@ -5474,6 +5480,9 @@
     "e.g. 65" : {
 
     },
+    "e.g. gel at 1h was too sweet" : {
+
+    },
     "Easy" : {
       "localizations" : {
         "fr" : {
@@ -5553,9 +5562,6 @@
           }
         }
       }
-    },
-    "Edit preferences" : {
-
     },
     "Edit Profile" : {
       "localizations" : {
@@ -5979,6 +5985,9 @@
           }
         }
       }
+    },
+    "Exact amount" : {
+
     },
     "Excluded" : {
       "localizations" : {
@@ -6641,6 +6650,9 @@
     "Français" : {
 
     },
+    "Fresh" : {
+
+    },
     "Friend request sent!" : {
       "localizations" : {
         "fr" : {
@@ -6684,7 +6696,7 @@
         }
       }
     },
-    "Fueling targets" : {
+    "FUELING TARGETS" : {
 
     },
     "Full screen route map showing %lld segments colored by %@. Tap to view segment details." : {
@@ -6704,6 +6716,9 @@
       }
     },
     "g / hr" : {
+
+    },
+    "g/hr" : {
 
     },
     "Gain" : {
@@ -6958,7 +6973,7 @@
         }
       }
     },
-    "Gut training log" : {
+    "GUT TRAINING LOG" : {
 
     },
     "Gut training recommended" : {
@@ -7211,9 +7226,6 @@
           }
         }
       }
-    },
-    "How did it go?" : {
-
     },
     "How did the run go? Key learnings?" : {
       "localizations" : {
@@ -9263,9 +9275,6 @@
     "No problem! We'll build a general fitness plan to keep you progressing. You can add a target race anytime later." : {
 
     },
-    "No products in the current plan." : {
-
-    },
     "No Profile" : {
       "localizations" : {
         "fr" : {
@@ -11281,22 +11290,22 @@
         }
       }
     },
+    "Planned %lld g/hr · %lld min · %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Planned %1$lld g/hr · %2$lld min · %3$lld of %4$lld"
+          }
+        }
+      }
+    },
     "Planned Sessions" : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Séances planifiées"
-          }
-        }
-      }
-    },
-    "Planned: %lld g/hr · %lld min" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Planned: %1$lld g/hr · %2$lld min"
           }
         }
       }
@@ -11644,6 +11653,9 @@
         }
       }
     },
+    "Quick summary" : {
+
+    },
     "Quiet Hours" : {
       "localizations" : {
         "fr" : {
@@ -11713,6 +11725,9 @@
           }
         }
       }
+    },
+    "RACE DAY" : {
+
     },
     "Race Day Plan" : {
       "localizations" : {
@@ -11864,10 +11879,7 @@
         }
       }
     },
-    "Race timeline" : {
-
-    },
-    "race total" : {
+    "RACE TIMELINE" : {
 
     },
     "Race Type" : {
@@ -12144,9 +12156,6 @@
           }
         }
       }
-    },
-    "Regenerate" : {
-
     },
     "Relationship" : {
       "localizations" : {
@@ -12483,9 +12492,6 @@
           }
         }
       }
-    },
-    "Roughly how many grams of carbs per hour did you actually consume?" : {
-
     },
     "Route" : {
       "localizations" : {
@@ -14706,6 +14712,12 @@
     "Tap everything you're happy to use. Leave empty for no preference." : {
 
     },
+    "Tap green for worked, red for didn't. Leave grey if you didn't try it." : {
+
+    },
+    "Tap if you blew up before the finish." : {
+
+    },
     "Tap to add" : {
 
     },
@@ -14718,9 +14730,6 @@
           }
         }
       }
-    },
-    "Tap to mark each product as Tolerated or Intolerant. Skip if you didn't try it." : {
-
     },
     "Target" : {
       "localizations" : {
@@ -16038,6 +16047,9 @@
         }
       }
     },
+    "We'll factor this into the refinement." : {
+
+    },
     "We'll use this to personalize your experience." : {
 
     },
@@ -16735,9 +16747,6 @@
     "Your completed runs will appear here.\nRecord a run or import from Strava." : {
 
     },
-    "Your feedback tunes the race-day plan to what your gut actually tolerates." : {
-
-    },
     "Your fitness journey starts now" : {
 
     },
@@ -16750,6 +16759,9 @@
           }
         }
       }
+    },
+    "Your notes" : {
+
     },
     "Your password has been changed successfully." : {
       "localizations" : {

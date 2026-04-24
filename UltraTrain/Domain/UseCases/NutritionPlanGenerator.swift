@@ -512,11 +512,31 @@ enum NutritionProductSelector {
             && passesFormatPreference(product, preferences: preferences)
         }
 
-        // Prefer favorites first, then the first matching product.
+        // Prefer favorites first.
         if let favorite = candidates.first(where: { preferences.favoriteProductIds.contains($0.id) }) {
             return favorite
         }
+        // Then prefer products from a brand the athlete chose for this format.
+        if let brandMatch = candidates.first(where: { matchesBrandPreference($0, type: type, preferences: preferences) }) {
+            return brandMatch
+        }
         return candidates.first ?? fallback(type: type, caffeinated: caffeinated, preferences: preferences)
+    }
+
+    /// True when the athlete set a brand preference for this format and
+    /// the product belongs to one of those brands. False (permissive) when
+    /// no brand preference is set — the selector treats that as "any brand".
+    private static func matchesBrandPreference(
+        _ product: NutritionProduct,
+        type: ProductType,
+        preferences: NutritionPreferences
+    ) -> Bool {
+        guard let preferredBrands = preferences.brandPreferences[type],
+              !preferredBrands.isEmpty else {
+            return false
+        }
+        guard let brand = product.brand else { return false }
+        return preferredBrands.contains(brand)
     }
 
     /// Fallback ignores format preference so that an absent preferred format

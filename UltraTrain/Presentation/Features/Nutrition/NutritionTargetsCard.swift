@@ -1,14 +1,14 @@
 import SwiftUI
 
-/// Hourly-targets card for the Race Day nutrition tab. Futuristic-glass
-/// treatment with nutrition-domain green tint. Carbs per hour is the
-/// primary hero metric (Jeukendrup / ISSN standard); hydration, sodium,
-/// and caffeine render as equal-weight tiles below. Total race grams
-/// sit as a quiet secondary line under the hero so the athlete has the
-/// bigger picture without it competing for attention.
+/// Hourly-targets card for the Race Day nutrition tab. Four equal-weight
+/// tiles in a 2×2 grid — carbs, hydration, sodium, caffeine — so the
+/// athlete sees every per-hour target at a glance without one metric
+/// drowning out the others. Race total + expected duration sit quietly
+/// in the footer; gut-training practice count surfaces as a soft chip.
 ///
-/// Designed to read clearly during an ultra: generous line-height, bold
-/// numerals, no decorative clutter, high-contrast text.
+/// Designed for at-a-glance race-day reading: each tile is a premium
+/// glass surface with a single icon, a bold value, a small unit and a
+/// label. No decorative clutter competing for the athlete's attention.
 struct NutritionTargetsCard: View {
 
     let carbsPerHour: Int
@@ -25,9 +25,7 @@ struct NutritionTargetsCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.md) {
             header
-            heroCarbs
-            secondaryTiles
-            Divider().opacity(0.5)
+            tileGrid
             footer
         }
         .futuristicGlassStyle(phaseTint: NutritionPalette.tint)
@@ -66,106 +64,108 @@ struct NutritionTargetsCard: View {
         }
     }
 
-    // MARK: - Hero carbs
+    // MARK: - Tile grid
 
-    private var heroCarbs: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            HStack(alignment: .firstTextBaseline, spacing: Theme.Spacing.sm) {
-                Text("\(carbsPerHour)")
-                    .font(.system(size: 68, weight: .bold, design: .rounded).monospacedDigit())
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [NutritionPalette.tint, NutritionPalette.deep],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-                    .shadow(color: NutritionPalette.tint.opacity(0.25), radius: 12, y: 2)
-                VStack(alignment: .leading, spacing: 0) {
-                    Text("g / hr")
-                        .font(.title3.bold())
-                        .foregroundStyle(Theme.Colors.label)
-                    Text("carbohydrate")
-                        .font(.caption)
-                        .foregroundStyle(Theme.Colors.secondaryLabel)
-                }
-                Spacer(minLength: 0)
+    private var tileGrid: some View {
+        VStack(spacing: Theme.Spacing.sm + 2) {
+            HStack(spacing: Theme.Spacing.sm + 2) {
+                tile(
+                    icon: "bolt.heart.fill",
+                    iconColor: NutritionPalette.tint,
+                    value: "\(carbsPerHour)",
+                    unit: "g/hr",
+                    label: "Carbs",
+                    accent: true
+                )
+                tile(
+                    icon: "drop.fill",
+                    iconColor: .cyan,
+                    value: "\(hydrationMlPerHour)",
+                    unit: "ml/hr",
+                    label: "Hydration"
+                )
             }
-            HStack(spacing: Theme.Spacing.xs + 2) {
-                Text("\(totalCarbsGrams) g total")
-                    .font(.caption.weight(.semibold).monospacedDigit())
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-                Text("across the race")
-                    .font(.caption)
-                    .foregroundStyle(Theme.Colors.tertiaryLabel)
+            HStack(spacing: Theme.Spacing.sm + 2) {
+                tile(
+                    icon: "cross.vial.fill",
+                    iconColor: .mint,
+                    value: "\(sodiumMgPerHour)",
+                    unit: "mg/hr",
+                    label: "Sodium"
+                )
+                tile(
+                    icon: "bolt.fill",
+                    iconColor: totalCaffeineMg > 0 ? .yellow : Theme.Colors.tertiaryLabel,
+                    value: totalCaffeineMg > 0 ? "\(totalCaffeineMg)" : "—",
+                    unit: totalCaffeineMg > 0 ? "mg total" : "",
+                    label: "Caffeine"
+                )
             }
         }
     }
 
-    // MARK: - Secondary tiles
-
-    private var secondaryTiles: some View {
-        HStack(spacing: Theme.Spacing.sm) {
-            targetTile(
-                icon: "drop.fill",
-                iconColor: .cyan,
-                value: "\(hydrationMlPerHour)",
-                unit: "ml/h",
-                label: "Hydration"
-            )
-            targetTile(
-                icon: "cross.vial.fill",
-                iconColor: .mint,
-                value: "\(sodiumMgPerHour)",
-                unit: "mg/h",
-                label: "Sodium"
-            )
-            targetTile(
-                icon: "bolt.fill",
-                iconColor: totalCaffeineMg > 0 ? .yellow : Theme.Colors.tertiaryLabel,
-                value: totalCaffeineMg > 0 ? "\(totalCaffeineMg)" : "—",
-                unit: totalCaffeineMg > 0 ? "mg" : "",
-                label: "Caffeine"
-            )
-        }
-    }
-
-    private func targetTile(
+    private func tile(
         icon: String,
         iconColor: Color,
         value: String,
         unit: String,
-        label: String
+        label: String,
+        accent: Bool = false
     ) -> some View {
-        VStack(spacing: Theme.Spacing.xs + 2) {
-            Image(systemName: icon)
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(iconColor)
-            HStack(alignment: .lastTextBaseline, spacing: 2) {
+        VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+            HStack {
+                Image(systemName: icon)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(accent ? .white : iconColor)
+                    .frame(width: 28, height: 28)
+                    .background(
+                        Circle().fill(
+                            accent
+                                ? AnyShapeStyle(NutritionPalette.gradient)
+                                : AnyShapeStyle(iconColor.opacity(0.18))
+                        )
+                    )
+                Spacer()
+                Text(label.uppercased())
+                    .font(.caption2.weight(.bold))
+                    .tracking(0.8)
+                    .foregroundStyle(Theme.Colors.tertiaryLabel)
+            }
+            HStack(alignment: .lastTextBaseline, spacing: 3) {
                 Text(value)
-                    .font(.title3.bold().monospacedDigit())
-                    .foregroundStyle(Theme.Colors.label)
+                    .font(.system(size: 30, weight: .bold, design: .rounded).monospacedDigit())
+                    .foregroundStyle(
+                        accent
+                            ? AnyShapeStyle(LinearGradient(
+                                colors: [NutritionPalette.tint, NutritionPalette.deep],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            ))
+                            : AnyShapeStyle(Theme.Colors.label)
+                    )
                 if !unit.isEmpty {
                     Text(unit)
-                        .font(.caption2.weight(.medium))
-                        .foregroundStyle(Theme.Colors.tertiaryLabel)
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
             }
-            Text(label)
-                .font(.caption2)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, Theme.Spacing.sm)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(Theme.Spacing.sm + 2)
         .background(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .fill(colorScheme == .dark
-                      ? Color.white.opacity(0.04)
-                      : Color.black.opacity(0.025))
+                      ? Color.white.opacity(0.05)
+                      : Color.white.opacity(0.75))
         )
         .overlay(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                .stroke(iconColor.opacity(0.14), lineWidth: 0.5)
+                .stroke(
+                    accent
+                        ? NutritionPalette.tint.opacity(0.35)
+                        : iconColor.opacity(0.18),
+                    lineWidth: accent ? 1.0 : 0.5
+                )
         )
     }
 
@@ -176,11 +176,22 @@ struct NutritionTargetsCard: View {
             Label(formattedDuration, systemImage: "timer")
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+            Text("·")
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.tertiaryLabel)
+            Text("\(totalCarbsGrams) g total carbs")
+                .font(.caption.monospacedDigit())
+                .foregroundStyle(Theme.Colors.secondaryLabel)
             Spacer()
             if gutTrainingSessions > 0 {
-                Label("\(gutTrainingSessions) gut-training runs", systemImage: "figure.run")
-                    .font(.caption.weight(.medium))
+                Label("\(gutTrainingSessions) runs", systemImage: "figure.run")
+                    .font(.caption.weight(.semibold))
                     .foregroundStyle(NutritionPalette.tint)
+                    .padding(.horizontal, Theme.Spacing.xs + 2)
+                    .padding(.vertical, 3)
+                    .background(
+                        Capsule().fill(NutritionPalette.tint.opacity(0.12))
+                    )
             }
         }
     }
@@ -189,8 +200,8 @@ struct NutritionTargetsCard: View {
         let totalMinutes = Int(estimatedDurationSeconds / 60)
         let h = totalMinutes / 60
         let m = totalMinutes % 60
-        if h == 0 { return "\(m) min estimated" }
-        return String(format: "%dh%02d estimated", h, m)
+        if h == 0 { return "\(m) min" }
+        return String(format: "%dh%02d", h, m)
     }
 }
 

@@ -153,22 +153,19 @@ struct NutritionProductCard: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        HStack(alignment: .top, spacing: Theme.Spacing.sm + 2) {
-            iconBadge
-            VStack(alignment: .leading, spacing: 4) {
-                productTitle
-                if let notes = entry.notes, !notes.isEmpty {
-                    Text(notes)
-                        .font(.caption)
-                        .foregroundStyle(Theme.Colors.secondaryLabel)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                microstats
+        VStack(alignment: .leading, spacing: Theme.Spacing.xs + 2) {
+            topRow
+            if let notes = entry.notes, !notes.isEmpty {
+                Text(notes)
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            Spacer(minLength: 0)
-            timingBadge
+            secondaryRow
         }
-        .padding(Theme.Spacing.sm + 2)
+        .padding(.vertical, Theme.Spacing.sm)
+        .padding(.leading, Theme.Spacing.md)
+        .padding(.trailing, Theme.Spacing.sm + 2)
         .background(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .fill(colorScheme == .dark
@@ -193,84 +190,135 @@ struct NutritionProductCard: View {
         .accessibilityLabel(accessibilityLabel)
     }
 
+    // MARK: - Top row: icon + title + carbs badge + timing
+
+    private var topRow: some View {
+        HStack(alignment: .center, spacing: Theme.Spacing.sm + 2) {
+            iconBadge
+            VStack(alignment: .leading, spacing: 1) {
+                Text(displayTitle)
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(Theme.Colors.label)
+                    .lineLimit(2)
+                Text(typeDescriptor)
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(entry.product.type.color)
+                    .tracking(0.3)
+            }
+            Spacer(minLength: Theme.Spacing.xs)
+            carbsBadge
+        }
+    }
+
     private var iconBadge: some View {
         ZStack {
             Circle()
                 .fill(entry.product.type.color.opacity(0.18))
-                .frame(width: 40, height: 40)
+                .frame(width: 42, height: 42)
             Image(systemName: entry.product.type.icon)
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: 17, weight: .semibold))
                 .foregroundStyle(entry.product.type.color)
         }
-        .padding(.leading, 4)
     }
 
-    private var productTitle: some View {
-        VStack(alignment: .leading, spacing: 1) {
-            if let brand = entry.product.brand, !brand.isEmpty {
-                Text(brand.uppercased())
-                    .font(.caption2.weight(.bold))
-                    .foregroundStyle(entry.product.type.color)
-                    .tracking(0.8)
+    /// Brand + name paired together so it always reads as one concept
+    /// rather than a cryptic SKU ("Gel 100"). Falls back to just the
+    /// product name for brandless generics.
+    private var displayTitle: String {
+        if let brand = entry.product.brand, !brand.isEmpty {
+            return "\(brand) \(entry.product.name)"
+        }
+        return entry.product.name
+    }
+
+    /// Secondary line: type + caffeine/fluid hints. Tells the athlete
+    /// "this is a 500 ml drink" or "gel · caffeinated" at a glance.
+    private var typeDescriptor: String {
+        var parts: [String] = [entry.product.type.displayName.uppercased()]
+        if entry.product.caffeineMgPerServing > 0 {
+            parts.append("CAFFEINATED")
+        }
+        if let fluid = entry.product.fluidMlPerServing, fluid > 0 {
+            parts.append("\(fluid) ML")
+        }
+        return parts.joined(separator: " · ")
+    }
+
+    /// Prominent carbs-per-serving badge. This is the number the athlete
+    /// cares about in-race, so it sits opposite the title as a first-
+    /// class element (not buried in microstats).
+    @ViewBuilder
+    private var carbsBadge: some View {
+        if entry.product.carbsGramsPerServing > 0 {
+            VStack(alignment: .center, spacing: 0) {
+                Text("\(Int(entry.product.carbsGramsPerServing))")
+                    .font(.title3.bold().monospacedDigit())
+                    .foregroundStyle(NutritionPalette.tint)
+                Text("g carbs")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
             }
-            Text(entry.product.name)
-                .font(.subheadline.weight(.bold))
-                .foregroundStyle(Theme.Colors.label)
-                .lineLimit(2)
+            .padding(.horizontal, Theme.Spacing.sm)
+            .padding(.vertical, Theme.Spacing.xs)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                    .fill(NutritionPalette.tint.opacity(0.12))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                    .stroke(NutritionPalette.tint.opacity(0.28), lineWidth: 0.5)
+            )
         }
     }
 
-    private var microstats: some View {
-        HStack(spacing: Theme.Spacing.sm + 2) {
-            if entry.product.carbsGramsPerServing > 0 {
-                microstat(value: "\(Int(entry.product.carbsGramsPerServing))g", label: "carbs")
+    // MARK: - Secondary row: supporting stats + timing
+
+    private var secondaryRow: some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            if entry.product.caffeineMgPerServing > 0 {
+                stat(icon: "bolt.fill", iconColor: .yellow,
+                     value: "\(entry.product.caffeineMgPerServing)", unit: "mg caf")
             }
             if entry.product.sodiumMgPerServing > 0 {
-                microstat(value: "\(entry.product.sodiumMgPerServing)mg", label: "Na")
+                stat(icon: "cross.vial.fill", iconColor: .mint,
+                     value: "\(entry.product.sodiumMgPerServing)", unit: "mg Na")
             }
-            if entry.product.caffeineMgPerServing > 0 {
-                microstat(value: "\(entry.product.caffeineMgPerServing)mg", label: "caf")
-            }
-            if let fluid = entry.product.fluidMlPerServing, fluid > 0 {
-                microstat(value: "\(fluid)ml", label: "water")
-            }
+            Spacer(minLength: 0)
+            Label(formattedTime, systemImage: "clock")
+                .font(.caption.weight(.semibold).monospacedDigit())
+                .foregroundStyle(Theme.Colors.secondaryLabel)
         }
         .padding(.top, 2)
     }
 
-    private func microstat(value: String, label: String) -> some View {
-        HStack(spacing: 2) {
+    private func stat(icon: String, iconColor: Color, value: String, unit: String) -> some View {
+        HStack(spacing: 3) {
+            Image(systemName: icon)
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(iconColor)
             Text(value)
                 .font(.caption.weight(.bold).monospacedDigit())
                 .foregroundStyle(Theme.Colors.label)
-            Text(label)
-                .font(.system(size: 10))
+            Text(unit)
+                .font(.caption2)
                 .foregroundStyle(Theme.Colors.tertiaryLabel)
-        }
-    }
-
-    private var timingBadge: some View {
-        VStack(alignment: .trailing, spacing: 0) {
-            Text(formattedTime)
-                .font(.caption.weight(.bold).monospacedDigit())
-                .foregroundStyle(Theme.Colors.secondaryLabel)
         }
     }
 
     private var formattedTime: String {
         let h = entry.timingMinutes / 60
         let m = entry.timingMinutes % 60
-        if h == 0 { return "\(m)min" }
+        if h == 0 { return "\(m) min" }
         return String(format: "%dh%02d", h, m)
     }
 
     private var accessibilityLabel: String {
-        var parts: [String] = []
-        if let brand = entry.product.brand { parts.append(brand) }
-        parts.append(entry.product.name)
-        parts.append("at \(formattedTime)")
+        var parts: [String] = [displayTitle, "at \(formattedTime)"]
         if entry.product.carbsGramsPerServing > 0 {
             parts.append("\(Int(entry.product.carbsGramsPerServing)) grams carbs")
+        }
+        if entry.product.caffeineMgPerServing > 0 {
+            parts.append("\(entry.product.caffeineMgPerServing) milligrams caffeine")
         }
         if let notes = entry.notes { parts.append(notes) }
         return parts.joined(separator: ", ")
