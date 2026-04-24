@@ -81,6 +81,20 @@ struct SessionDetailView: View {
                     } else if let notes = session.nutritionNotes {
                         nutritionSection(notes)
                     }
+
+                    // #20: race-week carb-loading + hydration protocol.
+                    // Only surfaces on the race session itself, where
+                    // the athlete is most likely to look for fuelling
+                    // guidance. The card uses the race's planned
+                    // duration as the estimated finish time.
+                    if session.type == .race,
+                       let athlete, athlete.weightKg > 0,
+                       session.plannedDuration > 0 {
+                        RaceWeekFuellingCard(
+                            athleteWeightKg: athlete.weightKg,
+                            estimatedRaceDurationSeconds: session.plannedDuration
+                        )
+                    }
                 }
 
                 actionsSection
