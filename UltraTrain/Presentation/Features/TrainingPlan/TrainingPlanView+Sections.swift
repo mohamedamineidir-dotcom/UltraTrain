@@ -469,60 +469,19 @@ extension TrainingPlanView {
     }
 
     var emptyState: some View {
-        VStack(spacing: Theme.Spacing.xl) {
-            Spacer()
-            ZStack {
-                Circle()
-                    .fill(Theme.Colors.accentColor.opacity(0.1))
-                    .frame(width: 100, height: 100)
-                Circle()
-                    .fill(Theme.Colors.accentColor.opacity(0.05))
-                    .frame(width: 140, height: 140)
-                Image(systemName: "calendar.badge.plus")
-                    .font(.system(size: 40))
-                    .foregroundStyle(Theme.Colors.accentColor)
-                    .shadow(color: Theme.Colors.accentColor.opacity(0.3), radius: 8)
-            }
-
-            VStack(spacing: Theme.Spacing.sm) {
-                Text("No Training Plan")
-                    .font(.title2.bold())
-                Text("Generate a personalized plan based on\nyour profile and race goals.")
-                    .font(.subheadline)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-                    .multilineTextAlignment(.center)
-            }
-
-            Button {
+        FeatureEmptyState(
+            icon: "calendar.badge.plus",
+            title: "No Training Plan",
+            message: "Generate a personalized plan based on your profile and race goals.",
+            tint: Theme.Colors.accentColor,
+            primaryAction: FeatureEmptyState.Action(
+                title: "Generate Plan",
+                systemImage: "sparkles"
+            ) {
                 Task { await viewModel.generatePlan() }
-            } label: {
-                if viewModel.isGenerating {
-                    ProgressView()
-                        .tint(.white)
-                        .padding(.horizontal, Theme.Spacing.xl)
-                } else {
-                    Label("Generate Plan", systemImage: "sparkles")
-                        .font(.headline)
-                }
-            }
-            .foregroundStyle(.white)
-            .padding(.horizontal, Theme.Spacing.xl)
-            .padding(.vertical, Theme.Spacing.md)
-            .background(
-                LinearGradient(
-                    colors: [Theme.Colors.accentColor, Theme.Colors.accentColor.opacity(0.8)],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
-            .clipShape(Capsule())
-            .shadow(color: Theme.Colors.accentColor.opacity(0.3), radius: 8, y: 4)
-            .disabled(viewModel.isGenerating)
-            .accessibilityIdentifier("trainingPlan.generateButton")
-
-            Spacer()
-        }
-        .frame(maxWidth: .infinity)
+            },
+            isPrimaryLoading: viewModel.isGenerating
+        )
         .accessibilityIdentifier("trainingPlan.emptyState")
     }
 }

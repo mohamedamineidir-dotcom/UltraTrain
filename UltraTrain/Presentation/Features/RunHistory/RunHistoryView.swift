@@ -286,62 +286,30 @@ struct RunHistoryView: View {
     // MARK: - Empty States
 
     private var emptyState: some View {
-        VStack(spacing: Theme.Spacing.lg) {
-            Spacer()
-
-            ZStack {
-                Circle()
-                    .fill(Theme.Colors.warmCoral.opacity(colorScheme == .dark ? 0.12 : 0.08))
-                    .frame(width: 100, height: 100)
-                Image(systemName: "figure.run.circle")
-                    .font(.system(size: emptyIconSize))
-                    .foregroundStyle(Theme.Colors.warmCoral)
-            }
-
-            VStack(spacing: Theme.Spacing.sm) {
-                Text("No runs yet")
-                    .font(.title3.bold())
-                Text("Your completed runs will appear here.\nRecord a run or import from Strava.")
-                    .font(.subheadline)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-                    .multilineTextAlignment(.center)
-            }
-
-            HStack(spacing: Theme.Spacing.md) {
-                Button {
-                    showingDocumentPicker = true
-                } label: {
-                    Label("Import GPX", systemImage: "doc.badge.arrow.up")
-                        .font(.subheadline.weight(.medium))
-                        .padding(.horizontal, Theme.Spacing.md)
-                        .padding(.vertical, Theme.Spacing.sm)
-                        .background(Theme.Colors.secondaryBackground)
-                        .clipShape(Capsule())
+        FeatureEmptyState(
+            icon: "figure.run.circle",
+            title: "No runs yet",
+            message: "Your completed runs will appear here. Record a run or import from Strava.",
+            tint: Theme.Colors.warmCoral,
+            primaryAction: FeatureEmptyState.Action(
+                title: "Import GPX",
+                systemImage: "doc.badge.arrow.up"
+            ) {
+                showingDocumentPicker = true
+            },
+            secondaryAction: stravaConnected
+                ? FeatureEmptyState.Action(
+                    title: "Import from Strava",
+                    systemImage: "arrow.down.circle"
+                ) {
+                    showingStravaImport = true
                 }
-
-                if stravaConnected {
-                    Button {
-                        showingStravaImport = true
-                    } label: {
-                        Label("Strava", systemImage: "arrow.down.circle")
-                            .font(.subheadline.weight(.medium))
-                            .padding(.horizontal, Theme.Spacing.md)
-                            .padding(.vertical, Theme.Spacing.sm)
-                            .background(Color.orange.opacity(0.15))
-                            .foregroundStyle(.orange)
-                            .clipShape(Capsule())
-                    }
-                }
-            }
-            .padding(.top, Theme.Spacing.sm)
-
-            Spacer()
-        }
-        .padding()
+                : nil
+        )
     }
 
     private var noResultsState: some View {
-        VStack(spacing: Theme.Spacing.md) {
+        VStack(spacing: 0) {
             RunHistoryFilterBar(
                 selectedPeriod: $viewModel.selectedTimePeriod,
                 customStartDate: $viewModel.customStartDate,
@@ -349,24 +317,17 @@ struct RunHistoryView: View {
             )
             .padding(.horizontal, Theme.Spacing.md)
 
-            Spacer()
-            Image(systemName: "magnifyingglass")
-                .font(.system(size: emptyIconSize))
-                .foregroundStyle(Theme.Colors.secondaryLabel)
-            Text("No matching runs")
-                .font(.title3.bold())
-            Text("Try adjusting your search or filters.")
-                .font(.subheadline)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
-
-            Button("Clear Filters") {
-                viewModel.clearFilters()
-            }
-            .font(.subheadline.weight(.medium))
-            .foregroundStyle(Theme.Colors.warmCoral)
-            .padding(.top, Theme.Spacing.sm)
-
-            Spacer()
+            FeatureEmptyState(
+                icon: "magnifyingglass",
+                title: "No matching runs",
+                message: "Try adjusting your search or filters.",
+                tint: Theme.Colors.warmCoral,
+                primaryAction: FeatureEmptyState.Action(
+                    title: "Clear Filters"
+                ) {
+                    viewModel.clearFilters()
+                }
+            )
         }
     }
 }

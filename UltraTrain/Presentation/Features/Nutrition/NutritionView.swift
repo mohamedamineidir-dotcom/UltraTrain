@@ -258,25 +258,19 @@ struct NutritionView: View {
     }
 
     private var emptyState: some View {
-        ContentUnavailableView {
-            Label("No Nutrition Plan", systemImage: "fork.knife.circle")
-        } description: {
-            Text("Generate a race-day nutrition strategy based on your profile, race distance, and expected duration.")
-        } actions: {
-            Button {
+        FeatureEmptyState(
+            icon: "fork.knife.circle",
+            title: "No Nutrition Plan",
+            message: "Generate a race-day nutrition strategy based on your profile, race distance, and expected duration.",
+            tint: NutritionPalette.tint,
+            primaryAction: FeatureEmptyState.Action(
+                title: "Generate Plan",
+                systemImage: "sparkles"
+            ) {
                 Task { await viewModel.startPlanGeneration() }
-            } label: {
-                if viewModel.isGenerating {
-                    ProgressView()
-                        .padding(.horizontal)
-                } else {
-                    Text("Generate Plan")
-                }
-            }
-            .buttonStyle(.borderedProminent)
-            .disabled(viewModel.isGenerating)
-            .accessibilityIdentifier("nutrition.generateButton")
-        }
+            },
+            isPrimaryLoading: viewModel.isGenerating
+        )
         .accessibilityIdentifier("nutrition.emptyState")
     }
 }

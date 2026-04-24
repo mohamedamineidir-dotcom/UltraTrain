@@ -1473,6 +1473,7 @@
 		D88886CF4529BD7F7B650B9A /* CourseGradientCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19D283754BE2AFF0F20C8E6C /* CourseGradientCalculator.swift */; };
 		D8B3B1F9C13C77B98EEFF1D3 /* SyncedActivityFeedRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF48DBC7CF20C06243BFEE9C /* SyncedActivityFeedRepositoryTests.swift */; };
 		D8BEA4E937144CE530A6331A /* WatchRunHistoryData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9FEFABE15E245AD3EEBE18A /* WatchRunHistoryData.swift */; };
+		D8C09A23DCA7F63ECB9A418D /* FeatureEmptyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B08ED336A716396D3FDEA708 /* FeatureEmptyState.swift */; };
 		D8F7D43ACCE36589E5608F62 /* MockHealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1F5DFC3C65D0DD2EBADB64 /* MockHealthKitService.swift */; };
 		D948D962F954664267A33EED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D97A0D4229E5C16A244BCF35 /* Assets.xcassets */; };
 		D9741A6647F8BA60EBDF73D5 /* PlanAutoAdjustmentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D20F802A33B6D2BCAD1B921D /* PlanAutoAdjustmentService.swift */; };
@@ -3051,6 +3052,7 @@
 		B017DCDAC7101D2C50FC2D99 /* CertificatePinningDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificatePinningDelegate.swift; sourceTree = "<group>"; };
 		B03BD1A722AA8E5244A46944 /* UltraTrainClip.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = UltraTrainClip.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B061D358D9D11C779DE83CF7 /* RaceCourseMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceCourseMapView.swift; sourceTree = "<group>"; };
+		B08ED336A716396D3FDEA708 /* FeatureEmptyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureEmptyState.swift; sourceTree = "<group>"; };
 		B092558B4E9ABDAEEF66191F /* SessionDescriptionGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDescriptionGenerator.swift; sourceTree = "<group>"; };
 		B0C37E2F9A3FB6CAFAB58CC6 /* XCUIElement+Waiters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+Waiters.swift"; sourceTree = "<group>"; };
 		B0D4B7F02F9B0B65BD12D9B2 /* MockAchievementRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAchievementRepository.swift; sourceTree = "<group>"; };
@@ -3640,6 +3642,7 @@
 				5EC4543E5545FA2F93A20660 /* ChartAnnotationCard.swift */,
 				F1E1F5EC0FA6B945898AF4EF /* DocumentPicker.swift */,
 				88623DF1C979FBA8AFCD1161 /* ErrorBannerView.swift */,
+				B08ED336A716396D3FDEA708 /* FeatureEmptyState.swift */,
 				D0322B4AA039A02B2DF39603 /* FuturisticGenerationView.swift */,
 				92389CDAEA0459A54CEA12CF /* GenerationAnimationHelpers.swift */,
 				66007B0AEF09C88910CB69B5 /* GutTrainingBadge.swift */,
@@ -7136,6 +7139,7 @@
 				DA02F1117EB986E1B282724B /* FatiguePatternDetector.swift in Sources */,
 				9A2FF5F52B01DD269E9AA77D /* FatiguePatternType.swift in Sources */,
 				B8956062332F856EDB0164E6 /* FatigueSeverity.swift in Sources */,
+				D8C09A23DCA7F63ECB9A418D /* FeatureEmptyState.swift in Sources */,
 				F11AB2CE1299C4C516A1462D /* FeaturePreviewCard.swift in Sources */,
 				53AD132B5EB08B91E192B236 /* FeatureTourView.swift in Sources */,
 				0F63BC7B252F74AF9769C7F4 /* FeedActivityType.swift in Sources */,

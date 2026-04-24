@@ -207,11 +207,12 @@ struct TrainingNutritionView: View {
     // MARK: - No Athlete State
 
     private var noAthleteState: some View {
-        ContentUnavailableView {
-            Label("No Profile", systemImage: "person.crop.circle.badge.exclamationmark")
-        } description: {
-            Text("Complete your athlete profile to see personalized nutrition targets.")
-        }
+        FeatureEmptyState(
+            icon: "person.crop.circle.badge.exclamationmark",
+            title: "No Profile",
+            message: "Complete your athlete profile to see personalized nutrition targets.",
+            tint: NutritionPalette.tint
+        )
         .accessibilityIdentifier("nutrition.noAthleteState")
     }
 }
