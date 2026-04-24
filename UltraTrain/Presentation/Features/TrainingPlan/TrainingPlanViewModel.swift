@@ -36,6 +36,12 @@ final class TrainingPlanViewModel {
     var adjustmentRecommendations: [PlanAdjustmentRecommendation] = []
     var dismissedRecommendationIds: Set<UUID> = []
     var isApplyingAdjustment = false
+    /// #22: next-7-day injury-risk projection (ACWR + monotony).
+    /// Recomputed whenever the plan reloads or regenerates.
+    var injuryRiskProjection: PlanInjuryRiskProjector.Projection?
+    /// Session-scoped dismissal for the banner — athlete can hide it
+    /// for the current app session without disabling projection.
+    var injuryRiskBannerDismissed: Bool = false
 
     // MARK: - Init
 
@@ -91,6 +97,27 @@ final class TrainingPlanViewModel {
 
         isLoading = false
         checkForAdjustments()
+        refreshInjuryRiskProjection()
+    }
+
+    /// Recomputes the next-7-day injury-risk projection from the
+    /// currently-loaded plan. Cheap (pure domain computation), safe
+    /// to call any time the plan changes.
+    func refreshInjuryRiskProjection() {
+        guard let plan else {
+            injuryRiskProjection = nil
+            return
+        }
+        injuryRiskProjection = PlanInjuryRiskProjector.project(plan: plan)
+    }
+
+    /// True when we have a non-empty flag set AND the athlete hasn't
+    /// dismissed the banner this session. Banner view consults this
+    /// to decide whether to render.
+    var shouldShowInjuryRiskBanner: Bool {
+        guard !injuryRiskBannerDismissed,
+              let projection = injuryRiskProjection else { return false }
+        return !projection.flags.isEmpty
     }
 
     // MARK: - Refresh Races
@@ -153,6 +180,7 @@ final class TrainingPlanViewModel {
             plan = newPlan
             self.athlete = athlete
             races = allRaces
+            refreshInjuryRiskProjection()
             Logger.training.info("Plan generated: \(newPlan.weeks.count) weeks")
             hapticService.playSuccess()
             await updateWidgets()

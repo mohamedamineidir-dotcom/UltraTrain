@@ -24,6 +24,19 @@ extension TrainingPlanView {
                     )
                 }
 
+                // #22: ACWR / monotony projection for the next 7 days.
+                // Evidence-backed injury signal surfaced BEFORE the
+                // athlete executes the week rather than after.
+                if viewModel.shouldShowInjuryRiskBanner,
+                   let projection = viewModel.injuryRiskProjection {
+                    InjuryRiskBanner(
+                        projection: projection,
+                        onDismiss: {
+                            viewModel.injuryRiskBannerDismissed = true
+                        }
+                    )
+                }
+
                 planHeader(plan)
 
                 let isRoadPlan = viewModel.targetRace?.raceType == .road
