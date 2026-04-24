@@ -1,73 +1,150 @@
 import SwiftUI
 
-/// Pre-plan nutrition onboarding sheet. Presented before "Generate Plan" on
-/// the Race Day tab to capture the athlete's goals, caffeine habits, GI
-/// sensitivities, format preferences, carbs-per-hour tolerance, and sweat
-/// profile. Sections are gated by race distance so a 5K athlete sees only
-/// the essentials, while a marathon or ultra athlete is asked the full set.
+/// Pre-plan nutrition onboarding sheet. Presented before "Generate Plan"
+/// on the Race Day tab.
+///
+/// Redesigned as a step-by-step flow (one question per screen, big
+/// tappable cards) instead of a long scrollable form. Matches the main
+/// onboarding aesthetic: coral-gradient icon header, progress bar,
+/// Back/Next navigation. The athlete's goal is DERIVED from the A-race
+/// `goalType` — we don't ask again for what onboarding already knows.
+///
+/// Steps are gated by race distance:
+///   • Always: caffeine, dietary restrictions
+///   • Half marathon and up: GI sensitivities, preferred formats
+///   • Marathon and up: optional advanced profile (carbs tolerance,
+///     sweat rate + sodium, heavy-salty-sweater flag)
 struct NutritionOnboardingSheet: View {
 
     let raceName: String
     let raceDistanceKm: Double
+    /// Used to derive `nutritionGoal` from what onboarding captured.
+    let raceGoalType: RaceGoal
     let initialPreferences: NutritionPreferences
     let onGenerate: (NutritionPreferences) -> Void
     let onCancel: () -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     @State private var preferences: NutritionPreferences
-    @State private var caffeineHabitText: String = ""
+    @State private var stepIndex: Int = 0
     @State private var carbsToleranceText: String = ""
     @State private var sweatRateText: String = ""
     @State private var sweatSodiumText: String = ""
-    @State private var showAdvanced: Bool = false
 
     init(
         raceName: String,
         raceDistanceKm: Double,
+        raceGoalType: RaceGoal,
         initialPreferences: NutritionPreferences,
         onGenerate: @escaping (NutritionPreferences) -> Void,
         onCancel: @escaping () -> Void
     ) {
         self.raceName = raceName
         self.raceDistanceKm = raceDistanceKm
+        self.raceGoalType = raceGoalType
         self.initialPreferences = initialPreferences
         self.onGenerate = onGenerate
         self.onCancel = onCancel
-        _preferences = State(initialValue: initialPreferences)
+        var prefs = initialPreferences
+        // Derive the nutrition goal from the A-race goal type — no need
+        // to re-ask what onboarding already captured. Maps:
+        //   .finish          → conservative (finishComfortably)
+        //   .targetTime(_)   → standard evidence-based (targetTime)
+        //   .targetRanking(_)→ aggressive / competitive
+        switch raceGoalType {
+        case .finish:            prefs.nutritionGoal = .finishComfortably
+        case .targetTime:        prefs.nutritionGoal = .targetTime
+        case .targetRanking:     prefs.nutritionGoal = .competitive
+        }
+        _preferences = State(initialValue: prefs)
     }
 
     // MARK: - Gating
 
-    /// Half marathon and longer — ask about GI sensitivities and format prefs.
     private var needsExtendedQuestions: Bool { raceDistanceKm >= 18 }
-    /// Marathon, trail, and ultra — ask about carbs/hr tolerance + sweat profile.
     private var needsAdvancedQuestions: Bool { raceDistanceKm >= 35 }
+
+    fileprivate enum Step: Int, CaseIterable {
+        case caffeine
+        case dietary
+        case giSensitivities
+        case formats
+        case advanced
+
+        var title: String {
+            switch self {
+            case .caffeine:         return "How much caffeine?"
+            case .dietary:          return "Anything to avoid?"
+            case .giSensitivities:  return "Any stomach trouble in past races?"
+            case .formats:          return "What do you like to fuel with?"
+            case .advanced:         return "Any training data to calibrate?"
+            }
+        }
+
+        var subtitle: String {
+            switch self {
+            case .caffeine:
+                return "We use this to calibrate race-day dose."
+            case .dietary:
+                return "We'll only suggest products that fit."
+            case .giSensitivities:
+                return "Things that have caused issues before — gels, fructose, gluten..."
+            case .formats:
+                return "Tap every format you're happy to use on race day."
+            case .advanced:
+                return "All optional. Skip what you don't know — we default to evidence-based targets."
+            }
+        }
+
+        var iconName: String {
+            switch self {
+            case .caffeine:         return "cup.and.saucer.fill"
+            case .dietary:          return "leaf.fill"
+            case .giSensitivities:  return "stethoscope"
+            case .formats:          return "square.stack.fill"
+            case .advanced:         return "slider.horizontal.3"
+            }
+        }
+    }
+
+    /// The sequence of steps the athlete will see, derived from race
+    /// distance. Order matters: caffeine first (simple), dietary next
+    /// (familiar), GI/formats when applicable, advanced last (optional).
+    private var steps: [Step] {
+        var s: [Step] = [.caffeine, .dietary]
+        if needsExtendedQuestions {
+            s.append(.giSensitivities)
+            s.append(.formats)
+        }
+        if needsAdvancedQuestions {
+            s.append(.advanced)
+        }
+        return s
+    }
+
+    private var currentStep: Step { steps[stepIndex] }
+    private var isLastStep: Bool { stepIndex == steps.count - 1 }
 
     // MARK: - Body
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
-                    header
-                    goalSection
-                    caffeineSection
-                    dietarySection
-
-                    if needsExtendedQuestions {
-                        giSensitivitySection
-                        formatPreferenceSection
+            VStack(spacing: 0) {
+                progressBar
+                ScrollView {
+                    VStack(spacing: Theme.Spacing.lg) {
+                        stepHeader
+                        stepContent
+                            .transition(.asymmetric(
+                                insertion: .move(edge: .trailing).combined(with: .opacity),
+                                removal: .move(edge: .leading).combined(with: .opacity)
+                            ))
                     }
-
-                    if needsAdvancedQuestions {
-                        advancedSection
-                    }
-
-                    Spacer(minLength: Theme.Spacing.xl)
+                    .padding(Theme.Spacing.lg)
                 }
-                .padding()
             }
-            .navigationTitle("Personalize your plan")
+            .background(Theme.Gradients.futuristicBackground(colorScheme: colorScheme).ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -76,104 +153,121 @@ struct NutritionOnboardingSheet: View {
                         dismiss()
                     }
                 }
-            }
-            .safeAreaInset(edge: .bottom) {
-                generateButton
-            }
-        }
-        .interactiveDismissDisabled(false)
-    }
-
-    // MARK: - Header
-
-    private var header: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-            Text(raceName)
-                .font(.title3.bold())
-            Text("\(Int(raceDistanceKm)) km race")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            Text("Answer a few questions so your race-day plan matches your physiology, preferences, and goals. You can skip anything you're unsure about — we'll use safe defaults.")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-                .padding(.top, Theme.Spacing.xs)
-        }
-    }
-
-    // MARK: - Goal
-
-    private var goalSection: some View {
-        Section {
-            sectionHeader("Your goal", systemImage: "flag.checkered")
-            VStack(spacing: Theme.Spacing.xs) {
-                ForEach(NutritionGoal.allCases, id: \.self) { goal in
-                    OnboardingRadioRow(
-                        title: goal.displayName,
-                        subtitle: goalSubtitle(goal),
-                        isSelected: preferences.nutritionGoal == goal
-                    ) {
-                        preferences.nutritionGoal = goal
+                ToolbarItem(placement: .principal) {
+                    VStack(spacing: 0) {
+                        Text(raceName)
+                            .font(.subheadline.weight(.semibold))
+                            .lineLimit(1)
+                        Text("\(Int(raceDistanceKm)) km · \(stepIndex + 1) of \(steps.count)")
+                            .font(.caption2)
+                            .foregroundStyle(Theme.Colors.tertiaryLabel)
                     }
                 }
             }
+            .safeAreaInset(edge: .bottom) { navigationBar }
         }
     }
 
-    private func goalSubtitle(_ goal: NutritionGoal) -> String {
-        switch goal {
-        case .finishComfortably: "Conservative fueling, prioritize GI safety"
-        case .targetTime:        "Standard evidence-based targets"
-        case .competitive:       "Aggressive carbs (requires gut training)"
+    // MARK: - Progress bar
+
+    private var progressBar: some View {
+        GeometryReader { geo in
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(Theme.Colors.tertiaryLabel.opacity(0.15))
+                Capsule()
+                    .fill(LinearGradient(
+                        colors: [Theme.Colors.warmCoral, Theme.Colors.warmCoral.opacity(0.75)],
+                        startPoint: .leading, endPoint: .trailing
+                    ))
+                    .frame(width: geo.size.width * CGFloat(stepIndex + 1) / CGFloat(steps.count))
+            }
         }
+        .frame(height: 3)
+        .padding(.horizontal, Theme.Spacing.md)
+        .padding(.top, Theme.Spacing.xs)
+    }
+
+    // MARK: - Step header (icon + title + subtitle)
+
+    private var stepHeader: some View {
+        VStack(spacing: Theme.Spacing.md) {
+            Image(systemName: currentStep.iconName)
+                .font(.system(size: 30, weight: .semibold))
+                .foregroundStyle(.white)
+                .frame(width: 64, height: 64)
+                .background(Circle().fill(Theme.Gradients.warmCoralCTA))
+                .shadow(color: Theme.Colors.warmCoral.opacity(0.3), radius: 8, y: 4)
+
+            Text(currentStep.title)
+                .font(.title2.bold())
+                .multilineTextAlignment(.center)
+
+            Text(currentStep.subtitle)
+                .font(.subheadline)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+                .multilineTextAlignment(.center)
+        }
+        .padding(.top, Theme.Spacing.md)
+        .id(currentStep)
+    }
+
+    // MARK: - Step content
+
+    @ViewBuilder
+    private var stepContent: some View {
+        Group {
+            switch currentStep {
+            case .caffeine:        caffeineStep
+            case .dietary:         dietaryStep
+            case .giSensitivities: giStep
+            case .formats:         formatsStep
+            case .advanced:        advancedStep
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: stepIndex)
     }
 
     // MARK: - Caffeine
 
-    private var caffeineSection: some View {
-        Section {
-            sectionHeader("Caffeine", systemImage: "cup.and.saucer.fill")
-            VStack(spacing: Theme.Spacing.xs) {
-                ForEach(CaffeineSensitivity.allCases, id: \.self) { sensitivity in
-                    OnboardingRadioRow(
-                        title: sensitivity.displayName,
-                        subtitle: nil,
-                        isSelected: preferences.caffeineSensitivity == sensitivity
-                    ) {
-                        preferences.caffeineSensitivity = sensitivity
-                        preferences.avoidCaffeine = sensitivity == .none
-                    }
+    private var caffeineStep: some View {
+        VStack(spacing: Theme.Spacing.sm) {
+            ForEach(CaffeineSensitivity.allCases, id: \.self) { sensitivity in
+                SelectableCard(
+                    title: sensitivity.displayName,
+                    subtitle: caffeineSubtitle(sensitivity),
+                    icon: caffeineIcon(sensitivity),
+                    isSelected: preferences.caffeineSensitivity == sensitivity
+                ) {
+                    preferences.caffeineSensitivity = sensitivity
+                    preferences.avoidCaffeine = sensitivity == .none
                 }
-            }
-
-            if preferences.caffeineSensitivity != .none {
-                VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-                    Text("Daily intake (mg, optional)")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    TextField("e.g. 200", text: $caffeineHabitText)
-                        .keyboardType(.numberPad)
-                        .textFieldStyle(.roundedBorder)
-                        .onChange(of: caffeineHabitText) { _, new in
-                            preferences.caffeineHabitMgPerDay = Int(new)
-                        }
-                    Text("One coffee ≈ 95 mg, one espresso ≈ 63 mg. Used to calibrate race-day dose.")
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
-                }
-                .padding(.top, Theme.Spacing.xs)
             }
         }
     }
 
-    // MARK: - Dietary restrictions
+    private func caffeineSubtitle(_ s: CaffeineSensitivity) -> String {
+        switch s {
+        case .none:      return "No coffee, tea, or caffeinated drinks"
+        case .low:       return "Occasional — not a daily drinker"
+        case .moderate:  return "1-2 coffees or equivalent per day"
+        case .high:      return "3+ coffees or strong daily habit"
+        }
+    }
 
-    private var dietarySection: some View {
-        Section {
-            sectionHeader("Dietary restrictions", systemImage: "leaf.fill")
-            Text("Any we should respect when picking products?")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            ChipsGrid(
+    private func caffeineIcon(_ s: CaffeineSensitivity) -> String {
+        switch s {
+        case .none:      return "cup.and.saucer"
+        case .low, .moderate, .high:
+            return "cup.and.saucer.fill"
+        }
+    }
+
+    // MARK: - Dietary
+
+    private var dietaryStep: some View {
+        VStack(spacing: Theme.Spacing.sm) {
+            noneOrChipsGrid(
                 items: DietaryRestriction.allCases,
                 title: { $0.displayName },
                 isSelected: { preferences.dietaryRestrictions.contains($0) },
@@ -183,20 +277,18 @@ struct NutritionOnboardingSheet: View {
                     } else {
                         preferences.dietaryRestrictions.insert(restriction)
                     }
-                }
+                },
+                isEmpty: preferences.dietaryRestrictions.isEmpty,
+                onClear: { preferences.dietaryRestrictions.removeAll() }
             )
         }
     }
 
-    // MARK: - GI sensitivities (extended)
+    // MARK: - GI sensitivities
 
-    private var giSensitivitySection: some View {
-        Section {
-            sectionHeader("Known GI sensitivities", systemImage: "exclamationmark.triangle.fill")
-            Text("Things that have caused stomach trouble in past races or long runs.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            ChipsGrid(
+    private var giStep: some View {
+        VStack(spacing: Theme.Spacing.sm) {
+            noneOrChipsGrid(
                 items: GISensitivity.allCases,
                 title: { $0.displayName },
                 isSelected: { preferences.giSensitivities.contains($0) },
@@ -206,22 +298,21 @@ struct NutritionOnboardingSheet: View {
                     } else {
                         preferences.giSensitivities.insert(sensitivity)
                     }
-                }
+                },
+                isEmpty: preferences.giSensitivities.isEmpty,
+                onClear: { preferences.giSensitivities.removeAll() }
             )
         }
     }
 
-    // MARK: - Format preferences (extended)
+    // MARK: - Formats
 
-    private var formatPreferenceSection: some View {
-        Section {
-            sectionHeader("Preferred formats", systemImage: "square.stack.fill")
-            Text("Select formats you like. Leave empty for no preference.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+    private var formatsStep: some View {
+        VStack(spacing: Theme.Spacing.sm) {
             ChipsGrid(
                 items: ProductType.allCases,
                 title: { formatTitle($0) },
+                icon: { formatIcon($0) },
                 isSelected: { preferences.preferredFormats.contains($0) },
                 onToggle: { format in
                     if preferences.preferredFormats.contains(format) {
@@ -231,6 +322,11 @@ struct NutritionOnboardingSheet: View {
                     }
                 }
             )
+            Text("Tap everything you're happy to use. Leave empty for no preference.")
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.tertiaryLabel)
+                .multilineTextAlignment(.center)
+                .padding(.top, Theme.Spacing.xs)
         }
     }
 
@@ -245,130 +341,270 @@ struct NutritionOnboardingSheet: View {
         }
     }
 
-    // MARK: - Advanced (marathon+)
-
-    private var advancedSection: some View {
-        DisclosureGroup(isExpanded: $showAdvanced) {
-            VStack(alignment: .leading, spacing: Theme.Spacing.md) {
-                // Carbs tolerance
-                VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-                    Text("Max carbs/hour you've tolerated in training")
-                        .font(.subheadline.weight(.medium))
-                    TextField("e.g. 80 (g/hr)", text: $carbsToleranceText)
-                        .keyboardType(.numberPad)
-                        .textFieldStyle(.roundedBorder)
-                        .onChange(of: carbsToleranceText) { _, new in
-                            preferences.carbsPerHourTolerance = Int(new)
-                        }
-                    Text("Leave blank if you haven't gut-trained yet. The generator will prescribe an evidence-based target based on your race duration.")
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
-                }
-
-                Divider()
-
-                // Sweat profile
-                Toggle(isOn: $preferences.sweatProfile.heavySaltySweater) {
-                    VStack(alignment: .leading) {
-                        Text("Heavy salty sweater").font(.subheadline.weight(.medium))
-                        Text("White salt marks on dark shirts, stinging eyes, crystals on skin")
-                            .font(.caption2)
-                            .foregroundStyle(.tertiary)
-                    }
-                }
-
-                VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-                    Text("Measured sweat rate (ml/hr, optional)")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    TextField("e.g. 900", text: $sweatRateText)
-                        .keyboardType(.numberPad)
-                        .textFieldStyle(.roundedBorder)
-                        .onChange(of: sweatRateText) { _, new in
-                            preferences.sweatProfile.sweatRateMlPerHour = Int(new)
-                        }
-                }
-
-                VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-                    Text("Measured sweat sodium (mg/L, optional)")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    TextField("e.g. 1000", text: $sweatSodiumText)
-                        .keyboardType(.numberPad)
-                        .textFieldStyle(.roundedBorder)
-                        .onChange(of: sweatSodiumText) { _, new in
-                            preferences.sweatProfile.sweatSodiumMgPerL = Int(new)
-                        }
-                    Text("From a lab test (e.g. Precision Fuel & Hydration). If you haven't tested, skip.")
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
-                }
-            }
-            .padding(.top, Theme.Spacing.sm)
-        } label: {
-            sectionHeader("Advanced (optional)", systemImage: "slider.horizontal.3")
+    private func formatIcon(_ type: ProductType) -> String {
+        switch type {
+        case .gel:      "drop.fill"
+        case .chew:     "circle.grid.3x3.fill"
+        case .drink:    "waterbottle.fill"
+        case .bar:      "rectangle.fill"
+        case .realFood: "leaf.fill"
+        case .salt:     "pills.fill"
         }
     }
 
-    // MARK: - Generate button
+    // MARK: - Advanced
 
-    private var generateButton: some View {
-        VStack {
-            Button {
-                var final = preferences
-                final.onboardingCompleted = true
-                onGenerate(final)
-                dismiss()
-            } label: {
-                Text("Generate my plan")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, Theme.Spacing.sm)
+    private var advancedStep: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+            Toggle(isOn: $preferences.sweatProfile.heavySaltySweater) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Heavy salty sweater").font(.subheadline.weight(.semibold))
+                    Text("White salt marks on dark shirts, stinging eyes, crystals on skin")
+                        .font(.caption2)
+                        .foregroundStyle(Theme.Colors.tertiaryLabel)
+                }
             }
-            .buttonStyle(.borderedProminent)
-            .accessibilityIdentifier("nutrition.onboarding.generate")
+            .tint(Theme.Colors.warmCoral)
+            .padding(Theme.Spacing.md)
+            .background(tintedCard)
+
+            advancedNumericField(
+                label: "Max carbs/hour you've tolerated",
+                placeholder: "e.g. 80",
+                unit: "g/hr",
+                text: $carbsToleranceText,
+                hint: "From training. Leave blank if you haven't gut-trained."
+            )
+            .onChange(of: carbsToleranceText) { _, new in
+                preferences.carbsPerHourTolerance = Int(new)
+            }
+
+            advancedNumericField(
+                label: "Sweat rate",
+                placeholder: "e.g. 900",
+                unit: "ml/hr",
+                text: $sweatRateText,
+                hint: nil
+            )
+            .onChange(of: sweatRateText) { _, new in
+                preferences.sweatProfile.sweatRateMlPerHour = Int(new)
+            }
+
+            advancedNumericField(
+                label: "Sweat sodium",
+                placeholder: "e.g. 1000",
+                unit: "mg/L",
+                text: $sweatSodiumText,
+                hint: "From a lab test. Skip if untested."
+            )
+            .onChange(of: sweatSodiumText) { _, new in
+                preferences.sweatProfile.sweatSodiumMgPerL = Int(new)
+            }
+
+            Text("All fields optional. Skip what you don't know — we'll use evidence-based defaults.")
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.tertiaryLabel)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
         }
-        .padding()
+    }
+
+    private func advancedNumericField(
+        label: String,
+        placeholder: String,
+        unit: String,
+        text: Binding<String>,
+        hint: String?
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(label)
+                .font(.subheadline.weight(.semibold))
+            HStack {
+                TextField(placeholder, text: text)
+                    .keyboardType(.numberPad)
+                    .font(.title3.monospacedDigit())
+                Text(unit)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+            if let hint {
+                Text(hint)
+                    .font(.caption2)
+                    .foregroundStyle(Theme.Colors.tertiaryLabel)
+            }
+        }
+        .padding(Theme.Spacing.md)
+        .background(tintedCard)
+    }
+
+    private var tintedCard: some View {
+        RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+            .fill(colorScheme == .dark ? Color.white.opacity(0.06) : Color.white.opacity(0.7))
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                    .stroke(Theme.Colors.warmCoral.opacity(0.14), lineWidth: 0.75)
+            )
+    }
+
+    // MARK: - Navigation bar
+
+    private var navigationBar: some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            if stepIndex > 0 {
+                Button {
+                    withAnimation { stepIndex -= 1 }
+                } label: {
+                    Label("Back", systemImage: "chevron.left")
+                        .font(.subheadline.weight(.semibold))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, Theme.Spacing.sm + 2)
+                }
+                .buttonStyle(.bordered)
+                .tint(Theme.Colors.secondaryLabel)
+            }
+
+            Button {
+                if isLastStep {
+                    submit()
+                } else {
+                    withAnimation { stepIndex += 1 }
+                }
+            } label: {
+                Label(
+                    isLastStep ? "Generate my plan" : "Continue",
+                    systemImage: isLastStep ? "checkmark.circle.fill" : "chevron.right"
+                )
+                .font(.subheadline.weight(.semibold))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, Theme.Spacing.sm + 2)
+                .foregroundStyle(.white)
+                .background(Theme.Gradients.warmCoralCTA)
+                .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
+                .shadow(color: Theme.Colors.warmCoral.opacity(0.3), radius: 6, y: 3)
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier(isLastStep ? "nutrition.onboarding.generate" : "nutrition.onboarding.continue")
+        }
+        .padding(.horizontal, Theme.Spacing.md)
+        .padding(.vertical, Theme.Spacing.sm)
         .background(.regularMaterial)
     }
 
-    // MARK: - Helpers
+    private func submit() {
+        var final = preferences
+        final.onboardingCompleted = true
+        onGenerate(final)
+        dismiss()
+    }
 
-    private func sectionHeader(_ title: String, systemImage: String) -> some View {
-        Label(title, systemImage: systemImage)
-            .font(.headline)
+    // MARK: - None-or-chips grid helper
+
+    /// Adds a "None" chip at the start that clears the whole selection.
+    /// Keeps "nothing to avoid" as a one-tap state rather than leaving
+    /// the athlete to figure out that empty = none.
+    @ViewBuilder
+    private func noneOrChipsGrid<Item: Hashable>(
+        items: [Item],
+        title: @escaping (Item) -> String,
+        isSelected: @escaping (Item) -> Bool,
+        onToggle: @escaping (Item) -> Void,
+        isEmpty: Bool,
+        onClear: @escaping () -> Void
+    ) -> some View {
+        VStack(spacing: Theme.Spacing.sm) {
+            HStack {
+                Button {
+                    onClear()
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: isEmpty ? "checkmark.circle.fill" : "circle")
+                            .font(.caption.weight(.bold))
+                        Text("None — nothing to flag")
+                            .font(.subheadline.weight(.medium))
+                    }
+                    .foregroundStyle(isEmpty ? .white : Theme.Colors.label)
+                    .padding(.horizontal, Theme.Spacing.md)
+                    .padding(.vertical, Theme.Spacing.sm + 2)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                            .fill(isEmpty
+                                  ? AnyShapeStyle(Theme.Gradients.warmCoralCTA)
+                                  : AnyShapeStyle(colorScheme == .dark ? Color.white.opacity(0.06) : Color.white.opacity(0.7)))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                            .stroke(Theme.Colors.warmCoral.opacity(isEmpty ? 0.0 : 0.14), lineWidth: 0.75)
+                    )
+                }
+                .buttonStyle(.plain)
+            }
+            ChipsGrid(
+                items: items,
+                title: title,
+                icon: { _ in nil },
+                isSelected: isSelected,
+                onToggle: onToggle
+            )
+        }
     }
 }
 
-// MARK: - Radio row
+// MARK: - Selectable card
 
-private struct OnboardingRadioRow: View {
+/// Large full-width card with icon + title + optional subtitle. Matches
+/// the main onboarding aesthetic (ExperienceLevelCard-style). Replaces
+/// the tiny radio rows that made the old sheet feel like a DMV form.
+private struct SelectableCard: View {
     let title: String
     let subtitle: String?
+    let icon: String
     let isSelected: Bool
     let onTap: () -> Void
 
+    @Environment(\.colorScheme) private var colorScheme
+
     var body: some View {
         Button(action: onTap) {
-            HStack(alignment: .top, spacing: Theme.Spacing.md) {
-                Image(systemName: isSelected ? "largecircle.fill.circle" : "circle")
-                    .foregroundStyle(isSelected ? Theme.Colors.accentColor : Theme.Colors.secondaryLabel)
+            HStack(alignment: .center, spacing: Theme.Spacing.md) {
+                Image(systemName: icon)
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(isSelected ? .white : Theme.Colors.warmCoral)
+                    .frame(width: 38, height: 38)
+                    .background(
+                        Circle().fill(
+                            isSelected
+                                ? AnyShapeStyle(Theme.Gradients.warmCoralCTA)
+                                : AnyShapeStyle(Theme.Colors.warmCoral.opacity(0.14))
+                        )
+                    )
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(title).font(.subheadline.weight(.medium))
+                    Text(title)
+                        .font(.subheadline.weight(.semibold))
                     if let subtitle {
-                        Text(subtitle).font(.caption).foregroundStyle(.secondary)
+                        Text(subtitle)
+                            .font(.caption)
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
                     }
                 }
                 Spacer()
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.title3)
+                        .foregroundStyle(Theme.Colors.warmCoral)
+                }
             }
-            .padding(Theme.Spacing.sm)
+            .padding(Theme.Spacing.md)
             .background(
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                    .fill(isSelected ? Theme.Colors.accentColor.opacity(0.08) : Color.clear)
+                    .fill(colorScheme == .dark ? Color.white.opacity(0.06) : Color.white.opacity(0.7))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                    .stroke(isSelected ? Theme.Colors.accentColor.opacity(0.4) : Theme.Colors.secondaryLabel.opacity(0.15), lineWidth: 1)
+                    .stroke(
+                        isSelected ? Theme.Colors.warmCoral : Theme.Colors.tertiaryLabel.opacity(0.14),
+                        lineWidth: isSelected ? 1.5 : 0.75
+                    )
             )
         }
         .buttonStyle(.plain)
@@ -380,27 +616,45 @@ private struct OnboardingRadioRow: View {
 private struct ChipsGrid<Item: Hashable>: View {
     let items: [Item]
     let title: (Item) -> String
+    let icon: (Item) -> String?
     let isSelected: (Item) -> Bool
     let onToggle: (Item) -> Void
 
+    @Environment(\.colorScheme) private var colorScheme
+
     var body: some View {
-        FlowLayout(spacing: Theme.Spacing.xs) {
+        FlowLayout(spacing: Theme.Spacing.xs + 2) {
             ForEach(items, id: \.self) { item in
                 let selected = isSelected(item)
                 Button {
                     onToggle(item)
                 } label: {
-                    Text(title(item))
-                        .font(.caption.weight(.medium))
-                        .padding(.horizontal, Theme.Spacing.sm)
-                        .padding(.vertical, Theme.Spacing.xs)
-                        .background(
-                            Capsule().fill(selected ? Theme.Colors.accentColor.opacity(0.15) : Color.gray.opacity(0.12))
+                    HStack(spacing: 6) {
+                        if let iconName = icon(item) {
+                            Image(systemName: iconName)
+                                .font(.caption2.weight(.bold))
+                        }
+                        Text(title(item))
+                            .font(.subheadline.weight(.medium))
+                    }
+                    .padding(.horizontal, Theme.Spacing.sm + 2)
+                    .padding(.vertical, Theme.Spacing.xs + 2)
+                    .background(
+                        Capsule().fill(
+                            selected
+                                ? AnyShapeStyle(Theme.Gradients.warmCoralCTA)
+                                : AnyShapeStyle(colorScheme == .dark
+                                                ? Color.white.opacity(0.08)
+                                                : Color.white.opacity(0.7))
                         )
-                        .overlay(
-                            Capsule().stroke(selected ? Theme.Colors.accentColor : Color.clear, lineWidth: 1)
+                    )
+                    .overlay(
+                        Capsule().stroke(
+                            selected ? Color.clear : Theme.Colors.tertiaryLabel.opacity(0.14),
+                            lineWidth: 0.75
                         )
-                        .foregroundStyle(selected ? Theme.Colors.accentColor : Theme.Colors.label)
+                    )
+                    .foregroundStyle(selected ? .white : Theme.Colors.label)
                 }
                 .buttonStyle(.plain)
             }
@@ -408,7 +662,7 @@ private struct ChipsGrid<Item: Hashable>: View {
     }
 }
 
-// MARK: - Flow layout (for wrapping chips)
+// MARK: - Flow layout
 
 private struct FlowLayout: Layout {
     let spacing: CGFloat

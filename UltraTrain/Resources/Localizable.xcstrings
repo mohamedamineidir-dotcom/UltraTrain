@@ -297,6 +297,9 @@
         }
       }
     },
+    "%@ focus" : {
+
+    },
     "%@ km" : {
       "localizations" : {
         "fr" : {
@@ -1101,6 +1104,9 @@
           }
         }
       }
+    },
+    "%lld kg" : {
+
     },
     "%lld kilocalories" : {
       "localizations" : {
@@ -2358,6 +2364,9 @@
       }
     },
     "Add route" : {
+
+    },
+    "Add to Calendar (.ics)" : {
 
     },
     "Add to Plan" : {
@@ -5268,6 +5277,9 @@
         }
       }
     },
+    "Double-tap to move your rest day to another day this week" : {
+
+    },
     "Double-tap to navigate to the next month" : {
       "localizations" : {
         "fr" : {
@@ -6212,6 +6224,12 @@
       }
     },
     "Export Failed" : {
+
+    },
+    "Export plan" : {
+
+    },
+    "Export Plan" : {
 
     },
     "Export Run" : {
@@ -8825,6 +8843,9 @@
         }
       }
     },
+    "Move Rest Day" : {
+
+    },
     "Move this session to a different date" : {
       "localizations" : {
         "fr" : {
@@ -9359,6 +9380,9 @@
           }
         }
       }
+    },
+    "No session" : {
+
     },
     "No Sessions Available" : {
       "localizations" : {
@@ -11190,6 +11214,9 @@
         }
       }
     },
+    "Pick a day to rest on" : {
+
+    },
     "Pick a Route" : {
       "localizations" : {
         "fr" : {
@@ -11875,6 +11902,9 @@
     "Race Type" : {
 
     },
+    "RACE WEEK FUELLING" : {
+
+    },
     "Races" : {
       "localizations" : {
         "fr" : {
@@ -11999,6 +12029,12 @@
           }
         }
       }
+    },
+    "Rebalance the plan" : {
+
+    },
+    "Rebuilding" : {
+
     },
     "Rec." : {
 
@@ -12363,6 +12399,9 @@
           }
         }
       }
+    },
+    "Rest (current)" : {
+
     },
     "Rest Day" : {
       "localizations" : {
@@ -12879,6 +12918,9 @@
           }
         }
       }
+    },
+    "Save as PDF" : {
+
     },
     "Save feedback" : {
 
@@ -14690,6 +14732,9 @@
     "Tap a pill to set how many you completed" : {
 
     },
+    "Tap another day to move" : {
+
+    },
     "Tap to add" : {
 
     },
@@ -14844,6 +14889,9 @@
           }
         }
       }
+    },
+    "The session on that day will move to %@ in exchange." : {
+
     },
     "Theme" : {
       "localizations" : {

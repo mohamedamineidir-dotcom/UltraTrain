@@ -95,6 +95,7 @@ struct NutritionView: View {
                     NutritionOnboardingSheet(
                         raceName: race.name,
                         raceDistanceKm: race.distanceKm,
+                        raceGoalType: race.goalType,
                         initialPreferences: viewModel.preferences,
                         onGenerate: { updatedPreferences in
                             Task { await viewModel.generatePlan(with: updatedPreferences) }
