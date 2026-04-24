@@ -22,7 +22,8 @@ enum RoadCoachAdviceGenerator {
         hotRaceForecast: Bool = false,
         refinementSummary: RefineRoadPaceFromFeedbackUseCase.PaceRefinementSummary? = nil,
         restingHR: Int? = nil,
-        maxHR: Int? = nil
+        maxHR: Int? = nil,
+        biologicalSex: BiologicalSex? = nil
     ) -> String? {
         if isRecoveryWeek {
             return recoveryWeekAdvice(type: type)
@@ -117,6 +118,21 @@ enum RoadCoachAdviceGenerator {
             )
             current += " Target HR: \(range.min)-\(range.max) bpm."
             advice = current
+        }
+
+        // #15: append research-backed sex-specific note when applicable.
+        // Phase 1 appends only for female athletes (long-run fuelling,
+        // peak iron surveillance, race-week RED-S). Male athletes pass
+        // through unchanged.
+        if let biologicalSex, let current = advice,
+           let note = SexSpecificAdviceHelper.note(
+               biologicalSex: biologicalSex,
+               sessionType: type,
+               phase: phase,
+               isRecoveryWeek: isRecoveryWeek,
+               isRaceWeek: phase == .race
+           ) {
+            advice = current + " " + note
         }
 
         return advice

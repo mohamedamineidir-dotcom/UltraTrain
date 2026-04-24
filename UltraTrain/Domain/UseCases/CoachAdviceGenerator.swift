@@ -13,7 +13,8 @@ enum CoachAdviceGenerator {
         intervalFocus: IntervalFocus? = nil,
         isRoadRace: Bool = false,
         restingHR: Int? = nil,
-        maxHR: Int? = nil
+        maxHR: Int? = nil,
+        biologicalSex: BiologicalSex? = nil
     ) -> String? {
         let recoveryPrefix = isRecoveryWeek
             ? "Recovery week, so keep everything easy. Your body adapts when you rest. "
@@ -59,6 +60,17 @@ enum CoachAdviceGenerator {
                 for: intensity, restingHR: restingHR, maxHR: maxHR
             )
             result += " Target HR: \(range.min)-\(range.max) bpm."
+        }
+        // #15: append research-backed sex-specific note when relevant.
+        if let biologicalSex,
+           let note = SexSpecificAdviceHelper.note(
+               biologicalSex: biologicalSex,
+               sessionType: type,
+               phase: phase,
+               isRecoveryWeek: isRecoveryWeek,
+               isRaceWeek: phase == .race
+           ) {
+            result += " " + note
         }
         return result
     }

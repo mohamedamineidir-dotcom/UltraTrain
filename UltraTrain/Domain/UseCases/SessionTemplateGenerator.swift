@@ -32,7 +32,8 @@ enum SessionTemplateGenerator {
         isRoadRace: Bool = false,
         intermediateRaceContext: RaceContext? = nil,
         restingHR: Int? = nil,
-        maxHR: Int? = nil
+        maxHR: Int? = nil,
+        biologicalSex: BiologicalSex? = nil
     ) -> (sessions: [TrainingSession], workouts: [IntervalWorkout], strengthWorkouts: [StrengthWorkout]) {
         let runsPerWeek = preferredRunsPerWeek
         let templates: [SessionTemplate]
@@ -121,7 +122,8 @@ enum SessionTemplateGenerator {
                 intervalFocus: intervalFocus,
                 isRoadRace: isRoadRace,
                 restingHR: restingHR,
-                maxHR: maxHR
+                maxHR: maxHR,
+                biologicalSex: biologicalSex
             )
 
             return TrainingSession(
