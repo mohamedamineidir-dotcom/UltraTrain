@@ -325,9 +325,55 @@ private struct ManualValidationPage: View {
     @State private var feeling: PerceivedFeeling?
     @State private var rpe: Int?
     @State private var pulseOn: Bool = false
+    @State private var stepIndex: Int = 0
     @FocusState private var focusedField: StatsField?
 
     enum StatsField: Hashable { case distance, elevation }
+
+    /// Atomic step in the validation flow. The sequence is computed per
+    /// session — intervals/tempo with a feedback context skip feeling/rpe
+    /// here because IR-1 will capture them afterwards.
+    fileprivate enum Step {
+        case stats
+        case feeling
+        case rpe
+
+        var title: String {
+            switch self {
+            case .stats:   return "Enter your stats"
+            case .feeling: return "How did it feel?"
+            case .rpe:     return "Rate your effort"
+            }
+        }
+
+        var subtitle: String {
+            switch self {
+            case .stats:   return "Planned values are pre-filled — adjust anything that came out different."
+            case .feeling: return "Overall impression from start to finish."
+            case .rpe:     return "1 is walking-easy, 10 is the hardest effort you can imagine."
+            }
+        }
+
+        var iconName: String {
+            switch self {
+            case .stats:   return "stopwatch.fill"
+            case .feeling: return "face.smiling"
+            case .rpe:     return "flame.fill"
+            }
+        }
+    }
+
+    private var steps: [Step] {
+        var s: [Step] = [.stats]
+        if !hideFeelingAndRPE {
+            s.append(.feeling)
+            s.append(.rpe)
+        }
+        return s
+    }
+
+    private var currentStep: Step { steps[stepIndex] }
+    private var isLastStep: Bool { stepIndex == steps.count - 1 }
 
     init(
         session: TrainingSession,
@@ -359,48 +405,178 @@ private struct ManualValidationPage: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: Theme.Spacing.md) {
-                // Single unified card: session context on top, stats rows
-                // below. One visual anchor instead of two stacked cards
-                // competing for the first look.
-                unifiedSessionCard
-
-                if !hideFeelingAndRPE {
-                    feelingSection
-                    rpeSection
-                }
-
-                completeButton
-
-                rationaleCard
-
-                if let next = weekProgress?.nextSessionPreview {
-                    nextUpCard(next)
-                }
-
-                if let progress = weekProgress {
-                    weekProgressFooter(progress)
-                }
-
-                Button {
-                    onComplete(nil, nil, nil, nil, nil)
-                } label: {
-                    Text("Skip stats, just complete")
-                        .font(.caption)
-                        .foregroundStyle(Theme.Colors.tertiaryLabel)
-                }
-                .padding(.bottom, Theme.Spacing.sm)
+        VStack(spacing: 0) {
+            if steps.count > 1 {
+                progressBar
             }
-            .padding(Theme.Spacing.md)
+            ScrollView {
+                VStack(spacing: Theme.Spacing.md) {
+                    stepHeader
+                    stepContent
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal: .move(edge: .leading).combined(with: .opacity)
+                        ))
+
+                    // Context + forward-looking cards sit on the final
+                    // step only so they read as "what happens after you
+                    // submit" rather than filler on every page.
+                    if isLastStep {
+                        rationaleCard
+                        if let next = weekProgress?.nextSessionPreview {
+                            nextUpCard(next)
+                        }
+                        if let progress = weekProgress {
+                            weekProgressFooter(progress)
+                        }
+                    }
+                }
+                .padding(Theme.Spacing.md)
+            }
+            navigationBar
+            skipLink
         }
-        .navigationTitle("Enter Stats")
+        .navigationTitle("Validate")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             withAnimation(.easeInOut(duration: 1.6).repeatForever(autoreverses: true)) {
                 pulseOn = true
             }
         }
+    }
+
+    // MARK: - Step chrome
+
+    private var progressBar: some View {
+        GeometryReader { geo in
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(Theme.Colors.tertiaryLabel.opacity(0.15))
+                Capsule()
+                    .fill(LinearGradient(
+                        colors: [session.intensity.color, session.intensity.color.opacity(0.75)],
+                        startPoint: .leading, endPoint: .trailing
+                    ))
+                    .frame(width: geo.size.width * CGFloat(stepIndex + 1) / CGFloat(steps.count))
+            }
+        }
+        .frame(height: 3)
+        .padding(.horizontal, Theme.Spacing.md)
+        .padding(.top, Theme.Spacing.xs)
+    }
+
+    /// Shown on steps 2+ only. The stats step already carries a session-
+    /// context header inside `unifiedSessionCard`, so repeating a titled
+    /// step header above it would double up.
+    @ViewBuilder
+    private var stepHeader: some View {
+        if currentStep != .stats {
+            VStack(spacing: Theme.Spacing.md) {
+                Image(systemName: currentStep.iconName)
+                    .font(.system(size: 30, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 64, height: 64)
+                    .background(Circle().fill(
+                        LinearGradient(
+                            colors: [session.intensity.color, session.intensity.color.opacity(0.75)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    ))
+                    .shadow(color: session.intensity.color.opacity(0.3), radius: 8, y: 4)
+                Text(currentStep.title)
+                    .font(.title2.bold())
+                    .multilineTextAlignment(.center)
+                Text(currentStep.subtitle)
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(.top, Theme.Spacing.md)
+            .id(currentStep.title)
+        }
+    }
+
+    @ViewBuilder
+    private var stepContent: some View {
+        Group {
+            switch currentStep {
+            case .stats:   unifiedSessionCard
+            case .feeling: feelingSection
+            case .rpe:     rpeSection
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: stepIndex)
+    }
+
+    private var navigationBar: some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            if stepIndex > 0 {
+                Button {
+                    withAnimation { stepIndex -= 1 }
+                } label: {
+                    Label("Back", systemImage: "chevron.left")
+                        .font(.subheadline.weight(.semibold))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, Theme.Spacing.sm + 2)
+                }
+                .buttonStyle(.bordered)
+                .tint(Theme.Colors.secondaryLabel)
+            }
+
+            Button {
+                if isLastStep {
+                    submit()
+                } else {
+                    withAnimation { stepIndex += 1 }
+                }
+            } label: {
+                Label(
+                    isLastStep ? (hideFeelingAndRPE ? "Continue" : "Complete Session")
+                               : "Continue",
+                    systemImage: isLastStep ? "checkmark.circle.fill" : "chevron.right"
+                )
+                .font(.subheadline.weight(.semibold))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, Theme.Spacing.sm + 2)
+                .foregroundStyle(.white)
+                .background(Theme.Gradients.warmCoralCTA)
+                .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
+                .shadow(
+                    color: Theme.Colors.warmCoral.opacity(isLastStep && pulseOn ? 0.45 : 0.25),
+                    radius: isLastStep && pulseOn ? 12 : 6,
+                    y: 3
+                )
+                .opacity(isLastStep && !isReadyToSubmit ? 0.55 : 1.0)
+            }
+            .buttonStyle(.plain)
+            .disabled(isLastStep && !isReadyToSubmit)
+        }
+        .padding(.horizontal, Theme.Spacing.md)
+        .padding(.vertical, Theme.Spacing.sm)
+        .background(.regularMaterial)
+    }
+
+    private var skipLink: some View {
+        Button {
+            onComplete(nil, nil, nil, nil, nil)
+        } label: {
+            Text("Skip stats, just mark complete")
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.tertiaryLabel)
+        }
+        .padding(.bottom, Theme.Spacing.xs)
+        .padding(.top, 2)
+    }
+
+    private func submit() {
+        let dist = Double(distanceText.replacingOccurrences(of: ",", with: "."))
+        let dur: TimeInterval? = {
+            let total = TimeInterval(hours * 3600 + minutes * 60 + seconds)
+            return total > 0 ? total : nil
+        }()
+        let elev = Double(elevationText)
+        onComplete(dist, dur, elev, feeling, rpe)
     }
 
     /// Single card holding: session context header, then the 3 input
@@ -807,34 +983,6 @@ private struct ManualValidationPage: View {
         let hasElevation = Double(elevationText) ?? 0 > 0
         let hasFeeling = feeling != nil || rpe != nil
         return hasDistance || hasDuration || hasElevation || hasFeeling
-    }
-
-    private var completeButton: some View {
-        let ready = isReadyToSubmit
-        return Button {
-            let dist = Double(distanceText.replacingOccurrences(of: ",", with: "."))
-            let dur: TimeInterval? = {
-                let total = TimeInterval(hours * 3600 + minutes * 60 + seconds)
-                return total > 0 ? total : nil
-            }()
-            let elev = Double(elevationText)
-            onComplete(dist, dur, elev, feeling, rpe)
-        } label: {
-            Label(hideFeelingAndRPE ? "Continue" : "Complete Session", systemImage: "checkmark.circle.fill")
-                .font(.headline)
-                .frame(maxWidth: .infinity)
-                .frame(height: 48)
-                .foregroundStyle(.white)
-                .background(Theme.Gradients.warmCoralCTA)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .shadow(color: Theme.Colors.warmCoral.opacity(
-                    ready ? (pulseOn ? 0.45 : 0.20) : 0.0
-                ), radius: ready ? (pulseOn ? 12 : 6) : 0, y: 3)
-                .opacity(ready ? 1.0 : 0.55)
-        }
-        .buttonStyle(.plain)
-        .disabled(!ready)
-        .padding(.top, Theme.Spacing.xs)
     }
 
     // MARK: - Diff capsule
