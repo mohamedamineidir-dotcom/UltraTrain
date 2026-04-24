@@ -296,6 +296,20 @@ extension WeekCardView {
             Divider()
                 .padding(.vertical, Theme.Spacing.sm)
 
+            // #25: weekly narrative — short coach-voice summary of
+            // what this week is for. Generated from phase + recovery
+            // flag + volume trend. Renders once per expanded week,
+            // above the session rows.
+            let narrative = WeeklyNarrativeGenerator.build(
+                week: week,
+                weekIndex: weekIndex,
+                allWeeks: allWeeks,
+                isRoad: isRoad
+            )
+            WeeklyNarrativeCard(narrative: narrative, phaseTint: phaseAccentColor)
+                .padding(.horizontal, Theme.Spacing.xs)
+                .padding(.bottom, Theme.Spacing.sm)
+
             ForEach(Array(dayGroupedSessions.enumerated()), id: \.offset) { groupIdx, dayGroup in
                 if groupIdx > 0 {
                     Rectangle()
