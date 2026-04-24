@@ -37,6 +37,22 @@ extension TrainingPlanView {
                     )
                 }
 
+                // #26: sustained missed-session pattern. Closes the
+                // loop between plan assumptions and actual execution.
+                if viewModel.shouldShowMissedSessionBanner,
+                   let pattern = viewModel.missedSessionPattern {
+                    MissedSessionBanner(
+                        pattern: pattern,
+                        onRegenerate: {
+                            Task { await viewModel.generatePlan() }
+                        },
+                        onDismiss: {
+                            viewModel.missedSessionBannerDismissed = true
+                        },
+                        isRegenerating: viewModel.isGenerating
+                    )
+                }
+
                 planHeader(plan)
 
                 let isRoadPlan = viewModel.targetRace?.raceType == .road

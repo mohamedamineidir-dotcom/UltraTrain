@@ -48,6 +48,10 @@ final class TrainingPlanViewModel {
     /// Session-scoped dismissal for the banner — athlete can hide it
     /// for the current app session without disabling projection.
     var injuryRiskBannerDismissed: Bool = false
+    /// #26: sustained-missed-session pattern (skips / quality drift /
+    /// inactivity). Recomputed on plan load + session mutations.
+    var missedSessionPattern: MissedSessionPatternDetector.Pattern?
+    var missedSessionBannerDismissed: Bool = false
 
     // MARK: - Init
 
@@ -108,6 +112,7 @@ final class TrainingPlanViewModel {
         isLoading = false
         checkForAdjustments()
         refreshInjuryRiskProjection()
+        refreshMissedSessionPattern()
         refreshScheduledReminders()
     }
 
@@ -120,6 +125,23 @@ final class TrainingPlanViewModel {
             return
         }
         injuryRiskProjection = PlanInjuryRiskProjector.project(plan: plan)
+    }
+
+    /// #26: recomputes the trailing 14-day missed-session pattern.
+    /// Cheap pure-domain scan — safe to call after any mutation.
+    /// Dismissal state is intentionally NOT reset by refresh so the
+    /// athlete doesn't re-see the same banner on every plan edit in
+    /// the same app session.
+    func refreshMissedSessionPattern() {
+        guard let plan else {
+            missedSessionPattern = nil
+            return
+        }
+        missedSessionPattern = MissedSessionPatternDetector.detect(plan: plan)
+    }
+
+    var shouldShowMissedSessionBanner: Bool {
+        !missedSessionBannerDismissed && missedSessionPattern != nil
     }
 
     /// True when we have a non-empty flag set AND the athlete hasn't
@@ -192,6 +214,10 @@ final class TrainingPlanViewModel {
             self.athlete = athlete
             races = allRaces
             refreshInjuryRiskProjection()
+            refreshMissedSessionPattern()
+            // Clear dismissal state when regenerating — the new plan
+            // deserves a fresh review if any pattern persists.
+            missedSessionBannerDismissed = false
             refreshScheduledReminders()
             Logger.training.info("Plan generated: \(newPlan.weeks.count) weeks")
             hapticService.playSuccess()

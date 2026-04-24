@@ -21,6 +21,7 @@ extension TrainingPlanViewModel {
             plan = currentPlan
             await updateWidgets()
             checkForAdjustments()
+            refreshMissedSessionPattern()
             refreshScheduledReminders()
         } catch {
             self.error = error.localizedDescription
@@ -57,6 +58,7 @@ extension TrainingPlanViewModel {
             plan = currentPlan
             await updateWidgets()
             checkForAdjustments()
+            refreshMissedSessionPattern()
             refreshScheduledReminders()
         } catch {
             self.error = error.localizedDescription
@@ -91,6 +93,7 @@ extension TrainingPlanViewModel {
             }
 
             checkForAdjustments()
+            refreshMissedSessionPattern()
             refreshScheduledReminders()
         } catch {
             self.error = error.localizedDescription
@@ -146,6 +149,7 @@ extension TrainingPlanViewModel {
             try await planRepository.updateSession(session)
             plan = currentPlan
             checkForAdjustments()
+            refreshMissedSessionPattern()
             refreshScheduledReminders()
         } catch {
             self.error = error.localizedDescription
@@ -168,6 +172,7 @@ extension TrainingPlanViewModel {
         do {
             try await planRepository.updateSession(session)
             plan = currentPlan
+            refreshMissedSessionPattern()
             refreshScheduledReminders()
         } catch {
             self.error = error.localizedDescription
@@ -205,6 +210,7 @@ extension TrainingPlanViewModel {
             try await planRepository.updateSession(sessionA)
             try await planRepository.updateSession(sessionB)
             plan = currentPlan
+            refreshMissedSessionPattern()
             refreshScheduledReminders()
         } catch {
             self.error = error.localizedDescription
