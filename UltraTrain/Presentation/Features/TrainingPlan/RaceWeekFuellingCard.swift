@@ -10,13 +10,18 @@ import SwiftUI
 struct RaceWeekFuellingCard: View {
     let athleteWeightKg: Double
     let estimatedRaceDurationSeconds: TimeInterval
+    /// Athlete's preferred pre-race meal window captured in the
+    /// nutrition onboarding. Nil when onboarding was skipped; the
+    /// generator falls back to the 3h default.
+    var preRaceMealTiming: PreRaceMealTiming? = nil
 
     @Environment(\.colorScheme) private var colorScheme
 
     private var protocolPlan: RaceFuellingProtocolGenerator.FuellingPlan? {
         RaceFuellingProtocolGenerator.build(
             athleteWeightKg: athleteWeightKg,
-            estimatedRaceDurationSeconds: estimatedRaceDurationSeconds
+            estimatedRaceDurationSeconds: estimatedRaceDurationSeconds,
+            preRaceMealTiming: preRaceMealTiming
         )
     }
 

@@ -92,7 +92,8 @@ struct SessionDetailView: View {
                        session.plannedDuration > 0 {
                         RaceWeekFuellingCard(
                             athleteWeightKg: athlete.weightKg,
-                            estimatedRaceDurationSeconds: session.plannedDuration
+                            estimatedRaceDurationSeconds: session.plannedDuration,
+                            preRaceMealTiming: nutritionPreferences.preRaceMealTiming
                         )
                     }
                 }

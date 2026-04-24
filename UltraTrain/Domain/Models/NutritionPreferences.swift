@@ -39,6 +39,18 @@ struct NutritionPreferences: Equatable, Sendable, Codable {
 
     var sweatProfile: SweatProfile
 
+    // MARK: - Race-day timing
+
+    /// Preferred pre-race meal window. Drives the race-morning phase
+    /// of the fuelling protocol. Asked only on HM+ in onboarding;
+    /// shorter races default to nil (generator uses 3h).
+    var preRaceMealTiming: PreRaceMealTiming?
+
+    /// When the athlete hits flavour fatigue on long efforts. Asked
+    /// only on ultras (≥ 60 km). Informs when the aid-station
+    /// strategy shifts from gels to real food.
+    var ultraPalateTiming: UltraPalateTiming?
+
     // MARK: - Onboarding state
 
     /// True when the athlete has completed the pre-plan nutrition onboarding.
@@ -61,6 +73,8 @@ struct NutritionPreferences: Equatable, Sendable, Codable {
         dietaryRestrictions: [],
         preferredFormats: [],
         sweatProfile: .unknown,
+        preRaceMealTiming: nil,
+        ultraPalateTiming: nil,
         onboardingCompleted: false
     )
 
@@ -85,6 +99,8 @@ struct NutritionPreferences: Equatable, Sendable, Codable {
         let formats: Set<ProductType>? = try? c.decode(Set<ProductType>.self, forKey: .preferredFormats)
         self.preferredFormats = formats ?? Set<ProductType>()
         self.sweatProfile = (try? c.decode(SweatProfile.self, forKey: .sweatProfile)) ?? .unknown
+        self.preRaceMealTiming = (try? c.decodeIfPresent(PreRaceMealTiming.self, forKey: .preRaceMealTiming)) ?? nil
+        self.ultraPalateTiming = (try? c.decodeIfPresent(UltraPalateTiming.self, forKey: .ultraPalateTiming)) ?? nil
         self.onboardingCompleted = (try? c.decode(Bool.self, forKey: .onboardingCompleted)) ?? false
     }
 
@@ -102,6 +118,8 @@ struct NutritionPreferences: Equatable, Sendable, Codable {
         try c.encode(dietaryRestrictions, forKey: .dietaryRestrictions)
         try c.encode(preferredFormats, forKey: .preferredFormats)
         try c.encode(sweatProfile, forKey: .sweatProfile)
+        try c.encodeIfPresent(preRaceMealTiming, forKey: .preRaceMealTiming)
+        try c.encodeIfPresent(ultraPalateTiming, forKey: .ultraPalateTiming)
         try c.encode(onboardingCompleted, forKey: .onboardingCompleted)
     }
 
@@ -118,6 +136,8 @@ struct NutritionPreferences: Equatable, Sendable, Codable {
         dietaryRestrictions: Set<DietaryRestriction> = [],
         preferredFormats: Set<ProductType> = [],
         sweatProfile: SweatProfile = .unknown,
+        preRaceMealTiming: PreRaceMealTiming? = nil,
+        ultraPalateTiming: UltraPalateTiming? = nil,
         onboardingCompleted: Bool = false
     ) {
         self.avoidCaffeine = avoidCaffeine
@@ -132,6 +152,8 @@ struct NutritionPreferences: Equatable, Sendable, Codable {
         self.dietaryRestrictions = dietaryRestrictions
         self.preferredFormats = preferredFormats
         self.sweatProfile = sweatProfile
+        self.preRaceMealTiming = preRaceMealTiming
+        self.ultraPalateTiming = ultraPalateTiming
         self.onboardingCompleted = onboardingCompleted
     }
 
@@ -140,6 +162,8 @@ struct NutritionPreferences: Equatable, Sendable, Codable {
         case nutritionGoal, carbsPerHourTolerance
         case caffeineSensitivity, caffeineHabitMgPerDay
         case giSensitivities, dietaryRestrictions, preferredFormats
-        case sweatProfile, onboardingCompleted
+        case sweatProfile
+        case preRaceMealTiming, ultraPalateTiming
+        case onboardingCompleted
     }
 }

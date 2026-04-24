@@ -82,13 +82,19 @@ struct NutritionOnboardingSheet: View {
 
     private var needsExtendedQuestions: Bool { raceDistanceKm >= 18 }
     private var needsAdvancedQuestions: Bool { raceDistanceKm >= 35 }
+    /// Ultra-specific gate (60 km and up). Palate fatigue research
+    /// (Costa 2017) shows flavour rotation only becomes meaningful
+    /// past ~4h of effort — roughly 60 km of running.
+    private var needsUltraQuestions: Bool { raceDistanceKm >= 60 }
 
     fileprivate enum Step: Int, CaseIterable {
         case caffeine
         case dietary
         case giSensitivities
         case formats
+        case preRaceMeal
         case advanced
+        case ultraPalate
 
         var title: String {
             switch self {
@@ -96,7 +102,9 @@ struct NutritionOnboardingSheet: View {
             case .dietary:          return "Anything to avoid?"
             case .giSensitivities:  return "Any stomach trouble in past races?"
             case .formats:          return "What do you like to fuel with?"
+            case .preRaceMeal:      return "Pre-race meal timing"
             case .advanced:         return "Any training data to calibrate?"
+            case .ultraPalate:      return "When do you crave savoury food?"
             }
         }
 
@@ -110,8 +118,12 @@ struct NutritionOnboardingSheet: View {
                 return "Things that have caused issues before — gels, fructose, gluten..."
             case .formats:
                 return "Tap every format you're happy to use on race day."
+            case .preRaceMeal:
+                return "How long before race start do you like to eat? Tunes the morning fuelling plan."
             case .advanced:
                 return "All optional. Skip what you don't know — we default to evidence-based targets."
+            case .ultraPalate:
+                return "On long efforts, most athletes get tired of sweet fuel at some point. Knowing when helps plan the aid-station switch."
             }
         }
 
@@ -121,7 +133,9 @@ struct NutritionOnboardingSheet: View {
             case .dietary:          return "leaf.fill"
             case .giSensitivities:  return "stethoscope"
             case .formats:          return "square.stack.fill"
+            case .preRaceMeal:      return "sunrise.fill"
             case .advanced:         return "slider.horizontal.3"
+            case .ultraPalate:      return "fork.knife"
             }
         }
     }
@@ -134,9 +148,13 @@ struct NutritionOnboardingSheet: View {
         if needsExtendedQuestions {
             s.append(.giSensitivities)
             s.append(.formats)
+            s.append(.preRaceMeal)
         }
         if needsAdvancedQuestions {
             s.append(.advanced)
+        }
+        if needsUltraQuestions {
+            s.append(.ultraPalate)
         }
         return s
     }
@@ -240,10 +258,55 @@ struct NutritionOnboardingSheet: View {
             case .dietary:         dietaryStep
             case .giSensitivities: giStep
             case .formats:         formatsStep
+            case .preRaceMeal:     preRaceMealStep
             case .advanced:        advancedStep
+            case .ultraPalate:     ultraPalateStep
             }
         }
         .animation(.easeInOut(duration: 0.2), value: stepIndex)
+    }
+
+    // MARK: - Pre-race meal timing
+
+    private var preRaceMealStep: some View {
+        VStack(spacing: Theme.Spacing.sm) {
+            ForEach(PreRaceMealTiming.allCases, id: \.self) { timing in
+                SelectableCard(
+                    title: timing.displayName,
+                    subtitle: timing.subtitle,
+                    icon: "clock.fill",
+                    isSelected: preferences.preRaceMealTiming == timing
+                ) {
+                    preferences.preRaceMealTiming = timing
+                }
+            }
+        }
+    }
+
+    // MARK: - Ultra palate timing
+
+    private var ultraPalateStep: some View {
+        VStack(spacing: Theme.Spacing.sm) {
+            ForEach(UltraPalateTiming.allCases, id: \.self) { timing in
+                SelectableCard(
+                    title: timing.displayName,
+                    subtitle: timing.subtitle,
+                    icon: ultraPalateIcon(timing),
+                    isSelected: preferences.ultraPalateTiming == timing
+                ) {
+                    preferences.ultraPalateTiming = timing
+                }
+            }
+        }
+    }
+
+    private func ultraPalateIcon(_ timing: UltraPalateTiming) -> String {
+        switch timing {
+        case .early:  return "hare.fill"
+        case .mid:    return "timer"
+        case .late:   return "tortoise.fill"
+        case .never:  return "heart.fill"
+        }
     }
 
     // MARK: - Caffeine

@@ -54,20 +54,23 @@ enum RaceFuellingProtocolGenerator {
     /// defaults.
     static func build(
         athleteWeightKg: Double,
-        estimatedRaceDurationSeconds: TimeInterval
+        estimatedRaceDurationSeconds: TimeInterval,
+        preRaceMealTiming: PreRaceMealTiming? = nil
     ) -> FuellingPlan? {
         guard athleteWeightKg > 0 else { return nil }
         let weight = athleteWeightKg
         let raceMinutes = estimatedRaceDurationSeconds / 60
 
-        // Pre-race morning meal is always present. 3 g/kg at T-3h
-        // is the Jeukendrup "safe default" — substantial without
-        // GI risk.
-        let morning = Phase(
-            title: "Race morning (3-4h before)",
-            carbsGrams: Int((weight * 3.0).rounded()),
-            carbsPerKg: 3.0,
-            detail: "Familiar foods only: bagel + honey, oatmeal, or white toast with jam. 500 ml water + electrolytes. No fibre or fat."
+        // Pre-race morning meal. Jeukendrup ISSN 2017 recommends
+        // 1-4 g/kg of carb 1-4h before a race — the window is wide
+        // because tight timing (1h) means less food, low fibre,
+        // mostly liquid; long windows (4h) allow a full meal. When
+        // the athlete has told us their preferred timing, we tune
+        // both the carb dose and the phase copy to match. Default
+        // (no timing captured) stays on the safe 3h / 3 g/kg anchor.
+        let morning = morningPhase(
+            timing: preRaceMealTiming,
+            weightKg: weight
         )
 
         let during: String
@@ -158,6 +161,44 @@ enum RaceFuellingProtocolGenerator {
             morning: morning,
             during: during,
             rationale: "For an ultra-endurance race, a full 3-day load at 8-10 g/kg/day is worth it — you'll burn through stored glycogen inside the first 2-3 hours."
+        )
+    }
+
+    /// Builds the pre-race meal phase, tuning carbs-per-kg and copy
+    /// to the athlete's chosen pre-race timing. Research basis:
+    /// Jeukendrup ISSN 2017 — 1 g/kg at 1h, 2 g/kg at 2h, 3 g/kg at
+    /// 3h, 4 g/kg at 4h. Defaults to 3h when timing is unknown.
+    private static func morningPhase(
+        timing: PreRaceMealTiming?,
+        weightKg: Double
+    ) -> Phase {
+        let resolved = timing ?? .threeHours
+        let carbsPerKg: Double
+        let detail: String
+        let title: String
+        switch resolved {
+        case .oneHour:
+            carbsPerKg = 1.0
+            title = "Race morning (1h before)"
+            detail = "Tight window: keep it small and liquid-leaning. Half a banana + honey, or 300 ml sports drink + a slice of toast. Skip fibre, fat, and protein — no room for digestion."
+        case .twoHours:
+            carbsPerKg = 2.0
+            title = "Race morning (2h before)"
+            detail = "Moderate carb meal: oatmeal with honey + banana, or a bagel with jam. 400 ml water + electrolytes. Low fibre, familiar foods only."
+        case .threeHours:
+            carbsPerKg = 3.0
+            title = "Race morning (3h before)"
+            detail = "Full carb meal: bagel + honey + jam + banana, oatmeal with maple syrup, or white toast with jam. 500 ml water + electrolytes. No fibre or fat."
+        case .fourHours:
+            carbsPerKg = 4.0
+            title = "Race morning (4h before)"
+            detail = "Full meal with time to digest: bagels + peanut butter + honey, or rice with honey + scrambled egg white. 500 ml water + electrolytes. Back to bed afterwards is fine."
+        }
+        return Phase(
+            title: title,
+            carbsGrams: Int((weightKg * carbsPerKg).rounded()),
+            carbsPerKg: carbsPerKg,
+            detail: detail
         )
     }
 }
