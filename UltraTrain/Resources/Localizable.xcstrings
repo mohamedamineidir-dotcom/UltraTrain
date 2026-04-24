@@ -1128,6 +1128,16 @@
         }
       }
     },
+    "%lld km · %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld km · %2$lld of %3$lld"
+          }
+        }
+      }
+    },
     "%lld km · D+ %lld m · %@" : {
       "localizations" : {
         "en" : {
@@ -1137,9 +1147,6 @@
           }
         }
       }
-    },
-    "%lld km race" : {
-
     },
     "%lld like%@" : {
       "localizations" : {
@@ -2595,6 +2602,9 @@
         }
       }
     },
+    "All fields optional. Skip what you don't know — we'll use evidence-based defaults." : {
+
+    },
     "All items checked" : {
       "localizations" : {
         "fr" : {
@@ -2758,9 +2768,6 @@
         }
       }
     },
-    "Answer a few questions so your race-day plan matches your physiology, preferences, and goals. You can skip anything you're unsure about — we'll use safe defaults." : {
-
-    },
     "Any pacing insights or details?" : {
       "localizations" : {
         "fr" : {
@@ -2770,9 +2777,6 @@
           }
         }
       }
-    },
-    "Any we should respect when picking products?" : {
-
     },
     "Anything else? e.g. 'gel at 1h was too sweet'" : {
 
@@ -4632,9 +4636,6 @@
         }
       }
     },
-    "Daily intake (mg, optional)" : {
-
-    },
     "Dashboard" : {
       "localizations" : {
         "fr" : {
@@ -5471,18 +5472,6 @@
       }
     },
     "e.g. 65" : {
-
-    },
-    "e.g. 80 (g/hr)" : {
-
-    },
-    "e.g. 200" : {
-
-    },
-    "e.g. 900" : {
-
-    },
-    "e.g. 1000" : {
 
     },
     "Easy" : {
@@ -6684,9 +6673,6 @@
           }
         }
       }
-    },
-    "From a lab test (e.g. Precision Fuel & Hydration). If you haven't tested, skip." : {
-
     },
     "ft" : {
       "localizations" : {
@@ -8091,9 +8077,6 @@
         }
       }
     },
-    "Leave blank if you haven't gut-trained yet. The generator will prescribe an evidence-based target based on your race duration." : {
-
-    },
     "Leave empty to skip this metric." : {
       "localizations" : {
         "fr" : {
@@ -8581,9 +8564,6 @@
         }
       }
     },
-    "Max carbs/hour you've tolerated in training" : {
-
-    },
     "Max Distance" : {
       "localizations" : {
         "fr" : {
@@ -8665,12 +8645,6 @@
       }
     },
     "Measure first thing in the morning. Typical: 60-70 bpm." : {
-
-    },
-    "Measured sweat rate (ml/hr, optional)" : {
-
-    },
-    "Measured sweat sodium (mg/L, optional)" : {
 
     },
     "Measurement System" : {
@@ -9460,6 +9434,9 @@
         }
       }
     },
+    "None — nothing to flag" : {
+
+    },
     "None active" : {
       "localizations" : {
         "fr" : {
@@ -9753,9 +9730,6 @@
           }
         }
       }
-    },
-    "One coffee ≈ 95 mg, one espresso ≈ 63 mg. Used to calibrate race-day dose." : {
-
     },
     "Only runs and trail runs from Strava are shown here." : {
       "localizations" : {
@@ -10990,9 +10964,6 @@
           }
         }
       }
-    },
-    "Personalize your plan" : {
-
     },
     "Phase" : {
       "localizations" : {
@@ -13364,9 +13335,6 @@
         }
       }
     },
-    "Select formats you like. Leave empty for no preference." : {
-
-    },
     "Select how this person is related to you" : {
       "localizations" : {
         "fr" : {
@@ -14735,6 +14703,9 @@
     "Tap another day to move" : {
 
     },
+    "Tap everything you're happy to use. Leave empty for no preference." : {
+
+    },
     "Tap to add" : {
 
     },
@@ -14922,9 +14893,6 @@
           }
         }
       }
-    },
-    "Things that have caused stomach trouble in past races or long runs." : {
-
     },
     "This device may be compromised. Your training and health data could be at risk." : {
       "localizations" : {
