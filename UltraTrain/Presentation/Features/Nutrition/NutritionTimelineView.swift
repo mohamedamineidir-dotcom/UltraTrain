@@ -1,12 +1,14 @@
 import SwiftUI
 
-/// Visual race-day timeline replacing the list-based schedule. Each hour is
-/// a labeled block on a vertical spine; products for that hour render as
-/// rich cards with type-colored left border, brand, product name, timing,
-/// and a microstats row (carbs / sodium / caffeine / fluid).
+/// Race-day timeline. Each hour is an anchored block on a vertical spine;
+/// products render as large, scannable cards so the athlete can read them
+/// mid-race on a phone screen while running. Futuristic-glass treatment
+/// with the nutrition-domain green tint.
 struct NutritionTimelineView: View {
 
     let entries: [NutritionEntry]
+
+    @Environment(\.colorScheme) private var colorScheme
 
     private var groupedByHour: [(hour: Int, entries: [NutritionEntry])] {
         let grouped = Dictionary(grouping: entries) { $0.timingMinutes / 60 }
@@ -17,14 +19,7 @@ struct NutritionTimelineView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.md) {
-            HStack {
-                Label("Race timeline", systemImage: "timeline.selection")
-                    .font(.headline)
-                Spacer()
-                Text("\(entries.count) items")
-                    .font(.caption.monospacedDigit())
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-            }
+            header
 
             if groupedByHour.isEmpty {
                 emptyTimeline
@@ -39,6 +34,25 @@ struct NutritionTimelineView: View {
                     )
                 }
             }
+        }
+        .futuristicGlassStyle(phaseTint: NutritionPalette.tint)
+    }
+
+    private var header: some View {
+        HStack {
+            HStack(spacing: Theme.Spacing.xs + 2) {
+                Image(systemName: "timeline.selection")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(NutritionPalette.tint)
+                Text("RACE TIMELINE")
+                    .font(.caption.weight(.bold))
+                    .tracking(1.0)
+                    .foregroundStyle(NutritionPalette.tint)
+            }
+            Spacer()
+            Text("\(entries.count) items")
+                .font(.caption.monospacedDigit())
+                .foregroundStyle(Theme.Colors.secondaryLabel)
         }
     }
 
@@ -64,131 +78,150 @@ private struct TimelineHourBlock: View {
     let isLast: Bool
     let hourCarbs: Int
 
+    @Environment(\.colorScheme) private var colorScheme
+
     var body: some View {
-        HStack(alignment: .top, spacing: Theme.Spacing.sm) {
-            // Spine + hour marker
-            VStack(spacing: 0) {
-                Rectangle()
-                    .fill(Theme.Colors.accentColor.opacity(isFirst ? 0 : 0.2))
-                    .frame(width: 2, height: 10)
+        HStack(alignment: .top, spacing: Theme.Spacing.sm + 2) {
+            spine
+            content
+        }
+    }
+
+    private var spine: some View {
+        VStack(spacing: 0) {
+            Rectangle()
+                .fill(NutritionPalette.tint.opacity(isFirst ? 0 : 0.25))
+                .frame(width: 2, height: 14)
+            ZStack {
                 Circle()
-                    .fill(Theme.Colors.accentColor)
-                    .frame(width: 12, height: 12)
-                    .overlay(
-                        Circle()
-                            .stroke(Theme.Colors.accentColor.opacity(0.25), lineWidth: 4)
-                    )
-                Rectangle()
-                    .fill(Theme.Colors.accentColor.opacity(isLast ? 0 : 0.2))
-                    .frame(width: 2)
-                    .frame(maxHeight: .infinity)
+                    .fill(NutritionPalette.gradient)
+                    .frame(width: 14, height: 14)
+                    .shadow(color: NutritionPalette.tint.opacity(0.4), radius: 4, y: 2)
+                Circle()
+                    .stroke(NutritionPalette.tint.opacity(0.25), lineWidth: 4)
+                    .frame(width: 22, height: 22)
             }
-            .frame(width: 12)
+            Rectangle()
+                .fill(NutritionPalette.tint.opacity(isLast ? 0 : 0.25))
+                .frame(width: 2)
+                .frame(maxHeight: .infinity)
+        }
+        .frame(width: 22)
+    }
 
-            // Content
-            VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-                HStack(alignment: .firstTextBaseline) {
-                    Text("Hour \(hour + 1)")
-                        .font(.subheadline.bold())
-                        .foregroundStyle(Theme.Colors.accentColor)
-                    Text("\(hour * 60)–\((hour + 1) * 60) min")
-                        .font(.caption2.monospacedDigit())
-                        .foregroundStyle(Theme.Colors.secondaryLabel)
-                    Spacer()
-                    Text("\(hourCarbs) g carbs")
-                        .font(.caption.weight(.medium).monospacedDigit())
-                        .foregroundStyle(Theme.Colors.secondaryLabel)
-                        .padding(.horizontal, Theme.Spacing.xs)
-                        .padding(.vertical, 2)
-                        .background(
-                            Capsule().fill(Theme.Colors.accentColor.opacity(0.08))
-                        )
-                }
-
-                ForEach(entries) { entry in
-                    NutritionProductCard(entry: entry)
-                }
+    private var content: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            hourHeader
+            ForEach(entries) { entry in
+                NutritionProductCard(entry: entry)
             }
-            .padding(.bottom, Theme.Spacing.md)
+        }
+        .padding(.bottom, Theme.Spacing.md)
+    }
+
+    private var hourHeader: some View {
+        HStack(alignment: .center) {
+            VStack(alignment: .leading, spacing: 1) {
+                Text("Hour \(hour + 1)")
+                    .font(.headline.weight(.bold))
+                    .foregroundStyle(Theme.Colors.label)
+                Text("\(hour * 60)–\((hour + 1) * 60) min")
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(Theme.Colors.tertiaryLabel)
+            }
+            Spacer()
+            Text("\(hourCarbs) g")
+                .font(.subheadline.weight(.bold).monospacedDigit())
+                .foregroundStyle(NutritionPalette.tint)
+                .padding(.horizontal, Theme.Spacing.sm)
+                .padding(.vertical, 4)
+                .background(
+                    Capsule().fill(NutritionPalette.tint.opacity(0.12))
+                )
+                .overlay(
+                    Capsule().stroke(NutritionPalette.tint.opacity(0.25), lineWidth: 0.5)
+                )
         }
     }
 }
 
-// MARK: - Product card (rich entry)
+// MARK: - Product card
 
 struct NutritionProductCard: View {
     let entry: NutritionEntry
 
-    var body: some View {
-        HStack(alignment: .top, spacing: Theme.Spacing.sm) {
-            // Type-colored icon badge
-            iconBadge
+    @Environment(\.colorScheme) private var colorScheme
 
+    var body: some View {
+        HStack(alignment: .top, spacing: Theme.Spacing.sm + 2) {
+            iconBadge
             VStack(alignment: .leading, spacing: 4) {
                 productTitle
-
                 if let notes = entry.notes, !notes.isEmpty {
                     Text(notes)
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-
                 microstats
             }
-
             Spacer(minLength: 0)
-
             timingBadge
         }
-        .padding(Theme.Spacing.sm)
+        .padding(Theme.Spacing.sm + 2)
         .background(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                .fill(Theme.Colors.secondaryBackground)
+                .fill(colorScheme == .dark
+                      ? Color.white.opacity(0.05)
+                      : Color.white.opacity(0.75))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .stroke(entry.product.type.color.opacity(0.25), lineWidth: 0.75)
         )
         .overlay(
             HStack(spacing: 0) {
-                Rectangle()
+                RoundedRectangle(cornerRadius: 2)
                     .fill(entry.product.type.color)
-                    .frame(width: 3)
+                    .frame(width: 4)
+                    .padding(.vertical, 10)
                 Spacer()
             }
-            .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
+            .padding(.leading, 4)
         )
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityLabel)
     }
 
-    // MARK: - Sections
-
     private var iconBadge: some View {
         ZStack {
             Circle()
                 .fill(entry.product.type.color.opacity(0.18))
-                .frame(width: 36, height: 36)
+                .frame(width: 40, height: 40)
             Image(systemName: entry.product.type.icon)
-                .font(.system(size: 15, weight: .semibold))
+                .font(.system(size: 16, weight: .semibold))
                 .foregroundStyle(entry.product.type.color)
         }
+        .padding(.leading, 4)
     }
 
     private var productTitle: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 1) {
             if let brand = entry.product.brand, !brand.isEmpty {
                 Text(brand.uppercased())
-                    .font(.caption2.weight(.semibold))
+                    .font(.caption2.weight(.bold))
                     .foregroundStyle(entry.product.type.color)
-                    .tracking(0.5)
+                    .tracking(0.8)
             }
             Text(entry.product.name)
-                .font(.subheadline.weight(.semibold))
+                .font(.subheadline.weight(.bold))
                 .foregroundStyle(Theme.Colors.label)
                 .lineLimit(2)
         }
     }
 
     private var microstats: some View {
-        HStack(spacing: Theme.Spacing.sm) {
+        HStack(spacing: Theme.Spacing.sm + 2) {
             if entry.product.carbsGramsPerServing > 0 {
                 microstat(value: "\(Int(entry.product.carbsGramsPerServing))g", label: "carbs")
             }
@@ -208,18 +241,18 @@ struct NutritionProductCard: View {
     private func microstat(value: String, label: String) -> some View {
         HStack(spacing: 2) {
             Text(value)
-                .font(.caption2.weight(.semibold).monospacedDigit())
+                .font(.caption.weight(.bold).monospacedDigit())
+                .foregroundStyle(Theme.Colors.label)
             Text(label)
-                .font(.system(size: 9))
+                .font(.system(size: 10))
                 .foregroundStyle(Theme.Colors.tertiaryLabel)
         }
-        .foregroundStyle(Theme.Colors.secondaryLabel)
     }
 
     private var timingBadge: some View {
         VStack(alignment: .trailing, spacing: 0) {
             Text(formattedTime)
-                .font(.caption.weight(.semibold).monospacedDigit())
+                .font(.caption.weight(.bold).monospacedDigit())
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
     }

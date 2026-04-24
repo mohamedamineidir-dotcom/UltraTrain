@@ -1,9 +1,14 @@
 import SwiftUI
 
-/// Redesigned hourly-targets card for the Race Day nutrition tab. Carbs per
-/// hour is the primary hero metric (modern Jeukendrup / ISSN standard),
-/// secondary stats show hydration, sodium, caffeine, and total grams across
-/// the race.
+/// Hourly-targets card for the Race Day nutrition tab. Futuristic-glass
+/// treatment with nutrition-domain green tint. Carbs per hour is the
+/// primary hero metric (Jeukendrup / ISSN standard); hydration, sodium,
+/// and caffeine render as equal-weight tiles below. Total race grams
+/// sit as a quiet secondary line under the hero so the athlete has the
+/// bigger picture without it competing for attention.
+///
+/// Designed to read clearly during an ultra: generous line-height, bold
+/// numerals, no decorative clutter, high-contrast text.
 struct NutritionTargetsCard: View {
 
     let carbsPerHour: Int
@@ -14,29 +19,18 @@ struct NutritionTargetsCard: View {
     let estimatedDurationSeconds: TimeInterval
     let gutTrainingSessions: Int
 
+    @Environment(\.colorScheme) private var colorScheme
     @State private var showingExplainer = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.md) {
             header
-
             heroCarbs
-
-            secondaryStats
-
-            Divider()
-
+            secondaryTiles
+            Divider().opacity(0.5)
             footer
         }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                .fill(Theme.Colors.secondaryBackground)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                .stroke(Theme.Colors.secondaryLabel.opacity(0.12), lineWidth: 1)
-        )
+        .futuristicGlassStyle(phaseTint: NutritionPalette.tint)
         .sheet(isPresented: $showingExplainer) {
             TargetsExplainerSheet()
         }
@@ -47,15 +41,25 @@ struct NutritionTargetsCard: View {
 
     private var header: some View {
         HStack {
-            Label("Fueling targets", systemImage: "target")
-                .font(.headline)
+            HStack(spacing: Theme.Spacing.xs + 2) {
+                Image(systemName: "target")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(NutritionPalette.tint)
+                Text("FUELING TARGETS")
+                    .font(.caption.weight(.bold))
+                    .tracking(1.0)
+                    .foregroundStyle(NutritionPalette.tint)
+            }
             Spacer()
             Button {
                 showingExplainer = true
             } label: {
-                Label("Why?", systemImage: "info.circle")
-                    .font(.caption.weight(.medium))
-                    .labelStyle(.titleAndIcon)
+                HStack(spacing: 4) {
+                    Image(systemName: "info.circle")
+                    Text("Why?")
+                }
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(Theme.Colors.secondaryLabel)
             }
             .accessibilityLabel("Why these targets")
             .accessibilityIdentifier("nutrition.targetsExplainerButton")
@@ -65,85 +69,107 @@ struct NutritionTargetsCard: View {
     // MARK: - Hero carbs
 
     private var heroCarbs: some View {
-        HStack(alignment: .lastTextBaseline, spacing: Theme.Spacing.sm) {
-            Text("\(carbsPerHour)")
-                .font(.system(size: 52, weight: .bold, design: .rounded).monospacedDigit())
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [Theme.Colors.accentColor, Theme.Colors.accentColor.opacity(0.7)],
-                        startPoint: .top,
-                        endPoint: .bottom
+        VStack(alignment: .leading, spacing: 2) {
+            HStack(alignment: .firstTextBaseline, spacing: Theme.Spacing.sm) {
+                Text("\(carbsPerHour)")
+                    .font(.system(size: 68, weight: .bold, design: .rounded).monospacedDigit())
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [NutritionPalette.tint, NutritionPalette.deep],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
                     )
-                )
-            VStack(alignment: .leading, spacing: 0) {
-                Text("g / hr")
-                    .font(.title3.bold())
-                    .foregroundStyle(Theme.Colors.label)
-                Text("carbohydrate")
+                    .shadow(color: NutritionPalette.tint.opacity(0.25), radius: 12, y: 2)
+                VStack(alignment: .leading, spacing: 0) {
+                    Text("g / hr")
+                        .font(.title3.bold())
+                        .foregroundStyle(Theme.Colors.label)
+                    Text("carbohydrate")
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
+                Spacer(minLength: 0)
+            }
+            HStack(spacing: Theme.Spacing.xs + 2) {
+                Text("\(totalCarbsGrams) g total")
+                    .font(.caption.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                Text("across the race")
                     .font(.caption)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-            }
-            Spacer()
-            // Total grams across race as a secondary pill
-            VStack(alignment: .trailing, spacing: 2) {
-                Text("\(totalCarbsGrams) g")
-                    .font(.subheadline.bold().monospacedDigit())
-                Text("race total")
-                    .font(.caption2)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .foregroundStyle(Theme.Colors.tertiaryLabel)
             }
         }
     }
 
-    // MARK: - Secondary stats
+    // MARK: - Secondary tiles
 
-    private var secondaryStats: some View {
+    private var secondaryTiles: some View {
         HStack(spacing: Theme.Spacing.sm) {
-            stat(icon: "drop.fill", iconColor: .cyan,
-                 value: "\(hydrationMlPerHour)", unit: "ml/h", label: "hydration")
-            statDivider
-            stat(icon: "cross.vial.fill", iconColor: .mint,
-                 value: "\(sodiumMgPerHour)", unit: "mg/h", label: "sodium")
-            statDivider
-            stat(icon: "bolt.fill", iconColor: totalCaffeineMg > 0 ? .yellow : .gray,
-                 value: totalCaffeineMg > 0 ? "\(totalCaffeineMg)" : "—",
-                 unit: totalCaffeineMg > 0 ? "mg" : "",
-                 label: "caffeine total")
+            targetTile(
+                icon: "drop.fill",
+                iconColor: .cyan,
+                value: "\(hydrationMlPerHour)",
+                unit: "ml/h",
+                label: "Hydration"
+            )
+            targetTile(
+                icon: "cross.vial.fill",
+                iconColor: .mint,
+                value: "\(sodiumMgPerHour)",
+                unit: "mg/h",
+                label: "Sodium"
+            )
+            targetTile(
+                icon: "bolt.fill",
+                iconColor: totalCaffeineMg > 0 ? .yellow : Theme.Colors.tertiaryLabel,
+                value: totalCaffeineMg > 0 ? "\(totalCaffeineMg)" : "—",
+                unit: totalCaffeineMg > 0 ? "mg" : "",
+                label: "Caffeine"
+            )
         }
     }
 
-    private func stat(
+    private func targetTile(
         icon: String,
         iconColor: Color,
         value: String,
         unit: String,
         label: String
     ) -> some View {
-        VStack(alignment: .center, spacing: 4) {
+        VStack(spacing: Theme.Spacing.xs + 2) {
             Image(systemName: icon)
-                .font(.caption)
+                .font(.subheadline.weight(.semibold))
                 .foregroundStyle(iconColor)
             HStack(alignment: .lastTextBaseline, spacing: 2) {
                 Text(value)
-                    .font(.subheadline.bold().monospacedDigit())
-                Text(unit)
-                    .font(.caption2)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .font(.title3.bold().monospacedDigit())
+                    .foregroundStyle(Theme.Colors.label)
+                if !unit.isEmpty {
+                    Text(unit)
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(Theme.Colors.tertiaryLabel)
+                }
             }
             Text(label)
                 .font(.caption2)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
         .frame(maxWidth: .infinity)
+        .padding(.vertical, Theme.Spacing.sm)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .fill(colorScheme == .dark
+                      ? Color.white.opacity(0.04)
+                      : Color.black.opacity(0.025))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .stroke(iconColor.opacity(0.14), lineWidth: 0.5)
+        )
     }
 
-    private var statDivider: some View {
-        Rectangle()
-            .fill(Theme.Colors.secondaryLabel.opacity(0.12))
-            .frame(width: 1, height: 40)
-    }
-
-    // MARK: - Footer (practice reminder + duration)
+    // MARK: - Footer
 
     private var footer: some View {
         HStack(spacing: Theme.Spacing.md) {
@@ -152,9 +178,9 @@ struct NutritionTargetsCard: View {
                 .foregroundStyle(Theme.Colors.secondaryLabel)
             Spacer()
             if gutTrainingSessions > 0 {
-                Label("\(gutTrainingSessions) training runs to practice", systemImage: "figure.run")
-                    .font(.caption)
-                    .foregroundStyle(Theme.Colors.accentColor)
+                Label("\(gutTrainingSessions) gut-training runs", systemImage: "figure.run")
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(NutritionPalette.tint)
             }
         }
     }
@@ -172,6 +198,7 @@ struct NutritionTargetsCard: View {
 
 private struct TargetsExplainerSheet: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         NavigationStack {
@@ -200,6 +227,7 @@ private struct TargetsExplainerSheet: View {
                 }
                 .padding()
             }
+            .background(Theme.Gradients.futuristicBackground(colorScheme: colorScheme).ignoresSafeArea())
             .navigationTitle("Why these targets")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -217,5 +245,14 @@ private struct TargetsExplainerSheet: View {
                 .font(.subheadline)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
+        .padding(Theme.Spacing.md)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .fill(Color.primary.opacity(0.04))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .stroke(NutritionPalette.tint.opacity(0.14), lineWidth: 0.5)
+        )
     }
 }

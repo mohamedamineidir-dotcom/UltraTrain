@@ -151,6 +151,8 @@ struct NutritionView: View {
 
     // MARK: - Race Day Content
 
+    @Environment(\.colorScheme) private var colorScheme
+
     private var raceDayContent: some View {
         Group {
             if viewModel.isGenerating {
@@ -188,29 +190,7 @@ struct NutritionView: View {
                     gutTrainingSessions: viewModel.gutTrainingSessionCount
                 )
 
-                HStack(spacing: Theme.Spacing.sm) {
-                    Button {
-                        viewModel.showingNutritionOnboarding = true
-                    } label: {
-                        Label("Edit preferences", systemImage: "slider.horizontal.3")
-                            .font(.caption.weight(.medium))
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
-                    .accessibilityIdentifier("nutrition.editPreferencesButton")
-
-                    Button {
-                        Task { await viewModel.startPlanGeneration() }
-                    } label: {
-                        Label("Regenerate", systemImage: "arrow.clockwise")
-                            .font(.caption.weight(.medium))
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
-                    .accessibilityIdentifier("nutrition.regenerateButton")
-                }
+                planActionRow
 
                 NutritionTimelineView(entries: plan.entries)
 
@@ -225,7 +205,56 @@ struct NutritionView: View {
             }
             .padding()
         }
+        .background(
+            Theme.Gradients.futuristicBackground(colorScheme: colorScheme)
+                .ignoresSafeArea()
+        )
         .accessibilityIdentifier("nutrition.planContent")
+    }
+
+    private var planActionRow: some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            planActionButton(
+                title: "Edit preferences",
+                systemImage: "slider.horizontal.3",
+                identifier: "nutrition.editPreferencesButton"
+            ) {
+                viewModel.showingNutritionOnboarding = true
+            }
+            planActionButton(
+                title: "Regenerate",
+                systemImage: "arrow.clockwise",
+                identifier: "nutrition.regenerateButton"
+            ) {
+                Task { await viewModel.startPlanGeneration() }
+            }
+        }
+    }
+
+    private func planActionButton(
+        title: String,
+        systemImage: String,
+        identifier: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            Label(title, systemImage: systemImage)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(NutritionPalette.tint)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, Theme.Spacing.xs + 2)
+                .background(
+                    Capsule()
+                        .fill(colorScheme == .dark
+                              ? Color.white.opacity(0.05)
+                              : Color.white.opacity(0.8))
+                )
+                .overlay(
+                    Capsule().stroke(NutritionPalette.tint.opacity(0.22), lineWidth: 0.75)
+                )
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier(identifier)
     }
 
     private var emptyState: some View {
