@@ -112,24 +112,24 @@ struct NutritionTargetsCard: View {
         label: String,
         accent: Bool = false
     ) -> some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-            HStack {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            HStack(spacing: 6) {
                 Image(systemName: icon)
-                    .font(.subheadline.weight(.semibold))
+                    .font(.caption.weight(.bold))
                     .foregroundStyle(accent ? .white : iconColor)
-                    .frame(width: 28, height: 28)
+                    .frame(width: 22, height: 22)
                     .background(
                         Circle().fill(
                             accent
                                 ? AnyShapeStyle(NutritionPalette.gradient)
-                                : AnyShapeStyle(iconColor.opacity(0.18))
+                                : AnyShapeStyle(iconColor.opacity(0.20))
                         )
                     )
-                Spacer()
                 Text(label.uppercased())
                     .font(.caption2.weight(.bold))
                     .tracking(0.8)
-                    .foregroundStyle(Theme.Colors.tertiaryLabel)
+                    .foregroundStyle(accent ? NutritionPalette.tint : Theme.Colors.secondaryLabel)
+                Spacer(minLength: 0)
             }
             HStack(alignment: .lastTextBaseline, spacing: 3) {
                 Text(value)
@@ -154,18 +154,43 @@ struct NutritionTargetsCard: View {
         .padding(Theme.Spacing.sm + 2)
         .background(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                .fill(colorScheme == .dark
-                      ? Color.white.opacity(0.05)
-                      : Color.white.opacity(0.75))
+                .fill(tileFill(accent: accent, iconColor: iconColor))
         )
         .overlay(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .stroke(
                     accent
-                        ? NutritionPalette.tint.opacity(0.35)
-                        : iconColor.opacity(0.18),
-                    lineWidth: accent ? 1.0 : 0.5
+                        ? NutritionPalette.tint.opacity(0.45)
+                        : iconColor.opacity(0.22),
+                    lineWidth: accent ? 1.0 : 0.6
                 )
+        )
+    }
+
+    /// Tinted tile fill — each metric gets a whisper of its own colour
+    /// so the four tiles feel distinct against the glass card behind
+    /// them instead of disappearing into a sea of white. Accent tile
+    /// (carbs) leans harder into the nutrition green.
+    private func tileFill(accent: Bool, iconColor: Color) -> AnyShapeStyle {
+        if accent {
+            return AnyShapeStyle(
+                LinearGradient(
+                    colors: colorScheme == .dark
+                        ? [NutritionPalette.tint.opacity(0.18), NutritionPalette.tint.opacity(0.08)]
+                        : [NutritionPalette.tint.opacity(0.12), NutritionPalette.tint.opacity(0.04)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+        }
+        return AnyShapeStyle(
+            LinearGradient(
+                colors: colorScheme == .dark
+                    ? [iconColor.opacity(0.12), iconColor.opacity(0.04)]
+                    : [iconColor.opacity(0.08), iconColor.opacity(0.02)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
         )
     }
 

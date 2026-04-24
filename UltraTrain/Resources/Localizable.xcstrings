@@ -1038,7 +1038,7 @@
     "%lld g" : {
 
     },
-    "%lld g total" : {
+    "%lld g total carbs" : {
 
     },
     "%lld g/hr" : {
@@ -1063,9 +1063,6 @@
           }
         }
       }
-    },
-    "%lld gut-training runs" : {
-
     },
     "%lld intervals" : {
       "localizations" : {
@@ -1300,6 +1297,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$lld sur %2$lld éléments"
+          }
+        }
+      }
+    },
+    "%lld of %lld runs logged" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld of %2$lld runs logged"
           }
         }
       }
@@ -2025,9 +2032,6 @@
           }
         }
       }
-    },
-    "across the race" : {
-
     },
     "Active" : {
       "localizations" : {
@@ -3324,9 +3328,6 @@
           }
         }
       }
-    },
-    "carbohydrate" : {
-
     },
     "Category" : {
       "localizations" : {
@@ -5483,6 +5484,9 @@
     "e.g. gel at 1h was too sweet" : {
 
     },
+    "Each feedback tunes your race-day plan to what your gut actually tolerates." : {
+
+    },
     "Easy" : {
       "localizations" : {
         "fr" : {
@@ -6715,7 +6719,7 @@
         }
       }
     },
-    "g / hr" : {
+    "g carbs" : {
 
     },
     "g/hr" : {
@@ -6973,7 +6977,7 @@
         }
       }
     },
-    "GUT TRAINING LOG" : {
+    "GUT TRAINING" : {
 
     },
     "Gut training recommended" : {
@@ -11207,6 +11211,9 @@
         }
       }
     },
+    "Pick at least one format above and you'll be able to choose brands for it here." : {
+
+    },
     "Pick from Route Library" : {
       "localizations" : {
         "fr" : {
@@ -13383,6 +13390,9 @@
           }
         }
       }
+    },
+    "Selections are per format. Anything you skip keeps 'no brand preference' and we'll pick the best fit from the full catalog." : {
+
     },
     "Send Feedback" : {
       "localizations" : {

@@ -160,21 +160,23 @@ enum NutritionTargets {
         bodyWeightKg: Double,
         weather: WeatherImpactCalculator.NutritionWeatherAdjustment?
     ) -> Int {
-        // If measured sweat rate exists, replace 80% of sweat loss.
+        let raw: Int
         if let sweatRate = sweatProfile.sweatRateMlPerHour {
-            return max(300, min(1000, Int(Double(sweatRate) * 0.80)))
+            // If measured sweat rate exists, replace 80% of sweat loss.
+            raw = max(300, min(1000, Int(Double(sweatRate) * 0.80)))
+        } else {
+            // Heuristic base: 500 ml/hr, adjusted by heat/humidity multiplier.
+            var base: Double = 500
+            // Size adjustment (heavier athletes lose more fluid).
+            base += (bodyWeightKg - 70) * 5
+            // Weather multiplier (already captures heat/humidity intensification)
+            let multiplier = weather?.hydrationMultiplier ?? 1.0
+            base *= multiplier
+            raw = max(300, min(1000, Int(base)))
         }
-
-        // Heuristic base: 500 ml/hr, adjusted by heat/humidity multiplier.
-        var base: Double = 500
-        // Size adjustment (heavier athletes lose more fluid).
-        base += (bodyWeightKg - 70) * 5
-
-        // Weather multiplier (already captures heat/humidity intensification)
-        let multiplier = weather?.hydrationMultiplier ?? 1.0
-        base *= multiplier
-
-        return max(300, min(1000, Int(base)))
+        // Round to nearest 25 ml so values read as 500 / 525 / 550 rather
+        // than the jagged 502 / 517 / 548 that the raw formula produces.
+        return roundToNearest(raw, step: 25)
     }
 
     // MARK: Sodium mg/hr
@@ -206,7 +208,22 @@ enum NutritionTargets {
             : mgPerLiter
 
         let mgPerHour = (hydrationMlPerHour * appliedConcentration) / 1000
-        return max(200, min(1500, mgPerHour))
+        let clamped = max(200, min(1500, mgPerHour))
+        // Round to nearest 25 mg for the same reason we round hydration —
+        // jagged values like 351 / 487 read as arbitrary precision when
+        // they're really heuristic targets.
+        return roundToNearest(clamped, step: 25)
+    }
+
+    // MARK: Helpers
+
+    /// Rounds a value to the nearest multiple of `step`. Used on targets
+    /// that the athlete sees directly — jagged digits erode trust in the
+    /// recommendation by signalling false precision.
+    fileprivate static func roundToNearest(_ value: Int, step: Int) -> Int {
+        guard step > 1 else { return value }
+        let half = step / 2
+        return ((value + half) / step) * step
     }
 
     // MARK: Caffeine total mg

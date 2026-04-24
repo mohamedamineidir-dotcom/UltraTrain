@@ -124,8 +124,8 @@ struct NutritionPlanGeneratorTests {
         let mg = NutritionTargets.sodiumMgPerHour(
             sweatProfile: profile, hydrationMlPerHour: 800, durationHours: 3, weather: nil
         )
-        // 800 ml × 1200 mg/L = 960 mg/hr
-        #expect(mg == 960)
+        // 800 ml × 1200 mg/L = 960 mg/hr, rounded to nearest 25 = 950.
+        #expect(mg == 950)
     }
 
     @Test("Heavy salty sweater gets elevated sodium")
