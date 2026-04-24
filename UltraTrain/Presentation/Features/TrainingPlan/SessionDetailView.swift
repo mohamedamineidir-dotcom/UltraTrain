@@ -233,7 +233,7 @@ struct SessionDetailView: View {
                         .foregroundStyle(.white)
                         .padding(.horizontal, Theme.Spacing.sm)
                         .padding(.vertical, Theme.Spacing.xs)
-                        .background(session.isSkipped ? Color.gray : session.intensity.color)
+                        .background(session.isSkipped ? AnyShapeStyle(Theme.Colors.tertiaryLabel) : AnyShapeStyle(session.intensity.color))
                         .clipShape(Capsule())
 
                     if let zone = session.targetHeartRateZone {
@@ -373,8 +373,7 @@ struct SessionDetailView: View {
             }
             .frame(maxWidth: .infinity)
         }
-        .padding(Theme.Spacing.md)
-        .cardStyle()
+        .futuristicGlassStyle(phaseTint: Theme.Colors.zone3)
     }
 
     private var scExerciseCount: Int {
@@ -562,7 +561,7 @@ struct SessionDetailView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .cardStyle()
+            .futuristicGlassStyle(phaseTint: session.intensity.color)
         }
     }
 

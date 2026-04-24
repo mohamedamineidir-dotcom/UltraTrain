@@ -75,7 +75,7 @@ struct WeekSummarySheet: View {
                 )
             }
         }
-        .appCardStyle()
+        .futuristicGlassStyle(phaseTint: Theme.Colors.warmCoral)
     }
 
     private func metricBar(
