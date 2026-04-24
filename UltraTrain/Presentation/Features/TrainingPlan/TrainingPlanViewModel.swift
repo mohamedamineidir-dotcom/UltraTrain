@@ -21,6 +21,12 @@ final class TrainingPlanViewModel {
     let stravaAuthService: (any StravaAuthServiceProtocol)?
     let stravaImportService: (any StravaImportServiceProtocol)?
     let intervalPerformanceRepository: (any IntervalPerformanceRepository)?
+    /// #27: lets the plan viewmodel keep scheduled training reminders
+    /// in sync when sessions are swapped, rescheduled, skipped, or the
+    /// plan is regenerated. Optional for callers that don't care about
+    /// reminders; nil-safe throughout.
+    let notificationService: (any NotificationServiceProtocol)?
+    let appSettingsRepository: (any AppSettingsRepository)?
 
     // MARK: - State
 
@@ -59,7 +65,9 @@ final class TrainingPlanViewModel {
         runRepository: (any RunRepository)? = nil,
         stravaAuthService: (any StravaAuthServiceProtocol)? = nil,
         stravaImportService: (any StravaImportServiceProtocol)? = nil,
-        intervalPerformanceRepository: (any IntervalPerformanceRepository)? = nil
+        intervalPerformanceRepository: (any IntervalPerformanceRepository)? = nil,
+        notificationService: (any NotificationServiceProtocol)? = nil,
+        appSettingsRepository: (any AppSettingsRepository)? = nil
     ) {
         self.planRepository = planRepository
         self.athleteRepository = athleteRepository
@@ -75,6 +83,8 @@ final class TrainingPlanViewModel {
         self.stravaAuthService = stravaAuthService
         self.stravaImportService = stravaImportService
         self.intervalPerformanceRepository = intervalPerformanceRepository
+        self.notificationService = notificationService
+        self.appSettingsRepository = appSettingsRepository
     }
 
     // MARK: - Load
@@ -98,6 +108,7 @@ final class TrainingPlanViewModel {
         isLoading = false
         checkForAdjustments()
         refreshInjuryRiskProjection()
+        refreshScheduledReminders()
     }
 
     /// Recomputes the next-7-day injury-risk projection from the
@@ -181,6 +192,7 @@ final class TrainingPlanViewModel {
             self.athlete = athlete
             races = allRaces
             refreshInjuryRiskProjection()
+            refreshScheduledReminders()
             Logger.training.info("Plan generated: \(newPlan.weeks.count) weeks")
             hapticService.playSuccess()
             await updateWidgets()

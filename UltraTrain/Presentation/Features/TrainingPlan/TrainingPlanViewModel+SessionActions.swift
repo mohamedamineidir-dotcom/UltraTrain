@@ -21,6 +21,7 @@ extension TrainingPlanViewModel {
             plan = currentPlan
             await updateWidgets()
             checkForAdjustments()
+            refreshScheduledReminders()
         } catch {
             self.error = error.localizedDescription
             Logger.training.error("Failed to update session: \(error)")
@@ -56,6 +57,7 @@ extension TrainingPlanViewModel {
             plan = currentPlan
             await updateWidgets()
             checkForAdjustments()
+            refreshScheduledReminders()
         } catch {
             self.error = error.localizedDescription
             Logger.training.error("Failed to complete session manually: \(error)")
@@ -89,6 +91,7 @@ extension TrainingPlanViewModel {
             }
 
             checkForAdjustments()
+            refreshScheduledReminders()
         } catch {
             self.error = error.localizedDescription
             Logger.training.error("Failed to skip session: \(error)")
@@ -143,6 +146,7 @@ extension TrainingPlanViewModel {
             try await planRepository.updateSession(session)
             plan = currentPlan
             checkForAdjustments()
+            refreshScheduledReminders()
         } catch {
             self.error = error.localizedDescription
             Logger.training.error("Failed to unskip session: \(error)")
@@ -164,6 +168,7 @@ extension TrainingPlanViewModel {
         do {
             try await planRepository.updateSession(session)
             plan = currentPlan
+            refreshScheduledReminders()
         } catch {
             self.error = error.localizedDescription
             Logger.training.error("Failed to reschedule session: \(error)")
@@ -200,6 +205,7 @@ extension TrainingPlanViewModel {
             try await planRepository.updateSession(sessionA)
             try await planRepository.updateSession(sessionB)
             plan = currentPlan
+            refreshScheduledReminders()
         } catch {
             self.error = error.localizedDescription
             Logger.training.error("Failed to swap sessions: \(error)")
@@ -220,6 +226,7 @@ extension TrainingPlanViewModel {
             try await runRepository?.updateLinkedSession(runId: runId, sessionId: currentPlan.weeks[weekIndex].sessions[sessionIndex].id)
             plan = currentPlan
             await updateWidgets()
+            refreshScheduledReminders()
             Logger.training.info("Linked run \(runId) to session")
         } catch {
             self.error = error.localizedDescription
