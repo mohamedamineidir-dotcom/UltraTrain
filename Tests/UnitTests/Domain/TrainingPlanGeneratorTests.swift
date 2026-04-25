@@ -55,9 +55,10 @@ struct TrainingPlanGeneratorTests {
 
         let plan = try await generator.execute(athlete: athlete, targetRace: race, intermediateRaces: [])
 
-        // Should be approximately 16 weeks (exact count depends on weeksBetween calculation)
+        // 16 weeks of training + post-race recovery (1-3 weeks based on
+        // distance). 100 km race → 3 post-race weeks → 16-19 weeks total.
         #expect(plan.weeks.count >= 14)
-        #expect(plan.weeks.count <= 18)
+        #expect(plan.weeks.count <= 21)
     }
 
     @Test("Each week has 7 sessions")
@@ -263,7 +264,12 @@ struct TrainingPlanGeneratorTests {
 
         let plan = try await generator.execute(athlete: athlete, targetRace: race, intermediateRaces: [])
 
-        let buildableWeeks = plan.weeks.filter { $0.phase != .taper }
+        // Exclude post-race recovery weeks (phase == .recovery, appended
+        // after the race) and taper weeks. We're measuring the
+        // base / build / peak split.
+        let buildableWeeks = plan.weeks.filter {
+            $0.phase != .taper && $0.phase != .recovery
+        }
         let peakWeeks = buildableWeeks.filter { $0.phase == .peak }.count
         let peakFraction = Double(peakWeeks) / Double(buildableWeeks.count)
         #expect(peakFraction >= 0.30,

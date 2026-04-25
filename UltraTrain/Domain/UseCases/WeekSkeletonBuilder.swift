@@ -14,7 +14,8 @@ enum WeekSkeletonBuilder {
     static func build(
         raceDate: Date,
         phases: [PhaseDistributor.PhaseAllocation],
-        recoveryCycle: Int = 3
+        recoveryCycle: Int = 3,
+        postRaceRecoveryWeeks: Int = 0
     ) -> [WeekSkeleton] {
         let totalWeeks = phases.reduce(0) { $0 + $1.weekCount }
 
@@ -65,6 +66,28 @@ enum WeekSkeletonBuilder {
                 ))
                 weekIndex += 1
             }
+        }
+
+        // Post-race recovery weeks. Append N weeks AFTER the race week so
+        // the athlete sees a structured return to training instead of
+        // dropping off the plan the day after their A-race. Weeks land
+        // on phase = .recovery + isRecoveryWeek = true so volume + session
+        // templates pick the existing recovery shape (Daniels' "post-race
+        // regeneration" — 30-50% volume, no quality, walking encouraged
+        // in the first few days). The athlete can transition to a fresh
+        // plan from the dashboard once the recovery window closes.
+        for _ in 0..<postRaceRecoveryWeeks {
+            let startDate = planStartDate.adding(weeks: weekIndex)
+            let endDate = startDate.adding(days: 6)
+            skeletons.append(WeekSkeleton(
+                weekNumber: weekIndex + 1,
+                startDate: startDate,
+                endDate: endDate,
+                phase: .recovery,
+                isRecoveryWeek: true,
+                phaseFocus: .sharpening
+            ))
+            weekIndex += 1
         }
         return skeletons
     }

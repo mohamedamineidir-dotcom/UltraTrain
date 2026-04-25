@@ -55,10 +55,24 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             for: athlete.experienceLevel,
             age: athlete.age
         )
+        // Post-race recovery weeks. Daniels' rule: ~1 easy day per 3 km of
+        // race distance. Translates to whole weeks:
+        //   <30 km   → 1 week  (10K, HM)
+        //   30-49 km → 2 weeks (marathon, short ultra)
+        //   50+ km   → 3 weeks (50K+, full ultra)
+        // Athlete sees a structured return-to-training instead of falling
+        // off the plan the day after their A-race.
+        let postRaceRecoveryWeeks: Int
+        switch targetRace.distanceKm {
+        case ..<30:    postRaceRecoveryWeeks = 1
+        case ..<50:    postRaceRecoveryWeeks = 2
+        default:       postRaceRecoveryWeeks = 3
+        }
         let skeletons = WeekSkeletonBuilder.build(
             raceDate: raceDate,
             phases: phases,
-            recoveryCycle: recoveryCycle
+            recoveryCycle: recoveryCycle,
+            postRaceRecoveryWeeks: postRaceRecoveryWeeks
         )
 
         // 3. Compute intermediate race overrides BEFORE volume calculation
@@ -299,10 +313,19 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
 
         // 3. Build week skeletons — road-specific recovery cycle
         let recoveryCycle = VolumeCapCalculator.roadRecoveryCycle(for: athlete.experienceLevel, discipline: discipline)
+        // Post-race recovery weeks (same Daniels rule as trail). 10K and
+        // HM get 1 week; marathon gets 2.
+        let postRaceRecoveryWeeks: Int
+        switch targetRace.distanceKm {
+        case ..<30:    postRaceRecoveryWeeks = 1
+        case ..<50:    postRaceRecoveryWeeks = 2
+        default:       postRaceRecoveryWeeks = 3
+        }
         let skeletons = WeekSkeletonBuilder.build(
             raceDate: raceDate,
             phases: phases,
-            recoveryCycle: recoveryCycle
+            recoveryCycle: recoveryCycle,
+            postRaceRecoveryWeeks: postRaceRecoveryWeeks
         )
 
         // 4. Road-specific volume calculation
