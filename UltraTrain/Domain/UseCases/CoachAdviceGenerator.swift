@@ -115,7 +115,41 @@ enum CoachAdviceGenerator {
            type == .intervals || type == .tempo || type == .verticalGain {
             result += " Today's forecast is hot — consider swapping with tomorrow's easy day or moving this to dawn."
         }
+        // Mental cue. Short — one sentence. Surfaces only on the few
+        // sessions where it actually matters: peak-phase race-effort
+        // efforts, race-week prep, and the race itself. Skipped on
+        // routine easy / recovery / strength so the card stays focused.
+        if let mentalCue = mentalCue(for: type, phase: phase, weekInPhase: weekInPhase) {
+            result += " " + mentalCue
+        }
         return result
+    }
+
+    /// Single-sentence mental cue. Matches research-backed sport-
+    /// psychology themes — visualisation, controlled self-talk,
+    /// pace-by-feel — without bloating the card. Returns nil when the
+    /// session doesn't warrant one.
+    private static func mentalCue(
+        for type: SessionType,
+        phase: TrainingPhase,
+        weekInPhase: Int
+    ) -> String? {
+        switch (phase, type) {
+        case (.race, .race):
+            return "Trust your training. The race goes to who's calmest, not who's fittest."
+        case (.taper, .longRun), (.taper, .backToBack):
+            return "Visualise the race tonight: start, mid-race, finish. Three minutes is enough."
+        case (.taper, .intervals), (.taper, .tempo):
+            return "Sharpening, not building. Stay relaxed — speed comes from looseness."
+        case (.peak, .longRun), (.peak, .backToBack):
+            return "If a bad patch hits, walk 60 seconds, fuel, then run. Patches pass."
+        case (.peak, .race):
+            return "Race-pace work. Pace by feel for the first half, push when you'd want to fade."
+        case (.build, .intervals), (.build, .tempo):
+            return "Hard, not desperate. Hold form when it stings."
+        default:
+            return nil
+        }
     }
 
     /// Heat-acclimation cue — surfaced on peak / taper sessions when the
