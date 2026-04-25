@@ -72,24 +72,75 @@ enum RoadRaceDiscipline: String, Sendable {
         }
     }
 
-    /// Maximum long run distance in km, scaled by experience.
-    /// Maximum long run distance in km. Daniels: LR ≤ 25% of weekly volume or distance cap.
-    /// Pfitzinger 18/55: 16mi (26km), 18/70: 20mi (32km), 18/85: 22mi (35km).
-    func longRunCapKm(experience: ExperienceLevel) -> Double {
+    /// Maximum long run distance in km. Daniels: LR ≤ 25% of weekly volume
+    /// or distance cap. Pfitzinger 18/55: 16mi (26km), 18/70: 20mi (32km),
+    /// 18/85: 22mi (35km). Hanson: 16mi (26km) regardless of athlete tier.
+    ///
+    /// The cap responds to three personalisation dimensions:
+    ///   • **experience** — base level (beginner→elite)
+    ///   • **philosophy** — performance lifts the cap modestly
+    ///     (×1.08), enjoyment trims it (×0.92). Wider swings would
+    ///     over-rotate: a marathon LR can only meaningfully grow so far
+    ///     before recovery cost outweighs adaptation (Pfitzinger
+    ///     stops at 22 mi even for elites).
+    ///   • **goal** — targetRanking nudges +5%, finish trims -5%.
+    ///     Goal effect is smaller than philosophy because the target
+    ///     time is already encoded in pace targets, not LR distance.
+    ///
+    /// Floors prevent the lowest combinations from producing dangerously
+    /// short LRs (Hanson principle: marathoners need a 26 km cumulative
+    /// fatigue test). Ceilings prevent the highest combinations from
+    /// pushing athletes above what mainstream road coaching considers
+    /// safe-to-recover from.
+    func longRunCapKm(
+        experience: ExperienceLevel,
+        philosophy: TrainingPhilosophy = .balanced,
+        raceGoal: RaceGoal = .targetTime(0)
+    ) -> Double {
+        let baseline: Double
         switch (self, experience) {
-        case (.road10K, .beginner):       16
-        case (.road10K, .intermediate):   20
-        case (.road10K, .advanced):       24
-        case (.road10K, .elite):          24
-        case (.roadHalf, .beginner):      20
-        case (.roadHalf, .intermediate):  23
-        case (.roadHalf, .advanced):      26
-        case (.roadHalf, .elite):         26
-        case (.roadMarathon, .beginner):  30
-        case (.roadMarathon, .intermediate): 32
-        case (.roadMarathon, .advanced):  35
-        case (.roadMarathon, .elite):     35
+        case (.road10K, .beginner):          baseline = 16
+        case (.road10K, .intermediate):      baseline = 20
+        case (.road10K, .advanced):          baseline = 24
+        case (.road10K, .elite):             baseline = 24
+        case (.roadHalf, .beginner):         baseline = 20
+        case (.roadHalf, .intermediate):     baseline = 23
+        case (.roadHalf, .advanced):         baseline = 26
+        case (.roadHalf, .elite):            baseline = 26
+        case (.roadMarathon, .beginner):     baseline = 30
+        case (.roadMarathon, .intermediate): baseline = 32
+        case (.roadMarathon, .advanced):     baseline = 35
+        case (.roadMarathon, .elite):        baseline = 35
         }
+
+        let philMult: Double = switch philosophy {
+        case .enjoyment:    0.92
+        case .balanced:     1.00
+        case .performance:  1.08
+        }
+
+        let goalMult: Double
+        switch raceGoal {
+        case .finish:        goalMult = 0.95
+        case .targetTime:    goalMult = 1.00
+        case .targetRanking: goalMult = 1.05
+        }
+
+        let scaled = baseline * philMult * goalMult
+
+        // Floors — minimum LRs to actually prepare for the race.
+        // Hanson holds marathoners at 26 km even for the most conservative
+        // profile; Pfitz keeps HM athletes at 16+ km; 10K runners need
+        // ~120% of race distance to develop adequate aerobic depth.
+        let floor: Double
+        let ceiling: Double
+        switch self {
+        case .road10K:      (floor, ceiling) = (12, 24)
+        case .roadHalf:     (floor, ceiling) = (16, 28)
+        case .roadMarathon: (floor, ceiling) = (26, 35)
+        }
+
+        return min(max(scaled, floor), ceiling)
     }
 
     /// Peak weekly volume in km (Pfitzinger plans as reference).

@@ -96,7 +96,8 @@ enum RoadVolumeCalculator {
         skeletons: [WeekSkeletonBuilder.WeekSkeleton],
         athlete: Athlete,
         raceDistanceKm: Double,
-        taperProfile: TaperProfile
+        taperProfile: TaperProfile,
+        raceGoal: RaceGoal = .targetTime(0)
     ) -> [VolumeCalculator.WeekVolume] {
         guard !skeletons.isEmpty else { return [] }
 
@@ -228,7 +229,9 @@ enum RoadVolumeCalculator {
                 experience: experience,
                 raceDistanceKm: raceDistanceKm,
                 currentLongestRunKm: athlete.longestRunKm,
-                isRecoveryWeek: skeleton.isRecoveryWeek
+                isRecoveryWeek: skeleton.isRecoveryWeek,
+                philosophy: athlete.trainingPhilosophy,
+                raceGoal: raceGoal
             )
 
             // HARD CAP: Easy runs must NEVER exceed long run, and absolute max 90min
@@ -372,6 +375,11 @@ enum RoadVolumeCalculator {
             + tempoP.startMinutes * 60
 
         // Unscaled Week 1 long run (may itself be anchored to longestRunKm).
+        // Passes athlete's philosophy through so the cap is consistent with
+        // the per-week call site above. We don't have raceGoal here, so we
+        // pass the default — the cap variation is dominated by philosophy
+        // anyway, and this is only used for anchor-ratio computation
+        // (philosophy multiplier cancels in numerator/denominator).
         let unscaledWeek1LongRun = RoadLongRunCalculator.longRunDuration(
             weekIndex: 0,
             totalWeeks: totalWeeks,
@@ -379,7 +387,8 @@ enum RoadVolumeCalculator {
             experience: experience,
             raceDistanceKm: raceDistanceKm,
             currentLongestRunKm: athlete.longestRunKm,
-            isRecoveryWeek: false
+            isRecoveryWeek: false,
+            philosophy: athlete.trainingPhilosophy
         )
 
         let unscaledWeek1TotalKm = (unscaledWeek1Seconds + unscaledWeek1LongRun) / avgPaceSecPerKm

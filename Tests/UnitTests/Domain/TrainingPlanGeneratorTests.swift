@@ -312,6 +312,38 @@ struct TrainingPlanGeneratorTests {
             "Easy pace ratio \(ratio) does not match the tightened 1.30/1.42 spec")
     }
 
+    @Test("Road: long-run cap responds to philosophy + goal")
+    func longRunCapResponsiveToProfile() async throws {
+        // Same intermediate marathoner — three different profiles. The
+        // cap should track philosophy and goal: performance + ranking
+        // pulls higher; enjoyment + finish pulls lower (floored at the
+        // marathon-safe minimum of 26 km).
+        let baselineCap = RoadRaceDiscipline.roadMarathon.longRunCapKm(
+            experience: .intermediate,
+            philosophy: .balanced,
+            raceGoal: .targetTime(0)
+        )
+        let perfCap = RoadRaceDiscipline.roadMarathon.longRunCapKm(
+            experience: .intermediate,
+            philosophy: .performance,
+            raceGoal: .targetRanking(1)
+        )
+        let enjoyCap = RoadRaceDiscipline.roadMarathon.longRunCapKm(
+            experience: .intermediate,
+            philosophy: .enjoyment,
+            raceGoal: .finish
+        )
+
+        #expect(perfCap > baselineCap,
+            "Performance/ranking marathon cap (\(perfCap)) should exceed balanced (\(baselineCap))")
+        #expect(enjoyCap < baselineCap,
+            "Enjoyment/finish marathon cap (\(enjoyCap)) should be below balanced (\(baselineCap))")
+        #expect(enjoyCap >= 26,
+            "Enjoyment/finish marathon cap (\(enjoyCap)) must respect the 26 km marathon-safe floor")
+        #expect(perfCap <= 35,
+            "Performance/ranking marathon cap (\(perfCap)) must respect the 35 km Pfitzinger ceiling")
+    }
+
     @Test("Trail: peak long runs include race-simulation blocks")
     func peakLongRunHasRaceSimBlocks() async throws {
         // Peak-phase long runs ≥ 2h should have an IntervalWorkout

@@ -39,7 +39,10 @@ enum RoadLongRunCalculator {
     /// Calculates long run duration for a given week in a road plan.
     ///
     /// Uses a quadratic ramp up to peak, then holds or tapers.
-    /// Duration is capped by distance (road-specific) and experience.
+    /// Duration is capped by distance (road-specific), experience,
+    /// philosophy, and goal — a performance-mode targetRanking marathoner
+    /// gets a longer LR cap than an enjoyment-mode finisher even at the
+    /// same experience tier.
     static func longRunDuration(
         weekIndex: Int,
         totalWeeks: Int,
@@ -47,10 +50,16 @@ enum RoadLongRunCalculator {
         experience: ExperienceLevel,
         raceDistanceKm: Double,
         currentLongestRunKm: Double,
-        isRecoveryWeek: Bool
+        isRecoveryWeek: Bool,
+        philosophy: TrainingPhilosophy = .balanced,
+        raceGoal: RaceGoal = .targetTime(0)
     ) -> TimeInterval {
         let discipline = RoadRaceDiscipline.from(distanceKm: raceDistanceKm)
-        let maxDistanceKm = discipline.longRunCapKm(experience: experience)
+        let maxDistanceKm = discipline.longRunCapKm(
+            experience: experience,
+            philosophy: philosophy,
+            raceGoal: raceGoal
+        )
 
         // Convert max distance to duration using experience-based pace
         let avgPaceSecPerKm: Double = switch experience {
