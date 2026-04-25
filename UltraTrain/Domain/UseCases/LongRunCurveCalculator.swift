@@ -339,9 +339,18 @@ enum LongRunCurveCalculator {
         let philMult = AppConfiguration.Training.philosophyPeakMultiplier[philosophy.rawValue] ?? 1.0
         let goalMult = AppConfiguration.Training.goalPeakMultiplier[raceGoalConfigKey(raceGoal)] ?? 1.0
 
+        // Philosophy-aware B2B cap. Performance (×1.15) lifts the
+        // ceiling — an intermediate-for-performance HK100 athlete gets
+        // ~14.95 h B2B instead of being clipped at 13 h, matching what
+        // pro-coached training packages actually prescribe. Enjoyment
+        // (×0.80) drops the ceiling so casual athletes never see a
+        // brutal week. Goal type doesn't move the cap — ambition can't
+        // manufacture extra recovery capacity.
+        let personalizedCapHours = maxCapHours * philMult
+
         let peakCombined = min(
             raceDurationSeconds * b2bFraction * philMult * goalMult,
-            maxCapHours * 3600
+            personalizedCapHours * 3600
         )
 
         let buildWeekCount = max(totalWeeks - taperWeekEstimate(totalWeeks, taperProfile: taperProfile), 1)
@@ -432,7 +441,14 @@ enum LongRunCurveCalculator {
         let goalMult = AppConfiguration.Training.goalPeakMultiplier[raceGoalConfigKey(raceGoal)] ?? 1.0
         let personalizedFraction = fraction * philMult * goalMult
 
-        var peak = min(raceDurationSeconds * personalizedFraction, maxSeconds)
+        // Philosophy-aware absolute cap. Performance lifts the ceiling
+        // (intermediate from 8h to ~9.2h — matches what real coaches
+        // prescribe for performance-mode 100K prep, e.g. HK100 with a
+        // 9-hour single long run). Enjoyment drops it (~6.4h). Goal
+        // type doesn't move the cap.
+        let personalizedCapSeconds = maxSeconds * philMult
+
+        var peak = min(raceDurationSeconds * personalizedFraction, personalizedCapSeconds)
 
         // When B2B is eligible, cap the single LR so B2B weeks are always
         // the biggest volume weeks. Single LR should not exceed B2B Day 1.
@@ -445,9 +461,13 @@ enum LongRunCurveCalculator {
                 philosophy: philosophy,
                 raceEffectiveKm: raceEffectiveKm
             )
+            // B2B cap also philosophy-aware so the inline guard stays in
+            // sync with the standalone B2B calculation in
+            // `b2bCombinedDuration`.
+            let b2bMaxSeconds = (AppConfiguration.Training.peakB2BMaxHours[key] ?? 16.0) * philMult * 3600
             let b2bCombinedPeak = min(
                 raceDurationSeconds * b2bFraction * philMult * goalMult,
-                (AppConfiguration.Training.peakB2BMaxHours[key] ?? 16.0) * 3600
+                b2bMaxSeconds
             )
             let b2bDay1Peak = b2bCombinedPeak * AppConfiguration.Training.b2bDay1Split
             // Single LR capped at B2B Day 1 so B2B weeks stay the biggest

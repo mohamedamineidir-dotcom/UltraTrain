@@ -185,9 +185,14 @@ enum VolumeCalculator {
     ) -> Double {
         guard raceDistanceKm > 0 else { return 0 }
         let raceElevationPerKm = raceElevationGainM / raceDistanceKm
-        // Cap training elevation density at 60 m/km to prevent extreme values
-        // for short, steep races (e.g., 13km/1500D+ = 115 m/km)
-        let trainingElevationPerKm = min(raceElevationPerKm, 60.0)
+        // Cap training density at 75 m/km (was 60). The previous cap meant
+        // any race above 60 m/km was trained at LESS density than the race
+        // itself — wrong for vertical races (Hardrock, Madeira Sky Race,
+        // Sky Skouts where race density runs 80-100+ m/km). New cap lets
+        // training match races up to 75 m/km and stay close for steeper
+        // ones, while still preventing pathological values for short
+        // races like a 13 km / 1500 D+ vert kilometre.
+        let trainingElevationPerKm = min(raceElevationPerKm, 75.0)
         // Progressive ramp: 15% density at plan start → 70% at peak
         // Keeps D+ manageable through build/peak phases
         let progressFactor = 0.15 + 0.55 * planProgress

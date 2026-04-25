@@ -10,10 +10,19 @@ enum PhaseDistributor {
 
     /// Distributes weeks across 4 training phases using Campus Coach 5-block cycle:
     /// Seuil 30 (base) → VO2max (build) → Seuil 60 (peak) → Affûtage (taper)
+    ///
+    /// - Parameter raceEffectiveKm: race effective distance (km + D+/100).
+    ///   100K+ races shift +5% from base into peak — the longer the race,
+    ///   the more cumulative race-specific work the athlete needs (a
+    ///   100-mile plan and a 50K plan should not have identical phase
+    ///   weighting for the same experience tier). Floors at 18% base for
+    ///   elites so even pros coming off recovery still rebuild aerobic
+    ///   foundation before peak.
     static func distribute(
         totalWeeks: Int,
         experience: ExperienceLevel,
-        taperProfile: TaperProfile? = nil
+        taperProfile: TaperProfile? = nil,
+        raceEffectiveKm: Double = 0
     ) -> [PhaseAllocation] {
         guard totalWeeks >= 4 else {
             return [
@@ -22,7 +31,7 @@ enum PhaseDistributor {
             ]
         }
 
-        let fracs = focusFractions(for: experience)
+        let fracs = focusFractions(for: experience, raceEffectiveKm: raceEffectiveKm)
 
         if let profile = taperProfile {
             // Race-aware taper: use profile's week count
@@ -78,16 +87,40 @@ enum PhaseDistributor {
         let sharpening: Double
     }
 
-    private static func focusFractions(for experience: ExperienceLevel) -> FocusFractions {
+    private static func focusFractions(
+        for experience: ExperienceLevel,
+        raceEffectiveKm: Double = 0
+    ) -> FocusFractions {
+        let base: FocusFractions
         switch experience {
         case .beginner:
-            FocusFractions(threshold30: 0.25, vo2max: 0.15, threshold60: 0.35, sharpening: 0.25)
+            base = FocusFractions(threshold30: 0.25, vo2max: 0.15, threshold60: 0.35, sharpening: 0.25)
         case .intermediate:
-            FocusFractions(threshold30: 0.18, vo2max: 0.15, threshold60: 0.44, sharpening: 0.23)
+            base = FocusFractions(threshold30: 0.18, vo2max: 0.15, threshold60: 0.44, sharpening: 0.23)
         case .advanced:
-            FocusFractions(threshold30: 0.15, vo2max: 0.15, threshold60: 0.46, sharpening: 0.24)
+            base = FocusFractions(threshold30: 0.15, vo2max: 0.15, threshold60: 0.46, sharpening: 0.24)
         case .elite:
-            FocusFractions(threshold30: 0.12, vo2max: 0.18, threshold60: 0.46, sharpening: 0.24)
+            // Elite base floor at 18%. The previous 12% assumed elites came
+            // in with bulletproof aerobic foundation — fine in steady-state
+            // training, dangerous after a recovery period or coming back
+            // from injury. 18% is enough to rebuild without robbing peak.
+            base = FocusFractions(threshold30: 0.18, vo2max: 0.18, threshold60: 0.40, sharpening: 0.24)
         }
+
+        // 100K+ shift: move 5% from base → peak. Longer races demand more
+        // accumulated race-specific work; a 100-mile plan should not have
+        // the same peak weight as a 50K plan for the same athlete.
+        // Triggered by race effective km (km + D+/100), so a 60K with
+        // 4000m D+ also benefits.
+        guard raceEffectiveKm >= 100 else { return base }
+        let shift = 0.05
+        let shiftedT30 = max(base.threshold30 - shift, 0.05)
+        let actualShift = base.threshold30 - shiftedT30
+        return FocusFractions(
+            threshold30: shiftedT30,
+            vo2max: base.vo2max,
+            threshold60: base.threshold60 + actualShift,
+            sharpening: base.sharpening
+        )
     }
 }

@@ -41,12 +41,13 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             )
         }
 
-        // 1. Distribute phases (race-aware taper)
+        // 1. Distribute phases (race-aware taper + race-distance peak shift)
         let taperProfile = TaperProfile.forRace(effectiveKm: targetRace.effectiveDistanceKm)
         let phases = PhaseDistributor.distribute(
             totalWeeks: totalWeeks,
             experience: athlete.experienceLevel,
-            taperProfile: taperProfile
+            taperProfile: taperProfile,
+            raceEffectiveKm: targetRace.effectiveDistanceKm
         )
 
         // 2. Build week skeletons (experience-based recovery cycle)

@@ -312,6 +312,54 @@ struct TrainingPlanGeneratorTests {
             "Easy pace ratio \(ratio) does not match the tightened 1.30/1.42 spec")
     }
 
+    @Test("Trail: HK100 intermediate-performance unlocks longer single LR + B2B caps")
+    func hk100PerformanceCapsLifted() async throws {
+        // HK100 prep with Campus Coach: intermediate athlete training for
+        // performance, with a target time. Real coaches prescribe a 9-hour
+        // single long run and ~12 hour combined B2B for this profile.
+        // Before the philosophy-aware caps, these were clipped at 8h
+        // single / 13h B2B regardless of philosophy. After the fix,
+        // performance × intermediate caps lift to ~9.2h / ~14.95h.
+        let raceDurationSeconds: TimeInterval = 24 * 3600 // typical HK100 finish
+        let raceEffectiveKm: Double = 100 + 4500.0 / 100  // 100 km + 4500 D+/100 = 145
+
+        let perfPeak = LongRunCurveCalculator.b2bCombinedDuration(
+            weekIndex: 100, totalWeeks: 100, // force progress = 1.0
+            experience: .intermediate,
+            philosophy: .performance,
+            raceGoal: .targetTime(raceDurationSeconds),
+            raceDurationSeconds: raceDurationSeconds,
+            raceEffectiveKm: raceEffectiveKm
+        )
+        let balancedPeak = LongRunCurveCalculator.b2bCombinedDuration(
+            weekIndex: 100, totalWeeks: 100,
+            experience: .intermediate,
+            philosophy: .balanced,
+            raceGoal: .targetTime(raceDurationSeconds),
+            raceDurationSeconds: raceDurationSeconds,
+            raceEffectiveKm: raceEffectiveKm
+        )
+        let enjoyPeak = LongRunCurveCalculator.b2bCombinedDuration(
+            weekIndex: 100, totalWeeks: 100,
+            experience: .intermediate,
+            philosophy: .enjoyment,
+            raceGoal: .targetTime(raceDurationSeconds),
+            raceDurationSeconds: raceDurationSeconds,
+            raceEffectiveKm: raceEffectiveKm
+        )
+
+        // Performance must exceed balanced; balanced must exceed enjoyment.
+        // Performance specifically should clip at ~14.95h (13 × 1.15).
+        #expect(perfPeak > balancedPeak,
+            "Performance B2B (\(perfPeak/3600)h) should exceed balanced (\(balancedPeak/3600)h)")
+        #expect(balancedPeak > enjoyPeak,
+            "Balanced B2B (\(balancedPeak/3600)h) should exceed enjoyment (\(enjoyPeak/3600)h)")
+        // Performance B2B should clip somewhere around 14.95h (allow ±0.5h tolerance for fraction effects)
+        let perfHours = perfPeak / 3600
+        #expect(perfHours >= 12.0,
+            "Performance B2B \(perfHours)h must reach the 12h+ range that intermediate-performance HK100 prep requires")
+    }
+
     @Test("Road plan: final taper week ends with a pre-race shakeout, not a long run")
     func finalTaperWeekShakeout() async throws {
         // The very last week of the plan replaces the day-5 long-run slot

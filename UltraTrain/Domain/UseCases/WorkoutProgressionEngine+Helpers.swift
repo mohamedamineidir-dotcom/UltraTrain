@@ -153,8 +153,13 @@ extension WorkoutProgressionEngine {
         guard effectiveKm > 0 else { return 1.0 }
         let density = elevationGainM / effectiveKm
         let clamped = min(max(density, 15), 120)
-        // Wider range: 0.7 for flat trails to 1.5 for vertical races
-        return 0.7 + (clamped - 15) / (120 - 15) * 0.8
+        // Coach principle: quality VG days train ABOVE race density. Curve
+        // lifted so a typical mountain ultra (UTMB-style ~58 m/km) gets a
+        // ~1.25× factor instead of the previous ~1.03×, and high-vertical
+        // races (100 m/km) get ~1.65×. Floor moves up too so even flat-
+        // trail races still get meaningful climbing exposure on quality
+        // days. Range: 0.85 (flat) → 1.85 (extreme vertical).
+        return 0.85 + (clamped - 15) / (120 - 15) * 1.00
     }
 
     static func experienceFactor(_ experience: ExperienceLevel) -> Double {
