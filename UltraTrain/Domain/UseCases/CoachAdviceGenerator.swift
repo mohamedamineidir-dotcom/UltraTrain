@@ -12,6 +12,8 @@ enum CoachAdviceGenerator {
         verticalGainEnvironment: VerticalGainEnvironment = .mountain,
         intervalFocus: IntervalFocus? = nil,
         isRoadRace: Bool = false,
+        plannedDurationSeconds: TimeInterval = 0,
+        isHotRaceForecast: Bool = false,
         restingHR: Int? = nil,
         maxHR: Int? = nil,
         biologicalSex: BiologicalSex? = nil
@@ -52,14 +54,32 @@ enum CoachAdviceGenerator {
             result = prefix + " " + result
         }
         // #14: append Karvonen HR range when both resting + max HR are
-        // known. Skips rest days (no meaningful zone) and strength /
-        // cross-training (HR too variable to prescribe a range).
+        // known. Skips rest days (no meaningful zone), strength /
+        // cross-training (HR too variable to prescribe a range), and —
+        // critically for ultras — sessions ≥ 2 hours, where cardiac
+        // drift makes HR zones misleading: at hour 5 your HR climbs
+        // 10-15 bpm at the same effort. Athletes who chase HR through
+        // a long ultra slow inappropriately. RPE / effort cues stay
+        // truer over long durations.
+        let isLongSession = plannedDurationSeconds >= 2 * 3600
         if type != .rest, type != .strengthConditioning, type != .crossTraining,
+           !isLongSession,
            let restingHR, let maxHR, restingHR > 0, maxHR > restingHR {
             let range = PaceCalculator.heartRateRange(
                 for: intensity, restingHR: restingHR, maxHR: maxHR
             )
             result += " Target HR: \(range.min)-\(range.max) bpm."
+        } else if type != .rest, type != .strengthConditioning, type != .crossTraining,
+                  isLongSession {
+            // Pure RPE guidance for long sessions — HR drifts, effort doesn't.
+            let effortLabel: String
+            switch intensity {
+            case .easy:      effortLabel = "Stay at conversational effort throughout — if HR climbs but the effort feels the same, trust the effort."
+            case .moderate:  effortLabel = "Moderate effort the whole way. Past 2 hours your HR will drift up at the same effort — that's normal, ignore it."
+            case .hard:      effortLabel = "Hard effort but sustainable. Pace by feel, not by HR — long-effort cardiac drift will lie to you."
+            case .maxEffort: effortLabel = "Race effort. RPE-driven — HR drift makes the bpm number meaningless after the first hour."
+            }
+            result += " " + effortLabel
         }
         // #15: append research-backed sex-specific note when relevant.
         if let biologicalSex,
@@ -72,7 +92,40 @@ enum CoachAdviceGenerator {
            ) {
             result += " " + note
         }
+        // Heat-acclimation advice. Surfaces in peak / race-week / long-
+        // run sessions when the forecasted race-day weather is hot
+        // (≥22°C or ≥65% humidity). Coach principle: 10-14 days of
+        // heat exposure pre-race is enough to confer most of the
+        // adaptation; pure plan structure doesn't change, but the
+        // athlete sees the cue at the right moment.
+        if isHotRaceForecast,
+           type != .rest, type != .strengthConditioning,
+           let heatNote = heatAcclimationNote(
+                phase: phase, type: type, weekInPhase: weekInPhase
+           ) {
+            result += " " + heatNote
+        }
         return result
+    }
+
+    /// Heat-acclimation cue — surfaced on peak / taper sessions when the
+    /// race-day forecast is hot. Returns nil for sessions where the cue
+    /// would be misleading (recovery weeks, base phase, etc.).
+    private static func heatAcclimationNote(
+        phase: TrainingPhase,
+        type: SessionType,
+        weekInPhase: Int
+    ) -> String? {
+        switch (phase, type) {
+        case (.peak, .longRun), (.peak, .backToBack):
+            return "Race-day forecast is hot — start your 10-14 day heat-acclimation block by training in the warmest part of the day, layered, or in a sauna 20-30 min post-run."
+        case (.taper, .longRun), (.taper, .backToBack), (.taper, .race):
+            return "Stay heat-adapted: short heat exposures (warm bath, sauna 15 min) every 2-3 days through taper. Don't add new training stress."
+        case (.peak, .race):
+            return "Race day will be hot. Pre-cool if possible, sip-and-eat early before thirst/hunger spikes, and drop pace targets 5-10% in heat."
+        default:
+            return nil
+        }
     }
 
     // MARK: - Interval Focus Advice

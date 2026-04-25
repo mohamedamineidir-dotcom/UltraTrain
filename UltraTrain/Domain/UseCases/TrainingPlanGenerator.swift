@@ -154,6 +154,15 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 intermediateRaceContext = nil
             }
 
+            // Heat-acclimation flag — true when forecasted race-day weather
+            // is hot enough to demand pre-race adaptation (10-14 days of
+            // heat exposure pre-race confers most of the benefit). Same
+            // threshold the road generator uses.
+            let trailHotRaceForecast: Bool = {
+                guard let fc = targetRace.forecastedWeather else { return false }
+                return fc.temperatureCelsius >= 22 || fc.humidity >= 65
+            }()
+
             let result = SessionTemplateGenerator.sessions(
                 for: skeleton,
                 volume: volume,
@@ -172,6 +181,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 intervalFocus: athlete.intervalFocus,
                 isRoadRace: targetRace.raceType == .road,
                 intermediateRaceContext: intermediateRaceContext,
+                isHotRaceForecast: trailHotRaceForecast,
                 restingHR: athlete.restingHeartRate,
                 maxHR: athlete.maxHeartRate,
                 biologicalSex: athlete.biologicalSex

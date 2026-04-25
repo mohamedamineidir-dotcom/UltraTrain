@@ -54,17 +54,24 @@ extension TaperProfile {
     static func forRace(effectiveKm: Double) -> TaperProfile {
         switch effectiveKm {
         case 100...:
+            // Sharper drop in the final 2-3 weeks. Old curve [80, 70, 60,
+            // 50, 40] was too gradual — modern ultra coaching (Koop, Roche,
+            // Krar) cuts more aggressively in the final approach so the
+            // athlete arrives genuinely fresh. New curve [80, 65, 50, 40,
+            // 30] holds enough first-week volume to stay sharp, then
+            // peels harder.
             TaperProfile(
                 totalTaperWeeks: 5,
                 volumeTransitionWeeks: 2,
-                weeklyVolumeFractions: [0.80, 0.70, 0.60, 0.50, 0.40],
+                weeklyVolumeFractions: [0.80, 0.65, 0.50, 0.40, 0.30],
                 qualityAllowedPerWeek: [true, true, false, false, false]
             )
         case 50..<100:
+            // Same principle for 50-99K: tighten the final week.
             TaperProfile(
                 totalTaperWeeks: 4,
                 volumeTransitionWeeks: 1,
-                weeklyVolumeFractions: [0.75, 0.61, 0.47, 0.33],
+                weeklyVolumeFractions: [0.75, 0.55, 0.40, 0.28],
                 qualityAllowedPerWeek: [true, false, false, false]
             )
         case 21..<50:

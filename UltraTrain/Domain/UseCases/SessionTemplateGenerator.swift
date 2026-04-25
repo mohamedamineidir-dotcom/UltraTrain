@@ -31,6 +31,7 @@ enum SessionTemplateGenerator {
         intervalFocus: IntervalFocus = .mixed,
         isRoadRace: Bool = false,
         intermediateRaceContext: RaceContext? = nil,
+        isHotRaceForecast: Bool = false,
         restingHR: Int? = nil,
         maxHR: Int? = nil,
         biologicalSex: BiologicalSex? = nil
@@ -121,6 +122,8 @@ enum SessionTemplateGenerator {
                 verticalGainEnvironment: verticalGainEnvironment,
                 intervalFocus: intervalFocus,
                 isRoadRace: isRoadRace,
+                plannedDurationSeconds: duration,
+                isHotRaceForecast: isHotRaceForecast,
                 restingHR: restingHR,
                 maxHR: maxHR,
                 biologicalSex: biologicalSex

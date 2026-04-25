@@ -312,6 +312,41 @@ struct TrainingPlanGeneratorTests {
             "Easy pace ratio \(ratio) does not match the tightened 1.30/1.42 spec")
     }
 
+    @Test("Trail: peak long runs include race-simulation blocks")
+    func peakLongRunHasRaceSimBlocks() async throws {
+        // Peak-phase long runs ≥ 2h should have an IntervalWorkout
+        // attached whose name includes "Race simulation". Verifies the
+        // dress-rehearsal pattern is plumbed end-to-end through the
+        // session generator + workout engine.
+        let generator = TrainingPlanGenerator()
+        let athlete = makeAthlete(experience: .intermediate, weeklyVolumeKm: 50, longestRunKm: 30)
+        let race = makeRace(weeksFromNow: 18, distanceKm: 100, elevationGainM: 4500)
+
+        let plan = try await generator.execute(athlete: athlete, targetRace: race, intermediateRaces: [])
+
+        // Look in peak-phase weeks for a long run whose linked workout
+        // is a race-simulation template.
+        let peakWeeks = plan.weeks.filter { $0.phase == .peak && !$0.isRecoveryWeek }
+        let peakSessions = peakWeeks.flatMap { $0.sessions }
+        let peakLongRuns = peakSessions.filter {
+            $0.type == .longRun && $0.plannedDuration >= 2 * 3600
+        }
+
+        var raceSimCount = 0
+        for session in peakLongRuns {
+            guard let id = session.intervalWorkoutId,
+                  let workout = plan.workouts.first(where: { $0.id == id }) else {
+                continue
+            }
+            if workout.name.lowercased().contains("race simulation") {
+                raceSimCount += 1
+            }
+        }
+
+        #expect(raceSimCount > 0,
+            "Expected at least one peak long run with a race-simulation workout")
+    }
+
     @Test("Trail: HK100 intermediate-performance unlocks longer single LR + B2B caps")
     func hk100PerformanceCapsLifted() async throws {
         // HK100 prep with Campus Coach: intermediate athlete training for
