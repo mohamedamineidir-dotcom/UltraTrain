@@ -8,7 +8,7 @@ final class TrainingPlanViewModel {
     // MARK: - Dependencies
 
     let planRepository: any TrainingPlanRepository
-    private let athleteRepository: any AthleteRepository
+    let athleteRepository: any AthleteRepository
     private let raceRepository: any RaceRepository
     private let planGenerator: any GenerateTrainingPlanUseCase
     private let nutritionRepository: any NutritionRepository

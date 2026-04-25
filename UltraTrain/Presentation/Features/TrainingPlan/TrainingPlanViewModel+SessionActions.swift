@@ -136,6 +136,96 @@ extension TrainingPlanViewModel {
         }
     }
 
+    /// Bulk-skip every session falling within an N-day suspension window
+    /// starting today. Used for two athlete-state events a coach handles
+    /// regularly:
+    ///   • **Illness** — flu, cold, GI virus. 3-7 day window with reason
+    ///     `.illness`. Triggers the existing missed-session pattern
+    ///     detector + auto-applied volume reduction once threshold is
+    ///     crossed.
+    ///   • **Acute injury** — strain, sprain, sharp pain. 5-14 day
+    ///     window with reason `.injury`. Same auto-rebuild path.
+    ///
+    /// Sessions already past (date < today) are left alone. Already-
+    /// completed sessions stay completed. Recovery / cross-training
+    /// sessions are intentionally skipped too — full pause means full
+    /// pause, not "swap intervals for 30 min cycling."
+    func suspendTraining(forDays days: Int, reason: SkipReason) async {
+        guard days > 0, var currentPlan = plan else { return }
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: .now)
+        guard let endDate = calendar.date(byAdding: .day, value: days, to: today) else { return }
+
+        var skippedAny = false
+        for weekIndex in currentPlan.weeks.indices {
+            for sessionIndex in currentPlan.weeks[weekIndex].sessions.indices {
+                let session = currentPlan.weeks[weekIndex].sessions[sessionIndex]
+                let sessionDay = calendar.startOfDay(for: session.date)
+                guard sessionDay >= today, sessionDay < endDate else { continue }
+                guard !session.isCompleted, !session.isSkipped else { continue }
+                guard session.type != .rest else { continue }
+
+                var updated = session
+                updated.isSkipped = true
+                updated.skipReason = reason
+                currentPlan.weeks[weekIndex].sessions[sessionIndex] = updated
+
+                do {
+                    try await planRepository.updateSession(updated)
+                    skippedAny = true
+                } catch {
+                    Logger.training.error("Failed to skip session during suspension: \(error)")
+                }
+            }
+        }
+
+        guard skippedAny else { return }
+        plan = currentPlan
+        // Trigger the missed-session detector and the urgent
+        // auto-apply path. With Commit A's auto-apply for
+        // .reduceTargetDueToAccumulatedMissed at .urgent severity, the
+        // remaining plan will silently de-load without the athlete
+        // having to reason about it.
+        checkForAdjustments()
+        refreshMissedSessionPattern()
+        refreshScheduledReminders()
+    }
+
+    /// Records a mid-cycle injury escalation. Updates the athlete's
+    /// `hasRecentInjury` flag so future plan generation gates VO2max
+    /// work, and optionally suspends training for an acute window.
+    /// `painFrequency` can also be raised (e.g. `.sometimes` → `.often`)
+    /// so the next plan generation switches to threshold-only base.
+    ///
+    /// The flag update affects every NEW session built from the
+    /// regenerator after this call. Existing un-completed future
+    /// sessions stay as-is until the plan rebuilds (race-date change
+    /// or athlete-triggered regenerate).
+    func reportMidCycleInjury(
+        suspendDays: Int,
+        bumpPainFrequencyToOften: Bool
+    ) async {
+        guard var currentAthlete = athlete else { return }
+        currentAthlete.hasRecentInjury = true
+        if currentAthlete.injuryCountLastYear == .none {
+            currentAthlete.injuryCountLastYear = .one
+        }
+        if bumpPainFrequencyToOften {
+            currentAthlete.painFrequency = .often
+        }
+        do {
+            try await athleteRepository.updateAthlete(currentAthlete)
+            athlete = currentAthlete
+        } catch {
+            self.error = error.localizedDescription
+            Logger.training.error("Failed to record mid-cycle injury on athlete profile: \(error)")
+            return
+        }
+        if suspendDays > 0 {
+            await suspendTraining(forDays: suspendDays, reason: .injury)
+        }
+    }
+
     func unskipSession(weekIndex: Int, sessionIndex: Int) async {
         guard var currentPlan = plan else { return }
         guard weekIndex < currentPlan.weeks.count,
