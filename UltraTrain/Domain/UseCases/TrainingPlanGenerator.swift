@@ -51,7 +51,10 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         )
 
         // 2. Build week skeletons (experience-based recovery cycle)
-        let recoveryCycle = VolumeCapCalculator.recoveryCycle(for: athlete.experienceLevel)
+        let recoveryCycle = VolumeCapCalculator.recoveryCycle(
+            for: athlete.experienceLevel,
+            age: athlete.age
+        )
         let skeletons = WeekSkeletonBuilder.build(
             raceDate: raceDate,
             phases: phases,
@@ -98,7 +101,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             preferredRunsPerWeek: athlete.preferredRunsPerWeek,
             raceType: targetRace.raceType,
             painFrequency: athlete.painFrequency,
-            taperProfile: taperProfile
+            taperProfile: taperProfile,
+            athleteAge: athlete.age
         )
 
         // 5. Track week number within each phase

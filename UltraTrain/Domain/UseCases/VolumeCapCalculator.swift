@@ -114,12 +114,36 @@ enum VolumeCapCalculator {
     }
 
     /// Recovery week cycle by experience (trail/ultra default).
-    static func recoveryCycle(for experience: ExperienceLevel) -> Int {
+    /// Master athletes (50+) get one notch tighter — extra recovery to
+    /// match slower adaptation. 50+ intermediate moves from 3:1 → 2:1;
+    /// 60+ stays at 2:1 regardless of tier.
+    static func recoveryCycle(for experience: ExperienceLevel, age: Int = 0) -> Int {
+        let base: Int
         switch experience {
-        case .beginner: return 2     // 2:1 (2 hard + 1 recovery)
-        case .intermediate: return 3 // 3:1
-        case .advanced: return 3     // 3:1
-        case .elite: return 3        // 3:1
+        case .beginner: base = 2     // 2:1 (2 hard + 1 recovery)
+        case .intermediate: base = 3 // 3:1
+        case .advanced: base = 3     // 3:1
+        case .elite: base = 3        // 3:1
+        }
+        if age >= 50 {
+            return max(base - 1, 2) // tighten by one cycle, floor at 2
+        }
+        return base
+    }
+
+    /// Age-based volume multiplier. Sports-science consensus: from age
+    /// ~50 onwards, training capacity declines ~5-10% per decade and
+    /// recovery time lengthens. We trim peak volume accordingly while
+    /// keeping intensity intact (masters benefit MORE from quality).
+    /// Applies on top of philosophy / goal multipliers.
+    static func ageVolumeMultiplier(age: Int) -> Double {
+        switch age {
+        case ..<50:  return 1.00
+        case ..<55:  return 0.95
+        case ..<60:  return 0.92
+        case ..<65:  return 0.88
+        case ..<70:  return 0.85
+        default:     return 0.80
         }
     }
 

@@ -141,6 +141,11 @@ enum RoadVolumeCalculator {
             peakKmCeiling: peakKmCeiling
         )
 
+        // Master athletes (50+) get a small volume reduction. Stacks
+        // multiplicatively on the week-1 anchor, so the whole plan shifts
+        // down without changing its shape. Same multiplier as trail.
+        let ageScale = VolumeCapCalculator.ageVolumeMultiplier(age: athlete.age)
+
         var volumes: [VolumeCalculator.WeekVolume] = []
         var taperWeekCounter = 0
         let taperStart = totalWeeks - taperProfile.totalTaperWeeks
@@ -184,17 +189,22 @@ enum RoadVolumeCalculator {
             // crushed peak volume for athletes whose declared base was well
             // below tier default (e.g., a 2:40 marathoner declaring 55 km/wk
             // had peaks of ~5 h/week instead of the 8-9 h tier target).
+            // ageScale applies to BOTH start and peak — masters need
+            // across-the-board volume reduction, not just a low Week 1.
+            // sessionScalingFactor only scales start (the anchor) so that
+            // a 2:40 marathoner declaring 55 km/wk doesn't get peak weeks
+            // crushed too — peak is set by the tier ceiling.
             let scaledEasyParams = SessionParams(
-                startMinutes: easyP.startMinutes * sessionScalingFactor,
-                peakMinutes: easyP.peakMinutes
+                startMinutes: easyP.startMinutes * sessionScalingFactor * ageScale,
+                peakMinutes: easyP.peakMinutes * ageScale
             )
             let scaledIntervalParams = SessionParams(
-                startMinutes: intervalP.startMinutes * sessionScalingFactor,
-                peakMinutes: intervalP.peakMinutes
+                startMinutes: intervalP.startMinutes * sessionScalingFactor * ageScale,
+                peakMinutes: intervalP.peakMinutes * ageScale
             )
             let scaledTempoParams = SessionParams(
-                startMinutes: tempoP.startMinutes * sessionScalingFactor,
-                peakMinutes: tempoP.peakMinutes
+                startMinutes: tempoP.startMinutes * sessionScalingFactor * ageScale,
+                peakMinutes: tempoP.peakMinutes * ageScale
             )
             var easy1Seconds = linearDuration(params: scaledEasyParams, progress: clampedProgress)
             var easy2Seconds = linearDuration(params: scaledEasyParams, progress: clampedProgress) * 0.9
