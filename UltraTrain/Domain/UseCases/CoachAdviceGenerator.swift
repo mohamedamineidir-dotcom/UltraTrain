@@ -14,6 +14,7 @@ enum CoachAdviceGenerator {
         isRoadRace: Bool = false,
         plannedDurationSeconds: TimeInterval = 0,
         isHotRaceForecast: Bool = false,
+        isHotSessionForecast: Bool = false,
         restingHR: Int? = nil,
         maxHR: Int? = nil,
         biologicalSex: BiologicalSex? = nil
@@ -104,6 +105,15 @@ enum CoachAdviceGenerator {
                 phase: phase, type: type, weekInPhase: weekInPhase
            ) {
             result += " " + heatNote
+        }
+        // Session-day weather flag — today's forecast is hot enough that
+        // a hard session is unsafe / unproductive. Surface a swap cue
+        // instead of just a "drink more water" warning. Athlete makes
+        // the call (skip / swap with tomorrow's easy / move to early
+        // morning). One short sentence — no over-stuffed card.
+        if isHotSessionForecast,
+           type == .intervals || type == .tempo || type == .verticalGain {
+            result += " Today's forecast is hot — consider swapping with tomorrow's easy day or moving this to dawn."
         }
         return result
     }

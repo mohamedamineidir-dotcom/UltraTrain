@@ -43,9 +43,20 @@ extension TrainingPlanViewModel {
     /// and decide. Lower-severity versions of these recommendations stay
     /// as banners (athlete-facing decision).
     private func autoApplyUrgentAdjustments() async {
+        // Auto-apply set covers both adherence/fatigue (Commit A original)
+        // and same-day readiness signals: when overnight HRV/sleep
+        // produced a `swapToRecoveryLowRecovery` or `reduceLoadLowRecovery`
+        // recommendation at urgent severity, the session swap or volume
+        // cut applies silently. The athlete sees today's session already
+        // updated when they open the app — no banner-then-decide round
+        // trip. Recovery-driven recommendations require the analyzer to
+        // be passed a `RecoveryScore`; that wiring is incremental — once
+        // a call site supplies it, this auto-apply path picks it up.
         let autoApplyTypes: Set<PlanAdjustmentType> = [
             .reduceTargetDueToAccumulatedMissed,
-            .reduceFatigueLoad
+            .reduceFatigueLoad,
+            .swapToRecoveryLowRecovery,
+            .reduceLoadLowRecovery
         ]
         let candidates = adjustmentRecommendations.filter {
             $0.severity == .urgent
