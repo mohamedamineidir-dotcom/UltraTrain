@@ -217,11 +217,19 @@ struct OnboardingCardModifier: ViewModifier {
             .background(
                 Group {
                     if colorScheme == .dark {
+                        // Switched from `.ultraThinMaterial` to `.regularMaterial`
+                        // and bumped the overlay tint to 0.14. The previous
+                        // ultra-thin + 0.06 overlay let too much of the dark
+                        // futuristic gradient bleed through, dropping body-
+                        // text contrast below WCAG-AA on the lighter ribbon
+                        // where the gradient peaks. The new combo keeps the
+                        // glass character but holds a stable dark-grey base
+                        // for text to sit on.
                         RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                            .fill(.ultraThinMaterial)
+                            .fill(.regularMaterial)
                             .overlay(
                                 RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                                    .fill(Color.white.opacity(0.06))
+                                    .fill(Color.white.opacity(0.14))
                             )
                     } else {
                         RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
@@ -233,7 +241,7 @@ struct OnboardingCardModifier: ViewModifier {
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                     .stroke(
-                        colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.06),
+                        colorScheme == .dark ? Color.white.opacity(0.18) : Color.black.opacity(0.06),
                         lineWidth: 1
                     )
             )

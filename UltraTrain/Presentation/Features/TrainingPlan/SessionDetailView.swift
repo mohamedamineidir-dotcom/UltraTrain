@@ -266,22 +266,23 @@ struct SessionDetailView: View {
     private var skippedBanner: some View {
         HStack(spacing: Theme.Spacing.sm) {
             Image(systemName: "forward.fill")
-                .foregroundStyle(.orange)
+                .foregroundStyle(Theme.Colors.warning)
                 .accessibilityHidden(true)
             Text("Skipped")
                 .font(.subheadline.bold())
-                .foregroundStyle(.orange)
+                .foregroundStyle(Theme.Colors.warning)
             Spacer()
             if onUnskip != nil {
                 Button("Undo") { onUnskip?() }
                     .font(.subheadline.bold())
+                    .accessibilityIdentifier("trainingPlan.session.unskip")
                     .accessibilityHint("Double-tap to restore this session")
             }
         }
         .padding(Theme.Spacing.md)
         .background(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                .fill(.orange.opacity(0.12))
+                .fill(Theme.Colors.warning.opacity(0.12))
         )
     }
 
@@ -675,6 +676,7 @@ struct SessionDetailView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(Theme.Colors.success)
+                .accessibilityIdentifier("trainingPlan.session.validate")
                 .accessibilityHint("Double-tap to validate this session as completed")
             }
 
@@ -693,6 +695,7 @@ struct SessionDetailView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(Theme.Colors.warmCoral)
+                .accessibilityIdentifier("trainingPlan.session.moveRest")
                 .accessibilityHint("Double-tap to move your rest day to another day this week")
             }
 
@@ -706,7 +709,8 @@ struct SessionDetailView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
-                .tint(.orange)
+                .tint(Theme.Colors.warning)
+                .accessibilityIdentifier("trainingPlan.session.skip")
                 .accessibilityHint("Double-tap to skip this session and explain why")
             }
 
@@ -718,6 +722,7 @@ struct SessionDetailView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
+                .accessibilityIdentifier("trainingPlan.session.reschedule")
                 .accessibilityHint("Double-tap to move this session to a different date")
             }
 
@@ -729,6 +734,7 @@ struct SessionDetailView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
+                .accessibilityIdentifier("trainingPlan.session.swap")
                 .accessibilityHint("Double-tap to swap this session with another one")
             }
         }

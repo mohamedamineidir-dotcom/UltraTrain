@@ -218,6 +218,7 @@ extension WeekCardView {
         .accessibilityLabel(weekHeaderAccessibilityLabel)
         .accessibilityHint(isExpanded ? "Double-tap to collapse sessions" : "Double-tap to expand sessions")
         .accessibilityAddTraits(.isButton)
+        .accessibilityIdentifier("trainingPlan.week.\(week.weekNumber).header")
     }
 
     private var weekHeaderAccessibilityLabel: String {

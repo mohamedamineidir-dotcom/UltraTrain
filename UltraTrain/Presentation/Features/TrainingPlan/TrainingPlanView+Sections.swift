@@ -427,6 +427,7 @@ extension TrainingPlanView {
                     .clipShape(Capsule())
             }
             .buttonStyle(.plain)
+            .accessibilityIdentifier("trainingPlan.staleBanner.update")
             .accessibilityHint("Double-tap to regenerate your training plan")
         }
         .futuristicGlassStyle()

@@ -522,6 +522,7 @@ private struct ManualValidationPage: View {
                 }
                 .buttonStyle(.bordered)
                 .tint(Theme.Colors.secondaryLabel)
+                .accessibilityIdentifier("trainingPlan.validate.back")
             }
 
             Button {
@@ -551,6 +552,8 @@ private struct ManualValidationPage: View {
             }
             .buttonStyle(.plain)
             .disabled(isLastStep && !isReadyToSubmit)
+            .accessibilityIdentifier(isLastStep ? "trainingPlan.validate.complete" : "trainingPlan.validate.continue")
+            .accessibilityHint(isLastStep ? "Submit your session stats" : "Move to the next step")
         }
         .padding(.horizontal, Theme.Spacing.md)
         .padding(.vertical, Theme.Spacing.sm)
@@ -567,6 +570,8 @@ private struct ManualValidationPage: View {
         }
         .padding(.bottom, Theme.Spacing.xs)
         .padding(.top, 2)
+        .accessibilityIdentifier("trainingPlan.validate.skipStats")
+        .accessibilityHint("Mark session complete without entering any stats")
     }
 
     private func submit() {
@@ -922,6 +927,9 @@ private struct ManualValidationPage: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel(feelingLabel(for: f))
+                    .accessibilityAddTraits(feeling == f ? .isSelected : [])
+                    .accessibilityIdentifier("trainingPlan.validate.feeling.\(f.rawValue)")
                 }
             }
         }
@@ -956,6 +964,9 @@ private struct ManualValidationPage: View {
                             .foregroundStyle(rpe == value ? .white : Theme.Colors.label)
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("RPE \(value) of 10")
+                    .accessibilityAddTraits(rpe == value ? .isSelected : [])
+                    .accessibilityIdentifier("trainingPlan.validate.rpe.\(value)")
                 }
             }
 
