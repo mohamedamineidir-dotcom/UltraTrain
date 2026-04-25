@@ -36,6 +36,8 @@ enum RoadLongRunWorkoutBuilder {
             return buildProgressive(totalDuration: totalDuration, paceProfile: paceProfile)
         case .fastFinish:
             return buildFastFinish(totalDuration: totalDuration, paceProfile: paceProfile)
+        case .marathonPaceIntro:
+            return buildMarathonPaceIntro(totalDuration: totalDuration, paceProfile: paceProfile)
         case .marathonPaceBlocks:
             return buildMarathonPaceBlocks(totalDuration: totalDuration, paceProfile: paceProfile, weekInPhase: weekInPhase)
         case .twoPart:
@@ -43,6 +45,45 @@ enum RoadLongRunWorkoutBuilder {
         case .raceSimulation:
             return buildRaceSimulation(totalDuration: totalDuration, paceProfile: paceProfile, weekInPhase: weekInPhase)
         }
+    }
+
+    /// Late-build MP intro: warm easy → single 15-20 min MP block near
+    /// the end → easy cool-down. Half the dose of `.marathonPaceBlocks`
+    /// so the athlete sees marathon pace once before peak ramps to
+    /// 3 × 12-20 min blocks.
+    private static func buildMarathonPaceIntro(totalDuration: TimeInterval, paceProfile: RoadPaceProfile?) -> IntervalWorkout {
+        let blockDuration: TimeInterval = min(20 * 60, max(15 * 60, totalDuration * 0.20))
+        let coolDown: TimeInterval = 10 * 60
+        let warmUp: TimeInterval = max(0, totalDuration - blockDuration - coolDown)
+
+        let phases = [
+            IntervalPhase(
+                id: UUID(), phaseType: .warmUp,
+                trigger: .duration(seconds: warmUp),
+                targetIntensity: .easy, repeatCount: 1,
+                notes: paceNote("Easy build-up", easyPace(paceProfile))
+            ),
+            IntervalPhase(
+                id: UUID(), phaseType: .work,
+                trigger: .duration(seconds: blockDuration),
+                targetIntensity: .moderate, repeatCount: 1,
+                notes: paceNote("Marathon pace block — controlled, not surge", paceProfile?.marathonPacePerKm)
+            ),
+            IntervalPhase(
+                id: UUID(), phaseType: .coolDown,
+                trigger: .duration(seconds: coolDown),
+                targetIntensity: .easy, repeatCount: 1,
+                notes: paceNote("Easy cool-down", easyPace(paceProfile))
+            ),
+        ]
+        let blockMins = Int(blockDuration / 60)
+        return workout(
+            name: "MP intro long run (\(blockMins) min @ MP)",
+            description: "Easy throughout, then a single \(blockMins)-minute marathon-pace block near the end. Locks in MP feel before peak.",
+            phases: phases,
+            totalDuration: totalDuration,
+            paceProfile: paceProfile
+        )
     }
 
     // MARK: - Variants

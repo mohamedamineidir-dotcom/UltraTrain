@@ -230,4 +230,88 @@ struct TrainingPlanGeneratorTests {
             }
         }
     }
+
+    // MARK: - Road plan structure
+
+    private func makeRoadMarathonRace(weeksFromNow: Int = 18) -> Race {
+        Race(
+            id: UUID(),
+            name: "Test Marathon",
+            date: Date.now.adding(weeks: weeksFromNow),
+            distanceKm: 42.2,
+            elevationGainM: 0,
+            elevationLossM: 0,
+            priority: .aRace,
+            goalType: .targetTime(4 * 3600),
+            checkpoints: [],
+            terrainDifficulty: .easy,
+            raceType: .road
+        )
+    }
+
+    @Test("Road marathon plan: peak phase covers ~33% of base+build+peak")
+    func marathonPeakAtLeastOneThird() async throws {
+        // The phase fractions in RoadPhaseDistributor put marathon peak at
+        // 32–37% of base + build + peak (excluding taper). Anything below
+        // 30% means the cumulative-fatigue stimulus is too short — the
+        // regression we just fixed.
+        // Recovery weeks still belong to their phase, so we count by phase
+        // and not by isRecoveryWeek.
+        let generator = TrainingPlanGenerator()
+        let athlete = makeAthlete(experience: .intermediate, weeklyVolumeKm: 50, longestRunKm: 22)
+        let race = makeRoadMarathonRace(weeksFromNow: 18)
+
+        let plan = try await generator.execute(athlete: athlete, targetRace: race, intermediateRaces: [])
+
+        let buildableWeeks = plan.weeks.filter { $0.phase != .taper }
+        let peakWeeks = buildableWeeks.filter { $0.phase == .peak }.count
+        let peakFraction = Double(peakWeeks) / Double(buildableWeeks.count)
+        #expect(peakFraction >= 0.30,
+            "Peak fraction \(peakFraction) below 30% of base+build+peak")
+    }
+
+    @Test("Road plan: base-phase weeks have at most one quality session")
+    func basePhaseSingleQuality() async throws {
+        // Daniels-purer base: one quality session a week (a progression run
+        // or cruise interval). The Tuesday slot is .intervals or .tempo;
+        // the Thursday slot must NOT be a second quality session — it should
+        // be reduced to .recovery.
+        let generator = TrainingPlanGenerator()
+        let athlete = makeAthlete(experience: .intermediate, weeklyVolumeKm: 50, longestRunKm: 22)
+        let race = makeRoadMarathonRace(weeksFromNow: 18)
+
+        let plan = try await generator.execute(athlete: athlete, targetRace: race, intermediateRaces: [])
+
+        for week in plan.weeks where week.phase == .base && !week.isRecoveryWeek {
+            let qualityCount = week.sessions.filter {
+                $0.type == .intervals || $0.type == .tempo
+            }.count
+            #expect(qualityCount <= 1,
+                "Base week \(week.weekNumber) has \(qualityCount) quality sessions; expected at most 1")
+        }
+    }
+
+    @Test("Road marathon: late build introduces marathon-pace work")
+    func marathonPaceIntroducedInBuild() async throws {
+        // After our fix, the marathon long run in late build (weekInPhase ≥ 3)
+        // adopts the .marathonPaceIntro variant — single 15-20 min MP block
+        // embedded in the long run. Plan generator surfaces this as a
+        // moderate-intensity long run with an intervalWorkoutId set.
+        let generator = TrainingPlanGenerator()
+        let athlete = makeAthlete(experience: .intermediate, weeklyVolumeKm: 60, longestRunKm: 25)
+        let race = makeRoadMarathonRace(weeksFromNow: 18)
+
+        let plan = try await generator.execute(athlete: athlete, targetRace: race, intermediateRaces: [])
+
+        // Look for at least one build-phase long run with non-easy intensity —
+        // a signal that an MP block was embedded.
+        let buildLongRuns = plan.weeks
+            .filter { $0.phase == .build && !$0.isRecoveryWeek }
+            .flatMap { $0.sessions }
+            .filter { $0.type == .longRun }
+
+        let modBuildLongRuns = buildLongRuns.filter { $0.intensity != .easy }
+        #expect(!modBuildLongRuns.isEmpty,
+            "Expected at least one build-phase long run with embedded MP work")
+    }
 }

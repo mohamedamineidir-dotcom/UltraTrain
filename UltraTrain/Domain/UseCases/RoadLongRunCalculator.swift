@@ -21,6 +21,11 @@ enum RoadLongRunCalculator {
         case progressive
         /// Easy until last 20-25%, then surge to race pace.
         case fastFinish
+        /// Late-build marathon variant: single 15-20 min MP block embedded
+        /// near the end of an otherwise easy long run. Bridges progressive
+        /// long runs and the full peak-phase MP-block sessions, so the
+        /// athlete's first marathon-pace exposure isn't `5×3 km @ 103% MP`.
+        case marathonPaceIntro
         /// Embed 2-3 blocks of marathon pace mid-run (Canova).
         case marathonPaceBlocks
         /// First half easy, second half at race pace.
@@ -175,6 +180,13 @@ enum RoadLongRunCalculator {
             return .easy
 
         case .build:
+            // Marathon: late build (week index ≥ 3) introduces a single MP
+            // block in the long run so the peak-phase Canova blocks aren't
+            // the athlete's first taste of marathon pace. Earlier build
+            // weeks alternate progressive / fast-finish.
+            if discipline == .roadMarathon && weekInPhase >= 3 && experience != .beginner {
+                return .marathonPaceIntro
+            }
             // Build: alternate progressive and fast-finish
             return weekInPhase.isMultiple(of: 2) ? .progressive : .fastFinish
 

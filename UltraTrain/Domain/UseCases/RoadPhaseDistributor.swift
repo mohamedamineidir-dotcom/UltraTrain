@@ -73,8 +73,12 @@ enum RoadPhaseDistributor {
     /// Research-corrected fractions:
     /// - **10K** (Daniels): Build is critical (VO2max development). Base 25-30%, Build 35%, Peak 30-35%.
     /// - **HM** (Pfitzinger): Threshold-limited. Needs long build. Base 28-35%, Build 35%, Peak 25-32%.
-    /// - **Marathon** (Pfitzinger/Canova): Aerobic-limited. Needs LONG base. Base 35-40%, Build 28-32%, Peak 23-28%.
-    ///   Longer distances → proportionally LONGER base (inverted from previous implementation).
+    /// - **Marathon** (Pfitzinger/Canova/Hanson): Modern marathon coaching gives the
+    ///   peak (race-specific) phase 32-37% of the plan — Hanson Method is even
+    ///   peak-heavier. Long base is still non-negotiable but the previous
+    ///   23-28% peak share starved the cumulative-fatigue stimulus that
+    ///   distinguishes a real marathon plan from "long runs + tempos".
+    ///   New target: peak 32-37%, build 30-35%, base 28-38%.
     private static func fractions(
         discipline: RoadRaceDiscipline,
         experience: ExperienceLevel
@@ -94,13 +98,14 @@ enum RoadPhaseDistributor {
         case (.roadHalf, .advanced):     return Fractions(base: 0.32, build: 0.40, peak: 0.28)
         case (.roadHalf, .elite):        return Fractions(base: 0.28, build: 0.42, peak: 0.30)
 
-        // Marathon: aerobic-centric. Pfitzinger/Canova: long base is non-negotiable.
-        // Pfitzinger 18/70: Base 38%, Build 28%, Peak 22%
-        // Canova: General+Fundamental = 65% of plan
-        case (.roadMarathon, .beginner):     return Fractions(base: 0.45, build: 0.30, peak: 0.25)
-        case (.roadMarathon, .intermediate): return Fractions(base: 0.40, build: 0.32, peak: 0.28)
-        case (.roadMarathon, .advanced):     return Fractions(base: 0.38, build: 0.34, peak: 0.28)
-        case (.roadMarathon, .elite):        return Fractions(base: 0.35, build: 0.37, peak: 0.28)
+        // Marathon: aerobic + race-specific. Modern coaching (Hanson, Canova)
+        // gives peak 30-37% of plan so cumulative-fatigue stimulus matters.
+        // Each row sums to 1.00. Base shrinks as experience rises (assumed
+        // pre-existing aerobic foundation), build holds steady, peak grows.
+        case (.roadMarathon, .beginner):     return Fractions(base: 0.38, build: 0.30, peak: 0.32)
+        case (.roadMarathon, .intermediate): return Fractions(base: 0.35, build: 0.30, peak: 0.35)
+        case (.roadMarathon, .advanced):     return Fractions(base: 0.32, build: 0.32, peak: 0.36)
+        case (.roadMarathon, .elite):        return Fractions(base: 0.28, build: 0.35, peak: 0.37)
         }
     }
 

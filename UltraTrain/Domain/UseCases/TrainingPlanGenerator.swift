@@ -527,7 +527,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                         switch longRunVariant {
                         case .marathonPaceBlocks, .raceSimulation:
                             session.intensity = .hard
-                        case .progressive, .fastFinish, .twoPart:
+                        case .progressive, .fastFinish, .twoPart, .marathonPaceIntro:
                             session.intensity = .moderate
                         case .easy:
                             break // keep .easy

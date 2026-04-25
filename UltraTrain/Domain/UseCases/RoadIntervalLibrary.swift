@@ -92,9 +92,10 @@ enum RoadIntervalLibrary {
 
         guard !available.isEmpty else { return nil }
 
-        // Distance × phase × slot category preferences (Daniels, Pfitzinger, Canova)
+        // Distance × phase × slot × week category preferences (Daniels, Pfitzinger, Canova)
         let preferred = categoryPreferences(
-            phase: phase, discipline: discipline, slotIndex: slotIndex
+            phase: phase, discipline: discipline, slotIndex: slotIndex,
+            weekInPhase: weekInPhase
         )
 
         // RR-16: Walk forward through the progression within a category,
@@ -126,24 +127,34 @@ enum RoadIntervalLibrary {
 
     // MARK: - Distance-Specific Category Preferences
 
-    /// Returns ordered category preferences based on distance, phase, and slot.
+    /// Returns ordered category preferences based on distance, phase, slot,
+    /// and the athlete's progress within the phase.
     ///
     /// Research basis:
     /// - **10K** (Daniels): Speed → VO2max → race-specific. VO2max is the limiter.
     /// - **HM** (Pfitzinger): Threshold is the limiter. Extended threshold through peak.
     /// - **Marathon** (Canova/Pfitzinger): Aerobic base → threshold → MP-specific.
-    ///   Threshold continues through peak phase.
+    ///   Threshold continues through peak phase. Race-specific (MP cruise
+    ///   intervals) introduce in late build so peak isn't the first time the
+    ///   athlete sees marathon pace.
+    /// - **Base** (Daniels/Pfitzinger purer model): Base is mileage-first. Drop
+    ///   `.speed` from primary slot — repetition work belongs in build/peak,
+    ///   not aerobic base. Base has at most one quality session/week — the
+    ///   second slot is suppressed at the selector level for base phase.
     private static func categoryPreferences(
         phase: TrainingPhase,
         discipline: RoadRaceDiscipline,
-        slotIndex: Int
+        slotIndex: Int,
+        weekInPhase: Int = 0
     ) -> [Category] {
         switch (phase, discipline, slotIndex) {
-        // === BASE: All distances — speed + threshold introduction ===
+        // === BASE: One quality session/week. Light progression or threshold
+        // — no R-pace speed work in pure base (Daniels' "fundamental" base).
+        // Slot 1 is unused in base — selector skips Q2 entirely for base phase.
         case (.base, _, 0):
-            return [.speed, .threshold]
+            return [.progression, .threshold]
         case (.base, _, _):
-            return [.threshold, .progression, .speed]
+            return [.threshold, .progression]
 
         // === BUILD: Distance-specific ===
         // 10K: VO2max is the limiter (Daniels)
@@ -153,9 +164,16 @@ enum RoadIntervalLibrary {
         // Both slots threshold-primary, VO2max secondary
         case (.build, .roadHalf, 0):    return [.threshold, .vo2max]
         case (.build, .roadHalf, _):    return [.threshold, .progression]
-        // Marathon: VO2max + threshold equally important (Canova)
-        case (.build, .roadMarathon, 0): return [.vo2max, .speed]
-        case (.build, .roadMarathon, _): return [.threshold, .progression]
+        // Marathon: VO2max + threshold in early build, MP cruise intervals
+        // start to appear in late build (weekInPhase >= 3) so the athlete
+        // experiences marathon pace before peak instead of meeting it cold.
+        case (.build, .roadMarathon, 0):
+            return [.vo2max, .threshold]
+        case (.build, .roadMarathon, _):
+            // Late build: race-specific MP cruise intervals take over
+            return weekInPhase >= 3
+                ? [.raceSpecific, .threshold, .progression]
+                : [.threshold, .progression]
 
         // === PEAK: Distance-specific ===
         // 10K: Race-specific + VO2max sharpeners
@@ -336,6 +354,34 @@ enum RoadIntervalLibrary {
     // MARK: - Category D: Race-Specific
 
     private static let raceSpecificTemplates: [Template] = [
+        // === Marathon late-build MP introductions ===
+        // Pfitzinger / Canova-style: 1.5–2.5 km cruise intervals at MP with
+        // very short recovery, before peak ramps to 3 km / 5 km / 7 km blocks.
+        // Sits in build phase so the athlete meets marathon pace gradually.
+        Template(
+            name: "MP Cruise 3×1.5K",
+            category: .raceSpecific, description: "3×1500m at marathon pace, 60s jog. Intro MP work — late build.",
+            targetPaceZone: .marathonPace, repDistanceM: 1500, repCount: 3,
+            recoverySeconds: 60, recoveryType: .jog, totalWorkMinutes: 18,
+            applicablePhases: [.build], applicableDistances: [.roadMarathon],
+            minExperience: .intermediate
+        ),
+        Template(
+            name: "MP Cruise 4×1.5K",
+            category: .raceSpecific, description: "4×1500m at marathon pace, 60s jog. Extended MP intro for advanced.",
+            targetPaceZone: .marathonPace, repDistanceM: 1500, repCount: 4,
+            recoverySeconds: 60, recoveryType: .jog, totalWorkMinutes: 24,
+            applicablePhases: [.build], applicableDistances: [.roadMarathon],
+            minExperience: .advanced
+        ),
+        Template(
+            name: "MP Cruise 3×2K",
+            category: .raceSpecific, description: "3×2000m at marathon pace, 90s jog. Bridging MP block to peak.",
+            targetPaceZone: .marathonPace, repDistanceM: 2000, repCount: 3,
+            recoverySeconds: 90, recoveryType: .jog, totalWorkMinutes: 24,
+            applicablePhases: [.build], applicableDistances: [.roadMarathon],
+            minExperience: .intermediate
+        ),
         // 10K specific
         Template(
             name: "10K Pace 1000m",
