@@ -15,7 +15,7 @@ struct HeartRateZoneChart: View {
                     y: .value("Zone", zone.zoneName)
                 )
                 .foregroundStyle(zoneColor(zone.zone))
-                .cornerRadius(4)
+                .cornerRadius(Theme.CornerRadius.xs)
                 .annotation(position: .trailing) {
                     if zone.percentage > 0 {
                         Text(String(format: "%.0f%%", zone.percentage))

@@ -29,7 +29,7 @@ struct SessionTypeBreakdownChart: View {
                 angularInset: 1.5
             )
             .foregroundStyle(sessionColor(stat.sessionType))
-            .cornerRadius(3)
+            .cornerRadius(Theme.CornerRadius.xs)
         }
         .chartBackground { _ in
             VStack(spacing: 0) {

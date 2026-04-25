@@ -3738,9 +3738,6 @@
         }
       }
     },
-    "Clear Filters" : {
-
-    },
     "Close" : {
       "localizations" : {
         "fr" : {
@@ -4127,6 +4124,7 @@
       }
     },
     "Complete your athlete profile to see personalized nutrition targets." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -5888,9 +5886,6 @@
     "Enter per-rep paces (optional)" : {
 
     },
-    "Enter Stats" : {
-
-    },
     "Enter the 6-digit code and your new password" : {
       "localizations" : {
         "fr" : {
@@ -6741,9 +6736,6 @@
         }
       }
     },
-    "Generate a personalized plan based on\nyour profile and race goals." : {
-
-    },
     "Generate a personalized training plan based on your profile and race goal." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -6756,6 +6748,7 @@
       }
     },
     "Generate a race-day nutrition strategy based on your profile, race distance, and expected duration." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -6789,6 +6782,7 @@
 
     },
     "Generate Plan" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -9194,6 +9188,7 @@
 
     },
     "No matching runs" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -9244,6 +9239,7 @@
       }
     },
     "No Nutrition Plan" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -9280,6 +9276,7 @@
 
     },
     "No Profile" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -9359,6 +9356,7 @@
 
     },
     "No runs yet" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -9425,6 +9423,7 @@
       }
     },
     "No Training Plan" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -14129,7 +14128,7 @@
         }
       }
     },
-    "Skip stats, just complete" : {
+    "Skip stats, just mark complete" : {
 
     },
     "Skip this nutrition reminder" : {
@@ -15555,6 +15554,7 @@
       }
     },
     "Try adjusting your search or filters." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -16753,9 +16753,6 @@
           }
         }
       }
-    },
-    "Your completed runs will appear here.\nRecord a run or import from Strava." : {
-
     },
     "Your fitness journey starts now" : {
 

@@ -143,8 +143,7 @@ struct TrainingProgressView: View {
 
     var thisWeekSection: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("This Week")
-                .font(.headline)
+            SectionHeader(title: "This Week", tint: Theme.Colors.warmCoral)
 
             HStack(spacing: Theme.Spacing.md) {
                 StatCard(
@@ -185,7 +184,7 @@ struct TrainingProgressView: View {
     var phaseTimelineSection: some View {
         if !viewModel.phaseBlocks.isEmpty {
             PhaseTimelineView(blocks: viewModel.phaseBlocks)
-                .cardStyle()
+                .futuristicGlassStyle(phaseTint: Theme.Colors.success)
         }
     }
 }

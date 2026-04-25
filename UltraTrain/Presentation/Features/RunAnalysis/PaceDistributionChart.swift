@@ -31,7 +31,7 @@ struct PaceDistributionChart: View {
                         y: .value(yLabel, yValue(for: bucket))
                     )
                     .foregroundStyle(barColor(for: bucket))
-                    .cornerRadius(4)
+                    .cornerRadius(Theme.CornerRadius.xs)
                     .opacity(selectedBucket == nil || selectedBucket?.id == bucket.id ? 1.0 : 0.4)
                 }
 

@@ -33,7 +33,7 @@ extension TrainingProgressView {
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
         }
-        .cardStyle()
+        .futuristicGlassStyle(phaseTint: Theme.Colors.info)
     }
 
     // MARK: - Race Readiness
@@ -50,7 +50,7 @@ extension TrainingProgressView {
 
     var volumeChartSection: some View {
         WeeklyDistanceChartView(weeklyVolumes: viewModel.weeklyVolumes)
-            .cardStyle()
+            .futuristicGlassStyle(phaseTint: Theme.Colors.warmCoral)
     }
 
     // MARK: - Elevation Chart

@@ -51,7 +51,7 @@ struct MonthlyVolumeComparisonChart: View {
                     y: .value(metric.rawValue, value(for: volume))
                 )
                 .foregroundStyle(Theme.Colors.primary.gradient)
-                .cornerRadius(4)
+                .cornerRadius(Theme.CornerRadius.xs)
             }
 
             if let selectedMonth, let volume = nearestVolume(to: selectedMonth) {
@@ -124,9 +124,9 @@ struct MonthlyVolumeComparisonChart: View {
     ) -> String {
         switch metric {
         case .distance:
-            return String(format: "%.1f km", volume.distanceKm)
+            return UnitFormatter.formatDistance(volume.distanceKm, unit: units)
         case .elevation:
-            return String(format: "%.0f m D+", volume.elevationGainM)
+            return UnitFormatter.formatElevation(volume.elevationGainM, unit: units) + " D+"
         case .duration:
             let hours = Int(volume.duration) / 3600
             let minutes = (Int(volume.duration) % 3600) / 60

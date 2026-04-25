@@ -36,7 +36,7 @@ struct WeeklyLoadChartView: View {
                     y: .value("Load", week.actualLoad)
                 )
                 .foregroundStyle(Theme.Colors.primary.gradient)
-                .cornerRadius(4)
+                .cornerRadius(Theme.CornerRadius.xs)
             }
 
             ForEach(weeklyHistory.filter { $0.plannedLoad > 0 }) { week in

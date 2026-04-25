@@ -1,5 +1,26 @@
 import Foundation
 
+/// Single source of truth for how the app displays measurements.
+///
+/// **Display spec** — call `formatDistance` / `formatElevation` /
+/// `formatPace` / `formatWeight` / `formatHeight` and trust them.
+/// Never write raw `String(format: "%.1f km", x)` at call sites:
+/// it bypasses the user's unit preference (metric vs imperial) and
+/// drifts away from the canonical decimal counts.
+///
+///   • Distance — 1 decimal by default ("12.3 km" / "7.6 mi"). Pass
+///     `decimals: 0` for race-distance pills where the integer reads
+///     cleaner.
+///   • Elevation — 0 decimals ("450 m" / "1480 ft"). Append " D+"
+///     manually when the row needs the gain marker.
+///   • Pace — `m:ss` per chosen unit. Returns "--:--" for zero or
+///     non-finite paces.
+///   • Weight — 1 decimal ("72.5 kg" / "159.8 lb").
+///   • Height — integer cm or feet/inches.
+///
+/// If a screen needs an integer value for math (chart axes, comparing
+/// targets) use the `*Value` variants — they convert without
+/// formatting.
 enum UnitFormatter {
 
     // MARK: - Conversion Constants

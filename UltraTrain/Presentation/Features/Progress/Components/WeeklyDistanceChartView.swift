@@ -37,7 +37,7 @@ struct WeeklyDistanceChartView: View {
                     y: .value("Distance", UnitFormatter.distanceValue(week.distanceKm, unit: units))
                 )
                 .foregroundStyle(Theme.Colors.primary.gradient)
-                .cornerRadius(4)
+                .cornerRadius(Theme.CornerRadius.xs)
             }
 
             ForEach(weeklyVolumes.filter { $0.plannedDistanceKm > 0 }) { week in

@@ -37,7 +37,7 @@ struct WeeklyElevationChartView: View {
                     y: .value("Elevation", UnitFormatter.elevationValue(week.elevationGainM, unit: units))
                 )
                 .foregroundStyle(Theme.Colors.success.gradient)
-                .cornerRadius(4)
+                .cornerRadius(Theme.CornerRadius.xs)
             }
 
             ForEach(weeklyVolumes.filter { $0.plannedElevationGainM > 0 }) { week in

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct OptimalSessionCard: View {
+    @Environment(\.unitPreference) private var units
     let session: OptimalSession
 
     var body: some View {
@@ -54,10 +55,10 @@ struct OptimalSessionCard: View {
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 2) {
-                Text(String(format: "%.1f km", session.distanceKm))
+                Text(UnitFormatter.formatDistance(session.distanceKm, unit: units))
                     .font(.subheadline.bold())
                 if session.elevationGainM > 0 {
-                    Text("\(Int(session.elevationGainM)) m D+")
+                    Text(UnitFormatter.formatElevation(session.elevationGainM, unit: units) + " D+")
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }

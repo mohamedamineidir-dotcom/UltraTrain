@@ -65,7 +65,7 @@ struct WeeklyNutritionChart: View {
                         ? Theme.Colors.success.gradient
                         : Theme.Colors.primary.gradient
                 )
-                .cornerRadius(4)
+                .cornerRadius(Theme.CornerRadius.xs)
             }
 
             if dailyTarget > 0 {

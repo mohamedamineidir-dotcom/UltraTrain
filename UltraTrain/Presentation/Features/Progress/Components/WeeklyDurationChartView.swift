@@ -32,7 +32,7 @@ struct WeeklyDurationChartView: View {
                     y: .value("Duration", week.duration / 3600)
                 )
                 .foregroundStyle(Theme.Colors.zone3.gradient)
-                .cornerRadius(4)
+                .cornerRadius(Theme.CornerRadius.xs)
             }
 
             if let selectedDate, let week = nearestWeek(to: selectedDate) {

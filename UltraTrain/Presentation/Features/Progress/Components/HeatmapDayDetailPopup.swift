@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct HeatmapDayDetailPopup: View {
+    @Environment(\.unitPreference) private var units
     let day: TrainingCalendarHeatmapCalculator.DayIntensity
     let onDismiss: () -> Void
 
@@ -21,7 +22,7 @@ struct HeatmapDayDetailPopup: View {
             }
 
             HStack(spacing: Theme.Spacing.md) {
-                detailItem(label: "Distance", value: String(format: "%.1f km", day.totalDistanceKm))
+                detailItem(label: "Distance", value: UnitFormatter.formatDistance(day.totalDistanceKm, unit: units))
                 detailItem(label: "Duration", value: formattedDuration)
                 detailItem(label: "Runs", value: "\(day.runCount)")
             }

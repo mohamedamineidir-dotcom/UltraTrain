@@ -112,7 +112,7 @@ struct DashboardView: View {
                     }
 
                     // Today
-                    DashboardSectionHeader(title: "Today")
+                    SectionHeader(title: "Today")
 
                     DashboardNextSessionCard(
                         session: viewModel.nextSession,
@@ -134,7 +134,7 @@ struct DashboardView: View {
                     .accessibilityIdentifier("dashboard.nextSessionCard")
 
                     // This Week
-                    DashboardSectionHeader(title: "This Week")
+                    SectionHeader(title: "This Week")
 
                     DashboardWeeklyStatsCard(
                         progress: viewModel.weeklyProgress,
@@ -159,7 +159,7 @@ struct DashboardView: View {
                     // minority of users had Apple-Watch recovery data, whereas
                     // the finish forecast is meaningful for every athlete and
                     // tightens as training progresses).
-                    DashboardSectionHeader(title: "Race forecast")
+                    SectionHeader(title: "Race forecast")
 
                     finishEstimateSection
                     UpcomingRacesCard(races: viewModel.upcomingRaces)

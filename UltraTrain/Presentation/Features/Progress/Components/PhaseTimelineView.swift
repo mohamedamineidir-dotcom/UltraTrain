@@ -37,7 +37,7 @@ struct PhaseTimelineView: View {
                 y: .value("Phase", "Plan")
             )
             .foregroundStyle(phaseColor(block.phase))
-            .cornerRadius(4)
+            .cornerRadius(Theme.CornerRadius.xs)
             .opacity(block.isCurrentPhase ? 1.0 : 0.7)
         }
         .chartXAxis {

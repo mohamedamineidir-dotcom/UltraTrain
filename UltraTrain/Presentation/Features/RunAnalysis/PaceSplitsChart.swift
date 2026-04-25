@@ -20,7 +20,7 @@ struct PaceSplitsChart: View {
                         y: .value("Pace", split.duration)
                     )
                     .foregroundStyle(barColor(for: split))
-                    .cornerRadius(4)
+                    .cornerRadius(Theme.CornerRadius.xs)
                     .opacity(selectedKm == nil || selectedKm == split.kilometerNumber ? 1.0 : 0.4)
                 }
 
