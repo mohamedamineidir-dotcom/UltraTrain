@@ -23,8 +23,13 @@ enum IntermediateRaceHandler {
         skeletons: [WeekSkeletonBuilder.WeekSkeleton],
         intermediateRaces: [Race]
     ) -> [RaceWeekOverride] {
+        // Two-A-race seasons: plan target is the LATER A-race; any A-race
+        // scheduled earlier is treated like a beefed-up B-race —
+        // 2-week taper + 2-3 weeks recovery. Athletes prepping spring
+        // marathon + fall marathon, or UTMB + CCC, can now have both
+        // marked as A-races without the planner silently dropping the
+        // earlier one.
         let sortedRaces = intermediateRaces
-            .filter { $0.priority != .aRace }
             .sorted { $0.date < $1.date }
 
         var overrides: [RaceWeekOverride] = []
@@ -37,10 +42,19 @@ enum IntermediateRaceHandler {
                 return raceDay >= start && raceDay <= end
             }) else { continue }
 
-            // B-races get full treatment: taper + race week + recovery
-            // C-races get only the race week override (lighter treatment)
-            if race.priority == .bRace {
-                if let taperWeek = skeletons.first(where: { $0.weekNumber == raceWeek.weekNumber - 1 }) {
+            // Taper structure:
+            //   A-race intermediate → 2 weeks (true peak rebuild before
+            //                          targeting the FINAL A-race)
+            //   B-race              → 1 week mini-taper
+            //   C-race              → no taper override (training race)
+            let taperWeekCount: Int
+            switch race.priority {
+            case .aRace: taperWeekCount = 2
+            case .bRace: taperWeekCount = 1
+            case .cRace: taperWeekCount = 0
+            }
+            for offset in 1...max(taperWeekCount, 0) where taperWeekCount > 0 {
+                if let taperWeek = skeletons.first(where: { $0.weekNumber == raceWeek.weekNumber - offset }) {
                     overrides.append(RaceWeekOverride(
                         weekNumber: taperWeek.weekNumber,
                         raceId: race.id,
@@ -55,29 +69,29 @@ enum IntermediateRaceHandler {
                 behavior: .raceWeek(priority: race.priority)
             ))
 
-            if race.priority == .bRace {
-                // RR-23: post-race recovery duration scales with race distance.
-                // Daniels' rule: ~1 easy day per 3 km of race distance.
-                //   10K / HM  → 1 recovery week
-                //   Marathon+ → 2 recovery weeks
-                //   50K+      → 3 recovery weeks
-                // Previously we always inserted exactly 1 recovery week
-                // regardless — a 42 km B-race got the same 7-day return-to-
-                // training as a 10K, insufficient by a factor of 2.
-                let recoveryWeekCount: Int
-                switch race.distanceKm {
-                case ..<30:    recoveryWeekCount = 1
-                case ..<50:    recoveryWeekCount = 2
-                default:       recoveryWeekCount = 3
-                }
-                for offset in 1...recoveryWeekCount {
-                    if let recoveryWeek = skeletons.first(where: { $0.weekNumber == raceWeek.weekNumber + offset }) {
-                        overrides.append(RaceWeekOverride(
-                            weekNumber: recoveryWeek.weekNumber,
-                            raceId: race.id,
-                            behavior: .postRaceRecovery
-                        ))
-                    }
+            // Post-race recovery scales with priority + distance.
+            //   A-race intermediate: 2 weeks min (longer rebuild before
+            //                         the final A-race), capped at 3
+            //                         for 50K+
+            //   B-race: 1-3 weeks by distance (existing)
+            //   C-race: 0 weeks
+            let recoveryWeekCount: Int
+            switch (race.priority, race.distanceKm) {
+            case (.aRace, ..<30):  recoveryWeekCount = 2
+            case (.aRace, ..<50):  recoveryWeekCount = 2
+            case (.aRace, _):      recoveryWeekCount = 3
+            case (.bRace, ..<30):  recoveryWeekCount = 1
+            case (.bRace, ..<50):  recoveryWeekCount = 2
+            case (.bRace, _):      recoveryWeekCount = 3
+            case (.cRace, _):      recoveryWeekCount = 0
+            }
+            for offset in 1...max(recoveryWeekCount, 0) where recoveryWeekCount > 0 {
+                if let recoveryWeek = skeletons.first(where: { $0.weekNumber == raceWeek.weekNumber + offset }) {
+                    overrides.append(RaceWeekOverride(
+                        weekNumber: recoveryWeek.weekNumber,
+                        raceId: race.id,
+                        behavior: .postRaceRecovery
+                    ))
                 }
             }
         }

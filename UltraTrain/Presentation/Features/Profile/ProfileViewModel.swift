@@ -112,11 +112,17 @@ final class ProfileViewModel {
     private func triggerPlanAutoAdjustment() async {
         do {
             guard let plan = try await planRepository.getActivePlan(),
-                  let athlete = try await athleteRepository.getAthlete(),
-                  let targetRace = races.first(where: { $0.priority == .aRace }) else { return }
-
-            let intermediateRaces = races.filter {
-                $0.priority != .aRace && $0.date < targetRace.date
+                  let athlete = try await athleteRepository.getAthlete() else { return }
+            // Two-A-race seasons: when multiple A-races exist, the LATEST
+            // is the target; earlier A-races become priority-A intermediate
+            // races (handled by IntermediateRaceHandler with full taper +
+            // recovery). Single-A-race plans behave exactly as before.
+            let aRacesByDate = races
+                .filter { $0.priority == .aRace }
+                .sorted { $0.date < $1.date }
+            guard let targetRace = aRacesByDate.last else { return }
+            let intermediateRaces = races.filter { race in
+                race.id != targetRace.id && race.date < targetRace.date
             }
 
             if let _ = try await planAutoAdjustmentService.adjustPlanIfNeeded(

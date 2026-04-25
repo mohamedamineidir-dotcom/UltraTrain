@@ -177,10 +177,17 @@ final class TrainingPlanViewModel {
             }
 
             let allRaces = try await raceRepository.getRaces()
-            let targetRace = allRaces.first(where: { $0.priority == .aRace })
-                ?? Race.generalFitness(startingFrom: .now)
+            // Two-A-race seasons: target is the LATEST A-race; earlier
+            // A-races flow through IntermediateRaceHandler with full
+            // 2-week taper + 2-3 week recovery.
+            let aRacesByDate = allRaces
+                .filter { $0.priority == .aRace }
+                .sorted { $0.date < $1.date }
+            let targetRace = aRacesByDate.last ?? Race.generalFitness(startingFrom: .now)
 
-            let intermediateRaces = allRaces.filter { $0.priority != .aRace && $0.date < targetRace.date }
+            let intermediateRaces = allRaces.filter { race in
+                race.id != targetRace.id && race.date < targetRace.date
+            }
 
             // Snapshot old session progress before regenerating
             let oldProgress = plan.map { PlanProgressPreserver.snapshot($0) } ?? []

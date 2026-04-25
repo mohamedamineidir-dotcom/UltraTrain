@@ -189,17 +189,31 @@ struct IntermediateRaceHandlerTests {
 
     // MARK: - A-Race Filtering
 
-    @Test("A-race is filtered out and produces no overrides")
-    func aRaceFilteredOut() {
-        let skeletons = makeSkeletons(weekRange: 1...6)
-        let aRace = makeRace(priority: .aRace, weekNumber: 4)
+    @Test("A-race intermediate gets enhanced taper + recovery (two-A-race seasons)")
+    func aRaceIntermediateOverrides() {
+        // Two-A-race season change: an A-race scheduled before the
+        // target A-race gets full peak treatment — 2-week taper and
+        // 2-3 weeks of post-race recovery — instead of being silently
+        // dropped. Allows spring + fall marathons, UTMB + CCC, etc.
+        let skeletons = makeSkeletons(weekRange: 1...10)
+        // 50 km race → 3 weeks recovery
+        let aRace = makeRace(priority: .aRace, weekNumber: 5)
 
         let overrides = IntermediateRaceHandler.overrides(
             skeletons: skeletons,
             intermediateRaces: [aRace]
         )
 
-        #expect(overrides.isEmpty, "A-race should be filtered out and produce no overrides")
+        let taperOverrides = overrides.filter { $0.behavior == .miniTaper }
+        let raceWeekOverrides = overrides.filter { $0.behavior.isRaceWeek }
+        let recoveryOverrides = overrides.filter { $0.behavior == .postRaceRecovery }
+
+        #expect(taperOverrides.count == 2,
+                "A-race intermediate should produce 2 weeks of taper, got \(taperOverrides.count)")
+        #expect(raceWeekOverrides.count == 1,
+                "A-race intermediate should produce exactly 1 race week override")
+        #expect(recoveryOverrides.count == 3,
+                "A-race intermediate at 50 km should produce 3 weeks of recovery, got \(recoveryOverrides.count)")
     }
 
     // MARK: - Edge Cases
