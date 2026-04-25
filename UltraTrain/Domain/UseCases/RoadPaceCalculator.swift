@@ -100,7 +100,10 @@ enum RoadPaceCalculator {
         // Validated against Daniels VDOT tables (VDOT 40-65 range).
         //
         // Daniels ratios (5K pace as 1.00):
-        // Easy:       1.30 - 1.50× slower (conversational)
+        // Easy:       1.30 - 1.42× slower (conversational; tightened from
+        //              1.30 - 1.48× because a 50 sec/km E-pace window
+        //              stops feeling prescriptive — athletes drift into
+        //              zone-3 "moderate" without realising)
         // Marathon:    1.12 - 1.18× slower
         // Threshold:   1.06 - 1.09× slower (~60min race effort)
         // Interval:    1.00× (= 5K pace)
@@ -108,7 +111,7 @@ enum RoadPaceCalculator {
         let fiveK = fitness5KPace
 
         return RoadPaceProfile(
-            easyPacePerKm: (fiveK * 1.30)...(fiveK * 1.48),
+            easyPacePerKm: (fiveK * 1.30)...(fiveK * 1.42),
             marathonPacePerKm: fiveK * 1.12,
             thresholdPacePerKm: fiveK * 1.09,
             intervalPacePerKm: fiveK * 1.00,

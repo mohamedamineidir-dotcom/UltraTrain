@@ -22,9 +22,17 @@ enum RoadSessionSelector {
         let age: Int
         let weightGoal: WeightGoal
         let raceName: String?
+        /// True when the athlete has no prior PB at the race distance.
+        /// First-timers cap one template short of the hardest in each
+        /// category so they never plateau on the toughest threshold or
+        /// VO2max session their tier unlocks.
+        var isFirstTimerAtDistance: Bool = false
     }
 
     /// Generates a full 7-day session template array for a road training week.
+    /// - Parameter isFinalTaperWeek: true on the very last taper week before
+    ///   the A-race. The day-before-race long-run slot is converted into a
+    ///   pre-race shakeout (20 min easy + 4 strides at race target pace).
     static func sessions(
         phase: TrainingPhase,
         volume: VolumeCalculator.WeekVolume,
@@ -34,7 +42,8 @@ enum RoadSessionSelector {
         preferredRunsPerWeek: Int,
         isRecoveryWeek: Bool,
         paceProfile: RoadPaceProfile?,
-        athleteContext: AthleteContext? = nil
+        athleteContext: AthleteContext? = nil,
+        isFinalTaperWeek: Bool = false
     ) -> [SessionTemplateGenerator.SessionTemplate] {
         let tpl = SessionTemplateGenerator.tpl
         let base = volume.baseSessionDurations
@@ -96,10 +105,12 @@ enum RoadSessionSelector {
         // Base phase: Daniels' "fundamental" base is mileage-first. We only
         // schedule one quality session per week (a light progression run or
         // cruise intervals). Q2 is skipped — its slot becomes an easy run.
+        let isFirstTimer = athleteContext?.isFirstTimerAtDistance ?? false
         let q1 = RoadIntervalLibrary.selectForSlot(
             slotIndex: 0, phase: phase, discipline: discipline,
             experience: experience, weekInPhase: weekInPhase,
-            excludeCategory: primaryExclusion
+            excludeCategory: primaryExclusion,
+            isFirstTimerAtDistance: isFirstTimer
         )
         let q2: RoadIntervalLibrary.Template?
         if phase == .base {
@@ -108,7 +119,8 @@ enum RoadSessionSelector {
             q2 = RoadIntervalLibrary.selectForSlot(
                 slotIndex: 1, phase: phase, discipline: discipline,
                 experience: experience, weekInPhase: weekInPhase,
-                excludeCategory: q1?.category ?? primaryExclusion
+                excludeCategory: q1?.category ?? primaryExclusion,
+                isFirstTimerAtDistance: isFirstTimer
             )
         }
 
@@ -297,7 +309,26 @@ enum RoadSessionSelector {
         let isInjured = athleteContext?.hasRecentInjury == true
         let replaceWithCrossTraining = isInjured && !isTrueTaperWeek
 
-        let slotLong   = (5, tpl(5, .longRun, .easy, longRunDuration, longRunElev, longRunDesc))
+        // Pre-race shakeout — the day before the race. Replaces the day-5
+        // long-run slot in the final taper week. Pfitzinger / Daniels: a
+        // short, easy shakeout with 4 strides at race target pace wakes the
+        // legs without burning glycogen. Single most-prescribed pre-race
+        // session in road coaching.
+        let slotLong: (day: Int, template: SessionTemplateGenerator.SessionTemplate)
+        if isFinalTaperWeek {
+            let shakeoutDuration: TimeInterval = 20 * 60 // 20 minutes
+            let stridePace: String
+            if let p = paceProfile, hasDataDerivedPaces {
+                let pace = RoadCoachAdviceGenerator.formatPace(p.racePacePerKm)
+                stridePace = "\(pace)/km (race pace) or slightly slower"
+            } else {
+                stridePace = "race pace or slightly slower"
+            }
+            let shakeoutDesc = "Pre-race shakeout — 20 min easy + 4 strides @ \(stridePace) at the end. Last run before race day. Wake the legs, don't tire them."
+            slotLong = (5, tpl(5, .recovery, .easy, shakeoutDuration, 0, shakeoutDesc))
+        } else {
+            slotLong = (5, tpl(5, .longRun, .easy, longRunDuration, longRunElev, longRunDesc))
+        }
         let slotIntervals: (day: Int, template: SessionTemplateGenerator.SessionTemplate)
         if replaceWithCrossTraining {
             let minutes = Int(effectiveIntervalSeconds / 60)

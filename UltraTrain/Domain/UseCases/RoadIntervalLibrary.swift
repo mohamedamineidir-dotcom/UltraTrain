@@ -77,13 +77,21 @@ enum RoadIntervalLibrary {
 
     /// Selects a quality session template for the given slot.
     /// Slot 1 and slot 2 must be DIFFERENT categories (Daniels: variety principle).
+    ///
+    /// - Parameter isFirstTimerAtDistance: true when the athlete has no
+    ///   prior PB at the race distance. First-timers stop one template
+    ///   short of the hardest in each category — a first-time marathoner
+    ///   should not be plateauing on `Double Tempo` (40 min total at
+    ///   T-pace) just because the walk-forward index reached the end of
+    ///   the threshold ladder.
     static func selectForSlot(
         slotIndex: Int,
         phase: TrainingPhase,
         discipline: RoadRaceDiscipline,
         experience: ExperienceLevel,
         weekInPhase: Int,
-        excludeCategory: Category? = nil
+        excludeCategory: Category? = nil,
+        isFirstTimerAtDistance: Bool = false
     ) -> Template? {
         let available = templates(
             phase: phase, discipline: discipline,
@@ -108,20 +116,24 @@ enum RoadIntervalLibrary {
         // increasingly demanding workouts, then consolidate the top session
         // across remaining peak weeks.
         //
-        // Previously the code cycled via `(weekInPhase + offset) % count`
-        // which produced random-looking jumps (e.g. W0=800, W1=800, W2=1000,
-        // W3=1200, W4=1600, W5=800 — resetting mid-peak). Walk-forward-
-        // plateau is predictable and matches coach-prescribed progressions.
+        // First-timers cap one short of the hardest template — they get
+        // the progression up to the second-to-last template and plateau
+        // there, instead of seeing repeated weeks of the toughest session
+        // their experience tier unlocks.
         for cat in preferred {
             let inCat = available.filter { $0.category == cat }
             if !inCat.isEmpty {
-                let index = min(weekInPhase, inCat.count - 1)
+                let lastIndex = inCat.count - 1
+                let cap = isFirstTimerAtDistance ? max(0, lastIndex - 1) : lastIndex
+                let index = min(weekInPhase, cap)
                 return inCat[index]
             }
         }
 
         // Fallback: any available template — same walk-forward rule.
-        let fallbackIndex = min(weekInPhase, available.count - 1)
+        let lastIndex = available.count - 1
+        let cap = isFirstTimerAtDistance ? max(0, lastIndex - 1) : lastIndex
+        let fallbackIndex = min(weekInPhase, cap)
         return available[fallbackIndex]
     }
 

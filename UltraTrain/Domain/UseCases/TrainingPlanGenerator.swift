@@ -456,8 +456,14 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     painFrequency: athlete.painFrequency,
                     age: athlete.age,
                     weightGoal: athlete.weightGoal,
-                    raceName: targetRace.name
+                    raceName: targetRace.name,
+                    isFirstTimerAtDistance: isFirstTimer
                 )
+                // Final taper week = the very last week of the plan. The
+                // selector swaps the day-5 long run slot for a pre-race
+                // shakeout (20 min easy + 4 strides at race pace).
+                let isFinalTaperWeek = skeleton.phase == .taper
+                    && phaseCounters[index] == taperProfile.totalTaperWeeks - 1
                 let templates = RoadSessionSelector.sessions(
                     phase: skeleton.phase,
                     volume: volume,
@@ -467,18 +473,24 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     preferredRunsPerWeek: athlete.preferredRunsPerWeek,
                     isRecoveryWeek: skeleton.isRecoveryWeek,
                     paceProfile: paceProfile,
-                    athleteContext: roadAthleteContext
+                    athleteContext: roadAthleteContext,
+                    isFinalTaperWeek: isFinalTaperWeek
                 )
 
-                // Build IntervalWorkout objects for quality sessions
+                // Build IntervalWorkout objects for quality sessions —
+                // mirror the selector's first-timer template cap so the
+                // workout structure matches what the session description
+                // already says.
                 let q1Template = RoadIntervalLibrary.selectForSlot(
                     slotIndex: 0, phase: skeleton.phase, discipline: discipline,
-                    experience: athlete.experienceLevel, weekInPhase: phaseCounters[index]
+                    experience: athlete.experienceLevel, weekInPhase: phaseCounters[index],
+                    isFirstTimerAtDistance: isFirstTimer
                 )
                 let q2Template = RoadIntervalLibrary.selectForSlot(
                     slotIndex: 1, phase: skeleton.phase, discipline: discipline,
                     experience: athlete.experienceLevel, weekInPhase: phaseCounters[index],
-                    excludeCategory: q1Template?.category
+                    excludeCategory: q1Template?.category,
+                    isFirstTimerAtDistance: isFirstTimer
                 )
 
                 let q1Workout = q1Template.map { RoadWorkoutBuilder.build(from: $0, paceProfile: paceProfile, experience: athlete.experienceLevel, athleteAge: athlete.age) }

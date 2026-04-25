@@ -291,6 +291,49 @@ struct TrainingPlanGeneratorTests {
         }
     }
 
+    @Test("Road plan: easy pace upper bound is at most 1.42× 5K")
+    func easyPaceTightened() async throws {
+        // After tightening from 1.48× to 1.42×, the easy upper bound must
+        // hold the 1.30/1.42 ratio against the lower bound. Wider than
+        // that and "easy" loses prescriptive meaning.
+        let athlete = makeAthlete(experience: .intermediate, weeklyVolumeKm: 50, longestRunKm: 22)
+
+        let profile = RoadPaceCalculator.paceProfile(
+            goalTime: 4 * 3600,
+            raceDistanceKm: 42.2,
+            personalBests: athlete.personalBests,
+            vmaKmh: athlete.vmaKmh,
+            experience: athlete.experienceLevel
+        )
+
+        let ratio = profile.easyPacePerKm.upperBound / profile.easyPacePerKm.lowerBound
+        let expected = 1.42 / 1.30
+        #expect(abs(ratio - expected) < 0.01,
+            "Easy pace ratio \(ratio) does not match the tightened 1.30/1.42 spec")
+    }
+
+    @Test("Road plan: final taper week ends with a pre-race shakeout, not a long run")
+    func finalTaperWeekShakeout() async throws {
+        // The very last week of the plan replaces the day-5 long-run slot
+        // with a 20-min shakeout. Day 5 must NOT be a longRun session.
+        let generator = TrainingPlanGenerator()
+        let athlete = makeAthlete(experience: .intermediate, weeklyVolumeKm: 50, longestRunKm: 22)
+        let race = makeRoadMarathonRace(weeksFromNow: 18)
+
+        let plan = try await generator.execute(athlete: athlete, targetRace: race, intermediateRaces: [])
+
+        // The final taper week's day-5 session should be .recovery (the
+        // shakeout), not .longRun.
+        guard let finalWeek = plan.weeks.last(where: { $0.phase == .taper }) else {
+            Issue.record("No taper week found in plan")
+            return
+        }
+        // Find day-5 session: index 5 in the 7-day session array.
+        let day5 = finalWeek.sessions[5]
+        #expect(day5.type != .longRun,
+            "Final taper week's day-5 slot is a long run; expected a shakeout")
+    }
+
     @Test("Road marathon: late build introduces marathon-pace work")
     func marathonPaceIntroducedInBuild() async throws {
         // After our fix, the marathon long run in late build (weekInPhase ≥ 3)
