@@ -32,6 +32,31 @@ extension TrainingPlanViewModel {
             )
             let updatedIds = Set(adjustmentRecommendations.map(\.id))
             dismissedRecommendationIds = dismissedRecommendationIds.intersection(updatedIds)
+            await autoApplyUrgentAdjustments()
+        }
+    }
+
+    /// Auto-apply urgent-severity recommendations that the athlete
+    /// shouldn't have to reason about — adherence-driven volume cuts and
+    /// severe fatigue load reduction. A coach would just rebuild after 3
+    /// missed key sessions; the athlete shouldn't have to read a banner
+    /// and decide. Lower-severity versions of these recommendations stay
+    /// as banners (athlete-facing decision).
+    private func autoApplyUrgentAdjustments() async {
+        let autoApplyTypes: Set<PlanAdjustmentType> = [
+            .reduceTargetDueToAccumulatedMissed,
+            .reduceFatigueLoad
+        ]
+        let candidates = adjustmentRecommendations.filter {
+            $0.severity == .urgent
+                && autoApplyTypes.contains($0.type)
+                && !dismissedRecommendationIds.contains($0.id)
+        }
+        guard !candidates.isEmpty else { return }
+        for rec in candidates {
+            await applyRecommendation(rec)
+            // Hide from banner — already applied silently.
+            dismissedRecommendationIds.insert(rec.id)
         }
     }
 
