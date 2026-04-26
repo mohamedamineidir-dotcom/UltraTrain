@@ -10,6 +10,7 @@ struct TrainingPlanView: View {
     @State private var showExportDialog = false
     @State private var exportedFileURL: URL?
     @State private var exportError: String?
+    @State private var showPauseSheet = false
     private let raceRepository: any RaceRepository
     private let planRepository: any TrainingPlanRepository
     private let workoutRecipeRepository: any WorkoutRecipeRepository
@@ -119,6 +120,21 @@ struct TrainingPlanView: View {
                                 .accessibilityLabel("Race calendar list")
                             }
 
+                            // Pause training — illness or injury.
+                            // Triggers suspendTraining or
+                            // reportMidCycleInjury via the sheet.
+                            // The most-coach-relevant button on this
+                            // toolbar — sits between the navigation
+                            // helpers and export so it's always one tap
+                            // away when the athlete needs it.
+                            Button {
+                                showPauseSheet = true
+                            } label: {
+                                Image(systemName: "pause.circle")
+                            }
+                            .accessibilityLabel("Pause training")
+                            .accessibilityIdentifier("trainingPlan.pauseButton")
+
                             // #30: plan export (PDF + calendar).
                             // Respects the subscription gate — hands
                             // off viewModel.visibleWeeks, not the full
@@ -196,6 +212,19 @@ struct TrainingPlanView: View {
                 Button("OK") { exportError = nil }
             } message: {
                 Text(exportError ?? "")
+            }
+            .sheet(isPresented: $showPauseSheet) {
+                PauseTrainingSheet(
+                    onSuspend: { days, reason in
+                        await viewModel.suspendTraining(forDays: days, reason: reason)
+                    },
+                    onReportInjury: { days, bumpPain in
+                        await viewModel.reportMidCycleInjury(
+                            suspendDays: days,
+                            bumpPainFrequencyToOften: bumpPain
+                        )
+                    }
+                )
             }
         }
     }
