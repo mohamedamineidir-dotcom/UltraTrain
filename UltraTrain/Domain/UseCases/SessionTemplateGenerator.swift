@@ -34,7 +34,8 @@ enum SessionTemplateGenerator {
         isHotRaceForecast: Bool = false,
         restingHR: Int? = nil,
         maxHR: Int? = nil,
-        biologicalSex: BiologicalSex? = nil
+        biologicalSex: BiologicalSex? = nil,
+        cyclePhase: CyclePhaseCalculator.Phase = .unknown
     ) -> (sessions: [TrainingSession], workouts: [IntervalWorkout], strengthWorkouts: [StrengthWorkout]) {
         let runsPerWeek = preferredRunsPerWeek
         let templates: [SessionTemplate]
@@ -126,7 +127,8 @@ enum SessionTemplateGenerator {
                 isHotRaceForecast: isHotRaceForecast,
                 restingHR: restingHR,
                 maxHR: maxHR,
-                biologicalSex: biologicalSex
+                biologicalSex: biologicalSex,
+                cyclePhase: cyclePhase
             )
 
             return TrainingSession(

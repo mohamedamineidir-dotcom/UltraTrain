@@ -1695,6 +1695,7 @@
 		F62DAEBE7554EF0122EF98EB /* MockGenerateNutritionPlanUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67046BD5B89F2ADDC637BD6C /* MockGenerateNutritionPlanUseCase.swift */; };
 		F63110F2715FC8119227E4E7 /* WatchConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1A6BC6E7BAF1CF58F1EB0E /* WatchConfiguration.swift */; };
 		F652076C4B14AA3D832C5132 /* RaceSwiftDataMapperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37634083849CDB029D660FB7 /* RaceSwiftDataMapperTests.swift */; };
+		F6768A507422C164E4276BA9 /* CyclePhaseCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01C176F9580332922F89E03 /* CyclePhaseCalculator.swift */; };
 		F67BF764A6D273C03F1F03F6 /* MockRunRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883F648ABD3BA81758A3D1F2 /* MockRunRepository.swift */; };
 		F6A566D5B8DF7595FDE43727 /* SocialProfileRemoteMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FA740A8F0DFD6AAEB714B63 /* SocialProfileRemoteMapper.swift */; };
 		F6B114516BAED04E47396DA4 /* LocalNutritionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13D60FA031B922138E9942B1 /* LocalNutritionRepository.swift */; };
@@ -3282,6 +3283,7 @@
 		CF785BFFF9913396243EBD99 /* RaceEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceEndpoints.swift; sourceTree = "<group>"; };
 		CF9CD8470E4D4580F587239B /* RaceDatabaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceDatabaseTests.swift; sourceTree = "<group>"; };
 		CFE5F778BB0D8F1322CA8842 /* AddProductSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddProductSheet.swift; sourceTree = "<group>"; };
+		D01C176F9580332922F89E03 /* CyclePhaseCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CyclePhaseCalculator.swift; sourceTree = "<group>"; };
 		D02383199F138FB96A286127 /* ResumeRunIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResumeRunIntent.swift; sourceTree = "<group>"; };
 		D0322B4AA039A02B2DF39603 /* FuturisticGenerationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FuturisticGenerationView.swift; sourceTree = "<group>"; };
 		D05CC044E4759FAC14362D93 /* NotificationDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDelegateTests.swift; sourceTree = "<group>"; };
@@ -4478,6 +4480,7 @@
 				B638EFB474C831799DD5DDE7 /* CrashReporterProtocol.swift */,
 				E76E1CE42E05C415A91AE7FC /* CrewTrackingServiceProtocol.swift */,
 				DE27523E1E8B64C7132153C4 /* CSVExporter.swift */,
+				D01C176F9580332922F89E03 /* CyclePhaseCalculator.swift */,
 				9D77E1E3DE0FDAE2A2685007 /* DailyNutritionCalculator.swift */,
 				F75CAA564C5B9EBDBF93E7A0 /* DefaultChecklistGenerator.swift */,
 				C4508A46ABC4C8D54125BE35 /* DefaultProducts.swift */,
@@ -7053,6 +7056,7 @@
 				6B51F7CEB81AAAD24AD39C39 /* CrossTrainingLogView.swift in Sources */,
 				3905B0DDAF94034EE96D6B14 /* CrossTrainingLogViewModel.swift in Sources */,
 				FB26D274F48548835535422B /* CumulativeVolumeChartView.swift in Sources */,
+				F6768A507422C164E4276BA9 /* CyclePhaseCalculator.swift in Sources */,
 				77DA47C8494AEA27558A6038 /* DailyNutritionCalculator.swift in Sources */,
 				EA70BAE4391E744E5F3425D4 /* DailyNutritionTarget.swift in Sources */,
 				9946A7EF0448C480AFD051F9 /* DailyWeatherForecast.swift in Sources */,

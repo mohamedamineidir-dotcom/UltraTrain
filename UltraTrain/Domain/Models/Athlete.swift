@@ -52,6 +52,20 @@ struct Athlete: Identifiable, Equatable, Sendable {
     /// Pace at ~30 min threshold (seuil 30) in seconds/km.
     var thresholdPace30MinPerKm: Double?
 
+    // MARK: - Menstrual cycle awareness (opt-in)
+
+    /// When true, the plan + coach advice surface cycle-aware cues
+    /// (luteal-phase carb reminders, mild intensity scaler). Off by
+    /// default — only meaningful for menstruating athletes who choose
+    /// to log cycle dates. Sims (2016), Mountjoy (2014 / RED-S IOC).
+    var cycleAware: Bool = false
+    /// Typical cycle length in days. Default 28; range 21-35 covers
+    /// most ranges. Used to compute current phase.
+    var cycleLengthDays: Int = 28
+    /// First day of most recent menstruation. Used as the cycle anchor.
+    /// Nil disables phase computation even when cycleAware is true.
+    var lastPeriodStartDate: Date? = nil
+
     var age: Int {
         Calendar.current.dateComponents([.year], from: dateOfBirth, to: .now).year ?? 0
     }

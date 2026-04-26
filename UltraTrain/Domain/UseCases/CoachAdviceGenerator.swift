@@ -17,7 +17,8 @@ enum CoachAdviceGenerator {
         isHotSessionForecast: Bool = false,
         restingHR: Int? = nil,
         maxHR: Int? = nil,
-        biologicalSex: BiologicalSex? = nil
+        biologicalSex: BiologicalSex? = nil,
+        cyclePhase: CyclePhaseCalculator.Phase = .unknown
     ) -> String? {
         let recoveryPrefix = isRecoveryWeek
             ? "Recovery week, so keep everything easy. Your body adapts when you rest. "
@@ -122,7 +123,33 @@ enum CoachAdviceGenerator {
         if let mentalCue = mentalCue(for: type, phase: phase, weekInPhase: weekInPhase) {
             result += " " + mentalCue
         }
+        // Cycle-phase cue (opt-in). One short sentence, only on hard
+        // sessions in the luteal phase where carb demand actually rises
+        // and HR drifts at the same effort. Sims (2016): luteal-phase
+        // carb need ~10-15% higher on long efforts; HR runs warm.
+        if let cycleNote = cyclePhaseNote(phase: cyclePhase, type: type, intensity: intensity) {
+            result += " " + cycleNote
+        }
         return result
+    }
+
+    /// One-sentence cycle-phase note. Returns nil unless the athlete is
+    /// in the luteal phase AND the session is hard enough that fueling
+    /// / HR drift actually matters. Keeps the card focused.
+    private static func cyclePhaseNote(
+        phase: CyclePhaseCalculator.Phase,
+        type: SessionType,
+        intensity: Intensity
+    ) -> String? {
+        guard phase == .luteal else { return nil }
+        switch type {
+        case .longRun, .backToBack, .race:
+            return "Luteal phase — fuel +carbs and expect HR to run a touch warm at the same effort."
+        case .intervals, .tempo, .verticalGain:
+            return "Luteal phase — HR runs slightly warm here, trust effort over the bpm number."
+        default:
+            return nil
+        }
     }
 
     /// Single-sentence mental cue. Matches research-backed sport-

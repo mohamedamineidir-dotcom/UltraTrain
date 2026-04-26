@@ -181,6 +181,18 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 return fc.temperatureCelsius >= 22 || fc.humidity >= 65
             }()
 
+            // Cycle-phase awareness (opt-in). Computed per-week using the
+            // week's start date, so the advice tracks the athlete through
+            // the plan rather than freezing the phase from "today". Off
+            // entirely unless the athlete logged a cycle anchor.
+            let weekCyclePhase: CyclePhaseCalculator.Phase = athlete.cycleAware
+                ? CyclePhaseCalculator.currentPhase(
+                    lastPeriodStartDate: athlete.lastPeriodStartDate,
+                    cycleLengthDays: athlete.cycleLengthDays,
+                    now: skeleton.startDate
+                )
+                : .unknown
+
             let result = SessionTemplateGenerator.sessions(
                 for: skeleton,
                 volume: volume,
@@ -202,7 +214,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 isHotRaceForecast: trailHotRaceForecast,
                 restingHR: athlete.restingHeartRate,
                 maxHR: athlete.maxHeartRate,
-                biologicalSex: athlete.biologicalSex
+                biologicalSex: athlete.biologicalSex,
+                cyclePhase: weekCyclePhase
             )
 
             // Apply terrain constraint adaptation for VG sessions (trail/ultra only)
