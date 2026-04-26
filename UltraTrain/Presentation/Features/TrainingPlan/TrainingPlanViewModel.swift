@@ -14,6 +14,13 @@ final class TrainingPlanViewModel {
     private let nutritionRepository: any NutritionRepository
     let nutritionAdvisor: any SessionNutritionAdvisor
     let fitnessRepository: any FitnessRepository
+    /// Optional. When provided, the latest RecoveryScore is fetched on
+    /// plan load and passed to PlanAdjustmentCalculator.analyze. That
+    /// fires the swapToRecoveryLowRecovery / reduceLoadLowRecovery
+    /// recommendations which Commit E added to the urgent auto-apply
+    /// set — turning poor overnight HRV/sleep into an automatic swap
+    /// of today's hard session for an easy run, no banner round-trip.
+    let recoveryRepository: (any RecoveryRepository)?
     let widgetDataWriter: WidgetDataWriter
     private let hapticService: any HapticServiceProtocol
     private let subscriptionService: (any SubscriptionServiceProtocol)?
@@ -71,7 +78,8 @@ final class TrainingPlanViewModel {
         stravaImportService: (any StravaImportServiceProtocol)? = nil,
         intervalPerformanceRepository: (any IntervalPerformanceRepository)? = nil,
         notificationService: (any NotificationServiceProtocol)? = nil,
-        appSettingsRepository: (any AppSettingsRepository)? = nil
+        appSettingsRepository: (any AppSettingsRepository)? = nil,
+        recoveryRepository: (any RecoveryRepository)? = nil
     ) {
         self.planRepository = planRepository
         self.athleteRepository = athleteRepository
@@ -89,6 +97,7 @@ final class TrainingPlanViewModel {
         self.intervalPerformanceRepository = intervalPerformanceRepository
         self.notificationService = notificationService
         self.appSettingsRepository = appSettingsRepository
+        self.recoveryRepository = recoveryRepository
     }
 
     // MARK: - Load

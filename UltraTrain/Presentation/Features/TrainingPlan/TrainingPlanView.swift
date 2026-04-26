@@ -37,7 +37,8 @@ struct TrainingPlanView: View {
         stravaImportService: (any StravaImportServiceProtocol)? = nil,
         intervalPerformanceRepository: (any IntervalPerformanceRepository)? = nil,
         notificationService: (any NotificationServiceProtocol)? = nil,
-        appSettingsRepository: (any AppSettingsRepository)? = nil
+        appSettingsRepository: (any AppSettingsRepository)? = nil,
+        recoveryRepository: (any RecoveryRepository)? = nil
     ) {
         self.raceRepository = raceRepository
         self.planRepository = planRepository
@@ -63,7 +64,8 @@ struct TrainingPlanView: View {
             stravaImportService: stravaImportService,
             intervalPerformanceRepository: intervalPerformanceRepository,
             notificationService: notificationService,
-            appSettingsRepository: appSettingsRepository
+            appSettingsRepository: appSettingsRepository,
+            recoveryRepository: recoveryRepository
         ))
     }
 

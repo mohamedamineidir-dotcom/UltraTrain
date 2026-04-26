@@ -74,7 +74,8 @@ extension MainTabView {
                 stravaImportService: stravaImportService,
                 intervalPerformanceRepository: intervalPerformanceRepository,
                 notificationService: notificationService,
-                appSettingsRepository: appSettingsRepository
+                appSettingsRepository: appSettingsRepository,
+                recoveryRepository: recoveryRepository
             )
                 .tabItem {
                     Label("Plan", systemImage: "calendar")

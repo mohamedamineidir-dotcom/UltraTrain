@@ -19,6 +19,14 @@ extension TrainingPlanViewModel {
         dismissedRecommendationIds = dismissedRecommendationIds.intersection(currentIds)
 
         Task {
+            // Fetch fitness + recovery in parallel — both feed the
+            // analyser. Recovery is optional (nil-safe inside analyse);
+            // when present, it activates the swapToRecoveryLowRecovery
+            // and reduceLoadLowRecovery recommendations that Commit E
+            // added to the urgent auto-apply set. Result: poor overnight
+            // HRV/sleep silently swaps today's hard session for an easy
+            // run instead of just showing a banner the athlete has to
+            // accept.
             let snapshot: FitnessSnapshot?
             do {
                 snapshot = try await fitnessRepository.getLatestSnapshot()
@@ -26,13 +34,34 @@ extension TrainingPlanViewModel {
                 Logger.fitness.warning("TrainingPlanViewModel: failed to load fitness snapshot for adjustments: \(error)")
                 return
             }
-            guard let snapshot else { return }
+            let recoveryScore: RecoveryScore? = await loadLatestRecoveryScore()
             adjustmentRecommendations = PlanAdjustmentCalculator.analyze(
-                plan: plan, fitnessSnapshot: snapshot
+                plan: plan,
+                fitnessSnapshot: snapshot,
+                recoveryScore: recoveryScore
             )
             let updatedIds = Set(adjustmentRecommendations.map(\.id))
             dismissedRecommendationIds = dismissedRecommendationIds.intersection(updatedIds)
             await autoApplyUrgentAdjustments()
+        }
+    }
+
+    /// Pulls the most-recent recovery snapshot from the optional
+    /// `recoveryRepository`. Returns nil when the dependency wasn't
+    /// injected (e.g. tests, contexts without HealthKit) — the analyser
+    /// then falls back to the existing fitness-only adjustment path.
+    private func loadLatestRecoveryScore() async -> RecoveryScore? {
+        guard let repo = recoveryRepository else { return nil }
+        do {
+            let calendar = Calendar.current
+            let now = Date.now
+            // invariant: Calendar.date(byAdding:) always succeeds for simple offsets
+            let weekAgo = calendar.date(byAdding: .day, value: -7, to: now)!
+            let snapshots = try await repo.getSnapshots(from: weekAgo, to: now)
+            return snapshots.last?.recoveryScore
+        } catch {
+            Logger.recovery.warning("TrainingPlanViewModel: failed to load recovery snapshot for adjustments: \(error)")
+            return nil
         }
     }
 
