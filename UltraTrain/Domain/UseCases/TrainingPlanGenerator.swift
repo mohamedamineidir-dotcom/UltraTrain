@@ -102,6 +102,18 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         // 4. Calculate volumes (with dynamic caps and anchoring)
         let raceDuration = targetRace.estimatedDuration(experience: athlete.experienceLevel)
         let raceEffectiveKm = targetRace.effectiveDistanceKm
+
+        // Build per-athlete personalization profile. Tenure, weight band,
+        // ultra finish count, and demonstrated longest run feed into
+        // multipliers + a hard cap on peak LR. Composite multiplier is
+        // clamped to [0.75, 1.30] inside the profile so no single
+        // signal can blow up prescriptions.
+        let ultraCount = countUltraFinishes(athlete: athlete)
+        let personalization = PersonalizationProfile.from(
+            athlete: athlete,
+            ultraFinishCount: ultraCount
+        )
+
         let volumes = VolumeCalculator.calculate(
             skeletons: volumeSkeletons,
             currentWeeklyVolumeKm: athlete.weeklyVolumeKm,
@@ -116,7 +128,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             raceType: targetRace.raceType,
             painFrequency: athlete.painFrequency,
             taperProfile: taperProfile,
-            athleteAge: athlete.age
+            athleteAge: athlete.age,
+            personalization: personalization
         )
 
         // 5. Track week number within each phase
@@ -844,5 +857,14 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         case .road10K:
             return ""
         }
+    }
+
+    /// Counts ultra finishes (≥30 km trail PBs) used to set the
+    /// ultra-experience multiplier on `PersonalizationProfile`. PBs
+    /// with `timeSeconds == 0` are treated as placeholders and excluded.
+    private func countUltraFinishes(athlete: Athlete) -> Int {
+        athlete.trailPersonalBests.filter {
+            $0.distanceKm >= 30 && $0.timeSeconds > 0
+        }.count
     }
 }

@@ -6,12 +6,16 @@ enum VolumeCapCalculator {
 
     /// Dynamic weekly volume increase cap (15-20% trail/ultra, 10-13% road).
     /// Scales with experience, race distance, philosophy, injury profile.
+    /// `personalization` adds a small dampening if the athlete flagged
+    /// recurring injury structures (-0.5% per structure, max -2%) and a
+    /// small bonus for long-tenure athletes (per tenureMultiplier).
     static func weeklyVolumeCap(
         experience: ExperienceLevel,
         raceType: RaceType = .trail,
         raceEffectiveKm: Double = 50,
         philosophy: TrainingPhilosophy = .balanced,
-        painFrequency: PainFrequency = .never
+        painFrequency: PainFrequency = .never,
+        personalization: PersonalizationProfile? = nil
     ) -> Double {
         if raceType == .road {
             // Road: 10-13% range
@@ -19,7 +23,15 @@ enum VolumeCapCalculator {
             if experience == .advanced || experience == .elite { cap += 1.0 }
             if philosophy == .performance { cap += 1.0 }
             if raceEffectiveKm > 42 { cap += 1.0 } // marathon+
-            return min(cap, 13.0)
+            // Tenure: long-tenure athletes can sustain a slightly faster
+            // ramp; short-tenure athletes ramp more conservatively.
+            // Mapping: tenureMultiplier 0.92→-0.5, 0.95→-0.25, 1.00→0,
+            //          1.05→+0.25, 1.10→+0.5
+            if let p = personalization {
+                cap += (p.tenureMultiplier - 1.0) * 5.0
+                cap += p.injuryVolumeCapPenalty
+            }
+            return min(max(cap, 8.0), 13.0)
         }
 
         // Trail/Ultra: 15-20% range
@@ -39,6 +51,11 @@ enum VolumeCapCalculator {
         // Injury penalty
         if painFrequency == .often { cap -= 2.0 }
         else if painFrequency == .sometimes { cap -= 1.0 }
+        // Personalization: tenure bonus + per-structure injury penalty
+        if let p = personalization {
+            cap += (p.tenureMultiplier - 1.0) * 5.0
+            cap += p.injuryVolumeCapPenalty
+        }
 
         return min(max(cap, 12.0), 20.0)
     }

@@ -31,8 +31,20 @@ struct Athlete: Identifiable, Equatable, Sendable {
     var painFrequency: PainFrequency = .never
     var injuryCountLastYear: InjuryCount = .none
     var hasRecentInjury: Bool = false
+    /// Recurring injury structures the athlete flagged at onboarding.
+    /// Drives PersonalizationProfile injury-volume penalty and (in v2)
+    /// session-selection bias.
+    var injuryStructures: Set<InjuryStructure> = []
     var strengthTrainingPreference: StrengthTrainingPreference = .no
     var strengthTrainingLocation: StrengthTrainingLocation = .home
+
+    // MARK: - Tenure
+
+    /// Years of consistent running (≥1×/week). 0 means unknown.
+    /// Drives the tenure multiplier in PersonalizationProfile —
+    /// a 10-year intermediate tolerates more peak load than a
+    /// 2-year intermediate at the same tier label.
+    var runningYears: Double = 0
 
     // MARK: - Terrain & Environment
 

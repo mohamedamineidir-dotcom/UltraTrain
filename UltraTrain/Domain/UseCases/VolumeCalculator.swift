@@ -37,7 +37,8 @@ enum VolumeCalculator {
         raceType: RaceType = .trail,
         painFrequency: PainFrequency = .never,
         taperProfile: TaperProfile? = nil,
-        athleteAge: Int = 0
+        athleteAge: Int = 0,
+        personalization: PersonalizationProfile? = nil
     ) -> [WeekVolume] {
         guard !skeletons.isEmpty else { return [] }
 
@@ -66,7 +67,8 @@ enum VolumeCalculator {
                 previousNonRecoveryWeekTotal: previousNonRecoveryWeekTotal,
                 taperProfile: taperProfile,
                 weekNumberInTaper: weekInTaper,
-                athleteAge: athleteAge
+                athleteAge: athleteAge,
+                personalization: personalization
             )
 
             if skeleton.phase == .taper {
@@ -117,7 +119,8 @@ enum VolumeCalculator {
             raceType: raceType,
             raceEffectiveKm: raceEffectiveKm,
             philosophy: philosophy,
-            painFrequency: painFrequency
+            painFrequency: painFrequency,
+            personalization: personalization
         )
         let week1Multiplier = VolumeCapCalculator.week1VolumeMultiplier(preferredRunsPerWeek: preferredRunsPerWeek)
         let week1Baseline = VolumeCapCalculator.week1MinimumBaseline(experience: experience)

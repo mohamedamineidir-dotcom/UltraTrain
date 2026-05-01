@@ -31,7 +31,8 @@ enum LongRunCurveCalculator {
         previousNonRecoveryWeekTotal: TimeInterval = 0,
         taperProfile: TaperProfile? = nil,
         weekNumberInTaper: Int = 0,
-        athleteAge: Int = 0
+        athleteAge: Int = 0,
+        personalization: PersonalizationProfile? = nil
     ) -> WeekDurations {
         let planProgress = totalWeeks > 1
             ? Double(weekIndex) / Double(totalWeeks - 1)
@@ -49,7 +50,9 @@ enum LongRunCurveCalculator {
             raceEffectiveKm: raceEffectiveKm,
             currentWeeklyVolumeKm: currentWeeklyVolumeKm,
             raceDurationSeconds: raceDurationSeconds,
-            taperProfile: taperProfile
+            taperProfile: taperProfile,
+            athleteAge: athleteAge,
+            personalization: personalization
         )
 
         // --- B2B decision ---
@@ -91,7 +94,8 @@ enum LongRunCurveCalculator {
                 raceDurationSeconds: raceDurationSeconds,
                 raceEffectiveKm: raceEffectiveKm,
                 taperProfile: taperProfile,
-                athleteAge: athleteAge
+                athleteAge: athleteAge,
+                personalization: personalization
             )
             b2bDay1 = combined * AppConfiguration.Training.b2bDay1Split
             b2bDay2 = combined * AppConfiguration.Training.b2bDay2Split
@@ -246,7 +250,8 @@ enum LongRunCurveCalculator {
         currentWeeklyVolumeKm: Double = 40,
         raceDurationSeconds: TimeInterval,
         taperProfile: TaperProfile? = nil,
-        athleteAge: Int = 0
+        athleteAge: Int = 0,
+        personalization: PersonalizationProfile? = nil
     ) -> TimeInterval {
         guard phase != .taper else {
             // Taper base = 85% of peak → then durations() multiplies by weekly fraction
@@ -254,7 +259,8 @@ enum LongRunCurveCalculator {
                 experience, raceDurationSeconds: raceDurationSeconds,
                 philosophy: philosophy, raceGoal: raceGoal,
                 raceEffectiveKm: raceEffectiveKm,
-                athleteAge: athleteAge
+                athleteAge: athleteAge,
+                personalization: personalization
             )
             return peak * AppConfiguration.Training.taperLongRunPeakFraction
         }
@@ -268,7 +274,8 @@ enum LongRunCurveCalculator {
             experience, raceDurationSeconds: raceDurationSeconds,
             philosophy: philosophy, raceGoal: raceGoal,
             raceEffectiveKm: raceEffectiveKm,
-            athleteAge: athleteAge
+            athleteAge: athleteAge,
+            personalization: personalization
         )
 
         // Build weeks only (base + build + peak, excluding taper)
@@ -339,7 +346,8 @@ enum LongRunCurveCalculator {
         raceDurationSeconds: TimeInterval,
         raceEffectiveKm: Double = 100,
         taperProfile: TaperProfile? = nil,
-        athleteAge: Int = 0
+        athleteAge: Int = 0,
+        personalization: PersonalizationProfile? = nil
     ) -> TimeInterval {
         let startCombined = AppConfiguration.Training.b2bStartCombinedHours * 3600
         let maxCapHours = AppConfiguration.Training.peakB2BMaxHours[experience.rawValue] ?? 16.0
@@ -354,6 +362,11 @@ enum LongRunCurveCalculator {
         let philMult = AppConfiguration.Training.philosophyPeakMultiplier[philosophy.rawValue] ?? 1.0
         let goalMult = AppConfiguration.Training.goalPeakMultiplier[raceGoalConfigKey(raceGoal)] ?? 1.0
         let ageMult = VolumeCapCalculator.ageVolumeMultiplier(age: athleteAge)
+        // Personalization composite (tenure × weight × ultra). Defaults
+        // to 1.0 when no profile provided. Stacks on top of philosophy /
+        // goal / age, matching peakSingleLongRun behaviour so peak LR
+        // and B2B cap stay consistent.
+        let persMult = personalization?.trailComposite ?? 1.0
 
         // Philosophy + age aware B2B cap. Performance (×1.15) lifts the
         // ceiling — an intermediate-for-performance HK100 athlete gets
@@ -362,10 +375,10 @@ enum LongRunCurveCalculator {
         // (×0.80) drops the ceiling so casual athletes never see a
         // brutal week. Master athletes (50+) trim further per
         // ageVolumeMultiplier. Goal type doesn't move the cap.
-        let personalizedCapHours = maxCapHours * philMult * ageMult
+        let personalizedCapHours = maxCapHours * philMult * ageMult * persMult
 
         let peakCombined = min(
-            raceDurationSeconds * b2bFraction * philMult * goalMult * ageMult,
+            raceDurationSeconds * b2bFraction * philMult * goalMult * ageMult * persMult,
             personalizedCapHours * 3600
         )
 
@@ -448,7 +461,8 @@ enum LongRunCurveCalculator {
         philosophy: TrainingPhilosophy = .balanced,
         raceGoal: RaceGoal = .finish,
         raceEffectiveKm: Double = 0,
-        athleteAge: Int = 0
+        athleteAge: Int = 0,
+        personalization: PersonalizationProfile? = nil
     ) -> TimeInterval {
         let key = experience.rawValue
         let fraction = AppConfiguration.Training.peakSingleLRFraction[key] ?? 0.50
@@ -461,16 +475,31 @@ enum LongRunCurveCalculator {
         // performance-mode 55-year-old still gets a meaningful cap
         // bump over balanced-mode but below their 35-year-old self.
         let ageMult = VolumeCapCalculator.ageVolumeMultiplier(age: athleteAge)
-        let personalizedFraction = fraction * philMult * goalMult * ageMult
+        // Personalization multiplier (tenure × weight × ultra-experience),
+        // hard-clamped to [0.75, 1.30]. Stacks on top of philosophy / goal
+        // / age. Defaults to 1.0 when no profile is provided so existing
+        // call sites are unaffected.
+        let persMult = personalization?.trailComposite ?? 1.0
+        let personalizedFraction = fraction * philMult * goalMult * ageMult * persMult
 
         // Philosophy-aware absolute cap. Performance lifts the ceiling
         // (intermediate from 8h to ~9.2h — matches what real coaches
         // prescribe for performance-mode 100K prep, e.g. HK100 with a
         // 9-hour single long run). Enjoyment drops it (~6.4h). Goal
         // type doesn't move the cap. Age also scales the cap.
-        let personalizedCapSeconds = maxSeconds * philMult * ageMult
+        let personalizedCapSeconds = maxSeconds * philMult * ageMult * persMult
 
         var peak = min(raceDurationSeconds * personalizedFraction, personalizedCapSeconds)
+
+        // Historical-data cap: never prescribe a peak LR more than 20%
+        // above what the athlete has actually completed before. This
+        // protects against tier-label / fraction math producing a peak
+        // the athlete has no demonstrated tolerance for. Only applies
+        // when we have a credible longest-run number.
+        if let historicalCap = personalization?.historicalLongRunCapSeconds,
+           historicalCap > 0 {
+            peak = min(peak, historicalCap)
+        }
 
         // When B2B is eligible, cap the single LR so B2B weeks are always
         // the biggest volume weeks. Single LR should not exceed B2B Day 1.
@@ -483,12 +512,12 @@ enum LongRunCurveCalculator {
                 philosophy: philosophy,
                 raceEffectiveKm: raceEffectiveKm
             )
-            // B2B cap also philosophy + age aware so the inline guard
-            // stays in sync with the standalone B2B calculation in
-            // `b2bCombinedDuration`.
-            let b2bMaxSeconds = (AppConfiguration.Training.peakB2BMaxHours[key] ?? 16.0) * philMult * ageMult * 3600
+            // B2B cap also philosophy + age + personalization aware so
+            // the inline guard stays in sync with the standalone B2B
+            // calculation in `b2bCombinedDuration`.
+            let b2bMaxSeconds = (AppConfiguration.Training.peakB2BMaxHours[key] ?? 16.0) * philMult * ageMult * persMult * 3600
             let b2bCombinedPeak = min(
-                raceDurationSeconds * b2bFraction * philMult * goalMult * ageMult,
+                raceDurationSeconds * b2bFraction * philMult * goalMult * ageMult * persMult,
                 b2bMaxSeconds
             )
             let b2bDay1Peak = b2bCombinedPeak * AppConfiguration.Training.b2bDay1Split
