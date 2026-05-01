@@ -6,6 +6,19 @@ enum IntermediateRaceHandler {
         let weekNumber: Int
         let raceId: UUID
         let behavior: Behavior
+        /// 1, 2, 3 for `.postRaceRecovery` (week 1 = first week after race);
+        /// nil otherwise. Drives the progressive return-to-normal scaling
+        /// in post-race recovery templates so week 2 and week 3 are
+        /// progressively closer to normal training rather than repeating
+        /// week 1's deepest cuts.
+        let weekInRecovery: Int?
+
+        init(weekNumber: Int, raceId: UUID, behavior: Behavior, weekInRecovery: Int? = nil) {
+            self.weekNumber = weekNumber
+            self.raceId = raceId
+            self.behavior = behavior
+            self.weekInRecovery = weekInRecovery
+        }
     }
 
     enum Behavior: Equatable, Sendable {
@@ -90,7 +103,8 @@ enum IntermediateRaceHandler {
                     overrides.append(RaceWeekOverride(
                         weekNumber: recoveryWeek.weekNumber,
                         raceId: race.id,
-                        behavior: .postRaceRecovery
+                        behavior: .postRaceRecovery,
+                        weekInRecovery: offset
                     ))
                 }
             }

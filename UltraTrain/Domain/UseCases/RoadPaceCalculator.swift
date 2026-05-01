@@ -186,10 +186,17 @@ enum RoadPaceCalculator {
         guard fitnessPace > 0, goalPace > 0 else { return .realistic }
         // Positive = goal is faster than current fitness
         let speedImprovement = (fitnessPace - goalPace) / fitnessPace
+        // Tightened from 10/20 because 10% faster than current fitness is
+        // already a stretch in one cycle for most athletes — calling that
+        // "realistic" gave overconfident framing. New bands are calibrated
+        // against typical season-over-season improvement curves: ≤8% is
+        // achievable with focused prep, 8-15% requires everything to go
+        // right, >15% is plausible only for fast-improving newer athletes
+        // or true outliers and warrants explicit coach pushback.
         switch speedImprovement {
-        case ..<0.10:  return .realistic      // Goal within 10% of current fitness
-        case ..<0.20:  return .ambitious       // 10-20% faster than fitness
-        default:       return .veryAmbitious   // >20% faster — flag in advice
+        case ..<0.08:  return .realistic       // ≤8% faster than current fitness
+        case ..<0.15:  return .ambitious        // 8-15% faster
+        default:       return .veryAmbitious    // >15% faster — flag in advice
         }
     }
 

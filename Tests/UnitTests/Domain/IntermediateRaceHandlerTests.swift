@@ -123,8 +123,13 @@ struct IntermediateRaceHandlerTests {
         #expect(recovery?.raceId == bRace.id)
     }
 
-    @Test("B-race produces exactly 3 overrides: taper, race week, recovery")
-    func bRaceProducesThreeOverrides() {
+    @Test("B-race produces taper, race week, and distance-scaled recovery weeks")
+    func bRaceProducesExpectedOverrides() {
+        // makeRace defaults to 50km — per RR-23, that triggers 3 post-race
+        // recovery weeks. So the override sequence is:
+        //   week 4: miniTaper
+        //   week 5: raceWeek
+        //   weeks 6, 7, 8: postRaceRecovery × 3
         let skeletons = makeSkeletons(weekRange: 1...8)
         let bRace = makeRace(priority: .bRace, weekNumber: 5)
 
@@ -133,13 +138,20 @@ struct IntermediateRaceHandlerTests {
             intermediateRaces: [bRace]
         )
 
-        #expect(overrides.count == 3, "B-race should produce exactly 3 overrides")
+        #expect(overrides.count == 5, "B-race at 50km produces taper + race + 3 recoveries")
         #expect(overrides[0].behavior == .miniTaper)
         #expect(overrides[0].weekNumber == 4)
         #expect(overrides[1].behavior == .raceWeek(priority: .bRace))
         #expect(overrides[1].weekNumber == 5)
         #expect(overrides[2].behavior == .postRaceRecovery)
         #expect(overrides[2].weekNumber == 6)
+        #expect(overrides[2].weekInRecovery == 1)
+        #expect(overrides[3].behavior == .postRaceRecovery)
+        #expect(overrides[3].weekNumber == 7)
+        #expect(overrides[3].weekInRecovery == 2)
+        #expect(overrides[4].behavior == .postRaceRecovery)
+        #expect(overrides[4].weekNumber == 8)
+        #expect(overrides[4].weekInRecovery == 3)
     }
 
     // MARK: - C-Race: Lighter Treatment
@@ -297,13 +309,13 @@ struct IntermediateRaceHandlerTests {
             intermediateRaces: [bRace, cRace]
         )
 
-        // B-race: taper (week 3) + race (week 4) + recovery (week 5) = 3
-        // C-race: race (week 8) = 1
-        #expect(overrides.count == 4, "Should have 4 overrides total (3 for B-race + 1 for C-race)")
+        // B-race at 50km: taper (week 3) + race (week 4) + 3 recoveries (RR-23)
+        // C-race at 50km: race (week 8) only — C-races get no taper/recovery
+        #expect(overrides.count == 6, "5 for B-race + 1 for C-race")
 
         let bRaceOverrides = overrides.filter { $0.raceId == bRace.id }
         let cRaceOverrides = overrides.filter { $0.raceId == cRace.id }
-        #expect(bRaceOverrides.count == 3)
+        #expect(bRaceOverrides.count == 5)
         #expect(cRaceOverrides.count == 1)
     }
 
@@ -323,8 +335,9 @@ struct IntermediateRaceHandlerTests {
         let earlierOverrides = overrides.filter { $0.raceId == earlierRace.id }
         let laterOverrides = overrides.filter { $0.raceId == laterRace.id }
 
-        #expect(earlierOverrides.count == 3)
-        #expect(laterOverrides.count == 3)
+        // Each B-race at 50km → 1 taper + 1 race week + 3 recoveries (RR-23)
+        #expect(earlierOverrides.count == 5)
+        #expect(laterOverrides.count == 5)
 
         // Verify ordering: earlier race overrides appear before later race overrides
         let firstEarlierIndex = overrides.firstIndex { $0.raceId == earlierRace.id }!

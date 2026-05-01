@@ -147,18 +147,19 @@ enum VolumeCapCalculator {
         }
     }
 
-    /// Road-specific recovery cycle — marathon runners need longer blocks.
-    /// Pfitzinger: uses 3-week cycles in 18-week plans (3 load + natural deload).
-    /// For road, advanced+ athletes can sustain 4:1 for marathon prep.
+    /// Road-specific recovery cycle. Pfitzinger 18/55 + 18/70 use 3-week
+    /// cycles even for advanced/elite marathon — combining 4:1 cadence
+    /// with our standard ~25-35% deload was too aggressive (a recovery
+    /// week that distant should be shallower OR the cycle should stay
+    /// at 3:1). We pick 3:1 across the board for adv/elite to match
+    /// Pfitzinger's structure and the generic running-coach consensus,
+    /// keeping current deload depth.
     static func roadRecoveryCycle(for experience: ExperienceLevel, discipline: RoadRaceDiscipline) -> Int {
-        switch (experience, discipline) {
-        case (.beginner, _):                     return 2 // 2:1
-        case (.intermediate, .roadMarathon):     return 3 // 3:1
-        case (.intermediate, _):                 return 3 // 3:1
-        case (.advanced, .roadMarathon):         return 4 // 4:1 (longer blocks for marathon)
-        case (.advanced, _):                     return 3 // 3:1
-        case (.elite, .roadMarathon):            return 4 // 4:1
-        case (.elite, _):                        return 3 // 3:1
+        switch experience {
+        case .beginner:     return 2 // 2:1
+        case .intermediate: return 3 // 3:1
+        case .advanced:     return 3 // 3:1
+        case .elite:        return 3 // 3:1
         }
     }
 

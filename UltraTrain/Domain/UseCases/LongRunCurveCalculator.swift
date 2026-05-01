@@ -167,18 +167,27 @@ enum LongRunCurveCalculator {
             longRun = rawLongRun
         }
 
-        // Recovery week reductions
+        // Recovery week reductions. Beginners get deeper cuts: novices
+        // benefit from larger reductions due to slower adaptation and
+        // higher injury risk. Generic running-coach consensus skews the
+        // 10-40% deload range higher for newer runners. Intermediate+
+        // stay at the established 25/35% cuts that match Higdon and the
+        // mainstream French trail-coaching norm.
         if isRecoveryWeek {
-            easy1 *= 0.75
-            easy2 *= 0.75
-            interval *= 0.75
-            vg *= 0.75
+            let easyMult: Double = (experience == .beginner) ? 0.65 : 0.75
+            let lrMult: Double = (experience == .beginner) ? 0.55 : 0.65
+            easy1 *= easyMult
+            easy2 *= easyMult
+            interval *= easyMult
+            vg *= easyMult
             if b2b {
+                // Beginners never reach B2B (gated in isB2BWeek), so this
+                // branch is intermediate+ only. Keep current ×0.65.
                 b2bDay1 *= 0.65
                 b2bDay2 *= 0.65
                 longRun = b2bDay1 + b2bDay2
             } else {
-                longRun *= 0.65
+                longRun *= lrMult
             }
         }
 

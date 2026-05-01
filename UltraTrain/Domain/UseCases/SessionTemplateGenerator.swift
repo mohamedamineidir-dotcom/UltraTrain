@@ -42,7 +42,13 @@ enum SessionTemplateGenerator {
         var workouts: [IntervalWorkout] = []
 
         if let override = raceOverride {
-            templates = overrideTemplates(for: override.behavior, volume: volume, preferredRunsPerWeek: runsPerWeek, raceContext: intermediateRaceContext)
+            templates = overrideTemplates(
+                for: override.behavior,
+                volume: volume,
+                preferredRunsPerWeek: runsPerWeek,
+                raceContext: intermediateRaceContext,
+                weekInRecovery: override.weekInRecovery ?? 1
+            )
         } else if skeleton.isRecoveryWeek {
             templates = recoveryTemplates(volume: volume, preferredRunsPerWeek: runsPerWeek)
         } else {
@@ -675,7 +681,8 @@ enum SessionTemplateGenerator {
         volume: VolumeCalculator.WeekVolume,
         preferredRunsPerWeek: Int = 5,
         raceContext: RaceContext? = nil,
-        isRoadRace: Bool = false
+        isRoadRace: Bool = false,
+        weekInRecovery: Int = 1
     ) -> [SessionTemplate] {
         let raw: [SessionTemplate]
         switch behavior {
@@ -686,7 +693,12 @@ enum SessionTemplateGenerator {
                 ? cRaceWeekTemplates(volume: volume, raceContext: raceContext)
                 : bRaceWeekTemplates(volume: volume, raceContext: raceContext)
         case .postRaceRecovery:
-            raw = postRaceRecoveryTemplates(volume: volume, raceContext: raceContext, isRoadRace: isRoadRace)
+            raw = postRaceRecoveryTemplates(
+                volume: volume,
+                raceContext: raceContext,
+                isRoadRace: isRoadRace,
+                weekInRecovery: weekInRecovery
+            )
         }
         return capActiveSessionsForOverride(raw, preferredRunsPerWeek: preferredRunsPerWeek)
     }
@@ -920,11 +932,27 @@ enum SessionTemplateGenerator {
     private static func postRaceRecoveryTemplates(
         volume: VolumeCalculator.WeekVolume,
         raceContext: RaceContext? = nil,
-        isRoadRace: Bool = false
+        isRoadRace: Bool = false,
+        weekInRecovery: Int = 1
     ) -> [SessionTemplate] {
         let raceKm = raceContext?.distanceKm ?? 50
         let base = volume.baseSessionDurations
         let longRun = volume.targetLongRunDurationSeconds
+
+        // Progressive return-to-normal across the post-race recovery
+        // weeks. Week 1 keeps the deepest cuts (the templates below);
+        // week 2 scales sessions ~25% closer to normal; week 3 gets
+        // close to a standard easy week. Caps inherit each per-distance
+        // branch's structure (rest days remain in place) so we don't
+        // accidentally promote a rest day to a workout — only durations
+        // grow. Matches the Koop / Roche progression: week 1 deepest,
+        // each subsequent week steps closer to baseline.
+        let weekFactor: Double
+        switch weekInRecovery {
+        case ...1: weekFactor = 1.0
+        case 2:    weekFactor = 1.25
+        default:   weekFactor = 1.45
+        }
 
         // RR-13: For road races, strip .verticalGain sessions and zero the
         // long-run elevationFraction. Road athletes returning from a B-race
@@ -939,9 +967,10 @@ enum SessionTemplateGenerator {
             ? "Moderate tempo. Rebuild threshold feel without overloading fresh-from-race legs."
             : "Uphill session at moderate effort. Rebuild vertical strength."
 
+        let baseTemplates: [SessionTemplate]
         if raceKm > 100 {
             // Ultra 100K+: 2 rest days, easy mid-week, short quality Thu, shortened long run
-            return [
+            baseTemplates = [
                 tpl(0, .rest, .easy, 0, 0, "Complete rest. Recover from a big effort."),
                 tpl(1, .rest, .easy, 0, 0, "Rest. Walk if you feel like it."),
                 tpl(2, .recovery, .easy, base.easyRun1Seconds * 0.5, 0,
@@ -957,7 +986,7 @@ enum SessionTemplateGenerator {
             ]
         } else if raceKm > 50 {
             // 50-100K: 1 rest day, easy Tue, quality Wed-Thu, shortened long run
-            return [
+            baseTemplates = [
                 tpl(0, .rest, .easy, 0, 0, "Complete rest. Let your body recover."),
                 tpl(1, .recovery, .easy, base.easyRun1Seconds * 0.6, 0,
                     "First easy jog. Short and gentle."),
@@ -974,7 +1003,7 @@ enum SessionTemplateGenerator {
             ]
         } else if raceKm > 25 {
             // 25-50K: 1 rest day, quick return to quality + long run
-            return [
+            baseTemplates = [
                 tpl(0, .rest, .easy, 0, 0, "Rest day after your race."),
                 tpl(1, .recovery, .easy, base.easyRun1Seconds * 0.7, 0,
                     "Easy jog. Shake out race legs."),
@@ -991,7 +1020,7 @@ enum SessionTemplateGenerator {
             ]
         } else {
             // < 25K: almost normal week — fast return to quality + near-full long run
-            return [
+            baseTemplates = [
                 tpl(0, .rest, .easy, 0, 0, "Rest day after your race."),
                 tpl(1, .recovery, .easy, base.easyRun1Seconds * 0.8, 0,
                     "Easy run. Shake out race effort."),
@@ -1006,6 +1035,23 @@ enum SessionTemplateGenerator {
                 tpl(6, .longRun, .easy, longRun * 0.8, lrElevFraction055,
                     "Near-normal long run. Back on track."),
             ]
+        }
+
+        // Week 1 (factor = 1.0) returns templates unchanged. Weeks 2 and
+        // 3 scale running session durations to walk back toward normal
+        // training. Rest and race days are preserved as-is — we only
+        // scale durations, never promote a rest day into a workout.
+        guard weekFactor != 1.0 else { return baseTemplates }
+        return baseTemplates.map { template in
+            guard template.type != .rest, template.type != .race else { return template }
+            return SessionTemplate(
+                dayOffset: template.dayOffset,
+                type: template.type,
+                intensity: template.intensity,
+                durationSeconds: template.durationSeconds * weekFactor,
+                elevationFraction: template.elevationFraction,
+                description: template.description
+            )
         }
     }
 

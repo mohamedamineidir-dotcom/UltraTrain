@@ -54,7 +54,10 @@ struct LongRunCurveCalculatorTests {
 
     @Test("long run peaks near race fraction of race duration")
     func longRunPeakNearRaceFraction() {
-        let raceDuration: TimeInterval = 50400 // ~14h (HK100-ish)
+        // Use a sub-80km race so B2B cap doesn't apply (intermediate's
+        // B2B threshold is 80km effective). Without B2B in play, peak
+        // single LR climbs cleanly toward the experience-tier fraction.
+        let raceDuration: TimeInterval = 25200 // ~7h marathon-ish
         let d = LongRunCurveCalculator.durations(
             weekIndex: 22, // near end of 24-week build
             totalWeeks: 24,
@@ -63,7 +66,7 @@ struct LongRunCurveCalculatorTests {
             experience: .intermediate,
             philosophy: .balanced,
             raceDurationSeconds: raceDuration,
-            raceEffectiveKm: 150,
+            raceEffectiveKm: 50,
             preferredRunsPerWeek: 5
         )
 
@@ -995,9 +998,10 @@ struct LongRunCurveCalculatorTests {
             raceDurationSeconds: raceDuration
         )
 
-        // Beginner cap = 5h, Advanced cap = 10h
-        #expect(beginner <= 5.0 * 3600 + 1,
-                "Beginner LR should be capped at 5h, got \(beginner/3600)h")
+        // Caps come from AppConfiguration.peakSingleLRMaxHours:
+        // beginner 6h, intermediate 8h, advanced 10h, elite 12h.
+        #expect(beginner <= 6.0 * 3600 + 1,
+                "Beginner LR should be capped at 6h, got \(beginner/3600)h")
         #expect(advanced <= 10.0 * 3600 + 1,
                 "Advanced LR should be capped at 10h, got \(advanced/3600)h")
         #expect(advanced > beginner,
