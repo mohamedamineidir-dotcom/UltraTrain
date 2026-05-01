@@ -379,6 +379,7 @@
 		35FB9DBCB76DC547940887BD /* TrainingCalendarLegend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C0AD9096806DF650BE9AF0 /* TrainingCalendarLegend.swift */; };
 		36730A19ADE3509215AB14B0 /* LocalSocialProfileRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CFF4C0A2C376CA1B028F21A /* LocalSocialProfileRepositoryTests.swift */; };
 		3697CCA8FC1441673F368943 /* StravaImportServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6349F6F6E74204C7468CD74F /* StravaImportServiceTests.swift */; };
+		369D782B8D59D31103A24F21 /* MenstrualAdaptationCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCD749E3C9CE91CAF4D88FD8 /* MenstrualAdaptationCalculator.swift */; };
 		3706E0ACA9FFA7087F18E1B7 /* InputValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF4F058D30F33BD8FD1AD42 /* InputValidator.swift */; };
 		3710202A0CBE0EDB2285E833 /* NotificationSoundPickerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DF54D9109B0EC84B431F88 /* NotificationSoundPickerRow.swift */; };
 		371944B287B3885941E551DA /* RoadSessionTargetPace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 929915B09C1A7B5283485D7F /* RoadSessionTargetPace.swift */; };
@@ -784,6 +785,7 @@
 		7411AE5F172708A6D8EB9123 /* EnvironmentValues+NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F2A731EE2CFE1C3560938E /* EnvironmentValues+NetworkMonitor.swift */; };
 		7454919290ED227561AB33F3 /* WatchConnectivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECA7A42DD7DA1D5016F467F /* WatchConnectivityService.swift */; };
 		74811159F1D95C2217281702 /* WeeklyReviewViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 727CF37CD7B60DFD5DF28B3E /* WeeklyReviewViewModelTests.swift */; };
+		74880B399906F469330F6301 /* MenstrualSymptomCluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E3D5D445DF6EBA7D6E214A /* MenstrualSymptomCluster.swift */; };
 		74D55AE8916803A7CB08C0A7 /* RunReplayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FEEE9E32F644D90CFD1D84 /* RunReplayViewModel.swift */; };
 		74EE5F5009C2A90E0D0E930F /* SyncQueueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46C7C266359287830B19FFDC /* SyncQueueView.swift */; };
 		7538A709D344E405CE709A26 /* FriendConnectionDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B4E0F851E01761301B5223 /* FriendConnectionDTO.swift */; };
@@ -808,6 +810,7 @@
 		773A2061464A1CC6665F9E28 /* LastRunCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D211332A0DE57BA661D9F47 /* LastRunCard.swift */; };
 		77864AA9614142C637AA1705 /* CoachingInsightCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9344BDACB5E3826B262FE7B5 /* CoachingInsightCard.swift */; };
 		778770852B8FE0A1FF984CB9 /* PreRunBriefing.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE00C3061FF91AF8A61D9F83 /* PreRunBriefing.swift */; };
+		77A1B09BC1EF306FA63A140D /* MenstrualAdaptationCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3751CFC33A4C618706AB7A60 /* MenstrualAdaptationCalculatorTests.swift */; };
 		77DA47C8494AEA27558A6038 /* DailyNutritionCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D77E1E3DE0FDAE2A2685007 /* DailyNutritionCalculator.swift */; };
 		781A7FFCFFC62B69715B7C0E /* FitnessSnapshotSwiftDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAAD6E850585DEE1C6B43D5 /* FitnessSnapshotSwiftDataModel.swift */; };
 		78813408D61FC0764A44AB33 /* ActiveRunViewModel+Context.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CE0BDA15CB31F02F65B5510 /* ActiveRunViewModel+Context.swift */; };
@@ -2226,6 +2229,7 @@
 		364360DFC64B238891E74FD7 /* QualitySessionRatioResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QualitySessionRatioResolver.swift; sourceTree = "<group>"; };
 		365F0542FF9BAE9B6723B6C1 /* PerformanceEstimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceEstimator.swift; sourceTree = "<group>"; };
 		36E813F94D4567DE4B5097C0 /* Logger+App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Logger+App.swift"; sourceTree = "<group>"; };
+		3751CFC33A4C618706AB7A60 /* MenstrualAdaptationCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenstrualAdaptationCalculatorTests.swift; sourceTree = "<group>"; };
 		37634083849CDB029D660FB7 /* RaceSwiftDataMapperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceSwiftDataMapperTests.swift; sourceTree = "<group>"; };
 		37C6218E43AFF77633FF26ED /* RecoveryRecommendation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoveryRecommendation.swift; sourceTree = "<group>"; };
 		37EB546EEDE884A595E033B3 /* WeeklyVolumeCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyVolumeCalculator.swift; sourceTree = "<group>"; };
@@ -2351,6 +2355,7 @@
 		485FEB1CE9CE1CF942BC124F /* GroupChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupChallenge.swift; sourceTree = "<group>"; };
 		4876ADB4F7A67BF54FB77B88 /* ProductLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductLibraryView.swift; sourceTree = "<group>"; };
 		48AA817B1D4A64D86043D843 /* PostRunAdvice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostRunAdvice.swift; sourceTree = "<group>"; };
+		48E3D5D445DF6EBA7D6E214A /* MenstrualSymptomCluster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenstrualSymptomCluster.swift; sourceTree = "<group>"; };
 		48F94EC52EA1289C30C95930 /* SessionNutritionAdvisorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionNutritionAdvisorTests.swift; sourceTree = "<group>"; };
 		491290E4A05A40BFB5B4546B /* NutritionPerformanceImpact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionPerformanceImpact.swift; sourceTree = "<group>"; };
 		491418BFEEA71823A54A3665 /* ZoneDriftAlertCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoneDriftAlertCalculator.swift; sourceTree = "<group>"; };
@@ -3569,6 +3574,7 @@
 		FC9BCF9A5B8FED905ABE337D /* RemoteSharedRunDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteSharedRunDataSource.swift; sourceTree = "<group>"; };
 		FCA9AF7B4B31C36A30213AFD /* CourseImportUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseImportUseCase.swift; sourceTree = "<group>"; };
 		FCC29DDA4352E841FB1ECABD /* FinishEstimateDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishEstimateDTO.swift; sourceTree = "<group>"; };
+		FCD749E3C9CE91CAF4D88FD8 /* MenstrualAdaptationCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenstrualAdaptationCalculator.swift; sourceTree = "<group>"; };
 		FD050CE1610C5BCDBAD7E823 /* IntervalPerformanceFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntervalPerformanceFeedback.swift; sourceTree = "<group>"; };
 		FD094F721308F3B1B4D1BB2E /* RouteLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteLibraryViewModel.swift; sourceTree = "<group>"; };
 		FD4DBBF8B2DF013F80CB6161 /* StartRunIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartRunIntent.swift; sourceTree = "<group>"; };
@@ -4526,6 +4532,7 @@
 				AD0B11F0A002EFCE9C0CE928 /* LiveHRZoneTracker.swift */,
 				9CD4C64F191262187B9D5C93 /* LiveNutritionTracker.swift */,
 				119BAD287CA21ADBBE8A0E3A /* LongRunCurveCalculator.swift */,
+				FCD749E3C9CE91CAF4D88FD8 /* MenstrualAdaptationCalculator.swift */,
 				A9547095472F69704F8A016F /* MissedSessionPatternDetector.swift */,
 				9176EDCE190C58FEC02D0317 /* MissedSessionRedistributor.swift */,
 				F19580A0973A4E7E6952F1C9 /* MonthlyVolumeCalculator.swift */,
@@ -4863,6 +4870,7 @@
 				A54CB180C874B0C59261DD1C /* KnownRace.swift */,
 				FC641F27F83E557F1C3A8548 /* LiveCheckpointState.swift */,
 				CCA9C512446674E503C4C28A /* MealType.swift */,
+				48E3D5D445DF6EBA7D6E214A /* MenstrualSymptomCluster.swift */,
 				F077DCEBCA909987EA1B98B8 /* MLFinishTimePrediction.swift */,
 				E12D012F87F539F9598A0C9C /* MonotonyLevel.swift */,
 				8A02C43D52419E2FD91E2244 /* MorningCheckIn.swift */,
@@ -5852,6 +5860,7 @@
 				50E42F583A52EEA214121B36 /* LiveHRZoneTrackerTests.swift */,
 				703EEBC1310D91BEFFD255FB /* LiveNutritionTrackerTests.swift */,
 				8EA29CAB56609A401B4A7CAB /* LongRunCurveCalculatorTests.swift */,
+				3751CFC33A4C618706AB7A60 /* MenstrualAdaptationCalculatorTests.swift */,
 				252FC7047C9DC5F44167DB7A /* MissedSessionRedistributorTests.swift */,
 				D165E77AF05EFE2A6911E3E5 /* MonthlyVolumeCalculatorTests.swift */,
 				8A97CA0B7D38318EC01EFB5F /* NoMovementDetectorTests.swift */,
@@ -6631,6 +6640,7 @@
 				59FEC17BD2AF16B1DF5B4F50 /* LocationServiceTests.swift in Sources */,
 				B95F2EF8891B5A7E03A7FED3 /* LoginViewModelTests.swift in Sources */,
 				1B71CEBDF95835CAEC949947 /* LongRunCurveCalculatorTests.swift in Sources */,
+				77A1B09BC1EF306FA63A140D /* MenstrualAdaptationCalculatorTests.swift in Sources */,
 				4B8FC165ECDE22E078FE01D1 /* MigrationPlanTests.swift in Sources */,
 				3D8A1FECB79C140302BD7898 /* MissedSessionRedistributorTests.swift in Sources */,
 				FB7FF2DC9E206568464F12CA /* MockAchievementRepository.swift in Sources */,
@@ -7406,6 +7416,8 @@
 				00D52E54EC2E8FD88052885B /* MapStyleResolver.swift in Sources */,
 				E8E94E79EAEB47E46A5F52B8 /* MapStyleToggleButton.swift in Sources */,
 				1960B4B0A4BD32D40D70224F /* MealType.swift in Sources */,
+				369D782B8D59D31103A24F21 /* MenstrualAdaptationCalculator.swift in Sources */,
+				74880B399906F469330F6301 /* MenstrualSymptomCluster.swift in Sources */,
 				E950F5460F8DFD3362BB7BD0 /* MessageComposeView.swift in Sources */,
 				F53AF08C18E242CD00AEF1DE /* MiniFormSparkline.swift in Sources */,
 				594ADD390CF6F3D1D6766FE8 /* MissedSessionBanner.swift in Sources */,

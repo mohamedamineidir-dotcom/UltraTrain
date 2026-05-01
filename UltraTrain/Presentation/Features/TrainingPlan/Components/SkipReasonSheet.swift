@@ -97,53 +97,57 @@ struct SkipReasonSheet: View {
 extension SkipReason {
     var displayName: String {
         switch self {
-        case .noTime:       "I don't have time"
-        case .fatigue:      "I feel tired or fatigued"
-        case .noMotivation: "No motivation today"
-        case .soreness:     "Muscle soreness or pain"
-        case .illness:      "Feeling unwell or sick"
-        case .weather:      "Bad weather or conditions"
-        case .injury:       "I have an injury or sharp pain"
-        case .other:        "Other reason"
+        case .noTime:         "I don't have time"
+        case .fatigue:        "I feel tired or fatigued"
+        case .noMotivation:   "No motivation today"
+        case .soreness:       "Muscle soreness or pain"
+        case .illness:        "Feeling unwell or sick"
+        case .weather:        "Bad weather or conditions"
+        case .injury:         "I have an injury or sharp pain"
+        case .other:          "Other reason"
+        case .menstrualCycle: "Menstrual cycle / period symptoms"
         }
     }
 
     var hint: String {
         switch self {
-        case .noTime:       "Work, family, or schedule conflict"
-        case .fatigue:      "Legs heavy, body tired, need rest"
-        case .noMotivation: "Mentally not feeling it today"
-        case .soreness:     "Joint discomfort or muscle tightness"
-        case .illness:      "Cold, flu, or general malaise"
-        case .injury:       "Strain, sprain, or acute pain"
-        case .weather:      "Rain, extreme heat, unsafe trail"
-        case .other:        "Something else"
+        case .noTime:         "Work, family, or schedule conflict"
+        case .fatigue:        "Legs heavy, body tired, need rest"
+        case .noMotivation:   "Mentally not feeling it today"
+        case .soreness:       "Joint discomfort or muscle tightness"
+        case .illness:        "Cold, flu, or general malaise"
+        case .injury:         "Strain, sprain, or acute pain"
+        case .weather:        "Rain, extreme heat, unsafe trail"
+        case .other:          "Something else"
+        case .menstrualCycle: "Cramps, heavy flow, PMS, or related symptoms"
         }
     }
 
     var icon: String {
         switch self {
-        case .noTime:       "clock"
-        case .fatigue:      "battery.25percent"
-        case .noMotivation: "brain.head.profile"
-        case .soreness:     "bandage"
-        case .illness:      "cross.case"
-        case .injury:       "exclamationmark.triangle"
-        case .weather:      "cloud.rain"
-        case .other:        "ellipsis.circle"
+        case .noTime:         "clock"
+        case .fatigue:        "battery.25percent"
+        case .noMotivation:   "brain.head.profile"
+        case .soreness:       "bandage"
+        case .illness:        "cross.case"
+        case .injury:         "exclamationmark.triangle"
+        case .weather:        "cloud.rain"
+        case .other:          "ellipsis.circle"
+        case .menstrualCycle: "calendar.badge.clock"
         }
     }
 
     var color: Color {
         switch self {
-        case .noTime:       .blue
-        case .fatigue:      .orange
-        case .noMotivation: .purple
-        case .soreness:     .red
-        case .illness:      .pink
-        case .injury:       .red
-        case .weather:      .cyan
-        case .other:        .gray
+        case .noTime:         .blue
+        case .fatigue:        .orange
+        case .noMotivation:   .purple
+        case .soreness:       .red
+        case .illness:        .pink
+        case .injury:         .red
+        case .weather:        .cyan
+        case .other:          .gray
+        case .menstrualCycle: .indigo
         }
     }
 }

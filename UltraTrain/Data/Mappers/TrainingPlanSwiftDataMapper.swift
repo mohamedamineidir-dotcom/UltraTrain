@@ -91,7 +91,9 @@ enum TrainingPlanSwiftDataMapper {
             actualElevationGainM: model.actualElevationGainM,
             perceivedFeeling: model.perceivedFeelingRaw.flatMap { PerceivedFeeling(rawValue: $0) },
             perceivedExertion: model.perceivedExertion,
-            skipReason: model.skipReasonRaw.flatMap { SkipReason(rawValue: $0) }
+            skipReason: model.skipReasonRaw.flatMap { SkipReason(rawValue: $0) },
+            menstrualSymptomCluster: model.menstrualSymptomClusterRaw
+                .flatMap { MenstrualSymptomCluster(rawValue: $0) }
         )
     }
 
@@ -154,7 +156,8 @@ enum TrainingPlanSwiftDataMapper {
             actualElevationGainM: session.actualElevationGainM,
             perceivedFeelingRaw: session.perceivedFeeling?.rawValue,
             perceivedExertion: session.perceivedExertion,
-            skipReasonRaw: session.skipReason?.rawValue
+            skipReasonRaw: session.skipReason?.rawValue,
+            menstrualSymptomClusterRaw: session.menstrualSymptomCluster?.rawValue
         )
     }
 }

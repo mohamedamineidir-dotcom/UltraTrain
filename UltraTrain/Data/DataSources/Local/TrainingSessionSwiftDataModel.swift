@@ -30,6 +30,9 @@ final class TrainingSessionSwiftDataModel {
     var perceivedFeelingRaw: String?
     var perceivedExertion: Int?
     var skipReasonRaw: String?
+    /// Sub-classification when skipReasonRaw == "menstrualCycle".
+    /// Lightweight migration — defaults to nil for legacy sessions.
+    var menstrualSymptomClusterRaw: String?
     var updatedAt: Date = Date()
 
     init(
@@ -56,6 +59,7 @@ final class TrainingSessionSwiftDataModel {
         perceivedFeelingRaw: String? = nil,
         perceivedExertion: Int? = nil,
         skipReasonRaw: String? = nil,
+        menstrualSymptomClusterRaw: String? = nil,
         updatedAt: Date = Date()
     ) {
         self.id = id
@@ -81,6 +85,7 @@ final class TrainingSessionSwiftDataModel {
         self.perceivedFeelingRaw = perceivedFeelingRaw
         self.perceivedExertion = perceivedExertion
         self.skipReasonRaw = skipReasonRaw
+        self.menstrualSymptomClusterRaw = menstrualSymptomClusterRaw
         self.updatedAt = updatedAt
     }
 }

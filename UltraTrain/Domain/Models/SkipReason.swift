@@ -31,4 +31,12 @@ enum SkipReason: String, CaseIterable, Sendable, Codable {
 
     /// Catch-all for reasons not listed above.
     case other
+
+    /// Menstruation-related skip. Always paired with a
+    /// `MenstrualSymptomCluster` on the session to drive the right
+    /// adaptation. Rationale and full evidence base in
+    /// `MenstrualAdaptationCalculator` — short version: research
+    /// (McNulty 2020 meta-analysis, IOC 2023, UEFA 2025) supports
+    /// symptom-driven response, not phase-based prescription.
+    case menstrualCycle
 }

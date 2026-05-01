@@ -141,6 +141,13 @@ extension TrainingPlanViewModel {
             case .reduceTargetDueToAccumulatedMissed:
                 let factor = 1.0 - AppConfiguration.Training.accumulatedMissedVolumeReductionPercent / 100.0
                 try await applyVolumeReduction(recommendation, plan: &currentPlan, factor: factor)
+            case .menstrualBleedDayOptions, .menstrualPrePeriodOptions:
+                // Option-style recommendations: applying is handled by the
+                // dedicated picker sheet (defer / reduce intensity / swap /
+                // keep). The banner's primary action opens that sheet
+                // rather than committing a single change here. Until the
+                // sheet is wired in we just dismiss.
+                dismissRecommendation(recommendation)
             }
 
             plan = currentPlan

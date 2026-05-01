@@ -93,6 +93,17 @@ enum SkipAdaptationCalculator {
 
         case .other:
             result = handleOther(context: context, pattern: pattern)
+
+        case .menstrualCycle:
+            // Menstrual-cycle skips are routed to MenstrualAdaptationCalculator
+            // by the ViewModel using the session's `menstrualSymptomCluster`,
+            // which carries the cluster needed for the right adaptation.
+            // SkipAdaptationCalculator deliberately returns no-op for this
+            // case so the two pipelines don't double-recommend.
+            result = Adaptation(
+                recommendations: [],
+                note: "Logged as menstrual-cycle skip. Symptom-specific options will surface separately if you flagged bleed-day or PMS symptoms."
+            )
         }
 
         // Issue #3: Long run skips — special handling (Pfitzinger: "most important session")

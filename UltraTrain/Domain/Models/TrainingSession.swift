@@ -32,6 +32,10 @@ struct TrainingSession: Identifiable, Equatable, Sendable, Codable {
     var perceivedFeeling: PerceivedFeeling? = nil
     var perceivedExertion: Int? = nil
     var skipReason: SkipReason? = nil
+    /// When `skipReason == .menstrualCycle`, sub-classifies the symptom
+    /// cluster so `MenstrualAdaptationCalculator` can offer the right
+    /// adjustment. Nil for all other skip reasons.
+    var menstrualSymptomCluster: MenstrualSymptomCluster? = nil
 
     var isGutTrainingRecommended: Bool {
         (type == .longRun || type == .backToBack || type == .race) && plannedDuration >= 7200
