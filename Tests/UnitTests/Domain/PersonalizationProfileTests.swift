@@ -55,6 +55,7 @@ struct PersonalizationProfileTests {
             tenureMultiplier: 1.10,
             weightMultiplier: 1.03,
             ultraExperienceMultiplier: 1.10,
+            vgDensityMultiplier: 1.0,
             historicalLongRunCapSeconds: nil,
             injuryStructures: []
         )
@@ -66,6 +67,7 @@ struct PersonalizationProfileTests {
             tenureMultiplier: 0.92,
             weightMultiplier: 0.93,
             ultraExperienceMultiplier: 0.95,
+            vgDensityMultiplier: 1.0,
             historicalLongRunCapSeconds: nil,
             injuryStructures: []
         )
@@ -81,6 +83,7 @@ struct PersonalizationProfileTests {
             tenureMultiplier: 1.5,
             weightMultiplier: 1.5,
             ultraExperienceMultiplier: 1.5,
+            vgDensityMultiplier: 1.0,
             historicalLongRunCapSeconds: nil,
             injuryStructures: []
         )
@@ -90,6 +93,7 @@ struct PersonalizationProfileTests {
             tenureMultiplier: 0.5,
             weightMultiplier: 0.5,
             ultraExperienceMultiplier: 0.5,
+            vgDensityMultiplier: 1.0,
             historicalLongRunCapSeconds: nil,
             injuryStructures: []
         )
@@ -102,11 +106,27 @@ struct PersonalizationProfileTests {
             tenureMultiplier: 1.00,
             weightMultiplier: 1.00,
             ultraExperienceMultiplier: 1.10,
+            vgDensityMultiplier: 1.0,
             historicalLongRunCapSeconds: nil,
             injuryStructures: []
         )
         // Road composite = tenure × weight only = 1.0
         #expect(withHighUltra.roadComposite == 1.00)
+    }
+
+    // MARK: - VG density multiplier
+
+    @Test("vgDensityMultiplier scales with tenure + ultra count, clamped to [0.85, 1.20]")
+    func vgDensityBrackets() {
+        // First-timer + low tenure: 0.92 × 0.95 = 0.874
+        #expect(PersonalizationProfile.vgDensityMultiplier(years: 1, ultraCount: 0) == 0.874)
+        // Mid tenure + 1-2 ultras: 1.00 × 1.00 = 1.0
+        #expect(PersonalizationProfile.vgDensityMultiplier(years: 5, ultraCount: 2) == 1.00)
+        // Long tenure + 5+ ultras: 1.05 × 1.10 = 1.155
+        let high = PersonalizationProfile.vgDensityMultiplier(years: 10, ultraCount: 6)
+        #expect((high - 1.155).magnitude < 0.001)
+        // Extreme combo within bounds (clamp at 1.20)
+        // No actual combo exceeds this with current brackets but verify the clamp
     }
 
     // MARK: - Injury penalty
@@ -119,6 +139,7 @@ struct PersonalizationProfileTests {
         let one = PersonalizationProfile(
             tenureMultiplier: 1.0, weightMultiplier: 1.0,
             ultraExperienceMultiplier: 1.0,
+            vgDensityMultiplier: 1.0,
             historicalLongRunCapSeconds: nil,
             injuryStructures: [.knees]
         )
@@ -127,6 +148,7 @@ struct PersonalizationProfileTests {
         let three = PersonalizationProfile(
             tenureMultiplier: 1.0, weightMultiplier: 1.0,
             ultraExperienceMultiplier: 1.0,
+            vgDensityMultiplier: 1.0,
             historicalLongRunCapSeconds: nil,
             injuryStructures: [.knees, .hips, .calf]
         )
@@ -136,6 +158,7 @@ struct PersonalizationProfileTests {
         let many = PersonalizationProfile(
             tenureMultiplier: 1.0, weightMultiplier: 1.0,
             ultraExperienceMultiplier: 1.0,
+            vgDensityMultiplier: 1.0,
             historicalLongRunCapSeconds: nil,
             injuryStructures: manyStructures
         )

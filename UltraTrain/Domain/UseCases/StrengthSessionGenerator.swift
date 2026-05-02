@@ -198,8 +198,32 @@ enum StrengthSessionGenerator {
             reps = "10-12"
         }
 
-        // Rotate exercises by week to prevent identical sessions
+        // Phase-rotated exercise selection. Pool indices have specific
+        // training emphases:
+        //   0 = compound squat-focused (heaviest force production)
+        //   1 = hinge-focused (posterior chain, structural strength)
+        //   2 = unilateral-focused (stability, anatomical adaptation)
+        //
+        // Phase mapping:
+        //   .base   → rotate freely through all 3 patterns (anatomical
+        //             adaptation period — variety builds movement
+        //             vocabulary + tendon/ligament tolerance)
+        //   .build  → alternate squat (0) and hinge (1) only — strength
+        //             + power phase, drop the unilateral-focused
+        //             pattern that's better suited to base
+        //   .peak   → lock to squat pattern (0) — maintenance phase,
+        //             athlete doesn't need to learn new movements while
+        //             also peaking aerobic load. Single familiar
+        //             pattern, lower volume (handled by sets reduction)
+        //   default → freely rotate (covers .recovery / unknown phases)
         let weekVariation = config.weekNumberInPhase
+        let phaseAdjustedIndex: Int
+        switch config.phase {
+        case .base:    phaseAdjustedIndex = weekVariation
+        case .build:   phaseAdjustedIndex = weekVariation % 2
+        case .peak:    phaseAdjustedIndex = 0
+        default:       phaseAdjustedIndex = weekVariation
+        }
 
         if isGym {
             let pool: [[StrengthExercise]] = [
@@ -225,7 +249,7 @@ enum StrengthSessionGenerator {
                                     notes: "Long stride, controlled descent. Mimics uphill stride pattern.", requiresEquipment: true),
                 ],
             ]
-            return pool[weekVariation % pool.count]
+            return pool[phaseAdjustedIndex % pool.count]
         } else {
             let pool: [[StrengthExercise]] = [
                 [
@@ -247,7 +271,7 @@ enum StrengthSessionGenerator {
                                     notes: "One leg planted, other extended. Max glute activation."),
                 ],
             ]
-            return pool[weekVariation % pool.count]
+            return pool[phaseAdjustedIndex % pool.count]
         }
     }
 

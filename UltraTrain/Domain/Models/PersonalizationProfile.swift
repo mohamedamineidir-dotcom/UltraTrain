@@ -30,6 +30,16 @@ struct PersonalizationProfile: Equatable, Sendable {
     /// applied to trail/ultra plans; ignored for road.
     let ultraExperienceMultiplier: Double
 
+    /// Vertical-gain density multiplier for trail plans. Scales the
+    /// progressFactor in `VolumeCalculator.elevationForVolume` so an
+    /// experienced mountain runner ramps closer to race demand at peak,
+    /// while a first-time mountain runner stays conservative. Range
+    /// [0.85, 1.20]. Composed from running tenure + ultra count
+    /// (proxy for climbing background — true climbing-specific
+    /// metric like recent peak D+/km would come from training history
+    /// in v2). Applied trail-only; road plans ignore.
+    let vgDensityMultiplier: Double
+
     // MARK: - Hard caps
 
     /// Athlete's longest completed single run, in seconds, capped at
@@ -84,6 +94,7 @@ struct PersonalizationProfile: Equatable, Sendable {
         tenureMultiplier: 1.0,
         weightMultiplier: 1.0,
         ultraExperienceMultiplier: 1.0,
+        vgDensityMultiplier: 1.0,
         historicalLongRunCapSeconds: nil,
         injuryStructures: []
     )
@@ -106,6 +117,7 @@ extension PersonalizationProfile {
         let tenure = tenureMultiplier(years: athlete.runningYears)
         let weight = weightMultiplier(weightKg: athlete.weightKg)
         let ultra = ultraExperienceMultiplier(count: ultraFinishCount)
+        let vgDensity = vgDensityMultiplier(years: athlete.runningYears, ultraCount: ultraFinishCount)
 
         let cap: TimeInterval?
         if athlete.longestRunKm > 0 {
@@ -120,6 +132,7 @@ extension PersonalizationProfile {
             tenureMultiplier: tenure,
             weightMultiplier: weight,
             ultraExperienceMultiplier: ultra,
+            vgDensityMultiplier: vgDensity,
             historicalLongRunCapSeconds: cap,
             injuryStructures: athlete.injuryStructures
         )
@@ -150,5 +163,37 @@ extension PersonalizationProfile {
         case 3...4:  return 1.05
         default:     return 1.10
         }
+    }
+
+    /// Vertical-gain density multiplier for trail plans. Composes
+    /// running tenure (proxy for general aerobic + tendon tolerance)
+    /// with ultra finish count (proxy for actual mountain experience),
+    /// hard-clamped to [0.85, 1.20]. The clamp keeps even an
+    /// extremely experienced mountain runner inside a sensible band
+    /// — VG density above 1.20× of the curve approaches race-day
+    /// stress in training, which is the wrong trade-off.
+    ///
+    /// True climbing-specific signals (recent peak D+/km in actual
+    /// training history, weekly vertical hours) are deferred to
+    /// Personalization v2 alongside `recentPeakHours` and the
+    /// adaptation signal.
+    static func vgDensityMultiplier(years: Double, ultraCount: Int) -> Double {
+        var mult = 1.0
+        // Tenure proxy: more years = better tendon/ligament tolerance
+        // for steep + sustained climbing
+        switch years {
+        case ..<3:  mult *= 0.92
+        case ..<7:  mult *= 1.00
+        default:    mult *= 1.05
+        }
+        // Ultra-mountain count proxy: athletes who've finished mountain
+        // ultras have demonstrated they tolerate sustained vertical
+        switch ultraCount {
+        case ..<1:  mult *= 0.95
+        case 1...2: mult *= 1.00
+        case 3...4: mult *= 1.05
+        default:    mult *= 1.10
+        }
+        return max(0.85, min(1.20, mult))
     }
 }

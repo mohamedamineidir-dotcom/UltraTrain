@@ -91,7 +91,8 @@ enum VolumeCalculator {
                 derivedKm,
                 raceDistanceKm: raceDistanceKm,
                 raceElevationGainM: raceElevationGainM,
-                planProgress: planProgress
+                planProgress: planProgress,
+                vgDensityMultiplier: personalization?.vgDensityMultiplier ?? 1.0
             )
 
             volumes.append(WeekVolume(
@@ -186,7 +187,8 @@ enum VolumeCalculator {
         _ volume: Double,
         raceDistanceKm: Double,
         raceElevationGainM: Double,
-        planProgress: Double
+        planProgress: Double,
+        vgDensityMultiplier: Double = 1.0
     ) -> Double {
         guard raceDistanceKm > 0 else { return 0 }
         let raceElevationPerKm = raceElevationGainM / raceDistanceKm
@@ -198,10 +200,17 @@ enum VolumeCalculator {
         // ones, while still preventing pathological values for short
         // races like a 13 km / 1500 D+ vert kilometre.
         let trainingElevationPerKm = min(raceElevationPerKm, 75.0)
-        // Progressive ramp: 15% density at plan start → 70% at peak
-        // Keeps D+ manageable through build/peak phases
-        let progressFactor = 0.15 + 0.55 * planProgress
-        let raw = volume * trainingElevationPerKm * progressFactor
+        // Progressive ramp: 15% density at plan start → 70% at peak,
+        // multiplied by athlete VG density personalization (range
+        // [0.85, 1.20] from PersonalizationProfile). An experienced
+        // mountain runner (5+ ultras, 7+ years) can ramp toward ~84%
+        // of race demand at peak; a first-time mountain runner stays
+        // closer to 60%. Cap at 0.95 so even the most experienced
+        // athlete never trains AT race density (specificity argument
+        // says this is the wrong trade-off — race-day stress is for
+        // race day).
+        let personalizedProgressFactor = min(0.95, (0.15 + 0.55 * planProgress) * vgDensityMultiplier)
+        let raw = volume * trainingElevationPerKm * personalizedProgressFactor
         return roundToNearest5(raw)
     }
 
