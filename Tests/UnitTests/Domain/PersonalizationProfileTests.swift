@@ -51,25 +51,19 @@ struct PersonalizationProfileTests {
     @Test("trail composite clamped to [0.75, 1.30]")
     func trailCompositeClamped() {
         // Maximum stack: tenure 1.10 × weight 1.03 × ultra 1.10 = 1.2463 → not clamped
-        let high = PersonalizationProfile(
+        let high = makeProfile(
             tenureMultiplier: 1.10,
             weightMultiplier: 1.03,
-            ultraExperienceMultiplier: 1.10,
-            vgDensityMultiplier: 1.0,
-            historicalLongRunCapSeconds: nil,
-            injuryStructures: []
+            ultraExperienceMultiplier: 1.10
         )
         #expect(high.trailComposite <= 1.30)
         #expect(high.trailComposite > 1.20)
 
         // Minimum stack: tenure 0.92 × weight 0.93 × ultra 0.95 = 0.8129 → not clamped
-        let low = PersonalizationProfile(
+        let low = makeProfile(
             tenureMultiplier: 0.92,
             weightMultiplier: 0.93,
-            ultraExperienceMultiplier: 0.95,
-            vgDensityMultiplier: 1.0,
-            historicalLongRunCapSeconds: nil,
-            injuryStructures: []
+            ultraExperienceMultiplier: 0.95
         )
         #expect(low.trailComposite >= 0.75)
         #expect(low.trailComposite < 0.85)
@@ -79,36 +73,27 @@ struct PersonalizationProfileTests {
     func compositeHardClamps() {
         // Synthetic profile with values outside the natural [0.92, 1.10]
         // brackets — should clamp to 1.30 / 0.75.
-        let extreme = PersonalizationProfile(
+        let extreme = makeProfile(
             tenureMultiplier: 1.5,
             weightMultiplier: 1.5,
-            ultraExperienceMultiplier: 1.5,
-            vgDensityMultiplier: 1.0,
-            historicalLongRunCapSeconds: nil,
-            injuryStructures: []
+            ultraExperienceMultiplier: 1.5
         )
         #expect(extreme.trailComposite == 1.30)
 
-        let lowExtreme = PersonalizationProfile(
+        let lowExtreme = makeProfile(
             tenureMultiplier: 0.5,
             weightMultiplier: 0.5,
-            ultraExperienceMultiplier: 0.5,
-            vgDensityMultiplier: 1.0,
-            historicalLongRunCapSeconds: nil,
-            injuryStructures: []
+            ultraExperienceMultiplier: 0.5
         )
         #expect(lowExtreme.trailComposite == 0.75)
     }
 
     @Test("road composite ignores ultra experience")
     func roadCompositeIgnoresUltra() {
-        let withHighUltra = PersonalizationProfile(
+        let withHighUltra = makeProfile(
             tenureMultiplier: 1.00,
             weightMultiplier: 1.00,
-            ultraExperienceMultiplier: 1.10,
-            vgDensityMultiplier: 1.0,
-            historicalLongRunCapSeconds: nil,
-            injuryStructures: []
+            ultraExperienceMultiplier: 1.10
         )
         // Road composite = tenure × weight only = 1.0
         #expect(withHighUltra.roadComposite == 1.00)
@@ -131,38 +116,76 @@ struct PersonalizationProfileTests {
 
     // MARK: - Injury penalty
 
-    @Test("injury volume cap penalty scales by structure count, capped at -2.0%")
-    func injuryPenaltyScales() {
-        let none = PersonalizationProfile.neutral
-        #expect(none.injuryVolumeCapPenalty == 0)
-
-        let one = PersonalizationProfile(
-            tenureMultiplier: 1.0, weightMultiplier: 1.0,
-            ultraExperienceMultiplier: 1.0,
-            vgDensityMultiplier: 1.0,
-            historicalLongRunCapSeconds: nil,
-            injuryStructures: [.knees]
+    @Test("injury penalty: zero when never+none+empty")
+    func injuryPenaltyHealthyAthlete() {
+        let p = PersonalizationProfile.computeInjuryVolumeCapPenalty(
+            painFrequency: .never,
+            injuryCount: .none,
+            structures: []
         )
-        #expect(one.injuryVolumeCapPenalty == -0.5)
+        #expect(p == 0)
+    }
 
-        let three = PersonalizationProfile(
-            tenureMultiplier: 1.0, weightMultiplier: 1.0,
-            ultraExperienceMultiplier: 1.0,
-            vgDensityMultiplier: 1.0,
-            historicalLongRunCapSeconds: nil,
-            injuryStructures: [.knees, .hips, .calf]
+    @Test("injury penalty: rarely + one + no structures")
+    func injuryPenaltyMildProfile() {
+        let p = PersonalizationProfile.computeInjuryVolumeCapPenalty(
+            painFrequency: .rarely,
+            injuryCount: .one,
+            structures: []
         )
-        #expect(three.injuryVolumeCapPenalty == -1.5)
+        // -0.25 (rarely) + -0.25 (one) + 0 = -0.5
+        #expect(p == -0.5)
+    }
 
-        let manyStructures: Set<InjuryStructure> = [.knees, .hips, .calf, .achilles, .itBand, .footAnkle]
-        let many = PersonalizationProfile(
-            tenureMultiplier: 1.0, weightMultiplier: 1.0,
-            ultraExperienceMultiplier: 1.0,
-            vgDensityMultiplier: 1.0,
-            historicalLongRunCapSeconds: nil,
-            injuryStructures: manyStructures
+    @Test("injury penalty: sometimes + two + 2 structures")
+    func injuryPenaltyModerateProfile() {
+        let p = PersonalizationProfile.computeInjuryVolumeCapPenalty(
+            painFrequency: .sometimes,
+            injuryCount: .two,
+            structures: [.knees, .itBand]
         )
-        #expect(many.injuryVolumeCapPenalty == -2.0, "should cap at -2.0 even with 6 structures")
+        // -0.5 (sometimes) + -0.5 (two) + 2×-0.25 (structures) = -1.5
+        #expect(p == -1.5)
+    }
+
+    @Test("injury penalty: worst-case clamps to -2.0")
+    func injuryPenaltyWorstCase() {
+        let p = PersonalizationProfile.computeInjuryVolumeCapPenalty(
+            painFrequency: .often,
+            injuryCount: .threeOrMore,
+            structures: [.knees, .hips, .calf, .achilles, .itBand, .footAnkle]
+        )
+        // -1.0 + -0.75 + 4×-0.25 (capped) = -2.75 → clamps to -2.0
+        #expect(p == -2.0)
+    }
+
+    @Test("injury penalty: structure-only signal still works (no pain reported)")
+    func injuryPenaltyStructuresOnly() {
+        let p = PersonalizationProfile.computeInjuryVolumeCapPenalty(
+            painFrequency: .never,
+            injuryCount: .none,
+            structures: [.knees, .achilles]
+        )
+        // 0 + 0 + 2×-0.25 = -0.5
+        #expect(p == -0.5)
+    }
+
+    // MARK: - Years proxy from experience
+
+    @Test("yearsProxy maps experience tier to expected tenure multiplier bracket")
+    func yearsProxyMapsToTenureMultiplier() {
+        // Beginner → 1.0 yrs → 0.95 multiplier (1-3 bracket)
+        #expect(PersonalizationProfile.yearsProxy(for: .beginner) == 1.0)
+        #expect(PersonalizationProfile.tenureMultiplier(years: PersonalizationProfile.yearsProxy(for: .beginner)) == 0.95)
+        // Intermediate → 4.0 yrs → 1.00 multiplier (3-7 bracket)
+        #expect(PersonalizationProfile.yearsProxy(for: .intermediate) == 4.0)
+        #expect(PersonalizationProfile.tenureMultiplier(years: PersonalizationProfile.yearsProxy(for: .intermediate)) == 1.00)
+        // Advanced → 9.0 yrs → 1.05 multiplier (7-15 bracket)
+        #expect(PersonalizationProfile.yearsProxy(for: .advanced) == 9.0)
+        #expect(PersonalizationProfile.tenureMultiplier(years: PersonalizationProfile.yearsProxy(for: .advanced)) == 1.05)
+        // Elite → 16.0 yrs → 1.10 multiplier (15+ bracket)
+        #expect(PersonalizationProfile.yearsProxy(for: .elite) == 16.0)
+        #expect(PersonalizationProfile.tenureMultiplier(years: PersonalizationProfile.yearsProxy(for: .elite)) == 1.10)
     }
 
     // MARK: - Neutral / safe defaults
@@ -222,13 +245,78 @@ struct PersonalizationProfileTests {
         #expect(profile.historicalLongRunCapSeconds == 8640)
     }
 
+    // MARK: - Onboarding-derivation behaviour
+
+    @Test("factory derives years from experience tier when runningYears is 0")
+    func factoryDerivesYearsFromExperience() {
+        // Athlete sets no runningYears (default 0) but is .advanced.
+        // Profile should use the experience proxy → 9 years → 1.05 multiplier.
+        let athlete = makeAthlete(runningYears: 0, experience: .advanced)
+        let profile = PersonalizationProfile.from(athlete: athlete)
+        #expect(profile.tenureMultiplier == 1.05)
+    }
+
+    @Test("factory uses explicit runningYears when set, ignoring experience proxy")
+    func factoryRespectsExplicitYears() {
+        // Athlete is .elite (would proxy to 16 years → 1.10) but
+        // explicitly set runningYears = 2 — explicit wins, gives 0.95.
+        let athlete = makeAthlete(runningYears: 2, experience: .elite)
+        let profile = PersonalizationProfile.from(athlete: athlete)
+        #expect(profile.tenureMultiplier == 0.95)
+    }
+
+    @Test("factory derives injury penalty from painFrequency + injuryCount")
+    func factoryDerivesInjuryPenaltyFromExistingFields() {
+        // Athlete with no explicit injuryStructures but pain "sometimes"
+        // and 2 injuries last year — penalty should still fire.
+        let athlete = makeAthlete(
+            painFrequency: .sometimes,
+            injuryCount: .two
+        )
+        let profile = PersonalizationProfile.from(athlete: athlete)
+        // -0.5 (sometimes) + -0.5 (two) + 0 (no structures) = -1.0
+        #expect(profile.injuryVolumeCapPenalty == -1.0)
+    }
+
+    @Test("factory derives VG density from experience proxy when years is 0")
+    func factoryDerivesVgDensityFromExperience() {
+        // Beginner with 0 explicit years → proxy 1.0 → vgDensity:
+        // years bracket <3 → 0.92; ultraCount 0 → 0.95; product = 0.874
+        let athlete = makeAthlete(runningYears: 0, experience: .beginner)
+        let profile = PersonalizationProfile.from(athlete: athlete)
+        #expect((profile.vgDensityMultiplier - 0.874).magnitude < 0.001)
+    }
+
     // MARK: - Helper
+
+    private func makeProfile(
+        tenureMultiplier: Double = 1.0,
+        weightMultiplier: Double = 1.0,
+        ultraExperienceMultiplier: Double = 1.0,
+        vgDensityMultiplier: Double = 1.0,
+        historicalLongRunCapSeconds: TimeInterval? = nil,
+        injuryStructures: Set<InjuryStructure> = [],
+        injuryVolumeCapPenalty: Double = 0
+    ) -> PersonalizationProfile {
+        PersonalizationProfile(
+            tenureMultiplier: tenureMultiplier,
+            weightMultiplier: weightMultiplier,
+            ultraExperienceMultiplier: ultraExperienceMultiplier,
+            vgDensityMultiplier: vgDensityMultiplier,
+            historicalLongRunCapSeconds: historicalLongRunCapSeconds,
+            injuryStructures: injuryStructures,
+            injuryVolumeCapPenalty: injuryVolumeCapPenalty
+        )
+    }
 
     private func makeAthlete(
         weightKg: Double = 70,
         longestRunKm: Double = 0,
         runningYears: Double = 0,
-        injuryStructures: Set<InjuryStructure> = []
+        injuryStructures: Set<InjuryStructure> = [],
+        experience: ExperienceLevel = .intermediate,
+        painFrequency: PainFrequency = .never,
+        injuryCount: InjuryCount = .none
     ) -> Athlete {
         var a = Athlete(
             id: UUID(),
@@ -239,13 +327,15 @@ struct PersonalizationProfileTests {
             heightCm: 175,
             restingHeartRate: 50,
             maxHeartRate: 190,
-            experienceLevel: .intermediate,
+            experienceLevel: experience,
             weeklyVolumeKm: 40,
             longestRunKm: longestRunKm,
             preferredUnit: .metric
         )
         a.runningYears = runningYears
         a.injuryStructures = injuryStructures
+        a.painFrequency = painFrequency
+        a.injuryCountLastYear = injuryCount
         return a
     }
 }

@@ -50,11 +50,20 @@ struct PersonalizationProfile: Equatable, Sendable {
 
     // MARK: - Reported injury structures
 
-    /// Recurring injury sites the athlete flagged at onboarding.
-    /// Currently surfaced to coach advice; used to dampen volume
-    /// caps lightly (-0.5% per structure, max -2%). Will drive
-    /// session-selection bias in v2.
+    /// Recurring injury sites the athlete flagged. Optional refinement
+    /// signal — primary injury volume penalty is derived from
+    /// `painFrequency` + `injuryCountLastYear` (which onboarding does
+    /// collect). When `injuryStructures` is non-empty (v2 onboarding
+    /// or profile-edit), it adds a small additional penalty AND will
+    /// drive session-selection bias in v2 (avoid VG for ITB-prone, etc.).
     let injuryStructures: Set<InjuryStructure>
+
+    /// Volume-cap dampening from the athlete's injury profile. Computed
+    /// in the factory from painFrequency + injuryCountLastYear +
+    /// injuryStructures, hard-floored at -2%. Stored (not computed) so
+    /// that callers reading the profile see the final value without
+    /// re-deriving from the source signals.
+    let injuryVolumeCapPenalty: Double
 
     // MARK: - Composite
 
@@ -72,15 +81,6 @@ struct PersonalizationProfile: Equatable, Sendable {
         clamp(tenureMultiplier * weightMultiplier)
     }
 
-    /// Volume-cap dampening from injury structures. -0.5% per
-    /// flagged structure, capped at -2.0%. Returned as a delta to
-    /// add to the percentage-based weekly cap (so 18% cap with 2
-    /// structures becomes 17%).
-    var injuryVolumeCapPenalty: Double {
-        let count = min(injuryStructures.count, 4)
-        return -0.5 * Double(count)
-    }
-
     private func clamp(_ value: Double) -> Double {
         max(0.75, min(1.30, value))
     }
@@ -88,15 +88,16 @@ struct PersonalizationProfile: Equatable, Sendable {
     // MARK: - Default
 
     /// Profile that has no effect — all multipliers 1.0, no caps,
-    /// no injury structures. Use as fallback when athlete data
-    /// yields no signal.
+    /// no injury structures, zero injury penalty. Use as fallback
+    /// when athlete data yields no signal.
     static let neutral = PersonalizationProfile(
         tenureMultiplier: 1.0,
         weightMultiplier: 1.0,
         ultraExperienceMultiplier: 1.0,
         vgDensityMultiplier: 1.0,
         historicalLongRunCapSeconds: nil,
-        injuryStructures: []
+        injuryStructures: [],
+        injuryVolumeCapPenalty: 0
     )
 }
 
@@ -109,15 +110,34 @@ extension PersonalizationProfile {
     /// cap on peak LR seconds; defaults to 7.5 min/km which is a
     /// reasonable ultra-pace baseline. Pass a faster pace (e.g.
     /// 6.0 min/km) for road athletes when you have one.
+    ///
+    /// Onboarding-derivation strategy: today's onboarding doesn't
+    /// ask for `runningYears` or `injuryStructures` directly — both
+    /// fall back to fields that ARE collected (experienceLevel +
+    /// painFrequency + injuryCountLastYear). Athletes who later
+    /// fill in the explicit fields via profile-edit get more precise
+    /// personalization; everyone else gets a defensible derivation.
     static func from(
         athlete: Athlete,
         ultraFinishCount: Int = 0,
         estimatedLongRunPaceSecondsPerKm: Double = 450 // 7:30 min/km
     ) -> PersonalizationProfile {
-        let tenure = tenureMultiplier(years: athlete.runningYears)
+        // Use explicit runningYears when set; otherwise infer from
+        // experience tier. Explicit > inferred so power users can
+        // refine via profile-edit later.
+        let effectiveYears: Double = athlete.runningYears > 0
+            ? athlete.runningYears
+            : yearsProxy(for: athlete.experienceLevel)
+
+        let tenure = tenureMultiplier(years: effectiveYears)
         let weight = weightMultiplier(weightKg: athlete.weightKg)
         let ultra = ultraExperienceMultiplier(count: ultraFinishCount)
-        let vgDensity = vgDensityMultiplier(years: athlete.runningYears, ultraCount: ultraFinishCount)
+        let vgDensity = vgDensityMultiplier(years: effectiveYears, ultraCount: ultraFinishCount)
+        let injuryPenalty = computeInjuryVolumeCapPenalty(
+            painFrequency: athlete.painFrequency,
+            injuryCount: athlete.injuryCountLastYear,
+            structures: athlete.injuryStructures
+        )
 
         let cap: TimeInterval?
         if athlete.longestRunKm > 0 {
@@ -134,8 +154,65 @@ extension PersonalizationProfile {
             ultraExperienceMultiplier: ultra,
             vgDensityMultiplier: vgDensity,
             historicalLongRunCapSeconds: cap,
-            injuryStructures: athlete.injuryStructures
+            injuryStructures: athlete.injuryStructures,
+            injuryVolumeCapPenalty: injuryPenalty
         )
+    }
+
+    /// Proxy mapping from experience tier → years of consistent
+    /// running. Used as a default when `runningYears` is unset (the
+    /// onboarding flow doesn't ask for years today). Mapping picks
+    /// the centre of each tier's typical range so the corresponding
+    /// `tenureMultiplier` lands on the expected bracket:
+    ///   .beginner     → 1.0 yrs → 0.95 multiplier
+    ///   .intermediate → 4.0 yrs → 1.00 multiplier
+    ///   .advanced     → 9.0 yrs → 1.05 multiplier
+    ///   .elite        → 16.0 yrs → 1.10 multiplier
+    static func yearsProxy(for level: ExperienceLevel) -> Double {
+        switch level {
+        case .beginner:     return 1.0
+        case .intermediate: return 4.0
+        case .advanced:     return 9.0
+        case .elite:        return 16.0
+        }
+    }
+
+    /// Volume-cap dampening from the athlete's injury profile.
+    /// Composes the FREQUENCY (painFrequency: never/rarely/sometimes/
+    /// often) with the COUNT (injuryCountLastYear: none/one/two/3+)
+    /// — both already collected at onboarding — plus an optional
+    /// refinement from `injuryStructures` if the athlete has
+    /// explicitly flagged structures via profile-edit.
+    /// Hard floor at -2.0% so even the worst-case injury profile
+    /// doesn't completely cripple the volume cap.
+    ///
+    /// Worst case: often (-1.0) + 3+ (-0.75) + 4 structures (-1.0)
+    /// = -2.75 → clamped to -2.0
+    /// Common: rarely (-0.25) + one (-0.25) = -0.5
+    /// Healthy: never (0) + none (0) = 0
+    static func computeInjuryVolumeCapPenalty(
+        painFrequency: PainFrequency,
+        injuryCount: InjuryCount,
+        structures: Set<InjuryStructure>
+    ) -> Double {
+        var penalty = 0.0
+        switch painFrequency {
+        case .never:     penalty += 0
+        case .rarely:    penalty += -0.25
+        case .sometimes: penalty += -0.5
+        case .often:     penalty += -1.0
+        }
+        switch injuryCount {
+        case .none:        penalty += 0
+        case .one:         penalty += -0.25
+        case .two:         penalty += -0.5
+        case .threeOrMore: penalty += -0.75
+        }
+        // Specific structures add a small additional penalty on top —
+        // capped contribution so this stays a refinement signal.
+        let structureCount = min(structures.count, 4)
+        penalty += -0.25 * Double(structureCount)
+        return max(penalty, -2.0)
     }
 
     static func tenureMultiplier(years: Double) -> Double {
