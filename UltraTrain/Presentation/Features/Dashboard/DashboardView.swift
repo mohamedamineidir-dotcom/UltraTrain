@@ -216,8 +216,8 @@ struct DashboardView: View {
             }
             .sheet(isPresented: $showSkipSession) {
                 if let session = viewModel.nextSession {
-                    SkipReasonSheet(sessionType: session.type) { reason in
-                        Task { await viewModel.skipNextSession(reason: reason) }
+                    SkipReasonSheet(sessionType: session.type) { reason, cluster in
+                        Task { await viewModel.skipNextSession(reason: reason, cluster: cluster) }
                     }
                 }
             }

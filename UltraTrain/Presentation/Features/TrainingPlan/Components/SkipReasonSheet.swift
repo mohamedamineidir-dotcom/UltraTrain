@@ -2,9 +2,20 @@ import SwiftUI
 
 struct SkipReasonSheet: View {
     let sessionType: SessionType
-    let onConfirm: (SkipReason) -> Void
+    let onConfirm: (SkipReason, MenstrualSymptomCluster?) -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var selectedReason: SkipReason?
+    @State private var selectedCluster: MenstrualSymptomCluster?
+
+    /// Confirm requires a reason. If menstrualCycle is picked, a
+    /// cluster sub-selection is also required so the adaptation
+    /// calculator gets the right symptom signal — McNulty (2020):
+    /// symptom-driven, never phase-based.
+    private var canConfirm: Bool {
+        guard let reason = selectedReason else { return false }
+        if reason == .menstrualCycle { return selectedCluster != nil }
+        return true
+    }
 
     var body: some View {
         NavigationStack {
@@ -22,11 +33,16 @@ struct SkipReasonSheet: View {
                     VStack(spacing: Theme.Spacing.sm) {
                         ForEach(SkipReason.allCases, id: \.self) { reason in
                             reasonRow(reason)
+                            if reason == .menstrualCycle && selectedReason == .menstrualCycle {
+                                menstrualClusterSection
+                                    .transition(.opacity.combined(with: .move(edge: .top)))
+                            }
                         }
                     }
                     .padding(.horizontal, Theme.Spacing.md)
                 }
                 .padding(.vertical, Theme.Spacing.md)
+                .animation(.easeInOut(duration: 0.2), value: selectedReason)
             }
             .navigationTitle("Skip Session")
             .navigationBarTitleDisplayMode(.inline)
@@ -37,16 +53,75 @@ struct SkipReasonSheet: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Skip") {
                         if let reason = selectedReason {
-                            onConfirm(reason)
+                            // Only forward the cluster when the reason
+                            // matches — defensive against UI state lag.
+                            let cluster = reason == .menstrualCycle ? selectedCluster : nil
+                            onConfirm(reason, cluster)
                             dismiss()
                         }
                     }
                     .fontWeight(.semibold)
-                    .disabled(selectedReason == nil)
+                    .disabled(!canConfirm)
                 }
             }
         }
         .presentationDetents([.medium, .large])
+    }
+
+    // MARK: - Menstrual cluster section
+
+    /// Inline sub-prompt that appears under the menstrualCycle row
+    /// when it's selected. Symptom-driven sub-classification per
+    /// the menstrual MVP spec — bleed-day vs PMS vs asymptomatic vs
+    /// unspecified, each with different adaptation behaviour.
+    private var menstrualClusterSection: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            Text("Which describes today best?")
+                .font(.subheadline.weight(.medium))
+                .padding(.top, Theme.Spacing.sm)
+            Text("We use this to offer the right kind of adjustment, not to judge.")
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+
+            VStack(spacing: Theme.Spacing.xs) {
+                ForEach(MenstrualSymptomCluster.allCases, id: \.self) { cluster in
+                    clusterRow(cluster)
+                }
+            }
+            .padding(.top, Theme.Spacing.xs)
+        }
+        .padding(.leading, Theme.Spacing.md)
+        .padding(.bottom, Theme.Spacing.sm)
+    }
+
+    private func clusterRow(_ cluster: MenstrualSymptomCluster) -> some View {
+        let isSelected = selectedCluster == cluster
+        return Button {
+            selectedCluster = cluster
+        } label: {
+            HStack(spacing: Theme.Spacing.sm) {
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .foregroundStyle(isSelected ? Color.indigo : Theme.Colors.secondaryLabel)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(cluster.displayName)
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(Theme.Colors.label)
+                    Text(cluster.hint)
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                }
+                Spacer()
+            }
+            .padding(.vertical, Theme.Spacing.xs)
+            .padding(.horizontal, Theme.Spacing.sm)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                    .fill(isSelected ? Color.indigo.opacity(0.1) : Theme.Colors.secondaryBackground.opacity(0.5))
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(cluster.displayName)
+        .accessibilityHint(cluster.hint)
     }
 
     // MARK: - Reason Row
@@ -148,6 +223,28 @@ extension SkipReason {
         case .weather:        .cyan
         case .other:          .gray
         case .menstrualCycle: .indigo
+        }
+    }
+}
+
+// MARK: - MenstrualSymptomCluster UI Properties
+
+extension MenstrualSymptomCluster {
+    var displayName: String {
+        switch self {
+        case .bleedDay:      "Bleed-day symptoms"
+        case .prePeriod:     "Pre-period (PMS) symptoms"
+        case .asymptomatic:  "Just bleeding, no symptoms"
+        case .unspecified:   "Prefer not to specify"
+        }
+    }
+
+    var hint: String {
+        switch self {
+        case .bleedDay:      "Cramps, heavy flow, fatigue"
+        case .prePeriod:     "Mood, GI, sleep, breast pain, bloating"
+        case .asymptomatic:  "Logged for tracking — no plan change"
+        case .unspecified:   "Skip will be logged without a sub-reason"
         }
     }
 }

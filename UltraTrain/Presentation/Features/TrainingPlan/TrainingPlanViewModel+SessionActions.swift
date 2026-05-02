@@ -68,7 +68,12 @@ extension TrainingPlanViewModel {
 
     // MARK: - Skip
 
-    func skipSession(weekIndex: Int, sessionIndex: Int, reason: SkipReason? = nil) async {
+    func skipSession(
+        weekIndex: Int,
+        sessionIndex: Int,
+        reason: SkipReason? = nil,
+        cluster: MenstrualSymptomCluster? = nil
+    ) async {
         guard var currentPlan = plan else { return }
         guard weekIndex < currentPlan.weeks.count,
               sessionIndex < currentPlan.weeks[weekIndex].sessions.count else { return }
@@ -76,6 +81,7 @@ extension TrainingPlanViewModel {
         var session = currentPlan.weeks[weekIndex].sessions[sessionIndex]
         session.isSkipped = true
         session.skipReason = reason
+        session.menstrualSymptomCluster = cluster
         currentPlan.weeks[weekIndex].sessions[sessionIndex] = session
 
         do {
@@ -84,12 +90,25 @@ extension TrainingPlanViewModel {
 
             // Run skip-specific adaptation if reason provided
             if let reason {
-                analyzeSkipAdaptation(
-                    session: session,
-                    reason: reason,
-                    weekIndex: weekIndex,
-                    plan: currentPlan
-                )
+                if reason == .menstrualCycle {
+                    // Symptom-driven path. McNulty 2020: phase-based
+                    // prescription is unsupported by the evidence; the
+                    // actionable signal is the cluster the athlete just
+                    // logged. Asymptomatic / unspecified → no recs.
+                    analyzeMenstrualAdaptation(
+                        session: session,
+                        cluster: cluster ?? .unspecified,
+                        weekIndex: weekIndex,
+                        plan: currentPlan
+                    )
+                } else {
+                    analyzeSkipAdaptation(
+                        session: session,
+                        reason: reason,
+                        weekIndex: weekIndex,
+                        plan: currentPlan
+                    )
+                }
             }
 
             checkForAdjustments()
@@ -98,6 +117,27 @@ extension TrainingPlanViewModel {
         } catch {
             self.error = error.localizedDescription
             Logger.training.error("Failed to skip session: \(error)")
+        }
+    }
+
+    private func analyzeMenstrualAdaptation(
+        session: TrainingSession,
+        cluster: MenstrualSymptomCluster,
+        weekIndex: Int,
+        plan: TrainingPlan
+    ) {
+        let currentWeek = plan.weeks[weekIndex]
+        let nextWeek = weekIndex + 1 < plan.weeks.count ? plan.weeks[weekIndex + 1] : nil
+        let context = MenstrualAdaptationCalculator.Context(
+            skippedSession: session,
+            cluster: cluster,
+            currentWeek: currentWeek,
+            nextWeek: nextWeek,
+            now: .now
+        )
+        let adaptation = MenstrualAdaptationCalculator.analyze(context: context)
+        if !adaptation.recommendations.isEmpty {
+            adjustmentRecommendations.append(contentsOf: adaptation.recommendations)
         }
     }
 

@@ -10,7 +10,7 @@ struct SessionDetailView: View {
     let nutritionAdvisor: any SessionNutritionAdvisor
     let nutritionPreferences: NutritionPreferences
     var workouts: [IntervalWorkout] = []
-    var onSkip: ((SkipReason) -> Void)?
+    var onSkip: ((SkipReason, MenstrualSymptomCluster?) -> Void)?
     var onUnskip: (() -> Void)?
     var onReschedule: ((Date) -> Void)?
     var onSwap: ((SwapCandidate) -> Void)?
@@ -118,8 +118,8 @@ struct SessionDetailView: View {
         .navigationTitle(session.type.displayName)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showSkipReasonSheet) {
-            SkipReasonSheet(sessionType: session.type) { reason in
-                onSkip?(reason)
+            SkipReasonSheet(sessionType: session.type) { reason, cluster in
+                onSkip?(reason, cluster)
             }
         }
         .sheet(isPresented: $showRescheduleSheet) {
