@@ -22,15 +22,96 @@ import Foundation
 /// and skipped session importance.
 enum SkipAdaptationCalculator {
 
+    /// A past skip carrying its reason + when it happened. Replaces the
+    /// older `[SkipReason]` so the calculator can do time-window
+    /// clustering (acute flares vs chronic patterns) and detect
+    /// sustained illness/injury runs.
+    struct RecentSkip: Sendable, Equatable {
+        let reason: SkipReason
+        let date: Date
+    }
+
     struct Context: Sendable {
         let skippedSession: TrainingSession
         let reason: SkipReason
         let currentWeek: TrainingWeek
         let nextWeek: TrainingWeek?
+        /// Optional second future week. Lets us extend reductions over
+        /// 2+ weeks for sustained illness/injury patterns rather than
+        /// being capped at next week only.
+        let weekAfterNext: TrainingWeek?
         let experience: ExperienceLevel
-        let recentSkipReasons: [SkipReason]  // Last 3 weeks of skip reasons
+        /// Recent skips with their dates (typically last 3 weeks). Carries
+        /// timestamps so we can distinguish a 3-skip flare in 5 days
+        /// (acute) from 3 skips spread across 21 days (chronic).
+        let recentSkips: [RecentSkip]
         let totalWeeksInPlan: Int
         let raceDate: Date?
+        /// "Now" for time-based logic (race proximity, flare windows).
+        /// Defaults to `.now` for callers; injectable for tests.
+        let analysisDate: Date
+
+        init(
+            skippedSession: TrainingSession,
+            reason: SkipReason,
+            currentWeek: TrainingWeek,
+            nextWeek: TrainingWeek?,
+            weekAfterNext: TrainingWeek? = nil,
+            experience: ExperienceLevel,
+            recentSkips: [RecentSkip],
+            totalWeeksInPlan: Int,
+            raceDate: Date?,
+            analysisDate: Date = .now
+        ) {
+            self.skippedSession = skippedSession
+            self.reason = reason
+            self.currentWeek = currentWeek
+            self.nextWeek = nextWeek
+            self.weekAfterNext = weekAfterNext
+            self.experience = experience
+            self.recentSkips = recentSkips
+            self.totalWeeksInPlan = totalWeeksInPlan
+            self.raceDate = raceDate
+            self.analysisDate = analysisDate
+        }
+    }
+
+    /// Race-proximity bands. Drive severity escalation across all
+    /// adaptation paths. Coaches treat the last 3 weeks before a race
+    /// fundamentally differently — every quality session matters more,
+    /// experimental adjustments are ill-advised, and protective
+    /// recommendations get prioritized.
+    enum RaceProximity: Sendable {
+        case offSeason       // No race on the horizon (no raceDate or >42 days)
+        case farOut          // 21-42 days
+        case approaching     // 7-21 days — bump severity one notch
+        case raceWeek        // 3-7 days — bump and prefer protective options
+        case taperLockdown   // <3 days — minimum interventions, protect taper
+
+        var bumpsSeverity: Bool {
+            switch self {
+            case .offSeason, .farOut: return false
+            case .approaching, .raceWeek, .taperLockdown: return true
+            }
+        }
+    }
+
+    /// Categorical reason scoring for combination-aware pattern
+    /// detection. injury/illness are critical and always escalate at
+    /// count=1. fatigue/soreness/menstrualCycle are moderate (need
+    /// 2-3 to escalate). noMotivation/noTime/other/weather are minor
+    /// (3+ to even register).
+    enum ReasonSeverity: Sendable {
+        case critical, moderate, minor, neutral
+
+        static func of(_ reason: SkipReason) -> ReasonSeverity {
+            switch reason {
+            case .injury, .illness:                  return .critical
+            case .fatigue, .soreness:                return .moderate
+            case .noMotivation, .other:              return .minor
+            case .noTime, .weather, .menstrualCycle: return .neutral
+            }
+        }
     }
 
     struct Adaptation: Sendable, Equatable {
@@ -49,11 +130,17 @@ enum SkipAdaptationCalculator {
         let isLongRun = session.type == .longRun
         // Issue #7: Scale pattern thresholds by plan length
         let pattern = detectSkipPattern(
-            context.recentSkipReasons, currentReason: reason,
+            context.recentSkips,
+            currentReason: reason,
+            currentDate: context.analysisDate,
             totalWeeks: context.totalWeeksInPlan
         )
         // Issue #6: Phase-aware severity escalation
         let isPeakOrTaper = context.currentWeek.phase == .peak || context.currentWeek.phase == .taper
+        // Race-proximity awareness: last few weeks before the A-race
+        // change everything. Every quality session matters more, plan
+        // experimentation gets shut down, protective options preferred.
+        let proximity = raceProximity(raceDate: context.raceDate, now: context.analysisDate)
 
         var result: Adaptation
 
@@ -134,7 +221,67 @@ enum SkipAdaptationCalculator {
             )
         }
 
+        // Race-proximity bump. Stacks on top of peak-phase escalation.
+        // Within 21 days of race day, suggestions become recommended;
+        // in race week (<7 days) and the final lockdown (<3 days), we
+        // also append a contextual coach note so the athlete sees
+        // *why* the severity moved.
+        if proximity.bumpsSeverity && !result.recommendations.isEmpty {
+            let suffix: String? = {
+                switch proximity {
+                case .approaching:    return " (Race in 1-3 weeks — every session matters.)"
+                case .raceWeek:       return " (Race week — protect freshness, no experiments.)"
+                case .taperLockdown:  return " (Race in days — minimum interventions only.)"
+                default:              return nil
+                }
+            }()
+            result = Adaptation(
+                recommendations: result.recommendations.map { rec in
+                    let nextSeverity: AdjustmentSeverity = {
+                        // .approaching bumps suggestion → recommended.
+                        // .raceWeek + .taperLockdown bump suggestion →
+                        // recommended AND recommended → urgent so
+                        // athletes see protective advice the way a
+                        // coach would phrase it on race week.
+                        switch (proximity, rec.severity) {
+                        case (.approaching, .suggestion):    return .recommended
+                        case (.raceWeek, .suggestion):       return .recommended
+                        case (.raceWeek, .recommended):      return .urgent
+                        case (.taperLockdown, .suggestion):  return .recommended
+                        case (.taperLockdown, .recommended): return .urgent
+                        default:                             return rec.severity
+                        }
+                    }()
+                    return PlanAdjustmentRecommendation(
+                        id: rec.id,
+                        type: rec.type,
+                        severity: nextSeverity,
+                        title: rec.title,
+                        message: suffix.map { rec.message + $0 } ?? rec.message,
+                        actionLabel: rec.actionLabel,
+                        affectedSessionIds: rec.affectedSessionIds,
+                        volumeAdjustments: rec.volumeAdjustments
+                    )
+                },
+                note: result.note
+            )
+        }
+
         return result
+    }
+
+    // MARK: - Race-Proximity
+
+    static func raceProximity(raceDate: Date?, now: Date) -> RaceProximity {
+        guard let raceDate else { return .offSeason }
+        let days = Calendar.current.dateComponents([.day], from: now, to: raceDate).day ?? Int.max
+        switch days {
+        case ..<3:    return .taperLockdown
+        case ..<7:    return .raceWeek
+        case ..<21:   return .approaching
+        case ..<42:   return .farOut
+        default:      return .offSeason
+        }
     }
 
     // MARK: - Illness
@@ -164,6 +311,19 @@ enum SkipAdaptationCalculator {
             ))
         }
 
+        // Sustained-illness check: ≥2 illness skips in the last 14 days
+        // = bug that's hung around → extend reduction to week-after-next
+        // too. Gleeson (2007) on multi-day URI: return to training
+        // should be gradual. A 10-day flu warrants 2 weeks of reduced
+        // load, not just 1.
+        let sustained = sustainedCriticalCount(
+            recentSkips: context.recentSkips,
+            currentReason: .illness,
+            now: context.analysisDate,
+            kind: .illness,
+            withinDays: 14
+        ) >= 2
+
         // Next week: mild reduction. Illness is the exception where even 1 skip matters.
         // Scale: beginners 10-12%, intermediate 8-10%, advanced/elite 5-8%
         if let nextWeek = context.nextWeek {
@@ -171,12 +331,15 @@ enum SkipAdaptationCalculator {
             let volumeAdj = nextWeekVolumeReduction(nextWeek: nextWeek, factor: factor)
             if !volumeAdj.isEmpty {
                 let pct = Int((1 - factor) * 100)
+                let extraNote = sustained
+                    ? " You've logged multiple illness skips recently — keeping load lighter for two weeks instead of one."
+                    : " Return to normal the week after."
                 recs.append(PlanAdjustmentRecommendation(
                     id: UUID(),
                     type: .reduceFatigueLoad,
-                    severity: .recommended,
-                    title: "Lighter week after illness",
-                    message: "Reducing next week by ~\(pct)% to support immune recovery. Return to normal the week after.",
+                    severity: sustained ? .urgent : .recommended,
+                    title: sustained ? "Two-week ease-off — illness pattern" : "Lighter week after illness",
+                    message: "Reducing next week by ~\(pct)% to support immune recovery.\(extraNote)",
                     actionLabel: "Reduce volume",
                     affectedSessionIds: volumeAdj.map(\.sessionId),
                     volumeAdjustments: volumeAdj
@@ -184,10 +347,59 @@ enum SkipAdaptationCalculator {
             }
         }
 
-        return Adaptation(
-            recommendations: recs,
-            note: "Illness noted. Remaining hard sessions eased off. Light reduction next week to support recovery."
-        )
+        // Sustained illness → also reduce week-after-next (lighter than
+        // week 1 — gradual ramp back). Gleeson recommends a 7-14 day
+        // gradual return after upper-respiratory infection.
+        if sustained, let weekAfter = context.weekAfterNext {
+            // Week 2: split the difference between illness reduction
+            // and full normal — a stair-step back to baseline.
+            let weekTwoFactor = (illnessReductionFactor(experience: context.experience) + 1.0) / 2.0
+            let volumeAdj = nextWeekVolumeReduction(nextWeek: weekAfter, factor: weekTwoFactor)
+            if !volumeAdj.isEmpty {
+                let pct = Int((1 - weekTwoFactor) * 100)
+                recs.append(PlanAdjustmentRecommendation(
+                    id: UUID(),
+                    type: .reduceFatigueLoad,
+                    severity: .recommended,
+                    title: "Stair-step back the week after",
+                    message: "Week 2 stays ~\(pct)% under normal so the immune system finishes recovering before full load resumes.",
+                    actionLabel: "Reduce volume",
+                    affectedSessionIds: volumeAdj.map(\.sessionId),
+                    volumeAdjustments: volumeAdj
+                ))
+            }
+        }
+
+        let note: String
+        if sustained {
+            note = "Multiple illness skips logged in the last 2 weeks. Two-week stair-step reduction in place — return to full load only when symptom-free 48h+. Persistent illness > 10 days warrants a doctor."
+        } else {
+            note = "Illness noted. Remaining hard sessions eased off. Light reduction next week to support recovery."
+        }
+        return Adaptation(recommendations: recs, note: note)
+    }
+
+    /// Counts critical-reason skips of the given kind within the last
+    /// `withinDays` days, including `currentReason` if it matches.
+    /// Used by handleIllness / handleInjury to detect sustained
+    /// patterns that warrant 2-week reductions instead of 1.
+    private enum CriticalKind {
+        case illness, injury
+    }
+    private static func sustainedCriticalCount(
+        recentSkips: [RecentSkip],
+        currentReason: SkipReason,
+        now: Date,
+        kind: CriticalKind,
+        withinDays: Int
+    ) -> Int {
+        let target: SkipReason = kind == .illness ? .illness : .injury
+        let windowStart = Calendar.current.date(byAdding: .day, value: -withinDays, to: now) ?? now
+        let recentMatching = recentSkips.filter {
+            $0.reason == target && $0.date >= windowStart
+        }.count
+        let currentMatches = currentReason == target ? 1 : 0
+        return recentMatching + currentMatches
     }
 
     // MARK: - Fatigue
@@ -239,7 +451,7 @@ enum SkipAdaptationCalculator {
                 recs.append(PlanAdjustmentRecommendation(
                     id: UUID(),
                     type: .swapToRecovery,
-                    severity: pattern == .elevated ? .urgent : .recommended,
+                    severity: pattern >= .elevated ? .urgent : .recommended,
                     title: "Ease off — fatigue pattern detected",
                     message: "Multiple fatigue signals recently. Converting \(next.type.displayName) to easy this week.",
                     actionLabel: "Convert to easy",
@@ -257,7 +469,7 @@ enum SkipAdaptationCalculator {
                     recs.append(PlanAdjustmentRecommendation(
                         id: UUID(),
                         type: .reduceFatigueLoad,
-                        severity: pattern == .elevated ? .urgent : .recommended,
+                        severity: pattern >= .elevated ? .urgent : .recommended,
                         title: "Lighter next week",
                         message: "Fatigue pattern detected. Reducing next week ~\(pct)% to help recovery.",
                         actionLabel: "Reduce volume",
@@ -332,7 +544,7 @@ enum SkipAdaptationCalculator {
             )
         }
 
-        if pattern == .elevated {
+        if pattern >= .elevated {
             // Elevated: could be overreaching. Suggest light next-week reduction.
             var recs: [PlanAdjustmentRecommendation] = []
             if let nextWeek = context.nextWeek {
@@ -396,7 +608,7 @@ enum SkipAdaptationCalculator {
         }
 
         let note: String
-        if pattern == .elevated {
+        if pattern >= .elevated {
             note = "Frequent time-based skips. The plan might not match your schedule — consider adjusting your preferred runs per week."
         } else {
             note = "Skipped for time. No plan changes needed."
@@ -410,7 +622,7 @@ enum SkipAdaptationCalculator {
     private static func handleOther(
         context: Context, pattern: PatternLevel
     ) -> Adaptation {
-        guard pattern == .elevated else {
+        guard pattern >= .elevated else {
             return Adaptation(
                 recommendations: [],
                 note: "Session skipped. No plan adaptation needed."
@@ -448,31 +660,90 @@ enum SkipAdaptationCalculator {
         case none     // Isolated skip — no concern
         case mild     // 2 non-weather skips recently — worth noting
         case elevated // 3+ physiological or 5+ total — real concern
+        case acuteFlare // 3+ skips clustered in 7 days — recent dense pattern
     }
 
     /// Detects skip patterns from recent history.
-    /// Issue #7: Thresholds scale by plan length — shorter plans need tighter detection.
-    /// A 12-week 10K plan can't afford the same skip tolerance as a 28-week marathon.
+    ///
+    /// Categorical scoring (audit fix #3): not all physiological reasons
+    /// are equal. injury / illness are *critical* and contribute much
+    /// more than fatigue / soreness, which contribute more than mild
+    /// reasons (motivation, other). Scoring lets us catch e.g.
+    /// 1× injury + 1× illness = elevated even at count=2.
+    ///
+    /// Time-window clustering (audit fix #2): if 3+ skips of any
+    /// physiological kind happen within the **same 7-day window**,
+    /// classify as `.acuteFlare` rather than `.elevated`. Acute flares
+    /// often resolve on their own (one bad week) and warrant a
+    /// shorter, sharper response than chronic patterns where the same
+    /// number of skips is spread across 21 days.
+    ///
+    /// Plan-length scaling (issue #7): thresholds tighten on shorter
+    /// plans. A 12-week 10K plan can't absorb the same skip rate as
+    /// a 28-week marathon.
     private static func detectSkipPattern(
-        _ recentReasons: [SkipReason], currentReason: SkipReason,
+        _ recentSkips: [RecentSkip],
+        currentReason: SkipReason,
+        currentDate: Date,
         totalWeeks: Int
     ) -> PatternLevel {
-        let allReasons = recentReasons + [currentReason]
-        let physiological = allReasons.filter {
-            $0 == .fatigue || $0 == .soreness || $0 == .illness || $0 == .injury
+        let allSkips = recentSkips + [RecentSkip(reason: currentReason, date: currentDate)]
+        let physiological = allSkips.filter {
+            $0.reason == .fatigue || $0.reason == .soreness
+            || $0.reason == .illness || $0.reason == .injury
         }
-        let meaningful = allReasons.filter { $0 != .weather && $0 != .other }
+        let meaningful = allSkips.filter {
+            $0.reason != .weather && $0.reason != .other
+            && $0.reason != .menstrualCycle  // routed separately
+        }
 
-        // Scale thresholds: shorter plans → lower thresholds
-        // 28-week marathon: physio≥3 = elevated. 12-week 10K: physio≥2 = elevated.
+        // Acute flare check: 3+ physiological skips clustered in any
+        // 7-day window. Walks each skip, counts how many physiological
+        // skips fall in the next 7 days from that anchor. If any
+        // anchor has ≥3 → flare.
+        let physioDates = physiological.map(\.date).sorted()
+        for anchor in physioDates {
+            let windowEnd = Calendar.current.date(byAdding: .day, value: 7, to: anchor) ?? anchor
+            let countInWindow = physioDates.filter { $0 >= anchor && $0 <= windowEnd }.count
+            if countInWindow >= 3 {
+                return .acuteFlare
+            }
+        }
+
+        // Categorical score for chronic-pattern detection. Critical
+        // reasons (injury / illness) count 3×, moderate (fatigue /
+        // soreness) count 2×, minor (motivation / other) count 1×.
+        // The score is what we threshold against.
+        let score = allSkips.reduce(0.0) { acc, skip in
+            switch ReasonSeverity.of(skip.reason) {
+            case .critical: return acc + 3.0
+            case .moderate: return acc + 2.0
+            case .minor:    return acc + 1.0
+            case .neutral:  return acc + 0.0
+            }
+        }
+
+        // Plan-length scaling. 28-week baseline → elevated at score ≥ 6
+        // (e.g. 3× moderate, or 1× critical + 1× moderate + 1× minor).
+        // Mild at score ≥ 4 (2× moderate, etc.). Shorter plans tighten.
         let scale = max(Double(totalWeeks) / 28.0, 0.5)
-        let elevatedPhysio = max(Int(3.0 * scale), 2)
-        let elevatedTotal = max(Int(5.0 * scale), 3)
-        let mildPhysio = max(Int(2.0 * scale), 1)
-        let mildTotal = max(Int(3.0 * scale), 2)
+        let elevatedScore = max(6.0 * scale, 4.0)
+        let mildScore = max(4.0 * scale, 2.5)
 
-        if physiological.count >= elevatedPhysio || meaningful.count >= elevatedTotal { return .elevated }
-        if physiological.count >= mildPhysio || meaningful.count >= mildTotal { return .mild }
+        // Single-skip critical fast-path: any skip with severity
+        // .critical (illness/injury) routes to its own handler with
+        // urgent severity — but if RECENT history already shows
+        // another critical, that's an immediate elevated pattern.
+        let criticalCount = allSkips.filter { ReasonSeverity.of($0.reason) == .critical }.count
+        if criticalCount >= 2 { return .elevated }
+
+        // Volume backstop: 5+ meaningful skips of any kind in window
+        // means the plan isn't matching capacity — elevated even if
+        // the categorical score is low.
+        if meaningful.count >= max(Int(5.0 * scale), 3) { return .elevated }
+
+        if score >= elevatedScore { return .elevated }
+        if score >= mildScore { return .mild }
         return .none
     }
 
@@ -497,11 +768,13 @@ enum SkipAdaptationCalculator {
         pattern: PatternLevel, experience: ExperienceLevel
     ) -> Double {
         switch (pattern, experience) {
-        // Elevated pattern
-        case (.elevated, .beginner):     return 0.88 // 12%
-        case (.elevated, .intermediate): return 0.90 // 10%
-        case (.elevated, .advanced):     return 0.93 // 7%
-        case (.elevated, .elite):        return 0.95 // 5%
+        // Elevated chronic pattern OR acute 7-day flare — same response
+        // for now (response shape is identical; only the messaging
+        // differs based on which pattern fired).
+        case (.elevated, .beginner), (.acuteFlare, .beginner):         return 0.88 // 12%
+        case (.elevated, .intermediate), (.acuteFlare, .intermediate): return 0.90 // 10%
+        case (.elevated, .advanced), (.acuteFlare, .advanced):         return 0.93 // 7%
+        case (.elevated, .elite), (.acuteFlare, .elite):               return 0.95 // 5%
         // Mild pattern
         case (.mild, .beginner):         return 0.93 // 7%
         case (.mild, .intermediate):     return 0.95 // 5%
@@ -539,6 +812,18 @@ enum SkipAdaptationCalculator {
             ))
         }
 
+        // Sustained-injury check: ≥2 injury skips in the last 14 days
+        // = either the injury didn't resolve or there's a re-injury
+        // pattern. Either way the prescribed rebuild needs to span
+        // 2 weeks, not 1.
+        let sustained = sustainedCriticalCount(
+            recentSkips: context.recentSkips,
+            currentReason: .injury,
+            now: context.analysisDate,
+            kind: .injury,
+            withinDays: 14
+        ) >= 2
+
         // Aggressive next-week reduction (30-40% based on experience)
         if let nextWeek = context.nextWeek {
             let factor: Double = switch context.experience {
@@ -550,12 +835,15 @@ enum SkipAdaptationCalculator {
             let volumeAdj = nextWeekVolumeReduction(nextWeek: nextWeek, factor: factor)
             if !volumeAdj.isEmpty {
                 let pct = Int((1.0 - factor) * 100)
+                let extraNote = sustained
+                    ? " You've logged multiple injury skips recently — extending the reduction over two weeks instead of one."
+                    : ""
                 recs.append(PlanAdjustmentRecommendation(
                     id: UUID(),
                     type: .reduceFatigueLoad,
                     severity: .urgent,
                     title: "Reduced load after injury",
-                    message: "Reducing next week by ~\(pct)%. Return to running only when pain-free. Consider cross-training (swimming, cycling) to maintain fitness.",
+                    message: "Reducing next week by ~\(pct)%. Return to running only when pain-free. Consider cross-training (swimming, cycling) to maintain fitness.\(extraNote)",
                     actionLabel: "Reduce volume",
                     affectedSessionIds: volumeAdj.map(\.sessionId),
                     volumeAdjustments: volumeAdj
@@ -563,10 +851,40 @@ enum SkipAdaptationCalculator {
             }
         }
 
-        return Adaptation(
-            recommendations: recs,
-            note: "Injury reported. All remaining sessions cancelled. Next week significantly reduced. Do NOT run through pain — cross-train if possible. See a professional if pain persists beyond 48-72h."
-        )
+        // Sustained injury pattern → also reduce week-after-next.
+        // Step from ~30-40% reduction (week 1) to ~15-20% (week 2)
+        // before resuming full load. Coaching consensus: re-injury
+        // risk is highest when athletes ramp back too fast.
+        if sustained, let weekAfter = context.weekAfterNext {
+            let weekTwoFactor: Double = switch context.experience {
+            case .beginner:     0.80  // 20% reduction
+            case .intermediate: 0.83  // 17% reduction
+            case .advanced:     0.85  // 15% reduction
+            case .elite:        0.85
+            }
+            let volumeAdj = nextWeekVolumeReduction(nextWeek: weekAfter, factor: weekTwoFactor)
+            if !volumeAdj.isEmpty {
+                let pct = Int((1 - weekTwoFactor) * 100)
+                recs.append(PlanAdjustmentRecommendation(
+                    id: UUID(),
+                    type: .reduceFatigueLoad,
+                    severity: .recommended,
+                    title: "Stair-step back the week after",
+                    message: "Week 2 stays ~\(pct)% under normal — re-injury risk is highest when ramp is too fast. Confirm pain-free running before adding back.",
+                    actionLabel: "Reduce volume",
+                    affectedSessionIds: volumeAdj.map(\.sessionId),
+                    volumeAdjustments: volumeAdj
+                ))
+            }
+        }
+
+        let note: String
+        if sustained {
+            note = "Multiple injury skips logged in the last 2 weeks. Two-week stair-step rebuild in place — return to running only when pain-free, and if pain returns or persists, see a sports-med professional."
+        } else {
+            note = "Injury reported. All remaining sessions cancelled. Next week significantly reduced. Do NOT run through pain — cross-train if possible. See a professional if pain persists beyond 48-72h."
+        }
+        return Adaptation(recommendations: recs, note: note)
     }
 
     // MARK: - Long Run Reschedule (Issue #3)

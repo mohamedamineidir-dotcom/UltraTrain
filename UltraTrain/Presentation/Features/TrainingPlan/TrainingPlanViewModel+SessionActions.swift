@@ -109,21 +109,32 @@ extension TrainingPlanViewModel {
     ) {
         let currentWeek = plan.weeks[weekIndex]
         let nextWeek = weekIndex + 1 < plan.weeks.count ? plan.weeks[weekIndex + 1] : nil
+        // Week-after-next lets the calculator extend reductions over
+        // 2 weeks for sustained illness/injury patterns instead of
+        // capping at next week only.
+        let weekAfterNext = weekIndex + 2 < plan.weeks.count ? plan.weeks[weekIndex + 2] : nil
 
-        // Gather recent skip reasons from last 3 weeks for pattern detection
+        // Gather recent skips with timestamps (last 3 weeks). Carries
+        // dates so the calculator can do time-window clustering and
+        // distinguish acute flares (3 in 7 days) from chronic patterns.
         let lookbackStart = max(0, weekIndex - 2)
-        let recentSkipReasons: [SkipReason] = plan.weeks[lookbackStart..<weekIndex]
+        let recentSkips: [SkipAdaptationCalculator.RecentSkip] = plan.weeks[lookbackStart..<weekIndex]
             .flatMap(\.sessions)
             .filter { $0.isSkipped }
-            .compactMap(\.skipReason)
+            .compactMap { session in
+                session.skipReason.map {
+                    SkipAdaptationCalculator.RecentSkip(reason: $0, date: session.date)
+                }
+            }
 
         let context = SkipAdaptationCalculator.Context(
             skippedSession: session,
             reason: reason,
             currentWeek: currentWeek,
             nextWeek: nextWeek,
+            weekAfterNext: weekAfterNext,
             experience: athlete?.experienceLevel ?? .intermediate,
-            recentSkipReasons: recentSkipReasons,
+            recentSkips: recentSkips,
             totalWeeksInPlan: plan.weeks.count,
             raceDate: plan.weeks.last?.endDate
         )
