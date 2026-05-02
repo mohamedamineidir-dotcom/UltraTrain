@@ -211,7 +211,28 @@ enum RoadLongRunCalculator {
                 return weekInPhase.isMultiple(of: 2) ? .twoPart : .progressive
 
             case .roadMarathon:
-                // Marathon: Canova-style MP block long runs
+                // Marathon peak: variants by experience.
+                //
+                // Beginners (finish-mode novices) get a Pfitzinger-style
+                // ramp: week 0 = .marathonPaceIntro (single 15-20min MP
+                // block, gentle introduction to MP), then alternate
+                // .fastFinish (last 20-25% at MP — textbook Pfitzinger
+                // MP-finish long run) and .marathonPaceBlocks. Avoids
+                // the audit's flagged issue of beginners hitting full
+                // Canova 5×3km MP blocks in week 0 of peak.
+                //
+                // Intermediate gets the historical alternation between
+                // .twoPart (50% easy + 50% race-pace) and
+                // .marathonPaceBlocks. .twoPart is more appropriate
+                // than .raceSimulation for the intermediate tier.
+                //
+                // Advanced/elite get .raceSimulation (15-20km at race
+                // pace within a longer run) alternating with full
+                // Canova blocks.
+                if experience == .beginner {
+                    if weekInPhase == 0 { return .marathonPaceIntro }
+                    return weekInPhase.isMultiple(of: 2) ? .fastFinish : .marathonPaceBlocks
+                }
                 if weekInPhase == 0 {
                     return .marathonPaceBlocks
                 } else if experience == .advanced || experience == .elite {

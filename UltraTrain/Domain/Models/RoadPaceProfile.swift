@@ -14,7 +14,19 @@ import Foundation
 struct RoadPaceProfile: Equatable, Sendable {
     let easyPacePerKm: ClosedRange<Double>
     let marathonPacePerKm: Double
+    /// Threshold pace (single value, kept for backwards compat). Use
+    /// `thresholdPaceRangePerKm` for prescribing — single sessions may
+    /// sit at the harder edge (cruise intervals) or slower edge
+    /// (sustained 30-min tempo). Defaults to the slower edge of the
+    /// range when written.
     let thresholdPacePerKm: Double
+    /// Threshold pace range. Daniels' T-pace = ~1.06-1.09× 5K. The
+    /// faster end (1.06×) is for short cruise intervals where the
+    /// athlete can recover; the slower end (1.09×) is for longer
+    /// sustained tempo where the athlete needs to hold ~60min effort.
+    /// Sessions can prescribe inside this range based on their
+    /// duration / structure.
+    let thresholdPaceRangePerKm: ClosedRange<Double>
     let intervalPacePerKm: Double
     let repetitionPacePerKm: Double
     let racePacePerKm: Double

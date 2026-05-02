@@ -114,6 +114,11 @@ enum RoadPaceCalculator {
             easyPacePerKm: (fiveK * 1.30)...(fiveK * 1.42),
             marathonPacePerKm: fiveK * 1.12,
             thresholdPacePerKm: fiveK * 1.09,
+            // Daniels T-pace range: 1.06× (cruise intervals, short
+            // hard reps) to 1.09× (sustained 30-min tempo). Single
+            // value at 1.09 sat at the slower edge — sessions like
+            // 4×5min cruise intervals deserve the faster end.
+            thresholdPaceRangePerKm: (fiveK * 1.06)...(fiveK * 1.09),
             intervalPacePerKm: fiveK * 1.00,
             repetitionPacePerKm: fiveK * 0.93,
             racePacePerKm: goalPacePerKm,

@@ -19,6 +19,7 @@ struct RefineRoadPaceFromFeedbackUseCaseTests {
             easyPacePerKm: 300...330,
             marathonPacePerKm: 270,
             thresholdPacePerKm: threshold,
+            thresholdPaceRangePerKm: (threshold * 0.97)...(threshold * 1.00),
             intervalPacePerKm: interval,
             repetitionPacePerKm: 223,
             racePacePerKm: 290,

@@ -57,16 +57,22 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         )
         // Post-race recovery weeks. Daniels' rule: ~1 easy day per 3 km of
         // race distance. Translates to whole weeks:
-        //   <30 km   → 1 week  (10K, HM)
-        //   30-49 km → 2 weeks (marathon, short ultra)
-        //   50+ km   → 3 weeks (50K+, full ultra)
+        //   <30 km     → 1 week  (10K, HM)
+        //   30-49 km   → 2 weeks (marathon, short ultra)
+        //   50-99 km   → 3 weeks (50-100K)
+        //   100-159 km → 4 weeks (100-mile range)
+        //   160+ km    → 5 weeks (200K+ — multi-day races warrant longest rebuild)
         // Athlete sees a structured return-to-training instead of falling
-        // off the plan the day after their A-race.
+        // off the plan the day after their A-race. Caps extend per the
+        // coaching review: 100-mile finishers commonly need 4-5 weeks of
+        // structured easy training before resuming key work.
         let postRaceRecoveryWeeks: Int
         switch targetRace.distanceKm {
         case ..<30:    postRaceRecoveryWeeks = 1
         case ..<50:    postRaceRecoveryWeeks = 2
-        default:       postRaceRecoveryWeeks = 3
+        case ..<100:   postRaceRecoveryWeeks = 3
+        case ..<160:   postRaceRecoveryWeeks = 4
+        default:       postRaceRecoveryWeeks = 5
         }
         let skeletons = WeekSkeletonBuilder.build(
             raceDate: raceDate,
@@ -194,6 +200,23 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 return fc.temperatureCelsius >= 22 || fc.humidity >= 65
             }()
 
+            // Descent-heavy flag — drives the eccentric / quad-tolerance
+            // cue on long runs and B2B day 2 in build/peak. Threshold
+            // ≥1500m D- catches UTMB (10000m), Hardrock (10000m), TDS
+            // (7000m), Madeira Sky (5000m), and similar mountain races
+            // where descent is the limiter most athletes underprepare.
+            // Also fires when descent density (D-/km) is ≥30 m/km even
+            // at lower total D- — small-but-steep races.
+            let isDescentHeavyRace: Bool = {
+                guard targetRace.raceType == .trail else { return false }
+                if targetRace.elevationLossM >= 1500 { return true }
+                if targetRace.distanceKm > 0,
+                   targetRace.elevationLossM / targetRace.distanceKm >= 30 {
+                    return true
+                }
+                return false
+            }()
+
             // Cycle-phase awareness (opt-in). Computed per-week using the
             // week's start date, so the advice tracks the athlete through
             // the plan rather than freezing the phase from "today". Off
@@ -225,6 +248,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 isRoadRace: targetRace.raceType == .road,
                 intermediateRaceContext: intermediateRaceContext,
                 isHotRaceForecast: trailHotRaceForecast,
+                isDescentHeavyRace: isDescentHeavyRace,
                 restingHR: athlete.restingHeartRate,
                 maxHR: athlete.maxHeartRate,
                 biologicalSex: athlete.biologicalSex,

@@ -15,6 +15,13 @@ enum CoachAdviceGenerator {
         plannedDurationSeconds: TimeInterval = 0,
         isHotRaceForecast: Bool = false,
         isHotSessionForecast: Bool = false,
+        /// True when the target race has heavy descent (D- ≥ 1500m or
+        /// race effective km descent density justifies eccentric prep).
+        /// Drives a "practice relaxed descents" cue on long runs and
+        /// B2B day 2 only — quad damage tolerance is the #1 limiter at
+        /// UTMB / Hardrock / Madeira-style races. Coach-advice only;
+        /// no plan structure change.
+        isDescentHeavyRace: Bool = false,
         restingHR: Int? = nil,
         maxHR: Int? = nil,
         biologicalSex: BiologicalSex? = nil,
@@ -31,7 +38,7 @@ enum CoachAdviceGenerator {
         case .rest:
             baseAdvice = restAdvice(phase: phase, isRecoveryWeek: isRecoveryWeek)
         case .recovery:
-            baseAdvice = recoveryRunAdvice(phase: phase)
+            baseAdvice = recoveryRunAdvice(phase: phase, isRoadRace: isRoadRace, weekInPhase: weekInPhase)
         case .crossTraining:
             baseAdvice = "Keep it light and fun. Different movements help your body recover while staying active."
         case .backToBack:
@@ -116,6 +123,19 @@ enum CoachAdviceGenerator {
            type == .intervals || type == .tempo || type == .verticalGain {
             result += " Today's forecast is hot — consider swapping with tomorrow's easy day or moving this to dawn."
         }
+        // Descent emphasis. For races with heavy D- (UTMB / Hardrock /
+        // Madeira / TDS class), quad damage tolerance is the limiter
+        // most beginners + intermediates underprepare for. Surface a
+        // descent cue on long runs + B2B day 2 in build/peak only —
+        // outside those phases there's not enough downhill volume in
+        // the plan for the cue to bite. Cue is intentionally short:
+        // the ATHLETE picks the route, we just remind why it matters.
+        if isDescentHeavyRace,
+           (type == .longRun || type == .backToBack),
+           (phase == .build || phase == .peak),
+           !isRecoveryWeek {
+            result += " Pick a route with sustained descent — practice relaxed quads, slight forward lean, quick foot turnover. Quad tolerance is the #1 race-day limiter for big-D- races."
+        }
         // Mental cue. Short — one sentence. Surfaces only on the few
         // sessions where it actually matters: peak-phase race-effort
         // efforts, race-week prep, and the race itself. Skipped on
@@ -188,10 +208,19 @@ enum CoachAdviceGenerator {
         weekInPhase: Int
     ) -> String? {
         switch (phase, type) {
+        // Peak long run / B2B — kick off the 10-14 day acclimation block
         case (.peak, .longRun), (.peak, .backToBack):
             return "Race-day forecast is hot — start your 10-14 day heat-acclimation block by training in the warmest part of the day, layered, or in a sauna 20-30 min post-run."
+        // Peak quality (intervals/tempo/VG) — heat-specific pacing reminder
+        case (.peak, .intervals), (.peak, .tempo), (.peak, .verticalGain):
+            return "Heat block in progress: dial today's pace by feel, not the watch — heat compresses pace bands. Cool the head + neck immediately post-rep."
+        // Taper big efforts (LR / B2B / race) — maintain and don't chase new stress
         case (.taper, .longRun), (.taper, .backToBack), (.taper, .race):
             return "Stay heat-adapted: short heat exposures (warm bath, sauna 15 min) every 2-3 days through taper. Don't add new training stress."
+        // Taper quality (intervals/tempo) — reinforce maintenance + race-day pacing
+        case (.taper, .intervals), (.taper, .tempo):
+            return "Final heat reminder: keep one short hot exposure every 2-3 days; on race day expect 5-10% slower pace at same effort."
+        // Race day in peak — full pre-cool / fueling / pacing brief
         case (.peak, .race):
             return "Race day will be hot. Pre-cool if possible, sip-and-eat early before thirst/hunger spikes, and drop pace targets 5-10% in heat."
         default:
@@ -247,13 +276,33 @@ enum CoachAdviceGenerator {
 
     // MARK: - Recovery Run
 
-    private static func recoveryRunAdvice(phase: TrainingPhase) -> String {
+    private static func recoveryRunAdvice(
+        phase: TrainingPhase,
+        isRoadRace: Bool = false,
+        weekInPhase: Int = 0
+    ) -> String {
+        let base: String
         switch phase {
         case .taper:
-            return "Just a short easy jog to keep the legs moving. If anything feels off, cut it short. You're almost there."
+            base = "Just a short easy jog to keep the legs moving. If anything feels off, cut it short. You're almost there."
         default:
-            return "When in doubt, go slower. This run is about blood flow, not building fitness. You should be able to hold a full conversation."
+            base = "When in doubt, go slower. This run is about blood flow, not building fitness. You should be able to hold a full conversation."
         }
+        // Road-only weekly strides cue. Daniels + Pfitzinger prescribe
+        // 4-6 × 100m strides at the end of one easy run/week during
+        // base + build to maintain neuromuscular speed without taxing
+        // the aerobic system. Fires once per week (week-in-phase even
+        // weeks) so it doesn't get noisy if the athlete has multiple
+        // easy days. Skipped for trail (strides aren't critical when
+        // the long run already includes vertical / mixed terrain) and
+        // for peak/taper (peak gets quality sessions; taper handles
+        // sharpening separately).
+        if isRoadRace,
+           (phase == .base || phase == .build),
+           weekInPhase % 2 == 0 {
+            return base + " End with 4-6 × 100m strides at controlled fast pace, full recovery between — keeps top-end speed alive without aerobic cost."
+        }
+        return base
     }
 
     // MARK: - Long Run (Phase-Aware)

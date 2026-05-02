@@ -120,6 +120,7 @@ enum RefineRoadPaceFromFeedbackUseCase {
                 easyPacePerKm: refined.easyPacePerKm,
                 marathonPacePerKm: refined.marathonPacePerKm,
                 thresholdPacePerKm: refined.thresholdPacePerKm,
+                thresholdPaceRangePerKm: refined.thresholdPaceRangePerKm,
                 intervalPacePerKm: entry.adjustedPacePerKm,
                 repetitionPacePerKm: refined.repetitionPacePerKm,
                 racePacePerKm: refined.racePacePerKm,
@@ -140,10 +141,19 @@ enum RefineRoadPaceFromFeedbackUseCase {
             goalRealism: baseProfile.goalRealismLevel
         ) {
             entries.append(entry)
+            // When the single threshold pace is refined, slide the
+            // range so its centre tracks the refined value but width
+            // stays in proportion (Daniels' T-pace span ≈ 3% wide).
+            let newSingle = entry.adjustedPacePerKm
+            let oldSingle = refined.thresholdPacePerKm
+            let shiftRatio = oldSingle > 0 ? newSingle / oldSingle : 1.0
+            let newRange = (refined.thresholdPaceRangePerKm.lowerBound * shiftRatio)
+                ... (refined.thresholdPaceRangePerKm.upperBound * shiftRatio)
             refined = RoadPaceProfile(
                 easyPacePerKm: refined.easyPacePerKm,
                 marathonPacePerKm: refined.marathonPacePerKm,
-                thresholdPacePerKm: entry.adjustedPacePerKm,
+                thresholdPacePerKm: newSingle,
+                thresholdPaceRangePerKm: newRange,
                 intervalPacePerKm: refined.intervalPacePerKm,
                 repetitionPacePerKm: refined.repetitionPacePerKm,
                 racePacePerKm: refined.racePacePerKm,
