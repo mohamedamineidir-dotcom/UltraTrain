@@ -117,41 +117,46 @@ struct PlanVolumeChartsSection: View {
     private var chartView: some View {
         Chart {
             ForEach(dataPoints) { point in
-                // Planned curve — hidden for distance (trail plans don't pre-plan distance)
-                if selectedMetric != .distance {
-                    AreaMark(
-                        x: .value("Week", point.weekNumber),
-                        y: .value("Planned", plannedValue(for: point))
+                // Planned curve — drawn for ALL metrics. Distance was
+                // previously gated off based on a stale assumption
+                // ("trail plans don't pre-plan distance"); the
+                // VolumeCalculator does in fact compute
+                // `targetVolumeKm` per week, which feeds
+                // `plannedDistanceKm` here. Hiding the curve made the
+                // chart visibly empty on the Distance tab even when
+                // the plan had data — confusing.
+                AreaMark(
+                    x: .value("Week", point.weekNumber),
+                    y: .value("Planned", plannedValue(for: point))
+                )
+                .foregroundStyle(
+                    .linearGradient(
+                        colors: [
+                            Theme.Colors.accentColor.opacity(0.35),
+                            Theme.Colors.accentColor.opacity(0.12),
+                            Theme.Colors.accentColor.opacity(0.02)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
                     )
-                    .foregroundStyle(
-                        .linearGradient(
-                            colors: [
-                                Theme.Colors.accentColor.opacity(0.35),
-                                Theme.Colors.accentColor.opacity(0.12),
-                                Theme.Colors.accentColor.opacity(0.02)
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-                    .interpolationMethod(.linear)
+                )
+                .interpolationMethod(.linear)
 
-                    LineMark(
-                        x: .value("Week", point.weekNumber),
-                        y: .value("Planned", plannedValue(for: point))
-                    )
-                    .foregroundStyle(Theme.Colors.accentColor)
-                    .lineStyle(StrokeStyle(lineWidth: 3))
-                    .interpolationMethod(.linear)
+                LineMark(
+                    x: .value("Week", point.weekNumber),
+                    y: .value("Planned", plannedValue(for: point))
+                )
+                .foregroundStyle(Theme.Colors.accentColor)
+                .lineStyle(StrokeStyle(lineWidth: 3))
+                .interpolationMethod(.linear)
 
-                    PointMark(
-                        x: .value("Week", point.weekNumber),
-                        y: .value("Planned", plannedValue(for: point))
-                    )
-                    .symbol(point.isRecoveryWeek ? .diamond : .circle)
-                    .symbolSize(point.isRecoveryWeek ? 50 : (point.isCurrentWeek ? 50 : 30))
-                    .foregroundStyle(point.isRecoveryWeek ? .mint : Theme.Colors.accentColor)
-                }
+                PointMark(
+                    x: .value("Week", point.weekNumber),
+                    y: .value("Planned", plannedValue(for: point))
+                )
+                .symbol(point.isRecoveryWeek ? .diamond : .circle)
+                .symbolSize(point.isRecoveryWeek ? 50 : (point.isCurrentWeek ? 50 : 30))
+                .foregroundStyle(point.isRecoveryWeek ? .mint : Theme.Colors.accentColor)
 
                 // Completed bars — stacked by session type
                 ForEach(point.completedByType) { slice in
@@ -274,8 +279,11 @@ struct PlanVolumeChartsSection: View {
 
     private var chartLegend: some View {
         let types = activeSessionTypes
+        // Planned swatch shown for ALL metrics — paired with the
+        // change above to draw the planned curve on every metric
+        // including distance.
         let legendItems: [(String, Color)] = types.map { ($0.displayName, sessionTypeColor($0)) }
-            + (selectedMetric != .distance ? [("Planned", Theme.Colors.accentColor.opacity(0.3))] : [])
+            + [("Planned", Theme.Colors.accentColor.opacity(0.3))]
         return ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: Theme.Spacing.sm) {
                 ForEach(Array(legendItems.enumerated()), id: \.offset) { _, item in
