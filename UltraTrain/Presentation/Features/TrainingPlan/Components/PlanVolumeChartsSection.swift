@@ -120,7 +120,7 @@ struct PlanVolumeChartsSection: View {
                 // Planned curve — hidden for distance (trail plans don't pre-plan distance)
                 if selectedMetric != .distance {
                     AreaMark(
-                        x: .value("Week", "W\(point.weekNumber)"),
+                        x: .value("Week", point.weekNumber),
                         y: .value("Planned", plannedValue(for: point))
                     )
                     .foregroundStyle(
@@ -137,7 +137,7 @@ struct PlanVolumeChartsSection: View {
                     .interpolationMethod(.linear)
 
                     LineMark(
-                        x: .value("Week", "W\(point.weekNumber)"),
+                        x: .value("Week", point.weekNumber),
                         y: .value("Planned", plannedValue(for: point))
                     )
                     .foregroundStyle(Theme.Colors.accentColor)
@@ -145,7 +145,7 @@ struct PlanVolumeChartsSection: View {
                     .interpolationMethod(.linear)
 
                     PointMark(
-                        x: .value("Week", "W\(point.weekNumber)"),
+                        x: .value("Week", point.weekNumber),
                         y: .value("Planned", plannedValue(for: point))
                     )
                     .symbol(point.isRecoveryWeek ? .diamond : .circle)
@@ -156,7 +156,7 @@ struct PlanVolumeChartsSection: View {
                 // Completed bars — stacked by session type
                 ForEach(point.completedByType) { slice in
                     BarMark(
-                        x: .value("Week", "W\(point.weekNumber)"),
+                        x: .value("Week", point.weekNumber),
                         y: .value("Completed", sliceValue(for: slice)),
                         width: .fixed(12),
                         stacking: .standard
@@ -175,7 +175,7 @@ struct PlanVolumeChartsSection: View {
             // Recovery week background shading
             ForEach(dataPoints.filter(\.isRecoveryWeek)) { point in
                 RectangleMark(
-                    x: .value("Week", "W\(point.weekNumber)"),
+                    x: .value("Week", point.weekNumber),
                     yStart: .value("Start", 0),
                     yEnd: .value("End", maxPlannedValue * 1.05),
                     width: .ratio(1)
@@ -188,7 +188,7 @@ struct PlanVolumeChartsSection: View {
             // the plot area so it never overlaps the summary stats above.
             if let currentWeek = dataPoints.first(where: \.isCurrentWeek) {
                 RuleMark(
-                    x: .value("Current", "W\(currentWeek.weekNumber)"),
+                    x: .value("Current", currentWeek.weekNumber),
                     yStart: .value("Start", 0),
                     yEnd: .value("End", nowRuleMarkYEnd)
                 )
@@ -214,16 +214,18 @@ struct PlanVolumeChartsSection: View {
 
             // Selected week line
             if let selected = selectedWeek {
-                RuleMark(x: .value("Selected", "W\(selected.weekNumber)"))
+                RuleMark(x: .value("Selected", selected.weekNumber))
                     .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.3))
                     .lineStyle(StrokeStyle(lineWidth: 1))
             }
         }
         .chartXAxis {
-            AxisMarks(values: visibleWeekLabels) { _ in
-                AxisValueLabel()
-                    .font(.system(size: 10, weight: .medium, design: .rounded))
-                    .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.7))
+            AxisMarks(values: visibleWeekNumbers) { value in
+                if let weekNum = value.as(Int.self) {
+                    AxisValueLabel("W\(weekNum)")
+                        .font(.system(size: 10, weight: .medium, design: .rounded))
+                        .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.7))
+                }
             }
         }
         .chartYAxis {
@@ -251,8 +253,7 @@ struct PlanVolumeChartsSection: View {
                         DragGesture(minimumDistance: 0)
                             .onChanged { drag in
                                 let x = drag.location.x - geo[proxy.plotFrame!].origin.x
-                                if let weekLabel: String = proxy.value(atX: x) {
-                                    let weekNum = Int(weekLabel.dropFirst()) ?? 0
+                                if let weekNum: Int = proxy.value(atX: x) {
                                     selectedWeek = dataPoints.first { $0.weekNumber == weekNum }
                                 }
                             }
@@ -305,7 +306,15 @@ struct PlanVolumeChartsSection: View {
 
     // MARK: - Visible Week Labels
 
-    private var visibleWeekLabels: [String] {
+    /// X-axis tick positions. Returns Ints (week numbers) so the
+    /// chart's X axis stays numeric and ordered. Previously these
+    /// were strings ("W1", "W2", ...), which Swift Charts treats as
+    /// categorical and renders in alphabetical order — so a 24-week
+    /// plan rendered W1, W11, W13... W2, W20... W3, W4... instead of
+    /// W1, W2, W3 sequentially. Numeric values + a string formatter
+    /// in the AxisValueLabel keep the labels reading "W1, W3, W5..."
+    /// in proper week order.
+    private var visibleWeekNumbers: [Int] {
         let total = dataPoints.count
         let stride: Int
         switch total {
@@ -316,7 +325,7 @@ struct PlanVolumeChartsSection: View {
         }
         return dataPoints.enumerated()
             .filter { $0.offset % stride == 0 }
-            .map { "W\($0.element.weekNumber)" }
+            .map { $0.element.weekNumber }
     }
 
     // MARK: - Summary Calculations
