@@ -29,14 +29,17 @@ enum SkipReason: String, CaseIterable, Sendable, Codable {
     /// Acute injury — strain, sprain, sharp pain. Needs aggressive rest protocol.
     case injury
 
-    /// Catch-all for reasons not listed above.
-    case other
-
     /// Menstruation-related skip. Always paired with a
     /// `MenstrualSymptomCluster` on the session to drive the right
     /// adaptation. Rationale and full evidence base in
     /// `MenstrualAdaptationCalculator` — short version: research
     /// (McNulty 2020 meta-analysis, IOC 2023, UEFA 2025) supports
     /// symptom-driven response, not phase-based prescription.
+    /// Ordered just before `.other` so it's grouped with other
+    /// physiological reasons rather than appearing as a footnote
+    /// after the catch-all.
     case menstrualCycle
+
+    /// Catch-all for reasons not listed above.
+    case other
 }

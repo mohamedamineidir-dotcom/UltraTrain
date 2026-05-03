@@ -71,57 +71,96 @@ struct SkipReasonSheet: View {
     // MARK: - Menstrual cluster section
 
     /// Inline sub-prompt that appears under the menstrualCycle row
-    /// when it's selected. Symptom-driven sub-classification per
-    /// the menstrual MVP spec — bleed-day vs PMS vs asymptomatic vs
-    /// unspecified, each with different adaptation behaviour.
+    /// when it's selected. Visual language matches the parent reason
+    /// rows: full-width glass cards with accent-tinted fill + stroke
+    /// when selected, and a custom icon per cluster so the choice
+    /// feels deliberate rather than a generic radio list. Indigo
+    /// accent throughout — same hue as the parent row's selected
+    /// state so the section reads as nested children.
     private var menstrualClusterSection: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("Which describes today best?")
-                .font(.subheadline.weight(.medium))
-                .padding(.top, Theme.Spacing.sm)
-            Text("We use this to offer the right kind of adjustment, not to judge.")
+            HStack(spacing: Theme.Spacing.xs) {
+                Image(systemName: "sparkles")
+                    .font(.caption)
+                    .foregroundStyle(Color.indigo)
+                Text("Which describes today best?")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Theme.Colors.label)
+            }
+            .padding(.top, Theme.Spacing.sm)
+
+            Text("We tailor the suggestion to the symptom — never to judge.")
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
 
-            VStack(spacing: Theme.Spacing.xs) {
+            VStack(spacing: Theme.Spacing.sm) {
                 ForEach(MenstrualSymptomCluster.allCases, id: \.self) { cluster in
                     clusterRow(cluster)
                 }
             }
             .padding(.top, Theme.Spacing.xs)
         }
-        .padding(.leading, Theme.Spacing.md)
         .padding(.bottom, Theme.Spacing.sm)
     }
 
     private func clusterRow(_ cluster: MenstrualSymptomCluster) -> some View {
         let isSelected = selectedCluster == cluster
+        let accent = Color.indigo
         return Button {
             selectedCluster = cluster
         } label: {
-            HStack(spacing: Theme.Spacing.sm) {
-                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(isSelected ? Color.indigo : Theme.Colors.secondaryLabel)
+            HStack(spacing: Theme.Spacing.md) {
+                // Icon tile — matches parent row's icon-in-circle
+                // rhythm but slightly smaller for nested visual weight.
+                ZStack {
+                    Circle()
+                        .fill(isSelected ? accent : accent.opacity(0.15))
+                        .frame(width: 36, height: 36)
+                    Image(systemName: cluster.iconName)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(isSelected ? .white : accent)
+                }
                 VStack(alignment: .leading, spacing: 2) {
                     Text(cluster.displayName)
-                        .font(.subheadline.weight(.medium))
+                        .font(.subheadline.weight(.semibold))
                         .foregroundStyle(Theme.Colors.label)
                     Text(cluster.hint)
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
+                        .lineLimit(2)
                 }
                 Spacer()
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.title3)
+                        .foregroundStyle(accent)
+                        .transition(.scale.combined(with: .opacity))
+                }
             }
-            .padding(.vertical, Theme.Spacing.xs)
-            .padding(.horizontal, Theme.Spacing.sm)
+            .padding(Theme.Spacing.md)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
-                    .fill(isSelected ? Color.indigo.opacity(0.1) : Theme.Colors.secondaryBackground.opacity(0.5))
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                    .fill(isSelected ? accent.opacity(0.18) : Theme.Colors.secondaryBackground)
             )
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                    .stroke(
+                        isSelected ? accent : Color.clear,
+                        lineWidth: isSelected ? 1.5 : 0
+                    )
+            )
+            .shadow(
+                color: isSelected ? accent.opacity(0.25) : .clear,
+                radius: isSelected ? 12 : 0,
+                y: isSelected ? 4 : 0
+            )
+            .animation(.easeInOut(duration: 0.2), value: isSelected)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(cluster.displayName)
         .accessibilityHint(cluster.hint)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     // MARK: - Reason Row
@@ -245,6 +284,15 @@ extension MenstrualSymptomCluster {
         case .prePeriod:     "Mood, GI, sleep, breast pain, bloating"
         case .asymptomatic:  "Logged for tracking — no plan change"
         case .unspecified:   "Skip will be logged without a sub-reason"
+        }
+    }
+
+    var iconName: String {
+        switch self {
+        case .bleedDay:      "drop.fill"
+        case .prePeriod:     "wind"
+        case .asymptomatic:  "checkmark.shield.fill"
+        case .unspecified:   "ellipsis.circle.fill"
         }
     }
 }
