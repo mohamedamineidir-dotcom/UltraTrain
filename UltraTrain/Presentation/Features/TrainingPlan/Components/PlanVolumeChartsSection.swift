@@ -291,7 +291,7 @@ struct PlanVolumeChartsSection: View {
         }
         .sheet(item: $sheetWeek) { point in
             let matchingWeek = plan.weeks.first { $0.weekNumber == point.weekNumber }
-            WeekSummarySheet(point: point, week: matchingWeek)
+            WeekSummarySheet(point: point, week: matchingWeek, isRoad: isRoad)
         }
     }
 

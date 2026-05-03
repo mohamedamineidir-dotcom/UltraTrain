@@ -5,6 +5,12 @@ struct WeekSummarySheet: View {
     @Environment(\.dismiss) private var dismiss
     let point: WeekChartDataPoint
     let week: TrainingWeek?
+    /// True when the parent plan is a road race plan. Drives the
+    /// metrics section to show Distance (planned + completed) and
+    /// hide Elevation — road athletes don't train D+ as a target.
+    /// Trail/ultra plans (default false) keep the existing
+    /// Duration + Elevation + (conditional) Distance layout.
+    var isRoad: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -58,21 +64,42 @@ struct WeekSummarySheet: View {
                 completed: point.completedDurationSeconds > 0 ? formatDuration(point.completedDurationSeconds) : nil,
                 fraction: safeFraction(point.completedDurationSeconds, point.plannedDurationSeconds)
             )
-            metricBar(
-                label: "Elevation",
-                icon: "mountain.2.fill",
-                planned: UnitFormatter.formatElevation(point.plannedElevationM, unit: units),
-                completed: point.completedElevationM > 0 ? UnitFormatter.formatElevation(point.completedElevationM, unit: units) : nil,
-                fraction: safeFraction(point.completedElevationM, point.plannedElevationM)
-            )
-            if point.completedDistanceKm > 0 {
+            if isRoad {
+                // Road plan: Distance is the primary volume target.
+                // Show planned + completed alongside duration. Elevation
+                // is not a road metric and is intentionally suppressed.
                 metricBar(
                     label: "Distance",
                     icon: "figure.run",
-                    planned: nil,
-                    completed: UnitFormatter.formatDistance(point.completedDistanceKm, unit: units),
-                    fraction: nil
+                    planned: UnitFormatter.formatDistance(point.plannedDistanceKm, unit: units),
+                    completed: point.completedDistanceKm > 0
+                        ? UnitFormatter.formatDistance(point.completedDistanceKm, unit: units)
+                        : nil,
+                    fraction: safeFraction(point.completedDistanceKm, point.plannedDistanceKm)
                 )
+            } else {
+                // Trail/ultra plan: D+ is the second-most-important
+                // metric after duration. Distance shown only when the
+                // athlete logged completed runs (not pre-planned for
+                // trail because terrain choice is the athlete's call).
+                metricBar(
+                    label: "Elevation",
+                    icon: "mountain.2.fill",
+                    planned: UnitFormatter.formatElevation(point.plannedElevationM, unit: units),
+                    completed: point.completedElevationM > 0
+                        ? UnitFormatter.formatElevation(point.completedElevationM, unit: units)
+                        : nil,
+                    fraction: safeFraction(point.completedElevationM, point.plannedElevationM)
+                )
+                if point.completedDistanceKm > 0 {
+                    metricBar(
+                        label: "Distance",
+                        icon: "figure.run",
+                        planned: nil,
+                        completed: UnitFormatter.formatDistance(point.completedDistanceKm, unit: units),
+                        fraction: nil
+                    )
+                }
             }
         }
         .futuristicGlassStyle(phaseTint: Theme.Colors.warmCoral)
