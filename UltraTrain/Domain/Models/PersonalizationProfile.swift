@@ -40,6 +40,16 @@ struct PersonalizationProfile: Equatable, Sendable {
     /// in v2). Applied trail-only; road plans ignore.
     let vgDensityMultiplier: Double
 
+    /// Continuous adaptation multiplier in [0.97, 1.03] reflecting how
+    /// the athlete has been responding to recent training. Composed
+    /// from average RPE + average perceived feeling on logged runs in
+    /// the last 42 days. Defaults to 1.0 when no signal data is
+    /// available (fewer than 6 runs with RPE/feeling logged). Stacks
+    /// with tenure × weight × ultra into both `trailComposite` and
+    /// `roadComposite`, so a single +3% bump translates to a small
+    /// peak-LR / B2B bump and a small cut translates to backing off.
+    let adaptationMultiplier: Double
+
     // MARK: - Hard caps
 
     /// Athlete's longest completed single run, in seconds, capped at
@@ -78,17 +88,18 @@ struct PersonalizationProfile: Equatable, Sendable {
     // MARK: - Composite
 
     /// Convenience: the trail/ultra composite multiplier (tenure ×
-    /// weight × ultraExperience), hard-clamped to [0.75, 1.30].
-    /// Use this for peak LR / B2B prescriptions in trail plans.
+    /// weight × ultraExperience × adaptation), hard-clamped to
+    /// [0.75, 1.30]. Use this for peak LR / B2B prescriptions in
+    /// trail plans.
     var trailComposite: Double {
-        clamp(tenureMultiplier * weightMultiplier * ultraExperienceMultiplier)
+        clamp(tenureMultiplier * weightMultiplier * ultraExperienceMultiplier * adaptationMultiplier)
     }
 
-    /// Road composite: tenure × weight only. Ultra experience is
-    /// not relevant for road plans (a 100-mile finish does not
+    /// Road composite: tenure × weight × adaptation. Ultra experience
+    /// is not relevant for road plans (a 100-mile finish does not
     /// directly translate to road readiness).
     var roadComposite: Double {
-        clamp(tenureMultiplier * weightMultiplier)
+        clamp(tenureMultiplier * weightMultiplier * adaptationMultiplier)
     }
 
     private func clamp(_ value: Double) -> Double {
@@ -134,6 +145,7 @@ struct PersonalizationProfile: Equatable, Sendable {
         weightMultiplier: 1.0,
         ultraExperienceMultiplier: 1.0,
         vgDensityMultiplier: 1.0,
+        adaptationMultiplier: 1.0,
         historicalLongRunCapSeconds: nil,
         recentPeakWeeklyVolumeKm: nil,
         injuryStructures: [],
@@ -194,17 +206,146 @@ extension PersonalizationProfile {
             runs: recentRuns,
             now: now
         )
+        let signal = computeAdaptationSignal(runs: recentRuns, now: now)
+        let adaptation = adaptationMultiplier(signal: signal)
 
         return PersonalizationProfile(
             tenureMultiplier: tenure,
             weightMultiplier: weight,
             ultraExperienceMultiplier: ultra,
             vgDensityMultiplier: vgDensity,
+            adaptationMultiplier: adaptation,
             historicalLongRunCapSeconds: cap,
             recentPeakWeeklyVolumeKm: recentPeak,
             injuryStructures: athlete.injuryStructures,
             injuryVolumeCapPenalty: injuryPenalty
         )
+    }
+
+    /// Aggregates RPE + perceived feeling from recent logged runs to
+    /// detect how the athlete is actually responding to load.
+    /// Returned struct is nil when there isn't enough data to draw a
+    /// meaningful conclusion.
+    struct AdaptationSignal: Equatable, Sendable {
+        /// Number of recent runs that contributed to the average.
+        let runCount: Int
+        /// Mean RPE (1-10) across runs that logged RPE. Nil when no
+        /// run in the window logged RPE.
+        let avgRPE: Double?
+        /// Mean perceived feeling (1-5: 1=terrible, 5=great) across
+        /// runs that logged it. Nil when no feeling logged.
+        let avgPerceivedFeelingScore: Double?
+    }
+
+    /// Computes the adaptation signal from recent run history. Looks
+    /// at runs in the last `windowDays` (default 42 = 6 weeks ≈ one
+    /// training block), filters to running activities with at least
+    /// one of RPE or perceivedFeeling logged, and returns means.
+    /// Returns nil when fewer than `minRuns` runs in the window have
+    /// signal data — averages from a thin sample aren't actionable.
+    static func computeAdaptationSignal(
+        runs: [CompletedRun],
+        now: Date = .now,
+        windowDays: Int = 42,
+        minRuns: Int = 6
+    ) -> AdaptationSignal? {
+        guard let windowStart = Calendar.current.date(
+            byAdding: .day, value: -windowDays, to: now
+        ) else { return nil }
+        let recent = runs.filter {
+            $0.isRunningActivity
+                && $0.date >= windowStart
+                && $0.date <= now
+                && ($0.rpe != nil || $0.perceivedFeeling != nil)
+        }
+        guard recent.count >= minRuns else { return nil }
+
+        let rpeValues = recent.compactMap { $0.rpe }
+        let avgRPE: Double? = rpeValues.isEmpty
+            ? nil
+            : Double(rpeValues.reduce(0, +)) / Double(rpeValues.count)
+
+        let feelingValues = recent.compactMap {
+            $0.perceivedFeeling.map(perceivedFeelingScore)
+        }
+        let avgFeeling: Double? = feelingValues.isEmpty
+            ? nil
+            : feelingValues.reduce(0, +) / Double(feelingValues.count)
+
+        return AdaptationSignal(
+            runCount: recent.count,
+            avgRPE: avgRPE,
+            avgPerceivedFeelingScore: avgFeeling
+        )
+    }
+
+    /// Maps an AdaptationSignal to a per-cycle multiplier in [0.97,
+    /// 1.03]. Each axis (RPE + feeling) contributes independently
+    /// with a per-axis adjustment in [-3%, +2%]; the two are averaged
+    /// when both are present so disagreement dampens. Returns 1.0
+    /// when no signal is available.
+    ///
+    /// RPE brackets — average RPE across logged runs in the window:
+    ///   <5.5  : +2.0%  (under-stimulated, can ramp)
+    ///   5.5-6.5: +1.5%  (light, modest ramp ok)
+    ///   6.5-7.5: +0.5%  (sustainable hard, small bump)
+    ///   7.5-8.5: -1.5%  (consistently hard, ease back)
+    ///   ≥8.5  : -3.0%  (overload signal, cut)
+    ///
+    /// Feeling brackets — average score (1=terrible, 5=great):
+    ///   ≥4.5    : +1.5%  (body responding well)
+    ///   3.5-4.5: +0.5%
+    ///   2.5-3.5: 0       (neutral)
+    ///   1.5-2.5: -1.5%  (strain)
+    ///   <1.5    : -3.0%  (severe — back off)
+    static func adaptationMultiplier(signal: AdaptationSignal?) -> Double {
+        guard let signal else { return 1.0 }
+
+        var totalAdjustment = 0.0
+        var contributingAxes = 0
+
+        if let avgRPE = signal.avgRPE {
+            let adj: Double
+            switch avgRPE {
+            case ..<5.5:    adj = 2.0
+            case 5.5..<6.5: adj = 1.5
+            case 6.5..<7.5: adj = 0.5
+            case 7.5..<8.5: adj = -1.5
+            default:        adj = -3.0
+            }
+            totalAdjustment += adj
+            contributingAxes += 1
+        }
+        if let avgFeeling = signal.avgPerceivedFeelingScore {
+            let adj: Double
+            switch avgFeeling {
+            case 4.5...:    adj = 1.5
+            case 3.5..<4.5: adj = 0.5
+            case 2.5..<3.5: adj = 0
+            case 1.5..<2.5: adj = -1.5
+            default:        adj = -3.0
+            }
+            totalAdjustment += adj
+            contributingAxes += 1
+        }
+        guard contributingAxes > 0 else { return 1.0 }
+
+        // Average the per-axis adjustments so disagreement dampens
+        // the swing. Bound at ±3% per cycle.
+        let avgAdjustment = totalAdjustment / Double(contributingAxes)
+        let bounded = max(-3.0, min(3.0, avgAdjustment))
+        return 1.0 + (bounded / 100.0)
+    }
+
+    /// Numeric mapping for `PerceivedFeeling` so we can average it.
+    static func perceivedFeelingScore(_ feeling: PerceivedFeeling) -> Double {
+        switch feeling {
+        case .great:    return 5
+        case .good:     return 4
+        case .ok:       return 3
+        case .tough:    return 2
+        case .terrible: return 1
+        }
     }
 
     /// Aggregates running activities from the last `windowDays` into

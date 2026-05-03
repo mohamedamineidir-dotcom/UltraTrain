@@ -420,10 +420,12 @@ struct PersonalizationProfileTests {
     private func makeRun(
         daysFromNow: Int,
         distanceKm: Double,
-        now: Date
+        now: Date,
+        rpe: Int? = nil,
+        feeling: PerceivedFeeling? = nil
     ) -> CompletedRun {
         let date = Calendar.current.date(byAdding: .day, value: daysFromNow, to: now)!
-        return CompletedRun(
+        var run = CompletedRun(
             id: UUID(),
             athleteId: UUID(),
             date: date,
@@ -436,6 +438,169 @@ struct PersonalizationProfileTests {
             splits: [],
             pausedDuration: 0
         )
+        run.rpe = rpe
+        run.perceivedFeeling = feeling
+        return run
+    }
+
+    // MARK: - Adaptation signal
+
+    @Test("computeAdaptationSignal returns nil with fewer than 6 logged runs")
+    func adaptationSignalNilWhenThinHistory() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        let runs = [
+            makeRun(daysFromNow: -3, distanceKm: 10, now: now, rpe: 6),
+            makeRun(daysFromNow: -10, distanceKm: 12, now: now, rpe: 7),
+        ]
+        let signal = PersonalizationProfile.computeAdaptationSignal(
+            runs: runs, now: now
+        )
+        #expect(signal == nil)
+    }
+
+    @Test("computeAdaptationSignal averages RPE across logged runs")
+    func adaptationSignalAveragesRPE() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        let runs = [
+            makeRun(daysFromNow: -3, distanceKm: 10, now: now, rpe: 5),
+            makeRun(daysFromNow: -7, distanceKm: 10, now: now, rpe: 6),
+            makeRun(daysFromNow: -11, distanceKm: 10, now: now, rpe: 7),
+            makeRun(daysFromNow: -15, distanceKm: 10, now: now, rpe: 6),
+            makeRun(daysFromNow: -19, distanceKm: 10, now: now, rpe: 5),
+            makeRun(daysFromNow: -23, distanceKm: 10, now: now, rpe: 7),
+        ]
+        let signal = PersonalizationProfile.computeAdaptationSignal(
+            runs: runs, now: now
+        )
+        #expect(signal != nil)
+        #expect(signal?.runCount == 6)
+        // (5+6+7+6+5+7)/6 = 6.0
+        #expect(signal?.avgRPE == 6.0)
+        #expect(signal?.avgPerceivedFeelingScore == nil)
+    }
+
+    @Test("computeAdaptationSignal averages feeling score, ignores nil entries")
+    func adaptationSignalAveragesFeeling() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        let runs = [
+            makeRun(daysFromNow: -3, distanceKm: 10, now: now, feeling: .great),
+            makeRun(daysFromNow: -7, distanceKm: 10, now: now, feeling: .good),
+            makeRun(daysFromNow: -11, distanceKm: 10, now: now, feeling: .ok),
+            makeRun(daysFromNow: -15, distanceKm: 10, now: now, feeling: .good),
+            makeRun(daysFromNow: -19, distanceKm: 10, now: now, feeling: .great),
+            makeRun(daysFromNow: -23, distanceKm: 10, now: now, feeling: .ok),
+        ]
+        let signal = PersonalizationProfile.computeAdaptationSignal(
+            runs: runs, now: now
+        )
+        // (5+4+3+4+5+3)/6 = 4.0
+        #expect(signal?.avgPerceivedFeelingScore == 4.0)
+        #expect(signal?.avgRPE == nil)
+    }
+
+    @Test("computeAdaptationSignal ignores runs without any signal data")
+    func adaptationSignalIgnoresUntaggedRuns() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        let runs = [
+            // 5 runs without RPE/feeling — should not count
+            makeRun(daysFromNow: -3, distanceKm: 10, now: now),
+            makeRun(daysFromNow: -7, distanceKm: 10, now: now),
+            makeRun(daysFromNow: -11, distanceKm: 10, now: now),
+            makeRun(daysFromNow: -15, distanceKm: 10, now: now),
+            makeRun(daysFromNow: -19, distanceKm: 10, now: now),
+            // Only 1 run with RPE — below the 6-run threshold
+            makeRun(daysFromNow: -23, distanceKm: 10, now: now, rpe: 5),
+        ]
+        let signal = PersonalizationProfile.computeAdaptationSignal(
+            runs: runs, now: now
+        )
+        #expect(signal == nil)
+    }
+
+    // MARK: - adaptationMultiplier
+
+    @Test("adaptationMultiplier returns 1.0 when no signal")
+    func adaptationMultNilSignal() {
+        #expect(PersonalizationProfile.adaptationMultiplier(signal: nil) == 1.0)
+    }
+
+    @Test("adaptationMultiplier: ideal RPE alone gives modest bump")
+    func adaptationMultIdealRPE() {
+        let signal = PersonalizationProfile.AdaptationSignal(
+            runCount: 8, avgRPE: 6.0, avgPerceivedFeelingScore: nil
+        )
+        // Bracket 5.5-6.5 → +1.5% → 1.015
+        #expect(PersonalizationProfile.adaptationMultiplier(signal: signal) == 1.015)
+    }
+
+    @Test("adaptationMultiplier: high RPE gives cut")
+    func adaptationMultHighRPECuts() {
+        let signal = PersonalizationProfile.AdaptationSignal(
+            runCount: 8, avgRPE: 8.0, avgPerceivedFeelingScore: nil
+        )
+        // Bracket 7.5-8.5 → -1.5% → 0.985
+        #expect(PersonalizationProfile.adaptationMultiplier(signal: signal) == 0.985)
+    }
+
+    @Test("adaptationMultiplier: severe overload caps at -3%")
+    func adaptationMultSevereOverloadClamps() {
+        let signal = PersonalizationProfile.AdaptationSignal(
+            runCount: 8, avgRPE: 9.5, avgPerceivedFeelingScore: 1.0
+        )
+        // RPE 9.5 → -3%, feeling 1.0 → -3%, avg = -3% → 0.97
+        #expect(PersonalizationProfile.adaptationMultiplier(signal: signal) == 0.97)
+    }
+
+    @Test("adaptationMultiplier: disagreement between axes dampens swing")
+    func adaptationMultDisagreement() {
+        // RPE says ideal (+1.5%) but feeling is rough (-1.5%)
+        // Average = 0% → 1.0
+        let signal = PersonalizationProfile.AdaptationSignal(
+            runCount: 8, avgRPE: 6.0, avgPerceivedFeelingScore: 2.0
+        )
+        #expect(PersonalizationProfile.adaptationMultiplier(signal: signal) == 1.0)
+    }
+
+    @Test("adaptationMultiplier: bounded to [0.97, 1.03]")
+    func adaptationMultBounds() {
+        // Best case: RPE just under 5.5 (+2.0%) + feeling great (+1.5%)
+        // avg = 1.75% → 1.0175 (within bounds)
+        let best = PersonalizationProfile.AdaptationSignal(
+            runCount: 8, avgRPE: 5.0, avgPerceivedFeelingScore: 5.0
+        )
+        let bestMult = PersonalizationProfile.adaptationMultiplier(signal: best)
+        #expect(bestMult >= 1.0 && bestMult <= 1.03)
+    }
+
+    @Test("factory wires adaptationMultiplier from history")
+    func factoryWiresAdaptation() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        // 6 runs all logged with great feeling + ideal RPE
+        let runs = (1...6).map { i in
+            makeRun(
+                daysFromNow: -3 * i, distanceKm: 10, now: now,
+                rpe: 6, feeling: .great
+            )
+        }
+        let athlete = makeAthlete()
+        let profile = PersonalizationProfile.from(
+            athlete: athlete, recentRuns: runs, now: now
+        )
+        // RPE ideal (+1.5%) + feeling great (+1.5%), avg = +1.5% → 1.015
+        #expect(profile.adaptationMultiplier == 1.015)
+    }
+
+    @Test("trail composite includes adaptation multiplier")
+    func trailCompositeIncludesAdaptation() {
+        let p = makeProfile(adaptationMultiplier: 1.02)
+        // 1.0 × 1.0 × 1.0 × 1.02 = 1.02
+        #expect(p.trailComposite == 1.02)
+    }
+
+    @Test("road composite includes adaptation multiplier")
+    func roadCompositeIncludesAdaptation() {
+        let p = makeProfile(adaptationMultiplier: 0.98)
+        #expect(p.roadComposite == 0.98)
     }
 
     // MARK: - Helper
@@ -445,6 +610,7 @@ struct PersonalizationProfileTests {
         weightMultiplier: Double = 1.0,
         ultraExperienceMultiplier: Double = 1.0,
         vgDensityMultiplier: Double = 1.0,
+        adaptationMultiplier: Double = 1.0,
         historicalLongRunCapSeconds: TimeInterval? = nil,
         recentPeakWeeklyVolumeKm: Double? = nil,
         injuryStructures: Set<InjuryStructure> = [],
@@ -455,6 +621,7 @@ struct PersonalizationProfileTests {
             weightMultiplier: weightMultiplier,
             ultraExperienceMultiplier: ultraExperienceMultiplier,
             vgDensityMultiplier: vgDensityMultiplier,
+            adaptationMultiplier: adaptationMultiplier,
             historicalLongRunCapSeconds: historicalLongRunCapSeconds,
             recentPeakWeeklyVolumeKm: recentPeakWeeklyVolumeKm,
             injuryStructures: injuryStructures,
