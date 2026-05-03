@@ -109,35 +109,39 @@ struct SkipReasonSheet: View {
         return Button {
             selectedCluster = cluster
         } label: {
-            HStack(spacing: Theme.Spacing.md) {
-                // Icon tile — matches parent row's icon-in-circle
-                // rhythm but slightly smaller for nested visual weight.
+            HStack(spacing: Theme.Spacing.sm) {
+                // Compact icon tile — visually distinct from the
+                // parent row's plain icon (signals "sub-option") but
+                // smaller than the parent rhythm so the nested rows
+                // don't outweigh their parent.
                 ZStack {
                     Circle()
                         .fill(isSelected ? accent : accent.opacity(0.15))
-                        .frame(width: 36, height: 36)
+                        .frame(width: 26, height: 26)
                     Image(systemName: cluster.iconName)
-                        .font(.subheadline.weight(.semibold))
+                        .font(.caption.weight(.semibold))
                         .foregroundStyle(isSelected ? .white : accent)
                 }
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 1) {
                     Text(cluster.displayName)
-                        .font(.subheadline.weight(.semibold))
+                        .font(.subheadline.weight(.medium))
                         .foregroundStyle(Theme.Colors.label)
+                        .lineLimit(1)
                     Text(cluster.hint)
-                        .font(.caption)
+                        .font(.caption2)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
-                        .lineLimit(2)
+                        .lineLimit(1)
                 }
                 Spacer()
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.title3)
+                        .font(.subheadline)
                         .foregroundStyle(accent)
                         .transition(.scale.combined(with: .opacity))
                 }
             }
-            .padding(Theme.Spacing.md)
+            .padding(.vertical, Theme.Spacing.sm)
+            .padding(.horizontal, Theme.Spacing.md)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
@@ -151,9 +155,9 @@ struct SkipReasonSheet: View {
                     )
             )
             .shadow(
-                color: isSelected ? accent.opacity(0.25) : .clear,
-                radius: isSelected ? 12 : 0,
-                y: isSelected ? 4 : 0
+                color: isSelected ? accent.opacity(0.22) : .clear,
+                radius: isSelected ? 10 : 0,
+                y: isSelected ? 3 : 0
             )
             .animation(.easeInOut(duration: 0.2), value: isSelected)
         }
@@ -219,7 +223,7 @@ extension SkipReason {
         case .weather:        "Bad weather or conditions"
         case .injury:         "I have an injury or sharp pain"
         case .other:          "Other reason"
-        case .menstrualCycle: "Menstrual cycle / period symptoms"
+        case .menstrualCycle: "Menstrual cycle"
         }
     }
 
@@ -233,7 +237,7 @@ extension SkipReason {
         case .injury:         "Strain, sprain, or acute pain"
         case .weather:        "Rain, extreme heat, unsafe trail"
         case .other:          "Something else"
-        case .menstrualCycle: "Cramps, heavy flow, PMS, or related symptoms"
+        case .menstrualCycle: "Cramps, PMS, or period symptoms"
         }
     }
 
