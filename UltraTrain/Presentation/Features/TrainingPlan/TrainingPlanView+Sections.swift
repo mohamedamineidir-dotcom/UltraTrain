@@ -211,6 +211,21 @@ extension TrainingPlanView {
             }
             .padding()
         }
+        .sheet(item: Binding(
+            get: { viewModel.presentedMenstrualOptions },
+            set: { viewModel.presentedMenstrualOptions = $0 }
+        )) { rec in
+            // Menstrual recommendation chosen via the banner action.
+            // Sheet shows defer / reduce / swap / keep buttons; on
+            // pick, the ViewModel performs the concrete plan edit
+            // and dismisses the recommendation.
+            MenstrualAdaptationOptionsSheet(
+                recommendation: rec,
+                onChoose: { choice in
+                    Task { await viewModel.applyMenstrualChoice(rec, choice: choice) }
+                }
+            )
+        }
     }
 
     @MainActor

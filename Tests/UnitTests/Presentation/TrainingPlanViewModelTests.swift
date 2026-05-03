@@ -1173,4 +1173,122 @@ struct TrainingPlanViewModelTests {
 
         #expect(vm.isPlanStale == false)
     }
+
+    // MARK: - Menstrual Adaptation Choice
+
+    /// Builds a plan with a single tempo session targetable by the
+    /// menstrual recommendation. Returns the (vm, plan, sessionId)
+    /// triple ready for choice tests.
+    @MainActor
+    private func makeMenstrualChoiceFixture(
+        recommendationType: PlanAdjustmentType = .menstrualBleedDayOptions
+    ) -> (vm: TrainingPlanViewModel, plan: TrainingPlan, sessionId: UUID, recommendation: PlanAdjustmentRecommendation) {
+        let athlete = makeAthlete()
+        let race = makeRace()
+        let plan = makePlan(athlete: athlete, race: race)
+        // Tempo session is index 1 — that's our target
+        let tempoId = plan.weeks[0].sessions[1].id
+
+        let rec = PlanAdjustmentRecommendation(
+            id: UUID(),
+            type: recommendationType,
+            severity: .suggestion,
+            title: "Symptoms ahead — pick what fits",
+            message: "Test rec",
+            actionLabel: "See options",
+            affectedSessionIds: [tempoId]
+        )
+
+        let planRepo = MockTrainingPlanRepository()
+        planRepo.activePlan = plan
+        let vm = makeViewModel(planRepo: planRepo)
+        vm.plan = plan
+        return (vm, plan, tempoId, rec)
+    }
+
+    @Test("menstrual choice .keep leaves the plan untouched and dismisses the rec")
+    @MainActor
+    func menstrualChoiceKeepIsNoOp() async {
+        let (vm, plan, sessionId, rec) = makeMenstrualChoiceFixture()
+        let originalDistance = plan.weeks[0].sessions[1].plannedDistanceKm
+        let originalDuration = plan.weeks[0].sessions[1].plannedDuration
+        let originalDate = plan.weeks[0].sessions[1].date
+        let originalType = plan.weeks[0].sessions[1].type
+
+        await vm.applyMenstrualChoice(rec, choice: .keep)
+
+        let updated = vm.plan?.weeks[0].sessions.first(where: { $0.id == sessionId })
+        #expect(updated?.plannedDistanceKm == originalDistance)
+        #expect(updated?.plannedDuration == originalDuration)
+        #expect(updated?.date == originalDate)
+        #expect(updated?.type == originalType)
+        // Recommendation dismissed
+    }
+
+    @Test("menstrual choice .deferDays shifts the session forward by N days")
+    @MainActor
+    func menstrualChoiceDeferShiftsDate() async {
+        let (vm, plan, sessionId, rec) = makeMenstrualChoiceFixture()
+        let originalDate = plan.weeks[0].sessions[1].date
+
+        await vm.applyMenstrualChoice(rec, choice: .deferDays(2))
+
+        let updated = vm.plan?.weeks[0].sessions.first(where: { $0.id == sessionId })
+        let expected = Calendar.current.date(byAdding: .day, value: 2, to: originalDate)
+        #expect(updated?.date == expected)
+    }
+
+    @Test("menstrual choice .reduceVolume cuts distance/duration and (optionally) lowers intensity")
+    @MainActor
+    func menstrualChoiceReduceVolumeWithEasy() async {
+        let (vm, plan, sessionId, rec) = makeMenstrualChoiceFixture()
+        let originalDistance = plan.weeks[0].sessions[1].plannedDistanceKm
+        let originalDuration = plan.weeks[0].sessions[1].plannedDuration
+
+        await vm.applyMenstrualChoice(rec, choice: .reduceVolume(factor: 0.75, lowerToEasy: true))
+
+        let updated = vm.plan?.weeks[0].sessions.first(where: { $0.id == sessionId })
+        #expect(((updated?.plannedDistanceKm ?? 0) - originalDistance * 0.75).magnitude < 0.001)
+        #expect(((updated?.plannedDuration ?? 0) - originalDuration * 0.75).magnitude < 0.001)
+        #expect(updated?.intensity == .easy)
+    }
+
+    @Test("menstrual choice .reduceVolume without easy keeps original intensity")
+    @MainActor
+    func menstrualChoiceReduceVolumeKeepsIntensity() async {
+        let (vm, _, sessionId, rec) = makeMenstrualChoiceFixture(recommendationType: .menstrualPrePeriodOptions)
+        // Tempo session is .moderate — should stay .moderate after reduce-only
+        await vm.applyMenstrualChoice(rec, choice: .reduceVolume(factor: 0.88, lowerToEasy: false))
+        let updated = vm.plan?.weeks[0].sessions.first(where: { $0.id == sessionId })
+        #expect(updated?.intensity == .moderate)
+    }
+
+    @Test("menstrual choice .swapToEasy converts session to recovery type at 60% volume")
+    @MainActor
+    func menstrualChoiceSwapToEasy() async {
+        let (vm, plan, sessionId, rec) = makeMenstrualChoiceFixture()
+        let originalDistance = plan.weeks[0].sessions[1].plannedDistanceKm
+        let originalDuration = plan.weeks[0].sessions[1].plannedDuration
+
+        await vm.applyMenstrualChoice(rec, choice: .swapToEasy)
+
+        let updated = vm.plan?.weeks[0].sessions.first(where: { $0.id == sessionId })
+        #expect(updated?.type == .recovery)
+        #expect(updated?.intensity == .easy)
+        #expect(((updated?.plannedDistanceKm ?? 0) - originalDistance * 0.6).magnitude < 0.001)
+        #expect(((updated?.plannedDuration ?? 0) - originalDuration * 0.6).magnitude < 0.001)
+        #expect(updated?.plannedElevationGainM == 0)
+    }
+
+    @Test("applyRecommendation for menstrual recommendation presents the options sheet")
+    @MainActor
+    func menstrualBannerActionPresentsSheet() async {
+        let (vm, _, _, rec) = makeMenstrualChoiceFixture()
+        #expect(vm.presentedMenstrualOptions == nil)
+        await vm.applyRecommendation(rec)
+        #expect(vm.presentedMenstrualOptions?.id == rec.id)
+        // Plan should NOT have changed — the sheet hasn't been chosen yet
+        let updated = vm.plan?.weeks[0].sessions[1]
+        #expect(updated?.intensity == .moderate)
+    }
 }

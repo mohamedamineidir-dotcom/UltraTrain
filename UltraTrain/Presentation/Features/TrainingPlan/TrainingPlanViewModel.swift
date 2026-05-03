@@ -49,6 +49,12 @@ final class TrainingPlanViewModel {
     var adjustmentRecommendations: [PlanAdjustmentRecommendation] = []
     var dismissedRecommendationIds: Set<UUID> = []
     var isApplyingAdjustment = false
+    /// When non-nil, drives presentation of `MenstrualAdaptationOptionsSheet`.
+    /// Tapping the menstrual recommendation banner sets this to the
+    /// originating recommendation (rather than calling apply directly,
+    /// which doesn't make sense for option-style recs). Cleared when
+    /// the user picks an option or dismisses the sheet.
+    var presentedMenstrualOptions: PlanAdjustmentRecommendation?
     /// #22: next-7-day injury-risk projection (ACWR + monotony).
     /// Recomputed whenever the plan reloads or regenerates.
     var injuryRiskProjection: PlanInjuryRiskProjector.Projection?
