@@ -85,7 +85,6 @@ extension AppDependencyContainer {
         planRepository = SyncedTrainingPlanRepository(
             local: localPlanRepo, syncService: planSyncService, syncQueue: sync
         )
-        planGenerator = TrainingPlanGenerator()
         let localNutritionRepo = LocalNutritionRepository(modelContainer: modelContainer)
         let remoteNutritionDataSource = RemoteNutritionDataSource(apiClient: client)
         let nutritionSyncService = NutritionSyncService(
@@ -102,6 +101,10 @@ extension AppDependencyContainer {
             local: localRunRepo, syncService: sync, restoreService: runRestoreService,
             remoteDataSource: remoteRunDataSource, authService: auth
         )
+        // PersonalizationProfile pulls last 90 days of completed runs
+        // to anchor plan ramps off demonstrated capacity instead of the
+        // stale onboarding snapshot — wire the run repo through.
+        planGenerator = TrainingPlanGenerator(runRepository: runRepository)
         locationService = LocationService()
         let localFitnessRepo = LocalFitnessRepository(modelContainer: modelContainer)
         let remoteFitnessDataSource = RemoteFitnessDataSource(apiClient: client)

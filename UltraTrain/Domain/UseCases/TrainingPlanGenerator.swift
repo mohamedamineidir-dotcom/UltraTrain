@@ -2,6 +2,20 @@ import Foundation
 
 struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
 
+    /// Optional run history source. When provided, the generator
+    /// pulls the athlete's last 90 days of completed runs and feeds
+    /// them into PersonalizationProfile so the plan anchor reflects
+    /// **demonstrated** weekly capacity rather than the stale
+    /// onboarding snapshot. Nil means we fall back to snapshot —
+    /// existing tests and any caller that doesn't wire this don't
+    /// see a behaviour change.
+    let runRepository: RunRepository?
+
+    init(runRepository: RunRepository? = nil) {
+        self.runRepository = runRepository
+    }
+
+
     func execute(
         athlete: Athlete,
         targetRace: Race,
@@ -110,14 +124,16 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         let raceEffectiveKm = targetRace.effectiveDistanceKm
 
         // Build per-athlete personalization profile. Tenure, weight band,
-        // ultra finish count, and demonstrated longest run feed into
-        // multipliers + a hard cap on peak LR. Composite multiplier is
-        // clamped to [0.75, 1.30] inside the profile so no single
-        // signal can blow up prescriptions.
+        // ultra finish count, demonstrated longest run, and demonstrated
+        // recent peak weekly volume feed into multipliers + hard caps.
+        // Composite multiplier is clamped to [0.75, 1.30] inside the
+        // profile so no single signal can blow up prescriptions.
         let ultraCount = countUltraFinishes(athlete: athlete)
+        let recentRuns = await fetchRecentRuns(for: athlete)
         let personalization = PersonalizationProfile.from(
             athlete: athlete,
-            ultraFinishCount: ultraCount
+            ultraFinishCount: ultraCount,
+            recentRuns: recentRuns
         )
 
         let volumes = VolumeCalculator.calculate(
@@ -890,5 +906,24 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         athlete.trailPersonalBests.filter {
             $0.distanceKm >= 30 && $0.timeSeconds > 0
         }.count
+    }
+
+    /// Pulls the athlete's last 90 days of completed runs for
+    /// PersonalizationProfile's recent-peak computation. Returns
+    /// `[]` when no run repository is wired (existing tests, DI
+    /// containers that don't pass one) so the personalization layer
+    /// falls back to the snapshot baseline. Errors are swallowed —
+    /// a failed history fetch must never block plan generation.
+    private func fetchRecentRuns(for athlete: Athlete) async -> [CompletedRun] {
+        guard let runRepository else { return [] }
+        let now = Date.now
+        guard let windowStart = Calendar.current.date(
+            byAdding: .day, value: -90, to: now
+        ) else { return [] }
+        do {
+            return try await runRepository.getRuns(from: windowStart, to: now)
+        } catch {
+            return []
+        }
     }
 }

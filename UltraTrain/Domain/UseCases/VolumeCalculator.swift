@@ -44,6 +44,15 @@ enum VolumeCalculator {
 
         let totalWeeks = skeletons.count
 
+        // Pick the effective baseline. When PersonalizationProfile has
+        // a recentPeak that diverges significantly from the snapshot,
+        // we use the demonstrated peak instead — better matches actual
+        // current capacity for returning users than a stale onboarding
+        // number. Falls through to snapshot when no recent peak data.
+        let effectiveCurrentVolumeKm = personalization?
+            .effectiveWeeklyVolumeKm(snapshotKm: currentWeeklyVolumeKm)
+            ?? currentWeeklyVolumeKm
+
         // Compute duration-based volumes via LongRunCurveCalculator
         var volumes: [WeekVolume] = []
         var previousNonRecoveryWeekTotal: TimeInterval = 0
@@ -63,7 +72,7 @@ enum VolumeCalculator {
                 raceDurationSeconds: raceDurationSeconds,
                 raceEffectiveKm: raceEffectiveKm,
                 preferredRunsPerWeek: preferredRunsPerWeek,
-                currentWeeklyVolumeKm: currentWeeklyVolumeKm,
+                currentWeeklyVolumeKm: effectiveCurrentVolumeKm,
                 previousNonRecoveryWeekTotal: previousNonRecoveryWeekTotal,
                 taperProfile: taperProfile,
                 weekNumberInTaper: weekInTaper,
@@ -125,7 +134,11 @@ enum VolumeCalculator {
         )
         let week1Multiplier = VolumeCapCalculator.week1VolumeMultiplier(preferredRunsPerWeek: preferredRunsPerWeek)
         let week1Baseline = VolumeCapCalculator.week1MinimumBaseline(experience: experience)
-        let currentVolumeSeconds = currentWeeklyVolumeKm * (AppConfiguration.Training.averagePaceSecPerKm[experience.rawValue] ?? 390)
+        // Week-1 anchor uses the EFFECTIVE baseline so a returning
+        // user with demonstrated higher capacity gets a more
+        // appropriate first-week ramp than the stale snapshot would
+        // allow. Snapshot still wins when no peak data exists.
+        let currentVolumeSeconds = effectiveCurrentVolumeKm * (AppConfiguration.Training.averagePaceSecPerKm[experience.rawValue] ?? 390)
         let week1MaxTotal = max(currentVolumeSeconds * week1Multiplier, week1Baseline)
 
         var capped = volumes

@@ -48,6 +48,16 @@ struct PersonalizationProfile: Equatable, Sendable {
     /// a `min(...)` on the computed peak single LR.
     let historicalLongRunCapSeconds: TimeInterval?
 
+    /// Maximum weekly running volume the athlete has actually
+    /// completed in the last 90 days, in km. Drives the
+    /// `effectiveWeeklyVolumeKm(snapshotKm:)` decision so the plan
+    /// generator can anchor off **demonstrated** capacity rather
+    /// than the static onboarding snapshot when the two diverge
+    /// significantly. Nil when no recent training history is
+    /// available (fresh account, generator wired without a
+    /// RunRepository, or fewer than 4 weeks of logged data).
+    let recentPeakWeeklyVolumeKm: Double?
+
     // MARK: - Reported injury structures
 
     /// Recurring injury sites the athlete flagged. Optional refinement
@@ -85,6 +95,35 @@ struct PersonalizationProfile: Equatable, Sendable {
         max(0.75, min(1.30, value))
     }
 
+    /// Returns the weekly volume baseline that should drive plan
+    /// generation, picking between the athlete's onboarding snapshot
+    /// and the demonstrated recent peak based on which best reflects
+    /// current capacity.
+    ///
+    /// Decision rules:
+    /// - `recentPeak >= snapshot × 1.15` → athlete is more capable
+    ///   than they reported (often: returning user generating a new
+    ///   plan after months of training) → use recentPeak so the
+    ///   ramp matches current ability
+    /// - `recentPeak <= snapshot × 0.70` → athlete has detrained
+    ///   (often: returning after injury / long break) → use recentPeak
+    ///   so we don't ramp from a stale higher baseline
+    /// - otherwise → snapshot still matches reality, use it
+    ///
+    /// Falls through to snapshot when no recent peak is available.
+    func effectiveWeeklyVolumeKm(snapshotKm: Double) -> Double {
+        guard let peak = recentPeakWeeklyVolumeKm,
+              peak > 0,
+              snapshotKm > 0 else {
+            return snapshotKm
+        }
+        let ratio = peak / snapshotKm
+        if ratio >= 1.15 || ratio <= 0.70 {
+            return peak
+        }
+        return snapshotKm
+    }
+
     // MARK: - Default
 
     /// Profile that has no effect — all multipliers 1.0, no caps,
@@ -96,6 +135,7 @@ struct PersonalizationProfile: Equatable, Sendable {
         ultraExperienceMultiplier: 1.0,
         vgDensityMultiplier: 1.0,
         historicalLongRunCapSeconds: nil,
+        recentPeakWeeklyVolumeKm: nil,
         injuryStructures: [],
         injuryVolumeCapPenalty: 0
     )
@@ -120,7 +160,9 @@ extension PersonalizationProfile {
     static func from(
         athlete: Athlete,
         ultraFinishCount: Int = 0,
-        estimatedLongRunPaceSecondsPerKm: Double = 450 // 7:30 min/km
+        recentRuns: [CompletedRun] = [],
+        estimatedLongRunPaceSecondsPerKm: Double = 450, // 7:30 min/km
+        now: Date = .now
     ) -> PersonalizationProfile {
         // Use explicit runningYears when set; otherwise infer from
         // experience tier. Explicit > inferred so power users can
@@ -148,15 +190,59 @@ extension PersonalizationProfile {
             cap = nil
         }
 
+        let recentPeak = computeRecentPeakWeeklyVolumeKm(
+            runs: recentRuns,
+            now: now
+        )
+
         return PersonalizationProfile(
             tenureMultiplier: tenure,
             weightMultiplier: weight,
             ultraExperienceMultiplier: ultra,
             vgDensityMultiplier: vgDensity,
             historicalLongRunCapSeconds: cap,
+            recentPeakWeeklyVolumeKm: recentPeak,
             injuryStructures: athlete.injuryStructures,
             injuryVolumeCapPenalty: injuryPenalty
         )
+    }
+
+    /// Aggregates running activities from the last `windowDays` into
+    /// ISO weekly buckets and returns the maximum weekly km. Returns
+    /// nil when fewer than `minWeeks` of data are available — peaks
+    /// from a thin history aren't reliable signal.
+    ///
+    /// Only running activities (`run` / `trailRunning`) with positive
+    /// distance are counted. Cross-training and gear-only logs are
+    /// ignored — the goal is demonstrated *running* capacity.
+    static func computeRecentPeakWeeklyVolumeKm(
+        runs: [CompletedRun],
+        now: Date = .now,
+        windowDays: Int = 90,
+        minWeeks: Int = 4
+    ) -> Double? {
+        guard let windowStart = Calendar.current.date(
+            byAdding: .day, value: -windowDays, to: now
+        ) else { return nil }
+
+        let runningOnly = runs.filter {
+            $0.isRunningActivity
+                && $0.date >= windowStart
+                && $0.date <= now
+                && $0.distanceKm > 0
+        }
+
+        let calendar = Calendar.current
+        var weekTotals: [Date: Double] = [:]
+        for run in runningOnly {
+            guard let weekStart = calendar.dateInterval(
+                of: .weekOfYear, for: run.date
+            )?.start else { continue }
+            weekTotals[weekStart, default: 0] += run.distanceKm
+        }
+
+        guard weekTotals.count >= minWeeks else { return nil }
+        return weekTotals.values.max()
     }
 
     /// Proxy mapping from experience tier → years of consistent

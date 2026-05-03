@@ -287,6 +287,157 @@ struct PersonalizationProfileTests {
         #expect((profile.vgDensityMultiplier - 0.874).magnitude < 0.001)
     }
 
+    // MARK: - Recent peak weekly volume
+
+    @Test("computeRecentPeakWeeklyVolumeKm returns nil when fewer than 4 weeks of data")
+    func recentPeakReturnsNilForThinHistory() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        // 3 runs in 3 different weeks → only 3 weeks total
+        let runs = [
+            makeRun(daysFromNow: -3, distanceKm: 10, now: now),
+            makeRun(daysFromNow: -10, distanceKm: 12, now: now),
+            makeRun(daysFromNow: -17, distanceKm: 15, now: now),
+        ]
+        let peak = PersonalizationProfile.computeRecentPeakWeeklyVolumeKm(
+            runs: runs, now: now
+        )
+        #expect(peak == nil)
+    }
+
+    @Test("computeRecentPeakWeeklyVolumeKm returns max weekly km across 90-day window")
+    func recentPeakReturnsMaxWeekly() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        // Spread across 5 different weeks. Peak week (3 weeks ago)
+        // has 50 km total.
+        let runs = [
+            // Week -1: 30 km
+            makeRun(daysFromNow: -3, distanceKm: 15, now: now),
+            makeRun(daysFromNow: -5, distanceKm: 15, now: now),
+            // Week -2: 40 km
+            makeRun(daysFromNow: -10, distanceKm: 20, now: now),
+            makeRun(daysFromNow: -12, distanceKm: 20, now: now),
+            // Week -3: 50 km (PEAK)
+            makeRun(daysFromNow: -17, distanceKm: 25, now: now),
+            makeRun(daysFromNow: -19, distanceKm: 25, now: now),
+            // Week -4: 35 km
+            makeRun(daysFromNow: -24, distanceKm: 18, now: now),
+            makeRun(daysFromNow: -26, distanceKm: 17, now: now),
+            // Week -5: 25 km
+            makeRun(daysFromNow: -31, distanceKm: 25, now: now),
+        ]
+        let peak = PersonalizationProfile.computeRecentPeakWeeklyVolumeKm(
+            runs: runs, now: now
+        )
+        #expect(peak == 50)
+    }
+
+    @Test("computeRecentPeakWeeklyVolumeKm ignores runs older than the 90-day window")
+    func recentPeakIgnoresOldRuns() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        let runs = [
+            // Inside window: 4 weeks of consistent 20 km
+            makeRun(daysFromNow: -3,  distanceKm: 20, now: now),
+            makeRun(daysFromNow: -10, distanceKm: 20, now: now),
+            makeRun(daysFromNow: -17, distanceKm: 20, now: now),
+            makeRun(daysFromNow: -24, distanceKm: 20, now: now),
+            // Outside window: 100 km bomb 6 months ago — should be ignored
+            makeRun(daysFromNow: -180, distanceKm: 100, now: now),
+        ]
+        let peak = PersonalizationProfile.computeRecentPeakWeeklyVolumeKm(
+            runs: runs, now: now
+        )
+        #expect(peak == 20)
+    }
+
+    @Test("computeRecentPeakWeeklyVolumeKm ignores cross-training and zero-distance entries")
+    func recentPeakIgnoresNonRunning() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        var crossTrainingRun = makeRun(daysFromNow: -3, distanceKm: 30, now: now)
+        crossTrainingRun.activityType = .cycling
+        let zeroDistance = makeRun(daysFromNow: -10, distanceKm: 0, now: now)
+        let runs = [
+            crossTrainingRun,
+            zeroDistance,
+            makeRun(daysFromNow: -17, distanceKm: 15, now: now),
+            makeRun(daysFromNow: -24, distanceKm: 15, now: now),
+            makeRun(daysFromNow: -31, distanceKm: 15, now: now),
+            makeRun(daysFromNow: -38, distanceKm: 15, now: now),
+        ]
+        let peak = PersonalizationProfile.computeRecentPeakWeeklyVolumeKm(
+            runs: runs, now: now
+        )
+        // Only the 4 valid running entries count, max weekly = 15
+        #expect(peak == 15)
+    }
+
+    // MARK: - effectiveWeeklyVolumeKm
+
+    @Test("effectiveWeeklyVolumeKm picks recentPeak when athlete is more capable than snapshot")
+    func effectiveUsesPeakWhenAthleteMoreCapable() {
+        // Snapshot 50, demonstrated 70 (40% above) → use 70
+        let p = makeProfile(recentPeakWeeklyVolumeKm: 70)
+        #expect(p.effectiveWeeklyVolumeKm(snapshotKm: 50) == 70)
+    }
+
+    @Test("effectiveWeeklyVolumeKm picks recentPeak when athlete has detrained")
+    func effectiveUsesPeakWhenDetrained() {
+        // Snapshot 80, demonstrated 40 (50% below) → use 40
+        let p = makeProfile(recentPeakWeeklyVolumeKm: 40)
+        #expect(p.effectiveWeeklyVolumeKm(snapshotKm: 80) == 40)
+    }
+
+    @Test("effectiveWeeklyVolumeKm uses snapshot when peak is close to snapshot")
+    func effectiveUsesSnapshotWhenClose() {
+        // Snapshot 50, demonstrated 55 (10% above) → still use snapshot
+        let p = makeProfile(recentPeakWeeklyVolumeKm: 55)
+        #expect(p.effectiveWeeklyVolumeKm(snapshotKm: 50) == 50)
+    }
+
+    @Test("effectiveWeeklyVolumeKm falls back to snapshot when no recent peak")
+    func effectiveFallsBackToSnapshot() {
+        let p = makeProfile(recentPeakWeeklyVolumeKm: nil)
+        #expect(p.effectiveWeeklyVolumeKm(snapshotKm: 60) == 60)
+    }
+
+    @Test("factory wires recentPeak from computeRecentPeakWeeklyVolumeKm")
+    func factoryWiresRecentPeak() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        let runs = [
+            makeRun(daysFromNow: -3,  distanceKm: 25, now: now),
+            makeRun(daysFromNow: -10, distanceKm: 25, now: now),
+            makeRun(daysFromNow: -17, distanceKm: 25, now: now),
+            makeRun(daysFromNow: -24, distanceKm: 25, now: now),
+        ]
+        let athlete = makeAthlete()
+        let profile = PersonalizationProfile.from(
+            athlete: athlete,
+            recentRuns: runs,
+            now: now
+        )
+        #expect(profile.recentPeakWeeklyVolumeKm == 25)
+    }
+
+    private func makeRun(
+        daysFromNow: Int,
+        distanceKm: Double,
+        now: Date
+    ) -> CompletedRun {
+        let date = Calendar.current.date(byAdding: .day, value: daysFromNow, to: now)!
+        return CompletedRun(
+            id: UUID(),
+            athleteId: UUID(),
+            date: date,
+            distanceKm: distanceKm,
+            elevationGainM: 0,
+            elevationLossM: 0,
+            duration: distanceKm * 360, // 6 min/km baseline
+            averagePaceSecondsPerKm: 360,
+            gpsTrack: [],
+            splits: [],
+            pausedDuration: 0
+        )
+    }
+
     // MARK: - Helper
 
     private func makeProfile(
@@ -295,6 +446,7 @@ struct PersonalizationProfileTests {
         ultraExperienceMultiplier: Double = 1.0,
         vgDensityMultiplier: Double = 1.0,
         historicalLongRunCapSeconds: TimeInterval? = nil,
+        recentPeakWeeklyVolumeKm: Double? = nil,
         injuryStructures: Set<InjuryStructure> = [],
         injuryVolumeCapPenalty: Double = 0
     ) -> PersonalizationProfile {
@@ -304,6 +456,7 @@ struct PersonalizationProfileTests {
             ultraExperienceMultiplier: ultraExperienceMultiplier,
             vgDensityMultiplier: vgDensityMultiplier,
             historicalLongRunCapSeconds: historicalLongRunCapSeconds,
+            recentPeakWeeklyVolumeKm: recentPeakWeeklyVolumeKm,
             injuryStructures: injuryStructures,
             injuryVolumeCapPenalty: injuryVolumeCapPenalty
         )
