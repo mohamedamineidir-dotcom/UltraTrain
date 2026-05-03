@@ -117,46 +117,41 @@ struct PlanVolumeChartsSection: View {
     private var chartView: some View {
         Chart {
             ForEach(dataPoints) { point in
-                // Planned curve — drawn for ALL metrics. Distance was
-                // previously gated off based on a stale assumption
-                // ("trail plans don't pre-plan distance"); the
-                // VolumeCalculator does in fact compute
-                // `targetVolumeKm` per week, which feeds
-                // `plannedDistanceKm` here. Hiding the curve made the
-                // chart visibly empty on the Distance tab even when
-                // the plan had data — confusing.
-                AreaMark(
-                    x: .value("Week", point.weekNumber),
-                    y: .value("Planned", plannedValue(for: point))
-                )
-                .foregroundStyle(
-                    .linearGradient(
-                        colors: [
-                            Theme.Colors.accentColor.opacity(0.35),
-                            Theme.Colors.accentColor.opacity(0.12),
-                            Theme.Colors.accentColor.opacity(0.02)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
+                // Planned curve — hidden for distance (trail plans don't pre-plan distance)
+                if selectedMetric != .distance {
+                    AreaMark(
+                        x: .value("Week", point.weekNumber),
+                        y: .value("Planned", plannedValue(for: point))
                     )
-                )
-                .interpolationMethod(.linear)
+                    .foregroundStyle(
+                        .linearGradient(
+                            colors: [
+                                Theme.Colors.accentColor.opacity(0.35),
+                                Theme.Colors.accentColor.opacity(0.12),
+                                Theme.Colors.accentColor.opacity(0.02)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .interpolationMethod(.linear)
 
-                LineMark(
-                    x: .value("Week", point.weekNumber),
-                    y: .value("Planned", plannedValue(for: point))
-                )
-                .foregroundStyle(Theme.Colors.accentColor)
-                .lineStyle(StrokeStyle(lineWidth: 3))
-                .interpolationMethod(.linear)
+                    LineMark(
+                        x: .value("Week", point.weekNumber),
+                        y: .value("Planned", plannedValue(for: point))
+                    )
+                    .foregroundStyle(Theme.Colors.accentColor)
+                    .lineStyle(StrokeStyle(lineWidth: 3))
+                    .interpolationMethod(.linear)
 
-                PointMark(
-                    x: .value("Week", point.weekNumber),
-                    y: .value("Planned", plannedValue(for: point))
-                )
-                .symbol(point.isRecoveryWeek ? .diamond : .circle)
-                .symbolSize(point.isRecoveryWeek ? 50 : (point.isCurrentWeek ? 50 : 30))
-                .foregroundStyle(point.isRecoveryWeek ? .mint : Theme.Colors.accentColor)
+                    PointMark(
+                        x: .value("Week", point.weekNumber),
+                        y: .value("Planned", plannedValue(for: point))
+                    )
+                    .symbol(point.isRecoveryWeek ? .diamond : .circle)
+                    .symbolSize(point.isRecoveryWeek ? 50 : (point.isCurrentWeek ? 50 : 30))
+                    .foregroundStyle(point.isRecoveryWeek ? .mint : Theme.Colors.accentColor)
+                }
 
                 // Completed bars — stacked by session type
                 ForEach(point.completedByType) { slice in
@@ -244,8 +239,25 @@ struct PlanVolumeChartsSection: View {
             plot
                 .frame(height: 200)
                 .background(
+                    // Soft accent-tinted plot background — gives the
+                    // chart its branded "blue glow" feel even when the
+                    // plot is empty (initial state, or the Distance
+                    // tab where the planned curve is intentionally
+                    // hidden). Subtle vertical gradient: stronger near
+                    // the bottom where data sits, fading out toward
+                    // the top so the line/area marks remain readable.
                     RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
-                        .fill(Theme.Colors.secondaryLabel.opacity(0.03))
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Theme.Colors.accentColor.opacity(0.04),
+                                    Theme.Colors.accentColor.opacity(0.10),
+                                    Theme.Colors.accentColor.opacity(0.14)
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
                 )
         }
         .shadow(color: Theme.Colors.accentColor.opacity(0.15), radius: 8)
@@ -279,11 +291,8 @@ struct PlanVolumeChartsSection: View {
 
     private var chartLegend: some View {
         let types = activeSessionTypes
-        // Planned swatch shown for ALL metrics — paired with the
-        // change above to draw the planned curve on every metric
-        // including distance.
         let legendItems: [(String, Color)] = types.map { ($0.displayName, sessionTypeColor($0)) }
-            + [("Planned", Theme.Colors.accentColor.opacity(0.3))]
+            + (selectedMetric != .distance ? [("Planned", Theme.Colors.accentColor.opacity(0.3))] : [])
         return ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: Theme.Spacing.sm) {
                 ForEach(Array(legendItems.enumerated()), id: \.offset) { _, item in
