@@ -213,4 +213,181 @@ enum MenstrualAdaptationCalculator {
             return formatter.string(from: session.date)
         }
     }
+
+    // MARK: - v2: Multi-skip pattern detection
+
+    /// Detects ≥2 menstrual-cycle skips inside a 7-day window across
+    /// the supplied weeks. When that fires, surfaces a single
+    /// pattern-level recommendation that names the signal explicitly:
+    /// the athlete is already dropping load via skips, the
+    /// recommendation just makes the deload structural in framing
+    /// (no auto plan mutation — the skips themselves are doing the
+    /// work).
+    static func analyzeMultiSkipPattern(
+        weeks: [TrainingWeek],
+        now: Date = .now,
+        windowDays: Int = 7
+    ) -> [PlanAdjustmentRecommendation] {
+        guard let windowStart = Calendar.current.date(
+            byAdding: .day, value: -windowDays, to: now
+        ) else { return [] }
+
+        let menstrualSkips = weeks.flatMap(\.sessions).filter { session in
+            session.isSkipped
+                && session.skipReason == .menstrualCycle
+                && session.date >= windowStart
+                && session.date <= now
+        }
+
+        guard menstrualSkips.count >= 2 else { return [] }
+
+        return [PlanAdjustmentRecommendation(
+            id: UUID(),
+            type: .menstrualMultiSkipPattern,
+            severity: .recommended,
+            title: "Cycle pattern this week — name it",
+            message: "You've logged \(menstrualSkips.count) cycle-related skips in the last week. Your body's already dialled the load — let this week be a soft deload (easy + recovery only, no key quality), then resume normal training next week. McNulty 2020: when symptoms drive availability, listen.",
+            actionLabel: "Got it",
+            affectedSessionIds: menstrualSkips.map(\.id)
+        )]
+    }
+
+    // MARK: - v2: RED-S amenorrhea screening
+
+    /// Surfaces a non-judgmental health prompt when the athlete has
+    /// `cycleAware == true` AND has logged a `lastPeriodStartDate`
+    /// 90+ days in the past AND training volume is still active
+    /// (≥1 completed session in the last 21 days). Persistent
+    /// menstrual disruption while training is a Female Athlete
+    /// Program / BJSM RED-S screening signal — the prompt links to
+    /// resources, never diagnoses, never auto-modifies training.
+    ///
+    /// Skipped entirely when cycleAware is off (athlete didn't opt
+    /// into cycle features) or when no period has ever been logged
+    /// (we'd produce false positives for first-time users).
+    static func analyzeAmenorrheaScreening(
+        cycleAware: Bool,
+        lastPeriodStartDate: Date?,
+        weeks: [TrainingWeek],
+        now: Date = .now
+    ) -> [PlanAdjustmentRecommendation] {
+        guard cycleAware,
+              let lastPeriod = lastPeriodStartDate else { return [] }
+
+        let daysSincePeriod = Calendar.current.dateComponents(
+            [.day], from: lastPeriod, to: now
+        ).day ?? 0
+        guard daysSincePeriod >= 90 else { return [] }
+
+        // Athlete is still training — at least 1 completed session
+        // in last 21 days. If they've completely stopped, the prompt
+        // would be misplaced (different concern, not RED-S).
+        guard let recentWindow = Calendar.current.date(
+            byAdding: .day, value: -21, to: now
+        ) else { return [] }
+        let recentlyActive = weeks.flatMap(\.sessions).contains {
+            $0.isCompleted && $0.date >= recentWindow && $0.date <= now
+        }
+        guard recentlyActive else { return [] }
+
+        return [PlanAdjustmentRecommendation(
+            id: UUID(),
+            type: .menstrualAmenorrheaScreening,
+            severity: .suggestion,
+            title: "Worth a check-in",
+            message: "You haven't logged a period in \(daysSincePeriod) days while training has stayed active. That can be normal for some athletes and a flag for others (RED-S). Worth a chat with a sports-med doctor or reading the Female Athlete Program / BJSM RED-S consensus when you have a moment. We won't diagnose — just naming the signal.",
+            actionLabel: "Got it",
+            affectedSessionIds: []
+        )]
+    }
+
+    // MARK: - v2: Predictive flagging
+
+    /// Projects forward from the athlete's `lastPeriodStartDate +
+    /// cycleLengthDays` and flags any A-priority hard session
+    /// (intervals / tempo / longRun / VG / B2B) that falls inside the
+    /// predicted symptomatic window (-3 to +2 days from expected
+    /// period start). Flag only — athlete sees it ahead of time and
+    /// decides whether to defer or adjust on the day.
+    ///
+    /// Skipped entirely when cycleAware is off, or no
+    /// lastPeriodStartDate logged. Looks ahead 14 days max — far
+    /// enough to be useful, not so far that cycle drift makes the
+    /// prediction unreliable.
+    static func analyzePredictiveFlag(
+        cycleAware: Bool,
+        lastPeriodStartDate: Date?,
+        cycleLengthDays: Int,
+        weeks: [TrainingWeek],
+        now: Date = .now,
+        lookAheadDays: Int = 14
+    ) -> [PlanAdjustmentRecommendation] {
+        guard cycleAware,
+              let lastPeriod = lastPeriodStartDate,
+              cycleLengthDays > 0 else { return [] }
+
+        let calendar = Calendar.current
+        // Project the next expected period start. If the last logged
+        // period was less than one cycle ago, the athlete is mid-
+        // cycle; project forward from lastPeriod + cycleLengthDays.
+        // If it was longer ago (skipped logging), keep adding cycles
+        // until we find the first projected start in the future.
+        var nextExpected = lastPeriod
+        while nextExpected <= now {
+            guard let next = calendar.date(
+                byAdding: .day, value: cycleLengthDays, to: nextExpected
+            ) else { return [] }
+            nextExpected = next
+        }
+
+        // Flag only when the projected start is within the look-ahead
+        // window. Beyond that, cycle drift makes the projection
+        // unreliable.
+        guard let lookAheadEnd = calendar.date(
+            byAdding: .day, value: lookAheadDays, to: now
+        ) else { return [] }
+        guard nextExpected <= lookAheadEnd else { return [] }
+
+        // Symptomatic window: 3 days before expected period start
+        // through 2 days after. Captures the typical PMS + early
+        // bleed-day overlap.
+        guard let windowStart = calendar.date(
+            byAdding: .day, value: -3, to: nextExpected
+        ) else { return [] }
+        guard let windowEnd = calendar.date(
+            byAdding: .day, value: 2, to: nextExpected
+        ) else { return [] }
+
+        let qualityTypes: Set<SessionType> = [
+            .intervals, .tempo, .longRun, .verticalGain, .backToBack
+        ]
+        let flagged = weeks.flatMap(\.sessions).filter { session in
+            let day = calendar.startOfDay(for: session.date)
+            return qualityTypes.contains(session.type)
+                && session.isKeySession
+                && day >= calendar.startOfDay(for: windowStart)
+                && day <= calendar.startOfDay(for: windowEnd)
+                && !session.isCompleted
+                && !session.isSkipped
+        }
+
+        guard !flagged.isEmpty else { return [] }
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d"
+        let expectedLabel = formatter.string(from: nextExpected)
+        let typesLabel = flagged
+            .map { $0.type.rawValue.capitalized }
+            .joined(separator: ", ")
+
+        return [PlanAdjustmentRecommendation(
+            id: UUID(),
+            type: .menstrualPredictiveFlag,
+            severity: .suggestion,
+            title: "Heads-up: cycle window approaching",
+            message: "Based on your cycle history, your next period is likely around \(expectedLabel). \(flagged.count) key session(s) (\(typesLabel)) fall in that window — flag only, no plan change. Adjust on the day if symptoms hit.",
+            actionLabel: "Got it",
+            affectedSessionIds: flagged.map(\.id)
+        )]
+    }
 }

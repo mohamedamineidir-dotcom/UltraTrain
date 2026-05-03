@@ -14,7 +14,9 @@ extension TrainingPlanViewModel {
             adjustmentRecommendations = []
             return
         }
-        adjustmentRecommendations = PlanAdjustmentCalculator.analyze(plan: plan)
+        var allRecs = PlanAdjustmentCalculator.analyze(plan: plan)
+        allRecs.append(contentsOf: scanMenstrualPassiveSignals(plan: plan))
+        adjustmentRecommendations = allRecs
         let currentIds = Set(adjustmentRecommendations.map(\.id))
         dismissedRecommendationIds = dismissedRecommendationIds.intersection(currentIds)
 
@@ -35,15 +37,42 @@ extension TrainingPlanViewModel {
                 return
             }
             let recoveryScore: RecoveryScore? = await loadLatestRecoveryScore()
-            adjustmentRecommendations = PlanAdjustmentCalculator.analyze(
+            var allRecs = PlanAdjustmentCalculator.analyze(
                 plan: plan,
                 fitnessSnapshot: snapshot,
                 recoveryScore: recoveryScore
             )
+            allRecs.append(contentsOf: scanMenstrualPassiveSignals(plan: plan))
+            adjustmentRecommendations = allRecs
             let updatedIds = Set(adjustmentRecommendations.map(\.id))
             dismissedRecommendationIds = dismissedRecommendationIds.intersection(updatedIds)
             await autoApplyUrgentAdjustments()
         }
+    }
+
+    /// Runs the three menstrual v2 passive scans (multi-skip pattern,
+    /// RED-S guardrail, predictive flagging) and returns any
+    /// recommendations they emit. Skipped entirely when no athlete
+    /// loaded or when cycleAware is off — these scans only fire when
+    /// the athlete has opted into cycle-aware features.
+    private func scanMenstrualPassiveSignals(plan: TrainingPlan) -> [PlanAdjustmentRecommendation] {
+        guard let athlete else { return [] }
+        var recs: [PlanAdjustmentRecommendation] = []
+        recs.append(contentsOf: MenstrualAdaptationCalculator.analyzeMultiSkipPattern(
+            weeks: plan.weeks
+        ))
+        recs.append(contentsOf: MenstrualAdaptationCalculator.analyzeAmenorrheaScreening(
+            cycleAware: athlete.cycleAware,
+            lastPeriodStartDate: athlete.lastPeriodStartDate,
+            weeks: plan.weeks
+        ))
+        recs.append(contentsOf: MenstrualAdaptationCalculator.analyzePredictiveFlag(
+            cycleAware: athlete.cycleAware,
+            lastPeriodStartDate: athlete.lastPeriodStartDate,
+            cycleLengthDays: athlete.cycleLengthDays,
+            weeks: plan.weeks
+        ))
+        return recs
     }
 
     /// Pulls the most-recent recovery snapshot from the optional
@@ -148,6 +177,16 @@ extension TrainingPlanViewModel {
                 // user picks defer / reduce / swap / keep. No plan
                 // mutation here — the sheet drives it.
                 presentedMenstrualOptions = recommendation
+            case .menstrualMultiSkipPattern,
+                 .menstrualAmenorrheaScreening,
+                 .menstrualPredictiveFlag:
+                // Menstrual v2 informational signals — surface only,
+                // no plan mutation. Multi-skip pattern: athlete is
+                // already deloading via skips; we just name it.
+                // RED-S guardrail: pure health prompt, never auto-
+                // edits training. Predictive flag: athlete decides
+                // on the day. Tapping the banner just dismisses.
+                dismissRecommendation(recommendation)
             }
 
             plan = currentPlan

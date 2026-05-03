@@ -229,4 +229,253 @@ struct MenstrualAdaptationCalculatorTests {
             now: now
         )
     }
+
+    // MARK: - v2: Multi-skip pattern detection
+
+    @Test("multi-skip pattern: nothing when fewer than 2 menstrual skips in window")
+    func multiSkipBelowThreshold() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        var session1 = makeSession(daysFromNow: -3, type: .longRun, now: now)
+        session1.isSkipped = true
+        session1.skipReason = .menstrualCycle
+        let week = makeWeek(sessions: [session1])
+        let recs = MenstrualAdaptationCalculator.analyzeMultiSkipPattern(
+            weeks: [week], now: now
+        )
+        #expect(recs.isEmpty)
+    }
+
+    @Test("multi-skip pattern: fires when ≥2 menstrual skips in 7-day window")
+    func multiSkipAboveThreshold() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        var s1 = makeSession(daysFromNow: -2, type: .longRun, now: now)
+        s1.isSkipped = true
+        s1.skipReason = .menstrualCycle
+        var s2 = makeSession(daysFromNow: -5, type: .intervals, now: now)
+        s2.isSkipped = true
+        s2.skipReason = .menstrualCycle
+        let week = makeWeek(sessions: [s1, s2])
+        let recs = MenstrualAdaptationCalculator.analyzeMultiSkipPattern(
+            weeks: [week], now: now
+        )
+        #expect(recs.count == 1)
+        #expect(recs.first?.type == .menstrualMultiSkipPattern)
+        #expect(recs.first?.severity == .recommended)
+    }
+
+    @Test("multi-skip pattern: ignores skips outside 7-day window")
+    func multiSkipOutsideWindowIgnored() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        // Both skips 10+ days ago → outside 7-day default window
+        var s1 = makeSession(daysFromNow: -10, type: .longRun, now: now)
+        s1.isSkipped = true
+        s1.skipReason = .menstrualCycle
+        var s2 = makeSession(daysFromNow: -12, type: .intervals, now: now)
+        s2.isSkipped = true
+        s2.skipReason = .menstrualCycle
+        let week = makeWeek(sessions: [s1, s2])
+        let recs = MenstrualAdaptationCalculator.analyzeMultiSkipPattern(
+            weeks: [week], now: now
+        )
+        #expect(recs.isEmpty)
+    }
+
+    @Test("multi-skip pattern: ignores non-menstrual skips")
+    func multiSkipIgnoresOtherReasons() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        var s1 = makeSession(daysFromNow: -2, type: .longRun, now: now)
+        s1.isSkipped = true
+        s1.skipReason = .fatigue
+        var s2 = makeSession(daysFromNow: -5, type: .intervals, now: now)
+        s2.isSkipped = true
+        s2.skipReason = .noTime
+        let week = makeWeek(sessions: [s1, s2])
+        let recs = MenstrualAdaptationCalculator.analyzeMultiSkipPattern(
+            weeks: [week], now: now
+        )
+        #expect(recs.isEmpty)
+    }
+
+    // MARK: - v2: Amenorrhea screening
+
+    @Test("amenorrhea screening: nothing when cycleAware is off")
+    func amenorrheaSkipsWhenCycleAwareOff() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        let lastPeriod = Calendar.current.date(byAdding: .day, value: -120, to: now)
+        var completed = makeSession(daysFromNow: -3, type: .longRun, now: now)
+        completed.isCompleted = true
+        let week = makeWeek(sessions: [completed])
+        let recs = MenstrualAdaptationCalculator.analyzeAmenorrheaScreening(
+            cycleAware: false,
+            lastPeriodStartDate: lastPeriod,
+            weeks: [week],
+            now: now
+        )
+        #expect(recs.isEmpty)
+    }
+
+    @Test("amenorrhea screening: nothing when never logged a period")
+    func amenorrheaSkipsWhenNoPeriodLogged() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        var completed = makeSession(daysFromNow: -3, type: .longRun, now: now)
+        completed.isCompleted = true
+        let week = makeWeek(sessions: [completed])
+        let recs = MenstrualAdaptationCalculator.analyzeAmenorrheaScreening(
+            cycleAware: true,
+            lastPeriodStartDate: nil,
+            weeks: [week],
+            now: now
+        )
+        #expect(recs.isEmpty)
+    }
+
+    @Test("amenorrhea screening: fires when 90+ days no period and recently active")
+    func amenorrheaFiresAfter90Days() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        let lastPeriod = Calendar.current.date(byAdding: .day, value: -100, to: now)
+        var completed = makeSession(daysFromNow: -3, type: .longRun, now: now)
+        completed.isCompleted = true
+        let week = makeWeek(sessions: [completed])
+        let recs = MenstrualAdaptationCalculator.analyzeAmenorrheaScreening(
+            cycleAware: true,
+            lastPeriodStartDate: lastPeriod,
+            weeks: [week],
+            now: now
+        )
+        #expect(recs.count == 1)
+        #expect(recs.first?.type == .menstrualAmenorrheaScreening)
+        #expect(recs.first?.severity == .suggestion)
+    }
+
+    @Test("amenorrhea screening: nothing when training has stopped")
+    func amenorrheaSkipsWhenInactive() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        let lastPeriod = Calendar.current.date(byAdding: .day, value: -100, to: now)
+        // Last completed session 30 days ago — outside the 21-day "active" window
+        var completed = makeSession(daysFromNow: -30, type: .longRun, now: now)
+        completed.isCompleted = true
+        let week = makeWeek(sessions: [completed])
+        let recs = MenstrualAdaptationCalculator.analyzeAmenorrheaScreening(
+            cycleAware: true,
+            lastPeriodStartDate: lastPeriod,
+            weeks: [week],
+            now: now
+        )
+        // Athlete stopped training — RED-S prompt would be misplaced
+        #expect(recs.isEmpty)
+    }
+
+    @Test("amenorrhea screening: nothing when last period was recent")
+    func amenorrheaSkipsWhenRecentPeriod() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        let lastPeriod = Calendar.current.date(byAdding: .day, value: -30, to: now)
+        var completed = makeSession(daysFromNow: -3, type: .longRun, now: now)
+        completed.isCompleted = true
+        let week = makeWeek(sessions: [completed])
+        let recs = MenstrualAdaptationCalculator.analyzeAmenorrheaScreening(
+            cycleAware: true,
+            lastPeriodStartDate: lastPeriod,
+            weeks: [week],
+            now: now
+        )
+        #expect(recs.isEmpty)
+    }
+
+    // MARK: - v2: Predictive flagging
+
+    @Test("predictive flag: nothing when cycleAware is off")
+    func predictiveSkipsWhenCycleAwareOff() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        let lastPeriod = Calendar.current.date(byAdding: .day, value: -20, to: now)
+        var hard = makeSession(daysFromNow: 7, type: .intervals, now: now)
+        hard.isKeySession = true
+        let week = makeWeek(sessions: [hard])
+        let recs = MenstrualAdaptationCalculator.analyzePredictiveFlag(
+            cycleAware: false,
+            lastPeriodStartDate: lastPeriod,
+            cycleLengthDays: 28,
+            weeks: [week],
+            now: now
+        )
+        #expect(recs.isEmpty)
+    }
+
+    @Test("predictive flag: fires when key session falls in expected symptomatic window")
+    func predictiveFiresInWindow() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        // Last period 25 days ago, cycle 28 → next expected in 3 days
+        let lastPeriod = Calendar.current.date(byAdding: .day, value: -25, to: now)
+        // Hard session in 4 days = day +1 from expected (within +2 window)
+        var hard = makeSession(daysFromNow: 4, type: .intervals, now: now)
+        hard.isKeySession = true
+        let week = makeWeek(sessions: [hard])
+        let recs = MenstrualAdaptationCalculator.analyzePredictiveFlag(
+            cycleAware: true,
+            lastPeriodStartDate: lastPeriod,
+            cycleLengthDays: 28,
+            weeks: [week],
+            now: now
+        )
+        #expect(recs.count == 1)
+        #expect(recs.first?.type == .menstrualPredictiveFlag)
+        #expect(recs.first?.affectedSessionIds.contains(hard.id) == true)
+    }
+
+    @Test("predictive flag: nothing when no hard session in symptomatic window")
+    func predictiveNoHardInWindow() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        // Last period 25 days ago, cycle 28 → next expected in 3 days
+        let lastPeriod = Calendar.current.date(byAdding: .day, value: -25, to: now)
+        // Easy session in 4 days — not key, doesn't count
+        var easy = makeSession(daysFromNow: 4, type: .recovery, now: now)
+        easy.isKeySession = false
+        let week = makeWeek(sessions: [easy])
+        let recs = MenstrualAdaptationCalculator.analyzePredictiveFlag(
+            cycleAware: true,
+            lastPeriodStartDate: lastPeriod,
+            cycleLengthDays: 28,
+            weeks: [week],
+            now: now
+        )
+        #expect(recs.isEmpty)
+    }
+
+    @Test("predictive flag: nothing when next expected period is beyond look-ahead window")
+    func predictiveSkipsBeyondLookAhead() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        // Last period 1 day ago, cycle 28 → next expected in 27 days
+        // Default lookAhead is 14, so should NOT fire.
+        let lastPeriod = Calendar.current.date(byAdding: .day, value: -1, to: now)
+        var hard = makeSession(daysFromNow: 27, type: .intervals, now: now)
+        hard.isKeySession = true
+        let week = makeWeek(sessions: [hard])
+        let recs = MenstrualAdaptationCalculator.analyzePredictiveFlag(
+            cycleAware: true,
+            lastPeriodStartDate: lastPeriod,
+            cycleLengthDays: 28,
+            weeks: [week],
+            now: now
+        )
+        #expect(recs.isEmpty)
+    }
+
+    @Test("predictive flag: walks past missed cycles to project the next future start")
+    func predictivePastMultipleCycles() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        // Last logged period 60 days ago, cycle 28 → expected starts
+        // were -32d and -4d (both past). Next future start is at +24d.
+        // That's beyond the 14-day look-ahead → should NOT fire.
+        let lastPeriod = Calendar.current.date(byAdding: .day, value: -60, to: now)
+        var hard = makeSession(daysFromNow: 5, type: .intervals, now: now)
+        hard.isKeySession = true
+        let week = makeWeek(sessions: [hard])
+        let recs = MenstrualAdaptationCalculator.analyzePredictiveFlag(
+            cycleAware: true,
+            lastPeriodStartDate: lastPeriod,
+            cycleLengthDays: 28,
+            weeks: [week],
+            now: now
+        )
+        #expect(recs.isEmpty)
+    }
 }
