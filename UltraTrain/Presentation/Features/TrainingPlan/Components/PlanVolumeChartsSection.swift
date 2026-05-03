@@ -219,10 +219,18 @@ struct PlanVolumeChartsSection: View {
                     .lineStyle(StrokeStyle(lineWidth: 1))
             }
         }
+        .chartXScale(
+            // Pin the X domain to the exact week range. Without this,
+            // Swift Charts adds default padding around a continuous
+            // Int X-axis — pushing W1 off the left edge and offsetting
+            // the axis ticks from the data points above them.
+            domain: weekDomain,
+            range: .plotDimension(padding: 0)
+        )
         .chartXAxis {
             AxisMarks(values: visibleWeekNumbers) { value in
                 if let weekNum = value.as(Int.self) {
-                    AxisValueLabel("W\(weekNum)")
+                    AxisValueLabel("W\(weekNum)", centered: false)
                         .font(.system(size: 10, weight: .medium, design: .rounded))
                         .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.7))
                 }
@@ -322,6 +330,18 @@ struct PlanVolumeChartsSection: View {
     }
 
     // MARK: - Visible Week Labels
+
+    /// X-axis domain that exactly matches the data range. Used by
+    /// `.chartXScale(domain:)` so the first/last data points pin to
+    /// the chart edges and the axis ticks align under their data
+    /// points (instead of Swift Charts adding default Int-axis
+    /// padding that pushes W1 off the left edge).
+    private var weekDomain: ClosedRange<Int> {
+        let weeks = dataPoints.map(\.weekNumber)
+        let lo = weeks.min() ?? 1
+        let hi = weeks.max() ?? 1
+        return lo...hi
+    }
 
     /// X-axis tick positions. Returns Ints (week numbers) so the
     /// chart's X axis stays numeric and ordered. Previously these
