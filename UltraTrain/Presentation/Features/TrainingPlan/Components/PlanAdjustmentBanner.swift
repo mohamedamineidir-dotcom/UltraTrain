@@ -85,6 +85,7 @@ struct PlanAdjustmentBanner: View {
         case .menstrualMultiSkipPattern: "chart.line.downtrend.xyaxis"
         case .menstrualAmenorrheaScreening: "stethoscope"
         case .menstrualPredictiveFlag: "calendar.badge.exclamationmark"
+        case .bRaceMismatch: "flag.2.crossed.fill"
         }
     }
 

@@ -35,4 +35,12 @@ enum PlanAdjustmentType: String, Sendable {
     /// expected period start, based on logged cycle history). Flag
     /// only — athlete decides whether to defer / adjust on the day.
     case menstrualPredictiveFlag
+    /// Race coherence: intermediate B-race is meaningfully more
+    /// demanding than the A-race AND happens close enough to it
+    /// that recovery isn't realistic — e.g. a 100km mountain ultra
+    /// 5 weeks before a 2h40 road marathon. Flag only; the athlete
+    /// keeps the priority assignment they declared, but sees the
+    /// structural problem early enough to adjust either the goal,
+    /// the priority, or the timing.
+    case bRaceMismatch
 }

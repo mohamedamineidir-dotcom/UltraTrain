@@ -16,6 +16,7 @@ extension TrainingPlanViewModel {
         }
         var allRecs = PlanAdjustmentCalculator.analyze(plan: plan)
         allRecs.append(contentsOf: scanMenstrualPassiveSignals(plan: plan))
+        allRecs.append(contentsOf: scanRaceCoherence())
         adjustmentRecommendations = allRecs
         let currentIds = Set(adjustmentRecommendations.map(\.id))
         dismissedRecommendationIds = dismissedRecommendationIds.intersection(currentIds)
@@ -43,6 +44,7 @@ extension TrainingPlanViewModel {
                 recoveryScore: recoveryScore
             )
             allRecs.append(contentsOf: scanMenstrualPassiveSignals(plan: plan))
+        allRecs.append(contentsOf: scanRaceCoherence())
             adjustmentRecommendations = allRecs
             let updatedIds = Set(adjustmentRecommendations.map(\.id))
             dismissedRecommendationIds = dismissedRecommendationIds.intersection(updatedIds)
@@ -73,6 +75,20 @@ extension TrainingPlanViewModel {
             weeks: plan.weeks
         ))
         return recs
+    }
+
+    /// Surfaces structural mismatches between the A-race and any
+    /// B-races scheduled close to it (e.g. a 100K mountain ultra
+    /// 5 weeks before a goal road marathon). Skipped when target
+    /// race or intermediate races aren't loaded.
+    private func scanRaceCoherence() -> [PlanAdjustmentRecommendation] {
+        guard let target = races.first(where: { $0.id == plan?.targetRaceId }) else { return [] }
+        let intermediateIds = Set(plan?.intermediateRaceIds ?? [])
+        let intermediates = races.filter { intermediateIds.contains($0.id) }
+        return PlanRaceCoherenceAnalyzer.detectIntermediateRaceMismatch(
+            targetRace: target,
+            intermediateRaces: intermediates
+        )
     }
 
     /// Pulls the most-recent recovery snapshot from the optional
@@ -179,13 +195,15 @@ extension TrainingPlanViewModel {
                 presentedMenstrualOptions = recommendation
             case .menstrualMultiSkipPattern,
                  .menstrualAmenorrheaScreening,
-                 .menstrualPredictiveFlag:
-                // Menstrual v2 informational signals — surface only,
-                // no plan mutation. Multi-skip pattern: athlete is
-                // already deloading via skips; we just name it.
-                // RED-S guardrail: pure health prompt, never auto-
-                // edits training. Predictive flag: athlete decides
-                // on the day. Tapping the banner just dismisses.
+                 .menstrualPredictiveFlag,
+                 .bRaceMismatch:
+                // Informational signals — surface only, no plan
+                // mutation. Menstrual v2 cases handle their own
+                // domain-specific contexts; bRaceMismatch flags a
+                // structural priority/timing problem the athlete
+                // declared and asks them to revisit it. None of
+                // these auto-edit the plan; tapping the banner
+                // just dismisses.
                 dismissRecommendation(recommendation)
             }
 

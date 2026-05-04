@@ -202,6 +202,18 @@ enum RoadLongRunCalculator {
 
         switch phase {
         case .base:
+            // Marathon non-beginners get an early single MP-block intro
+            // in late base (weekInPhase ≥ 5 ≈ weeks 6-8 of a 24-week
+            // plan) — bridges into build's MP work without a hard
+            // jump and gives the athlete a calibrated marathon-pace
+            // exposure mid-base instead of waiting for late build.
+            // Pfitzinger-style "tempo-finish long run" placement.
+            // Beginners stay on .easy / .progressive; introducing MP
+            // blocks before they've built threshold tolerance is
+            // premature.
+            if discipline == .roadMarathon && weekInPhase >= 5 && experience != .beginner {
+                return .marathonPaceIntro
+            }
             // Base: easy long runs. Introduce progressive in late base for experienced.
             if weekInPhase >= 2 && experience != .beginner {
                 return .progressive
@@ -209,11 +221,12 @@ enum RoadLongRunCalculator {
             return .easy
 
         case .build:
-            // Marathon: late build (week index ≥ 3) introduces a single MP
-            // block in the long run so the peak-phase Canova blocks aren't
-            // the athlete's first taste of marathon pace. Earlier build
-            // weeks alternate progressive / fast-finish.
-            if discipline == .roadMarathon && weekInPhase >= 3 && experience != .beginner {
+            // Marathon: MP block introduction lowered from weekInPhase ≥ 3
+            // to ≥ 1 — the athlete already saw an MP intro in late base
+            // (above) for marathon non-beginners, so the gap between MP
+            // exposures stays consistent and there's no week-1 build
+            // regression back to pure progressive runs.
+            if discipline == .roadMarathon && weekInPhase >= 1 && experience != .beginner {
                 return .marathonPaceIntro
             }
             // Build: alternate progressive and fast-finish
