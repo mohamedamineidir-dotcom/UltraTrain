@@ -298,19 +298,18 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             allWorkouts.append(contentsOf: adapted.workouts)
             allStrengthWorkouts.append(contentsOf: adapted.strengthWorkouts)
 
-            // For override weeks, recalculate duration from actual sessions
-            let weekDuration: TimeInterval
-            if override != nil {
-                weekDuration = adapted.sessions
-                    .filter { $0.type != .rest && $0.type != .strengthConditioning }
-                    .reduce(0) { $0 + $1.plannedDuration }
-            } else {
-                weekDuration = volume.targetDurationSeconds > 0
-                    ? volume.targetDurationSeconds
-                    : adapted.sessions
-                        .filter { $0.type != .rest && $0.type != .strengthConditioning }
-                        .reduce(0) { $0 + $1.plannedDuration }
-            }
+            // Always recompute weekly duration from the actual session
+            // content. Sessions' plannedDuration now reflects the
+            // workout's real structure (warmup + work + cooldown for
+            // intervals/tempo/VG, full long-run length, etc.) thanks
+            // to the SessionTemplateGenerator alignment, so summing
+            // them gives the truth. The volume.targetDurationSeconds
+            // budget is the planner's INTENT before the workout
+            // engine got involved — keeping it would make the chart
+            // disagree with the session list.
+            let weekDuration = adapted.sessions
+                .filter { $0.type != .rest && $0.type != .strengthConditioning }
+                .reduce(0) { $0 + $1.plannedDuration }
 
             return TrainingWeek(
                 id: UUID(),
@@ -630,14 +629,25 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     // Threshold / Race pace / ...) onto the session so
                     // the row/detail can label it at a glance instead of
                     // the generic "Intervals" / "Tempo".
+                    //
+                    // After attaching the workout, align the session's
+                    // displayed duration + distance with the workout's
+                    // actual content so the card matches the detail.
+                    // Without this alignment, the weekly card showed
+                    // e.g. "Intervals 16min / 3.0km" while the detail
+                    // unpacked to a 5×1km session totalling 42 min /
+                    // 13 km — two truths visible to the user.
                     if session.type == .intervals, let w = q1Workout {
                         session.intervalWorkoutId = w.id
                         session.intervalFocus = q1Template?.category.displayName
+                        alignSessionWithWorkout(&session, workout: w)
                     } else if session.type == .tempo, let w = q2Workout {
                         session.intervalWorkoutId = w.id
                         session.intervalFocus = q2Template?.category.displayName
+                        alignSessionWithWorkout(&session, workout: w)
                     } else if session.type == .longRun, let w = longRunWorkout {
                         session.intervalWorkoutId = w.id
+                        alignSessionWithWorkout(&session, workout: w)
                         // Long runs with structured work become moderate/hard
                         // sessions, not easy. Mark accordingly so the UI surfaces
                         // them correctly (intensity badges, weekly load calc).
@@ -897,6 +907,19 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         case .road10K:
             return ""
         }
+    }
+
+    /// Replaces the session's plannedDuration + plannedDistanceKm with
+    /// values derived from the attached workout's actual structure.
+    /// Used by the road pipeline so the weekly card reads the same
+    /// totals the athlete sees when they tap into the workout detail
+    /// — instead of the abstract budget that didn't account for
+    /// warmup + cooldown around quality sessions.
+    private func alignSessionWithWorkout(_ session: inout TrainingSession, workout: IntervalWorkout) {
+        guard workout.estimatedDurationSeconds > 0 else { return }
+        let avgPaceSecPerKm: Double = 330  // ~5:30/km baseline (matches makeSession)
+        session.plannedDuration = workout.estimatedDurationSeconds
+        session.plannedDistanceKm = round(workout.estimatedDurationSeconds / avgPaceSecPerKm * 10) / 10
     }
 
     /// Counts ultra finishes (≥30 km trail PBs) used to set the

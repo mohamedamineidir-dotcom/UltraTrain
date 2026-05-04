@@ -96,6 +96,12 @@ enum SessionTemplateGenerator {
             // Generate workout for active sessions
             var workoutId: UUID?
             var sessionDescription = template.description
+            // Effective duration that the session card and weekly volume
+            // calculation will see. Defaults to the budget the volume
+            // calculator handed in; gets replaced with the workout's
+            // actual content duration once that's generated, so the
+            // card matches the detail screen.
+            var effectiveDuration = duration
             let shouldGenerateWorkout = template.type != .rest
             if shouldGenerateWorkout {
                 let isB2BDay1 = volume.isB2BWeek && template.type == .longRun
@@ -118,6 +124,16 @@ enum SessionTemplateGenerator {
                 workouts.append(workout)
                 workoutId = workout.id
                 sessionDescription = workout.descriptionText
+                // Source-of-truth alignment: when the workout engine
+                // produces structured content (interval template,
+                // tempo template, etc.) that totals more than the
+                // session's abstract budget, the SESSION display
+                // should reflect what the athlete will actually do.
+                // Otherwise the card shows "16 min / 3 km" while the
+                // detail shows a 5×1 km session totalling 42 min.
+                if workout.estimatedDurationSeconds > 0 {
+                    effectiveDuration = workout.estimatedDurationSeconds
+                }
             }
 
             let advice = CoachAdviceGenerator.advice(
@@ -130,7 +146,7 @@ enum SessionTemplateGenerator {
                 verticalGainEnvironment: verticalGainEnvironment,
                 intervalFocus: intervalFocus,
                 isRoadRace: isRoadRace,
-                plannedDurationSeconds: duration,
+                plannedDurationSeconds: effectiveDuration,
                 isHotRaceForecast: isHotRaceForecast,
                 isDescentHeavyRace: isDescentHeavyRace,
                 restingHR: restingHR,
@@ -145,10 +161,10 @@ enum SessionTemplateGenerator {
                 type: template.type,
                 plannedDistanceKm: 0,
                 plannedElevationGainM: elevation,
-                plannedDuration: duration,
+                plannedDuration: effectiveDuration,
                 intensity: template.intensity,
                 description: sessionDescription,
-                nutritionNotes: nutritionNotes(duration: duration),
+                nutritionNotes: nutritionNotes(duration: effectiveDuration),
                 isCompleted: false,
                 isSkipped: false,
                 linkedRunId: nil,

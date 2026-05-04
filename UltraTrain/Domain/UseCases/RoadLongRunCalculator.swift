@@ -52,7 +52,8 @@ enum RoadLongRunCalculator {
         currentLongestRunKm: Double,
         isRecoveryWeek: Bool,
         philosophy: TrainingPhilosophy = .balanced,
-        raceGoal: RaceGoal = .targetTime(0)
+        raceGoal: RaceGoal = .targetTime(0),
+        weeklyVolumeKm: Double = 0
     ) -> TimeInterval {
         let discipline = RoadRaceDiscipline.from(distanceKm: raceDistanceKm)
         let maxDistanceKm = discipline.longRunCapKm(
@@ -123,8 +124,27 @@ enum RoadLongRunCalculator {
         if currentLongestRunKm > 0 {
             let proposedAnchor = currentLongestRunKm * 0.9 * avgPaceSecPerKm
             let maxAnchor = capDuration * 0.60
+            // Weekly-volume sanity cap: an athlete who declared
+            // longestRunKm = 105 with weeklyVolumeKm = 40 has a
+            // longest run that's 2.6× their weekly volume — almost
+            // certainly trail/ultra history bleeding into a road
+            // plan. Anchoring an LR at 21+ km in week 1 of a 40-
+            // km/wk plan crushes every other session because the
+            // remaining weekly budget can't be split across 4 easy
+            // runs + 1 quality. Cap the anchor at 35% of weekly
+            // volume so the LR stays a sensible fraction of the
+            // week (Daniels' "≤25% of weekly mileage" guideline
+            // applied as a slightly looser ceiling). When
+            // weeklyVolumeKm isn't supplied (older callers, tests),
+            // skip the cap and use the 60%-of-cap rule alone.
+            let weeklyVolumeBasedCap: TimeInterval
+            if weeklyVolumeKm > 0 {
+                weeklyVolumeBasedCap = weeklyVolumeKm * 0.35 * avgPaceSecPerKm
+            } else {
+                weeklyVolumeBasedCap = .infinity
+            }
             let sanityFloor: TimeInterval = 900 // 15 min — below this it's not a long run
-            startDuration = max(sanityFloor, min(proposedAnchor, maxAnchor))
+            startDuration = max(sanityFloor, min(proposedAnchor, maxAnchor, weeklyVolumeBasedCap))
         } else {
             startDuration = max(capDuration * startFraction, minimumLongRun)
         }

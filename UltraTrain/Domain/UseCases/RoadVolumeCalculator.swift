@@ -231,7 +231,9 @@ enum RoadVolumeCalculator {
             }
 
             // Long run: quadratic growth (delegated). Anchored to athlete's
-            // declared longestRunKm inside the calculator (RR-1).
+            // declared longestRunKm inside the calculator (RR-1), with a
+            // weeklyVolumeKm-based sanity cap so a trail-background
+            // longest run doesn't dominate a road-plan week budget.
             let longRunSeconds = RoadLongRunCalculator.longRunDuration(
                 weekIndex: index,
                 totalWeeks: totalWeeks,
@@ -241,7 +243,8 @@ enum RoadVolumeCalculator {
                 currentLongestRunKm: athlete.longestRunKm,
                 isRecoveryWeek: skeleton.isRecoveryWeek,
                 philosophy: athlete.trainingPhilosophy,
-                raceGoal: raceGoal
+                raceGoal: raceGoal,
+                weeklyVolumeKm: athlete.weeklyVolumeKm
             )
 
             // HARD CAP: Easy runs must NEVER exceed long run, and absolute max 90min
@@ -398,7 +401,8 @@ enum RoadVolumeCalculator {
             raceDistanceKm: raceDistanceKm,
             currentLongestRunKm: athlete.longestRunKm,
             isRecoveryWeek: false,
-            philosophy: athlete.trainingPhilosophy
+            philosophy: athlete.trainingPhilosophy,
+            weeklyVolumeKm: athlete.weeklyVolumeKm
         )
 
         let unscaledWeek1TotalKm = (unscaledWeek1Seconds + unscaledWeek1LongRun) / avgPaceSecPerKm
