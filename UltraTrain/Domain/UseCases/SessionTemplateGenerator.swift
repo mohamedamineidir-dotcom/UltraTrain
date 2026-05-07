@@ -38,13 +38,24 @@ enum SessionTemplateGenerator {
         restingHR: Int? = nil,
         maxHR: Int? = nil,
         biologicalSex: BiologicalSex? = nil,
-        athleteAge: Int = 0
+        athleteAge: Int = 0,
+        /// Pre-built day-by-day templates for the A-race week. When
+        /// non-nil, bypasses phase / recovery / override dispatch and
+        /// uses these templates directly. Used by the
+        /// {Trail,Road}RaceWeekTemplates builders so the A-race week
+        /// gets a research-backed structure (race day included as a
+        /// `.race` session, prep days scaled by distance class /
+        /// experience / philosophy / mountain profile) instead of being
+        /// rendered as a generic taper week.
+        aRaceWeekTemplates: [SessionTemplate]? = nil
     ) -> (sessions: [TrainingSession], workouts: [IntervalWorkout], strengthWorkouts: [StrengthWorkout]) {
         let runsPerWeek = preferredRunsPerWeek
         let templates: [SessionTemplate]
         var workouts: [IntervalWorkout] = []
 
-        if let override = raceOverride {
+        if let aRaceTemplates = aRaceWeekTemplates {
+            templates = aRaceTemplates
+        } else if let override = raceOverride {
             templates = overrideTemplates(
                 for: override.behavior,
                 volume: volume,

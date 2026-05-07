@@ -70,12 +70,43 @@ struct PlanPreferenceReframer: ReframePlanForPreferencesUseCase {
         let phaseCounters = computeWeekNumbersInPhase(skeletons: skeletons)
         let lastPastWeekNumber = pastWeeks.last?.weekNumber ?? 0
 
+        // Detect the A-race week (week containing targetRace.date) so we
+        // can dispatch to the appropriate race-week builder. Mirrors
+        // TrainingPlanGenerator so reframed plans get the same race-week
+        // structure.
+        let aRaceWeekIdx = skeletons.firstIndex { skeleton in
+            raceDate >= skeleton.startDate && raceDate <= skeleton.endDate
+        }
+        let isRoadRace = targetRace.raceType == .road
+
         var allWorkouts: [IntervalWorkout] = currentPlan.workouts
         var futureWeeks: [TrainingWeek] = []
 
         for (index, pair) in zip(skeletons, volumes).enumerated() {
             let (skeleton, volume) = pair
             let override = overrides.first { $0.weekNumber == skeleton.weekNumber }
+            let isARaceWeek = (index == aRaceWeekIdx)
+
+            // A-race week: build via the appropriate templates (road vs
+            // trail) so race day is included as a `.race` session.
+            let aRaceWeekTemplates: [SessionTemplateGenerator.SessionTemplate]?
+            if isARaceWeek {
+                aRaceWeekTemplates = isRoadRace
+                    ? RoadRaceWeekTemplates.sessions(
+                        targetRace: targetRace,
+                        experience: updatedAthlete.experienceLevel,
+                        philosophy: updatedAthlete.trainingPhilosophy,
+                        weekStartDate: skeleton.startDate
+                    )
+                    : TrailRaceWeekTemplates.sessions(
+                        targetRace: targetRace,
+                        experience: updatedAthlete.experienceLevel,
+                        philosophy: updatedAthlete.trainingPhilosophy,
+                        weekStartDate: skeleton.startDate
+                    )
+            } else {
+                aRaceWeekTemplates = nil
+            }
 
             let result = SessionTemplateGenerator.sessions(
                 for: skeleton,
@@ -89,7 +120,8 @@ struct PlanPreferenceReframer: ReframePlanForPreferencesUseCase {
                 raceOverride: override,
                 preferredRunsPerWeek: updatedAthlete.preferredRunsPerWeek,
                 verticalGainEnvironment: updatedAthlete.verticalGainEnvironment,
-                expectedRaceDuration: raceDuration
+                expectedRaceDuration: raceDuration,
+                aRaceWeekTemplates: aRaceWeekTemplates
             )
 
             allWorkouts.append(contentsOf: result.workouts)
@@ -99,17 +131,41 @@ struct PlanPreferenceReframer: ReframePlanForPreferencesUseCase {
             var roundedSessions = result.sessions
             EnduranceDurationRounder.roundInPlace(&roundedSessions)
 
+            let weekPhase: TrainingPhase
+            if isARaceWeek {
+                weekPhase = .race
+            } else if override?.behavior.isRaceWeek == true {
+                weekPhase = .race
+            } else {
+                weekPhase = skeleton.phase
+            }
+
+            let weekVolumeKm: Double
+            let weekElevationGainM: Double
+            let weekDurationSeconds: TimeInterval
+            if isARaceWeek {
+                let active = roundedSessions
+                    .filter { $0.type != .rest && $0.type != .strengthConditioning }
+                weekVolumeKm = active.reduce(0) { $0 + $1.plannedDistanceKm }
+                weekElevationGainM = active.reduce(0) { $0 + $1.plannedElevationGainM }
+                weekDurationSeconds = active.reduce(0) { $0 + $1.plannedDuration }
+            } else {
+                weekVolumeKm = volume.targetVolumeKm
+                weekElevationGainM = volume.targetElevationGainM
+                weekDurationSeconds = volume.targetDurationSeconds
+            }
+
             let week = TrainingWeek(
                 id: UUID(),
                 weekNumber: lastPastWeekNumber + skeleton.weekNumber,
                 startDate: skeleton.startDate,
                 endDate: skeleton.endDate,
-                phase: override?.behavior.isRaceWeek == true ? .race : skeleton.phase,
+                phase: weekPhase,
                 sessions: roundedSessions,
                 isRecoveryWeek: skeleton.isRecoveryWeek || override?.behavior == .postRaceRecovery,
-                targetVolumeKm: volume.targetVolumeKm,
-                targetElevationGainM: volume.targetElevationGainM,
-                targetDurationSeconds: volume.targetDurationSeconds,
+                targetVolumeKm: weekVolumeKm,
+                targetElevationGainM: weekElevationGainM,
+                targetDurationSeconds: weekDurationSeconds,
                 phaseFocus: skeleton.phaseFocus
             )
             futureWeeks.append(week)

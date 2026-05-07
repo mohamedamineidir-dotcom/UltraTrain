@@ -433,26 +433,30 @@ struct TrainingPlanGeneratorTests {
             "Performance B2B \(perfHours)h must reach the 12h+ range that intermediate-performance HK100 prep requires")
     }
 
-    @Test("Road plan: final taper week ends with a pre-race shakeout, not a long run")
-    func finalTaperWeekShakeout() async throws {
-        // The very last week of the plan replaces the day-5 long-run slot
-        // with a 20-min shakeout. Day 5 must NOT be a longRun session.
+    @Test("Road plan: A-race week contains a .race session and no long run on race day")
+    func roadARaceWeekHasRaceSession() async throws {
+        // The A-race week (relabeled from `.taper` after the race-week
+        // builder split) places the race itself as a `.race` session at
+        // race day, and the prep days lead with strides/easy + a Day -1
+        // shakeout — no long-run on race day.
         let generator = TrainingPlanGenerator()
         let athlete = makeAthlete(experience: .intermediate, weeklyVolumeKm: 50, longestRunKm: 22)
         let race = makeRoadMarathonRace(weeksFromNow: 18)
 
         let plan = try await generator.execute(athlete: athlete, targetRace: race, intermediateRaces: [])
 
-        // The final taper week's day-5 session should be .recovery (the
-        // shakeout), not .longRun.
-        guard let finalWeek = plan.weeks.last(where: { $0.phase == .taper }) else {
-            Issue.record("No taper week found in plan")
+        guard let raceWeek = plan.weeks.last(where: { $0.phase == .race }) else {
+            Issue.record("No race-phase week found in plan")
             return
         }
-        // Find day-5 session: index 5 in the 7-day session array.
-        let day5 = finalWeek.sessions[5]
-        #expect(day5.type != .longRun,
-            "Final taper week's day-5 slot is a long run; expected a shakeout")
+        // Race week must contain a `.race` session.
+        let raceSession = raceWeek.sessions.first { $0.type == .race }
+        #expect(raceSession != nil,
+            "A-race week must contain a `.race` session")
+        // No `.longRun` should appear in the A-race week.
+        let longRuns = raceWeek.sessions.filter { $0.type == .longRun }
+        #expect(longRuns.isEmpty,
+            "A-race week must not schedule a long run; found \(longRuns.count)")
     }
 
     @Test("Road marathon: late build introduces marathon-pace work")

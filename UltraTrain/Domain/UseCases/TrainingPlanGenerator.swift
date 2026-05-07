@@ -157,6 +157,16 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         // 5. Track week number within each phase
         let phaseCounters = computeWeekNumbersInPhase(skeletons: skeletons)
 
+        // 5b. Detect the A-race week (the week whose date range contains
+        // targetRace.date). For that week we bypass the standard phase
+        // templates and dispatch to the research-backed
+        // TrailRaceWeekTemplates builder, so race day appears in the plan
+        // as a `.race` session and the prep shape adapts to distance
+        // class + mountain profile + experience + philosophy.
+        let aRaceWeekIdx = skeletons.firstIndex { skeleton in
+            raceDate >= skeleton.startDate && raceDate <= skeleton.endDate
+        }
+
         // 6. Generate sessions for each week
         var allWorkouts: [IntervalWorkout] = []
         var allStrengthWorkouts: [StrengthWorkout] = []
@@ -234,6 +244,22 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 return false
             }()
 
+            // A-race week: dispatch to the trail race-week builder so
+            // race day shows up as a real `.race` session and the prep
+            // days scale with distance / mountain profile / experience /
+            // philosophy (instead of the generic taper template).
+            let aRaceWeekTemplates: [SessionTemplateGenerator.SessionTemplate]?
+            if index == aRaceWeekIdx {
+                aRaceWeekTemplates = TrailRaceWeekTemplates.sessions(
+                    targetRace: targetRace,
+                    experience: athlete.experienceLevel,
+                    philosophy: athlete.trainingPhilosophy,
+                    weekStartDate: skeleton.startDate
+                )
+            } else {
+                aRaceWeekTemplates = nil
+            }
+
             let result = SessionTemplateGenerator.sessions(
                 for: skeleton,
                 volume: volume,
@@ -259,7 +285,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 restingHR: athlete.restingHeartRate,
                 maxHR: athlete.maxHeartRate,
                 biologicalSex: athlete.biologicalSex,
-                athleteAge: athlete.age
+                athleteAge: athlete.age,
+                aRaceWeekTemplates: aRaceWeekTemplates
             )
 
             // Apply terrain constraint adaptation for VG sessions (trail/ultra only)
@@ -309,16 +336,45 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 .filter { $0.type != .rest && $0.type != .strengthConditioning }
                 .reduce(0) { $0 + $1.plannedDuration }
 
+            // A-race week beats override label (B-race override would be
+            // odd here anyway, but be defensive). targetVolumeKm and
+            // targetElevationGainM get recomputed from the actual session
+            // list so the chart reflects what we just generated (race day
+            // included).
+            let isARace = (index == aRaceWeekIdx)
+            let weekPhase: TrainingPhase
+            if isARace {
+                weekPhase = .race
+            } else if override?.behavior.isRaceWeek == true {
+                weekPhase = .race
+            } else {
+                weekPhase = skeleton.phase
+            }
+
+            let weekVolumeKm: Double
+            let weekElevationGainM: Double
+            if isARace {
+                weekVolumeKm = roundedSessions
+                    .filter { $0.type != .rest && $0.type != .strengthConditioning }
+                    .reduce(0) { $0 + $1.plannedDistanceKm }
+                weekElevationGainM = roundedSessions
+                    .filter { $0.type != .rest && $0.type != .strengthConditioning }
+                    .reduce(0) { $0 + $1.plannedElevationGainM }
+            } else {
+                weekVolumeKm = volume.targetVolumeKm
+                weekElevationGainM = volume.targetElevationGainM
+            }
+
             return TrainingWeek(
                 id: UUID(),
                 weekNumber: skeleton.weekNumber,
                 startDate: skeleton.startDate,
                 endDate: skeleton.endDate,
-                phase: override?.behavior.isRaceWeek == true ? .race : skeleton.phase,
+                phase: weekPhase,
                 sessions: roundedSessions,
                 isRecoveryWeek: skeleton.isRecoveryWeek || override?.behavior == .postRaceRecovery,
-                targetVolumeKm: volume.targetVolumeKm,
-                targetElevationGainM: volume.targetElevationGainM,
+                targetVolumeKm: weekVolumeKm,
+                targetElevationGainM: weekElevationGainM,
                 targetDurationSeconds: weekDuration,
                 phaseFocus: skeleton.phaseFocus
             )
@@ -452,6 +508,16 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         // 7. Phase counters
         let phaseCounters = computeWeekNumbersInPhase(skeletons: skeletons)
 
+        // 7b. Detect the A-race week (week containing targetRace.date).
+        // For that week we dispatch to RoadRaceWeekTemplates instead of
+        // the normal RoadSessionSelector, so race day shows up as a
+        // `.race` session with athlete-expected duration and prep days
+        // follow Pfitzinger / Daniels / Hudson distance-class shapes
+        // (5K → marathon).
+        let aRaceWeekIdx = skeletons.firstIndex { skeleton in
+            raceDate >= skeleton.startDate && raceDate <= skeleton.endDate
+        }
+
         // RR-18: auto-insert a tune-up time-trial in a coach-appropriate
         // week when the athlete has no B-race nearby. Pfitzinger prescribes
         // a tune-up race at week -5 for marathon, week -3 for HM. Our
@@ -521,9 +587,56 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         let weeks: [TrainingWeek] = zip(skeletons, volumes).enumerated().map { index, pair in
             let (skeleton, volume) = pair
             let override = overrides.first { $0.weekNumber == skeleton.weekNumber }
+            let isARaceWeek = (index == aRaceWeekIdx)
 
             let sessions: [TrainingSession]
-            if let override {
+            if isARaceWeek {
+                // A-race week: RoadRaceWeekTemplates places the race day
+                // as a `.race` session. Coach advice is generated by
+                // RoadCoachAdviceGenerator so road tone (paces, glycogen
+                // cues, race execution language) matches the rest of
+                // the plan.
+                let templates = RoadRaceWeekTemplates.sessions(
+                    targetRace: targetRace,
+                    experience: athlete.experienceLevel,
+                    philosophy: athlete.trainingPhilosophy,
+                    weekStartDate: skeleton.startDate
+                )
+                sessions = templates.enumerated().map { dayIdx, tpl in
+                    var session = makeSession(
+                        template: tpl, skeleton: skeleton,
+                        dayIndex: dayIdx, volume: volume
+                    )
+                    session.plannedElevationGainM = 0
+                    if tpl.type == .race {
+                        session.isKeySession = true
+                        session.coachAdvice = roadRaceDayCoachAdvice(
+                            discipline: discipline,
+                            paceProfile: paceProfile,
+                            isFirstTimer: isFirstTimer,
+                            hotRaceForecast: hotRaceForecast
+                        )
+                    } else if tpl.type != .rest {
+                        session.coachAdvice = RoadCoachAdviceGenerator.advice(
+                            type: tpl.type, intensity: tpl.intensity,
+                            phase: .race, discipline: discipline,
+                            isRecoveryWeek: false,
+                            paceProfile: paceProfile,
+                            raceName: targetRace.name,
+                            experience: athlete.experienceLevel,
+                            isFirstTimer: isFirstTimer,
+                            isShortPrep: isShortPrep,
+                            hotRaceForecast: hotRaceForecast,
+                            refinementSummary: refinementSummary,
+                            restingHR: athlete.restingHeartRate,
+                            maxHR: athlete.maxHeartRate,
+                            biologicalSex: athlete.biologicalSex,
+                            qualityTemplate: nil
+                        )
+                    }
+                    return session
+                }
+            } else if let override {
                 // Use existing override templates for intermediate race weeks
                 let intermediateRaceContext: SessionTemplateGenerator.RaceContext?
                 let raceId = override.raceId
@@ -776,15 +889,35 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 .filter { $0.type != .rest && $0.type != .strengthConditioning }
                 .reduce(0) { $0 + $1.plannedDuration }
 
+            // A-race week beats override label (defensive). Recompute
+            // weekly volume from sessions so the chart includes race day.
+            let weekPhase: TrainingPhase
+            if isARaceWeek {
+                weekPhase = .race
+            } else if override?.behavior.isRaceWeek == true {
+                weekPhase = .race
+            } else {
+                weekPhase = skeleton.phase
+            }
+
+            let weekVolumeKm: Double
+            if isARaceWeek {
+                weekVolumeKm = finalSessions
+                    .filter { $0.type != .rest && $0.type != .strengthConditioning }
+                    .reduce(0) { $0 + $1.plannedDistanceKm }
+            } else {
+                weekVolumeKm = volume.targetVolumeKm
+            }
+
             return TrainingWeek(
                 id: UUID(),
                 weekNumber: skeleton.weekNumber,
                 startDate: skeleton.startDate,
                 endDate: skeleton.endDate,
-                phase: override?.behavior.isRaceWeek == true ? .race : skeleton.phase,
+                phase: weekPhase,
                 sessions: finalSessions,
                 isRecoveryWeek: skeleton.isRecoveryWeek,
-                targetVolumeKm: volume.targetVolumeKm,
+                targetVolumeKm: weekVolumeKm,
                 targetElevationGainM: 0,
                 targetDurationSeconds: weekDuration,
                 phaseFocus: skeleton.phaseFocus
@@ -807,6 +940,35 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         plan.workouts = allWorkouts
         plan.strengthWorkouts = allStrengthWorkouts
         return plan
+    }
+
+    /// Race-day coach advice for ROAD A-races. Distance-class specific
+    /// pacing, glycogen, hot-weather, and first-timer cues. Returned as
+    /// the session's `coachAdvice` so the athlete sees execution
+    /// guidance on race day.
+    private func roadRaceDayCoachAdvice(
+        discipline: RoadRaceDiscipline,
+        paceProfile: RoadPaceProfile?,
+        isFirstTimer: Bool,
+        hotRaceForecast: Bool
+    ) -> String {
+        var pieces: [String] = []
+        switch discipline {
+        case .road10K:
+            pieces.append("10K race day. Plan: settle into goal pace by 1K — first kilometre will feel deceptively easy. Hold rhythm through 5K. From 7K onwards, every kilometre buys the next. Strong final 1K is where the time gets earned.")
+        case .roadHalf:
+            pieces.append("Half marathon race day. Plan: first 5K is for patience — sit on (not under) goal pace. 5-15K hold the rhythm. 15K-end is where you race — pick off targets one at a time, lift cadence on the closing kilometres.")
+        case .roadMarathon:
+            pieces.append("Marathon race day. Plan: first 10K is for restraint — even 5 sec/km too quick will cost you 5+ minutes by 35K. Lock into goal pace, fuel from kilometre 5 every 25-30 min, drink at every aid station. The race begins at 30K.")
+        }
+        if isFirstTimer {
+            pieces.append("First time at this distance: finishing strong matters more than the clock. Negative split if at all possible.")
+        }
+        if hotRaceForecast {
+            pieces.append("Hot conditions forecast: drink earlier and more, take electrolytes, slow goal pace 5-10 sec/km from the gun — heat compounds.")
+        }
+        pieces.append("Trust your training. Execute your plan.")
+        return pieces.joined(separator: " ")
     }
 
     /// Creates a TrainingSession from a SessionTemplate (used by road plan).

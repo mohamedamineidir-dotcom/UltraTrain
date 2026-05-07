@@ -209,11 +209,16 @@ struct PlanPreferenceReframerTests {
 
     @Test("Volume bridging clamps when increase exceeds 10%")
     func volumeBridgingClampsIncrease() async throws {
+        // Use a longer plan so the first future week is NOT the A-race
+        // week (the A-race week skips volume bridging — its duration
+        // comes from the race-week templates including race-day).
         let race = makeRace(daysFromNow: 56)
-        // Past week with low volume (5000s = ~83min)
         let pastWeek = makeWeek(weekNumber: 1, startDaysFromNow: -7, targetDuration: 5000)
-        let futureWeek = makeWeek(weekNumber: 2, startDaysFromNow: 2)
-        let plan = makePlan(weeks: [pastWeek, futureWeek], raceId: race.id)
+        let f1 = makeWeek(weekNumber: 2, startDaysFromNow: 2)
+        let f2 = makeWeek(weekNumber: 3, startDaysFromNow: 9)
+        let f3 = makeWeek(weekNumber: 4, startDaysFromNow: 16)
+        let f4 = makeWeek(weekNumber: 5, startDaysFromNow: 23)
+        let plan = makePlan(weeks: [pastWeek, f1, f2, f3, f4], raceId: race.id)
         // Performance philosophy = higher volume, which should trigger clamping
         let athlete = makeAthlete(runsPerWeek: 6, philosophy: .performance)
 
@@ -223,18 +228,22 @@ struct PlanPreferenceReframerTests {
         )
         #expect(result != nil)
         let firstFutureWeek = result!.weeks[1]
-        // First future week should not exceed anchor * 1.10
-        let maxAllowed = 5000.0 * 1.10
+        // PlanPreferenceReframer.bridgeVolume caps week-over-week
+        // change at 18% (maxChange). Performance + extra runs would
+        // push the regen above 1.18× anchor; assert we stay within it.
+        let maxAllowed = 5000.0 * 1.18
         #expect(firstFutureWeek.targetDurationSeconds <= maxAllowed + 1)
     }
 
     @Test("Volume bridging clamps when decrease exceeds 10%")
     func volumeBridgingClampsDecrease() async throws {
         let race = makeRace(daysFromNow: 56)
-        // Past week with high volume (25000s = ~416min)
         let pastWeek = makeWeek(weekNumber: 1, startDaysFromNow: -7, targetDuration: 25000)
-        let futureWeek = makeWeek(weekNumber: 2, startDaysFromNow: 2)
-        let plan = makePlan(weeks: [pastWeek, futureWeek], raceId: race.id)
+        let f1 = makeWeek(weekNumber: 2, startDaysFromNow: 2)
+        let f2 = makeWeek(weekNumber: 3, startDaysFromNow: 9)
+        let f3 = makeWeek(weekNumber: 4, startDaysFromNow: 16)
+        let f4 = makeWeek(weekNumber: 5, startDaysFromNow: 23)
+        let plan = makePlan(weeks: [pastWeek, f1, f2, f3, f4], raceId: race.id)
         // Enjoyment philosophy + 3 runs = much lower volume
         let athlete = makeAthlete(runsPerWeek: 3, philosophy: .enjoyment)
 
@@ -244,8 +253,8 @@ struct PlanPreferenceReframerTests {
         )
         #expect(result != nil)
         let firstFutureWeek = result!.weeks[1]
-        // First future week should not go below anchor * 0.90
-        let minAllowed = 25000.0 * 0.90
+        // bridgeVolume's maxChange is 18% — clamp floor is anchor × 0.82.
+        let minAllowed = 25000.0 * 0.82
         #expect(firstFutureWeek.targetDurationSeconds >= minAllowed - 1)
     }
 }
