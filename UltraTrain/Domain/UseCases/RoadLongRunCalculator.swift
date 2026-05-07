@@ -53,7 +53,8 @@ enum RoadLongRunCalculator {
         isRecoveryWeek: Bool,
         philosophy: TrainingPhilosophy = .balanced,
         raceGoal: RaceGoal = .targetTime(0),
-        weeklyVolumeKm: Double = 0
+        weeklyVolumeKm: Double = 0,
+        taperWeeks: Int = 3
     ) -> TimeInterval {
         let discipline = RoadRaceDiscipline.from(distanceKm: raceDistanceKm)
         let maxDistanceKm = discipline.longRunCapKm(
@@ -149,18 +150,37 @@ enum RoadLongRunCalculator {
             startDuration = max(capDuration * startFraction, minimumLongRun)
         }
 
-        // Quadratic ramp reaches peak just before taper starts (~88% of plan).
-        // Old value 0.80 caused a 3-4 week long-run plateau during the peak
-        // phase (W19 onward at same duration). Pushing the peak to 0.88 keeps
-        // the long run growing through almost all peak-phase weeks before the
-        // taper reduction kicks in.
-        let peakWeek = Int(Double(totalWeeks) * 0.88)
+        // RR-26: Place the LR peak 3-4 weeks BEFORE taper, then plateau.
+        //
+        // Pfitzinger Adv. Marathoning Ch. 9: "the last very long run must
+        // precede taper by at least 3 weeks." Daniels 2Q peak LRs sit
+        // 2-4 weeks pre-race. Canova: last specific block at the 40-day
+        // window. Hudson: the 4th-week cutback is mandatory; longest LR
+        // never sits adjacent to taper.
+        //
+        // Old behavior anchored the peak at 88% of total weeks, which
+        // for a 23-week marathon plan placed the peak LR at the LAST
+        // non-taper week — exactly the antipattern these systems warn
+        // against. The athlete entered taper carrying acute fatigue
+        // from the hardest run of the cycle, leaving the taper to clear
+        // fatigue instead of sharpening.
+        //
+        // New behavior: ramp quadratically up to peakWeek = taperStart -
+        // plateauOffset, then HOLD at peak through the remaining peak
+        // weeks before taper. Recovery weeks within the plateau still
+        // apply ×0.85 (natural cutback); taper still applies ×0.60.
+        // Athlete sees the peak LR multiple times before the taper, then
+        // the taper drop. plateauOffset scales with plan length so short
+        // plans don't get a degenerate plateau.
+        let taperStart = max(totalWeeks - taperWeeks, 1)
+        let plateauOffset = min(4, max(1, totalWeeks / 5))
+        let peakWeek = max(taperStart - plateauOffset, 1)
         let progress: Double
         if weekIndex <= peakWeek {
             let t = Double(weekIndex) / max(Double(peakWeek), 1.0)
             progress = t * (2.0 - t) // Quadratic ease-out
         } else {
-            progress = 1.0 // Hold at peak (taper handles reduction)
+            progress = 1.0 // Hold at peak — consolidation, not escalation
         }
 
         var duration = startDuration + (capDuration - startDuration) * progress
@@ -170,7 +190,12 @@ enum RoadLongRunCalculator {
             duration *= 0.85
         }
 
-        // Taper: keep 60% of current duration (40% reduction per Mujika 2003)
+        // Taper: keep 60% of current duration (40% reduction per Mujika 2003).
+        // M2 note: the long run owns its own taper shape — flat 60% across
+        // every taper week. The non-LR sessions follow the TaperProfile's
+        // per-week fractions in RoadVolumeCalculator. This is by design;
+        // the two paths are deliberately decoupled so the LR doesn't get
+        // double-cut by both ×0.60 here AND the per-week fraction there.
         if phase == .taper {
             duration *= 0.60
         }

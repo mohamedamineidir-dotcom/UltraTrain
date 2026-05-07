@@ -109,32 +109,73 @@ enum RoadIntervalLibrary {
         // RR-16: Walk forward through the progression within a category,
         // plateau at the most-advanced template for weeks beyond the end.
         //
-        // Templates within each category are ordered by progression
-        // (800m → 1000m → 1200m → 1600m → 2000m for VO2max; short cruise
+        // Templates within each category are sorted ascending by
+        // `totalWorkMinutes` (a coarse but reliable difficulty proxy:
+        // 800m → 1000m → 1200m → 1600m → 2000m for VO2max; short cruise
         // intervals → extended continuous tempo for threshold). Pfitzinger
         // and Daniels both use this pattern: progress weekly through
         // increasingly demanding workouts, then consolidate the top session
         // across remaining peak weeks.
         //
+        // RR-25: Sorting is explicit. Earlier code relied on declaration
+        // order, but `allTemplates` appends `auditTemplates` last — which
+        // dropped lighter audit templates (e.g. Marathon Tempo 30min, 30
+        // min) AFTER heavier originals (Marathon Pace 3K Blocks, 40 min)
+        // in the same category. The walk-forward then handed week 0 the
+        // heaviest session and weeks 1+ a lighter plateau — backwards
+        // progression. Sorting by totalWorkMinutes guarantees ascending
+        // difficulty regardless of where templates are declared.
+        //
         // First-timers cap one short of the hardest template — they get
         // the progression up to the second-to-last template and plateau
         // there, instead of seeing repeated weeks of the toughest session
         // their experience tier unlocks.
-        for cat in preferred {
-            let inCat = available.filter { $0.category == cat }
+        //
+        // RR-27: Each category preference carries an introduction week.
+        // Most categories are live from weekInPhase 0, but some are
+        // introduced mid-phase (e.g. marathon raceSpecific in late build,
+        // weekInPhase >= 3). Without an offset, those late-introduced
+        // categories pin every week to the cap (3 weeks of late build all
+        // get the hardest MP cruise template instead of progressing
+        // through 3×1.5K → 4×1.5K → 3×2K). The effective index is
+        // `weekInPhase - introductionWeek` so the walk-forward starts at 0
+        // when a category is freshly engaged.
+        for (cat, introWeek) in preferred {
+            let inCat = available
+                .filter { $0.category == cat }
+                .sorted { $0.totalWorkMinutes < $1.totalWorkMinutes }
             if !inCat.isEmpty {
                 let lastIndex = inCat.count - 1
                 let cap = isFirstTimerAtDistance ? max(0, lastIndex - 1) : lastIndex
-                let index = min(weekInPhase, cap)
+                let effectiveWeek = max(0, weekInPhase - introWeek)
+                let index = min(effectiveWeek, cap)
                 return inCat[index]
             }
         }
 
-        // Fallback: any available template — same walk-forward rule.
-        let lastIndex = available.count - 1
+        // Fallback: NONE of the preferred categories had a matching
+        // template (rare — usually means an exotic phase × discipline
+        // × experience combo we didn't anticipate). Pick a *safe*
+        // category before falling back to "anything goes".
+        //
+        // M3: race-specific templates are tightly tied to phase timing
+        // (peak only, late build for marathon). If a phase didn't ask
+        // for raceSpecific, it shouldn't accidentally show up just
+        // because the threshold pool was empty. Threshold / progression
+        // / vo2max work safely in most contexts; raceSpecific and speed
+        // do not. Only fall back to those when literally nothing else
+        // is available.
+        let safeCategories: Set<Category> = [.threshold, .progression, .vo2max, .longRunVariant]
+        let safePool = available
+            .filter { safeCategories.contains($0.category) }
+            .sorted { $0.totalWorkMinutes < $1.totalWorkMinutes }
+        let pool = safePool.isEmpty
+            ? available.sorted { $0.totalWorkMinutes < $1.totalWorkMinutes }
+            : safePool
+        let lastIndex = pool.count - 1
         let cap = isFirstTimerAtDistance ? max(0, lastIndex - 1) : lastIndex
         let fallbackIndex = min(weekInPhase, cap)
-        return available[fallbackIndex]
+        return pool[fallbackIndex]
     }
 
     // MARK: - Distance-Specific Category Preferences
@@ -153,57 +194,75 @@ enum RoadIntervalLibrary {
     ///   `.speed` from primary slot — repetition work belongs in build/peak,
     ///   not aerobic base. Base has at most one quality session/week — the
     ///   second slot is suppressed at the selector level for base phase.
+    /// Returns `[(category, introductionWeekInPhase)]` so a category that
+    /// only kicks in mid-phase (e.g. marathon raceSpecific in late build)
+    /// can be walked forward starting from its own zero, not from the
+    /// phase's zero. Most categories use `0` (live since week 0).
     private static func categoryPreferences(
         phase: TrainingPhase,
         discipline: RoadRaceDiscipline,
         slotIndex: Int,
         weekInPhase: Int = 0
-    ) -> [Category] {
+    ) -> [(Category, Int)] {
+        // Marathon late-build threshold: raceSpecific MP cruise intervals
+        // first appear at weekInPhase >= 3. Encoded as an explicit constant
+        // so both Q1 and Q2 share the same introduction point and stay
+        // synchronized when one slot picks raceSpecific over the other.
+        let marathonRaceSpecificIntroWeek = 3
+
         switch (phase, discipline, slotIndex) {
         // === BASE: One quality session/week. Light progression or threshold
         // — no R-pace speed work in pure base (Daniels' "fundamental" base).
         // Slot 1 is unused in base — selector skips Q2 entirely for base phase.
         case (.base, _, 0):
-            return [.progression, .threshold]
+            return [(.progression, 0), (.threshold, 0)]
         case (.base, _, _):
-            return [.threshold, .progression]
+            return [(.threshold, 0), (.progression, 0)]
 
         // === BUILD: Distance-specific ===
         // 10K: VO2max is the limiter (Daniels)
-        case (.build, .road10K, 0):     return [.vo2max, .speed]
-        case (.build, .road10K, _):     return [.threshold, .vo2max]
+        case (.build, .road10K, 0):     return [(.vo2max, 0), (.speed, 0)]
+        case (.build, .road10K, _):     return [(.threshold, 0), (.vo2max, 0)]
         // HM: Threshold is the limiter (Pfitzinger: "LT is the HM cornerstone")
-        // Both slots threshold-primary, VO2max secondary
-        case (.build, .roadHalf, 0):    return [.threshold, .vo2max]
-        case (.build, .roadHalf, _):    return [.threshold, .progression]
-        // Marathon: VO2max + threshold in early build, MP cruise intervals
-        // start to appear in late build (weekInPhase >= 3) so the athlete
-        // experiences marathon pace before peak instead of meeting it cold.
+        case (.build, .roadHalf, 0):    return [(.threshold, 0), (.vo2max, 0)]
+        case (.build, .roadHalf, _):    return [(.threshold, 0), (.progression, 0)]
+        // Marathon Q1 (Tuesday — the hardest session of the week):
+        // VO2max early build builds aerobic ceiling, then late build
+        // (weekInPhase >= 3) transitions to MP cruise intervals so the
+        // athlete sees marathon-pace work BEFORE peak. Without this
+        // transition the first MP intervals show up at peak Q1 cold —
+        // contrary to Canova's progression and Pfitzinger 18/85 which
+        // both gradually introduce MP cruise (1.5K → 2K → 3K) through
+        // late build before the peak's full MP blocks. (RR-27 audit C2.)
         case (.build, .roadMarathon, 0):
-            return [.vo2max, .threshold]
+            return weekInPhase >= marathonRaceSpecificIntroWeek
+                ? [(.raceSpecific, marathonRaceSpecificIntroWeek), (.vo2max, 0)]
+                : [(.vo2max, 0), (.threshold, 0)]
+        // Marathon Q2 (Thursday): threshold-primary, race-specific takes
+        // over in late build alongside Q1 so the athlete sees TWO MP
+        // sessions/week in late build instead of one.
         case (.build, .roadMarathon, _):
-            // Late build: race-specific MP cruise intervals take over
-            return weekInPhase >= 3
-                ? [.raceSpecific, .threshold, .progression]
-                : [.threshold, .progression]
+            return weekInPhase >= marathonRaceSpecificIntroWeek
+                ? [(.raceSpecific, marathonRaceSpecificIntroWeek), (.threshold, 0), (.progression, 0)]
+                : [(.threshold, 0), (.progression, 0)]
 
         // === PEAK: Distance-specific ===
         // 10K: Race-specific + VO2max sharpeners
-        case (.peak, .road10K, 0):      return [.raceSpecific, .vo2max]
-        case (.peak, .road10K, _):      return [.vo2max, .raceSpecific]
+        case (.peak, .road10K, 0):      return [(.raceSpecific, 0), (.vo2max, 0)]
+        case (.peak, .road10K, _):      return [(.vo2max, 0), (.raceSpecific, 0)]
         // HM: Threshold CONTINUES + race-specific (Pfitzinger: LT is cornerstone)
-        case (.peak, .roadHalf, 0):     return [.raceSpecific, .threshold]
-        case (.peak, .roadHalf, _):     return [.threshold, .raceSpecific]
+        case (.peak, .roadHalf, 0):     return [(.raceSpecific, 0), (.threshold, 0)]
+        case (.peak, .roadHalf, _):     return [(.threshold, 0), (.raceSpecific, 0)]
         // Marathon: Race-specific + threshold maintenance (Canova: threshold never stops)
-        case (.peak, .roadMarathon, 0): return [.raceSpecific, .threshold]
-        case (.peak, .roadMarathon, _): return [.threshold, .raceSpecific]
+        case (.peak, .roadMarathon, 0): return [(.raceSpecific, 0), (.threshold, 0)]
+        case (.peak, .roadMarathon, _): return [(.threshold, 0), (.raceSpecific, 0)]
 
         // === TAPER: Light sharpeners ===
         case (.taper, _, _):
-            return [.speed, .raceSpecific]
+            return [(.speed, 0), (.raceSpecific, 0)]
 
         default:
-            return [.threshold]
+            return [(.threshold, 0)]
         }
     }
 
@@ -637,5 +696,36 @@ extension ExperienceLevel {
         case .advanced:     2
         case .elite:        3
         }
+    }
+}
+
+// MARK: - Template Pace Selection
+
+extension RoadIntervalLibrary.Template {
+    /// Picks the appropriate threshold pace for this template from the
+    /// athlete's `thresholdPaceRangePerKm` (Daniels 1.06× – 1.09× of 5K
+    /// pace).
+    ///
+    /// - Cruise intervals (short reps with recovery, per-rep ≤ 10 min)
+    ///   → **faster end** (1.06×). The athlete can recover between
+    ///   reps, so the pace itself is steeper. Daniels' classic 4×5 min
+    ///   T or 5×1 km T sessions live here.
+    /// - Sustained tempo (single continuous block, or multi-rep with
+    ///   each rep ≥ 11 min) → **slower end** (1.09×). One-hour-holdable
+    ///   pace because the rep itself is the lactate-clearance work.
+    ///   "Tempo 20 min", "Marathon Threshold 25 min", "Double Tempo
+    ///   2×20 min" live here.
+    ///
+    /// Only call on threshold-zone templates; non-threshold zones have
+    /// their own single-value pace and ignore the range.
+    func effectiveThresholdPacePerKm(profile: RoadPaceProfile) -> Double {
+        guard repCount > 1 else {
+            return profile.thresholdPaceRangePerKm.upperBound
+        }
+        let perRepMinutes = totalWorkMinutes / Double(repCount)
+        if perRepMinutes <= 10 {
+            return profile.thresholdPaceRangePerKm.lowerBound
+        }
+        return profile.thresholdPaceRangePerKm.upperBound
     }
 }

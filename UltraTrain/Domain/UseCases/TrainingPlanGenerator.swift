@@ -179,7 +179,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     preferredRunsPerWeek: athlete.preferredRunsPerWeek,
                     weekNumberInPhase: phaseCounters[index],
                     isRecoveryWeek: skeleton.isRecoveryWeek || override?.behavior == .postRaceRecovery,
-                    raceEffectiveKm: raceEffectiveKm
+                    raceEffectiveKm: raceEffectiveKm,
+                    raceType: targetRace.raceType
                 )
                 : nil
 
@@ -233,18 +234,6 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 return false
             }()
 
-            // Cycle-phase awareness (opt-in). Computed per-week using the
-            // week's start date, so the advice tracks the athlete through
-            // the plan rather than freezing the phase from "today". Off
-            // entirely unless the athlete logged a cycle anchor.
-            let weekCyclePhase: CyclePhaseCalculator.Phase = athlete.cycleAware
-                ? CyclePhaseCalculator.currentPhase(
-                    lastPeriodStartDate: athlete.lastPeriodStartDate,
-                    cycleLengthDays: athlete.cycleLengthDays,
-                    now: skeleton.startDate
-                )
-                : .unknown
-
             let result = SessionTemplateGenerator.sessions(
                 for: skeleton,
                 volume: volume,
@@ -268,7 +257,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 restingHR: athlete.restingHeartRate,
                 maxHR: athlete.maxHeartRate,
                 biologicalSex: athlete.biologicalSex,
-                cyclePhase: weekCyclePhase
+                athleteAge: athlete.age
             )
 
             // Apply terrain constraint adaptation for VG sessions (trail/ultra only)
@@ -298,16 +287,23 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             allWorkouts.append(contentsOf: adapted.workouts)
             allStrengthWorkouts.append(contentsOf: adapted.strengthWorkouts)
 
+            // Round endurance sessions (Long Run, Base Endurance,
+            // Back-to-Back) to the nearest 5 minutes so the schedule
+            // reads cleanly. Quality sessions stay at minute precision —
+            // their structure is minute-anchored.
+            var roundedSessions = adapted.sessions
+            EnduranceDurationRounder.roundInPlace(&roundedSessions)
+
             // Always recompute weekly duration from the actual session
             // content. Sessions' plannedDuration now reflects the
             // workout's real structure (warmup + work + cooldown for
             // intervals/tempo/VG, full long-run length, etc.) thanks
-            // to the SessionTemplateGenerator alignment, so summing
-            // them gives the truth. The volume.targetDurationSeconds
-            // budget is the planner's INTENT before the workout
-            // engine got involved — keeping it would make the chart
-            // disagree with the session list.
-            let weekDuration = adapted.sessions
+            // to the SessionTemplateGenerator alignment AND the
+            // 5-min rounding above, so summing them gives the truth.
+            // The volume.targetDurationSeconds budget is the planner's
+            // INTENT before the workout engine got involved — keeping
+            // it would make the chart disagree with the session list.
+            let weekDuration = roundedSessions
                 .filter { $0.type != .rest && $0.type != .strengthConditioning }
                 .reduce(0) { $0 + $1.plannedDuration }
 
@@ -317,7 +313,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 startDate: skeleton.startDate,
                 endDate: skeleton.endDate,
                 phase: override?.behavior.isRaceWeek == true ? .race : skeleton.phase,
-                sessions: adapted.sessions,
+                sessions: roundedSessions,
                 isRecoveryWeek: skeleton.isRecoveryWeek || override?.behavior == .postRaceRecovery,
                 targetVolumeKm: volume.targetVolumeKm,
                 targetElevationGainM: volume.targetElevationGainM,
@@ -660,6 +656,17 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                             break // keep .easy
                         }
                     }
+                    // Pick the matching quality template so coach advice
+                    // can prescribe the right pace (cruise vs sustained
+                    // for threshold sessions; MP for raceSpecific late-
+                    // build, etc.) instead of falling back to the
+                    // phase-default which can desync from the workout.
+                    let qualityTemplate: RoadIntervalLibrary.Template?
+                    switch session.type {
+                    case .intervals: qualityTemplate = q1Template
+                    case .tempo:     qualityTemplate = q2Template
+                    default:         qualityTemplate = nil
+                    }
                     // Road-specific coach advice
                     session.coachAdvice = RoadCoachAdviceGenerator.advice(
                         type: session.type, intensity: session.intensity,
@@ -674,7 +681,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                         refinementSummary: refinementSummary,
                         restingHR: athlete.restingHeartRate,
                         maxHR: athlete.maxHeartRate,
-                        biologicalSex: athlete.biologicalSex
+                        biologicalSex: athlete.biologicalSex,
+                        qualityTemplate: qualityTemplate
                     )
                     return session
                 }
@@ -730,7 +738,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     preferredRunsPerWeek: athlete.preferredRunsPerWeek,
                     weekNumberInPhase: phaseCounters[index],
                     isRecoveryWeek: skeleton.isRecoveryWeek || override?.behavior == .postRaceRecovery,
-                    raceEffectiveKm: raceEffectiveKm
+                    raceEffectiveKm: raceEffectiveKm,
+                    raceType: targetRace.raceType
                 )
                 // Convert existing TrainingSessions to SessionTemplates for the helper.
                 // We only need type + dayOffset for availability computation.
@@ -754,6 +763,12 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 finalSessions.sort { $0.date < $1.date }
                 allStrengthWorkouts.append(contentsOf: strength.workouts)
             }
+
+            // Round endurance sessions (Long Run, Base Endurance) to
+            // the nearest 5 minutes so the road schedule reads cleanly.
+            // Mirrors the trail pipeline; quality sessions keep their
+            // minute precision because their structure is minute-anchored.
+            EnduranceDurationRounder.roundInPlace(&finalSessions)
 
             let weekDuration = finalSessions
                 .filter { $0.type != .rest && $0.type != .strengthConditioning }

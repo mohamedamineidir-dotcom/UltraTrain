@@ -97,7 +97,20 @@ extension WorkoutProgressionEngine {
                 maxReps: 12
             )
         case .threshold60:
-            let maxDuration: Double = experience == .advanced || experience == .elite ? 720 : 480
+            // T9: peak-phase VG should include sustained 20-25 min climbs
+            // for advanced+ mountain athletes — race-day climbs at UTMB /
+            // Hardrock / Madeira class regularly run 20-40 min continuous,
+            // so peak training should rehearse that length. Pre-fix max
+            // was 12 min for advanced/elite (well below race specificity).
+            // Beginner/intermediate keep shorter reps (8/12 min) since
+            // they're still building climbing economy.
+            let maxDuration: Double
+            switch experience {
+            case .beginner:     maxDuration = 480   // 8 min
+            case .intermediate: maxDuration = 720   // 12 min
+            case .advanced:     maxDuration = 1200  // 20 min
+            case .elite:        maxDuration = 1500  // 25 min
+            }
             return FocusParams(
                 setDurationSec: 300 + planProgress * (maxDuration - 300),
                 intensity: .moderate,

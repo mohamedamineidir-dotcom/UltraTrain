@@ -1171,6 +1171,7 @@
 
     },
     "%lld m D+" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -3705,6 +3706,9 @@
     "Choose the app language" : {
 
     },
+    "Choose what fits today" : {
+
+    },
     "Choose your race goal: finish, target time, or target ranking" : {
       "localizations" : {
         "fr" : {
@@ -4740,6 +4744,9 @@
           }
         }
       }
+    },
+    "Days" : {
+
     },
     "days to go" : {
       "localizations" : {
@@ -7251,6 +7258,9 @@
         }
       }
     },
+    "How many days off?" : {
+
+    },
     "How many injuries kept you from running?" : {
 
     },
@@ -7424,6 +7434,9 @@
           }
         }
       }
+    },
+    "If pain is recurring, we'll switch base-phase to threshold-only and gate VO2max work in future plan rebuilds." : {
+
     },
     "If unknown, use 220 minus your age." : {
 
@@ -8544,6 +8557,9 @@
         }
       }
     },
+    "Mark session complete without entering any stats" : {
+
+    },
     "Mark this nutrition reminder as taken" : {
       "localizations" : {
         "fr" : {
@@ -8839,6 +8855,9 @@
           }
         }
       }
+    },
+    "Move to the next step" : {
+
     },
     "ms" : {
       "localizations" : {
@@ -10386,6 +10405,12 @@
         }
       }
     },
+    "Pause training" : {
+
+    },
+    "Pause Training" : {
+
+    },
     "paywall.feature.coaching" : {
       "localizations" : {
         "en" : {
@@ -10950,6 +10975,9 @@
           }
         }
       }
+    },
+    "Persistent pain" : {
+
     },
     "Personal record, %@ %lld, pace %@" : {
       "localizations" : {
@@ -12019,6 +12047,9 @@
         }
       }
     },
+    "Reason" : {
+
+    },
     "Rebalance the plan" : {
 
     },
@@ -12591,6 +12622,9 @@
           }
         }
       }
+    },
+    "RPE %lld of 10" : {
+
     },
     "RPE %lld%@" : {
       "localizations" : {
@@ -14536,6 +14570,9 @@
     "Strength Training" : {
 
     },
+    "Submit your session stats" : {
+
+    },
     "Suggested products" : {
       "localizations" : {
         "fr" : {
@@ -16057,6 +16094,9 @@
         }
       }
     },
+    "We tailor the suggestion to the symptom — never to judge." : {
+
+    },
     "We'll factor this into the refinement." : {
 
     },
@@ -16496,6 +16536,9 @@
 
     },
     "Where Will You Train?" : {
+
+    },
+    "Which describes today best?" : {
 
     },
     "Which sessions did you complete?" : {

@@ -94,13 +94,18 @@ struct PlanPreferenceReframer: ReframePlanForPreferencesUseCase {
 
             allWorkouts.append(contentsOf: result.workouts)
 
+            // Round endurance sessions to nearest 5 min so re-framed
+            // plans match what the main generator produces.
+            var roundedSessions = result.sessions
+            EnduranceDurationRounder.roundInPlace(&roundedSessions)
+
             let week = TrainingWeek(
                 id: UUID(),
                 weekNumber: lastPastWeekNumber + skeleton.weekNumber,
                 startDate: skeleton.startDate,
                 endDate: skeleton.endDate,
                 phase: override?.behavior.isRaceWeek == true ? .race : skeleton.phase,
-                sessions: result.sessions,
+                sessions: roundedSessions,
                 isRecoveryWeek: skeleton.isRecoveryWeek || override?.behavior == .postRaceRecovery,
                 targetVolumeKm: volume.targetVolumeKm,
                 targetElevationGainM: volume.targetElevationGainM,

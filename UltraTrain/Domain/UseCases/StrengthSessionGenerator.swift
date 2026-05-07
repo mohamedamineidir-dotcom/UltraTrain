@@ -20,6 +20,12 @@ enum StrengthSessionGenerator {
         let weekNumberInPhase: Int
         let isRecoveryWeek: Bool
         let raceEffectiveKm: Double
+        /// T13: race format drives discipline-specific exercise pools
+        /// for plyometrics + injury prevention. Road runners get
+        /// elastic-stiffness + hip-stability emphasis; trail/ultra
+        /// runners get eccentric quad + ankle proprioception. Defaults
+        /// to .trail to preserve existing behavior for older callers.
+        let raceType: RaceType
     }
 
     // MARK: - Public API
@@ -356,28 +362,64 @@ enum StrengthSessionGenerator {
 
         let sets = config.phase == .peak ? 2 : 3
 
-        if config.phase == .build {
-            return [
-                StrengthExercise(
-                    name: "Squat Jumps",
-                    category: .plyometric, sets: sets, reps: "8-10",
-                    notes: "Land softly. Full squat depth before jumping."
-                ),
-                StrengthExercise(
-                    name: "Lateral Bounds",
-                    category: .plyometric, sets: sets, reps: "8 per side",
-                    notes: "Stick the landing on one foot. Critical for trail terrain changes."
-                ),
-            ]
-        } else {
-            // Peak: reduced plyometrics
-            return [
-                StrengthExercise(
-                    name: "Pogo Hops",
-                    category: .plyometric, sets: 2, reps: "15-20",
-                    notes: "Quick ground contact. Stiff ankles. Minimal knee bend."
-                ),
-            ]
+        // T13: discipline-specific plyometric pools.
+        //
+        // ROAD (Blagrove 2018 meta-analysis; Paavolainen 1999): elastic
+        // stiffness + reactive ground contact drive running economy.
+        // Pogo hops + low box jumps + ankle pogos are the keystone.
+        //
+        // TRAIL (House/Johnston; Roche): lateral stability for terrain
+        // changes + landing absorption. Lateral bounds + squat jumps
+        // with controlled landing.
+        switch config.raceType {
+        case .road:
+            if config.phase == .build {
+                return [
+                    StrengthExercise(
+                        name: "Pogo Hops",
+                        category: .plyometric, sets: sets, reps: "20-30",
+                        notes: "Quick ground contact. Stiff ankles, minimal knee bend. Builds tendon stiffness — strongly correlated with running economy."
+                    ),
+                    StrengthExercise(
+                        name: "Low Box Jumps",
+                        category: .plyometric, sets: sets, reps: "5-6",
+                        notes: "30-45 cm box. Soft landing, full recovery between reps. Reactive strength — not a max test."
+                    ),
+                ]
+            } else {
+                // Peak road: maintain elastic stiffness, dose lower
+                return [
+                    StrengthExercise(
+                        name: "Pogo Hops",
+                        category: .plyometric, sets: 2, reps: "15-20",
+                        notes: "Quick ground contact. Stiff ankles. Maintain tendon stiffness through peak."
+                    ),
+                ]
+            }
+        case .trail:
+            if config.phase == .build {
+                return [
+                    StrengthExercise(
+                        name: "Squat Jumps",
+                        category: .plyometric, sets: sets, reps: "8-10",
+                        notes: "Land softly. Full squat depth before jumping."
+                    ),
+                    StrengthExercise(
+                        name: "Lateral Bounds",
+                        category: .plyometric, sets: sets, reps: "8 per side",
+                        notes: "Stick the landing on one foot. Critical for trail terrain changes."
+                    ),
+                ]
+            } else {
+                // Peak trail: reduced plyometrics
+                return [
+                    StrengthExercise(
+                        name: "Pogo Hops",
+                        category: .plyometric, sets: 2, reps: "15-20",
+                        notes: "Quick ground contact. Stiff ankles. Minimal knee bend."
+                    ),
+                ]
+            }
         }
     }
 
@@ -439,40 +481,68 @@ enum StrengthSessionGenerator {
         var exercises: [StrengthExercise] = []
         let sets = 3
 
-        // Common runner rehab exercises
-        exercises.append(StrengthExercise(
-            name: "Clamshell with Band",
-            category: .injuryPrevention, sets: sets, reps: "12-15 per side",
-            notes: "Glute medius activation. Prevents IT band issues and knee pain."
-        ))
-
-        exercises.append(StrengthExercise(
-            name: "Eccentric Calf Raise",
-            category: .injuryPrevention, sets: sets, reps: "12-15",
-            notes: "3 sec lowering phase. Both straight and bent knee versions. Achilles and calf health."
-        ))
-
-        if config.painFrequency == .often || config.hasRecentInjury {
+        // T13: discipline-specific injury-prevention emphasis.
+        //
+        // ROAD (Dicharry; Willy & Davis 2011; Pfitzinger): glute medius
+        // dysfunction (Trendelenburg) and Achilles/calf overload are
+        // the dominant injuries — ITBS, PFP, Achilles tendinopathy.
+        // Side plank with hip abduction (Copenhagen-style) + slow-
+        // eccentric calf raise are the keystone exercises.
+        //
+        // TRAIL (House/Johnston; Roche): eccentric quad damage from
+        // descents + ankle sprains from technical terrain dominate.
+        // Step-down + single-leg balance are the keystone.
+        switch config.raceType {
+        case .road:
             exercises.append(StrengthExercise(
-                name: "Hip Hike on Step",
-                category: .injuryPrevention, sets: sets, reps: "12 per side",
-                notes: "Stand on step edge. Lower hip then raise. Strengthens glute medius and hip stabilizers."
+                name: "Side Plank with Hip Abduction",
+                category: .injuryPrevention, sets: sets, reps: "8-10 per side",
+                notes: "Stack hips, lift the top leg slowly. Glute-med specific — directly counters the pelvic drop behind ITBS and PFP."
             ))
-
             exercises.append(StrengthExercise(
-                name: "Ankle Stability - Star Reach",
-                category: .injuryPrevention, sets: 2, reps: "3 rounds per leg",
-                notes: "Stand on one leg, reach other foot in 4 directions. Ankle proprioception for trails."
+                name: "Slow Eccentric Calf Raise",
+                category: .injuryPrevention, sets: sets, reps: "12-15",
+                notes: "3-second lowering. Both straight and bent knee. The calf-Achilles complex absorbs ~3× bodyweight per stride — calf endurance predicts late-marathon pace fade."
             ))
-        }
+            if config.painFrequency == .often || config.hasRecentInjury {
+                exercises.append(StrengthExercise(
+                    name: "Pallof Press",
+                    category: .injuryPrevention, sets: sets, reps: "10 per side",
+                    notes: "Anti-rotation core. Prevents trunk twist that wastes energy at high cadence."
+                ))
+            }
 
-        // For ultra trail: extra ankle and quad eccentric work
-        if config.raceEffectiveKm > 50 {
+        case .trail:
             exercises.append(StrengthExercise(
-                name: "Single-Leg Balance (Eyes Closed)",
-                category: .injuryPrevention, sets: 2, reps: "15-20 sec per leg",
-                notes: "Advanced proprioception. Essential for technical trail terrain."
+                name: "Clamshell with Band",
+                category: .injuryPrevention, sets: sets, reps: "12-15 per side",
+                notes: "Glute medius activation. Prevents IT band issues and knee pain."
             ))
+            exercises.append(StrengthExercise(
+                name: "Step-Down (slow eccentric)",
+                category: .injuryPrevention, sets: sets, reps: "8-12 per leg",
+                notes: "30-50 cm box. 4-second lowering. Best single exercise for downhill quad tolerance — directly trains the eccentric loading that destroys late-race ultras."
+            ))
+            if config.painFrequency == .often || config.hasRecentInjury {
+                exercises.append(StrengthExercise(
+                    name: "Hip Hike on Step",
+                    category: .injuryPrevention, sets: sets, reps: "12 per side",
+                    notes: "Stand on step edge. Lower hip then raise. Strengthens glute medius and hip stabilizers."
+                ))
+                exercises.append(StrengthExercise(
+                    name: "Ankle Stability - Star Reach",
+                    category: .injuryPrevention, sets: 2, reps: "3 rounds per leg",
+                    notes: "Stand on one leg, reach other foot in 4 directions. Ankle proprioception for trails."
+                ))
+            }
+            // For ultra trail: extra ankle and quad eccentric work
+            if config.raceEffectiveKm > 50 {
+                exercises.append(StrengthExercise(
+                    name: "Single-Leg Balance (Eyes Closed)",
+                    category: .injuryPrevention, sets: 2, reps: "15-20 sec per leg",
+                    notes: "Advanced proprioception. Essential for technical trail terrain."
+                ))
+            }
         }
 
         return exercises

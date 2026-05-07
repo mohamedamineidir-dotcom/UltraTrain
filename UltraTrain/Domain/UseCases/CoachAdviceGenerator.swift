@@ -25,7 +25,12 @@ enum CoachAdviceGenerator {
         restingHR: Int? = nil,
         maxHR: Int? = nil,
         biologicalSex: BiologicalSex? = nil,
-        cyclePhase: CyclePhaseCalculator.Phase = .unknown
+        /// Athlete age in years, used to surface a Maffetone-style
+        /// aerobic ceiling (180 − age) on easy / recovery runs when
+        /// the athlete hasn't supplied resting + max HR. T7: ultras
+        /// run most volume in Zone 2 — athletes need *a number* to
+        /// stay below, not just "conversational pace."
+        athleteAge: Int = 0
     ) -> String? {
         let recoveryPrefix = isRecoveryWeek
             ? "Recovery week, so keep everything easy. Your body adapts when you rest. "
@@ -77,7 +82,26 @@ enum CoachAdviceGenerator {
             let range = PaceCalculator.heartRateRange(
                 for: intensity, restingHR: restingHR, maxHR: maxHR
             )
-            result += " Target HR: \(range.min)-\(range.max) bpm."
+            // T7: explicitly label easy-intensity ranges as Zone 2 so
+            // the athlete maps the cue to the consensus aerobic-base
+            // concept (Roche, Koop, Maffetone). Other intensities keep
+            // their plain "Target HR" wording.
+            if intensity == .easy {
+                result += " Target HR: \(range.min)–\(range.max) bpm (Zone 2 — your aerobic engine)."
+            } else {
+                result += " Target HR: \(range.min)-\(range.max) bpm."
+            }
+        } else if type != .rest, type != .strengthConditioning, type != .crossTraining,
+                  !isLongSession,
+                  intensity == .easy,
+                  athleteAge > 0 {
+            // T7 fallback: athlete hasn't supplied resting + max HR but
+            // age is known. Surface Maffetone aerobic ceiling (180−age)
+            // so they have a concrete number to stay below on easy
+            // runs. Only fires for .easy intensity short sessions —
+            // Maffetone isn't meant to prescribe quality work.
+            let mafCeiling = max(120, 180 - athleteAge)
+            result += " Aerobic ceiling: keep HR ≤\(mafCeiling) bpm (Maffetone 180−age — Zone 2). If no HR data, target conversational pace where you could speak in full sentences."
         } else if type != .rest, type != .strengthConditioning, type != .crossTraining,
                   isLongSession {
             // Pure RPE guidance for long sessions — HR drifts, effort doesn't.
@@ -143,33 +167,7 @@ enum CoachAdviceGenerator {
         if let mentalCue = mentalCue(for: type, phase: phase, weekInPhase: weekInPhase) {
             result += " " + mentalCue
         }
-        // Cycle-phase cue (opt-in). One short sentence, only on hard
-        // sessions in the luteal phase where carb demand actually rises
-        // and HR drifts at the same effort. Sims (2016): luteal-phase
-        // carb need ~10-15% higher on long efforts; HR runs warm.
-        if let cycleNote = cyclePhaseNote(phase: cyclePhase, type: type, intensity: intensity) {
-            result += " " + cycleNote
-        }
         return result
-    }
-
-    /// One-sentence cycle-phase note. Returns nil unless the athlete is
-    /// in the luteal phase AND the session is hard enough that fueling
-    /// / HR drift actually matters. Keeps the card focused.
-    private static func cyclePhaseNote(
-        phase: CyclePhaseCalculator.Phase,
-        type: SessionType,
-        intensity: Intensity
-    ) -> String? {
-        guard phase == .luteal else { return nil }
-        switch type {
-        case .longRun, .backToBack, .race:
-            return "Luteal phase — fuel +carbs and expect HR to run a touch warm at the same effort."
-        case .intervals, .tempo, .verticalGain:
-            return "Luteal phase — HR runs slightly warm here, trust effort over the bpm number."
-        default:
-            return nil
-        }
     }
 
     /// Single-sentence mental cue. Matches research-backed sport-

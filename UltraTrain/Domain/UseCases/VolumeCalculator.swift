@@ -172,7 +172,69 @@ enum VolumeCalculator {
             }
         }
 
+        // Round endurance sessions (Long Run, Base Endurance / easy runs,
+        // back-to-back long runs) to the nearest 5 minutes — feedback from
+        // athlete trial: "31 min" / "47 min" durations on aerobic runs feel
+        // arbitrary. Quality work (intervals, vertical-gain) keeps minute-
+        // level precision because the prescription itself is structural
+        // (e.g. 4×8 min at threshold + warm-up/cool-down) — rounding those
+        // would distort the workout. Applied AFTER all scaling so rounded
+        // values are what the athlete actually sees.
+        for i in capped.indices {
+            capped[i] = roundEnduranceSessions(capped[i])
+        }
+
         return capped
+    }
+
+    /// Rounds Long Run, easy runs, and B2B day durations to nearest 5 min.
+    /// Recomputes `targetDurationSeconds` as the sum of all sessions so the
+    /// week total stays consistent with the rounded session breakdown.
+    private static func roundEnduranceSessions(_ volume: WeekVolume) -> WeekVolume {
+        let lr = roundToNearest5Min(volume.targetLongRunDurationSeconds)
+        let e1 = roundToNearest5Min(volume.baseSessionDurations.easyRun1Seconds)
+        let e2 = roundToNearest5Min(volume.baseSessionDurations.easyRun2Seconds)
+        let b1 = roundToNearest5Min(volume.b2bDay1Seconds)
+        let b2 = roundToNearest5Min(volume.b2bDay2Seconds)
+        let intervals = volume.baseSessionDurations.intervalSeconds
+        let vg = volume.baseSessionDurations.vgSeconds
+
+        // Rebuild week total from the rounded parts. For a B2B week the
+        // long-run slot is split across two days, so b2bDay1+b2bDay2
+        // replaces targetLongRun in the sum.
+        let lrContribution = volume.isB2BWeek ? (b1 + b2) : lr
+        let newTotal = e1 + e2 + intervals + vg + lrContribution
+
+        // Keep targetLongRunDurationSeconds consistent with the B2B day
+        // split. Without this, `lr` and `b1+b2` can drift up to 5 min
+        // apart because each is independently rounded — that breaks any
+        // downstream consumer that asserts `b2bDay1 + b2bDay2 ==
+        // targetLongRun`. For non-B2B weeks the rounded LR is the truth.
+        let displayedLongRun = volume.isB2BWeek ? (b1 + b2) : lr
+
+        return WeekVolume(
+            weekNumber: volume.weekNumber,
+            targetVolumeKm: volume.targetVolumeKm,
+            targetElevationGainM: volume.targetElevationGainM,
+            targetDurationSeconds: newTotal,
+            targetLongRunDurationSeconds: displayedLongRun,
+            isB2BWeek: volume.isB2BWeek,
+            b2bDay1Seconds: b1,
+            b2bDay2Seconds: b2,
+            baseSessionDurations: BaseSessionDurations(
+                easyRun1Seconds: e1,
+                easyRun2Seconds: e2,
+                intervalSeconds: intervals,
+                vgSeconds: vg
+            ),
+            weekNumberInTaper: volume.weekNumberInTaper,
+            taperProfile: volume.taperProfile
+        )
+    }
+
+    private static func roundToNearest5Min(_ seconds: TimeInterval) -> TimeInterval {
+        guard seconds > 0 else { return 0 }
+        return (seconds / 300.0).rounded() * 300.0
     }
 
     private static func scaleVolume(_ volume: WeekVolume, by ratio: Double) -> WeekVolume {

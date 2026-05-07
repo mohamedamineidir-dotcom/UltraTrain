@@ -52,29 +52,13 @@ extension TrainingPlanViewModel {
         }
     }
 
-    /// Runs the three menstrual v2 passive scans (multi-skip pattern,
-    /// RED-S guardrail, predictive flagging) and returns any
-    /// recommendations they emit. Skipped entirely when no athlete
-    /// loaded or when cycleAware is off — these scans only fire when
-    /// the athlete has opted into cycle-aware features.
+    /// Reactive menstrual scan: only the multi-skip pattern detection.
+    /// Predictive scans (amenorrhea screening, phase-based flagging)
+    /// were stripped per product call — too intrusive for an app
+    /// surface. Athletes communicate cycle impact via the skip reason;
+    /// the engine responds to that signal alone.
     private func scanMenstrualPassiveSignals(plan: TrainingPlan) -> [PlanAdjustmentRecommendation] {
-        guard let athlete else { return [] }
-        var recs: [PlanAdjustmentRecommendation] = []
-        recs.append(contentsOf: MenstrualAdaptationCalculator.analyzeMultiSkipPattern(
-            weeks: plan.weeks
-        ))
-        recs.append(contentsOf: MenstrualAdaptationCalculator.analyzeAmenorrheaScreening(
-            cycleAware: athlete.cycleAware,
-            lastPeriodStartDate: athlete.lastPeriodStartDate,
-            weeks: plan.weeks
-        ))
-        recs.append(contentsOf: MenstrualAdaptationCalculator.analyzePredictiveFlag(
-            cycleAware: athlete.cycleAware,
-            lastPeriodStartDate: athlete.lastPeriodStartDate,
-            cycleLengthDays: athlete.cycleLengthDays,
-            weeks: plan.weeks
-        ))
-        return recs
+        MenstrualAdaptationCalculator.analyzeMultiSkipPattern(weeks: plan.weeks)
     }
 
     /// Surfaces structural mismatches between the A-race and any
@@ -186,24 +170,13 @@ extension TrainingPlanViewModel {
             case .reduceTargetDueToAccumulatedMissed:
                 let factor = 1.0 - AppConfiguration.Training.accumulatedMissedVolumeReductionPercent / 100.0
                 try await applyVolumeReduction(recommendation, plan: &currentPlan, factor: factor)
-            case .menstrualBleedDayOptions, .menstrualPrePeriodOptions:
-                // Option-style recommendations: tapping the banner action
-                // presents `MenstrualAdaptationOptionsSheet`, which calls
-                // back into `applyMenstrualChoice(_:choice:)` once the
-                // user picks defer / reduce / swap / keep. No plan
-                // mutation here — the sheet drives it.
-                presentedMenstrualOptions = recommendation
-            case .menstrualMultiSkipPattern,
-                 .menstrualAmenorrheaScreening,
-                 .menstrualPredictiveFlag,
-                 .bRaceMismatch:
+            case .menstrualMultiSkipPattern, .bRaceMismatch:
                 // Informational signals — surface only, no plan
-                // mutation. Menstrual v2 cases handle their own
-                // domain-specific contexts; bRaceMismatch flags a
-                // structural priority/timing problem the athlete
-                // declared and asks them to revisit it. None of
-                // these auto-edit the plan; tapping the banner
-                // just dismisses.
+                // mutation. menstrualMultiSkipPattern is a soft-deload
+                // framing: the athlete is already dropping load via
+                // skips. bRaceMismatch flags a structural priority/
+                // timing problem the athlete declared. Tapping the
+                // banner just dismisses.
                 dismissRecommendation(recommendation)
             }
 
@@ -331,127 +304,6 @@ extension TrainingPlanViewModel {
             plan.weeks[wi].sessions[si].isSkipped = true
             try await planRepository.updateSession(plan.weeks[wi].sessions[si])
         }
-    }
-
-    // MARK: - Menstrual Adaptation Choice
-
-    /// Dispatcher called by `MenstrualAdaptationOptionsSheet` after the
-    /// athlete picks one of the option-style choices. Performs the
-    /// concrete plan edit, dismisses the recommendation, and refreshes
-    /// the adjustment list.
-    ///
-    /// `.keep` is intentionally a no-op on the plan — the user
-    /// explicitly chose to keep the planned session as-is, which is
-    /// always a first-class option per the menstrual MVP spec
-    /// (McNulty 2020: many athletes train and PR through symptomatic
-    /// days without issue).
-    func applyMenstrualChoice(
-        _ rec: PlanAdjustmentRecommendation,
-        choice: MenstrualAdaptationOptionsSheet.Choice
-    ) async {
-        guard var currentPlan = plan else { return }
-        isApplyingAdjustment = true
-        do {
-            switch choice {
-            case .deferDays(let days):
-                try await applyMenstrualDefer(rec, plan: &currentPlan, days: days)
-            case .reduceVolume(let factor, let lowerToEasy):
-                try await applyMenstrualReduce(
-                    rec, plan: &currentPlan,
-                    factor: factor, lowerToEasy: lowerToEasy
-                )
-            case .swapToEasy:
-                try await applyMenstrualSwap(rec, plan: &currentPlan)
-            case .keep:
-                break // explicit user choice — leave plan untouched
-            }
-            plan = currentPlan
-            dismissRecommendation(rec)
-            checkForAdjustments()
-            await updateWidgets()
-        } catch {
-            self.error = error.localizedDescription
-            Logger.training.error("Failed to apply menstrual choice: \(error)")
-        }
-        isApplyingAdjustment = false
-    }
-
-    /// Pushes the affected session(s) forward by `days`. The menstrual
-    /// calculator typically emits a single affected session (the next
-    /// quality session in the symptom window) — but the implementation
-    /// supports the multi-session case in case v2 widens it.
-    private func applyMenstrualDefer(
-        _ rec: PlanAdjustmentRecommendation,
-        plan: inout TrainingPlan,
-        days: Int
-    ) async throws {
-        let affectedIds = Set(rec.affectedSessionIds)
-        var weeksToSort = Set<Int>()
-        for wi in plan.weeks.indices {
-            for si in plan.weeks[wi].sessions.indices {
-                let id = plan.weeks[wi].sessions[si].id
-                guard affectedIds.contains(id) else { continue }
-                let oldDate = plan.weeks[wi].sessions[si].date
-                if let newDate = Calendar.current.date(byAdding: .day, value: days, to: oldDate) {
-                    plan.weeks[wi].sessions[si].date = newDate
-                    weeksToSort.insert(wi)
-                }
-            }
-        }
-        for wi in weeksToSort {
-            plan.weeks[wi].sessions.sort { $0.date < $1.date }
-        }
-        // Persist after sorting so each save sees the final ordered state
-        for wi in plan.weeks.indices {
-            for session in plan.weeks[wi].sessions where affectedIds.contains(session.id) {
-                try await planRepository.updateSession(session)
-            }
-        }
-    }
-
-    /// Cuts planned distance/elevation/duration by `factor` (e.g. 0.75
-    /// = 25% reduction). Optionally drops the session intensity to
-    /// .easy — used for the bleed-day "reduce + easy effort" path
-    /// where the athlete keeps the session structure but dials it back.
-    private func applyMenstrualReduce(
-        _ rec: PlanAdjustmentRecommendation,
-        plan: inout TrainingPlan,
-        factor: Double,
-        lowerToEasy: Bool
-    ) async throws {
-        let affectedIds = Set(rec.affectedSessionIds)
-        for wi in plan.weeks.indices {
-            for si in plan.weeks[wi].sessions.indices {
-                guard affectedIds.contains(plan.weeks[wi].sessions[si].id) else { continue }
-                plan.weeks[wi].sessions[si].plannedDistanceKm *= factor
-                plan.weeks[wi].sessions[si].plannedElevationGainM *= factor
-                plan.weeks[wi].sessions[si].plannedDuration *= factor
-                if lowerToEasy {
-                    plan.weeks[wi].sessions[si].intensity = .easy
-                }
-                try await planRepository.updateSession(plan.weeks[wi].sessions[si])
-            }
-        }
-    }
-
-    /// Swaps the affected session to a recovery run. Different from
-    /// `applySwapToRecovery` (which auto-overwrites the description
-    /// with a fatigue-adjustment string and cuts to 50%) — menstrual
-    /// swap keeps the original description and uses a 60% volume cut
-    /// since it's a planned choice rather than an auto-applied
-    /// fatigue protection.
-    private func applyMenstrualSwap(
-        _ rec: PlanAdjustmentRecommendation,
-        plan: inout TrainingPlan
-    ) async throws {
-        guard let sessionId = rec.affectedSessionIds.first,
-              let (wi, si) = findSession(id: sessionId, in: plan) else { return }
-        plan.weeks[wi].sessions[si].type = .recovery
-        plan.weeks[wi].sessions[si].intensity = .easy
-        plan.weeks[wi].sessions[si].plannedDistanceKm *= 0.6
-        plan.weeks[wi].sessions[si].plannedElevationGainM = 0
-        plan.weeks[wi].sessions[si].plannedDuration *= 0.6
-        try await planRepository.updateSession(plan.weeks[wi].sessions[si])
     }
 
     func findSession(id: UUID, in plan: TrainingPlan) -> (weekIndex: Int, sessionIndex: Int)? {

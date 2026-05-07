@@ -8,6 +8,12 @@ import Foundation
 enum RoadCoachAdviceGenerator {
 
     /// Generates coach advice for a road training session.
+    ///
+    /// `qualityTemplate` lets the advice surface the *correct* prescribed
+    /// pace for threshold sessions — cruise intervals use the faster end
+    /// of the threshold range (1.06×), sustained tempos use the slower
+    /// end (1.09×). Without it the advice falls back to the slower
+    /// single-value default, which underspeeds cruise prescriptions.
     static func advice(
         type: SessionType,
         intensity: Intensity,
@@ -23,7 +29,8 @@ enum RoadCoachAdviceGenerator {
         refinementSummary: RefineRoadPaceFromFeedbackUseCase.PaceRefinementSummary? = nil,
         restingHR: Int? = nil,
         maxHR: Int? = nil,
-        biologicalSex: BiologicalSex? = nil
+        biologicalSex: BiologicalSex? = nil,
+        qualityTemplate: RoadIntervalLibrary.Template? = nil
     ) -> String? {
         if isRecoveryWeek {
             return recoveryWeekAdvice(type: type)
@@ -34,9 +41,9 @@ enum RoadCoachAdviceGenerator {
         case .recovery:
             advice = easyRunAdvice(phase: phase, paceProfile: paceProfile)
         case .intervals:
-            advice = intervalAdvice(phase: phase, discipline: discipline, paceProfile: paceProfile)
+            advice = intervalAdvice(phase: phase, discipline: discipline, paceProfile: paceProfile, template: qualityTemplate)
         case .tempo:
-            advice = tempoAdvice(phase: phase, discipline: discipline, paceProfile: paceProfile)
+            advice = tempoAdvice(phase: phase, discipline: discipline, paceProfile: paceProfile, template: qualityTemplate)
         case .longRun:
             advice = longRunAdvice(phase: phase, discipline: discipline, paceProfile: paceProfile)
         case .rest:
@@ -229,7 +236,8 @@ enum RoadCoachAdviceGenerator {
     private static func intervalAdvice(
         phase: TrainingPhase,
         discipline: RoadRaceDiscipline,
-        paceProfile: RoadPaceProfile?
+        paceProfile: RoadPaceProfile?,
+        template: RoadIntervalLibrary.Template?
     ) -> String {
         var advice = "Warm-up: 10-15min easy jog + 4-6 strides."
         switch phase {
@@ -238,12 +246,14 @@ enum RoadCoachAdviceGenerator {
         case .build:
             advice += " VO2max session. Run the intervals at a controlled hard effort — working hard but not sprinting."
             if let profile = paceProfile {
-                advice += " Target: \(formatPace(profile.intervalPacePerKm))/km."
+                let pace = paceForTemplate(template: template, profile: profile, fallback: profile.intervalPacePerKm)
+                advice += " Target: \(formatPace(pace))/km."
             }
         case .peak:
             advice += " Race-specific work. This is your \(discipline.displayName) pace — memorize how it feels."
             if let profile = paceProfile {
-                advice += " Target: \(formatPace(profile.racePacePerKm))/km."
+                let pace = paceForTemplate(template: template, profile: profile, fallback: profile.racePacePerKm)
+                advice += " Target: \(formatPace(pace))/km."
             }
         default:
             advice += " Light speed work to stay sharp."
@@ -255,25 +265,49 @@ enum RoadCoachAdviceGenerator {
     private static func tempoAdvice(
         phase: TrainingPhase,
         discipline: RoadRaceDiscipline,
-        paceProfile: RoadPaceProfile?
+        paceProfile: RoadPaceProfile?,
+        template: RoadIntervalLibrary.Template?
     ) -> String {
         var advice = "Warm-up: 10min easy jog + 4 strides."
         switch phase {
         case .base, .build:
             advice += " Threshold pace: comfortably hard. Speak in short phrases but not a conversation."
             if let profile = paceProfile {
-                advice += " Target: \(formatPace(profile.thresholdPacePerKm))/km."
+                let pace = paceForTemplate(template: template, profile: profile, fallback: profile.thresholdPacePerKm)
+                advice += " Target: \(formatPace(pace))/km."
             }
         case .peak:
             advice += " Race-pace threshold work. Sustain your target \(discipline.displayName) pace with control."
             if let profile = paceProfile {
-                advice += " Target: \(formatPace(profile.racePacePerKm))/km."
+                let pace = paceForTemplate(template: template, profile: profile, fallback: profile.racePacePerKm)
+                advice += " Target: \(formatPace(pace))/km."
             }
         default:
             advice += " Easy tempo to maintain feel."
         }
         advice += " Cool-down: 5-10min easy jog."
         return advice
+    }
+
+    /// Returns the prescribed pace for a quality session. When a template
+    /// is available we honor its target zone (so an MP cruise session in
+    /// late-build marathon doesn't get told "VO2max pace" or threshold
+    /// pace just because the phase implies it). Threshold-zone templates
+    /// pick from the cruise/sustained range based on rep structure.
+    private static func paceForTemplate(
+        template: RoadIntervalLibrary.Template?,
+        profile: RoadPaceProfile,
+        fallback: Double
+    ) -> Double {
+        guard let template = template else { return fallback }
+        switch template.targetPaceZone {
+        case .easy:          return profile.easyPacePerKm.lowerBound
+        case .marathonPace:  return profile.marathonPacePerKm
+        case .threshold:     return template.effectiveThresholdPacePerKm(profile: profile)
+        case .interval:      return profile.intervalPacePerKm
+        case .repetition:    return profile.repetitionPacePerKm
+        case .racePace:      return profile.racePacePerKm
+        }
     }
 
     private static func longRunAdvice(

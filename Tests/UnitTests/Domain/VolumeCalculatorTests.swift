@@ -443,4 +443,52 @@ struct VolumeCalculatorTests {
         let elevationPerKm = vol.targetElevationGainM / vol.targetVolumeKm
         #expect(elevationPerKm <= 61.0)
     }
+
+    // MARK: - 5-min rounding for endurance sessions
+
+    /// Aerobic-run durations are surfaced to athletes as "1h 33min" today.
+    /// Athletes asked for cleaner numbers on long runs and base-endurance
+    /// runs. Quality work (intervals, vertical-gain) keeps minute precision
+    /// because the structure itself is minute-anchored. This pin guarantees
+    /// the rounding behavior across a full plan.
+    @Test("LR + easy runs round to nearest 5 min; intervals/VG keep minute precision")
+    func enduranceRoundsToNearest5Min() {
+        let skeletons = (1...20).map { idx -> WeekSkeletonBuilder.WeekSkeleton in
+            let phase: TrainingPhase = idx <= 6 ? .base : (idx <= 14 ? .build : .peak)
+            return makeSkeleton(weekNumber: idx, phase: phase)
+        }
+        let result = VolumeCalculator.calculate(
+            skeletons: skeletons,
+            currentWeeklyVolumeKm: 50,
+            raceDistanceKm: 100,
+            raceElevationGainM: 5000,
+            experience: .intermediate,
+            raceDurationSeconds: 50400,
+            raceEffectiveKm: 150
+        )
+
+        for vol in result {
+            // Endurance must land on a 5-min boundary.
+            #expect(
+                vol.targetLongRunDurationSeconds.truncatingRemainder(dividingBy: 300) == 0,
+                "LR week \(vol.weekNumber) = \(vol.targetLongRunDurationSeconds)s not aligned to 5 min"
+            )
+            #expect(
+                vol.baseSessionDurations.easyRun1Seconds.truncatingRemainder(dividingBy: 300) == 0,
+                "Easy 1 week \(vol.weekNumber) not aligned to 5 min"
+            )
+            #expect(
+                vol.baseSessionDurations.easyRun2Seconds.truncatingRemainder(dividingBy: 300) == 0,
+                "Easy 2 week \(vol.weekNumber) not aligned to 5 min"
+            )
+            #expect(
+                vol.b2bDay1Seconds.truncatingRemainder(dividingBy: 300) == 0,
+                "B2B day 1 week \(vol.weekNumber) not aligned to 5 min"
+            )
+            #expect(
+                vol.b2bDay2Seconds.truncatingRemainder(dividingBy: 300) == 0,
+                "B2B day 2 week \(vol.weekNumber) not aligned to 5 min"
+            )
+        }
+    }
 }

@@ -34,8 +34,27 @@ enum LongRunCurveCalculator {
         athleteAge: Int = 0,
         personalization: PersonalizationProfile? = nil
     ) -> WeekDurations {
+        // Linear planProgress kept for the legacy taper-fallback formula
+        // (line ~205, only used when taperProfile is nil — essentially
+        // never in production, but preserved for backwards compatibility).
         let planProgress = totalWeeks > 1
             ? Double(weekIndex) / Double(totalWeeks - 1)
+            : 1.0
+
+        // RR-26 / T2: Plateau-aware progress for base sessions. Like the
+        // long run, easy/interval/VG durations should reach their nominal
+        // maximum 3-4 weeks BEFORE taper, then plateau through the rest
+        // of peak phase. Pfitzinger / Daniels / Canova / Koop consensus:
+        // the last hardest week must precede taper by ≥3 weeks so the
+        // taper can sharpen rather than clear acute fatigue.
+        //
+        // Without this, base sessions ramped linearly across the entire
+        // plan and reached their highest pre-taper value in the LAST
+        // non-taper week — same antipattern we fixed on the road side.
+        let peakWeek = peakBuildWeekIndex(totalWeeks: totalWeeks, taperProfile: taperProfile)
+        let cappedIndex = min(weekIndex, peakWeek)
+        let baseSessionProgress = peakWeek > 0
+            ? Double(cappedIndex) / Double(peakWeek)
             : 1.0
 
         // --- Long run ---
@@ -74,10 +93,14 @@ enum LongRunCurveCalculator {
         // Don't scale session durations by runs/week. SessionTemplateGenerator
         // handles session count via pool selection. Each session should be its
         // full proper duration, not shrunk when athlete picks fewer sessions.
-        var easy1 = baseEasyDuration(planProgress) * combinedMultiplier
-        var easy2 = baseEasyDuration(planProgress) * combinedMultiplier
-        var interval = baseIntervalDuration(planProgress) * combinedMultiplier
-        var vg = baseVGDuration(planProgress) * combinedMultiplier
+        //
+        // Uses baseSessionProgress (plateau-aware) so the final 3-4 weeks
+        // of peak phase don't keep ramping; they hold at peak and the
+        // taper handler reduces them once we cross into taper.
+        var easy1 = baseEasyDuration(baseSessionProgress) * combinedMultiplier
+        var easy2 = baseEasyDuration(baseSessionProgress) * combinedMultiplier
+        var interval = baseIntervalDuration(baseSessionProgress) * combinedMultiplier
+        var vg = baseVGDuration(baseSessionProgress) * combinedMultiplier
 
         // B2B adjustments
         var longRun: TimeInterval
@@ -97,8 +120,15 @@ enum LongRunCurveCalculator {
                 athleteAge: athleteAge,
                 personalization: personalization
             )
-            b2bDay1 = combined * AppConfiguration.Training.b2bDay1Split
-            b2bDay2 = combined * AppConfiguration.Training.b2bDay2Split
+            // T10: B2B day split scales with race distance. Shorter
+            // ultras (<50K) get a more balanced split (45/55) — both
+            // days are real long runs; longer ultras (>80K) skew
+            // day-2-heavier (40/60) so day 2 rehearses the slow
+            // accumulating fatigue of the second half of the race
+            // while day 1 is closer to a fast-finish session.
+            let split = b2bDaySplit(raceEffectiveKm: raceEffectiveKm)
+            b2bDay1 = combined * split.day1
+            b2bDay2 = combined * split.day2
             longRun = b2bDay1 + b2bDay2
 
             let easyFloor: TimeInterval = 30 * 60
@@ -163,8 +193,10 @@ enum LongRunCurveCalculator {
             easy2 = min(easy2, b2bEasyMax)
             let totalExcess = excess1 + excess2
             if totalExcess > 0 {
-                b2bDay1 += totalExcess * AppConfiguration.Training.b2bDay1Split
-                b2bDay2 += totalExcess * AppConfiguration.Training.b2bDay2Split
+                // Use the same race-distance-aware split as the main
+                // assignment so excess reallocation stays consistent.
+                b2bDay1 += totalExcess * split.day1
+                b2bDay2 += totalExcess * split.day2
                 longRun = b2bDay1 + b2bDay2
             }
         } else {
@@ -278,13 +310,21 @@ enum LongRunCurveCalculator {
             personalization: personalization
         )
 
-        // Build weeks only (base + build + peak, excluding taper)
-        let buildWeekCount = max(totalWeeks - taperWeekEstimate(totalWeeks, taperProfile: taperProfile), 1)
-        let clampedIndex = min(weekIndex, buildWeekCount - 1)
+        // RR-26 / T1: LR peak sits 3-4 weeks BEFORE taper start, then
+        // plateaus through the remaining peak weeks. Old behavior put the
+        // LR peak at the LAST non-taper week (clampedIndex = buildWeekCount
+        // - 1) which made the athlete enter taper carrying acute fatigue
+        // from the hardest run of the cycle — Pfitzinger Adv. Marathoning
+        // Ch. 9 explicitly warns against this. Now the LR consolidates at
+        // peak for several weeks instead of escalating into the taper
+        // boundary. Recovery weeks within the plateau still apply ×0.65;
+        // taper still applies its own fraction downstream.
+        let peakWeek = peakBuildWeekIndex(totalWeeks: totalWeeks, taperProfile: taperProfile)
+        let clampedIndex = min(weekIndex, peakWeek)
 
         let progress: Double
-        if buildWeekCount > 1 {
-            progress = Double(clampedIndex) / Double(buildWeekCount - 1)
+        if peakWeek > 0 {
+            progress = Double(clampedIndex) / Double(peakWeek)
         } else {
             progress = 1.0
         }
@@ -296,6 +336,46 @@ enum LongRunCurveCalculator {
         let exponent = AppConfiguration.Training.longRunCurveExponent
         let curved = pow(progress, exponent)
         return adjustedStart + (peak - adjustedStart) * curved
+    }
+
+    // MARK: - Peak Placement Helper
+
+    /// Returns the weekIndex at which both the long run and base sessions
+    /// reach their nominal maximum. Past this index they plateau (recovery
+    /// week and taper handlers still cut from there). Placing peak 3-4
+    /// weeks before taper rather than adjacent to it follows Pfitzinger /
+    /// Daniels / Canova / Koop / Roche consensus that the last hardest run
+    /// must precede taper by ≥3 weeks.
+    /// T10: B2B day split as a function of race distance (effective km).
+    /// Roche / Magness consensus: shorter ultras run B2B more balanced
+    /// (both days are full LRs); longer ultras skew day-2-heavier so
+    /// day 2 specifically rehearses the second half of the race under
+    /// accumulated fatigue.
+    ///
+    ///   <50K:    45 / 55
+    ///   50–80K:  43 / 57 (current default — unchanged)
+    ///   >80K:    40 / 60
+    ///
+    /// Falls through to the legacy 43/57 split when raceEffectiveKm is
+    /// 0 (older callers / tests that don't pass it).
+    static func b2bDaySplit(raceEffectiveKm: Double) -> (day1: Double, day2: Double) {
+        guard raceEffectiveKm > 0 else { return (0.43, 0.57) }
+        switch raceEffectiveKm {
+        case ..<50:    return (0.45, 0.55)
+        case 50..<80:  return (0.43, 0.57)
+        default:       return (0.40, 0.60)
+        }
+    }
+
+    static func peakBuildWeekIndex(
+        totalWeeks: Int,
+        taperProfile: TaperProfile?
+    ) -> Int {
+        let buildWeekCount = max(totalWeeks - taperWeekEstimate(totalWeeks, taperProfile: taperProfile), 1)
+        // plateauOffset scales with plan length so short plans don't get a
+        // degenerate plateau (e.g. an 8-week plan would hit 0 plateau weeks).
+        let plateauOffset = min(4, max(1, totalWeeks / 5))
+        return max(buildWeekCount - 1 - plateauOffset, 0)
     }
 
     // MARK: - B2B Scheduling

@@ -138,7 +138,8 @@ enum RoadVolumeCalculator {
             totalWeeks: totalWeeks,
             raceDistanceKm: raceDistanceKm,
             experience: experience,
-            peakKmCeiling: peakKmCeiling
+            peakKmCeiling: peakKmCeiling,
+            taperWeeks: taperProfile.totalTaperWeeks
         )
 
         // Master athletes (50+) get a small volume reduction. Stacks
@@ -161,7 +162,15 @@ enum RoadVolumeCalculator {
             // Peak was 0.90→1.00 (10% range) which produced near-identical weeks
             // after minute-rounding. Pfitzinger/Daniels peak phases show real
             // week-to-week progression, so we stretch peak to a 22% range.
-            let peakWeekIndex = max(taperStart - 1, 1)
+            //
+            // RR-26: peakWeekIndex was `taperStart - 1`, which placed the
+            // volume peak at the last non-taper week — the same antipattern
+            // we corrected for the long run. Shift to `taperStart -
+            // plateauOffset` so the volume curve plateaus 3-4 weeks before
+            // taper, in lockstep with the LR. Recovery weeks within the
+            // plateau still cut volume normally.
+            let plateauOffset = min(4, max(1, totalWeeks / 5))
+            let peakWeekIndex = max(taperStart - plateauOffset, 1)
             let rawProgress = min(Double(index) / Double(peakWeekIndex), 1.0)
             let progress: Double
             switch skeleton.phase {
@@ -244,7 +253,8 @@ enum RoadVolumeCalculator {
                 isRecoveryWeek: skeleton.isRecoveryWeek,
                 philosophy: athlete.trainingPhilosophy,
                 raceGoal: raceGoal,
-                weeklyVolumeKm: athlete.weeklyVolumeKm
+                weeklyVolumeKm: athlete.weeklyVolumeKm,
+                taperWeeks: taperProfile.totalTaperWeeks
             )
 
             // HARD CAP: Easy runs must NEVER exceed long run, and absolute max 90min
@@ -267,6 +277,17 @@ enum RoadVolumeCalculator {
             // pace from the template) or get zeroed out when qualityAllowedPerWeek
             // says so. Race week with qualityAllowed=false → RoadSessionSelector
             // substitutes a dress-rehearsal (short MP segment) in the tempo slot.
+            //
+            // RR-26 / M2 note: the LONG RUN is NOT touched here. It is
+            // tapered independently inside `RoadLongRunCalculator` (×0.60
+            // when `phase == .taper`), so the LR is already the right
+            // size by the time we reach this block. The taper fractions
+            // below apply only to easy / interval / tempo. If you find
+            // this surprising, it isn't a bug: the LR has its own taper
+            // shape (flat 60% across all taper weeks) while non-LR
+            // sessions follow the TaperProfile's per-week fractions
+            // (e.g. 0.75 → 0.55 → 0.35 for marathon). Applying both
+            // would double-cut the LR.
             if skeleton.phase == .taper {
                 let weekInTaper = taperWeekCounter
                 let fraction = taperProfile.volumeFraction(forWeekInTaper: weekInTaper)
@@ -360,13 +381,42 @@ enum RoadVolumeCalculator {
     /// declared `weeklyVolumeKm`. Applied uniformly across all weeks — the
     /// progression SHAPE stays the same, the whole ramp just shifts.
     ///
-    /// Safety clamps:
-    /// - Floor at 50% of tier-default Week 1 (prevents a starving plan if
-    ///   the athlete declared an unrealistically low value).
-    /// - Ceiling at 80% of tier peak (leaves headroom to grow into peak
-    ///   weeks; if an athlete's declared base is already at peak they
+    /// ## Why a single scaling factor?
+    /// Sessions are sized in *minutes* by tier-default `startMinutes`
+    /// values (e.g. advanced marathon easy run = 40 × 1.35 = 54 min start).
+    /// An advanced athlete declaring 80 km/wk and one declaring 50 km/wk
+    /// shouldn't get identical Week 1s; this factor scales every non-LR
+    /// session up or down so the *total* Week 1 km lands near their
+    /// declared base. The LR is anchored separately (RoadLongRunCalculator
+    /// uses `currentLongestRunKm`), so this factor only touches non-LR
+    /// time.
+    ///
+    /// ## Worked example (advanced 2h40 marathoner, 80 km/wk, 32 km LR)
+    /// - `easyP.startMinutes = 54`, `intervalP.startMinutes = ~50`,
+    ///   `tempoP.startMinutes = ~50` (advanced × marathon multipliers)
+    /// - Unscaled Week 1 non-LR seconds = 54·60 + 54·60·0.9 + 50·60 + 50·60
+    ///   ≈ 12 156 s ≈ 41 km @ 295 s/km
+    /// - Unscaled Week 1 LR ≈ 21 km (capped at 35% of weekly volume by
+    ///   RoadLongRunCalculator)
+    /// - Unscaled Week 1 total ≈ 62 km
+    /// - Target Week 1 = 80 × 0.85 = 68 km, clamped to [floor=10,
+    ///   ceiling=peakKmCeiling × 0.80 = 92]
+    /// - Target non-LR = 68 - 21 = 47 km
+    /// - Unscaled non-LR = 41 km
+    /// - **Scaling factor = 47 / 41 ≈ 1.146** (sessions scaled up ~15% so
+    ///   Week 1 lands at 68 km instead of 62 km)
+    ///
+    /// ## Safety clamps
+    /// - **Floor 10 km/wk** (absolute minimum below which a structured
+    ///   plan isn't really a plan; the plan-generator should warn the
+    ///   athlete to build base first but we still produce something).
+    /// - **Ceiling = peakKmCeiling × 0.80** (leaves headroom to grow into
+    ///   peak weeks; if declared base is already at peak the athlete
     ///   probably should be on a higher-experience plan).
-    /// - Falls through to 1.0 when `weeklyVolumeKm <= 0` (no onboarding data).
+    /// - **Returns 1.0 when `weeklyVolumeKm <= 0`** (no onboarding data;
+    ///   tier defaults take over).
+    /// - **Returns 1.0 when target non-LR ≤ 0** (LR alone exceeds Week 1
+    ///   target; the LR cap will sort that out).
     private static func computeWeek1ScalingFactor(
         athlete: Athlete,
         easyP: SessionParams,
@@ -376,7 +426,8 @@ enum RoadVolumeCalculator {
         totalWeeks: Int,
         raceDistanceKm: Double,
         experience: ExperienceLevel,
-        peakKmCeiling: Double
+        peakKmCeiling: Double,
+        taperWeeks: Int
     ) -> Double {
         guard athlete.weeklyVolumeKm > 0 else { return 1.0 }
 
@@ -402,7 +453,8 @@ enum RoadVolumeCalculator {
             currentLongestRunKm: athlete.longestRunKm,
             isRecoveryWeek: false,
             philosophy: athlete.trainingPhilosophy,
-            weeklyVolumeKm: athlete.weeklyVolumeKm
+            weeklyVolumeKm: athlete.weeklyVolumeKm,
+            taperWeeks: taperWeeks
         )
 
         let unscaledWeek1TotalKm = (unscaledWeek1Seconds + unscaledWeek1LongRun) / avgPaceSecPerKm

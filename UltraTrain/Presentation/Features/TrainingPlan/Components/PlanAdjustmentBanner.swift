@@ -81,10 +81,7 @@ struct PlanAdjustmentBanner: View {
         case .redistributeMissedVolume: "arrow.triangle.branch"
         case .convertEasyToQuality: "arrow.triangle.swap"
         case .reduceTargetDueToAccumulatedMissed: "exclamationmark.triangle.fill"
-        case .menstrualBleedDayOptions, .menstrualPrePeriodOptions: "calendar.badge.clock"
         case .menstrualMultiSkipPattern: "chart.line.downtrend.xyaxis"
-        case .menstrualAmenorrheaScreening: "stethoscope"
-        case .menstrualPredictiveFlag: "calendar.badge.exclamationmark"
         case .bRaceMismatch: "flag.2.crossed.fill"
         }
     }

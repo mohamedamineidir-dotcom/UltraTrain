@@ -107,19 +107,37 @@ enum PhaseDistributor {
             base = FocusFractions(threshold30: 0.18, vo2max: 0.18, threshold60: 0.40, sharpening: 0.24)
         }
 
-        // 100K+ shift: move 5% from base → peak. Longer races demand more
-        // accumulated race-specific work; a 100-mile plan should not have
-        // the same peak weight as a 50K plan for the same athlete.
+        // 100K+ shift (T5 audit fix): REVERSE direction — for ultras,
+        // shift weeks from peak → base. Original code did the opposite
+        // (5% base→peak) under the assumption "longer race = more peak
+        // phase." Modern ultra-coaching consensus (Koop, Roche, Jurek,
+        // Krar) is the opposite: ultras are aerobic-dominant; the
+        // limiter is mileage capacity, not race-specific intensity.
+        //
+        // Roche recommends ~30–35% base for 100K-class races. Pre-fix
+        // intermediate ultras got 13% base / 49% peak (3 weeks base on
+        // a 24-week plan). Post-fix: ~26% base / 36% peak (6 weeks
+        // base) — closer to consensus, still meaty peak.
+        //
+        // Resulting splits for 100K+ races by tier:
+        //   beginner:     0.33 base / 0.27 peak
+        //   intermediate: 0.26 base / 0.36 peak
+        //   advanced:     0.23 base / 0.38 peak
+        //   elite:        0.26 base / 0.32 peak
+        //
         // Triggered by race effective km (km + D+/100), so a 60K with
         // 4000m D+ also benefits.
         guard raceEffectiveKm >= 100 else { return base }
-        let shift = 0.05
-        let shiftedT30 = max(base.threshold30 - shift, 0.05)
-        let actualShift = base.threshold30 - shiftedT30
+        let shift = 0.08
+        // Floor peak at 0.20 so ultras still get a real peak phase even
+        // for tiers with already-low peak fractions. Pre-shift no tier
+        // is below 0.35, so the floor is defense-in-depth.
+        let shiftedT60 = max(base.threshold60 - shift, 0.20)
+        let actualShift = base.threshold60 - shiftedT60
         return FocusFractions(
-            threshold30: shiftedT30,
+            threshold30: base.threshold30 + actualShift,
             vo2max: base.vo2max,
-            threshold60: base.threshold60 + actualShift,
+            threshold60: shiftedT60,
             sharpening: base.sharpening
         )
     }

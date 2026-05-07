@@ -110,7 +110,7 @@ enum RoadWorkoutBuilder {
         // No need to remove trailing recovery — repeatCount handles it
 
         // Compute total duration (account for distance phases using target pace)
-        let targetPace = targetPaceSeconds(zone: template.targetPaceZone, profile: paceProfile)
+        let targetPace = targetPaceSeconds(template: template, profile: paceProfile)
         var totalDuration: TimeInterval = 0
         for phase in phases {
             if case .distance(let km) = phase.trigger {
@@ -124,7 +124,7 @@ enum RoadWorkoutBuilder {
         // Build compact name: "10×200m @ 3:43/km" format
         let compactName: String
         if template.repDistanceM > 0 {
-            let pace = targetPaceSeconds(zone: template.targetPaceZone, profile: paceProfile)
+            let pace = targetPaceSeconds(template: template, profile: paceProfile)
             let paceStr = RoadCoachAdviceGenerator.formatPace(pace)
             compactName = "\(template.repCount)×\(template.repDistanceM)m @ \(paceStr)/km"
         } else if template.repCount > 1 {
@@ -189,7 +189,7 @@ enum RoadWorkoutBuilder {
         switch template.targetPaceZone {
         case .easy:          targetPace = p.easyPacePerKm.lowerBound
         case .marathonPace:  targetPace = p.marathonPacePerKm
-        case .threshold:     targetPace = p.thresholdPacePerKm
+        case .threshold:     targetPace = template.effectiveThresholdPacePerKm(profile: p)
         case .interval:      targetPace = p.intervalPacePerKm
         case .repetition:    targetPace = p.repetitionPacePerKm
         case .racePace:      targetPace = p.racePacePerKm
@@ -210,16 +210,19 @@ enum RoadWorkoutBuilder {
         "Easy jog cool-down."
     }
 
-    /// Returns target pace in sec/km for a given pace zone.
+    /// Returns target pace in sec/km for a template's intended zone.
+    /// For threshold-zone templates, picks the cruise (faster) or
+    /// sustained (slower) end of the threshold range based on the
+    /// template's structure. Other zones use their single pace value.
     private static func targetPaceSeconds(
-        zone: RoadIntervalLibrary.PaceZone,
+        template: RoadIntervalLibrary.Template,
         profile: RoadPaceProfile?
     ) -> Double {
         guard let p = profile else { return 300 } // 5:00/km fallback
-        switch zone {
+        switch template.targetPaceZone {
         case .easy:          return p.easyPacePerKm.lowerBound
         case .marathonPace:  return p.marathonPacePerKm
-        case .threshold:     return p.thresholdPacePerKm
+        case .threshold:     return template.effectiveThresholdPacePerKm(profile: p)
         case .interval:      return p.intervalPacePerKm
         case .repetition:    return p.repetitionPacePerKm
         case .racePace:      return p.racePacePerKm

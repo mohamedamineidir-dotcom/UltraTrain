@@ -58,6 +58,18 @@ enum WorkoutProgressionEngine {
             phases = template.phases
             name = template.name
             description = template.description
+        case .longRun where phase == .build && totalDuration >= 90 * 60:
+            // T4: build-phase LR includes a race-pace block in the
+            // second half. Pre-fix this case fell through to the
+            // all-easy `longRunTemplate`, but the coach advice for
+            // build LR week 4+ explicitly says "include blocks at
+            // goal race pace" — card and detail disagreed. Now they
+            // align. Pfitzinger Ch. 6 / Hudson "Run Faster":
+            // progressive long runs in build phase.
+            let template = longRunBuildTemplate(totalDuration: totalDuration)
+            phases = template.phases
+            name = template.name
+            description = template.description
         case .longRun:
             let template = longRunTemplate(totalDuration: totalDuration)
             phases = template.phases
@@ -107,6 +119,58 @@ enum WorkoutProgressionEngine {
             name: "Base Endurance",
             description: "Base Endurance: \(totalMin)min at conversational pace",
             phases: [main]
+        )
+    }
+
+    // MARK: - Long Run Template (build)
+
+    /// Build-phase long run with a race-intensity block embedded in
+    /// the second half. Closes the gap where the all-easy
+    /// `longRunTemplate` was used for build, while the coach advice
+    /// already promised race-effort sections — card and detail used to
+    /// disagree.
+    ///
+    /// Trail/ultra deliberately uses "race intensity" / "race effort"
+    /// rather than a specific pace. On trail there IS no single race
+    /// pace — terrain varies section to section. The athlete dials in
+    /// race effort by feel, not by min/km.
+    ///
+    /// Shape: warmup → easy aerobic block (70% of remaining easy time)
+    /// → race-intensity block (25% of total) → easy finish (30% of
+    /// remaining easy time) → cooldown. Pfitzinger Ch. 6 progressive
+    /// long runs; Hudson "Run Faster" build-phase LR pattern. The
+    /// block goes in the second half but is followed by an easy block
+    /// + cooldown so the athlete doesn't end on peak intensity.
+    private static func longRunBuildTemplate(totalDuration: TimeInterval) -> WorkoutTemplate {
+        let warmUpDur: TimeInterval = min(900, totalDuration * 0.10)   // ≤15 min
+        let coolDownDur: TimeInterval = min(600, totalDuration * 0.08) // ≤10 min
+        let racePaceBlock: TimeInterval = totalDuration * 0.25         // 25% race pace
+        let availableForEasy = max(totalDuration - warmUpDur - coolDownDur - racePaceBlock, 1800)
+
+        // 70% before / 30% after the block so the race-pace effort
+        // sits firmly in the second half (Pfitzinger MP-finish pattern)
+        // but the run still ends with an easy block + cooldown so the
+        // athlete doesn't finish on peak intensity.
+        let easyBefore = availableForEasy * 0.70
+        let easyAfter = availableForEasy * 0.30
+
+        let warmUp = phase(.warmUp, duration: warmUpDur, intensity: .easy, reps: 1,
+                           notes: "Easy warmup, settle in")
+        let easyMain = phase(.work, duration: easyBefore, intensity: .easy, reps: 1,
+                             notes: "Easy aerobic block — conversational effort, fuel as you'll fuel on race day.")
+        let racePace = phase(.work, duration: racePaceBlock, intensity: .moderate, reps: 1,
+                             notes: "Race-intensity block. Run at the EFFORT you'd hold at race-day — controlled, repeatable, NOT all-out. On trail your pace varies with terrain; the EFFORT is the constant.")
+        let easyFinish = phase(.work, duration: easyAfter, intensity: .easy, reps: 1,
+                               notes: "Easy finish — practice running tired but in control.")
+        let coolDown = phase(.coolDown, duration: coolDownDur, intensity: .easy, reps: 1,
+                             notes: "Walk to cool down. Stretch. Refuel within 30 min.")
+
+        let blockMin = Int(racePaceBlock) / 60
+        let totalMin = Int(totalDuration) / 60
+        return WorkoutTemplate(
+            name: "Progressive long run",
+            description: "Progressive long run \(totalMin) min: warmup → easy → \(blockMin) min at race intensity → easy → cooldown",
+            phases: [warmUp, easyMain, racePace, easyFinish, coolDown]
         )
     }
 
@@ -592,10 +656,17 @@ enum WorkoutProgressionEngine {
             actualSetSec = roundToNearest15(totalWorkSec / Double(reps))
             restSec = roundToNearest15(actualSetSec / params.workRestRatio)
         case 1:
-            // Mode B: longer sustained climbs, fewer reps
+            // Mode B: longer sustained climbs, fewer reps. T9: allow
+            // single-rep sessions (drop floor to 1) so peak-phase
+            // advanced/elite athletes can see a full 20-25 min
+            // sustained climb when their tier's setDurationSec ≥ 20
+            // min. Cap actualSetSec at longerSet so a single-rep
+            // session doesn't get expanded to fill totalWorkSec —
+            // the focused sustained climb IS the workout for the day.
             let longerSet = params.setDurationSec * 1.3
-            reps = min(max(Int((totalWorkSec / longerSet).rounded()), 2), max(params.maxReps - 1, 2))
-            actualSetSec = roundToNearest15(totalWorkSec / Double(reps))
+            reps = min(max(Int((totalWorkSec / longerSet).rounded()), 1), max(params.maxReps - 1, 2))
+            let avgSet = totalWorkSec / Double(reps)
+            actualSetSec = roundToNearest15(min(avgSet, longerSet))
             restSec = roundToNearest15(actualSetSec / params.workRestRatio)
             vgName = "Long hill repeats"
             climbNotes = "Sustained climbing. Longer reps build endurance for race-day climbs."
@@ -791,16 +862,32 @@ enum WorkoutProgressionEngine {
         // → cooldown. Athlete spends most of the run in pure aerobic
         // territory and gets two clear race-pace efforts in the middle
         // — exactly the dress-rehearsal pattern (Krar / Roche).
+        //
+        // T3: Hard cap on race-sim duration relative to expected race
+        // duration. Koop / Roche / Jurek consensus: peak race sims max
+        // out at 50–70 km / ≤75% of race duration. Without this guard,
+        // an elite performance-mode athlete with a 24h target
+        // (100-miler) could see an 18h "peak race sim" — far too much
+        // recovery cost. Upstream `peakSingleLongRun` already caps via
+        // tier fractions, but those don't *explicitly* enforce the
+        // 75% rule; this is defense-in-depth.
+        let safeTotalDuration: TimeInterval
+        if expectedRaceDuration > 0 {
+            safeTotalDuration = min(totalDuration, expectedRaceDuration * 0.75)
+        } else {
+            safeTotalDuration = totalDuration
+        }
+
         let warmUpDur: TimeInterval = 1800   // 30 min
         let coolDownDur: TimeInterval = 1200 // 20 min
         let recoveryBetween: TimeInterval = 900 // 15 min between blocks
         let blockCount = 2
 
-        let availableTime = max(totalDuration - warmUpDur - coolDownDur, 1800)
+        let availableTime = max(safeTotalDuration - warmUpDur - coolDownDur, 1800)
 
         // Block duration: 20% of total run time, capped at 90 min, floor 15.
         // 8h run → 90 min/block; 4h run → 48 min/block; 2h run → 24 min/block.
-        let rawWorkPerBlock = totalDuration * 0.20
+        let rawWorkPerBlock = safeTotalDuration * 0.20
         let workPerBlock = max(900, min(5400, rawWorkPerBlock))
 
         // Easy aerobic fill split before / after the race blocks. If race

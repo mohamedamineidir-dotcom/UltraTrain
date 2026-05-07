@@ -13,7 +13,7 @@ struct WeekCardView: View {
     let nutritionAdvisor: any SessionNutritionAdvisor
     let nutritionPreferences: NutritionPreferences
     let onToggleSession: (Int) -> Void
-    let onSkipSession: (Int, SkipReason, MenstrualSymptomCluster?) -> Void
+    let onSkipSession: (Int, SkipReason) -> Void
     let onUnskipSession: (Int) -> Void
     let onRescheduleSession: (Int, Date) -> Void
     let onSwapSession: (Int, SwapCandidate) -> Void
@@ -51,7 +51,7 @@ struct WeekCardView: View {
         nutritionAdvisor: any SessionNutritionAdvisor,
         nutritionPreferences: NutritionPreferences,
         onToggleSession: @escaping (Int) -> Void,
-        onSkipSession: @escaping (Int, SkipReason, MenstrualSymptomCluster?) -> Void,
+        onSkipSession: @escaping (Int, SkipReason) -> Void,
         onUnskipSession: @escaping (Int) -> Void,
         onRescheduleSession: @escaping (Int, Date) -> Void,
         onSwapSession: @escaping (Int, SwapCandidate) -> Void,
@@ -330,8 +330,8 @@ extension WeekCardView {
             }
         }
         .sheet(item: $contextSkipItem) { item in
-            SkipReasonSheet(sessionType: item.session.type) { reason, cluster in
-                onSkipSession(item.sessionIndex, reason, cluster)
+            SkipReasonSheet(sessionType: item.session.type) { reason in
+                onSkipSession(item.sessionIndex, reason)
             }
         }
         .sheet(item: $contextRescheduleItem) { item in
@@ -539,7 +539,7 @@ extension WeekCardView {
             nutritionAdvisor: nutritionAdvisor,
             nutritionPreferences: nutritionPreferences,
             workouts: workouts,
-            onSkip: { reason, cluster in onSkipSession(sessionIndex, reason, cluster) },
+            onSkip: { reason in onSkipSession(sessionIndex, reason) },
             onUnskip: session.isSkipped ? { onUnskipSession(sessionIndex) } : nil,
             onReschedule: { newDate in onRescheduleSession(sessionIndex, newDate) },
             onSwap: { candidate in onSwapSession(sessionIndex, candidate) },

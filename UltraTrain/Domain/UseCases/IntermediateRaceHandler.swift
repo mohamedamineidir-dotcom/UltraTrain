@@ -55,24 +55,35 @@ enum IntermediateRaceHandler {
                 return raceDay >= start && raceDay <= end
             }) else { continue }
 
+            // B-1: B-race during peak phase compresses both taper and
+            // recovery so the peak phase isn't fragmented. The user can
+            // still race ("test race during peak"), but the surrounding
+            // weeks adapt instead of inserting a full taper+recovery
+            // block that breaks peak continuity. C-races are
+            // unaffected (no override anyway).
+            let isInPeak = raceWeek.phase == .peak
+
             // Taper structure:
             //   A-race intermediate → 2 weeks (true peak rebuild before
             //                          targeting the FINAL A-race)
             //   B-race              → 1 week mini-taper
             //   C-race              → no taper override (training race)
+            //   IN-PEAK (any)       → compressed: max 1 week
             let taperWeekCount: Int
             switch race.priority {
-            case .aRace: taperWeekCount = 2
-            case .bRace: taperWeekCount = 1
+            case .aRace: taperWeekCount = isInPeak ? 1 : 2
+            case .bRace: taperWeekCount = isInPeak ? 0 : 1
             case .cRace: taperWeekCount = 0
             }
-            for offset in 1...max(taperWeekCount, 0) where taperWeekCount > 0 {
-                if let taperWeek = skeletons.first(where: { $0.weekNumber == raceWeek.weekNumber - offset }) {
-                    overrides.append(RaceWeekOverride(
-                        weekNumber: taperWeek.weekNumber,
-                        raceId: race.id,
-                        behavior: .miniTaper
-                    ))
+            if taperWeekCount > 0 {
+                for offset in 1...taperWeekCount {
+                    if let taperWeek = skeletons.first(where: { $0.weekNumber == raceWeek.weekNumber - offset }) {
+                        overrides.append(RaceWeekOverride(
+                            weekNumber: taperWeek.weekNumber,
+                            raceId: race.id,
+                            behavior: .miniTaper
+                        ))
+                    }
                 }
             }
 
@@ -83,29 +94,46 @@ enum IntermediateRaceHandler {
             ))
 
             // Post-race recovery scales with priority + distance.
-            //   A-race intermediate: 2 weeks min (longer rebuild before
-            //                         the final A-race), capped at 3
-            //                         for 50K+
-            //   B-race: 1-3 weeks by distance (existing)
-            //   C-race: 0 weeks
-            let recoveryWeekCount: Int
+            //
+            // B-2: B-race recovery COMPRESSED across the board (was 1-3
+            // wk by distance, now 1-2 wk) — B-races shouldn't break the
+            // training plan for the final A-race. Athletes who need
+            // more recovery can apply a manual recovery-week
+            // recommendation, but the default is conservative on
+            // disruption.
+            //
+            // A-race intermediate gets longer recovery than B-race at
+            // the same distance (audit B-2): the intermediate A-race
+            // is the bigger event, athletes need more rebuild before
+            // the final A-race.
+            //
+            //   A-race intermediate: <30K = 2, <50K = 3, 50K+ = 4
+            //   B-race:              <30K = 1, <50K = 1, 50K+ = 2
+            //   C-race:              0
+            //   IN-PEAK (any):       capped at 1 week (B-1)
+            var recoveryWeekCount: Int
             switch (race.priority, race.distanceKm) {
             case (.aRace, ..<30):  recoveryWeekCount = 2
-            case (.aRace, ..<50):  recoveryWeekCount = 2
-            case (.aRace, _):      recoveryWeekCount = 3
+            case (.aRace, ..<50):  recoveryWeekCount = 3
+            case (.aRace, _):      recoveryWeekCount = 4
             case (.bRace, ..<30):  recoveryWeekCount = 1
-            case (.bRace, ..<50):  recoveryWeekCount = 2
-            case (.bRace, _):      recoveryWeekCount = 3
+            case (.bRace, ..<50):  recoveryWeekCount = 1
+            case (.bRace, _):      recoveryWeekCount = 2
             case (.cRace, _):      recoveryWeekCount = 0
             }
-            for offset in 1...max(recoveryWeekCount, 0) where recoveryWeekCount > 0 {
-                if let recoveryWeek = skeletons.first(where: { $0.weekNumber == raceWeek.weekNumber + offset }) {
-                    overrides.append(RaceWeekOverride(
-                        weekNumber: recoveryWeek.weekNumber,
-                        raceId: race.id,
-                        behavior: .postRaceRecovery,
-                        weekInRecovery: offset
-                    ))
+            if isInPeak {
+                recoveryWeekCount = min(recoveryWeekCount, 1)
+            }
+            if recoveryWeekCount > 0 {
+                for offset in 1...recoveryWeekCount {
+                    if let recoveryWeek = skeletons.first(where: { $0.weekNumber == raceWeek.weekNumber + offset }) {
+                        overrides.append(RaceWeekOverride(
+                            weekNumber: recoveryWeek.weekNumber,
+                            raceId: race.id,
+                            behavior: .postRaceRecovery,
+                            weekInRecovery: offset
+                        ))
+                    }
                 }
             }
         }

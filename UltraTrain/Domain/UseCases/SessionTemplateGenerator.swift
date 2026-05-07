@@ -36,7 +36,7 @@ enum SessionTemplateGenerator {
         restingHR: Int? = nil,
         maxHR: Int? = nil,
         biologicalSex: BiologicalSex? = nil,
-        cyclePhase: CyclePhaseCalculator.Phase = .unknown
+        athleteAge: Int = 0
     ) -> (sessions: [TrainingSession], workouts: [IntervalWorkout], strengthWorkouts: [StrengthWorkout]) {
         let runsPerWeek = preferredRunsPerWeek
         let templates: [SessionTemplate]
@@ -152,7 +152,7 @@ enum SessionTemplateGenerator {
                 restingHR: restingHR,
                 maxHR: maxHR,
                 biologicalSex: biologicalSex,
-                cyclePhase: cyclePhase
+                athleteAge: athleteAge
             )
 
             return TrainingSession(
@@ -164,7 +164,12 @@ enum SessionTemplateGenerator {
                 plannedDuration: effectiveDuration,
                 intensity: template.intensity,
                 description: sessionDescription,
-                nutritionNotes: nutritionNotes(duration: effectiveDuration),
+                nutritionNotes: nutritionNotes(
+                    duration: effectiveDuration,
+                    raceEffectiveKm: raceEffectiveKm,
+                    experience: experience,
+                    philosophy: philosophy
+                ),
                 isCompleted: false,
                 isSkipped: false,
                 linkedRunId: nil,
@@ -652,10 +657,14 @@ enum SessionTemplateGenerator {
         default:    recoveryCount = 6
         }
 
-        // All sessions at easy/recovery intensity
-        // D+ concentrated on long run only
+        // All sessions at easy/recovery intensity.
+        // D+ concentrated on long run only — and even on the LR we cut
+        // hard. T11: dropped LR elevation fraction from 0.52 → 0.40
+        // (in-between toward the audit's 0.25). Descent is the highest
+        // acute-fatigue stimulus on trail; recovery weeks should
+        // genuinely clear eccentric damage, not just tickle it.
         let pool: [(day: Int, template: SessionTemplate)] = [
-            (5, tpl(5, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.52,
+            (5, tpl(5, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.40,
                     SessionDescriptionGenerator.longRun(phase: .recovery, isRecoveryWeek: true))),
             (3, tpl(3, .verticalGain, .easy, base.vgSeconds, 0,
                     SessionDescriptionGenerator.verticalGain(phase: .recovery, isRecoveryWeek: true))),
@@ -1098,18 +1107,81 @@ enum SessionTemplateGenerator {
         return (meters / 5.0).rounded() * 5.0
     }
 
-    private static func nutritionNotes(duration: TimeInterval) -> String? {
+    private static func nutritionNotes(
+        duration: TimeInterval,
+        raceEffectiveKm: Double = 0,
+        experience: ExperienceLevel = .intermediate,
+        philosophy: TrainingPhilosophy = .balanced
+    ) -> String? {
         let hours = duration / 3600.0
         guard hours > 1.0 else { return nil }
 
         var notes = "Carry water and fuel for this session."
 
         if hours > 1.5 {
-            notes += " Aim for ~60g carbs/hour (gels, bars, or real food)."
+            // T12: carb/h target scales by race distance, experience,
+            // and philosophy. Base range follows Jeukendrup sports-
+            // nutrition research and Roche/Koop ultra-fueling
+            // consensus (~60g/h minimum, up to 90-100g/h for trained
+            // guts). Higher tiers + performance mindset → train the
+            // gut to handle more; enjoyment / beginner → comfortable
+            // lower end.
+            let range = carbRangePerHour(
+                raceEffectiveKm: raceEffectiveKm,
+                experience: experience,
+                philosophy: philosophy
+            )
+            notes += " Aim for ~\(Int(range.lower))–\(Int(range.upper)) g carbs/hour (gels, bars, or real food)."
         }
         if hours > 2.0 {
             notes += " Practice your race-day nutrition plan. Train your gut."
         }
         return notes
+    }
+
+    /// Computes the carb/h range for a session, given race distance and
+    /// athlete profile. T12. Returns a (lower, upper) pair so the cue
+    /// can show a coaching range, not a single point.
+    private static func carbRangePerHour(
+        raceEffectiveKm: Double,
+        experience: ExperienceLevel,
+        philosophy: TrainingPhilosophy
+    ) -> (lower: Double, upper: Double) {
+        // Base by race distance. Conservative defaults — we advise the
+        // *lower* end of what research supports so athletes who tolerate
+        // more can self-adjust upward, but we never recommend numbers
+        // that risk GI distress for a typical athlete in the tier.
+        // (Jeukendrup notes 60–90 g/h is achievable WITH gut training;
+        // most athletes who haven't trained the gut can't tolerate the
+        // upper end.)
+        let base: (Double, Double)
+        switch raceEffectiveKm {
+        case ..<50:        base = (40, 50)
+        case 50..<80:      base = (50, 60)
+        case 80..<150:     base = (55, 65)
+        default:           base = (60, 75)  // 100mi / 200K class
+        }
+
+        // Experience tier — larger guts trained for higher hourly intake.
+        let expBump: Double
+        switch experience {
+        case .beginner:     expBump = -5
+        case .intermediate: expBump = 0
+        case .advanced:     expBump = 5
+        case .elite:        expBump = 10
+        }
+
+        // Philosophy — performance mindset trains the gut higher;
+        // enjoyment athletes stay comfortable.
+        let philBump: Double
+        switch philosophy {
+        case .enjoyment:    philBump = -5
+        case .balanced:     philBump = 0
+        case .performance:  philBump = 5
+        }
+
+        let lower = max(30, base.0 + expBump + philBump)
+        let upper = max(lower + 10, base.1 + expBump + philBump)
+        return (lower, upper)
     }
 }

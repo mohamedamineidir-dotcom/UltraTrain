@@ -57,14 +57,13 @@ extension DashboardViewModel {
     /// Marks `nextSession` skipped with the given reason, mirroring
     /// TrainingPlanViewModel.skipSession. The skip reason flows into the
     /// plan-adjustment pipeline on the Training Plan tab.
-    func skipNextSession(reason: SkipReason, cluster: MenstrualSymptomCluster? = nil) async {
+    func skipNextSession(reason: SkipReason) async {
         guard var currentPlan = plan,
               let indices = findNextSessionIndices() else { return }
 
         var session = indices.session
         session.isSkipped = true
         session.skipReason = reason
-        session.menstrualSymptomCluster = cluster
 
         currentPlan.weeks[indices.weekIndex].sessions[indices.sessionIndex] = session
 
