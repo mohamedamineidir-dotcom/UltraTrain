@@ -11,6 +11,13 @@ struct KnownRace: Identifiable, Sendable {
     let nextEditionDate: Date?
     let terrainDifficulty: TerrainDifficulty
     let raceType: RaceType
+    /// Highest point on the course in meters. Optional — when present
+    /// and ≥ 2500m, the plan surfaces altitude-acclimatization advice
+    /// in build/peak phases.
+    let maxElevationM: Double?
+    /// Whether trekking poles are allowed. Optional — when true, the
+    /// plan surfaces a pole-training cue. Nil = unknown / unspecified.
+    let polesAllowed: Bool?
 
     init(
         name: String,
@@ -21,7 +28,9 @@ struct KnownRace: Identifiable, Sendable {
         country: String,
         nextEditionDate: Date? = nil,
         terrainDifficulty: TerrainDifficulty,
-        raceType: RaceType = .trail
+        raceType: RaceType = .trail,
+        maxElevationM: Double? = nil,
+        polesAllowed: Bool? = nil
     ) {
         self.name = name
         self.shortName = shortName
@@ -32,5 +41,7 @@ struct KnownRace: Identifiable, Sendable {
         self.nextEditionDate = nextEditionDate
         self.terrainDifficulty = terrainDifficulty
         self.raceType = raceType
+        self.maxElevationM = maxElevationM
+        self.polesAllowed = polesAllowed
     }
 }

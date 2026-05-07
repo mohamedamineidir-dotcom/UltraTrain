@@ -30,7 +30,15 @@ enum CoachAdviceGenerator {
         /// the athlete hasn't supplied resting + max HR. T7: ultras
         /// run most volume in Zone 2 — athletes need *a number* to
         /// stay below, not just "conversational pace."
-        athleteAge: Int = 0
+        athleteAge: Int = 0,
+        /// Highest course elevation in meters. T8: when ≥ 2500m, an
+        /// altitude-acclimatization advisory surfaces in build/peak.
+        /// Nil = no advisory.
+        raceMaxElevationM: Double? = nil,
+        /// Whether trekking poles are allowed in the target race.
+        /// T8: when true, a pole-training cue surfaces in build/peak
+        /// VG sessions. Nil = no cue.
+        racePolesAllowed: Bool? = nil
     ) -> String? {
         let recoveryPrefix = isRecoveryWeek
             ? "Recovery week, so keep everything easy. Your body adapts when you rest. "
@@ -160,6 +168,29 @@ enum CoachAdviceGenerator {
            !isRecoveryWeek {
             result += " Pick a route with sustained descent — practice relaxed quads, slight forward lean, quick foot turnover. Quad tolerance is the #1 race-day limiter for big-D- races."
         }
+        // T8 — altitude-acclimatization advisory. Surfaces on long
+        // runs in build/peak when the target race tops out ≥ 2500m.
+        // Pure coaching cue (no plan structure change). Athletes who
+        // can't travel to altitude pre-race still benefit from the
+        // pacing-on-race-day expectation. Sources: Bärtsch & Saltin
+        // 2008, IOC consensus on altitude training; Burtscher 2013
+        // on hypoxia and endurance performance.
+        if let elev = raceMaxElevationM, elev >= 2500,
+           (type == .longRun || type == .backToBack),
+           (phase == .build || phase == .peak),
+           !isRecoveryWeek {
+            result += " " + altitudeAdvisory(maxElevationM: elev)
+        }
+        // T8 — pole-training cue. Surfaces on VG sessions in build/peak
+        // when poles are allowed in the target race. Athletes who plan
+        // to use poles need 1-2 sessions/week practice to lock in
+        // technique before race day; untrained pole use wastes energy.
+        if racePolesAllowed == true,
+           type == .verticalGain,
+           (phase == .build || phase == .peak),
+           !isRecoveryWeek {
+            result += " Poles are allowed in your race. If you plan to use them, practice with poles on this VG session — uphill is the natural slot. Athletes who race with poles untrained typically fight technique on race day."
+        }
         // Mental cue. Short — one sentence. Surfaces only on the few
         // sessions where it actually matters: peak-phase race-effort
         // efforts, race-week prep, and the race itself. Skipped on
@@ -194,6 +225,24 @@ enum CoachAdviceGenerator {
             return "Hard, not desperate. Hold form when it stings."
         default:
             return nil
+        }
+    }
+
+    /// T8 — altitude-acclimatization advisory. Tier-aware by elevation:
+    /// high-altitude (≥3500m, Hardrock / Tor des Géants class) gets a
+    /// stronger acclimatization framing; moderate-altitude (2500-3500m,
+    /// Lavaredo / many Andes 100K class) gets a "expect slower pace"
+    /// reminder. Athletes who can't travel to altitude pre-race still
+    /// benefit from the pacing-on-race-day expectation.
+    /// Sources: Bärtsch & Saltin 2008, IOC altitude consensus; Burtscher
+    /// 2013 on hypoxia and endurance performance.
+    private static func altitudeAdvisory(maxElevationM: Double) -> String {
+        if maxElevationM >= 3500 {
+            let elevStr = String(Int(maxElevationM))
+            return "Your race tops out at \(elevStr)m. Above 3000m every effort feels harder for the same pace — plan 3-4 weeks at race elevation pre-race, or use altitude tents / live-low train-high. Without acclimatization, expect a 10-15% pace cost in the highest sections."
+        } else {
+            let elevStr = String(Int(maxElevationM))
+            return "Your race tops out at \(elevStr)m. At altitude every effort feels harder for the same pace — if you can, schedule 1-2 weeks at race elevation pre-race. Otherwise expect a 5-10% pace cost above 3000m and budget extra fueling."
         }
     }
 

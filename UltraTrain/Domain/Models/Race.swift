@@ -21,6 +21,17 @@ struct Race: Identifiable, Equatable, Sendable, Codable {
     var courseRoute: [TrackPoint] = []
     var savedRouteId: UUID? = nil
     var serverUpdatedAt: Date? = nil
+    /// Highest point on the course in meters above sea level. Optional —
+    /// when ≥ 2500m, the trail coach advice surfaces an altitude-prep
+    /// advisory in build/peak phases. Pre-populated from the known-race
+    /// database when the athlete picks a known race; otherwise stays nil
+    /// and no advisory fires.
+    var maxElevationM: Double? = nil
+    /// Whether trekking poles are allowed on this course. When true, the
+    /// trail coach advice surfaces a pole-training cue in build/peak
+    /// phases (1-2 pole sessions/week). Pre-populated from the known-race
+    /// database; nil = unknown, no cue.
+    var polesAllowed: Bool? = nil
 
     var hasCourseRoute: Bool { !courseRoute.isEmpty }
 

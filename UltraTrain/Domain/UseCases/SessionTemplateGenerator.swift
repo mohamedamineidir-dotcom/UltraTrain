@@ -33,6 +33,8 @@ enum SessionTemplateGenerator {
         intermediateRaceContext: RaceContext? = nil,
         isHotRaceForecast: Bool = false,
         isDescentHeavyRace: Bool = false,
+        raceMaxElevationM: Double? = nil,
+        racePolesAllowed: Bool? = nil,
         restingHR: Int? = nil,
         maxHR: Int? = nil,
         biologicalSex: BiologicalSex? = nil,
@@ -152,7 +154,9 @@ enum SessionTemplateGenerator {
                 restingHR: restingHR,
                 maxHR: maxHR,
                 biologicalSex: biologicalSex,
-                athleteAge: athleteAge
+                athleteAge: athleteAge,
+                raceMaxElevationM: raceMaxElevationM,
+                racePolesAllowed: racePolesAllowed
             )
 
             return TrainingSession(

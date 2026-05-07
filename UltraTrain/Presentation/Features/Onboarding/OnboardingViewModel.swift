@@ -127,6 +127,13 @@ final class OnboardingViewModel {
     var raceTerrainDifficulty: TerrainDifficulty = .moderate
     var raceType: RaceType = .trail
     var isKnownRace: Bool = false
+    /// T8: highest elevation on the course (m). Pre-populated from the
+    /// known-race database when the athlete picks one; otherwise nil
+    /// and no altitude advisory fires.
+    var raceMaxElevationM: Double? = nil
+    /// T8: whether trekking poles are allowed. Pre-populated from the
+    /// known-race database; nil = unknown / no cue.
+    var racePolesAllowed: Bool? = nil
     var targetRankingEstimatedTimeHours: Int = 10
     var targetRankingEstimatedTimeMinutes: Int = 0
     var verticalGainEnvironment: VerticalGainEnvironment = .mountain
@@ -533,7 +540,7 @@ final class OnboardingViewModel {
     }
 
     private func buildRace() -> Race {
-        Race(
+        var race = Race(
             id: UUID(),
             name: raceName.trimmingCharacters(in: .whitespaces),
             date: raceDate,
@@ -546,6 +553,12 @@ final class OnboardingViewModel {
             terrainDifficulty: raceTerrainDifficulty,
             raceType: raceType
         )
+        // T8: forward altitude + pole flags from the known-race
+        // pre-population. Plain memberwise init doesn't support the
+        // optional fields without ordering rework, so set them after.
+        race.maxElevationM = raceMaxElevationM
+        race.polesAllowed = racePolesAllowed
+        return race
     }
 
     private func buildRaceGoal() -> RaceGoal {

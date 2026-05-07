@@ -1702,6 +1702,7 @@
 		F3C0112D1EB3672D5E50970B /* IntervalPhaseType.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB9C3524873E7659E554A26E /* IntervalPhaseType.swift */; };
 		F455D290B851AB67CFAA3ED0 /* SyncedSocialProfileRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DABA6638463984C8D8C4D9 /* SyncedSocialProfileRepositoryTests.swift */; };
 		F4759C6A7E38B82FAA719169 /* RacePacingHandler+Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AFE16122098AFD6F199965B /* RacePacingHandler+Alerts.swift */; };
+		F482DA2FABD537C45B0063E7 /* CoachAdviceAltitudePoleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA9D5951D8D2B3524AC5C8B7 /* CoachAdviceAltitudePoleTests.swift */; };
 		F49D385786B00B3FDB56D082 /* FinishTimePredictor.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 57B69D7870B9A970A6091158 /* FinishTimePredictor.mlmodel */; };
 		F4CC5B9879D001BFE7C43477 /* LiveActivityServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C79E5D0FA80CFF17BCA9B4 /* LiveActivityServiceTests.swift */; };
 		F4E6D1E9CA5B9A83C3DA0B48 /* HistoricalComparisonCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E51AEE05895F063C4C45CA0 /* HistoricalComparisonCalculatorTests.swift */; };
@@ -3470,6 +3471,7 @@
 		E9C2B18A5FA6AE40DFB06602 /* LabeledIntStepper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabeledIntStepper.swift; sourceTree = "<group>"; };
 		E9CA62636D71B409FFE7BE45 /* APIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoint.swift; sourceTree = "<group>"; };
 		EA8DB5FFA1B27080E45DAB5C /* GoogleSignInCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInCoordinator.swift; sourceTree = "<group>"; };
+		EA9D5951D8D2B3524AC5C8B7 /* CoachAdviceAltitudePoleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachAdviceAltitudePoleTests.swift; sourceTree = "<group>"; };
 		EAA1B8B403FFC6EE9EB951F9 /* VolumePreviewStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumePreviewStepView.swift; sourceTree = "<group>"; };
 		EAC3B74BF827AAB737F14450 /* DeepLinkRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkRouter.swift; sourceTree = "<group>"; };
 		EAD5FA7DE2BFBD6BBBFFC507 /* FitnessFormWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitnessFormWidgetView.swift; sourceTree = "<group>"; };
@@ -5841,6 +5843,7 @@
 				BDDCB6E05CB50C070E88F33C /* BuildEmergencyMessageUseCaseTests.swift */,
 				01035523ADC792C852D2F9EF /* ChallengeProgressCalculatorTests.swift */,
 				3C700C42E5E25D7FE67E4F2D /* CheckpointLocationResolverTests.swift */,
+				EA9D5951D8D2B3524AC5C8B7 /* CoachAdviceAltitudePoleTests.swift */,
 				3B78032F8F792FE3EFDE409A /* CoachAdviceMaffetoneZone2Tests.swift */,
 				EC8F1AA8C4F9E249DFD5A887 /* CoachingInsightCalculatorTests.swift */,
 				5959BA5B2192D6228A29A304 /* ConvertRunToRouteUseCaseTests.swift */,
@@ -6564,6 +6567,7 @@
 				D04E2FAB38252A2A840D50D5 /* CloudKitDeduplicationTests.swift in Sources */,
 				8F62D9B39EB184C4E794DDC2 /* CloudKitModelCompatibilityTests.swift in Sources */,
 				595E2F62B162F6BB1DB4E8D1 /* CloudKitRecordConverterTests.swift in Sources */,
+				F482DA2FABD537C45B0063E7 /* CoachAdviceAltitudePoleTests.swift in Sources */,
 				CA2468F481F5BE182EB68AB9 /* CoachAdviceMaffetoneZone2Tests.swift in Sources */,
 				2793EB402D0C6FE8891E4D5A /* CoachingInsightCalculatorTests.swift in Sources */,
 				92FCF0258DDA4DEF5CA68AE2 /* ConvertRunToRouteUseCaseTests.swift in Sources */,

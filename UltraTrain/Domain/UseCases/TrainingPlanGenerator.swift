@@ -254,6 +254,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 intermediateRaceContext: intermediateRaceContext,
                 isHotRaceForecast: trailHotRaceForecast,
                 isDescentHeavyRace: isDescentHeavyRace,
+                raceMaxElevationM: targetRace.maxElevationM,
+                racePolesAllowed: targetRace.polesAllowed,
                 restingHR: athlete.restingHeartRate,
                 maxHR: athlete.maxHeartRate,
                 biologicalSex: athlete.biologicalSex,

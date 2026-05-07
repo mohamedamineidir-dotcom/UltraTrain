@@ -36,6 +36,12 @@ struct RaceNameDateStepView: View {
                             viewModel.raceElevationLossM = race.elevationLossM
                             viewModel.raceTerrainDifficulty = race.terrainDifficulty
                             viewModel.raceType = race.raceType
+                            // T8: pre-populate altitude + pole flags from the
+                            // known-race database when the athlete picks one
+                            // of our curated races. Manual entry leaves these
+                            // nil and no advisory fires.
+                            viewModel.raceMaxElevationM = race.maxElevationM
+                            viewModel.racePolesAllowed = race.polesAllowed
                             viewModel.isKnownRace = true
                             if let date = race.nextEditionDate, date > Date.now {
                                 viewModel.raceDate = date

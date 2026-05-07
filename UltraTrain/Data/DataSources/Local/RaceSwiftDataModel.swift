@@ -26,6 +26,12 @@ final class RaceSwiftDataModel {
     var savedRouteId: UUID?
     var updatedAt: Date = Date()
     var serverUpdatedAt: Date?
+    /// Highest course elevation in meters. Drives altitude-prep
+    /// advisory when ≥ 2500m. Optional; nil = no advisory fires.
+    var maxElevationM: Double?
+    /// Whether trekking poles are allowed on the course. Drives the
+    /// pole-training cue. Optional; nil = no cue.
+    var polesAllowed: Bool?
 
     init(
         id: UUID = UUID(),
@@ -49,7 +55,9 @@ final class RaceSwiftDataModel {
         courseRouteData: Data? = nil,
         savedRouteId: UUID? = nil,
         updatedAt: Date = Date(),
-        serverUpdatedAt: Date? = nil
+        serverUpdatedAt: Date? = nil,
+        maxElevationM: Double? = nil,
+        polesAllowed: Bool? = nil
     ) {
         self.id = id
         self.name = name
@@ -73,5 +81,7 @@ final class RaceSwiftDataModel {
         self.savedRouteId = savedRouteId
         self.updatedAt = updatedAt
         self.serverUpdatedAt = serverUpdatedAt
+        self.maxElevationM = maxElevationM
+        self.polesAllowed = polesAllowed
     }
 }
