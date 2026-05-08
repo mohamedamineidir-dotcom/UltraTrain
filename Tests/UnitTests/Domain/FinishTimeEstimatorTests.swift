@@ -895,6 +895,59 @@ struct FinishTimeEstimatorTests {
         _ = day0Spread; _ = midSpread
     }
 
+    @Test("Range narrows / confidence climbs as runs accumulate (multi-point)")
+    func multiPointMonotonicNarrowing() async throws {
+        var pbAthlete = athlete
+        pbAthlete.personalBests = [
+            PersonalBest(id: UUID(), distance: .fiveK, timeSeconds: 1200, date: .now)
+        ]
+        let race = makeRace(distanceKm: 21.1, elevationGainM: 50, terrain: .easy)
+
+        // Build consistent runs: ~4:10/km on 12 km easy long runs.
+        // Same pace each run so the percentile spread doesn't grow
+        // due to within-run variance — isolates the data-quantity
+        // signal from variance signal.
+        func runsBatch(_ count: Int) -> [CompletedRun] {
+            (0..<count).map { _ in
+                makeRun(distanceKm: 12, elevationGainM: 100, duration: 3000)
+            }
+        }
+
+        let est0 = try await estimator.execute(
+            athlete: pbAthlete, race: race,
+            recentRuns: [], currentFitness: nil
+        )
+        let est5 = try await estimator.execute(
+            athlete: pbAthlete, race: race,
+            recentRuns: runsBatch(5), currentFitness: nil
+        )
+        let est15 = try await estimator.execute(
+            athlete: pbAthlete, race: race,
+            recentRuns: runsBatch(15), currentFitness: nil
+        )
+
+        // Confidence should strictly climb across the three points
+        // (from PB-baseline through partial run data to abundant runs).
+        #expect(est0.confidencePercent < est5.confidencePercent,
+            "Confidence should climb from 0 → 5 runs. \(est0.confidencePercent) vs \(est5.confidencePercent)")
+        #expect(est5.confidencePercent <= est15.confidencePercent,
+            "Confidence should climb (or stay equal) from 5 → 15 runs. \(est5.confidencePercent) vs \(est15.confidencePercent)")
+
+        // Source should change as data accumulates.
+        #expect(est0.predictionSource == .personalBests)
+        #expect(est5.predictionSource == .runs)
+        #expect(est15.predictionSource == .runs)
+
+        // Spreads — sanity bounds: PB-only spread should not exceed
+        // ~30%; with 15 consistent runs spread should be tight.
+        let spread0 = (est0.conservativeTime - est0.optimisticTime) / est0.expectedTime
+        let spread15 = (est15.conservativeTime - est15.optimisticTime) / est15.expectedTime
+        #expect(spread0 < 0.40,
+            "Day-0 PB spread should be bounded (<40%), got \(spread0)")
+        #expect(spread15 < 0.20,
+            "15-run consistent-pace spread should be tight (<20%), got \(spread15)")
+    }
+
     @Test("PB recency: older PB → wider range than recent PB")
     func recencyImpactsRange() async throws {
         var recent = athlete

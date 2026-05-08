@@ -16,7 +16,8 @@ enum FinishEstimateSwiftDataMapper {
             raceResultsUsed: model.raceResultsUsed,
             calibrationFactor: model.calibrationFactor,
             weatherMultiplier: model.weatherMultiplier,
-            weatherImpactSummary: model.weatherImpactSummary
+            weatherImpactSummary: model.weatherImpactSummary,
+            predictionSource: model.predictionSourceRaw.flatMap(FinishPredictionSource.init(rawValue:))
         )
     }
 
@@ -34,7 +35,8 @@ enum FinishEstimateSwiftDataMapper {
             raceResultsUsed: estimate.raceResultsUsed,
             calibrationFactor: estimate.calibrationFactor,
             weatherMultiplier: estimate.weatherMultiplier,
-            weatherImpactSummary: estimate.weatherImpactSummary
+            weatherImpactSummary: estimate.weatherImpactSummary,
+            predictionSourceRaw: estimate.predictionSource?.rawValue
         )
     }
 

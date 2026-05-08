@@ -83,6 +83,9 @@ struct FinishEstimationView: View {
                         }
                     }
                     scenarioCards(estimate)
+                    if let source = estimate.predictionSource {
+                        dataSourceBadge(source: source)
+                    }
                     if let weatherImpact = viewModel.weatherImpact {
                         WeatherImpactCard(
                             impact: weatherImpact,

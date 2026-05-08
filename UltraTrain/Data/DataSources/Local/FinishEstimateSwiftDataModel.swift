@@ -16,6 +16,10 @@ final class FinishEstimateSwiftDataModel {
     var calibrationFactor: Double = 1.0
     var weatherMultiplier: Double?
     var weatherImpactSummary: String?
+    /// Raw value of FinishPredictionSource. Optional + default nil
+    /// for migration: estimates persisted before this column existed
+    /// remain readable.
+    var predictionSourceRaw: String? = nil
 
     init(
         id: UUID = UUID(),
@@ -30,7 +34,8 @@ final class FinishEstimateSwiftDataModel {
         raceResultsUsed: Int = 0,
         calibrationFactor: Double = 1.0,
         weatherMultiplier: Double? = nil,
-        weatherImpactSummary: String? = nil
+        weatherImpactSummary: String? = nil,
+        predictionSourceRaw: String? = nil
     ) {
         self.id = id
         self.raceId = raceId
@@ -45,5 +50,6 @@ final class FinishEstimateSwiftDataModel {
         self.calibrationFactor = calibrationFactor
         self.weatherMultiplier = weatherMultiplier
         self.weatherImpactSummary = weatherImpactSummary
+        self.predictionSourceRaw = predictionSourceRaw
     }
 }

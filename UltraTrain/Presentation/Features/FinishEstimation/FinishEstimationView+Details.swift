@@ -81,6 +81,55 @@ extension FinishEstimationView {
         return "Low confidence — keep training to improve prediction accuracy"
     }
 
+    // MARK: - Data Source Badge
+
+    /// Inline indicator that explains where the prediction came from
+    /// (PB-based / runs-derived / generic-fallback). The athlete sees
+    /// the range narrow + this badge change as they accumulate data.
+    func dataSourceBadge(source: FinishPredictionSource) -> some View {
+        HStack(alignment: .top, spacing: Theme.Spacing.sm) {
+            Image(systemName: dataSourceIcon(source))
+                .foregroundStyle(dataSourceColor(source))
+                .font(.subheadline)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(source.shortLabel)
+                    .font(.caption.bold())
+                    .foregroundStyle(dataSourceColor(source))
+                Text(source.explainer)
+                    .font(.caption2)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer()
+        }
+        .padding(Theme.Spacing.md)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                .fill(dataSourceColor(source).opacity(0.08))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                .stroke(dataSourceColor(source).opacity(0.3), lineWidth: 1)
+        )
+    }
+
+    private func dataSourceIcon(_ source: FinishPredictionSource) -> String {
+        switch source {
+        case .runs:               return "checkmark.circle.fill"
+        case .personalBests:      return "info.circle.fill"
+        case .experienceFallback: return "questionmark.circle.fill"
+        }
+    }
+
+    private func dataSourceColor(_ source: FinishPredictionSource) -> Color {
+        switch source {
+        case .runs:               return Theme.Colors.success
+        case .personalBests:      return Theme.Colors.warmCoral
+        case .experienceFallback: return Theme.Colors.warning
+        }
+    }
+
     // MARK: - Race Calibration Badge
 
     func raceCalibrationBadge(estimate: FinishEstimate) -> some View {

@@ -8,16 +8,11 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         self.mlPredictionService = mlPredictionService
     }
 
-    /// Where the prediction's pace anchor came from. Drives range
-    /// width: runs-based has within-run variance baked in (use pace25
-    /// / pace75 percentiles), PB-based has no variance so we add an
-    /// explicit aleatory + epistemic spread, fallback gets the widest
-    /// spread (very low certainty).
-    enum PredictionSource: Sendable {
-        case runs           // ≥ 1 completed run with pace data
-        case personalBests  // PBs converted via Riegel + Kilian
-        case experienceFallback  // experience-level fallback only
-    }
+    /// Re-exposed for internal use; the canonical type lives on
+    /// `FinishPredictionSource` (Domain/Models/FinishEstimate.swift)
+    /// so the UI layer can read it off the FinishEstimate without
+    /// pulling in this estimator.
+    typealias PredictionSource = FinishPredictionSource
 
     // MARK: - Execute
 
@@ -158,7 +153,8 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
             raceResultsUsed: raceResultsUsed,
             calibrationFactor: calibration,
             weatherMultiplier: weatherImpact?.multiplier,
-            weatherImpactSummary: weatherImpact?.summary
+            weatherImpactSummary: weatherImpact?.summary,
+            predictionSource: source
         )
     }
 
@@ -275,13 +271,17 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
                 .map { $0.recencyWeight() }
             // Sum of recency weights → effective sample size. 2.0+ →
             // strong signal; 1.0 → moderate; <0.5 → weak (very old).
+            // Bucket boundaries are slightly wider than the integer
+            // counts to absorb microsecond drift in `Date.now` —
+            // a fresh PB returns recencyWeight ~ 0.99999... not exactly
+            // 1.0, which would otherwise tip into the wrong bucket.
             let totalRecencyWeight = allPBs.reduce(0, +)
             let recencyComponent: Double
             switch totalRecencyWeight {
             case ..<0.5:    recencyComponent = 0.18  // weak / very old
-            case ..<1.0:    recencyComponent = 0.12
-            case ..<2.0:    recencyComponent = 0.08
-            default:        recencyComponent = 0.05
+            case ..<0.99:   recencyComponent = 0.12  // partially decayed single PB
+            case ..<1.99:   recencyComponent = 0.08  // 1-2 fresh PBs
+            default:        recencyComponent = 0.05  // multiple recent PBs
             }
             // Distance-match: PBs at same race type get extra credit.
             let hasMatchingDistanceType = athlete.personalBests.contains { pb in
