@@ -117,8 +117,14 @@ enum BRaceSpecificityCalculator {
                 let injectionWeek = bRaceWeekNumber - 1 - i
                 guard injectionWeek >= 1, injectionWeek <= skeletons.count else { continue }
                 let skeleton = skeletons[injectionWeek - 1]
-                // Skip recovery weeks + race weeks + taper.
-                guard skeleton.phase == .base || skeleton.phase == .build else { continue }
+                // Skip recovery weeks + race weeks + taper. Peak is
+                // OK — when a B-race lands in the A-race's peak phase,
+                // the surrounding training weeks are in peak too, and
+                // there's no fitness-development reason to forbid B-race
+                // specificity in those weeks (the alternative is doing
+                // nothing for this race).
+                let allowedPhases: Set<TrainingPhase> = [.base, .build, .peak]
+                guard allowedPhases.contains(skeleton.phase) else { continue }
                 guard !skeleton.isRecoveryWeek else { continue }
 
                 // Pick the slot + kind based on (weeksBefore, discipline).
@@ -232,8 +238,15 @@ enum BRaceSpecificityCalculator {
         of date: Date,
         in skeletons: [WeekSkeletonBuilder.WeekSkeleton]
     ) -> Int? {
-        skeletons.first { skel in
-            date >= skel.startDate && date <= skel.endDate
+        // Normalize to start-of-day. Skeleton endDate is at 00:00 of
+        // the last day of the week; a wallclock-time race date later
+        // that day would otherwise fail the range check. Use
+        // calendar-day comparison via startOfDay to keep the range
+        // inclusive at both ends.
+        let cal = Calendar.current
+        let dateDay = cal.startOfDay(for: date)
+        return skeletons.first { skel in
+            dateDay >= skel.startDate && dateDay <= skel.endDate
         }?.weekNumber
     }
 }

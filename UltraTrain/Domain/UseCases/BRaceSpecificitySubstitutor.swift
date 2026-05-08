@@ -21,22 +21,35 @@ enum BRaceSpecificitySubstitutor {
         sessions: inout [TrainingSession],
         athlete: Athlete
     ) -> IntervalWorkout? {
-        // Find a session matching the requested slot type.
-        let targetType: SessionType = {
+        // Find a session matching the requested slot type. Fallback
+        // to .verticalGain for intervals/tempo slots — trail plans
+        // for big-D+ A-races often substitute VG for intervals based
+        // on the quality-ratio resolver, so we'd miss them otherwise.
+        // VG is a high-intensity slot, same purpose: swapping it for
+        // road-specific work doesn't add load, just changes the
+        // stimulus for the upcoming tune-up.
+        let preferredTypes: [SessionType] = {
             switch injection.slot {
-            case .intervals: return .intervals
-            case .tempo:     return .tempo
-            case .longRun:   return .longRun
+            case .intervals: return [.intervals, .verticalGain]
+            case .tempo:     return [.tempo, .verticalGain]
+            case .longRun:   return [.longRun]
             }
         }()
 
-        guard let idx = sessions.firstIndex(where: { sess in
-            sess.type == targetType
-                && !sess.isCompleted && !sess.isSkipped
-                // Don't overwrite fitness-test slots — those carry a
-                // higher-priority calibration purpose.
-                && !FitnessTestVariant.isFitnessTestFocus(sess.intervalFocus)
-        }) else { return nil }
+        var targetIdx: Int?
+        for type in preferredTypes {
+            if let idx = sessions.firstIndex(where: { sess in
+                sess.type == type
+                    && !sess.isCompleted && !sess.isSkipped
+                    // Don't overwrite fitness-test slots — those carry a
+                    // higher-priority calibration purpose.
+                    && !FitnessTestVariant.isFitnessTestFocus(sess.intervalFocus)
+            }) {
+                targetIdx = idx
+                break
+            }
+        }
+        guard let idx = targetIdx else { return nil }
 
         // Build a B-race-specific pace profile from the goal time.
         // We pass the athlete's PRs / VMA so the calculator can

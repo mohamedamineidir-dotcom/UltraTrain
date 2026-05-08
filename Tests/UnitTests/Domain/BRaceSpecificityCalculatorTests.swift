@@ -314,4 +314,117 @@ struct BRaceSpecificityCalculatorTests {
         #expect(hasLongRunMP,
             "Marathon B-race should include a MP-block long run injection")
     }
+
+    // MARK: - End-to-end integration
+
+    @Test("Trail plan with HM B-race + opt-in: weeks before B-race contain HM-prep sessions")
+    func endToEndHMBRaceSpecificity() async throws {
+        // Real plan generation through TrainingPlanGenerator.execute.
+        // Verifies the calculator's decisions actually flow into the
+        // generated plan's sessions (not just unit-tested in isolation).
+        let athlete = Athlete(
+            id: UUID(), firstName: "Test", lastName: "Runner",
+            dateOfBirth: Calendar.current.date(byAdding: .year, value: -32, to: .now)!,
+            weightKg: 65, heightCm: 175,
+            restingHeartRate: 50, maxHeartRate: 185,
+            experienceLevel: .intermediate,
+            weeklyVolumeKm: 60, longestRunKm: 30,
+            preferredUnit: .metric,
+            trainingPhilosophy: .balanced,
+            preferredRunsPerWeek: 5
+        )
+        // 16-week prep for a trail/ultra A-race
+        let aRace = Race(
+            id: UUID(), name: "UTMB",
+            date: Calendar.current.date(byAdding: .day, value: 16 * 7, to: .now)!,
+            distanceKm: 170, elevationGainM: 10000, elevationLossM: 10000,
+            priority: .aRace, goalType: .finish, checkpoints: [],
+            terrainDifficulty: .technical, raceType: .trail
+        )
+        // HM B-race at week 8 with target time 1:30 + opted into specificity
+        var hmBRace = Race(
+            id: UUID(), name: "Tune-up Half",
+            date: Calendar.current.date(byAdding: .day, value: 8 * 7, to: .now)!,
+            distanceKm: 21.1, elevationGainM: 50, elevationLossM: 50,
+            priority: .bRace,
+            goalType: .targetTime(5400),
+            checkpoints: [], terrainDifficulty: .easy, raceType: .road
+        )
+        hmBRace.includesSpecificPrep = true
+
+        let plan = try await TrainingPlanGenerator().execute(
+            athlete: athlete,
+            targetRace: aRace,
+            intermediateRaces: [hmBRace]
+        )
+
+        // Look for a session in the 2-3 weeks before the B-race that
+        // has the B-race-prep intervalFocus marker. The exact week
+        // depends on the skeleton structure, but it must be in the
+        // 4-6 range (2-4 weeks before the B-race week).
+        let prepSessions = plan.weeks.flatMap(\.sessions).filter { session in
+            guard let focus = session.intervalFocus else { return false }
+            return focus.contains("HM prep")
+        }
+
+        #expect(!prepSessions.isEmpty,
+            "End-to-end: trail plan with HM B-race + opt-in must produce HM-prep sessions")
+
+        // Verify they're in the expected window: before the B-race
+        // (which is at day 56), and at least 7 days before (no
+        // overlap with mini-taper / race week).
+        let bRaceDate = hmBRace.date
+        for session in prepSessions {
+            let daysBefore = Calendar.current.dateComponents(
+                [.day], from: session.date, to: bRaceDate
+            ).day ?? 0
+            #expect(daysBefore >= 7,
+                "HM-prep session at \(session.date) is too close to B-race (\(daysBefore) days)")
+            #expect(daysBefore <= 28,
+                "HM-prep session at \(session.date) is too far from B-race (\(daysBefore) days)")
+        }
+    }
+
+    @Test("Trail plan with HM B-race but no opt-in: zero HM-prep sessions")
+    func endToEndOptOutNoSpecificity() async throws {
+        let athlete = Athlete(
+            id: UUID(), firstName: "Test", lastName: "Runner",
+            dateOfBirth: Calendar.current.date(byAdding: .year, value: -32, to: .now)!,
+            weightKg: 65, heightCm: 175,
+            restingHeartRate: 50, maxHeartRate: 185,
+            experienceLevel: .intermediate,
+            weeklyVolumeKm: 60, longestRunKm: 30,
+            preferredUnit: .metric,
+            trainingPhilosophy: .balanced,
+            preferredRunsPerWeek: 5
+        )
+        let aRace = Race(
+            id: UUID(), name: "UTMB",
+            date: Calendar.current.date(byAdding: .day, value: 16 * 7, to: .now)!,
+            distanceKm: 170, elevationGainM: 10000, elevationLossM: 10000,
+            priority: .aRace, goalType: .finish, checkpoints: [],
+            terrainDifficulty: .technical, raceType: .trail
+        )
+        var hmBRace = Race(
+            id: UUID(), name: "Tune-up Half",
+            date: Calendar.current.date(byAdding: .day, value: 8 * 7, to: .now)!,
+            distanceKm: 21.1, elevationGainM: 50, elevationLossM: 50,
+            priority: .bRace,
+            goalType: .targetTime(5400),
+            checkpoints: [], terrainDifficulty: .easy, raceType: .road
+        )
+        hmBRace.includesSpecificPrep = false  // explicitly opted out
+
+        let plan = try await TrainingPlanGenerator().execute(
+            athlete: athlete,
+            targetRace: aRace,
+            intermediateRaces: [hmBRace]
+        )
+
+        let prepSessions = plan.weeks.flatMap(\.sessions).filter { session in
+            session.intervalFocus?.contains("HM prep") == true
+        }
+        #expect(prepSessions.isEmpty,
+            "Without opt-in, zero specificity sessions should appear")
+    }
 }

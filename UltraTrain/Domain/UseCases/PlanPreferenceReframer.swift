@@ -79,6 +79,16 @@ struct PlanPreferenceReframer: ReframePlanForPreferencesUseCase {
         }
         let isRoadRace = targetRace.raceType == .road
 
+        // B/C-race specificity injections (opt-in per race). Mirrors
+        // TrainingPlanGenerator so toggling Race.includesSpecificPrep
+        // after plan generation propagates through the reframer.
+        let bRaceSpecificityInjections = BRaceSpecificityCalculator.injections(
+            skeletons: skeletons,
+            intermediateRaces: intermediateRaces,
+            targetRace: targetRace,
+            athlete: updatedAthlete
+        )
+
         var allWorkouts: [IntervalWorkout] = currentPlan.workouts
         var futureWeeks: [TrainingWeek] = []
 
@@ -130,6 +140,21 @@ struct PlanPreferenceReframer: ReframePlanForPreferencesUseCase {
             // plans match what the main generator produces.
             var roundedSessions = result.sessions
             EnduranceDurationRounder.roundInPlace(&roundedSessions)
+
+            // Apply B/C-race specificity injections for this week.
+            // Same pattern as TrainingPlanGenerator's trail branch.
+            let weekInjections = bRaceSpecificityInjections.filter {
+                $0.weekNumber == skeleton.weekNumber
+            }
+            for injection in weekInjections {
+                if let workout = BRaceSpecificitySubstitutor.apply(
+                    injection: injection,
+                    sessions: &roundedSessions,
+                    athlete: updatedAthlete
+                ) {
+                    allWorkouts.append(workout)
+                }
+            }
 
             let weekPhase: TrainingPhase
             if isARaceWeek {
