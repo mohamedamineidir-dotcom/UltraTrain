@@ -60,18 +60,21 @@ final class FinishEstimationViewModel {
                 return
             }
 
+            // Day-0 prediction: athletes get a credible estimate from
+            // their PBs alone before logging any training. The estimator
+            // builds the pace anchor from runs when available, falls
+            // back to PBs (Riegel + Kilian for trail), then to an
+            // experience-level fallback. Range widens as data quality
+            // decreases.
             let runs = try await runRepository.getRuns(for: athlete.id)
-            guard !runs.isEmpty else {
-                error = "Complete some runs first to get a finish time estimate"
-                isLoading = false
-                return
-            }
 
             var fitness: FitnessSnapshot?
-            do {
-                fitness = try await fitnessCalculator.execute(runs: runs, asOf: .now)
-            } catch {
-                Logger.fitness.warning("Could not calculate fitness for estimation: \(error)")
+            if !runs.isEmpty {
+                do {
+                    fitness = try await fitnessCalculator.execute(runs: runs, asOf: .now)
+                } catch {
+                    Logger.fitness.warning("Could not calculate fitness for estimation: \(error)")
+                }
             }
 
             let calibrations = await buildCalibrations()
