@@ -28,6 +28,11 @@ struct WeekCardView: View {
     /// edit). If parent returns nil, no feedback sheet is presented.
     var intervalFeedbackContextProvider: ((Int) async -> IntervalFeedbackContext?)?
     var onSaveIntervalFeedback: ((IntervalPerformanceFeedback) -> Void)?
+    /// Triggered when athlete validates a fitness-test session with
+    /// variant-specific results. The view-model runs the recalibration
+    /// pipeline (update vmaKmh, refresh remaining session paces, insert
+    /// re-test if regression).
+    var onCompleteFitnessTest: ((Int, FitnessTestVariant, TestResultInput, PerceivedFeeling?) -> Void)?
     var recentRunsProvider: ((Date) async -> [CompletedRun])?
     var stravaActivitiesProvider: ((Date) async -> [StravaActivity])?
     var onLinkStravaActivity: ((Int, StravaActivity) -> Void)?
@@ -64,7 +69,8 @@ struct WeekCardView: View {
         stravaActivitiesProvider: ((Date) async -> [StravaActivity])? = nil,
         onLinkStravaActivity: ((Int, StravaActivity) -> Void)? = nil,
         intervalFeedbackContextProvider: ((Int) async -> IntervalFeedbackContext?)? = nil,
-        onSaveIntervalFeedback: ((IntervalPerformanceFeedback) -> Void)? = nil
+        onSaveIntervalFeedback: ((IntervalPerformanceFeedback) -> Void)? = nil,
+        onCompleteFitnessTest: ((Int, FitnessTestVariant, TestResultInput, PerceivedFeeling?) -> Void)? = nil
     ) {
         self.week = week
         self.weekIndex = weekIndex
@@ -90,6 +96,7 @@ struct WeekCardView: View {
         self.onLinkStravaActivity = onLinkStravaActivity
         self.intervalFeedbackContextProvider = intervalFeedbackContextProvider
         self.onSaveIntervalFeedback = onSaveIntervalFeedback
+        self.onCompleteFitnessTest = onCompleteFitnessTest
         _isExpanded = State(initialValue: isCurrentWeek)
     }
 
@@ -558,7 +565,10 @@ extension WeekCardView {
                 await intervalFeedbackContextProvider?(sessionIndex)
             } : nil,
             onSaveIntervalFeedback: onSaveIntervalFeedback,
-            weekProgress: makeWeekProgress(for: session)
+            weekProgress: makeWeekProgress(for: session),
+            onCompleteFitnessTest: onCompleteFitnessTest != nil ? { variant, result, feeling in
+                onCompleteFitnessTest?(sessionIndex, variant, result, feeling)
+            } : nil
         )
     }
 

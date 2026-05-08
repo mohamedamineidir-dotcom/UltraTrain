@@ -27,6 +27,10 @@ struct SessionDetailView: View {
     var intervalFeedbackContextProvider: (() async -> IntervalFeedbackContext?)?
     var onSaveIntervalFeedback: ((IntervalPerformanceFeedback) -> Void)?
     var weekProgress: WeekProgress?
+    /// Fires when the athlete validates a fitness-test session with
+    /// variant-specific results. Variant is auto-detected from the
+    /// session's `intervalFocus` field — no extra plumbing required.
+    var onCompleteFitnessTest: ((FitnessTestVariant, TestResultInput, PerceivedFeeling?) -> Void)?
 
     @State private var showSkipReasonSheet = false
     @State private var showRescheduleSheet = false
@@ -161,7 +165,8 @@ struct SessionDetailView: View {
                 onLinkStravaActivity: onLinkStravaActivity,
                 intervalFeedbackContextProvider: intervalFeedbackContextProvider,
                 onSaveIntervalFeedback: onSaveIntervalFeedback,
-                weekProgress: weekProgress
+                weekProgress: weekProgress,
+                onCompleteFitnessTest: onCompleteFitnessTest
             )
         }
     }

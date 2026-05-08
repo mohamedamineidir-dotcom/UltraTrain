@@ -66,6 +66,235 @@ extension TrainingPlanViewModel {
         }
     }
 
+    // MARK: - Fitness Test Completion + Recalibration
+
+    /// Completes a fitness-test session AND runs the recalibration
+    /// pipeline: convert result → measured VMA, decide recommendation,
+    /// apply the new pace profile to remaining quality sessions, and
+    /// (when regression) insert a confirmation re-test session.
+    ///
+    /// Uses the same persistence path as `completeSessionManually` so
+    /// the session save is identical; the recalibration runs after.
+    func completeFitnessTestSession(
+        weekIndex: Int,
+        sessionIndex: Int,
+        variant: FitnessTestVariant,
+        result: TestResultInput,
+        feeling: PerceivedFeeling? = nil,
+        exertion: Int? = nil
+    ) async {
+        guard var currentPlan = plan else { return }
+        guard weekIndex < currentPlan.weeks.count,
+              sessionIndex < currentPlan.weeks[weekIndex].sessions.count else { return }
+
+        // 1. Save the session as completed with whatever stats the
+        // result carries. Distance / duration get pulled from the
+        // variant-specific result so the standard session card
+        // shows what the athlete did.
+        var session = currentPlan.weeks[weekIndex].sessions[sessionIndex]
+        session.isCompleted = true
+        if let meters = result.distanceMeters {
+            session.actualDistanceKm = meters / 1000.0
+        }
+        if let timeSec = result.timeSeconds {
+            session.actualDurationSeconds = timeSec
+        }
+        session.perceivedFeeling = feeling
+        session.perceivedExertion = exertion
+        currentPlan.weeks[weekIndex].sessions[sessionIndex] = session
+
+        do {
+            try await planRepository.updateSession(session)
+        } catch {
+            self.error = error.localizedDescription
+            Logger.training.error("Failed to save fitness test session: \(error)")
+            return
+        }
+
+        // 2. Load athlete + race for the recalibration pass.
+        guard let athlete = try? await athleteRepository.getAthlete() else {
+            plan = currentPlan
+            return
+        }
+        let races = (try? await raceRepository.getRaces()) ?? []
+        let aRaces = races.filter { $0.priority == .aRace }
+            .sorted { $0.date < $1.date }
+        guard let targetRace = aRaces.last else {
+            plan = currentPlan
+            return
+        }
+
+        // 3. Compute current race phase + weeks remaining so the
+        // recalibrator can apply its asymmetric thresholds.
+        let testWeek = currentPlan.weeks[weekIndex]
+        let weeksRemaining = max(0, currentPlan.weeks.count - weekIndex - 1)
+
+        // 4. Run recalibration.
+        let outcome = FitnessTestRecalibrator.recalibrate(
+            testVariant: variant,
+            result: result,
+            athlete: athlete,
+            targetRace: targetRace,
+            weeksUntilRace: weeksRemaining,
+            currentRacePhase: testWeek.phase
+        )
+
+        Logger.training.info("Fitness test recalibration: delta \(outcome.deltaPercent), \(String(describing: outcome.recommendation))")
+
+        // 5. Persist the new vmaKmh on the athlete (so future plans /
+        // pace prescriptions read fresh).
+        if let measured = outcome.measuredVmaKmh {
+            var updatedAthlete = athlete
+            updatedAthlete.vmaKmh = measured
+            try? await athleteRepository.updateAthlete(updatedAthlete)
+        }
+
+        // 6. Apply the updated pace profile to remaining quality
+        // sessions if recalibration was triggered. Updates coachAdvice
+        // text on intervals / tempo / longRun sessions after the test
+        // week — the structured workout (interval phases) keeps its
+        // current shape, but the coaching guidance reflects the new
+        // fitness anchor.
+        if let newProfile = outcome.updatedPaceProfile {
+            applyRefinedPaceProfile(
+                to: &currentPlan,
+                fromWeekIndex: weekIndex + 1,
+                profile: newProfile,
+                targetRace: targetRace,
+                athlete: athlete
+            )
+        }
+
+        // 7. Insert a confirmation re-test (regression case only).
+        if outcome.recommendation == .regressionPendingRetest {
+            insertConfirmationRetest(
+                in: &currentPlan,
+                originalTestWeekNumber: testWeek.weekNumber,
+                variant: variant,
+                targetRace: targetRace,
+                intermediateRaces: races.filter { $0.id != targetRace.id }
+            )
+        }
+
+        // 8. Surface the recommendation as a fitness-test-specific
+        // notification so the athlete sees the rationale immediately.
+        fitnessTestRecommendation = .init(
+            variant: variant,
+            outcome: outcome
+        )
+
+        // 9. Save the modified plan + refresh.
+        do {
+            try await planRepository.savePlan(currentPlan)
+            plan = currentPlan
+            await updateWidgets()
+            checkForAdjustments()
+            refreshMissedSessionPattern()
+            refreshScheduledReminders()
+        } catch {
+            self.error = error.localizedDescription
+            Logger.training.error("Failed to save plan after fitness test recalibration: \(error)")
+        }
+    }
+
+    /// Applies a refreshed pace profile to coach advice on remaining
+    /// quality sessions (intervals / tempo / longRun) starting from
+    /// `fromWeekIndex`. Lightweight — doesn't rebuild interval workout
+    /// phases (those keep their shape; the athlete's effort cues
+    /// reflect the new fitness via coachAdvice text).
+    private func applyRefinedPaceProfile(
+        to plan: inout TrainingPlan,
+        fromWeekIndex: Int,
+        profile: RoadPaceProfile,
+        targetRace: Race,
+        athlete: Athlete
+    ) {
+        guard targetRace.raceType == .road else { return }
+        let discipline = RoadRaceDiscipline.from(distanceKm: targetRace.distanceKm)
+        let touchedTypes: Set<SessionType> = [.intervals, .tempo, .longRun, .recovery]
+
+        for wi in fromWeekIndex..<plan.weeks.count {
+            for si in 0..<plan.weeks[wi].sessions.count {
+                let session = plan.weeks[wi].sessions[si]
+                guard !session.isCompleted, !session.isSkipped else { continue }
+                guard touchedTypes.contains(session.type) else { continue }
+                let newAdvice = RoadCoachAdviceGenerator.advice(
+                    type: session.type,
+                    intensity: session.intensity,
+                    phase: plan.weeks[wi].phase,
+                    discipline: discipline,
+                    isRecoveryWeek: plan.weeks[wi].isRecoveryWeek,
+                    paceProfile: profile,
+                    raceName: targetRace.name,
+                    experience: athlete.experienceLevel,
+                    isFirstTimer: false,
+                    isShortPrep: false,
+                    hotRaceForecast: false,
+                    refinementSummary: nil,
+                    restingHR: athlete.restingHeartRate,
+                    maxHR: athlete.maxHeartRate,
+                    biologicalSex: athlete.biologicalSex,
+                    qualityTemplate: nil
+                )
+                if let advice = newAdvice {
+                    plan.weeks[wi].sessions[si].coachAdvice = advice
+                }
+            }
+        }
+    }
+
+    /// Inserts a confirmation re-test session into the plan. Used when
+    /// FitnessTestRecalibrator returns `.regressionPendingRetest` —
+    /// the re-test takes the place of an intervals session 1 week (or
+    /// as soon as eligible) after the original.
+    private func insertConfirmationRetest(
+        in plan: inout TrainingPlan,
+        originalTestWeekNumber: Int,
+        variant: FitnessTestVariant,
+        targetRace: Race,
+        intermediateRaces: [Race]
+    ) {
+        // Build minimal skeletons from the existing plan so the
+        // scheduler can pick the right week. The plan's weeks already
+        // carry phase + isRecoveryWeek + dates.
+        let skeletons = plan.weeks.map { week in
+            WeekSkeletonBuilder.WeekSkeleton(
+                weekNumber: week.weekNumber,
+                startDate: week.startDate,
+                endDate: week.endDate,
+                phase: week.phase,
+                isRecoveryWeek: week.isRecoveryWeek,
+                phaseFocus: week.phaseFocus ?? week.phase.defaultFocus
+            )
+        }
+        let overrides = IntermediateRaceHandler.overrides(
+            skeletons: skeletons,
+            intermediateRaces: intermediateRaces
+        )
+        guard let schedule = FitnessTestScheduler.scheduleRetest(
+            skeletons: skeletons,
+            originalTestWeek: originalTestWeekNumber,
+            originalVariant: variant,
+            existingOverrides: overrides
+        ) else { return }
+
+        // Find the target week in the plan and substitute its first
+        // intervals (or tempo / VG) session with a re-test.
+        guard let weekIdx = plan.weeks.firstIndex(where: { $0.weekNumber == schedule.weekNumber }) else { return }
+        let qualityPriority: [SessionType] = [.intervals, .tempo, .verticalGain]
+        for type in qualityPriority {
+            if let idx = plan.weeks[weekIdx].sessions.firstIndex(where: { $0.type == type && !$0.isCompleted }) {
+                plan.weeks[weekIdx].sessions[idx].description = schedule.variant.description
+                plan.weeks[weekIdx].sessions[idx].coachAdvice = "🔁 Confirmation re-test. Your previous test was off your usual fitness — let's confirm whether that was a bad day or a real change before we touch the race goal. " + schedule.variant.coachAdvice
+                plan.weeks[weekIdx].sessions[idx].intensity = .maxEffort
+                plan.weeks[weekIdx].sessions[idx].intervalWorkoutId = nil
+                plan.weeks[weekIdx].sessions[idx].intervalFocus = schedule.variant.intervalFocusEncoded
+                plan.weeks[weekIdx].sessions[idx].isKeySession = true
+                return
+            }
+        }
+    }
+
     // MARK: - Skip
 
     func skipSession(

@@ -140,6 +140,15 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         let raceDuration = targetRace.estimatedDuration(experience: athlete.experienceLevel)
         let raceEffectiveKm = targetRace.effectiveDistanceKm
 
+        // Apply RecentFitnessChange anchor multiplier (asked in the
+        // plan-time onboarding sheet). Athletes recovering from injury /
+        // illness / extended time off shouldn't be anchored to the
+        // pre-break weekly volume — early-prep weeks would prescribe
+        // load they haven't built up to. Multiplier ranges 0.70-1.00
+        // depending on severity. Default 1.00 = no change.
+        let anchorMultiplier = planOptions.recentFitnessChange?.anchorMultiplier ?? 1.0
+        let anchoredWeeklyVolumeKm = athlete.weeklyVolumeKm * anchorMultiplier
+
         // Build per-athlete personalization profile. Tenure, weight band,
         // ultra finish count, demonstrated longest run, and demonstrated
         // recent peak weekly volume feed into multipliers + hard caps.
@@ -155,7 +164,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
 
         let volumes = VolumeCalculator.calculate(
             skeletons: volumeSkeletons,
-            currentWeeklyVolumeKm: athlete.weeklyVolumeKm,
+            currentWeeklyVolumeKm: anchoredWeeklyVolumeKm,
             raceDistanceKm: targetRace.distanceKm,
             raceElevationGainM: targetRace.elevationGainM,
             experience: athlete.experienceLevel,
@@ -518,10 +527,15 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             postRaceRecoveryWeeks: postRaceRecoveryWeeks
         )
 
-        // 4. Road-specific volume calculation
+        // 4. Road-specific volume calculation. Apply RecentFitnessChange
+        // anchor multiplier so athletes recovering from injury / illness
+        // / time off don't get pre-break volume prescribed in early weeks.
+        let anchorMultiplier = planOptions.recentFitnessChange?.anchorMultiplier ?? 1.0
+        var anchoredAthlete = athlete
+        anchoredAthlete.weeklyVolumeKm = athlete.weeklyVolumeKm * anchorMultiplier
         let volumes = RoadVolumeCalculator.calculate(
             skeletons: skeletons,
-            athlete: athlete,
+            athlete: anchoredAthlete,
             raceDistanceKm: targetRace.distanceKm,
             taperProfile: taperProfile,
             raceGoal: targetRace.goalType
@@ -1270,7 +1284,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
     /// gain) in the week's sessions with a fitness test session.
     /// Idempotent: if no quality slot exists, no-op (defensive — every
     /// non-recovery base/build week has at least one quality slot in
-    /// our pipelines).
+    /// our pipelines). Encodes the variant into `intervalFocus` so the
+    /// session-validation flow can recover it without separate state.
     private func substituteFitnessTest(
         sessions: inout [TrainingSession],
         variant: FitnessTestVariant
@@ -1282,7 +1297,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 sessions[idx].coachAdvice = variant.coachAdvice
                 sessions[idx].intensity = .maxEffort
                 sessions[idx].intervalWorkoutId = nil
-                sessions[idx].intervalFocus = FitnessTestVariant.intervalFocusLabel
+                sessions[idx].intervalFocus = variant.intervalFocusEncoded
                 sessions[idx].isKeySession = true
                 return
             }

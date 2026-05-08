@@ -51,6 +51,19 @@ struct SessionValidationView: View {
     /// Optional week context shown as a progress footer on the manual
     /// stats page. When nil, the footer is hidden.
     var weekProgress: WeekProgress?
+    /// Callback fired when a fitness-test session is validated with a
+    /// variant-specific result. Triggers the recalibration pipeline.
+    /// Detected automatically: the variant is encoded in
+    /// `session.intervalFocus` so no extra plumbing is needed.
+    var onCompleteFitnessTest: ((FitnessTestVariant, TestResultInput, PerceivedFeeling?) -> Void)?
+
+    /// Derives the fitness-test variant from the session's
+    /// `intervalFocus` (set by the scheduler when the test session was
+    /// substituted into the plan). Returns nil for non-fitness-test
+    /// sessions.
+    private var fitnessTestVariant: FitnessTestVariant? {
+        FitnessTestVariant.fromIntervalFocus(session.intervalFocus)
+    }
 
     @State private var showCompletion = false
     @State private var path: [ValidationStep] = []
@@ -60,6 +73,7 @@ struct SessionValidationView: View {
         case manual
         case syncApp
         case intervalFeedback
+        case fitnessTestResult
     }
 
     init(
@@ -72,7 +86,8 @@ struct SessionValidationView: View {
         onLinkStravaActivity: ((StravaActivity) -> Void)? = nil,
         intervalFeedbackContextProvider: (() async -> IntervalFeedbackContext?)? = nil,
         onSaveIntervalFeedback: ((IntervalPerformanceFeedback) -> Void)? = nil,
-        weekProgress: WeekProgress? = nil
+        weekProgress: WeekProgress? = nil,
+        onCompleteFitnessTest: ((FitnessTestVariant, TestResultInput, PerceivedFeeling?) -> Void)? = nil
     ) {
         self.session = session
         self.recentRuns = recentRuns
@@ -84,6 +99,7 @@ struct SessionValidationView: View {
         self.intervalFeedbackContextProvider = intervalFeedbackContextProvider
         self.onSaveIntervalFeedback = onSaveIntervalFeedback
         self.weekProgress = weekProgress
+        self.onCompleteFitnessTest = onCompleteFitnessTest
     }
 
     /// True when this session's type warrants a per-rep feedback page after
@@ -184,6 +200,18 @@ struct SessionValidationView: View {
             } else {
                 EmptyView()
             }
+        case .fitnessTestResult:
+            if let variant = fitnessTestVariant {
+                FitnessTestResultPage(
+                    variant: variant,
+                    onComplete: { result, feeling in
+                        onCompleteFitnessTest?(variant, result, feeling)
+                        withAnimation { showCompletion = true }
+                    }
+                )
+            } else {
+                EmptyView()
+            }
         }
     }
 
@@ -199,15 +227,23 @@ struct SessionValidationView: View {
                 Text("How do you want to validate?")
                     .font(.headline)
 
-                // Manual entry
+                // Manual entry. For fitness-test sessions, route to a
+                // variant-specific result entry (distance / time / HR)
+                // instead of the standard distance + duration form.
                 Button {
-                    path.append(.manual)
+                    if fitnessTestVariant != nil {
+                        path.append(.fitnessTestResult)
+                    } else {
+                        path.append(.manual)
+                    }
                 } label: {
                     validationOptionCard(
-                        icon: "pencil.and.list.clipboard",
+                        icon: fitnessTestVariant != nil ? "stopwatch.fill" : "pencil.and.list.clipboard",
                         iconColor: Theme.Colors.primary,
-                        title: "Enter manually",
-                        subtitle: "Type your distance, duration, and elevation."
+                        title: fitnessTestVariant != nil ? "Enter test result" : "Enter manually",
+                        subtitle: fitnessTestVariant != nil
+                            ? "Log your test result so we can recalibrate your training paces."
+                            : "Type your distance, duration, and elevation."
                     )
                 }
                 .buttonStyle(.plain)

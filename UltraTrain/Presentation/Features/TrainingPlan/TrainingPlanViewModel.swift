@@ -9,7 +9,7 @@ final class TrainingPlanViewModel {
 
     let planRepository: any TrainingPlanRepository
     let athleteRepository: any AthleteRepository
-    private let raceRepository: any RaceRepository
+    let raceRepository: any RaceRepository
     private let planGenerator: any GenerateTrainingPlanUseCase
     private let nutritionRepository: any NutritionRepository
     let nutritionAdvisor: any SessionNutritionAdvisor
@@ -178,6 +178,16 @@ final class TrainingPlanViewModel {
     /// Set by `PlanGenerationOptionsSheet.onGenerate`. Reset to standard
     /// after each plan generation so the next regen starts fresh.
     var pendingPlanOptions: PlanGenerationOptions = .standard
+
+    /// Most recent fitness-test recalibration outcome. Drives a
+    /// post-test recommendation banner / sheet so the athlete sees
+    /// the rationale for any pace updates.
+    var fitnessTestRecommendation: FitnessTestRecommendation?
+
+    struct FitnessTestRecommendation: Equatable, Sendable {
+        let variant: FitnessTestVariant
+        let outcome: FitnessTestRecalibrator.Result
+    }
 
     /// Drives the plan-options sheet presentation. The view binds to
     /// this; call `prepareToGeneratePlan()` to load the inputs and

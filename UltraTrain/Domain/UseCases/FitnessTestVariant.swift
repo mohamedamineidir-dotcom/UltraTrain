@@ -180,6 +180,30 @@ enum FitnessTestVariant: String, Sendable, Codable {
 
     static let intervalFocusLabel: String = "Fitness Test"
 
+    /// Encodes the variant into the session's `intervalFocus` string so
+    /// the validation view can recover it without extra plumbing.
+    /// Format: "Fitness Test:<rawValue>" (e.g., "Fitness Test:vmaFlat6Min").
+    var intervalFocusEncoded: String {
+        "\(Self.intervalFocusLabel):\(rawValue)"
+    }
+
+    /// Recovers the variant from an encoded `intervalFocus` string.
+    /// Returns nil for non-fitness-test focus strings or unknown raw
+    /// values.
+    static func fromIntervalFocus(_ focus: String?) -> FitnessTestVariant? {
+        guard let focus,
+              focus.hasPrefix("\(intervalFocusLabel):") else { return nil }
+        let raw = String(focus.dropFirst("\(intervalFocusLabel):".count))
+        return FitnessTestVariant(rawValue: raw)
+    }
+
+    /// True for any string that begins with the fitness-test prefix.
+    /// Handy when only presence matters, not the variant itself.
+    static func isFitnessTestFocus(_ focus: String?) -> Bool {
+        focus?.hasPrefix("\(intervalFocusLabel):") == true
+            || focus == intervalFocusLabel
+    }
+
     enum ResultPrompt: Equatable, Sendable {
         case distanceMeters
         case timeSeconds(distanceKm: Double)

@@ -200,6 +200,17 @@ extension TrainingPlanView {
                         },
                         onSaveIntervalFeedback: { feedback in
                             Task { await viewModel.saveIntervalFeedback(feedback) }
+                        },
+                        onCompleteFitnessTest: { sessionIndex, variant, result, feeling in
+                            Task {
+                                await viewModel.completeFitnessTestSession(
+                                    weekIndex: weekIndex,
+                                    sessionIndex: sessionIndex,
+                                    variant: variant,
+                                    result: result,
+                                    feeling: feeling
+                                )
+                            }
                         }
                     )
                 }

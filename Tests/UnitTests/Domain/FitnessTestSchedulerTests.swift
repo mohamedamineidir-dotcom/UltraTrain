@@ -294,6 +294,30 @@ struct FitnessTestSchedulerTests {
         #expect(result == nil, "Should return nil when only taper weeks remain")
     }
 
+    // MARK: - intervalFocus encoding
+
+    @Test("Variant encodes/decodes via intervalFocus")
+    func variantEncodingRoundTrip() {
+        for variant: FitnessTestVariant in [
+            .vmaFlat6Min, .fiveKTT, .uphillSustained30Min,
+            .uphillRepeats4x8, .uphillRepeats6x4, .treadmillIncline30Min
+        ] {
+            let encoded = variant.intervalFocusEncoded
+            let decoded = FitnessTestVariant.fromIntervalFocus(encoded)
+            #expect(decoded == variant, "Round-trip failed for \(variant)")
+            #expect(FitnessTestVariant.isFitnessTestFocus(encoded))
+        }
+    }
+
+    @Test("Non-fitness-test focus strings return nil variant")
+    func nonFitnessTestFocus() {
+        #expect(FitnessTestVariant.fromIntervalFocus(nil) == nil)
+        #expect(FitnessTestVariant.fromIntervalFocus("VO2max") == nil)
+        #expect(FitnessTestVariant.fromIntervalFocus("Speed") == nil)
+        #expect(FitnessTestVariant.fromIntervalFocus("Check-in") == nil)
+        #expect(!FitnessTestVariant.isFitnessTestFocus("VO2max"))
+    }
+
     @Test("Re-test returns nil when a B-race is within ±1 week")
     func retestSkipsWhenBraceClose() {
         let skeletons = makeSkeletons(weeks: 16)
