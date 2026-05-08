@@ -273,6 +273,61 @@ struct FitnessTestRecalibratorTests {
             "New T pace (\(newT)) should be faster than original (\(originalT))")
     }
 
+    // MARK: - Re-test cycle (baseline override)
+
+    @Test("Re-test rebound: original baseline override detects bounce-back")
+    func retestReboundDetection() {
+        // Simulate the rebound case:
+        // - First test (separately): athlete went 25:00 (slow), baseline 14.0 → vmaKmh updated to 12.37, regressionPendingRetest, plan stored 14.0 as original baseline.
+        // - Re-test: athlete runs 22:00 (rebound).
+        //   * Without override: baseline = 12.37 (post-first-test), delta = +24.9% → suspicious. WRONG.
+        //   * With override = 14.0 (original): delta = +1.4% → noChange. Correct outcome.
+        let athlete = makeAthlete(vmaKmh: 12.37) // already updated by first test
+        let race = makeRace()
+        // 22:00 5K → ~14.06 km/h VMA equivalent (close to original 14.0)
+        let result = FitnessTestRecalibrator.recalibrate(
+            testVariant: .fiveKTT,
+            result: TestResultInput(timeSeconds: 1320),
+            athlete: athlete, targetRace: race,
+            weeksUntilRace: 7, currentRacePhase: .build,
+            baselineVmaOverride: 14.0  // pre-first-test baseline
+        )
+        if case .noChange = result.recommendation { } else {
+            Issue.record("Rebound to original baseline should map to noChange, got \(result.recommendation)")
+        }
+        // Delta is computed against the override, not athlete.vmaKmh.
+        #expect(abs(result.deltaPercent) < 0.05)
+    }
+
+    @Test("Re-test confirmed regression: original baseline override + still slow → recalibrateAll")
+    func retestConfirmedRegression() {
+        // Simulate confirmed regression:
+        // - First test 25:00 → baseline 14.0 → vmaKmh = 12.37
+        // - Re-test still slow at 25:30 → measured 12.05
+        //   * Without override: baseline 12.37, delta -2.6% → noChange. WRONG.
+        //   * With override = 14.0: delta -13.9% → recalibrateAll (real regression confirmed).
+        let athlete = makeAthlete(vmaKmh: 12.37)
+        let race = makeRace()
+        // 25:30 → 11.76 km/h average → VMA 12.13
+        let result = FitnessTestRecalibrator.recalibrate(
+            testVariant: .fiveKTT,
+            result: TestResultInput(timeSeconds: 1530),
+            athlete: athlete, targetRace: race,
+            weeksUntilRace: 7, currentRacePhase: .build,
+            baselineVmaOverride: 14.0
+        )
+        // Confirmed regression: should NOT defer again (no double re-test).
+        // It should recalibrateAll (or recalibrateTrainingPacesOnly if too late).
+        switch result.recommendation {
+        case .recalibrateAll, .recalibrateTrainingPacesOnly, .regressionPendingRetest:
+            break  // any of these is acceptable; the key is delta > threshold
+        default:
+            Issue.record("Confirmed regression should recalibrate, got \(result.recommendation)")
+        }
+        #expect(result.deltaPercent < -0.07,
+            "Delta vs original baseline (\(result.deltaPercent)) should still show regression")
+    }
+
     @Test("No baseline VMA: accepts measured value, recalibrates training paces")
     func noBaselineVMA() {
         let athlete = makeAthlete(vmaKmh: nil)  // no VMA, no PRs

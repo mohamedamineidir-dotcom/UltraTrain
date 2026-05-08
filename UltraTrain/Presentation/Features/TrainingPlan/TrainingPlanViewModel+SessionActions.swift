@@ -129,24 +129,40 @@ extension TrainingPlanViewModel {
         let testWeek = currentPlan.weeks[weekIndex]
         let weeksRemaining = max(0, currentPlan.weeks.count - weekIndex - 1)
 
-        // 4. Run recalibration.
+        // 4. Run recalibration. If a previous test scheduled a
+        // confirmation re-test (the plan carries the original baseline),
+        // pass that baseline so the second test compares against the
+        // PRE-first-test fitness anchor — that's how we detect rebound
+        // vs confirmed regression.
+        let isConfirmationRetest = currentPlan.pendingRetestOriginalBaselineVma != nil
         let outcome = FitnessTestRecalibrator.recalibrate(
             testVariant: variant,
             result: result,
             athlete: athlete,
             targetRace: targetRace,
             weeksUntilRace: weeksRemaining,
-            currentRacePhase: testWeek.phase
+            currentRacePhase: testWeek.phase,
+            baselineVmaOverride: currentPlan.pendingRetestOriginalBaselineVma
         )
 
-        Logger.training.info("Fitness test recalibration: delta \(outcome.deltaPercent), \(String(describing: outcome.recommendation))")
+        Logger.training.info("Fitness test recalibration: delta \(outcome.deltaPercent), \(String(describing: outcome.recommendation)) (retest=\(isConfirmationRetest))")
 
-        // 5. Persist the new vmaKmh on the athlete (so future plans /
-        // pace prescriptions read fresh).
+        // 5. Persist the new vmaKmh on the athlete + capture / clear
+        // the plan's pendingRetestOriginalBaselineVma:
+        //   - First test, regression detected → STORE the pre-test
+        //     baseline so the upcoming re-test can compare against it.
+        //   - Confirmation re-test completing → CLEAR the stored baseline.
+        let preTestBaseline = outcome.baselineVmaKmh
         if let measured = outcome.measuredVmaKmh {
             var updatedAthlete = athlete
             updatedAthlete.vmaKmh = measured
             try? await athleteRepository.updateAthlete(updatedAthlete)
+        }
+        if isConfirmationRetest {
+            // Re-test cycle resolved — clear the stored baseline.
+            currentPlan.pendingRetestOriginalBaselineVma = nil
+        } else if outcome.recommendation == .regressionPendingRetest {
+            currentPlan.pendingRetestOriginalBaselineVma = preTestBaseline
         }
 
         // 6. Apply the updated pace profile to remaining quality
@@ -197,11 +213,11 @@ extension TrainingPlanViewModel {
         }
     }
 
-    /// Applies a refreshed pace profile to coach advice on remaining
-    /// quality sessions (intervals / tempo / longRun) starting from
-    /// `fromWeekIndex`. Lightweight — doesn't rebuild interval workout
-    /// phases (those keep their shape; the athlete's effort cues
-    /// reflect the new fitness via coachAdvice text).
+    /// Applies a refreshed pace profile to coach advice AND rebuilds
+    /// the structured IntervalWorkouts on remaining quality sessions
+    /// (intervals / tempo / longRun) starting from `fromWeekIndex`.
+    /// This keeps the workout-detail screen and the coach advice in
+    /// sync — both reflect the new fitness anchor.
     private func applyRefinedPaceProfile(
         to plan: inout TrainingPlan,
         fromWeekIndex: Int,
@@ -212,22 +228,50 @@ extension TrainingPlanViewModel {
         guard targetRace.raceType == .road else { return }
         let discipline = RoadRaceDiscipline.from(distanceKm: targetRace.distanceKm)
         let touchedTypes: Set<SessionType> = [.intervals, .tempo, .longRun, .recovery]
+        let isFirstTimer = !athlete.personalBests.contains { pb in
+            pb.timeSeconds > 0 && {
+                switch discipline {
+                case .road10K:      return pb.distance == .tenK
+                case .roadHalf:     return pb.distance == .halfMarathon
+                case .roadMarathon: return pb.distance == .marathon
+                }
+            }()
+        }
+
+        // Track week-in-phase as we walk forward so RoadIntervalLibrary
+        // can pick the right template (some templates rotate by
+        // week-in-phase to balance category exposure).
+        var weekInPhaseCounter: [TrainingPhase: Int] = [:]
+        for w in 0..<fromWeekIndex {
+            let phase = plan.weeks[w].phase
+            weekInPhaseCounter[phase, default: 0] += 1
+        }
 
         for wi in fromWeekIndex..<plan.weeks.count {
+            let week = plan.weeks[wi]
+            let weekInPhase = weekInPhaseCounter[week.phase, default: 0]
+            weekInPhaseCounter[week.phase, default: 0] += 1
+
             for si in 0..<plan.weeks[wi].sessions.count {
                 let session = plan.weeks[wi].sessions[si]
                 guard !session.isCompleted, !session.isSkipped else { continue }
                 guard touchedTypes.contains(session.type) else { continue }
+
+                // Don't disturb fitness-test sessions — they have their
+                // own description / advice and shouldn't be rewritten.
+                if FitnessTestVariant.isFitnessTestFocus(session.intervalFocus) { continue }
+
+                // 1. Refresh coach advice with the new pace profile.
                 let newAdvice = RoadCoachAdviceGenerator.advice(
                     type: session.type,
                     intensity: session.intensity,
-                    phase: plan.weeks[wi].phase,
+                    phase: week.phase,
                     discipline: discipline,
-                    isRecoveryWeek: plan.weeks[wi].isRecoveryWeek,
+                    isRecoveryWeek: week.isRecoveryWeek,
                     paceProfile: profile,
                     raceName: targetRace.name,
                     experience: athlete.experienceLevel,
-                    isFirstTimer: false,
+                    isFirstTimer: isFirstTimer,
                     isShortPrep: false,
                     hotRaceForecast: false,
                     refinementSummary: nil,
@@ -239,7 +283,105 @@ extension TrainingPlanViewModel {
                 if let advice = newAdvice {
                     plan.weeks[wi].sessions[si].coachAdvice = advice
                 }
+
+                // 2. Rebuild the structured workout (when one is linked)
+                // so workout-detail phases match the new pace anchor.
+                guard let workoutId = session.intervalWorkoutId else { continue }
+                guard let newWorkout = rebuildWorkout(
+                    for: session,
+                    week: week,
+                    weekInPhase: weekInPhase,
+                    discipline: discipline,
+                    raceDistanceKm: targetRace.distanceKm,
+                    profile: profile,
+                    experience: athlete.experienceLevel,
+                    age: athlete.age,
+                    isFirstTimer: isFirstTimer
+                ) else { continue }
+
+                // Replace the workout in plan.workouts, preserving
+                // the original UUID so the session.intervalWorkoutId
+                // reference stays valid.
+                let stableWorkout = IntervalWorkout(
+                    id: workoutId,
+                    name: newWorkout.name,
+                    descriptionText: newWorkout.descriptionText,
+                    phases: newWorkout.phases,
+                    category: newWorkout.category,
+                    estimatedDurationSeconds: newWorkout.estimatedDurationSeconds,
+                    estimatedDistanceKm: newWorkout.estimatedDistanceKm,
+                    isUserCreated: newWorkout.isUserCreated
+                )
+                if let widx = plan.workouts.firstIndex(where: { $0.id == workoutId }) {
+                    plan.workouts[widx] = stableWorkout
+                }
+                // Align session duration with the rebuilt workout.
+                if stableWorkout.estimatedDurationSeconds > 0 {
+                    plan.weeks[wi].sessions[si].plannedDuration = stableWorkout.estimatedDurationSeconds
+                }
             }
+        }
+    }
+
+    /// Rebuilds a single interval/tempo/longRun workout from the
+    /// library + new pace profile. Returns nil for session types that
+    /// don't carry a structured workout.
+    private func rebuildWorkout(
+        for session: TrainingSession,
+        week: TrainingWeek,
+        weekInPhase: Int,
+        discipline: RoadRaceDiscipline,
+        raceDistanceKm: Double,
+        profile: RoadPaceProfile,
+        experience: ExperienceLevel,
+        age: Int,
+        isFirstTimer: Bool
+    ) -> IntervalWorkout? {
+        switch session.type {
+        case .intervals:
+            // Intervals always sit in slot 0 in our generation pipeline.
+            guard let template = RoadIntervalLibrary.selectForSlot(
+                slotIndex: 0, phase: week.phase, discipline: discipline,
+                experience: experience, weekInPhase: weekInPhase,
+                isFirstTimerAtDistance: isFirstTimer
+            ) else { return nil }
+            return RoadWorkoutBuilder.build(
+                from: template, paceProfile: profile,
+                experience: experience, athleteAge: age
+            )
+        case .tempo:
+            // Tempo sits in slot 1 (excludes whatever category slot 0 used).
+            let q1 = RoadIntervalLibrary.selectForSlot(
+                slotIndex: 0, phase: week.phase, discipline: discipline,
+                experience: experience, weekInPhase: weekInPhase,
+                isFirstTimerAtDistance: isFirstTimer
+            )
+            guard let template = RoadIntervalLibrary.selectForSlot(
+                slotIndex: 1, phase: week.phase, discipline: discipline,
+                experience: experience, weekInPhase: weekInPhase,
+                excludeCategory: q1?.category,
+                isFirstTimerAtDistance: isFirstTimer
+            ) else { return nil }
+            return RoadWorkoutBuilder.build(
+                from: template, paceProfile: profile,
+                experience: experience, athleteAge: age
+            )
+        case .longRun:
+            let variant = RoadLongRunCalculator.variant(
+                phase: week.phase,
+                weekInPhase: weekInPhase,
+                raceDistanceKm: raceDistanceKm,
+                experience: experience,
+                isRecoveryWeek: week.isRecoveryWeek
+            )
+            return RoadLongRunWorkoutBuilder.build(
+                variant: variant,
+                totalDuration: session.plannedDuration,
+                paceProfile: profile,
+                weekInPhase: weekInPhase
+            )
+        default:
+            return nil
         }
     }
 

@@ -13,6 +13,9 @@ final class TrainingPlanSwiftDataModel {
     var intermediateRaceSnapshotsData: Data?
     var workoutsData: Data?
     var updatedAt: Date = Date()
+    /// Baseline VMA captured when a regression-pending re-test was
+    /// scheduled. Optional with default nil for SwiftData migration.
+    var pendingRetestOriginalBaselineVma: Double? = nil
 
     init(
         id: UUID = UUID(),
@@ -23,7 +26,8 @@ final class TrainingPlanSwiftDataModel {
         intermediateRaceIds: [UUID] = [],
         intermediateRaceSnapshotsData: Data? = nil,
         workoutsData: Data? = nil,
-        updatedAt: Date = Date()
+        updatedAt: Date = Date(),
+        pendingRetestOriginalBaselineVma: Double? = nil
     ) {
         self.id = id
         self.athleteId = athleteId
@@ -34,5 +38,6 @@ final class TrainingPlanSwiftDataModel {
         self.intermediateRaceSnapshotsData = intermediateRaceSnapshotsData
         self.workoutsData = workoutsData
         self.updatedAt = updatedAt
+        self.pendingRetestOriginalBaselineVma = pendingRetestOriginalBaselineVma
     }
 }

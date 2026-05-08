@@ -61,13 +61,20 @@ enum FitnessTestRecalibrator {
 
     /// Converts a test result into a recommendation + (when applicable)
     /// an updated RoadPaceProfile.
+    ///
+    /// `baselineVmaOverride` lets the caller supply a specific baseline
+    /// (e.g., the pre-first-test VMA stored on the plan) so a
+    /// confirmation re-test compares against the original fitness
+    /// anchor instead of the post-first-test value. When nil, the
+    /// recalibrator falls back to athlete.vmaKmh / Riegel-from-PB.
     static func recalibrate(
         testVariant: FitnessTestVariant,
         result: TestResultInput,
         athlete: Athlete,
         targetRace: Race,
         weeksUntilRace: Int,
-        currentRacePhase: TrainingPhase
+        currentRacePhase: TrainingPhase,
+        baselineVmaOverride: Double? = nil
     ) -> Result {
         // Trail uphill / treadmill variants: surface result, no
         // auto-recalibration.
@@ -92,10 +99,9 @@ enum FitnessTestRecalibrator {
             )
         }
 
-        // Baseline VMA: prefer the athlete's stored vmaKmh (most recent
-        // calibration); fall back to deriving from their best 5K PR
-        // when vmaKmh is nil.
-        let baselineVma = baselineVMA(athlete: athlete)
+        // Baseline VMA: explicit override > athlete.vmaKmh > derived
+        // from best 5K PR via Riegel.
+        let baselineVma = baselineVmaOverride ?? baselineVMA(athlete: athlete)
         guard let baseline = baselineVma, baseline > 0 else {
             // No baseline to compare against — accept the new VMA and
             // recalibrate training paces.

@@ -184,7 +184,8 @@ final class TrainingPlanViewModel {
     /// the rationale for any pace updates.
     var fitnessTestRecommendation: FitnessTestRecommendation?
 
-    struct FitnessTestRecommendation: Equatable, Sendable {
+    struct FitnessTestRecommendation: Equatable, Sendable, Identifiable {
+        let id = UUID()
         let variant: FitnessTestVariant
         let outcome: FitnessTestRecalibrator.Result
     }

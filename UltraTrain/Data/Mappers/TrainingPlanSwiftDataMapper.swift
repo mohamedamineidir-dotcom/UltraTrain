@@ -35,6 +35,7 @@ enum TrainingPlanSwiftDataMapper {
             intermediateRaceSnapshots: snapshots
         )
         plan.workouts = workouts
+        plan.pendingRetestOriginalBaselineVma = model.pendingRetestOriginalBaselineVma
         return plan
     }
 
@@ -109,7 +110,8 @@ enum TrainingPlanSwiftDataMapper {
             weeks: weekModels,
             intermediateRaceIds: plan.intermediateRaceIds,
             intermediateRaceSnapshotsData: snapshotsData,
-            workoutsData: workoutsData
+            workoutsData: workoutsData,
+            pendingRetestOriginalBaselineVma: plan.pendingRetestOriginalBaselineVma
         )
     }
 

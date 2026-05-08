@@ -204,6 +204,12 @@ struct TrainingPlanView: View {
                     )
                 }
             }
+            .sheet(item: $viewModel.fitnessTestRecommendation) { recommendation in
+                FitnessTestResultBanner(
+                    recommendation: recommendation,
+                    onDismiss: { viewModel.fitnessTestRecommendation = nil }
+                )
+            }
             .confirmationDialog(
                 "Export Plan",
                 isPresented: $showExportDialog,
