@@ -5,10 +5,31 @@ struct SkipReasonSheet: View {
     let onConfirm: (SkipReason) -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var selectedReason: SkipReason?
+    /// Drives the swap from the reason picker to the futuristic
+    /// charging screen after the user confirms. Mirrors the post-
+    /// validation UX so the athlete sees a consistent "we're working
+    /// on it" treatment whether they validated or skipped a session.
+    @State private var showCompletion = false
+    /// Detents shift to .large when the loading screen takes over —
+    /// the animation is full-screen by design and would feel cramped
+    /// at .medium.
+    @State private var detents: Set<PresentationDetent> = [.medium, .large]
+    @State private var currentDetent: PresentationDetent = .medium
 
     private var canConfirm: Bool { selectedReason != nil }
 
     var body: some View {
+        Group {
+            if showCompletion {
+                SessionCompletionLoadingView { dismiss() }
+            } else {
+                reasonPicker
+            }
+        }
+        .presentationDetents(detents, selection: $currentDetent)
+    }
+
+    private var reasonPicker: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
@@ -40,8 +61,17 @@ struct SkipReasonSheet: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Skip") {
                         if let reason = selectedReason {
+                            // Fire the viewmodel work immediately so it
+                            // progresses in parallel with the loading
+                            // animation. By the time the animation ends
+                            // (~5s) the skip is persisted and any
+                            // adaptation analysis has run.
                             onConfirm(reason)
-                            dismiss()
+                            // Lock the sheet at .large for the loading
+                            // screen.
+                            detents = [.large]
+                            currentDetent = .large
+                            withAnimation { showCompletion = true }
                         }
                     }
                     .fontWeight(.semibold)
@@ -49,7 +79,6 @@ struct SkipReasonSheet: View {
                 }
             }
         }
-        .presentationDetents([.medium, .large])
     }
 
     // MARK: - Reason Row
