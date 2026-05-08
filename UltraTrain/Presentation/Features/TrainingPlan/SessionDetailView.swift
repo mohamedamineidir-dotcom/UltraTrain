@@ -51,8 +51,8 @@ struct SessionDetailView: View {
                     // S&C-specific layout
                     scDurationCard
                     scExerciseList
-                    if let advice = session.coachAdvice {
-                        coachAdviceSection(advice)
+                    if let advice = session.coachAdvice, !advice.isEmpty {
+                        CoachAdviceCard(advice: advice, tint: session.intensity.color)
                     }
                 } else {
                     statsSection
@@ -61,17 +61,30 @@ struct SessionDetailView: View {
                         paceTargetsSection(athlete: athlete)
                     }
 
-                    descriptionSection
+                    // Resolve the linked workout once. When present,
+                    // WorkoutBlocksSection carries the athlete-facing
+                    // structure + per-phase visual breakdown — the
+                    // standalone Description / Session-Structure cards
+                    // become redundant and are dropped to keep the
+                    // page tight (user feedback: too many cards).
+                    let resolvedWorkout: IntervalWorkout? = {
+                        guard let id = session.intervalWorkoutId else { return nil }
+                        return workouts.first(where: { $0.id == id && !$0.phases.isEmpty })
+                    }()
 
-                    if let workoutId = session.intervalWorkoutId,
-                       let workout = workouts.first(where: { $0.id == workoutId }),
-                       !workout.phases.isEmpty {
-                        sessionStructureSummary(workout: workout)
+                    if resolvedWorkout == nil {
+                        // No structured workout → keep the description
+                        // text card as the only place the athlete sees
+                        // what they're meant to do.
+                        descriptionSection
+                    }
+
+                    if let workout = resolvedWorkout {
                         WorkoutBlocksSection(workout: workout, athlete: athlete)
                     }
 
-                    if let advice = session.coachAdvice {
-                        coachAdviceSection(advice)
+                    if let advice = session.coachAdvice, !advice.isEmpty {
+                        CoachAdviceCard(advice: advice, tint: session.intensity.color)
                     }
 
                     if let athlete,
@@ -187,66 +200,62 @@ struct SessionDetailView: View {
     // MARK: - Header
 
     private var headerSection: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // Gradient intensity bar
-            RoundedRectangle(cornerRadius: 2)
-                .fill(
-                    LinearGradient(
-                        colors: [session.intensity.color.opacity(0.6), session.intensity.color],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .frame(height: 4)
-                .padding(.bottom, Theme.Spacing.sm)
-
-            HStack {
+        let tint = session.isSkipped ? Theme.Colors.tertiaryLabel : session.intensity.color
+        return HStack(alignment: .top, spacing: Theme.Spacing.md) {
+            // Glowing icon disc — replaces the bare large-title icon.
+            // Anchors the eye and ties to the session's intensity color.
+            ZStack {
+                Circle()
+                    .fill(tint.opacity(0.15))
+                    .frame(width: 56, height: 56)
+                Circle()
+                    .stroke(tint.opacity(0.4), lineWidth: 1)
+                    .frame(width: 56, height: 56)
                 Image(systemName: session.type.icon)
-                    .font(.largeTitle)
-                    .foregroundStyle(session.isSkipped ? Theme.Colors.secondaryLabel : session.intensity.color)
-                    .accessibilityHidden(true)
+                    .font(.title2)
+                    .foregroundStyle(tint)
+            }
+            .shadow(color: tint.opacity(0.3), radius: 8, y: 2)
+            .accessibilityHidden(true)
 
-                VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-                    HStack(spacing: Theme.Spacing.xs) {
-                        Text(session.type.displayName)
-                            .font(.title2)
-                            .fontWeight(.bold)
-                        // RR-24: interval focus pill next to the type
-                        // title so the detail header reads e.g.
-                        // "Intervals · VO2max" instead of the generic
-                        // "Intervals".
-                        if let focus = session.intervalFocus {
-                            Text(focus)
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(session.intensity.color)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(Capsule().fill(session.intensity.color.opacity(0.14)))
-                                .overlay(Capsule().stroke(session.intensity.color.opacity(0.25), lineWidth: 0.5))
-                        }
-                    }
-                    Text(session.date.formatted(.dateTime.weekday(.wide).month().day()))
-                        .foregroundStyle(Theme.Colors.secondaryLabel)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(session.type.displayName)
+                    .font(.title2.bold())
+                if let focus = session.intervalFocus {
+                    Text(focus.uppercased())
+                        .font(.caption2.weight(.bold))
+                        .tracking(0.5)
+                        .foregroundStyle(tint)
                 }
+                Text(session.date.formatted(.dateTime.weekday(.wide).month().day()))
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
 
-                Spacer()
+            Spacer()
 
-                VStack(spacing: Theme.Spacing.xs) {
-                    Text(session.intensity.displayName)
-                        .font(.caption)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, Theme.Spacing.sm)
-                        .padding(.vertical, Theme.Spacing.xs)
-                        .background(session.isSkipped ? AnyShapeStyle(Theme.Colors.tertiaryLabel) : AnyShapeStyle(session.intensity.color))
-                        .clipShape(Capsule())
-
-                    if let zone = session.targetHeartRateZone {
-                        SessionZoneTargetBadge(zone: zone)
-                    }
+            VStack(alignment: .trailing, spacing: Theme.Spacing.xs) {
+                Text(session.intensity.displayName)
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(
+                        Capsule().fill(
+                            LinearGradient(
+                                colors: [tint, tint.opacity(0.75)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                    )
+                if let zone = session.targetHeartRateZone {
+                    SessionZoneTargetBadge(zone: zone)
                 }
             }
         }
+        .padding(Theme.Spacing.md)
+        .futuristicGlassStyle(phaseTint: tint)
         .accessibilityIdentifier("trainingPlan.sessionDetail.header")
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(headerAccessibilityLabel)
@@ -298,27 +307,31 @@ struct SessionDetailView: View {
     }
 
     private var statsSection: some View {
-        HStack(spacing: Theme.Spacing.md) {
+        let tint = session.intensity.color
+        return HStack(spacing: Theme.Spacing.sm) {
             if isTimeBased {
                 if session.plannedDuration > 0 {
                     StatCard(
                         title: "Duration",
                         value: session.plannedDuration.formattedDuration,
-                        unit: ""
+                        unit: "",
+                        tint: tint
                     )
                 }
                 if session.plannedElevationGainM > 0 {
                     StatCard(
                         title: "Elevation",
                         value: String(format: "%.0f", UnitFormatter.elevationValue(session.plannedElevationGainM, unit: units)),
-                        unit: UnitFormatter.elevationLabel(units)
+                        unit: UnitFormatter.elevationLabel(units),
+                        tint: tint
                     )
                 }
                 if session.plannedDistanceKm > 0 {
                     StatCard(
                         title: "Distance",
                         value: String(format: "%.1f", UnitFormatter.distanceValue(session.plannedDistanceKm, unit: units)),
-                        unit: UnitFormatter.distanceLabel(units)
+                        unit: UnitFormatter.distanceLabel(units),
+                        tint: tint
                     )
                 }
             } else {
@@ -326,21 +339,24 @@ struct SessionDetailView: View {
                     StatCard(
                         title: "Distance",
                         value: String(format: "%.1f", UnitFormatter.distanceValue(session.plannedDistanceKm, unit: units)),
-                        unit: UnitFormatter.distanceLabel(units)
+                        unit: UnitFormatter.distanceLabel(units),
+                        tint: tint
                     )
                 }
                 if session.plannedElevationGainM > 0 {
                     StatCard(
                         title: "Elevation",
                         value: String(format: "%.0f", UnitFormatter.elevationValue(session.plannedElevationGainM, unit: units)),
-                        unit: UnitFormatter.elevationLabel(units)
+                        unit: UnitFormatter.elevationLabel(units),
+                        tint: tint
                     )
                 }
                 if session.plannedDuration > 0 {
                     StatCard(
                         title: "Duration",
                         value: session.plannedDuration.formattedDuration,
-                        unit: ""
+                        unit: "",
+                        tint: tint
                     )
                 }
             }
@@ -476,36 +492,32 @@ struct SessionDetailView: View {
 
     private var descriptionSection: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("Description")
-                .font(.headline)
+            Label("Description", systemImage: "text.alignleft")
+                .font(.subheadline.bold())
+                .foregroundStyle(session.intensity.color)
             Text(session.description)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
+                .font(.subheadline)
+                .foregroundStyle(.primary)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .cardStyle()
-    }
-
-    private func coachAdviceSection(_ advice: String) -> some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Label("Coach", systemImage: "quote.bubble.fill")
-                .font(.headline)
-                .foregroundStyle(Theme.Colors.warmCoral)
-            Text(advice)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .cardStyle()
+        .padding(Theme.Spacing.md)
+        .futuristicGlassStyle(phaseTint: session.intensity.color)
     }
 
     private func nutritionSection(_ notes: String) -> some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             Label("Nutrition", systemImage: "fork.knife")
-                .font(.headline)
+                .font(.subheadline.bold())
+                .foregroundStyle(Theme.Colors.warning)
             Text(notes)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
+                .font(.subheadline)
+                .foregroundStyle(.primary)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .cardStyle()
+        .padding(Theme.Spacing.md)
+        .futuristicGlassStyle(phaseTint: Theme.Colors.warning)
     }
 
     // MARK: - Pace & HR Targets
@@ -582,89 +594,6 @@ struct SessionDetailView: View {
         case .hard:      "VO2max effort"
         case .maxEffort: "All-out effort"
         }
-    }
-
-    // MARK: - Session Structure Summary
-
-    private func sessionStructureSummary(workout: IntervalWorkout) -> some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Label("Session Structure", systemImage: "list.bullet.rectangle")
-                .font(.headline)
-            Text(buildStructureSummary(workout: workout))
-                .font(.subheadline)
-                .foregroundStyle(Theme.Colors.secondaryLabel)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .cardStyle()
-    }
-
-    private func buildStructureSummary(workout: IntervalWorkout) -> String {
-        var parts: [String] = []
-        let phases = workout.phases
-
-        var i = 0
-        while i < phases.count {
-            let phase = phases[i]
-            let perRepSeconds: Int
-            if case .duration(let sec) = phase.trigger {
-                perRepSeconds = Int(sec)
-            } else {
-                perRepSeconds = 0
-            }
-
-            switch phase.phaseType {
-            case .warmUp:
-                let mins = Int(phase.totalDuration) / 60
-                parts.append("Warmup \(mins)min")
-
-            case .coolDown:
-                let mins = Int(phase.totalDuration) / 60
-                parts.append("Cooldown \(mins)min")
-
-            case .work:
-                // Show distance for distance-based, time for duration-based
-                let repLabel: String
-                if case .distance(let km) = phase.trigger {
-                    let meters = Int(km * 1000)
-                    repLabel = meters >= 1000 ? "\(meters)m" : "\(meters)m"
-                } else {
-                    repLabel = formatSeconds(perRepSeconds)
-                }
-                var workPart: String
-                if phase.repeatCount > 1 {
-                    workPart = "\(phase.repeatCount)×\(repLabel) @ \(phase.targetIntensity.displayName)"
-                } else {
-                    workPart = "\(repLabel) @ \(phase.targetIntensity.displayName)"
-                }
-
-                // Inline the next recovery phase if it exists (compact format)
-                if i + 1 < phases.count, phases[i + 1].phaseType == .recovery {
-                    let recPhase = phases[i + 1]
-                    if case .duration(let recSec) = recPhase.trigger, recSec > 0 {
-                        let recStr = formatSeconds(Int(recSec))
-                        workPart += " (\(recStr) jog)"
-                    }
-                    i += 1 // Skip the recovery phase
-                }
-                parts.append(workPart)
-
-            case .recovery:
-                // Only show standalone recovery (not already inlined with work)
-                if perRepSeconds > 0 {
-                    parts.append("\(formatSeconds(perRepSeconds)) jog")
-                }
-            }
-            i += 1
-        }
-        return parts.joined(separator: " → ")
-    }
-
-    private func formatSeconds(_ totalSeconds: Int) -> String {
-        let mins = totalSeconds / 60
-        let secs = totalSeconds % 60
-        if mins == 0 { return "\(secs)s" }
-        if secs > 0 { return "\(mins)m\(secs)s" }
-        return "\(mins)min"
     }
 
     // MARK: - Actions

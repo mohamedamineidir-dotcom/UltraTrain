@@ -21,6 +21,7 @@
 		013ED6B3C99A5697B58D10EE /* SyncedActivityFeedRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 801DD8A5729920B761AE30DB /* SyncedActivityFeedRepository.swift */; };
 		017A92A4CCE9071E64367F6E /* IntervalProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58587DFD2739D7C0506DDCEE /* IntervalProgressBar.swift */; };
 		01B5CFD4ADBF0D57993D33BD /* MockRaceReflectionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32016904314D9CA105F102E9 /* MockRaceReflectionRepository.swift */; };
+		01D97FB92F2C0B11DA0B243F /* CoachAdviceCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D982AD916860B1A88A911A51 /* CoachAdviceCard.swift */; };
 		01DFF0296B849C60E22A078B /* GroupChallengeSwiftDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DBBECAFF2DC931C0369718 /* GroupChallengeSwiftDataModel.swift */; };
 		01F3E35C2AAD2E622A0D1FE0 /* SessionIntensityRecommendation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAA240788F3912A9DC609391 /* SessionIntensityRecommendation.swift */; };
 		02254FF20CA61ECF2275D228 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D6C6B912DABCC6F887B9734 /* Assets.xcassets */; };
@@ -3403,6 +3404,7 @@
 		D97536629EE62005DCA5871C /* NutritionIntakeSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionIntakeSummaryView.swift; sourceTree = "<group>"; };
 		D97A0D4229E5C16A244BCF35 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D97BD5E6B16C2F6378F98671 /* WatchActiveRunView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchActiveRunView.swift; sourceTree = "<group>"; };
+		D982AD916860B1A88A911A51 /* CoachAdviceCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachAdviceCard.swift; sourceTree = "<group>"; };
 		D9C161CE409CC2EAB551D2BF /* LocalGearRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalGearRepositoryTests.swift; sourceTree = "<group>"; };
 		DA03634533E1046CAD625F38 /* FinishEstimate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishEstimate.swift; sourceTree = "<group>"; };
 		DA080FB6EE683BB9FE394234 /* VoiceCoachingConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCoachingConfig.swift; sourceTree = "<group>"; };
@@ -5656,6 +5658,7 @@
 		C4C20A01440FA0E58E2EE863 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				D982AD916860B1A88A911A51 /* CoachAdviceCard.swift */,
 				CA6D8FFA706B45DCDA641A77 /* PhaseHeaderCard.swift */,
 				3F63AB0E4AEB7A801C28E400 /* PlanAdjustmentBanner.swift */,
 				E5DEBDF1312D3C3991378D29 /* PlanGenerationLoadingView.swift */,
@@ -7157,6 +7160,7 @@
 				8AF3134B056526A81ADCBF6B /* CloudKitSharingService.swift in Sources */,
 				8855990C017CDDA861D1514D /* CloudKitSharingServiceProtocol.swift in Sources */,
 				7F7B391E697D5B8F250F9337 /* CloudKitSyncMonitor.swift in Sources */,
+				01D97FB92F2C0B11DA0B243F /* CoachAdviceCard.swift in Sources */,
 				546C12992C5238FC369B4674 /* CoachAdviceGenerator.swift in Sources */,
 				3AADF509F0AA95E015095ED3 /* CoachingInsight.swift in Sources */,
 				572EEEEC19EC1E3F6300354C /* CoachingInsightCalculator.swift in Sources */,
