@@ -145,6 +145,55 @@ enum FitnessTestScheduler {
         return .uphillRepeats6x4
     }
 
+    /// Maximum weeks ahead of the original test we'll search for a
+    /// re-test slot. Beyond 3 weeks the goal-change conversation is
+    /// moot — the athlete is too close to the race to act on it.
+    static let maxRetestSearchWeeks = 3
+
+    /// Schedules a confirmation re-test 1 week after the original test
+    /// (or as soon as the next non-recovery base/build week allows).
+    /// Same variant as the original — re-tests must compare apples to
+    /// apples. Returns nil when no eligible slot exists within
+    /// `maxRetestSearchWeeks` of the original.
+    ///
+    /// Triggered when FitnessTestRecalibrator returns
+    /// `.regressionPendingRetest`. The re-test takes the place of an
+    /// intervals slot in the chosen week — the existing
+    /// `substituteFitnessTest` priority (intervals → tempo → vertical
+    /// gain) handles the actual slot replacement.
+    static func scheduleRetest(
+        skeletons: [WeekSkeletonBuilder.WeekSkeleton],
+        originalTestWeek: Int,
+        originalVariant: FitnessTestVariant,
+        existingOverrides: [IntermediateRaceHandler.RaceWeekOverride] = []
+    ) -> Schedule? {
+        for offset in 1...maxRetestSearchWeeks {
+            let target = originalTestWeek + offset
+            guard target <= skeletons.count else { break }
+            // weekNumber is 1-based; skeletons array is 0-indexed.
+            guard target >= 1, target - 1 < skeletons.count else { continue }
+            let skeleton = skeletons[target - 1]
+
+            // Phase gate: only base or build, never recovery.
+            guard skeleton.phase == .base || skeleton.phase == .build else { continue }
+            guard !skeleton.isRecoveryWeek else { continue }
+
+            // B-race within ±1 week: the B-race itself is the
+            // calibration event — skip the re-test entirely. (We
+            // return nil rather than scheduling further out: if the
+            // B-race calibration doesn't confirm the regression, the
+            // athlete can re-decide manually.)
+            let bRaceClose = existingOverrides.contains { override in
+                override.behavior.isRaceWeek
+                    && abs(override.weekNumber - skeleton.weekNumber) <= 1
+            }
+            if bRaceClose { return nil }
+
+            return Schedule(weekNumber: skeleton.weekNumber, variant: originalVariant)
+        }
+        return nil
+    }
+
     /// Smart default for the opt-in toggle in the plan-time onboarding
     /// sheet. The user can always override.
     /// - Beginners default OFF (French school + Roche: too risky)

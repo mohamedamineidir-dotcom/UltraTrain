@@ -242,4 +242,75 @@ struct FitnessTestSchedulerTests {
         // Should land within ±3 of week 5 (offsets searched outward)
         #expect(abs(s.weekNumber - 5) <= 3, "Test landed at week \(s.weekNumber)")
     }
+
+    // MARK: - Re-test scheduling
+
+    @Test("Re-test placed 1 week after original")
+    func retestOneWeekLater() {
+        let skeletons = makeSkeletons(weeks: 16)
+        guard let s = FitnessTestScheduler.scheduleRetest(
+            skeletons: skeletons,
+            originalTestWeek: 5,
+            originalVariant: .fiveKTT
+        ) else { Issue.record("Expected re-test schedule"); return }
+        #expect(s.weekNumber == 6, "Re-test should land at week 6, got \(s.weekNumber)")
+        #expect(s.variant == .fiveKTT, "Re-test variant must match original")
+    }
+
+    @Test("Re-test skips a recovery week and lands the next eligible week")
+    func retestSkipsRecoveryWeek() {
+        // Force week 5 = original, week 6 = recovery, week 7 should be picked.
+        let originalTestWeek = 5
+        let weeks = 16
+        let skeletons = (0..<weeks).map { i -> WeekSkeletonBuilder.WeekSkeleton in
+            let isRecovery = (i + 1) == originalTestWeek + 1  // make week 6 recovery
+            let phase: TrainingPhase = i < 10 ? .build : .taper
+            return WeekSkeletonBuilder.WeekSkeleton(
+                weekNumber: i + 1,
+                startDate: Date.now.addingTimeInterval(TimeInterval(i * 7 * 86400)),
+                endDate: Date.now.addingTimeInterval(TimeInterval((i * 7 + 6) * 86400)),
+                phase: phase,
+                isRecoveryWeek: isRecovery,
+                phaseFocus: phase.defaultFocus
+            )
+        }
+        guard let s = FitnessTestScheduler.scheduleRetest(
+            skeletons: skeletons,
+            originalTestWeek: originalTestWeek,
+            originalVariant: .vmaFlat6Min
+        ) else { Issue.record("Expected re-test"); return }
+        #expect(s.weekNumber == 7, "Should skip recovery week 6, landed at \(s.weekNumber)")
+    }
+
+    @Test("Re-test returns nil when next 3 weeks are all unsuitable")
+    func retestReturnsNilWhenNoSlot() {
+        // Original at week 14, plan only goes to week 16, weeks 15-16 are taper.
+        let skeletons = makeSkeletons(weeks: 16)
+        let result = FitnessTestScheduler.scheduleRetest(
+            skeletons: skeletons,
+            originalTestWeek: 14,
+            originalVariant: .fiveKTT
+        )
+        #expect(result == nil, "Should return nil when only taper weeks remain")
+    }
+
+    @Test("Re-test returns nil when a B-race is within ±1 week")
+    func retestSkipsWhenBraceClose() {
+        let skeletons = makeSkeletons(weeks: 16)
+        let bRaceOverride = IntermediateRaceHandler.RaceWeekOverride(
+            weekNumber: 7,
+            raceId: UUID(),
+            behavior: .raceWeek(priority: .bRace),
+            weekInRecovery: nil
+        )
+        // Original at week 5, B-race at week 7 → within ±1 of week 6 (re-test
+        // candidate) AND ±1 of week 7 (next candidate). Should return nil.
+        let result = FitnessTestScheduler.scheduleRetest(
+            skeletons: skeletons,
+            originalTestWeek: 5,
+            originalVariant: .fiveKTT,
+            existingOverrides: [bRaceOverride]
+        )
+        #expect(result == nil, "Should skip when B-race lands close — race itself is the calibration")
+    }
 }

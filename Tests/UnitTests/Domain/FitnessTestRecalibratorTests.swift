@@ -157,11 +157,11 @@ struct FitnessTestRecalibratorTests {
         #expect(result.updatedPaceProfile == nil)
     }
 
-    @Test("Sign of delta: regression also recalibrates")
-    func regressionDelta() {
+    @Test("Regression ≥7% in build phase: defer goal change pending re-test")
+    func regressionInBuildDefersGoalChange() {
         let athlete = makeAthlete(vmaKmh: 14.0)
         let race = makeRace()
-        // 13.0 km/h → -7.1% delta
+        // 13.0 km/h → ~-7.1% delta
         let result = FitnessTestRecalibrator.recalibrate(
             testVariant: .vmaFlat6Min,
             result: TestResultInput(distanceMeters: 1300),
@@ -169,8 +169,40 @@ struct FitnessTestRecalibratorTests {
             weeksUntilRace: 8, currentRacePhase: .build
         )
         #expect(result.deltaPercent < 0)
-        #expect(result.recommendation == .recalibrateAll
-            || result.recommendation == .recalibrateTrainingPacesOnly)
+        #expect(result.recommendation == .regressionPendingRetest,
+            "Regression in build should defer to re-test, not auto-update goal")
+        // Training paces still update — workouts must match current fitness.
+        #expect(result.updatedPaceProfile != nil,
+            "Training paces should still update on regression")
+    }
+
+    @Test("Regression in peak/taper: training paces only (no re-test)")
+    func regressionInPeakNoRetest() {
+        let athlete = makeAthlete(vmaKmh: 14.0)
+        let race = makeRace()
+        let result = FitnessTestRecalibrator.recalibrate(
+            testVariant: .vmaFlat6Min,
+            result: TestResultInput(distanceMeters: 1300),
+            athlete: athlete, targetRace: race,
+            weeksUntilRace: 3, currentRacePhase: .peak
+        )
+        // Late prep — too risky to do another all-out test, fall through.
+        #expect(result.recommendation == .recalibrateTrainingPacesOnly)
+    }
+
+    @Test("Improvement ≥7% in build: still recalibrate all (asymmetric is regression-only)")
+    func improvementStillRecalibratesAll() {
+        let athlete = makeAthlete(vmaKmh: 14.0)
+        let race = makeRace()
+        // 15.1 km/h → ~+7.9% delta — improvement
+        let result = FitnessTestRecalibrator.recalibrate(
+            testVariant: .vmaFlat6Min,
+            result: TestResultInput(distanceMeters: 1510),
+            athlete: athlete, targetRace: race,
+            weeksUntilRace: 8, currentRacePhase: .build
+        )
+        #expect(result.recommendation == .recalibrateAll,
+            "Improvement should immediately recalibrate all (not defer)")
     }
 
     @Test("Trail uphill variant: no auto-recalibration")

@@ -32,6 +32,22 @@ enum FitnessTestRecalibrator {
         case noChange(reason: String)
         case recalibrateTrainingPacesOnly
         case recalibrateAll
+
+        /// Regression ≥ 7% detected in build phase with ≥ 4 weeks
+        /// until race. We update training paces (workouts must match
+        /// current fitness) but DON'T immediately suggest a race-target
+        /// downgrade — a single bad test could be a heat / sleep / life-
+        /// stress day. The caller schedules a confirmation re-test
+        /// (FitnessTestScheduler.scheduleRetest) one week later in
+        /// place of an intervals slot. Goal-change conversation waits
+        /// for the second test to confirm or rebound.
+        ///
+        /// Asymmetric to improvement intentionally — Pfitzinger / Hudson
+        /// rule: don't move a season goal on one data point, especially
+        /// when it's downward. Improvements are robust signal (you don't
+        /// accidentally run a fast 5K). Regressions can be noise.
+        case regressionPendingRetest
+
         case suspicious  // delta too large to trust automatically
     }
 
@@ -148,7 +164,22 @@ enum FitnessTestRecalibrator {
             }
         }()
         let timeToActOnTarget = weeksUntilRace >= 4
-        if absDelta >= raceTargetDeltaThreshold && inBuildOrEarlier && timeToActOnTarget {
+        let hitsRaceTargetThreshold = absDelta >= raceTargetDeltaThreshold
+
+        if hitsRaceTargetThreshold && inBuildOrEarlier && timeToActOnTarget {
+            // Asymmetric: improvement → recalibrateAll immediately.
+            // Regression → defer goal change until a confirmation
+            // re-test confirms it. Training paces still update either
+            // way (sessions must match current fitness).
+            if delta < 0 {
+                return Result(
+                    measuredVmaKmh: measuredVma,
+                    baselineVmaKmh: baseline,
+                    deltaPercent: delta,
+                    recommendation: .regressionPendingRetest,
+                    updatedPaceProfile: updatedProfile
+                )
+            }
             return Result(
                 measuredVmaKmh: measuredVma,
                 baselineVmaKmh: baseline,
