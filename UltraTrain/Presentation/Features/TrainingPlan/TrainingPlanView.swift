@@ -184,11 +184,25 @@ struct TrainingPlanView: View {
                 titleVisibility: .visible
             ) {
                 Button("Update Plan") {
-                    Task { await viewModel.generatePlan() }
+                    Task { await viewModel.prepareToGeneratePlan() }
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text(regenerateDialogMessage)
+            }
+            .sheet(isPresented: $viewModel.showPlanOptionsSheet) {
+                if let athlete = viewModel.planOptionsSheetAthlete,
+                   let race = viewModel.planOptionsSheetTargetRace {
+                    PlanGenerationOptionsSheet(
+                        targetRace: race,
+                        athlete: athlete,
+                        planTotalWeeks: viewModel.planOptionsSheetTotalWeeks,
+                        onGenerate: { options in
+                            Task { await viewModel.generatePlanWithOptions(options) }
+                        },
+                        onCancel: { viewModel.showPlanOptionsSheet = false }
+                    )
+                }
             }
             .confirmationDialog(
                 "Export Plan",

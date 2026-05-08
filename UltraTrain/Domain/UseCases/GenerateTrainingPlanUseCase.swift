@@ -17,6 +17,18 @@ protocol GenerateTrainingPlanUseCase: Sendable {
         intermediateRaces: [Race],
         recentIntervalFeedback: [IntervalPerformanceFeedback]
     ) async throws -> TrainingPlan
+
+    /// Plan-time options variant. Adds support for the small plan-time
+    /// onboarding sheet (fitness test opt-in, recent fitness change).
+    /// Default impl drops the options and delegates to the feedback
+    /// variant, so existing tests + mocks keep working.
+    func execute(
+        athlete: Athlete,
+        targetRace: Race,
+        intermediateRaces: [Race],
+        recentIntervalFeedback: [IntervalPerformanceFeedback],
+        planOptions: PlanGenerationOptions
+    ) async throws -> TrainingPlan
 }
 
 extension GenerateTrainingPlanUseCase {
@@ -30,6 +42,21 @@ extension GenerateTrainingPlanUseCase {
             athlete: athlete,
             targetRace: targetRace,
             intermediateRaces: intermediateRaces
+        )
+    }
+
+    func execute(
+        athlete: Athlete,
+        targetRace: Race,
+        intermediateRaces: [Race],
+        recentIntervalFeedback: [IntervalPerformanceFeedback],
+        planOptions: PlanGenerationOptions
+    ) async throws -> TrainingPlan {
+        try await execute(
+            athlete: athlete,
+            targetRace: targetRace,
+            intermediateRaces: intermediateRaces,
+            recentIntervalFeedback: recentIntervalFeedback
         )
     }
 }

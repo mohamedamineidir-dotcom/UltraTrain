@@ -479,7 +479,7 @@ extension TrainingPlanView {
                 title: "Generate Plan",
                 systemImage: "sparkles"
             ) {
-                Task { await viewModel.generatePlan() }
+                Task { await viewModel.prepareToGeneratePlan() }
             },
             isPrimaryLoading: viewModel.isGenerating
         )

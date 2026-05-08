@@ -35,13 +35,30 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         intermediateRaces: [Race],
         recentIntervalFeedback: [IntervalPerformanceFeedback]
     ) async throws -> TrainingPlan {
+        try await execute(
+            athlete: athlete,
+            targetRace: targetRace,
+            intermediateRaces: intermediateRaces,
+            recentIntervalFeedback: recentIntervalFeedback,
+            planOptions: .standard
+        )
+    }
+
+    func execute(
+        athlete: Athlete,
+        targetRace: Race,
+        intermediateRaces: [Race],
+        recentIntervalFeedback: [IntervalPerformanceFeedback],
+        planOptions: PlanGenerationOptions
+    ) async throws -> TrainingPlan {
         // Road race branch: completely separate pipeline, zero trail logic changes.
         if targetRace.raceType == .road {
             return try generateRoadPlan(
                 athlete: athlete,
                 targetRace: targetRace,
                 intermediateRaces: intermediateRaces,
-                recentIntervalFeedback: recentIntervalFeedback
+                recentIntervalFeedback: recentIntervalFeedback,
+                planOptions: planOptions
             )
         }
 
@@ -166,6 +183,24 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         let aRaceWeekIdx = skeletons.firstIndex { skeleton in
             raceDate >= skeleton.startDate && raceDate <= skeleton.endDate
         }
+
+        // 5c. Mid-prep fitness test schedule (opt-in via planOptions).
+        // Trail pipeline skips the test entirely for races ≥100K — Koop
+        // and House & Johnston both argue VMA-style tests are misleading
+        // for ultras. Below 100K, the variant adapts to athlete's terrain
+        // (verticalGainEnvironment + uphillDuration) — sustained 30-min
+        // uphill TT for mountain athletes, 4×8 / 5×4 repeats for athletes
+        // with shorter hills, treadmill incline, or 6-min VMA flat as
+        // fallback.
+        let fitnessTestSchedule = FitnessTestScheduler.schedule(
+            skeletons: skeletons,
+            targetRace: targetRace,
+            athlete: athlete,
+            userOptIn: planOptions.includeFitnessTest,
+            existingOverrides: overrides,
+            tuneUpWeekNumber: nil,
+            fitnessCheckInWeeks: []
+        )
 
         // 6. Generate sessions for each week
         var allWorkouts: [IntervalWorkout] = []
@@ -341,6 +376,19 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             var roundedSessions = adapted.sessions
             EnduranceDurationRounder.roundInPlace(&roundedSessions)
 
+            // Mid-prep fitness test substitution. When this week is
+            // the scheduled test week, replace the first quality slot
+            // (intervals → tempo) with the test session. Same pattern
+            // as the periodic 2K check-in / Pfitz tune-up — a test is
+            // a workout substitution, not an addition.
+            if let schedule = fitnessTestSchedule,
+               schedule.weekNumber == skeleton.weekNumber {
+                substituteFitnessTest(
+                    sessions: &roundedSessions,
+                    variant: schedule.variant
+                )
+            }
+
             // Always recompute weekly duration from the actual session
             // content. Sessions' plannedDuration now reflects the
             // workout's real structure (warmup + work + cooldown for
@@ -427,7 +475,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         athlete: Athlete,
         targetRace: Race,
         intermediateRaces: [Race],
-        recentIntervalFeedback: [IntervalPerformanceFeedback] = []
+        recentIntervalFeedback: [IntervalPerformanceFeedback] = [],
+        planOptions: PlanGenerationOptions = .standard
     ) throws -> TrainingPlan {
         let today = Date.now.startOfDay
         let raceDate = targetRace.date.startOfDay
@@ -560,6 +609,20 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         let fitnessCheckInWeeks = PlanFitnessCheckIn.checkInWeekNumbers(
             skeletons: skeletons,
             tuneUpWeekNumber: tuneUpWeekNumber
+        )
+
+        // Mid-prep fitness test (opt-in). Coordinates with the auto
+        // Pfitz tune-up + periodic 2K check-ins so we don't double-up
+        // on hard tests. Variant is 6-min VMA flat (5K/10K races) or
+        // 5K TT (HM/Marathon).
+        let fitnessTestSchedule = FitnessTestScheduler.schedule(
+            skeletons: skeletons,
+            targetRace: targetRace,
+            athlete: athlete,
+            userOptIn: planOptions.includeFitnessTest,
+            existingOverrides: overrides,
+            tuneUpWeekNumber: tuneUpWeekNumber,
+            fitnessCheckInWeeks: fitnessCheckInWeeks
         )
 
         // RR-20: first-timer flag — true when the athlete has no prior PB at
@@ -895,6 +958,20 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 sessionsAfterSub[ttIdx].isKeySession = true
             }
 
+            // Mid-prep fitness test (opt-in) — replace the intervals
+            // session with the variant-specific test. Scheduler already
+            // ensures we don't collide with a B-race / tune-up / 2K
+            // check-in; defensive `override == nil` guards intermediate
+            // race weeks.
+            if let schedule = fitnessTestSchedule,
+               schedule.weekNumber == skeleton.weekNumber,
+               override == nil {
+                substituteFitnessTest(
+                    sessions: &sessionsAfterSub,
+                    variant: schedule.variant
+                )
+            }
+
             // RR-5: Add S&C sessions for athletes who opted in. Uses the same
             // StrengthSessionGenerator the trail pipeline uses; road-specific
             // emphasis is inherent to the generator's exercise selection.
@@ -1186,6 +1263,29 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             return try await runRepository.getRuns(from: windowStart, to: now)
         } catch {
             return []
+        }
+    }
+
+    /// Substitutes the first quality slot (intervals → tempo → vertical
+    /// gain) in the week's sessions with a fitness test session.
+    /// Idempotent: if no quality slot exists, no-op (defensive — every
+    /// non-recovery base/build week has at least one quality slot in
+    /// our pipelines).
+    private func substituteFitnessTest(
+        sessions: inout [TrainingSession],
+        variant: FitnessTestVariant
+    ) {
+        let qualityPriority: [SessionType] = [.intervals, .tempo, .verticalGain]
+        for type in qualityPriority {
+            if let idx = sessions.firstIndex(where: { $0.type == type }) {
+                sessions[idx].description = variant.description
+                sessions[idx].coachAdvice = variant.coachAdvice
+                sessions[idx].intensity = .maxEffort
+                sessions[idx].intervalWorkoutId = nil
+                sessions[idx].intervalFocus = FitnessTestVariant.intervalFocusLabel
+                sessions[idx].isKeySession = true
+                return
+            }
         }
     }
 }

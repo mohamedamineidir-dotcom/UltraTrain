@@ -174,6 +174,57 @@ final class TrainingPlanViewModel {
 
     // MARK: - Generate
 
+    /// Plan-time options collected from the small onboarding sheet.
+    /// Set by `PlanGenerationOptionsSheet.onGenerate`. Reset to standard
+    /// after each plan generation so the next regen starts fresh.
+    var pendingPlanOptions: PlanGenerationOptions = .standard
+
+    /// Drives the plan-options sheet presentation. The view binds to
+    /// this; call `prepareToGeneratePlan()` to load the inputs and
+    /// flip it on.
+    var showPlanOptionsSheet: Bool = false
+
+    /// Inputs the plan-options sheet needs. Populated by
+    /// `prepareToGeneratePlan()` before the sheet is shown.
+    private(set) var planOptionsSheetAthlete: Athlete?
+    private(set) var planOptionsSheetTargetRace: Race?
+    private(set) var planOptionsSheetTotalWeeks: Int = 0
+
+    /// Loads the athlete + target race + plan length so the sheet has
+    /// everything it needs, then presents it. Called by the view when
+    /// the user taps "Generate plan" / "Update plan". Falls back to
+    /// direct generation (skipping the sheet) when the prerequisites
+    /// can't be loaded — better than blocking the user.
+    func prepareToGeneratePlan() async {
+        do {
+            guard let athlete = try await athleteRepository.getAthlete() else {
+                await generatePlan()
+                return
+            }
+            let allRaces = try await raceRepository.getRaces()
+            let aRacesByDate = allRaces
+                .filter { $0.priority == .aRace }
+                .sorted { $0.date < $1.date }
+            let target = aRacesByDate.last ?? Race.generalFitness(startingFrom: .now)
+            let totalWeeks = max(1, Date.now.startOfDay.weeksBetween(target.date.startOfDay))
+            planOptionsSheetAthlete = athlete
+            planOptionsSheetTargetRace = target
+            planOptionsSheetTotalWeeks = totalWeeks
+            showPlanOptionsSheet = true
+        } catch {
+            Logger.training.error("prepareToGeneratePlan failed: \(error). Falling back to direct generation.")
+            await generatePlan()
+        }
+    }
+
+    /// Sets the pending options + triggers generation. Called from
+    /// `PlanGenerationOptionsSheet.onGenerate`.
+    func generatePlanWithOptions(_ options: PlanGenerationOptions) async {
+        pendingPlanOptions = options
+        showPlanOptionsSheet = false
+        await generatePlan()
+    }
+
     func generatePlan() async {
         guard !isGenerating else { return }
         isGenerating = true
@@ -207,11 +258,18 @@ final class TrainingPlanViewModel {
             // paces when feedback can't be loaded.
             let recentFeedback = await loadRecentIntervalFeedback()
 
+            // Options from the plan-time sheet (fitness test opt-in,
+            // recent fitness change). Reset to standard after to avoid
+            // leaking state into a future regen.
+            let options = pendingPlanOptions
+            pendingPlanOptions = .standard
+
             var newPlan = try await planGenerator.execute(
                 athlete: athlete,
                 targetRace: targetRace,
                 intermediateRaces: intermediateRaces,
-                recentIntervalFeedback: recentFeedback
+                recentIntervalFeedback: recentFeedback,
+                planOptions: options
             )
 
             // Restore progress from old plan to matching sessions
