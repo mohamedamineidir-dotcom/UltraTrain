@@ -53,7 +53,8 @@ enum RaceSwiftDataMapper {
             savedRouteId: model.savedRouteId,
             serverUpdatedAt: model.serverUpdatedAt,
             maxElevationM: model.maxElevationM,
-            polesAllowed: model.polesAllowed
+            polesAllowed: model.polesAllowed,
+            includesSpecificPrep: model.includesSpecificPrep
         )
     }
 
@@ -93,7 +94,8 @@ enum RaceSwiftDataMapper {
             savedRouteId: race.savedRouteId,
             serverUpdatedAt: race.serverUpdatedAt,
             maxElevationM: race.maxElevationM,
-            polesAllowed: race.polesAllowed
+            polesAllowed: race.polesAllowed,
+            includesSpecificPrep: race.includesSpecificPrep
         )
     }
 

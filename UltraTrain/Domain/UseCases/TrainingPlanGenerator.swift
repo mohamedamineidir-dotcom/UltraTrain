@@ -211,6 +211,19 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             fitnessCheckInWeeks: []
         )
 
+        // 5d. B/C-race specificity injections (opt-in per race via
+        // Race.includesSpecificPrep). When the athlete has a road B/C
+        // race with a target time AND opted in, inject 1-3 race-pace
+        // sessions in the 2-3 weeks before the race. Replaces existing
+        // intervals/tempo/longRun slots — no net fatigue. See
+        // BRaceSpecificityCalculator for the coaching basis.
+        let bRaceSpecificityInjections = BRaceSpecificityCalculator.injections(
+            skeletons: skeletons,
+            intermediateRaces: intermediateRaces,
+            targetRace: targetRace,
+            athlete: athlete
+        )
+
         // 6. Generate sessions for each week
         var allWorkouts: [IntervalWorkout] = []
         var allStrengthWorkouts: [StrengthWorkout] = []
@@ -396,6 +409,24 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     sessions: &roundedSessions,
                     variant: schedule.variant
                 )
+            }
+
+            // B/C-race specificity injections for this week. Multiple
+            // injections per week are possible if two races' prep
+            // windows overlap; substitutor checks the slot type so
+            // they don't trample each other (intervals vs tempo vs
+            // longRun).
+            let weekInjections = bRaceSpecificityInjections.filter {
+                $0.weekNumber == skeleton.weekNumber
+            }
+            for injection in weekInjections {
+                if let workout = BRaceSpecificitySubstitutor.apply(
+                    injection: injection,
+                    sessions: &roundedSessions,
+                    athlete: athlete
+                ) {
+                    allWorkouts.append(workout)
+                }
             }
 
             // Always recompute weekly duration from the actual session

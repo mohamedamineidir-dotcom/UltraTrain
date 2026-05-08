@@ -243,6 +243,18 @@ extension EditRaceSheet {
     }
 
     func save() {
+        // Auto-detect raceType when the user hasn't explicitly chosen
+        // one but the heuristic says road (low elev + sub-marathon).
+        // This catches B/C races added via autocomplete that didn't
+        // set raceType, so the trail-pipeline B-race-specificity logic
+        // can pick them up.
+        let resolvedRaceType: RaceType = {
+            if raceType != .trail { return raceType }
+            if elevationGainM < 100 && distanceKm < 50 && distanceKm > 0 {
+                return .road
+            }
+            return raceType
+        }()
         var race = Race(
             id: existingId ?? UUID(),
             name: name.trimmingCharacters(in: .whitespaces),
@@ -253,13 +265,15 @@ extension EditRaceSheet {
             priority: priority,
             goalType: buildGoal(),
             checkpoints: checkpoints,
-            terrainDifficulty: terrainDifficulty
+            terrainDifficulty: terrainDifficulty,
+            raceType: resolvedRaceType
         )
         race.courseRoute = courseRoute
         race.savedRouteId = savedRouteId
         race.locationLatitude = locationLatitude
         race.locationLongitude = locationLongitude
         race.locationName = locationName
+        race.includesSpecificPrep = includesSpecificPrep
         onSave(race)
         dismiss()
     }

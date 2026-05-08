@@ -32,6 +32,8 @@ final class RaceSwiftDataModel {
     /// Whether trekking poles are allowed on the course. Drives the
     /// pole-training cue. Optional; nil = no cue.
     var polesAllowed: Bool?
+    /// Athlete opted into B/C-race specific prep. Default false.
+    var includesSpecificPrep: Bool = false
 
     init(
         id: UUID = UUID(),
@@ -57,7 +59,8 @@ final class RaceSwiftDataModel {
         updatedAt: Date = Date(),
         serverUpdatedAt: Date? = nil,
         maxElevationM: Double? = nil,
-        polesAllowed: Bool? = nil
+        polesAllowed: Bool? = nil,
+        includesSpecificPrep: Bool = false
     ) {
         self.id = id
         self.name = name
@@ -83,5 +86,6 @@ final class RaceSwiftDataModel {
         self.serverUpdatedAt = serverUpdatedAt
         self.maxElevationM = maxElevationM
         self.polesAllowed = polesAllowed
+        self.includesSpecificPrep = includesSpecificPrep
     }
 }

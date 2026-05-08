@@ -32,6 +32,13 @@ struct Race: Identifiable, Equatable, Sendable, Codable {
     /// phases (1-2 pole sessions/week). Pre-populated from the known-race
     /// database; nil = unknown, no cue.
     var polesAllowed: Bool? = nil
+    /// Athlete opted into B/C-race specific prep (1-3 race-pace quality
+    /// sessions in the 2-3 weeks before this race). Only meaningful for
+    /// road B/C races with a `.targetTime` goal during a trail/ultra
+    /// A-race prep — for all other cases the flag is ignored. Default
+    /// false: athlete must explicitly opt in (Pfizinger / Roche stance:
+    /// don't compromise the primary goal silently).
+    var includesSpecificPrep: Bool = false
 
     var hasCourseRoute: Bool { !courseRoute.isEmpty }
 

@@ -43,6 +43,8 @@ struct EditRaceSheet: View {
     @State var locationLongitude: Double?
     @State var locationName: String?
     @State var showLocationPicker = false
+    @State var raceType: RaceType
+    @State var includesSpecificPrep: Bool
 
     let existingId: UUID?
 
@@ -75,6 +77,8 @@ struct EditRaceSheet: View {
             _locationLatitude = State(initialValue: nil)
             _locationLongitude = State(initialValue: nil)
             _locationName = State(initialValue: nil)
+            _raceType = State(initialValue: .trail)
+            _includesSpecificPrep = State(initialValue: false)
         case .edit(let race):
             existingId = race.id
             _name = State(initialValue: race.name)
@@ -107,6 +111,8 @@ struct EditRaceSheet: View {
                 _targetTimeMinutes = State(initialValue: 0)
                 _targetRanking = State(initialValue: rank)
             }
+            _raceType = State(initialValue: race.raceType)
+            _includesSpecificPrep = State(initialValue: race.includesSpecificPrep)
         }
     }
 
@@ -129,6 +135,9 @@ struct EditRaceSheet: View {
                 elevationSection
                 prioritySection
                 goalSection
+                if showSpecificPrepToggle {
+                    specificPrepSection
+                }
                 terrainSection
                 checkpointsSection
             }
@@ -203,6 +212,42 @@ struct EditRaceSheet: View {
 
     private var isShortRoadRace: Bool {
         elevationGainM < 100 && distanceKm < 42.195 && distanceKm > 0
+    }
+
+    /// True when this race is a road B/C race with a target time —
+    /// the only case where B-race specificity opt-in makes sense.
+    /// Trail/ultra B/C races and `.finish` goals don't surface the
+    /// toggle (consensus: trail/ultra prep IS the specificity; no
+    /// time goal = no need for pace work).
+    var showSpecificPrepToggle: Bool {
+        guard priority != .aRace else { return false }
+        guard goalType == .targetTime else { return false }
+        let isRoadByType = raceType == .road
+        let isRoadByHeuristic = elevationGainM < 100 && distanceKm < 50 && distanceKm > 0
+        return isRoadByType || isRoadByHeuristic
+    }
+
+    @ViewBuilder
+    var specificPrepSection: some View {
+        Section {
+            Toggle(isOn: $includesSpecificPrep) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Race-pace prep for this race")
+                        .font(.subheadline.weight(.semibold))
+                    Text("Adds 1-3 race-pace quality sessions in the 2-3 weeks before this race — VO2max for 10K, threshold for HM, MP blocks for marathon. Replaces existing intervals, no extra fatigue.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .tint(Theme.Colors.warmCoral)
+        } header: {
+            Text("Specific prep")
+        } footer: {
+            Text("Off by default. When off, this race stays on your calendar with a standard mini-taper + recovery, but your training stays focused on your A-race.")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
     }
 
     private var raceInfoSection: some View {
