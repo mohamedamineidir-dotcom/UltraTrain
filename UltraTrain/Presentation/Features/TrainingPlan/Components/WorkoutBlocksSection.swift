@@ -58,7 +58,8 @@ struct WorkoutBlocksSection: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .cardStyle()
+        .padding(Theme.Spacing.md)
+        .futuristicGlassStyle(phaseTint: Theme.Colors.accentColor)
     }
 
     // MARK: - Ordered Phases
