@@ -39,9 +39,15 @@ struct GoalTrainingStepView: View {
                         .pickerStyle(.segmented)
 
                         if viewModel.raceGoalType == .targetTime {
-                            HStack(spacing: Theme.Spacing.md) {
+                            // 3-up (h:m:s) needs tighter spacing than
+                            // 2-up to fit on small phones (iPhone SE)
+                            // without wrapping.
+                            HStack(spacing: viewModel.showsTargetTimeSeconds ? Theme.Spacing.sm : Theme.Spacing.md) {
                                 LabeledIntStepper(label: "Hrs", value: $viewModel.raceTargetTimeHours, range: 0...100, unit: "h")
                                 LabeledIntStepper(label: "Min", value: $viewModel.raceTargetTimeMinutes, range: 0...59, unit: "m")
+                                if viewModel.showsTargetTimeSeconds {
+                                    LabeledIntStepper(label: "Sec", value: $viewModel.raceTargetTimeSeconds, range: 0...59, unit: "s")
+                                }
                             }
                         }
                         if viewModel.raceGoalType == .targetRanking {

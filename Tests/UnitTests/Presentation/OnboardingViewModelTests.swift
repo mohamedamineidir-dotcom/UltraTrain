@@ -202,6 +202,65 @@ struct OnboardingViewModelTests {
         #expect(vm.error == nil)
     }
 
+    @Test("Target time includes seconds for road race ≤ marathon")
+    @MainActor
+    func targetTimeIncludesSecondsForRoadRace() async {
+        let athleteRepo = MockAthleteRepository()
+        let raceRepo = MockRaceRepository()
+        let (vm, _, _) = makeViewModel(athleteRepo: athleteRepo, raceRepo: raceRepo)
+
+        vm.experienceLevel = .intermediate
+        vm.firstName = "Sarah"
+        vm.lastName = "Test"
+        vm.raceName = "10K"
+        vm.raceDistanceKm = 10
+        vm.raceElevationGainM = 0
+        vm.raceType = .road
+        vm.raceGoalType = .targetTime
+        // 36:55 — the user's example from the spec
+        vm.raceTargetTimeHours = 0
+        vm.raceTargetTimeMinutes = 36
+        vm.raceTargetTimeSeconds = 55
+
+        await vm.completeOnboarding()
+
+        guard let saved = raceRepo.savedRace else {
+            Issue.record("Race not saved"); return
+        }
+        guard case .targetTime(let secs) = saved.goalType else {
+            Issue.record("Expected .targetTime, got \(saved.goalType)"); return
+        }
+        let expected: TimeInterval = 0 * 3600 + 36 * 60 + 55  // 2215
+        #expect(secs == expected,
+            "Target time should be 36:55 = 2215s, got \(secs)")
+    }
+
+    @Test("showsTargetTimeSeconds: road ≤marathon → true; trail/ultra → false")
+    @MainActor
+    func showsSecondsGate() async {
+        let (vm, _, _) = makeViewModel()
+        // Road 10K → seconds visible
+        vm.raceType = .road
+        vm.raceDistanceKm = 10
+        vm.raceElevationGainM = 0
+        #expect(vm.showsTargetTimeSeconds == true)
+        // Road marathon (exactly 42.195) → seconds visible (inclusive)
+        vm.raceDistanceKm = 42.195
+        #expect(vm.showsTargetTimeSeconds == true)
+        // Just over marathon → seconds hidden
+        vm.raceDistanceKm = 50
+        #expect(vm.showsTargetTimeSeconds == false)
+        // Trail 50K → seconds hidden
+        vm.raceType = .trail
+        vm.raceDistanceKm = 50
+        vm.raceElevationGainM = 2500
+        #expect(vm.showsTargetTimeSeconds == false)
+        // Trail 21K with elevation (mountain race) → seconds hidden
+        vm.raceDistanceKm = 21
+        vm.raceElevationGainM = 1500
+        #expect(vm.showsTargetTimeSeconds == false)
+    }
+
     @Test("Complete onboarding handles save failure")
     @MainActor
     func completeOnboardingFailure() async {

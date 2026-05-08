@@ -123,6 +123,12 @@ final class OnboardingViewModel {
     var raceGoalType: RaceGoalSelection = .finish
     var raceTargetTimeHours: Int = 10
     var raceTargetTimeMinutes: Int = 0
+    /// Seconds component of the target time. Only surfaced in the UI
+    /// for road races up to marathon (inclusive) where the difference
+    /// between e.g. 36:01 and 36:55 in a 10K is large enough that
+    /// target paces would diverge. For longer trail/ultra goals the
+    /// seconds picker stays hidden — minute precision is plenty.
+    var raceTargetTimeSeconds: Int = 0
     var raceTargetRanking: Int = 50
     var raceTerrainDifficulty: TerrainDifficulty = .moderate
     var raceType: RaceType = .trail
@@ -156,6 +162,19 @@ final class OnboardingViewModel {
 
     var isShortRoadRace: Bool {
         raceElevationGainM < 100 && raceDistanceKm < 42.195 && raceDistanceKm > 0
+    }
+
+    /// Whether the target-time picker should expose a seconds field.
+    /// Road races up to marathon (inclusive) need second precision —
+    /// the gap between e.g. 36:01 and 36:55 in a 10K shifts target
+    /// paces by ~10 sec/km. For trail/ultra A-races minute precision
+    /// is sufficient (and seconds would be noise relative to race-day
+    /// variability).
+    var showsTargetTimeSeconds: Bool {
+        let isRoadByType = raceType == .road
+        let isRoadByHeuristic = raceElevationGainM < 100 && raceDistanceKm > 0
+        let isRoad = isRoadByType || isRoadByHeuristic
+        return isRoad && raceDistanceKm > 0 && raceDistanceKm <= 42.195
     }
 
     // MARK: - Init
@@ -566,8 +585,14 @@ final class OnboardingViewModel {
         case .finish:
             return .finish
         case .targetTime:
-            let seconds = TimeInterval(raceTargetTimeHours * 3600 + raceTargetTimeMinutes * 60)
-            return .targetTime(seconds)
+            // Include seconds component when the UI exposes the field
+            // (road race ≤ marathon). For longer trail/ultra goals the
+            // seconds picker stays hidden so raceTargetTimeSeconds is
+            // always 0 → no impact.
+            let totalSeconds = raceTargetTimeHours * 3600
+                + raceTargetTimeMinutes * 60
+                + raceTargetTimeSeconds
+            return .targetTime(TimeInterval(totalSeconds))
         case .targetRanking:
             return .targetRanking(raceTargetRanking)
         }

@@ -91,9 +91,13 @@ extension EditRaceSheet {
             .accessibilityHint("Choose your race goal: finish, target time, or target ranking")
 
             if goalType == .targetTime {
-                HStack(spacing: Theme.Spacing.md) {
-                    LabeledIntStepper(label: "Hours", value: $targetTimeHours, range: 0...100, unit: "h")
+                // 3-up (h:m:s) tightens spacing to fit on small phones.
+                HStack(spacing: showsTargetTimeSeconds ? Theme.Spacing.sm : Theme.Spacing.md) {
+                    LabeledIntStepper(label: showsTargetTimeSeconds ? "Hrs" : "Hours", value: $targetTimeHours, range: 0...100, unit: "h")
                     LabeledIntStepper(label: "Min", value: $targetTimeMinutes, range: 0...59, unit: "m")
+                    if showsTargetTimeSeconds {
+                        LabeledIntStepper(label: "Sec", value: $targetTimeSeconds, range: 0...59, unit: "s")
+                    }
                 }
             }
 
@@ -213,7 +217,13 @@ extension EditRaceSheet {
     func buildGoal() -> RaceGoal {
         switch goalType {
         case .finish: .finish
-        case .targetTime: .targetTime(TimeInterval(targetTimeHours * 3600 + targetTimeMinutes * 60))
+        case .targetTime:
+            // Seconds component is always added; the picker only
+            // shows it for road races ≤ marathon (showsTargetTimeSeconds),
+            // so for trail/ultra the field stays at 0.
+            .targetTime(TimeInterval(
+                targetTimeHours * 3600 + targetTimeMinutes * 60 + targetTimeSeconds
+            ))
         case .targetRanking: .targetRanking(targetRanking)
         }
     }

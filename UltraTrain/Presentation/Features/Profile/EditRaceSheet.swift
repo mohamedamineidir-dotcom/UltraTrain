@@ -27,6 +27,7 @@ struct EditRaceSheet: View {
     @State var goalType: RaceGoalSelection
     @State var targetTimeHours: Int
     @State var targetTimeMinutes: Int
+    @State var targetTimeSeconds: Int
     @State var targetRanking: Int
     @State var terrainDifficulty: TerrainDifficulty
     @State var checkpoints: [Checkpoint]
@@ -69,6 +70,7 @@ struct EditRaceSheet: View {
             _goalType = State(initialValue: .finish)
             _targetTimeHours = State(initialValue: 10)
             _targetTimeMinutes = State(initialValue: 0)
+            _targetTimeSeconds = State(initialValue: 0)
             _targetRanking = State(initialValue: 50)
             _terrainDifficulty = State(initialValue: .moderate)
             _checkpoints = State(initialValue: [])
@@ -99,16 +101,19 @@ struct EditRaceSheet: View {
                 _goalType = State(initialValue: .finish)
                 _targetTimeHours = State(initialValue: 10)
                 _targetTimeMinutes = State(initialValue: 0)
+                _targetTimeSeconds = State(initialValue: 0)
                 _targetRanking = State(initialValue: 50)
             case .targetTime(let seconds):
                 _goalType = State(initialValue: .targetTime)
                 _targetTimeHours = State(initialValue: Int(seconds) / 3600)
                 _targetTimeMinutes = State(initialValue: (Int(seconds) % 3600) / 60)
+                _targetTimeSeconds = State(initialValue: Int(seconds) % 60)
                 _targetRanking = State(initialValue: 50)
             case .targetRanking(let rank):
                 _goalType = State(initialValue: .targetRanking)
                 _targetTimeHours = State(initialValue: 10)
                 _targetTimeMinutes = State(initialValue: 0)
+                _targetTimeSeconds = State(initialValue: 0)
                 _targetRanking = State(initialValue: rank)
             }
             _raceType = State(initialValue: race.raceType)
@@ -212,6 +217,17 @@ struct EditRaceSheet: View {
 
     private var isShortRoadRace: Bool {
         elevationGainM < 100 && distanceKm < 42.195 && distanceKm > 0
+    }
+
+    /// Surface a seconds picker on the target-time field for road
+    /// races up to marathon (inclusive). The 36:01 vs 36:55 gap in a
+    /// 10K shifts target paces by ~10 sec/km — minute-only precision
+    /// would lose that signal.
+    var showsTargetTimeSeconds: Bool {
+        let isRoadByType = raceType == .road
+        let isRoadByHeuristic = elevationGainM < 100 && distanceKm > 0
+        let isRoad = isRoadByType || isRoadByHeuristic
+        return isRoad && distanceKm > 0 && distanceKm <= 42.195
     }
 
     /// True when this race is a road B/C race with a target time —
