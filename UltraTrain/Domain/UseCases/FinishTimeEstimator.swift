@@ -137,7 +137,9 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
             runs: recentRuns,
             fitness: currentFitness,
             race: race,
-            hasRaceResults: raceResultsUsed > 0
+            hasRaceResults: raceResultsUsed > 0,
+            source: source,
+            athlete: athlete
         )
 
         return FinishEstimate(
@@ -205,6 +207,27 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
             let terrainMatch: Double = race.raceType == .trail ? 1.0 : 0.6
             result.append((pace, recency * proximity * terrainMatch))
         }
+
+        // VMA from a fitness test is a measured-fitness signal that
+        // wouldn't otherwise reach the predictor (it lives on the
+        // athlete, not in personalBests). Convert to a 5K-equivalent
+        // synthetic PB via Daniels (5K is run at ~97% vVO2max → 5K
+        // pace ≈ (3600/VMA) × 1.02 sec/km). Discount the weight
+        // slightly because it's derived not raced — race-day pacing
+        // adds variance the test doesn't capture.
+        if let vma = athlete.vmaKmh, vma > 0 {
+            let fiveKPaceSecPerKm = (3600.0 / vma) * 1.02
+            let fiveKTimeSec = fiveKPaceSecPerKm * 5
+            let exponent = riegelExponent(toDistanceKm: raceFlatKm)
+            let predictedTime = fiveKTimeSec * pow(raceFlatKm / 5.0, exponent)
+            let pace = predictedTime / max(raceEffectiveKm, 1)
+            // Recency: VMA is by definition the most recent fitness
+            // measurement (updated on each test). Weight = 1.0 fresh.
+            let proximity = 1.0 / (1.0 + abs(5.0 - raceFlatKm) / max(raceFlatKm, 1))
+            let terrainMatch: Double = race.raceType == .road ? 1.0 : 0.6
+            let derivedDiscount = 0.8
+            result.append((pace, proximity * terrainMatch * derivedDiscount))
+        }
         return result
     }
 
@@ -264,18 +287,24 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
             // ±25-30% when prepping a generic-fitness profile.
             return 0.25
         case .personalBests:
-            // Two factors: how MANY PBs and how MATCHED they are.
-            let allPBs = athlete.personalBests.filter { $0.timeSeconds > 0 }
+            // Two factors: how MANY signals and how MATCHED they are.
+            // Include VMA as a fresh signal (weight 1.0) when present —
+            // a recent fitness test counts as a fitness anchor even
+            // without explicit PBs.
+            var allSignals = athlete.personalBests.filter { $0.timeSeconds > 0 }
                 .map { $0.recencyWeight() }
                 + athlete.trailPersonalBests.filter { $0.timeSeconds > 0 }
                 .map { $0.recencyWeight() }
+            if let vma = athlete.vmaKmh, vma > 0 {
+                allSignals.append(0.8)  // fresh signal but slightly discounted
+            }
             // Sum of recency weights → effective sample size. 2.0+ →
             // strong signal; 1.0 → moderate; <0.5 → weak (very old).
             // Bucket boundaries are slightly wider than the integer
             // counts to absorb microsecond drift in `Date.now` —
             // a fresh PB returns recencyWeight ~ 0.99999... not exactly
             // 1.0, which would otherwise tip into the wrong bucket.
-            let totalRecencyWeight = allPBs.reduce(0, +)
+            let totalRecencyWeight = allSignals.reduce(0, +)
             let recencyComponent: Double
             switch totalRecencyWeight {
             case ..<0.5:    recencyComponent = 0.18  // weak / very old
@@ -283,12 +312,21 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
             case ..<1.99:   recencyComponent = 0.08  // 1-2 fresh PBs
             default:        recencyComponent = 0.05  // multiple recent PBs
             }
-            // Distance-match: PBs at same race type get extra credit.
-            let hasMatchingDistanceType = athlete.personalBests.contains { pb in
-                pb.timeSeconds > 0 && race.raceType == .road
-            } || athlete.trailPersonalBests.contains { tpb in
-                tpb.timeSeconds > 0 && race.raceType == .trail
-            }
+            // Type match: a fitness signal in the right "domain"
+            // (road or trail) earns no penalty. VMA counts as a
+            // road-side signal — it's a flat-running fitness anchor.
+            // For trail races, VMA still helps via terrainMatch in
+            // pbsAsWeightedPaces, but it's not a perfect-match
+            // signal so the penalty applies if no trail PB exists.
+            let hasMatchingDistanceType: Bool = {
+                if race.raceType == .road {
+                    let hasRoadPB = athlete.personalBests.contains { $0.timeSeconds > 0 }
+                    let hasVMA = (athlete.vmaKmh ?? 0) > 0
+                    return hasRoadPB || hasVMA
+                } else {
+                    return athlete.trailPersonalBests.contains { $0.timeSeconds > 0 }
+                }
+            }()
             let typeMatchPenalty: Double = hasMatchingDistanceType ? 0 : 0.05
             return recencyComponent + typeMatchPenalty
         }
@@ -455,7 +493,9 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         runs: [CompletedRun],
         fitness: FitnessSnapshot?,
         race: Race,
-        hasRaceResults: Bool
+        hasRaceResults: Bool,
+        source: PredictionSource? = nil,
+        athlete: Athlete? = nil
     ) -> Double {
         var confidence = 40.0
         if runs.count > 5 { confidence += 10 }
@@ -464,6 +504,24 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         if runs.contains(where: { $0.distanceKm >= race.distanceKm * 0.5 }) { confidence += 15 }
         if runs.contains(where: { $0.elevationGainM >= 500 }) { confidence += 10 }
         if hasRaceResults { confidence += 15 }
+        // PB-source bump: when no runs are available but we DO have
+        // PBs / VMA from the fitness test, we still know SOMETHING
+        // about the athlete's fitness. +10 lifts the confidence
+        // label from "Low" to "Moderate" — matches the badge's
+        // "Early estimate from your profile data" framing rather
+        // than the dismissive "low confidence — keep training"
+        // copy that was designed for fully-uncalibrated athletes.
+        if source == .personalBests {
+            confidence += 10
+            // Extra +5 if the athlete has multiple recent fitness
+            // signals (PB + VMA, or PBs in matched type).
+            if let athlete {
+                let hasPB = !athlete.personalBests.filter { $0.timeSeconds > 0 }.isEmpty
+                    || !athlete.trailPersonalBests.filter { $0.timeSeconds > 0 }.isEmpty
+                let hasVMA = (athlete.vmaKmh ?? 0) > 0
+                if hasPB && hasVMA { confidence += 5 }
+            }
+        }
         return min(confidence, 95)
     }
 }

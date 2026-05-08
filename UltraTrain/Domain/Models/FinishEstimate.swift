@@ -16,18 +16,20 @@ enum FinishPredictionSource: String, Sendable, Codable {
     var shortLabel: String {
         switch self {
         case .runs:               return "Refined from your training"
-        case .personalBests:      return "Early estimate from your PBs"
+        case .personalBests:      return "Early estimate from your profile data"
         case .experienceFallback: return "General estimate"
         }
     }
 
     /// Helper copy explaining why the range looks the way it does.
+    /// Generic across PB- and VMA-derived sources so it covers both
+    /// "athlete has race PBs" and "athlete completed a fitness test."
     var explainer: String {
         switch self {
         case .runs:
             return "Updated from your recent training data. Range tightens as you log more sessions."
         case .personalBests:
-            return "Built from your race PBs. Will refine as you log training — log a few runs to tighten the range."
+            return "Built from your race PBs and any test results. Will refine as you log training — log a few runs to tighten the range."
         case .experienceFallback:
             return "We don't have PBs or training data yet. Add a recent race time on your profile, or log a few runs to refine the prediction."
         }

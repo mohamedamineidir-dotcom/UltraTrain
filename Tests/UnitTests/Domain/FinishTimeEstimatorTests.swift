@@ -948,6 +948,85 @@ struct FinishTimeEstimatorTests {
             "15-run consistent-pace spread should be tight (<20%), got \(spread15)")
     }
 
+    @Test("VMA-only athlete: predictor uses fitness-test signal (not fallback)")
+    func vmaOnlyAthleteUsesFitnessTestSignal() async throws {
+        // Athlete who completed the fitness test but has no PBs and
+        // no logged runs. The predictor should USE vmaKmh — not
+        // bail to experienceFallback (which would waste the test
+        // result and give a wide ±50% range).
+        var vmaAthlete = athlete
+        vmaAthlete.vmaKmh = 15.0  // typical intermediate VMA
+        // explicitly empty
+        vmaAthlete.personalBests = []
+        vmaAthlete.trailPersonalBests = []
+        let race = Race(
+            id: UUID(), name: "HM",
+            date: Date.now.adding(days: 60),
+            distanceKm: 21.1, elevationGainM: 50, elevationLossM: 50,
+            priority: .aRace, goalType: .finish, checkpoints: [],
+            terrainDifficulty: .easy, raceType: .road
+        )
+        let estimate = try await estimator.execute(
+            athlete: vmaAthlete, race: race,
+            recentRuns: [], currentFitness: nil
+        )
+        #expect(estimate.predictionSource == .personalBests,
+            "VMA-only athlete should fall into personalBests source (synthetic PB), not fallback")
+        // Spread should be MUCH tighter than the experienceFallback (~50%).
+        let spread = (estimate.conservativeTime - estimate.optimisticTime) / estimate.expectedTime
+        #expect(spread < 0.35,
+            "VMA-derived range should be tighter than fallback (<35%), got \(spread)")
+    }
+
+    @Test("PB-source confidence ≥ 50 (not 'low')")
+    func pbSourceConfidenceLifted() async throws {
+        var pbAthlete = athlete
+        pbAthlete.personalBests = [
+            PersonalBest(id: UUID(), distance: .fiveK, timeSeconds: 1200, date: .now)
+        ]
+        let race = Race(
+            id: UUID(), name: "HM",
+            date: Date.now.adding(days: 60),
+            distanceKm: 21.1, elevationGainM: 50, elevationLossM: 50,
+            priority: .aRace, goalType: .finish, checkpoints: [],
+            terrainDifficulty: .easy, raceType: .road
+        )
+        let estimate = try await estimator.execute(
+            athlete: pbAthlete, race: race,
+            recentRuns: [], currentFitness: nil
+        )
+        #expect(estimate.confidencePercent >= 50,
+            "PB-source confidence should be ≥ 50 (Moderate), got \(estimate.confidencePercent)")
+    }
+
+    @Test("Confidence climbs further when athlete has BOTH PB and VMA")
+    func pbPlusVMAExtraConfidence() async throws {
+        var pbOnly = athlete
+        pbOnly.personalBests = [
+            PersonalBest(id: UUID(), distance: .fiveK, timeSeconds: 1200, date: .now)
+        ]
+        var pbAndVma = pbOnly
+        pbAndVma.vmaKmh = 15.0
+
+        let race = Race(
+            id: UUID(), name: "HM",
+            date: Date.now.adding(days: 60),
+            distanceKm: 21.1, elevationGainM: 50, elevationLossM: 50,
+            priority: .aRace, goalType: .finish, checkpoints: [],
+            terrainDifficulty: .easy, raceType: .road
+        )
+        let pbOnlyEst = try await estimator.execute(
+            athlete: pbOnly, race: race,
+            recentRuns: [], currentFitness: nil
+        )
+        let pbVmaEst = try await estimator.execute(
+            athlete: pbAndVma, race: race,
+            recentRuns: [], currentFitness: nil
+        )
+        #expect(pbVmaEst.confidencePercent > pbOnlyEst.confidencePercent,
+            "PB + VMA should have higher confidence than PB only. \(pbVmaEst.confidencePercent) vs \(pbOnlyEst.confidencePercent)")
+    }
+
     @Test("PB recency: older PB → wider range than recent PB")
     func recencyImpactsRange() async throws {
         var recent = athlete
