@@ -244,10 +244,17 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 return false
             }()
 
-            // A-race week: dispatch to the trail race-week builder so
-            // race day shows up as a real `.race` session and the prep
-            // days scale with distance / mountain profile / experience /
-            // philosophy (instead of the generic taper template).
+            // A-race week + post-race recovery dispatch. Both bypass
+            // the standard phase / recovery / override templates by
+            // supplying pre-built session lists.
+            //
+            // - A-race week → TrailRaceWeekTemplates (race day shows
+            //   up as a `.race` session; prep days adapt to distance /
+            //   mountain profile / experience / philosophy)
+            // - Post-race recovery weeks → TrailRaceRecoveryTemplates
+            //   (volume drops sharply: 100mi W1 ≈ 5% of peak, with
+            //   cross-training prescribed over running for the first
+            //   two weeks of demanding races and for mountain profiles)
             let aRaceWeekTemplates: [SessionTemplateGenerator.SessionTemplate]?
             if index == aRaceWeekIdx {
                 aRaceWeekTemplates = TrailRaceWeekTemplates.sessions(
@@ -255,6 +262,17 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     experience: athlete.experienceLevel,
                     philosophy: athlete.trainingPhilosophy,
                     weekStartDate: skeleton.startDate
+                )
+            } else if let aIdx = aRaceWeekIdx,
+                      index > aIdx,
+                      skeleton.isRecoveryWeek {
+                let weekInRecovery = index - aIdx  // 1, 2, 3, 4, 5
+                aRaceWeekTemplates = TrailRaceRecoveryTemplates.sessions(
+                    targetRace: targetRace,
+                    experience: athlete.experienceLevel,
+                    philosophy: athlete.trainingPhilosophy,
+                    weekStartDate: skeleton.startDate,
+                    weekInRecovery: weekInRecovery
                 )
             } else {
                 aRaceWeekTemplates = nil
@@ -339,9 +357,13 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             // A-race week beats override label (B-race override would be
             // odd here anyway, but be defensive). targetVolumeKm and
             // targetElevationGainM get recomputed from the actual session
-            // list so the chart reflects what we just generated (race day
-            // included).
+            // list whenever we used pre-built templates (A-race week or
+            // post-race recovery), so the weekly card / chart reflects
+            // what we generated.
             let isARace = (index == aRaceWeekIdx)
+            let isPostRaceRecovery = aRaceWeekTemplates != nil && !isARace
+            let usedPrebuilt = isARace || isPostRaceRecovery
+
             let weekPhase: TrainingPhase
             if isARace {
                 weekPhase = .race
@@ -353,7 +375,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
 
             let weekVolumeKm: Double
             let weekElevationGainM: Double
-            if isARace {
+            if usedPrebuilt {
                 weekVolumeKm = roundedSessions
                     .filter { $0.type != .rest && $0.type != .strengthConditioning }
                     .reduce(0) { $0 + $1.plannedDistanceKm }
@@ -588,6 +610,19 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             let (skeleton, volume) = pair
             let override = overrides.first { $0.weekNumber == skeleton.weekNumber }
             let isARaceWeek = (index == aRaceWeekIdx)
+            // Post-race recovery week index (1-based: 1, 2, 3) when the
+            // skeleton lands AFTER the A-race week and is flagged as a
+            // recovery week by WeekSkeletonBuilder. Drives dispatch to
+            // RoadRaceRecoveryTemplates so volume drops to ~10-20% of
+            // peak in W1 instead of the in-plan recovery template's
+            // ~60-70%.
+            let postRaceRecoveryWeekN: Int? = {
+                guard let aIdx = aRaceWeekIdx,
+                      index > aIdx,
+                      skeleton.isRecoveryWeek
+                else { return nil }
+                return index - aIdx
+            }()
 
             let sessions: [TrainingSession]
             if isARaceWeek {
@@ -634,6 +669,28 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                             qualityTemplate: nil
                         )
                     }
+                    return session
+                }
+            } else if let weekInRecovery = postRaceRecoveryWeekN {
+                // Post-race recovery: RoadRaceRecoveryTemplates dispatch
+                // by distance class + week. Volume falls sharply (W1
+                // ≈ 15-20% of peak for marathon) and cross-training
+                // appears in marathon W1 / ultra-road W1 prescriptions.
+                let templates = RoadRaceRecoveryTemplates.sessions(
+                    targetRace: targetRace,
+                    experience: athlete.experienceLevel,
+                    philosophy: athlete.trainingPhilosophy,
+                    weekStartDate: skeleton.startDate,
+                    weekInRecovery: weekInRecovery
+                )
+                sessions = templates.enumerated().map { dayIdx, tpl in
+                    var session = makeSession(
+                        template: tpl, skeleton: skeleton,
+                        dayIndex: dayIdx, volume: volume
+                    )
+                    session.plannedElevationGainM = 0
+                    // Description carries the recovery cue; coachAdvice
+                    // stays nil to keep the row clean.
                     return session
                 }
             } else if let override {
@@ -890,7 +947,9 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 .reduce(0) { $0 + $1.plannedDuration }
 
             // A-race week beats override label (defensive). Recompute
-            // weekly volume from sessions so the chart includes race day.
+            // weekly volume from sessions whenever we used pre-built
+            // templates (race week or post-race recovery), so the
+            // chart reflects the actual prescription.
             let weekPhase: TrainingPhase
             if isARaceWeek {
                 weekPhase = .race
@@ -900,8 +959,9 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 weekPhase = skeleton.phase
             }
 
+            let usedPrebuilt = isARaceWeek || postRaceRecoveryWeekN != nil
             let weekVolumeKm: Double
-            if isARaceWeek {
+            if usedPrebuilt {
                 weekVolumeKm = finalSessions
                     .filter { $0.type != .rest && $0.type != .strengthConditioning }
                     .reduce(0) { $0 + $1.plannedDistanceKm }
