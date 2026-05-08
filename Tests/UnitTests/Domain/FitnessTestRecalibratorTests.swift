@@ -189,6 +189,58 @@ struct FitnessTestRecalibratorTests {
         #expect(result.updatedPaceProfile == nil)
     }
 
+    @Test("5K TT result actually shifts derived 5K pace (not just vmaKmh)")
+    func fiveKTTUpdatesDerivedPaces() {
+        // Athlete with HM PR but no 5K PR. RoadPaceCalculator estimates
+        // 5K via Riegel from HM. Test result must DOMINATE that and
+        // produce different paces — otherwise the recalibration is
+        // a no-op for athletes with stale PRs.
+        var athlete = Athlete(
+            id: UUID(), firstName: "Test", lastName: "Runner",
+            dateOfBirth: Calendar.current.date(byAdding: .year, value: -30, to: .now)!,
+            weightKg: 70, heightCm: 175,
+            restingHeartRate: 50, maxHeartRate: 185,
+            experienceLevel: .intermediate,
+            weeklyVolumeKm: 50, longestRunKm: 25,
+            preferredUnit: .metric,
+            trainingPhilosophy: .balanced,
+            preferredRunsPerWeek: 5
+        )
+        // HM PR 1:48:00. Riegel-estimated 5K ≈ 23:39 → ~4:44/km
+        athlete.personalBests = [PersonalBest(
+            id: UUID(), distance: .halfMarathon,
+            timeSeconds: 6480, date: .now.addingTimeInterval(-90 * 86400)
+        )]
+        athlete.vmaKmh = 14.0  // baseline anchor
+        let race = makeRace()
+
+        let originalProfile = RoadPaceCalculator.paceProfile(
+            goalTime: 3 * 3600 + 30 * 60,
+            raceDistanceKm: 42.195,
+            personalBests: athlete.personalBests,
+            vmaKmh: athlete.vmaKmh,
+            experience: .intermediate
+        )
+
+        // Test: 5K TT in 20:00 → measured VMA 15.46 (~10% above 14.0).
+        let result = FitnessTestRecalibrator.recalibrate(
+            testVariant: .fiveKTT,
+            result: TestResultInput(timeSeconds: 1200),
+            athlete: athlete, targetRace: race,
+            weeksUntilRace: 8, currentRacePhase: .build
+        )
+        guard let newProfile = result.updatedPaceProfile else {
+            Issue.record("Expected an updated pace profile"); return
+        }
+        // The new profile's threshold pace should be FASTER (smaller
+        // s/km) than the original. Threshold is the most stable
+        // calibration target — interval pace can be noisy.
+        let originalT = originalProfile.thresholdPacePerKm
+        let newT = newProfile.thresholdPacePerKm
+        #expect(newT < originalT,
+            "New T pace (\(newT)) should be faster than original (\(originalT))")
+    }
+
     @Test("No baseline VMA: accepts measured value, recalibrates training paces")
     func noBaselineVMA() {
         let athlete = makeAthlete(vmaKmh: nil)  // no VMA, no PRs

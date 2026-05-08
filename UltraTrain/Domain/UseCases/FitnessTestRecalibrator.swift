@@ -84,7 +84,11 @@ enum FitnessTestRecalibrator {
             // No baseline to compare against — accept the new VMA and
             // recalibrate training paces.
             let updatedAthlete = athlete.with(vmaKmh: measuredVma)
-            let profile = newPaceProfile(athlete: updatedAthlete, targetRace: targetRace)
+            let profile = newPaceProfile(
+                athlete: updatedAthlete, targetRace: targetRace,
+                testVariant: testVariant, result: result,
+                measuredVma: measuredVma
+            )
             return Result(
                 measuredVmaKmh: measuredVma,
                 baselineVmaKmh: nil,
@@ -119,9 +123,20 @@ enum FitnessTestRecalibrator {
             )
         }
 
-        // Above noise — recompute pace profile with the new VMA.
+        // Above noise — recompute pace profile with the new VMA + a
+        // synthetic 5K PR derived from the test. The PR injection is
+        // critical: RoadPaceCalculator's 5K-pace estimate prioritises
+        // PRs over VMA, so updating vmaKmh alone wouldn't actually
+        // change paces for athletes with existing HM / marathon PRs.
+        // The synthetic PR with today's date carries full recency
+        // weight and supersedes older PRs the test result has
+        // demonstrably eclipsed.
         let updatedAthlete = athlete.with(vmaKmh: measuredVma)
-        let updatedProfile = newPaceProfile(athlete: updatedAthlete, targetRace: targetRace)
+        let updatedProfile = newPaceProfile(
+            athlete: updatedAthlete, targetRace: targetRace,
+            testVariant: testVariant, result: result,
+            measuredVma: measuredVma
+        )
 
         // Should we ALSO suggest race-target adjustment?
         // Yes if: |delta| ≥ 7% AND we're still in build phase AND
@@ -197,9 +212,25 @@ enum FitnessTestRecalibrator {
 
     private static func newPaceProfile(
         athlete: Athlete,
-        targetRace: Race
+        targetRace: Race,
+        testVariant: FitnessTestVariant,
+        result: TestResultInput,
+        measuredVma: Double?
     ) -> RoadPaceProfile? {
-        // Mirror what TrainingPlanGenerator does for road plans.
+        // Mirror what TrainingPlanGenerator does for road plans, but
+        // first inject a synthetic 5K PR built from the test result so
+        // the pace calculator picks up the new fitness signal.
+        var pbs = athlete.personalBests
+        if let synthetic = synthetic5KPersonalBest(
+            testVariant: testVariant, result: result, measuredVma: measuredVma
+        ) {
+            if let idx = pbs.firstIndex(where: { $0.distance == .fiveK }) {
+                pbs[idx] = synthetic
+            } else {
+                pbs.append(synthetic)
+            }
+        }
+
         let goalTime: TimeInterval?
         switch targetRace.goalType {
         case .targetTime(let t): goalTime = t
@@ -210,10 +241,37 @@ enum FitnessTestRecalibrator {
         return RoadPaceCalculator.paceProfile(
             goalTime: goalTime,
             raceDistanceKm: targetRace.distanceKm,
-            personalBests: athlete.personalBests,
+            personalBests: pbs,
             vmaKmh: athlete.vmaKmh,
             experience: athlete.experienceLevel
         )
+    }
+
+    /// Builds a synthetic 5K PR from the test result. For 5K TT, uses
+    /// the recorded time directly. For VMA flat, derives an equivalent
+    /// 5K time from the measured VMA (5K is run at ~98% vVO2max, so
+    /// 5K pace = (3600 / VMA) * 1.02 seconds/km). Both carry today's
+    /// date so they take recency precedence over older PRs.
+    private static func synthetic5KPersonalBest(
+        testVariant: FitnessTestVariant,
+        result: TestResultInput,
+        measuredVma: Double?
+    ) -> PersonalBest? {
+        switch testVariant {
+        case .fiveKTT:
+            guard let timeSec = result.timeSeconds, timeSec > 0 else { return nil }
+            return PersonalBest(id: UUID(), distance: .fiveK, timeSeconds: timeSec, date: .now)
+        case .vmaFlat6Min:
+            guard let vma = measuredVma, vma > 0 else { return nil }
+            let pacePerKm = (3600.0 / vma) * 1.02
+            let fiveKTime = pacePerKm * 5
+            return PersonalBest(id: UUID(), distance: .fiveK, timeSeconds: fiveKTime, date: .now)
+        case .uphillSustained30Min,
+             .uphillRepeats4x8,
+             .uphillRepeats6x4,
+             .treadmillIncline30Min:
+            return nil
+        }
     }
 }
 
