@@ -769,7 +769,7 @@ private struct ManualValidationPage: View {
             Spacer(minLength: 0)
             TextField("0.0", text: $distanceText)
                 .keyboardType(.decimalPad)
-                .font(.title3.bold().monospacedDigit())
+                .font(.body.bold().monospacedDigit())
                 .multilineTextAlignment(.trailing)
                 .frame(width: 80)
                 .focused($focusedField, equals: .distance)
@@ -785,7 +785,7 @@ private struct ManualValidationPage: View {
             Spacer(minLength: 0)
             TextField("0", text: hoursTextBinding)
                 .keyboardType(.numberPad)
-                .font(.title3.bold().monospacedDigit())
+                .font(.body.bold().monospacedDigit())
                 .foregroundStyle(Theme.Colors.label)
                 .multilineTextAlignment(.trailing)
                 .frame(width: 22)
@@ -793,7 +793,7 @@ private struct ManualValidationPage: View {
             durationSeparator
             TextField("00", text: minutesTextBinding)
                 .keyboardType(.numberPad)
-                .font(.title3.bold().monospacedDigit())
+                .font(.body.bold().monospacedDigit())
                 .foregroundStyle(Theme.Colors.label)
                 .multilineTextAlignment(.center)
                 .frame(width: 30)
@@ -801,7 +801,7 @@ private struct ManualValidationPage: View {
             durationSeparator
             TextField("00", text: secondsTextBinding)
                 .keyboardType(.numberPad)
-                .font(.title3.bold().monospacedDigit())
+                .font(.body.bold().monospacedDigit())
                 .foregroundStyle(Theme.Colors.label)
                 .multilineTextAlignment(.leading)
                 .frame(width: 30)
@@ -816,7 +816,7 @@ private struct ManualValidationPage: View {
 
     private var durationSeparator: some View {
         Text(":")
-            .font(.title3.bold().monospacedDigit())
+            .font(.body.bold().monospacedDigit())
             .foregroundStyle(Theme.Colors.secondaryLabel)
             .padding(.horizontal, 1)
     }
@@ -847,7 +847,7 @@ private struct ManualValidationPage: View {
             Spacer(minLength: 0)
             TextField("0", text: $elevationText)
                 .keyboardType(.numberPad)
-                .font(.title3.bold().monospacedDigit())
+                .font(.body.bold().monospacedDigit())
                 .multilineTextAlignment(.trailing)
                 .frame(width: 80)
                 .focused($focusedField, equals: .elevation)
