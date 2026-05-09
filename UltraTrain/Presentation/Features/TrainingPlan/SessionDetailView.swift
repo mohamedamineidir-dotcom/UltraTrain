@@ -307,13 +307,10 @@ struct SessionDetailView: View {
     }
 
     private var statsSection: some View {
-        // Each stat carries its own semantic tint so the row reads as a
-        // varied trio instead of three same-colour cards. Matches the
-        // validation page palette: distance=primary, duration=zone3,
-        // elevation=success.
-        let distanceTint = Theme.Colors.primary
-        let durationTint = Theme.Colors.zone3
-        let elevationTint = Theme.Colors.success
+        // Stats trio shares the intensity tint with the header — they
+        // sit on the same line as a paired "what is this session"
+        // block, so different colours per stat read as noise.
+        let tint = session.intensity.color
         return HStack(spacing: Theme.Spacing.sm) {
             if isTimeBased {
                 if session.plannedDuration > 0 {
@@ -321,7 +318,7 @@ struct SessionDetailView: View {
                         title: "Duration",
                         value: session.plannedDuration.formattedDuration,
                         unit: "",
-                        tint: durationTint
+                        tint: tint
                     )
                 }
                 if session.plannedElevationGainM > 0 {
@@ -329,7 +326,7 @@ struct SessionDetailView: View {
                         title: "Elevation",
                         value: String(format: "%.0f", UnitFormatter.elevationValue(session.plannedElevationGainM, unit: units)),
                         unit: UnitFormatter.elevationLabel(units),
-                        tint: elevationTint
+                        tint: tint
                     )
                 }
                 if session.plannedDistanceKm > 0 {
@@ -337,7 +334,7 @@ struct SessionDetailView: View {
                         title: "Distance",
                         value: String(format: "%.1f", UnitFormatter.distanceValue(session.plannedDistanceKm, unit: units)),
                         unit: UnitFormatter.distanceLabel(units),
-                        tint: distanceTint
+                        tint: tint
                     )
                 }
             } else {
@@ -346,7 +343,7 @@ struct SessionDetailView: View {
                         title: "Distance",
                         value: String(format: "%.1f", UnitFormatter.distanceValue(session.plannedDistanceKm, unit: units)),
                         unit: UnitFormatter.distanceLabel(units),
-                        tint: distanceTint
+                        tint: tint
                     )
                 }
                 if session.plannedElevationGainM > 0 {
@@ -354,7 +351,7 @@ struct SessionDetailView: View {
                         title: "Elevation",
                         value: String(format: "%.0f", UnitFormatter.elevationValue(session.plannedElevationGainM, unit: units)),
                         unit: UnitFormatter.elevationLabel(units),
-                        tint: elevationTint
+                        tint: tint
                     )
                 }
                 if session.plannedDuration > 0 {
@@ -362,7 +359,7 @@ struct SessionDetailView: View {
                         title: "Duration",
                         value: session.plannedDuration.formattedDuration,
                         unit: "",
-                        tint: durationTint
+                        tint: tint
                     )
                 }
             }
@@ -497,10 +494,13 @@ struct SessionDetailView: View {
     // MARK: - Description
 
     private var descriptionSection: some View {
+        // Paired with the Pace & HR card above under the info tint —
+        // both are reference / detail cards, so sharing a colour
+        // groups them visually as the "session reference" block.
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             Label("Description", systemImage: "text.alignleft")
                 .font(.subheadline.bold())
-                .foregroundStyle(Theme.Colors.amberAccent)
+                .foregroundStyle(Theme.Colors.info)
             Text(session.description)
                 .font(.subheadline)
                 .foregroundStyle(.primary)
@@ -508,7 +508,7 @@ struct SessionDetailView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(Theme.Spacing.md)
-        .futuristicGlassStyle(phaseTint: Theme.Colors.amberAccent)
+        .futuristicGlassStyle(phaseTint: Theme.Colors.info)
     }
 
     private func nutritionSection(_ notes: String) -> some View {
