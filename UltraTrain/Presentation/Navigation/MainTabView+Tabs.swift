@@ -19,6 +19,7 @@ extension MainTabView {
             handleDeepLink()
         }
         .task { await checkWeeklyReview() }
+        .onAppear { loadRunnerTabIcon() }
         .fullScreenCover(isPresented: $showWeeklyReview) {
             if let vm = weeklyReviewViewModel {
                 WeeklyReviewSheet(viewModel: vm) {
@@ -110,7 +111,11 @@ extension MainTabView {
                 motionService: motionService
             )
                 .tabItem {
-                    Label("Run", image: "LaunchIcon")
+                    Label {
+                        Text("Run")
+                    } icon: {
+                        runnerTabIcon ?? Image(systemName: "figure.run")
+                    }
                 }
                 .tag(Tab.run)
 
@@ -199,6 +204,20 @@ extension MainTabView {
         )
         lastReviewedWeekNumber = pwn
         showWeeklyReview = true
+    }
+
+    @MainActor
+    func loadRunnerTabIcon() {
+        guard runnerTabIcon == nil else { return }
+        guard let source = UIImage(named: "LaunchIcon") else { return }
+        let target = CGSize(width: 25, height: 25)
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = UIScreen.main.scale
+        let renderer = UIGraphicsImageRenderer(size: target, format: format)
+        let scaled = renderer.image { _ in
+            source.draw(in: CGRect(origin: .zero, size: target))
+        }
+        runnerTabIcon = Image(uiImage: scaled.withRenderingMode(.alwaysTemplate))
     }
 
     func handleDeepLink() {

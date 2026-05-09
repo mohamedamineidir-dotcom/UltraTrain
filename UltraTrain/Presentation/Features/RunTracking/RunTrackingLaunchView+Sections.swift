@@ -57,7 +57,7 @@ extension RunTrackingLaunchView {
                 Image("LaunchIcon")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: heroIconSize, height: heroIconSize)
+                    .frame(width: heroIconSize * 1.3, height: heroIconSize * 1.3)
             }
             .shadow(color: Theme.Colors.primary.opacity(0.3), radius: 12)
             .accessibilityHidden(true)
