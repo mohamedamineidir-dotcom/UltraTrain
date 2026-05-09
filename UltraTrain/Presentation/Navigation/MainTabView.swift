@@ -5,7 +5,6 @@ struct MainTabView: View {
     @State var selectedTab: Tab = .dashboard
     @State var showWeeklyReview = false
     @State var weeklyReviewViewModel: WeeklyReviewViewModel?
-    @State var runnerTabIcon: Image?
     @AppStorage("lastReviewedWeekNumber") var lastReviewedWeekNumber = 0
 
     let deepLinkRouter: DeepLinkRouter
