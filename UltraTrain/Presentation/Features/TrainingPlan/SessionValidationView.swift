@@ -770,13 +770,14 @@ private struct ManualValidationPage: View {
             TextField("0.0", text: $distanceText)
                 .keyboardType(.decimalPad)
                 .font(.body.bold().monospacedDigit())
+                .foregroundStyle(Theme.Colors.label)
                 .multilineTextAlignment(.trailing)
-                .frame(width: 80)
+                .frame(width: 60)
                 .focused($focusedField, equals: .distance)
             Text("km")
-                .font(.subheadline.weight(.medium))
+                .font(.footnote.weight(.medium))
                 .foregroundStyle(Theme.Colors.secondaryLabel)
-                .frame(width: 38, alignment: .leading)
+                .frame(width: Self.unitSlotWidth, alignment: .trailing)
         }
     }
 
@@ -788,28 +789,28 @@ private struct ManualValidationPage: View {
                 .font(.body.bold().monospacedDigit())
                 .foregroundStyle(Theme.Colors.label)
                 .multilineTextAlignment(.trailing)
-                .frame(width: 22)
+                .frame(width: 14)
                 .focused($focusedField, equals: .hours)
             durationSeparator
             TextField("00", text: minutesTextBinding)
                 .keyboardType(.numberPad)
                 .font(.body.bold().monospacedDigit())
                 .foregroundStyle(Theme.Colors.label)
-                .multilineTextAlignment(.center)
-                .frame(width: 30)
+                .multilineTextAlignment(.trailing)
+                .frame(width: 22)
                 .focused($focusedField, equals: .minutes)
             durationSeparator
             TextField("00", text: secondsTextBinding)
                 .keyboardType(.numberPad)
                 .font(.body.bold().monospacedDigit())
                 .foregroundStyle(Theme.Colors.label)
-                .multilineTextAlignment(.leading)
-                .frame(width: 30)
+                .multilineTextAlignment(.trailing)
+                .frame(width: 22)
                 .focused($focusedField, equals: .seconds)
             Text("h:m:s")
-                .font(.caption2)
+                .font(.footnote.weight(.medium))
                 .foregroundStyle(Theme.Colors.secondaryLabel)
-                .frame(width: 38, alignment: .leading)
+                .frame(width: Self.unitSlotWidth, alignment: .trailing)
                 .padding(.leading, 4)
         }
     }
@@ -848,13 +849,14 @@ private struct ManualValidationPage: View {
             TextField("0", text: $elevationText)
                 .keyboardType(.numberPad)
                 .font(.body.bold().monospacedDigit())
+                .foregroundStyle(Theme.Colors.label)
                 .multilineTextAlignment(.trailing)
-                .frame(width: 80)
+                .frame(width: 60)
                 .focused($focusedField, equals: .elevation)
             Text("m D+")
-                .font(.subheadline.weight(.medium))
+                .font(.footnote.weight(.medium))
                 .foregroundStyle(Theme.Colors.secondaryLabel)
-                .frame(width: 38, alignment: .leading)
+                .frame(width: Self.unitSlotWidth, alignment: .trailing)
         }
     }
 
@@ -955,10 +957,14 @@ private struct ManualValidationPage: View {
     // MARK: - Stats Entry
 
     /// Fixed width reserved for the right-side control in every stats row.
-    /// Duration's 3 pickers + 2 colons need ≈ 148pt; we align distance and
-    /// elevation to match so all three rows land on the same trailing edge
-    /// and the cards visually balance.
+    /// All three controls end with a unit slot of `unitSlotWidth`, so the
+    /// visible right edge of "km" / "m D+" / "h:m:s" lands on exactly the
+    /// same x for every row regardless of value width.
     private static let statsControlWidth: CGFloat = 148
+    /// Trailing unit slot — wide enough for the longest unit string
+    /// ("m D+", "h:m:s") at footnote weight; right-aligned so each unit's
+    /// rightmost glyph sits at the slot's trailing edge.
+    private static let unitSlotWidth: CGFloat = 36
 
 private func sectionLabel(_ text: String, icon: String) -> some View {
         HStack(spacing: Theme.Spacing.sm) {
