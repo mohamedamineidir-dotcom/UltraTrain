@@ -307,7 +307,13 @@ struct SessionDetailView: View {
     }
 
     private var statsSection: some View {
-        let tint = session.intensity.color
+        // Each stat carries its own semantic tint so the row reads as a
+        // varied trio instead of three same-colour cards. Matches the
+        // validation page palette: distance=primary, duration=zone3,
+        // elevation=success.
+        let distanceTint = Theme.Colors.primary
+        let durationTint = Theme.Colors.zone3
+        let elevationTint = Theme.Colors.success
         return HStack(spacing: Theme.Spacing.sm) {
             if isTimeBased {
                 if session.plannedDuration > 0 {
@@ -315,7 +321,7 @@ struct SessionDetailView: View {
                         title: "Duration",
                         value: session.plannedDuration.formattedDuration,
                         unit: "",
-                        tint: tint
+                        tint: durationTint
                     )
                 }
                 if session.plannedElevationGainM > 0 {
@@ -323,7 +329,7 @@ struct SessionDetailView: View {
                         title: "Elevation",
                         value: String(format: "%.0f", UnitFormatter.elevationValue(session.plannedElevationGainM, unit: units)),
                         unit: UnitFormatter.elevationLabel(units),
-                        tint: tint
+                        tint: elevationTint
                     )
                 }
                 if session.plannedDistanceKm > 0 {
@@ -331,7 +337,7 @@ struct SessionDetailView: View {
                         title: "Distance",
                         value: String(format: "%.1f", UnitFormatter.distanceValue(session.plannedDistanceKm, unit: units)),
                         unit: UnitFormatter.distanceLabel(units),
-                        tint: tint
+                        tint: distanceTint
                     )
                 }
             } else {
@@ -340,7 +346,7 @@ struct SessionDetailView: View {
                         title: "Distance",
                         value: String(format: "%.1f", UnitFormatter.distanceValue(session.plannedDistanceKm, unit: units)),
                         unit: UnitFormatter.distanceLabel(units),
-                        tint: tint
+                        tint: distanceTint
                     )
                 }
                 if session.plannedElevationGainM > 0 {
@@ -348,7 +354,7 @@ struct SessionDetailView: View {
                         title: "Elevation",
                         value: String(format: "%.0f", UnitFormatter.elevationValue(session.plannedElevationGainM, unit: units)),
                         unit: UnitFormatter.elevationLabel(units),
-                        tint: tint
+                        tint: elevationTint
                     )
                 }
                 if session.plannedDuration > 0 {
@@ -356,7 +362,7 @@ struct SessionDetailView: View {
                         title: "Duration",
                         value: session.plannedDuration.formattedDuration,
                         unit: "",
-                        tint: tint
+                        tint: durationTint
                     )
                 }
             }
@@ -494,7 +500,7 @@ struct SessionDetailView: View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             Label("Description", systemImage: "text.alignleft")
                 .font(.subheadline.bold())
-                .foregroundStyle(session.intensity.color)
+                .foregroundStyle(Theme.Colors.amberAccent)
             Text(session.description)
                 .font(.subheadline)
                 .foregroundStyle(.primary)
@@ -502,7 +508,7 @@ struct SessionDetailView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(Theme.Spacing.md)
-        .futuristicGlassStyle(phaseTint: session.intensity.color)
+        .futuristicGlassStyle(phaseTint: Theme.Colors.amberAccent)
     }
 
     private func nutritionSection(_ notes: String) -> some View {
@@ -530,14 +536,20 @@ struct SessionDetailView: View {
                 restingHR: athlete.restingHeartRate,
                 maxHR: athlete.maxHeartRate
             )
+            // Pace + HR card uses the info (cyan) tint so it reads as
+            // "metrics / data" and contrasts with the intensity-tinted
+            // header sitting two cards above.
+            let metricsTint = Theme.Colors.info
 
             VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                 if showsEffortInsteadOfPace {
                     Label("Effort & Heart Rate Targets", systemImage: "speedometer")
                         .font(.headline)
+                        .foregroundStyle(metricsTint)
                 } else {
                     Label("Pace & Heart Rate Targets", systemImage: "speedometer")
                         .font(.headline)
+                        .foregroundStyle(metricsTint)
                 }
 
                 HStack(spacing: Theme.Spacing.lg) {
@@ -548,7 +560,7 @@ struct SessionDetailView: View {
                                 .foregroundStyle(Theme.Colors.secondaryLabel)
                             Text(effortDescription(for: session.intensity))
                                 .font(.subheadline.bold())
-                                .foregroundStyle(session.intensity.color)
+                                .foregroundStyle(metricsTint)
                         }
                     } else {
                         let range = PaceCalculator.paceRange(for: session.intensity, thresholdPacePerKm: thresholdPace)
@@ -558,7 +570,7 @@ struct SessionDetailView: View {
                                 .foregroundStyle(Theme.Colors.secondaryLabel)
                             Text("\(PaceCalculator.formatPace(range.min)) - \(PaceCalculator.formatPace(range.max)) /km")
                                 .font(.subheadline.bold().monospacedDigit())
-                                .foregroundStyle(session.intensity.color)
+                                .foregroundStyle(metricsTint)
                         }
                     }
 
@@ -568,7 +580,7 @@ struct SessionDetailView: View {
                             .foregroundStyle(Theme.Colors.secondaryLabel)
                         Text("\(hrRange.min) - \(hrRange.max) bpm")
                             .font(.subheadline.bold().monospacedDigit())
-                            .foregroundStyle(session.intensity.color)
+                            .foregroundStyle(metricsTint)
                     }
                 }
 
@@ -579,7 +591,7 @@ struct SessionDetailView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .futuristicGlassStyle(phaseTint: session.intensity.color)
+            .futuristicGlassStyle(phaseTint: metricsTint)
         }
     }
 
