@@ -210,7 +210,7 @@ extension MainTabView {
     func loadRunnerTabIcon() {
         guard runnerTabIcon == nil else { return }
         guard let source = UIImage(named: "LaunchIcon") else { return }
-        let target = CGSize(width: 25, height: 25)
+        let target = CGSize(width: 30, height: 30)
         let format = UIGraphicsImageRendererFormat.default()
         format.scale = UIScreen.main.scale
         let renderer = UIGraphicsImageRenderer(size: target, format: format)
