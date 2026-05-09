@@ -5,17 +5,23 @@ struct LabeledIntStepper: View {
     @Binding var value: Int
     let range: ClosedRange<Int>
     let unit: String
+    /// Compact mode hides the inline text label and tightens the value
+    /// box so 3 steppers (h:m:s) fit side-by-side inside an onboarding
+    /// card without overflowing on small phones.
+    var compact: Bool = false
 
     @State private var isEditing = false
     @State private var editText = ""
     @FocusState private var isFocused: Bool
 
     var body: some View {
-        HStack(spacing: 6) {
-            Text(label)
-                .font(.subheadline)
-                .fixedSize()
-            Spacer(minLength: 2)
+        HStack(spacing: compact ? 2 : 6) {
+            if !compact {
+                Text(label)
+                    .font(.subheadline)
+                    .fixedSize()
+                Spacer(minLength: 2)
+            }
             Button {
                 value = max(range.lowerBound, value - 1)
             } label: {
@@ -30,7 +36,7 @@ struct LabeledIntStepper: View {
                     .keyboardType(.numberPad)
                     .font(.body.monospacedDigit())
                     .multilineTextAlignment(.center)
-                    .frame(minWidth: 44)
+                    .frame(minWidth: compact ? 30 : 44)
                     .focused($isFocused)
                     .onSubmit { commitEdit() }
                     .onChange(of: isFocused) { _, focused in
@@ -39,7 +45,9 @@ struct LabeledIntStepper: View {
             } else {
                 Text("\(value) \(unit)")
                     .font(.body.monospacedDigit())
-                    .frame(minWidth: 44)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                    .frame(minWidth: compact ? 30 : 44)
                     .multilineTextAlignment(.center)
                     .contentShape(Rectangle())
                     .onTapGesture { beginEdit() }
