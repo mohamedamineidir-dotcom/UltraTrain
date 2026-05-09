@@ -14,7 +14,6 @@ struct PlanGenerationOptionsSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var includeFitnessTest: Bool
     @State private var recentFitnessChange: RecentFitnessChange = .none
-    @State private var headerPulse = false
 
     init(
         targetRace: Race,
@@ -38,7 +37,7 @@ struct PlanGenerationOptionsSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Theme.Colors.background.ignoresSafeArea()
+                Color(red: 0.05, green: 0.05, blue: 0.09).ignoresSafeArea()
 
                 VStack(spacing: 0) {
                     ScrollView {
@@ -59,7 +58,8 @@ struct PlanGenerationOptionsSheet: View {
                     bottomBar
                 }
             }
-            .preferredColorScheme(.dark)
+            .environment(\.colorScheme, .dark)
+            .presentationBackground(Color(red: 0.05, green: 0.05, blue: 0.09))
             .navigationTitle("Plan options")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -81,15 +81,13 @@ struct PlanGenerationOptionsSheet: View {
                 Circle()
                     .fill(
                         RadialGradient(
-                            colors: [Theme.Colors.warmCoral.opacity(0.35), .clear],
+                            colors: [Theme.Colors.warmCoral.opacity(0.30), .clear],
                             center: .center,
                             startRadius: 0,
                             endRadius: 60
                         )
                     )
                     .frame(width: 120, height: 120)
-                    .scaleEffect(headerPulse ? 1.06 : 1.0)
-                    .blur(radius: 4)
 
                 Image(systemName: "slider.horizontal.3")
                     .font(.system(size: 30, weight: .semibold))
@@ -117,11 +115,6 @@ struct PlanGenerationOptionsSheet: View {
             }
         }
         .padding(.top, Theme.Spacing.md)
-        .onAppear {
-            withAnimation(.easeInOut(duration: 2.4).repeatForever(autoreverses: true)) {
-                headerPulse = true
-            }
-        }
     }
 
     // MARK: - Recent fitness change
@@ -303,7 +296,10 @@ struct PlanGenerationOptionsSheet: View {
     private var bottomBar: some View {
         VStack(spacing: 0) {
             LinearGradient(
-                colors: [Theme.Colors.background.opacity(0), Theme.Colors.background],
+                colors: [
+                    Color(red: 0.05, green: 0.05, blue: 0.09).opacity(0),
+                    Color(red: 0.05, green: 0.05, blue: 0.09)
+                ],
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -334,7 +330,7 @@ struct PlanGenerationOptionsSheet: View {
             .buttonStyle(.plain)
             .padding(.horizontal, Theme.Spacing.lg)
             .padding(.bottom, Theme.Spacing.md)
-            .background(Theme.Colors.background)
+            .background(Color(red: 0.05, green: 0.05, blue: 0.09))
         }
     }
 
