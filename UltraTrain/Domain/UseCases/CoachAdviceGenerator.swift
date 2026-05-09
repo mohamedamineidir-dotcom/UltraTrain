@@ -95,7 +95,7 @@ enum CoachAdviceGenerator {
             // concept (Roche, Koop, Maffetone). Other intensities keep
             // their plain "Target HR" wording.
             if intensity == .easy {
-                result += " Target HR: \(range.min)–\(range.max) bpm (Zone 2 — your aerobic engine)."
+                result += " Target HR: \(range.min)-\(range.max) bpm (Zone 2, your aerobic engine)."
             } else {
                 result += " Target HR: \(range.min)-\(range.max) bpm."
             }
@@ -109,16 +109,16 @@ enum CoachAdviceGenerator {
             // runs. Only fires for .easy intensity short sessions —
             // Maffetone isn't meant to prescribe quality work.
             let mafCeiling = max(120, 180 - athleteAge)
-            result += " Aerobic ceiling: keep HR ≤\(mafCeiling) bpm (Maffetone 180−age — Zone 2). If no HR data, target conversational pace where you could speak in full sentences."
+            result += " Aerobic ceiling: keep HR ≤\(mafCeiling) bpm (Maffetone 180−age, Zone 2). If no HR data, target conversational pace where you could speak in full sentences."
         } else if type != .rest, type != .strengthConditioning, type != .crossTraining,
                   isLongSession {
             // Pure RPE guidance for long sessions — HR drifts, effort doesn't.
             let effortLabel: String
             switch intensity {
-            case .easy:      effortLabel = "Stay at conversational effort throughout — if HR climbs but the effort feels the same, trust the effort."
-            case .moderate:  effortLabel = "Moderate effort the whole way. Past 2 hours your HR will drift up at the same effort — that's normal, ignore it."
-            case .hard:      effortLabel = "Hard effort but sustainable. Pace by feel, not by HR — long-effort cardiac drift will lie to you."
-            case .maxEffort: effortLabel = "Race effort. RPE-driven — HR drift makes the bpm number meaningless after the first hour."
+            case .easy:      effortLabel = "Stay at conversational effort throughout. If HR climbs but the effort feels the same, trust the effort."
+            case .moderate:  effortLabel = "Moderate effort the whole way. Past 2 hours your HR will drift up at the same effort. That's normal, ignore it."
+            case .hard:      effortLabel = "Hard effort but sustainable. Pace by feel, not by HR. Long-effort cardiac drift will lie to you."
+            case .maxEffort: effortLabel = "Race effort. RPE-driven. HR drift makes the bpm number meaningless after the first hour."
             }
             result += " " + effortLabel
         }
@@ -153,7 +153,7 @@ enum CoachAdviceGenerator {
         // morning). One short sentence — no over-stuffed card.
         if isHotSessionForecast,
            type == .intervals || type == .tempo || type == .verticalGain {
-            result += " Today's forecast is hot — consider swapping with tomorrow's easy day or moving this to dawn."
+            result += " Today's forecast is hot. Consider swapping with tomorrow's easy day or moving this to dawn."
         }
         // Descent emphasis. For races with heavy D- (UTMB / Hardrock /
         // Madeira / TDS class), quad damage tolerance is the limiter
@@ -166,7 +166,7 @@ enum CoachAdviceGenerator {
            (type == .longRun || type == .backToBack),
            (phase == .build || phase == .peak),
            !isRecoveryWeek {
-            result += " Pick a route with sustained descent — practice relaxed quads, slight forward lean, quick foot turnover. Quad tolerance is the #1 race-day limiter for big-D- races."
+            result += " Pick a route with sustained descent. Practice relaxed quads, slight forward lean, quick foot turnover. Quad tolerance is the #1 race-day limiter for big-D- races."
         }
         // T8 — altitude-acclimatization advisory. Surfaces on long
         // runs in build/peak when the target race tops out ≥ 2500m.
@@ -189,7 +189,7 @@ enum CoachAdviceGenerator {
            type == .verticalGain,
            (phase == .build || phase == .peak),
            !isRecoveryWeek {
-            result += " Poles are allowed in your race. If you plan to use them, practice with poles on this VG session — uphill is the natural slot. Athletes who race with poles untrained typically fight technique on race day."
+            result += " Poles are allowed in your race. If you plan to use them, practice with poles on this VG session, since uphill is the natural slot. Athletes who race with poles untrained typically fight technique on race day."
         }
         // Mental cue. Short — one sentence. Surfaces only on the few
         // sessions where it actually matters: peak-phase race-effort
@@ -216,7 +216,7 @@ enum CoachAdviceGenerator {
         case (.taper, .longRun), (.taper, .backToBack):
             return "Visualise the race tonight: start, mid-race, finish. Three minutes is enough."
         case (.taper, .intervals), (.taper, .tempo):
-            return "Sharpening, not building. Stay relaxed — speed comes from looseness."
+            return "Sharpening, not building. Stay relaxed; speed comes from looseness."
         case (.peak, .longRun), (.peak, .backToBack):
             return "If a bad patch hits, walk 60 seconds, fuel, then run. Patches pass."
         case (.peak, .race):
@@ -239,10 +239,10 @@ enum CoachAdviceGenerator {
     private static func altitudeAdvisory(maxElevationM: Double) -> String {
         if maxElevationM >= 3500 {
             let elevStr = String(Int(maxElevationM))
-            return "Your race tops out at \(elevStr)m. Above 3000m every effort feels harder for the same pace — plan 3-4 weeks at race elevation pre-race, or use altitude tents / live-low train-high. Without acclimatization, expect a 10-15% pace cost in the highest sections."
+            return "Your race tops out at \(elevStr)m. Above 3000m every effort feels harder for the same pace. Plan 3-4 weeks at race elevation pre-race, or use altitude tents / live-low train-high. Without acclimatization, expect a 10-15% pace cost in the highest sections."
         } else {
             let elevStr = String(Int(maxElevationM))
-            return "Your race tops out at \(elevStr)m. At altitude every effort feels harder for the same pace — if you can, schedule 1-2 weeks at race elevation pre-race. Otherwise expect a 5-10% pace cost above 3000m and budget extra fueling."
+            return "Your race tops out at \(elevStr)m. At altitude every effort feels harder for the same pace. If you can, schedule 1-2 weeks at race elevation pre-race. Otherwise expect a 5-10% pace cost above 3000m and budget extra fueling."
         }
     }
 
@@ -257,10 +257,10 @@ enum CoachAdviceGenerator {
         switch (phase, type) {
         // Peak long run / B2B — kick off the 10-14 day acclimation block
         case (.peak, .longRun), (.peak, .backToBack):
-            return "Race-day forecast is hot — start your 10-14 day heat-acclimation block by training in the warmest part of the day, layered, or in a sauna 20-30 min post-run."
+            return "Race-day forecast is hot. Start your 10-14 day heat-acclimation block by training in the warmest part of the day, layered, or in a sauna 20-30 min post-run."
         // Peak quality (intervals/tempo/VG) — heat-specific pacing reminder
         case (.peak, .intervals), (.peak, .tempo), (.peak, .verticalGain):
-            return "Heat block in progress: dial today's pace by feel, not the watch — heat compresses pace bands. Cool the head + neck immediately post-rep."
+            return "Heat block in progress: dial today's pace by feel, not the watch. Heat compresses pace bands. Cool the head + neck immediately post-rep."
         // Taper big efforts (LR / B2B / race) — maintain and don't chase new stress
         case (.taper, .longRun), (.taper, .backToBack), (.taper, .race):
             return "Stay heat-adapted: short heat exposures (warm bath, sauna 15 min) every 2-3 days through taper. Don't add new training stress."
@@ -347,7 +347,7 @@ enum CoachAdviceGenerator {
         if isRoadRace,
            (phase == .base || phase == .build),
            weekInPhase % 2 == 0 {
-            return base + " End with 4-6 × 100m strides at controlled fast pace, full recovery between — keeps top-end speed alive without aerobic cost."
+            return base + " End with 4-6 × 100m strides at controlled fast pace, full recovery between. Keeps top-end speed alive without aerobic cost."
         }
         return base
     }

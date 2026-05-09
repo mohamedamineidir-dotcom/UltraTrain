@@ -73,7 +73,7 @@ enum SexSpecificAdviceHelper {
     // MARK: - Copy (short, coach-voice, no em-dashes)
 
     private static let fuellingNote =
-        "Note for female athletes: research (Sims 2016) suggests higher carb demand on long efforts, especially through the luteal phase. Fuel generously — 30-60 g carbs per hour, starting before you feel you need it."
+        "Note for female athletes: research (Sims 2016) suggests higher carb demand on long efforts, especially through the luteal phase. Fuel generously, 30-60 g carbs per hour, starting before you feel you need it."
 
     private static let ironNote =
         "Note for female athletes: high-intensity blocks raise iron turnover. If you're trending tired beyond what training explains, a ferritin check is worth it. Target 15-18 mg/day through diet or supplementation (Sims 2016)."

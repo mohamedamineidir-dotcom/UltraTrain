@@ -103,12 +103,12 @@ enum RoadCoachAdviceGenerator {
             let warning: String
             if realism == .veryAmbitious {
                 if let recommended = paceProfile?.recommendedGoalTime {
-                    warning = " ⚠ Goal is very ambitious — >20% faster than current fitness supports. Training paces stay honest (fitness-derived); race-pace work is held back until late peak. Your fitness right now points to ~\(formatFinishTime(recommended)) as a realistic target for this race. If the tune-up time trial doesn't match your declared goal, retarget before race day — chasing an unattainable goal leads to overtraining, not breakthroughs."
+                    warning = " ⚠ Goal is very ambitious. A realistic target right now is ~\(formatFinishTime(recommended)). Race pace unlocks only if your tune-up trial confirms it."
                 } else {
-                    warning = " ⚠ Goal is very ambitious vs current fitness. Training paces stay honest — we'll introduce goal pace only in late peak, and only if the tune-up time trial supports it."
+                    warning = " ⚠ Goal is very ambitious vs current fitness. Race pace unlocks only if your tune-up trial confirms it."
                 }
             } else {
-                warning = " Note: goal is ambitious. Training paces reflect current fitness to build safely toward race day; race-specific work unlocks in late peak."
+                warning = " Note: goal is ambitious. Training paces reflect current fitness; race-specific work unlocks in late peak."
             }
             advice = (advice ?? "") + warning
         }
@@ -161,13 +161,13 @@ enum RoadCoachAdviceGenerator {
         case .slowDownPaceDrift:
             reasonText = "your recent reps have been running \(Int(entry.meanDeviationSecondsPerKm.rounded()))s/km slower than target"
         case .slowDownHighRPE:
-            reasonText = "you've been hitting target but at a perceived effort of \(String(format: "%.1f", entry.meanRPE))/10 — unsustainable across a block"
+            reasonText = "you've been hitting target but at a perceived effort of \(String(format: "%.1f", entry.meanRPE))/10, unsustainable across a block"
         case .slowDownIncompleteReps:
-            reasonText = "you've bailed on reps across multiple sessions — the previous target was too hard"
+            reasonText = "you've bailed on reps across multiple sessions; the previous target was too hard"
         case .speedUpFitnessHeadroom:
-            reasonText = "you've been clearing the work at RPE \(String(format: "%.1f", entry.meanRPE))/10 with all reps completed — fitness has room"
+            reasonText = "you've been clearing the work at RPE \(String(format: "%.1f", entry.meanRPE))/10 with all reps completed; fitness has room"
         }
-        return "📊 Target \(direction) \(deltaSeconds)s/km (\(from) → \(to)) based on \(entry.evidenceCount) recent sessions — \(reasonText). The fitness baseline is unchanged; only this session's prescription adapts."
+        return "📊 Target \(direction) \(deltaSeconds)s/km (\(from) → \(to)) based on \(entry.evidenceCount) recent sessions: \(reasonText). The fitness baseline is unchanged; only this session's prescription adapts."
     }
 
     /// RR-22: Hot-race advisory — practical heat-acclimation options the
@@ -176,7 +176,7 @@ enum RoadCoachAdviceGenerator {
     /// of active heat training (Scoon 2007, Zurawlew 2016). Heat acclimation
     /// starts at 5-7 days but optimal benefit at 10-14 days.
     private static func hotRaceAdvice() -> String {
-        return "Hot-race advisory: forecast suggests warm/humid race conditions. Practical acclimation you can do wherever you live: (1) sauna sessions 20-30 min at 60-80 °C, 3× per week starting 2 weeks out — passive heat exposure yields ~50-70% of active-heat training benefit; (2) overdress (extra layer) on easy runs during the final 10 days; (3) pre-cool with ice slurry or cold water 15 min before the race if available; (4) expect to pace 10-30 s/km slower than your cool-weather goal pace, and front-load hydration the week before."
+        return "Hot-race advisory: forecast suggests warm/humid race conditions. Practical acclimation: (1) sauna sessions 20-30 min at 60-80 °C, 3× per week starting 2 weeks out (passive heat exposure yields ~50-70% of active-heat benefit); (2) overdress on easy runs during the final 10 days; (3) pre-cool with ice slurry or cold water 15 min before the race; (4) expect to pace 10-30 s/km slower than your cool-weather goal pace."
     }
 
     /// RR-21: Short-prep advisory for compressed plans. Surfaced only during
@@ -187,9 +187,9 @@ enum RoadCoachAdviceGenerator {
         case .roadMarathon:
             return "Compressed prep alert: marathon builds typically run 16-18 weeks, with 8 weeks of aerobic base development alone. Your base is truncated, which caps how much aerobic engine you can build before race day. Strongly recommend a conservative finish goal (add 5-10% to your target) or deferring to a later race if the calendar allows."
         case .roadHalf:
-            return "Compressed prep alert: HM prep benefits from at least 8 weeks for meaningful threshold development. Your plan is running shorter — consider a conservative finish goal, and trust your aerobic base rather than chasing speed."
+            return "Compressed prep alert: HM prep benefits from at least 8 weeks for meaningful threshold development. Your plan is running shorter. Consider a conservative finish goal, and trust your aerobic base rather than chasing speed."
         case .road10K:
-            return "Compressed prep alert: 10K plans normally run 6+ weeks. Your base is short — prioritize finishing cleanly over hitting a hard target."
+            return "Compressed prep alert: 10K plans normally run 6+ weeks. Your base is short. Prioritize finishing cleanly over hitting a hard target."
         }
     }
 
@@ -199,9 +199,9 @@ enum RoadCoachAdviceGenerator {
     private static func firstTimerAdvice(discipline: RoadRaceDiscipline) -> String {
         switch discipline {
         case .roadMarathon:
-            return "First-timer note: prioritize finishing strong over hitting a specific time. First-time marathoners most often blow up in the final 10K from going out too hard — hold marathon pace even when it feels too easy in the first half. The fast target belongs to race #2."
+            return "First-timer note: prioritize finishing strong over hitting a specific time. First-time marathoners most often blow up in the final 10K from going out too hard. Hold marathon pace even when it feels too easy in the first half. The fast target belongs to race #2."
         case .roadHalf:
-            return "First-timer note: keep the first 15 km conservative — a common first-half-marathon mistake is starting at 10K effort and blowing up at 17 km. Save a little for the final 5 km."
+            return "First-timer note: keep the first 15 km conservative. A common first-half-marathon mistake is starting at 10K effort and blowing up at 17 km. Save a little for the final 5 km."
         case .road10K:
             return "First-timer note: most first 10Ks go out too hard. Settle into goal pace by 2 km and save a surge for the final 2 km, not the first."
         }
@@ -223,7 +223,7 @@ enum RoadCoachAdviceGenerator {
     // MARK: - Specific Advice
 
     private static func easyRunAdvice(phase: TrainingPhase, paceProfile: RoadPaceProfile?) -> String {
-        var advice = "Keep it truly easy — conversational pace."
+        var advice = "Keep it truly easy, at conversational pace."
         if let profile = paceProfile {
             let slowPace = formatPace(profile.easyPacePerKm.upperBound)
             let fastPace = formatPace(profile.easyPacePerKm.lowerBound)
@@ -244,13 +244,13 @@ enum RoadCoachAdviceGenerator {
         case .base:
             advice += " Speed strides and short reps. Focus on form and leg turnover, not raw speed."
         case .build:
-            advice += " VO2max session. Run the intervals at a controlled hard effort — working hard but not sprinting."
+            advice += " VO2max session. Run the intervals at a controlled hard effort, working hard but not sprinting."
             if let profile = paceProfile {
                 let pace = paceForTemplate(template: template, profile: profile, fallback: profile.intervalPacePerKm)
                 advice += " Target: \(formatPace(pace))/km."
             }
         case .peak:
-            advice += " Race-specific work. This is your \(discipline.displayName) pace — memorize how it feels."
+            advice += " Race-specific work. This is your \(discipline.displayName) pace. Memorize how it feels."
             if let profile = paceProfile {
                 let pace = paceForTemplate(template: template, profile: profile, fallback: profile.racePacePerKm)
                 advice += " Target: \(formatPace(pace))/km."
@@ -326,7 +326,7 @@ enum RoadCoachAdviceGenerator {
             return "Structured long run. Start easy and build into a moderate effort in the second half. Practice your race-day nutrition."
         case .peak:
             if discipline == .roadMarathon {
-                return "Marathon-specific long run. Include blocks at marathon pace. This is your dress rehearsal — practice everything: pacing, fueling, gear."
+                return "Marathon-specific long run. Include blocks at marathon pace. This is your dress rehearsal. Practice everything: pacing, fueling, gear."
             }
             return "Race-specific long run. Include a faster segment at race pace. Practice your race-day routine."
         default:
@@ -337,7 +337,7 @@ enum RoadCoachAdviceGenerator {
     private static func recoveryWeekAdvice(type: SessionType) -> String {
         switch type {
         case .longRun:
-            "Shorter long run this week. Your body is absorbing recent training — let it work."
+            "Shorter long run this week. Your body is absorbing recent training. Let it work."
         case .recovery:
             "Easy effort. Recovery weeks are when you get stronger. Trust the process."
         default:
