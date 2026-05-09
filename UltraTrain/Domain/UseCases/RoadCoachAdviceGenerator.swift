@@ -207,16 +207,21 @@ enum RoadCoachAdviceGenerator {
         }
     }
 
-    /// Formats a TimeInterval as "H:MM" or "M:SS" for coach advice messages.
+    /// Formats a TimeInterval as a finish time using letter-suffixed
+    /// segments ("3h16", "22min30s") instead of colon notation. Avoids
+    /// visual collision with pace strings like "3:16/km".
     private static func formatFinishTime(_ seconds: TimeInterval) -> String {
         let totalSeconds = Int(seconds.rounded())
         let hours = totalSeconds / 3600
         let minutes = (totalSeconds % 3600) / 60
         let secs = totalSeconds % 60
         if hours > 0 {
-            return "\(hours):\(String(format: "%02d", minutes))"
+            return "\(hours)h\(String(format: "%02d", minutes))"
         }
-        return "\(minutes):\(String(format: "%02d", secs))"
+        if secs > 0 {
+            return "\(minutes)min\(secs)s"
+        }
+        return "\(minutes)min"
     }
 
 
