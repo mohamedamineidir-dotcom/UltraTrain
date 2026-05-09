@@ -54,9 +54,7 @@ extension RunTrackingLaunchView {
                         )
                     )
                     .frame(width: 80, height: 80)
-                Image(systemName: "figure.run")
-                    .font(.system(size: heroIconSize))
-                    .foregroundStyle(Theme.Colors.primary)
+                RunnerLogoView(size: heroIconSize)
             }
             .shadow(color: Theme.Colors.primary.opacity(0.3), radius: 12)
             .accessibilityHidden(true)
