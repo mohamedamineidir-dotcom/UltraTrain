@@ -364,7 +364,7 @@ private struct ManualValidationPage: View {
     @State private var stepIndex: Int = 0
     @FocusState private var focusedField: StatsField?
 
-    enum StatsField: Hashable { case distance, elevation }
+    enum StatsField: Hashable { case distance, hours, minutes, seconds, elevation }
 
     /// Atomic step in the validation flow. The sequence is computed per
     /// session — intervals/tempo with a feedback context skip feeling/rpe
@@ -433,7 +433,7 @@ private struct ManualValidationPage: View {
         _minutes = State(initialValue: (Int(planned) % 3600) / 60)
         _seconds = State(initialValue: 0)
         _elevationText = State(initialValue: session.plannedElevationGainM > 0
-            ? String(format: "%.0f", session.plannedElevationGainM) : "")
+            ? String(format: "%.0f", session.plannedElevationGainM) : "0")
     }
 
     private var isStrengthSession: Bool {
@@ -639,12 +639,12 @@ private struct ManualValidationPage: View {
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ))
-                        .frame(width: 46, height: 46)
+                        .frame(width: 40, height: 40)
                         .overlay(
                             Circle().stroke(session.intensity.color.opacity(0.35), lineWidth: 0.75)
                         )
                     Image(systemName: session.type.icon)
-                        .font(.title3.weight(.semibold))
+                        .font(.subheadline.weight(.semibold))
                         .foregroundStyle(session.intensity.color)
                 }
                 VStack(alignment: .leading, spacing: 3) {
@@ -668,7 +668,8 @@ private struct ManualValidationPage: View {
                 }
                 Spacer(minLength: 0)
             }
-            .padding(Theme.Spacing.md)
+            .padding(.horizontal, Theme.Spacing.md)
+            .padding(.vertical, Theme.Spacing.sm + 2)
 
             Rectangle()
                 .fill(session.intensity.color.opacity(0.15))
@@ -676,7 +677,7 @@ private struct ManualValidationPage: View {
 
             // Input rows — no section label, no inner card background.
             // Just clean rows inside the same visual block as the header.
-            VStack(spacing: Theme.Spacing.sm) {
+            VStack(spacing: 2) {
                 if !isStrengthSession {
                     inlineInputRow(
                         label: "Distance",
@@ -706,8 +707,8 @@ private struct ManualValidationPage: View {
                     )
                 }
             }
-            .padding(.horizontal, Theme.Spacing.md)
-            .padding(.vertical, Theme.Spacing.md)
+            .padding(.horizontal, Theme.Spacing.sm)
+            .padding(.vertical, Theme.Spacing.sm + 2)
         }
         .background(tintedGlass(tint: session.intensity.color))
         .overlay(tintedGlassBorder(tint: session.intensity.color))
@@ -780,14 +781,65 @@ private struct ManualValidationPage: View {
     }
 
     private var durationControl: some View {
-        HStack(spacing: 2) {
+        HStack(spacing: 0) {
             Spacer(minLength: 0)
-            durationPicker(value: $hours, label: "h", range: 0..<24)
-            Text(":").font(.subheadline.bold()).foregroundStyle(Theme.Colors.tertiaryLabel)
-            durationPicker(value: $minutes, label: "m", range: 0..<60)
-            Text(":").font(.subheadline.bold()).foregroundStyle(Theme.Colors.tertiaryLabel)
-            durationPicker(value: $seconds, label: "s", range: 0..<60)
+            TextField("0", text: hoursTextBinding)
+                .keyboardType(.numberPad)
+                .font(.title3.bold().monospacedDigit())
+                .foregroundStyle(Theme.Colors.label)
+                .multilineTextAlignment(.trailing)
+                .frame(width: 22)
+                .focused($focusedField, equals: .hours)
+            durationSeparator
+            TextField("00", text: minutesTextBinding)
+                .keyboardType(.numberPad)
+                .font(.title3.bold().monospacedDigit())
+                .foregroundStyle(Theme.Colors.label)
+                .multilineTextAlignment(.center)
+                .frame(width: 30)
+                .focused($focusedField, equals: .minutes)
+            durationSeparator
+            TextField("00", text: secondsTextBinding)
+                .keyboardType(.numberPad)
+                .font(.title3.bold().monospacedDigit())
+                .foregroundStyle(Theme.Colors.label)
+                .multilineTextAlignment(.leading)
+                .frame(width: 30)
+                .focused($focusedField, equals: .seconds)
+            Text("h:m:s")
+                .font(.caption2)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+                .frame(width: 38, alignment: .leading)
+                .padding(.leading, 4)
         }
+    }
+
+    private var durationSeparator: some View {
+        Text(":")
+            .font(.title3.bold().monospacedDigit())
+            .foregroundStyle(Theme.Colors.secondaryLabel)
+            .padding(.horizontal, 1)
+    }
+
+    private var hoursTextBinding: Binding<String> {
+        Binding(
+            get: { String(hours) },
+            set: { hours = max(0, min(99, Int($0.filter { $0.isNumber }) ?? 0)) }
+        )
+    }
+
+    private var minutesTextBinding: Binding<String> {
+        Binding(
+            get: { String(format: "%02d", minutes) },
+            set: { minutes = max(0, min(59, Int($0.filter { $0.isNumber }) ?? 0)) }
+        )
+    }
+
+    private var secondsTextBinding: Binding<String> {
+        Binding(
+            get: { String(format: "%02d", seconds) },
+            set: { seconds = max(0, min(59, Int($0.filter { $0.isNumber }) ?? 0)) }
+        )
     }
 
     private var elevationControl: some View {
@@ -908,18 +960,7 @@ private struct ManualValidationPage: View {
     /// and the cards visually balance.
     private static let statsControlWidth: CGFloat = 148
 
-    private func durationPicker(value: Binding<Int>, label: String, range: Range<Int>) -> some View {
-        Picker(label, selection: value) {
-            ForEach(range, id: \.self) { v in
-                Text(String(format: "%02d", v)).tag(v)
-            }
-        }
-        .pickerStyle(.menu)
-        .labelsHidden()
-        .fixedSize()
-    }
-
-    private func sectionLabel(_ text: String, icon: String) -> some View {
+private func sectionLabel(_ text: String, icon: String) -> some View {
         HStack(spacing: Theme.Spacing.sm) {
             Image(systemName: icon)
                 .font(.caption)
