@@ -11,6 +11,10 @@ struct TrainingPlanView: View {
     @State private var exportedFileURL: URL?
     @State private var exportError: String?
     @State private var showPauseSheet = false
+    /// Index into `phaseGroups` for the phase whose weeks are currently
+    /// rendered below the charts. Initialised to the phase containing
+    /// today on first appear of each loaded plan via .task(id:).
+    @State var selectedPhaseIndex: Int = 0
     private let raceRepository: any RaceRepository
     private let planRepository: any TrainingPlanRepository
     private let workoutRecipeRepository: any WorkoutRecipeRepository

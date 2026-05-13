@@ -59,159 +59,22 @@ extension TrainingPlanView {
 
                 PlanVolumeChartsSection(plan: plan, isRoad: isRoadPlan)
 
-                ForEach(Array(viewModel.visibleWeeks.enumerated()), id: \.element.id) { visibleIndex, week in
-                    let weekIndex = plan.weeks.firstIndex(where: { $0.id == week.id }) ?? 0
-
-                    // Phase header at phase transitions
-                    if visibleIndex == 0 || week.phase != viewModel.visibleWeeks[visibleIndex - 1].phase {
-                        let phaseWeeks = plan.weeks.filter { $0.phase == week.phase }
-                        let completedWeeks = phaseWeeks.filter { w in
-                            w.sessions.filter { $0.type != .rest && !$0.isSkipped }.allSatisfy(\.isCompleted)
-                        }.count
-                        let firstNum = phaseWeeks.first?.weekNumber ?? 1
-                        let lastNum = phaseWeeks.last?.weekNumber ?? 1
-                        PhaseHeaderCard(
-                            phase: week.phase,
-                            weekRange: "Weeks \(firstNum)-\(lastNum)",
-                            completedWeeks: completedWeeks,
-                            totalWeeks: phaseWeeks.count,
-                            description: PhaseHeaderCard.description(for: week.phase, focus: week.phaseFocus, isRoad: isRoadPlan),
-                            phaseFocus: week.phaseFocus,
-                            isRoad: isRoadPlan
-                        )
-                    }
-
-                    WeekCardView(
-                        week: week,
-                        weekIndex: weekIndex,
-                        isCurrentWeek: week.containsToday,
-                        planStartDate: plan.weeks.first?.startDate ?? .now,
-                        planEndDate: plan.weeks.last?.endDate ?? .now,
-                        allWeeks: plan.weeks,
-                        athlete: viewModel.athlete,
-                        isRoad: isRoadPlan,
-                        nutritionAdvisor: viewModel.nutritionAdvisor,
-                        nutritionPreferences: viewModel.nutritionPreferences,
-                        onToggleSession: { sessionIndex in
-                            Task {
-                                await viewModel.toggleSessionCompletion(
-                                    weekIndex: weekIndex,
-                                    sessionIndex: sessionIndex
-                                )
-                            }
-                        },
-                        onSkipSession: { sessionIndex, reason in
-                            Task {
-                                await viewModel.skipSession(
-                                    weekIndex: weekIndex,
-                                    sessionIndex: sessionIndex,
-                                    reason: reason
-                                )
-                            }
-                        },
-                        onUnskipSession: { sessionIndex in
-                            Task {
-                                await viewModel.unskipSession(
-                                    weekIndex: weekIndex,
-                                    sessionIndex: sessionIndex
-                                )
-                            }
-                        },
-                        onRescheduleSession: { sessionIndex, newDate in
-                            Task {
-                                await viewModel.rescheduleSession(
-                                    weekIndex: weekIndex,
-                                    sessionIndex: sessionIndex,
-                                    to: newDate
-                                )
-                            }
-                        },
-                        onSwapSession: { sessionIndex, candidate in
-                            Task {
-                                await viewModel.swapSessions(
-                                    weekIndexA: weekIndex,
-                                    sessionIndexA: sessionIndex,
-                                    weekIndexB: candidate.weekIndex,
-                                    sessionIndexB: candidate.sessionIndex
-                                )
-                            }
-                        },
-                        workouts: plan.workouts,
-                        onReorderSession: { sourceWeekIndex, sourceSessionIndex, target in
-                            Task {
-                                await viewModel.swapSessions(
-                                    weekIndexA: sourceWeekIndex,
-                                    sessionIndexA: sourceSessionIndex,
-                                    weekIndexB: target.weekIndex,
-                                    sessionIndexB: target.sessionIndex
-                                )
-                            }
-                        },
-                        onValidateSession: { sessionIndex in
-                            Task {
-                                await viewModel.toggleSessionCompletion(
-                                    weekIndex: weekIndex,
-                                    sessionIndex: sessionIndex
-                                )
-                            }
-                        },
-                        onValidateSessionWithStats: { sessionIndex, dist, dur, elev, feeling, exertion in
-                            Task {
-                                await viewModel.completeSessionManually(
-                                    weekIndex: weekIndex,
-                                    sessionIndex: sessionIndex,
-                                    distanceKm: dist,
-                                    durationSeconds: dur,
-                                    elevationGainM: elev,
-                                    feeling: feeling,
-                                    exertion: exertion
-                                )
-                            }
-                        },
-                        onLinkSessionToRun: { sessionIndex, runId in
-                            Task {
-                                await viewModel.linkSessionToRun(
-                                    weekIndex: weekIndex,
-                                    sessionIndex: sessionIndex,
-                                    runId: runId
-                                )
-                            }
-                        },
-                        recentRunsProvider: { date in
-                            await viewModel.recentUnlinkedRuns(near: date)
-                        },
-                        stravaActivitiesProvider: { date in
-                            await viewModel.recentStravaActivities(near: date)
-                        },
-                        onLinkStravaActivity: { sessionIndex, activity in
-                            Task {
-                                await viewModel.importAndLinkStravaActivity(
-                                    weekIndex: weekIndex,
-                                    sessionIndex: sessionIndex,
-                                    activity: activity
-                                )
-                            }
-                        },
-                        intervalFeedbackContextProvider: { sessionIndex in
-                            await buildIntervalFeedbackContext(
-                                weekIndex: weekIndex,
-                                sessionIndex: sessionIndex
-                            )
-                        },
-                        onSaveIntervalFeedback: { feedback in
-                            Task { await viewModel.saveIntervalFeedback(feedback) }
-                        },
-                        onCompleteFitnessTest: { sessionIndex, variant, result, feeling in
-                            Task {
-                                await viewModel.completeFitnessTestSession(
-                                    weekIndex: weekIndex,
-                                    sessionIndex: sessionIndex,
-                                    variant: variant,
-                                    result: result,
-                                    feeling: feeling
-                                )
-                            }
-                        }
+                // Phase-paginated weeks. The flat vertical list of all
+                // weeks meant a 26-week plan required ~5 screenfuls of
+                // scroll to reach the end. Now the page shows ONE phase
+                // at a time (Base / Build / Peak / Taper / Race), with
+                // arrow buttons + dots indicator + horizontal swipe to
+                // move between phases. Top charts and bottom banners are
+                // unchanged — only the weeks list is paginated.
+                let groups = phaseGroups
+                if !groups.isEmpty {
+                    let safeIndex = min(max(0, selectedPhaseIndex), groups.count - 1)
+                    phaseNavigatorBar(groups: groups, currentIndex: safeIndex)
+                    phaseContent(
+                        groups: groups,
+                        currentIndex: safeIndex,
+                        plan: plan,
+                        isRoadPlan: isRoadPlan
                     )
                 }
 
@@ -221,6 +84,323 @@ extension TrainingPlanView {
             }
             .padding()
         }
+        .task(id: plan.id) {
+            // Land on the phase containing today on first load (and
+            // whenever the plan changes, e.g. after a regeneration).
+            selectedPhaseIndex = initialPhaseIndex
+        }
+    }
+
+    // MARK: - Phase pagination
+
+    /// Weeks of `viewModel.visibleWeeks` grouped contiguously by phase.
+    /// Each entry is one swipeable page in the phase pager.
+    var phaseGroups: [(phase: TrainingPhase, weeks: [TrainingWeek])] {
+        var groups: [(phase: TrainingPhase, weeks: [TrainingWeek])] = []
+        for week in viewModel.visibleWeeks {
+            if let last = groups.last, last.phase == week.phase {
+                groups[groups.count - 1].weeks.append(week)
+            } else {
+                groups.append((phase: week.phase, weeks: [week]))
+            }
+        }
+        return groups
+    }
+
+    /// Index of the phase that contains today's week — what we land on
+    /// when the plan first loads. Falls back to 0 if no week matches.
+    var initialPhaseIndex: Int {
+        let groups = phaseGroups
+        if let idx = groups.firstIndex(where: { group in
+            group.weeks.contains(where: { $0.containsToday })
+        }) {
+            return idx
+        }
+        return 0
+    }
+
+    /// Top strip: prev arrow · phase name + progress + dots · next arrow.
+    /// Tap to navigate. The dots double as a phase-progress indicator.
+    @ViewBuilder
+    func phaseNavigatorBar(
+        groups: [(phase: TrainingPhase, weeks: [TrainingWeek])],
+        currentIndex: Int
+    ) -> some View {
+        let phase = groups[currentIndex].phase
+        let isFirst = currentIndex == 0
+        let isLast = currentIndex == groups.count - 1
+        HStack(spacing: Theme.Spacing.md) {
+            Button {
+                guard !isFirst else { return }
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    selectedPhaseIndex = currentIndex - 1
+                }
+            } label: {
+                Image(systemName: "chevron.left.circle.fill")
+                    .font(.title2)
+                    .foregroundStyle(isFirst ? Theme.Colors.tertiaryLabel : phase.color)
+            }
+            .buttonStyle(.plain)
+            .disabled(isFirst)
+            .accessibilityLabel("Previous phase")
+
+            VStack(spacing: 4) {
+                Text(phase.displayName.uppercased())
+                    .font(.caption2.weight(.bold))
+                    .tracking(1.2)
+                    .foregroundStyle(phase.color)
+                Text("Phase \(currentIndex + 1) of \(groups.count)")
+                    .font(.caption2)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                HStack(spacing: 5) {
+                    ForEach(groups.indices, id: \.self) { i in
+                        Capsule()
+                            .fill(i == currentIndex ? groups[i].phase.color : Theme.Colors.tertiaryLabel.opacity(0.3))
+                            .frame(width: i == currentIndex ? 14 : 6, height: 6)
+                            .animation(.easeInOut(duration: 0.2), value: currentIndex)
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity)
+
+            Button {
+                guard !isLast else { return }
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    selectedPhaseIndex = currentIndex + 1
+                }
+            } label: {
+                Image(systemName: "chevron.right.circle.fill")
+                    .font(.title2)
+                    .foregroundStyle(isLast ? Theme.Colors.tertiaryLabel : phase.color)
+            }
+            .buttonStyle(.plain)
+            .disabled(isLast)
+            .accessibilityLabel("Next phase")
+        }
+        .padding(.vertical, Theme.Spacing.sm)
+        .padding(.horizontal, Theme.Spacing.md)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .fill(.ultraThinMaterial)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .stroke(phase.color.opacity(0.25), lineWidth: 0.5)
+        )
+    }
+
+    /// Phase header + weeks of the selected phase. Slides in from the
+    /// trailing edge on next, leading edge on previous. A horizontal
+    /// drag gesture mirrors the arrow buttons for swipe navigation;
+    /// the drag only fires when the gesture is clearly horizontal so
+    /// vertical scroll in the parent ScrollView is preserved.
+    @ViewBuilder
+    func phaseContent(
+        groups: [(phase: TrainingPhase, weeks: [TrainingWeek])],
+        currentIndex: Int,
+        plan: TrainingPlan,
+        isRoadPlan: Bool
+    ) -> some View {
+        let group = groups[currentIndex]
+        let completedWeeks = group.weeks.filter { w in
+            w.sessions.filter { $0.type != .rest && !$0.isSkipped }.allSatisfy(\.isCompleted)
+        }.count
+        let firstNum = group.weeks.first?.weekNumber ?? 1
+        let lastNum = group.weeks.last?.weekNumber ?? 1
+
+        VStack(spacing: Theme.Spacing.md) {
+            PhaseHeaderCard(
+                phase: group.phase,
+                weekRange: "Weeks \(firstNum)-\(lastNum)",
+                completedWeeks: completedWeeks,
+                totalWeeks: group.weeks.count,
+                description: PhaseHeaderCard.description(
+                    for: group.phase,
+                    focus: group.weeks.first?.phaseFocus,
+                    isRoad: isRoadPlan
+                ),
+                phaseFocus: group.weeks.first?.phaseFocus,
+                isRoad: isRoadPlan
+            )
+
+            ForEach(group.weeks) { week in
+                let weekIndex = plan.weeks.firstIndex(where: { $0.id == week.id }) ?? 0
+                weekCard(
+                    week: week,
+                    weekIndex: weekIndex,
+                    plan: plan,
+                    isRoadPlan: isRoadPlan
+                )
+            }
+        }
+        .id(currentIndex)
+        .transition(.asymmetric(
+            insertion: .move(edge: .trailing).combined(with: .opacity),
+            removal: .move(edge: .leading).combined(with: .opacity)
+        ))
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 30)
+                .onEnded { value in
+                    let h = value.translation.width
+                    let v = value.translation.height
+                    // Horizontal-dominant gesture only — leaves the parent
+                    // ScrollView free to handle vertical drags.
+                    guard abs(h) > abs(v) * 1.5 else { return }
+                    if h > 50, currentIndex > 0 {
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            selectedPhaseIndex = currentIndex - 1
+                        }
+                    } else if h < -50, currentIndex < groups.count - 1 {
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            selectedPhaseIndex = currentIndex + 1
+                        }
+                    }
+                }
+        )
+    }
+
+    /// Extracted week-card builder so the phase-pager body stays
+    /// readable. Captures the same callbacks the previous flat
+    /// ForEach used.
+    @ViewBuilder
+    private func weekCard(
+        week: TrainingWeek,
+        weekIndex: Int,
+        plan: TrainingPlan,
+        isRoadPlan: Bool
+    ) -> some View {
+        WeekCardView(
+            week: week,
+            weekIndex: weekIndex,
+            isCurrentWeek: week.containsToday,
+            planStartDate: plan.weeks.first?.startDate ?? .now,
+            planEndDate: plan.weeks.last?.endDate ?? .now,
+            allWeeks: plan.weeks,
+            athlete: viewModel.athlete,
+            isRoad: isRoadPlan,
+            nutritionAdvisor: viewModel.nutritionAdvisor,
+            nutritionPreferences: viewModel.nutritionPreferences,
+            onToggleSession: { sessionIndex in
+                Task {
+                    await viewModel.toggleSessionCompletion(
+                        weekIndex: weekIndex,
+                        sessionIndex: sessionIndex
+                    )
+                }
+            },
+            onSkipSession: { sessionIndex, reason in
+                Task {
+                    await viewModel.skipSession(
+                        weekIndex: weekIndex,
+                        sessionIndex: sessionIndex,
+                        reason: reason
+                    )
+                }
+            },
+            onUnskipSession: { sessionIndex in
+                Task {
+                    await viewModel.unskipSession(
+                        weekIndex: weekIndex,
+                        sessionIndex: sessionIndex
+                    )
+                }
+            },
+            onRescheduleSession: { sessionIndex, newDate in
+                Task {
+                    await viewModel.rescheduleSession(
+                        weekIndex: weekIndex,
+                        sessionIndex: sessionIndex,
+                        to: newDate
+                    )
+                }
+            },
+            onSwapSession: { sessionIndex, candidate in
+                Task {
+                    await viewModel.swapSessions(
+                        weekIndexA: weekIndex,
+                        sessionIndexA: sessionIndex,
+                        weekIndexB: candidate.weekIndex,
+                        sessionIndexB: candidate.sessionIndex
+                    )
+                }
+            },
+            workouts: plan.workouts,
+            onReorderSession: { sourceWeekIndex, sourceSessionIndex, target in
+                Task {
+                    await viewModel.swapSessions(
+                        weekIndexA: sourceWeekIndex,
+                        sessionIndexA: sourceSessionIndex,
+                        weekIndexB: target.weekIndex,
+                        sessionIndexB: target.sessionIndex
+                    )
+                }
+            },
+            onValidateSession: { sessionIndex in
+                Task {
+                    await viewModel.toggleSessionCompletion(
+                        weekIndex: weekIndex,
+                        sessionIndex: sessionIndex
+                    )
+                }
+            },
+            onValidateSessionWithStats: { sessionIndex, dist, dur, elev, feeling, exertion in
+                Task {
+                    await viewModel.completeSessionManually(
+                        weekIndex: weekIndex,
+                        sessionIndex: sessionIndex,
+                        distanceKm: dist,
+                        durationSeconds: dur,
+                        elevationGainM: elev,
+                        feeling: feeling,
+                        exertion: exertion
+                    )
+                }
+            },
+            onLinkSessionToRun: { sessionIndex, runId in
+                Task {
+                    await viewModel.linkSessionToRun(
+                        weekIndex: weekIndex,
+                        sessionIndex: sessionIndex,
+                        runId: runId
+                    )
+                }
+            },
+            recentRunsProvider: { date in
+                await viewModel.recentUnlinkedRuns(near: date)
+            },
+            stravaActivitiesProvider: { date in
+                await viewModel.recentStravaActivities(near: date)
+            },
+            onLinkStravaActivity: { sessionIndex, activity in
+                Task {
+                    await viewModel.importAndLinkStravaActivity(
+                        weekIndex: weekIndex,
+                        sessionIndex: sessionIndex,
+                        activity: activity
+                    )
+                }
+            },
+            intervalFeedbackContextProvider: { sessionIndex in
+                await buildIntervalFeedbackContext(
+                    weekIndex: weekIndex,
+                    sessionIndex: sessionIndex
+                )
+            },
+            onSaveIntervalFeedback: { feedback in
+                Task { await viewModel.saveIntervalFeedback(feedback) }
+            },
+            onCompleteFitnessTest: { sessionIndex, variant, result, feeling in
+                Task {
+                    await viewModel.completeFitnessTestSession(
+                        weekIndex: weekIndex,
+                        sessionIndex: sessionIndex,
+                        variant: variant,
+                        result: result,
+                        feeling: feeling
+                    )
+                }
+            }
+        )
     }
 
     @MainActor
