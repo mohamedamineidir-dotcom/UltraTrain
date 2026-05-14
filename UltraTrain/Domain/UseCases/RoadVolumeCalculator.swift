@@ -254,7 +254,8 @@ enum RoadVolumeCalculator {
                 philosophy: athlete.trainingPhilosophy,
                 raceGoal: raceGoal,
                 weeklyVolumeKm: athlete.weeklyVolumeKm,
-                taperWeeks: taperProfile.totalTaperWeeks
+                taperWeeks: taperProfile.totalTaperWeeks,
+                thresholdPacePerKm: athlete.thresholdPace60MinPerKm
             )
 
             // HARD CAP: Easy runs must NEVER exceed long run, and absolute max 90min
@@ -454,7 +455,8 @@ enum RoadVolumeCalculator {
             isRecoveryWeek: false,
             philosophy: athlete.trainingPhilosophy,
             weeklyVolumeKm: athlete.weeklyVolumeKm,
-            taperWeeks: taperWeeks
+            taperWeeks: taperWeeks,
+            thresholdPacePerKm: athlete.thresholdPace60MinPerKm
         )
 
         let unscaledWeek1TotalKm = (unscaledWeek1Seconds + unscaledWeek1LongRun) / avgPaceSecPerKm

@@ -32,6 +32,21 @@ enum RoadLongRunCalculator {
         case twoPart
         /// Full race simulation: 15-20km at race pace within a longer run.
         case raceSimulation
+
+        /// Short user-facing label used as a pill on the long-run row.
+        /// Returns nil for `.easy` because a plain easy long run doesn't
+        /// need a tag — only structured variants benefit from the badge.
+        var displayLabel: String? {
+            switch self {
+            case .easy:               return nil
+            case .progressive:        return "Progressive"
+            case .fastFinish:         return "Fast Finish"
+            case .marathonPaceIntro:  return "MP Intro"
+            case .marathonPaceBlocks: return "MP Blocks"
+            case .twoPart:            return "Two-Part"
+            case .raceSimulation:     return "Race Sim"
+            }
+        }
     }
 
     // MARK: - Long Run Duration
@@ -54,7 +69,8 @@ enum RoadLongRunCalculator {
         philosophy: TrainingPhilosophy = .balanced,
         raceGoal: RaceGoal = .targetTime(0),
         weeklyVolumeKm: Double = 0,
-        taperWeeks: Int = 3
+        taperWeeks: Int = 3,
+        thresholdPacePerKm: Double? = nil
     ) -> TimeInterval {
         let discipline = RoadRaceDiscipline.from(distanceKm: raceDistanceKm)
         let maxDistanceKm = discipline.longRunCapKm(
@@ -63,13 +79,33 @@ enum RoadLongRunCalculator {
             raceGoal: raceGoal
         )
 
-        // Convert max distance to duration using experience-based pace
-        let avgPaceSecPerKm: Double = switch experience {
-        case .beginner:     370  // ~6:10/km
-        case .intermediate: 330  // ~5:30/km
-        case .advanced:     295  // ~4:55/km
-        case .elite:        265  // ~4:25/km
-        }
+        // Long-run / easy pace. When the athlete has a measured threshold
+        // pace we derive long-run pace from it (Daniels: L ≈ T + 30-45 s/km;
+        // Pfitzinger: LR pace ≈ MP + 30-45 s/km; Magness / Hudson: long
+        // run = 30-60 s/km slower than threshold). Using a fixed
+        // ~35 s/km offset puts the LR right in the middle of consensus.
+        // Without threshold data we fall back to a tier-based default —
+        // imperfect, but it's a cold-start signal and gets replaced as
+        // soon as the athlete provides a PR or VMA.
+        //
+        // Effect on the duration cap: a 2:45-marathon advanced athlete
+        // with a ~4:00 /km threshold gets a 35 km long-run cap at
+        // (240 + 35) × 35 = 2h40; a 3:30-marathon advanced athlete with
+        // a ~4:35 /km threshold gets the same 35 km at
+        // (275 + 35) × 35 = 3h01. Same prescribed distance, time scales
+        // with the athlete's actual pace instead of being forced to a
+        // tier average.
+        let avgPaceSecPerKm: Double = {
+            if let t = thresholdPacePerKm, t > 0 {
+                return t + 35
+            }
+            switch experience {
+            case .beginner:     return 370  // ~6:10/km
+            case .intermediate: return 330  // ~5:30/km
+            case .advanced:     return 295  // ~4:55/km
+            case .elite:        return 265  // ~4:25/km
+            }
+        }()
         let maxDurationSeconds = maxDistanceKm * avgPaceSecPerKm
 
         // Daniels' "≤ 2.5 h" rule is a beginner-era guideline. Pfitzinger's

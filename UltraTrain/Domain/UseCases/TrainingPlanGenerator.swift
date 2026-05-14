@@ -937,6 +937,11 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                         case .easy:
                             break // keep .easy
                         }
+                        // Surface the variant as a pill on the session row so
+                        // four 2h50 long runs in a row don't read as identical —
+                        // the work inside changes week to week (MP Blocks, Race
+                        // Sim, Fast Finish, Two-Part) even when duration plateaus.
+                        session.intervalFocus = longRunVariant.displayLabel
                     }
                     // Pick the matching quality template so coach advice
                     // can prescribe the right pace (cruise vs sustained
