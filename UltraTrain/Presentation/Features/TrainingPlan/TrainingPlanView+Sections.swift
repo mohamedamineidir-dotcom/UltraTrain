@@ -66,7 +66,7 @@ extension TrainingPlanView {
                 // arrow buttons + dots indicator + horizontal swipe to
                 // move between phases. Top charts and bottom banners are
                 // unchanged — only the weeks list is paginated.
-                let groups = phaseGroups
+                let groups = phaseGroups(plan: plan)
                 if !groups.isEmpty {
                     let safeIndex = min(max(0, selectedPhaseIndex), groups.count - 1)
                     phaseNavigatorBar(groups: groups, currentIndex: safeIndex)
@@ -87,17 +87,19 @@ extension TrainingPlanView {
         .task(id: plan.id) {
             // Land on the phase containing today on first load (and
             // whenever the plan changes, e.g. after a regeneration).
-            selectedPhaseIndex = initialPhaseIndex
+            selectedPhaseIndex = initialPhaseIndex(plan: plan)
         }
     }
 
     // MARK: - Phase pagination
 
-    /// Weeks of `viewModel.visibleWeeks` grouped contiguously by phase.
-    /// Each entry is one swipeable page in the phase pager.
-    var phaseGroups: [(phase: TrainingPhase, weeks: [TrainingWeek])] {
+    /// All `plan.weeks` grouped contiguously by phase. We page over the
+    /// full plan so the athlete can browse every phase even when some
+    /// of its weeks are locked behind a subscription — locked phases
+    /// surface an upgrade CTA in place of week cards.
+    func phaseGroups(plan: TrainingPlan) -> [(phase: TrainingPhase, weeks: [TrainingWeek])] {
         var groups: [(phase: TrainingPhase, weeks: [TrainingWeek])] = []
-        for week in viewModel.visibleWeeks {
+        for week in plan.weeks {
             if let last = groups.last, last.phase == week.phase {
                 groups[groups.count - 1].weeks.append(week)
             } else {
@@ -107,16 +109,23 @@ extension TrainingPlanView {
         return groups
     }
 
-    /// Index of the phase that contains today's week — what we land on
-    /// when the plan first loads. Falls back to 0 if no week matches.
-    var initialPhaseIndex: Int {
-        let groups = phaseGroups
+    /// Index of the phase that contains today's week. Falls back to 0
+    /// if no week matches (e.g. plan starts in the future).
+    func initialPhaseIndex(plan: TrainingPlan) -> Int {
+        let groups = phaseGroups(plan: plan)
         if let idx = groups.firstIndex(where: { group in
             group.weeks.contains(where: { $0.containsToday })
         }) {
             return idx
         }
         return 0
+    }
+
+    /// Subset of a phase group's weeks that are currently unlocked for
+    /// the athlete's subscription tier.
+    private func visibleSubset(of group: (phase: TrainingPhase, weeks: [TrainingWeek])) -> [TrainingWeek] {
+        let visibleIds = Set(viewModel.visibleWeeks.map(\.id))
+        return group.weeks.filter { visibleIds.contains($0.id) }
     }
 
     /// Top strip: prev arrow · phase name + progress + dots · next arrow.
@@ -202,6 +211,8 @@ extension TrainingPlanView {
         isRoadPlan: Bool
     ) -> some View {
         let group = groups[currentIndex]
+        let visible = visibleSubset(of: group)
+        let lockedCount = group.weeks.count - visible.count
         let completedWeeks = group.weeks.filter { w in
             w.sessions.filter { $0.type != .rest && !$0.isSkipped }.allSatisfy(\.isCompleted)
         }.count
@@ -223,7 +234,7 @@ extension TrainingPlanView {
                 isRoad: isRoadPlan
             )
 
-            ForEach(group.weeks) { week in
+            ForEach(visible) { week in
                 let weekIndex = plan.weeks.firstIndex(where: { $0.id == week.id }) ?? 0
                 weekCard(
                     week: week,
@@ -231,6 +242,10 @@ extension TrainingPlanView {
                     plan: plan,
                     isRoadPlan: isRoadPlan
                 )
+            }
+
+            if lockedCount > 0 {
+                phaseLockedCard(phase: group.phase, lockedCount: lockedCount, isFullyLocked: visible.isEmpty)
             }
         }
         .id(currentIndex)
@@ -257,6 +272,56 @@ extension TrainingPlanView {
                     }
                 }
         )
+    }
+
+    /// In-phase locked-weeks card. Mirrors the global lockedWeeksBanner
+    /// visual language (gold lock icon + glass background + subtitle
+    /// from the view model) but is phase-scoped so the athlete sees
+    /// which specific phase still requires an upgrade. Replaces the
+    /// week list entirely when no weeks in this phase are unlocked.
+    @ViewBuilder
+    func phaseLockedCard(phase: TrainingPhase, lockedCount: Int, isFullyLocked: Bool) -> some View {
+        let title: String = {
+            if isFullyLocked {
+                return "\(phase.displayName) phase locked"
+            }
+            return "\(lockedCount) more \(lockedCount == 1 ? "week" : "weeks") in \(phase.displayName)"
+        }()
+        HStack(spacing: Theme.Spacing.md) {
+            ZStack {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [Theme.Colors.goldAccent.opacity(0.25), Theme.Colors.goldAccent.opacity(0.05)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 44, height: 44)
+                Image(systemName: "lock.fill")
+                    .font(.body)
+                    .foregroundStyle(Theme.Colors.goldAccent)
+                    .shadow(color: Theme.Colors.goldAccent.opacity(0.4), radius: 3)
+            }
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .font(.subheadline.bold())
+                Text(viewModel.lockedWeeksBannerSubtitle)
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 0)
+            Image(systemName: "chevron.right")
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.goldAccent.opacity(0.6))
+        }
+        .futuristicGlassStyle(phaseTint: Theme.Colors.goldAccent)
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                .stroke(Theme.Colors.goldAccent.opacity(0.2), lineWidth: 1)
+        )
+        .accessibilityLabel("\(lockedCount) locked weeks in \(phase.displayName) phase. Upgrade to view.")
     }
 
     /// Extracted week-card builder so the phase-pager body stays
