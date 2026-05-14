@@ -84,13 +84,16 @@ struct PhaseHeaderCard: View {
     }
 
     private var focusDisplayName: String {
-        // Race phase always reads as "Race Week", not whatever sharpening-
-        // focus label the underlying PhaseFocus carries. The phase-level
-        // identity is what matters to the athlete on race week.
-        if phase == .race {
-            return "Race Week"
+        // Race and Recovery phases always read with their phase-level
+        // identity, not the underlying PhaseFocus label (which is
+        // typically a sharpening / taper variant inherited from the
+        // surrounding weeks). The phase-level identity is what matters
+        // to the athlete on race week or in a post-race recovery block.
+        switch phase {
+        case .race:     return "Race Week"
+        case .recovery: return "Recovery"
+        default:        return phaseFocus?.displayName(isRoad: isRoad) ?? phase.displayName
         }
-        return phaseFocus?.displayName(isRoad: isRoad) ?? phase.displayName
     }
 
     private var phaseIcon: String {
@@ -134,7 +137,12 @@ struct PhaseHeaderCard: View {
     }
 
     static func description(for phase: TrainingPhase, focus: PhaseFocus? = nil, isRoad: Bool = false) -> String {
-        if let focus {
+        // Race and Recovery phases ignore the focus description because
+        // a recovery / race week typically carries a taper-flavoured
+        // PhaseFocus that would describe sharpening work — misleading
+        // for what the athlete actually does that week. Fall through to
+        // the phase-level description below.
+        if let focus, phase != .race, phase != .recovery {
             return focus.shortDescription(isRoad: isRoad)
         }
         if isRoad {
