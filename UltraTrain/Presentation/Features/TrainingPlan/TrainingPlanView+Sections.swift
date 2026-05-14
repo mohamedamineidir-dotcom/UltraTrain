@@ -293,11 +293,13 @@ extension TrainingPlanView {
             }
             return "\(lockedCount) more \(lockedCount == 1 ? "week" : "weeks") in \(phase.displayName)"
         }()
-        let totalSuffix: String = {
-            // Only mention the plan-wide total when it differs from the
-            // in-phase count (otherwise it just restates the title).
-            guard totalLockedInPlan > lockedCount else { return "" }
-            return " · \(totalLockedInPlan) total in plan"
+        // Plan-wide total goes in the subtitle (not the title) so the
+        // bold phase-line stays on one line at the existing card width.
+        let subtitle: String = {
+            if totalLockedInPlan > lockedCount {
+                return "\(totalLockedInPlan) locked plan-wide · Upgrade or wait to renew"
+            }
+            return viewModel.lockedWeeksBannerSubtitle
         }()
         HStack(spacing: Theme.Spacing.md) {
             ZStack {
@@ -316,9 +318,10 @@ extension TrainingPlanView {
                     .shadow(color: Theme.Colors.goldAccent.opacity(0.4), radius: 3)
             }
             VStack(alignment: .leading, spacing: 3) {
-                (Text(title) + Text(totalSuffix).foregroundColor(Theme.Colors.goldAccent.opacity(0.85)))
+                Text(title)
                     .font(.subheadline.bold())
-                Text(viewModel.lockedWeeksBannerSubtitle)
+                    .lineLimit(1)
+                Text(subtitle)
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
                     .fixedSize(horizontal: false, vertical: true)
