@@ -78,9 +78,6 @@ extension TrainingPlanView {
                     )
                 }
 
-                if viewModel.hasLockedWeeks {
-                    lockedWeeksBanner
-                }
             }
             .padding()
         }
@@ -245,7 +242,12 @@ extension TrainingPlanView {
             }
 
             if lockedCount > 0 {
-                phaseLockedCard(phase: group.phase, lockedCount: lockedCount, isFullyLocked: visible.isEmpty)
+                phaseLockedCard(
+                    phase: group.phase,
+                    lockedCount: lockedCount,
+                    isFullyLocked: visible.isEmpty,
+                    totalLockedInPlan: viewModel.lockedWeekCount
+                )
             }
         }
         .id(currentIndex)
@@ -274,18 +276,28 @@ extension TrainingPlanView {
         )
     }
 
-    /// In-phase locked-weeks card. Mirrors the global lockedWeeksBanner
-    /// visual language (gold lock icon + glass background + subtitle
-    /// from the view model) but is phase-scoped so the athlete sees
-    /// which specific phase still requires an upgrade. Replaces the
-    /// week list entirely when no weeks in this phase are unlocked.
+    /// Single in-phase locked-weeks card that carries BOTH the phase-
+    /// specific status and the plan-wide locked total. Replaces what
+    /// used to be two stacked cards (one per-phase, one global) so the
+    /// athlete reads the locked state in one place per page.
     @ViewBuilder
-    func phaseLockedCard(phase: TrainingPhase, lockedCount: Int, isFullyLocked: Bool) -> some View {
+    func phaseLockedCard(
+        phase: TrainingPhase,
+        lockedCount: Int,
+        isFullyLocked: Bool,
+        totalLockedInPlan: Int
+    ) -> some View {
         let title: String = {
             if isFullyLocked {
                 return "\(phase.displayName) phase locked"
             }
             return "\(lockedCount) more \(lockedCount == 1 ? "week" : "weeks") in \(phase.displayName)"
+        }()
+        let totalSuffix: String = {
+            // Only mention the plan-wide total when it differs from the
+            // in-phase count (otherwise it just restates the title).
+            guard totalLockedInPlan > lockedCount else { return "" }
+            return " · \(totalLockedInPlan) total in plan"
         }()
         HStack(spacing: Theme.Spacing.md) {
             ZStack {
@@ -304,7 +316,7 @@ extension TrainingPlanView {
                     .shadow(color: Theme.Colors.goldAccent.opacity(0.4), radius: 3)
             }
             VStack(alignment: .leading, spacing: 3) {
-                Text(title)
+                (Text(title) + Text(totalSuffix).foregroundColor(Theme.Colors.goldAccent.opacity(0.85)))
                     .font(.subheadline.bold())
                 Text(viewModel.lockedWeeksBannerSubtitle)
                     .font(.caption)
@@ -321,7 +333,7 @@ extension TrainingPlanView {
             RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
                 .stroke(Theme.Colors.goldAccent.opacity(0.2), lineWidth: 1)
         )
-        .accessibilityLabel("\(lockedCount) locked weeks in \(phase.displayName) phase. Upgrade to view.")
+        .accessibilityLabel("\(lockedCount) locked weeks in \(phase.displayName) phase, \(totalLockedInPlan) total in plan. Upgrade to view.")
     }
 
     /// Extracted week-card builder so the phase-pager body stays
@@ -498,43 +510,6 @@ extension TrainingPlanView {
             prescribedRepCount: reps,
             existingFeedback: existing
         )
-    }
-
-    var lockedWeeksBanner: some View {
-        HStack(spacing: Theme.Spacing.md) {
-            ZStack {
-                Circle()
-                    .fill(
-                        LinearGradient(
-                            colors: [Theme.Colors.goldAccent.opacity(0.2), Theme.Colors.goldAccent.opacity(0.05)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .frame(width: 40, height: 40)
-                Image(systemName: "lock.fill")
-                    .font(.body)
-                    .foregroundStyle(Theme.Colors.goldAccent)
-                    .shadow(color: Theme.Colors.goldAccent.opacity(0.4), radius: 3)
-            }
-            VStack(alignment: .leading, spacing: 3) {
-                Text("\(viewModel.lockedWeekCount) More Weeks")
-                    .font(.subheadline.bold())
-                Text(viewModel.lockedWeeksBannerSubtitle)
-                    .font(.caption)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-            }
-            Spacer()
-            Image(systemName: "chevron.right")
-                .font(.caption)
-                .foregroundStyle(Theme.Colors.goldAccent.opacity(0.6))
-        }
-        .futuristicGlassStyle()
-        .overlay(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                .stroke(Theme.Colors.goldAccent.opacity(0.15), lineWidth: 1)
-        )
-        .accessibilityLabel("\(viewModel.lockedWeekCount) locked weeks. Upgrade to view.")
     }
 
     func planHeader(_ plan: TrainingPlan) -> some View {
