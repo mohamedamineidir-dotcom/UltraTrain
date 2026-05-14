@@ -297,7 +297,7 @@ extension TrainingPlanView {
         // bold phase-line stays on one line at the existing card width.
         let subtitle: String = {
             if totalLockedInPlan > lockedCount {
-                return "\(totalLockedInPlan) locked plan-wide · Upgrade or wait to renew"
+                return "\(totalLockedInPlan) locked plan-wide · \(viewModel.lockedWeeksBannerSubtitle)"
             }
             return viewModel.lockedWeeksBannerSubtitle
         }()
