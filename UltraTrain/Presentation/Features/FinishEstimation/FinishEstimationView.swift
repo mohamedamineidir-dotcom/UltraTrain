@@ -3,7 +3,7 @@ import SwiftUI
 struct FinishEstimationView: View {
     @Environment(\.unitPreference) private var units
     @ScaledMetric(relativeTo: .largeTitle) var errorIconSize: CGFloat = 48
-    @State private var viewModel: FinishEstimationViewModel
+    @State var viewModel: FinishEstimationViewModel
 
     let race: Race
     let finishTimeEstimator: any EstimateFinishTimeUseCase
@@ -100,7 +100,6 @@ struct FinishEstimationView: View {
                     if !estimate.checkpointSplits.isEmpty {
                         CheckpointSplitsCard(race: viewModel.race, estimate: estimate)
                     }
-                    raceDayPlanLink
                 } else if let error = viewModel.error {
                     errorSection(error)
                 }

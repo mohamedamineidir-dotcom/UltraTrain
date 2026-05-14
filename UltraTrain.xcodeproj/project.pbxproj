@@ -1770,6 +1770,7 @@
 		F97F23F59549D241ADC410A8 /* LastRunWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E913411D3913474D877AAD78 /* LastRunWidget.swift */; };
 		F98123AF314AFD69FBAE9AE1 /* SyncedAthleteRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B87E7B126D9CD53193DDF5 /* SyncedAthleteRepositoryTests.swift */; };
 		F9C1E5493AB31CADDC185536 /* WatchSplit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EF4559395A612CD5A5520BB /* WatchSplit.swift */; };
+		F9D4371BDA6FD7BFEC93D939 /* FinishTimeEvolutionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1A60EEF563742E2137836C /* FinishTimeEvolutionView.swift */; };
 		FA0458307944C1D0DF6F2F66 /* MockSocialProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5E2F59D4D10E8F7E9EFEE0 /* MockSocialProfileRepository.swift */; };
 		FA09BC23C579A0133BDD272F /* ReplayControlsBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78815D68DBE640B3529CD7C /* ReplayControlsBar.swift */; };
 		FA3DDF2C21456DF194289709 /* DeviceTokenServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4127CA0ED6B49819FFB0360D /* DeviceTokenServiceTests.swift */; };
@@ -1977,6 +1978,7 @@
 		0AB8F0A326F0DDC85F5C1482 /* GoalSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalSettingView.swift; sourceTree = "<group>"; };
 		0AD490BA7A19C9106CA0C421 /* BackgroundUploadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundUploadService.swift; sourceTree = "<group>"; };
 		0B150EB750670D80A54F2BAF /* PostRaceWizardViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostRaceWizardViewModelTests.swift; sourceTree = "<group>"; };
+		0B1A60EEF563742E2137836C /* FinishTimeEvolutionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishTimeEvolutionView.swift; sourceTree = "<group>"; };
 		0BB1318790ADF182AA6A7AE3 /* PaceDistributionChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaceDistributionChart.swift; sourceTree = "<group>"; };
 		0BB6DE9EB28DF4E323FD5E32 /* BRaceSpecificitySubstitutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BRaceSpecificitySubstitutor.swift; sourceTree = "<group>"; };
 		0BE11517AF72E8A8F13C9B2C /* WorkoutProgressionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutProgressionEngine.swift; sourceTree = "<group>"; };
@@ -4151,6 +4153,7 @@
 				774E6AF362BD461C850D388C /* FinishEstimationView.swift */,
 				E2BCD6A7FAE23EA7990064B1 /* FinishEstimationView+Details.swift */,
 				B6C034B877C609298B790C42 /* FinishEstimationViewModel.swift */,
+				0B1A60EEF563742E2137836C /* FinishTimeEvolutionView.swift */,
 				6BB4EA9BF0D4CF9F6889D73B /* RaceCourseElevationChart.swift */,
 				890F262D597E204CEA9E0FDC /* RaceCoursePaceChart.swift */,
 				4A191E824AE03388807105EB /* WeatherImpactCard.swift */,
@@ -7309,6 +7312,7 @@
 				A6F7D465EC172D49762E47AA /* FinishEstimationViewModel.swift in Sources */,
 				9F267DCDF4225A1483F3AAA8 /* FinishScenario.swift in Sources */,
 				F2259312142F4E4400FCED09 /* FinishTimeEstimator.swift in Sources */,
+				F9D4371BDA6FD7BFEC93D939 /* FinishTimeEvolutionView.swift in Sources */,
 				F7C75771999E536E06768956 /* FinishTimeMLService.swift in Sources */,
 				9031D27C82447A9B5D77E2C5 /* FinishTimePredictionServiceProtocol.swift in Sources */,
 				F49D385786B00B3FDB56D082 /* FinishTimePredictor.mlmodel in Sources */,

@@ -1,36 +1,58 @@
 import SwiftUI
 
-// MARK: - Scenario Cards, Confidence, Calibration, Race Day Plan & Error
+// MARK: - Scenario Cards, Confidence, Calibration & Error
 
 extension FinishEstimationView {
 
     // MARK: - Scenario Cards
 
     func scenarioCards(_ estimate: FinishEstimate) -> some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text("Predicted Finish Time")
-                .font(.headline)
+        NavigationLink {
+            FinishTimeEvolutionView(
+                race: race,
+                estimate: estimate,
+                experience: viewModel.athleteExperience
+            )
+        } label: {
+            VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                HStack(spacing: 6) {
+                    Text("Predicted Finish Time")
+                        .font(.headline)
+                    Spacer()
+                    Image(systemName: "chart.line.downtrend.xyaxis")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(Theme.Colors.primary)
+                    Image(systemName: "chevron.right")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(Theme.Colors.tertiaryLabel)
+                }
 
-            HStack(spacing: Theme.Spacing.sm) {
-                scenarioCard(
-                    title: "Optimistic",
-                    time: estimate.optimisticTime,
-                    color: Theme.Colors.success
-                )
-                scenarioCard(
-                    title: "Expected",
-                    time: estimate.expectedTime,
-                    color: Theme.Colors.primary
-                )
-                scenarioCard(
-                    title: "Conservative",
-                    time: estimate.conservativeTime,
-                    color: Theme.Colors.warning
-                )
+                HStack(spacing: Theme.Spacing.sm) {
+                    scenarioCard(
+                        title: "Optimistic",
+                        time: estimate.optimisticTime,
+                        color: Theme.Colors.success
+                    )
+                    scenarioCard(
+                        title: "Expected",
+                        time: estimate.expectedTime,
+                        color: Theme.Colors.primary
+                    )
+                    scenarioCard(
+                        title: "Conservative",
+                        time: estimate.conservativeTime,
+                        color: Theme.Colors.warning
+                    )
+                }
+
+                Text("Tap to see how this evolves with your prep →")
+                    .font(.caption2)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .cardStyle()
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .cardStyle()
+        .buttonStyle(.plain)
     }
 
     func scenarioCard(title: String, time: TimeInterval, color: Color) -> some View {
@@ -167,44 +189,6 @@ extension FinishEstimationView {
             return "Model adjusted down — you're faster than predicted"
         }
         return "Model adjusted up — you're slower than predicted"
-    }
-
-    // MARK: - Race Day Plan Link
-
-    var raceDayPlanLink: some View {
-        NavigationLink {
-            RaceDayPlanView(
-                race: race,
-                finishTimeEstimator: finishTimeEstimator,
-                athleteRepository: athleteRepository,
-                runRepository: runRepository,
-                fitnessCalculator: fitnessCalculator,
-                nutritionRepository: nutritionRepository,
-                nutritionGenerator: nutritionGenerator,
-                raceRepository: raceRepository,
-                finishEstimateRepository: finishEstimateRepository,
-                weatherService: weatherService,
-                locationService: locationService,
-                checklistRepository: checklistRepository
-            )
-        } label: {
-            HStack {
-                Image(systemName: "map.fill")
-                    .foregroundStyle(Theme.Colors.primary)
-                    .accessibilityHidden(true)
-                Text("Race Day Plan")
-                    .font(.subheadline.bold())
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .font(.caption)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-                    .accessibilityHidden(true)
-            }
-            .padding(Theme.Spacing.md)
-            .background(Theme.Colors.primary.opacity(0.1))
-            .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
-        }
-        .buttonStyle(.plain)
     }
 
     // MARK: - Error

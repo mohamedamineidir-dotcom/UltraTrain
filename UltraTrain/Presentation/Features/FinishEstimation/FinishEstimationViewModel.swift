@@ -24,6 +24,10 @@ final class FinishEstimationViewModel {
     var weatherImpact: WeatherImpactCalculator.WeatherImpact?
     var weatherSnapshot: WeatherSnapshot?
     var dailyForecast: DailyWeatherForecast?
+    /// Exposed so the evolution graph can size its improvement curve
+    /// per the athlete's tier (beginner improves more across a prep
+    /// than elite). Falls back to .intermediate when athlete missing.
+    var athleteExperience: ExperienceLevel = .intermediate
 
     // MARK: - Init
 
@@ -59,6 +63,7 @@ final class FinishEstimationViewModel {
                 isLoading = false
                 return
             }
+            athleteExperience = athlete.experienceLevel
 
             // Day-0 prediction: athletes get a credible estimate from
             // their PBs alone before logging any training. The estimator
