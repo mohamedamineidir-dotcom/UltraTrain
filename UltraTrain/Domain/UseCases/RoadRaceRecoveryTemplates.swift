@@ -122,7 +122,8 @@ enum RoadRaceRecoveryTemplates {
         case (.halfMarathon, _):    return halfWeek1(mod)
 
         case (.marathon, 1):        return marathonWeek1(mod)
-        case (.marathon, _):        return marathonWeek2(mod)
+        case (.marathon, 2):        return marathonWeek2(mod)
+        case (.marathon, _):        return marathonWeek3(mod)
 
         case (.ultra, 1):           return ultraRoadWeek1(mod)
         case (.ultra, 2):           return ultraRoadWeek2(mod)
@@ -198,15 +199,37 @@ enum RoadRaceRecoveryTemplates {
     }
 
     private static func marathonWeek2(_ mod: Modifiers) -> [(Int, RecoverySession)] {
-        // W2 of 2. ~55% of peak. Easy training back online, no quality.
+        // W2 of 3. Pfitzinger *Adv. Marathoning* Plan A reverse taper W2:
+        // 4 runs (Tue/Thu/Sat/Sun pattern). Hansons Marathon Method Ch.10
+        // is even more conservative at 3-4 easy runs. All recovery pace,
+        // no quality. Identical across philosophies — performance doesn't
+        // get extra running here; muscle damage doesn't care about
+        // training-prep style and the deep aerobic damage from a marathon
+        // takes 2-3 weeks to clear (Saugy 2013, Hammerle & Tartaruga 2019).
         [
             (0, rest()),
             (1, easy(scaled(35, mod), "Easy 35 min, conversational.")),
-            (2, easy(scaled(30, mod), "Easy 30 min. Strides only if no soreness.")),
-            (3, mod.isPerformance ? easy(scaled(30, mod), "Easy 30 min — performance retains volume.") : (mod.isEnjoyment ? cross(scaled(30, mod)) : rest())),
-            (4, easy(scaled(40, mod), "Easy 40 min on flat.")),
-            (5, easy(scaled(30, mod), "Easy 30 min, light.")),
-            (6, easy(scaled(60, mod), "Easy 55-65 min on flat. By feel only.")),
+            (2, rest()),
+            (3, mod.isEnjoyment ? cross(scaled(30, mod)) : easy(scaled(30, mod), "Easy 30 min. Strides only if no soreness.")),
+            (4, rest()),
+            (5, easy(scaled(35, mod), "Easy 35 min on flat.")),
+            (6, easy(scaled(55, mod), "Easy 50-55 min. By feel only.")),
+        ]
+    }
+
+    private static func marathonWeek3(_ mod: Modifiers) -> [(Int, RecoverySession)] {
+        // W3 of 3. Pfitz Plan A reverse taper W3: 5 runs at ~70% of peak
+        // volume. Last recovery week before normal training resumes.
+        // Performance philosophy nudges day 4 slightly longer; enjoyment
+        // keeps day 2 as cross-training instead of an extra run.
+        [
+            (0, rest()),
+            (1, easy(scaled(45, mod), "Easy 45 min + 4 strides if legs feel sharp.")),
+            (2, mod.isEnjoyment ? cross(scaled(30, mod)) : easy(scaled(35, mod), "Easy 35 min, conversational.")),
+            (3, rest()),
+            (4, easy(scaled(mod.isPerformance ? 55 : 50, mod), "Easy 50-55 min on flat.")),
+            (5, easy(scaled(35, mod), "Easy 35 min, light.")),
+            (6, easy(scaled(70, mod), "Easy 65-75 min on flat. Normal training resumes next week.")),
         ]
     }
 

@@ -89,18 +89,18 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         // Post-race recovery weeks. Daniels' rule: ~1 easy day per 3 km of
         // race distance. Translates to whole weeks:
         //   <30 km     → 1 week  (10K, HM)
-        //   30-49 km   → 2 weeks (marathon, short ultra)
+        //   30-49 km   → 3 weeks (marathon — Pfitzinger AM Plan A reverse
+        //                taper, Hansons Marathon Method Ch.10; marathon
+        //                muscle damage takes 2-3 weeks to clear)
         //   50-99 km   → 3 weeks (50-100K)
         //   100-159 km → 4 weeks (100-mile range)
         //   160+ km    → 5 weeks (200K+ — multi-day races warrant longest rebuild)
         // Athlete sees a structured return-to-training instead of falling
-        // off the plan the day after their A-race. Caps extend per the
-        // coaching review: 100-mile finishers commonly need 4-5 weeks of
-        // structured easy training before resuming key work.
+        // off the plan the day after their A-race.
         let postRaceRecoveryWeeks: Int
         switch targetRace.distanceKm {
         case ..<30:    postRaceRecoveryWeeks = 1
-        case ..<50:    postRaceRecoveryWeeks = 2
+        case ..<50:    postRaceRecoveryWeeks = 3
         case ..<100:   postRaceRecoveryWeeks = 3
         case ..<160:   postRaceRecoveryWeeks = 4
         default:       postRaceRecoveryWeeks = 5
