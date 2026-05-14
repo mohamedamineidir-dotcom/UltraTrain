@@ -27,7 +27,8 @@ enum TrailRaceWeekTemplates {
         targetRace: Race,
         experience: ExperienceLevel,
         philosophy: TrainingPhilosophy,
-        weekStartDate: Date
+        weekStartDate: Date,
+        preferredRunsPerWeek: Int = 5
     ) -> [SessionTemplateGenerator.SessionTemplate] {
         let raceDayOffset = max(0, min(6, dayOffset(from: weekStartDate, to: targetRace.date)))
         let raceDuration = targetRace.estimatedDuration(experience: experience)
@@ -85,7 +86,88 @@ enum TrailRaceWeekTemplates {
             ))
         }
 
-        return templates.sorted { $0.dayOffset < $1.dayOffset }
+        let sorted = templates.sorted { $0.dayOffset < $1.dayOffset }
+        return capActivePrep(
+            sorted,
+            raceDayOffset: raceDayOffset,
+            maxActivePrep: maxActivePrepDays(
+                distClass: distClass,
+                preferredRunsPerWeek: preferredRunsPerWeek,
+                experience: experience,
+                isMountain: isMountain
+            )
+        )
+    }
+
+    // MARK: - Frequency cap
+
+    /// Max active prep days (excluding race day) allowed in race week.
+    /// Koop *TEU* Ch.11: 50-mile and longer race weeks taper to 3-4
+    /// active days regardless of normal frequency; 100-mile drops to
+    /// 3 active days; multi-day stage races to 2. Race week always runs
+    /// fewer sessions than the athlete's normal week. Mountain profiles
+    /// drop one extra (descent prep matters more than mileage retention).
+    private static func maxActivePrepDays(
+        distClass: TrailRaceClass,
+        preferredRunsPerWeek: Int,
+        experience: ExperienceLevel,
+        isMountain: Bool
+    ) -> Int {
+        // Hard ceiling per distance class.
+        let baseCap: Int
+        switch distClass {
+        case .shortTrail, .fiftyK:               baseCap = 4
+        case .fiftyMile, .hundredK, .hundredMile: baseCap = 3
+        case .multiDay:                           baseCap = 2
+        }
+        // Drop count from athlete's normal frequency. Longer races
+        // drop two days; shorter trail drops one. Beginner / mountain
+        // drop one more for the recovery margin.
+        var dropCount: Int
+        switch distClass {
+        case .shortTrail, .fiftyK:               dropCount = 1
+        case .fiftyMile, .hundredK, .hundredMile: dropCount = 2
+        case .multiDay:                           dropCount = 2
+        }
+        if experience == .beginner { dropCount += 1 }
+        if isMountain { dropCount += 1 }
+        let frequencyCap = preferredRunsPerWeek - dropCount
+        return max(2, min(baseCap, frequencyCap))
+    }
+
+    /// Demotes lowest-value prep sessions to rest until active-prep
+    /// count meets `maxActivePrep`. Race day is never touched. Demote
+    /// priority (most preferred to drop first):
+    ///   1. Day -4 (mid-week recovery, lowest value)
+    ///   2. Day -6 (longer easy — can be cut)
+    ///   3. Day -5 (quality / primer)
+    ///   4. Day -3 (strides — high value, last resort)
+    ///   5. Day -1 (shakeout — never drop)
+    private static func capActivePrep(
+        _ templates: [SessionTemplateGenerator.SessionTemplate],
+        raceDayOffset: Int,
+        maxActivePrep: Int
+    ) -> [SessionTemplateGenerator.SessionTemplate] {
+        var result = templates
+        let activeCount = result.filter { $0.type != .rest && $0.type != .race }.count
+        guard activeCount > maxActivePrep else { return result }
+        var toDemote = activeCount - maxActivePrep
+
+        let demoteOrder: [Int] = [4, 6, 5, 3, 1]
+        for daysBefore in demoteOrder where toDemote > 0 {
+            let targetDay = raceDayOffset - daysBefore
+            guard targetDay >= 0 else { continue }
+            if let idx = result.firstIndex(where: {
+                $0.dayOffset == targetDay && $0.type != .rest && $0.type != .race
+            }) {
+                result[idx] = SessionTemplateGenerator.tpl(
+                    targetDay, .rest, .easy, 0, 0,
+                    "Rest day. Race-week frequency dialed back to keep your legs fresh."
+                )
+                toDemote -= 1
+            }
+        }
+        return result
     }
 
     // MARK: - Distance classification

@@ -23,12 +23,16 @@ enum RoadRaceWeekTemplates {
     /// Builds the 7-day session list for the A-race week. Race day is
     /// placed at the dayOffset corresponding to the actual race date;
     /// prep days fill the slots before; any days after race day in the
-    /// same week become very easy / rest.
+    /// same week become very easy / rest. The final template list is
+    /// frequency-capped so a 6/wk athlete doesn't end up with 6 active
+    /// prep days + race day; race week should run *fewer* sessions than
+    /// a normal training week, not the same or more.
     static func sessions(
         targetRace: Race,
         experience: ExperienceLevel,
         philosophy: TrainingPhilosophy,
-        weekStartDate: Date
+        weekStartDate: Date,
+        preferredRunsPerWeek: Int = 5
     ) -> [SessionTemplateGenerator.SessionTemplate] {
         let raceDayOffset = max(0, min(6, dayOffset(from: weekStartDate, to: targetRace.date)))
         let raceDuration = targetRace.estimatedDuration(experience: experience)
@@ -79,7 +83,74 @@ enum RoadRaceWeekTemplates {
             ))
         }
 
-        return templates.sorted { $0.dayOffset < $1.dayOffset }
+        let sorted = templates.sorted { $0.dayOffset < $1.dayOffset }
+        return capActivePrep(
+            sorted,
+            raceDayOffset: raceDayOffset,
+            maxActivePrep: maxActivePrepDays(
+                distClass: distClass,
+                preferredRunsPerWeek: preferredRunsPerWeek,
+                experience: experience
+            )
+        )
+    }
+
+    // MARK: - Frequency cap
+
+    /// Max active prep days (excluding race day) allowed in race week.
+    /// Pfitzinger *Adv. Marathoning* Plan A: 5 runs Mon-Sat including
+    /// race day = 4 prep days. Daniels *RF* Ch.9: 5K race week is
+    /// 4 prep + race day. Race week should run fewer sessions than a
+    /// normal training week regardless of how many days/week the athlete
+    /// usually runs.
+    private static func maxActivePrepDays(
+        distClass: RoadRaceClass,
+        preferredRunsPerWeek: Int,
+        experience: ExperienceLevel
+    ) -> Int {
+        // Hard ceiling regardless of normal frequency.
+        let baseCap = 4
+        // Drop count: race week always has at least 1 fewer running day
+        // than the athlete's normal week.
+        let dropCount = experience == .beginner ? 2 : 1
+        let frequencyCap = preferredRunsPerWeek - dropCount
+        return max(2, min(baseCap, frequencyCap))
+    }
+
+    /// Demotes the lowest-value prep sessions to rest until the
+    /// active-prep count meets `maxActivePrep`. Race day is never
+    /// touched. Demote priority (most preferred to drop first):
+    ///   1. Day -4 (mid-week recovery, lowest value)
+    ///   2. Day -6 (longer easy — high volume, can be cut)
+    ///   3. Day -5 (quality session — drop only when cutting deep)
+    ///   4. Day -3 (strides + CNS prime — high value, last resort)
+    ///   5. Day -1 (shakeout — never drop)
+    private static func capActivePrep(
+        _ templates: [SessionTemplateGenerator.SessionTemplate],
+        raceDayOffset: Int,
+        maxActivePrep: Int
+    ) -> [SessionTemplateGenerator.SessionTemplate] {
+        var result = templates
+        let activeCount = result.filter { $0.type != .rest && $0.type != .race }.count
+        guard activeCount > maxActivePrep else { return result }
+        var toDemote = activeCount - maxActivePrep
+
+        // daysBefore in demote priority order (lowest value first).
+        let demoteOrder: [Int] = [4, 6, 5, 3, 1]
+        for daysBefore in demoteOrder where toDemote > 0 {
+            let targetDay = raceDayOffset - daysBefore
+            guard targetDay >= 0 else { continue }
+            if let idx = result.firstIndex(where: {
+                $0.dayOffset == targetDay && $0.type != .rest && $0.type != .race
+            }) {
+                result[idx] = SessionTemplateGenerator.tpl(
+                    targetDay, .rest, .easy, 0, 0,
+                    "Rest day. Race-week frequency dialed back to keep your legs fresh."
+                )
+                toDemote -= 1
+            }
+        }
+        return result
     }
 
     // MARK: - Distance classification

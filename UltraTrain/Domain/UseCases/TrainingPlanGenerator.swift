@@ -318,7 +318,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     targetRace: targetRace,
                     experience: athlete.experienceLevel,
                     philosophy: athlete.trainingPhilosophy,
-                    weekStartDate: skeleton.startDate
+                    weekStartDate: skeleton.startDate,
+                    preferredRunsPerWeek: athlete.preferredRunsPerWeek
                 )
             } else if let aIdx = aRaceWeekIdx,
                       index > aIdx,
@@ -743,7 +744,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     targetRace: targetRace,
                     experience: athlete.experienceLevel,
                     philosophy: athlete.trainingPhilosophy,
-                    weekStartDate: skeleton.startDate
+                    weekStartDate: skeleton.startDate,
+                    preferredRunsPerWeek: athlete.preferredRunsPerWeek
                 )
                 sessions = templates.enumerated().map { dayIdx, tpl in
                     var session = makeSession(
