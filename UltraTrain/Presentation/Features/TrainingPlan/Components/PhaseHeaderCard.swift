@@ -84,7 +84,13 @@ struct PhaseHeaderCard: View {
     }
 
     private var focusDisplayName: String {
-        phaseFocus?.displayName(isRoad: isRoad) ?? phase.displayName
+        // Race phase always reads as "Race Week", not whatever sharpening-
+        // focus label the underlying PhaseFocus carries. The phase-level
+        // identity is what matters to the athlete on race week.
+        if phase == .race {
+            return "Race Week"
+        }
+        return phaseFocus?.displayName(isRoad: isRoad) ?? phase.displayName
     }
 
     private var phaseIcon: String {

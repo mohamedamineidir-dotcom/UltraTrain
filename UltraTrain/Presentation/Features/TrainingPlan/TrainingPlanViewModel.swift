@@ -364,7 +364,7 @@ final class TrainingPlanViewModel {
     }
 
     var lockedWeeksBannerSubtitle: String {
-        "Upgrade your plan to see more, or wait for your subscription to renew"
+        "Upgrade your plan or wait for your subscription to renew"
     }
 
     private func weeksInWindow(plan: TrainingPlan, futureWeekCount: Int) -> [TrainingWeek] {
