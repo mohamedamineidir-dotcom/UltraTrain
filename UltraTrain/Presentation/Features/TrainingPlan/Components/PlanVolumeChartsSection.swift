@@ -116,59 +116,79 @@ struct PlanVolumeChartsSection: View {
 
     private var chartView: some View {
         Chart {
-            ForEach(dataPoints) { point in
-                // Planned curve — hidden for distance (trail plans don't pre-plan distance)
-                if selectedMetric != .distance {
+            // 1) Planned curve — neutral grey background, visible across
+            //    the whole prep so the athlete can read the shape of the
+            //    block (build, peak, taper). Hidden on the distance tab
+            //    because trail plans don't pre-plan distance.
+            if selectedMetric != .distance {
+                ForEach(dataPoints) { point in
                     AreaMark(
                         x: .value("Week", point.weekNumber),
-                        y: .value("Planned", plannedValue(for: point))
+                        y: .value("Planned", plannedValue(for: point)),
+                        series: .value("Series", "Planned"),
+                        stacking: .unstacked
                     )
                     .foregroundStyle(
                         .linearGradient(
                             colors: [
-                                Theme.Colors.accentColor.opacity(0.35),
-                                Theme.Colors.accentColor.opacity(0.12),
-                                Theme.Colors.accentColor.opacity(0.02)
+                                Theme.Colors.label.opacity(0.18),
+                                Theme.Colors.label.opacity(0.04)
                             ],
                             startPoint: .top,
                             endPoint: .bottom
                         )
                     )
-                    .interpolationMethod(.linear)
-
+                    .interpolationMethod(.monotone)
+                }
+                ForEach(dataPoints) { point in
                     LineMark(
                         x: .value("Week", point.weekNumber),
-                        y: .value("Planned", plannedValue(for: point))
+                        y: .value("Planned", plannedValue(for: point)),
+                        series: .value("Series", "Planned")
                     )
-                    .foregroundStyle(Theme.Colors.accentColor)
-                    .lineStyle(StrokeStyle(lineWidth: 3))
-                    .interpolationMethod(.linear)
-
-                    PointMark(
-                        x: .value("Week", point.weekNumber),
-                        y: .value("Planned", plannedValue(for: point))
-                    )
-                    .symbol(point.isRecoveryWeek ? .diamond : .circle)
-                    .symbolSize(point.isRecoveryWeek ? 50 : (point.isCurrentWeek ? 50 : 30))
-                    .foregroundStyle(point.isRecoveryWeek ? .mint : Theme.Colors.accentColor)
+                    .foregroundStyle(Theme.Colors.label.opacity(0.35))
+                    .lineStyle(StrokeStyle(lineWidth: 1.5))
+                    .interpolationMethod(.monotone)
                 }
+            }
 
-                // Completed bars — stacked by session type
-                ForEach(point.completedByType) { slice in
-                    BarMark(
+            // 2) Completed overlay — phase-coloured area + line that
+            //    "fills in" the planned curve as the athlete validates
+            //    sessions. Colour changes by phase block, matching the
+            //    same palette used elsewhere in the app (Base = blue,
+            //    Build = orange, Peak = red/coral, Taper = green,
+            //    Recovery = mint, Race = purple). Renders one segment
+            //    per phase so transitions read as discrete colour
+            //    bands, the way Campus Coach surfaces progress without
+            //    losing the phase narrative.
+            ForEach(phaseSegments) { segment in
+                ForEach(segment.points) { point in
+                    AreaMark(
                         x: .value("Week", point.weekNumber),
-                        y: .value("Completed", sliceValue(for: slice)),
-                        width: .fixed(12),
-                        stacking: .standard
+                        y: .value("Completed", completedValue(for: point)),
+                        series: .value("Phase", segment.id),
+                        stacking: .unstacked
                     )
                     .foregroundStyle(
                         .linearGradient(
-                            colors: [sessionTypeColor(slice.type), sessionTypeColor(slice.type).opacity(0.5)],
+                            colors: [
+                                phaseColor(segment.phase).opacity(0.55),
+                                phaseColor(segment.phase).opacity(0.15)
+                            ],
                             startPoint: .top,
                             endPoint: .bottom
                         )
                     )
-                    .clipShape(RoundedRectangle(cornerRadius: 3))
+                    .interpolationMethod(.monotone)
+
+                    LineMark(
+                        x: .value("Week", point.weekNumber),
+                        y: .value("Completed", completedValue(for: point)),
+                        series: .value("Phase", segment.id)
+                    )
+                    .foregroundStyle(phaseColor(segment.phase))
+                    .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
+                    .interpolationMethod(.monotone)
                 }
             }
 
@@ -298,12 +318,21 @@ struct PlanVolumeChartsSection: View {
     // MARK: - Chart Legend
 
     private var chartLegend: some View {
-        let types = activeSessionTypes
-        let legendItems: [(String, Color)] = types.map { ($0.displayName, sessionTypeColor($0)) }
-            + (selectedMetric != .distance ? [("Planned", Theme.Colors.accentColor.opacity(0.3))] : [])
+        // Legend reads as "what colour means what phase" — matches
+        // what the chart actually shows now (phase-coloured overlay
+        // over the planned grey background) instead of the old
+        // per-session-type stacked bars.
+        let phases = activePhases
+        var items: [(String, Color)] = []
+        if selectedMetric != .distance {
+            items.append(("Planned", Theme.Colors.label.opacity(0.35)))
+        }
+        for phase in phases {
+            items.append((phaseLabel(phase), phaseColor(phase)))
+        }
         return ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: Theme.Spacing.sm) {
-                ForEach(Array(legendItems.enumerated()), id: \.offset) { _, item in
+                ForEach(Array(items.enumerated()), id: \.offset) { _, item in
                     HStack(spacing: 4) {
                         RoundedRectangle(cornerRadius: 2)
                             .fill(item.1)
@@ -317,6 +346,17 @@ struct PlanVolumeChartsSection: View {
         }
     }
 
+    private func phaseLabel(_ phase: TrainingPhase) -> String {
+        switch phase {
+        case .base:     return "Base"
+        case .build:    return "Build"
+        case .peak:     return "Peak"
+        case .taper:    return "Taper"
+        case .recovery: return "Recovery"
+        case .race:     return "Race"
+        }
+    }
+
     private var activeSessionTypes: [SessionType] {
         var seen = Set<SessionType>()
         var result: [SessionType] = []
@@ -327,6 +367,79 @@ struct PlanVolumeChartsSection: View {
             }
         }
         return result
+    }
+
+    // MARK: - Phase Segments
+
+    struct PhaseSegment: Identifiable {
+        let id: String
+        let phase: TrainingPhase
+        let points: [WeekChartDataPoint]
+    }
+
+    /// Slices the completed timeline into contiguous phase segments,
+    /// each rendered as its own Area+Line in the chart. Stops at the
+    /// current week so the overlay only "fills in" the planned curve
+    /// up to today — like Campus Coach. Adjacent segments share their
+    /// boundary point so the colour transition has no visual gap.
+    private var phaseSegments: [PhaseSegment] {
+        let currentIdx = dataPoints.firstIndex(where: \.isCurrentWeek)
+            ?? dataPoints.lastIndex(where: { hasAnyCompleted($0) })
+        guard let upTo = currentIdx else { return [] }
+        let visible = Array(dataPoints.prefix(through: upTo))
+        guard !visible.isEmpty else { return [] }
+
+        var segments: [PhaseSegment] = []
+        var current: [WeekChartDataPoint] = [visible[0]]
+        var currentPhase = visible[0].phase
+        for idx in 1..<visible.count {
+            let p = visible[idx]
+            if p.phase == currentPhase {
+                current.append(p)
+            } else {
+                // Anchor the new segment to the previous segment's
+                // last point so the colour band starts exactly where
+                // the previous one ends — no visual gap.
+                current.append(p)
+                segments.append(PhaseSegment(
+                    id: "\(currentPhase.rawValue)-\(segments.count)",
+                    phase: currentPhase,
+                    points: current
+                ))
+                current = [p]
+                currentPhase = p.phase
+            }
+        }
+        if !current.isEmpty {
+            segments.append(PhaseSegment(
+                id: "\(currentPhase.rawValue)-\(segments.count)",
+                phase: currentPhase,
+                points: current
+            ))
+        }
+        return segments
+    }
+
+    /// Phases that actually appear in the visible (up-to-now) overlay.
+    /// Used for the legend so we only list bands the athlete can see.
+    private var activePhases: [TrainingPhase] {
+        var seen = Set<TrainingPhase>()
+        var result: [TrainingPhase] = []
+        for seg in phaseSegments where !seen.contains(seg.phase) {
+            seen.insert(seg.phase)
+            result.append(seg.phase)
+        }
+        return result
+    }
+
+    private func hasAnyCompleted(_ point: WeekChartDataPoint) -> Bool {
+        let v: Double
+        switch selectedMetric {
+        case .distance:  v = point.completedDistanceKm
+        case .duration:  v = point.completedDurationSeconds
+        case .elevation: v = point.completedElevationM
+        }
+        return v > 0
     }
 
     // MARK: - Visible Week Labels
