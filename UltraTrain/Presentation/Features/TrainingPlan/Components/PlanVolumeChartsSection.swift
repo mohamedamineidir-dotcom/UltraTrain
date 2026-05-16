@@ -192,6 +192,23 @@ struct PlanVolumeChartsSection: View {
                 }
             }
 
+            // Per-week dots on completed weeks. Without these a single
+            // completed week (e.g. only W1 done) doesn't render any
+            // overlay — Swift Charts needs ≥ 2 points to draw a line
+            // or area. The dot guarantees there's something visible
+            // for the athlete from the first validated session, and
+            // also gives the curve a discrete "milestone" rhythm.
+            ForEach(dataPoints) { point in
+                if hasAnyCompleted(point) {
+                    PointMark(
+                        x: .value("Week", point.weekNumber),
+                        y: .value("Completed", completedValue(for: point))
+                    )
+                    .foregroundStyle(phaseColor(point.phase))
+                    .symbolSize(point.isCurrentWeek ? 80 : 36)
+                }
+            }
+
             // Recovery week background shading
             ForEach(dataPoints.filter(\.isRecoveryWeek)) { point in
                 RectangleMark(
@@ -250,9 +267,13 @@ struct PlanVolumeChartsSection: View {
         .chartXAxis {
             AxisMarks(values: visibleWeekNumbers) { value in
                 if let weekNum = value.as(Int.self) {
-                    AxisValueLabel("W\(weekNum)", centered: false)
-                        .font(.system(size: 10, weight: .medium, design: .rounded))
-                        .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.7))
+                    AxisTick()
+                        .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.4))
+                    AxisValueLabel(centered: true) {
+                        Text("W\(weekNum)")
+                            .font(.system(size: 10, weight: .medium, design: .rounded))
+                            .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.7))
+                    }
                 }
             }
         }
@@ -465,17 +486,30 @@ struct PlanVolumeChartsSection: View {
     /// in the AxisValueLabel keep the labels reading "W1, W3, W5..."
     /// in proper week order.
     private var visibleWeekNumbers: [Int] {
-        let total = dataPoints.count
+        let weeks = dataPoints.map(\.weekNumber)
+        guard let first = weeks.first, let last = weeks.last else { return [] }
+        // Target ~5-6 evenly-spaced labels regardless of plan length so
+        // a 22-week marathon plan reads "W1 W5 W10 W15 W20 W22" instead
+        // of "W1 W3 W5 ... W19" cramming the axis. The first and last
+        // weeks are always shown so the chart's range is obvious.
+        let total = weeks.count
         let stride: Int
         switch total {
-        case 0...12: stride = 1
-        case 13...24: stride = 2
-        case 25...36: stride = 4
-        default: stride = 5
+        case 0...8:   stride = 1
+        case 9...14:  stride = 2
+        case 15...22: stride = 4
+        case 23...30: stride = 5
+        default:      stride = 7
         }
-        return dataPoints.enumerated()
-            .filter { $0.offset % stride == 0 }
-            .map { $0.element.weekNumber }
+        var ticks = Set<Int>()
+        ticks.insert(first)
+        ticks.insert(last)
+        var w = first
+        while w <= last {
+            ticks.insert(w)
+            w += stride
+        }
+        return ticks.sorted()
     }
 
     // MARK: - Summary Calculations
