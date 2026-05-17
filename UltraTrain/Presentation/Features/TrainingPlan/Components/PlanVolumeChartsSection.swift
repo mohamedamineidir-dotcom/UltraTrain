@@ -226,7 +226,7 @@ struct PlanVolumeChartsSection: View {
                     y: .value("Completed", completedValue(for: selected))
                 )
                 .foregroundStyle(phaseColor(selected.phase))
-                .symbolSize(120)
+                .symbolSize(55)
             }
 
             // Recovery week background shading
@@ -285,13 +285,23 @@ struct PlanVolumeChartsSection: View {
         .chartXAxis {
             AxisMarks(values: visibleWeekNumbers) { value in
                 if let weekNum = value.as(Int.self) {
-                    AxisTick()
-                        .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.4))
-                    AxisValueLabel(centered: true) {
-                        Text("W\(weekNum)")
-                            .font(.system(size: 10, weight: .medium, design: .rounded))
-                            .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.7))
-                    }
+                    // Faint vertical grid line at each tick so the
+                    // athlete can visually trace from the label up to
+                    // the week column it refers to — eliminates any
+                    // ambiguity about which week the label belongs to.
+                    AxisGridLine()
+                        .foregroundStyle(Theme.Colors.label.opacity(0.08))
+                    AxisTick(length: 4)
+                        .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.45))
+                    // Plain-string initializer of AxisValueLabel +
+                    // centered: true reliably places the label so its
+                    // visual centre lines up with the tick. The custom
+                    // Text closure version drifts because the wrapped
+                    // view inherits leading alignment instead of being
+                    // anchored at its centre.
+                    AxisValueLabel("W\(weekNum)", centered: true)
+                        .font(.system(size: 10, weight: .medium, design: .rounded))
+                        .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.7))
                 }
             }
         }
