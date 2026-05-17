@@ -162,51 +162,71 @@ struct PlanVolumeChartsSection: View {
             //    bands, the way Campus Coach surfaces progress without
             //    losing the phase narrative.
             ForEach(phaseSegments) { segment in
-                ForEach(segment.points) { point in
-                    AreaMark(
-                        x: .value("Week", point.weekNumber),
-                        y: .value("Completed", completedValue(for: point)),
-                        series: .value("Phase", segment.id),
-                        stacking: .unstacked
+                if segment.points.count == 1, let only = segment.points.first {
+                    // Single-week segment (typical when athlete has
+                    // just validated W1) — render a thin phase-coloured
+                    // bar so the fill is visible. Without this, Swift
+                    // Charts produces nothing because Line/AreaMark
+                    // need ≥ 2 points.
+                    BarMark(
+                        x: .value("Week", only.weekNumber),
+                        y: .value("Completed", completedValue(for: only)),
+                        width: .fixed(10)
                     )
                     .foregroundStyle(
                         .linearGradient(
                             colors: [
-                                phaseColor(segment.phase).opacity(0.55),
-                                phaseColor(segment.phase).opacity(0.15)
+                                phaseColor(segment.phase),
+                                phaseColor(segment.phase).opacity(0.55)
                             ],
                             startPoint: .top,
                             endPoint: .bottom
                         )
                     )
-                    .interpolationMethod(.monotone)
+                    .clipShape(RoundedRectangle(cornerRadius: 2))
+                } else {
+                    ForEach(segment.points) { point in
+                        AreaMark(
+                            x: .value("Week", point.weekNumber),
+                            y: .value("Completed", completedValue(for: point)),
+                            series: .value("Phase", segment.id),
+                            stacking: .unstacked
+                        )
+                        .foregroundStyle(
+                            .linearGradient(
+                                colors: [
+                                    phaseColor(segment.phase).opacity(0.55),
+                                    phaseColor(segment.phase).opacity(0.15)
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        .interpolationMethod(.monotone)
 
-                    LineMark(
-                        x: .value("Week", point.weekNumber),
-                        y: .value("Completed", completedValue(for: point)),
-                        series: .value("Phase", segment.id)
-                    )
-                    .foregroundStyle(phaseColor(segment.phase))
-                    .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
-                    .interpolationMethod(.monotone)
+                        LineMark(
+                            x: .value("Week", point.weekNumber),
+                            y: .value("Completed", completedValue(for: point)),
+                            series: .value("Phase", segment.id)
+                        )
+                        .foregroundStyle(phaseColor(segment.phase))
+                        .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
+                        .interpolationMethod(.monotone)
+                    }
                 }
             }
 
-            // Per-week dots on completed weeks. Without these a single
-            // completed week (e.g. only W1 done) doesn't render any
-            // overlay — Swift Charts needs ≥ 2 points to draw a line
-            // or area. The dot guarantees there's something visible
-            // for the athlete from the first validated session, and
-            // also gives the curve a discrete "milestone" rhythm.
-            ForEach(dataPoints) { point in
-                if hasAnyCompleted(point) {
-                    PointMark(
-                        x: .value("Week", point.weekNumber),
-                        y: .value("Completed", completedValue(for: point))
-                    )
-                    .foregroundStyle(phaseColor(point.phase))
-                    .symbolSize(point.isCurrentWeek ? 80 : 36)
-                }
+            // Interactive dot. Only appears while the athlete is
+            // dragging on the chart — moves with the rule mark to
+            // surface the precise value at the inspected week. No
+            // permanent per-week dots so the curve stays clean.
+            if let selected = selectedWeek {
+                PointMark(
+                    x: .value("Selected week", selected.weekNumber),
+                    y: .value("Completed", completedValue(for: selected))
+                )
+                .foregroundStyle(phaseColor(selected.phase))
+                .symbolSize(120)
             }
 
             // Recovery week background shading
@@ -256,14 +276,12 @@ struct PlanVolumeChartsSection: View {
                     .lineStyle(StrokeStyle(lineWidth: 1))
             }
         }
-        .chartXScale(
-            // Pin the X domain to the exact week range. Without this,
-            // Swift Charts adds default padding around a continuous
-            // Int X-axis — pushing W1 off the left edge and offsetting
-            // the axis ticks from the data points above them.
-            domain: weekDomain,
-            range: .plotDimension(padding: 0)
-        )
+        // Domain pins to the exact week range; we no longer override
+        // `range:` because zero plot-dimension padding made the first
+        // and last week labels render half-clipped at the chart edges,
+        // which mis-aligned every label across the axis. With default
+        // padding the ticks now sit directly under their data points.
+        .chartXScale(domain: weekDomain)
         .chartXAxis {
             AxisMarks(values: visibleWeekNumbers) { value in
                 if let weekNum = value.as(Int.self) {
@@ -488,26 +506,41 @@ struct PlanVolumeChartsSection: View {
     private var visibleWeekNumbers: [Int] {
         let weeks = dataPoints.map(\.weekNumber)
         guard let first = weeks.first, let last = weeks.last else { return [] }
-        // Target ~5-6 evenly-spaced labels regardless of plan length so
-        // a 22-week marathon plan reads "W1 W5 W10 W15 W20 W22" instead
-        // of "W1 W3 W5 ... W19" cramming the axis. The first and last
-        // weeks are always shown so the chart's range is obvious.
         let total = weeks.count
+        // Spacing tuned so a 22-week plan reads roughly "W3 W7 W11
+        // W15 W19" instead of "W1 W3 W5 ..." cramming the axis. We
+        // start one step in from the first week and stop one step
+        // before the last so labels never sit at the absolute chart
+        // edges — Swift Charts clips/drifts labels positioned exactly
+        // at the chart bounds, which is what was misaligning W1 vs
+        // its data point.
         let stride: Int
         switch total {
         case 0...8:   stride = 1
-        case 9...14:  stride = 2
+        case 9...14:  stride = 3
         case 15...22: stride = 4
         case 23...30: stride = 5
         default:      stride = 7
         }
-        var ticks = Set<Int>()
-        ticks.insert(first)
-        ticks.insert(last)
-        var w = first
-        while w <= last {
-            ticks.insert(w)
-            w += stride
+        // For short plans (≤ 8 weeks) keep first + last; otherwise
+        // start at `first + 2` so the leftmost label sits cleanly
+        // inside the plot area.
+        var ticks: [Int] = []
+        if total <= 8 {
+            var w = first
+            while w <= last {
+                ticks.append(w)
+                w += stride
+            }
+            if let lastTick = ticks.last, lastTick != last {
+                ticks.append(last)
+            }
+        } else {
+            var w = first + 2
+            while w <= last - 1 {
+                ticks.append(w)
+                w += stride
+            }
         }
         return ticks.sorted()
     }
