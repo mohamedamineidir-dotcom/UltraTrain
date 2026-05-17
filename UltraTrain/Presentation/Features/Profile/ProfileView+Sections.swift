@@ -7,7 +7,11 @@ extension ProfileView {
     // MARK: - Athlete Stats
 
     func athleteStatsGrid(_ athlete: Athlete) -> some View {
-        Grid(alignment: .leading, horizontalSpacing: Theme.Spacing.lg, verticalSpacing: Theme.Spacing.sm) {
+        // 3 columns × 2 rows. Row 1 = body baseline + resting HR;
+        // Row 2 = max HR + training capacity (weekly volume + longest
+        // run). Same six stats as before, just denser so the athlete
+        // card stops eating half the screen.
+        Grid(alignment: .leading, horizontalSpacing: Theme.Spacing.md, verticalSpacing: Theme.Spacing.sm) {
             GridRow {
                 statItem(
                     label: "Weight",
@@ -19,12 +23,10 @@ extension ProfileView {
                     value: UnitFormatter.formatHeight(athlete.heightCm, unit: units),
                     unit: ""
                 )
-            }
-            GridRow {
                 statItem(label: "Resting HR", value: "\(athlete.restingHeartRate)", unit: "bpm")
-                statItem(label: "Max HR", value: "\(athlete.maxHeartRate)", unit: "bpm")
             }
             GridRow {
+                statItem(label: "Max HR", value: "\(athlete.maxHeartRate)", unit: "bpm")
                 statItem(
                     label: "Weekly Vol",
                     value: String(format: "%.0f", UnitFormatter.distanceValue(athlete.weeklyVolumeKm, unit: units)),
@@ -41,17 +43,24 @@ extension ProfileView {
 
     func statItem(label: String, value: String, unit: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(label)
-                .font(.caption)
+            Text(label.uppercased())
+                .font(.caption2.weight(.semibold))
+                .tracking(0.4)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .lineLimit(1)
+                .minimumScaleFactor(0.85)
             HStack(alignment: .firstTextBaseline, spacing: 2) {
                 Text(value)
                     .font(.subheadline.bold().monospacedDigit())
+                    .foregroundStyle(Theme.Colors.label)
                 Text(unit)
-                    .font(.caption)
+                    .font(.caption2)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(label): \(value) \(unit)")
     }

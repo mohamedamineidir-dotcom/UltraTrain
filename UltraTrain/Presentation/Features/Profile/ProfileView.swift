@@ -136,7 +136,15 @@ struct ProfileView: View {
                     gearSection
                     routesSection
                     challengesSection
-                    socialSection
+                    // Social section is intentionally hidden from the
+                    // profile: a serious training app isn't won on
+                    // social, network effects aren't there yet, and
+                    // surfacing empty rooms makes the profile feel
+                    // generic. The underlying repositories
+                    // (socialProfile / friend / sharedRun / activityFeed
+                    // / groupChallenge) and `socialSection` view stay
+                    // in place — flip back on whenever social becomes a
+                    // focus, no data migration needed.
                 }
             }
             .navigationTitle("Profile")
@@ -244,36 +252,101 @@ struct ProfileView: View {
     @ViewBuilder
     private var athleteSection: some View {
         if let athlete = viewModel.athlete {
-            Section("Athlete") {
-                VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-                    Text("\(athlete.firstName) \(athlete.lastName)")
-                        .font(.title3.bold())
-                    HStack(spacing: Theme.Spacing.md) {
-                        Label("\(athlete.age) yrs", systemImage: "calendar")
-                        Label(athlete.experienceLevel.rawValue.capitalized, systemImage: "figure.run")
-                        Label(athlete.preferredUnit.rawValue.capitalized, systemImage: "ruler")
+            // Single full-width glass card carrying header + chips +
+            // 3×2 stats grid. Sits inside one List row with the row
+            // background cleared so the card's own glass surface
+            // shows through — matches the futuristic DNA used on
+            // Dashboard / Plan / Session Detail instead of the plain
+            // grouped-list look the profile had before.
+            Section {
+                VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+                    HStack(alignment: .top, spacing: Theme.Spacing.md) {
+                        ZStack {
+                            Circle()
+                                .fill(
+                                    LinearGradient(
+                                        colors: [
+                                            Theme.Colors.primary.opacity(0.35),
+                                            Theme.Colors.primary.opacity(0.1)
+                                        ],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .frame(width: 44, height: 44)
+                            Image(systemName: "person.fill")
+                                .font(.title3)
+                                .foregroundStyle(Theme.Colors.primary)
+                        }
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("\(athlete.firstName) \(athlete.lastName)")
+                                .font(.headline)
+                            HStack(spacing: 6) {
+                                athleteChip(label: "\(athlete.age) yrs", icon: "calendar")
+                                athleteChip(label: athlete.experienceLevel.rawValue.capitalized, icon: "figure.run")
+                                athleteChip(label: athlete.preferredUnit.rawValue.capitalized, icon: "ruler")
+                            }
+                        }
+                        Spacer(minLength: 0)
                     }
-                    .font(.caption)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-                }
-                .accessibilityElement(children: .combine)
-                athleteStatsGrid(athlete)
-                NavigationLink {
-                    HRZoneConfigurationView(athlete: athlete) { updated in
-                        Task { await viewModel.updateAthlete(updated) }
+                    .accessibilityElement(children: .combine)
+
+                    Divider().opacity(0.15)
+
+                    athleteStatsGrid(athlete)
+
+                    NavigationLink {
+                        HRZoneConfigurationView(athlete: athlete) { updated in
+                            Task { await viewModel.updateAthlete(updated) }
+                        }
+                    } label: {
+                        HStack {
+                            Image(systemName: "heart.text.square")
+                                .foregroundStyle(Theme.Colors.warmCoral)
+                            Text("HR Zones")
+                                .font(.subheadline.weight(.medium))
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(Theme.Colors.tertiaryLabel)
+                        }
+                        .padding(.vertical, 4)
                     }
-                } label: {
-                    Label("HR Zones", systemImage: "heart.text.square")
                 }
+                .padding(Theme.Spacing.md)
+                .futuristicGlassStyle(phaseTint: Theme.Colors.primary)
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                .listRowSeparator(.hidden)
             }
             .accessibilityIdentifier("profile.athleteSection")
         } else {
-            Section("Athlete") {
+            Section {
                 Label("Complete onboarding to see your profile", systemImage: "person.crop.circle")
                     .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .padding(Theme.Spacing.md)
+                    .futuristicGlassStyle()
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                    .listRowSeparator(.hidden)
             }
             .accessibilityIdentifier("profile.athleteSection")
         }
+    }
+
+    private func athleteChip(label: String, icon: String) -> some View {
+        HStack(spacing: 3) {
+            Image(systemName: icon)
+                .font(.caption2)
+            Text(label)
+                .font(.caption2.weight(.medium))
+        }
+        .foregroundStyle(Theme.Colors.secondaryLabel)
+        .padding(.horizontal, 6)
+        .padding(.vertical, 2)
+        .background(
+            Capsule().fill(Theme.Colors.label.opacity(0.06))
+        )
     }
 
 }
