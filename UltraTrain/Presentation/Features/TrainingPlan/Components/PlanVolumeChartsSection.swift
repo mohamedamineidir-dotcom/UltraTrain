@@ -283,26 +283,22 @@ struct PlanVolumeChartsSection: View {
         // padding the ticks now sit directly under their data points.
         .chartXScale(domain: weekDomain)
         .chartXAxis {
-            AxisMarks(values: visibleWeekNumbers) { value in
-                if let weekNum = value.as(Int.self) {
-                    // Faint vertical grid line at each tick so the
-                    // athlete can visually trace from the label up to
-                    // the week column it refers to — eliminates any
-                    // ambiguity about which week the label belongs to.
-                    AxisGridLine()
-                        .foregroundStyle(Theme.Colors.label.opacity(0.08))
-                    AxisTick(length: 4)
-                        .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.45))
-                    // Plain-string initializer of AxisValueLabel +
-                    // centered: true reliably places the label so its
-                    // visual centre lines up with the tick. The custom
-                    // Text closure version drifts because the wrapped
-                    // view inherits leading alignment instead of being
-                    // anchored at its centre.
-                    AxisValueLabel("W\(weekNum)", centered: true)
-                        .font(.system(size: 10, weight: .medium, design: .rounded))
-                        .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.7))
-                }
+            // Auto axis renders only the faint vertical grid lines +
+            // ticks at the labeled week positions. The W-labels
+            // themselves are rendered manually via `chartOverlay`
+            // below using `proxy.position(forX:)` — every other
+            // approach (centered: true on the string init, custom
+            // Text content with manual frame, even default leading
+            // anchor) drifts the labels off their data columns by
+            // ~2 weeks on long plans because SwiftUI Charts adds
+            // implicit edge padding that AxisValueLabel positioning
+            // doesn't account for. Drawing labels at the exact
+            // resolved x-position bypasses the quirk entirely.
+            AxisMarks(values: visibleWeekNumbers) { _ in
+                AxisGridLine()
+                    .foregroundStyle(Theme.Colors.label.opacity(0.08))
+                AxisTick(length: 4)
+                    .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.45))
             }
         }
         .chartYAxis {
@@ -357,6 +353,33 @@ struct PlanVolumeChartsSection: View {
                             }
                     )
             }
+        }
+        .chartOverlay { proxy in
+            // Manual X-axis labels. Resolves each week number to its
+            // exact pixel position via `proxy.position(forX:)` then
+            // centres the label on it. Sidesteps the Swift Charts
+            // bug where `AxisValueLabel(_:centered:)` with Int values
+            // drifts off the data column on long plans.
+            GeometryReader { geo in
+                if let plotAnchor = proxy.plotFrame {
+                    let plot = geo[plotAnchor]
+                    ZStack(alignment: .topLeading) {
+                        ForEach(visibleWeekNumbers, id: \.self) { weekNum in
+                            if let xPos = proxy.position(forX: weekNum) {
+                                Text("W\(weekNum)")
+                                    .font(.system(size: 10, weight: .medium, design: .rounded))
+                                    .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.75))
+                                    .fixedSize()
+                                    .position(
+                                        x: plot.minX + xPos,
+                                        y: plot.maxY + 12
+                                    )
+                            }
+                        }
+                    }
+                }
+            }
+            .allowsHitTesting(false)
         }
         .sheet(item: $sheetWeek) { point in
             let matchingWeek = plan.weeks.first { $0.weekNumber == point.weekNumber }
