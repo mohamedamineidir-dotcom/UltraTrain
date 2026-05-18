@@ -12,32 +12,10 @@ struct UltraTrainApp: App {
     }
 
     @Environment(\.scenePhase) private var scenePhase
-    @AppStorage("appearanceMode") private var appearanceModeRaw: String = "system"
-    /// Controls the in-app launch splash that bridges the gap when
-    /// the user has forced the app to dark mode on a light-system
-    /// device. iOS launch screens follow the system appearance only;
-    /// the splash takes over for ~0.4 s so the visible flash from the
-    /// light system launch into the dark app is masked.
-    @State private var showLaunchSplash: Bool = true
-
-    private var colorScheme: ColorScheme? {
-        switch AppearanceMode(rawValue: appearanceModeRaw) {
-        case .light: .light
-        case .dark: .dark
-        default: nil
-        }
-    }
-
-    /// True only when the user has explicitly set the app to dark.
-    /// For .system and .light the iOS launch screen already shows the
-    /// correct variant, so the splash is unnecessary overhead.
-    private var shouldOverrideLaunchToDark: Bool {
-        AppearanceMode(rawValue: appearanceModeRaw) == .dark
-    }
 
     var body: some Scene {
         WindowGroup {
-            ZStack {
+            AppRootContainer {
             AppRootView(
                 authService: container.authService,
                 subscriptionService: container.subscriptionService,
@@ -104,7 +82,6 @@ struct UltraTrainApp: App {
             .environment(\.syncStatusMonitor, container.syncStatusMonitor)
             .environment(\.syncService, container.syncService)
             .environment(\.networkMonitor, container.networkMonitor)
-            .preferredColorScheme(colorScheme)
             .onOpenURL { url in
                 _ = container.deepLinkRouter.handle(url: url)
             }
@@ -120,21 +97,6 @@ struct UltraTrainApp: App {
                     await syncSvc.processQueue()
                     await monitor.refresh()
                 }
-            }
-
-            if shouldOverrideLaunchToDark && showLaunchSplash {
-                LaunchSplashView()
-                    .transition(.opacity)
-                    .task {
-                        // Show the dark splash for ~0.4 s, then fade
-                        // out over 0.3 s so the handoff to the main
-                        // UI feels like a smooth cross-fade rather
-                        // than a hard cut.
-                        try? await Task.sleep(nanoseconds: 400_000_000)
-                        withAnimation(.easeOut(duration: 0.3)) {
-                            showLaunchSplash = false
-                        }
-                    }
             }
             }
         }
@@ -153,6 +115,54 @@ struct UltraTrainApp: App {
                 container.backgroundTaskService.scheduleHealthKitSync()
                 container.backgroundTaskService.scheduleRecoveryCalc()
                 container.backgroundTaskService.scheduleSyncQueueProcessing()
+            }
+        }
+    }
+}
+
+/// Hosts the app's content, applies the user's appearance preference,
+/// and conditionally overlays `LaunchSplashView`.
+///
+/// Reads `@Environment(\.colorScheme)` *before* `preferredColorScheme`
+/// is applied to the content — so `systemColorScheme` reflects what
+/// iOS actually rendered for the system launch screen. The splash is
+/// only drawn when the iOS launch screen would have shown the *light*
+/// variant while the app wants dark. When the system is already dark
+/// the splash is skipped — otherwise it produces a redundant ~0.7 s
+/// second blue flash after the iOS launch.
+private struct AppRootContainer<Content: View>: View {
+    @Environment(\.colorScheme) private var systemColorScheme
+    @AppStorage("appearanceMode") private var appearanceModeRaw: String = "system"
+    @State private var showLaunchSplash: Bool = true
+    @ViewBuilder var content: () -> Content
+
+    private var preferredColorScheme: ColorScheme? {
+        switch AppearanceMode(rawValue: appearanceModeRaw) {
+        case .light: .light
+        case .dark: .dark
+        default: nil
+        }
+    }
+
+    private var shouldOverrideLaunchToDark: Bool {
+        AppearanceMode(rawValue: appearanceModeRaw) == .dark
+            && systemColorScheme == .light
+    }
+
+    var body: some View {
+        ZStack {
+            content()
+                .preferredColorScheme(preferredColorScheme)
+
+            if shouldOverrideLaunchToDark && showLaunchSplash {
+                LaunchSplashView()
+                    .transition(.opacity)
+                    .task {
+                        try? await Task.sleep(nanoseconds: 400_000_000)
+                        withAnimation(.easeOut(duration: 0.3)) {
+                            showLaunchSplash = false
+                        }
+                    }
             }
         }
     }
