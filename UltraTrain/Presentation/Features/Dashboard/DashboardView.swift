@@ -9,6 +9,12 @@ struct DashboardView: View {
     @State private var showValidateSession = false
     @State private var showSkipSession = false
     @State private var validateRecentRuns: [CompletedRun] = []
+    /// Race selected from the "Upcoming Races" card. Drives a
+    /// navigationDestination push to FinishEstimationView so the
+    /// athlete can open the race predictor straight from the
+    /// dashboard, same as from the Profile section.
+    @State private var selectedUpcomingRace: Race?
+    @State private var showUpcomingRacePredictor = false
     @Binding var selectedTab: Tab
 
     let planRepository: any TrainingPlanRepository
@@ -148,12 +154,14 @@ struct DashboardView: View {
 
                     LastRunCard(lastRun: viewModel.lastRun)
 
-                    DashboardWeatherCard(
-                        currentWeather: viewModel.currentWeather,
-                        sessionForecast: viewModel.sessionForecast,
-                        sessionDate: viewModel.nextSession?.date,
-                        isLoading: viewModel.isLoading
-                    )
+                    // Weather card intentionally removed from the
+                    // dashboard — generic "current conditions" without
+                    // a session attached to it didn't drive useful
+                    // decisions for the athlete; per-session weather
+                    // still surfaces on the run-tracking screen and
+                    // session detail. WeatherService is still wired in
+                    // so the race-day forecast card on the finish
+                    // estimate page keeps working.
 
                     // Race forecast (replaces the old Recovery section — only a
                     // minority of users had Apple-Watch recovery data, whereas
@@ -162,7 +170,10 @@ struct DashboardView: View {
                     SectionHeader(title: "Race forecast")
 
                     finishEstimateSection
-                    UpcomingRacesCard(races: viewModel.upcomingRaces)
+                    UpcomingRacesCard(races: viewModel.upcomingRaces) { race in
+                        selectedUpcomingRace = race
+                        showUpcomingRacePredictor = true
+                    }
                 }
                 .padding()
             }
@@ -187,6 +198,24 @@ struct DashboardView: View {
             .navigationDestination(isPresented: $showSyncQueue) {
                 if let svc = syncService {
                     SyncQueueView(syncService: svc)
+                }
+            }
+            .navigationDestination(isPresented: $showUpcomingRacePredictor) {
+                if let race = selectedUpcomingRace {
+                    FinishEstimationView(
+                        race: race,
+                        finishTimeEstimator: finishTimeEstimator,
+                        athleteRepository: athleteRepository,
+                        runRepository: runRepository,
+                        fitnessCalculator: fitnessCalculator,
+                        nutritionRepository: nutritionRepository,
+                        nutritionGenerator: nutritionGenerator,
+                        raceRepository: raceRepository,
+                        finishEstimateRepository: finishEstimateRepository,
+                        weatherService: weatherService,
+                        locationService: locationService,
+                        checklistRepository: checklistRepository
+                    )
                 }
             }
             .sheet(isPresented: $showValidateSession) {

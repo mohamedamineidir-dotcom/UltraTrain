@@ -3,6 +3,11 @@ import SwiftUI
 struct UpcomingRacesCard: View {
     @Environment(\.unitPreference) private var units
     let races: [Race]
+    /// Fired when the athlete taps a race row. Used by the dashboard
+    /// to push `FinishEstimationView` for that race so the predictor
+    /// + evolution chart are one tap away from the home screen, same
+    /// as in the Profile section.
+    var onTapRace: ((Race) -> Void)? = nil
 
     var body: some View {
         if !uniqueRaces.isEmpty {
@@ -11,7 +16,16 @@ struct UpcomingRacesCard: View {
                     .font(.headline)
 
                 ForEach(uniqueRaces) { race in
-                    raceRow(race)
+                    if let onTapRace {
+                        Button {
+                            onTapRace(race)
+                        } label: {
+                            raceRow(race, showsChevron: true)
+                        }
+                        .buttonStyle(.plain)
+                    } else {
+                        raceRow(race, showsChevron: false)
+                    }
                     if race.id != uniqueRaces.last?.id {
                         Divider()
                             .opacity(0.4)
@@ -34,7 +48,7 @@ struct UpcomingRacesCard: View {
         }
     }
 
-    private func raceRow(_ race: Race) -> some View {
+    private func raceRow(_ race: Race, showsChevron: Bool) -> some View {
         HStack(spacing: Theme.Spacing.sm) {
             RoundedRectangle(cornerRadius: 2)
                 .fill(race.priority.badgeColor.gradient)
@@ -44,6 +58,7 @@ struct UpcomingRacesCard: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(race.name)
                     .font(.subheadline.bold())
+                    .foregroundStyle(Theme.Colors.label)
                     .lineLimit(1)
                 HStack(spacing: Theme.Spacing.xs) {
                     Text(UnitFormatter.formatDistance(race.distanceKm, unit: units, decimals: 0))
@@ -68,9 +83,18 @@ struct UpcomingRacesCard: View {
                     .background(race.priority.badgeColor.opacity(0.12))
                     .clipShape(Capsule())
             }
+
+            if showsChevron {
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Theme.Colors.tertiaryLabel)
+                    .accessibilityHidden(true)
+            }
         }
+        .contentShape(Rectangle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(race.name), \(race.priority.displayName) race. \(UnitFormatter.formatDistance(race.distanceKm, unit: units, decimals: 0)), \(UnitFormatter.formatElevation(race.elevationGainM, unit: units)) elevation gain. \(daysUntilText(race.date))")
+        .accessibilityHint(showsChevron ? "Opens the finish-time predictor for this race" : "")
     }
 
     private func daysUntilText(_ date: Date) -> String {
