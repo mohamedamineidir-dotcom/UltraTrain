@@ -138,7 +138,7 @@ struct PlanVolumeChartsSection: View {
                             endPoint: .bottom
                         )
                     )
-                    .interpolationMethod(.monotone)
+                    .interpolationMethod(.linear)
                 }
                 ForEach(dataPoints) { point in
                     LineMark(
@@ -148,7 +148,7 @@ struct PlanVolumeChartsSection: View {
                     )
                     .foregroundStyle(Theme.Colors.label.opacity(0.35))
                     .lineStyle(StrokeStyle(lineWidth: 1.5))
-                    .interpolationMethod(.monotone)
+                    .interpolationMethod(.linear)
                 }
             }
 
@@ -163,29 +163,20 @@ struct PlanVolumeChartsSection: View {
             //    losing the phase narrative.
             ForEach(phaseSegments) { segment in
                 if segment.points.count == 1, let only = segment.points.first {
-                    // Single-week segment (typical when athlete has
-                    // just validated W1) — Swift Charts can't draw a
-                    // Line or Area with one point. Previous attempt
-                    // used a fixed-width BarMark that read as a
-                    // 10pt-wide blue column dominating the chart.
-                    // Switch to a thin lollipop: a 2pt phase-coloured
-                    // stem from baseline up to the completed value
-                    // plus a small dot at the top. Reads as "you've
-                    // started filling — here's where you are" without
-                    // hijacking the visual weight.
+                    // Single-week segment (athlete has just validated
+                    // W1). Swift Charts can't draw a Line or Area with
+                    // one point, so render a thin phase-coloured
+                    // vertical stem from baseline up to the completed
+                    // value. No permanent dot on top — dots are
+                    // reserved for the drag-inspect interaction so the
+                    // chart stays clean while idle.
                     RuleMark(
                         x: .value("Week", only.weekNumber),
                         yStart: .value("Floor", 0),
                         yEnd: .value("Completed", completedValue(for: only))
                     )
-                    .foregroundStyle(phaseColor(segment.phase).opacity(0.7))
-                    .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
-                    PointMark(
-                        x: .value("Week", only.weekNumber),
-                        y: .value("Completed", completedValue(for: only))
-                    )
                     .foregroundStyle(phaseColor(segment.phase))
-                    .symbolSize(70)
+                    .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
                 } else {
                     ForEach(segment.points) { point in
                         AreaMark(
@@ -204,7 +195,7 @@ struct PlanVolumeChartsSection: View {
                                 endPoint: .bottom
                             )
                         )
-                        .interpolationMethod(.monotone)
+                        .interpolationMethod(.linear)
 
                         LineMark(
                             x: .value("Week", point.weekNumber),
@@ -213,7 +204,7 @@ struct PlanVolumeChartsSection: View {
                         )
                         .foregroundStyle(phaseColor(segment.phase))
                         .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
-                        .interpolationMethod(.monotone)
+                        .interpolationMethod(.linear)
                     }
                 }
             }
