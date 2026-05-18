@@ -260,7 +260,8 @@ struct ProfileView: View {
             // grouped-list look the profile had before.
             Section {
                 VStack(alignment: .leading, spacing: Theme.Spacing.md) {
-                    HStack(alignment: .top, spacing: Theme.Spacing.md) {
+                    // Avatar + name row.
+                    HStack(spacing: Theme.Spacing.md) {
                         ZStack {
                             Circle()
                                 .fill(
@@ -278,37 +279,46 @@ struct ProfileView: View {
                                 .font(.title3)
                                 .foregroundStyle(Theme.Colors.primary)
                         }
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("\(athlete.firstName) \(athlete.lastName)")
-                                .font(.headline)
-                            HStack(spacing: 6) {
-                                athleteChip(label: "\(athlete.age) yrs", icon: "calendar")
-                                athleteChip(label: athlete.experienceLevel.rawValue.capitalized, icon: "figure.run")
-                                athleteChip(label: athlete.preferredUnit.rawValue.capitalized, icon: "ruler")
-                            }
-                        }
+                        Text("\(athlete.firstName) \(athlete.lastName)")
+                            .font(.headline)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
                         Spacer(minLength: 0)
                     }
                     .accessibilityElement(children: .combine)
+
+                    // Chips row. Pulled out of the avatar HStack so
+                    // they have the full card width to lay out on —
+                    // sharing the row with the 44pt avatar squeezed
+                    // them and they were wrapping ("Ad-vanced", "22 /
+                    // yrs"). `.fixedSize` per chip prevents wrapping
+                    // regardless of available width.
+                    HStack(spacing: 6) {
+                        athleteChip(label: "\(athlete.age) yrs", icon: "calendar")
+                        athleteChip(label: athlete.experienceLevel.rawValue.capitalized, icon: "figure.run")
+                        athleteChip(label: athlete.preferredUnit.rawValue.capitalized, icon: "ruler")
+                        Spacer(minLength: 0)
+                    }
 
                     Divider().opacity(0.15)
 
                     athleteStatsGrid(athlete)
 
+                    // HR Zones nav row. Just label content — the
+                    // NavigationLink supplies its own trailing chevron,
+                    // adding a second one was the source of the double
+                    // arrow.
                     NavigationLink {
                         HRZoneConfigurationView(athlete: athlete) { updated in
                             Task { await viewModel.updateAthlete(updated) }
                         }
                     } label: {
-                        HStack {
+                        HStack(spacing: 8) {
                             Image(systemName: "heart.text.square")
                                 .foregroundStyle(Theme.Colors.warmCoral)
                             Text("HR Zones")
                                 .font(.subheadline.weight(.medium))
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(Theme.Colors.tertiaryLabel)
+                                .foregroundStyle(Theme.Colors.label)
                         }
                         .padding(.vertical, 4)
                     }
@@ -340,13 +350,22 @@ struct ProfileView: View {
                 .font(.caption2)
             Text(label)
                 .font(.caption2.weight(.medium))
+                .lineLimit(1)
         }
         .foregroundStyle(Theme.Colors.secondaryLabel)
-        .padding(.horizontal, 6)
-        .padding(.vertical, 2)
+        .padding(.horizontal, 7)
+        .padding(.vertical, 3)
         .background(
             Capsule().fill(Theme.Colors.label.opacity(0.06))
         )
+        .overlay(
+            Capsule().stroke(Theme.Colors.label.opacity(0.08), lineWidth: 0.5)
+        )
+        // Lock the chip to its intrinsic width so adjacent chips never
+        // share-the-shrink with each other when the row is narrow —
+        // each one gets exactly the width it needs and the row scrolls
+        // / clips before any chip wraps.
+        .fixedSize(horizontal: true, vertical: false)
     }
 
 }
