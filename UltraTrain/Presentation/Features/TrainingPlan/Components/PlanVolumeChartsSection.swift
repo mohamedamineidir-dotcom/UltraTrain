@@ -269,17 +269,15 @@ struct PlanVolumeChartsSection: View {
                     .lineStyle(StrokeStyle(lineWidth: 1))
             }
         }
-        // Domain pins to the exact week range; we add a small inward
-        // padding so the W1 mark's stroke (2.5pt) doesn't straddle
-        // the plot-frame edge and poke out visually on the left. 8pt
-        // is wider than the thickest line/stem we draw, so every mark
-        // sits safely inside the plot frame. Labels still align
-        // because we draw them manually via `chartOverlay` + the
-        // chart proxy, which honours whatever scale padding is set.
-        .chartXScale(
-            domain: weekDomain,
-            range: .plotDimension(startPadding: 8, endPadding: 8)
-        )
+        // Domain pins to the exact week range. We don't override the
+        // range padding here — adding inward padding shrinks the
+        // PLANNED grey curve too, which was already laid out
+        // correctly. The poke-out only affects the completed
+        // overlay's stroke; we handle that by clipping the plot
+        // content below (chartPlotStyle.clipShape) so the strokes
+        // straddling the boundary get visually cropped to the plot
+        // frame.
+        .chartXScale(domain: weekDomain)
         .chartXAxis {
             // Auto axis renders only the faint vertical grid lines +
             // ticks at the labeled week positions. The W-labels
@@ -330,6 +328,15 @@ struct PlanVolumeChartsSection: View {
                             )
                         )
                 )
+                // Hard-clip the plot region to its rounded frame.
+                // Marks at the absolute X-domain edges (W1 and the
+                // last week) have their stroke widths straddling the
+                // boundary pixel; without clipping, half the stroke
+                // renders outside the visible plot. Clipping crops
+                // those tiny outside-strokes to the frame so the
+                // overlay never appears to poke out, without
+                // shrinking the planned curve or the chart itself.
+                .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
         }
         .shadow(color: Theme.Colors.accentColor.opacity(0.15), radius: 8)
         .chartOverlay { proxy in
