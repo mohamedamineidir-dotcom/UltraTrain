@@ -134,6 +134,7 @@ extension ProfileView {
             } label: {
                 RaceRowView(race: race)
             }
+            .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 12))
             .swipeActions(edge: .trailing) {
                 Button("Edit") {
                     viewModel.raceToEdit = race
