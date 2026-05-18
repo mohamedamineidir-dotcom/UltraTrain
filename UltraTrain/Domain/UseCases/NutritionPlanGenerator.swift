@@ -327,12 +327,11 @@ enum NutritionScheduleBuilder {
         )
     }
 
-    /// Minimum gap (minutes) between two distinct carb intakes that
-    /// occur at *different* times. Anchored on the sports-nutrition
-    /// consensus:
+    /// Minimum gap (minutes) between two *discrete* carb intakes
+    /// (gel-to-gel, gel-to-caffeine-gel, solid-to-solid). Anchored on:
     /// - Jeukendrup 2010 / 2014: small frequent doses better tolerated
     ///   than boluses; 20-25 min between gels is the working norm.
-    /// - ACSM/IOC 2016 statement: 60-90 g/h split across the hour.
+    /// - ACSM/IOC 2016: 60-90 g/h split across the hour.
     /// - Stellingwerff & Cox 2014: 20-25 g every 20 min = 60-75 g/h.
     /// - Costa et al. 2017 (gut-training meta): GI tolerance drops
     ///   sharply when intra-bolus interval falls below ~15 min.
@@ -343,17 +342,35 @@ enum NutritionScheduleBuilder {
     /// both placed at the halfway mark, say) are preserved — athletes
     /// routinely take both with the same sip of water and showing them
     /// as a single timestamp on the timeline is the correct UX.
-    private static let minIntakeGapMinutes: Int = 18
+    private static let minDiscreteGapMinutes: Int = 18
+
+    /// Minimum gap when one of the two items is a drink. Drinks are
+    /// a continuous sipping vehicle, not a bolus event, so they don't
+    /// compete with gels for GI capacity at the same instant. 5 min
+    /// is enough to read as a separate timeline event without
+    /// crowding the athlete's mid-race attention.
+    private static let minDrinkAdjacencyGapMinutes: Int = 5
+
+    /// Cutoff for the *last* carb intake. Marathon-and-shorter races
+    /// stop fuelling 15 min before the finish so a gel's absorption
+    /// window (10-20 min for glucose to hit the bloodstream — Coyle
+    /// 1992, Jentjens 2004) starts before the finish line. Ultras
+    /// stop 30 min out — late carbs there are largely psychological
+    /// rather than ergogenic.
+    private static func lastIntakeCutoffMinutes(_ duration: Int) -> Int {
+        if duration >= 4 * 60 { return max(0, duration - 30) }
+        return max(0, duration - 15)
+    }
 
     /// Walks the sorted timeline and shifts later entries forward so
     /// adjacent intakes that occur at *different* minutes never sit
-    /// closer than `minIntakeGapMinutes`. Caffeine and base schedules
-    /// are computed independently in the current pipeline, which
-    /// produced timelines like "gel @ 1h20, gel @ 1h30" on a
-    /// sub-2h40 marathon (10-min gap between two carb hits) — too
-    /// tight for the gut and pointless for blood-glucose stability.
-    /// We *shift* rather than *drop* so the total carb load stays at
-    /// the prescribed target rate.
+    /// closer than the minimum gap. Caffeine and base schedules are
+    /// computed independently, which produced timelines like "gel @
+    /// 1h20, gel @ 1h30" — too tight for the gut and pointless for
+    /// blood-glucose stability. We *shift* rather than *drop* so the
+    /// total carb load stays at the prescribed target rate, and round
+    /// shifted times up to the nearest 5-minute boundary so the
+    /// timeline reads as "1h40" rather than "1h38".
     private static func enforceCarbTimingSpacing(
         _ entries: [NutritionEntry],
         durationMinutes: Int
@@ -361,24 +378,38 @@ enum NutritionScheduleBuilder {
         guard entries.count > 1 else { return entries }
         var result = entries
 
-        // Shift later entries forward when the gap is positive but
-        // below the minimum. Concurrent intakes (gap == 0) are left
-        // alone — they read as a single timestamp on the timeline
-        // and the athlete takes them together. After each shift the
-        // next iteration sees the updated time, so a cascade of
-        // tight intakes is fanned out in a single pass.
         for idx in 1..<result.count {
-            let prevTime = result[idx - 1].timingMinutes
-            let currentTime = result[idx].timingMinutes
-            let gap = currentTime - prevTime
-            if gap > 0 && gap < minIntakeGapMinutes {
-                result[idx].timingMinutes = prevTime + minIntakeGapMinutes
+            let prev = result[idx - 1]
+            let current = result[idx]
+            let gap = current.timingMinutes - prev.timingMinutes
+            let minGap = minGapBetween(prev, current)
+            if gap > 0 && gap < minGap {
+                result[idx].timingMinutes = roundedToFiveMinutes(prev.timingMinutes + minGap)
             }
         }
 
-        // Drop anything pushed past the race minus 5 min — better to
-        // skip than to fuel inside the last 5 min.
-        return result.filter { $0.timingMinutes <= max(0, durationMinutes - 5) }
+        // Drop anything past the race-class-aware cutoff so a gel
+        // taken inside the final absorption window doesn't make it
+        // to the timeline.
+        let cutoff = lastIntakeCutoffMinutes(durationMinutes)
+        return result.filter { $0.timingMinutes <= cutoff }
+    }
+
+    /// Drink ↔ anything pairs use the relaxed 5-min adjacency rule;
+    /// discrete-bolus pairs (gel, caffeine gel, solid) use 18 min.
+    private static func minGapBetween(_ a: NutritionEntry, _ b: NutritionEntry) -> Int {
+        if a.product.type == .drink || b.product.type == .drink {
+            return minDrinkAdjacencyGapMinutes
+        }
+        return minDiscreteGapMinutes
+    }
+
+    /// Rounds a minute value up to the nearest 5-minute boundary so
+    /// timeline labels read as "1h40" rather than "1h38". Athletes
+    /// check their watch at round numbers; computed precision adds
+    /// no value and reads as machine output.
+    private static func roundedToFiveMinutes(_ minutes: Int) -> Int {
+        ((minutes + 4) / 5) * 5
     }
 
     // MARK: Short races (30-90 min)
@@ -534,13 +565,22 @@ enum NutritionScheduleBuilder {
             // Single pre-race dose only (not an in-race entry) — skip.
             return []
         } else if durationHours < 6 {
-            // Split dose: 50% at halfway, 25% at 3/4, with one pre-race note.
-            let halfway = durationMinutes / 2
-            let threeQuarter = durationMinutes * 3 / 4
+            // Caffeine peaks in plasma 30-60 min after ingestion
+            // (Graham & Spriet 1995; Burke 2008), so anchoring the
+            // doses at exactly 50% and 75% of duration lands their
+            // *effect* past the finish line on a marathon. Pull both
+            // doses ~5-10% earlier so the FIRST dose peaks during the
+            // suffer-zone (60-75% of the race) and the SECOND dose
+            // peaks ~15 min before finish, when blood glucose is the
+            // main limiter on the last surge. For a 2h40 marathon
+            // (160 min): first dose at 45% ≈ 1h10 → peak ≈ 1h45;
+            // second dose at 70% ≈ 1h50 → peak ≈ 2h20.
+            let halfway = roundedToFiveMinutes(durationMinutes * 45 / 100)
+            let threeQuarter = roundedToFiveMinutes(durationMinutes * 70 / 100)
             entries.append(entry(product: caffGel, timingMinutes: halfway,
-                                 notes: "Caffeinated gel — energy kick for back half"))
+                                 notes: "Caffeinated gel — peaks ~45 min later, hits the back-half suffer zone"))
             entries.append(entry(product: caffGel, timingMinutes: threeQuarter,
-                                 notes: "Final caffeine dose"))
+                                 notes: "Final caffeine dose — peaks near the finish surge"))
         } else {
             // Ultra: back-loaded. 1 dose every 2 h starting at hour 3,
             // concentrated during predicted low points (night hours).
