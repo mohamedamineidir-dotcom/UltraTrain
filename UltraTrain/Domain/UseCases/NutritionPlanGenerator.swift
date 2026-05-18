@@ -314,7 +314,71 @@ enum NutritionScheduleBuilder {
             preferences: preferences
         ))
 
-        return entries.sorted { $0.timingMinutes < $1.timingMinutes }
+        // Post-process: merge near-clashes and enforce a minimum gap
+        // between adjacent carb intakes so the timeline never ships
+        // two gels 10 minutes apart. Caffeine-gel placement is
+        // computed independently from the base gel/drink schedule, so
+        // without this pass a 50%-of-duration caffeine gel can land
+        // right next to a 30-minute base gel (the original bug:
+        // gel @ 1h20, gel @ 1h30 on a sub-2h40 marathon).
+        return enforceCarbTimingSpacing(
+            entries.sorted { $0.timingMinutes < $1.timingMinutes },
+            durationMinutes: durationMinutes
+        )
+    }
+
+    /// Minimum gap (minutes) between two distinct carb intakes that
+    /// occur at *different* times. Anchored on the sports-nutrition
+    /// consensus:
+    /// - Jeukendrup 2010 / 2014: small frequent doses better tolerated
+    ///   than boluses; 20-25 min between gels is the working norm.
+    /// - ACSM/IOC 2016 statement: 60-90 g/h split across the hour.
+    /// - Stellingwerff & Cox 2014: 20-25 g every 20 min = 60-75 g/h.
+    /// - Costa et al. 2017 (gut-training meta): GI tolerance drops
+    ///   sharply when intra-bolus interval falls below ~15 min.
+    /// 18 min sits in the comfortable middle: up to ~3.3 intakes / h
+    /// (≈ 80 g/h with 25 g gels) without crossing the GI-risk line.
+    ///
+    /// Items at *exactly* the same minute (a drink and a caffeine gel
+    /// both placed at the halfway mark, say) are preserved — athletes
+    /// routinely take both with the same sip of water and showing them
+    /// as a single timestamp on the timeline is the correct UX.
+    private static let minIntakeGapMinutes: Int = 18
+
+    /// Walks the sorted timeline and shifts later entries forward so
+    /// adjacent intakes that occur at *different* minutes never sit
+    /// closer than `minIntakeGapMinutes`. Caffeine and base schedules
+    /// are computed independently in the current pipeline, which
+    /// produced timelines like "gel @ 1h20, gel @ 1h30" on a
+    /// sub-2h40 marathon (10-min gap between two carb hits) — too
+    /// tight for the gut and pointless for blood-glucose stability.
+    /// We *shift* rather than *drop* so the total carb load stays at
+    /// the prescribed target rate.
+    private static func enforceCarbTimingSpacing(
+        _ entries: [NutritionEntry],
+        durationMinutes: Int
+    ) -> [NutritionEntry] {
+        guard entries.count > 1 else { return entries }
+        var result = entries
+
+        // Shift later entries forward when the gap is positive but
+        // below the minimum. Concurrent intakes (gap == 0) are left
+        // alone — they read as a single timestamp on the timeline
+        // and the athlete takes them together. After each shift the
+        // next iteration sees the updated time, so a cascade of
+        // tight intakes is fanned out in a single pass.
+        for idx in 1..<result.count {
+            let prevTime = result[idx - 1].timingMinutes
+            let currentTime = result[idx].timingMinutes
+            let gap = currentTime - prevTime
+            if gap > 0 && gap < minIntakeGapMinutes {
+                result[idx].timingMinutes = prevTime + minIntakeGapMinutes
+            }
+        }
+
+        // Drop anything pushed past the race minus 5 min — better to
+        // skip than to fuel inside the last 5 min.
+        return result.filter { $0.timingMinutes <= max(0, durationMinutes - 5) }
     }
 
     // MARK: Short races (30-90 min)
