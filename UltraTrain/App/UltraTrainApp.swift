@@ -13,6 +13,12 @@ struct UltraTrainApp: App {
 
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("appearanceMode") private var appearanceModeRaw: String = "system"
+    /// Controls the in-app launch splash that bridges the gap when
+    /// the user has forced the app to dark mode on a light-system
+    /// device. iOS launch screens follow the system appearance only;
+    /// the splash takes over for ~0.4 s so the visible flash from the
+    /// light system launch into the dark app is masked.
+    @State private var showLaunchSplash: Bool = true
 
     private var colorScheme: ColorScheme? {
         switch AppearanceMode(rawValue: appearanceModeRaw) {
@@ -22,8 +28,16 @@ struct UltraTrainApp: App {
         }
     }
 
+    /// True only when the user has explicitly set the app to dark.
+    /// For .system and .light the iOS launch screen already shows the
+    /// correct variant, so the splash is unnecessary overhead.
+    private var shouldOverrideLaunchToDark: Bool {
+        AppearanceMode(rawValue: appearanceModeRaw) == .dark
+    }
+
     var body: some Scene {
         WindowGroup {
+            ZStack {
             AppRootView(
                 authService: container.authService,
                 subscriptionService: container.subscriptionService,
@@ -106,6 +120,22 @@ struct UltraTrainApp: App {
                     await syncSvc.processQueue()
                     await monitor.refresh()
                 }
+            }
+
+            if shouldOverrideLaunchToDark && showLaunchSplash {
+                LaunchSplashView()
+                    .transition(.opacity)
+                    .task {
+                        // Show the dark splash for ~0.4 s, then fade
+                        // out over 0.3 s so the handoff to the main
+                        // UI feels like a smooth cross-fade rather
+                        // than a hard cut.
+                        try? await Task.sleep(nanoseconds: 400_000_000)
+                        withAnimation(.easeOut(duration: 0.3)) {
+                            showLaunchSplash = false
+                        }
+                    }
+            }
             }
         }
         .onChange(of: scenePhase) { _, newPhase in
