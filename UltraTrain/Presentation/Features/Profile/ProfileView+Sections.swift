@@ -77,6 +77,7 @@ extension ProfileView {
             } label: {
                 Label("Race Calendar", systemImage: "calendar")
             }
+            .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 12))
             .accessibilityIdentifier("profile.raceCalendarLink")
 
             if viewModel.races.isEmpty {
@@ -111,10 +112,15 @@ extension ProfileView {
 
     @ViewBuilder
     var upcomingRacesSubsection: some View {
+        // Subtitle was sitting in a default List row (~12pt top + 12pt
+        // bottom inset) which left a visible gap above and below
+        // "Upcoming". Trim to a tight 6pt top / 2pt bottom so the
+        // subtitle hugs the first race row beneath it.
         Text("Upcoming")
             .font(.caption.bold())
             .foregroundStyle(Theme.Colors.secondaryLabel)
             .listRowSeparator(.hidden)
+            .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 2, trailing: 16))
         ForEach(viewModel.upcomingRaces) { race in
             NavigationLink {
                 FinishEstimationView(
@@ -164,6 +170,7 @@ extension ProfileView {
             .font(.caption.bold())
             .foregroundStyle(Theme.Colors.secondaryLabel)
             .listRowSeparator(.hidden)
+            .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 2, trailing: 16))
         ForEach(viewModel.completedRaces) { race in
             NavigationLink {
                 RaceReportView(
@@ -187,6 +194,7 @@ extension ProfileView {
                     }
                 }
             }
+            .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 12))
             .swipeActions(edge: .trailing) {
                 Button("Edit") {
                     viewModel.raceToEdit = race
