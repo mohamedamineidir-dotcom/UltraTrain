@@ -269,12 +269,17 @@ struct PlanVolumeChartsSection: View {
                     .lineStyle(StrokeStyle(lineWidth: 1))
             }
         }
-        // Domain pins to the exact week range; we no longer override
-        // `range:` because zero plot-dimension padding made the first
-        // and last week labels render half-clipped at the chart edges,
-        // which mis-aligned every label across the axis. With default
-        // padding the ticks now sit directly under their data points.
-        .chartXScale(domain: weekDomain)
+        // Domain pins to the exact week range; we add a small inward
+        // padding so the W1 mark's stroke (2.5pt) doesn't straddle
+        // the plot-frame edge and poke out visually on the left. 8pt
+        // is wider than the thickest line/stem we draw, so every mark
+        // sits safely inside the plot frame. Labels still align
+        // because we draw them manually via `chartOverlay` + the
+        // chart proxy, which honours whatever scale padding is set.
+        .chartXScale(
+            domain: weekDomain,
+            range: .plotDimension(startPadding: 8, endPadding: 8)
+        )
         .chartXAxis {
             // Auto axis renders only the faint vertical grid lines +
             // ticks at the labeled week positions. The W-labels
