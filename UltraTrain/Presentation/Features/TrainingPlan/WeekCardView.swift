@@ -278,6 +278,10 @@ extension WeekCardView {
         }
         .frame(height: 4)
         .clipShape(Capsule())
+        // Small breathing room between the stats row above (clock /
+        // distance icons) and the progress capsule. Without this the
+        // bar sat flush against the "4h02 · 42 km" line.
+        .padding(.top, 5)
     }
 }
 
