@@ -404,12 +404,21 @@ enum NutritionScheduleBuilder {
         return minDiscreteGapMinutes
     }
 
-    /// Rounds a minute value up to the nearest 5-minute boundary so
-    /// timeline labels read as "1h40" rather than "1h38". Athletes
-    /// check their watch at round numbers; computed precision adds
-    /// no value and reads as machine output.
+    /// Rounds a minute value UP to the next 5-minute boundary. Used
+    /// by the spacing pass when shifting a tight intake forward — the
+    /// shifted time must remain ≥ `prev + minGap`, so we round up.
     private static func roundedToFiveMinutes(_ minutes: Int) -> Int {
         ((minutes + 4) / 5) * 5
+    }
+
+    /// Rounds to the NEAREST 5-minute boundary. Used for caffeine
+    /// anchors where the target percentage is a *suggestion* (45% /
+    /// 75% of duration), so rounding to the closer multiple gives a
+    /// cleaner number — 72 → 70 instead of 75, 112 → 110 instead of
+    /// 115. The spacing pass still uses up-rounding so any
+    /// subsequent shift can't violate the min-gap rule.
+    private static func roundedToNearestFiveMinutes(_ minutes: Int) -> Int {
+        ((minutes + 2) / 5) * 5
     }
 
     // MARK: Short races (30-90 min)
@@ -566,17 +575,17 @@ enum NutritionScheduleBuilder {
             return []
         } else if durationHours < 6 {
             // Caffeine peaks in plasma 30-60 min after ingestion
-            // (Graham & Spriet 1995; Burke 2008), so anchoring the
-            // doses at exactly 50% and 75% of duration lands their
-            // *effect* past the finish line on a marathon. Pull both
-            // doses ~5-10% earlier so the FIRST dose peaks during the
-            // suffer-zone (60-75% of the race) and the SECOND dose
-            // peaks ~15 min before finish, when blood glucose is the
-            // main limiter on the last surge. For a 2h40 marathon
-            // (160 min): first dose at 45% ≈ 1h10 → peak ≈ 1h45;
-            // second dose at 70% ≈ 1h50 → peak ≈ 2h20.
-            let halfway = roundedToFiveMinutes(durationMinutes * 45 / 100)
-            let threeQuarter = roundedToFiveMinutes(durationMinutes * 70 / 100)
+            // (Graham & Spriet 1995; Burke 2008). Anchor the first
+            // dose at 45% of duration so its peak lands during the
+            // back-half suffer zone (60-75% of the race). Anchor the
+            // second dose at 75% — for a 2h40 marathon (160 min) that
+            // places it at exactly 2h00, with the effect peaking
+            // ~2h30 just before the finish surge. Round to NEAREST
+            // 5 min (not up) so anchors land on clean round numbers
+            // ("2h00", "1h10") instead of computed precision
+            // ("1h55", "1h12") that reads as machine output.
+            let halfway = roundedToNearestFiveMinutes(durationMinutes * 45 / 100)
+            let threeQuarter = roundedToNearestFiveMinutes(durationMinutes * 75 / 100)
             entries.append(entry(product: caffGel, timingMinutes: halfway,
                                  notes: "Caffeinated gel — peaks ~45 min later, hits the back-half suffer zone"))
             entries.append(entry(product: caffGel, timingMinutes: threeQuarter,
