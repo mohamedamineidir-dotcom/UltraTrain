@@ -38,7 +38,6 @@ extension MainTabView {
                 sessionNutritionAdvisor: sessionNutritionAdvisor,
                 fitnessRepository: fitnessRepository,
                 widgetDataWriter: widgetDataWriter,
-                workoutRecipeRepository: workoutRecipeRepository,
                 runRepository: runRepository,
                 subscriptionService: subscriptionService,
                 stravaAuthService: stravaAuthService,
