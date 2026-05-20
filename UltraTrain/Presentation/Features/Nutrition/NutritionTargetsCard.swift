@@ -242,23 +242,23 @@ private struct TargetsExplainerSheet: View {
                 VStack(alignment: .leading, spacing: Theme.Spacing.md) {
                     section(
                         title: "Carbs per hour",
-                        body: "Modern endurance research (Jeukendrup, ISSN) prescribes carbohydrate intake in grams per hour, scaled to **expected race duration**. A 4-hour marathon needs ~60–90 g/h; a 12-hour ultra needs 60–90 g/h sustained via mixed glucose + fructose. This is the single biggest driver of performance and GI outcomes."
+                        body: "Scaled to your race duration. Most runners need 60 to 90 g per hour, from a mix of glucose and fructose to avoid GI issues."
                     )
                     section(
                         title: "Hydration",
-                        body: "Derived from your sweat rate if you've measured it, otherwise from body weight + temperature + humidity. We aim to replace ~80% of fluid loss — over-drinking risks hyponatremia (ISSN 2019)."
+                        body: "Set from your sweat rate, or estimated from your weight and the weather. We aim to replace about 80% of what you lose."
                     )
                     section(
                         title: "Sodium",
-                        body: "Calculated as **mg per liter of sweat** matched to your composition (heavy salty sweater vs average). Races over 6 h apply the ISSN 575 mg/L floor to prevent hyponatremia."
+                        body: "Matched to how salty your sweat is. Races over 6 hours apply a 575 mg per liter floor."
                     )
                     section(
                         title: "Caffeine",
-                        body: "Race-day dose from ISSN's 3–6 mg/kg range, adjusted for your sensitivity and habitual intake. Split across the race with a front, mid, and 3/4 dose for marathons, and back-loaded toward night hours for ultras."
+                        body: "3 to 6 mg per kg of body weight, tuned to your tolerance. Spread across the race, with night doses for ultras."
                     )
                     section(
                         title: "Why practice this in training?",
-                        body: "The gut is a trainable organ. Start around 40 g/h and add ~10 g/h every 2 weeks until race-day target feels comfortable. Two long runs at your target rate (8–12 weeks before race) dramatically improve absorption."
+                        body: "Your gut can be trained. Start at 40 g per hour, add 10 g every two weeks, and test your full race intake on two long runs before the event."
                     )
                 }
                 .padding()

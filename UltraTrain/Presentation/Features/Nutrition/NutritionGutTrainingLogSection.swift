@@ -149,7 +149,7 @@ struct NutritionGutTrainingLogSection: View {
             return "Generate a plan and we'll flag the long runs worth practicing on."
         }
         if feedbacks.count >= sessions.count {
-            return "Feedback loop complete — plan refined."
+            return "Feedback loop complete. Plan refined."
         }
         return "Tap to log feedback and refine your race-day plan"
     }

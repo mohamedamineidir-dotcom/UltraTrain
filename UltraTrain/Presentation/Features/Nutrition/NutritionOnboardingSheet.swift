@@ -99,7 +99,7 @@ struct NutritionOnboardingSheet: View {
             case .dietary:
                 return "We'll only suggest products that fit."
             case .giSensitivities:
-                return "Things that have caused issues before — gels, fructose, gluten..."
+                return "Things that have caused issues before (gels, fructose, gluten…)."
             case .formats:
                 return "Tap every format you're happy to use on race day."
             case .brands:
@@ -107,7 +107,7 @@ struct NutritionOnboardingSheet: View {
             case .preRaceMeal:
                 return "How long before race start do you like to eat? Tunes the morning fuelling plan."
             case .advanced:
-                return "All optional. Skip what you don't know — we default to evidence-based targets."
+                return "All optional. Skip what you don't know, we'll use evidence-based defaults."
             case .ultraPalate:
                 return "On long efforts, most athletes get tired of sweet fuel at some point. Knowing when helps plan the aid-station switch."
             }
@@ -319,7 +319,7 @@ struct NutritionOnboardingSheet: View {
     private func caffeineSubtitle(_ s: CaffeineSensitivity) -> String {
         switch s {
         case .none:      return "No coffee, tea, or caffeinated drinks"
-        case .low:       return "Occasional — not a daily drinker"
+        case .low:       return "Occasional, not a daily drinker"
         case .moderate:  return "1-2 coffees or equivalent per day"
         case .high:      return "3+ coffees or strong daily habit"
         }
@@ -567,7 +567,7 @@ struct NutritionOnboardingSheet: View {
                 preferences.sweatProfile.sweatSodiumMgPerL = Int(new)
             }
 
-            Text("All fields optional. Skip what you don't know — we'll use evidence-based defaults.")
+            Text("All fields optional. Skip what you don't know, we'll use evidence-based defaults.")
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.tertiaryLabel)
                 .multilineTextAlignment(.center)
@@ -685,7 +685,7 @@ struct NutritionOnboardingSheet: View {
                     HStack(spacing: 6) {
                         Image(systemName: isEmpty ? "checkmark.circle.fill" : "circle")
                             .font(.caption.weight(.bold))
-                        Text("None — nothing to flag")
+                        Text("None, nothing to flag")
                             .font(.subheadline.weight(.medium))
                     }
                     .foregroundStyle(isEmpty ? .white : Theme.Colors.label)
