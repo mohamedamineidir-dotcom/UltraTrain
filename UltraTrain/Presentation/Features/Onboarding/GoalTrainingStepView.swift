@@ -147,7 +147,13 @@ struct GoalTrainingStepView: View {
                         Text("What surface do you primarily run on?")
                             .font(.caption)
                             .foregroundStyle(Theme.Colors.secondaryLabel)
-                        Picker("Terrain", selection: $viewModel.runningTerrain) {
+                        Picker("Terrain", selection: Binding(
+                            get: { viewModel.effectiveRunningTerrain },
+                            set: { newValue in
+                                viewModel.runningTerrain = newValue
+                                viewModel.runningTerrainUserPicked = true
+                            }
+                        )) {
                             ForEach(TerrainType.allCases, id: \.self) { terrain in
                                 Text(terrain.displayName).tag(terrain)
                             }

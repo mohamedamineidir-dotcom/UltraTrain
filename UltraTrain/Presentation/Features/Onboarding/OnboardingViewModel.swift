@@ -155,7 +155,28 @@ final class OnboardingViewModel {
 
     // MARK: - GoalTraining additions
 
+    /// Backing storage for the terrain picker. Treated as the source of
+    /// truth only once the athlete has explicitly tapped the picker —
+    /// until then `effectiveRunningTerrain` derives the default from the
+    /// A-race profile so a road A-race lands on Road instead of Trail.
     var runningTerrain: TerrainType = .trail
+    /// Flips to `true` the first time the athlete touches the terrain
+    /// picker in `GoalTrainingStepView`. Once set we stop deriving and
+    /// honour their choice, even if they later go back and change the
+    /// race profile.
+    var runningTerrainUserPicked: Bool = false
+
+    /// Terrain default inferred from the A-race profile when the athlete
+    /// hasn't explicitly picked yet. Road A-races up to and including the
+    /// marathon default to Road; everything else (trail, ultra, no race)
+    /// stays on Trail.
+    var effectiveRunningTerrain: TerrainType {
+        if runningTerrainUserPicked { return runningTerrain }
+        let isRoadByType = raceType == .road
+        let isRoadByHeuristic = raceElevationGainM < 100 && raceDistanceKm > 0 && raceDistanceKm <= 42.195
+        return (isRoadByType || isRoadByHeuristic) ? .road : .trail
+    }
+
     var uphillDuration: UphillDuration? = nil
     var treadmillMaxIncline: TreadmillIncline? = nil
     var intervalFocus: IntervalFocus = .mixed
@@ -404,7 +425,7 @@ final class OnboardingViewModel {
             hasRecentInjury: hasRecentInjury,
             strengthTrainingPreference: strengthTrainingPreference ?? .no,
             strengthTrainingLocation: strengthTrainingLocation ?? .home,
-            runningTerrain: runningTerrain,
+            runningTerrain: effectiveRunningTerrain,
             uphillDuration: uphillDuration,
             treadmillMaxIncline: treadmillMaxIncline,
             intervalFocus: intervalFocus,

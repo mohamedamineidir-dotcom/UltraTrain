@@ -31,7 +31,7 @@ final class NutritionViewModel {
     var showingNutritionOnboarding = false
     var feedbackTargetSessionId: UUID?
     var lastRefinementNotes: [String] = []
-    var selectedTab: NutritionTab = .training
+    var selectedTab: NutritionTab = .raceDay
 
     /// True when the athlete hasn't yet completed the pre-plan nutrition
     /// onboarding. Drives whether `generatePlan` opens the sheet first.
