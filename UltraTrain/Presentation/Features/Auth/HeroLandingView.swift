@@ -69,8 +69,11 @@ struct HeroLandingView: View {
                         .fill(Theme.Colors.warmCoral.opacity(0.12))
                         .frame(width: 120, height: 120)
 
-                    Image(systemName: "mountain.2.fill")
-                        .font(.system(size: 56))
+                    Image("RunnerGlyph")
+                        .resizable()
+                        .renderingMode(.template)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 70, height: 70)
                         .foregroundStyle(
                             LinearGradient(
                                 colors: colorScheme == .dark
