@@ -1192,6 +1192,7 @@
 		AA9410929F4EF2F05FC6B450 /* BackgroundUploadServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E30AEF905730C5775B1687F /* BackgroundUploadServiceTests.swift */; };
 		AAD7563BB61021CCBFD6DF9A /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A250CD9093B3776ED540E1 /* LoginView.swift */; };
 		AAF8729E7A0815CE28082C4B /* NutritionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A82939589D6A057653F5732F /* NutritionViewModel.swift */; };
+		AAFFA715AC96E377AB03A8D8 /* SessionActionButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1F8C8D02371ACC6059A2EB /* SessionActionButtonStyle.swift */; };
 		AB37CD565FD56AD20CCB7DA3 /* GroupChallengeRemoteMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1033261C340DDADF05A6140 /* GroupChallengeRemoteMapper.swift */; };
 		AB774152BB63396FCB16C625 /* MockIntervalWorkoutRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9A67AD24B7891DB898632B1 /* MockIntervalWorkoutRepository.swift */; };
 		ABA984706DD0D1B4E905AA07 /* ZoneComplianceCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636C114B2917D18FABBDD10A /* ZoneComplianceCalculator.swift */; };
@@ -2304,6 +2305,7 @@
 		3E611360D30E9D409A534BC5 /* SavedRouteSwiftDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedRouteSwiftDataModel.swift; sourceTree = "<group>"; };
 		3EB7A5DEC9ECB0930DF1CA07 /* RaceSwiftDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceSwiftDataModel.swift; sourceTree = "<group>"; };
 		3F17E7145CA6798ED7CFB4C4 /* PhaseBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhaseBlock.swift; sourceTree = "<group>"; };
+		3F1F8C8D02371ACC6059A2EB /* SessionActionButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionActionButtonStyle.swift; sourceTree = "<group>"; };
 		3F3AFB709C9941C00A0C38FE /* RaceRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceRowView.swift; sourceTree = "<group>"; };
 		3F46C6C255803C59562FB7C8 /* PaywallTrialTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallTrialTimeline.swift; sourceTree = "<group>"; };
 		3F4821B18F9519684DC75250 /* ActiveRunView+Portrait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ActiveRunView+Portrait.swift"; sourceTree = "<group>"; };
@@ -3976,6 +3978,7 @@
 				05791490EBDCA85E85F2DF84 /* Animation+Ultra.swift */,
 				913D3F8835FB63018374E396 /* CardModifier.swift */,
 				0C6AE8E5250C48F6AE0FD956 /* NutritionPalette.swift */,
+				3F1F8C8D02371ACC6059A2EB /* SessionActionButtonStyle.swift */,
 				C31DCA000DB563D940A7B2BC /* Theme.swift */,
 			);
 			path = Theme;
@@ -7895,6 +7898,7 @@
 				3362B6C9DA25B56DC34B8EF4 /* SectionHeader.swift in Sources */,
 				C80FCE2AD0EF574CB5EAA42D /* SegmentDetail.swift in Sources */,
 				0823C19B09CD87A8BE842E6E /* SegmentDetailPopup.swift in Sources */,
+				AAFFA715AC96E377AB03A8D8 /* SessionActionButtonStyle.swift in Sources */,
 				DA412404599AC20CB8BFBD20 /* SessionCompletionLoadingView.swift in Sources */,
 				A098268626D1907A93892624 /* SessionDescriptionGenerator.swift in Sources */,
 				15D63F9E486E630F79E1FDEA /* SessionDetailView.swift in Sources */,

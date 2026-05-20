@@ -617,45 +617,30 @@ struct SessionDetailView: View {
                     showValidateSheet = true
                 } label: {
                     Label("Validate Session", systemImage: "checkmark.circle.fill")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(Theme.Colors.success)
+                .buttonStyle(.sessionPrimary(tint: Theme.Colors.success))
                 .accessibilityIdentifier("trainingPlan.session.validate")
                 .accessibilityHint("Double-tap to validate this session as completed")
             }
 
-            // #21: dedicated rest-day move action, prominent on rest
-            // session detail so the flow "I want to rest on a different
-            // day" is discoverable. Internally a regular swap, but the
-            // mental model is inverted — pick your rest day, not swap
-            // two sessions.
             if session.type == .rest && !session.isCompleted && !session.isSkipped {
                 Button {
                     showRestSwapSheet = true
                 } label: {
                     Label("Move Rest Day", systemImage: "arrow.triangle.2.circlepath")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(Theme.Colors.warmCoral)
+                .buttonStyle(.sessionPrimary(tint: Theme.Colors.warmCoral))
                 .accessibilityIdentifier("trainingPlan.session.moveRest")
                 .accessibilityHint("Double-tap to move your rest day to another day this week")
             }
-
-            Divider()
 
             if !session.isCompleted && !session.isSkipped {
                 Button {
                     showSkipReasonSheet = true
                 } label: {
                     Label("Skip Session", systemImage: "forward.fill")
-                        .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.bordered)
-                .tint(Theme.Colors.warning)
+                .buttonStyle(.sessionSecondary(tint: Theme.Colors.amberAccent))
                 .accessibilityIdentifier("trainingPlan.session.skip")
                 .accessibilityHint("Double-tap to skip this session and explain why")
             }
@@ -665,9 +650,8 @@ struct SessionDetailView: View {
                     showRescheduleSheet = true
                 } label: {
                     Label("Reschedule", systemImage: "calendar.badge.clock")
-                        .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(.sessionSecondary(tint: Theme.Colors.info))
                 .accessibilityIdentifier("trainingPlan.session.reschedule")
                 .accessibilityHint("Double-tap to move this session to a different date")
             }
@@ -677,9 +661,8 @@ struct SessionDetailView: View {
                     showSwapSheet = true
                 } label: {
                     Label("Swap with Another Session", systemImage: "arrow.triangle.swap")
-                        .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(.sessionSecondary(tint: Theme.Colors.info))
                 .accessibilityIdentifier("trainingPlan.session.swap")
                 .accessibilityHint("Double-tap to swap this session with another one")
             }
