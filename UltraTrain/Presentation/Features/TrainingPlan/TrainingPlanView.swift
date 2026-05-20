@@ -140,6 +140,7 @@ struct TrainingPlanView: View {
                         targetRace: race,
                         athlete: athlete,
                         planTotalWeeks: viewModel.planOptionsSheetTotalWeeks,
+                        raceRepository: raceRepository,
                         onGenerate: { options in
                             Task { await viewModel.generatePlanWithOptions(options) }
                         },
