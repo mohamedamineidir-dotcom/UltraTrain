@@ -56,16 +56,19 @@ struct RaceCalendarView: View {
     }
 
     private var phaseLegend: some View {
-        HStack(spacing: Theme.Spacing.md) {
-            ForEach(usedPhases, id: \.self) { phase in
-                HStack(spacing: Theme.Spacing.xs) {
-                    Circle()
-                        .fill(phase.color)
-                        .frame(width: 8, height: 8)
-                        .accessibilityHidden(true)
-                    Text(phase.displayName)
-                        .font(.caption)
-                        .foregroundStyle(Theme.Colors.secondaryLabel)
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: Theme.Spacing.sm) {
+                ForEach(usedPhases, id: \.self) { phase in
+                    HStack(spacing: Theme.Spacing.xs) {
+                        Circle()
+                            .fill(phase.color)
+                            .frame(width: 8, height: 8)
+                            .accessibilityHidden(true)
+                        Text(phase.displayName)
+                            .font(.caption)
+                            .foregroundStyle(Theme.Colors.secondaryLabel)
+                            .fixedSize(horizontal: true, vertical: false)
+                    }
                 }
             }
         }
