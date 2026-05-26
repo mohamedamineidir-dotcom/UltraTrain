@@ -77,20 +77,34 @@ struct WorkoutBlockCard: View {
         .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
     }
 
+    /// Per-rep distance or duration shown in the top-right of the card.
+    /// Always reflects ONE iteration so it lines up with the description
+    /// below and the parent "Repeat N times" header. Showing a multiplied
+    /// total here caused two problems: athletes read "5km" as "5×5km", and
+    /// the recovery total drifted out of sync with the work rep count
+    /// (work has N reps, recovery has N-1 in classic interval design).
     private var durationText: String {
-        // For distance triggers, show total distance. For duration, show time.
-        if case .distance(let km) = phase.trigger {
-            let totalMeters = Int(km * 1000) * phase.repeatCount
-            return totalMeters >= 1000
-                ? String(format: "%.1fkm", Double(totalMeters) / 1000.0)
-                : "\(totalMeters)m"
+        switch phase.trigger {
+        case .distance(let km):
+            let meters = Int(km * 1000)
+            return meters >= 1000
+                ? String(format: "%.1fkm", Double(meters) / 1000.0)
+                : "\(meters)m"
+        case .duration(let seconds):
+            let sec = Int(seconds)
+            if sec < 60 {
+                return "\(sec)s"
+            }
+            let mins = sec / 60
+            let secRemainder = sec % 60
+            if mins >= 60 {
+                return "\(mins / 60)h\(String(format: "%02d", mins % 60))"
+            }
+            if secRemainder > 0 {
+                return "\(mins)m\(secRemainder)s"
+            }
+            return "\(mins)min"
         }
-        let totalSec = phase.totalDuration
-        let mins = Int(totalSec) / 60
-        if mins >= 60 {
-            return "\(mins / 60)h\(String(format: "%02d", mins % 60))"
-        }
-        return "\(mins)min"
     }
 
     private var repDescription: String {
