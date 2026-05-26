@@ -40,8 +40,9 @@ struct PaywallFeatureBullets: View {
             Text(feature.key)
                 .font(.subheadline)
                 .foregroundStyle(.primary.opacity(0.92))
-                .lineLimit(2)
-                .minimumScaleFactor(0.85)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+                .truncationMode(.tail)
         }
     }
 }

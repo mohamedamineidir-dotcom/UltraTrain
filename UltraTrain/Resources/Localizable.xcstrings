@@ -190,6 +190,7 @@
       }
     },
     "%@ — %@": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2705,7 +2706,7 @@
         }
       }
     },
-    "Adds 1-3 race-pace quality sessions in the 2-3 weeks before this race — VO2max for 10K, threshold for HM, MP blocks for marathon. Replaces existing intervals, no extra fatigue.": {},
+    "Adds 1 to 3 race-pace quality sessions in the 2 to 3 weeks before this race. VO2max for 10K, threshold for HM, MP blocks for marathon. Replaces existing intervals, no extra fatigue.": {},
     "Adherence": {
       "localizations": {
         "fr": {
@@ -7616,6 +7617,7 @@
       }
     },
     "Goal": {
+      "extractionState": "stale",
       "localizations": {
         "fr": {
           "stringUnit": {
@@ -8300,6 +8302,7 @@
       }
     },
     "I'm OK — Cancel": {
+      "extractionState": "stale",
       "localizations": {
         "fr": {
           "stringUnit": {
@@ -8309,6 +8312,7 @@
         }
       }
     },
+    "I'm OK, Cancel": {},
     "iCloud": {
       "localizations": {
         "fr": {
@@ -8402,6 +8406,7 @@
       }
     },
     "Import a GPX file or add waypoints manually for predicted split times.": {
+      "extractionState": "stale",
       "localizations": {
         "fr": {
           "stringUnit": {
@@ -8422,6 +8427,7 @@
       }
     },
     "Import a GPX file to automatically populate the course route and checkpoints": {
+      "extractionState": "stale",
       "localizations": {
         "fr": {
           "stringUnit": {
@@ -8482,6 +8488,7 @@
       }
     },
     "Import GPX Course": {
+      "extractionState": "stale",
       "localizations": {
         "fr": {
           "stringUnit": {
@@ -9367,6 +9374,7 @@
       }
     },
     "Location": {
+      "extractionState": "stale",
       "localizations": {
         "fr": {
           "stringUnit": {
@@ -10710,6 +10718,7 @@
       }
     },
     "No worries — we'll build your base from scratch.": {
+      "extractionState": "stale",
       "localizations": {
         "fr": {
           "stringUnit": {
@@ -10719,6 +10728,7 @@
         }
       }
     },
+    "No worries, we'll build your base from scratch.": {},
     "None — nothing to flag": {
       "extractionState": "stale",
       "localizations": {
@@ -10995,7 +11005,6 @@
         }
       }
     },
-    "Off by default. When off, this race stays on your calendar with a standard mini-taper + recovery, but your training stays focused on your A-race.": {},
     "Off Course": {
       "localizations": {
         "fr": {
@@ -11330,6 +11339,7 @@
     },
     "Opens the finish-time predictor for this race": {},
     "Opens the form to add a new checkpoint": {
+      "extractionState": "stale",
       "localizations": {
         "fr": {
           "stringUnit": {
@@ -11753,55 +11763,63 @@
         }
       }
     },
-    "paywall.feature.coaching": {
+    "paywall.bestValue": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nutrition strategy, finish predictions & coaching"
+            "value": "BEST VALUE"
           }
-        },
-        "fr": {
+        }
+      }
+    },
+    "paywall.cta.reassurance": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nutrition, prédictions de temps et coaching"
+            "value": "No charge today. Cancel anytime."
+          }
+        }
+      }
+    },
+    "paywall.feature.coaching": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nutrition, finish predictions & coaching"
           }
         }
       }
     },
     "paywall.feature.plans": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Personalized training plans for any ultra distance"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plans d'entraînement personnalisés pour toute distance"
+            "value": "Personalized plans for any ultra"
           }
         }
       }
     },
     "paywall.feature.sync": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sync with Apple Watch, Strava, and HealthKit"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Synchronise avec Apple Watch, Strava et HealthKit"
+            "value": "Sync with Apple Watch, Strava & HealthKit"
           }
         }
       }
     },
     "paywall.freeWeek": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -11866,6 +11884,7 @@
       }
     },
     "paywall.perWeek %@": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -11877,6 +11896,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@/semaine"
+          }
+        }
+      }
+    },
+    "paywall.perWeekLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "per week"
           }
         }
       }
@@ -11994,6 +12024,28 @@
         }
       }
     },
+    "paywall.step.cancelAnytime": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel anytime"
+          }
+        }
+      }
+    },
+    "paywall.step.cancelAnytimeDetail": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop in one tap from Settings. No charge if you cancel before the trial ends."
+          }
+        }
+      }
+    },
     "paywall.step.reminder": {
       "extractionState": "manual",
       "localizations": {
@@ -12050,6 +12102,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "S'abonner"
+          }
+        }
+      }
+    },
+    "paywall.subtitle": {
+      "comment": "Static hero subtitle under the paywall title.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your ultra-trail coach. In your pocket."
           }
         }
       }
@@ -12531,6 +12595,7 @@
       }
     },
     "Pick from Route Library": {
+      "extractionState": "stale",
       "localizations": {
         "fr": {
           "stringUnit": {
@@ -13102,6 +13167,7 @@
         }
       }
     },
+    "Race date": {},
     "Race Date": {
       "localizations": {
         "fr": {
@@ -13184,6 +13250,7 @@
       }
     },
     "Race Info": {
+      "extractionState": "stale",
       "localizations": {
         "fr": {
           "stringUnit": {
@@ -14473,6 +14540,7 @@
         }
       }
     },
+    "Save changes": {},
     "Save feedback": {
       "localizations": {
         "fr": {
@@ -14944,6 +15012,7 @@
       }
     },
     "Select a saved route to use as the race course": {
+      "extractionState": "stale",
       "localizations": {
         "fr": {
           "stringUnit": {
@@ -15477,6 +15546,7 @@
       }
     },
     "Set Race Location": {
+      "extractionState": "stale",
       "localizations": {
         "fr": {
           "stringUnit": {
@@ -15886,6 +15956,7 @@
       }
     },
     "Sleep — Last 7 Nights": {
+      "extractionState": "stale",
       "localizations": {
         "fr": {
           "stringUnit": {
@@ -15895,6 +15966,7 @@
         }
       }
     },
+    "Sleep, Last 7 Nights": {},
     "Sleep: %@ hours, Deep: %@ hours, Efficiency: %lld percent": {
       "localizations": {
         "en": {
@@ -16001,7 +16073,6 @@
         }
       }
     },
-    "Specific prep": {},
     "Speech Rate": {
       "localizations": {
         "fr": {
@@ -17582,6 +17653,7 @@
       }
     },
     "UltraTrain is built for trail and ultra-distance races. For shorter road events, features like altitude training and nutrition planning shine most on longer distances. You can still create a plan — but to get the most out of this app, consider using it for your next trail or long-distance adventure!": {
+      "extractionState": "stale",
       "localizations": {
         "fr": {
           "stringUnit": {
@@ -17591,6 +17663,7 @@
         }
       }
     },
+    "UltraTrain is built for trail and ultra-distance races. For shorter road events, features like altitude training and nutrition planning shine most on longer distances. You can still create a plan, but to get the most out of this app, consider using it for your next trail or long-distance adventure!": {},
     "UltraTrain is Locked": {
       "localizations": {
         "fr": {
@@ -17822,6 +17895,7 @@
       }
     },
     "Used for weather forecasts in your race day estimate.": {
+      "extractionState": "stale",
       "localizations": {
         "fr": {
           "stringUnit": {
@@ -19232,6 +19306,7 @@
       }
     },
     "Zone %lld — %@": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -19259,6 +19334,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zone %lld (%@)"
+          }
+        }
+      }
+    },
+    "Zone %lld, %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Zone %1$lld, %2$@"
           }
         }
       }
@@ -19349,73 +19434,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zoom"
-          }
-        }
-      }
-    },
-    "paywall.subtitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Your ultra-trail coach. In your pocket."
-          }
-        }
-      },
-      "comment": "Static hero subtitle under the paywall title."
-    },
-    "paywall.step.cancelAnytime": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cancel anytime"
-          }
-        }
-      }
-    },
-    "paywall.step.cancelAnytimeDetail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stop in one tap from Settings. No charge if you cancel before the trial ends."
-          }
-        }
-      }
-    },
-    "paywall.bestValue": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "BEST VALUE"
-          }
-        }
-      }
-    },
-    "paywall.perWeekLabel": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "per week"
-          }
-        }
-      }
-    },
-    "paywall.cta.reassurance": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No charge today. Cancel anytime."
           }
         }
       }

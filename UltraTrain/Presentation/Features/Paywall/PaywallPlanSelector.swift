@@ -46,37 +46,25 @@ struct PaywallPlanCard: View {
             }
 
             HStack(spacing: Theme.Spacing.md) {
-                // Left: plan name + small total
+                // Left: plan name + savings badge if there is one
                 VStack(alignment: .leading, spacing: 4) {
-                    HStack(spacing: 6) {
-                        Text(plan.period.displayNameLocalized)
-                            .font(.headline)
-                            .foregroundStyle(.primary)
-                            .lineLimit(1)
-
-                        if let savings = plan.savingsPercent {
-                            savingsBadge(savings: savings)
-                        }
-                    }
-
-                    Text(plan.displayPrice)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    Text(plan.period.displayNameLocalized)
+                        .font(.headline)
+                        .foregroundStyle(.primary)
                         .lineLimit(1)
+
+                    if let savings = plan.savingsPercent {
+                        savingsBadge(savings: savings)
+                    }
                 }
 
                 Spacer(minLength: Theme.Spacing.sm)
 
-                // Right: per-week price as the hero number
-                VStack(alignment: .trailing, spacing: 2) {
-                    Text(plan.displayPricePerWeek)
-                        .font(.title3.bold().monospacedDigit())
-                        .foregroundStyle(.primary)
-                        .fixedSize()
-                    Text("paywall.perWeekLabel")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                }
+                // Right: total price as the hero number
+                Text(plan.displayPrice)
+                    .font(.title3.bold().monospacedDigit())
+                    .foregroundStyle(.primary)
+                    .fixedSize()
             }
             .padding(Theme.Spacing.md)
         }
@@ -127,17 +115,19 @@ struct PaywallPlanCard: View {
         .padding(.top, -10)
     }
 
-    /// Compact "Save N%" badge inline with the plan name. Uses a tinted
-    /// fill rather than the loud gold gradient so it doesn't fight the
-    /// BEST VALUE pill on the yearly card.
+    /// Compact "Save N%" badge inline under the plan name. Uses the
+    /// gold-premium gradient so the savings number reads loud as the
+    /// primary highlight (the user picks plans on the saving, not on the
+    /// total). Sits at a different position than the BEST VALUE pill on
+    /// the yearly card so they reinforce rather than overlap.
     private func savingsBadge(savings: Int) -> some View {
         Text(String(localized: "paywall.save \(savings)"))
             .font(.caption2.bold())
-            .foregroundStyle(Theme.Colors.success)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 2)
+            .foregroundStyle(.black)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 3)
             .background(
-                Capsule().fill(Theme.Colors.success.opacity(0.16))
+                Capsule().fill(Theme.Gradients.goldPremium)
             )
     }
 }
