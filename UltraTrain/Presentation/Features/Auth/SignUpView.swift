@@ -161,8 +161,11 @@ struct SignUpView: View {
             }
         }
         controller.delegate = coordinator
-        controller.performRequests()
-        // Keep coordinator alive
+        controller.presentationContextProvider = coordinator
+        // Keep coordinator alive across the async callback before
+        // performRequests so the controller's weak delegate/provider
+        // references don't drop.
         AppleSignInCoordinator.current = coordinator
+        controller.performRequests()
     }
 }

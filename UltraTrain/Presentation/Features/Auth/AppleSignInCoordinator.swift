@@ -1,4 +1,5 @@
 import AuthenticationServices
+import UIKit
 
 struct AppleSignInCredential {
     let identityToken: String
@@ -6,7 +7,10 @@ struct AppleSignInCredential {
     let lastName: String?
 }
 
-final class AppleSignInCoordinator: NSObject, ASAuthorizationControllerDelegate, @unchecked Sendable {
+final class AppleSignInCoordinator: NSObject,
+                                    ASAuthorizationControllerDelegate,
+                                    ASAuthorizationControllerPresentationContextProviding,
+                                    @unchecked Sendable {
     /// Keep a strong reference so the delegate survives the async callback.
     static var current: AppleSignInCoordinator?
 
@@ -44,6 +48,19 @@ final class AppleSignInCoordinator: NSObject, ASAuthorizationControllerDelegate,
         // Don't report cancellation as an error
         if (error as? ASAuthorizationError)?.code == .canceled { return }
         completion(.failure(error))
+    }
+
+    /// Required by `ASAuthorizationControllerPresentationContextProviding`.
+    /// Without this, iOS 17+ rejects `performRequests()` with
+    /// `ASAuthorizationError.unknown` (error 1000) because it has no
+    /// window to attach the system Sign-in-with-Apple sheet to. Returns
+    /// the current key window from the active foreground scene.
+    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        let activeWindow = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first(where: { $0.activationState == .foregroundActive })?
+            .windows.first(where: { $0.isKeyWindow })
+        return activeWindow ?? ASPresentationAnchor()
     }
 
     enum AuthError: LocalizedError {
