@@ -62,14 +62,32 @@ enum RoadIntervalLibrary {
     // MARK: - Template Selection
 
     /// Returns appropriate templates for the given context.
+    ///
+    /// Templates only declare `.base`, `.build`, `.peak` in their
+    /// `applicablePhases` set. Athletes still run light openers
+    /// (intervals / tempo) in taper, post-race recovery and race-week
+    /// shakeouts, and SessionTemplateGenerator emits those sessions with
+    /// real descriptions, so the session-detail view expects a
+    /// matching structured workout. Without a fallback the workout
+    /// breakdown silently disappears and the athlete just sees prose.
+    ///
+    /// In those phases we fall back to base-phase templates: they are
+    /// the lightest in the library (200m / 400m strides, short cruise
+    /// intervals) and match what those weeks actually prescribe.
     static func templates(
         phase: TrainingPhase,
         discipline: RoadRaceDiscipline,
         experience: ExperienceLevel,
         weekInPhase: Int
     ) -> [Template] {
-        allTemplates.filter { template in
-            template.applicablePhases.contains(phase)
+        let effectivePhase: TrainingPhase = {
+            switch phase {
+            case .taper, .recovery, .race: return .base
+            default:                       return phase
+            }
+        }()
+        return allTemplates.filter { template in
+            template.applicablePhases.contains(effectivePhase)
             && template.applicableDistances.contains(discipline)
             && experience.rawSortOrder >= template.minExperience.rawSortOrder
         }
