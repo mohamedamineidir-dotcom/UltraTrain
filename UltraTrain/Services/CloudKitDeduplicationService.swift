@@ -15,7 +15,7 @@ enum CloudKitDeduplicationService {
             try deduplicateEntities(context: context)
             if context.hasChanges {
                 try context.save()
-                Logger.cloudKit.info("Deduplication complete — duplicates removed")
+                Logger.cloudKit.info("Deduplication complete, duplicates removed")
             } else {
                 Logger.cloudKit.debug("No duplicates found")
             }

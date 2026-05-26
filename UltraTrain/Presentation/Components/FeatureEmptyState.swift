@@ -25,7 +25,7 @@ struct FeatureEmptyState: View {
     var primaryAction: Action? = nil
     var secondaryAction: Action? = nil
     /// When true the primary button shows a ProgressView and is
-    /// disabled — used by "Generate Plan"-style buttons that kick off
+    /// disabled, used by "Generate Plan"-style buttons that kick off
     /// async work.
     var isPrimaryLoading: Bool = false
 

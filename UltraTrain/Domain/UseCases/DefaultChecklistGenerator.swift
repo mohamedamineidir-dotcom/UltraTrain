@@ -112,7 +112,7 @@ enum DefaultChecklistGenerator {
     private static func technicalTerrainItems() -> [ChecklistItem] {
         [
             makeItem("Ankle-high trail shoes (recommended)", category: .gear,
-                     notes: "Technical terrain — consider shoes with good ankle support"),
+                     notes: "Technical terrain, consider shoes with good ankle support"),
             makeItem("Protective gloves for scrambling", category: .clothing)
         ]
     }

@@ -248,7 +248,7 @@ enum FatiguePatternDetector {
                 changePercent: (rpeRise / max(firstHalfAvg, 1)) * 100,
                 period: "Last \(runsWithRPE.count) rated runs"
             )],
-            recommendation: "Perceived effort is rising. Runs feel harder even though the training load hasn't changed — a classic fatigue signal.",
+            recommendation: "Perceived effort is rising. Runs feel harder even though the training load hasn't changed, a classic fatigue signal.",
             suggestedDeloadDays: AppConfiguration.AICoach.deloadSuggestionDays,
             detectedDate: Date.now
         )

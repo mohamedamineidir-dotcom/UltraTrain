@@ -96,7 +96,7 @@ extension AppDependencyContainer {
             Task {
                 do {
                     guard let athlete = try await athleteRepository.getAthlete() else {
-                        Logger.watch.warning("Cannot import watch run — no athlete profile")
+                        Logger.watch.warning("Cannot import watch run, no athlete profile")
                         return
                     }
                     try await watchRunImportService.importWatchRun(runData, athleteId: athlete.id)

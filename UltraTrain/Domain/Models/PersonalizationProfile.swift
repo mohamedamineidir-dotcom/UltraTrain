@@ -9,7 +9,7 @@ import Foundation
 ///
 /// **Default-equivalent**: when the athlete profile yields no
 /// personalization signal (a fresh sign-up), every multiplier is 1.0
-/// and the hard caps are nil — i.e., the calculators behave exactly
+/// and the hard caps are nil, i.e., the calculators behave exactly
 /// as before. The type is therefore safe to thread through with
 /// default `nil` parameters across the stack.
 struct PersonalizationProfile: Equatable, Sendable {
@@ -35,7 +35,7 @@ struct PersonalizationProfile: Equatable, Sendable {
     /// experienced mountain runner ramps closer to race demand at peak,
     /// while a first-time mountain runner stays conservative. Range
     /// [0.85, 1.20]. Composed from running tenure + ultra count
-    /// (proxy for climbing background — true climbing-specific
+    /// (proxy for climbing background, true climbing-specific
     /// metric like recent peak D+/km would come from training history
     /// in v2). Applied trail-only; road plans ignore.
     let vgDensityMultiplier: Double
@@ -71,7 +71,7 @@ struct PersonalizationProfile: Equatable, Sendable {
     // MARK: - Reported injury structures
 
     /// Recurring injury sites the athlete flagged. Optional refinement
-    /// signal — primary injury volume penalty is derived from
+    /// signal, primary injury volume penalty is derived from
     /// `painFrequency` + `injuryCountLastYear` (which onboarding does
     /// collect). When `injuryStructures` is non-empty (v2 onboarding
     /// or profile-edit), it adds a small additional penalty AND will
@@ -137,7 +137,7 @@ struct PersonalizationProfile: Equatable, Sendable {
 
     // MARK: - Default
 
-    /// Profile that has no effect — all multipliers 1.0, no caps,
+    /// Profile that has no effect, all multipliers 1.0, no caps,
     /// no injury structures, zero injury penalty. Use as fallback
     /// when athlete data yields no signal.
     static let neutral = PersonalizationProfile(
@@ -164,7 +164,7 @@ extension PersonalizationProfile {
     /// 6.0 min/km) for road athletes when you have one.
     ///
     /// Onboarding-derivation strategy: today's onboarding doesn't
-    /// ask for `runningYears` or `injuryStructures` directly — both
+    /// ask for `runningYears` or `injuryStructures` directly, both
     /// fall back to fields that ARE collected (experienceLevel +
     /// painFrequency + injuryCountLastYear). Athletes who later
     /// fill in the explicit fields via profile-edit get more precise
@@ -242,7 +242,7 @@ extension PersonalizationProfile {
     /// training block), filters to running activities with at least
     /// one of RPE or perceivedFeeling logged, and returns means.
     /// Returns nil when fewer than `minRuns` runs in the window have
-    /// signal data — averages from a thin sample aren't actionable.
+    /// signal data, averages from a thin sample aren't actionable.
     static func computeAdaptationSignal(
         runs: [CompletedRun],
         now: Date = .now,
@@ -285,19 +285,19 @@ extension PersonalizationProfile {
     /// when both are present so disagreement dampens. Returns 1.0
     /// when no signal is available.
     ///
-    /// RPE brackets — average RPE across logged runs in the window:
+    /// RPE brackets, average RPE across logged runs in the window:
     ///   <5.5  : +2.0%  (under-stimulated, can ramp)
     ///   5.5-6.5: +1.5%  (light, modest ramp ok)
     ///   6.5-7.5: +0.5%  (sustainable hard, small bump)
     ///   7.5-8.5: -1.5%  (consistently hard, ease back)
     ///   ≥8.5  : -3.0%  (overload signal, cut)
     ///
-    /// Feeling brackets — average score (1=terrible, 5=great):
+    /// Feeling brackets, average score (1=terrible, 5=great):
     ///   ≥4.5    : +1.5%  (body responding well)
     ///   3.5-4.5: +0.5%
     ///   2.5-3.5: 0       (neutral)
     ///   1.5-2.5: -1.5%  (strain)
-    ///   <1.5    : -3.0%  (severe — back off)
+    ///   <1.5    : -3.0%  (severe, back off)
     static func adaptationMultiplier(signal: AdaptationSignal?) -> Double {
         guard let signal else { return 1.0 }
 
@@ -350,12 +350,12 @@ extension PersonalizationProfile {
 
     /// Aggregates running activities from the last `windowDays` into
     /// ISO weekly buckets and returns the maximum weekly km. Returns
-    /// nil when fewer than `minWeeks` of data are available — peaks
+    /// nil when fewer than `minWeeks` of data are available, peaks
     /// from a thin history aren't reliable signal.
     ///
     /// Only running activities (`run` / `trailRunning`) with positive
     /// distance are counted. Cross-training and gear-only logs are
-    /// ignored — the goal is demonstrated *running* capacity.
+    /// ignored, the goal is demonstrated *running* capacity.
     static func computeRecentPeakWeeklyVolumeKm(
         runs: [CompletedRun],
         now: Date = .now,
@@ -407,7 +407,7 @@ extension PersonalizationProfile {
     /// Volume-cap dampening from the athlete's injury profile.
     /// Composes the FREQUENCY (painFrequency: never/rarely/sometimes/
     /// often) with the COUNT (injuryCountLastYear: none/one/two/3+)
-    /// — both already collected at onboarding — plus an optional
+    ///, both already collected at onboarding, plus an optional
     /// refinement from `injuryStructures` if the athlete has
     /// explicitly flagged structures via profile-edit.
     /// Hard floor at -2.0% so even the worst-case injury profile
@@ -435,7 +435,7 @@ extension PersonalizationProfile {
         case .two:         penalty += -0.5
         case .threeOrMore: penalty += -0.75
         }
-        // Specific structures add a small additional penalty on top —
+        // Specific structures add a small additional penalty on top
         // capped contribution so this stays a refinement signal.
         let structureCount = min(structures.count, 4)
         penalty += -0.25 * Double(structureCount)
@@ -474,7 +474,7 @@ extension PersonalizationProfile {
     /// with ultra finish count (proxy for actual mountain experience),
     /// hard-clamped to [0.85, 1.20]. The clamp keeps even an
     /// extremely experienced mountain runner inside a sensible band
-    /// — VG density above 1.20× of the curve approaches race-day
+    ///, VG density above 1.20× of the curve approaches race-day
     /// stress in training, which is the wrong trade-off.
     ///
     /// True climbing-specific signals (recent peak D+/km in actual

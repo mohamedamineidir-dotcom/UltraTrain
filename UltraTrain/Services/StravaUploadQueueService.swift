@@ -49,7 +49,7 @@ final class StravaUploadQueueService: StravaUploadQueueServiceProtocol, @uncheck
             let items = try await queueRepository.getPendingItems()
             for item in items {
                 guard !item.hasReachedMaxRetries else {
-                    Logger.strava.warning("Skipping run \(item.runId) — max retries reached")
+                    Logger.strava.warning("Skipping run \(item.runId), max retries reached")
                     continue
                 }
                 if let lastAttempt = item.lastAttempt {
@@ -102,7 +102,7 @@ final class StravaUploadQueueService: StravaUploadQueueServiceProtocol, @uncheck
 
         do {
             guard let run = try await runRepository.getRun(id: item.runId) else {
-                Logger.strava.warning("Run \(item.runId) not found — removing from queue")
+                Logger.strava.warning("Run \(item.runId) not found, removing from queue")
                 do {
                     try await queueRepository.deleteItem(id: item.id)
                 } catch {
@@ -126,7 +126,7 @@ final class StravaUploadQueueService: StravaUploadQueueServiceProtocol, @uncheck
             updatedRun.stravaActivityId = activityId
             try await runRepository.updateRun(updatedRun)
 
-            Logger.strava.info("Upload completed for run \(item.runId) — activity \(activityId)")
+            Logger.strava.info("Upload completed for run \(item.runId), activity \(activityId)")
         } catch {
             mutableItem.status = .failed
             mutableItem.retryCount += 1

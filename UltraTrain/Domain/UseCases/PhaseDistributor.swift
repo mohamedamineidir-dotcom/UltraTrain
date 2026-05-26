@@ -12,7 +12,7 @@ enum PhaseDistributor {
     /// Seuil 30 (base) → VO2max (build) → Seuil 60 (peak) → Affûtage (taper)
     ///
     /// - Parameter raceEffectiveKm: race effective distance (km + D+/100).
-    ///   100K+ races shift +5% from base into peak — the longer the race,
+    ///   100K+ races shift +5% from base into peak, the longer the race,
     ///   the more cumulative race-specific work the athlete needs (a
     ///   100-mile plan and a 50K plan should not have identical phase
     ///   weighting for the same experience tier). Floors at 18% base for
@@ -101,13 +101,13 @@ enum PhaseDistributor {
             base = FocusFractions(threshold30: 0.15, vo2max: 0.15, threshold60: 0.46, sharpening: 0.24)
         case .elite:
             // Elite base floor at 18%. The previous 12% assumed elites came
-            // in with bulletproof aerobic foundation — fine in steady-state
+            // in with bulletproof aerobic foundation, fine in steady-state
             // training, dangerous after a recovery period or coming back
             // from injury. 18% is enough to rebuild without robbing peak.
             base = FocusFractions(threshold30: 0.18, vo2max: 0.18, threshold60: 0.40, sharpening: 0.24)
         }
 
-        // 100K+ shift (T5 audit fix): REVERSE direction — for ultras,
+        // 100K+ shift (T5 audit fix): REVERSE direction, for ultras,
         // shift weeks from peak → base. Original code did the opposite
         // (5% base→peak) under the assumption "longer race = more peak
         // phase." Modern ultra-coaching consensus (Koop, Roche, Jurek,
@@ -117,7 +117,7 @@ enum PhaseDistributor {
         // Roche recommends ~30–35% base for 100K-class races. Pre-fix
         // intermediate ultras got 13% base / 49% peak (3 weeks base on
         // a 24-week plan). Post-fix: ~26% base / 36% peak (6 weeks
-        // base) — closer to consensus, still meaty peak.
+        // base), closer to consensus, still meaty peak.
         //
         // Resulting splits for 100K+ races by tier:
         //   beginner:     0.33 base / 0.27 peak

@@ -121,7 +121,7 @@ enum DefaultProducts {
             caffeineMgPerServing: 0, carbRatio: .twoToOne, fluidMlPerServing: 150,
             dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .containsFructose]
         ),
-        // Overstim's — major European brand, staple of UTMB / trail-running aid stations
+        // Overstim's, major European brand, staple of UTMB / trail-running aid stations
         NutritionProduct(
             id: UUID(uuidString: "11111111-0001-0000-0000-000000000015")!,
             name: "Coup de Fouet", type: .gel, brand: "Overstim's",
@@ -157,7 +157,7 @@ enum DefaultProducts {
             caffeineMgPerServing: 0, carbRatio: .glucoseOnly, fluidMlPerServing: 150,
             dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree]
         ),
-        // Huma — natural chia-based, popular with ultra-runners who struggle with synthetic gels
+        // Huma, natural chia-based, popular with ultra-runners who struggle with synthetic gels
         NutritionProduct(
             id: UUID(uuidString: "11111111-0001-0000-0000-000000000020")!,
             name: "Original Gel", type: .gel, brand: "Huma",
@@ -324,7 +324,7 @@ enum DefaultProducts {
             caffeineMgPerServing: 100, carbRatio: .oneToPointEight, fluidMlPerServing: 500,
             dietaryFlags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .lowFodmap]
         ),
-        // Näak — Canadian brand popular on UTMB / Western States
+        // Näak, Canadian brand popular on UTMB / Western States
         NutritionProduct(
             id: UUID(uuidString: "11111111-0003-0000-0000-000000000013")!,
             name: "Hydration Ultra Energy", type: .drink, brand: "Näak",
@@ -365,7 +365,7 @@ enum DefaultProducts {
             caffeineMgPerServing: 0, carbRatio: .twoToOne,
             dietaryFlags: [.vegetarian]
         ),
-        // Overstim's — Gatosport is a rice-cake-style pre-race/during-race staple in Europe
+        // Overstim's, Gatosport is a rice-cake-style pre-race/during-race staple in Europe
         NutritionProduct(
             id: UUID(uuidString: "11111111-0004-0000-0000-000000000005")!,
             name: "Gatosport", type: .bar, brand: "Overstim's",

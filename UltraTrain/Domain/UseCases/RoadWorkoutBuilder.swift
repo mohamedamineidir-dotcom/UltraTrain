@@ -107,7 +107,7 @@ enum RoadWorkoutBuilder {
             notes: coolDownNotes(paceProfile: paceProfile)
         ))
 
-        // No need to remove trailing recovery — repeatCount handles it
+        // No need to remove trailing recovery, repeatCount handles it
 
         // Compute total duration (account for distance phases using target pace)
         let targetPace = targetPaceSeconds(template: template, profile: paceProfile)

@@ -2,15 +2,15 @@ import Foundation
 
 /// Projects injury-risk signals (ACWR spike, monotony) for the NEXT 7
 /// days of the plan, not retrospectively. Complements the historical
-/// `TrainingLoadCalculator` which looks at completed runs only — this
+/// `TrainingLoadCalculator` which looks at completed runs only, this
 /// lets the plan view warn the athlete BEFORE they execute a week
 /// that's going to push ACWR past 1.5 or monotony past 2.0.
 ///
 /// Research basis:
-///   • Gabbett 2016 "The training-injury prevention paradox" — ACWR
+///   • Gabbett 2016 "The training-injury prevention paradox", ACWR
 ///     >1.5 associated with 2-4× injury risk in team sports; applies
 ///     in endurance training literature too.
-///   • Foster 1998 — training monotony (mean / std. dev of daily
+///   • Foster 1998, training monotony (mean / std. dev of daily
 ///     load over 7 days). >2.0 correlates with overtraining +
 ///     illness markers.
 ///
@@ -33,14 +33,14 @@ enum PlanInjuryRiskProjector {
     }
 
     enum Flag: String, Equatable, Sendable {
-        /// Planned next-7-day load pushes ACWR above 1.5 — elevated
+        /// Planned next-7-day load pushes ACWR above 1.5, elevated
         /// injury risk. Most actionable warning.
         case acwrSpike
-        /// Planned week drops ACWR below 0.8 — a cutback week can be
+        /// Planned week drops ACWR below 0.8, a cutback week can be
         /// fine, but a sustained drop is detraining. Surfaced with a
         /// gentler tone.
         case acwrDetraining
-        /// Monotony > 2.0 on the planned week — not enough variation
+        /// Monotony > 2.0 on the planned week, not enough variation
         /// between hard and easy days. Research links this to
         /// overreaching and illness.
         case highMonotony
@@ -59,7 +59,7 @@ enum PlanInjuryRiskProjector {
 
     /// Returns a projection for the 7 days starting at `asOf`. When the
     /// plan has no upcoming sessions or insufficient history, returns
-    /// nil — the UI treats that as "nothing to warn about".
+    /// nil, the UI treats that as "nothing to warn about".
     static func project(
         plan: TrainingPlan,
         asOf date: Date = .now
@@ -127,7 +127,7 @@ enum PlanInjuryRiskProjector {
 
     /// Runs/hikes: distance + elevation/100 (matches existing
     /// TrainingLoadCalculator.effortLoad). Strength / rest contribute
-    /// ~0 to loading risk — planned as nil-distance, nil-elevation
+    /// ~0 to loading risk, planned as nil-distance, nil-elevation
     /// sessions are covered.
     private static func plannedLoad(_ session: TrainingSession) -> Double {
         guard session.type != .rest else { return 0 }

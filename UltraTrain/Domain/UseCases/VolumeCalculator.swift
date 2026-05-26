@@ -46,7 +46,7 @@ enum VolumeCalculator {
 
         // Pick the effective baseline. When PersonalizationProfile has
         // a recentPeak that diverges significantly from the snapshot,
-        // we use the demonstrated peak instead — better matches actual
+        // we use the demonstrated peak instead, better matches actual
         // current capacity for returning users than a stale onboarding
         // number. Falls through to snapshot when no recent peak data.
         let effectiveCurrentVolumeKm = personalization?
@@ -173,11 +173,11 @@ enum VolumeCalculator {
         }
 
         // Round endurance sessions (Long Run, Base Endurance / easy runs,
-        // back-to-back long runs) to the nearest 5 minutes — feedback from
+        // back-to-back long runs) to the nearest 5 minutes, feedback from
         // athlete trial: "31 min" / "47 min" durations on aerobic runs feel
         // arbitrary. Quality work (intervals, vertical-gain) keeps minute-
         // level precision because the prescription itself is structural
-        // (e.g. 4×8 min at threshold + warm-up/cool-down) — rounding those
+        // (e.g. 4×8 min at threshold + warm-up/cool-down), rounding those
         // would distort the workout. Applied AFTER all scaling so rounded
         // values are what the athlete actually sees.
         for i in capped.indices {
@@ -207,7 +207,7 @@ enum VolumeCalculator {
 
         // Keep targetLongRunDurationSeconds consistent with the B2B day
         // split. Without this, `lr` and `b1+b2` can drift up to 5 min
-        // apart because each is independently rounded — that breaks any
+        // apart because each is independently rounded, that breaks any
         // downstream consumer that asserts `b2bDay1 + b2bDay2 ==
         // targetLongRun`. For non-B2B weeks the rounded LR is the truth.
         let displayedLongRun = volume.isB2BWeek ? (b1 + b2) : lr
@@ -269,7 +269,7 @@ enum VolumeCalculator {
         let raceElevationPerKm = raceElevationGainM / raceDistanceKm
         // Cap training density at 75 m/km (was 60). The previous cap meant
         // any race above 60 m/km was trained at LESS density than the race
-        // itself — wrong for vertical races (Hardrock, Madeira Sky Race,
+        // itself, wrong for vertical races (Hardrock, Madeira Sky Race,
         // Sky Skouts where race density runs 80-100+ m/km). New cap lets
         // training match races up to 75 m/km and stay close for steeper
         // ones, while still preventing pathological values for short
@@ -282,7 +282,7 @@ enum VolumeCalculator {
         // of race demand at peak; a first-time mountain runner stays
         // closer to 60%. Cap at 0.95 so even the most experienced
         // athlete never trains AT race density (specificity argument
-        // says this is the wrong trade-off — race-day stress is for
+        // says this is the wrong trade-off, race-day stress is for
         // race day).
         let personalizedProgressFactor = min(0.95, (0.15 + 0.55 * planProgress) * vgDensityMultiplier)
         let raw = volume * trainingElevationPerKm * personalizedProgressFactor

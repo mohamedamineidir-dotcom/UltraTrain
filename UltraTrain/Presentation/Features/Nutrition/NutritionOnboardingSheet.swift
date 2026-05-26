@@ -7,7 +7,7 @@ import SwiftUI
 /// tappable cards) instead of a long scrollable form. Matches the main
 /// onboarding aesthetic: coral-gradient icon header, progress bar,
 /// Back/Next navigation. The athlete's goal is DERIVED from the A-race
-/// `goalType` — we don't ask again for what onboarding already knows.
+/// `goalType`, we don't ask again for what onboarding already knows.
 ///
 /// Steps are gated by race distance:
 ///   • Always: caffeine, dietary restrictions
@@ -47,7 +47,7 @@ struct NutritionOnboardingSheet: View {
         self.onGenerate = onGenerate
         self.onCancel = onCancel
         var prefs = initialPreferences
-        // Derive the nutrition goal from the A-race goal type — no need
+        // Derive the nutrition goal from the A-race goal type, no need
         // to re-ask what onboarding already captured. Maps:
         //   .finish          → conservative (finishComfortably)
         //   .targetTime(_)   → standard evidence-based (targetTime)
@@ -66,7 +66,7 @@ struct NutritionOnboardingSheet: View {
     private var needsAdvancedQuestions: Bool { raceDistanceKm >= 35 }
     /// Ultra-specific gate (60 km and up). Palate fatigue research
     /// (Costa 2017) shows flavour rotation only becomes meaningful
-    /// past ~4h of effort — roughly 60 km of running.
+    /// past ~4h of effort, roughly 60 km of running.
     private var needsUltraQuestions: Bool { raceDistanceKm >= 60 }
 
     fileprivate enum Step: Int, CaseIterable {
@@ -379,7 +379,7 @@ struct NutritionOnboardingSheet: View {
 
     /// Formats the brand step groups. Derived from the athlete's format
     /// choice when they made one; otherwise covers the full set so the
-    /// step is still useful. Real food is excluded — it's generic.
+    /// step is still useful. Real food is excluded, it's generic.
     private var brandStepFormats: [ProductType] {
         let ordered: [ProductType] = [.gel, .drink, .chew, .bar, .salt]
         if preferences.preferredFormats.isEmpty {

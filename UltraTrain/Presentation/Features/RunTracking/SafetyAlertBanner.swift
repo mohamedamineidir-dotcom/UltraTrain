@@ -66,7 +66,7 @@ struct SafetyAlertBanner: View {
         Button {
             onCancel()
         } label: {
-            Text("I'm OK — Cancel")
+            Text("I'm OK, Cancel")
                 .font(.headline)
                 .foregroundStyle(Theme.Colors.danger)
                 .frame(maxWidth: .infinity)
@@ -108,7 +108,7 @@ struct SafetyAlertBanner: View {
             triggeredAt: .now,
             latitude: 45.832,
             longitude: 6.865,
-            message: "Fall detected — emergency contacts will be notified.",
+            message: "Fall detected, emergency contacts will be notified.",
             status: .triggered
         ),
         countdownRemaining: 25,

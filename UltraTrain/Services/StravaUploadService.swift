@@ -102,7 +102,7 @@ final class StravaUploadService: StravaUploadServiceProtocol {
                 throw DomainError.stravaUploadFailed(reason: error)
             }
 
-            Logger.strava.debug("Upload poll attempt \(attempt)/\(maxAttempts) — status: \(status.status ?? "unknown")")
+            Logger.strava.debug("Upload poll attempt \(attempt)/\(maxAttempts), status: \(status.status ?? "unknown")")
         }
 
         throw DomainError.stravaUploadFailed(reason: "Upload processing timed out")
@@ -114,7 +114,7 @@ final class StravaUploadService: StravaUploadServiceProtocol {
         var body = Data()
 
         let fileName = "run_\(run.date.ISO8601Format()).gpx"
-        let runName = "UltraTrain Run — \(String(format: "%.1f", run.distanceKm)) km"
+        let runName = "UltraTrain Run, \(String(format: "%.1f", run.distanceKm)) km"
 
         appendField(to: &body, boundary: boundary, name: "data_type", value: "gpx")
         appendField(to: &body, boundary: boundary, name: "name", value: runName)

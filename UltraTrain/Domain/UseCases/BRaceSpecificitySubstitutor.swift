@@ -22,7 +22,7 @@ enum BRaceSpecificitySubstitutor {
         athlete: Athlete
     ) -> IntervalWorkout? {
         // Find a session matching the requested slot type. Fallback
-        // to .verticalGain for intervals/tempo slots — trail plans
+        // to .verticalGain for intervals/tempo slots, trail plans
         // for big-D+ A-races often substitute VG for intervals based
         // on the quality-ratio resolver, so we'd miss them otherwise.
         // VG is a high-intensity slot, same purpose: swapping it for
@@ -41,7 +41,7 @@ enum BRaceSpecificitySubstitutor {
             if let idx = sessions.firstIndex(where: { sess in
                 sess.type == type
                     && !sess.isCompleted && !sess.isSkipped
-                    // Don't overwrite fitness-test slots — those carry a
+                    // Don't overwrite fitness-test slots, those carry a
                     // higher-priority calibration purpose.
                     && !FitnessTestVariant.isFitnessTestFocus(sess.intervalFocus)
             }) {
@@ -53,7 +53,7 @@ enum BRaceSpecificitySubstitutor {
 
         // Build a B-race-specific pace profile from the goal time.
         // We pass the athlete's PRs / VMA so the calculator can
-        // sanity-check goal realism — but the goalTime is the
+        // sanity-check goal realism, but the goalTime is the
         // authoritative anchor for THIS race.
         let paceProfile = RoadPaceCalculator.paceProfile(
             goalTime: injection.bRaceGoalTime,
@@ -134,7 +134,7 @@ enum BRaceSpecificitySubstitutor {
         // Fetch all road templates for this discipline + the build phase
         // (most race-specific work targets build/peak), then filter by
         // category. The trail plan's actual phase doesn't matter for
-        // template selection — the B-race is what we're prepping for.
+        // template selection, the B-race is what we're prepping for.
         let candidates = RoadIntervalLibrary.templates(
             phase: .build,
             discipline: discipline,
@@ -193,11 +193,11 @@ enum BRaceSpecificitySubstitutor {
         let pace = goalPaceText(for: injection.bRaceDiscipline, profile: paceProfile)
         switch injection.kind {
         case .vo2maxIntervals:
-            return "🎯 10K-pace work for your upcoming road tune-up. Hit the work intervals at \(pace) — fast enough that the last rep is hard, not so fast that you fall off pace by rep 3. Borrowed from your A-race prep so it doesn't add net fatigue."
+            return "🎯 10K-pace work for your upcoming road tune-up. Hit the work intervals at \(pace), fast enough that the last rep is hard, not so fast that you fall off pace by rep 3. Borrowed from your A-race prep so it doesn't add net fatigue."
         case .thresholdTempo:
-            return "🎯 Half-marathon-pace threshold work for your tune-up. Hold \(pace) — comfortably hard, sustainable for ~1 hour. The point is rhythm at race pace, not max effort."
+            return "🎯 Half-marathon-pace threshold work for your tune-up. Hold \(pace), comfortably hard, sustainable for ~1 hour. The point is rhythm at race pace, not max effort."
         case .marathonPaceTempo:
-            return "🎯 Marathon-pace tempo for your tune-up. \(pace) should feel like \"hard but easy\" — fueling and rhythm matter as much as the pace itself."
+            return "🎯 Marathon-pace tempo for your tune-up. \(pace) should feel like \"hard but easy\", fueling and rhythm matter as much as the pace itself."
         case .marathonPaceLongRun:
             return "🎯 Marathon-pace blocks inside today's long run. Run easy, then drop into \(pace) for the prescribed blocks. Practice your race-day fueling. This is your most race-specific session before the tune-up."
         }

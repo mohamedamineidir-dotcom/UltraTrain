@@ -4,7 +4,7 @@ import Foundation
 /// the plan view can warn the athlete before continuing to prescribe
 /// work the recent data no longer supports.
 ///
-/// Per-skip handling already happens in `SkipAdaptationCalculator` —
+/// Per-skip handling already happens in `SkipAdaptationCalculator`
 /// it reacts to individual skips with localised suggestions. This
 /// detector fills the gap one level up: sustained patterns over 2-3
 /// weeks that warrant a full plan rebalance rather than a session
@@ -13,7 +13,7 @@ import Foundation
 /// prescribing pace targets derived from fitness the athlete never
 /// built.
 ///
-/// Pure domain — callers read the output and decide what to show.
+/// Pure domain, callers read the output and decide what to show.
 enum MissedSessionPatternDetector {
 
     struct Pattern: Equatable, Sendable {
@@ -31,7 +31,7 @@ enum MissedSessionPatternDetector {
 
     enum Flag: String, Equatable, Sendable {
         /// Three or more skipped running sessions in the last 14 days.
-        /// Most actionable — suggests a regeneration.
+        /// Most actionable, suggests a regeneration.
         case multiSessionSkip
         /// Two or more quality sessions skipped or under-executed.
         /// Quality work is what builds the specific adaptations the
@@ -39,7 +39,7 @@ enum MissedSessionPatternDetector {
         /// periodisation.
         case qualitySessionDrift
         /// Seven or more days with no completed training. Could be
-        /// vacation, illness, or injury — either way the plan's
+        /// vacation, illness, or injury, either way the plan's
         /// chronic load no longer matches reality.
         case extendedInactivity
     }
@@ -52,7 +52,7 @@ enum MissedSessionPatternDetector {
     private static let inactivityDaysThreshold = 7
     /// Actual/planned ratio below which we count a completed session
     /// as "under-executed" for the quality-drift flag. 0.70 is
-    /// intentionally forgiving — we're catching real drift, not
+    /// intentionally forgiving, we're catching real drift, not
     /// penalising athletes who had a slightly short run.
     private static let underExecutedRatio: Double = 0.70
 
@@ -92,7 +92,7 @@ enum MissedSessionPatternDetector {
             return actual / session.plannedDistanceKm < underExecutedRatio
         }.count
 
-        // Days since last completed session — use any completed
+        // Days since last completed session, use any completed
         // running session, regardless of being in the window.
         let allCompleted = plan.weeks.flatMap(\.sessions)
             .filter { $0.isCompleted && $0.type != .rest }
@@ -102,7 +102,7 @@ enum MissedSessionPatternDetector {
         if let lastCompletionDay {
             daysSinceLast = calendar.dateComponents([.day], from: lastCompletionDay, to: today).day ?? 0
         } else {
-            // No completions at all — treat as "same as window" rather
+            // No completions at all, treat as "same as window" rather
             // than a 9999 day figure so a freshly-generated plan
             // doesn't trip the inactivity flag on day 0.
             daysSinceLast = 0

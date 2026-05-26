@@ -212,12 +212,12 @@ enum StrengthSessionGenerator {
         //
         // Phase mapping:
         //   .base   → rotate freely through all 3 patterns (anatomical
-        //             adaptation period — variety builds movement
+        //             adaptation period, variety builds movement
         //             vocabulary + tendon/ligament tolerance)
-        //   .build  → alternate squat (0) and hinge (1) only — strength
+        //   .build  → alternate squat (0) and hinge (1) only, strength
         //             + power phase, drop the unilateral-focused
         //             pattern that's better suited to base
-        //   .peak   → lock to squat pattern (0) — maintenance phase,
+        //   .peak   → lock to squat pattern (0), maintenance phase,
         //             athlete doesn't need to learn new movements while
         //             also peaking aerobic load. Single familiar
         //             pattern, lower volume (handled by sets reduction)
@@ -378,12 +378,12 @@ enum StrengthSessionGenerator {
                     StrengthExercise(
                         name: "Pogo Hops",
                         category: .plyometric, sets: sets, reps: "20-30",
-                        notes: "Quick ground contact. Stiff ankles, minimal knee bend. Builds tendon stiffness — strongly correlated with running economy."
+                        notes: "Quick ground contact. Stiff ankles, minimal knee bend. Builds tendon stiffness, strongly correlated with running economy."
                     ),
                     StrengthExercise(
                         name: "Low Box Jumps",
                         category: .plyometric, sets: sets, reps: "5-6",
-                        notes: "30-45 cm box. Soft landing, full recovery between reps. Reactive strength — not a max test."
+                        notes: "30-45 cm box. Soft landing, full recovery between reps. Reactive strength, not a max test."
                     ),
                 ]
             } else {
@@ -485,7 +485,7 @@ enum StrengthSessionGenerator {
         //
         // ROAD (Dicharry; Willy & Davis 2011; Pfitzinger): glute medius
         // dysfunction (Trendelenburg) and Achilles/calf overload are
-        // the dominant injuries — ITBS, PFP, Achilles tendinopathy.
+        // the dominant injuries, ITBS, PFP, Achilles tendinopathy.
         // Side plank with hip abduction (Copenhagen-style) + slow-
         // eccentric calf raise are the keystone exercises.
         //
@@ -497,12 +497,12 @@ enum StrengthSessionGenerator {
             exercises.append(StrengthExercise(
                 name: "Side Plank with Hip Abduction",
                 category: .injuryPrevention, sets: sets, reps: "8-10 per side",
-                notes: "Stack hips, lift the top leg slowly. Glute-med specific — directly counters the pelvic drop behind ITBS and PFP."
+                notes: "Stack hips, lift the top leg slowly. Glute-med specific, directly counters the pelvic drop behind ITBS and PFP."
             ))
             exercises.append(StrengthExercise(
                 name: "Slow Eccentric Calf Raise",
                 category: .injuryPrevention, sets: sets, reps: "12-15",
-                notes: "3-second lowering. Both straight and bent knee. The calf-Achilles complex absorbs ~3× bodyweight per stride — calf endurance predicts late-marathon pace fade."
+                notes: "3-second lowering. Both straight and bent knee. The calf-Achilles complex absorbs ~3× bodyweight per stride, calf endurance predicts late-marathon pace fade."
             ))
             if config.painFrequency == .often || config.hasRecentInjury {
                 exercises.append(StrengthExercise(
@@ -521,7 +521,7 @@ enum StrengthSessionGenerator {
             exercises.append(StrengthExercise(
                 name: "Step-Down (slow eccentric)",
                 category: .injuryPrevention, sets: sets, reps: "8-12 per leg",
-                notes: "30-50 cm box. 4-second lowering. Best single exercise for downhill quad tolerance — directly trains the eccentric loading that destroys late-race ultras."
+                notes: "30-50 cm box. 4-second lowering. Best single exercise for downhill quad tolerance, directly trains the eccentric loading that destroys late-race ultras."
             ))
             if config.painFrequency == .often || config.hasRecentInjury {
                 exercises.append(StrengthExercise(

@@ -7,7 +7,7 @@ import Foundation
 /// - Includes the race itself as a `.race` SessionTemplate with the
 ///   athlete's expected race duration, so weekly volume totals reflect
 ///   the actual race-day stimulus.
-/// - Scales the prep shape by race-distance class — a 5K race week looks
+/// - Scales the prep shape by race-distance class, a 5K race week looks
 ///   nothing like a marathon race week.
 /// - Modifies by athlete experience (beginner = less quality, more rest;
 ///   advanced/elite = full sharpening) and philosophy (performance =
@@ -69,7 +69,7 @@ enum RoadRaceWeekTemplates {
             for day in (raceDayOffset + 1)...6 {
                 templates.append(SessionTemplateGenerator.tpl(
                     day, .rest, .easy, 0, 0,
-                    "Rest / very easy walk. Race is done — celebrate, refuel, reflect."
+                    "Rest / very easy walk. Race is done, celebrate, refuel, reflect."
                 ))
             }
         }
@@ -121,10 +121,10 @@ enum RoadRaceWeekTemplates {
     /// active-prep count meets `maxActivePrep`. Race day is never
     /// touched. Demote priority (most preferred to drop first):
     ///   1. Day -4 (mid-week recovery, lowest value)
-    ///   2. Day -6 (longer easy — high volume, can be cut)
-    ///   3. Day -5 (quality session — drop only when cutting deep)
-    ///   4. Day -3 (strides + CNS prime — high value, last resort)
-    ///   5. Day -1 (shakeout — never drop)
+    ///   2. Day -6 (longer easy, high volume, can be cut)
+    ///   3. Day -5 (quality session, drop only when cutting deep)
+    ///   4. Day -3 (strides + CNS prime, high value, last resort)
+    ///   5. Day -1 (shakeout, never drop)
     private static func capActivePrep(
         _ templates: [SessionTemplateGenerator.SessionTemplate],
         raceDayOffset: Int,
@@ -206,7 +206,7 @@ enum RoadRaceWeekTemplates {
                     isPerformance: isPerformance,
                     quality: PrepSession(type: .intervals, intensity: .hard,
                                          durationSeconds: minutes(40),
-                                         description: "3-4 × 800m at 5K race pace, 90s rec. Daniels' R-pace tune-up — last race-pace touch."),
+                                         description: "3-4 × 800m at 5K race pace, 90s rec. Daniels' R-pace tune-up, last race-pace touch."),
                     fallback: PrepSession(type: .recovery, intensity: .easy,
                                           durationSeconds: minutes(35),
                                           description: "Easy run + 4 × 100m strides.")
@@ -235,7 +235,7 @@ enum RoadRaceWeekTemplates {
                     isPerformance: isPerformance,
                     quality: PrepSession(type: .intervals, intensity: .hard,
                                          durationSeconds: minutes(45),
-                                         description: "3 × 1km at 10K pace, full recovery. Pfitzinger 'tune-up' — sharpen race rhythm without depletion."),
+                                         description: "3 × 1km at 10K pace, full recovery. Pfitzinger 'tune-up', sharpen race rhythm without depletion."),
                     fallback: PrepSession(type: .recovery, intensity: .easy,
                                           durationSeconds: minutes(40),
                                           description: "Easy run + 4 × 100m strides.")
@@ -264,7 +264,7 @@ enum RoadRaceWeekTemplates {
                     isPerformance: isPerformance,
                     quality: PrepSession(type: .intervals, intensity: .moderate,
                                          durationSeconds: minutes(50),
-                                         description: "3 × 1 mile at half-marathon pace, 90s rec. Pfitzinger 'dress rehearsal' — last quality."),
+                                         description: "3 × 1 mile at half-marathon pace, 90s rec. Pfitzinger 'dress rehearsal', last quality."),
                     fallback: PrepSession(type: .recovery, intensity: .easy,
                                           durationSeconds: minutes(45),
                                           description: "Easy run + 4 × 100m strides.")
@@ -296,7 +296,7 @@ enum RoadRaceWeekTemplates {
                     isPerformance: isPerformance,
                     quality: PrepSession(type: .tempo, intensity: .moderate,
                                          durationSeconds: minutes(60),
-                                         description: "8 mi total: 5 mi easy + 3 mi at marathon pace. Pfitzinger 'dress rehearsal' — last MP touch."),
+                                         description: "8 mi total: 5 mi easy + 3 mi at marathon pace. Pfitzinger 'dress rehearsal', last MP touch."),
                     fallback: PrepSession(type: .recovery, intensity: .easy,
                                           durationSeconds: minutes(45),
                                           description: "Easy run + 4 × 100m strides.")
@@ -304,7 +304,7 @@ enum RoadRaceWeekTemplates {
                 (4, PrepSession(type: .recovery, intensity: .easy,
                                 durationSeconds: isPerformance ? minutes(50) : minutes(40),
                                 description: isPerformance
-                                    ? "Easy 7-8 mi. Performance philosophy — preserve aerobic fitness."
+                                    ? "Easy 7-8 mi. Performance philosophy, preserve aerobic fitness."
                                     : "Easy run, conversational. Recovery.")),
                 (3, PrepSession(type: .recovery, intensity: .easy,
                                 durationSeconds: minutes(35),

@@ -39,7 +39,7 @@ struct RunningHistoryStepView: View {
             VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                 Text("I'm just getting started")
                     .font(.headline)
-                Text("No worries — we'll build your base from scratch.")
+                Text("No worries, we'll build your base from scratch.")
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }

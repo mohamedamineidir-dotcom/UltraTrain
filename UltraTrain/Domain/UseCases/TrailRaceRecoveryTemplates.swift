@@ -9,7 +9,7 @@ import Foundation
 ///   recovery week looks nothing like a 100-miler recovery week.
 /// - Detects mountain races (D+ density ≥ 40 m/km) and prescribes
 ///   cross-training (bike) over running for the first two weeks
-///   because eccentric quad damage — not aerobic fitness — is the
+///   because eccentric quad damage, not aerobic fitness, is the
 ///   limiter at UTMB / Hardrock / Madeira-class events.
 /// - Strips ALL hill / vertical-gain work for the first three weeks
 ///   (House & Johnston). Recovery sessions are flat or rolling only.
@@ -22,17 +22,17 @@ import Foundation
 ///   rest), not the 60-70% the in-plan recovery template aims at.
 ///
 /// Sources:
-/// - Koop, *Training Essentials for Ultrarunning* Ch. 12 — recovery
+/// - Koop, *Training Essentials for Ultrarunning* Ch. 12, recovery
 ///   from 50K, 100K, 100mi (the most-cited source for ultra recovery)
-/// - Roche, *The Happy Runner* + Trail Runner columns — "can you run
+/// - Roche, *The Happy Runner* + Trail Runner columns, "can you run
 ///   without limping" gate, no HR / pace targets for two weeks
-/// - Jurek, *Eat and Run* — 100mi recovery (4 weeks of walk / swim /
+/// - Jurek, *Eat and Run*, 100mi recovery (4 weeks of walk / swim /
 ///   bike before structured running resumes)
-/// - House & Johnston, *Training for the Uphill Athlete* Ch. 12 —
+/// - House & Johnston, *Training for the Uphill Athlete* Ch. 12
 ///   mountain-race eccentric damage, cross-training mandate, no hill
 ///   running for three weeks
-/// - Comrades coaching consensus — 90K reverse-taper recovery
-/// - Friel ultra writings — cross-training is preferred over running
+/// - Comrades coaching consensus, 90K reverse-taper recovery
+/// - Friel ultra writings, cross-training is preferred over running
 ///   for the first 7-10 days of long-ultra recovery
 enum TrailRaceRecoveryTemplates {
 
@@ -65,7 +65,7 @@ enum TrailRaceRecoveryTemplates {
             mod: mod
         )
 
-        // Convert to SessionTemplate. elevation = 0 — no hill running
+        // Convert to SessionTemplate. elevation = 0, no hill running
         // during recovery.
         let templates: [SessionTemplateGenerator.SessionTemplate] = shape.map { day, session in
             SessionTemplateGenerator.tpl(
@@ -246,7 +246,7 @@ enum TrailRaceRecoveryTemplates {
             (0, rest()),
             (1, easy(scaled(40, mod), "Easy 40 min + 4 strides.")),
             (2, easy(scaled(35, mod), "Easy 35 min, conversational.")),
-            (3, mod.isPerformance ? easy(scaled(30, mod), "Easy 30 min — performance philosophy retains volume.") : rest()),
+            (3, mod.isPerformance ? easy(scaled(30, mod), "Easy 30 min, performance philosophy retains volume.") : rest()),
             (4, easy(scaled(45, mod), "Easy 45 min on flat or rolling.")),
             (5, easy(scaled(30, mod), "Easy 30 min, light.")),
             (6, easy(scaled(75, mod), "Easy 70-80 min on flat. No vertical work yet.")),
@@ -259,7 +259,7 @@ enum TrailRaceRecoveryTemplates {
         // W1 of 4. ~10% of peak. Almost full rest. Cross-training only
         // if athlete has the energy.
         [
-            (0, rest("Complete rest. The race is in your legs — let it dissipate.")),
+            (0, rest("Complete rest. The race is in your legs, let it dissipate.")),
             (1, rest()),
             (2, mod.isBeginner ? rest() : walk(scaled(30, mod))),
             (3, rest()),
@@ -277,7 +277,7 @@ enum TrailRaceRecoveryTemplates {
             (2, mod.isMountain ? cross(scaled(35, mod)) : easy(scaled(30, mod), "Easy 30 min, conversational.")),
             (3, rest()),
             (4, easy(scaled(35, mod), "Easy 35 min on flat.")),
-            (5, mod.isPerformance ? easy(scaled(25, mod), "Easy 25 min — light, performance retains some volume.") : rest()),
+            (5, mod.isPerformance ? easy(scaled(25, mod), "Easy 25 min, light, performance retains some volume.") : rest()),
             (6, easy(scaled(45, mod), "Easy 45 min, conversational.")),
         ]
     }
@@ -302,17 +302,17 @@ enum TrailRaceRecoveryTemplates {
             (0, rest()),
             (1, easy(scaled(45, mod), "Easy 45 min + 4 strides.")),
             (2, easy(scaled(35, mod), "Easy 35 min, conversational.")),
-            (3, mod.isPerformance ? easy(scaled(30, mod), "Easy 30 min — performance retains volume.") : rest()),
+            (3, mod.isPerformance ? easy(scaled(30, mod), "Easy 30 min, performance retains volume.") : rest()),
             (4, easy(scaled(50, mod), "Easy 50 min on flat or gentle rolling.")),
             (5, easy(scaled(40, mod), "Easy 40 min, light.")),
-            (6, easy(scaled(85, mod), "Easy 75-90 min. First longer run — flat or rolling, no big climbs.")),
+            (6, easy(scaled(85, mod), "Easy 75-90 min. First longer run, flat or rolling, no big climbs.")),
         ]
     }
 
     // MARK: - 100-mile (150-220K)
 
     private static func hundredMileWeek1(_ mod: Modifiers) -> [(Int, RecoverySession)] {
-        // W1 of 5. ~5% of peak. ALL rest or walking — Koop/Jurek
+        // W1 of 5. ~5% of peak. ALL rest or walking, Koop/Jurek
         // consensus: zero structured exercise after 100mi for 5-7 days.
         [
             (0, rest("Complete rest. You finished a 100. Sleep, eat, hydrate.")),
@@ -334,7 +334,7 @@ enum TrailRaceRecoveryTemplates {
             (3, cross(scaled(30, mod))),
             (4, rest()),
             (5, mod.isAdvanced && !mod.isMountain
-                ? easy(scaled(20, mod), "Optional 20 min very easy jog. First run since the race — pace by feel, walk if needed.")
+                ? easy(scaled(20, mod), "Optional 20 min very easy jog. First run since the race, pace by feel, walk if needed.")
                 : walk(scaled(25, mod))),
             (6, rest()),
         ]
@@ -359,7 +359,7 @@ enum TrailRaceRecoveryTemplates {
             (0, rest()),
             (1, easy(scaled(35, mod), "Easy 35 min, conversational.")),
             (2, easy(scaled(30, mod), "Easy 30 min + 4 strides if legs feel sharp.")),
-            (3, mod.isPerformance ? easy(scaled(30, mod), "Easy 30 min — performance retains volume.") : rest()),
+            (3, mod.isPerformance ? easy(scaled(30, mod), "Easy 30 min, performance retains volume.") : rest()),
             (4, easy(scaled(40, mod), "Easy 40 min on flat.")),
             (5, easy(scaled(30, mod), "Easy 30 min, light.")),
             (6, easy(scaled(60, mod), "Easy 50-60 min on flat or rolling.")),
@@ -375,7 +375,7 @@ enum TrailRaceRecoveryTemplates {
             (3, rest()),
             (4, easy(scaled(45, mod), "Easy 45 min on flat or rolling.")),
             (5, easy(scaled(40, mod), "Easy 40 min, conversational.")),
-            (6, easy(scaled(85, mod), "Easy 70-90 min. Flat or gentle rolling — no big climbs.")),
+            (6, easy(scaled(85, mod), "Easy 70-90 min. Flat or gentle rolling, no big climbs.")),
         ]
     }
 
@@ -384,7 +384,7 @@ enum TrailRaceRecoveryTemplates {
     private static func multiDayWeek1(_ mod: Modifiers) -> [(Int, RecoverySession)] {
         // W1 of 5. ~3% of peak. Pure rest. Multi-day stage races
         // (PTL, MDS) deplete glycogen, sleep, and tissue more than any
-        // other category — recovery is measured in weeks, not days.
+        // other category, recovery is measured in weeks, not days.
         [
             (0, rest("Complete rest. Walk only if you feel like it.")),
             (1, rest()),
@@ -428,7 +428,7 @@ enum TrailRaceRecoveryTemplates {
         RecoverySession(
             type: .crossTraining, intensity: .easy,
             durationSeconds: TimeInterval(minutes * 60),
-            description: "Cross-training \(minutes) min — easy bike, swim, or elliptical. Concentric only, no eccentric loading. Promotes blood flow without re-damaging quads."
+            description: "Cross-training \(minutes) min, easy bike, swim, or elliptical. Concentric only, no eccentric loading. Promotes blood flow without re-damaging quads."
         )
     }
 
@@ -436,7 +436,7 @@ enum TrailRaceRecoveryTemplates {
         RecoverySession(
             type: .crossTraining, intensity: .easy,
             durationSeconds: TimeInterval(minutes * 60),
-            description: "Walking \(minutes) min, easy. Light movement, no impact. If you have stairs at home, take them — gentle eccentric reload helps quads remap."
+            description: "Walking \(minutes) min, easy. Light movement, no impact. If you have stairs at home, take them, gentle eccentric reload helps quads remap."
         )
     }
 

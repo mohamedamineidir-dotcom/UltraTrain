@@ -4,7 +4,7 @@ import Foundation
 /// logs a skip with `.menstrualCycle` reason, surfaces a single
 /// pattern-level recommendation when ≥2 such skips land inside a
 /// 7-day window. No predictive logic, no cycle-phase calculator, no
-/// anchor-date input — the engine only responds to what the athlete
+/// anchor-date input, the engine only responds to what the athlete
 /// chose to share via the skip reason.
 ///
 /// This is intentionally minimal. UltraTrain does not ask cycle-anchor
@@ -20,7 +20,7 @@ enum MenstrualAdaptationCalculator {
     /// pattern-level recommendation that names the signal explicitly:
     /// the athlete is already dropping load via skips, the
     /// recommendation just makes the deload structural in framing
-    /// (no auto plan mutation — the skips themselves are doing the
+    /// (no auto plan mutation, the skips themselves are doing the
     /// work).
     static func analyzeMultiSkipPattern(
         weeks: [TrainingWeek],
@@ -44,8 +44,8 @@ enum MenstrualAdaptationCalculator {
             id: UUID(),
             type: .menstrualMultiSkipPattern,
             severity: .recommended,
-            title: "Cycle pattern this week — name it",
-            message: "You've logged \(menstrualSkips.count) cycle-related skips in the last week. Your body's already dialled the load — let this week be a soft deload (easy + recovery only, no key quality), then resume normal training next week. McNulty 2020: when symptoms drive availability, listen.",
+            title: "Cycle pattern this week, name it",
+            message: "You've logged \(menstrualSkips.count) cycle-related skips in the last week. Your body's already dialled the load, let this week be a soft deload (easy + recovery only, no key quality), then resume normal training next week. McNulty 2020: when symptoms drive availability, listen.",
             actionLabel: "Got it",
             affectedSessionIds: menstrualSkips.map(\.id)
         )]

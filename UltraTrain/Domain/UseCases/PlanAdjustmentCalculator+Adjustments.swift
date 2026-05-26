@@ -66,7 +66,7 @@ extension PlanAdjustmentCalculator {
             type: .swapToRecovery,
             severity: .urgent,
             title: "Swap to Recovery Run",
-            message: "ACR is \(String(format: "%.1f", snapshot.acuteToChronicRatio)) — injury risk is high. Swap your \(session.type.rawValue) to a recovery run.",
+            message: "ACR is \(String(format: "%.1f", snapshot.acuteToChronicRatio)), injury risk is high. Swap your \(session.type.rawValue) to a recovery run.",
             actionLabel: "Swap to Recovery",
             affectedSessionIds: [session.id]
         ))
@@ -118,7 +118,7 @@ extension PlanAdjustmentCalculator {
             id: UUID(),
             type: .reduceLoadLowRecovery,
             severity: .recommended,
-            title: "Reduce Load — Low Recovery",
+            title: "Reduce Load, Low Recovery",
             message: "Recovery score is \(recovery.overallScore)/100. Consider reducing today's session intensity by 20%.",
             actionLabel: "Reduce Intensity",
             affectedSessionIds: affectedIds

@@ -7,7 +7,7 @@ import Foundation
 /// description string. The session itself had `intensity = .easy` and
 /// `intervalWorkoutId = nil`, so the athlete saw no phase guidance, no
 /// pace targets, and no auto-advance in ActiveRunView. This builder
-/// produces real multi-phase workouts — a Pfitzinger "17 mi w/ 12 at MP"
+/// produces real multi-phase workouts, a Pfitzinger "17 mi w/ 12 at MP"
 /// or Canova "alternating 4 km easy / 3 km MP × 4" becomes an executable
 /// structured workout that `IntervalGuidanceHandler` can drive.
 ///
@@ -16,7 +16,7 @@ import Foundation
 ///   peak (8 → 10 → 12 → 14 mi at MP).
 /// - **Canova**: alternating easy/MP blocks in the "specific long run"
 ///   mesocycle; block length extends weekly.
-/// - **Daniels**: "2E + 14M + 1E" — explicit pace segments, never just
+/// - **Daniels**: "2E + 14M + 1E", explicit pace segments, never just
 ///   "long run with MP somewhere inside."
 enum RoadLongRunWorkoutBuilder {
 
@@ -67,7 +67,7 @@ enum RoadLongRunWorkoutBuilder {
                 id: UUID(), phaseType: .work,
                 trigger: .duration(seconds: blockDuration),
                 targetIntensity: .moderate, repeatCount: 1,
-                notes: paceNote("Marathon pace block — controlled, not surge", paceProfile?.marathonPacePerKm)
+                notes: paceNote("Marathon pace block, controlled, not surge", paceProfile?.marathonPacePerKm)
             ),
             IntervalPhase(
                 id: UUID(), phaseType: .coolDown,
@@ -258,7 +258,7 @@ enum RoadLongRunWorkoutBuilder {
                 id: UUID(), phaseType: .work,
                 trigger: .duration(seconds: blockDuration),
                 targetIntensity: .hard, repeatCount: 1,
-                notes: paceNote("Race simulation — lock in race pace", paceProfile?.racePacePerKm)
+                notes: paceNote("Race simulation, lock in race pace", paceProfile?.racePacePerKm)
             ),
             IntervalPhase(
                 id: UUID(), phaseType: .coolDown,

@@ -2,8 +2,8 @@ import SwiftUI
 
 /// Dedicated sheet for moving a rest day to another day within the same
 /// training week. Internally a regular swap (rest day ↔ selected session)
-/// but the UX is framed as "pick when you want to rest" — which is how
-/// athletes think about it — rather than "swap two sessions".
+/// but the UX is framed as "pick when you want to rest", which is how
+/// athletes think about it, rather than "swap two sessions".
 ///
 /// Differs from the general `SwapSessionSheet`:
 ///  • Scoped to THIS WEEK only (no cross-week noise)
@@ -82,7 +82,7 @@ struct RestDaySwapSheet: View {
     private func dayRow(date: Date, candidate: SwapCandidate?) -> some View {
         let isCurrentRest = Calendar.current.isDate(date, inSameDayAs: currentSession.date)
         if isCurrentRest {
-            // Current rest day — shown greyed, not tappable, so the
+            // Current rest day, shown greyed, not tappable, so the
             // athlete sees the full week at a glance.
             restRow(date: date)
         } else if let candidate {

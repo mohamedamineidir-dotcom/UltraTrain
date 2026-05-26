@@ -1,16 +1,16 @@
 import Foundation
 
-/// Athlete's tolerance for caffeine — scales the total race-day caffeine dose
+/// Athlete's tolerance for caffeine, scales the total race-day caffeine dose
 /// from the ISSN 3-6 mg/kg range.
 ///
-/// Research basis: ISSN 2021 position stand — effective range is 3-6 mg/kg,
+/// Research basis: ISSN 2021 position stand, effective range is 3-6 mg/kg,
 /// but habitual users tolerate the upper end while non-users may experience
 /// jitters or GI issues above 3 mg/kg. Athletes who consume 0 mg/day chronically
 /// should start at ~1.5 mg/kg to avoid side effects.
 enum CaffeineSensitivity: String, CaseIterable, Codable, Sendable {
     case none       // Avoid entirely
     case low        // Non-habitual, prone to jitters
-    case moderate   // Standard — 1-2 cups coffee/day
+    case moderate   // Standard, 1-2 cups coffee/day
     case high       // Habitual, tolerates 6 mg/kg
 
     var displayName: String {

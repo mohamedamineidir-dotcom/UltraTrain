@@ -98,7 +98,7 @@ extension WorkoutProgressionEngine {
             )
         case .threshold60:
             // T9: peak-phase VG should include sustained 20-25 min climbs
-            // for advanced+ mountain athletes — race-day climbs at UTMB /
+            // for advanced+ mountain athletes, race-day climbs at UTMB /
             // Hardrock / Madeira class regularly run 20-40 min continuous,
             // so peak training should rehearse that length. Pre-fix max
             // was 12 min for advanced/elite (well below race specificity).

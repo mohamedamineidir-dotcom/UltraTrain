@@ -25,7 +25,7 @@ extension CommonFoodDatabase {
             FoodEntry(name: "Creatine Monohydrate", nameFr: "Créatine monohydrate", brand: "Generic", caloriesPer100g: 0, carbsPer100g: 0.0, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 0, servingSizeGrams: 5, category: "Sports"),
         ])
 
-        // MARK: Gels — Branded
+        // MARK: Gels, Branded
         items.append(contentsOf: [
             FoodEntry(name: "GU Energy Gel", nameFr: nil, brand: "GU", caloriesPer100g: 312, carbsPer100g: 68.8, proteinPer100g: 0.0, fatPer100g: 3.1, sodiumMgPer100g: 172, servingSizeGrams: 32, category: "Sports"),
             FoodEntry(name: "GU Roctane Gel", nameFr: nil, brand: "GU", caloriesPer100g: 312, carbsPer100g: 65.6, proteinPer100g: 0.0, fatPer100g: 3.1, sodiumMgPer100g: 390, servingSizeGrams: 32, category: "Sports"),
@@ -55,7 +55,7 @@ extension CommonFoodDatabase {
             FoodEntry(name: "Nduranz Nrgy Gel", nameFr: nil, brand: "Nduranz", caloriesPer100g: 249, carbsPer100g: 62.2, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 222, servingSizeGrams: 45, category: "Sports"),
         ])
 
-        // MARK: Bars — Branded
+        // MARK: Bars, Branded
         items.append(contentsOf: [
             FoodEntry(name: "Clif Bar", nameFr: nil, brand: "Clif", caloriesPer100g: 368, carbsPer100g: 64.7, proteinPer100g: 14.7, fatPer100g: 8.8, sodiumMgPer100g: 382, servingSizeGrams: 68, category: "Sports"),
             FoodEntry(name: "Maurten Solid 225", nameFr: nil, brand: "Maurten", caloriesPer100g: 375, carbsPer100g: 75.0, proteinPer100g: 5.0, fatPer100g: 5.8, sodiumMgPer100g: 80, servingSizeGrams: 60, category: "Sports"),
@@ -71,7 +71,7 @@ extension CommonFoodDatabase {
             FoodEntry(name: "Larabar", nameFr: nil, brand: "Larabar", caloriesPer100g: 489, carbsPer100g: 53.3, proteinPer100g: 11.1, fatPer100g: 28.9, sodiumMgPer100g: 11, servingSizeGrams: 45, category: "Sports"),
         ])
 
-        // MARK: Drink Mixes — Branded
+        // MARK: Drink Mixes, Branded
         items.append(contentsOf: [
             FoodEntry(name: "Maurten Drink Mix 160", nameFr: nil, brand: "Maurten", caloriesPer100g: 400, carbsPer100g: 97.5, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 250, servingSizeGrams: 40, category: "Sports"),
             FoodEntry(name: "Maurten Drink Mix 320", nameFr: nil, brand: "Maurten", caloriesPer100g: 400, carbsPer100g: 98.8, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 250, servingSizeGrams: 80, category: "Sports"),
@@ -86,7 +86,7 @@ extension CommonFoodDatabase {
             FoodEntry(name: "Tailwind Rebuild Recovery", nameFr: nil, brand: "Tailwind", caloriesPer100g: 408, carbsPer100g: 65.3, proteinPer100g: 20.4, fatPer100g: 6.1, sodiumMgPer100g: 612, servingSizeGrams: 49, category: "Sports"),
         ])
 
-        // MARK: Chews & Waffles — Branded
+        // MARK: Chews & Waffles, Branded
         items.append(contentsOf: [
             FoodEntry(name: "GU Energy Chews", nameFr: nil, brand: "GU", caloriesPer100g: 296, carbsPer100g: 66.7, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 74, servingSizeGrams: 54, category: "Sports"),
             FoodEntry(name: "Clif Bloks", nameFr: nil, brand: "Clif", caloriesPer100g: 300, carbsPer100g: 75.0, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 117, servingSizeGrams: 60, category: "Sports"),
@@ -96,7 +96,7 @@ extension CommonFoodDatabase {
             FoodEntry(name: "GU Stroopwafel", nameFr: nil, brand: "GU", caloriesPer100g: 469, carbsPer100g: 65.6, proteinPer100g: 6.3, fatPer100g: 18.8, sodiumMgPer100g: 109, servingSizeGrams: 32, category: "Sports"),
         ])
 
-        // MARK: Electrolytes & Salt Capsules — Branded
+        // MARK: Electrolytes & Salt Capsules, Branded
         items.append(contentsOf: [
             FoodEntry(name: "Nuun Sport", nameFr: nil, brand: "Nuun", caloriesPer100g: 273, carbsPer100g: 72.7, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 5455, servingSizeGrams: 5.5, category: "Sports"),
             FoodEntry(name: "Nuun Endurance", nameFr: nil, brand: "Nuun", caloriesPer100g: 400, carbsPer100g: 100.0, proteinPer100g: 0.0, fatPer100g: 0.0, sodiumMgPer100g: 2533, servingSizeGrams: 15, category: "Sports"),

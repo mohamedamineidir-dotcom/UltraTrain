@@ -11,7 +11,7 @@ import Foundation
 ///   Validated ratios: Easy ≈ 130-150% of 5K pace, Threshold ≈ 106-108% of 5K pace,
 ///   Interval ≈ 100% of 5K pace, Repetition ≈ 92-95% of 5K pace.
 /// - **Riegel (1981)**: T2 = T1 × (D2/D1)^1.06. Adjusted for marathon (1.07).
-/// - **Pfitzinger**: Easy running should feel truly easy — most runners go too fast.
+/// - **Pfitzinger**: Easy running should feel truly easy, most runners go too fast.
 ///   Easy pace should allow full conversation without breathlessness.
 /// - **Jack Daniels VDOT verified data points**:
 ///   VDOT 40 (4:30 marathon): Easy 6:40-7:24, T 5:36, I 5:08, R 4:48/km
@@ -87,7 +87,7 @@ enum RoadPaceCalculator {
         // declared goal is flagged .veryAmbitious so the athlete gets a
         // concrete alternative instead of just a warning.
         // Only populated when we have fitness signal AND the profile is
-        // genuinely data-derived — we won't fabricate a "realistic" time
+        // genuinely data-derived, we won't fabricate a "realistic" time
         // from the same tier heuristic we just distrusted.
         let recommendedGoalTime: TimeInterval?
         if isDataDerived && fitnessPaceAtRaceDist > 0 {
@@ -102,7 +102,7 @@ enum RoadPaceCalculator {
         // Daniels ratios (5K pace as 1.00):
         // Easy:       1.30 - 1.42× slower (conversational; tightened from
         //              1.30 - 1.48× because a 50 sec/km E-pace window
-        //              stops feeling prescriptive — athletes drift into
+        //              stops feeling prescriptive, athletes drift into
         //              zone-3 "moderate" without realising)
         // Marathon:    1.12 - 1.18× slower
         // Threshold:   1.06 - 1.09× slower (~60min race effort)
@@ -116,7 +116,7 @@ enum RoadPaceCalculator {
             thresholdPacePerKm: fiveK * 1.09,
             // Daniels T-pace range: 1.06× (cruise intervals, short
             // hard reps) to 1.09× (sustained 30-min tempo). Single
-            // value at 1.09 sat at the slower edge — sessions like
+            // value at 1.09 sat at the slower edge, sessions like
             // 4×5min cruise intervals deserve the faster end.
             thresholdPaceRangePerKm: (fiveK * 1.06)...(fiveK * 1.09),
             intervalPacePerKm: fiveK * 1.00,
@@ -192,7 +192,7 @@ enum RoadPaceCalculator {
         // Positive = goal is faster than current fitness
         let speedImprovement = (fitnessPace - goalPace) / fitnessPace
         // Tightened from 10/20 because 10% faster than current fitness is
-        // already a stretch in one cycle for most athletes — calling that
+        // already a stretch in one cycle for most athletes, calling that
         // "realistic" gave overconfident framing. New bands are calibrated
         // against typical season-over-season improvement curves: ≤8% is
         // achievable with focused prep, 8-15% requires everything to go
@@ -201,7 +201,7 @@ enum RoadPaceCalculator {
         switch speedImprovement {
         case ..<0.08:  return .realistic       // ≤8% faster than current fitness
         case ..<0.15:  return .ambitious        // 8-15% faster
-        default:       return .veryAmbitious    // >15% faster — flag in advice
+        default:       return .veryAmbitious    // >15% faster, flag in advice
         }
     }
 

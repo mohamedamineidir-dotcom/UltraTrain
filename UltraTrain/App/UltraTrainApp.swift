@@ -124,11 +124,11 @@ struct UltraTrainApp: App {
 /// and conditionally overlays `LaunchSplashView`.
 ///
 /// Reads `@Environment(\.colorScheme)` *before* `preferredColorScheme`
-/// is applied to the content — so `systemColorScheme` reflects what
+/// is applied to the content, so `systemColorScheme` reflects what
 /// iOS actually rendered for the system launch screen. The splash is
 /// only drawn when the iOS launch screen would have shown the *light*
 /// variant while the app wants dark. When the system is already dark
-/// the splash is skipped — otherwise it produces a redundant ~0.7 s
+/// the splash is skipped, otherwise it produces a redundant ~0.7 s
 /// second blue flash after the iOS launch.
 private struct AppRootContainer<Content: View>: View {
     @Environment(\.colorScheme) private var systemColorScheme

@@ -1,6 +1,6 @@
 import Foundation
 
-/// A race-day or training nutrition product — gel, chew, drink, bar, solid, salt.
+/// A race-day or training nutrition product, gel, chew, drink, bar, solid, salt.
 ///
 /// All nutritional fields describe ONE serving as typically consumed
 /// (one gel, one sachet, one bar, one fist-size potato, one capsule).

@@ -92,7 +92,7 @@ final class BarcodeScannerViewController: UIViewController, AVCaptureMetadataOut
         previewLayer = preview
         captureSession = session
 
-        // AVCaptureSession.startRunning() blocks — must not run on main thread
+        // AVCaptureSession.startRunning() blocks, must not run on main thread
         let capturedSession = session
         Task.detached(priority: .userInitiated) {
             capturedSession.startRunning()

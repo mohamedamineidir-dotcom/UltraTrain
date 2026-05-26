@@ -53,9 +53,9 @@ enum PhaseFocus: String, CaseIterable, Sendable, Codable {
         case .threshold30:
             "Build aerobic power with 30-minute threshold efforts on hills"
         case .vo2max:
-            "VO2max intervals on steep climbs — short, intense hill repeats"
+            "VO2max intervals on steep climbs, short, intense hill repeats"
         case .threshold60:
-            "Sustained 60-minute threshold on rolling terrain — race-specific endurance"
+            "Sustained 60-minute threshold on rolling terrain, race-specific endurance"
         case .sharpening:
             "Volume reduction and race-day sharpening"
         case .postRaceRecovery:

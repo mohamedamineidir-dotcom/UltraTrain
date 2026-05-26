@@ -1,7 +1,7 @@
 import Foundation
 
 /// Returns the athlete's target pace (sec/km) for a road intervals or tempo
-/// session — the number the athlete should compare actual per-rep paces to
+/// session, the number the athlete should compare actual per-rep paces to
 /// when they capture feedback.
 ///
 /// Mirrors `RoadCoachAdviceGenerator.intervalAdvice` and `tempoAdvice` pace
@@ -45,7 +45,7 @@ enum RoadSessionTargetPace {
         )
 
         // Pace values only carry meaning when we have real data to anchor
-        // them. If the profile fell through to tier defaults, surface nil —
+        // them. If the profile fell through to tier defaults, surface nil
         // the UI reads this as "show effort labels, skip per-rep pace entry."
         guard profile.isDataDerived else { return nil }
 

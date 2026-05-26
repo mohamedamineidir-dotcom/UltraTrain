@@ -82,7 +82,7 @@ enum HistoricalComparisonCalculator {
             badges.append(ImprovementBadge(
                 id: UUID(),
                 title: "Longest Run",
-                description: "\(UnitFormatter.formatDistance(run.distanceKm, unit: unit)) — your longest run yet",
+                description: "\(UnitFormatter.formatDistance(run.distanceKm, unit: unit)), your longest run yet",
                 icon: "road.lanes"
             ))
         }
@@ -92,7 +92,7 @@ enum HistoricalComparisonCalculator {
             badges.append(ImprovementBadge(
                 id: UUID(),
                 title: "Most Elevation",
-                description: "+\(UnitFormatter.formatElevation(run.elevationGainM, unit: unit)) — your most climbing ever",
+                description: "+\(UnitFormatter.formatElevation(run.elevationGainM, unit: unit)), your most climbing ever",
                 icon: "mountain.2.fill"
             ))
         }
@@ -102,7 +102,7 @@ enum HistoricalComparisonCalculator {
             badges.append(ImprovementBadge(
                 id: UUID(),
                 title: "Fastest Pace",
-                description: "\(RunStatisticsCalculator.formatPace(run.averagePaceSecondsPerKm, unit: unit)) \(UnitFormatter.paceLabel(unit)) — a new personal best",
+                description: "\(RunStatisticsCalculator.formatPace(run.averagePaceSecondsPerKm, unit: unit)) \(UnitFormatter.paceLabel(unit)), a new personal best",
                 icon: "bolt.fill"
             ))
         }
@@ -112,7 +112,7 @@ enum HistoricalComparisonCalculator {
             badges.append(ImprovementBadge(
                 id: UUID(),
                 title: "Consistency King",
-                description: "Pace variability under 5% — rock-solid pacing",
+                description: "Pace variability under 5%, rock-solid pacing",
                 icon: "metronome.fill"
             ))
         }
@@ -122,7 +122,7 @@ enum HistoricalComparisonCalculator {
             badges.append(ImprovementBadge(
                 id: UUID(),
                 title: "Climbing Machine",
-                description: "Climbing efficiency \(Int(efficiency * 100))% — faster than expected on uphills",
+                description: "Climbing efficiency \(Int(efficiency * 100))%, faster than expected on uphills",
                 icon: "figure.hiking"
             ))
         }

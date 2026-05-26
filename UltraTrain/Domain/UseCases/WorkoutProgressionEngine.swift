@@ -63,7 +63,7 @@ enum WorkoutProgressionEngine {
             // second half. Pre-fix this case fell through to the
             // all-easy `longRunTemplate`, but the coach advice for
             // build LR week 4+ explicitly says "include blocks at
-            // goal race pace" — card and detail disagreed. Now they
+            // goal race pace", card and detail disagreed. Now they
             // align. Pfitzinger Ch. 6 / Hudson "Run Faster":
             // progressive long runs in build phase.
             let template = longRunBuildTemplate(totalDuration: totalDuration)
@@ -127,12 +127,12 @@ enum WorkoutProgressionEngine {
     /// Build-phase long run with a race-intensity block embedded in
     /// the second half. Closes the gap where the all-easy
     /// `longRunTemplate` was used for build, while the coach advice
-    /// already promised race-effort sections — card and detail used to
+    /// already promised race-effort sections, card and detail used to
     /// disagree.
     ///
     /// Trail/ultra deliberately uses "race intensity" / "race effort"
     /// rather than a specific pace. On trail there IS no single race
-    /// pace — terrain varies section to section. The athlete dials in
+    /// pace, terrain varies section to section. The athlete dials in
     /// race effort by feel, not by min/km.
     ///
     /// Shape: warmup → easy aerobic block (70% of remaining easy time)
@@ -157,11 +157,11 @@ enum WorkoutProgressionEngine {
         let warmUp = phase(.warmUp, duration: warmUpDur, intensity: .easy, reps: 1,
                            notes: "Easy warmup, settle in")
         let easyMain = phase(.work, duration: easyBefore, intensity: .easy, reps: 1,
-                             notes: "Easy aerobic block — conversational effort, fuel as you'll fuel on race day.")
+                             notes: "Easy aerobic block, conversational effort, fuel as you'll fuel on race day.")
         let racePace = phase(.work, duration: racePaceBlock, intensity: .moderate, reps: 1,
-                             notes: "Race-intensity block. Run at the EFFORT you'd hold at race-day — controlled, repeatable, NOT all-out. On trail your pace varies with terrain; the EFFORT is the constant.")
+                             notes: "Race-intensity block. Run at the EFFORT you'd hold at race-day, controlled, repeatable, NOT all-out. On trail your pace varies with terrain; the EFFORT is the constant.")
         let easyFinish = phase(.work, duration: easyAfter, intensity: .easy, reps: 1,
-                               notes: "Easy finish — practice running tired but in control.")
+                               notes: "Easy finish, practice running tired but in control.")
         let coolDown = phase(.coolDown, duration: coolDownDur, intensity: .easy, reps: 1,
                              notes: "Walk to cool down. Stretch. Refuel within 30 min.")
 
@@ -182,7 +182,7 @@ enum WorkoutProgressionEngine {
         let mainDuration = max(totalDuration - warmUpDuration - coolDownDuration, 600)
 
         let warmUp = phase(.warmUp, duration: warmUpDuration, intensity: .easy, reps: 1,
-                           notes: "Progressive warmup — start walking, build to easy jog")
+                           notes: "Progressive warmup, start walking, build to easy jog")
 
         // Split main effort into nutrition segments (~45min each)
         let segmentLength: TimeInterval = 2700 // 45min
@@ -215,7 +215,7 @@ enum WorkoutProgressionEngine {
         // Peak phase gets race simulation embedded in B2B Day 1: race-
         // effort blocks with explicit easy recovery between them, exactly
         // the dress-rehearsal pattern the athlete is asked for. Build /
-        // base keep the original negative-split shape — it's a
+        // base keep the original negative-split shape, it's a
         // progression builder, not a race rehearsal.
         if phase == .peak && totalDuration >= 2 * 3600 {
             return b2bDay1PeakRaceSimTemplate(
@@ -235,9 +235,9 @@ enum WorkoutProgressionEngine {
         let steady = self.phase(.work, duration: steadyDuration, intensity: .easy, reps: 1,
                                 notes: "Steady effort at easy pace. Fuel consistently.")
         let negativeSplit = self.phase(.work, duration: negativeSplitDuration, intensity: .moderate, reps: 1,
-                                       notes: "Negative split — build effort in the last third")
+                                       notes: "Negative split, build effort in the last third")
         let coolDown = self.phase(.coolDown, duration: coolDownDuration, intensity: .easy, reps: 1,
-                                  notes: "Cool down. Refuel well — tomorrow runs on today's fatigue.")
+                                  notes: "Cool down. Refuel well, tomorrow runs on today's fatigue.")
 
         return WorkoutTemplate(
             name: "B2B Day 1",
@@ -279,15 +279,15 @@ enum WorkoutProgressionEngine {
                                      notes: "Easy aerobic preamble. Fuel as you will on race day."))
         }
         phases.append(self.phase(.work, duration: workPerBlock, intensity: .moderate, reps: blockCount,
-                                 notes: "Race effort. Full race kit, full fueling — this is the dress rehearsal before tomorrow's tired-legs day."))
+                                 notes: "Race effort. Full race kit, full fueling, this is the dress rehearsal before tomorrow's tired-legs day."))
         phases.append(self.phase(.recovery, duration: recoveryBetween, intensity: .easy, reps: 1,
                                  notes: "Easy jog between race blocks. Eat, drink, reset."))
         if easyAfter > 60 {
             phases.append(self.phase(.work, duration: easyAfter, intensity: .easy, reps: 1,
-                                     notes: "Easy aerobic finish. Don't bury yourself — Day 2 still runs on this fatigue."))
+                                     notes: "Easy aerobic finish. Don't bury yourself, Day 2 still runs on this fatigue."))
         }
         phases.append(self.phase(.coolDown, duration: coolDownDur, intensity: .easy, reps: 1,
-                                 notes: "Cool down. Refuel well — Day 2 starts now."))
+                                 notes: "Cool down. Refuel well, Day 2 starts now."))
 
         let workMin = Int(workPerBlock) / 60
         let desc = "B2B Day 1 race simulation: \(blockCount)×\(workMin) min at race effort with 15 min easy between, embedded in a long aerobic run."
@@ -313,7 +313,7 @@ enum WorkoutProgressionEngine {
         let main = phase(.work, duration: mainDuration, intensity: .easy, reps: 1,
                          notes: "Steady fatigued effort at easy pace. Embrace the discomfort.")
         let push = phase(.work, duration: pushDuration, intensity: .moderate, reps: 1,
-                         notes: "Push section — build to race effort in the last 20%")
+                         notes: "Push section, build to race effort in the last 20%")
         let coolDown = phase(.coolDown, duration: coolDownDuration, intensity: .easy, reps: 1,
                              notes: "Walk to cool down. Refuel immediately.")
 
@@ -661,7 +661,7 @@ enum WorkoutProgressionEngine {
             // advanced/elite athletes can see a full 20-25 min
             // sustained climb when their tier's setDurationSec ≥ 20
             // min. Cap actualSetSec at longerSet so a single-rep
-            // session doesn't get expanded to fill totalWorkSec —
+            // session doesn't get expanded to fill totalWorkSec
             // the focused sustained climb IS the workout for the day.
             let longerSet = params.setDurationSec * 1.3
             reps = min(max(Int((totalWorkSec / longerSet).rounded()), 1), max(params.maxReps - 1, 2))
@@ -861,13 +861,13 @@ enum WorkoutProgressionEngine {
         // each) with 15 min easy recovery between → easy-aerobic-block
         // → cooldown. Athlete spends most of the run in pure aerobic
         // territory and gets two clear race-pace efforts in the middle
-        // — exactly the dress-rehearsal pattern (Krar / Roche).
+        //, exactly the dress-rehearsal pattern (Krar / Roche).
         //
         // T3: Hard cap on race-sim duration relative to expected race
         // duration. Koop / Roche / Jurek consensus: peak race sims max
         // out at 50–70 km / ≤75% of race duration. Without this guard,
         // an elite performance-mode athlete with a 24h target
-        // (100-miler) could see an 18h "peak race sim" — far too much
+        // (100-miler) could see an 18h "peak race sim", far too much
         // recovery cost. Upstream `peakSingleLongRun` already caps via
         // tier fractions, but those don't *explicitly* enforce the
         // 75% rule; this is defense-in-depth.
@@ -908,12 +908,12 @@ enum WorkoutProgressionEngine {
                                 notes: "Long easy aerobic block before race blocks. Fuel as you would on race day."))
         }
         phases.append(phase(.work, duration: workPerBlock, intensity: .moderate, reps: blockCount,
-                            notes: "Race effort — full kit, full fueling, hold steady. This is the dress rehearsal."))
+                            notes: "Race effort, full kit, full fueling, hold steady. This is the dress rehearsal."))
         phases.append(phase(.recovery, duration: recoveryBetween, intensity: .easy, reps: 1,
                             notes: "Easy jog between race blocks, recover before the next one"))
         if easyAfter > 60 {
             phases.append(phase(.work, duration: easyAfter, intensity: .easy, reps: 1,
-                                notes: "Easy running on tired legs — practice late-race execution."))
+                                notes: "Easy running on tired legs, practice late-race execution."))
         }
         phases.append(phase(.coolDown, duration: coolDownDur, intensity: .easy, reps: 1,
                             notes: "Cool down. Note what worked: gear, fueling, pacing."))

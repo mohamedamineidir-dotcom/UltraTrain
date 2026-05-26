@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Compact nutrition card for the session detail page. Nutrition is
-/// a *bonus* on the training page — useful at a glance, not the main
+/// a *bonus* on the training page, useful at a glance, not the main
 /// reason the athlete opened the screen. The previous version stacked
 /// expandable phase rows with mini-stat grids + meal-idea
 /// disclosures, which made the card almost as tall as the training

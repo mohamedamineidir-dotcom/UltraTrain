@@ -6,7 +6,7 @@ import SwiftUI
 /// instead of a plain flat card.
 ///
 /// Replaces the old multi-paragraph block that often buried the
-/// session-specific cue under generic guidance — athletes get the
+/// session-specific cue under generic guidance, athletes get the
 /// "what to do today" message at a glance.
 struct CoachAdviceCard: View {
     let advice: String
@@ -68,7 +68,7 @@ struct CoachAdviceCard: View {
     }
 
     private var sentences: [String] {
-        // Naive split on ". " / "! " / "? " — keeps trailing punctuation.
+        // Naive split on ". " / "! " / "? ", keeps trailing punctuation.
         // Good enough for short coach advice; the disclosure
         // catches edge cases.
         let separators: Set<Character> = [".", "!", "?"]

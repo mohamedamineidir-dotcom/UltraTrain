@@ -44,7 +44,7 @@ enum AdaptiveSessionAdjuster {
         }
 
         // 5. Extreme weather
-        // Issue #12: Don't downgrade in taper — intensity maintenance is critical (Mujika 2003)
+        // Issue #12: Don't downgrade in taper, intensity maintenance is critical (Mujika 2003)
         if phase == .taper {
             // Only weather adjustment applies in taper (safety concern)
             if let adjustment = weatherAdjustment(for: session, weather: weather, isHardSession: isHardSession, raceType: raceType) {
@@ -196,7 +196,7 @@ enum AdaptiveSessionAdjuster {
         isHardSession: Bool,
         raceType: RaceType = .trail
     ) -> AdaptiveSessionAdjustment? {
-        // Issue #8: Road surfaces are 2-5°C hotter than air — lower threshold for road
+        // Issue #8: Road surfaces are 2-5°C hotter than air, lower threshold for road
         let heatThreshold: Double = raceType == .road ? 25.0 : 30.0
         guard let weather, weather.temperatureCelsius > heatThreshold, isHardSession else {
             return nil

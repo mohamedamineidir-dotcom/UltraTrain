@@ -1,12 +1,12 @@
 import SwiftUI
 
 /// Appears above the week cards when the next 7 days of the plan push
-/// ACWR above 1.5 or monotony above 2.0 — both evidence-backed injury
+/// ACWR above 1.5 or monotony above 2.0, both evidence-backed injury
 /// predictors (Gabbett 2016 for ACWR, Foster 1998 for monotony). Gives
 /// the athlete a chance to rebalance BEFORE executing the week rather
 /// than finding out after.
 ///
-/// Dismissable per session — the projection still recomputes next load,
+/// Dismissable per session, the projection still recomputes next load,
 /// so dismissing now doesn't suppress a future week that re-breaches.
 struct InjuryRiskBanner: View {
     let projection: PlanInjuryRiskProjector.Projection
@@ -15,7 +15,7 @@ struct InjuryRiskBanner: View {
     @Environment(\.colorScheme) private var colorScheme
 
     private var tint: Color {
-        // ACWR spike is the most actionable injury flag — colour the
+        // ACWR spike is the most actionable injury flag, colour the
         // banner warning. Detraining or pure-monotony alone get the
         // softer neutral-info treatment.
         if projection.flags.contains(.acwrSpike) {
@@ -115,7 +115,7 @@ struct InjuryRiskBanner: View {
     private var body_: String {
         var parts: [String] = []
         if projection.flags.contains(.acwrSpike) {
-            parts.append("Your next 7 days are set to jump \(acwrPercentDelta)% over your recent 4-week average. Gabbett's research links ACWR >1.5 to a 2-4× injury risk — consider trimming a session or softening intensity.")
+            parts.append("Your next 7 days are set to jump \(acwrPercentDelta)% over your recent 4-week average. Gabbett's research links ACWR >1.5 to a 2-4× injury risk, consider trimming a session or softening intensity.")
         } else if projection.flags.contains(.acwrDetraining) {
             parts.append("Next 7 days sit ~\(abs(acwrPercentDelta))% below your recent average. Fine as a cutback, worth watching if it's unplanned.")
         }

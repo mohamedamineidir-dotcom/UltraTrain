@@ -4,7 +4,7 @@ import SwiftUI
 /// recalibration pipeline runs. Surfaces the measured VMA, delta vs
 /// baseline, and the system's recommendation in plain language.
 ///
-/// Driven by `TrainingPlanViewModel.fitnessTestRecommendation` —
+/// Driven by `TrainingPlanViewModel.fitnessTestRecommendation`
 /// presented via `.sheet(item:)` when non-nil.
 struct FitnessTestResultBanner: View {
     let recommendation: TrainingPlanViewModel.FitnessTestRecommendation
@@ -100,8 +100,8 @@ struct FitnessTestResultBanner: View {
         switch recommendation.outcome.recommendation {
         case .recalibrateAll:
             return recommendation.outcome.deltaPercent >= 0
-                ? "Big jump in fitness — paces updated"
-                : "Fitness shifted — paces updated"
+                ? "Big jump in fitness, paces updated"
+                : "Fitness shifted, paces updated"
         case .recalibrateTrainingPacesOnly:
             return "Training paces refreshed"
         case .regressionPendingRetest:
@@ -194,14 +194,14 @@ struct FitnessTestResultBanner: View {
         switch recommendation.outcome.recommendation {
         case .recalibrateAll:
             if recommendation.outcome.deltaPercent >= 0 {
-                return "Your training paces and race-day target have been refreshed to match your new fitness. Look at remaining sessions for the updated targets — a notification flags any goal adjustment we suggest based on the new fitness."
+                return "Your training paces and race-day target have been refreshed to match your new fitness. Look at remaining sessions for the updated targets, a notification flags any goal adjustment we suggest based on the new fitness."
             } else {
                 return "Your training paces have been refreshed to match where you're running today, and we've flagged a potential race-target adjustment based on the change."
             }
         case .recalibrateTrainingPacesOnly:
-            return "Training paces on remaining sessions have been refreshed to match your current fitness. Race-day target stays as it was — too late in the prep to safely change it from one data point."
+            return "Training paces on remaining sessions have been refreshed to match your current fitness. Race-day target stays as it was, too late in the prep to safely change it from one data point."
         case .regressionPendingRetest:
-            return "That result was off your usual fitness — could be heat, sleep, life stress, or just a bad day. We've adjusted your training paces so workouts match how you're running right now, but kept your race goal. Next week you'll see a re-test in place of one intervals session — let's confirm before deciding the goal needs to change."
+            return "That result was off your usual fitness, could be heat, sleep, life stress, or just a bad day. We've adjusted your training paces so workouts match how you're running right now, but kept your race goal. Next week you'll see a re-test in place of one intervals session, let's confirm before deciding the goal needs to change."
         case .noChange(let reason):
             return reason
         case .suspicious:

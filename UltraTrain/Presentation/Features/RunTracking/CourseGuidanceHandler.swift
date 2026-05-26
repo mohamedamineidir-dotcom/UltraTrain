@@ -66,7 +66,7 @@ final class CourseGuidanceHandler {
         checkForCheckpointArrival(progress: progress, elapsedTime: elapsedTime)
     }
 
-    // MARK: - Private — Next Checkpoint
+    // MARK: - Private, Next Checkpoint
 
     private func updateNextCheckpoint(
         progress: CourseProgress,
@@ -103,7 +103,7 @@ final class CourseGuidanceHandler {
         return dist * currentPace
     }
 
-    // MARK: - Private — Checkpoint Arrival
+    // MARK: - Private, Checkpoint Arrival
 
     private func checkForCheckpointArrival(
         progress: CourseProgress,

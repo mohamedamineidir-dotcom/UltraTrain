@@ -29,7 +29,7 @@ extension TrainingPlanViewModel {
                 }
                 // Only mirror the state the athlete opted into. If they
                 // haven't turned training reminders on, we don't start
-                // silently scheduling — same goes for the other toggles
+                // silently scheduling, same goes for the other toggles
                 // which NotificationService already respects via its
                 // identifier-prefix cleanup.
                 guard settings.trainingRemindersEnabled

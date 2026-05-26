@@ -21,7 +21,7 @@ struct PlanGenerationOptions: Sendable, Equatable {
 }
 
 /// Self-reported recent fitness change in the 4 weeks prior to plan
-/// generation. Coarse buckets — we just need a directional signal.
+/// generation. Coarse buckets, we just need a directional signal.
 enum RecentFitnessChange: String, Sendable, Codable, CaseIterable {
     case none
     case minor       // 1-2 weeks reduced volume from light illness, soreness
@@ -30,7 +30,7 @@ enum RecentFitnessChange: String, Sendable, Codable, CaseIterable {
 
     var displayName: String {
         switch self {
-        case .none:        "No change — training as usual"
+        case .none:        "No change, training as usual"
         case .minor:       "Light setback (1-2 weeks reduced)"
         case .moderate:    "Moderate (2-4 weeks off / managed injury)"
         case .significant: "Significant (4+ weeks off, returning)"
@@ -38,7 +38,7 @@ enum RecentFitnessChange: String, Sendable, Codable, CaseIterable {
     }
 
     /// Multiplier applied to the base-anchor weekly volume. Damper for
-    /// athletes who have lost fitness vs the onboarding snapshot —
+    /// athletes who have lost fitness vs the onboarding snapshot
     /// avoids prescribing a peak load they can't yet handle.
     var anchorMultiplier: Double {
         switch self {

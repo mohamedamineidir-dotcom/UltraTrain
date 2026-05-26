@@ -131,7 +131,7 @@ enum VolumeCapCalculator {
     }
 
     /// Recovery week cycle by experience (trail/ultra default).
-    /// Master athletes (50+) get one notch tighter — extra recovery to
+    /// Master athletes (50+) get one notch tighter, extra recovery to
     /// match slower adaptation. 50+ intermediate moves from 3:1 → 2:1;
     /// 60+ stays at 2:1 regardless of tier.
     static func recoveryCycle(for experience: ExperienceLevel, age: Int = 0) -> Int {
@@ -165,7 +165,7 @@ enum VolumeCapCalculator {
     }
 
     /// Road-specific recovery cycle. Pfitzinger 18/55 + 18/70 use 3-week
-    /// cycles even for advanced/elite marathon — combining 4:1 cadence
+    /// cycles even for advanced/elite marathon, combining 4:1 cadence
     /// with our standard ~25-35% deload was too aggressive (a recovery
     /// week that distant should be shallower OR the cycle should stay
     /// at 3:1). We pick 3:1 across the board for adv/elite to match

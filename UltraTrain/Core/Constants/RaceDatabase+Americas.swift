@@ -11,7 +11,7 @@ extension RaceDatabase {
 
     static let americas: [KnownRace] = [
 
-        // MARK: USA — Iconic 100 Milers
+        // MARK: USA, Iconic 100 Milers
 
         KnownRace(name: "Hardrock Hundred", shortName: "Hardrock 100", distanceKm: 161, elevationGainM: 10088,
                   elevationLossM: 10088, country: "USA", nextEditionDate: _d(2026, 7, 10), terrainDifficulty: .extreme),
@@ -54,7 +54,7 @@ extension RaceDatabase {
         KnownRace(name: "San Diego 100", shortName: nil, distanceKm: 161, elevationGainM: 6200,
                   elevationLossM: 6200, country: "USA", nextEditionDate: _d(2026, 6, 6), terrainDifficulty: .moderate),
 
-        // MARK: USA — 200+ Milers
+        // MARK: USA, 200+ Milers
 
         KnownRace(name: "Moab 240", shortName: nil, distanceKm: 389, elevationGainM: 9620,
                   elevationLossM: 9620, country: "USA", nextEditionDate: _d(2026, 10, 9), terrainDifficulty: .moderate),
@@ -65,12 +65,12 @@ extension RaceDatabase {
         KnownRace(name: "Bigfoot 200", shortName: nil, distanceKm: 330, elevationGainM: 14000,
                   elevationLossM: 14000, country: "USA", nextEditionDate: _d(2026, 8, 7), terrainDifficulty: .moderate),
 
-        // MARK: USA — Desert & Extreme
+        // MARK: USA, Desert & Extreme
 
         KnownRace(name: "Badwater 135", shortName: nil, distanceKm: 217, elevationGainM: 4450,
                   elevationLossM: 1859, country: "USA", nextEditionDate: _d(2026, 7, 27), terrainDifficulty: .moderate),
 
-        // MARK: USA — 50+ Milers
+        // MARK: USA, 50+ Milers
 
         KnownRace(name: "JFK 50 Mile", shortName: nil, distanceKm: 80, elevationGainM: 2100,
                   elevationLossM: 2100, country: "USA", nextEditionDate: _d(2026, 11, 21), terrainDifficulty: .easy),

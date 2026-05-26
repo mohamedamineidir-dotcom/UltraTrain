@@ -15,7 +15,7 @@ import Foundation
 ///   mountain-athlete calibration.
 /// - Repeated long-uphill / repeated medium-uphill: Koop's pragmatic
 ///   substitute when athlete lacks a 30-min sustained climb (*TEU* Ch. 7).
-/// - Treadmill incline: House & Johnston Ch. 5 — primary recommendation
+/// - Treadmill incline: House & Johnston Ch. 5, primary recommendation
 ///   for flat-region athletes prepping for mountain races.
 enum FitnessTestVariant: String, Sendable, Codable {
 
@@ -75,14 +75,14 @@ enum FitnessTestVariant: String, Sendable, Codable {
             Record the distance you covered. Your VMA (km/h) = distance in meters ÷ 100.
             (e.g., 1500m → VMA 15 km/h)
 
-            The result re-anchors all your training paces — easy, threshold, intervals, race pace.
+            The result re-anchors all your training paces, easy, threshold, intervals, race pace.
             """
         case .fiveKTT:
             return """
             5K time trial.
 
             Warm up 15-20 min easy + 4-6 strides.
-            Run 5 km as hard as you sustainably can. Track or flat road, even pacing — don't go out hard.
+            Run 5 km as hard as you sustainably can. Track or flat road, even pacing, don't go out hard.
             Cool down 10-15 min easy.
 
             Record your finish time. The result re-anchors your half-marathon / marathon pace targets via Daniels VDOT.
@@ -92,7 +92,7 @@ enum FitnessTestVariant: String, Sendable, Codable {
             30-min sustained uphill test (House & Johnston).
 
             Warm up 15-20 min easy on flat.
-            Run 30 minutes uphill at threshold effort — the hardest sustainable pace where you can still breathe rhythmically (about 80-85% max HR).
+            Run 30 minutes uphill at threshold effort, the hardest sustainable pace where you can still breathe rhythmically (about 80-85% max HR).
             Cool down jog down + 10 min easy.
 
             Record average HR + total elevation gain.
@@ -125,26 +125,26 @@ enum FitnessTestVariant: String, Sendable, Codable {
             30-min treadmill incline test.
 
             Warm up 10 min on flat (or 0% incline).
-            Set incline to 8-12% (steeper if you can sustain). Run 30 min at threshold effort — hardest sustainable pace where you can still breathe rhythmically.
+            Set incline to 8-12% (steeper if you can sustain). Run 30 min at threshold effort, hardest sustainable pace where you can still breathe rhythmically.
             Cool down 5-10 min flat.
 
             Record average HR + speed used.
-            Calibrates your threshold zones — House & Johnston's primary recommendation for flat-region athletes.
+            Calibrates your threshold zones, House & Johnston's primary recommendation for flat-region athletes.
             """
         }
     }
 
-    /// Coach advice — short, framed as "this is a test, not a workout."
+    /// Coach advice, short, framed as "this is a test, not a workout."
     var coachAdvice: String {
         switch self {
         case .vmaFlat6Min:
-            return "📊 VMA test, not a workout. Go all-out over 6 min — no pacing games. Track or flat road. Distance covered ÷ 100 = your VMA. Log it on validate so we can re-anchor your paces."
+            return "📊 VMA test, not a workout. Go all-out over 6 min, no pacing games. Track or flat road. Distance covered ÷ 100 = your VMA. Log it on validate so we can re-anchor your paces."
         case .fiveKTT:
-            return "📊 5K time trial. Test, not workout. Even pacing — first 1K should not be the fastest. Log your finish time so we can re-anchor your paces."
+            return "📊 5K time trial. Test, not workout. Even pacing, first 1K should not be the fastest. Log your finish time so we can re-anchor your paces."
         case .uphillSustained30Min, .uphillRepeats4x8, .uphillRepeats6x4:
-            return "📊 Threshold test — hardest sustainable effort, NOT all-out. You should be able to speak in 3-4 word fragments, not full sentences. Log your average HR (and pace if you have it) on validate."
+            return "📊 Threshold test, hardest sustainable effort, NOT all-out. You should be able to speak in 3-4 word fragments, not full sentences. Log your average HR (and pace if you have it) on validate."
         case .treadmillIncline30Min:
-            return "📊 Treadmill threshold test. Pick an incline you can sustain for 30 min — start conservative, you can always push the speed up after 10 min if it feels too easy. Log average HR + speed."
+            return "📊 Treadmill threshold test. Pick an incline you can sustain for 30 min, start conservative, you can always push the speed up after 10 min if it feels too easy. Log average HR + speed."
         }
     }
 
@@ -164,7 +164,7 @@ enum FitnessTestVariant: String, Sendable, Codable {
     }
 
     /// Whether this variant produces a recalibrable VMA signal. Trail
-    /// uphill / treadmill tests calibrate threshold zones (HR-based) —
+    /// uphill / treadmill tests calibrate threshold zones (HR-based)
     /// for now we surface the result but don't auto-modify the plan
     /// for those because the codebase's pace prescriptions don't use
     /// HR zones for trail.

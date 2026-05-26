@@ -26,7 +26,7 @@ struct RaceNameDateStepView: View {
                 .padding(.top, Theme.Spacing.xl)
 
                 VStack(spacing: Theme.Spacing.lg) {
-                    // Race Name — always visible
+                    // Race Name, always visible
                     VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                         Text("Race Name")
                             .font(.headline)
@@ -64,7 +64,7 @@ struct RaceNameDateStepView: View {
                         shortRoadRaceWarning
                     }
 
-                    // Race Date — always visible
+                    // Race Date, always visible
                     VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                         Text("Race Date")
                             .font(.headline)
@@ -81,7 +81,7 @@ struct RaceNameDateStepView: View {
                     .opacity(viewModel.hasNoRace ? 0.4 : 1.0)
                     .disabled(viewModel.hasNoRace)
 
-                    // No race option — at the bottom
+                    // No race option, at the bottom
                     Button {
                         viewModel.hasNoRace.toggle()
                     } label: {
@@ -131,7 +131,7 @@ struct RaceNameDateStepView: View {
         HStack(alignment: .top, spacing: Theme.Spacing.sm) {
             Image(systemName: "info.circle.fill")
                 .foregroundStyle(.blue)
-            Text("UltraTrain is built for trail and ultra-distance races. For shorter road events, features like altitude training and nutrition planning shine most on longer distances. You can still create a plan — but to get the most out of this app, consider using it for your next trail or long-distance adventure!")
+            Text("UltraTrain is built for trail and ultra-distance races. For shorter road events, features like altitude training and nutrition planning shine most on longer distances. You can still create a plan, but to get the most out of this app, consider using it for your next trail or long-distance adventure!")
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }

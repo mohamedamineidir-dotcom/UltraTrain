@@ -1,6 +1,6 @@
 import Foundation
 
-/// Primary nutrition goal — drives how aggressive the race-day plan is.
+/// Primary nutrition goal, drives how aggressive the race-day plan is.
 ///
 /// Research basis: a finish-focused runner prioritizes GI safety and finishes
 /// comfortably at 45-60 g/hr, while a competitive runner needs 80-100+ g/hr

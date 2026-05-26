@@ -53,7 +53,7 @@ enum ZoneDriftAlertCalculator {
 
         let direction = state.currentZone > target ? "Slow down" : "Pick up pace"
         let durationFormatted = formatDuration(driftDuration)
-        let message = "\(direction) — Zone \(state.currentZone) for \(durationFormatted), target is Zone \(target)"
+        let message = "\(direction), Zone \(state.currentZone) for \(durationFormatted), target is Zone \(target)"
 
         return ZoneDriftAlert(
             message: message,

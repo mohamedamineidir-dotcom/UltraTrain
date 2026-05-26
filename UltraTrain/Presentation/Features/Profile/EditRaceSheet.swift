@@ -226,7 +226,7 @@ struct EditRaceSheet: View {
 
     /// Surface a seconds picker on the target-time field for road
     /// races up to marathon (inclusive). The 36:01 vs 36:55 gap in a
-    /// 10K shifts target paces by ~10 sec/km — minute-only precision
+    /// 10K shifts target paces by ~10 sec/km, minute-only precision
     /// would lose that signal.
     var showsTargetTimeSeconds: Bool {
         let isRoadByType = raceType == .road
@@ -235,7 +235,7 @@ struct EditRaceSheet: View {
         return isRoad && distanceKm > 0 && distanceKm <= 42.195
     }
 
-    /// True when this race is a road B/C race with a target time —
+    /// True when this race is a road B/C race with a target time
     /// the only case where B-race specificity opt-in makes sense.
     /// Trail/ultra B/C races and `.finish` goals don't surface the
     /// toggle (consensus: trail/ultra prep IS the specificity; no

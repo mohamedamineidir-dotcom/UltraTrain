@@ -10,7 +10,7 @@ final class NutritionPreferencesSwiftDataModel {
     var excludedProductIdsData: Data = Data()
     var favoriteProductIdsData: Data = Data()
     var updatedAt: Date = Date()
-    // New columns — all optional so existing stores migrate cleanly.
+    // New columns, all optional so existing stores migrate cleanly.
     // Richer nested fields (sets, SweatProfile) are JSON-encoded into
     // `extendedPreferencesJson` to avoid a wave of new columns.
     var nutritionGoalRaw: String?

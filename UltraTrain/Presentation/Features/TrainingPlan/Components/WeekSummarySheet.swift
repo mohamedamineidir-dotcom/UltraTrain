@@ -7,7 +7,7 @@ struct WeekSummarySheet: View {
     let week: TrainingWeek?
     /// True when the parent plan is a road race plan. Drives the
     /// metrics section to show Distance (planned + completed) and
-    /// hide Elevation — road athletes don't train D+ as a target.
+    /// hide Elevation, road athletes don't train D+ as a target.
     /// Trail/ultra plans (default false) keep the existing
     /// Duration + Elevation + (conditional) Distance layout.
     var isRoad: Bool = false

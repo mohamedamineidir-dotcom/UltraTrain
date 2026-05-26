@@ -77,11 +77,11 @@ enum AdvancedRunMetricsCalculator {
         let weight = weightKg ?? 70.0
         let met: Double
         switch averagePace {
-        case ..<300: met = 12.0     // < 5:00/km — fast running
+        case ..<300: met = 12.0     // < 5:00/km, fast running
         case 300..<360: met = 10.0  // 5:00-6:00/km
         case 360..<420: met = 9.0   // 6:00-7:00/km
         case 420..<480: met = 8.0   // 7:00-8:00/km
-        default: met = 7.0          // > 8:00/km — slow jogging/walking
+        default: met = 7.0          // > 8:00/km, slow jogging/walking
         }
         let durationHours = duration / 3600.0
         return met * weight * durationHours

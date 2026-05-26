@@ -38,7 +38,7 @@ final class SyncedAthleteRepository: AthleteRepository, @unchecked Sendable {
             return localAthlete
         }
 
-        // No local athlete — try to restore from server
+        // No local athlete, try to restore from server
         return await restoreFromRemoteIfNeeded()
     }
 

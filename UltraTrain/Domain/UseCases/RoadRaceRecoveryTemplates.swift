@@ -10,7 +10,7 @@ import Foundation
 ///   easy + light strides"; a marathon W1 is "mostly rest plus walking
 ///   or one short cross-training session."
 /// - Drops vertical-gain entirely (road plans had it via the generic
-///   recovery template — wrong for road athletes anyway).
+///   recovery template, wrong for road athletes anyway).
 /// - Modifies by athlete experience and philosophy. Beginners get an
 ///   extra rest day; performance philosophy keeps slightly more
 ///   volume in late recovery; enjoyment replaces some easy runs with
@@ -19,16 +19,16 @@ import Foundation
 ///   not the 60-70% the in-plan recovery template aims at.
 ///
 /// Sources:
-/// - Daniels, *Running Formula* Ch. 10 — "easy day per 3 km of race"
+/// - Daniels, *Running Formula* Ch. 10, "easy day per 3 km of race"
 ///   rule scaling recovery to race distance
-/// - Pfitzinger, *Advanced Marathoning* Ch. 9 — post-marathon protocol
+/// - Pfitzinger, *Advanced Marathoning* Ch. 9, post-marathon protocol
 ///   (5 days easy / cross-train, then 3-5 mi jogs, 2-3 weeks rebuild)
-/// - Hansons, *Marathon Method* Ch. 10 — 7-10 days zero training, then
+/// - Hansons, *Marathon Method* Ch. 10, 7-10 days zero training, then
 ///   gradual easy return; cross-training if joint pain or DOMS persists
-/// - Magness, *The Science of Running* Ch. 14 — recovery cadence and
+/// - Magness, *The Science of Running* Ch. 14, recovery cadence and
 ///   neuromuscular re-engagement
-/// - Galloway, *Marathon* — "recovery week per major race" guideline
-/// - Hudson, *Run Faster* — 5K / 10K recovery (lighter than half / marathon)
+/// - Galloway, *Marathon*, "recovery week per major race" guideline
+/// - Hudson, *Run Faster*, 5K / 10K recovery (lighter than half / marathon)
 enum RoadRaceRecoveryTemplates {
 
     // MARK: - Public API
@@ -80,7 +80,7 @@ enum RoadRaceRecoveryTemplates {
         case tenK          // 8-15 km
         case halfMarathon  // 15-30 km
         case marathon      // 30-50 km
-        case ultra         // 50+ km (rare road category — 50K, 50mi road)
+        case ultra         // 50+ km (rare road category, 50K, 50mi road)
 
         static func from(distanceKm: Double) -> RoadRaceClass {
             switch distanceKm {
@@ -143,7 +143,7 @@ enum RoadRaceRecoveryTemplates {
             (3, easy(scaled(35, mod), "Easy 35 min + 4 strides if legs feel sharp.")),
             (4, rest()),
             (5, easy(scaled(45, mod), "Easy 45-50 min on flat.")),
-            (6, mod.isPerformance ? easy(scaled(30, mod), "Easy 30 min — performance retains volume.") : rest()),
+            (6, mod.isPerformance ? easy(scaled(30, mod), "Easy 30 min, performance retains volume.") : rest()),
         ]
     }
 
@@ -159,14 +159,14 @@ enum RoadRaceRecoveryTemplates {
             (3, easy(scaled(40, mod), "Easy 40 min + 4 strides.")),
             (4, rest()),
             (5, easy(scaled(50, mod), "Easy 50 min on flat.")),
-            (6, mod.isPerformance ? easy(scaled(30, mod), "Easy 30 min — performance philosophy.") : rest()),
+            (6, mod.isPerformance ? easy(scaled(30, mod), "Easy 30 min, performance philosophy.") : rest()),
         ]
     }
 
     // MARK: - Half marathon (1 recovery week)
 
     private static func halfWeek1(_ mod: Modifiers) -> [(Int, RecoverySession)] {
-        // ~40% of peak. HM produces real muscle damage — 1-2 days off
+        // ~40% of peak. HM produces real muscle damage, 1-2 days off
         // first, then progressive return.
         [
             (0, rest()),
@@ -175,7 +175,7 @@ enum RoadRaceRecoveryTemplates {
             (3, rest()),
             (4, easy(scaled(35, mod), "Easy 35 min, conversational.")),
             (5, mod.isEnjoyment ? walk(scaled(30, mod)) : easy(scaled(35, mod), "Easy 35 min, light.")),
-            (6, easy(scaled(55, mod), "Easy 50-55 min on flat. No pace targets — by feel only.")),
+            (6, easy(scaled(55, mod), "Easy 50-55 min on flat. No pace targets, by feel only.")),
         ]
     }
 
@@ -202,7 +202,7 @@ enum RoadRaceRecoveryTemplates {
         // W2 of 3. Pfitzinger *Adv. Marathoning* Plan A reverse taper W2:
         // 4 runs (Tue/Thu/Sat/Sun pattern). Hansons Marathon Method Ch.10
         // is even more conservative at 3-4 easy runs. All recovery pace,
-        // no quality. Identical across philosophies — performance doesn't
+        // no quality. Identical across philosophies, performance doesn't
         // get extra running here; muscle damage doesn't care about
         // training-prep style and the deep aerobic damage from a marathon
         // takes 2-3 weeks to clear (Saugy 2013, Hammerle & Tartaruga 2019).
@@ -267,7 +267,7 @@ enum RoadRaceRecoveryTemplates {
             (0, rest()),
             (1, easy(scaled(40, mod), "Easy 40 min + 4 strides.")),
             (2, easy(scaled(35, mod), "Easy 35 min, conversational.")),
-            (3, mod.isPerformance ? easy(scaled(30, mod), "Easy 30 min — performance retains volume.") : rest()),
+            (3, mod.isPerformance ? easy(scaled(30, mod), "Easy 30 min, performance retains volume.") : rest()),
             (4, easy(scaled(45, mod), "Easy 45 min on flat.")),
             (5, easy(scaled(35, mod), "Easy 35 min, light.")),
             (6, easy(scaled(75, mod), "Easy 70-80 min on flat.")),
@@ -292,7 +292,7 @@ enum RoadRaceRecoveryTemplates {
         RecoverySession(
             type: .crossTraining, intensity: .easy,
             durationSeconds: TimeInterval(minutes * 60),
-            description: "Cross-training \(minutes) min — easy bike, swim, or elliptical. Low-impact aerobic work while running tissue rebuilds."
+            description: "Cross-training \(minutes) min, easy bike, swim, or elliptical. Low-impact aerobic work while running tissue rebuilds."
         )
     }
 

@@ -139,7 +139,7 @@ struct PhaseHeaderCard: View {
     static func description(for phase: TrainingPhase, focus: PhaseFocus? = nil, isRoad: Bool = false) -> String {
         // Race and Recovery phases ignore the focus description because
         // a recovery / race week typically carries a taper-flavoured
-        // PhaseFocus that would describe sharpening work — misleading
+        // PhaseFocus that would describe sharpening work, misleading
         // for what the athlete actually does that week. Fall through to
         // the phase-level description below.
         if let focus, phase != .race, phase != .recovery {
@@ -157,11 +157,11 @@ struct PhaseHeaderCard: View {
         }
         switch phase {
         case .base:
-            return "Hill threshold foundation — 30-minute tempo efforts on hills"
+            return "Hill threshold foundation, 30-minute tempo efforts on hills"
         case .build:
-            return "VO2max intervals on steep climbs — short, intense hill repeats"
+            return "VO2max intervals on steep climbs, short, intense hill repeats"
         case .peak:
-            return "Sustained threshold on rolling terrain — race-specific endurance"
+            return "Sustained threshold on rolling terrain, race-specific endurance"
         case .taper:
             return "Volume reduction, freshness for race day"
         case .recovery:

@@ -8,7 +8,7 @@ import Foundation
 /// Ch. 13; Hudson *Run Faster*; Magness "transmutation"; Roche SWAP;
 /// Koop *TEU* Ch. 5):
 /// - 1-3 race-specific sessions in the 2-3 weeks before the B-race
-///   (replacing existing intervals/tempo/longRun slots — does NOT add
+///   (replacing existing intervals/tempo/longRun slots, does NOT add
 ///   net work)
 /// - Number scales by distance: 10K → 1-2; HM → 2-3; Marathon → 2-3
 ///   (incl. 1 MP-block long run)
@@ -83,7 +83,7 @@ enum BRaceSpecificityCalculator {
 
             // Gap-to-A-race rule: weeks between B-race and A-race.
             let weeksToARace = max(0, skeletons.count - bRaceWeekNumber)
-            // Skip if too close — don't compromise A-race taper.
+            // Skip if too close, don't compromise A-race taper.
             if weeksToARace < 3 { continue }
 
             // Gap-from-prior-race rule: skip if athlete is still
@@ -118,7 +118,7 @@ enum BRaceSpecificityCalculator {
                 guard injectionWeek >= 1, injectionWeek <= skeletons.count else { continue }
                 let skeleton = skeletons[injectionWeek - 1]
                 // Skip recovery weeks + race weeks + taper. Peak is
-                // OK — when a B-race lands in the A-race's peak phase,
+                // OK, when a B-race lands in the A-race's peak phase,
                 // the surrounding training weeks are in peak too, and
                 // there's no fitness-development reason to forbid B-race
                 // specificity in those weeks (the alternative is doing
@@ -195,7 +195,7 @@ enum BRaceSpecificityCalculator {
             count = min(count, 2)
         }
 
-        // Athlete-level dampers — beginners + enjoyment athletes get
+        // Athlete-level dampers, beginners + enjoyment athletes get
         // one less specific session.
         if experience == .beginner { count -= 1 }
         if philosophy == .enjoyment { count -= 1 }

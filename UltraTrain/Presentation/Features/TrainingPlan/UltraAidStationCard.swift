@@ -6,11 +6,11 @@ import SwiftUI
 /// aid stations they'll actually hit.
 ///
 /// Research basis:
-///   • Costa 2017 — "Systematic review: exercise-induced GI syndrome"
+///   • Costa 2017, "Systematic review: exercise-induced GI syndrome"
 ///     in ultra endurance. Flavour fatigue and sweet-aversion are
 ///     recurring mid-race GI symptoms; solutions are individualised
 ///     and rehearsed in training.
-///   • Jeukendrup ISSN 2017 — during races ≥ 2h, 60-90 g carbs/hr from
+///   • Jeukendrup ISSN 2017, during races ≥ 2h, 60-90 g carbs/hr from
 ///     multiple transportable carb sources (glucose + fructose) beats
 ///     a gel-only approach once palate resistance hits.
 ///
@@ -136,7 +136,7 @@ struct UltraAidStationCard: View {
                 ? "You tolerate sweet deep into a race, but 100 km+ will still push you past that window. Keep real food available for the final third."
                 : "You tolerate sweet through most of a race this length. Gel-led with real food as a final-stretch backup."
         case .never:
-            return "Your palate handles sweet at any distance. Stay gel-centric — but still stop at aid stations for fluid + sodium top-ups."
+            return "Your palate handles sweet at any distance. Stay gel-centric, but still stop at aid stations for fluid + sodium top-ups."
         }
     }
 
@@ -157,7 +157,7 @@ struct UltraAidStationCard: View {
                 StrategyBullet(
                     icon: "drop.fill",
                     title: "Hydration + sodium",
-                    detail: "Electrolyte drink, not plain water. 500-700 mg sodium/hr — easier to hit when you're already eating salty real food."
+                    detail: "Electrolyte drink, not plain water. 500-700 mg sodium/hr, easier to hit when you're already eating salty real food."
                 )
             ]
         case .mid:
@@ -170,7 +170,7 @@ struct UltraAidStationCard: View {
                 StrategyBullet(
                     icon: "2.circle.fill",
                     title: "Around the 2-3 hour mark",
-                    detail: "Start introducing real food at aid stations before you feel forced to. Pretzels, boiled potatoes, banana, broth — whatever's served."
+                    detail: "Start introducing real food at aid stations before you feel forced to. Pretzels, boiled potatoes, banana, broth, whatever's served."
                 ),
                 StrategyBullet(
                     icon: "3.circle.fill",
@@ -190,7 +190,7 @@ struct UltraAidStationCard: View {
                     title: "Final third",
                     detail: isHundredPlus
                         ? "Swap to real food at aid stations: broth, boiled potatoes, salted snacks. Even a strong palate fatigues past 4-5 hr."
-                        : "Have real food available as a plan-B. If gels still taste fine, stay on them — but don't force sweet if your gut resists."
+                        : "Have real food available as a plan-B. If gels still taste fine, stay on them, but don't force sweet if your gut resists."
                 ),
                 StrategyBullet(
                     icon: "drop.fill",
@@ -203,7 +203,7 @@ struct UltraAidStationCard: View {
                 StrategyBullet(
                     icon: "bolt.fill",
                     title: "Gel cadence",
-                    detail: "Stay on the cadence you've trained — 30-45 min. Alternate flavours to avoid monotony rather than palate fatigue."
+                    detail: "Stay on the cadence you've trained, 30-45 min. Alternate flavours to avoid monotony rather than palate fatigue."
                 ),
                 StrategyBullet(
                     icon: "drop.fill",
@@ -220,7 +220,7 @@ struct UltraAidStationCard: View {
     }
 
     private var footer: String {
-        "Rehearse this on your longest training runs — palate-fatigue strategy is individual and has to be tested before race day, not discovered on it."
+        "Rehearse this on your longest training runs, palate-fatigue strategy is individual and has to be tested before race day, not discovered on it."
     }
 }
 

@@ -10,7 +10,7 @@ enum RoadCoachAdviceGenerator {
     /// Generates coach advice for a road training session.
     ///
     /// `qualityTemplate` lets the advice surface the *correct* prescribed
-    /// pace for threshold sessions — cruise intervals use the faster end
+    /// pace for threshold sessions, cruise intervals use the faster end
     /// of the threshold range (1.06×), sustained tempos use the slower
     /// end (1.09×). Without it the advice falls back to the slower
     /// single-value default, which underspeeds cruise prescriptions.
@@ -56,7 +56,7 @@ enum RoadCoachAdviceGenerator {
         // peak + taper (the sessions closest in feel to race day), and never
         // during base/build (athlete is still building; specificity comes later).
         // Research: first-time marathoners most often fail in the final 10K
-        // from going out too hard — coaching emphasis = hold back, finish well.
+        // from going out too hard, coaching emphasis = hold back, finish well.
         if isFirstTimer, type == .longRun, phase == .peak || phase == .taper {
             advice = (advice ?? "") + " " + firstTimerAdvice(discipline: discipline)
         }
@@ -64,19 +64,19 @@ enum RoadCoachAdviceGenerator {
         // RR-21: Short-prep warning. When the plan has fewer weeks than
         // research-accepted minimums (marathon <12, HM <8, 10K <6), the
         // base phase is truncated and aerobic fitness won't fully develop.
-        // Surfaced on long runs in base phase only — that's when the athlete
+        // Surfaced on long runs in base phase only, that's when the athlete
         // can still reconsider their target or defer. After base, they've
         // committed.
         if isShortPrep, type == .longRun, phase == .base {
             advice = (advice ?? "") + " " + shortPrepAdvice(discipline: discipline)
         }
 
-        // RR-22: Hot-race advisory (heat + humidity). Pure coaching advice —
+        // RR-22: Hot-race advisory (heat + humidity). Pure coaching advice
         // no training-plan modification. Surfaced during peak + taper on
         // long runs and tempo sessions, the contexts where the athlete is
         // thinking about race-day execution. Advice is actionable regardless
         // of the athlete's home climate: sauna, overdressing, hydration
-        // calibration, pre-cooling — things everyone can do.
+        // calibration, pre-cooling, things everyone can do.
         if hotRaceForecast, phase == .peak || phase == .taper,
            type == .longRun || type == .tempo {
             advice = (advice ?? "") + " " + hotRaceAdvice()
@@ -86,7 +86,7 @@ enum RoadCoachAdviceGenerator {
         // surface the adjustment transparently so the athlete knows why
         // the number they see today differs from yesterday. We append
         // this only on intervals / tempo sessions (the pace types that
-        // get refined) — adding it to easy runs would be noise.
+        // get refined), adding it to easy runs would be noise.
         if let summary = refinementSummary,
            let entry = summary.entry(for: type),
            type == .intervals || type == .tempo {
@@ -147,7 +147,7 @@ enum RoadCoachAdviceGenerator {
 
     /// IR-2: transparent explanation of a feedback-driven pace refinement.
     /// Always cites the evidence count and the reason so the athlete can
-    /// trust — or push back on — the change. Silent adjustments would
+    /// trust, or push back on, the change. Silent adjustments would
     /// erode the athlete's sense of agency over their own training.
     private static func refinementNote(
         entry: RefineRoadPaceFromFeedbackUseCase.PaceRefinementSummary.Entry
@@ -170,7 +170,7 @@ enum RoadCoachAdviceGenerator {
         return "📊 Target \(direction) \(deltaSeconds)s/km (\(from) → \(to)) based on \(entry.evidenceCount) recent sessions: \(reasonText). The fitness baseline is unchanged; only this session's prescription adapts."
     }
 
-    /// RR-22: Hot-race advisory — practical heat-acclimation options the
+    /// RR-22: Hot-race advisory, practical heat-acclimation options the
     /// athlete can do wherever they live. Research: passive heat exposure
     /// (sauna, hot baths) produces ~50-70% of the acclimation adaptations
     /// of active heat training (Scoon 2007, Zurawlew 2016). Heat acclimation
@@ -180,7 +180,7 @@ enum RoadCoachAdviceGenerator {
     }
 
     /// RR-21: Short-prep advisory for compressed plans. Surfaced only during
-    /// base phase — after that, the athlete has committed and piling on
+    /// base phase, after that, the athlete has committed and piling on
     /// warnings is unhelpful.
     private static func shortPrepAdvice(discipline: RoadRaceDiscipline) -> String {
         switch discipline {
@@ -194,7 +194,7 @@ enum RoadCoachAdviceGenerator {
     }
 
     /// RR-20: First-timer coaching nudge for athletes with no prior PB at the
-    /// target race distance. Kept short and tactical — the athlete sees this
+    /// target race distance. Kept short and tactical, the athlete sees this
     /// on long runs in peak + taper, when race-day execution is on their mind.
     private static func firstTimerAdvice(discipline: RoadRaceDiscipline) -> String {
         switch discipline {

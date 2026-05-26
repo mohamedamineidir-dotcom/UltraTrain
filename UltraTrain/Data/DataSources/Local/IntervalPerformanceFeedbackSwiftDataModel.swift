@@ -15,7 +15,7 @@ final class IntervalPerformanceFeedbackSwiftDataModel {
     var actualPacesData: Data = Data()
     var completedAllReps: Bool = false
     /// -1 is a sentinel for "legacy record written before this field
-    /// existed" — callers derive the count from `completedAllReps` in
+    /// existed", callers derive the count from `completedAllReps` in
     /// that case (prescribed or 0). Values ≥ 0 are authoritative.
     var completedRepCount: Int = -1
     var perceivedEffort: Int = 0

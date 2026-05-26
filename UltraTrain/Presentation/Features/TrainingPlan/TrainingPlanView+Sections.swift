@@ -65,7 +65,7 @@ extension TrainingPlanView {
                 // at a time (Base / Build / Peak / Taper / Race), with
                 // arrow buttons + dots indicator + horizontal swipe to
                 // move between phases. Top charts and bottom banners are
-                // unchanged — only the weeks list is paginated.
+                // unchanged, only the weeks list is paginated.
                 let groups = phaseGroups(plan: plan)
                 if !groups.isEmpty {
                     let safeIndex = min(max(0, selectedPhaseIndex), groups.count - 1)
@@ -92,7 +92,7 @@ extension TrainingPlanView {
 
     /// All `plan.weeks` grouped contiguously by phase. We page over the
     /// full plan so the athlete can browse every phase even when some
-    /// of its weeks are locked behind a subscription — locked phases
+    /// of its weeks are locked behind a subscription, locked phases
     /// surface an upgrade CTA in place of week cards.
     func phaseGroups(plan: TrainingPlan) -> [(phase: TrainingPhase, weeks: [TrainingWeek])] {
         var groups: [(phase: TrainingPhase, weeks: [TrainingWeek])] = []
@@ -260,7 +260,7 @@ extension TrainingPlanView {
                 .onEnded { value in
                     let h = value.translation.width
                     let v = value.translation.height
-                    // Horizontal-dominant gesture only — leaves the parent
+                    // Horizontal-dominant gesture only, leaves the parent
                     // ScrollView free to handle vertical drags.
                     guard abs(h) > abs(v) * 1.5 else { return }
                     if h > 50, currentIndex > 0 {

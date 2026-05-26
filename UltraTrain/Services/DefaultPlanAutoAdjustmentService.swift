@@ -28,7 +28,7 @@ final class DefaultPlanAutoAdjustmentService: PlanAutoAdjustmentService {
 
         let intermediatesChanged = currentSnapshots != planSnapshots
 
-        // Target race date moved to a different week — trigger rebuild.
+        // Target race date moved to a different week, trigger rebuild.
         // The plan's last week ends on the Sunday of the original race
         // week (WeekSkeletonBuilder anchors to that Monday). If the
         // current target race lands in a different week than the plan

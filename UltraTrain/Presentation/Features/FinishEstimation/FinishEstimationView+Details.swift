@@ -98,9 +98,9 @@ extension FinishEstimationView {
     }
 
     func confidenceLabel(_ percent: Double) -> String {
-        if percent >= 70 { return "Strong prediction — good training data available" }
-        if percent >= 50 { return "Moderate prediction — more training data would improve accuracy" }
-        return "Low confidence — keep training to improve prediction accuracy"
+        if percent >= 70 { return "Strong prediction, good training data available" }
+        if percent >= 50 { return "Moderate prediction, more training data would improve accuracy" }
+        return "Low confidence, keep training to improve prediction accuracy"
     }
 
     // MARK: - Data Source Badge
@@ -186,9 +186,9 @@ extension FinishEstimationView {
 
     func calibrationDescription(_ factor: Double) -> String {
         if factor < 1.0 {
-            return "Model adjusted down — you're faster than predicted"
+            return "Model adjusted down, you're faster than predicted"
         }
-        return "Model adjusted up — you're slower than predicted"
+        return "Model adjusted up, you're slower than predicted"
     }
 
     // MARK: - Error

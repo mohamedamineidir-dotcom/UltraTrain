@@ -106,7 +106,7 @@ struct WeekCardView: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            // Left phase accent bar — outside the card padding for proper spacing
+            // Left phase accent bar, outside the card padding for proper spacing
             RoundedRectangle(cornerRadius: 3)
                 .fill(
                     LinearGradient(
@@ -308,7 +308,7 @@ extension WeekCardView {
             Divider()
                 .padding(.vertical, Theme.Spacing.sm)
 
-            // #25: weekly narrative — short coach-voice summary of
+            // #25: weekly narrative, short coach-voice summary of
             // what this week is for. Generated from phase + recovery
             // flag + volume trend. Renders once per expanded week,
             // above the session rows.
@@ -402,7 +402,7 @@ extension WeekCardView {
             ? "\(week.phase.displayName) · recovery"
             : "\(week.phase.displayName) · Week \(week.weekNumber)"
         // Next run in the same week after this one. Nil when current is
-        // last of the week — the "Next up" card hides in that case and
+        // last of the week, the "Next up" card hides in that case and
         // the page simply shows more breathing room.
         let nextSession = (idx + 1 < runs.count) ? runs[idx + 1] : nil
         let nextPreview = nextSession.map {
@@ -632,7 +632,7 @@ private struct ContextSheetItem: Identifiable {
 // MARK: - Interval Feedback Context
 
 /// Everything the per-rep feedback sheet needs to present. The view-model
-/// computes this after validation — it carries the target-pace snapshot that
+/// computes this after validation, it carries the target-pace snapshot that
 /// was in effect at prescription time, so IR-2 compares against the same
 /// number the athlete saw on the session.
 struct IntervalFeedbackContext: Identifiable, Equatable {

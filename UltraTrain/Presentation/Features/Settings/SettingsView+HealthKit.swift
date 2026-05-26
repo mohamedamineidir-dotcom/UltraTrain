@@ -120,7 +120,7 @@ extension SettingsView {
         case .unavailable: "Not available on this device"
         case .notDetermined: "Connect to sync heart rate and workouts"
         case .authorized: "Connected"
-        case .denied: "Access denied — enable in iOS Settings"
+        case .denied: "Access denied, enable in iOS Settings"
         }
     }
 

@@ -357,7 +357,7 @@ enum SessionTemplateGenerator {
             guard let exercises = grouped[category], !exercises.isEmpty else { continue }
             lines.append("▸ \(category.displayName):")
             for ex in exercises {
-                lines.append("  • \(ex.name) — \(ex.sets)×\(ex.reps)")
+                lines.append("  • \(ex.name), \(ex.sets)×\(ex.reps)")
                 if !ex.notes.isEmpty {
                     lines.append("    \(ex.notes)")
                 }
@@ -379,7 +379,7 @@ enum SessionTemplateGenerator {
             case .base:
                 return "Foundation phase: focus on learning proper form with moderate loads. Build the strength base that will support harder training later. Take 60-90 sec rest between sets."
             case .build:
-                return "Build phase: increase weight or difficulty. Add power movements. Quality over quantity — stop if form breaks down. Allow 4-6 hours between running and this session."
+                return "Build phase: increase weight or difficulty. Add power movements. Quality over quantity, stop if form breaks down. Allow 4-6 hours between running and this session."
             case .peak:
                 return "Peak maintenance: keep loads moderate, reduce volume. You're preserving strength, not building it. 2-3 sets max per exercise."
             default:
@@ -390,7 +390,7 @@ enum SessionTemplateGenerator {
         case .activation:
             switch config.phase {
             case .taper:
-                return "Light activation only. No soreness allowed — your race is close. These movements keep muscles firing without creating fatigue."
+                return "Light activation only. No soreness allowed, your race is close. These movements keep muscles firing without creating fatigue."
             case .recovery:
                 return "Gentle activation to promote blood flow and recovery. Stop immediately if anything feels off."
             default:
@@ -488,7 +488,7 @@ enum SessionTemplateGenerator {
             ? SessionDescriptionGenerator.verticalGain(phase: phase, isRecoveryWeek: false)
             : SessionDescriptionGenerator.intervals(phase: phase, isRecoveryWeek: false, weekInPhase: weekInPhase)
 
-        // Quality slot 2 (Thursday, day 4) — never consecutive with slot 1
+        // Quality slot 2 (Thursday, day 4), never consecutive with slot 1
         let q2Type: SessionType = slot2IsVG ? .verticalGain : .intervals
         let q2Intensity = slot2IsVG ? vgIntensity : intervalIntensity
         let q2Duration = slot2IsVG ? base.vgSeconds : base.intervalSeconds
@@ -626,7 +626,7 @@ enum SessionTemplateGenerator {
                         SessionDescriptionGenerator.taperEasyRun(subPhase: subPhase))),
             ]
         } else {
-            // True taper: no quality sessions — long run + easy runs + opener strides
+            // True taper: no quality sessions, long run + easy runs + opener strides
             let stridesDuration: TimeInterval = 15 * 60
             pool = [
                 (5, tpl(5, .longRun, .easy, volume.targetLongRunDurationSeconds, 0.43,
@@ -673,7 +673,7 @@ enum SessionTemplateGenerator {
         }
 
         // All sessions at easy/recovery intensity.
-        // D+ concentrated on long run only — and even on the LR we cut
+        // D+ concentrated on long run only, and even on the LR we cut
         // hard. T11: dropped LR elevation fraction from 0.52 → 0.40
         // (in-between toward the audit's 0.25). Descent is the highest
         // acute-fatigue stimulus on trail; recovery weeks should
@@ -986,7 +986,7 @@ enum SessionTemplateGenerator {
         // week 2 scales sessions ~25% closer to normal; week 3 gets
         // close to a standard easy week. Caps inherit each per-distance
         // branch's structure (rest days remain in place) so we don't
-        // accidentally promote a rest day to a workout — only durations
+        // accidentally promote a rest day to a workout, only durations
         // grow. Matches the Koop / Roche progression: week 1 deepest,
         // each subsequent week steps closer to baseline.
         let weekFactor: Double
@@ -1035,7 +1035,7 @@ enum SessionTemplateGenerator {
                 tpl(2, .recovery, .easy, base.easyRun1Seconds * 0.7, 0,
                     "Easy recovery run. Keep it relaxed."),
                 tpl(3, .intervals, .moderate, base.intervalSeconds * 0.6, 0,
-                    "Moderate intervals. Reintroduce quality — don't force it."),
+                    "Moderate intervals. Reintroduce quality, don't force it."),
                 tpl(4, .recovery, .easy, base.easyRun2Seconds * 0.7, 0,
                     "Easy run. Legs should be feeling better."),
                 tpl(5, .recovery, .easy, base.easyRun2Seconds * 0.65, 0,
@@ -1061,7 +1061,7 @@ enum SessionTemplateGenerator {
                     "Moderately shortened long run. Back toward normal."),
             ]
         } else {
-            // < 25K: almost normal week — fast return to quality + near-full long run
+            // < 25K: almost normal week, fast return to quality + near-full long run
             baseTemplates = [
                 tpl(0, .rest, .easy, 0, 0, "Rest day after your race."),
                 tpl(1, .recovery, .easy, base.easyRun1Seconds * 0.8, 0,
@@ -1081,7 +1081,7 @@ enum SessionTemplateGenerator {
 
         // Week 1 (factor = 1.0) returns templates unchanged. Weeks 2 and
         // 3 scale running session durations to walk back toward normal
-        // training. Rest and race days are preserved as-is — we only
+        // training. Rest and race days are preserved as-is, we only
         // scale durations, never promote a rest day into a workout.
         guard weekFactor != 1.0 else { return baseTemplates }
         return baseTemplates.map { template in
@@ -1162,7 +1162,7 @@ enum SessionTemplateGenerator {
         experience: ExperienceLevel,
         philosophy: TrainingPhilosophy
     ) -> (lower: Double, upper: Double) {
-        // Base by race distance. Conservative defaults — we advise the
+        // Base by race distance. Conservative defaults, we advise the
         // *lower* end of what research supports so athletes who tolerate
         // more can self-adjust upward, but we never recommend numbers
         // that risk GI distress for a typical athlete in the tier.
@@ -1177,7 +1177,7 @@ enum SessionTemplateGenerator {
         default:           base = (60, 75)  // 100mi / 200K class
         }
 
-        // Experience tier — larger guts trained for higher hourly intake.
+        // Experience tier, larger guts trained for higher hourly intake.
         let expBump: Double
         switch experience {
         case .beginner:     expBump = -5
@@ -1186,7 +1186,7 @@ enum SessionTemplateGenerator {
         case .elite:        expBump = 10
         }
 
-        // Philosophy — performance mindset trains the gut higher;
+        // Philosophy, performance mindset trains the gut higher;
         // enjoyment athletes stay comfortable.
         let philBump: Double
         switch philosophy {

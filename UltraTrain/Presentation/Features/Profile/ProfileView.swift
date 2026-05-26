@@ -143,7 +143,7 @@ struct ProfileView: View {
                     // generic. The underlying repositories
                     // (socialProfile / friend / sharedRun / activityFeed
                     // / groupChallenge) and `socialSection` view stay
-                    // in place — flip back on whenever social becomes a
+                    // in place, flip back on whenever social becomes a
                     // focus, no data migration needed.
                 }
             }
@@ -255,7 +255,7 @@ struct ProfileView: View {
             // Single full-width glass card carrying header + chips +
             // 3×2 stats grid. Sits inside one List row with the row
             // background cleared so the card's own glass surface
-            // shows through — matches the futuristic DNA used on
+            // shows through, matches the futuristic DNA used on
             // Dashboard / Plan / Session Detail instead of the plain
             // grouped-list look the profile had before.
             Section {
@@ -288,7 +288,7 @@ struct ProfileView: View {
                     .accessibilityElement(children: .combine)
 
                     // Chips row. Pulled out of the avatar HStack so
-                    // they have the full card width to lay out on —
+                    // they have the full card width to lay out on
                     // sharing the row with the 44pt avatar squeezed
                     // them and they were wrapping ("Ad-vanced", "22 /
                     // yrs"). `.fixedSize` per chip prevents wrapping
@@ -304,7 +304,7 @@ struct ProfileView: View {
 
                     athleteStatsGrid(athlete)
 
-                    // HR Zones nav row. Just label content — the
+                    // HR Zones nav row. Just label content, the
                     // NavigationLink supplies its own trailing chevron,
                     // adding a second one was the source of the double
                     // arrow.
@@ -362,7 +362,7 @@ struct ProfileView: View {
             Capsule().stroke(Theme.Colors.label.opacity(0.08), lineWidth: 0.5)
         )
         // Lock the chip to its intrinsic width so adjacent chips never
-        // share-the-shrink with each other when the row is narrow —
+        // share-the-shrink with each other when the row is narrow
         // each one gets exactly the width it needs and the row scrolls
         // / clips before any chip wraps.
         .fixedSize(horizontal: true, vertical: false)

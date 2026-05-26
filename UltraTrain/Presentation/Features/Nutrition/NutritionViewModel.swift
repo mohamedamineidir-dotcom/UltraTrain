@@ -105,7 +105,7 @@ final class NutritionViewModel {
     // MARK: - Generate
 
     /// Kicks off plan generation. If the athlete hasn't completed the
-    /// pre-plan nutrition onboarding, presents the sheet first — the sheet's
+    /// pre-plan nutrition onboarding, presents the sheet first, the sheet's
     /// "Generate" button then calls `generatePlan(with:)` directly.
     func startPlanGeneration() async {
         if needsNutritionOnboarding {

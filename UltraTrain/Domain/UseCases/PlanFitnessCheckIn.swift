@@ -2,7 +2,7 @@ import Foundation
 
 /// Selects plan weeks where a periodic fitness check-in (a short 2K
 /// time trial) should be inserted to re-anchor pace targets with fresh
-/// data. Long training blocks drift — the athlete's fitness quietly
+/// data. Long training blocks drift, the athlete's fitness quietly
 /// improves but the plan's prescribed paces are still derived from
 /// whatever baseline existed at plan generation. Without periodic
 /// re-anchoring, quality sessions gradually under-prescribe as the
@@ -17,10 +17,10 @@ import Foundation
 ///     race-specific; taper + race are sacred; post-race recovery is
 ///     not for hard efforts.
 ///   • Recovery weeks always skipped.
-///   • First check-in is the 6th eligible week at the earliest — the
+///   • First check-in is the 6th eligible week at the earliest, the
 ///     athlete needs some training to actually test.
 ///   • Cadence: every 6 eligible weeks thereafter.
-///   • Skip any week within ±1 of an auto-inserted tune-up — two hard
+///   • Skip any week within ±1 of an auto-inserted tune-up, two hard
 ///     tests back-to-back is bad load management.
 ///   • Plan needs ≥10 eligible base/build weeks total before any
 ///     check-in runs. Short plans don't have room for a fitness test
@@ -56,7 +56,7 @@ enum PlanFitnessCheckIn {
         return result
     }
 
-    /// Description shown on the check-in session card. Kept short —
+    /// Description shown on the check-in session card. Kept short
     /// details go into the coach advice field.
     static let description = """
 Fitness check-in: 2 km time trial at max effort.
@@ -74,7 +74,7 @@ The result updates the plan's target paces for the next block.
     /// refinement can kick in.
     static let coachAdvice = """
 📊 Fitness check-in. This is a test, not a workout. Go all-out over \
-2 km — no pacing games. Your time updates the pace targets for the \
+2 km, no pacing games. Your time updates the pace targets for the \
 next block of training so the prescriptions stay honest to your \
 current fitness. Make sure to log your actual pace when you validate.
 """

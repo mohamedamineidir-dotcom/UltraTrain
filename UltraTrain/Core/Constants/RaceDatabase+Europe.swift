@@ -5,7 +5,7 @@ private func _d(_ year: Int, _ month: Int, _ day: Int) -> Date {
     DateComponents(calendar: .current, year: year, month: month, day: day).date!
 }
 
-// MARK: - Europe (excluding France — see RaceDatabase+FranceTrails)
+// MARK: - Europe (excluding France, see RaceDatabase+FranceTrails)
 
 extension RaceDatabase {
 

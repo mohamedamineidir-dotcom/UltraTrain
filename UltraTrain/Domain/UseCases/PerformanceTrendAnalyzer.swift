@@ -69,7 +69,7 @@ enum PerformanceTrendAnalyzer {
         let summary: String
         switch direction {
         case .improving:
-            summary = "You're getting faster at the same heart rate — aerobic fitness is building."
+            summary = "You're getting faster at the same heart rate, aerobic fitness is building."
         case .stable:
             summary = "Aerobic efficiency is steady. Consistent effort is maintaining your fitness."
         case .declining:
@@ -223,7 +223,7 @@ enum PerformanceTrendAnalyzer {
         let summary: String
         switch direction {
         case .improving:
-            summary = "Resting heart rate is trending down — a sign of improving cardiovascular fitness."
+            summary = "Resting heart rate is trending down, a sign of improving cardiovascular fitness."
         case .stable:
             summary = "Resting heart rate is stable."
         case .declining:

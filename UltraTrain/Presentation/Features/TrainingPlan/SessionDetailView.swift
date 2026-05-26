@@ -29,7 +29,7 @@ struct SessionDetailView: View {
     var weekProgress: WeekProgress?
     /// Fires when the athlete validates a fitness-test session with
     /// variant-specific results. Variant is auto-detected from the
-    /// session's `intervalFocus` field — no extra plumbing required.
+    /// session's `intervalFocus` field, no extra plumbing required.
     var onCompleteFitnessTest: ((FitnessTestVariant, TestResultInput, PerceivedFeeling?) -> Void)?
 
     @State private var showSkipReasonSheet = false
@@ -63,7 +63,7 @@ struct SessionDetailView: View {
 
                     // Resolve the linked workout once. When present,
                     // WorkoutBlocksSection carries the athlete-facing
-                    // structure + per-phase visual breakdown — the
+                    // structure + per-phase visual breakdown, the
                     // standalone Description / Session-Structure cards
                     // become redundant and are dropped to keep the
                     // page tight (user feedback: too many cards).
@@ -188,7 +188,7 @@ struct SessionDetailView: View {
 
     /// Swap candidates filtered to the same calendar week as the current
     /// session. Used by RestDaySwapSheet so the athlete only sees days
-    /// from the rest day's own week — cross-week noise would defeat the
+    /// from the rest day's own week, cross-week noise would defeat the
     /// "pick when to rest this week" mental model.
     private var sameWeekCandidates: [SwapCandidate] {
         let calendar = Calendar.current
@@ -202,7 +202,7 @@ struct SessionDetailView: View {
     private var headerSection: some View {
         let tint = session.isSkipped ? Theme.Colors.tertiaryLabel : session.intensity.color
         return HStack(alignment: .top, spacing: Theme.Spacing.md) {
-            // Glowing icon disc — replaces the bare large-title icon.
+            // Glowing icon disc, replaces the bare large-title icon.
             // Anchors the eye and ties to the session's intensity color.
             ZStack {
                 Circle()
@@ -307,7 +307,7 @@ struct SessionDetailView: View {
     }
 
     private var statsSection: some View {
-        // Stats trio shares the intensity tint with the header — they
+        // Stats trio shares the intensity tint with the header, they
         // sit on the same line as a paired "what is this session"
         // block, so different colours per stat read as noise.
         let tint = session.intensity.color
@@ -465,7 +465,7 @@ struct SessionDetailView: View {
         for line in lines {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
             if trimmed.hasPrefix("\u{2022}") {
-                // Exercise line: "• Exercise Name — 3×10-12"
+                // Exercise line: "• Exercise Name, 3×10-12"
                 let content = trimmed.dropFirst().trimmingCharacters(in: .whitespaces)
                 let parts = content.components(separatedBy: " \u{2014} ")
                 if parts.count >= 2 {
@@ -494,7 +494,7 @@ struct SessionDetailView: View {
     // MARK: - Description
 
     private var descriptionSection: some View {
-        // Paired with the Pace & HR card above under the info tint —
+        // Paired with the Pace & HR card above under the info tint
         // both are reference / detail cards, so sharing a colour
         // groups them visually as the "session reference" block.
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {

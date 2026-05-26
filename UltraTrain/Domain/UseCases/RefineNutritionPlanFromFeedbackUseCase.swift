@@ -29,7 +29,7 @@ import Foundation
 /// 4. **Under-fueling detection**
 ///    If multiple sessions have `bonked == true` while `actualCarbsConsumed`
 ///    is below the planned target, we do NOT lower the ceiling. Instead
-///    we leave a caller-visible note — the athlete may simply have
+///    we leave a caller-visible note, the athlete may simply have
 ///    under-fueled rather than being intolerant.
 enum RefineNutritionPlanFromFeedbackUseCase {
 
@@ -43,7 +43,7 @@ enum RefineNutritionPlanFromFeedbackUseCase {
 
     /// Applies the rules above. Returns the unchanged preferences (with an
     /// empty notes list) if there aren't at least 2 feedback sessions to
-    /// draw signal from — one feedback is too noisy to act on.
+    /// draw signal from, one feedback is too noisy to act on.
     static func refine(
         preferences: NutritionPreferences,
         feedbacks: [NutritionSessionFeedback]
@@ -67,7 +67,7 @@ enum RefineNutritionPlanFromFeedbackUseCase {
             // opts in via the onboarding sheet).
             if previousCeiling == nil || best < previousCeiling! {
                 refined.carbsPerHourTolerance = best
-                notes.append("Carbs/hr ceiling updated to \(best) g — highest you've comfortably tolerated.")
+                notes.append("Carbs/hr ceiling updated to \(best) g, highest you've comfortably tolerated.")
             }
         }
 
@@ -79,7 +79,7 @@ enum RefineNutritionPlanFromFeedbackUseCase {
             let dropped = max(30, Int(Double(mostRecent.actualCarbsConsumed) * 0.85))
             if dropped < (refined.carbsPerHourTolerance ?? Int.max) {
                 refined.carbsPerHourTolerance = dropped
-                notes.append("Carbs/hr ceiling dropped 15% to \(dropped) g — GI symptoms reported on every recent session.")
+                notes.append("Carbs/hr ceiling dropped 15% to \(dropped) g, GI symptoms reported on every recent session.")
             }
         }
 
@@ -126,7 +126,7 @@ enum RefineNutritionPlanFromFeedbackUseCase {
             $0.bonked && $0.actualCarbsConsumed < $0.plannedCarbsPerHour
         }
         if bonkedUnderplanned.count >= 2 {
-            notes.append("You've bonked \(bonkedUnderplanned.count) times with actual intake below plan — try hitting the full target before considering a lower ceiling.")
+            notes.append("You've bonked \(bonkedUnderplanned.count) times with actual intake below plan, try hitting the full target before considering a lower ceiling.")
         }
 
         return RefinementResult(

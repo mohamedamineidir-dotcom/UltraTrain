@@ -1,7 +1,7 @@
 import Foundation
 
 /// Surfaces structural mismatches between an athlete's A-race and the
-/// B/A intermediate races scheduled before it. Pure analysis — never
+/// B/A intermediate races scheduled before it. Pure analysis, never
 /// mutates the plan, never auto-changes priorities. The athlete keeps
 /// the choices they declared; this just names problems they may not
 /// have spotted.
@@ -12,7 +12,7 @@ import Foundation
 /// the ultra realistically takes 4-6 weeks, so the marathon goal is
 /// structurally compromised before training even starts. The current
 /// plan generator silently accepts this and produces a plan tuned for
-/// the marathon — leaving the athlete to discover the problem in the
+/// the marathon, leaving the athlete to discover the problem in the
 /// final taper or, worse, on race day.
 enum PlanRaceCoherenceAnalyzer {
 
@@ -21,7 +21,7 @@ enum PlanRaceCoherenceAnalyzer {
     /// problem). Each match emits a single recommendation.
     ///
     /// Both effective-km ratio and time-gap thresholds must trip for
-    /// a recommendation to fire — a B-race that's harder but happens
+    /// a recommendation to fire, a B-race that's harder but happens
     /// 12 weeks out is fine; a B-race the same size as A-race 4
     /// weeks out is fine. Only the combination is the problem.
     ///
@@ -63,7 +63,7 @@ enum PlanRaceCoherenceAnalyzer {
 
             // Mismatch criteria:
             // - B-race ≥ 1.5× the effective km of A-race (meaningfully
-            //   more demanding — same-size races don't trip this)
+            //   more demanding, same-size races don't trip this)
             // - AND falls within 50 days (~7 weeks) of A-race
             //   (recovery from a 1.5×-harder effort takes 4-6 weeks
             //   minimum; less than 7 weeks is the problem zone)
@@ -79,7 +79,7 @@ enum PlanRaceCoherenceAnalyzer {
                 type: .bRaceMismatch,
                 severity: .recommended,
                 title: "B-race may compromise A-race goal",
-                message: "Your B-race \(bRace.name) (\(bDate), ~\(bEffStr) effective km) is more demanding than your A-race \(targetRace.name) (~\(tEffStr) effective km), and falls only ~\(weeksBefore) weeks before. Recovery from an effort that size realistically takes 4-6 weeks — your A-race goal will likely be affected. Consider whether to swap A/B priority, set a more conservative A-race goal, or push the A-race further out.",
+                message: "Your B-race \(bRace.name) (\(bDate), ~\(bEffStr) effective km) is more demanding than your A-race \(targetRace.name) (~\(tEffStr) effective km), and falls only ~\(weeksBefore) weeks before. Recovery from an effort that size realistically takes 4-6 weeks, your A-race goal will likely be affected. Consider whether to swap A/B priority, set a more conservative A-race goal, or push the A-race further out.",
                 actionLabel: "Got it",
                 affectedSessionIds: []
             ))

@@ -25,7 +25,7 @@ struct WorkoutBlocksSection: View {
                     if phase.phaseType == .work {
                         workRecoveryGroup(work: phase)
                     }
-                    // Skip standalone recovery — it's rendered inside the group
+                    // Skip standalone recovery, it's rendered inside the group
                 } else {
                     WorkoutBlockCard(phase: phase, easyPaceLabel: easyPaceLabel(for: phase))
                 }

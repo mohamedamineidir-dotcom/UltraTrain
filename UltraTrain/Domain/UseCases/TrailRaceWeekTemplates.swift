@@ -7,7 +7,7 @@ import Foundation
 /// - Includes the race itself as a `.race` SessionTemplate with the
 ///   athlete's expected race duration, so weekly volume totals reflect
 ///   the actual race-day stimulus (often 4-30+ hours for ultras).
-/// - Scales the prep shape by race-distance class — a 35K mountain
+/// - Scales the prep shape by race-distance class, a 35K mountain
 ///   trail race week looks nothing like a 100-miler race week.
 /// - Modifies by athlete experience (beginner = more rest, no quality;
 ///   advanced/elite = optional light quality on Day -5) and philosophy
@@ -72,7 +72,7 @@ enum TrailRaceWeekTemplates {
             for day in (raceDayOffset + 1)...6 {
                 templates.append(SessionTemplateGenerator.tpl(
                     day, .rest, .easy, 0, 0,
-                    "Rest / very easy walk. Race is done — refuel, hydrate, reflect. Recovery starts now."
+                    "Rest / very easy walk. Race is done, refuel, hydrate, reflect. Recovery starts now."
                 ))
             }
         }
@@ -139,10 +139,10 @@ enum TrailRaceWeekTemplates {
     /// count meets `maxActivePrep`. Race day is never touched. Demote
     /// priority (most preferred to drop first):
     ///   1. Day -4 (mid-week recovery, lowest value)
-    ///   2. Day -6 (longer easy — can be cut)
+    ///   2. Day -6 (longer easy, can be cut)
     ///   3. Day -5 (quality / primer)
-    ///   4. Day -3 (strides — high value, last resort)
-    ///   5. Day -1 (shakeout — never drop)
+    ///   4. Day -3 (strides, high value, last resort)
+    ///   5. Day -1 (shakeout, never drop)
     private static func capActivePrep(
         _ templates: [SessionTemplateGenerator.SessionTemplate],
         raceDayOffset: Int,
@@ -225,10 +225,10 @@ enum TrailRaceWeekTemplates {
                     : PrepSession(type: .intervals, intensity: .moderate,
                                   durationSeconds: minutes(40),
                                   elevationFraction: 0.3,
-                                  description: "4-5 × 3 min at controlled threshold on rolling terrain, 2 min easy between. Specific stimulus — Roche fast-finish mentality.")),
+                                  description: "4-5 × 3 min at controlled threshold on rolling terrain, 2 min easy between. Specific stimulus, Roche fast-finish mentality.")),
                 (4, easyRun(30, descSuffix: "Recovery from yesterday.")),
                 (3, easyRun(28, descSuffix: isMountain
-                    ? "Easy 25-30 min. No hill strides — keep climbing legs fresh."
+                    ? "Easy 25-30 min. No hill strides, keep climbing legs fresh."
                     : "+ 4 × 20s hill strides. Climb prime.")),
                 (2, restOrEasy(isBeginner: isBeginner, isEnjoyment: isEnjoyment, easyMin: 20)),
                 (1, easyRun(18, descSuffix: isMountain
@@ -248,14 +248,14 @@ enum TrailRaceWeekTemplates {
                         ? PrepSession(type: .tempo, intensity: .moderate,
                                       durationSeconds: minutes(45),
                                       elevationFraction: 0.2,
-                                      description: "30 min easy + 5 × 1 min at threshold or 4 × 30s hill strides. Koop's 'primer' — light sharpening only.")
+                                      description: "30 min easy + 5 × 1 min at threshold or 4 × 30s hill strides. Koop's 'primer', light sharpening only.")
                         : easyRun(40, descSuffix: "+ 4 × 30s hill strides. Light primer.")),
                 (4, easyRun(35, descSuffix: "Recovery, conversational pace.")),
                 (3, easyRun(28, descSuffix: "+ 4-6 × 100m strides. CNS prime.")),
                 (2, isBeginner || isEnjoyment
                     ? PrepSession(type: .rest, intensity: .easy,
                                   durationSeconds: 0, elevationFraction: 0,
-                                  description: "Rest. Mental prep — visualize aid stations, fueling timing.")
+                                  description: "Rest. Mental prep, visualize aid stations, fueling timing.")
                     : easyRun(20, descSuffix: "Easy OR rest if legs feel heavy.")),
                 (1, easyRun(20, descSuffix: "Shakeout 20-25 min + 2-3 strides. Prime.")),
             ]
@@ -266,8 +266,8 @@ enum TrailRaceWeekTemplates {
             return [
                 (6, easyRun(55, descSuffix: "+ 4 strides. Last 'real' run before taper deepens.")),
                 (5, easyRun(45, descSuffix: isPerformance
-                    ? "+ 4 × 1 min at steady on race-specific terrain. Performance philosophy — light primer."
-                    : "+ 4 × 30s pickups. Light primer — Koop avoids hard work this close.")),
+                    ? "+ 4 × 1 min at steady on race-specific terrain. Performance philosophy, light primer."
+                    : "+ 4 × 30s pickups. Light primer, Koop avoids hard work this close.")),
                 (4, isBeginner
                     ? PrepSession(type: .rest, intensity: .easy,
                                   durationSeconds: 0, elevationFraction: 0,
@@ -308,16 +308,16 @@ enum TrailRaceWeekTemplates {
                 (4, easyRun(22, descSuffix: "+ 4 strides. Light.")),
                 (3, PrepSession(type: .rest, intensity: .easy,
                                 durationSeconds: 0, elevationFraction: 0,
-                                description: "Rest. Travel day for most. Mental reset — Jurek: race-week stillness equals race-day strength.")),
+                                description: "Rest. Travel day for most. Mental reset, Jurek: race-week stillness equals race-day strength.")),
                 (2, isPerformance
-                    ? easyRun(15, descSuffix: "Shakeout 15-20 min + 2-3 strides. Performance openers — keep CNS engaged.")
+                    ? easyRun(15, descSuffix: "Shakeout 15-20 min + 2-3 strides. Performance openers, keep CNS engaged.")
                     : PrepSession(type: .rest, intensity: .easy,
                                   durationSeconds: 0, elevationFraction: 0,
                                   description: "Rest. Scout the course mentally. Pack drop bags.")),
                 (1, isPerformance
                     ? PrepSession(type: .rest, intensity: .easy,
                                   durationSeconds: 0, elevationFraction: 0,
-                                  description: "Rest. Race tomorrow — sleep, hydrate, eat real food, calm the mind.")
+                                  description: "Rest. Race tomorrow, sleep, hydrate, eat real food, calm the mind.")
                     : easyRun(12, descSuffix: "Optional 10-15 min jog if legs feel locked up. Otherwise rest is fine.")),
             ]
 
@@ -325,7 +325,7 @@ enum TrailRaceWeekTemplates {
             // Multi-day stage races (UTMB PTL 300K, MDS 250K). Volume
             // ~30-35% of peak. Logistics + heat acclimation dominate.
             // House & Johnston Ch. 9 + Friel ultra writings: "the
-            // start line is not a fitness test — get there fresh."
+            // start line is not a fitness test, get there fresh."
             return [
                 (6, easyRun(30, descSuffix: "+ 4 strides. Last short run.")),
                 (5, easyRun(25, descSuffix: "Conversational. Easy.")),
@@ -338,7 +338,7 @@ enum TrailRaceWeekTemplates {
                 (2, easyRun(15, descSuffix: "Optional 15-min jog if legs feel locked up. Otherwise rest.")),
                 (1, PrepSession(type: .rest, intensity: .easy,
                                 durationSeconds: 0, elevationFraction: 0,
-                                description: "Rest. Stage 1 starts tomorrow — pacing strategy beats fitness fine-tuning.")),
+                                description: "Rest. Stage 1 starts tomorrow, pacing strategy beats fitness fine-tuning.")),
             ]
         }
     }
@@ -375,6 +375,6 @@ enum TrailRaceWeekTemplates {
         let distStr = dist >= 100 ? String(format: "%.0f km", dist)
             : String(format: "%.1f km", dist)
         let elevStr = elev > 0 ? " / D+ \(Int(elev))m" : ""
-        return "RACE: \(targetRace.name) (\(distStr)\(elevStr)). The journey ends here. Trust your training, fuel like clockwork, manage the climbs, respect the descents. The first half is for patience — the second half is for grit."
+        return "RACE: \(targetRace.name) (\(distStr)\(elevStr)). The journey ends here. Trust your training, fuel like clockwork, manage the climbs, respect the descents. The first half is for patience, the second half is for grit."
     }
 }

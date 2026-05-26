@@ -14,7 +14,7 @@ enum InjuryRiskCalculator {
                 id: UUID(),
                 type: .highACR,
                 severity: .critical,
-                message: "Acute-to-chronic ratio is \(String(format: "%.2f", currentACR)) — dangerously high.",
+                message: "Acute-to-chronic ratio is \(String(format: "%.2f", currentACR)), dangerously high.",
                 recommendation: "Reduce training intensity and volume for the next 3-5 days. Focus on recovery runs or rest."
             ))
         }
@@ -34,7 +34,7 @@ enum InjuryRiskCalculator {
                 id: UUID(),
                 type: .highMonotony,
                 severity: .warning,
-                message: "Training monotony is \(String(format: "%.1f", monotony)) — too repetitive.",
+                message: "Training monotony is \(String(format: "%.1f", monotony)), too repetitive.",
                 recommendation: "Vary session types and intensities. Mix easy, tempo, and long runs across the week."
             ))
         }

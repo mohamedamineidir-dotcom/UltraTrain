@@ -2,12 +2,12 @@ import Foundation
 
 /// Produces a short "what this week is for" narrative for each training
 /// week. Surfaces on the expanded week card so the athlete gets actual
-/// coach-style framing — "this is a peak week, here's what we want out
-/// of it" — instead of just a list of session rows to execute.
+/// coach-style framing, "this is a peak week, here's what we want out
+/// of it", instead of just a list of session rows to execute.
 ///
 /// Inputs are the current week plus its neighbours in the plan so the
 /// narrative can reference volume trend (up vs previous, or cutback)
-/// and weeks-to-race. Output is hand-written copy per branch — no
+/// and weeks-to-race. Output is hand-written copy per branch, no
 /// templated strings with em-dashes.
 enum WeeklyNarrativeGenerator {
 
@@ -33,7 +33,7 @@ enum WeeklyNarrativeGenerator {
         if week.phase == .race {
             return Narrative(
                 title: "Race week",
-                body: "Short, easy, confident. The work is done — your job now is arriving rested.",
+                body: "Short, easy, confident. The work is done, your job now is arriving rested.",
                 goal: "Protect sleep. Eat normally. Get to the start line unhurried."
             )
         }
@@ -80,7 +80,7 @@ enum WeeklyNarrativeGenerator {
                 ? "Volume ticks up again. Most runs should still feel easy. The aerobic engine is quietly compounding."
                 : "A little more vertical this week. Most runs still easy. The engine compounds in the background."
         } else {
-            body = "Hold the rhythm. Most runs should feel unremarkable — that's the point of base training."
+            body = "Hold the rhythm. Most runs should feel unremarkable, that's the point of base training."
         }
         return Narrative(
             title: "Aerobic base · Week \(n)",
@@ -102,10 +102,10 @@ enum WeeklyNarrativeGenerator {
         let body: String
         if qualityCount >= 2 {
             body = isRoad
-                ? "Quality layers onto your base. Two focused sessions this week — one for VO2max, one for threshold or race pace."
+                ? "Quality layers onto your base. Two focused sessions this week, one for VO2max, one for threshold or race pace."
                 : "Quality sits on top of your base. Two hard sessions this week. Keep easy days genuinely easy."
         } else {
-            body = "Building. One quality session, the rest aerobic. Protect that one hard effort — it's where the adaptation lives."
+            body = "Building. One quality session, the rest aerobic. Protect that one hard effort, it's where the adaptation lives."
         }
         return Narrative(
             title: "Build · Week \(n)",
@@ -128,7 +128,7 @@ enum WeeklyNarrativeGenerator {
         } else {
             body = isRoad
                 ? "Peak volume with race-specific intensity. Execution quality matters more than hitting numbers."
-                : "Peak weeks stack the specificity. The hard sessions are the ones that count — everything else supports them."
+                : "Peak weeks stack the specificity. The hard sessions are the ones that count, everything else supports them."
         }
         return Narrative(
             title: "Peak · Week \(n)",
@@ -144,7 +144,7 @@ enum WeeklyNarrativeGenerator {
     ) -> Narrative {
         let n = weekNumberInPhase(week: week, allWeeks: allWeeks)
         let body = n <= 1
-            ? "Volume drops, intensity stays sharp. You may feel flat — that's fatigue clearing, not fitness leaving (Mujika 2003)."
+            ? "Volume drops, intensity stays sharp. You may feel flat, that's fatigue clearing, not fitness leaving (Mujika 2003)."
             : "Second taper week. Even lighter volume, short sharp efforts. Anxiety spikes are normal. Trust the work already done."
         return Narrative(
             title: "Taper · Week \(n)",

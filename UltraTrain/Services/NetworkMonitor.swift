@@ -42,7 +42,7 @@ final class NetworkMonitor: NetworkMonitorProtocol, @unchecked Sendable {
                 }
             }
         }
-        // NWPathMonitor requires a DispatchQueue — no async alternative exists
+        // NWPathMonitor requires a DispatchQueue, no async alternative exists
         monitor.start(queue: DispatchQueue(label: "com.ultratrain.networkmonitor"))
     }
 

@@ -103,7 +103,7 @@ extension AppDependencyContainer {
         )
         // PersonalizationProfile pulls last 90 days of completed runs
         // to anchor plan ramps off demonstrated capacity instead of the
-        // stale onboarding snapshot — wire the run repo through.
+        // stale onboarding snapshot, wire the run repo through.
         planGenerator = TrainingPlanGenerator(runRepository: runRepository)
         locationService = LocationService()
         let localFitnessRepo = LocalFitnessRepository(modelContainer: modelContainer)

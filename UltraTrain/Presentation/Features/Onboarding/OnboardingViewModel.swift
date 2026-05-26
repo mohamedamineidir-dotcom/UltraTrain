@@ -127,7 +127,7 @@ final class OnboardingViewModel {
     /// for road races up to marathon (inclusive) where the difference
     /// between e.g. 36:01 and 36:55 in a 10K is large enough that
     /// target paces would diverge. For longer trail/ultra goals the
-    /// seconds picker stays hidden — minute precision is plenty.
+    /// seconds picker stays hidden, minute precision is plenty.
     var raceTargetTimeSeconds: Int = 0
     var raceTargetRanking: Int = 50
     var raceTerrainDifficulty: TerrainDifficulty = .moderate
@@ -156,7 +156,7 @@ final class OnboardingViewModel {
     // MARK: - GoalTraining additions
 
     /// Backing storage for the terrain picker. Treated as the source of
-    /// truth only once the athlete has explicitly tapped the picker —
+    /// truth only once the athlete has explicitly tapped the picker
     /// until then `effectiveRunningTerrain` derives the default from the
     /// A-race profile so a road A-race lands on Road instead of Trail.
     var runningTerrain: TerrainType = .trail
@@ -186,7 +186,7 @@ final class OnboardingViewModel {
     }
 
     /// Whether the target-time picker should expose a seconds field.
-    /// Road races up to marathon (inclusive) need second precision —
+    /// Road races up to marathon (inclusive) need second precision
     /// the gap between e.g. 36:01 and 36:55 in a 10K shifts target
     /// paces by ~10 sec/km. For trail/ultra A-races minute precision
     /// is sufficient (and seconds would be noise relative to race-day

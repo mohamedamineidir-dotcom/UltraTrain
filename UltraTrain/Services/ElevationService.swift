@@ -66,7 +66,7 @@ enum ElevationService {
                 for (i, coord) in batch.enumerated() {
                     elevations[offset + i] = coord.longitude // GPS fallback not useful; leave 0
                 }
-                return [] // Return empty to signal failure — caller uses GPS data
+                return [] // Return empty to signal failure, caller uses GPS data
             }
         }
 

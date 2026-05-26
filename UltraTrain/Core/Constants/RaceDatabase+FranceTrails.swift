@@ -11,7 +11,7 @@ extension RaceDatabase {
 
     static let franceTrails: [KnownRace] = [
 
-        // MARK: Réunion — Grand Raid
+        // MARK: Réunion, Grand Raid
 
         KnownRace(name: "Diagonale des Fous", shortName: "Grand Raid", distanceKm: 180, elevationGainM: 10200,
                   elevationLossM: 10200, country: "France", nextEditionDate: _d(2026, 10, 15), terrainDifficulty: .extreme),

@@ -10,7 +10,7 @@ struct SkipReasonSheet: View {
     /// validation UX so the athlete sees a consistent "we're working
     /// on it" treatment whether they validated or skipped a session.
     @State private var showCompletion = false
-    /// Detents shift to .large when the loading screen takes over —
+    /// Detents shift to .large when the loading screen takes over
     /// the animation is full-screen by design and would feel cramped
     /// at .medium.
     @State private var detents: Set<PresentationDetent> = [.medium, .large]

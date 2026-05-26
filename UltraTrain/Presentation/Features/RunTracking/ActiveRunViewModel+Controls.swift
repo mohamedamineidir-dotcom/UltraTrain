@@ -79,7 +79,7 @@ extension ActiveRunViewModel {
         voiceCoachingHandler.stopSpeaking()
         safetyHandler?.stop()
         showSummary = true
-        Logger.tracking.info("Run stopped — \(self.distanceKm) km in \(self.elapsedTime)s")
+        Logger.tracking.info("Run stopped, \(self.distanceKm) km in \(self.elapsedTime)s")
     }
 
     // MARK: - Save

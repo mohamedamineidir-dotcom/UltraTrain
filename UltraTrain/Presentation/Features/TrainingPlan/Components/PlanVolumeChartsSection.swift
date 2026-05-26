@@ -116,7 +116,7 @@ struct PlanVolumeChartsSection: View {
 
     private var chartView: some View {
         Chart {
-            // 1) Planned curve — neutral grey background, visible across
+            // 1) Planned curve, neutral grey background, visible across
             //    the whole prep so the athlete can read the shape of the
             //    block (build, peak, taper). Hidden on the distance tab
             //    because trail plans don't pre-plan distance.
@@ -152,7 +152,7 @@ struct PlanVolumeChartsSection: View {
                 }
             }
 
-            // 2) Completed overlay — phase-coloured area + line that
+            // 2) Completed overlay, phase-coloured area + line that
             //    "fills in" the planned curve as the athlete validates
             //    sessions. Colour changes by phase block, matching the
             //    same palette used elsewhere in the app (Base = blue,
@@ -167,7 +167,7 @@ struct PlanVolumeChartsSection: View {
                     // W1). Swift Charts can't draw a Line or Area with
                     // one point, so render a thin phase-coloured
                     // vertical stem from baseline up to the completed
-                    // value. No permanent dot on top — dots are
+                    // value. No permanent dot on top, dots are
                     // reserved for the drag-inspect interaction so the
                     // chart stays clean while idle.
                     RuleMark(
@@ -210,7 +210,7 @@ struct PlanVolumeChartsSection: View {
             }
 
             // Interactive dot. Only appears while the athlete is
-            // dragging on the chart — moves with the rule mark to
+            // dragging on the chart, moves with the rule mark to
             // surface the precise value at the inspected week. No
             // permanent per-week dots so the curve stays clean.
             if let selected = selectedWeek {
@@ -233,7 +233,7 @@ struct PlanVolumeChartsSection: View {
                 .foregroundStyle(Color.mint.opacity(0.08))
             }
 
-            // Current week — filled accent pill
+            // Current week, filled accent pill
             // Shortened RuleMark (yEnd ~60% of max) keeps the NOW badge inside
             // the plot area so it never overlaps the summary stats above.
             if let currentWeek = dataPoints.first(where: \.isCurrentWeek) {
@@ -270,7 +270,7 @@ struct PlanVolumeChartsSection: View {
             }
         }
         // Domain pins to the exact week range. We don't override the
-        // range padding here — adding inward padding shrinks the
+        // range padding here, adding inward padding shrinks the
         // PLANNED grey curve too, which was already laid out
         // correctly. The poke-out only affects the completed
         // overlay's stroke; we handle that by clipping the plot
@@ -282,7 +282,7 @@ struct PlanVolumeChartsSection: View {
             // Auto axis renders only the faint vertical grid lines +
             // ticks at the labeled week positions. The W-labels
             // themselves are rendered manually via `chartOverlay`
-            // below using `proxy.position(forX:)` — every other
+            // below using `proxy.position(forX:)`, every other
             // approach (centered: true on the string init, custom
             // Text content with manual frame, even default leading
             // anchor) drifts the labels off their data columns by
@@ -308,7 +308,7 @@ struct PlanVolumeChartsSection: View {
             plot
                 .frame(height: 200)
                 .background(
-                    // Soft accent-tinted plot background — gives the
+                    // Soft accent-tinted plot background, gives the
                     // chart its branded "blue glow" feel even when the
                     // plot is empty (initial state, or the Distance
                     // tab where the planned curve is intentionally
@@ -395,7 +395,7 @@ struct PlanVolumeChartsSection: View {
     // MARK: - Chart Legend
 
     private var chartLegend: some View {
-        // Legend reads as "what colour means what phase" — matches
+        // Legend reads as "what colour means what phase", matches
         // what the chart actually shows now (phase-coloured overlay
         // over the planned grey background) instead of the old
         // per-session-type stacked bars.
@@ -457,7 +457,7 @@ struct PlanVolumeChartsSection: View {
     /// Slices the completed timeline into contiguous phase segments,
     /// each rendered as its own Area+Line in the chart. Stops at the
     /// current week so the overlay only "fills in" the planned curve
-    /// up to today — like Campus Coach. Adjacent segments share their
+    /// up to today, like Campus Coach. Adjacent segments share their
     /// boundary point so the colour transition has no visual gap.
     private var phaseSegments: [PhaseSegment] {
         let currentIdx = dataPoints.firstIndex(where: \.isCurrentWeek)
@@ -476,7 +476,7 @@ struct PlanVolumeChartsSection: View {
             } else {
                 // Anchor the new segment to the previous segment's
                 // last point so the colour band starts exactly where
-                // the previous one ends — no visual gap.
+                // the previous one ends, no visual gap.
                 current.append(p)
                 segments.append(PhaseSegment(
                     id: "\(currentPhase.rawValue)-\(segments.count)",
@@ -536,7 +536,7 @@ struct PlanVolumeChartsSection: View {
     /// X-axis tick positions. Returns Ints (week numbers) so the
     /// chart's X axis stays numeric and ordered. Previously these
     /// were strings ("W1", "W2", ...), which Swift Charts treats as
-    /// categorical and renders in alphabetical order — so a 24-week
+    /// categorical and renders in alphabetical order, so a 24-week
     /// plan rendered W1, W11, W13... W2, W20... W3, W4... instead of
     /// W1, W2, W3 sequentially. Numeric values + a string formatter
     /// in the AxisValueLabel keep the labels reading "W1, W3, W5..."
@@ -549,7 +549,7 @@ struct PlanVolumeChartsSection: View {
         // W15 W19" instead of "W1 W3 W5 ..." cramming the axis. We
         // start one step in from the first week and stop one step
         // before the last so labels never sit at the absolute chart
-        // edges — Swift Charts clips/drifts labels positioned exactly
+        // edges, Swift Charts clips/drifts labels positioned exactly
         // at the chart bounds, which is what was misaligning W1 vs
         // its data point.
         let stride: Int

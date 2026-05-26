@@ -18,7 +18,7 @@ final class TrainingPlanViewModel {
     /// plan load and passed to PlanAdjustmentCalculator.analyze. That
     /// fires the swapToRecoveryLowRecovery / reduceLoadLowRecovery
     /// recommendations which Commit E added to the urgent auto-apply
-    /// set — turning poor overnight HRV/sleep into an automatic swap
+    /// set, turning poor overnight HRV/sleep into an automatic swap
     /// of today's hard session for an easy run, no banner round-trip.
     let recoveryRepository: (any RecoveryRepository)?
     let widgetDataWriter: WidgetDataWriter
@@ -52,7 +52,7 @@ final class TrainingPlanViewModel {
     /// #22: next-7-day injury-risk projection (ACWR + monotony).
     /// Recomputed whenever the plan reloads or regenerates.
     var injuryRiskProjection: PlanInjuryRiskProjector.Projection?
-    /// Session-scoped dismissal for the banner — athlete can hide it
+    /// Session-scoped dismissal for the banner, athlete can hide it
     /// for the current app session without disabling projection.
     var injuryRiskBannerDismissed: Bool = false
     /// #26: sustained-missed-session pattern (skips / quality drift /
@@ -137,7 +137,7 @@ final class TrainingPlanViewModel {
     }
 
     /// #26: recomputes the trailing 14-day missed-session pattern.
-    /// Cheap pure-domain scan — safe to call after any mutation.
+    /// Cheap pure-domain scan, safe to call after any mutation.
     /// Dismissal state is intentionally NOT reset by refresh so the
     /// athlete doesn't re-see the same banner on every plan edit in
     /// the same app session.
@@ -205,7 +205,7 @@ final class TrainingPlanViewModel {
     /// everything it needs, then presents it. Called by the view when
     /// the user taps "Generate plan" / "Update plan". Falls back to
     /// direct generation (skipping the sheet) when the prerequisites
-    /// can't be loaded — better than blocking the user.
+    /// can't be loaded, better than blocking the user.
     func prepareToGeneratePlan() async {
         do {
             guard let athlete = try await athleteRepository.getAthlete() else {
@@ -265,7 +265,7 @@ final class TrainingPlanViewModel {
 
             // IR-2: load recent interval / tempo feedback so the generator
             // can refine target paces if evidence warrants it. Silent
-            // failure — the generator falls back to pure fitness-derived
+            // failure, the generator falls back to pure fitness-derived
             // paces when feedback can't be loaded.
             let recentFeedback = await loadRecentIntervalFeedback()
 
@@ -300,7 +300,7 @@ final class TrainingPlanViewModel {
             races = allRaces
             refreshInjuryRiskProjection()
             refreshMissedSessionPattern()
-            // Clear dismissal state when regenerating — the new plan
+            // Clear dismissal state when regenerating, the new plan
             // deserves a fresh review if any pattern persists.
             missedSessionBannerDismissed = false
             refreshScheduledReminders()
@@ -422,7 +422,7 @@ final class TrainingPlanViewModel {
             return currentSnapshots != planSnapshots
         }
 
-        // Fallback for old plans without snapshots — UUID-only comparison
+        // Fallback for old plans without snapshots, UUID-only comparison
         let currentIds = currentIntermediates
             .map(\.id)
             .sorted { $0.uuidString < $1.uuidString }

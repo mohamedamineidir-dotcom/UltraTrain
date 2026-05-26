@@ -132,7 +132,7 @@ extension TrainingPlanViewModel {
         // 4. Run recalibration. If a previous test scheduled a
         // confirmation re-test (the plan carries the original baseline),
         // pass that baseline so the second test compares against the
-        // PRE-first-test fitness anchor — that's how we detect rebound
+        // PRE-first-test fitness anchor, that's how we detect rebound
         // vs confirmed regression.
         let isConfirmationRetest = currentPlan.pendingRetestOriginalBaselineVma != nil
         let outcome = FitnessTestRecalibrator.recalibrate(
@@ -159,7 +159,7 @@ extension TrainingPlanViewModel {
             try? await athleteRepository.updateAthlete(updatedAthlete)
         }
         if isConfirmationRetest {
-            // Re-test cycle resolved — clear the stored baseline.
+            // Re-test cycle resolved, clear the stored baseline.
             currentPlan.pendingRetestOriginalBaselineVma = nil
         } else if outcome.recommendation == .regressionPendingRetest {
             currentPlan.pendingRetestOriginalBaselineVma = preTestBaseline
@@ -168,7 +168,7 @@ extension TrainingPlanViewModel {
         // 6. Apply the updated pace profile to remaining quality
         // sessions if recalibration was triggered. Updates coachAdvice
         // text on intervals / tempo / longRun sessions after the test
-        // week — the structured workout (interval phases) keeps its
+        // week, the structured workout (interval phases) keeps its
         // current shape, but the coaching guidance reflects the new
         // fitness anchor.
         if let newProfile = outcome.updatedPaceProfile {
@@ -217,7 +217,7 @@ extension TrainingPlanViewModel {
     /// the structured IntervalWorkouts on remaining quality sessions
     /// (intervals / tempo / longRun) starting from `fromWeekIndex`.
     /// This keeps the workout-detail screen and the coach advice in
-    /// sync — both reflect the new fitness anchor.
+    /// sync, both reflect the new fitness anchor.
     private func applyRefinedPaceProfile(
         to plan: inout TrainingPlan,
         fromWeekIndex: Int,
@@ -257,7 +257,7 @@ extension TrainingPlanViewModel {
                 guard !session.isCompleted, !session.isSkipped else { continue }
                 guard touchedTypes.contains(session.type) else { continue }
 
-                // Don't disturb fitness-test sessions — they have their
+                // Don't disturb fitness-test sessions, they have their
                 // own description / advice and shouldn't be rewritten.
                 if FitnessTestVariant.isFitnessTestFocus(session.intervalFocus) { continue }
 
@@ -386,7 +386,7 @@ extension TrainingPlanViewModel {
     }
 
     /// Inserts a confirmation re-test session into the plan. Used when
-    /// FitnessTestRecalibrator returns `.regressionPendingRetest` —
+    /// FitnessTestRecalibrator returns `.regressionPendingRetest`
     /// the re-test takes the place of an intervals session 1 week (or
     /// as soon as eligible) after the original.
     private func insertConfirmationRetest(
@@ -427,7 +427,7 @@ extension TrainingPlanViewModel {
         for type in qualityPriority {
             if let idx = plan.weeks[weekIdx].sessions.firstIndex(where: { $0.type == type && !$0.isCompleted }) {
                 plan.weeks[weekIdx].sessions[idx].description = schedule.variant.description
-                plan.weeks[weekIdx].sessions[idx].coachAdvice = "🔁 Confirmation re-test. Your previous test was off your usual fitness — let's confirm whether that was a bad day or a real change before we touch the race goal. " + schedule.variant.coachAdvice
+                plan.weeks[weekIdx].sessions[idx].coachAdvice = "🔁 Confirmation re-test. Your previous test was off your usual fitness, let's confirm whether that was a bad day or a real change before we touch the race goal. " + schedule.variant.coachAdvice
                 plan.weeks[weekIdx].sessions[idx].intensity = .maxEffort
                 plan.weeks[weekIdx].sessions[idx].intervalWorkoutId = nil
                 plan.weeks[weekIdx].sessions[idx].intervalFocus = schedule.variant.intervalFocusEncoded
@@ -458,7 +458,7 @@ extension TrainingPlanViewModel {
             plan = currentPlan
 
             // Run skip-specific adaptation if reason provided. Menstrual
-            // skips reuse the generic skip path — there's no symptom-
+            // skips reuse the generic skip path, there's no symptom-
             // cluster picker; the multi-skip pattern detector picks up
             // any pattern across the week and surfaces a soft-deload
             // recommendation if the count crosses threshold.
@@ -529,16 +529,16 @@ extension TrainingPlanViewModel {
     /// Bulk-skip every session falling within an N-day suspension window
     /// starting today. Used for two athlete-state events a coach handles
     /// regularly:
-    ///   • **Illness** — flu, cold, GI virus. 3-7 day window with reason
+    ///   • **Illness**, flu, cold, GI virus. 3-7 day window with reason
     ///     `.illness`. Triggers the existing missed-session pattern
     ///     detector + auto-applied volume reduction once threshold is
     ///     crossed.
-    ///   • **Acute injury** — strain, sprain, sharp pain. 5-14 day
+    ///   • **Acute injury**, strain, sprain, sharp pain. 5-14 day
     ///     window with reason `.injury`. Same auto-rebuild path.
     ///
     /// Sessions already past (date < today) are left alone. Already-
     /// completed sessions stay completed. Recovery / cross-training
-    /// sessions are intentionally skipped too — full pause means full
+    /// sessions are intentionally skipped too, full pause means full
     /// pause, not "swap intervals for 30 min cycling."
     func suspendTraining(forDays days: Int, reason: SkipReason) async {
         guard days > 0, var currentPlan = plan else { return }

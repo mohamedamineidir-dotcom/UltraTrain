@@ -11,7 +11,7 @@ struct RequestSigningInterceptor: Sendable {
 
     func sign(_ request: inout URLRequest) {
         guard !secret.isEmpty else {
-            Logger.security.warning("HMAC signing secret is empty — skipping request signing")
+            Logger.security.warning("HMAC signing secret is empty, skipping request signing")
             return
         }
 

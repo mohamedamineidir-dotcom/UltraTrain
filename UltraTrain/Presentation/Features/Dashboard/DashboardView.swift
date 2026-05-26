@@ -155,7 +155,7 @@ struct DashboardView: View {
                     LastRunCard(lastRun: viewModel.lastRun)
 
                     // Weather card intentionally removed from the
-                    // dashboard — generic "current conditions" without
+                    // dashboard, generic "current conditions" without
                     // a session attached to it didn't drive useful
                     // decisions for the athlete; per-session weather
                     // still surfaces on the run-tracking screen and
@@ -163,7 +163,7 @@ struct DashboardView: View {
                     // so the race-day forecast card on the finish
                     // estimate page keeps working.
 
-                    // Race forecast (replaces the old Recovery section — only a
+                    // Race forecast (replaces the old Recovery section, only a
                     // minority of users had Apple-Watch recovery data, whereas
                     // the finish forecast is meaningful for every athlete and
                     // tightens as training progresses).

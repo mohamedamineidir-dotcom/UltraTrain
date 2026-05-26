@@ -55,7 +55,7 @@ extension TaperProfile {
         switch effectiveKm {
         case 100...:
             // Sharper drop in the final 2-3 weeks. Old curve [80, 70, 60,
-            // 50, 40] was too gradual — modern ultra coaching (Koop, Roche,
+            // 50, 40] was too gradual, modern ultra coaching (Koop, Roche,
             // Krar) cuts more aggressively in the final approach so the
             // athlete arrives genuinely fresh. New curve [80, 65, 50, 40,
             // 30] holds enough first-week volume to stay sharp, then

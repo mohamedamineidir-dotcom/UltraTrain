@@ -36,7 +36,7 @@ enum RoadPhaseDistributor {
         let fracs = fractions(discipline: discipline, experience: experience)
 
         // Taper weeks: use profile directly (discipline-driven, not plan-length-driven)
-        // Pfitzinger: 10K=1wk, HM=2wk, Marathon=3wk — fixed per discipline
+        // Pfitzinger: 10K=1wk, HM=2wk, Marathon=3wk, fixed per discipline
         let taperWeeks = totalWeeks < 8
             ? min(taperProfile.totalTaperWeeks, 2)
             : min(taperProfile.totalTaperWeeks, totalWeeks - 3) // Leave at least 3 non-taper weeks
@@ -48,7 +48,7 @@ enum RoadPhaseDistributor {
         let peakWeeks = max(remaining - baseWeeks - buildWeeks, 1)
 
         // Road-specific PhaseFocus labels:
-        // Base → .threshold30 (aerobic development — same label, different road content)
+        // Base → .threshold30 (aerobic development, same label, different road content)
         // Build → .vo2max (speed/threshold development)
         // Peak → .threshold60 (race-specific preparation)
         // Taper → .sharpening
@@ -74,7 +74,7 @@ enum RoadPhaseDistributor {
     /// - **10K** (Daniels): Build is critical (VO2max development). Base 25-30%, Build 35%, Peak 30-35%.
     /// - **HM** (Pfitzinger): Threshold-limited. Needs long build. Base 28-35%, Build 35%, Peak 25-32%.
     /// - **Marathon** (Pfitzinger/Canova/Hanson): Modern marathon coaching gives the
-    ///   peak (race-specific) phase 32-37% of the plan — Hanson Method is even
+    ///   peak (race-specific) phase 32-37% of the plan, Hanson Method is even
     ///   peak-heavier. Long base is still non-negotiable but the previous
     ///   23-28% peak share starved the cumulative-fatigue stimulus that
     ///   distinguishes a real marathon plan from "long runs + tempos".

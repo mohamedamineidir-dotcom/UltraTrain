@@ -3,7 +3,7 @@ import SwiftUI
 /// Shared colour identity for nutrition-domain surfaces (onboarding
 /// sheet, race-week fuelling card, aid-station strategy card).
 /// Deliberately kept distinct from the app's warm-coral brand accent
-/// which sits on training surfaces — nutrition reads fresh / clean /
+/// which sits on training surfaces, nutrition reads fresh / clean /
 /// professional in green, training reads energetic in coral.
 ///
 /// Palette is a clean mint-to-teal gradient. Values picked to pair

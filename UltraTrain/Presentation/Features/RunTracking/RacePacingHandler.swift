@@ -127,12 +127,12 @@ final class RacePacingHandler {
         activeCrossingBanner = nil
     }
 
-    // MARK: - Private — Checkpoint
+    // MARK: - Private, Checkpoint
 
     func loadFinishEstimate(raceId: UUID) async {
         do {
             guard let estimate = try await finishEstimateRepository.getEstimate(for: raceId) else {
-                Logger.liveRace.info("No saved estimate for race \(raceId) — live splits unavailable")
+                Logger.liveRace.info("No saved estimate for race \(raceId), live splits unavailable")
                 return
             }
             liveCheckpointStates = estimate.checkpointSplits.map { split in

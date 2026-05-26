@@ -19,7 +19,7 @@ enum WeekSkeletonBuilder {
     ) -> [WeekSkeleton] {
         let totalWeeks = phases.reduce(0) { $0 + $1.weekCount }
 
-        // Work backward from race date — race week ends on race day's week start + 6 days
+        // Work backward from race date, race week ends on race day's week start + 6 days
         let calendar = Calendar.current
         let raceWeekStart = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: raceDate)
         let raceWeekMonday = calendar.date(from: raceWeekStart) ?? raceDate
@@ -73,7 +73,7 @@ enum WeekSkeletonBuilder {
         // dropping off the plan the day after their A-race. Weeks land
         // on phase = .recovery + isRecoveryWeek = true so volume + session
         // templates pick the existing recovery shape (Daniels' "post-race
-        // regeneration" — 30-50% volume, no quality, walking encouraged
+        // regeneration", 30-50% volume, no quality, walking encouraged
         // in the first few days). The athlete can transition to a fresh
         // plan from the dashboard once the recovery window closes.
         for _ in 0..<postRaceRecoveryWeeks {

@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Context about where this session sits in the athlete's current week.
 /// Surfaced as a progress footer on the validation page so the athlete
-/// sees their weekly trajectory — small "I'm making progress" hit after
+/// sees their weekly trajectory, small "I'm making progress" hit after
 /// completing a session.
 struct WeekProgress: Equatable, Sendable {
     /// 0-based index of this session among the week's running sessions
@@ -110,7 +110,7 @@ struct SessionValidationView: View {
         session.type == .intervals || session.type == .tempo
     }
 
-    /// True when the chain can actually push the feedback page — needs a
+    /// True when the chain can actually push the feedback page, needs a
     /// resolved context (fitness-derived target pace). When false for an
     /// intervals/tempo session, the basic page still skips feeling+RPE
     /// (user asked us not to show those on intervals/tempo), but we go
@@ -348,7 +348,7 @@ private struct ManualValidationPage: View {
     /// When true, the in-page Feeling + RPE sections are suppressed because
     /// a follow-up per-rep feedback page will capture those signals (IR-1).
     /// Only applied for intervals/tempo sessions that have a feedback
-    /// context — easy / long run / recovery sessions still ask here.
+    /// context, easy / long run / recovery sessions still ask here.
     let hideFeelingAndRPE: Bool
     let weekProgress: WeekProgress?
     let onComplete: (Double?, TimeInterval?, Double?, PerceivedFeeling?, Int?) -> Void
@@ -367,7 +367,7 @@ private struct ManualValidationPage: View {
     enum StatsField: Hashable { case distance, hours, minutes, seconds, elevation }
 
     /// Atomic step in the validation flow. The sequence is computed per
-    /// session — intervals/tempo with a feedback context skip feeling/rpe
+    /// session, intervals/tempo with a feedback context skip feeling/rpe
     /// here because IR-1 will capture them afterwards.
     fileprivate enum Step {
         case stats
@@ -384,7 +384,7 @@ private struct ManualValidationPage: View {
 
         var subtitle: String {
             switch self {
-            case .stats:   return "Planned values are pre-filled — adjust anything that came out different."
+            case .stats:   return "Planned values are pre-filled, adjust anything that came out different."
             case .feeling: return "Overall impression from start to finish."
             case .rpe:     return "1 is walking-easy, 10 is the hardest effort you can imagine."
             }
@@ -421,7 +421,7 @@ private struct ManualValidationPage: View {
         self.hideFeelingAndRPE = hideFeelingAndRPE
         self.weekProgress = weekProgress
         self.onComplete = onComplete
-        // Pre-fill with planned values. First-look is a completed page —
+        // Pre-fill with planned values. First-look is a completed page
         // the athlete can tap Continue immediately if they ran to plan
         // (the common case). Editing surfaces a diff pill below the row;
         // on-plan stays silent. The previous empty-first design added a
@@ -622,7 +622,7 @@ private struct ManualValidationPage: View {
 
     /// Single card holding: session context header, then the 3 input
     /// rows separated by a subtle hairline. Pre-filled with planned
-    /// values — the athlete's first look is a completed page they can
+    /// values, the athlete's first look is a completed page they can
     /// either accept or tap to refine. Only diff pills appear below
     /// rows whose values have been edited away from plan.
     private var unifiedSessionCard: some View {
@@ -675,7 +675,7 @@ private struct ManualValidationPage: View {
                 .fill(session.intensity.color.opacity(0.15))
                 .frame(height: 0.5)
 
-            // Input rows — no section label, no inner card background.
+            // Input rows, no section label, no inner card background.
             // Just clean rows inside the same visual block as the header.
             VStack(spacing: 2) {
                 if !isStrengthSession {
@@ -961,7 +961,7 @@ private struct ManualValidationPage: View {
     /// visible right edge of "km" / "m D+" / "h:m:s" lands on exactly the
     /// same x for every row regardless of value width.
     private static let statsControlWidth: CGFloat = 148
-    /// Trailing unit slot — wide enough for the longest unit string
+    /// Trailing unit slot, wide enough for the longest unit string
     /// ("m D+", "h:m:s") at footnote weight; right-aligned so each unit's
     /// rightmost glyph sits at the slot's trailing edge.
     private static let unitSlotWidth: CGFloat = 36
@@ -1121,7 +1121,7 @@ private func sectionLabel(_ text: String, icon: String) -> some View {
     /// Continue button. Fills the vertical space the page was wasting
     /// with something that pays the athlete back: a one-sentence
     /// "why this session" explanation written in a positive coaching
-    /// tone. No data entry demanded, no chrome — just context.
+    /// tone. No data entry demanded, no chrome, just context.
     private var rationaleCard: some View {
         HStack(alignment: .top, spacing: Theme.Spacing.md) {
             Image(systemName: rationaleIcon)
@@ -1265,7 +1265,7 @@ private func sectionLabel(_ text: String, icon: String) -> some View {
     /// `frame(maxWidth: .infinity)` so the dots stay evenly spaced no
     /// matter how many sessions the week contains. Track segments
     /// take on the success colour from index 0 through the current
-    /// position, neutral beyond — reads as a continuous progress bar.
+    /// position, neutral beyond, reads as a continuous progress bar.
     private func weekProgressFooter(_ progress: WeekProgress) -> some View {
         VStack(spacing: 10) {
             HStack(spacing: 0) {

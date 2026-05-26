@@ -1,8 +1,8 @@
 import SwiftUI
 
 /// Post-long-run nutrition feedback sheet. Stepped flow that mirrors the
-/// nutrition onboarding pattern — one focused question at a time, green
-/// palette, big tappable cards — so logging feels like a conversation
+/// nutrition onboarding pattern, one focused question at a time, green
+/// palette, big tappable cards, so logging feels like a conversation
 /// rather than a form. Feeds the Phase 4 refinement loop with NIQEC GI
 /// symptom ratings, energy/bonk state, actual carbs consumed, and per-
 /// product tolerance.
@@ -12,7 +12,7 @@ struct NutritionFeedbackSheet: View {
     let sessionLabel: String
     let plannedCarbsPerHour: Int
     let durationMinutes: Int
-    /// Products the athlete can mark as tolerated / intolerant — typically
+    /// Products the athlete can mark as tolerated / intolerant, typically
     /// the distinct products scheduled for the race plan.
     let availableProducts: [NutritionProduct]
     let existingFeedback: NutritionSessionFeedback?
@@ -218,7 +218,7 @@ struct NutritionFeedbackSheet: View {
 
     private var intakeStep: some View {
         VStack(spacing: Theme.Spacing.md) {
-            // Preset chips — gut-training typical range
+            // Preset chips, gut-training typical range
             VStack(spacing: Theme.Spacing.sm) {
                 ForEach(intakePresets, id: \.self) { preset in
                     intakePresetCard(preset)

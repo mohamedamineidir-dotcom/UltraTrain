@@ -70,7 +70,7 @@ final class IntervalGuidanceHandler {
         checkPhaseTransition(context: context)
     }
 
-    // MARK: - Private — Workout Start
+    // MARK: - Private, Workout Start
 
     func startWorkout(context: RunContext) {
         workoutStarted = true
@@ -82,7 +82,7 @@ final class IntervalGuidanceHandler {
         Logger.tracking.info("Interval workout started")
     }
 
-    // MARK: - Private — State Update
+    // MARK: - Private, State Update
 
     func updateCurrentState(context: RunContext) {
         guard currentFlatIndex < flattenedPhases.count else {

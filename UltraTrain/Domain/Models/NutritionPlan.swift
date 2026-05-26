@@ -3,7 +3,7 @@ import Foundation
 struct NutritionPlan: Identifiable, Equatable, Sendable, Codable {
     let id: UUID
     var raceId: UUID
-    /// Grams of carbohydrate per hour — the primary modern fuelling target
+    /// Grams of carbohydrate per hour, the primary modern fuelling target
     /// (Jeukendrup/ISSN). For legacy plans this is derived from `caloriesPerHour`
     /// at 4 kcal/g on decode.
     var carbsPerHour: Int

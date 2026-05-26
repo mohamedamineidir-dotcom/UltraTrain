@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Inner content for the per-rep feedback page. Rendered inside
 /// SessionValidationView's NavigationStack right after the manual stats
-/// entry — flow: basic stats → per-rep feedback → loading → done.
+/// entry, flow: basic stats → per-rep feedback → loading → done.
 ///
 /// Design priorities:
 /// - Capture three signals (pace, effort, completion) with minimum taps
@@ -99,7 +99,7 @@ struct IntervalPerformanceContent: View {
     /// stats page, but bumped one notch stronger here because this page
     /// is deeper in the flow and the athlete has earned the richer
     /// visual language. The effort card passes a DYNAMIC tint that
-    /// shifts hue as RPE changes — the whole surface changes character
+    /// shifts hue as RPE changes, the whole surface changes character
     /// live as the athlete moves between green (easy) and crimson (max).
     @ViewBuilder
     private func tintedGlass(tint: Color, corner: CGFloat = Theme.CornerRadius.lg) -> some View {
@@ -165,7 +165,7 @@ struct IntervalPerformanceContent: View {
                     .frame(width: 1)
                     .padding(.vertical, 4)
 
-                // Your average column — tappable fields
+                // Your average column, tappable fields
                 VStack(spacing: 6) {
                     Text("YOUR AVERAGE")
                         .font(.caption2.weight(.bold))
@@ -196,7 +196,7 @@ struct IntervalPerformanceContent: View {
                 .frame(maxWidth: .infinity)
             }
 
-            // Delta pill — centred, the primary comparison signal
+            // Delta pill, centred, the primary comparison signal
             deltaPill
 
             // Quick-set chips
@@ -394,7 +394,7 @@ struct IntervalPerformanceContent: View {
     private var completionSubtitle: String {
         if completedAll { return "Tap toggle if you dropped reps" }
         if completedReps == 0 { return "Tap a pill to record how many you managed" }
-        if completedReps == prescribedRepCount - 1 { return "Missed just the last one — noted" }
+        if completedReps == prescribedRepCount - 1 { return "Missed just the last one, noted" }
         return "Pace drift + incomplete reps = stronger slow-down signal"
     }
 
@@ -639,16 +639,16 @@ struct IntervalPerformanceContent: View {
     /// distinct and each colour feels intentional, not interpolated.
     private func rpeGradientColor(_ value: Int) -> Color {
         let palette: [(r: Double, g: Double, b: Double)] = [
-            (0.22, 0.80, 0.68),  // 1 — cyan-mint
-            (0.24, 0.78, 0.56),  // 2 — mint
-            (0.32, 0.78, 0.44),  // 3 — vivid green
-            (0.46, 0.78, 0.32),  // 4 — deep green (last cool shade before warm jump)
-            (0.95, 0.70, 0.22),  // 5 — amber (skips yellow-green mud)
-            (0.98, 0.56, 0.18),  // 6 — bright orange
-            (1.00, 0.42, 0.18),  // 7 — vivid orange
-            (0.96, 0.28, 0.24),  // 8 — red-orange
-            (0.88, 0.20, 0.32),  // 9 — crimson
-            (0.72, 0.16, 0.44)   // 10 — deep crimson-magenta
+            (0.22, 0.80, 0.68),  // 1, cyan-mint
+            (0.24, 0.78, 0.56),  // 2, mint
+            (0.32, 0.78, 0.44),  // 3, vivid green
+            (0.46, 0.78, 0.32),  // 4, deep green (last cool shade before warm jump)
+            (0.95, 0.70, 0.22),  // 5, amber (skips yellow-green mud)
+            (0.98, 0.56, 0.18),  // 6, bright orange
+            (1.00, 0.42, 0.18),  // 7, vivid orange
+            (0.96, 0.28, 0.24),  // 8, red-orange
+            (0.88, 0.20, 0.32),  // 9, crimson
+            (0.72, 0.16, 0.44)   // 10, deep crimson-magenta
         ]
         let index = max(1, min(10, value)) - 1
         let c = palette[index]
@@ -719,7 +719,7 @@ struct IntervalPerformanceContent: View {
             actualPaces = perRepTexts.prefix(prescribedRepCount).compactMap(parsePace)
         } else {
             // Replicate the athlete's declared average across the prescribed
-            // reps so refinement (IR-2) still sees a pace signal — without
+            // reps so refinement (IR-2) still sees a pace signal, without
             // this, skipping the per-rep panel would discard pace info.
             let avg = currentAveragePaceSeconds
             actualPaces = Array(repeating: avg, count: prescribedRepCount)

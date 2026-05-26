@@ -13,9 +13,9 @@ import Foundation
 ///   confirmation.
 /// - 7% ≤ delta ≤ 15%: recalibrate training paces AND suggest a race-target
 ///   adjustment, but only when we're still in build phase (≥4 weeks before
-///   race) — not in peak / taper. Late-prep target changes are risky.
+///   race), not in peak / taper. Late-prep target changes are risky.
 /// - delta > 15%: flag for athlete review. Likely a measurement issue
-///   (track length wrong, GPS error, hot day, illness) — don't auto-update.
+///   (track length wrong, GPS error, hot day, illness), don't auto-update.
 ///
 /// Trail uphill / treadmill variants don't currently auto-recalibrate
 /// (`producesPaceRecalibration == false`) because the trail pipeline
@@ -26,7 +26,7 @@ enum FitnessTestRecalibrator {
 
     static let trainingPaceDeltaThreshold = 0.05   // 5%
     static let raceTargetDeltaThreshold = 0.07     // 7%
-    static let suspiciousDeltaThreshold = 0.15     // 15% — flag, don't auto-update
+    static let suspiciousDeltaThreshold = 0.15     // 15%, flag, don't auto-update
 
     enum Recommendation: Equatable, Sendable {
         case noChange(reason: String)
@@ -36,13 +36,13 @@ enum FitnessTestRecalibrator {
         /// Regression ≥ 7% detected in build phase with ≥ 4 weeks
         /// until race. We update training paces (workouts must match
         /// current fitness) but DON'T immediately suggest a race-target
-        /// downgrade — a single bad test could be a heat / sleep / life-
+        /// downgrade, a single bad test could be a heat / sleep / life-
         /// stress day. The caller schedules a confirmation re-test
         /// (FitnessTestScheduler.scheduleRetest) one week later in
         /// place of an intervals slot. Goal-change conversation waits
         /// for the second test to confirm or rebound.
         ///
-        /// Asymmetric to improvement intentionally — Pfitzinger / Hudson
+        /// Asymmetric to improvement intentionally, Pfitzinger / Hudson
         /// rule: don't move a season goal on one data point, especially
         /// when it's downward. Improvements are robust signal (you don't
         /// accidentally run a fast 5K). Regressions can be noise.
@@ -94,7 +94,7 @@ enum FitnessTestRecalibrator {
                 measuredVmaKmh: nil,
                 baselineVmaKmh: athlete.vmaKmh,
                 deltaPercent: 0,
-                recommendation: .noChange(reason: "Result missing required data — recalibration skipped."),
+                recommendation: .noChange(reason: "Result missing required data, recalibration skipped."),
                 updatedPaceProfile: nil
             )
         }
@@ -103,7 +103,7 @@ enum FitnessTestRecalibrator {
         // from best 5K PR via Riegel.
         let baselineVma = baselineVmaOverride ?? baselineVMA(athlete: athlete)
         guard let baseline = baselineVma, baseline > 0 else {
-            // No baseline to compare against — accept the new VMA and
+            // No baseline to compare against, accept the new VMA and
             // recalibrate training paces.
             let updatedAthlete = athlete.with(vmaKmh: measuredVma)
             let profile = newPaceProfile(
@@ -123,7 +123,7 @@ enum FitnessTestRecalibrator {
         let delta = (measuredVma - baseline) / baseline
         let absDelta = abs(delta)
 
-        // Suspiciously large delta — surface but don't auto-update.
+        // Suspiciously large delta, surface but don't auto-update.
         if absDelta > suspiciousDeltaThreshold {
             return Result(
                 measuredVmaKmh: measuredVma,
@@ -134,7 +134,7 @@ enum FitnessTestRecalibrator {
             )
         }
 
-        // Below the noise floor — no change.
+        // Below the noise floor, no change.
         if absDelta < trainingPaceDeltaThreshold {
             return Result(
                 measuredVmaKmh: measuredVma,
@@ -145,7 +145,7 @@ enum FitnessTestRecalibrator {
             )
         }
 
-        // Above noise — recompute pace profile with the new VMA + a
+        // Above noise, recompute pace profile with the new VMA + a
         // synthetic 5K PR derived from the test. The PR injection is
         // critical: RoadPaceCalculator's 5K-pace estimate prioritises
         // PRs over VMA, so updating vmaKmh alone wouldn't actually
@@ -317,8 +317,8 @@ enum FitnessTestRecalibrator {
 struct TestResultInput: Equatable, Sendable {
     var distanceMeters: Double?     // for VMA flat
     var timeSeconds: TimeInterval?  // for 5K TT, uphill TT
-    var averageHeartRate: Int?      // for uphill / treadmill — informational
-    var perceivedEffortRPE: Int?    // 1-10 — informational
+    var averageHeartRate: Int?      // for uphill / treadmill, informational
+    var perceivedEffortRPE: Int?    // 1-10, informational
     var notes: String?
 
     init(

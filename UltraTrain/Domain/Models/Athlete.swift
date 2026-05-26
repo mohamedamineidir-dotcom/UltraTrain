@@ -41,7 +41,7 @@ struct Athlete: Identifiable, Equatable, Sendable {
     // MARK: - Tenure
 
     /// Years of consistent running (≥1×/week). 0 means unknown.
-    /// Drives the tenure multiplier in PersonalizationProfile —
+    /// Drives the tenure multiplier in PersonalizationProfile
     /// a 10-year intermediate tolerates more peak load than a
     /// 2-year intermediate at the same tier label.
     var runningYears: Double = 0

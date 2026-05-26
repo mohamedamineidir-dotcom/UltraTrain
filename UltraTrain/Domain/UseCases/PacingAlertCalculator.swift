@@ -59,9 +59,9 @@ enum PacingAlertCalculator {
         let pct = Int(deviationPercent)
         return switch (type, severity) {
         case (.tooFast, .major): "Way too fast! \(pct)% above target pace"
-        case (.tooFast, .minor): "Slightly fast — \(pct)% above target pace"
+        case (.tooFast, .minor): "Slightly fast, \(pct)% above target pace"
         case (.tooSlow, .major): "Falling behind! \(pct)% below target pace"
-        case (.tooSlow, .minor): "Slightly slow — \(pct)% below target pace"
+        case (.tooSlow, .minor): "Slightly slow, \(pct)% below target pace"
         default: ""
         }
     }

@@ -21,7 +21,7 @@ struct TrainingSession: Identifiable, Equatable, Sendable, Codable {
     /// by the road plan pipeline at generation time from
     /// `RoadIntervalLibrary.Category`. Nil for trail sessions, easy days,
     /// and sessions without a structured workout attached. Purely
-    /// informational — lets the session row/detail distinguish between
+    /// informational, lets the session row/detail distinguish between
     /// "Speed intervals" and "Race-pace intervals" at a glance.
     var intervalFocus: String? = nil
     var isKeySession: Bool = false

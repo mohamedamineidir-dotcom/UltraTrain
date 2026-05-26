@@ -116,7 +116,7 @@ enum RoadVolumeCalculator {
         case .elite:        265
         }
         // RR-7f: weight goal no longer modifies training volume. UltraTrain is
-        // a race-training app — the race goal drives the plan, and weight
+        // a race-training app, the race goal drives the plan, and weight
         // management is a nutrition concern (already handled by the nutrition
         // pipeline's calorie/hour scaling). Letting weightGoal silently
         // inflate or shrink peak km compromised the race prescription for
@@ -164,7 +164,7 @@ enum RoadVolumeCalculator {
             // week-to-week progression, so we stretch peak to a 22% range.
             //
             // RR-26: peakWeekIndex was `taperStart - 1`, which placed the
-            // volume peak at the last non-taper week — the same antipattern
+            // volume peak at the last non-taper week, the same antipattern
             // we corrected for the long run. Shift to `taperStart -
             // plateauOffset` so the volume curve plateaus 3-4 weeks before
             // taper, in lockstep with the LR. Recovery weeks within the
@@ -198,11 +198,11 @@ enum RoadVolumeCalculator {
             // crushed peak volume for athletes whose declared base was well
             // below tier default (e.g., a 2:40 marathoner declaring 55 km/wk
             // had peaks of ~5 h/week instead of the 8-9 h tier target).
-            // ageScale applies to BOTH start and peak — masters need
+            // ageScale applies to BOTH start and peak, masters need
             // across-the-board volume reduction, not just a low Week 1.
             // sessionScalingFactor only scales start (the anchor) so that
             // a 2:40 marathoner declaring 55 km/wk doesn't get peak weeks
-            // crushed too — peak is set by the tier ceiling.
+            // crushed too, peak is set by the tier ceiling.
             let scaledEasyParams = SessionParams(
                 startMinutes: easyP.startMinutes * sessionScalingFactor * ageScale,
                 peakMinutes: easyP.peakMinutes * ageScale
@@ -259,12 +259,12 @@ enum RoadVolumeCalculator {
             )
 
             // HARD CAP: Easy runs must NEVER exceed long run, and absolute max 90min
-            let easyAbsoluteMax: TimeInterval = 5400 // 90 min — no easy run should be 2h+
+            let easyAbsoluteMax: TimeInterval = 5400 // 90 min, no easy run should be 2h+
             easy1Seconds = min(easy1Seconds, longRunSeconds * 0.65, easyAbsoluteMax)
             easy2Seconds = min(easy2Seconds, longRunSeconds * 0.58, easyAbsoluteMax)
 
             // Recovery weeks: Pfitzinger uses ~80-85% of load week volume
-            // Keep the reduction gentle — recovery should feel like a lighter week, not a shutdown
+            // Keep the reduction gentle, recovery should feel like a lighter week, not a shutdown
             if skeleton.isRecoveryWeek {
                 easy1Seconds *= 0.87
                 easy2Seconds *= 0.87
@@ -272,7 +272,7 @@ enum RoadVolumeCalculator {
                 tempoSeconds *= 0.85
             }
 
-            // Taper: Mujika 2003 principle — reduce VOLUME, preserve INTENSITY.
+            // Taper: Mujika 2003 principle, reduce VOLUME, preserve INTENSITY.
             // Easy runs absorb most of the volume cut; quality sessions either
             // keep a high fraction of their peak duration (intensity intact via
             // pace from the template) or get zeroed out when qualityAllowedPerWeek
@@ -318,7 +318,7 @@ enum RoadVolumeCalculator {
                 taperWeekCounter += 1
             }
 
-            // Round to nearest MINUTE (not 5 minutes — 5min rounding causes identical consecutive weeks)
+            // Round to nearest MINUTE (not 5 minutes, 5min rounding causes identical consecutive weeks)
             easy1Seconds = (easy1Seconds / 60).rounded() * 60
             easy2Seconds = (easy2Seconds / 60).rounded() * 60
             intervalSeconds = (intervalSeconds / 60).rounded() * 60
@@ -328,7 +328,7 @@ enum RoadVolumeCalculator {
             let totalSeconds = easy1Seconds + easy2Seconds + intervalSeconds + tempoSeconds + longRunSeconds
             var totalKm = totalSeconds / avgPaceSecPerKm
 
-            // Issue #10: Peak volume ceiling — don't exceed discipline target
+            // Issue #10: Peak volume ceiling, don't exceed discipline target
             totalKm = min(totalKm, peakKmCeiling)
 
             // Issue #2: 10% weekly growth cap (Canova: "never >10% week-on-week")
@@ -379,7 +379,7 @@ enum RoadVolumeCalculator {
 
     /// Computes the scaling factor applied to easy/interval/tempo session
     /// durations so Week 1 of the plan lands at ~85% of the athlete's
-    /// declared `weeklyVolumeKm`. Applied uniformly across all weeks — the
+    /// declared `weeklyVolumeKm`. Applied uniformly across all weeks, the
     /// progression SHAPE stays the same, the whole ramp just shifts.
     ///
     /// ## Why a single scaling factor?
@@ -442,7 +442,7 @@ enum RoadVolumeCalculator {
         // Unscaled Week 1 long run (may itself be anchored to longestRunKm).
         // Passes athlete's philosophy through so the cap is consistent with
         // the per-week call site above. We don't have raceGoal here, so we
-        // pass the default — the cap variation is dominated by philosophy
+        // pass the default, the cap variation is dominated by philosophy
         // anyway, and this is only used for anchor-ratio computation
         // (philosophy multiplier cancels in numerator/denominator).
         let unscaledWeek1LongRun = RoadLongRunCalculator.longRunDuration(
@@ -465,14 +465,14 @@ enum RoadVolumeCalculator {
         // RR-12: Floor is an absolute sanity minimum (10 km/wk), not a
         // fraction of the tier-default Week 1. The previous floor of
         // unscaledWeek1TotalKm × 0.5 overrode the athlete's declared value
-        // whenever their base was below ~60% of tier default — which is
+        // whenever their base was below ~60% of tier default, which is
         // exactly the case we most need to respect (low-base athletes are
         // the ones at injury risk from a plan that starts too high).
         //
         // For a beginner 10K athlete declaring 15 km/wk with tier-default
         // Week 1 ≈ 40 km, the old floor of 20 km forced Week 1 to 33% above
         // declared. 10 km/wk is the floor below which a structured plan isn't
-        // really a plan — plan generation itself should warn the athlete to
+        // really a plan, plan generation itself should warn the athlete to
         // build base first, but we still produce something.
         let targetWeek1Km = athlete.weeklyVolumeKm * 0.85
         let floor: Double = 10  // km/wk absolute minimum

@@ -138,7 +138,7 @@ final class SafetyHandler {
         Logger.safety.info("Safety alert cancelled by user")
     }
 
-    // MARK: - Private — No Movement
+    // MARK: - Private, No Movement
 
     private func checkNoMovement(context: RunContext) {
         let shouldAlert = NoMovementDetector.shouldAlert(
@@ -170,7 +170,7 @@ final class SafetyHandler {
         startCountdown(alert: alert)
     }
 
-    // MARK: - Private — Safety Timer
+    // MARK: - Private, Safety Timer
 
     private func checkSafetyTimer(context: RunContext) {
         let threshold = TimeInterval(config.safetyTimerDurationMinutes * 60)
@@ -196,7 +196,7 @@ final class SafetyHandler {
         startCountdown(alert: alert)
     }
 
-    // MARK: - Private — Motion Monitoring
+    // MARK: - Private, Motion Monitoring
 
     private func startMotionMonitoring(motionService: any MotionServiceProtocol) {
         motionTask = Task { [weak self] in
@@ -239,10 +239,10 @@ final class SafetyHandler {
         )
         hapticService.playFallDetectedAlert()
         startCountdown(alert: alert)
-        Logger.safety.warning("Fall detected — impact: \(result.impactG)g")
+        Logger.safety.warning("Fall detected, impact: \(result.impactG)g")
     }
 
-    // MARK: - Private — Countdown
+    // MARK: - Private, Countdown
 
     private func startCountdown(alert: SafetyAlert) {
         activeAlert = alert

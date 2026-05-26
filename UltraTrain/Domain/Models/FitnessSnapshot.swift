@@ -3,12 +3,12 @@ import Foundation
 struct FitnessSnapshot: Identifiable, Equatable, Sendable, Codable {
     let id: UUID
     var date: Date
-    var fitness: Double    // CTL — chronic training load (42-day EMA)
-    var fatigue: Double    // ATL — acute training load (7-day EMA)
-    var form: Double       // TSB — training stress balance (fitness - fatigue)
+    var fitness: Double    // CTL, chronic training load (42-day EMA)
+    var fatigue: Double    // ATL, acute training load (7-day EMA)
+    var form: Double       // TSB, training stress balance (fitness - fatigue)
     var weeklyVolumeKm: Double
     var weeklyElevationGainM: Double
     var weeklyDuration: TimeInterval
     var acuteToChronicRatio: Double
-    var monotony: Double             // mean daily load / stddev — high (>2.0) = injury risk
+    var monotony: Double             // mean daily load / stddev, high (>2.0) = injury risk
 }

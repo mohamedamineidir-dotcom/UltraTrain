@@ -14,7 +14,7 @@ struct SweatProfile: Equatable, Sendable, Codable {
     var sweatRateMlPerHour: Int?
     /// Measured sweat sodium concentration (ml/L).
     var sweatSodiumMgPerL: Int?
-    /// Heuristic flag when no lab test exists — white salt marks, stinging eyes.
+    /// Heuristic flag when no lab test exists, white salt marks, stinging eyes.
     var heavySaltySweater: Bool
 
     static let unknown = SweatProfile(

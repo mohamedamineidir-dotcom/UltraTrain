@@ -173,7 +173,7 @@ enum PlanAdjustmentCalculator {
         let severity: AdjustmentSeverity = (currentWeek.phase == .peak || currentWeek.phase == .taper)
             ? .urgent : .recommended
         let peakNote = severity == .urgent
-            ? " You're in the peak phase — every session counts toward race day."
+            ? " You're in the peak phase, every session counts toward race day."
             : ""
         recommendations.append(PlanAdjustmentRecommendation(
             id: UUID(),

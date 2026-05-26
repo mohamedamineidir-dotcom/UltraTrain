@@ -137,7 +137,7 @@ extension RunSummarySheet {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Linked Session")
                         .font(.caption.bold())
-                    Text("\(session.type.rawValue.capitalized) — \(UnitFormatter.formatDistance(session.plannedDistanceKm, unit: units))")
+                    Text("\(session.type.rawValue.capitalized), \(UnitFormatter.formatDistance(session.plannedDistanceKm, unit: units))")
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
@@ -168,7 +168,7 @@ extension RunSummarySheet {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Auto-Linked to Session")
                         .font(.caption.bold())
-                    Text("\(match.session.type.rawValue.capitalized) — \(UnitFormatter.formatDistance(match.session.plannedDistanceKm, unit: units))")
+                    Text("\(match.session.type.rawValue.capitalized), \(UnitFormatter.formatDistance(match.session.plannedDistanceKm, unit: units))")
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }

@@ -18,7 +18,7 @@ enum CoachAdviceGenerator {
         /// True when the target race has heavy descent (D- ≥ 1500m or
         /// race effective km descent density justifies eccentric prep).
         /// Drives a "practice relaxed descents" cue on long runs and
-        /// B2B day 2 only — quad damage tolerance is the #1 limiter at
+        /// B2B day 2 only, quad damage tolerance is the #1 limiter at
         /// UTMB / Hardrock / Madeira-style races. Coach-advice only;
         /// no plan structure change.
         isDescentHeavyRace: Bool = false,
@@ -28,7 +28,7 @@ enum CoachAdviceGenerator {
         /// Athlete age in years, used to surface a Maffetone-style
         /// aerobic ceiling (180 − age) on easy / recovery runs when
         /// the athlete hasn't supplied resting + max HR. T7: ultras
-        /// run most volume in Zone 2 — athletes need *a number* to
+        /// run most volume in Zone 2, athletes need *a number* to
         /// stay below, not just "conversational pace."
         athleteAge: Int = 0,
         /// Highest course elevation in meters. T8: when ≥ 2500m, an
@@ -77,8 +77,8 @@ enum CoachAdviceGenerator {
         }
         // #14: append Karvonen HR range when both resting + max HR are
         // known. Skips rest days (no meaningful zone), strength /
-        // cross-training (HR too variable to prescribe a range), and —
-        // critically for ultras — sessions ≥ 2 hours, where cardiac
+        // cross-training (HR too variable to prescribe a range), and
+        // critically for ultras, sessions ≥ 2 hours, where cardiac
         // drift makes HR zones misleading: at hour 5 your HR climbs
         // 10-15 bpm at the same effort. Athletes who chase HR through
         // a long ultra slow inappropriately. RPE / effort cues stay
@@ -106,13 +106,13 @@ enum CoachAdviceGenerator {
             // T7 fallback: athlete hasn't supplied resting + max HR but
             // age is known. Surface Maffetone aerobic ceiling (180−age)
             // so they have a concrete number to stay below on easy
-            // runs. Only fires for .easy intensity short sessions —
+            // runs. Only fires for .easy intensity short sessions
             // Maffetone isn't meant to prescribe quality work.
             let mafCeiling = max(120, 180 - athleteAge)
             result += " Aerobic ceiling: keep HR ≤\(mafCeiling) bpm (Maffetone 180−age, Zone 2). If no HR data, target conversational pace where you could speak in full sentences."
         } else if type != .rest, type != .strengthConditioning, type != .crossTraining,
                   isLongSession {
-            // Pure RPE guidance for long sessions — HR drifts, effort doesn't.
+            // Pure RPE guidance for long sessions, HR drifts, effort doesn't.
             let effortLabel: String
             switch intensity {
             case .easy:      effortLabel = "Stay at conversational effort throughout. If HR climbs but the effort feels the same, trust the effort."
@@ -146,11 +146,11 @@ enum CoachAdviceGenerator {
            ) {
             result += " " + heatNote
         }
-        // Session-day weather flag — today's forecast is hot enough that
+        // Session-day weather flag, today's forecast is hot enough that
         // a hard session is unsafe / unproductive. Surface a swap cue
         // instead of just a "drink more water" warning. Athlete makes
         // the call (skip / swap with tomorrow's easy / move to early
-        // morning). One short sentence — no over-stuffed card.
+        // morning). One short sentence, no over-stuffed card.
         if isHotSessionForecast,
            type == .intervals || type == .tempo || type == .verticalGain {
             result += " Today's forecast is hot. Consider swapping with tomorrow's easy day or moving this to dawn."
@@ -158,7 +158,7 @@ enum CoachAdviceGenerator {
         // Descent emphasis. For races with heavy D- (UTMB / Hardrock /
         // Madeira / TDS class), quad damage tolerance is the limiter
         // most beginners + intermediates underprepare for. Surface a
-        // descent cue on long runs + B2B day 2 in build/peak only —
+        // descent cue on long runs + B2B day 2 in build/peak only
         // outside those phases there's not enough downhill volume in
         // the plan for the cue to bite. Cue is intentionally short:
         // the ATHLETE picks the route, we just remind why it matters.
@@ -168,7 +168,7 @@ enum CoachAdviceGenerator {
            !isRecoveryWeek {
             result += " Pick a route with sustained descent. Practice relaxed quads, slight forward lean, quick foot turnover. Quad tolerance is the #1 race-day limiter for big-D- races."
         }
-        // T8 — altitude-acclimatization advisory. Surfaces on long
+        // T8, altitude-acclimatization advisory. Surfaces on long
         // runs in build/peak when the target race tops out ≥ 2500m.
         // Pure coaching cue (no plan structure change). Athletes who
         // can't travel to altitude pre-race still benefit from the
@@ -181,7 +181,7 @@ enum CoachAdviceGenerator {
            !isRecoveryWeek {
             result += " " + altitudeAdvisory(maxElevationM: elev)
         }
-        // T8 — pole-training cue. Surfaces on VG sessions in build/peak
+        // T8, pole-training cue. Surfaces on VG sessions in build/peak
         // when poles are allowed in the target race. Athletes who plan
         // to use poles need 1-2 sessions/week practice to lock in
         // technique before race day; untrained pole use wastes energy.
@@ -191,7 +191,7 @@ enum CoachAdviceGenerator {
            !isRecoveryWeek {
             result += " Poles are allowed in your race. If you plan to use them, practice with poles on this VG session, since uphill is the natural slot. Athletes who race with poles untrained typically fight technique on race day."
         }
-        // Mental cue. Short — one sentence. Surfaces only on the few
+        // Mental cue. Short, one sentence. Surfaces only on the few
         // sessions where it actually matters: peak-phase race-effort
         // efforts, race-week prep, and the race itself. Skipped on
         // routine easy / recovery / strength so the card stays focused.
@@ -202,8 +202,8 @@ enum CoachAdviceGenerator {
     }
 
     /// Single-sentence mental cue. Matches research-backed sport-
-    /// psychology themes — visualisation, controlled self-talk,
-    /// pace-by-feel — without bloating the card. Returns nil when the
+    /// psychology themes, visualisation, controlled self-talk,
+    /// pace-by-feel, without bloating the card. Returns nil when the
     /// session doesn't warrant one.
     private static func mentalCue(
         for type: SessionType,
@@ -228,7 +228,7 @@ enum CoachAdviceGenerator {
         }
     }
 
-    /// T8 — altitude-acclimatization advisory. Tier-aware by elevation:
+    /// T8, altitude-acclimatization advisory. Tier-aware by elevation:
     /// high-altitude (≥3500m, Hardrock / Tor des Géants class) gets a
     /// stronger acclimatization framing; moderate-altitude (2500-3500m,
     /// Lavaredo / many Andes 100K class) gets a "expect slower pace"
@@ -246,7 +246,7 @@ enum CoachAdviceGenerator {
         }
     }
 
-    /// Heat-acclimation cue — surfaced on peak / taper sessions when the
+    /// Heat-acclimation cue, surfaced on peak / taper sessions when the
     /// race-day forecast is hot. Returns nil for sessions where the cue
     /// would be misleading (recovery weeks, base phase, etc.).
     private static func heatAcclimationNote(
@@ -255,19 +255,19 @@ enum CoachAdviceGenerator {
         weekInPhase: Int
     ) -> String? {
         switch (phase, type) {
-        // Peak long run / B2B — kick off the 10-14 day acclimation block
+        // Peak long run / B2B, kick off the 10-14 day acclimation block
         case (.peak, .longRun), (.peak, .backToBack):
             return "Race-day forecast is hot. Start your 10-14 day heat-acclimation block by training in the warmest part of the day, layered, or in a sauna 20-30 min post-run."
-        // Peak quality (intervals/tempo/VG) — heat-specific pacing reminder
+        // Peak quality (intervals/tempo/VG), heat-specific pacing reminder
         case (.peak, .intervals), (.peak, .tempo), (.peak, .verticalGain):
             return "Heat block in progress: dial today's pace by feel, not the watch. Heat compresses pace bands. Cool the head + neck immediately post-rep."
-        // Taper big efforts (LR / B2B / race) — maintain and don't chase new stress
+        // Taper big efforts (LR / B2B / race), maintain and don't chase new stress
         case (.taper, .longRun), (.taper, .backToBack), (.taper, .race):
             return "Stay heat-adapted: short heat exposures (warm bath, sauna 15 min) every 2-3 days through taper. Don't add new training stress."
-        // Taper quality (intervals/tempo) — reinforce maintenance + race-day pacing
+        // Taper quality (intervals/tempo), reinforce maintenance + race-day pacing
         case (.taper, .intervals), (.taper, .tempo):
             return "Final heat reminder: keep one short hot exposure every 2-3 days; on race day expect 5-10% slower pace at same effort."
-        // Race day in peak — full pre-cool / fueling / pacing brief
+        // Race day in peak, full pre-cool / fueling / pacing brief
         case (.peak, .race):
             return "Race day will be hot. Pre-cool if possible, sip-and-eat early before thirst/hunger spikes, and drop pace targets 5-10% in heat."
         default:

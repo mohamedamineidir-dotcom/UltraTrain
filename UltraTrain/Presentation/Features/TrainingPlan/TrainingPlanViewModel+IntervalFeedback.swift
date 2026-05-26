@@ -9,7 +9,7 @@ import os
 
 extension TrainingPlanViewModel {
 
-    /// Whether this plan is for a road race — gates whether the per-rep
+    /// Whether this plan is for a road race, gates whether the per-rep
     /// feedback sheet is offered at all. Uses the A-race's raceType field
     /// (aligned with TrainingPlanView+Sections) so manual and automatic
     /// road detection agree. Trail / ultra intervals use a different
@@ -20,7 +20,7 @@ extension TrainingPlanViewModel {
 
     /// Returns true when a given session qualifies for per-rep feedback:
     /// intervals or tempo on a road plan. We deliberately do NOT require a
-    /// linked IntervalWorkout — some road tempo sessions don't attach one
+    /// linked IntervalWorkout, some road tempo sessions don't attach one
     /// (single-block tempos), but the athlete should still be able to
     /// reflect on RPE + completion + average pace. rep count falls back to
     /// 1 in those cases.
@@ -84,7 +84,7 @@ extension TrainingPlanViewModel {
     }
 
     /// Persists per-rep feedback. The athlete's mark-completed flow already
-    /// ran — this only adds the feedback record.
+    /// ran, this only adds the feedback record.
     func saveIntervalFeedback(_ feedback: IntervalPerformanceFeedback) async {
         guard let repo = intervalPerformanceRepository else { return }
         do {

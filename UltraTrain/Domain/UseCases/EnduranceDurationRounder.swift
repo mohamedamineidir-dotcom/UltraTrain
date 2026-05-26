@@ -2,7 +2,7 @@ import Foundation
 
 /// Rounds the displayed `plannedDuration` of endurance sessions (long
 /// runs, base-endurance / recovery, back-to-back days) to the nearest 5
-/// minutes so the schedule reads cleanly — "1h 30min" or "2h 50min"
+/// minutes so the schedule reads cleanly, "1h 30min" or "2h 50min"
 /// instead of arbitrary "1h 03min" / "2h 48min" values that leak from
 /// the underlying floating-point session-budget math.
 ///
@@ -17,7 +17,7 @@ import Foundation
 /// - The road pipeline's `alignSessionWithWorkout` (which overrides
 ///   plannedDuration with the workout's actual estimated content)
 ///
-/// so that whatever set the duration last is what gets rounded — there
+/// so that whatever set the duration last is what gets rounded, there
 /// is no upstream mechanism that can un-round the value before the user
 /// sees it.
 enum EnduranceDurationRounder {

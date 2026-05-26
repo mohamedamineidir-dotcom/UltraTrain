@@ -168,23 +168,23 @@ enum SessionOptimizer {
             if type == .intervals || intensity == .maxEffort {
                 type = .tempo
                 intensity = .moderate
-                reasoning += " Adjusted for taper phase — no intervals or max effort."
+                reasoning += " Adjusted for taper phase, no intervals or max effort."
             }
         case .recovery:
             if intensity == .hard || intensity == .maxEffort {
                 intensity = .easy
                 type = .recovery
-                reasoning += " Recovery phase — keeping intensity easy."
+                reasoning += " Recovery phase, keeping intensity easy."
             }
         case .race:
             if type != .rest {
                 intensity = .easy
-                reasoning += " Race week — keeping effort easy."
+                reasoning += " Race week, keeping effort easy."
             }
         case .base:
             if intensity == .maxEffort {
                 intensity = .hard
-                reasoning += " Base phase — capped intensity."
+                reasoning += " Base phase, capped intensity."
             }
         case .build, .peak:
             break

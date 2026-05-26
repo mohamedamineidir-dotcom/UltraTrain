@@ -19,7 +19,7 @@ final class TrainingSessionSwiftDataModel {
     var intervalWorkoutId: UUID?
     /// RR-24: physiological focus label for road intervals/tempo
     /// (e.g. "Speed", "VO2max", "Threshold", "Race pace"). Nil for
-    /// legacy records — the mapper treats that as "no focus".
+    /// legacy records, the mapper treats that as "no focus".
     var intervalFocus: String?
     var week: TrainingWeekSwiftDataModel?
     var isKeySession: Bool = false

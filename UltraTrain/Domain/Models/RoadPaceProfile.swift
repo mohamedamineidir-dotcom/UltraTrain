@@ -2,7 +2,7 @@ import Foundation
 
 /// A complete set of Daniels-based training pace zones for road race preparation.
 ///
-/// The 6-tier system (Daniels, 2014 — "Daniels' Running Formula"):
+/// The 6-tier system (Daniels, 2014, "Daniels' Running Formula"):
 /// - **E (Easy)**: 65-75% VO2max → recovery, warm-up, cool-down, base building
 /// - **MP (Marathon Pace)**: ~78-82% VO2max → marathon-specific endurance
 /// - **T (Threshold)**: ~83-88% VO2max → lactate clearance, ~1hr max race effort
@@ -15,7 +15,7 @@ struct RoadPaceProfile: Equatable, Sendable {
     let easyPacePerKm: ClosedRange<Double>
     let marathonPacePerKm: Double
     /// Threshold pace (single value, kept for backwards compat). Use
-    /// `thresholdPaceRangePerKm` for prescribing — single sessions may
+    /// `thresholdPaceRangePerKm` for prescribing, single sessions may
     /// sit at the harder edge (cruise intervals) or slower edge
     /// (sustained 30-min tempo). Defaults to the slower edge of the
     /// range when written.
@@ -40,12 +40,12 @@ struct RoadPaceProfile: Equatable, Sendable {
     /// or a goal time). False when they fell through to a pure experience-
     /// tier heuristic because the athlete entered no PRs, no VMA, and no
     /// goal time. UI should prefer RPE/effort labels over specific /km
-    /// paces when this is false — a coach prescribes by effort when there's
+    /// paces when this is false, a coach prescribes by effort when there's
     /// no baseline data, not by fabricated pace numbers.
     let isDataDerived: Bool
 
     /// Coach-recommended realistic finish time given the athlete's current
-    /// fitness — fitness-derived pace × race distance. Used by coach advice
+    /// fitness, fitness-derived pace × race distance. Used by coach advice
     /// to suggest a retarget when the athlete's declared goal is
     /// .veryAmbitious. Nil when we have no usable fitness signal.
     let recommendedGoalTime: TimeInterval?
@@ -53,11 +53,11 @@ struct RoadPaceProfile: Equatable, Sendable {
 
 /// Classification of how realistic the athlete's target time is relative to current fitness.
 enum GoalRealism: String, Sendable, Codable {
-    /// Goal ≤10% faster than current fitness — use goal pace for all specific work.
+    /// Goal ≤10% faster than current fitness, use goal pace for all specific work.
     case realistic
-    /// Goal 10-25% faster — use fitness paces for VO2max/threshold, goal pace only in late peak.
+    /// Goal 10-25% faster, use fitness paces for VO2max/threshold, goal pace only in late peak.
     case ambitious
-    /// Goal >25% faster — flag in coach advice, use fitness paces throughout.
+    /// Goal >25% faster, flag in coach advice, use fitness paces throughout.
     case veryAmbitious
 }
 
@@ -89,13 +89,13 @@ enum RoadRaceDiscipline: String, Sendable {
     /// 18/85: 22mi (35km). Hanson: 16mi (26km) regardless of athlete tier.
     ///
     /// The cap responds to three personalisation dimensions:
-    ///   • **experience** — base level (beginner→elite)
-    ///   • **philosophy** — performance lifts the cap modestly
+    ///   • **experience**, base level (beginner→elite)
+    ///   • **philosophy**, performance lifts the cap modestly
     ///     (×1.08), enjoyment trims it (×0.92). Wider swings would
     ///     over-rotate: a marathon LR can only meaningfully grow so far
     ///     before recovery cost outweighs adaptation (Pfitzinger
     ///     stops at 22 mi even for elites).
-    ///   • **goal** — targetRanking nudges +5%, finish trims -5%.
+    ///   • **goal**, targetRanking nudges +5%, finish trims -5%.
     ///     Goal effect is smaller than philosophy because the target
     ///     time is already encoded in pace targets, not LR distance.
     ///
@@ -140,7 +140,7 @@ enum RoadRaceDiscipline: String, Sendable {
 
         let scaled = baseline * philMult * goalMult
 
-        // Floors — minimum LRs to actually prepare for the race.
+        // Floors, minimum LRs to actually prepare for the race.
         // Hanson holds marathoners at 26 km even for the most conservative
         // profile; Pfitz keeps HM athletes at 16+ km; 10K runners need
         // ~120% of race distance to develop adequate aerobic depth.

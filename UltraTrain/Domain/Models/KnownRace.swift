@@ -11,11 +11,11 @@ struct KnownRace: Identifiable, Sendable {
     let nextEditionDate: Date?
     let terrainDifficulty: TerrainDifficulty
     let raceType: RaceType
-    /// Highest point on the course in meters. Optional — when present
+    /// Highest point on the course in meters. Optional, when present
     /// and ≥ 2500m, the plan surfaces altitude-acclimatization advice
     /// in build/peak phases.
     let maxElevationM: Double?
-    /// Whether trekking poles are allowed. Optional — when true, the
+    /// Whether trekking poles are allowed. Optional, when true, the
     /// plan surfaces a pole-training cue. Nil = unknown / unspecified.
     let polesAllowed: Bool?
 

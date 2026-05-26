@@ -176,13 +176,13 @@ enum WeatherImpactCalculator {
 
         var notes: [String] = []
         if isHot {
-            notes.append("Increase fluid intake — expect higher sweat rate in warm conditions")
+            notes.append("Increase fluid intake, expect higher sweat rate in warm conditions")
         }
         if isHot && humidity > config.humidityCompoundingThreshold {
-            notes.append("High heat and humidity — consider ice/cold sponges at aid stations")
+            notes.append("High heat and humidity, consider ice/cold sponges at aid stations")
         }
         if isCold {
-            notes.append("Increase calorie intake — your body burns more energy in cold weather")
+            notes.append("Increase calorie intake, your body burns more energy in cold weather")
         }
         let isRainy = condition == .rain || condition == .heavyRain
             || condition == .drizzle || condition == .thunderstorm

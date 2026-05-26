@@ -6,7 +6,7 @@ import SwiftUI
 /// assumptions and what the athlete has actually executed.
 ///
 /// Dismissable per session. The regenerate-plan action is the primary
-/// CTA — tapping it reruns plan generation, which will re-anchor the
+/// CTA, tapping it reruns plan generation, which will re-anchor the
 /// chronic-load baseline, pace targets, and periodisation to what the
 /// athlete has actually done.
 struct MissedSessionBanner: View {
@@ -131,11 +131,11 @@ struct MissedSessionBanner: View {
         if pattern.flags.contains(.extendedInactivity) {
             lines.append("It's been \(pattern.daysSinceLastCompletion) days since your last completed session. The plan's later blocks assume fitness built in between. Rebalancing re-anchors the paces and load targets to what you've actually done.")
         } else if pattern.flags.contains(.multiSessionSkip) {
-            lines.append("You've skipped \(pattern.skipCountRecent) sessions in the last 14 days. The plan keeps prescribing work based on the original schedule — a rebalance pulls everything into line with your current trajectory.")
+            lines.append("You've skipped \(pattern.skipCountRecent) sessions in the last 14 days. The plan keeps prescribing work based on the original schedule, a rebalance pulls everything into line with your current trajectory.")
         }
 
         if pattern.flags.contains(.qualitySessionDrift) {
-            lines.append("\(pattern.qualityDriftCount) quality sessions have been skipped or under-executed. Quality is what builds the specific adaptations the later blocks assume — without it, race-pace targets may be ambitious.")
+            lines.append("\(pattern.qualityDriftCount) quality sessions have been skipped or under-executed. Quality is what builds the specific adaptations the later blocks assume, without it, race-pace targets may be ambitious.")
         }
 
         return lines.joined(separator: " ")

@@ -192,7 +192,7 @@ struct PlanGenerationOptionsSheet: View {
         }
     }
 
-    // MARK: - Step 1 — Recent fitness change
+    // MARK: - Step 1, Recent fitness change
 
     private var fitnessChangeSection: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.md) {
@@ -266,7 +266,7 @@ struct PlanGenerationOptionsSheet: View {
         .buttonStyle(.plain)
     }
 
-    // MARK: - Step 2 — Mid-prep fitness test
+    // MARK: - Step 2, Mid-prep fitness test
 
     private var fitnessTestSection: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.md) {
@@ -343,7 +343,7 @@ struct PlanGenerationOptionsSheet: View {
         }
     }
 
-    // MARK: - Step 3 — Intermediate (B/C) races
+    // MARK: - Step 3, Intermediate (B/C) races
 
     private var intermediateRacesSection: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.md) {

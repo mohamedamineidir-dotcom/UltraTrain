@@ -83,7 +83,7 @@ enum RecoveryScoreCalculator {
             durationScore = max(30, 60 - (hours - targetHigh) * 10)
         }
 
-        // Deep sleep score (0-20 points) — target 15-25% of total
+        // Deep sleep score (0-20 points), target 15-25% of total
         let deepPercent = sleep.totalSleepDuration > 0
             ? sleep.deepSleepDuration / sleep.totalSleepDuration
             : 0

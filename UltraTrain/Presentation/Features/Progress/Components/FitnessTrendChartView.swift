@@ -30,7 +30,7 @@ struct FitnessTrendChartView: View {
 
     private var chart: some View {
         Chart {
-            // Form area fill — green above zero
+            // Form area fill, green above zero
             ForEach(snapshots) { snapshot in
                 AreaMark(
                     x: .value("Date", snapshot.date),
@@ -40,7 +40,7 @@ struct FitnessTrendChartView: View {
                 .foregroundStyle(Theme.Colors.success.opacity(0.15))
             }
 
-            // Form area fill — red below zero
+            // Form area fill, red below zero
             ForEach(snapshots) { snapshot in
                 AreaMark(
                     x: .value("Date", snapshot.date),

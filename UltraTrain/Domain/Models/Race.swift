@@ -21,7 +21,7 @@ struct Race: Identifiable, Equatable, Sendable, Codable {
     var courseRoute: [TrackPoint] = []
     var savedRouteId: UUID? = nil
     var serverUpdatedAt: Date? = nil
-    /// Highest point on the course in meters above sea level. Optional —
+    /// Highest point on the course in meters above sea level. Optional
     /// when ≥ 2500m, the trail coach advice surfaces an altitude-prep
     /// advisory in build/peak phases. Pre-populated from the known-race
     /// database when the athlete picks a known race; otherwise stays nil
@@ -35,7 +35,7 @@ struct Race: Identifiable, Equatable, Sendable, Codable {
     /// Athlete opted into B/C-race specific prep (1-3 race-pace quality
     /// sessions in the 2-3 weeks before this race). Only meaningful for
     /// road B/C races with a `.targetTime` goal during a trail/ultra
-    /// A-race prep — for all other cases the flag is ignored. Default
+    /// A-race prep, for all other cases the flag is ignored. Default
     /// false: athlete must explicitly opt in (Pfizinger / Roche stance:
     /// don't compromise the primary goal silently).
     var includesSpecificPrep: Bool = false
@@ -65,7 +65,7 @@ struct Race: Identifiable, Equatable, Sendable, Codable {
     }
 
     /// Creates a synthetic race for users without a target race.
-    /// Used as input to the training plan generator — not saved to the database.
+    /// Used as input to the training plan generator, not saved to the database.
     static func generalFitness(startingFrom date: Date = .now) -> Race {
         let calendar = Calendar.current
         // invariant: Calendar.date(byAdding:) always succeeds for simple offsets

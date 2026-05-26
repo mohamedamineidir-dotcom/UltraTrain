@@ -20,10 +20,10 @@ enum Theme {
         static let zone4 = Color.orange
         static let zone5 = Color.red
 
-        /// Adaptive shadow — dark in light mode, light glow in dark mode.
+        /// Adaptive shadow, dark in light mode, light glow in dark mode.
         static let shadow = Color(.label).opacity(0.15)
 
-        /// Adaptive map annotation background — contrasts with map in both modes.
+        /// Adaptive map annotation background, contrasts with map in both modes.
         static let mapAnnotationBackground = Color(.systemBackground)
 
         // MARK: - Premium Palette (Paywall & Onboarding)

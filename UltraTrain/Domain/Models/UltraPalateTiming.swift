@@ -1,6 +1,6 @@
 import Foundation
 
-/// When the athlete typically hits flavour fatigue on long efforts —
+/// When the athlete typically hits flavour fatigue on long efforts
 /// the point where sweet gels become unpalatable and savoury/real
 /// food works better. Research (Costa 2017 on GI issues in ultra
 /// endurance) shows this varies widely per athlete.
@@ -8,7 +8,7 @@ import Foundation
 /// Only asked for races ≥ 60 km. Shorter races rarely push an athlete
 /// past the sweet-only window so the question isn't useful.
 enum UltraPalateTiming: String, CaseIterable, Codable, Sendable {
-    /// Savoury craving within the first 2 hours. Unusual but real —
+    /// Savoury craving within the first 2 hours. Unusual but real
     /// these athletes should have real food planned from early aid
     /// stations rather than gel-first.
     case early
@@ -19,7 +19,7 @@ enum UltraPalateTiming: String, CaseIterable, Codable, Sendable {
     /// 50K-ish race but needs real food backup for the final third of
     /// a 100K+.
     case late
-    /// Never — the athlete handles sweet fuelling through any
+    /// Never, the athlete handles sweet fuelling through any
     /// duration without palate fatigue. Plan can stay gel-centric.
     case never
 

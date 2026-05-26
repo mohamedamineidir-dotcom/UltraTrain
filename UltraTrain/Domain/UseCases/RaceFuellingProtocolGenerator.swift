@@ -4,13 +4,13 @@ import Foundation
 /// targets, sodium loading, hydration, and the pre-race morning meal.
 ///
 /// Research basis:
-///   • Burke 2011 — "Competition fuelling for athletes". Classic
+///   • Burke 2011, "Competition fuelling for athletes". Classic
 ///     8-12 g/kg/day carb load in the 1-3 days before endurance
 ///     events ≥ 90 min. Short events (<90 min) don't benefit from
 ///     loading; baseline high-carb diet suffices.
-///   • ACSM / AND / DC Joint Position Stand 2016 — 6-12 g/kg/day
+///   • ACSM / AND / DC Joint Position Stand 2016, 6-12 g/kg/day
 ///     across endurance training; upper end for race week.
-///   • ISSN 2017 Jeukendrup — 1-4 g/kg of carb 1-4h pre-race; 60-90
+///   • ISSN 2017 Jeukendrup, 1-4 g/kg of carb 1-4h pre-race; 60-90
 ///     g/hr during races ≥ 2h.
 ///   • Sodium: general recommendation +500-800 mg/day during
 ///     carb-loading phase to offset fluid-shifting from increased
@@ -49,7 +49,7 @@ enum RaceFuellingProtocolGenerator {
 
     /// Builds a protocol from the athlete's weight and the race's
     /// estimated duration. Returns nil when the athlete has no
-    /// recorded weight — the UI should gracefully hide the card in
+    /// recorded weight, the UI should gracefully hide the card in
     /// that case rather than show carb counts derived from fallback
     /// defaults.
     static func build(
@@ -62,7 +62,7 @@ enum RaceFuellingProtocolGenerator {
         let raceMinutes = estimatedRaceDurationSeconds / 60
 
         // Pre-race morning meal. Jeukendrup ISSN 2017 recommends
-        // 1-4 g/kg of carb 1-4h before a race — the window is wide
+        // 1-4 g/kg of carb 1-4h before a race, the window is wide
         // because tight timing (1h) means less food, low fibre,
         // mostly liquid; long windows (4h) allow a full meal. When
         // the athlete has told us their preferred timing, we tune
@@ -89,7 +89,7 @@ enum RaceFuellingProtocolGenerator {
                 loadingPhases: [],
                 morning: morning,
                 during: during,
-                rationale: "Race duration is under 90 min, so a multi-day carb load isn't needed — normal high-carb eating plus the pre-race meal is enough."
+                rationale: "Race duration is under 90 min, so a multi-day carb load isn't needed, normal high-carb eating plus the pre-race meal is enough."
             )
         }
 
@@ -107,7 +107,7 @@ enum RaceFuellingProtocolGenerator {
                 loadingPhases: phases,
                 morning: morning,
                 during: during,
-                rationale: "A 90-180 min race benefits from 1 day of focused carb-loading at ~8 g/kg — enough to top up glycogen without overloading."
+                rationale: "A 90-180 min race benefits from 1 day of focused carb-loading at ~8 g/kg, enough to top up glycogen without overloading."
             )
         }
 
@@ -124,14 +124,14 @@ enum RaceFuellingProtocolGenerator {
                     title: "Day before",
                     carbsGrams: Int((weight * 9.0).rounded()),
                     carbsPerKg: 9.0,
-                    detail: "Peak load. Low fibre, familiar foods. +800 mg sodium. Light pasta/rice dinner — done eating by 20:00."
+                    detail: "Peak load. Low fibre, familiar foods. +800 mg sodium. Light pasta/rice dinner, done eating by 20:00."
                 )
             ]
             return FuellingPlan(
                 loadingPhases: phases,
                 morning: morning,
                 during: during,
-                rationale: "For a 3-5 hr race, 2 days of loading at 8-9 g/kg maximises glycogen stores — classic marathon protocol (Burke 2011)."
+                rationale: "For a 3-5 hr race, 2 days of loading at 8-9 g/kg maximises glycogen stores, classic marathon protocol (Burke 2011)."
             )
         }
 
@@ -141,7 +141,7 @@ enum RaceFuellingProtocolGenerator {
                 title: "3 days out",
                 carbsGrams: Int((weight * 8.0).rounded()),
                 carbsPerKg: 8.0,
-                detail: "Begin the load. Shift plate composition toward carbs — rice, pasta, bread, potatoes, fruit. Reduce fibre."
+                detail: "Begin the load. Shift plate composition toward carbs, rice, pasta, bread, potatoes, fruit. Reduce fibre."
             ),
             Phase(
                 title: "2 days out",
@@ -160,13 +160,13 @@ enum RaceFuellingProtocolGenerator {
             loadingPhases: phases,
             morning: morning,
             during: during,
-            rationale: "For an ultra-endurance race, a full 3-day load at 8-10 g/kg/day is worth it — you'll burn through stored glycogen inside the first 2-3 hours."
+            rationale: "For an ultra-endurance race, a full 3-day load at 8-10 g/kg/day is worth it, you'll burn through stored glycogen inside the first 2-3 hours."
         )
     }
 
     /// Builds the pre-race meal phase, tuning carbs-per-kg and copy
     /// to the athlete's chosen pre-race timing. Research basis:
-    /// Jeukendrup ISSN 2017 — 1 g/kg at 1h, 2 g/kg at 2h, 3 g/kg at
+    /// Jeukendrup ISSN 2017, 1 g/kg at 1h, 2 g/kg at 2h, 3 g/kg at
     /// 3h, 4 g/kg at 4h. Defaults to 3h when timing is unknown.
     private static func morningPhase(
         timing: PreRaceMealTiming?,
@@ -180,7 +180,7 @@ enum RaceFuellingProtocolGenerator {
         case .oneHour:
             carbsPerKg = 1.0
             title = "Race morning (1h before)"
-            detail = "Tight window: keep it small and liquid-leaning. Half a banana + honey, or 300 ml sports drink + a slice of toast. Skip fibre, fat, and protein — no room for digestion."
+            detail = "Tight window: keep it small and liquid-leaning. Half a banana + honey, or 300 ml sports drink + a slice of toast. Skip fibre, fat, and protein, no room for digestion."
         case .twoHours:
             carbsPerKg = 2.0
             title = "Race morning (2h before)"

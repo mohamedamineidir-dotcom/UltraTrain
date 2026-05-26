@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Hero header for the Race Day nutrition tab. Futuristic-glass treatment
-/// with the nutrition-domain green tint — race context at a glance:
+/// with the nutrition-domain green tint, race context at a glance:
 /// name, countdown pill, distance, elevation, expected finish time.
 ///
 /// Designed to read clearly during an ultra: generous spacing, bold

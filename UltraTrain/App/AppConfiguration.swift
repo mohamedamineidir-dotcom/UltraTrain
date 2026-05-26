@@ -12,7 +12,7 @@ enum AppConfiguration {
                   !urlString.isEmpty,
                   let url = URL(string: urlString) else {
                 #if DEBUG
-                Logger.network.error("API_BASE_URL not configured — check Secrets.xcconfig")
+                Logger.network.error("API_BASE_URL not configured, check Secrets.xcconfig")
                 // invariant: static string literal is always a valid URL; intentionally invalid host so requests fail fast
                 return URL(string: "https://api-not-configured.invalid")!
                 #else

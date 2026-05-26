@@ -3,8 +3,8 @@ import Foundation
 /// Selects and arranges training sessions for road race weeks.
 ///
 /// Implements hard/easy alternation (Daniels) with phase-appropriate quality selection.
-/// No VG sessions for road plans — replaced by progression runs.
-/// No B2B weeks — single long run on Saturday.
+/// No VG sessions for road plans, replaced by progression runs.
+/// No B2B weeks, single long run on Saturday.
 ///
 /// Quality session allocation by runs/week (Daniels, Pfitzinger):
 /// - 3/week: 1 quality + 1 long run + 1 easy
@@ -67,7 +67,7 @@ enum RoadSessionSelector {
             )
         }
 
-        // #3: Injury gating — no VO2max/maxEffort for injured athletes
+        // #3: Injury gating, no VO2max/maxEffort for injured athletes
         // Threshold-only base for athletes with frequent pain
         let injuryGatedCategory: RoadIntervalLibrary.Category?
         if athleteContext?.hasRecentInjury == true {
@@ -78,7 +78,7 @@ enum RoadSessionSelector {
             injuryGatedCategory = nil
         }
 
-        // Issue #4: Goal realism gating — ambitious goals restrict race-pace usage
+        // Issue #4: Goal realism gating, ambitious goals restrict race-pace usage
         // Daniels: don't prescribe paces the athlete can't physiologically sustain
         let gateRaceSpecific: Bool
         if let realism = paceProfile?.goalRealismLevel {
@@ -90,7 +90,7 @@ enum RoadSessionSelector {
                 let phaseProgress = Double(weekInPhase) / max(Double(weekInPhase + 2), 1.0)
                 gateRaceSpecific = phase == .peak && phaseProgress < 0.60
             case .veryAmbitious:
-                // Never use race-specific — use fitness-derived paces only
+                // Never use race-specific, use fitness-derived paces only
                 gateRaceSpecific = true
             }
         } else {
@@ -104,7 +104,7 @@ enum RoadSessionSelector {
         // Select quality session templates from the library.
         // Base phase: Daniels' "fundamental" base is mileage-first. We only
         // schedule one quality session per week (a light progression run or
-        // cruise intervals). Q2 is skipped — its slot becomes an easy run.
+        // cruise intervals). Q2 is skipped, its slot becomes an easy run.
         let isFirstTimer = athleteContext?.isFirstTimerAtDistance ?? false
         let q1 = RoadIntervalLibrary.selectForSlot(
             slotIndex: 0, phase: phase, discipline: discipline,
@@ -161,11 +161,11 @@ enum RoadSessionSelector {
         // RR-17: Prefer effort labels over fabricated paces when the pace
         // profile is not data-derived (no PRs, no VMA, no goal time). A
         // coach wouldn't prescribe "5:12/km" to an athlete with no baseline
-        // — they'd say "comfortably hard." Pace-specific descriptions only
+        //, they'd say "comfortably hard." Pace-specific descriptions only
         // fire when the profile is actually anchored to athlete data.
         let hasDataDerivedPaces = paceProfile?.isDataDerived ?? false
 
-        // SHORT descriptions — rep format like trail plan display
+        // SHORT descriptions, rep format like trail plan display
         let easyPace: String
         if let p = paceProfile, hasDataDerivedPaces {
             let fast = RoadCoachAdviceGenerator.formatPace(p.easyPacePerKm.lowerBound)
@@ -179,16 +179,16 @@ enum RoadSessionSelector {
         if let t = q1, let p = paceProfile, hasDataDerivedPaces {
             let pace = RoadCoachAdviceGenerator.formatPace(paceForZone(t.targetPaceZone, profile: p))
             if t.repDistanceM > 0 {
-                q1Desc = "\(t.name) — \(t.repCount)×\(t.repDistanceM)m @ \(pace)/km"
+                q1Desc = "\(t.name), \(t.repCount)×\(t.repDistanceM)m @ \(pace)/km"
             } else {
                 q1Desc = "\(t.name) @ \(pace)/km"
             }
         } else if let t = q1 {
             let effortLabel = rpeLabel(for: t.targetPaceZone)
             if t.repDistanceM > 0 {
-                q1Desc = "\(t.name) — \(t.repCount)×\(t.repDistanceM)m at \(effortLabel) effort"
+                q1Desc = "\(t.name), \(t.repCount)×\(t.repDistanceM)m at \(effortLabel) effort"
             } else {
-                q1Desc = "\(t.name) — \(effortLabel) effort"
+                q1Desc = "\(t.name), \(effortLabel) effort"
             }
         } else {
             q1Desc = "Intervals"
@@ -198,16 +198,16 @@ enum RoadSessionSelector {
         if let t = q2, let p = paceProfile, hasDataDerivedPaces {
             let pace = RoadCoachAdviceGenerator.formatPace(paceForZone(t.targetPaceZone, profile: p))
             if t.repDistanceM > 0 {
-                q2Desc = "\(t.name) — \(t.repCount)×\(t.repDistanceM)m @ \(pace)/km"
+                q2Desc = "\(t.name), \(t.repCount)×\(t.repDistanceM)m @ \(pace)/km"
             } else {
                 q2Desc = "\(t.name) @ \(pace)/km"
             }
         } else if let t = q2 {
             let effortLabel = rpeLabel(for: t.targetPaceZone)
             if t.repDistanceM > 0 {
-                q2Desc = "\(t.name) — \(t.repCount)×\(t.repDistanceM)m at \(effortLabel) effort"
+                q2Desc = "\(t.name), \(t.repCount)×\(t.repDistanceM)m at \(effortLabel) effort"
             } else {
-                q2Desc = "\(t.name) — \(effortLabel) effort"
+                q2Desc = "\(t.name), \(effortLabel) effort"
             }
         } else {
             q2Desc = "Tempo"
@@ -228,7 +228,7 @@ enum RoadSessionSelector {
         if isTrueTaperWeek {
             // Pre-race shakeout. Short easy run with 4 strides at race
             // target pace (or slightly slower). Strides on this day, and
-            // ONLY this day, are intentional — they wake the legs up
+            // ONLY this day, are intentional, they wake the legs up
             // without depleting glycogen. Coaching consensus from Daniels,
             // Pfitzinger, and Hudson; matches what athletes actually do
             // the morning before a race.
@@ -240,7 +240,7 @@ enum RoadSessionSelector {
             } else {
                 stridePace = "race pace or slightly slower"
             }
-            effectiveIntervalDesc = "Shakeout — 20 min easy + 4 strides @ \(stridePace) at the end. Wakes the legs without burning glycogen."
+            effectiveIntervalDesc = "Shakeout, 20 min easy + 4 strides @ \(stridePace) at the end. Wakes the legs without burning glycogen."
             effectiveIntervalType = .recovery
         } else {
             effectiveIntervalSeconds = scaledInterval
@@ -250,7 +250,7 @@ enum RoadSessionSelector {
 
         // Base-phase quiet Q2: when phase == .base we suppress the second
         // quality session and convert this slot into a regular easy run.
-        // Daniels / Pfitzinger purer base — one quality session a week, the
+        // Daniels / Pfitzinger purer base, one quality session a week, the
         // rest is mileage. The tempo slot stays Thursday (weekly rhythm) so
         // the athlete's session count is unchanged.
         let isBaseQuietQ2 = (phase == .base) && q2 == nil
@@ -268,13 +268,13 @@ enum RoadSessionSelector {
             } else {
                 mpPace = "marathon effort"
             }
-            effectiveTempoDesc = "Dress rehearsal — \(Int(scaledTempo / 60)) min easy with 15-20 min @ \(mpPace). Wear race shoes."
+            effectiveTempoDesc = "Dress rehearsal, \(Int(scaledTempo / 60)) min easy with 15-20 min @ \(mpPace). Wear race shoes."
         } else {
             effectiveTempoSeconds = scaledTempo
             effectiveTempoDesc = q2Desc
         }
 
-        // Easy days are pure aerobic — no strides. Strides only appear on
+        // Easy days are pure aerobic, no strides. Strides only appear on
         // the pre-race shakeout (true taper week, handled above) where
         // they wake the legs up without burning glycogen. Adding strides
         // to regular easy days dilutes the aerobic stimulus those days
@@ -287,13 +287,13 @@ enum RoadSessionSelector {
         // RR-10: Pool order depends on preferredRunsPerWeek so that low-volume
         // athletes always get at least one easy run. The previous fixed order
         // [long, intervals, tempo, easy Mon, ...] meant a 3-days/week athlete
-        // got three hard days (all quality) with zero easy recovery — the
+        // got three hard days (all quality) with zero easy recovery, the
         // opposite of Daniels / Pfitzinger's prescription for 3-day plans,
         // which is 1 long + 1 quality + 1 easy.
         //
         // - preferredRunsPerWeek <= 2 → long + easy only (no quality; this is
         //   a maintenance level, not real race prep).
-        // - preferredRunsPerWeek == 3 → long + 1 quality (tempo, threshold —
+        // - preferredRunsPerWeek == 3 → long + 1 quality (tempo, threshold
         //   lower CNS stress than VO2max for low-volume) + 1 easy.
         // - preferredRunsPerWeek >= 4 → long + 2 quality + easy runs
         //   (the original quality-heavy pool).
@@ -301,7 +301,7 @@ enum RoadSessionSelector {
         // replaced with a cross-training session (cycling / swim / pool
         // running) of equivalent duration. Maintains aerobic stimulus without
         // impact while the injury resolves. Q2 (tempo) stays as a running
-        // session — threshold effort is lower impact than VO2max intervals
+        // session, threshold effort is lower impact than VO2max intervals
         // and preserves running-specific neuromuscular patterns.
         // Taper true-taper weeks bypass this: RR-3 already turns that slot
         // into a shakeout + strides which is the correct pre-race prep
@@ -309,7 +309,7 @@ enum RoadSessionSelector {
         let isInjured = athleteContext?.hasRecentInjury == true
         let replaceWithCrossTraining = isInjured && !isTrueTaperWeek
 
-        // Pre-race shakeout — the day before the race. Replaces the day-5
+        // Pre-race shakeout, the day before the race. Replaces the day-5
         // long-run slot in the final taper week. Pfitzinger / Daniels: a
         // short, easy shakeout with 4 strides at race target pace wakes the
         // legs without burning glycogen. Single most-prescribed pre-race
@@ -324,7 +324,7 @@ enum RoadSessionSelector {
             } else {
                 stridePace = "race pace or slightly slower"
             }
-            let shakeoutDesc = "Pre-race shakeout — 20 min easy + 4 strides @ \(stridePace) at the end. Last run before race day. Wake the legs, don't tire them."
+            let shakeoutDesc = "Pre-race shakeout, 20 min easy + 4 strides @ \(stridePace) at the end. Last run before race day. Wake the legs, don't tire them."
             slotLong = (5, tpl(5, .recovery, .easy, shakeoutDuration, 0, shakeoutDesc))
         } else {
             slotLong = (5, tpl(5, .longRun, .easy, longRunDuration, longRunElev, longRunDesc))
@@ -333,7 +333,7 @@ enum RoadSessionSelector {
         if replaceWithCrossTraining {
             let minutes = Int(effectiveIntervalSeconds / 60)
             slotIntervals = (1, tpl(1, .crossTraining, .moderate, effectiveIntervalSeconds, 0,
-                    "Cross-training \(minutes) min (cycling / swim / pool running) at moderate effort. Zero-impact aerobic work while your injury resolves — replaces intervals."))
+                    "Cross-training \(minutes) min (cycling / swim / pool running) at moderate effort. Zero-impact aerobic work while your injury resolves, replaces intervals."))
         } else {
             slotIntervals = (1, tpl(1, effectiveIntervalType, isTrueTaperWeek ? .easy : q1Intensity, effectiveIntervalSeconds, 0, effectiveIntervalDesc))
         }
@@ -358,7 +358,7 @@ enum RoadSessionSelector {
             pool = [slotLong, slotIntervals, slotTempo, slotEasyMon, slotEasyFri, slotEasyWed, slotEasySun]
         }
 
-        // RR-14: Mid-week medium-long run (MLR) — Pfitzinger's signature
+        // RR-14: Mid-week medium-long run (MLR), Pfitzinger's signature
         // marathon session. Programmed for marathon at 5+/wk (most plans)
         // and HM at 6+/wk (where there's room without compressing recovery).
         // 10K plans skip it: the race is short enough that the long run
@@ -367,11 +367,11 @@ enum RoadSessionSelector {
         //
         // Duration: 65% of the weekly long run, capped at 90 minutes
         // (Pfitzinger MLR range). 75% × a 3-hour marathon long run was
-        // 2:15 — too close to a second long run; 90 min is the textbook
+        // 2:15, too close to a second long run; 90 min is the textbook
         // ceiling.
         //
         // Pace: pure easy throughout. No surges, no progression. The
-        // stimulus is duration in zone 2 — adding intensity here would
+        // stimulus is duration in zone 2, adding intensity here would
         // compromise the Q1/Q2 quality sessions on either side.
         let mlrEligible = phase != .base && (
             (discipline == .roadMarathon && preferredRunsPerWeek >= 5)
@@ -384,7 +384,7 @@ enum RoadSessionSelector {
             // (marathon), drop the Friday easy in favour of an MLR on Wed
             // so the week becomes Mon-easy / Tue-Q1 / Wed-MLR / Thu-Q2 /
             // Sat-long. Friday + Sunday rest.
-            let mlrDescription = "Medium-long run — Pfitzinger aerobic builder. Easy pace throughout, no surges."
+            let mlrDescription = "Medium-long run, Pfitzinger aerobic builder. Easy pace throughout, no surges."
             let mlrSlot = (2, tpl(2, .recovery, .easy, medLongDuration, 0, mlrDescription))
             if preferredRunsPerWeek >= 6 {
                 // Replaces Wednesday easy in the 6+/wk pool
@@ -429,7 +429,7 @@ enum RoadSessionSelector {
     ) -> [SessionTemplateGenerator.SessionTemplate] {
         // Recovery week retains the SAME session count as a normal week but
         // swaps the two-quality layout for a one-quality layout:
-        //   - 1 reduced tempo/threshold session (threshold preferred — lower
+        //   - 1 reduced tempo/threshold session (threshold preferred, lower
         //     CNS load than VO2max; Pfitzinger 18/55 recovery weeks)
         //   - 1 easy long run (already reduced by RoadVolumeCalculator)
         //   - Remaining easy runs (also already reduced via base durations)
@@ -460,12 +460,12 @@ enum RoadSessionSelector {
         if let t = quality, let p = paceProfile {
             let pace = RoadCoachAdviceGenerator.formatPace(paceForZone(t.targetPaceZone, profile: p))
             if t.repDistanceM > 0 {
-                qualityDesc = "\(t.name) — \(t.repCount)×\(t.repDistanceM)m @ \(pace)/km (recovery week — reduced volume)"
+                qualityDesc = "\(t.name), \(t.repCount)×\(t.repDistanceM)m @ \(pace)/km (recovery week, reduced volume)"
             } else {
-                qualityDesc = "\(t.name) @ \(pace)/km (recovery week — reduced volume)"
+                qualityDesc = "\(t.name) @ \(pace)/km (recovery week, reduced volume)"
             }
         } else {
-            qualityDesc = "Tempo run — reduced volume (recovery week)"
+            qualityDesc = "Tempo run, reduced volume (recovery week)"
         }
 
         let easyPace: String
@@ -482,7 +482,7 @@ enum RoadSessionSelector {
         // on Thursday (mid-week) to keep the week's rhythm.
         let pool: [(day: Int, template: SessionTemplateGenerator.SessionTemplate)] = [
             (5, tpl(5, .longRun, .easy, longRunDuration, 0,
-                    "Easy long run — recovery week, reduced volume")),
+                    "Easy long run, recovery week, reduced volume")),
             (3, tpl(3, .tempo, qualityIntensity, qualityDuration, 0, qualityDesc)),
             (1, tpl(1, .recovery, .easy, base.easyRun1Seconds, 0,
                     "Easy run @ \(easyPace)")),
@@ -526,19 +526,19 @@ enum RoadSessionSelector {
 
         switch variant {
         case .easy:
-            return "Easy long run — conversational pace"
+            return "Easy long run, conversational pace"
         case .progressive:
-            return "Progressive long run — easy → race pace final 1/3"
+            return "Progressive long run, easy → race pace final 1/3"
         case .fastFinish:
-            return "Fast-finish long run — last 20% at race pace"
+            return "Fast-finish long run, last 20% at race pace"
         case .marathonPaceIntro:
-            return "MP intro long run — easy with a single 15-20 min block at marathon pace near the end. Bridges into peak-phase MP work."
+            return "MP intro long run, easy with a single 15-20 min block at marathon pace near the end. Bridges into peak-phase MP work."
         case .marathonPaceBlocks:
-            return "MP long run — 2-3 blocks at marathon pace"
+            return "MP long run, 2-3 blocks at marathon pace"
         case .twoPart:
-            return "Two-part long run — easy then race pace"
+            return "Two-part long run, easy then race pace"
         case .raceSimulation:
-            return "Race simulation — extended block at race pace"
+            return "Race simulation, extended block at race pace"
         }
     }
 

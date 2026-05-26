@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Variant-specific result entry for a completed fitness test session.
 /// Replaces the standard ManualValidationPage when the session is a
-/// fitness test — different prompts per variant:
+/// fitness test, different prompts per variant:
 ///
 /// - VMA flat 6-min → distance covered (meters)
 /// - 5K TT → finish time (mm:ss)

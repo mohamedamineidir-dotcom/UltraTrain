@@ -6,7 +6,7 @@ import Foundation
 /// target was refined).
 protocol IntervalPerformanceRepository: Sendable {
     /// Saves a feedback entry. Replaces any existing entry for the same
-    /// sessionId — an athlete re-logging the same session overwrites.
+    /// sessionId, an athlete re-logging the same session overwrites.
     func save(_ feedback: IntervalPerformanceFeedback) async throws
 
     /// All feedback entries, newest first.

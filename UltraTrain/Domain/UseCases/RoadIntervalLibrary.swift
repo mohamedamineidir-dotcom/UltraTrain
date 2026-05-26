@@ -3,12 +3,12 @@ import Foundation
 /// Complete library of road-specific interval workout templates.
 ///
 /// 6 categories based on physiological target:
-/// A: Speed / Running Economy (R-pace) — neuromuscular recruitment
-/// B: VO2max Intervals (I-pace) — aerobic power ceiling
-/// C: Lactate Threshold (T-pace) — sustainable speed
-/// D: Race-Specific (RP/MP) — race simulation
-/// E: Progression Runs — aerobic power at high end
-/// F: Long Run Variants — structured endurance builders
+/// A: Speed / Running Economy (R-pace), neuromuscular recruitment
+/// B: VO2max Intervals (I-pace), aerobic power ceiling
+/// C: Lactate Threshold (T-pace), sustainable speed
+/// D: Race-Specific (RP/MP), race simulation
+/// E: Progression Runs, aerobic power at high end
+/// F: Long Run Variants, structured endurance builders
 ///
 /// Research sources: Daniels (VDOT), Canova (extension of quality),
 /// Pfitzinger (lactate threshold), Norwegian model (double-threshold),
@@ -80,7 +80,7 @@ enum RoadIntervalLibrary {
     ///
     /// - Parameter isFirstTimerAtDistance: true when the athlete has no
     ///   prior PB at the race distance. First-timers stop one template
-    ///   short of the hardest in each category — a first-time marathoner
+    ///   short of the hardest in each category, a first-time marathoner
     ///   should not be plateauing on `Double Tempo` (40 min total at
     ///   T-pace) just because the walk-forward index reached the end of
     ///   the threshold ladder.
@@ -118,15 +118,15 @@ enum RoadIntervalLibrary {
         // across remaining peak weeks.
         //
         // RR-25: Sorting is explicit. Earlier code relied on declaration
-        // order, but `allTemplates` appends `auditTemplates` last — which
+        // order, but `allTemplates` appends `auditTemplates` last, which
         // dropped lighter audit templates (e.g. Marathon Tempo 30min, 30
         // min) AFTER heavier originals (Marathon Pace 3K Blocks, 40 min)
         // in the same category. The walk-forward then handed week 0 the
-        // heaviest session and weeks 1+ a lighter plateau — backwards
+        // heaviest session and weeks 1+ a lighter plateau, backwards
         // progression. Sorting by totalWorkMinutes guarantees ascending
         // difficulty regardless of where templates are declared.
         //
-        // First-timers cap one short of the hardest template — they get
+        // First-timers cap one short of the hardest template, they get
         // the progression up to the second-to-last template and plateau
         // there, instead of seeing repeated weeks of the toughest session
         // their experience tier unlocks.
@@ -154,7 +154,7 @@ enum RoadIntervalLibrary {
         }
 
         // Fallback: NONE of the preferred categories had a matching
-        // template (rare — usually means an exotic phase × discipline
+        // template (rare, usually means an exotic phase × discipline
         // × experience combo we didn't anticipate). Pick a *safe*
         // category before falling back to "anything goes".
         //
@@ -191,8 +191,8 @@ enum RoadIntervalLibrary {
     ///   intervals) introduce in late build so peak isn't the first time the
     ///   athlete sees marathon pace.
     /// - **Base** (Daniels/Pfitzinger purer model): Base is mileage-first. Drop
-    ///   `.speed` from primary slot — repetition work belongs in build/peak,
-    ///   not aerobic base. Base has at most one quality session/week — the
+    ///   `.speed` from primary slot, repetition work belongs in build/peak,
+    ///   not aerobic base. Base has at most one quality session/week, the
     ///   second slot is suppressed at the selector level for base phase.
     /// Returns `[(category, introductionWeekInPhase)]` so a category that
     /// only kicks in mid-phase (e.g. marathon raceSpecific in late build)
@@ -212,8 +212,8 @@ enum RoadIntervalLibrary {
 
         switch (phase, discipline, slotIndex) {
         // === BASE: One quality session/week. Light progression or threshold
-        // — no R-pace speed work in pure base (Daniels' "fundamental" base).
-        // Slot 1 is unused in base — selector skips Q2 entirely for base phase.
+        //, no R-pace speed work in pure base (Daniels' "fundamental" base).
+        // Slot 1 is unused in base, selector skips Q2 entirely for base phase.
         case (.base, _, 0):
             return [(.progression, 0), (.threshold, 0)]
         case (.base, _, _):
@@ -226,11 +226,11 @@ enum RoadIntervalLibrary {
         // HM: Threshold is the limiter (Pfitzinger: "LT is the HM cornerstone")
         case (.build, .roadHalf, 0):    return [(.threshold, 0), (.vo2max, 0)]
         case (.build, .roadHalf, _):    return [(.threshold, 0), (.progression, 0)]
-        // Marathon Q1 (Tuesday — the hardest session of the week):
+        // Marathon Q1 (Tuesday, the hardest session of the week):
         // VO2max early build builds aerobic ceiling, then late build
         // (weekInPhase >= 3) transitions to MP cruise intervals so the
         // athlete sees marathon-pace work BEFORE peak. Without this
-        // transition the first MP intervals show up at peak Q1 cold —
+        // transition the first MP intervals show up at peak Q1 cold
         // contrary to Canova's progression and Pfitzinger 18/85 which
         // both gradually introduce MP cruise (1.5K → 2K → 3K) through
         // late build before the peak's full MP blocks. (RR-27 audit C2.)
@@ -431,7 +431,7 @@ enum RoadIntervalLibrary {
         // Sits in build phase so the athlete meets marathon pace gradually.
         Template(
             name: "MP Cruise 3×1.5K",
-            category: .raceSpecific, description: "3×1500m at marathon pace, 60s jog. Intro MP work — late build.",
+            category: .raceSpecific, description: "3×1500m at marathon pace, 60s jog. Intro MP work, late build.",
             targetPaceZone: .marathonPace, repDistanceM: 1500, repCount: 3,
             recoverySeconds: 60, recoveryType: .jog, totalWorkMinutes: 18,
             applicablePhases: [.build], applicableDistances: [.roadMarathon],
@@ -619,7 +619,7 @@ enum RoadIntervalLibrary {
                 applicablePhases: [.peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
                 minExperience: .advanced
             ),
-            // Marathon continuous tempo at MP (not threshold — race-specific tempo)
+            // Marathon continuous tempo at MP (not threshold, race-specific tempo)
             Template(
                 name: "Marathon Tempo 30min",
                 category: .raceSpecific, description: "30min continuous at marathon pace. Lock in race rhythm.",

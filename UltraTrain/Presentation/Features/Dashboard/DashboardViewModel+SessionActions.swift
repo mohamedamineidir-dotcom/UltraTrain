@@ -46,7 +46,7 @@ extension DashboardViewModel {
             try await planRepository.updateSession(session)
             plan = currentPlan
             Logger.training.info("Dashboard: session \(session.id) marked completed")
-            // Completion shifts the tolerance range — refresh the forecast.
+            // Completion shifts the tolerance range, refresh the forecast.
             await refreshFinishEstimate()
         } catch {
             fitnessError = error.localizedDescription
@@ -71,7 +71,7 @@ extension DashboardViewModel {
             try await planRepository.updateSession(session)
             plan = currentPlan
             Logger.training.info("Dashboard: session \(session.id) skipped, reason=\(reason.rawValue)")
-            // Skipping widens the forecast range — refresh so the user sees it.
+            // Skipping widens the forecast range, refresh so the user sees it.
             await refreshFinishEstimate()
         } catch {
             fitnessError = error.localizedDescription

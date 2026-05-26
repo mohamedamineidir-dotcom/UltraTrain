@@ -88,7 +88,7 @@ struct DashboardNextSessionCard: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(sessionAccessibilityLabel(session))
 
-            // Primary CTA — Start Run (warm coral gradient)
+            // Primary CTA, Start Run (warm coral gradient)
             Button(action: onStartRun) {
                 Label("Start Run", systemImage: "figure.run")
                     .font(.subheadline.bold())
@@ -105,7 +105,7 @@ struct DashboardNextSessionCard: View {
             .accessibilityIdentifier("dashboard.startRunButton")
             .accessibilityHint("Starts GPS tracking for this session")
 
-            // Secondary row — Validate + Skip. Same flows as the Training Plan
+            // Secondary row, Validate + Skip. Same flows as the Training Plan
             // tab; validating opens the stats-entry sheet, skipping opens the
             // reason picker and feeds the plan-adjustment pipeline.
             if onValidate != nil || onSkip != nil {

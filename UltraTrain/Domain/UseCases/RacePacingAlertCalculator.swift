@@ -66,9 +66,9 @@ enum RacePacingAlertCalculator {
         let pct = Int(deviationPercent)
         return switch (type, severity) {
         case (.tooFast, .major): "\(segmentName): Way too fast! \(pct)% above target"
-        case (.tooFast, .minor): "\(segmentName): Slightly fast — \(pct)% above target"
+        case (.tooFast, .minor): "\(segmentName): Slightly fast, \(pct)% above target"
         case (.tooSlow, .major): "\(segmentName): Falling behind! \(pct)% below target"
-        case (.tooSlow, .minor): "\(segmentName): Slightly slow — \(pct)% below target"
+        case (.tooSlow, .minor): "\(segmentName): Slightly slow, \(pct)% below target"
         default: ""
         }
     }

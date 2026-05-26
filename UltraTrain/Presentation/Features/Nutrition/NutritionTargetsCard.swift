@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Hourly-targets card for the Race Day nutrition tab. Four equal-weight
-/// tiles in a 2×2 grid — carbs, hydration, sodium, caffeine — so the
+/// tiles in a 2×2 grid, carbs, hydration, sodium, caffeine, so the
 /// athlete sees every per-hour target at a glance without one metric
 /// drowning out the others. Race total + expected duration sit quietly
 /// in the footer; gut-training practice count surfaces as a soft chip.
@@ -167,7 +167,7 @@ struct NutritionTargetsCard: View {
         )
     }
 
-    /// Tinted tile fill — each metric gets a whisper of its own colour
+    /// Tinted tile fill, each metric gets a whisper of its own colour
     /// so the four tiles feel distinct against the glass card behind
     /// them instead of disappearing into a sea of white. Accent tile
     /// (carbs) leans harder into the nutrition green.

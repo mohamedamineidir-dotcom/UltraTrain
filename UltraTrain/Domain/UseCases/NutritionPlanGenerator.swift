@@ -139,7 +139,7 @@ enum NutritionTargets {
         if bodyWeightKg < 55 { target *= 0.90 }
         if bodyWeightKg > 85 { target *= 1.05 }
 
-        // Hard safety caps — never prescribe beyond proven gut tolerance
+        // Hard safety caps, never prescribe beyond proven gut tolerance
         let absoluteCeiling: Double = 120
         target = min(target, absoluteCeiling)
 
@@ -209,7 +209,7 @@ enum NutritionTargets {
 
         let mgPerHour = (hydrationMlPerHour * appliedConcentration) / 1000
         let clamped = max(200, min(1500, mgPerHour))
-        // Round to nearest 25 mg for the same reason we round hydration —
+        // Round to nearest 25 mg for the same reason we round hydration
         // jagged values like 351 / 487 read as arbitrary precision when
         // they're really heuristic targets.
         return roundToNearest(clamped, step: 25)
@@ -218,7 +218,7 @@ enum NutritionTargets {
     // MARK: Helpers
 
     /// Rounds a value to the nearest multiple of `step`. Used on targets
-    /// that the athlete sees directly — jagged digits erode trust in the
+    /// that the athlete sees directly, jagged digits erode trust in the
     /// recommendation by signalling false precision.
     fileprivate static func roundToNearest(_ value: Int, step: Int) -> Int {
         guard step > 1 else { return value }
@@ -339,7 +339,7 @@ enum NutritionScheduleBuilder {
     /// (≈ 80 g/h with 25 g gels) without crossing the GI-risk line.
     ///
     /// Items at *exactly* the same minute (a drink and a caffeine gel
-    /// both placed at the halfway mark, say) are preserved — athletes
+    /// both placed at the halfway mark, say) are preserved, athletes
     /// routinely take both with the same sip of water and showing them
     /// as a single timestamp on the timeline is the correct UX.
     private static let minDiscreteGapMinutes: Int = 18
@@ -353,9 +353,9 @@ enum NutritionScheduleBuilder {
 
     /// Cutoff for the *last* carb intake. Marathon-and-shorter races
     /// stop fuelling 15 min before the finish so a gel's absorption
-    /// window (10-20 min for glucose to hit the bloodstream — Coyle
+    /// window (10-20 min for glucose to hit the bloodstream, Coyle
     /// 1992, Jentjens 2004) starts before the finish line. Ultras
-    /// stop 30 min out — late carbs there are largely psychological
+    /// stop 30 min out, late carbs there are largely psychological
     /// rather than ergogenic.
     private static func lastIntakeCutoffMinutes(_ duration: Int) -> Int {
         if duration >= 4 * 60 { return max(0, duration - 30) }
@@ -366,7 +366,7 @@ enum NutritionScheduleBuilder {
     /// adjacent intakes that occur at *different* minutes never sit
     /// closer than the minimum gap. Caffeine and base schedules are
     /// computed independently, which produced timelines like "gel @
-    /// 1h20, gel @ 1h30" — too tight for the gut and pointless for
+    /// 1h20, gel @ 1h30", too tight for the gut and pointless for
     /// blood-glucose stability. We *shift* rather than *drop* so the
     /// total carb load stays at the prescribed target rate, and round
     /// shifted times up to the nearest 5-minute boundary so the
@@ -405,7 +405,7 @@ enum NutritionScheduleBuilder {
     }
 
     /// Rounds a minute value UP to the next 5-minute boundary. Used
-    /// by the spacing pass when shifting a tight intake forward — the
+    /// by the spacing pass when shifting a tight intake forward, the
     /// shifted time must remain ≥ `prev + minGap`, so we round up.
     private static func roundedToFiveMinutes(_ minutes: Int) -> Int {
         ((minutes + 4) / 5) * 5
@@ -414,7 +414,7 @@ enum NutritionScheduleBuilder {
     /// Rounds to the NEAREST 5-minute boundary. Used for caffeine
     /// anchors where the target percentage is a *suggestion* (45% /
     /// 75% of duration), so rounding to the closer multiple gives a
-    /// cleaner number — 72 → 70 instead of 75, 112 → 110 instead of
+    /// cleaner number, 72 → 70 instead of 75, 112 → 110 instead of
     /// 115. The spacing pass still uses up-rounding so any
     /// subsequent shift can't violate the min-gap rule.
     private static func roundedToNearestFiveMinutes(_ minutes: Int) -> Int {
@@ -437,7 +437,7 @@ enum NutritionScheduleBuilder {
             if durationMinutes >= 40 {
                 entries.append(entry(product: gel,
                                      timingMinutes: durationMinutes / 2,
-                                     notes: "Optional — take only if you feel energy dropping"))
+                                     notes: "Optional, take only if you feel energy dropping"))
             }
         } else {
             // 60-90 min: 1 gel every 30 min
@@ -479,12 +479,12 @@ enum NutritionScheduleBuilder {
                                  notes: "Take with 150-200 ml water"))
         }
 
-        // Solids for 4-8 h range — one every 90 min after hour 2
+        // Solids for 4-8 h range, one every 90 min after hour 2
         if includeSolid,
            let solid = NutritionProductSelector.pickSolid(preferences: preferences) {
             for minute in stride(from: 120, through: durationMinutes - 30, by: 90) {
                 entries.append(entry(product: solid, timingMinutes: minute,
-                                     notes: "At aid station if possible — chew thoroughly"))
+                                     notes: "At aid station if possible, chew thoroughly"))
             }
         }
 
@@ -532,7 +532,7 @@ enum NutritionScheduleBuilder {
         if let solid = NutritionProductSelector.pickSolid(preferences: preferences) {
             for minute in stride(from: 120, through: durationMinutes - 30, by: 60) {
                 entries.append(entry(product: solid, timingMinutes: minute,
-                                     notes: "Real food — best at aid stations"))
+                                     notes: "Real food, best at aid stations"))
             }
         }
 
@@ -540,7 +540,7 @@ enum NutritionScheduleBuilder {
         if let savory = NutritionProductSelector.pickSavory(preferences: preferences) {
             for minute in stride(from: 4 * 60, through: durationMinutes - 30, by: 120) {
                 entries.append(entry(product: savory, timingMinutes: minute,
-                                     notes: "Savory break — eat slowly at aid station"))
+                                     notes: "Savory break, eat slowly at aid station"))
             }
         }
 
@@ -571,14 +571,14 @@ enum NutritionScheduleBuilder {
         let durationHours = Double(durationMinutes) / 60
 
         if durationHours < 2 {
-            // Single pre-race dose only (not an in-race entry) — skip.
+            // Single pre-race dose only (not an in-race entry), skip.
             return []
         } else if durationHours < 6 {
             // Caffeine peaks in plasma 30-60 min after ingestion
             // (Graham & Spriet 1995; Burke 2008). Anchor the first
             // dose at 45% of duration so its peak lands during the
             // back-half suffer zone (60-75% of the race). Anchor the
-            // second dose at 75% — for a 2h40 marathon (160 min) that
+            // second dose at 75%, for a 2h40 marathon (160 min) that
             // places it at exactly 2h00, with the effect peaking
             // ~2h30 just before the finish surge. Round to NEAREST
             // 5 min (not up) so anchors land on clean round numbers
@@ -587,9 +587,9 @@ enum NutritionScheduleBuilder {
             let halfway = roundedToNearestFiveMinutes(durationMinutes * 45 / 100)
             let threeQuarter = roundedToNearestFiveMinutes(durationMinutes * 75 / 100)
             entries.append(entry(product: caffGel, timingMinutes: halfway,
-                                 notes: "Caffeinated gel — peaks ~45 min later, hits the back-half suffer zone"))
+                                 notes: "Caffeinated gel, peaks ~45 min later, hits the back-half suffer zone"))
             entries.append(entry(product: caffGel, timingMinutes: threeQuarter,
-                                 notes: "Final caffeine dose — peaks near the finish surge"))
+                                 notes: "Final caffeine dose, peaks near the finish surge"))
         } else {
             // Ultra: back-loaded. 1 dose every 2 h starting at hour 3,
             // concentrated during predicted low points (night hours).
@@ -597,7 +597,7 @@ enum NutritionScheduleBuilder {
             let endHour = Int(durationHours) - 1
             for hour in stride(from: startHour, through: endHour, by: 2) {
                 entries.append(entry(product: caffGel, timingMinutes: hour * 60,
-                                     notes: "Caffeinated gel — back-loaded dose"))
+                                     notes: "Caffeinated gel, back-loaded dose"))
             }
         }
         return entries
@@ -655,7 +655,7 @@ enum NutritionProductSelector {
 
     /// True when the athlete set a brand preference for this format and
     /// the product belongs to one of those brands. False (permissive) when
-    /// no brand preference is set — the selector treats that as "any brand".
+    /// no brand preference is set, the selector treats that as "any brand".
     private static func matchesBrandPreference(
         _ product: NutritionProduct,
         type: ProductType,

@@ -35,7 +35,7 @@ enum LongRunCurveCalculator {
         personalization: PersonalizationProfile? = nil
     ) -> WeekDurations {
         // Linear planProgress kept for the legacy taper-fallback formula
-        // (line ~205, only used when taperProfile is nil — essentially
+        // (line ~205, only used when taperProfile is nil, essentially
         // never in production, but preserved for backwards compatibility).
         let planProgress = totalWeeks > 1
             ? Double(weekIndex) / Double(totalWeeks - 1)
@@ -50,7 +50,7 @@ enum LongRunCurveCalculator {
         //
         // Without this, base sessions ramped linearly across the entire
         // plan and reached their highest pre-taper value in the LAST
-        // non-taper week — same antipattern we fixed on the road side.
+        // non-taper week, same antipattern we fixed on the road side.
         let peakWeek = peakBuildWeekIndex(totalWeeks: totalWeeks, taperProfile: taperProfile)
         let cappedIndex = min(weekIndex, peakWeek)
         let baseSessionProgress = peakWeek > 0
@@ -121,7 +121,7 @@ enum LongRunCurveCalculator {
                 personalization: personalization
             )
             // T10: B2B day split scales with race distance. Shorter
-            // ultras (<50K) get a more balanced split (45/55) — both
+            // ultras (<50K) get a more balanced split (45/55), both
             // days are real long runs; longer ultras (>80K) skew
             // day-2-heavier (40/60) so day 2 rehearses the slow
             // accumulating fatigue of the second half of the race
@@ -314,7 +314,7 @@ enum LongRunCurveCalculator {
         // plateaus through the remaining peak weeks. Old behavior put the
         // LR peak at the LAST non-taper week (clampedIndex = buildWeekCount
         // - 1) which made the athlete enter taper carrying acute fatigue
-        // from the hardest run of the cycle — Pfitzinger Adv. Marathoning
+        // from the hardest run of the cycle, Pfitzinger Adv. Marathoning
         // Ch. 9 explicitly warns against this. Now the LR consolidates at
         // peak for several weeks instead of escalating into the taper
         // boundary. Recovery weeks within the plateau still apply ×0.65;
@@ -353,7 +353,7 @@ enum LongRunCurveCalculator {
     /// accumulated fatigue.
     ///
     ///   <50K:    45 / 55
-    ///   50–80K:  43 / 57 (current default — unchanged)
+    ///   50–80K:  43 / 57 (current default, unchanged)
     ///   >80K:    40 / 60
     ///
     /// Falls through to the legacy 43/57 split when raceEffectiveKm is
@@ -449,7 +449,7 @@ enum LongRunCurveCalculator {
         let persMult = personalization?.trailComposite ?? 1.0
 
         // Philosophy + age aware B2B cap. Performance (×1.15) lifts the
-        // ceiling — an intermediate-for-performance HK100 athlete gets
+        // ceiling, an intermediate-for-performance HK100 athlete gets
         // ~14.95 h B2B instead of being clipped at 13 h, matching what
         // pro-coached training packages actually prescribe. Enjoyment
         // (×0.80) drops the ceiling so casual athletes never see a
@@ -563,7 +563,7 @@ enum LongRunCurveCalculator {
         let personalizedFraction = fraction * philMult * goalMult * ageMult * persMult
 
         // Philosophy-aware absolute cap. Performance lifts the ceiling
-        // (intermediate from 8h to ~9.2h — matches what real coaches
+        // (intermediate from 8h to ~9.2h, matches what real coaches
         // prescribe for performance-mode 100K prep, e.g. HK100 with a
         // 9-hour single long run). Enjoyment drops it (~6.4h). Goal
         // type doesn't move the cap. Age also scales the cap.
@@ -626,9 +626,9 @@ enum LongRunCurveCalculator {
 
     private static func raceGoalBaseMultiplier(_ goal: RaceGoal) -> Double {
         switch goal {
-        case .finish:          0.90  // Conservative — focus on completing
-        case .targetTime:      1.00  // Moderate — balanced approach
-        case .targetRanking:   1.10  // Aggressive — competitive volume
+        case .finish:          0.90  // Conservative, focus on completing
+        case .targetTime:      1.00  // Moderate, balanced approach
+        case .targetRanking:   1.10  // Aggressive, competitive volume
         }
     }
 

@@ -9,7 +9,7 @@ struct SleepHistoryBars: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-            Text("Sleep — Last 7 Nights")
+            Text("Sleep, Last 7 Nights")
                 .font(.caption2)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
 

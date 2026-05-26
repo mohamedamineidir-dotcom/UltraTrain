@@ -164,7 +164,7 @@ struct ImportRunView: View {
                         .accessibilityHidden(true)
                     Text("Run imported successfully!")
                         .font(.headline)
-                    Text("\(UnitFormatter.formatDistance(run.distanceKm, unit: units, decimals: 2)) — \(RunStatisticsCalculator.formatDuration(run.duration))")
+                    Text("\(UnitFormatter.formatDistance(run.distanceKm, unit: units, decimals: 2)), \(RunStatisticsCalculator.formatDuration(run.duration))")
                         .font(.subheadline)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                     Button("Done") { dismiss() }

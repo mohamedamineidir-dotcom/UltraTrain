@@ -22,7 +22,7 @@ extension TrainingPlanViewModel {
         dismissedRecommendationIds = dismissedRecommendationIds.intersection(currentIds)
 
         Task {
-            // Fetch fitness + recovery in parallel — both feed the
+            // Fetch fitness + recovery in parallel, both feed the
             // analyser. Recovery is optional (nil-safe inside analyse);
             // when present, it activates the swapToRecoveryLowRecovery
             // and reduceLoadLowRecovery recommendations that Commit E
@@ -54,7 +54,7 @@ extension TrainingPlanViewModel {
 
     /// Reactive menstrual scan: only the multi-skip pattern detection.
     /// Predictive scans (amenorrhea screening, phase-based flagging)
-    /// were stripped per product call — too intrusive for an app
+    /// were stripped per product call, too intrusive for an app
     /// surface. Athletes communicate cycle impact via the skip reason;
     /// the engine responds to that signal alone.
     private func scanMenstrualPassiveSignals(plan: TrainingPlan) -> [PlanAdjustmentRecommendation] {
@@ -77,7 +77,7 @@ extension TrainingPlanViewModel {
 
     /// Pulls the most-recent recovery snapshot from the optional
     /// `recoveryRepository`. Returns nil when the dependency wasn't
-    /// injected (e.g. tests, contexts without HealthKit) — the analyser
+    /// injected (e.g. tests, contexts without HealthKit), the analyser
     /// then falls back to the existing fitness-only adjustment path.
     private func loadLatestRecoveryScore() async -> RecoveryScore? {
         guard let repo = recoveryRepository else { return nil }
@@ -95,7 +95,7 @@ extension TrainingPlanViewModel {
     }
 
     /// Auto-apply urgent-severity recommendations that the athlete
-    /// shouldn't have to reason about — adherence-driven volume cuts and
+    /// shouldn't have to reason about, adherence-driven volume cuts and
     /// severe fatigue load reduction. A coach would just rebuild after 3
     /// missed key sessions; the athlete shouldn't have to read a banner
     /// and decide. Lower-severity versions of these recommendations stay
@@ -106,9 +106,9 @@ extension TrainingPlanViewModel {
         // produced a `swapToRecoveryLowRecovery` or `reduceLoadLowRecovery`
         // recommendation at urgent severity, the session swap or volume
         // cut applies silently. The athlete sees today's session already
-        // updated when they open the app — no banner-then-decide round
+        // updated when they open the app, no banner-then-decide round
         // trip. Recovery-driven recommendations require the analyzer to
-        // be passed a `RecoveryScore`; that wiring is incremental — once
+        // be passed a `RecoveryScore`; that wiring is incremental, once
         // a call site supplies it, this auto-apply path picks it up.
         let autoApplyTypes: Set<PlanAdjustmentType> = [
             .reduceTargetDueToAccumulatedMissed,
@@ -124,7 +124,7 @@ extension TrainingPlanViewModel {
         guard !candidates.isEmpty else { return }
         for rec in candidates {
             await applyRecommendation(rec)
-            // Hide from banner — already applied silently.
+            // Hide from banner, already applied silently.
             dismissedRecommendationIds.insert(rec.id)
         }
     }
@@ -171,7 +171,7 @@ extension TrainingPlanViewModel {
                 let factor = 1.0 - AppConfiguration.Training.accumulatedMissedVolumeReductionPercent / 100.0
                 try await applyVolumeReduction(recommendation, plan: &currentPlan, factor: factor)
             case .menstrualMultiSkipPattern, .bRaceMismatch:
-                // Informational signals — surface only, no plan
+                // Informational signals, surface only, no plan
                 // mutation. menstrualMultiSkipPattern is a soft-deload
                 // framing: the athlete is already dropping load via
                 // skips. bRaceMismatch flags a structural priority/

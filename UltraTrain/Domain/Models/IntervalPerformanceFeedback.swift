@@ -7,7 +7,7 @@ import Foundation
 /// rep, and their perceived effort. IR-2 then aggregates these across recent
 /// sessions of the same type to decide whether to adjust future target paces.
 ///
-/// We capture three distinct signals — pace, RPE, completion — because no
+/// We capture three distinct signals, pace, RPE, completion, because no
 /// single one is sufficient on its own:
 ///   • pace alone can't tell us if the athlete pushed past unsustainable cost
 ///   • RPE alone misses whether the prescription was physiologically met
@@ -35,17 +35,17 @@ struct IntervalPerformanceFeedback: Identifiable, Equatable, Sendable, Codable {
     var prescribedRepCount: Int
 
     /// Per-rep actual paces (seconds/km). Empty when the athlete used the
-    /// "hit target consistently" shortcut — in which case refinement treats
+    /// "hit target consistently" shortcut, in which case refinement treats
     /// the session as on-target across all reps.
     var actualPacesPerKm: [Double]
 
     /// Whether the athlete completed every prescribed rep. Kept for
-    /// backwards compatibility — new code should prefer
+    /// backwards compatibility, new code should prefer
     /// `completedRepCount` which is more granular.
     var completedAllReps: Bool
 
     /// How many work reps the athlete actually finished. Nil when a legacy
-    /// record was loaded before this field existed — callers should fall
+    /// record was loaded before this field existed, callers should fall
     /// back to `completedAllReps` in that case (prescribed or 0). A
     /// specific count (e.g. 8 of 10) lets the refinement use case weight
     /// the slow-down signal by how many reps were actually dropped rather

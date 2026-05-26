@@ -22,7 +22,7 @@ struct NutritionPreferences: Equatable, Sendable, Codable {
     /// the generator will not prescribe above this ceiling.
     var carbsPerHourTolerance: Int?
     var caffeineSensitivity: CaffeineSensitivity
-    /// Self-reported daily caffeine intake (mg) — coffee ~95 mg, espresso ~63 mg.
+    /// Self-reported daily caffeine intake (mg), coffee ~95 mg, espresso ~63 mg.
     var caffeineHabitMgPerDay: Int?
 
     // MARK: - GI & dietary filters
@@ -37,7 +37,7 @@ struct NutritionPreferences: Equatable, Sendable, Codable {
 
     /// Per-format brand preferences. Key is the product type; value is the
     /// set of brand names the athlete explicitly prefers for that format.
-    /// Missing key or empty set means "no preference" for that format —
+    /// Missing key or empty set means "no preference" for that format
     /// the selector will choose freely from the whole catalog.
     ///
     /// Captured in the nutrition onboarding after the format step, so the
@@ -112,7 +112,7 @@ struct NutritionPreferences: Equatable, Sendable, Codable {
         self.preferredFormats = formats ?? Set<ProductType>()
         // Decode brandPreferences from a serialised [String: Set<String>] map
         // keyed by ProductType.rawValue. Older payloads without the key fall
-        // back to an empty map — the generator treats missing keys as "no
+        // back to an empty map, the generator treats missing keys as "no
         // preference", so behaviour is unchanged for existing athletes.
         if let raw: [String: Set<String>] = try? c.decodeIfPresent([String: Set<String>].self, forKey: .brandPreferences) {
             var map: [ProductType: Set<String>] = [:]

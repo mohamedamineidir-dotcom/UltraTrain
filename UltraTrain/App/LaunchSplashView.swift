@@ -5,13 +5,13 @@ import SwiftUI
 /// rather than only the system appearance.
 ///
 /// iOS launch screens are rendered before the app's code runs, so
-/// they can't read in-app settings — they only follow the device's
+/// they can't read in-app settings, they only follow the device's
 /// system appearance. When a user has set the app to dark mode on a
 /// device that's still in light mode, the iOS launch screen renders
 /// the light variant, then the app fades into its dark UI. To smooth
 /// that transition we draw this view on top for ~0.4 s, forcing the
 /// dark colourScheme so `Color("LaunchBackground")` and
-/// `Image("LaunchIcon")` both resolve to their dark variants — same
+/// `Image("LaunchIcon")` both resolve to their dark variants, same
 /// brand-blue background + white runner as the dark launch screen.
 struct LaunchSplashView: View {
     var body: some View {

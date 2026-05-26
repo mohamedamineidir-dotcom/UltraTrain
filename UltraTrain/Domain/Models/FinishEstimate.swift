@@ -5,7 +5,7 @@ import Foundation
 enum FinishPredictionSource: String, Sendable, Codable {
     /// Recent completed runs supplied a measured pace anchor.
     case runs
-    /// PBs converted via Riegel + Kilian. No completed runs yet —
+    /// PBs converted via Riegel + Kilian. No completed runs yet
     /// this is the day-0 estimate.
     case personalBests
     /// No PBs and no runs. Estimate derived from the experience-level
@@ -29,7 +29,7 @@ enum FinishPredictionSource: String, Sendable, Codable {
         case .runs:
             return "Updated from your recent training data. Range tightens as you log more sessions."
         case .personalBests:
-            return "Built from your race PBs and any test results. Will refine as you log training — log a few runs to tighten the range."
+            return "Built from your race PBs and any test results. Will refine as you log training, log a few runs to tighten the range."
         case .experienceFallback:
             return "We don't have PBs or training data yet. Add a recent race time on your profile, or log a few runs to refine the prediction."
         }

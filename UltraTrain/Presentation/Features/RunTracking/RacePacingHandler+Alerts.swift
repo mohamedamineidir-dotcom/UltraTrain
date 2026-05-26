@@ -46,7 +46,7 @@ extension RacePacingHandler {
         showPacingAlert(alert)
     }
 
-    // MARK: - Private — Banners & Alerts
+    // MARK: - Private, Banners & Alerts
 
     func showCrossingBanner(for checkpoint: LiveCheckpointState) {
         crossingBannerTask?.cancel()
@@ -79,7 +79,7 @@ extension RacePacingHandler {
         Logger.pacing.info("\(alert.type.rawValue) alert: \(alert.message)")
     }
 
-    // MARK: - Private — Pacing Guidance
+    // MARK: - Private, Pacing Guidance
 
     func updatePacingGuidance(context: RunContext) {
         guard isActive, !raceSegmentPacings.isEmpty else { return }

@@ -110,7 +110,7 @@ final class VoiceCoachingHandler {
         voiceService.stop()
     }
 
-    // MARK: - Private — Split Detection
+    // MARK: - Private, Split Detection
 
     private func checkDistanceSplit(_ snapshot: VoiceCueBuilder.RunSnapshot) {
         guard config.announceDistanceSplits else { return }

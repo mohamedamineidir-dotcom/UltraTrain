@@ -82,7 +82,7 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
 
         // Source-dependent range. When we have runs, the percentile
         // spread (pace25 / pace75) already captures within-athlete
-        // variance — combined with a small ±3-5% safety margin.
+        // variance, combined with a small ±3-5% safety margin.
         // For PB / fallback predictions there's no run-level variance,
         // so we synthesise the spread from race-class aleatory
         // uncertainty (heat / GI / pacing variability) + epistemic
@@ -165,11 +165,11 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
     /// Converts an athlete's PBs into target-race pace samples via
     /// Riegel formula (with Kilian's effective-km correction for
     /// trail). Returns weighted (pace, weight) tuples that plug into
-    /// the same percentile pipeline as run-based paces — so the rest
+    /// the same percentile pipeline as run-based paces, so the rest
     /// of the estimator works unchanged when only PBs are available.
     ///
     /// Weights blend three signals:
-    /// - Recency (exponential decay, 180-day half-life — reuses
+    /// - Recency (exponential decay, 180-day half-life, reuses
     ///   PersonalBest.recencyWeight)
     /// - Distance proximity (PB distance closer to target = higher
     ///   weight; far-extrapolated PBs are noisy)
@@ -213,7 +213,7 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         // athlete, not in personalBests). Convert to a 5K-equivalent
         // synthetic PB via Daniels (5K is run at ~97% vVO2max → 5K
         // pace ≈ (3600/VMA) × 1.02 sec/km). Discount the weight
-        // slightly because it's derived not raced — race-day pacing
+        // slightly because it's derived not raced, race-day pacing
         // adds variance the test doesn't capture.
         if let vma = athlete.vmaKmh, vma > 0 {
             let fiveKPaceSecPerKm = (3600.0 / vma) * 1.02
@@ -232,9 +232,9 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
     }
 
     private func riegelExponent(toDistanceKm km: Double) -> Double {
-        // Pete Riegel (1981) — exponent for race-time conversion.
+        // Pete Riegel (1981), exponent for race-time conversion.
         // Marathon+ uses higher exponent due to greater fatigue
-        // accumulation (Canova, Galloway acknowledge this — k≈1.07
+        // accumulation (Canova, Galloway acknowledge this, k≈1.07
         // for marathon, ~1.08 for ultra).
         switch km {
         case ..<30:    return 1.06
@@ -272,7 +272,7 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
 
     /// Epistemic uncertainty (how well we know athlete's fitness)
     /// for non-runs sources. Scales with availability + freshness of
-    /// PBs (or zero for fallback). Not used for runs-source — that
+    /// PBs (or zero for fallback). Not used for runs-source, that
     /// gets variance via percentile spread.
     func epistemicSpread(
         source: PredictionSource,
@@ -283,12 +283,12 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         case .runs:
             return 0  // already encoded in percentile spread
         case .experienceFallback:
-            // No fitness signal at all — wide range. Coaches give
+            // No fitness signal at all, wide range. Coaches give
             // ±25-30% when prepping a generic-fitness profile.
             return 0.25
         case .personalBests:
             // Two factors: how MANY signals and how MATCHED they are.
-            // Include VMA as a fresh signal (weight 1.0) when present —
+            // Include VMA as a fresh signal (weight 1.0) when present
             // a recent fitness test counts as a fitness anchor even
             // without explicit PBs.
             var allSignals = athlete.personalBests.filter { $0.timeSeconds > 0 }
@@ -301,7 +301,7 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
             // Sum of recency weights → effective sample size. 2.0+ →
             // strong signal; 1.0 → moderate; <0.5 → weak (very old).
             // Bucket boundaries are slightly wider than the integer
-            // counts to absorb microsecond drift in `Date.now` —
+            // counts to absorb microsecond drift in `Date.now`
             // a fresh PB returns recencyWeight ~ 0.99999... not exactly
             // 1.0, which would otherwise tip into the wrong bucket.
             let totalRecencyWeight = allSignals.reduce(0, +)
@@ -314,7 +314,7 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
             }
             // Type match: a fitness signal in the right "domain"
             // (road or trail) earns no penalty. VMA counts as a
-            // road-side signal — it's a flat-running fitness anchor.
+            // road-side signal, it's a flat-running fitness anchor.
             // For trail races, VMA still helps via terrainMatch in
             // pbsAsWeightedPaces, but it's not a perfect-match
             // signal so the penalty applies if no trail PB exists.
@@ -507,9 +507,9 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         // PB-source bump: when no runs are available but we DO have
         // PBs / VMA from the fitness test, we still know SOMETHING
         // about the athlete's fitness. +10 lifts the confidence
-        // label from "Low" to "Moderate" — matches the badge's
+        // label from "Low" to "Moderate", matches the badge's
         // "Early estimate from your profile data" framing rather
-        // than the dismissive "low confidence — keep training"
+        // than the dismissive "low confidence, keep training"
         // copy that was designed for fully-uncalibrated athletes.
         if source == .personalBests {
             confidence += 10

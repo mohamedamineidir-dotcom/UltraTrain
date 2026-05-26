@@ -37,7 +37,7 @@ enum IntermediateRaceHandler {
         intermediateRaces: [Race]
     ) -> [RaceWeekOverride] {
         // Two-A-race seasons: plan target is the LATER A-race; any A-race
-        // scheduled earlier is treated like a beefed-up B-race —
+        // scheduled earlier is treated like a beefed-up B-race
         // 2-week taper + 2-3 weeks recovery. Athletes prepping spring
         // marathon + fall marathon, or UTMB + CCC, can now have both
         // marked as A-races without the planner silently dropping the
@@ -96,7 +96,7 @@ enum IntermediateRaceHandler {
             // Post-race recovery scales with priority + distance.
             //
             // B-2: B-race recovery COMPRESSED across the board (was 1-3
-            // wk by distance, now 1-2 wk) — B-races shouldn't break the
+            // wk by distance, now 1-2 wk), B-races shouldn't break the
             // training plan for the final A-race. Athletes who need
             // more recovery can apply a manual recovery-week
             // recommendation, but the default is conservative on

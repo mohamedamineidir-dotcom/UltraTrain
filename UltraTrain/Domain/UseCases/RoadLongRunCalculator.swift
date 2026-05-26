@@ -15,7 +15,7 @@ enum RoadLongRunCalculator {
 
     /// Structured long run variants for road training.
     enum LongRunVariant: String, Sendable {
-        /// Pure easy pace — base building, time on feet.
+        /// Pure easy pace, base building, time on feet.
         case easy
         /// Start easy, build to ~90% race pace in final third.
         case progressive
@@ -35,7 +35,7 @@ enum RoadLongRunCalculator {
 
         /// Short user-facing label used as a pill on the long-run row.
         /// Returns nil for `.easy` because a plain easy long run doesn't
-        /// need a tag — only structured variants benefit from the badge.
+        /// need a tag, only structured variants benefit from the badge.
         var displayLabel: String? {
             switch self {
             case .easy:               return nil
@@ -55,7 +55,7 @@ enum RoadLongRunCalculator {
     ///
     /// Uses a quadratic ramp up to peak, then holds or tapers.
     /// Duration is capped by distance (road-specific), experience,
-    /// philosophy, and goal — a performance-mode targetRanking marathoner
+    /// philosophy, and goal, a performance-mode targetRanking marathoner
     /// gets a longer LR cap than an enjoyment-mode finisher even at the
     /// same experience tier.
     static func longRunDuration(
@@ -84,7 +84,7 @@ enum RoadLongRunCalculator {
         // Pfitzinger: LR pace ≈ MP + 30-45 s/km; Magness / Hudson: long
         // run = 30-60 s/km slower than threshold). Using a fixed
         // ~35 s/km offset puts the LR right in the middle of consensus.
-        // Without threshold data we fall back to a tier-based default —
+        // Without threshold data we fall back to a tier-based default
         // imperfect, but it's a cold-start signal and gets replaced as
         // soon as the athlete provides a PR or VMA.
         //
@@ -115,10 +115,10 @@ enum RoadLongRunCalculator {
         // long run is mathematically unreachable (would need 4:40/km easy pace).
         // Raise the cap by tier so distance caps are actually achievable.
         let absoluteMax: TimeInterval = switch experience {
-        case .beginner:     9000   // 2h30 — keep conservative (injury prevention)
-        case .intermediate: 10800  // 3h00 — allows 32 km at 5:36/km intermediate easy pace
-        case .advanced:     12000  // 3h20 — allows 35 km at 5:40/km or 22-mi Pfitz 18/70
-        case .elite:        12600  // 3h30 — ultra-capable though usually used road
+        case .beginner:     9000   // 2h30, keep conservative (injury prevention)
+        case .intermediate: 10800  // 3h00, allows 32 km at 5:36/km intermediate easy pace
+        case .advanced:     12000  // 3h20, allows 35 km at 5:40/km or 22-mi Pfitz 18/70
+        case .elite:        12600  // 3h30, ultra-capable though usually used road
         }
         let capDuration = min(maxDurationSeconds, absoluteMax)
 
@@ -153,7 +153,7 @@ enum RoadLongRunCalculator {
         //
         // RR-11: when a value is declared we no longer clamp up to the tier
         // `minimumLongRun` floor. A beginner declaring 5 km longest was
-        // being bumped to 40 min (~6.5 km), a 30% jump on Week 1 — exactly
+        // being bumped to 40 min (~6.5 km), a 30% jump on Week 1, exactly
         // what the BJSM 10% rule is supposed to prevent. Instead we use a
         // sanity floor of 15 min so the session is still distinct from an
         // easy run, but we respect declared base down to that floor.
@@ -163,7 +163,7 @@ enum RoadLongRunCalculator {
             let maxAnchor = capDuration * 0.60
             // Weekly-volume sanity cap: an athlete who declared
             // longestRunKm = 105 with weeklyVolumeKm = 40 has a
-            // longest run that's 2.6× their weekly volume — almost
+            // longest run that's 2.6× their weekly volume, almost
             // certainly trail/ultra history bleeding into a road
             // plan. Anchoring an LR at 21+ km in week 1 of a 40-
             // km/wk plan crushes every other session because the
@@ -180,7 +180,7 @@ enum RoadLongRunCalculator {
             } else {
                 weeklyVolumeBasedCap = .infinity
             }
-            let sanityFloor: TimeInterval = 900 // 15 min — below this it's not a long run
+            let sanityFloor: TimeInterval = 900 // 15 min, below this it's not a long run
             startDuration = max(sanityFloor, min(proposedAnchor, maxAnchor, weeklyVolumeBasedCap))
         } else {
             startDuration = max(capDuration * startFraction, minimumLongRun)
@@ -196,7 +196,7 @@ enum RoadLongRunCalculator {
         //
         // Old behavior anchored the peak at 88% of total weeks, which
         // for a 23-week marathon plan placed the peak LR at the LAST
-        // non-taper week — exactly the antipattern these systems warn
+        // non-taper week, exactly the antipattern these systems warn
         // against. The athlete entered taper carrying acute fatigue
         // from the hardest run of the cycle, leaving the taper to clear
         // fatigue instead of sharpening.
@@ -216,7 +216,7 @@ enum RoadLongRunCalculator {
             let t = Double(weekIndex) / max(Double(peakWeek), 1.0)
             progress = t * (2.0 - t) // Quadratic ease-out
         } else {
-            progress = 1.0 // Hold at peak — consolidation, not escalation
+            progress = 1.0 // Hold at peak, consolidation, not escalation
         }
 
         var duration = startDuration + (capDuration - startDuration) * progress
@@ -227,7 +227,7 @@ enum RoadLongRunCalculator {
         }
 
         // Taper: keep 60% of current duration (40% reduction per Mujika 2003).
-        // M2 note: the long run owns its own taper shape — flat 60% across
+        // M2 note: the long run owns its own taper shape, flat 60% across
         // every taper week. The non-LR sessions follow the TaperProfile's
         // per-week fractions in RoadVolumeCalculator. This is by design;
         // the two paths are deliberately decoupled so the LR doesn't get
@@ -265,7 +265,7 @@ enum RoadLongRunCalculator {
         case .base:
             // Marathon non-beginners get an early single MP-block intro
             // in late base (weekInPhase ≥ 5 ≈ weeks 6-8 of a 24-week
-            // plan) — bridges into build's MP work without a hard
+            // plan), bridges into build's MP work without a hard
             // jump and gives the athlete a calibrated marathon-pace
             // exposure mid-base instead of waiting for late build.
             // Pfitzinger-style "tempo-finish long run" placement.
@@ -283,7 +283,7 @@ enum RoadLongRunCalculator {
 
         case .build:
             // Marathon: MP block introduction lowered from weekInPhase ≥ 3
-            // to ≥ 1 — the athlete already saw an MP intro in late base
+            // to ≥ 1, the athlete already saw an MP intro in late base
             // (above) for marathon non-beginners, so the gap between MP
             // exposures stays consistent and there's no week-1 build
             // regression back to pure progressive runs.
@@ -310,7 +310,7 @@ enum RoadLongRunCalculator {
                 // Beginners (finish-mode novices) get a Pfitzinger-style
                 // ramp: week 0 = .marathonPaceIntro (single 15-20min MP
                 // block, gentle introduction to MP), then alternate
-                // .fastFinish (last 20-25% at MP — textbook Pfitzinger
+                // .fastFinish (last 20-25% at MP, textbook Pfitzinger
                 // MP-finish long run) and .marathonPaceBlocks. Avoids
                 // the audit's flagged issue of beginners hitting full
                 // Canova 5×3km MP blocks in week 0 of peak.

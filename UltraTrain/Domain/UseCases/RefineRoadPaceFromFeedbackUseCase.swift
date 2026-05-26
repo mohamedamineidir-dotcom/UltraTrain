@@ -4,7 +4,7 @@ import Foundation
 /// per-rep feedback.
 ///
 /// This is NOT a cosmetic feature. It exists so the plan stays honest to
-/// the athlete's current trajectory — if the athlete has been hitting
+/// the athlete's current trajectory, if the athlete has been hitting
 /// targets at unsustainable cost, the target slows; if they're clearing
 /// work with plenty in the tank, the target quickens. The rules below
 /// are what a human coach would apply when reading a month of workout
@@ -28,7 +28,7 @@ import Foundation
 /// writing session descriptions, selecting intervals, and driving coach
 /// advice. The optional `PaceRefinementSummary` is carried back so the
 /// coach-advice layer can surface the "adjusted from X to Y because Z"
-/// note — silent changes would be unprofessional.
+/// note, silent changes would be unprofessional.
 enum RefineRoadPaceFromFeedbackUseCase {
 
     // MARK: - Summary types
@@ -45,19 +45,19 @@ enum RefineRoadPaceFromFeedbackUseCase {
         }
 
         enum Reason: String, Equatable, Sendable {
-            /// Paces consistently slower than target — target was too hard.
+            /// Paces consistently slower than target, target was too hard.
             case slowDownPaceDrift
-            /// Target was hit but RPE was consistently ≥ 8 — unsustainable.
+            /// Target was hit but RPE was consistently ≥ 8, unsustainable.
             case slowDownHighRPE
-            /// Reps not completed repeatedly — strongest signal to ease off.
+            /// Reps not completed repeatedly, strongest signal to ease off.
             case slowDownIncompleteReps
-            /// Paces faster than target with low RPE and full completion —
+            /// Paces faster than target with low RPE and full completion
             /// athlete has fitness headroom.
             case speedUpFitnessHeadroom
         }
 
         let entries: [Entry]
-        /// The phase gate that was in effect — useful when the UI wants to
+        /// The phase gate that was in effect, useful when the UI wants to
         /// say "held back in base" vs "responsive in peak".
         let gatePhase: TrainingPhase
 
@@ -91,7 +91,7 @@ enum RefineRoadPaceFromFeedbackUseCase {
         // "refinement" from numbers we never trusted in the first place.
         guard baseProfile.isDataDerived else { return (baseProfile, nil) }
 
-        // Phase gate — taper is sacred. Race phase (race week itself)
+        // Phase gate, taper is sacred. Race phase (race week itself)
         // also locked.
         let gatePhase = phaseForDaysToRace(
             daysToRace: daysBetween(now, raceDate),
@@ -180,7 +180,7 @@ enum RefineRoadPaceFromFeedbackUseCase {
         gatePhase: TrainingPhase,
         goalRealism: GoalRealism
     ) -> PaceRefinementSummary.Entry? {
-        // Minimum evidence — 3 sessions of THIS type within the window.
+        // Minimum evidence, 3 sessions of THIS type within the window.
         guard feedback.count >= 3 else { return nil }
 
         // Pace deviation comes only from sessions where actual paces were
@@ -223,7 +223,7 @@ enum RefineRoadPaceFromFeedbackUseCase {
             meanDeviation = 0
         }
 
-        // Base decision — returns (multiplier, reason) before modifiers.
+        // Base decision, returns (multiplier, reason) before modifiers.
         guard let (rawMultiplier, reason) = decide(
             meanDeviation: meanDeviation,
             hasPaceSignal: hasPaceSignal,
@@ -240,11 +240,11 @@ enum RefineRoadPaceFromFeedbackUseCase {
         let rawDelta = rawMultiplier - 1.0
         var finalMultiplier = 1.0 + rawDelta * expDamp * distDamp
 
-        // Phase cap — how aggressive can we get right now?
+        // Phase cap, how aggressive can we get right now?
         let phaseCap = phaseCap(gatePhase)
         finalMultiplier = clamp(finalMultiplier, min: 1.0 - phaseCap, max: 1.0 + phaseCap)
 
-        // Hard safety cap — never more than ±8% from the fitness anchor.
+        // Hard safety cap, never more than ±8% from the fitness anchor.
         finalMultiplier = clamp(finalMultiplier, min: 0.92, max: 1.08)
 
         // Deadband: <0.5% drift isn't worth a user-visible change.
@@ -272,7 +272,7 @@ enum RefineRoadPaceFromFeedbackUseCase {
         incompleteRate: Double,
         goalRealism: GoalRealism
     ) -> (Double, PaceRefinementSummary.Reason)? {
-        let slowTolerance = 5.0   // sec/km — within this band, no slow-down from pace alone
+        let slowTolerance = 5.0   // sec/km, within this band, no slow-down from pace alone
         let fastTolerance = -5.0
 
         // Highest-priority signal: persistent incomplete reps. Pace deviation
@@ -282,7 +282,7 @@ enum RefineRoadPaceFromFeedbackUseCase {
             return (1.03, .slowDownIncompleteReps)
         }
 
-        // No pace signal — we only have RPE and completion. If RPE is
+        // No pace signal, we only have RPE and completion. If RPE is
         // consistently very high without incomplete reps, pull back
         // modestly. Otherwise no action.
         if !hasPaceSignal {
@@ -298,7 +298,7 @@ enum RefineRoadPaceFromFeedbackUseCase {
                 return (1.04, .slowDownPaceDrift)  // strong slow
             }
             if meanRPE <= 4 {
-                // Slow paces but very low effort — the athlete is being
+                // Slow paces but very low effort, the athlete is being
                 // cautious, not overcooked. Tiny nudge.
                 return (1.01, .slowDownPaceDrift)
             }
@@ -311,7 +311,7 @@ enum RefineRoadPaceFromFeedbackUseCase {
             // unlocks only via the tune-up time trial in the existing flow.
             if goalRealism == .veryAmbitious { return nil }
 
-            // High RPE despite fast paces — unsustainable output, don't
+            // High RPE despite fast paces, unsustainable output, don't
             // encourage it.
             if meanRPE >= 8 { return nil }
 
@@ -320,13 +320,13 @@ enum RefineRoadPaceFromFeedbackUseCase {
                 return (0.98, .speedUpFitnessHeadroom)
             }
 
-            // Ambiguous — don't adjust.
+            // Ambiguous, don't adjust.
             return nil
         }
 
         // Pace on target.
         if meanRPE >= 8 {
-            // Hitting target but at too high a cost — gentle slow.
+            // Hitting target but at too high a cost, gentle slow.
             return (1.015, .slowDownHighRPE)
         }
         return nil
@@ -334,7 +334,7 @@ enum RefineRoadPaceFromFeedbackUseCase {
 
     // MARK: - Modifiers & gates
 
-    /// Experience dampening — beginners have noisier week-to-week variance
+    /// Experience dampening, beginners have noisier week-to-week variance
     /// than elites, so the same feedback pattern should move the target
     /// less confidently.
     private static func experienceDampen(_ experience: ExperienceLevel) -> Double {
@@ -346,7 +346,7 @@ enum RefineRoadPaceFromFeedbackUseCase {
         }
     }
 
-    /// Distance dampening — 10K intensity is more race-critical per
+    /// Distance dampening, 10K intensity is more race-critical per
     /// second than a marathon's, so keep 10K adjustments tighter.
     /// Marathon paces can tolerate a wider adjustment.
     private static func distanceDampen(_ discipline: RoadRaceDiscipline) -> Double {
@@ -377,7 +377,7 @@ enum RefineRoadPaceFromFeedbackUseCase {
 
     /// Maps "days until race" to the approximate phase the athlete is in.
     /// Used as the gate for how aggressive an adjustment is allowed to be.
-    /// Mirrors typical Pfitzinger / Daniels plan structure — taper starts
+    /// Mirrors typical Pfitzinger / Daniels plan structure, taper starts
     /// 2 weeks out, peak begins ~6 weeks out for marathon.
     static func phaseForDaysToRace(
         daysToRace: Int,

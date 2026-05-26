@@ -35,7 +35,7 @@ enum NutritionReminderScheduler {
         while time <= maxDurationSeconds {
             reminders.append(NutritionReminder(
                 triggerTimeSeconds: time,
-                message: "Time to hydrate — drink water or electrolytes",
+                message: "Time to hydrate, drink water or electrolytes",
                 type: .hydration
             ))
             time += hydrationIntervalSeconds
@@ -45,7 +45,7 @@ enum NutritionReminderScheduler {
         while time <= maxDurationSeconds {
             reminders.append(NutritionReminder(
                 triggerTimeSeconds: time,
-                message: "Time to fuel — take a gel or snack",
+                message: "Time to fuel, take a gel or snack",
                 type: .fuel
             ))
             time += fuelIntervalSeconds
@@ -56,7 +56,7 @@ enum NutritionReminderScheduler {
             while time <= maxDurationSeconds {
                 reminders.append(NutritionReminder(
                     triggerTimeSeconds: time,
-                    message: "Time for electrolytes — take salt tabs or electrolyte drink",
+                    message: "Time for electrolytes, take salt tabs or electrolyte drink",
                     type: .electrolyte
                 ))
                 time += electrolyteIntervalSeconds

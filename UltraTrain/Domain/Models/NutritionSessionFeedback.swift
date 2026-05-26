@@ -16,7 +16,7 @@ struct NutritionSessionFeedback: Identifiable, Equatable, Sendable, Codable {
     var actualCarbsConsumed: Int
     var durationMinutes: Int
 
-    // GI symptoms — 0 none, 10 severe (NIQEC scale)
+    // GI symptoms, 0 none, 10 severe (NIQEC scale)
     var nausea: Int
     var bloating: Int
     var cramping: Int

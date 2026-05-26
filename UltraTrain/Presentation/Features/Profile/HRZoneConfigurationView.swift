@@ -106,7 +106,7 @@ struct HRZoneConfigurationView: View {
                 .frame(width: 6, height: 32)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
-                Text("Zone \(zone) — \(name)")
+                Text("Zone \(zone), \(name)")
                     .font(.subheadline.bold())
                 Text(range)
                     .font(.caption)

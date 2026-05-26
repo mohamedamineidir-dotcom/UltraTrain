@@ -6,7 +6,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
     /// pulls the athlete's last 90 days of completed runs and feeds
     /// them into PersonalizationProfile so the plan anchor reflects
     /// **demonstrated** weekly capacity rather than the stale
-    /// onboarding snapshot. Nil means we fall back to snapshot —
+    /// onboarding snapshot. Nil means we fall back to snapshot
     /// existing tests and any caller that doesn't wire this don't
     /// see a behaviour change.
     let runRepository: RunRepository?
@@ -89,12 +89,12 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         // Post-race recovery weeks. Daniels' rule: ~1 easy day per 3 km of
         // race distance. Translates to whole weeks:
         //   <30 km     → 1 week  (10K, HM)
-        //   30-49 km   → 3 weeks (marathon — Pfitzinger AM Plan A reverse
+        //   30-49 km   → 3 weeks (marathon, Pfitzinger AM Plan A reverse
         //                taper, Hansons Marathon Method Ch.10; marathon
         //                muscle damage takes 2-3 weeks to clear)
         //   50-99 km   → 3 weeks (50-100K)
         //   100-159 km → 4 weeks (100-mile range)
-        //   160+ km    → 5 weeks (200K+ — multi-day races warrant longest rebuild)
+        //   160+ km    → 5 weeks (200K+, multi-day races warrant longest rebuild)
         // Athlete sees a structured return-to-training instead of falling
         // off the plan the day after their A-race.
         let postRaceRecoveryWeeks: Int
@@ -143,7 +143,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         // Apply RecentFitnessChange anchor multiplier (asked in the
         // plan-time onboarding sheet). Athletes recovering from injury /
         // illness / extended time off shouldn't be anchored to the
-        // pre-break weekly volume — early-prep weeks would prescribe
+        // pre-break weekly volume, early-prep weeks would prescribe
         // load they haven't built up to. Multiplier ranges 0.70-1.00
         // depending on severity. Default 1.00 = no change.
         let anchorMultiplier = planOptions.recentFitnessChange?.anchorMultiplier ?? 1.0
@@ -194,10 +194,10 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         }
 
         // 5c. Mid-prep fitness test schedule (opt-in via planOptions).
-        // Trail pipeline skips the test entirely for races ≥100K — Koop
+        // Trail pipeline skips the test entirely for races ≥100K, Koop
         // and House & Johnston both argue VMA-style tests are misleading
         // for ultras. Below 100K, the variant adapts to athlete's terrain
-        // (verticalGainEnvironment + uphillDuration) — sustained 30-min
+        // (verticalGainEnvironment + uphillDuration), sustained 30-min
         // uphill TT for mountain athletes, 4×8 / 5×4 repeats for athletes
         // with shorter hills, treadmill incline, or 6-min VMA flat as
         // fallback.
@@ -215,7 +215,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         // Race.includesSpecificPrep). When the athlete has a road B/C
         // race with a target time AND opted in, inject 1-3 race-pace
         // sessions in the 2-3 weeks before the race. Replaces existing
-        // intervals/tempo/longRun slots — no net fatigue. See
+        // intervals/tempo/longRun slots, no net fatigue. See
         // BRaceSpecificityCalculator for the coaching basis.
         let bRaceSpecificityInjections = BRaceSpecificityCalculator.injections(
             skeletons: skeletons,
@@ -275,7 +275,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 intermediateRaceContext = nil
             }
 
-            // Heat-acclimation flag — true when forecasted race-day weather
+            // Heat-acclimation flag, true when forecasted race-day weather
             // is hot enough to demand pre-race adaptation (10-14 days of
             // heat exposure pre-race confers most of the benefit). Same
             // threshold the road generator uses.
@@ -284,13 +284,13 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 return fc.temperatureCelsius >= 22 || fc.humidity >= 65
             }()
 
-            // Descent-heavy flag — drives the eccentric / quad-tolerance
+            // Descent-heavy flag, drives the eccentric / quad-tolerance
             // cue on long runs and B2B day 2 in build/peak. Threshold
             // ≥1500m D- catches UTMB (10000m), Hardrock (10000m), TDS
             // (7000m), Madeira Sky (5000m), and similar mountain races
             // where descent is the limiter most athletes underprepare.
             // Also fires when descent density (D-/km) is ≥30 m/km even
-            // at lower total D- — small-but-steep races.
+            // at lower total D-, small-but-steep races.
             let isDescentHeavyRace: Bool = {
                 guard targetRace.raceType == .trail else { return false }
                 if targetRace.elevationLossM >= 1500 { return true }
@@ -394,7 +394,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
 
             // Round endurance sessions (Long Run, Base Endurance,
             // Back-to-Back) to the nearest 5 minutes so the schedule
-            // reads cleanly. Quality sessions stay at minute precision —
+            // reads cleanly. Quality sessions stay at minute precision
             // their structure is minute-anchored.
             var roundedSessions = adapted.sessions
             EnduranceDurationRounder.roundInPlace(&roundedSessions)
@@ -402,7 +402,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             // Mid-prep fitness test substitution. When this week is
             // the scheduled test week, replace the first quality slot
             // (intervals → tempo) with the test session. Same pattern
-            // as the periodic 2K check-in / Pfitz tune-up — a test is
+            // as the periodic 2K check-in / Pfitz tune-up, a test is
             // a workout substitution, not an addition.
             if let schedule = fitnessTestSchedule,
                schedule.weekNumber == skeleton.weekNumber {
@@ -437,7 +437,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             // to the SessionTemplateGenerator alignment AND the
             // 5-min rounding above, so summing them gives the truth.
             // The volume.targetDurationSeconds budget is the planner's
-            // INTENT before the workout engine got involved — keeping
+            // INTENT before the workout engine got involved, keeping
             // it would make the chart disagree with the session list.
             let weekDuration = roundedSessions
                 .filter { $0.type != .rest && $0.type != .strengthConditioning }
@@ -542,7 +542,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             taperProfile: taperProfile
         )
 
-        // 3. Build week skeletons — road-specific recovery cycle
+        // 3. Build week skeletons, road-specific recovery cycle
         let recoveryCycle = VolumeCapCalculator.roadRecoveryCycle(for: athlete.experienceLevel, discipline: discipline)
         // Post-race recovery weeks (same Daniels rule as trail). 10K and
         // HM get 1 week; marathon gets 2.
@@ -609,7 +609,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         // When the athlete has been hitting intervals at unsustainable RPE
         // or bailing on reps, the target slows; when they're clearing work
         // with headroom, it quickens. Rules in
-        // RefineRoadPaceFromFeedbackUseCase — evidence-gated (≥3 in 21d),
+        // RefineRoadPaceFromFeedbackUseCase, evidence-gated (≥3 in 21d),
         // phase-capped (base ±2%, build ±4%, peak ±5%, taper locked),
         // experience- and distance-dampened, hard-capped at ±8%. The
         // summary is threaded into coach advice so the athlete sees why
@@ -641,7 +641,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         // insertion targets the week BEFORE the taper starts (less 1 for
         // HM, less 2 for marathon), skipped entirely for 10K (too short).
         // If a B-race override already falls within ±1 week of the target,
-        // we skip auto-insertion — athlete already has a sharpening race.
+        // we skip auto-insertion, athlete already has a sharpening race.
         let tuneUpWeekNumber = computeTuneUpWeekNumber(
             skeletons: skeletons,
             taperProfile: taperProfile,
@@ -671,7 +671,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             fitnessCheckInWeeks: fitnessCheckInWeeks
         )
 
-        // RR-20: first-timer flag — true when the athlete has no prior PB at
+        // RR-20: first-timer flag, true when the athlete has no prior PB at
         // the race distance. Drives tactical coach advice on peak/taper long
         // runs ("hold back, finish strong, save the fast time for race #2").
         let isFirstTimer = isFirstTimerAtDistance(
@@ -679,7 +679,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             discipline: discipline
         )
 
-        // RR-21: short-prep flag — true when the plan has fewer weeks than
+        // RR-21: short-prep flag, true when the plan has fewer weeks than
         // research-accepted minimums (marathon: 12, HM: 8, 10K: 6). Drives
         // a coach-advice warning on base-phase long runs so the athlete can
         // still reconsider the target or defer.
@@ -694,7 +694,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         // RR-22: hot-race flag. Triggered when the race has a forecasted
         // weather snapshot with temperature >= 22 °C or humidity >= 65%.
         // Drives a practical heat-acclimation advisory on peak/taper long
-        // runs + tempo sessions. Advisory only — no training-plan changes
+        // runs + tempo sessions. Advisory only, no training-plan changes
         // (we can't prescribe "run in 30 °C" to someone in a cold climate).
         let hotRaceForecast: Bool
         if let fc = targetRace.forecastedWeather {
@@ -859,7 +859,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     isFinalTaperWeek: isFinalTaperWeek
                 )
 
-                // Build IntervalWorkout objects for quality sessions —
+                // Build IntervalWorkout objects for quality sessions
                 // mirror the selector's first-timer template cap so the
                 // workout structure matches what the session description
                 // already says.
@@ -914,7 +914,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     // Without this alignment, the weekly card showed
                     // e.g. "Intervals 16min / 3.0km" while the detail
                     // unpacked to a 5×1km session totalling 42 min /
-                    // 13 km — two truths visible to the user.
+                    // 13 km, two truths visible to the user.
                     if session.type == .intervals, let w = q1Workout {
                         session.intervalWorkoutId = w.id
                         session.intervalFocus = q1Template?.category.displayName
@@ -938,7 +938,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                             break // keep .easy
                         }
                         // Surface the variant as a pill on the session row so
-                        // four 2h50 long runs in a row don't read as identical —
+                        // four 2h50 long runs in a row don't read as identical
                         // the work inside changes week to week (MP Blocks, Race
                         // Sim, Fast Finish, Two-Part) even when duration plateaus.
                         session.intervalFocus = longRunVariant.displayLabel
@@ -995,7 +995,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 sessionsAfterSub[ttIdx].coachAdvice = tuneUpTimeTrialCoachAdvice(discipline: discipline)
             }
 
-            // #28: fitness check-in week — replace the week's intervals
+            // #28: fitness check-in week, replace the week's intervals
             // session with a 2K TT. Same treatment pattern as RR-18
             // but shorter and more frequent, so paces don't drift
             // stale through a long base/build block.
@@ -1010,7 +1010,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 sessionsAfterSub[ttIdx].isKeySession = true
             }
 
-            // Mid-prep fitness test (opt-in) — replace the intervals
+            // Mid-prep fitness test (opt-in), replace the intervals
             // session with the variant-specific test. Scheduler already
             // ensures we don't collide with a B-race / tune-up / 2K
             // check-in; defensive `override == nil` guards intermediate
@@ -1144,17 +1144,17 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         var pieces: [String] = []
         switch discipline {
         case .road10K:
-            pieces.append("10K race day. Plan: settle into goal pace by 1K — first kilometre will feel deceptively easy. Hold rhythm through 5K. From 7K onwards, every kilometre buys the next. Strong final 1K is where the time gets earned.")
+            pieces.append("10K race day. Plan: settle into goal pace by 1K, first kilometre will feel deceptively easy. Hold rhythm through 5K. From 7K onwards, every kilometre buys the next. Strong final 1K is where the time gets earned.")
         case .roadHalf:
-            pieces.append("Half marathon race day. Plan: first 5K is for patience — sit on (not under) goal pace. 5-15K hold the rhythm. 15K-end is where you race — pick off targets one at a time, lift cadence on the closing kilometres.")
+            pieces.append("Half marathon race day. Plan: first 5K is for patience, sit on (not under) goal pace. 5-15K hold the rhythm. 15K-end is where you race, pick off targets one at a time, lift cadence on the closing kilometres.")
         case .roadMarathon:
-            pieces.append("Marathon race day. Plan: first 10K is for restraint — even 5 sec/km too quick will cost you 5+ minutes by 35K. Lock into goal pace, fuel from kilometre 5 every 25-30 min, drink at every aid station. The race begins at 30K.")
+            pieces.append("Marathon race day. Plan: first 10K is for restraint, even 5 sec/km too quick will cost you 5+ minutes by 35K. Lock into goal pace, fuel from kilometre 5 every 25-30 min, drink at every aid station. The race begins at 30K.")
         }
         if isFirstTimer {
             pieces.append("First time at this distance: finishing strong matters more than the clock. Negative split if at all possible.")
         }
         if hotRaceForecast {
-            pieces.append("Hot conditions forecast: drink earlier and more, take electrolytes, slow goal pace 5-10 sec/km from the gun — heat compounds.")
+            pieces.append("Hot conditions forecast: drink earlier and more, take electrolytes, slow goal pace 5-10 sec/km from the gun, heat compounds.")
         }
         pieces.append("Trust your training. Execute your plan.")
         return pieces.joined(separator: " ")
@@ -1239,7 +1239,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         return conflict ? nil : targetWeekNumber
     }
 
-    /// RR-20: first-timer check — true when the athlete has no recorded PB
+    /// RR-20: first-timer check, true when the athlete has no recorded PB
     /// at the discipline's distance. A PB with timeSeconds == 0 is treated
     /// as no PB (placeholder entries from onboarding).
     private func isFirstTimerAtDistance(
@@ -1258,9 +1258,9 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
     private func tuneUpTimeTrialDescription(discipline: RoadRaceDiscipline) -> String {
         switch discipline {
         case .roadMarathon:
-            return "Tune-up 10K Time Trial — 20 min easy warm-up + 4-6 × 20s strides, then 10K all-out sustained effort (HMP-to-10K pace), then 15 min easy cool-down. Your biggest fitness check of the block — execute like a real race."
+            return "Tune-up 10K Time Trial, 20 min easy warm-up + 4-6 × 20s strides, then 10K all-out sustained effort (HMP-to-10K pace), then 15 min easy cool-down. Your biggest fitness check of the block, execute like a real race."
         case .roadHalf:
-            return "Tune-up 5K Time Trial — 15 min easy warm-up + 4-6 × 20s strides, then 5K all-out sustained effort, then 10 min easy cool-down. Ideally on a track or flat route."
+            return "Tune-up 5K Time Trial, 15 min easy warm-up + 4-6 × 20s strides, then 5K all-out sustained effort, then 10 min easy cool-down. Ideally on a track or flat route."
         case .road10K:
             return "Tune-up time trial."
         }
@@ -1281,7 +1281,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
     /// values derived from the attached workout's actual structure.
     /// Used by the road pipeline so the weekly card reads the same
     /// totals the athlete sees when they tap into the workout detail
-    /// — instead of the abstract budget that didn't account for
+    ///, instead of the abstract budget that didn't account for
     /// warmup + cooldown around quality sessions.
     private func alignSessionWithWorkout(_ session: inout TrainingSession, workout: IntervalWorkout) {
         guard workout.estimatedDurationSeconds > 0 else { return }
@@ -1303,7 +1303,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
     /// PersonalizationProfile's recent-peak computation. Returns
     /// `[]` when no run repository is wired (existing tests, DI
     /// containers that don't pass one) so the personalization layer
-    /// falls back to the snapshot baseline. Errors are swallowed —
+    /// falls back to the snapshot baseline. Errors are swallowed
     /// a failed history fetch must never block plan generation.
     private func fetchRecentRuns(for athlete: Athlete) async -> [CompletedRun] {
         guard let runRepository else { return [] }
@@ -1320,7 +1320,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
 
     /// Substitutes the first quality slot (intervals → tempo → vertical
     /// gain) in the week's sessions with a fitness test session.
-    /// Idempotent: if no quality slot exists, no-op (defensive — every
+    /// Idempotent: if no quality slot exists, no-op (defensive, every
     /// non-recovery base/build week has at least one quality slot in
     /// our pipelines). Encodes the variant into `intervalFocus` so the
     /// session-validation flow can recover it without separate state.

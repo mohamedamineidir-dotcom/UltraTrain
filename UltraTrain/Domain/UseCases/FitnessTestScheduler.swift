@@ -4,24 +4,24 @@ import Foundation
 /// and which variant. The decision factors:
 ///
 /// - Athlete opt-in (sheet at plan-time)
-/// - Race profile (skip 100K+ ultras — Koop / House & Johnston explicitly
+/// - Race profile (skip 100K+ ultras, Koop / House & Johnston explicitly
 ///   advise against VMA-style tests for ultra athletes)
-/// - Plan length (skip plans <8 weeks — not enough plan left to act
+/// - Plan length (skip plans <8 weeks, not enough plan left to act
 ///   on the result)
 /// - Athlete experience (beginners default OFF; intermediate+ default ON
-///   — French school + Roche caveat)
+///  , French school + Roche caveat)
 /// - Available terrain (verticalGainEnvironment + uphillDuration drive
 ///   the trail-test variant; flat-region athletes fall back to VMA flat)
 /// - Collisions: ±1 week of any B-race week, the auto Pfitz tune-up,
 ///   or a periodic fitness check-in.
 ///
 /// Sources:
-/// - Pfitzinger *Adv Marathoning* Ch. 5 — tune-up race timing
-/// - Daniels *RF* Ch. 5 — VDOT recheck cadence (4-6 weeks)
-/// - Magness *Sci of Running* Ch. 11 — field-test cadence
-/// - Lacrouts / Cottin / Aubert — VMA test methodology + cadence
-/// - Koop *TEU* Ch. 6-7 — explicit warning against VMA tests for ultras
-/// - House & Johnston *TUA* Ch. 5 — uphill AnT test + flat-region
+/// - Pfitzinger *Adv Marathoning* Ch. 5, tune-up race timing
+/// - Daniels *RF* Ch. 5, VDOT recheck cadence (4-6 weeks)
+/// - Magness *Sci of Running* Ch. 11, field-test cadence
+/// - Lacrouts / Cottin / Aubert, VMA test methodology + cadence
+/// - Koop *TEU* Ch. 6-7, explicit warning against VMA tests for ultras
+/// - House & Johnston *TUA* Ch. 5, uphill AnT test + flat-region
 ///   substitutes (treadmill incline, repeated uphills)
 enum FitnessTestScheduler {
 
@@ -34,7 +34,7 @@ enum FitnessTestScheduler {
     static let minimumPlanWeeks = 8
 
     /// Trail / ultra distance threshold above which the test is skipped
-    /// entirely — Koop and House & Johnston both argue VMA-style tests
+    /// entirely, Koop and House & Johnston both argue VMA-style tests
     /// are misleading for ultras (limiter is fueling / durability /
     /// terrain efficiency, not aerobic ceiling).
     static let trailTestSkipThresholdKm: Double = 100
@@ -147,18 +147,18 @@ enum FitnessTestScheduler {
 
     /// Maximum weeks ahead of the original test we'll search for a
     /// re-test slot. Beyond 3 weeks the goal-change conversation is
-    /// moot — the athlete is too close to the race to act on it.
+    /// moot, the athlete is too close to the race to act on it.
     static let maxRetestSearchWeeks = 3
 
     /// Schedules a confirmation re-test 1 week after the original test
     /// (or as soon as the next non-recovery base/build week allows).
-    /// Same variant as the original — re-tests must compare apples to
+    /// Same variant as the original, re-tests must compare apples to
     /// apples. Returns nil when no eligible slot exists within
     /// `maxRetestSearchWeeks` of the original.
     ///
     /// Triggered when FitnessTestRecalibrator returns
     /// `.regressionPendingRetest`. The re-test takes the place of an
-    /// intervals slot in the chosen week — the existing
+    /// intervals slot in the chosen week, the existing
     /// `substituteFitnessTest` priority (intervals → tempo → vertical
     /// gain) handles the actual slot replacement.
     static func scheduleRetest(
@@ -179,7 +179,7 @@ enum FitnessTestScheduler {
             guard !skeleton.isRecoveryWeek else { continue }
 
             // B-race within ±1 week: the B-race itself is the
-            // calibration event — skip the re-test entirely. (We
+            // calibration event, skip the re-test entirely. (We
             // return nil rather than scheduling further out: if the
             // B-race calibration doesn't confirm the regression, the
             // athlete can re-decide manually.)

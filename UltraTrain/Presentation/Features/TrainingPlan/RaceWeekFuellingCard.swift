@@ -4,7 +4,7 @@ import SwiftUI
 /// the race session detail so the athlete can glance at the full
 /// fuelling plan from the same screen they check their pacing target.
 ///
-/// Built from `RaceFuellingProtocolGenerator` — all values derive from
+/// Built from `RaceFuellingProtocolGenerator`, all values derive from
 /// the athlete's weight and the race's estimated duration, so the copy
 /// is personalised, not a generic leaflet.
 struct RaceWeekFuellingCard: View {

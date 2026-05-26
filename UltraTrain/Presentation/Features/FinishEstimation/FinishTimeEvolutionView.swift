@@ -7,7 +7,7 @@ import Charts
 /// descending expected-time curve flanked by an optimistic/conservative
 /// confidence band, with today's position marked.
 ///
-/// The curve is a projection, not a record of past estimates — until we
+/// The curve is a projection, not a record of past estimates, until we
 /// persist per-week snapshots the chart shows what we predict the
 /// trajectory looks like, given the athlete's current estimate and the
 /// typical improvement curve for their experience tier.
@@ -262,7 +262,7 @@ struct FinishTimeEvolutionView: View {
 
     /// Total prep window. Stretches to fit how many weeks remain to
     /// the race so the curve always starts before today and ends on
-    /// race week — never compresses an athlete who's 22 weeks out
+    /// race week, never compresses an athlete who's 22 weeks out
     /// into a fixed 20-week window with a clipped NOW marker.
     private var prepWeeks: Int {
         max(16, weeksToRace + 1)
@@ -281,7 +281,7 @@ struct FinishTimeEvolutionView: View {
     }
 
     /// Y-axis domain. Window scales by race distance so the curve
-    /// actually reads as a curve — a marathon athlete shouldn't see
+    /// actually reads as a curve, a marathon athlete shouldn't see
     /// their 2h52 line floating in a 0h-5h33 range, and a 10K runner
     /// shouldn't see the band collapse into a 2 px stripe.
     private var yAxisRange: ClosedRange<TimeInterval> {
@@ -313,7 +313,7 @@ struct FinishTimeEvolutionView: View {
     /// Race-day expected finish. Anchored on today's optimistic time
     /// (the "if you stick with the plan" projection the estimator
     /// already produces), then nudged toward the goal when it sits
-    /// between optimistic and expected — that's the "reachable
+    /// between optimistic and expected, that's the "reachable
     /// stretch" band where coach belief in the goal should move the
     /// prediction. Goals more aggressive than optimistic don't bend
     /// the line further; goals slower than expected don't either.
@@ -321,20 +321,20 @@ struct FinishTimeEvolutionView: View {
         let optimistic = estimate.optimisticTime
         let expected = estimate.expectedTime
         guard let goal = goalTime else {
-            // No goal — project to optimistic with a small realism
+            // No goal, project to optimistic with a small realism
             // buffer (15% of the optimistic-expected gap).
             return optimistic + (expected - optimistic) * 0.15
         }
         if goal >= expected {
-            // Goal slower than expected — athlete will likely beat it.
+            // Goal slower than expected, athlete will likely beat it.
             return optimistic + (expected - optimistic) * 0.10
         }
         if goal <= optimistic {
-            // Goal more aggressive than the model's best case — don't
+            // Goal more aggressive than the model's best case, don't
             // promise it, project to optimistic.
             return optimistic
         }
-        // Goal sits inside the reachable stretch — project to goal.
+        // Goal sits inside the reachable stretch, project to goal.
         return goal
     }
 
