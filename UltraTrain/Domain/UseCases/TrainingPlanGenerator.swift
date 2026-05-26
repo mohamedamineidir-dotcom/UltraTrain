@@ -570,7 +570,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             athlete: anchoredAthlete,
             raceDistanceKm: targetRace.distanceKm,
             taperProfile: taperProfile,
-            raceGoal: targetRace.goalType
+            raceGoal: targetRace.goalType,
+            preferredRunsPerWeek: athlete.preferredRunsPerWeek
         )
 
         // 5. Intermediate race overrides (reuse existing handler)

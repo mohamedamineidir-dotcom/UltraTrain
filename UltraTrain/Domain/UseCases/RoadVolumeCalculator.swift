@@ -97,13 +97,15 @@ enum RoadVolumeCalculator {
         athlete: Athlete,
         raceDistanceKm: Double,
         taperProfile: TaperProfile,
-        raceGoal: RaceGoal = .targetTime(0)
+        raceGoal: RaceGoal = .targetTime(0),
+        preferredRunsPerWeek: Int? = nil
     ) -> [VolumeCalculator.WeekVolume] {
         guard !skeletons.isEmpty else { return [] }
 
         let experience = athlete.experienceLevel
         let totalWeeks = skeletons.count
         let discipline = RoadRaceDiscipline.from(distanceKm: raceDistanceKm)
+        let runsPerWeek = preferredRunsPerWeek ?? athlete.preferredRunsPerWeek
 
         let easyP = easyParams(experience: experience, discipline: discipline)
         let intervalP = intervalParams(experience: experience, discipline: discipline)
@@ -324,8 +326,23 @@ enum RoadVolumeCalculator {
             intervalSeconds = (intervalSeconds / 60).rounded() * 60
             tempoSeconds = (tempoSeconds / 60).rounded() * 60
 
-            // Weekly total = sum of all sessions
-            let totalSeconds = easy1Seconds + easy2Seconds + intervalSeconds + tempoSeconds + longRunSeconds
+            // Weekly total mirrors what RoadSessionSelector will actually
+            // place on the calendar for the athlete's chosen frequency.
+            // The previous version always summed the 5 fixed slots (LR +
+            // 2 easy + interval + tempo) regardless of preferredRunsPerWeek,
+            // so a 3-day athlete and a 7-day athlete saw identical km
+            // targets even though the selector was adding (6+/wk) or
+            // dropping (3-4/wk) sessions on top of that fixed budget.
+            let totalSeconds = expectedWeeklySeconds(
+                longRunSeconds: longRunSeconds,
+                easy1Seconds: easy1Seconds,
+                easy2Seconds: easy2Seconds,
+                intervalSeconds: intervalSeconds,
+                tempoSeconds: tempoSeconds,
+                preferredRunsPerWeek: runsPerWeek,
+                discipline: discipline,
+                phase: skeleton.phase
+            )
             var totalKm = totalSeconds / avgPaceSecPerKm
 
             // Issue #10: Peak volume ceiling, don't exceed discipline target
@@ -373,6 +390,69 @@ enum RoadVolumeCalculator {
     private static func linearDuration(params: SessionParams, progress: Double) -> TimeInterval {
         let minutes = params.startMinutes + (params.peakMinutes - params.startMinutes) * progress
         return minutes * 60
+    }
+
+    /// Returns the weekly total seconds the SessionSelector will actually
+    /// place on the calendar for the athlete's chosen frequency.
+    ///
+    /// Mirrors RoadSessionSelector.pool composition:
+    /// - ≤2 runs: LR + 2 easy (maintenance)
+    /// - 3 runs: LR + 1 quality (tempo) + 1 easy
+    /// - 4 runs: LR + 2 quality + 1 easy
+    /// - 5 runs: LR + 2 quality + 2 easy (marathon swaps Fri easy → MLR)
+    /// - 6 runs: LR + 2 quality + 3 easy (marathon / HM at 6+ swaps Wed easy → MLR)
+    /// - 7 runs: LR + 2 quality + 4 easy (with optional MLR)
+    ///
+    /// Research basis: Daniels (Running Formula Ch. 6, 3-day vs 7-day plan
+    /// templates), Pfitzinger 18/55 → 18/85 progression (more sessions at
+    /// higher peak km), and the standard observation that weekly volume
+    /// scales near-linearly with frequency for trained runners (~10-13 km
+    /// per supporting session at advanced level).
+    private static func expectedWeeklySeconds(
+        longRunSeconds: TimeInterval,
+        easy1Seconds: TimeInterval,
+        easy2Seconds: TimeInterval,
+        intervalSeconds: TimeInterval,
+        tempoSeconds: TimeInterval,
+        preferredRunsPerWeek: Int,
+        discipline: RoadRaceDiscipline,
+        phase: TrainingPhase
+    ) -> TimeInterval {
+        // MLR (Pfitzinger's medium-long run) eligibility mirrors
+        // RoadSessionSelector exactly: marathon at 5+/wk, HM at 6+/wk,
+        // never in the base phase.
+        let mlrEligible = phase != .base && (
+            (discipline == .roadMarathon && preferredRunsPerWeek >= 5)
+            || (discipline == .roadHalf && preferredRunsPerWeek >= 6)
+        )
+        let mlrSeconds: TimeInterval = mlrEligible
+            ? min(longRunSeconds * 0.65, 90 * 60)
+            : 0
+
+        switch preferredRunsPerWeek {
+        case ...2:
+            return longRunSeconds + easy1Seconds + easy2Seconds
+        case 3:
+            return longRunSeconds + tempoSeconds + easy1Seconds
+        case 4:
+            return longRunSeconds + intervalSeconds + tempoSeconds + easy1Seconds
+        case 5:
+            // Marathon at 5/wk: Fri easy becomes the MLR slot (sessionSelector
+            // does the same swap). HM / 10K keep both easy runs.
+            let easyContribution = (discipline == .roadMarathon)
+                ? easy1Seconds + mlrSeconds
+                : easy1Seconds + easy2Seconds
+            return longRunSeconds + intervalSeconds + tempoSeconds + easyContribution
+        case 6:
+            // Wed slot is the MLR for marathon (and HM at 6/wk), else a 3rd easy.
+            let wedSlot = mlrEligible ? mlrSeconds : easy1Seconds
+            return longRunSeconds + intervalSeconds + tempoSeconds
+                + easy1Seconds + easy2Seconds + wedSlot
+        default: // 7+
+            let wedSlot = mlrEligible ? mlrSeconds : easy1Seconds
+            return longRunSeconds + intervalSeconds + tempoSeconds
+                + easy1Seconds + easy2Seconds + wedSlot + easy2Seconds
+        }
     }
 
     // MARK: - RR-1 Anchor

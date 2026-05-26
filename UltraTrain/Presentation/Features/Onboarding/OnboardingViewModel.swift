@@ -488,42 +488,109 @@ final class OnboardingViewModel {
             effectiveKm: effectiveKm
         )
 
+        // Route to the calculator that drives the actual plan so the
+        // preview matches what the user will get. Road races (≤ marathon,
+        // low elevation gain) use RoadVolumeCalculator; everything else
+        // uses the trail LongRunCurveCalculator.
+        let isRoadRace: Bool = {
+            if raceType == .road { return true }
+            return raceElevationGainM < 100
+                && raceDistanceKm > 0
+                && raceDistanceKm <= 42.195
+        }()
+
         var estimates: [VolumeEstimate] = []
+        let weeksToCheck = min(4, skeletons.count)
 
-        for runs in 3...7 {
-            let weeksToCheck = min(4, skeletons.count)
-            var weekKms: [Double] = []
+        if isRoadRace {
+            // RoadVolumeCalculator returns the full block; we sample the
+            // first month and re-run per frequency option since the total
+            // now scales with preferredRunsPerWeek.
+            let taperProfile = TaperProfile.forRoadRace(distanceKm: raceDistanceKm)
+            let stubAthlete = volumePreviewStubAthlete(experience: experience)
 
-            for i in 0..<weeksToCheck {
-                let skeleton = skeletons[i]
-                let durations = LongRunCurveCalculator.durations(
-                    weekIndex: i,
-                    totalWeeks: totalWeeks,
-                    phase: skeleton.phase,
-                    isRecoveryWeek: skeleton.isRecoveryWeek,
-                    experience: experience,
-                    philosophy: trainingPhilosophy,
+            for runs in 3...7 {
+                let volumes = RoadVolumeCalculator.calculate(
+                    skeletons: skeletons,
+                    athlete: stubAthlete,
+                    raceDistanceKm: raceDistanceKm,
+                    taperProfile: taperProfile,
                     raceGoal: raceGoal,
-                    raceDurationSeconds: raceDuration,
-                    raceEffectiveKm: effectiveKm,
-                    preferredRunsPerWeek: runs,
-                    currentWeeklyVolumeKm: currentVolume
+                    preferredRunsPerWeek: runs
                 )
-                weekKms.append(durations.totalSeconds / avgPaceSecPerKm)
+                let firstMonth = volumes.prefix(weeksToCheck).map(\.targetVolumeKm)
+                let minKm = Int((firstMonth.min() ?? 0).rounded())
+                let maxKm = Int((firstMonth.max() ?? 0).rounded())
+
+                estimates.append(VolumeEstimate(
+                    runsPerWeek: runs,
+                    weeklyKmMin: minKm,
+                    weeklyKmMax: maxKm,
+                    isRecommended: runs == recommendedRuns
+                ))
             }
+        } else {
+            for runs in 3...7 {
+                var weekKms: [Double] = []
+                for i in 0..<weeksToCheck {
+                    let skeleton = skeletons[i]
+                    let durations = LongRunCurveCalculator.durations(
+                        weekIndex: i,
+                        totalWeeks: totalWeeks,
+                        phase: skeleton.phase,
+                        isRecoveryWeek: skeleton.isRecoveryWeek,
+                        experience: experience,
+                        philosophy: trainingPhilosophy,
+                        raceGoal: raceGoal,
+                        raceDurationSeconds: raceDuration,
+                        raceEffectiveKm: effectiveKm,
+                        preferredRunsPerWeek: runs,
+                        currentWeeklyVolumeKm: currentVolume
+                    )
+                    weekKms.append(durations.totalSeconds / avgPaceSecPerKm)
+                }
 
-            let minKm = Int((weekKms.min() ?? 0).rounded())
-            let maxKm = Int((weekKms.max() ?? 0).rounded())
+                let minKm = Int((weekKms.min() ?? 0).rounded())
+                let maxKm = Int((weekKms.max() ?? 0).rounded())
 
-            estimates.append(VolumeEstimate(
-                runsPerWeek: runs,
-                weeklyKmMin: minKm,
-                weeklyKmMax: maxKm,
-                isRecommended: runs == recommendedRuns
-            ))
+                estimates.append(VolumeEstimate(
+                    runsPerWeek: runs,
+                    weeklyKmMin: minKm,
+                    weeklyKmMax: maxKm,
+                    isRecommended: runs == recommendedRuns
+                ))
+            }
         }
 
         return estimates
+    }
+
+    /// Builds a minimal Athlete instance just for the preview pass through
+    /// RoadVolumeCalculator. The calculator reads experience, weeklyVolumeKm,
+    /// longestRunKm, trainingPhilosophy, age, and pain/injury flags. The rest
+    /// of the Athlete fields aren't touched by the volume math.
+    private func volumePreviewStubAthlete(experience: ExperienceLevel) -> Athlete {
+        Athlete(
+            id: UUID(),
+            firstName: firstName,
+            lastName: lastName,
+            dateOfBirth: dateOfBirth,
+            weightKg: weightKg,
+            heightCm: heightCm,
+            restingHeartRate: restingHeartRate,
+            maxHeartRate: maxHeartRate,
+            experienceLevel: experience,
+            weeklyVolumeKm: isNewRunner ? 0 : weeklyVolumeKm,
+            longestRunKm: isNewRunner ? 0 : longestRunKm,
+            preferredUnit: preferredUnit,
+            trainingPhilosophy: trainingPhilosophy,
+            preferredRunsPerWeek: preferredRunsPerWeek,
+            weightGoal: weightGoal,
+            biologicalSex: biologicalSex,
+            painFrequency: painFrequency ?? .never,
+            injuryCountLastYear: injuryCountLastYear ?? .none,
+            hasRecentInjury: hasRecentInjury
+        )
     }
 
     /// Smart recommendation based on athlete profile, race, philosophy, and injury risk.

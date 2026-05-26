@@ -253,7 +253,43 @@ enum LongRunCurveCalculator {
             b2bDay2 = 0
         }
 
-        let total = easy1 + easy2 + interval + vg + longRun
+        // Weekly total mirrors what SessionTemplateGenerator will actually
+        // place on the calendar for the athlete's frequency. Previously
+        // we summed the 5 fixed slots (LR + 2 easy + interval + VG) so a
+        // 3-day athlete and a 7-day athlete saw identical weekly km
+        // targets even though the session pool was adding (6+/wk) or
+        // dropping (3-4/wk) sessions on top.
+        //
+        // Pool order in standardWeekTemplates (mirror it here):
+        //   1. LR  2. q1 (VG or intervals)  3. q2 (intervals)
+        //   4. easy1  5. easy2  6. tempo (reuses interval duration)
+        //   7. cross-training (reuses easy1 duration)
+        let total: TimeInterval
+        if b2b && phase != .taper {
+            // B2B weeks override the standard pool with two long days +
+            // a budgeted supporting block. The sum of those slots is the
+            // weekly target as-is.
+            total = b2bDay1 + b2bDay2 + easy1 + easy2 + interval + vg
+        } else {
+            switch preferredRunsPerWeek {
+            case ...2:
+                // Maintenance: LR + 1 easy only
+                total = longRun + easy1
+            case 3:
+                // Pool prefix(3) = LR + q1 + q2 (no easy)
+                total = longRun + vg + interval
+            case 4:
+                total = longRun + vg + interval + easy1
+            case 5:
+                total = longRun + vg + interval + easy1 + easy2
+            case 6:
+                // + tempo (reuses interval duration)
+                total = longRun + vg + interval + easy1 + easy2 + interval
+            default: // 7+
+                // + cross-training (reuses easy1 duration)
+                total = longRun + vg + interval + easy1 + easy2 + interval + easy1
+            }
+        }
 
         return WeekDurations(
             longRunSeconds: round(longRun),
