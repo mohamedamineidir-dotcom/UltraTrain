@@ -93,7 +93,7 @@ struct PaywallPlanCard: View {
         .overlay(alignment: .top) {
             if isRecommended {
                 bestValuePill
-                    .offset(y: -10)
+                    .offset(y: -8)
             }
         }
         .shadow(
@@ -107,20 +107,20 @@ struct PaywallPlanCard: View {
     /// Floats above the card's top border so it doesn't change the card's
     /// measured height. Lives on the recommended (yearly) plan only.
     private var bestValuePill: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 3) {
             Image(systemName: "star.fill")
-                .font(.caption2.bold())
+                .font(.system(size: 8, weight: .bold))
             Text("paywall.bestValue")
-                .font(.caption2.bold())
-                .tracking(0.6)
+                .font(.system(size: 9, weight: .bold))
+                .tracking(0.4)
         }
         .foregroundStyle(.black)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 4)
+        .padding(.horizontal, 7)
+        .padding(.vertical, 2)
         .background(
             Capsule().fill(Theme.Gradients.goldPremium)
         )
-        .shadow(color: Theme.Colors.goldAccent.opacity(0.4), radius: 6, y: 2)
+        .shadow(color: Theme.Colors.goldAccent.opacity(0.4), radius: 5, y: 2)
     }
 
     /// "1 week free" pill. Coral-tinted so it differs from the gold

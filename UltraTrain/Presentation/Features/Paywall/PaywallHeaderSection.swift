@@ -2,7 +2,7 @@ import SwiftUI
 
 struct PaywallHeaderSection: View {
     var body: some View {
-        VStack(spacing: Theme.Spacing.md) {
+        VStack(spacing: Theme.Spacing.xs) {
             ZStack {
                 // Soft coral radial behind the glyph so the eye lands here
                 // first and the brand colour anchors the dark backdrop
@@ -17,20 +17,19 @@ struct PaywallHeaderSection: View {
                             ],
                             center: .center,
                             startRadius: 0,
-                            endRadius: 110
+                            endRadius: 90
                         )
                     )
-                    .frame(width: 220, height: 220)
+                    .frame(width: 180, height: 180)
                     .blur(radius: 6)
 
                 Image("LaunchIcon")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 104, height: 104)
-                    .shadow(color: Theme.Colors.warmCoral.opacity(0.55), radius: 24, y: 8)
+                    .frame(width: 84, height: 84)
+                    .shadow(color: Theme.Colors.warmCoral.opacity(0.55), radius: 20, y: 6)
                     .accessibilityHidden(true)
             }
-            .padding(.top, Theme.Spacing.xl)
 
             VStack(spacing: 6) {
                 Text("paywall.title")
