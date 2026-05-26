@@ -121,42 +121,47 @@ struct EditRaceSheet: View {
         }
     }
 
+    private static let sheetBackdrop = Color(red: 0.05, green: 0.05, blue: 0.09)
+
     var body: some View {
         NavigationStack {
-            Form {
-                raceInfoSection
-                if isShortRoadRace {
-                    Section {
-                        HStack(alignment: .top, spacing: 8) {
-                            Image(systemName: "info.circle.fill")
-                                .foregroundStyle(.blue)
-                            Text("UltraTrain is built for trail and ultra-distance races. For shorter road events, features like altitude training and nutrition planning shine most on longer distances.")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+            ZStack {
+                Self.sheetBackdrop.ignoresSafeArea()
+
+                VStack(spacing: 0) {
+                    ScrollView {
+                        VStack(spacing: Theme.Spacing.md) {
+                            raceInfoSection
+                            if isShortRoadRace {
+                                shortRoadRaceNote
+                            }
+                            locationSection
+                            elevationSection
+                            prioritySection
+                            goalSection
+                            if showSpecificPrepToggle {
+                                specificPrepSection
+                            }
+                            terrainSection
+                            checkpointsSection
+                            Color.clear.frame(height: 96)
                         }
+                        .padding(.horizontal, Theme.Spacing.lg)
+                        .padding(.top, Theme.Spacing.md)
                     }
+
+                    bottomBar
                 }
-                locationSection
-                elevationSection
-                prioritySection
-                goalSection
-                if showSpecificPrepToggle {
-                    specificPrepSection
-                }
-                terrainSection
-                checkpointsSection
             }
+            .environment(\.colorScheme, .dark)
+            .presentationBackground(Self.sheetBackdrop)
             .navigationTitle(mode.isAdd ? "Add Race" : "Edit Race")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Cancel") { dismiss() }
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
                         .accessibilityHint("Discards changes and closes the editor")
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Save") { save() }
-                        .disabled(!isValid)
-                        .accessibilityHint("Saves the race configuration")
                 }
             }
             .sheet(isPresented: $showAddCheckpoint) {
@@ -245,64 +250,170 @@ struct EditRaceSheet: View {
 
     @ViewBuilder
     var specificPrepSection: some View {
-        Section {
+        glassCard(
+            title: "Specific prep",
+            icon: "bolt.fill",
+            tint: Theme.Colors.warmCoral,
+            footer: "Off by default. When off, this race stays on your calendar with a standard mini-taper plus recovery, but your training stays focused on your A-race."
+        ) {
             Toggle(isOn: $includesSpecificPrep) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Race-pace prep for this race")
                         .font(.subheadline.weight(.semibold))
-                    Text("Adds 1-3 race-pace quality sessions in the 2-3 weeks before this race — VO2max for 10K, threshold for HM, MP blocks for marathon. Replaces existing intervals, no extra fatigue.")
+                        .foregroundStyle(.primary)
+                    Text("Adds 1 to 3 race-pace quality sessions in the 2 to 3 weeks before this race. VO2max for 10K, threshold for HM, MP blocks for marathon. Replaces existing intervals, no extra fatigue.")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }
             .tint(Theme.Colors.warmCoral)
-        } header: {
-            Text("Specific prep")
-        } footer: {
-            Text("Off by default. When off, this race stays on your calendar with a standard mini-taper + recovery, but your training stays focused on your A-race.")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
         }
     }
 
     private var raceInfoSection: some View {
-        Section("Race Info") {
-            RaceAutoCompleteField(text: $name) { race in
-                distanceKm = race.distanceKm
-                elevationGainM = race.elevationGainM
-                elevationLossM = race.elevationLossM
-                if let raceDate = race.nextEditionDate, raceDate > Date.now {
-                    date = raceDate
+        glassCard(
+            title: "Race info",
+            icon: "flag.checkered",
+            tint: Theme.Colors.warmCoral
+        ) {
+            VStack(spacing: Theme.Spacing.sm) {
+                RaceAutoCompleteField(text: $name) { race in
+                    distanceKm = race.distanceKm
+                    elevationGainM = race.elevationGainM
+                    elevationLossM = race.elevationLossM
+                    if let raceDate = race.nextEditionDate, raceDate > Date.now {
+                        date = raceDate
+                    }
                 }
+                DatePicker(
+                    "Race date",
+                    selection: $date,
+                    in: Date.now...,
+                    displayedComponents: .date
+                )
+                .tint(Theme.Colors.warmCoral)
+                .padding(.horizontal, Theme.Spacing.sm)
+                .padding(.vertical, Theme.Spacing.xs)
+                .background(fieldChrome)
+
+                LabeledStepper(
+                    label: "Distance",
+                    value: distanceBinding,
+                    range: isImperial ? 1...310 : 1...500,
+                    step: isImperial ? 3 : 5,
+                    unit: UnitFormatter.distanceLabel(units)
+                )
+                .padding(.horizontal, Theme.Spacing.sm)
+                .padding(.vertical, Theme.Spacing.xs)
+                .background(fieldChrome)
             }
-            DatePicker("Race Date", selection: $date, in: Date.now..., displayedComponents: .date)
-            LabeledStepper(
-                label: "Distance",
-                value: distanceBinding,
-                range: isImperial ? 1...310 : 1...500,
-                step: isImperial ? 3 : 5,
-                unit: UnitFormatter.distanceLabel(units)
-            )
         }
     }
 
     private var elevationSection: some View {
-        Section("Elevation") {
-            LabeledStepper(
-                label: "D+ (gain)",
-                value: elevationGainBinding,
-                range: isImperial ? 0...65600 : 0...20000,
-                step: isImperial ? 300 : 100,
-                unit: UnitFormatter.elevationShortLabel(units)
+        glassCard(
+            title: "Elevation",
+            icon: "mountain.2.fill",
+            tint: Theme.Colors.info
+        ) {
+            VStack(spacing: Theme.Spacing.sm) {
+                LabeledStepper(
+                    label: "D+ (gain)",
+                    value: elevationGainBinding,
+                    range: isImperial ? 0...65600 : 0...20000,
+                    step: isImperial ? 300 : 100,
+                    unit: UnitFormatter.elevationShortLabel(units)
+                )
+                .padding(.horizontal, Theme.Spacing.sm)
+                .padding(.vertical, Theme.Spacing.xs)
+                .background(fieldChrome)
+
+                LabeledStepper(
+                    label: "D- (loss)",
+                    value: elevationLossBinding,
+                    range: isImperial ? 0...65600 : 0...20000,
+                    step: isImperial ? 300 : 100,
+                    unit: UnitFormatter.elevationShortLabel(units)
+                )
+                .padding(.horizontal, Theme.Spacing.sm)
+                .padding(.vertical, Theme.Spacing.xs)
+                .background(fieldChrome)
+            }
+        }
+    }
+
+    // MARK: - Short-road-race callout
+
+    private var shortRoadRaceNote: some View {
+        HStack(alignment: .top, spacing: Theme.Spacing.sm) {
+            Image(systemName: "info.circle.fill")
+                .foregroundStyle(Theme.Colors.info)
+            Text("UltraTrain is built for trail and ultra-distance races. For shorter road events, features like altitude training and nutrition planning shine most on longer distances.")
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(Theme.Spacing.md)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .fill(Theme.Colors.info.opacity(0.10))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .stroke(Theme.Colors.info.opacity(0.30), lineWidth: 1)
+        )
+    }
+
+    // MARK: - Bottom bar
+
+    private var bottomBar: some View {
+        VStack(spacing: 0) {
+            LinearGradient(
+                colors: [Self.sheetBackdrop.opacity(0), Self.sheetBackdrop],
+                startPoint: .top,
+                endPoint: .bottom
             )
-            LabeledStepper(
-                label: "D- (loss)",
-                value: elevationLossBinding,
-                range: isImperial ? 0...65600 : 0...20000,
-                step: isImperial ? 300 : 100,
-                unit: UnitFormatter.elevationShortLabel(units)
-            )
+            .frame(height: 24)
+            .allowsHitTesting(false)
+
+            Button {
+                save()
+            } label: {
+                HStack(spacing: 8) {
+                    Text(mode.isAdd ? "Add race" : "Save changes")
+                        .font(.headline.bold())
+                    Image(systemName: "checkmark")
+                        .font(.subheadline.bold())
+                }
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, Theme.Spacing.md)
+                .background(
+                    Group {
+                        if isValid {
+                            Theme.Gradients.warmCoralCTA
+                        } else {
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.10), Color.white.opacity(0.10)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        }
+                    }
+                )
+                .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
+                .shadow(
+                    color: isValid ? Theme.Colors.warmCoral.opacity(0.4) : .clear,
+                    radius: 10, y: 4
+                )
+            }
+            .disabled(!isValid)
+            .buttonStyle(.plain)
+            .accessibilityHint("Saves the race configuration")
+            .padding(.horizontal, Theme.Spacing.lg)
+            .padding(.bottom, Theme.Spacing.md)
+            .background(Self.sheetBackdrop)
         }
     }
 }
