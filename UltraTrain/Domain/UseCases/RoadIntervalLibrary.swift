@@ -292,7 +292,7 @@ enum RoadIntervalLibrary {
         ),
         Template(
             name: "400m Repeats",
-            category: .speed, description: "Classic Daniels R-pace 400s. Neuromuscular speed work.",
+            category: .speed, description: "Classic 400m repeats at R-pace. Neuromuscular speed work.",
             targetPaceZone: .repetition, repDistanceM: 400, repCount: 8,
             recoverySeconds: 90, recoveryType: .jog, totalWorkMinutes: 12,
             applicablePhases: [.base, .build], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
@@ -321,7 +321,7 @@ enum RoadIntervalLibrary {
         ),
         Template(
             name: "1000m VO2max",
-            category: .vo2max, description: "5×1000m at I-pace. Daniels staple interval session.",
+            category: .vo2max, description: "5×1000m at I-pace. Staple VO2max interval session.",
             targetPaceZone: .interval, repDistanceM: 1000, repCount: 5,
             recoverySeconds: 150, recoveryType: .jog, totalWorkMinutes: 20,
             applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
@@ -366,7 +366,7 @@ enum RoadIntervalLibrary {
     private static let thresholdTemplates: [Template] = [
         Template(
             name: "Cruise Intervals 1K",
-            category: .threshold, description: "5×1000m at T-pace, 90s rest. Daniels cruise intervals.",
+            category: .threshold, description: "5×1000m at T-pace, 90s rest. Cruise intervals at threshold.",
             targetPaceZone: .threshold, repDistanceM: 1000, repCount: 5,
             recoverySeconds: 90, recoveryType: .standing, totalWorkMinutes: 20,
             applicablePhases: [.base, .build, .peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
@@ -390,7 +390,7 @@ enum RoadIntervalLibrary {
         ),
         Template(
             name: "Double Tempo",
-            category: .threshold, description: "2×20min at T-pace, 3min jog. Pfitzinger lactate threshold staple.",
+            category: .threshold, description: "2×20min at T-pace, 3min jog. Lactate threshold staple.",
             targetPaceZone: .threshold, repDistanceM: 0, repCount: 2,
             recoverySeconds: 180, recoveryType: .jog, totalWorkMinutes: 40,
             applicablePhases: [.build, .peak], applicableDistances: [.roadHalf, .roadMarathon],
@@ -514,7 +514,7 @@ enum RoadIntervalLibrary {
         // Marathon specific (Canova-style)
         Template(
             name: "Marathon Pace 3K Blocks",
-            category: .raceSpecific, description: "5×3000m at 103% MP with 1000m float. Canova marathon-specific.",
+            category: .raceSpecific, description: "5×3000m at 103% MP with 1000m float. Marathon-specific block.",
             targetPaceZone: .marathonPace, repDistanceM: 3000, repCount: 5,
             recoverySeconds: 240, recoveryType: .float, totalWorkMinutes: 40,
             applicablePhases: [.peak], applicableDistances: [.roadMarathon],
@@ -530,7 +530,7 @@ enum RoadIntervalLibrary {
         ),
         Template(
             name: "Marathon Pace 7K Blocks",
-            category: .raceSpecific, description: "3×7000m at MP, 1000m jog. Canova special block for advanced.",
+            category: .raceSpecific, description: "3×7000m at MP, 1000m jog. Special block for advanced runners.",
             targetPaceZone: .marathonPace, repDistanceM: 7000, repCount: 3,
             recoverySeconds: 300, recoveryType: .jog, totalWorkMinutes: 63,
             applicablePhases: [.peak], applicableDistances: [.roadMarathon],
@@ -543,7 +543,7 @@ enum RoadIntervalLibrary {
     private static let progressionTemplates: [Template] = [
         Template(
             name: "Short Progression",
-            category: .progression, description: "25min building from easy to 108% race pace. Canova-style.",
+            category: .progression, description: "25min building from easy to 108% race pace. Progressive stimulus.",
             targetPaceZone: .racePace, repDistanceM: 0, repCount: 1,
             recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 25,
             applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
@@ -595,7 +595,7 @@ enum RoadIntervalLibrary {
             // Progressive tempo (Canova: vary stimulus without intervals)
             Template(
                 name: "Progressive Tempo 30min",
-                category: .threshold, description: "30min building from easy to T-pace. Canova progressive stimulus.",
+                category: .threshold, description: "30min building from easy to T-pace. Progressive threshold stimulus.",
                 targetPaceZone: .threshold, repDistanceM: 0, repCount: 1,
                 recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 30,
                 applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
@@ -613,7 +613,7 @@ enum RoadIntervalLibrary {
             // Daniels 2Q combo: tempo + VO2max in one session (advanced/elite)
             Template(
                 name: "2Q Tempo + VO2max",
-                category: .vo2max, description: "15min tempo (T-pace) then 4×3min VO2max (I-pace). Daniels 2Q.",
+                category: .vo2max, description: "15min tempo (T-pace) then 4×3min VO2max (I-pace). Threshold-to-VO2max combo.",
                 targetPaceZone: .interval, repDistanceM: 0, repCount: 4,
                 recoverySeconds: 180, recoveryType: .jog, totalWorkMinutes: 27,
                 applicablePhases: [.peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
@@ -657,7 +657,7 @@ enum RoadIntervalLibrary {
             ),
             // Canova alternating long run (marathon peak, MP blocks)
             Template(
-                name: "Canova Alternating LR",
+                name: "Alternating Long Run",
                 category: .longRunVariant, description: "Easy + 3×3km MP blocks + easy. Marathon-specific endurance.",
                 targetPaceZone: .marathonPace, repDistanceM: 3000, repCount: 3,
                 recoverySeconds: 300, recoveryType: .jog, totalWorkMinutes: 30,

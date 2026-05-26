@@ -1271,7 +1271,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         case .roadMarathon:
             return "This is your race-pace calibration session. If you nail HMP effort comfortably, your target is achievable. If you struggle to hold pace past 7K, scale marathon target back by 1-2%."
         case .roadHalf:
-            return "5K TT result × 2.11 (Riegel) gives your realistic half marathon target. Use this to validate your goal time."
+            return "Your 5K time × 2.11 gives a realistic half-marathon target. Use this to validate your goal time."
         case .road10K:
             return ""
         }

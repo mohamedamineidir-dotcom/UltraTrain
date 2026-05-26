@@ -85,11 +85,11 @@ enum FitnessTestVariant: String, Sendable, Codable {
             Run 5 km as hard as you sustainably can. Track or flat road, even pacing, don't go out hard.
             Cool down 10-15 min easy.
 
-            Record your finish time. The result re-anchors your half-marathon / marathon pace targets via Daniels VDOT.
+            Record your finish time. The result re-anchors your half-marathon and marathon pace targets.
             """
         case .uphillSustained30Min:
             return """
-            30-min sustained uphill test (House & Johnston).
+            30-min sustained uphill test.
 
             Warm up 15-20 min easy on flat.
             Run 30 minutes uphill at threshold effort, the hardest sustainable pace where you can still breathe rhythmically (about 80-85% max HR).
@@ -129,7 +129,7 @@ enum FitnessTestVariant: String, Sendable, Codable {
             Cool down 5-10 min flat.
 
             Record average HR + speed used.
-            Calibrates your threshold zones, House & Johnston's primary recommendation for flat-region athletes.
+            Calibrates your threshold zones. Designed for flat-region athletes.
             """
         }
     }

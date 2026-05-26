@@ -225,7 +225,7 @@ enum TrailRaceWeekTemplates {
                     : PrepSession(type: .intervals, intensity: .moderate,
                                   durationSeconds: minutes(40),
                                   elevationFraction: 0.3,
-                                  description: "4-5 × 3 min at controlled threshold on rolling terrain, 2 min easy between. Specific stimulus, Roche fast-finish mentality.")),
+                                  description: "4-5 × 3 min at controlled threshold on rolling terrain, 2 min easy between. Specific stimulus with a fast-finish mentality.")),
                 (4, easyRun(30, descSuffix: "Recovery from yesterday.")),
                 (3, easyRun(28, descSuffix: isMountain
                     ? "Easy 25-30 min. No hill strides, keep climbing legs fresh."
@@ -248,7 +248,7 @@ enum TrailRaceWeekTemplates {
                         ? PrepSession(type: .tempo, intensity: .moderate,
                                       durationSeconds: minutes(45),
                                       elevationFraction: 0.2,
-                                      description: "30 min easy + 5 × 1 min at threshold or 4 × 30s hill strides. Koop's 'primer', light sharpening only.")
+                                      description: "30 min easy + 5 × 1 min at threshold or 4 × 30s hill strides. Light primer, sharpening only.")
                         : easyRun(40, descSuffix: "+ 4 × 30s hill strides. Light primer.")),
                 (4, easyRun(35, descSuffix: "Recovery, conversational pace.")),
                 (3, easyRun(28, descSuffix: "+ 4-6 × 100m strides. CNS prime.")),
@@ -267,7 +267,7 @@ enum TrailRaceWeekTemplates {
                 (6, easyRun(55, descSuffix: "+ 4 strides. Last 'real' run before taper deepens.")),
                 (5, easyRun(45, descSuffix: isPerformance
                     ? "+ 4 × 1 min at steady on race-specific terrain. Performance philosophy, light primer."
-                    : "+ 4 × 30s pickups. Light primer, Koop avoids hard work this close.")),
+                    : "+ 4 × 30s pickups. Light primer, no hard work this close to race day.")),
                 (4, isBeginner
                     ? PrepSession(type: .rest, intensity: .easy,
                                   durationSeconds: 0, elevationFraction: 0,
@@ -288,7 +288,7 @@ enum TrailRaceWeekTemplates {
                 (5, easyRun(35, descSuffix: "Conversational pace, recovery from peak block.")),
                 (4, easyRun(28, descSuffix: "+ 4 strides. Light.")),
                 (3, isEliteOrAdvanced && !isMountain && isPerformance
-                    ? easyRun(25, descSuffix: "+ 20 min steady-state pickup. Roche allows for elites with high training age.")
+                    ? easyRun(25, descSuffix: "+ 20 min steady-state pickup. Only for elites with high training age.")
                     : PrepSession(type: .rest, intensity: .easy,
                                   durationSeconds: 0, elevationFraction: 0,
                                   description: "Rest or 20 min very easy. Mental + physical reset.")),

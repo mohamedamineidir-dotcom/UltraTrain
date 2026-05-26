@@ -654,7 +654,7 @@ struct PlanGenerationOptionsSheet: View {
         case .vmaFlat6Min:
             return "6 min all-out on flat (track ideal). Distance covered ÷ 100 = your VMA. Re-anchors all training paces."
         case .fiveKTT:
-            return "5K time trial all-out. Result re-anchors your pace targets via Daniels VDOT."
+            return "5K time trial all-out. Result re-anchors all your pace targets."
         case .uphillSustained30Min:
             return "30 min uphill at threshold effort on a sustained climb. Calibrates your trail threshold zones."
         case .uphillRepeats4x8:
@@ -662,7 +662,7 @@ struct PlanGenerationOptionsSheet: View {
         case .uphillRepeats6x4:
             return "5-6 × 4 min uphill at threshold effort. Threshold calibration for shorter hills."
         case .treadmillIncline30Min:
-            return "30 min on a treadmill at 8-12% incline at threshold effort. House & Johnston's pick for flat-region athletes."
+            return "30 min on a treadmill at 8-12% incline at threshold effort. Designed for flat-region athletes prepping for mountain races."
         }
     }
 }

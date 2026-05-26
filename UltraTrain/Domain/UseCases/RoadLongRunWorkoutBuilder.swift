@@ -201,7 +201,7 @@ enum RoadLongRunWorkoutBuilder {
         let blockMins = Int(blockDuration / 60)
         return workout(
             name: "\(numBlocks)×\(blockMins) min MP long run",
-            description: "Canova-style alternating blocks. Lock in marathon-pace effort \(numBlocks) times with easy recovery between.",
+            description: "Alternating blocks of marathon-pace effort. Lock in race pace \(numBlocks) times with easy recovery between.",
             phases: phases,
             totalDuration: totalDuration,
             paceProfile: paceProfile

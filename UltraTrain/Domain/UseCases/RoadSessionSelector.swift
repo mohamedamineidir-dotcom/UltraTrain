@@ -384,7 +384,7 @@ enum RoadSessionSelector {
             // (marathon), drop the Friday easy in favour of an MLR on Wed
             // so the week becomes Mon-easy / Tue-Q1 / Wed-MLR / Thu-Q2 /
             // Sat-long. Friday + Sunday rest.
-            let mlrDescription = "Medium-long run, Pfitzinger aerobic builder. Easy pace throughout, no surges."
+            let mlrDescription = "Medium-long run, aerobic builder. Easy pace throughout, no surges."
             let mlrSlot = (2, tpl(2, .recovery, .easy, medLongDuration, 0, mlrDescription))
             if preferredRunsPerWeek >= 6 {
                 // Replaces Wednesday easy in the 6+/wk pool
