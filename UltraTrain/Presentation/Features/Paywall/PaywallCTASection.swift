@@ -8,7 +8,6 @@ struct PaywallCTASection: View {
         VStack(spacing: 0) {
             Spacer()
             VStack(spacing: Theme.Spacing.sm) {
-                // Main CTA button
                 Button {
                     Task { await viewModel.purchase() }
                 } label: {
@@ -32,7 +31,21 @@ struct PaywallCTASection: View {
                 .padding(.horizontal, Theme.Spacing.lg)
                 .accessibilityIdentifier("paywall.subscribeButton")
 
-                // Restore
+                /// Reassurance line directly under the CTA. Two short
+                /// promises ("no charge today, cancel anytime") kill the
+                /// implicit fear that lets users hesitate on the trial.
+                /// Lives outside the trial timeline because by the time
+                /// the thumb is on the button this is the only message
+                /// that matters.
+                HStack(spacing: 6) {
+                    Image(systemName: "lock.shield.fill")
+                        .font(.caption2)
+                    Text("paywall.cta.reassurance")
+                        .font(.caption2)
+                }
+                .foregroundStyle(.secondary)
+                .padding(.top, 2)
+
                 Button {
                     Task { await viewModel.restore() }
                 } label: {
@@ -48,7 +61,6 @@ struct PaywallCTASection: View {
                 .disabled(viewModel.isRestoring)
                 .accessibilityIdentifier("paywall.restoreButton")
 
-                // Legal links
                 HStack(spacing: Theme.Spacing.md) {
                     Link("Terms", destination: URL(string: "https://ultratrain.app/terms")!)
                     Text("|").foregroundStyle(.tertiary)

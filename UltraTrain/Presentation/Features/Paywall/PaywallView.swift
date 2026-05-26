@@ -47,7 +47,7 @@ struct PaywallView: View {
             } else {
                 ScrollView {
                     VStack(spacing: Theme.Spacing.lg) {
-                        PaywallHeaderSection(firstName: viewModel.firstName)
+                        PaywallHeaderSection()
                         PaywallFeatureBullets()
                         PaywallPlanSelector(
                             plans: viewModel.plans,

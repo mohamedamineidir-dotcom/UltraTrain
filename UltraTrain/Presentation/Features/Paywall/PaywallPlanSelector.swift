@@ -14,11 +14,12 @@ struct PaywallPlanSelector: View {
     }
 
     var body: some View {
-        VStack(spacing: Theme.Spacing.sm) {
+        VStack(spacing: Theme.Spacing.sm + 2) {
             ForEach(sortedPlans) { plan in
                 PaywallPlanCard(
                     plan: plan,
-                    isSelected: selectedPlanId == plan.id
+                    isSelected: selectedPlanId == plan.id,
+                    isRecommended: plan.period == .yearly
                 )
                 .onTapGesture {
                     withAnimation(.easeInOut(duration: 0.2)) {
@@ -36,61 +37,57 @@ struct PaywallPlanSelector: View {
 struct PaywallPlanCard: View {
     let plan: SubscriptionPlan
     let isSelected: Bool
+    let isRecommended: Bool
 
     var body: some View {
-        HStack(spacing: Theme.Spacing.md) {
-            // Left: plan info
-            VStack(alignment: .leading, spacing: 4) {
-                // Row 1: Plan name
-                HStack(spacing: 6) {
-                    Text(plan.period.displayNameLocalized)
-                        .font(.headline)
-                        .foregroundStyle(.primary)
-                        .lineLimit(1)
+        VStack(spacing: 0) {
+            if isRecommended {
+                bestValuePill
+            }
 
-                    if plan.trialDays != nil {
-                        badge(
-                            text: String(localized: "paywall.freeWeek"),
-                            foreground: Theme.Colors.warmCoral,
-                            background: Theme.Colors.warmCoral.opacity(0.12)
-                        )
+            HStack(spacing: Theme.Spacing.md) {
+                // Left: plan name + small total
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 6) {
+                        Text(plan.period.displayNameLocalized)
+                            .font(.headline)
+                            .foregroundStyle(.primary)
+                            .lineLimit(1)
+
+                        if let savings = plan.savingsPercent {
+                            savingsBadge(savings: savings)
+                        }
                     }
+
+                    Text(plan.displayPrice)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
                 }
 
-                // Row 2: Save badge + per-week price
-                HStack(spacing: 6) {
-                    if let savings = plan.savingsPercent {
-                        badge(
-                            text: String(localized: "paywall.save \(savings)"),
-                            foreground: .black,
-                            background: nil,
-                            gradient: Theme.Gradients.goldPremium
-                        )
-                    }
+                Spacer(minLength: Theme.Spacing.sm)
 
-                    Text("paywall.perWeek \(plan.displayPricePerWeek)")
-                        .font(.caption)
+                // Right: per-week price as the hero number
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text(plan.displayPricePerWeek)
+                        .font(.title3.bold().monospacedDigit())
+                        .foregroundStyle(.primary)
+                        .fixedSize()
+                    Text("paywall.perWeekLabel")
+                        .font(.caption2)
                         .foregroundStyle(.secondary)
                 }
             }
-
-            Spacer(minLength: Theme.Spacing.sm)
-
-            // Right: total price
-            Text(plan.displayPrice)
-                .font(.title3.bold())
-                .foregroundStyle(.primary)
-                .fixedSize()
+            .padding(Theme.Spacing.md)
         }
-        .padding(Theme.Spacing.md)
         .background(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .fill(.ultraThinMaterial)
-                .opacity(isSelected ? 1.0 : 0.6)
+                .opacity(isSelected ? 1.0 : 0.55)
         )
         .background(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                .fill(Color.primary.opacity(isSelected ? 0.1 : 0.03))
+                .fill(Color.primary.opacity(isSelected ? 0.08 : 0.03))
         )
         .overlay(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
@@ -99,30 +96,48 @@ struct PaywallPlanCard: View {
                     lineWidth: isSelected ? 2 : 1
                 )
         )
-        .shadow(color: isSelected ? Theme.Colors.warmCoral.opacity(0.3) : .clear, radius: 8)
+        .shadow(
+            color: isSelected ? Theme.Colors.warmCoral.opacity(0.32) : .clear,
+            radius: 10, y: 4
+        )
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
-    private func badge(
-        text: String,
-        foreground: Color,
-        background: Color? = nil,
-        gradient: LinearGradient? = nil
-    ) -> some View {
-        Text(text)
+    /// "BEST VALUE" pill that sits flush at the top of the recommended
+    /// card so the eye lands on it before reading the row. Gold gradient
+    /// keeps the premium feel without competing with the coral selection
+    /// border.
+    private var bestValuePill: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "star.fill")
+                .font(.caption2.bold())
+            Text("paywall.bestValue")
+                .font(.caption2.bold())
+                .tracking(0.6)
+        }
+        .foregroundStyle(.black)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 4)
+        .background(
+            Capsule().fill(Theme.Gradients.goldPremium)
+        )
+        .offset(y: 10)
+        .zIndex(1)
+        .padding(.top, -10)
+    }
+
+    /// Compact "Save N%" badge inline with the plan name. Uses a tinted
+    /// fill rather than the loud gold gradient so it doesn't fight the
+    /// BEST VALUE pill on the yearly card.
+    private func savingsBadge(savings: Int) -> some View {
+        Text(String(localized: "paywall.save \(savings)"))
             .font(.caption2.bold())
-            .foregroundStyle(foreground)
-            .lineLimit(1)
-            .fixedSize()
+            .foregroundStyle(Theme.Colors.success)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
-            .background {
-                if let gradient {
-                    Capsule().fill(gradient)
-                } else if let bg = background {
-                    Capsule().fill(bg)
-                }
-            }
+            .background(
+                Capsule().fill(Theme.Colors.success.opacity(0.16))
+            )
     }
 }
