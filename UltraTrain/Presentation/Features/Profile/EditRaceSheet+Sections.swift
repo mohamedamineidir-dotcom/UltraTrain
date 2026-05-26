@@ -44,6 +44,25 @@ extension EditRaceSheet {
         .futuristicGlassStyle(phaseTint: tint)
     }
 
+    /// Compact h:m:s stepper used in the 3-up target-time layout. Stacks a
+    /// small unit label above a compact LabeledIntStepper so the row
+    /// fits in the card width without the per-stepper inline label
+    /// blowing the layout out.
+    func compactTimeStepper(
+        title: String,
+        value: Binding<Int>,
+        range: ClosedRange<Int>,
+        unit: String
+    ) -> some View {
+        VStack(spacing: 2) {
+            Text(title)
+                .font(.caption2)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+            LabeledIntStepper(label: title, value: value, range: range, unit: unit, compact: true)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
     /// Subtle field chrome used to lift DatePicker / Stepper rows off the
     /// glass background so they read as tappable input affordances rather
     /// than free-floating text.
@@ -159,16 +178,27 @@ extension EditRaceSheet {
                 .accessibilityHint("Choose your race goal: finish, target time, or target ranking")
 
                 if goalType == .targetTime {
-                    HStack(spacing: showsTargetTimeSeconds ? Theme.Spacing.sm : Theme.Spacing.md) {
-                        LabeledIntStepper(label: showsTargetTimeSeconds ? "Hrs" : "Hours", value: $targetTimeHours, range: 0...100, unit: "h")
-                        LabeledIntStepper(label: "Min", value: $targetTimeMinutes, range: 0...59, unit: "m")
-                        if showsTargetTimeSeconds {
-                            LabeledIntStepper(label: "Sec", value: $targetTimeSeconds, range: 0...59, unit: "s")
+                    if showsTargetTimeSeconds {
+                        // 3-up (h:m:s) for road races ≤ marathon. Compact
+                        // steppers with the unit label stacked above so
+                        // the row fits inside the card on every phone.
+                        HStack(spacing: Theme.Spacing.sm) {
+                            compactTimeStepper(title: "Hours", value: $targetTimeHours, range: 0...100, unit: "h")
+                            compactTimeStepper(title: "Min", value: $targetTimeMinutes, range: 0...59, unit: "m")
+                            compactTimeStepper(title: "Sec", value: $targetTimeSeconds, range: 0...59, unit: "s")
                         }
+                        .padding(.horizontal, Theme.Spacing.sm)
+                        .padding(.vertical, Theme.Spacing.xs)
+                        .background(fieldChrome)
+                    } else {
+                        HStack(spacing: Theme.Spacing.md) {
+                            LabeledIntStepper(label: "Hours", value: $targetTimeHours, range: 0...100, unit: "h")
+                            LabeledIntStepper(label: "Min", value: $targetTimeMinutes, range: 0...59, unit: "m")
+                        }
+                        .padding(.horizontal, Theme.Spacing.sm)
+                        .padding(.vertical, Theme.Spacing.xs)
+                        .background(fieldChrome)
                     }
-                    .padding(.horizontal, Theme.Spacing.sm)
-                    .padding(.vertical, Theme.Spacing.xs)
-                    .background(fieldChrome)
                 }
 
                 if goalType == .targetRanking {
