@@ -14,7 +14,7 @@ struct PaywallPlanSelector: View {
     }
 
     var body: some View {
-        VStack(spacing: Theme.Spacing.sm + 2) {
+        VStack(spacing: Theme.Spacing.sm + 4) {
             ForEach(sortedPlans) { plan in
                 PaywallPlanCard(
                     plan: plan,
@@ -40,34 +40,40 @@ struct PaywallPlanCard: View {
     let isRecommended: Bool
 
     var body: some View {
-        VStack(spacing: 0) {
-            if isRecommended {
-                bestValuePill
-            }
+        HStack(alignment: .center, spacing: Theme.Spacing.md) {
+            // Left column: plan name + badges
+            VStack(alignment: .leading, spacing: 6) {
+                Text(plan.period.displayNameLocalized)
+                    .font(.headline)
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
 
-            HStack(spacing: Theme.Spacing.md) {
-                // Left: plan name + savings badge if there is one
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(plan.period.displayNameLocalized)
-                        .font(.headline)
-                        .foregroundStyle(.primary)
-                        .lineLimit(1)
-
+                HStack(spacing: 6) {
+                    if plan.trialDays != nil {
+                        trialBadge
+                    }
                     if let savings = plan.savingsPercent {
                         savingsBadge(savings: savings)
                     }
                 }
+            }
 
-                Spacer(minLength: Theme.Spacing.sm)
+            Spacer(minLength: Theme.Spacing.sm)
 
-                // Right: total price as the hero number
+            // Right column: total price hero + small per-week line
+            VStack(alignment: .trailing, spacing: 2) {
                 Text(plan.displayPrice)
                     .font(.title3.bold().monospacedDigit())
                     .foregroundStyle(.primary)
                     .fixedSize()
+                Text("paywall.perWeek \(plan.displayPricePerWeek)")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
             }
-            .padding(Theme.Spacing.md)
         }
+        .padding(Theme.Spacing.md)
+        .frame(minHeight: 72)
         .background(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .fill(.ultraThinMaterial)
@@ -84,6 +90,12 @@ struct PaywallPlanCard: View {
                     lineWidth: isSelected ? 2 : 1
                 )
         )
+        .overlay(alignment: .top) {
+            if isRecommended {
+                bestValuePill
+                    .offset(y: -10)
+            }
+        }
         .shadow(
             color: isSelected ? Theme.Colors.warmCoral.opacity(0.32) : .clear,
             radius: 10, y: 4
@@ -92,10 +104,8 @@ struct PaywallPlanCard: View {
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
-    /// "BEST VALUE" pill that sits flush at the top of the recommended
-    /// card so the eye lands on it before reading the row. Gold gradient
-    /// keeps the premium feel without competing with the coral selection
-    /// border.
+    /// Floats above the card's top border so it doesn't change the card's
+    /// measured height. Lives on the recommended (yearly) plan only.
     private var bestValuePill: some View {
         HStack(spacing: 4) {
             Image(systemName: "star.fill")
@@ -110,16 +120,28 @@ struct PaywallPlanCard: View {
         .background(
             Capsule().fill(Theme.Gradients.goldPremium)
         )
-        .offset(y: 10)
-        .zIndex(1)
-        .padding(.top, -10)
+        .shadow(color: Theme.Colors.goldAccent.opacity(0.4), radius: 6, y: 2)
     }
 
-    /// Compact "Save N%" badge inline under the plan name. Uses the
-    /// gold-premium gradient so the savings number reads loud as the
-    /// primary highlight (the user picks plans on the saving, not on the
-    /// total). Sits at a different position than the BEST VALUE pill on
-    /// the yearly card so they reinforce rather than overlap.
+    /// "1 week free" pill. Coral-tinted so it differs from the gold
+    /// savings pill and reinforces the brand without competing with the
+    /// BEST VALUE pill on top.
+    private var trialBadge: some View {
+        Text("paywall.freeWeek")
+            .font(.caption2.bold())
+            .foregroundStyle(Theme.Colors.warmCoral)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 3)
+            .background(
+                Capsule().fill(Theme.Colors.warmCoral.opacity(0.14))
+            )
+            .overlay(
+                Capsule().stroke(Theme.Colors.warmCoral.opacity(0.45), lineWidth: 0.6)
+            )
+    }
+
+    /// Gold-gradient savings badge. Loud on purpose because savings %
+    /// is the strongest conversion signal we have alongside BEST VALUE.
     private func savingsBadge(savings: Int) -> some View {
         Text(String(localized: "paywall.save \(savings)"))
             .font(.caption2.bold())

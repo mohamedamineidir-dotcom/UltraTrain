@@ -11819,18 +11819,12 @@
       }
     },
     "paywall.freeWeek": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "(1 week free)"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "(1 semaine gratuite)"
+            "value": "1 week free"
           }
         }
       }
