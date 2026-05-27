@@ -127,7 +127,7 @@ struct RaceDayPlanView: View {
             HStack(spacing: Theme.Spacing.sm) {
                 StatCard(
                     title: "Expected",
-                    value: FinishEstimate.formatDuration(estimate.expectedTime),
+                    value: FinishEstimate.formatDuration(estimate.expectedTime, raceDistanceKm: race.distanceKm),
                     unit: ""
                 )
                 StatCard(
@@ -216,7 +216,7 @@ struct RaceDayPlanView: View {
             Text(label)
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
-            Text(FinishEstimate.formatDuration(time))
+            Text(FinishEstimate.formatDuration(time, raceDistanceKm: race.distanceKm))
                 .font(.subheadline.bold().monospacedDigit())
                 .foregroundStyle(color)
         }

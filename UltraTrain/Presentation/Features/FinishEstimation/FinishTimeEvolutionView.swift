@@ -188,17 +188,20 @@ struct FinishTimeEvolutionView: View {
         HStack(spacing: Theme.Spacing.sm) {
             statTile(
                 label: "Initial",
-                value: FinishEstimate.formatDuration(points.first?.expectedSeconds ?? estimate.expectedTime),
+                value: FinishEstimate.formatDuration(
+                    points.first?.expectedSeconds ?? estimate.expectedTime,
+                    raceDistanceKm: race.distanceKm
+                ),
                 tint: Theme.Colors.warning
             )
             statTile(
                 label: "Today",
-                value: FinishEstimate.formatDuration(currentPointExpected),
+                value: FinishEstimate.formatDuration(currentPointExpected, raceDistanceKm: race.distanceKm),
                 tint: primaryTint
             )
             statTile(
                 label: "Race day",
-                value: FinishEstimate.formatDuration(raceDayExpected),
+                value: FinishEstimate.formatDuration(raceDayExpected, raceDistanceKm: race.distanceKm),
                 tint: Theme.Colors.success
             )
         }
@@ -264,8 +267,15 @@ struct FinishTimeEvolutionView: View {
     /// the race so the curve always starts before today and ends on
     /// race week, never compresses an athlete who's 22 weeks out
     /// into a fixed 20-week window with a clipped NOW marker.
+    ///
+    /// Keeps a small floor (4 weeks) so the chart still reads as a
+    /// curve, but no longer pads to 16 weeks. Padding to 16 for a
+    /// B-race 1 week out drew a long timeline with NOW hugging the
+    /// right edge and forced `computeInitialExpected` to extrapolate
+    /// wildly (1 - easedAtNow shrinks to ~0.07, blowing the formula
+    /// up).
     private var prepWeeks: Int {
-        max(16, weeksToRace + 1)
+        max(4, weeksToRace + 1)
     }
 
     private var weeksToRace: Int {
@@ -421,21 +431,48 @@ struct FinishTimeEvolutionView: View {
             // Race-week edge case: initial is irrelevant, return expected.
             return estimate.expectedTime
         }
-        return (estimate.expectedTime - raceDayExpected * easedAtNow) / (1 - easedAtNow)
+        let raw = (estimate.expectedTime - raceDayExpected * easedAtNow) / (1 - easedAtNow)
+        return clampInitial(raw, anchor: estimate.expectedTime)
     }
 
     private func computeInitialOptimistic() -> TimeInterval {
         let nowT = Double(currentWeekIndex - 1) / max(1.0, Double(prepWeeks - 1))
         let easedAtNow = easedProgress(nowT)
         guard easedAtNow < 0.999 else { return estimate.optimisticTime }
-        return (estimate.optimisticTime - raceDayOptimistic * easedAtNow) / (1 - easedAtNow)
+        let raw = (estimate.optimisticTime - raceDayOptimistic * easedAtNow) / (1 - easedAtNow)
+        return clampInitial(raw, anchor: estimate.optimisticTime)
     }
 
     private func computeInitialConservative() -> TimeInterval {
         let nowT = Double(currentWeekIndex - 1) / max(1.0, Double(prepWeeks - 1))
         let easedAtNow = easedProgress(nowT)
         guard easedAtNow < 0.999 else { return estimate.conservativeTime }
-        return (estimate.conservativeTime - raceDayConservative * easedAtNow) / (1 - easedAtNow)
+        let raw = (estimate.conservativeTime - raceDayConservative * easedAtNow) / (1 - easedAtNow)
+        return clampInitial(raw, anchor: estimate.conservativeTime)
+    }
+
+    /// Caps the back-extrapolated "initial" time so a NOW that sits late
+    /// in the prep window doesn't blow the value up. Without this cap a
+    /// B-race close to today (NOW at week N-1 of N weeks) drives
+    /// `(1 - easedAtNow)` toward zero and the formula explodes (a 36-min
+    /// 10K predicted with INITIAL = 1h08, more than 2× today's expected).
+    /// Realistic baselines for a runner inside a structured prep sit at
+    /// most ~25-30% slower than today's projection.
+    private func clampInitial(_ raw: TimeInterval, anchor: TimeInterval) -> TimeInterval {
+        guard anchor > 0 else { return raw }
+        let cap = anchor * initialMultiplierCap
+        return min(max(raw, anchor), cap)
+    }
+
+    private var initialMultiplierCap: Double {
+        switch distanceClass {
+        case .short5K, .tenK: return 1.20
+        case .hm:             return 1.22
+        case .marathon:       return 1.25
+        case .ultraShort:     return 1.30
+        case .ultraLong:      return 1.35
+        case .multiDay:       return 1.40
+        }
     }
 
     /// Tick stops on the X axis: ~5 stops, plus the current week.

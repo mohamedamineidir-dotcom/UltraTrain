@@ -6,19 +6,44 @@ extension FinishEstimationView {
 
     // MARK: - Scenario Cards
 
+    /// Whether the predicted-time evolution chart is meaningful for this
+    /// race. The chart projects an improvement curve across the prep
+    /// window, which doesn't say anything useful when there's less than
+    /// 4 weeks of training between today and the race AND the race isn't
+    /// the A-race. B/C races scheduled in the first few weeks of a prep
+    /// can't show real adaptation, so we hide the chart entirely instead
+    /// of drawing a curve the athlete shouldn't trust.
+    private var showsEvolutionChart: Bool {
+        if race.priority == .aRace { return true }
+        let weeksToRace = max(0, Int((race.date.timeIntervalSinceNow / 86400 / 7).rounded()))
+        return weeksToRace >= 4
+    }
+
+    @ViewBuilder
     func scenarioCards(_ estimate: FinishEstimate) -> some View {
-        NavigationLink {
-            FinishTimeEvolutionView(
-                race: race,
-                estimate: estimate,
-                experience: viewModel.athleteExperience
-            )
-        } label: {
-            VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-                HStack(spacing: 6) {
-                    Text("Predicted Finish Time")
-                        .font(.headline)
-                    Spacer()
+        if showsEvolutionChart {
+            NavigationLink {
+                FinishTimeEvolutionView(
+                    race: race,
+                    estimate: estimate,
+                    experience: viewModel.athleteExperience
+                )
+            } label: {
+                scenarioCardsBody(estimate, showsChartCue: true)
+            }
+            .buttonStyle(.plain)
+        } else {
+            scenarioCardsBody(estimate, showsChartCue: false)
+        }
+    }
+
+    private func scenarioCardsBody(_ estimate: FinishEstimate, showsChartCue: Bool) -> some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            HStack(spacing: 6) {
+                Text("Predicted Finish Time")
+                    .font(.headline)
+                Spacer()
+                if showsChartCue {
                     Image(systemName: "chart.line.downtrend.xyaxis")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(Theme.Colors.primary)
@@ -26,33 +51,38 @@ extension FinishEstimationView {
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(Theme.Colors.tertiaryLabel)
                 }
+            }
 
-                HStack(spacing: Theme.Spacing.sm) {
-                    scenarioCard(
-                        title: "Optimistic",
-                        time: estimate.optimisticTime,
-                        color: Theme.Colors.success
-                    )
-                    scenarioCard(
-                        title: "Expected",
-                        time: estimate.expectedTime,
-                        color: Theme.Colors.primary
-                    )
-                    scenarioCard(
-                        title: "Conservative",
-                        time: estimate.conservativeTime,
-                        color: Theme.Colors.warning
-                    )
-                }
+            HStack(spacing: Theme.Spacing.sm) {
+                scenarioCard(
+                    title: "Optimistic",
+                    time: estimate.optimisticTime,
+                    color: Theme.Colors.success
+                )
+                scenarioCard(
+                    title: "Expected",
+                    time: estimate.expectedTime,
+                    color: Theme.Colors.primary
+                )
+                scenarioCard(
+                    title: "Conservative",
+                    time: estimate.conservativeTime,
+                    color: Theme.Colors.warning
+                )
+            }
 
+            if showsChartCue {
                 Text("Tap to see how this evolves with your prep →")
                     .font(.caption2)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
+            } else {
+                Text("Race is too close to the start of your plan to project an evolution curve.")
+                    .font(.caption2)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .cardStyle()
         }
-        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .cardStyle()
     }
 
     func scenarioCard(title: String, time: TimeInterval, color: Color) -> some View {
@@ -60,7 +90,7 @@ extension FinishEstimationView {
             Text(title)
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
-            Text(FinishEstimate.formatDuration(time))
+            Text(FinishEstimate.formatDuration(time, raceDistanceKm: viewModel.race.distanceKm))
                 .font(.title3.bold().monospacedDigit())
                 .foregroundStyle(color)
         }

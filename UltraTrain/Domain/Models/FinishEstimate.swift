@@ -59,9 +59,22 @@ struct FinishEstimate: Identifiable, Equatable, Sendable, Codable {
         Self.formatDuration(expectedTime)
     }
 
-    static func formatDuration(_ interval: TimeInterval) -> String {
-        let hours = Int(interval) / 3600
-        let minutes = (Int(interval) % 3600) / 60
+    /// Formats a race time. Road races up to and including the marathon
+    /// get second precision (M:SS or H:MM:SS) because a 10K at 36:12 vs
+    /// 36:45 shifts target paces materially. Ultras and unknown contexts
+    /// keep the existing minute-precision "XhYY" format.
+    static func formatDuration(_ interval: TimeInterval, raceDistanceKm: Double? = nil) -> String {
+        let totalSec = Int(interval.rounded())
+        let hours = totalSec / 3600
+        let minutes = (totalSec % 3600) / 60
+        let seconds = totalSec % 60
+
+        if let km = raceDistanceKm, km > 0, km <= 42.195 {
+            if hours == 0 {
+                return String(format: "%d:%02d", minutes, seconds)
+            }
+            return String(format: "%d:%02d:%02d", hours, minutes, seconds)
+        }
         return String(format: "%dh%02d", hours, minutes)
     }
 }

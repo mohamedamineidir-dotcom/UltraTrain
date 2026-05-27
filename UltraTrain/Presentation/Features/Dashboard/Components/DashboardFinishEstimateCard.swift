@@ -46,7 +46,7 @@ struct DashboardFinishEstimateCard: View {
 
             HStack(spacing: 0) {
                 scenarioColumn(
-                    time: FinishEstimate.formatDuration(estimate.optimisticTime),
+                    time: FinishEstimate.formatDuration(estimate.optimisticTime, raceDistanceKm: race.distanceKm),
                     label: "Best",
                     color: Theme.Colors.success
                 )
@@ -54,7 +54,7 @@ struct DashboardFinishEstimateCard: View {
                 Spacer()
 
                 VStack(spacing: 4) {
-                    Text(estimate.expectedTimeFormatted)
+                    Text(FinishEstimate.formatDuration(estimate.expectedTime, raceDistanceKm: race.distanceKm))
                         .font(.system(.title2, design: .rounded, weight: .bold))
                         .foregroundStyle(Theme.Colors.primary)
                     Text("Expected")
@@ -65,7 +65,7 @@ struct DashboardFinishEstimateCard: View {
                 Spacer()
 
                 scenarioColumn(
-                    time: FinishEstimate.formatDuration(estimate.conservativeTime),
+                    time: FinishEstimate.formatDuration(estimate.conservativeTime, raceDistanceKm: race.distanceKm),
                     label: "Safe",
                     color: Theme.Colors.warning
                 )
@@ -107,8 +107,8 @@ struct DashboardFinishEstimateCard: View {
     }
 
     private var rangeHint: String {
-        let best = FinishEstimate.formatDuration(estimate.optimisticTime)
-        let safe = FinishEstimate.formatDuration(estimate.conservativeTime)
+        let best = FinishEstimate.formatDuration(estimate.optimisticTime, raceDistanceKm: race.distanceKm)
+        let safe = FinishEstimate.formatDuration(estimate.conservativeTime, raceDistanceKm: race.distanceKm)
         return "Range \(best)–\(safe). Narrows as you complete sessions."
     }
 
@@ -121,9 +121,9 @@ struct DashboardFinishEstimateCard: View {
     }
 
     private var accessibilityDescription: String {
-        let best = FinishEstimate.formatDuration(estimate.optimisticTime)
-        let expected = estimate.expectedTimeFormatted
-        let safe = FinishEstimate.formatDuration(estimate.conservativeTime)
+        let best = FinishEstimate.formatDuration(estimate.optimisticTime, raceDistanceKm: race.distanceKm)
+        let expected = FinishEstimate.formatDuration(estimate.expectedTime, raceDistanceKm: race.distanceKm)
+        let safe = FinishEstimate.formatDuration(estimate.conservativeTime, raceDistanceKm: race.distanceKm)
         return "Race estimate for \(race.name). Best case \(best). Expected \(expected). Safe case \(safe). Confidence \(Int(estimate.confidencePercent)) percent."
     }
 
