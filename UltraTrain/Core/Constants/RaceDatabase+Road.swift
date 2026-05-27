@@ -26,8 +26,10 @@ extension RaceDatabase {
                   country: "UK", nextEditionDate: _d(2026, 4, 26), terrainDifficulty: .easy, raceType: .road),
         KnownRace(name: "Berlin Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 73, elevationLossM: 79,
                   country: "Germany", nextEditionDate: _d(2026, 9, 27), terrainDifficulty: .easy, raceType: .road),
-        KnownRace(name: "Tokyo Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 40, elevationLossM: 40,
-                  country: "Japan", nextEditionDate: _d(2027, 3, 7), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Tokyo Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 80, elevationLossM: 80,
+                  country: "Japan", nextEditionDate: _d(2026, 3, 1), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Sydney Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 180, elevationLossM: 180,
+                  country: "Australia", nextEditionDate: _d(2026, 8, 30), terrainDifficulty: .easy, raceType: .road),
     ]
 
     // MARK: International Marathons (non-US, non-France)
@@ -89,6 +91,14 @@ extension RaceDatabase {
                   country: "Switzerland", nextEditionDate: _d(2026, 5, 10), terrainDifficulty: .easy, raceType: .road),
         KnownRace(name: "Midnight Sun Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 100, elevationLossM: 100,
                   country: "Norway", nextEditionDate: _d(2026, 6, 20), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Madrid Marathon", shortName: "Rock 'n' Roll Madrid", distanceKm: 42.195, elevationGainM: 350, elevationLossM: 350,
+                  country: "Spain", nextEditionDate: _d(2026, 4, 26), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Helsinki Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 70, elevationLossM: 70,
+                  country: "Finland", nextEditionDate: _d(2026, 8, 22), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Riga Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 60, elevationLossM: 60,
+                  country: "Latvia", nextEditionDate: _d(2026, 5, 17), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Frankfurt Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 60, elevationLossM: 60,
+                  country: "Germany", nextEditionDate: _d(2026, 10, 25), terrainDifficulty: .easy, raceType: .road),
         // Asia
         KnownRace(name: "Seoul Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 60, elevationLossM: 60,
                   country: "South Korea", nextEditionDate: _d(2026, 3, 15), terrainDifficulty: .easy, raceType: .road),
@@ -117,8 +127,6 @@ extension RaceDatabase {
                   country: "Australia", nextEditionDate: _d(2026, 10, 11), terrainDifficulty: .easy, raceType: .road),
         KnownRace(name: "Gold Coast Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 10, elevationLossM: 10,
                   country: "Australia", nextEditionDate: _d(2026, 7, 4), terrainDifficulty: .easy, raceType: .road),
-        KnownRace(name: "Sydney Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 80, elevationLossM: 80,
-                  country: "Australia", nextEditionDate: _d(2026, 9, 20), terrainDifficulty: .easy, raceType: .road),
         KnownRace(name: "Queenstown Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 60, elevationLossM: 60,
                   country: "New Zealand", nextEditionDate: _d(2026, 11, 21), terrainDifficulty: .easy, raceType: .road),
         // Americas (non-US)
@@ -156,6 +164,12 @@ extension RaceDatabase {
                   country: "Sweden", nextEditionDate: _d(2026, 5, 23), terrainDifficulty: .easy, raceType: .road),
         KnownRace(name: "Prague Half Marathon", shortName: nil, distanceKm: 21.1, elevationGainM: 30, elevationLossM: 30,
                   country: "Czech Republic", nextEditionDate: _d(2026, 4, 4), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Royal Parks Half Marathon", shortName: nil, distanceKm: 21.1, elevationGainM: 70, elevationLossM: 70,
+                  country: "UK", nextEditionDate: _d(2026, 10, 11), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Semi-Marathon de Paris", shortName: "Semi de Paris", distanceKm: 21.1, elevationGainM: 80, elevationLossM: 80,
+                  country: "France", nextEditionDate: _d(2026, 3, 8), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "World Athletics Road Running Championships", shortName: "WRRC Copenhagen", distanceKm: 21.1, elevationGainM: 50, elevationLossM: 50,
+                  country: "Denmark", nextEditionDate: _d(2026, 9, 20), terrainDifficulty: .easy, raceType: .road),
     ]
 
     // MARK: International 10K Races
@@ -165,5 +179,15 @@ extension RaceDatabase {
                   country: "UK", nextEditionDate: _d(2026, 7, 12), terrainDifficulty: .easy, raceType: .road),
         KnownRace(name: "Berlin 10K", shortName: nil, distanceKm: 10.0, elevationGainM: 10, elevationLossM: 10,
                   country: "Germany", terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Adidas 10K Paris", shortName: nil, distanceKm: 10.0, elevationGainM: 40, elevationLossM: 40,
+                  country: "France", nextEditionDate: _d(2026, 6, 7), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Course des Héros Paris 10K", shortName: nil, distanceKm: 10.0, elevationGainM: 80, elevationLossM: 80,
+                  country: "France", nextEditionDate: _d(2026, 6, 7), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Paris-Versailles", shortName: nil, distanceKm: 16.2, elevationGainM: 200, elevationLossM: 160,
+                  country: "France", nextEditionDate: _d(2026, 9, 27), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "Marseille-Cassis", shortName: nil, distanceKm: 20.0, elevationGainM: 300, elevationLossM: 300,
+                  country: "France", nextEditionDate: _d(2026, 10, 25), terrainDifficulty: .easy, raceType: .road),
+        KnownRace(name: "20km de Paris", shortName: nil, distanceKm: 20.0, elevationGainM: 100, elevationLossM: 100,
+                  country: "France", nextEditionDate: _d(2026, 10, 11), terrainDifficulty: .easy, raceType: .road),
     ]
 }

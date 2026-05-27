@@ -163,5 +163,127 @@ extension RaceDatabase {
                   distanceKm: 50, elevationGainM: 3400, elevationLossM: 3400, country: "Andorra",
                   nextEditionDate: _d(2026, 6, 13), terrainDifficulty: .moderate,
                   polesAllowed: true),
+
+        // MARK: Hardrock 100 (USA) — Jul 10, 2026
+
+        KnownRace(name: "Hardrock 100", shortName: "Hardrock",
+                  distanceKm: 161, elevationGainM: 10000, elevationLossM: 10000, country: "USA",
+                  nextEditionDate: _d(2026, 7, 10), terrainDifficulty: .technical,
+                  maxElevationM: 4250, polesAllowed: true),
+
+        // MARK: Tor des Géants & Tor des Glaciers (Italy) — Sep 2026
+
+        KnownRace(name: "Tor des Géants", shortName: "TOR330",
+                  distanceKm: 330, elevationGainM: 24000, elevationLossM: 24000, country: "Italy",
+                  nextEditionDate: _d(2026, 9, 13), terrainDifficulty: .technical,
+                  maxElevationM: 3300, polesAllowed: true),
+        KnownRace(name: "Tor des Glaciers", shortName: "TOR450",
+                  distanceKm: 450, elevationGainM: 32000, elevationLossM: 32000, country: "Italy",
+                  nextEditionDate: _d(2026, 9, 6), terrainDifficulty: .technical,
+                  maxElevationM: 3300, polesAllowed: true),
+
+        // MARK: Ultra Tour Monte Rosa (Switzerland/Italy) — Sep 7, 2026
+
+        KnownRace(name: "Ultra Tour Monte Rosa", shortName: "UTMR",
+                  distanceKm: 170, elevationGainM: 11300, elevationLossM: 11300, country: "Switzerland",
+                  nextEditionDate: _d(2026, 9, 7), terrainDifficulty: .technical,
+                  maxElevationM: 3300, polesAllowed: true),
+
+        // MARK: Eiger Ultra-Trail (Switzerland) — Jul 18, 2026
+
+        KnownRace(name: "Eiger Ultra-Trail E101", shortName: "Eiger E101",
+                  distanceKm: 101, elevationGainM: 6700, elevationLossM: 6700, country: "Switzerland",
+                  nextEditionDate: _d(2026, 7, 18), terrainDifficulty: .technical,
+                  maxElevationM: 2700, polesAllowed: true),
+
+        // MARK: Trail Verbier St-Bernard (Switzerland) — Jul 11, 2026
+
+        KnownRace(name: "Trail Verbier St-Bernard X-Alpine", shortName: "TVSB X-Alpine",
+                  distanceKm: 111, elevationGainM: 8300, elevationLossM: 8300, country: "Switzerland",
+                  nextEditionDate: _d(2026, 7, 11), terrainDifficulty: .technical,
+                  polesAllowed: true),
+
+        // MARK: Gore-Tex Transalpine Run — Sep 5, 2026
+
+        KnownRace(name: "Gore-Tex Transalpine Run", shortName: "Transalpine",
+                  distanceKm: 250, elevationGainM: 16000, elevationLossM: 16000, country: "Germany",
+                  nextEditionDate: _d(2026, 9, 5), terrainDifficulty: .technical,
+                  polesAllowed: true),
+
+        // MARK: Cortina Trail (Italy) — Jun 26, 2026
+
+        KnownRace(name: "Cortina Trail", shortName: "Cortina Trail",
+                  distanceKm: 48, elevationGainM: 2600, elevationLossM: 2600, country: "Italy",
+                  nextEditionDate: _d(2026, 6, 26), terrainDifficulty: .technical),
+
+        // MARK: Cappadocia Ultra-Trail (Turkey) — Oct 17, 2026
+
+        KnownRace(name: "Cappadocia Ultra-Trail", shortName: "CUT",
+                  distanceKm: 119, elevationGainM: 3300, elevationLossM: 3300, country: "Turkey",
+                  nextEditionDate: _d(2026, 10, 17), terrainDifficulty: .moderate),
+
+        // MARK: Marathon des Sables (Morocco) — Apr 10, 2026
+
+        KnownRace(name: "Marathon des Sables", shortName: "MdS",
+                  distanceKm: 250, elevationGainM: 2500, elevationLossM: 2500, country: "Morocco",
+                  nextEditionDate: _d(2026, 4, 10), terrainDifficulty: .moderate),
+
+        // MARK: USA mountain ultras — Cocodona, Speedgoat, Leadville, Wasatch, Bear, JFK 50
+
+        KnownRace(name: "Cocodona 250", shortName: "Cocodona",
+                  distanceKm: 402, elevationGainM: 12500, elevationLossM: 12200, country: "USA",
+                  nextEditionDate: _d(2026, 5, 4), terrainDifficulty: .technical,
+                  polesAllowed: true),
+        KnownRace(name: "Speedgoat 50K", shortName: "Speedgoat",
+                  distanceKm: 50, elevationGainM: 3400, elevationLossM: 3400, country: "USA",
+                  nextEditionDate: _d(2026, 7, 25), terrainDifficulty: .technical),
+        KnownRace(name: "Leadville Trail 100", shortName: "Leadville 100",
+                  distanceKm: 161, elevationGainM: 4800, elevationLossM: 4800, country: "USA",
+                  nextEditionDate: _d(2026, 8, 22), terrainDifficulty: .moderate,
+                  maxElevationM: 3840),
+        KnownRace(name: "Wasatch Front 100", shortName: "Wasatch 100",
+                  distanceKm: 161, elevationGainM: 7900, elevationLossM: 7900, country: "USA",
+                  nextEditionDate: _d(2026, 9, 11), terrainDifficulty: .technical),
+        KnownRace(name: "Bear 100", shortName: "Bear 100",
+                  distanceKm: 161, elevationGainM: 6700, elevationLossM: 7100, country: "USA",
+                  nextEditionDate: _d(2026, 9, 25), terrainDifficulty: .technical),
+        KnownRace(name: "JFK 50 Mile", shortName: "JFK 50",
+                  distanceKm: 80, elevationGainM: 1200, elevationLossM: 1200, country: "USA",
+                  nextEditionDate: _d(2026, 11, 21), terrainDifficulty: .easy),
+        KnownRace(name: "Bandera 100K", shortName: "Bandera",
+                  distanceKm: 100, elevationGainM: 2300, elevationLossM: 2300, country: "USA",
+                  nextEditionDate: _d(2026, 1, 10), terrainDifficulty: .moderate),
+        KnownRace(name: "Chuckanut 50K", shortName: "Chuckanut",
+                  distanceKm: 50, elevationGainM: 1700, elevationLossM: 1700, country: "USA",
+                  nextEditionDate: _d(2026, 3, 21), terrainDifficulty: .moderate),
+
+        // MARK: Asia-Pacific ultras outside the UTMB calendar
+
+        KnownRace(name: "Hong Kong 100", shortName: "HK100",
+                  distanceKm: 103, elevationGainM: 5028, elevationLossM: 5028, country: "Hong Kong",
+                  nextEditionDate: _d(2026, 1, 24), terrainDifficulty: .technical),
+        KnownRace(name: "MSIG Sai Kung 50", shortName: "SK50",
+                  distanceKm: 54, elevationGainM: 2800, elevationLossM: 2800, country: "Hong Kong",
+                  nextEditionDate: _d(2026, 2, 28), terrainDifficulty: .moderate),
+        KnownRace(name: "Northburn 100 Miler", shortName: "Northburn 100M",
+                  distanceKm: 161, elevationGainM: 10000, elevationLossM: 10000, country: "New Zealand",
+                  nextEditionDate: _d(2026, 3, 21), terrainDifficulty: .technical,
+                  polesAllowed: true),
+        KnownRace(name: "Northburn 100K", shortName: "Northburn 100K",
+                  distanceKm: 100, elevationGainM: 6000, elevationLossM: 6000, country: "New Zealand",
+                  nextEditionDate: _d(2026, 3, 21), terrainDifficulty: .technical),
+        KnownRace(name: "Northburn 50K", shortName: "Northburn 50K",
+                  distanceKm: 50, elevationGainM: 2600, elevationLossM: 2600, country: "New Zealand",
+                  nextEditionDate: _d(2026, 3, 21), terrainDifficulty: .technical),
+        KnownRace(name: "Yading Skyrun 32K", shortName: "Yading 32",
+                  distanceKm: 32, elevationGainM: 2800, elevationLossM: 2800, country: "China",
+                  nextEditionDate: _d(2026, 6, 20), terrainDifficulty: .technical,
+                  maxElevationM: 4800),
+
+        // MARK: United Kingdom — Grand Union Canal Race
+
+        KnownRace(name: "Grand Union Canal Race", shortName: "GUCR",
+                  distanceKm: 233, elevationGainM: 200, elevationLossM: 200, country: "UK",
+                  nextEditionDate: _d(2026, 5, 23), terrainDifficulty: .easy),
     ]
 }
