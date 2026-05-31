@@ -33,10 +33,16 @@
     },
     "—" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "--"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "—"
+            "value" : "--"
           }
         }
       }
@@ -195,13 +201,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ — %2$@"
+            "value" : "%1$@ · %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ — %2$@"
+            "value" : "%1$@ · %2$@"
           }
         }
       }
@@ -2940,7 +2946,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tous les champs sont optionnels. Passez ceux que vous ne connaissez pas — nous utiliserons des valeurs par défaut basées sur la recherche."
+            "value" : "Tous les champs sont optionnels. Passez ceux que vous ne connaissez pas, nous utiliserons des valeurs par défaut basées sur la recherche."
           }
         }
       }
@@ -4282,7 +4288,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Focus on time on feet, not pace. Walk uphills if needed — save your legs for the flats."
+            "value" : "Focus on time on feet, not pace. Walk uphills if needed. Save your legs for the flats."
           }
         },
         "fr" : {
@@ -4418,7 +4424,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Find a trail with sustained climbing. Power hike the steepest sections — hands on thighs, short steps."
+            "value" : "Find a trail with sustained climbing. Power hike the steepest sections, hands on thighs, short steps."
           }
         },
         "fr" : {
@@ -8431,7 +8437,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je vais bien — Annuler"
+            "value" : "Je vais bien, Annuler"
           }
         }
       }
@@ -10857,7 +10863,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pas de souci — nous construirons votre base à partir de zéro."
+            "value" : "Pas de souci, nous construirons votre base à partir de zéro."
           }
         }
       }
@@ -10871,7 +10877,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucun — rien à signaler"
+            "value" : "Aucun, rien à signaler"
           }
         }
       }
@@ -16662,7 +16668,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sommeil — 7 dernières nuits"
+            "value" : "Sommeil · 7 dernières nuits"
           }
         }
       }
@@ -18367,7 +18373,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "UltraTrain est conçu pour les courses de trail et d'ultra-distance. Pour les événements sur route plus courts, des fonctionnalités comme l'entraînement en altitude et la planification nutritionnelle brillent le plus sur les longues distances. Vous pouvez quand même créer un plan — mais pour profiter pleinement de cette app, pensez à l'utiliser pour votre prochaine aventure en trail ou longue distance !"
+            "value" : "UltraTrain est conçu pour les courses de trail et d'ultra-distance. Pour les événements sur route plus courts, des fonctionnalités comme l'entraînement en altitude et la planification nutritionnelle brillent le plus sur les longues distances. Vous pouvez quand même créer un plan, mais pour profiter pleinement de cette app, pensez à l'utiliser pour votre prochaine aventure en trail ou longue distance !"
           }
         }
       }
@@ -18903,7 +18909,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nous adaptons la suggestion au symptôme — jamais pour juger."
+            "value" : "Nous adaptons la suggestion au symptôme, jamais pour juger."
           }
         }
       }
@@ -19004,13 +19010,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Week %1$lld — %2$@"
+            "value" : "Week %1$lld · %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Semaine %1$lld — %2$@"
+            "value" : "Semaine %1$lld · %2$@"
           }
         }
       }
@@ -20026,13 +20032,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Zone %1$lld — %2$@"
+            "value" : "Zone %1$lld · %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zone %1$lld — %2$@"
+            "value" : "Zone %1$lld · %2$@"
           }
         }
       }
