@@ -757,6 +757,39 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     weekStartDate: skeleton.startDate,
                     preferredRunsPerWeek: athlete.preferredRunsPerWeek
                 )
+
+                // B6: same fix as the B-race override path. A-race week
+                // prep days (intervals / tempo race-pace tune-ups) need
+                // structured IntervalWorkouts attached so the detail page
+                // renders the phase cards instead of just the description.
+                let aRaceQ1Template = RoadIntervalLibrary.selectForSlot(
+                    slotIndex: 0, phase: skeleton.phase, discipline: discipline,
+                    experience: athlete.experienceLevel,
+                    weekInPhase: phaseCounters[index],
+                    isFirstTimerAtDistance: isFirstTimer
+                )
+                let aRaceQ2Template = RoadIntervalLibrary.selectForSlot(
+                    slotIndex: 1, phase: skeleton.phase, discipline: discipline,
+                    experience: athlete.experienceLevel,
+                    weekInPhase: phaseCounters[index],
+                    excludeCategory: aRaceQ1Template?.category,
+                    isFirstTimerAtDistance: isFirstTimer
+                )
+                let aRaceQ1Workout = aRaceQ1Template.map {
+                    RoadWorkoutBuilder.build(
+                        from: $0, paceProfile: paceProfile,
+                        experience: athlete.experienceLevel, athleteAge: athlete.age
+                    )
+                }
+                let aRaceQ2Workout = aRaceQ2Template.map {
+                    RoadWorkoutBuilder.build(
+                        from: $0, paceProfile: paceProfile,
+                        experience: athlete.experienceLevel, athleteAge: athlete.age
+                    )
+                }
+                if let w = aRaceQ1Workout { allWorkouts.append(w) }
+                if let w = aRaceQ2Workout { allWorkouts.append(w) }
+
                 sessions = templates.enumerated().map { dayIdx, tpl in
                     var session = makeSession(
                         template: tpl, skeleton: skeleton,
@@ -771,7 +804,16 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                             isFirstTimer: isFirstTimer,
                             hotRaceForecast: hotRaceForecast
                         )
-                    } else if tpl.type != .rest {
+                    } else if tpl.type == .intervals, let w = aRaceQ1Workout {
+                        session.intervalWorkoutId = w.id
+                        session.intervalFocus = aRaceQ1Template?.category.displayName
+                        alignSessionWithWorkout(&session, workout: w)
+                    } else if tpl.type == .tempo, let w = aRaceQ2Workout {
+                        session.intervalWorkoutId = w.id
+                        session.intervalFocus = aRaceQ2Template?.category.displayName
+                        alignSessionWithWorkout(&session, workout: w)
+                    }
+                    if tpl.type != .race && tpl.type != .rest {
                         session.coachAdvice = RoadCoachAdviceGenerator.advice(
                             type: tpl.type, intensity: tpl.intensity,
                             phase: .race, discipline: discipline,
@@ -843,11 +885,56 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     raceContext: intermediateRaceContext,
                     isRoadRace: true  // RR-4: strip VG sessions + elevation from road B-race weeks
                 )
+
+                // B6: Build structured IntervalWorkouts for the race-week
+                // opener intervals/tempo sessions so SessionDetailView
+                // renders the phase-breakdown cards (warm-up / work /
+                // recovery / cool-down). Without this, the override path
+                // produced sessions with `intervalWorkoutId == nil` and
+                // the athlete only ever saw the prose description.
+                let openerQ1Template = RoadIntervalLibrary.selectForSlot(
+                    slotIndex: 0, phase: skeleton.phase, discipline: discipline,
+                    experience: athlete.experienceLevel,
+                    weekInPhase: phaseCounters[index],
+                    isFirstTimerAtDistance: isFirstTimer
+                )
+                let openerQ2Template = RoadIntervalLibrary.selectForSlot(
+                    slotIndex: 1, phase: skeleton.phase, discipline: discipline,
+                    experience: athlete.experienceLevel,
+                    weekInPhase: phaseCounters[index],
+                    excludeCategory: openerQ1Template?.category,
+                    isFirstTimerAtDistance: isFirstTimer
+                )
+                let openerQ1Workout = openerQ1Template.map {
+                    RoadWorkoutBuilder.build(
+                        from: $0, paceProfile: paceProfile,
+                        experience: athlete.experienceLevel, athleteAge: athlete.age
+                    )
+                }
+                let openerQ2Workout = openerQ2Template.map {
+                    RoadWorkoutBuilder.build(
+                        from: $0, paceProfile: paceProfile,
+                        experience: athlete.experienceLevel, athleteAge: athlete.age
+                    )
+                }
+                if let w = openerQ1Workout { allWorkouts.append(w) }
+                if let w = openerQ2Workout { allWorkouts.append(w) }
+
                 sessions = templates.enumerated().map { dayIdx, tpl in
                     var session = makeSession(template: tpl, skeleton: skeleton, dayIndex: dayIdx, volume: volume)
                     // RR-4 defense-in-depth: never allow fabricated D+ on road plans
                     // regardless of what any template says.
                     session.plannedElevationGainM = 0
+
+                    if session.type == .intervals, let w = openerQ1Workout {
+                        session.intervalWorkoutId = w.id
+                        session.intervalFocus = openerQ1Template?.category.displayName
+                        alignSessionWithWorkout(&session, workout: w)
+                    } else if session.type == .tempo, let w = openerQ2Workout {
+                        session.intervalWorkoutId = w.id
+                        session.intervalFocus = openerQ2Template?.category.displayName
+                        alignSessionWithWorkout(&session, workout: w)
+                    }
                     return session
                 }
             } else {
