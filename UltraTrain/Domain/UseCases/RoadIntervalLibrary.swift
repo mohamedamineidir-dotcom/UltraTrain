@@ -223,22 +223,22 @@ enum RoadIntervalLibrary {
         switch focus {
         case Category.speed.displayName:
             return String(localized: "session.purpose.speed",
-                          defaultValue: "Neuromuscular freshness — keeps the legs sharp.")
+                          defaultValue: "Neuromuscular freshness. Keeps the legs sharp.")
         case Category.vo2max.displayName:
             return String(localized: "session.purpose.vo2max",
-                          defaultValue: "Aerobic ceiling — top-end engine work.")
+                          defaultValue: "Aerobic ceiling. Top-end engine work.")
         case Category.threshold.displayName:
             return String(localized: "session.purpose.threshold",
-                          defaultValue: "Lactate clearance — bread and butter for marathon pace.")
+                          defaultValue: "Lactate clearance. The bread and butter of marathon pace.")
         case Category.raceSpecific.displayName:
             return String(localized: "session.purpose.raceSpecific",
-                          defaultValue: "Race-specific endurance — rehearses your goal pace.")
+                          defaultValue: "Race-specific endurance. Rehearses your goal pace.")
         case Category.progression.displayName:
             return String(localized: "session.purpose.progression",
-                          defaultValue: "Sustained aerobic power — Kenyan-style controlled build.")
+                          defaultValue: "Sustained aerobic power. Kenyan-style controlled build.")
         case Category.longRunVariant.displayName:
             return String(localized: "session.purpose.longRun",
-                          defaultValue: "Time on feet — race-specific endurance under fatigue.")
+                          defaultValue: "Time on feet. Race-specific endurance under fatigue.")
         default:
             return nil
         }

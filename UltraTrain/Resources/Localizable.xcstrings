@@ -904,6 +904,9 @@
         }
       }
     },
+    "%@/km" : {
+
+    },
     "%@%@" : {
       "localizations" : {
         "en" : {
@@ -4493,6 +4496,87 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Couleur"
+          }
+        }
+      }
+    },
+    "common.cancel" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cancel"
+          }
+        }
+      }
+    },
+    "common.hours" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "h"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "h"
+          }
+        }
+      }
+    },
+    "common.minutes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "m"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "min"
+          }
+        }
+      }
+    },
+    "common.ok" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "OK"
+          }
+        }
+      }
+    },
+    "common.save" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Save"
+          }
+        }
+      }
+    },
+    "common.seconds" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "s"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "s"
           }
         }
       }
@@ -12422,7 +12506,6 @@
       }
     },
     "phase.base" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12439,7 +12522,6 @@
       }
     },
     "phase.build" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12456,7 +12538,6 @@
       }
     },
     "phase.peak" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12506,25 +12587,7 @@
         }
       }
     },
-    "phase.taper" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Race taper"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Affûtage"
-          }
-        }
-      }
-    },
     "phase.road.foundation" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12541,7 +12604,6 @@
       }
     },
     "phase.road.foundation.desc" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12557,110 +12619,7 @@
         }
       }
     },
-    "phase.road.thresholdVo2" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Threshold & VO2max"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seuil & VO2max"
-          }
-        }
-      }
-    },
-    "phase.road.thresholdVo2.desc" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Threshold blocks and VO2max intervals to sharpen the engine"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Blocs au seuil et VO2max pour affûter la cylindrée"
-          }
-        }
-      }
-    },
-    "phase.road.raceSpecific" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Race-specific block"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bloc spécifique course"
-          }
-        }
-      }
-    },
-    "phase.road.raceSpecific.desc" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Race-pace blocks and race-specific endurance"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Blocs à allure course et endurance spécifique"
-          }
-        }
-      }
-    },
-    "phase.road.taper" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Race taper"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Affûtage"
-          }
-        }
-      }
-    },
-    "phase.road.taper.desc" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Volume reduction with race-pace sharpeners"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Réduction du volume avec rappels d'allure course"
-          }
-        }
-      }
-    },
     "phase.road.postRace" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12677,7 +12636,6 @@
       }
     },
     "phase.road.postRace.desc" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12693,186 +12651,116 @@
         }
       }
     },
-    "pr.add.accessibility" : {
-      "extractionState" : "extracted_with_value",
+    "phase.road.raceSpecific" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Log a new PR" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Enregistrer un nouveau record" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race-specific block"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bloc spécifique course"
+          }
+        }
       }
     },
-    "pr.edit.date" : {
-      "extractionState" : "extracted_with_value",
+    "phase.road.raceSpecific.desc" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Date" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Date" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race-pace blocks and race-specific endurance"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blocs à allure course et endurance spécifique"
+          }
+        }
       }
     },
-    "pr.edit.distance" : {
-      "extractionState" : "extracted_with_value",
+    "phase.road.taper" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Distance" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Distance" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race taper"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affûtage"
+          }
+        }
       }
     },
-    "pr.edit.time" : {
-      "extractionState" : "extracted_with_value",
+    "phase.road.taper.desc" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Time" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Temps" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume reduction with race-pace sharpeners"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduction du volume avec rappels d'allure course"
+          }
+        }
       }
     },
-    "pr.edit.title" : {
-      "extractionState" : "extracted_with_value",
+    "phase.road.thresholdVo2" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Log a PR" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Enregistrer un record" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Threshold & VO2max"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seuil & VO2max"
+          }
+        }
       }
     },
-    "pr.empty.body" : {
-      "extractionState" : "extracted_with_value",
+    "phase.road.thresholdVo2.desc" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Log a recent race time and we'll project your fitness across every distance, then calibrate your training paces." } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Enregistrez un temps de course récent et nous projetterons votre forme à chaque distance, puis calibrerons vos allures d'entraînement." } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Threshold blocks and VO2max intervals to sharpen the engine"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blocs au seuil et VO2max pour affûter la cylindrée"
+          }
+        }
       }
     },
-    "pr.empty.cta" : {
-      "extractionState" : "extracted_with_value",
+    "phase.taper" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Log your first PR" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Enregistrer votre premier record" } }
-      }
-    },
-    "pr.empty.title" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "No fitness data yet" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Pas encore de données de forme" } }
-      }
-    },
-    "pr.recalibration.alertTitle" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Plan updated" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Plan mis à jour" } }
-      }
-    },
-    "pr.recalibration.message" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Updating your training paces…" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Mise à jour de vos allures d'entraînement…" } }
-      }
-    },
-    "pr.recalibration.summary" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "%d session(s) updated to match your new fitness." } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "%d séance(s) mise(s) à jour selon votre nouvelle forme." } }
-      }
-    },
-    "pr.row.projected" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Projected" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Projeté" } }
-      }
-    },
-    "pr.row.unknown" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add a PR to estimate" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ajoutez un record pour estimer" } }
-      }
-    },
-    "pr.section.footer" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Recorded PRs anchor your training paces. Projections are estimates from your other data — log a PR at that distance to lock it in." } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Les records officiels ancrent vos allures d'entraînement. Les projections sont des estimations basées sur vos autres données — enregistrez un record à cette distance pour le verrouiller." } }
-      }
-    },
-    "pr.section.title" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your records" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Vos records" } }
-      }
-    },
-    "pr.title" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Personal records" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Records personnels" } }
-      }
-    },
-    "profile.personalRecords" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Personal records" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Records personnels" } }
-      }
-    },
-    "session.purpose.speed" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Neuromuscular freshness — keeps the legs sharp." } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Vivacité neuromusculaire — garde les jambes affûtées." } }
-      }
-    },
-    "session.purpose.vo2max" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Aerobic ceiling — top-end engine work." } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Plafond aérobie — travail haut du moteur." } }
-      }
-    },
-    "session.purpose.threshold" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Lactate clearance — bread and butter for marathon pace." } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Clairance du lactate — la base pour l'allure marathon." } }
-      }
-    },
-    "session.purpose.raceSpecific" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Race-specific endurance — rehearses your goal pace." } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Endurance spécifique course — répétition de votre allure cible." } }
-      }
-    },
-    "session.purpose.progression" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sustained aerobic power — Kenyan-style controlled build." } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Puissance aérobie soutenue — progression contrôlée à la kényane." } }
-      }
-    },
-    "session.purpose.longRun" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Time on feet — race-specific endurance under fatigue." } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Temps sur les jambes — endurance spécifique en fatigue." } }
-      }
-    },
-    "common.hours" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "h" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "h" } }
-      }
-    },
-    "common.minutes" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "m" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "min" } }
-      }
-    },
-    "common.seconds" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "s" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "s" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race taper"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affûtage"
+          }
+        }
       }
     },
     "Phases" : {
@@ -13217,6 +13105,262 @@
         }
       }
     },
+    "pr.add.accessibility" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log a new PR"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrer un nouveau record"
+          }
+        }
+      }
+    },
+    "pr.edit.date" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date"
+          }
+        }
+      }
+    },
+    "pr.edit.distance" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distance"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distance"
+          }
+        }
+      }
+    },
+    "pr.edit.time" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temps"
+          }
+        }
+      }
+    },
+    "pr.edit.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log a PR"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrer un record"
+          }
+        }
+      }
+    },
+    "pr.empty.body" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log a recent race time and we'll project your fitness across every distance, then calibrate your training paces."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrez un temps de course récent et nous projetterons votre forme à chaque distance, puis calibrerons vos allures d'entraînement."
+          }
+        }
+      }
+    },
+    "pr.empty.cta" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log your first PR"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrer votre premier record"
+          }
+        }
+      }
+    },
+    "pr.empty.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No fitness data yet"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas encore de données de forme"
+          }
+        }
+      }
+    },
+    "pr.recalibration.alertTitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan updated"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan mis à jour"
+          }
+        }
+      }
+    },
+    "pr.recalibration.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updating your training paces…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mise à jour de vos allures d'entraînement…"
+          }
+        }
+      }
+    },
+    "pr.recalibration.summary" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d session(s) updated to match your new fitness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d séance(s) mise(s) à jour selon votre nouvelle forme."
+          }
+        }
+      }
+    },
+    "pr.row.projected" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Projected"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Projeté"
+          }
+        }
+      }
+    },
+    "pr.row.unknown" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a PR to estimate"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoutez un record pour estimer"
+          }
+        }
+      }
+    },
+    "pr.section.footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recorded PRs anchor your training paces. Projections are estimates from your other data. Log a PR at that distance to lock it in."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les records officiels ancrent vos allures d'entraînement. Les projections sont des estimations basées sur vos autres données. Enregistrez un record à cette distance pour le verrouiller."
+          }
+        }
+      }
+    },
+    "pr.section.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your records"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vos records"
+          }
+        }
+      }
+    },
+    "pr.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personal records"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Records personnels"
+          }
+        }
+      }
+    },
     "Practice your race-day nutrition during this run." : {
       "localizations" : {
         "fr" : {
@@ -13421,6 +13565,22 @@
         }
       }
     },
+    "profile.personalRecords" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personal records"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Records personnels"
+          }
+        }
+      }
+    },
     "Progress: %@" : {
       "localizations" : {
         "fr" : {
@@ -13493,6 +13653,9 @@
           }
         }
       }
+    },
+    "Purpose: %@" : {
+
     },
     "Quality Session Focus" : {
       "localizations" : {
@@ -15800,6 +15963,102 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Sortie longue"
+          }
+        }
+      }
+    },
+    "session.purpose.longRun" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time on feet. Race-specific endurance under fatigue."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temps sur les jambes. Endurance spécifique en fatigue."
+          }
+        }
+      }
+    },
+    "session.purpose.progression" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sustained aerobic power. Kenyan-style controlled build."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puissance aérobie soutenue. Progression contrôlée à la kényane."
+          }
+        }
+      }
+    },
+    "session.purpose.raceSpecific" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race-specific endurance. Rehearses your goal pace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Endurance spécifique course. Répétition de votre allure cible."
+          }
+        }
+      }
+    },
+    "session.purpose.speed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neuromuscular freshness. Keeps the legs sharp."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vivacité neuromusculaire. Garde les jambes affûtées."
+          }
+        }
+      }
+    },
+    "session.purpose.threshold" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lactate clearance. The bread and butter of marathon pace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clairance du lactate. La base pour l'allure marathon."
+          }
+        }
+      }
+    },
+    "session.purpose.vo2max" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aerobic ceiling. Top-end engine work."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plafond aérobie. Travail haut du moteur."
           }
         }
       }

@@ -14,34 +14,28 @@ struct PersonalRecordsView: View {
     @State private var recalibrationSummary: String? = nil
 
     var body: some View {
-        List {
-            if let athlete = viewModel.athlete {
-                Section {
+        ScrollView {
+            VStack(spacing: Theme.Spacing.lg) {
+                if let athlete = viewModel.athlete {
                     let estimates = MultiDistanceEstimator.estimates(for: athlete)
                     if estimates.allSatisfy({ $0.projectedSeconds == nil }) {
-                        emptyStateRow
+                        emptyStateCard
                     } else {
-                        ForEach(estimates, id: \.distance) { estimate in
-                            Button {
-                                presetDistance = estimate.distance
-                                showingEditSheet = true
-                            } label: {
-                                row(for: estimate)
-                            }
-                            .buttonStyle(.plain)
-                        }
+                        recordsCard(estimates: estimates)
+                        footerCaption
                     }
-                } header: {
-                    Text(String(localized: "pr.section.title", defaultValue: "Your records"))
-                } footer: {
-                    Text(String(localized: "pr.section.footer",
-                                defaultValue: "Recorded PRs anchor your training paces. Projections are estimates from your other data — log a PR at that distance to lock it in."))
+                } else if viewModel.isLoading {
+                    ProgressView()
+                        .tint(Theme.Colors.accentColor)
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, Theme.Spacing.xl)
                 }
-            } else if viewModel.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity, alignment: .center)
             }
+            .padding(.horizontal, Theme.Spacing.md)
+            .padding(.top, Theme.Spacing.sm)
+            .padding(.bottom, Theme.Spacing.xxl)
         }
+        .background(Theme.Colors.background.ignoresSafeArea())
         .navigationTitle(Text(String(localized: "pr.title", defaultValue: "Personal records")))
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
@@ -51,6 +45,8 @@ struct PersonalRecordsView: View {
                     showingEditSheet = true
                 } label: {
                     Image(systemName: "plus.circle.fill")
+                        .font(.title3)
+                        .foregroundStyle(Theme.Colors.accentColor)
                         .accessibilityLabel(String(localized: "pr.add.accessibility",
                                                    defaultValue: "Log a new PR"))
                 }
@@ -96,24 +92,65 @@ struct PersonalRecordsView: View {
         }
     }
 
+    // MARK: - Records card
+
+    private func recordsCard(estimates: [MultiDistanceEstimator.Estimate]) -> some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            sectionHeader
+
+            VStack(spacing: 0) {
+                ForEach(Array(estimates.enumerated()), id: \.element.distance) { idx, estimate in
+                    Button {
+                        presetDistance = estimate.distance
+                        showingEditSheet = true
+                    } label: {
+                        row(for: estimate)
+                    }
+                    .buttonStyle(.plain)
+
+                    if idx < estimates.count - 1 {
+                        Divider()
+                            .background(Color.white.opacity(0.06))
+                    }
+                }
+            }
+        }
+        .futuristicGlassStyle()
+    }
+
+    private var sectionHeader: some View {
+        HStack(spacing: Theme.Spacing.xs) {
+            Image(systemName: "stopwatch")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(Theme.Colors.accentColor)
+            Text(String(localized: "pr.section.title", defaultValue: "Your records").uppercased())
+                .font(.caption2.weight(.heavy))
+                .tracking(0.8)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+        }
+        .padding(.bottom, 2)
+    }
+
     // MARK: - Row
 
     @ViewBuilder
     private func row(for estimate: MultiDistanceEstimator.Estimate) -> some View {
         HStack(alignment: .center, spacing: Theme.Spacing.md) {
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(estimate.distance.shortLabel)
-                    .font(.body.bold())
+                    .font(.system(.headline, design: .rounded, weight: .semibold))
                     .foregroundStyle(Theme.Colors.label)
-                subtitle(for: estimate)
-                    .font(.caption)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                statusRow(for: estimate)
             }
-            Spacer()
-            VStack(alignment: .trailing, spacing: 2) {
+
+            Spacer(minLength: 8)
+
+            VStack(alignment: .trailing, spacing: 4) {
                 Text(timeString(estimate))
-                    .font(.body.monospacedDigit())
-                    .foregroundStyle(Theme.Colors.label)
+                    .font(.system(.title3, design: .rounded, weight: .bold).monospacedDigit())
+                    .foregroundStyle(estimate.recordedPR != nil
+                                     ? Theme.Colors.accentColor
+                                     : Theme.Colors.label)
                 if let pace = estimate.pacePerKm {
                     Text("\(formatPace(pace))/km")
                         .font(.caption.monospacedDigit())
@@ -122,56 +159,105 @@ struct PersonalRecordsView: View {
             }
         }
         .contentShape(Rectangle())
-        .padding(.vertical, 2)
+        .padding(.vertical, Theme.Spacing.sm)
         .accessibilityElement(children: .combine)
     }
 
-    private func subtitle(for estimate: MultiDistanceEstimator.Estimate) -> Text {
-        if let pr = estimate.recordedPR {
-            return Text(pr.date, format: .dateTime.month(.abbreviated).year())
+    @ViewBuilder
+    private func statusRow(for estimate: MultiDistanceEstimator.Estimate) -> some View {
+        HStack(spacing: 6) {
+            if let pr = estimate.recordedPR {
+                Text("PR")
+                    .font(.caption2.weight(.heavy))
+                    .tracking(0.5)
+                    .foregroundStyle(Theme.Colors.accentColor)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(
+                        Capsule().fill(Theme.Colors.accentColor.opacity(0.18))
+                    )
+                Text(pr.date, format: .dateTime.month(.abbreviated).year())
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            } else if estimate.projectedSeconds != nil {
+                Text(String(localized: "pr.row.projected", defaultValue: "Projected").uppercased())
+                    .font(.caption2.weight(.heavy))
+                    .tracking(0.5)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .overlay(
+                        Capsule()
+                            .stroke(Theme.Colors.secondaryLabel.opacity(0.35), lineWidth: 0.5)
+                    )
+            } else {
+                Text(String(localized: "pr.row.unknown", defaultValue: "Add a PR to estimate"))
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
         }
-        if estimate.projectedSeconds != nil {
-            return Text(String(localized: "pr.row.projected", defaultValue: "Projected"))
-        }
-        return Text(String(localized: "pr.row.unknown", defaultValue: "Add a PR to estimate"))
     }
 
     private func timeString(_ estimate: MultiDistanceEstimator.Estimate) -> String {
-        guard let seconds = estimate.projectedSeconds else { return "—" }
+        guard let seconds = estimate.projectedSeconds else { return "--" }
         return formatTime(seconds)
+    }
+
+    // MARK: - Footer caption
+
+    private var footerCaption: some View {
+        Text(String(localized: "pr.section.footer",
+                    defaultValue: "Recorded PRs anchor your training paces. Projections are estimates from your other data. Log a PR at that distance to lock it in."))
+            .font(.footnote)
+            .foregroundStyle(Theme.Colors.secondaryLabel)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, Theme.Spacing.xs)
     }
 
     // MARK: - Empty state
 
-    private var emptyStateRow: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text(String(localized: "pr.empty.title", defaultValue: "No fitness data yet"))
-                .font(.headline)
+    private var emptyStateCard: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+            HStack(spacing: Theme.Spacing.sm) {
+                Image(systemName: "stopwatch")
+                    .font(.title3)
+                    .foregroundStyle(Theme.Colors.accentColor)
+                Text(String(localized: "pr.empty.title", defaultValue: "No fitness data yet"))
+                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                    .foregroundStyle(Theme.Colors.label)
+            }
             Text(String(localized: "pr.empty.body",
                         defaultValue: "Log a recent race time and we'll project your fitness across every distance, then calibrate your training paces."))
                 .font(.subheadline)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .fixedSize(horizontal: false, vertical: true)
             Button {
                 presetDistance = nil
                 showingEditSheet = true
             } label: {
-                Label(
-                    String(localized: "pr.empty.cta", defaultValue: "Log your first PR"),
-                    systemImage: "plus.circle.fill"
-                )
+                HStack(spacing: 6) {
+                    Image(systemName: "plus.circle.fill")
+                    Text(String(localized: "pr.empty.cta", defaultValue: "Log your first PR"))
+                }
                 .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.white)
+                .padding(.horizontal, Theme.Spacing.md)
+                .padding(.vertical, Theme.Spacing.sm)
+                .background(
+                    Capsule().fill(Theme.Colors.accentColor)
+                )
             }
-            .buttonStyle(.borderedProminent)
             .padding(.top, Theme.Spacing.xs)
         }
-        .padding(.vertical, Theme.Spacing.sm)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .futuristicGlassStyle()
     }
 
     // MARK: - Overlay
 
     private var recalibrationOverlay: some View {
         ZStack {
-            Color.black.opacity(0.35).ignoresSafeArea()
+            Color.black.opacity(0.55).ignoresSafeArea()
             VStack(spacing: Theme.Spacing.md) {
                 ProgressView()
                     .controlSize(.large)
@@ -182,7 +268,7 @@ struct PersonalRecordsView: View {
                     .foregroundStyle(.white)
             }
             .padding(Theme.Spacing.lg)
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+            .futuristicGlassStyle()
         }
     }
 
