@@ -236,6 +236,11 @@ struct PlanVolumeChartsSection: View {
             // Current week, filled accent pill
             // Shortened RuleMark (yEnd ~60% of max) keeps the NOW badge inside
             // the plot area so it never overlaps the summary stats above.
+            // Annotation alignment flips toward the chart's interior when the
+            // current week sits within ~2 weeks of either edge so the pill
+            // never gets clipped against the left/right plot boundary
+            // (.fit(to: .chart) alone left the "N" of "NOW" cut on Week 1
+            // and would do the same in the final 2 weeks).
             if let currentWeek = dataPoints.first(where: \.isCurrentWeek) {
                 RuleMark(
                     x: .value("Current", currentWeek.weekNumber),
@@ -246,6 +251,7 @@ struct PlanVolumeChartsSection: View {
                     .lineStyle(StrokeStyle(lineWidth: 1))
                     .annotation(
                         position: .top,
+                        alignment: nowPillAlignment(weekNumber: currentWeek.weekNumber),
                         spacing: 2,
                         overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))
                     ) {
@@ -636,6 +642,20 @@ struct PlanVolumeChartsSection: View {
     private var nowRuleMarkYEnd: Double {
         let base = max(maxPlannedValue, 1)
         return base * 0.6
+    }
+
+    /// Horizontal alignment of the "NOW" pill relative to its rule mark.
+    /// `.center` for middle weeks; flips inward at the edges so the pill
+    /// never overflows the chart on early or late weeks. Edge threshold
+    /// scales with plan length: 2 weeks on each side for typical plans,
+    /// 1 week for very short plans (≤6 weeks) so we don't accidentally
+    /// reposition the pill on most of the plan.
+    private func nowPillAlignment(weekNumber: Int) -> Alignment {
+        let total = dataPoints.count
+        let edgeThreshold = total <= 6 ? 1 : 2
+        if weekNumber <= edgeThreshold { return .leading }
+        if weekNumber > total - edgeThreshold { return .trailing }
+        return .center
     }
 
     private var peakWeekValue: String? {
