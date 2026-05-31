@@ -49,15 +49,20 @@ struct SessionRowView: View {
 
             Spacer()
 
-            // Metrics + Day
+            // Metrics + Day. Duration takes the prominent slot because the
+            // plan prescribes time first (e.g. "45 min easy run"); distance
+            // is the derived approximation we surface as a secondary stat
+            // on the bottom line. Race sessions without a prescribed
+            // duration still fall back to distance so the row never goes
+            // empty.
             VStack(alignment: .trailing, spacing: 3) {
-                if session.plannedDistanceKm > 0 {
-                    Text(UnitFormatter.formatDistance(session.plannedDistanceKm, unit: units))
+                if session.plannedDuration > 0 {
+                    Text(formattedDuration)
                         .font(.subheadline.monospacedDigit().weight(.semibold))
                         .foregroundStyle(session.isCompleted || session.isSkipped
                             ? Theme.Colors.secondaryLabel : Theme.Colors.label)
-                } else if session.plannedDuration > 0 {
-                    Text(formattedDuration)
+                } else if session.plannedDistanceKm > 0 {
+                    Text(UnitFormatter.formatDistance(session.plannedDistanceKm, unit: units))
                         .font(.subheadline.monospacedDigit().weight(.semibold))
                         .foregroundStyle(session.isCompleted || session.isSkipped
                             ? Theme.Colors.secondaryLabel : Theme.Colors.label)
@@ -173,10 +178,14 @@ struct SessionRowView: View {
                     .foregroundStyle(accentColor)
             }
 
+            // Distance is the bottom-line companion stat (approximation
+            // from duration / pace). The prominent right-side stat shows
+            // the prescribed duration; this mirrors the same value on the
+            // secondary line for athletes who think in km.
             if session.plannedDuration > 0 && session.plannedDistanceKm > 0 {
                 Text("·").font(.caption2).foregroundStyle(Theme.Colors.tertiaryLabel)
-                Text(formattedDuration)
-                    .font(.caption2)
+                Text(UnitFormatter.formatDistance(session.plannedDistanceKm, unit: units))
+                    .font(.caption2.monospacedDigit())
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
 
