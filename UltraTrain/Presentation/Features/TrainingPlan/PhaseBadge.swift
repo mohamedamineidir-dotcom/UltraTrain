@@ -18,10 +18,10 @@ struct PhaseBadge: View {
 extension TrainingPhase {
     var displayName: String {
         switch self {
-        case .base:     String(localized: "phase.base", defaultValue: "Base")
+        case .base:     String(localized: "phase.base", defaultValue: "Aerobic base")
         case .build:    String(localized: "phase.build", defaultValue: "Build")
-        case .peak:     String(localized: "phase.peak", defaultValue: "Peak")
-        case .taper:    String(localized: "phase.taper", defaultValue: "Taper")
+        case .peak:     String(localized: "phase.peak", defaultValue: "Race-specific")
+        case .taper:    String(localized: "phase.taper", defaultValue: "Race taper")
         case .recovery: String(localized: "phase.recovery", defaultValue: "Recovery")
         case .race:     String(localized: "phase.race", defaultValue: "Race")
         }

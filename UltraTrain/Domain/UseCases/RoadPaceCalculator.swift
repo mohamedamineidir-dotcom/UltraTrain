@@ -30,16 +30,20 @@ enum RoadPaceCalculator {
         vmaKmh: Double?,
         experience: ExperienceLevel
     ) -> RoadPaceProfile {
-        // RR-17: paces are data-derived when the athlete has ANY of:
-        // a declared goal time, at least one PR, or a measured VMA.
-        // Without any of those we're just guessing from experience tier
-        // and the UI should use effort labels instead of fabricated paces.
+        // B1: paces are data-derived when the athlete has at least one PR
+        // or a measured VMA. A declared goal time alone is an aspiration,
+        // not fitness data, training paces must reflect what the athlete
+        // can run today, not what they hope to run on race day. UI falls
+        // back to effort/RPE labels when no fitness signal exists, which
+        // doubles as the nudge to log a PR.
         let hasAnyPR = personalBests.contains { $0.timeSeconds > 0 }
         let hasVMA = (vmaKmh ?? 0) > 0
-        let hasGoalTime = (goalTime ?? 0) > 0
-        let isDataDerived = hasAnyPR || hasVMA || hasGoalTime
+        let isDataDerived = hasAnyPR || hasVMA
 
-        // Step 1: Determine goal race pace (sec/km)
+        // Goal race pace (sec/km). Kept for goalRealism + recommendedGoalTime
+        // only, NEVER used to anchor training paces. Falls back to a fitness-
+        // derived estimate when the athlete hasn't declared a goal time so
+        // the realism scoring still has something to compare against.
         let goalPacePerKm: Double
         if let goalTime, goalTime > 0 {
             goalPacePerKm = goalTime / raceDistanceKm
@@ -50,30 +54,13 @@ enum RoadPaceCalculator {
             )
         }
 
-        // Step 2: Determine current fitness (estimated 5K pace as anchor)
-        var fitness5KPace = estimate5KPace(
+        // Current fitness anchor (estimated 5K pace). Pure fitness-derived,
+        // no goal blending: prescribing training paces against the athlete's
+        // aspiration asks the body to run intensities it hasn't earned, and
+        // erodes the calibration that the rest of the plan relies on.
+        let fitness5KPace = estimate5KPace(
             personalBests: personalBests, vmaKmh: vmaKmh, experience: experience
         )
-
-        // Step 2b: If athlete has a goal time, use it to improve 5K estimate
-        // Reverse-Riegel: if they believe they can run X marathon, they likely have Y 5K ability.
-        // Blend with fitness estimate: realistic goals weight goal-derived 5K more,
-        // ambitious goals weight fitness-derived 5K more.
-        if let goalTime, goalTime > 0, raceDistanceKm > 10 {
-            let goalDerived5KTime = riegelEquivalent(
-                fromTime: goalTime, fromDistanceKm: raceDistanceKm, toDistanceKm: 5.0
-            )
-            let goalDerived5KPace = goalDerived5KTime / 5.0
-
-            // Blend: use the SLOWER of the two estimates (more conservative)
-            // but pull toward goal-derived when they're close
-            let fitnessDerived = fitness5KPace
-            if goalDerived5KPace < fitnessDerived {
-                // Goal implies faster 5K than fitness estimate → blend conservatively
-                let blendWeight = 0.6 // 60% goal-derived, 40% fitness
-                fitness5KPace = goalDerived5KPace * blendWeight + fitnessDerived * (1.0 - blendWeight)
-            }
-        }
 
         // Step 3: Goal realism check
         let fitnessPaceAtRaceDist = estimatedPace(
@@ -121,7 +108,11 @@ enum RoadPaceCalculator {
             thresholdPaceRangePerKm: (fiveK * 1.06)...(fiveK * 1.09),
             intervalPacePerKm: fiveK * 1.00,
             repetitionPacePerKm: fiveK * 0.93,
-            racePacePerKm: goalPacePerKm,
+            // Race pace = fitness-derived expected pace at the race distance.
+            // The athlete's declared goal still lives in goalRealismLevel +
+            // recommendedGoalTime so the UI can surface the gap; training
+            // happens at paces the athlete can actually hold today.
+            racePacePerKm: fitnessPaceAtRaceDist,
             goalRealismLevel: realism,
             isDataDerived: isDataDerived,
             recommendedGoalTime: recommendedGoalTime

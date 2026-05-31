@@ -132,6 +132,7 @@ struct ProfileView: View {
                     ProgressView()
                 } else {
                     athleteSection
+                    personalRecordsSection
                     racesSection
                     gearSection
                     routesSection

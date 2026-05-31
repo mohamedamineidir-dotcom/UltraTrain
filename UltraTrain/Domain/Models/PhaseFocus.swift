@@ -14,11 +14,11 @@ enum PhaseFocus: String, CaseIterable, Sendable, Codable {
     func displayName(isRoad: Bool) -> String {
         if isRoad {
             return switch self {
-            case .threshold30:      "Aerobic Base"
-            case .vo2max:           "Speed Development"
-            case .threshold60:      "Race Preparation"
-            case .sharpening:       "Taper"
-            case .postRaceRecovery: "Post-Race Recovery"
+            case .threshold30:      String(localized: "phase.road.foundation", defaultValue: "Aerobic foundation")
+            case .vo2max:           String(localized: "phase.road.thresholdVo2", defaultValue: "Threshold & VO2max")
+            case .threshold60:      String(localized: "phase.road.raceSpecific", defaultValue: "Race-specific block")
+            case .sharpening:       String(localized: "phase.road.taper", defaultValue: "Race taper")
+            case .postRaceRecovery: String(localized: "phase.road.postRace", defaultValue: "Post-race recovery")
             }
         }
         return switch self {
@@ -38,15 +38,20 @@ enum PhaseFocus: String, CaseIterable, Sendable, Codable {
         if isRoad {
             return switch self {
             case .threshold30:
-                "Build aerobic foundation with easy running and strides"
+                String(localized: "phase.road.foundation.desc",
+                       defaultValue: "Aerobic capacity with easy mileage and strides")
             case .vo2max:
-                "VO2max intervals and tempo runs to build speed"
+                String(localized: "phase.road.thresholdVo2.desc",
+                       defaultValue: "Threshold blocks and VO2max intervals to sharpen the engine")
             case .threshold60:
-                "Race-specific workouts at target pace"
+                String(localized: "phase.road.raceSpecific.desc",
+                       defaultValue: "Race-pace blocks and race-specific endurance")
             case .sharpening:
-                "Volume reduction with race-pace sharpeners"
+                String(localized: "phase.road.taper.desc",
+                       defaultValue: "Volume reduction with race-pace sharpeners")
             case .postRaceRecovery:
-                "Active recovery and adaptation after competition"
+                String(localized: "phase.road.postRace.desc",
+                       defaultValue: "Active recovery and adaptation after competition")
             }
         }
         return switch self {

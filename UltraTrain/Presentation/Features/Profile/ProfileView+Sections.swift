@@ -210,6 +210,22 @@ extension ProfileView {
         }
     }
 
+    // MARK: - Personal Records Section
+
+    var personalRecordsSection: some View {
+        Section {
+            NavigationLink {
+                PersonalRecordsView(viewModel: viewModel)
+            } label: {
+                Label(
+                    String(localized: "profile.personalRecords", defaultValue: "Personal records"),
+                    systemImage: "stopwatch"
+                )
+            }
+            .accessibilityIdentifier("profile.personalRecordsLink")
+        }
+    }
+
     // MARK: - Gear Section
 
     var gearSection: some View {

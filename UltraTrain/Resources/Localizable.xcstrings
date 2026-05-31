@@ -12426,14 +12426,14 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Base"
+            "state" : "translated",
+            "value" : "Aerobic base"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Préparation"
+            "state" : "translated",
+            "value" : "Base aérobie"
           }
         }
       }
@@ -12443,14 +12443,14 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "Build"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Construction"
+            "state" : "translated",
+            "value" : "Développement"
           }
         }
       }
@@ -12460,14 +12460,14 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Peak"
+            "state" : "translated",
+            "value" : "Race-specific"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Pic"
+            "state" : "translated",
+            "value" : "Spécifique course"
           }
         }
       }
@@ -12511,16 +12511,326 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Taper"
+            "state" : "translated",
+            "value" : "Race taper"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Affûtage"
           }
         }
+      }
+    },
+    "phase.road.foundation" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aerobic foundation"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fondation aérobie"
+          }
+        }
+      }
+    },
+    "phase.road.foundation.desc" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aerobic capacity with easy mileage and strides"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capacité aérobie avec footings et lignes droites"
+          }
+        }
+      }
+    },
+    "phase.road.thresholdVo2" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Threshold & VO2max"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seuil & VO2max"
+          }
+        }
+      }
+    },
+    "phase.road.thresholdVo2.desc" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Threshold blocks and VO2max intervals to sharpen the engine"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blocs au seuil et VO2max pour affûter la cylindrée"
+          }
+        }
+      }
+    },
+    "phase.road.raceSpecific" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race-specific block"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bloc spécifique course"
+          }
+        }
+      }
+    },
+    "phase.road.raceSpecific.desc" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race-pace blocks and race-specific endurance"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blocs à allure course et endurance spécifique"
+          }
+        }
+      }
+    },
+    "phase.road.taper" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race taper"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affûtage"
+          }
+        }
+      }
+    },
+    "phase.road.taper.desc" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume reduction with race-pace sharpeners"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduction du volume avec rappels d'allure course"
+          }
+        }
+      }
+    },
+    "phase.road.postRace" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Post-race recovery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération post-course"
+          }
+        }
+      }
+    },
+    "phase.road.postRace.desc" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active recovery and adaptation after competition"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération active et adaptation après la compétition"
+          }
+        }
+      }
+    },
+    "pr.add.accessibility" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Log a new PR" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Enregistrer un nouveau record" } }
+      }
+    },
+    "pr.edit.date" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Date" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Date" } }
+      }
+    },
+    "pr.edit.distance" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Distance" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Distance" } }
+      }
+    },
+    "pr.edit.time" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Time" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Temps" } }
+      }
+    },
+    "pr.edit.title" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Log a PR" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Enregistrer un record" } }
+      }
+    },
+    "pr.empty.body" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Log a recent race time and we'll project your fitness across every distance, then calibrate your training paces." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Enregistrez un temps de course récent et nous projetterons votre forme à chaque distance, puis calibrerons vos allures d'entraînement." } }
+      }
+    },
+    "pr.empty.cta" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Log your first PR" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Enregistrer votre premier record" } }
+      }
+    },
+    "pr.empty.title" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No fitness data yet" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Pas encore de données de forme" } }
+      }
+    },
+    "pr.recalibration.alertTitle" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Plan updated" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Plan mis à jour" } }
+      }
+    },
+    "pr.recalibration.message" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Updating your training paces…" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Mise à jour de vos allures d'entraînement…" } }
+      }
+    },
+    "pr.recalibration.summary" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%d session(s) updated to match your new fitness." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "%d séance(s) mise(s) à jour selon votre nouvelle forme." } }
+      }
+    },
+    "pr.row.projected" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Projected" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Projeté" } }
+      }
+    },
+    "pr.row.unknown" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add a PR to estimate" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ajoutez un record pour estimer" } }
+      }
+    },
+    "pr.section.footer" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Recorded PRs anchor your training paces. Projections are estimates from your other data — log a PR at that distance to lock it in." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Les records officiels ancrent vos allures d'entraînement. Les projections sont des estimations basées sur vos autres données — enregistrez un record à cette distance pour le verrouiller." } }
+      }
+    },
+    "pr.section.title" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your records" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Vos records" } }
+      }
+    },
+    "pr.title" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Personal records" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Records personnels" } }
+      }
+    },
+    "profile.personalRecords" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Personal records" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Records personnels" } }
+      }
+    },
+    "common.hours" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "h" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "h" } }
+      }
+    },
+    "common.minutes" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "m" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "min" } }
+      }
+    },
+    "common.seconds" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "s" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "s" } }
       }
     },
     "Phases" : {
