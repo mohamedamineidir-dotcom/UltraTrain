@@ -80,7 +80,11 @@ struct SessionDetailView: View {
                     }
 
                     if let workout = resolvedWorkout {
-                        WorkoutBlocksSection(workout: workout, athlete: athlete)
+                        WorkoutBlocksSection(
+                            workout: workout,
+                            athlete: athlete,
+                            purposeLine: RoadIntervalLibrary.purposeLine(for: session.intervalFocus)
+                        )
                     }
 
                     if let advice = session.coachAdvice, !advice.isEmpty {

@@ -163,10 +163,19 @@ enum RoadIntervalLibrary {
                 .filter { $0.category == cat }
                 .sorted { $0.totalWorkMinutes < $1.totalWorkMinutes }
             if !inCat.isEmpty {
+                // B6: base-phase strides — always pick the LIGHTEST speed
+                // template (the 6×20s strides workout), not the walk-forward
+                // 200m/300m/400m/600m progression. Base strides are a
+                // neuromuscular maintenance touch, not a repetition ladder.
+                if phase == .base && cat == .speed {
+                    return inCat[0]
+                }
                 let lastIndex = inCat.count - 1
                 let cap = isFirstTimerAtDistance ? max(0, lastIndex - 1) : lastIndex
                 let effectiveWeek = max(0, weekInPhase - introWeek)
-                let index = min(effectiveWeek, cap)
+                let index = plateauOscillatingIndex(
+                    effectiveWeek: effectiveWeek, cap: cap
+                )
                 return inCat[index]
             }
         }
@@ -192,8 +201,71 @@ enum RoadIntervalLibrary {
             : safePool
         let lastIndex = pool.count - 1
         let cap = isFirstTimerAtDistance ? max(0, lastIndex - 1) : lastIndex
-        let fallbackIndex = min(weekInPhase, cap)
+        let fallbackIndex = plateauOscillatingIndex(effectiveWeek: weekInPhase, cap: cap)
         return pool[fallbackIndex]
+    }
+
+    // MARK: - Purpose Line (B9)
+
+    /// One-line "why" for a session, looked up from the `intervalFocus`
+    /// string that the road plan pipeline writes onto `TrainingSession`
+    /// at generation time. Surfaced in the session detail under the
+    /// workout name so the athlete reads *what* (e.g. "5×1K Threshold")
+    /// and *why* (e.g. "Lactate clearance — bread and butter for
+    /// marathon pace") at a glance, rather than parsing the description
+    /// each time.
+    ///
+    /// Returns `nil` when the focus is missing or unrecognised, the
+    /// caller renders nothing in that case (no fabricated tagline for
+    /// an unknown session type).
+    static func purposeLine(for focus: String?) -> String? {
+        guard let focus else { return nil }
+        switch focus {
+        case Category.speed.displayName:
+            return String(localized: "session.purpose.speed",
+                          defaultValue: "Neuromuscular freshness — keeps the legs sharp.")
+        case Category.vo2max.displayName:
+            return String(localized: "session.purpose.vo2max",
+                          defaultValue: "Aerobic ceiling — top-end engine work.")
+        case Category.threshold.displayName:
+            return String(localized: "session.purpose.threshold",
+                          defaultValue: "Lactate clearance — bread and butter for marathon pace.")
+        case Category.raceSpecific.displayName:
+            return String(localized: "session.purpose.raceSpecific",
+                          defaultValue: "Race-specific endurance — rehearses your goal pace.")
+        case Category.progression.displayName:
+            return String(localized: "session.purpose.progression",
+                          defaultValue: "Sustained aerobic power — Kenyan-style controlled build.")
+        case Category.longRunVariant.displayName:
+            return String(localized: "session.purpose.longRun",
+                          defaultValue: "Time on feet — race-specific endurance under fatigue.")
+        default:
+            return nil
+        }
+    }
+
+    // MARK: - Plateau oscillation
+
+    /// Walks forward through the difficulty ladder, then oscillates
+    /// between the top two templates once the cap is reached, instead
+    /// of pinning the hardest workout for every remaining week.
+    ///
+    /// Before this fix (B4): marathon peak (6 weeks) with only 3
+    /// raceSpecific templates produced T0 / T1 / T2 / T2 / T2 / T2 —
+    /// the athlete saw the same "MP 5K Blocks" four weeks in a row.
+    /// After: T0 / T1 / T2 / T1 / T2 / T1 — final weeks alternate
+    /// between the top two, giving the athlete variety in structure
+    /// (e.g. 5K Blocks ⇄ 4K Pyramid) at comparable difficulty.
+    ///
+    /// When the category has only one template the oscillation
+    /// degenerates to repeating that template (cap = 0 = top = bottom).
+    /// In that case the variety gap is a template-pool issue, not a
+    /// selection issue, the fix is to add another template.
+    private static func plateauOscillatingIndex(effectiveWeek: Int, cap: Int) -> Int {
+        guard cap > 0 else { return 0 }
+        if effectiveWeek <= cap { return effectiveWeek }
+        let overshoot = effectiveWeek - cap
+        return overshoot.isMultiple(of: 2) ? cap : cap - 1
     }
 
     // MARK: - Distance-Specific Category Preferences
@@ -230,9 +302,15 @@ enum RoadIntervalLibrary {
 
         switch (phase, discipline, slotIndex) {
         // === BASE: One quality session/week. Light progression or threshold
-        //, no R-pace speed work in pure base (Daniels' "fundamental" base).
-        // Slot 1 is unused in base, selector skips Q2 entirely for base phase.
+        // most weeks, strides every 3rd base week for neuromuscular
+        // maintenance (Daniels/Pfitzinger). Slot 1 is unused in base.
+        // The strides rotation kicks in on weekInPhase 2, 5, 8, … so
+        // short base mesocycles still get at least one strides session
+        // (a 6-week base hits weeks 2 and 5).
         case (.base, _, 0):
+            if weekInPhase % 3 == 2 {
+                return [(.speed, 0), (.progression, 0)]
+            }
             return [(.progression, 0), (.threshold, 0)]
         case (.base, _, _):
             return [(.threshold, 0), (.progression, 0)]
@@ -699,6 +777,100 @@ enum RoadIntervalLibrary {
                 recoverySeconds: 75, recoveryType: .jog, totalWorkMinutes: 10,
                 applicablePhases: [.base, .build], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
                 minExperience: .beginner
+            ),
+            // Base-phase strides (B6). Daniels' Running Formula and
+            // Pfitzinger both prescribe strides 1-2×/week through base
+            // for neuromuscular maintenance. 6×20-second accelerations
+            // after a 30-min easy warm-up: short, gentle, never
+            // anaerobic. Marked .base only so other phases keep their
+            // usual speed/repetition workouts unchanged. Slot 0 base
+            // preferences pull this in on every 3rd base week.
+            Template(
+                name: "Strides 6×20s",
+                category: .speed, description: "30 min easy + 6×20-second strides at R-pace, 90s walk. Neuromuscular freshness.",
+                targetPaceZone: .repetition, repDistanceM: 0, repCount: 6,
+                recoverySeconds: 90, recoveryType: .walk, totalWorkMinutes: 2,
+                applicablePhases: [.base], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
+                minExperience: .beginner
+            ),
+
+            // --- Marathon-peak raceSpecific variety (B4) ---
+            // Previously advanced marathon peak had only 3 templates
+            // (MP Tempo 30, MP 3K Blocks, MP 5K Blocks) → 6-week peak
+            // plateaued on MP 5K Blocks for the last 3-4 weeks. These
+            // five additions give a richer rotation across the peak
+            // mesocycle, covering the standard Pfitzinger/Canova MP
+            // structures (continuous, short-rep, pyramid, cutdown,
+            // sharpener) instead of a single workout repeated.
+
+            // Intro-level MP block — sits BELOW MP 3K Blocks on the
+            // difficulty ladder so peak W1 isn't a Canova 5×3km cold.
+            Template(
+                name: "MP 4×2K",
+                category: .raceSpecific, description: "4×2000m at marathon pace, 90s jog. Intro-level MP block.",
+                targetPaceZone: .marathonPace, repDistanceM: 2000, repCount: 4,
+                recoverySeconds: 90, recoveryType: .jog, totalWorkMinutes: 32,
+                applicablePhases: [.peak], applicableDistances: [.roadMarathon],
+                minExperience: .intermediate
+            ),
+            // Continuous-block alternative to interval-style MP work
+            // (Pfitzinger 18/70 prescribes 8 km continuous @ MP within
+            // a longer session as a sustained lactate-tolerance test).
+            Template(
+                name: "MP 8K Continuous",
+                category: .raceSpecific, description: "8000m continuous at marathon pace. Sustained MP block.",
+                targetPaceZone: .marathonPace, repDistanceM: 0, repCount: 1,
+                recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 36,
+                applicablePhases: [.peak], applicableDistances: [.roadMarathon],
+                minExperience: .intermediate
+            ),
+            // Pyramid: varied reps (Canova-style structural variation).
+            // Total 9 km @ MP across 5 reps with progressive then
+            // descending length — same MP work, different rhythm
+            // than uniform-rep blocks.
+            Template(
+                name: "MP Pyramid 1-2-3-2-1",
+                category: .raceSpecific, description: "1K + 2K + 3K + 2K + 1K at MP, 60s jog between reps. Pyramid block.",
+                targetPaceZone: .marathonPace, repDistanceM: 0, repCount: 5,
+                recoverySeconds: 60, recoveryType: .jog, totalWorkMinutes: 40,
+                applicablePhases: [.peak], applicableDistances: [.roadMarathon],
+                minExperience: .advanced
+            ),
+            // MP cutdown: final 2K accelerates from MP-equivalent to
+            // ~HM-pace. Teaches the athlete to finish strong from
+            // marathon-pace fatigue (race-day skill).
+            Template(
+                name: "MP Cutdown 6K",
+                category: .raceSpecific, description: "6000m progressing from MP+10s/km to HM pace over the final 2K. Race-finish skill.",
+                targetPaceZone: .marathonPace, repDistanceM: 0, repCount: 1,
+                recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 28,
+                applicablePhases: [.peak], applicableDistances: [.roadMarathon],
+                minExperience: .advanced
+            ),
+            // Short-rep MP sharpener — peak/taper bridge. Pfitzinger
+            // 18/85 final-peak prescribes "8×1km @ MP, 60s jog" as a
+            // sharpener that holds MP touch without the cumulative
+            // fatigue of long blocks.
+            Template(
+                name: "MP 6×1K Sharpener",
+                category: .raceSpecific, description: "6×1000m at marathon pace, 60s jog. Late-peak MP sharpener.",
+                targetPaceZone: .marathonPace, repDistanceM: 1000, repCount: 6,
+                recoverySeconds: 60, recoveryType: .jog, totalWorkMinutes: 24,
+                applicablePhases: [.peak], applicableDistances: [.roadMarathon],
+                minExperience: .intermediate
+            ),
+
+            // Build-phase MP cruise intermediate — fills the gap
+            // between MP Cruise 3×1.5K (18 min) and MP Cruise 3×2K
+            // (24 min) so 4-week late build has 4 walk-forward
+            // templates instead of 3.
+            Template(
+                name: "MP Cruise 5×1K",
+                category: .raceSpecific, description: "5×1000m at marathon pace, 60s jog. Early MP intro for late build.",
+                targetPaceZone: .marathonPace, repDistanceM: 1000, repCount: 5,
+                recoverySeconds: 60, recoveryType: .jog, totalWorkMinutes: 20,
+                applicablePhases: [.build], applicableDistances: [.roadMarathon],
+                minExperience: .intermediate
             ),
         ]
     }

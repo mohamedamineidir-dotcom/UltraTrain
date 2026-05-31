@@ -347,7 +347,7 @@ No Firebase unless explicitly approved. No third-party analytics SDKs without pr
 - **Phases:** Base (aerobic foundation) → Build (race-specific intensity) → Peak (sharpening) → Taper (reduction before race).
 - Phase durations scale with weeks available and race distance.
 - Long run progression: never increase weekly D+ or distance by more than 10% week-over-week.
-- Recovery weeks: reduce volume by 30-40% every 3rd or 4th week.
+- Recovery weeks: reduce volume by ~15% every 3rd or 4th week (Pfitzinger 80-85% of load-week volume). The 30-40% cut that earlier docs described was too aggressive for advanced athletes and never matched the code.
 - B-race integration: insert a mini-taper (3-5 days) before and recovery (3-7 days) after intermediate races.
 
 ### Training Load Metrics

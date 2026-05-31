@@ -157,6 +157,31 @@ enum RoadVolumeCalculator {
         // Track week-in-phase for explicit peak-phase progressive overload
         var peakWeekCounter = 0
 
+        // B5 final-block overload: flex the peakKmCeiling upward over
+        // the last three non-recovery peak weeks so they don't all
+        // clamp to the same value. Without this, a marathon athlete
+        // with 4-6 non-recovery peak weeks sees identical km in the
+        // last three (115 / 115 / 115) and can't perceive the
+        // Canova/Pfitzinger final specific block. Multipliers stack on
+        // ceiling: 1.00 / 1.05 / 1.10 → 115 / 121 / 126 km steps. Stays
+        // under the BJSM 10%/wk cap and applies only to non-recovery
+        // peak weeks so the recovery cut between them still reads as
+        // a deload.
+        let finalBlockCeilingMultiplier: [Int: Double] = {
+            let nonRecoveryPeakIndices = skeletons.enumerated().compactMap {
+                (idx, sk) -> Int? in
+                sk.phase == .peak && !sk.isRecoveryWeek ? idx : nil
+            }
+            let lastThree = Array(nonRecoveryPeakIndices.suffix(3))
+            let multipliers: [Double] = [1.00, 1.05, 1.10]
+            let offset = max(0, multipliers.count - lastThree.count)
+            var m: [Int: Double] = [:]
+            for (i, planIdx) in lastThree.enumerated() {
+                m[planIdx] = multipliers[offset + i]
+            }
+            return m
+        }()
+
         for (index, skeleton) in skeletons.enumerated() {
             // Tiered progress by phase (Daniels/Canova: build fast in base, hold in peak)
             // Base: 0→0.45 progress, Build: 0.45→0.78 progress, Peak: 0.78→1.00
@@ -171,7 +196,20 @@ enum RoadVolumeCalculator {
             // plateauOffset` so the volume curve plateaus 3-4 weeks before
             // taper, in lockstep with the LR. Recovery weeks within the
             // plateau still cut volume normally.
-            let plateauOffset = min(4, max(1, totalWeeks / 5))
+            // B7: plateauOffset is experience-aware. Beginners get the
+            // conservative 4-week buffer (≈6 weeks LR-to-race on a 21-
+            // week plan); advanced/elite athletes get a 2-week buffer
+            // so peak LR lands 3-4 weeks before race, in line with
+            // Pfitzinger 18/85's pattern of peaking LR at W15 of W18.
+            // Length-scaled floor stays so short plans don't degenerate.
+            let baseOffset = min(4, max(1, totalWeeks / 5))
+            let experienceOffsetAdjustment: Int = switch experience {
+            case .beginner:      0
+            case .intermediate: -1
+            case .advanced:     -2
+            case .elite:        -2
+            }
+            let plateauOffset = max(2, baseOffset + experienceOffsetAdjustment)
             let peakWeekIndex = max(taperStart - plateauOffset, 1)
             let rawProgress = min(Double(index) / Double(peakWeekIndex), 1.0)
             let progress: Double
@@ -345,8 +383,12 @@ enum RoadVolumeCalculator {
             )
             var totalKm = totalSeconds / avgPaceSecPerKm
 
-            // Issue #10: Peak volume ceiling, don't exceed discipline target
-            totalKm = min(totalKm, peakKmCeiling)
+            // Issue #10: Peak volume ceiling, don't exceed discipline target.
+            // B5: in the last three non-recovery peak weeks the ceiling is
+            // flexed (1.00 / 1.05 / 1.10) so the final specific block has
+            // perceptible week-to-week overload instead of plateauing.
+            let ceilingMultiplier = finalBlockCeilingMultiplier[index] ?? 1.0
+            totalKm = min(totalKm, peakKmCeiling * ceilingMultiplier)
 
             // Issue #2: 10% weekly growth cap (Canova: "never >10% week-on-week")
             // Issue #11: Post-recovery uses pre-recovery baseline, not recovery volume

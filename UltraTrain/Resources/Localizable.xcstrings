@@ -12812,6 +12812,48 @@
         "fr" : { "stringUnit" : { "state" : "translated", "value" : "Records personnels" } }
       }
     },
+    "session.purpose.speed" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Neuromuscular freshness — keeps the legs sharp." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Vivacité neuromusculaire — garde les jambes affûtées." } }
+      }
+    },
+    "session.purpose.vo2max" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Aerobic ceiling — top-end engine work." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Plafond aérobie — travail haut du moteur." } }
+      }
+    },
+    "session.purpose.threshold" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Lactate clearance — bread and butter for marathon pace." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Clairance du lactate — la base pour l'allure marathon." } }
+      }
+    },
+    "session.purpose.raceSpecific" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Race-specific endurance — rehearses your goal pace." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Endurance spécifique course — répétition de votre allure cible." } }
+      }
+    },
+    "session.purpose.progression" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sustained aerobic power — Kenyan-style controlled build." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Puissance aérobie soutenue — progression contrôlée à la kényane." } }
+      }
+    },
+    "session.purpose.longRun" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Time on feet — race-specific endurance under fatigue." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Temps sur les jambes — endurance spécifique en fatigue." } }
+      }
+    },
     "common.hours" : {
       "extractionState" : "extracted_with_value",
       "localizations" : {

@@ -209,7 +209,19 @@ enum RoadLongRunCalculator {
         // the taper drop. plateauOffset scales with plan length so short
         // plans don't get a degenerate plateau.
         let taperStart = max(totalWeeks - taperWeeks, 1)
-        let plateauOffset = min(4, max(1, totalWeeks / 5))
+        // B7: plateauOffset is experience-aware so the LR peak lands
+        // closer to taper for stronger athletes (Pfitzinger 18/85: peak
+        // LR W15 of W18 = 3 weeks before race) while beginners keep the
+        // conservative 4-week buffer. Mirrors RoadVolumeCalculator so
+        // volume + LR peaks stay locked together.
+        let baseOffset = min(4, max(1, totalWeeks / 5))
+        let experienceOffsetAdjustment: Int = switch experience {
+        case .beginner:      0
+        case .intermediate: -1
+        case .advanced:     -2
+        case .elite:        -2
+        }
+        let plateauOffset = max(2, baseOffset + experienceOffsetAdjustment)
         let peakWeek = max(taperStart - plateauOffset, 1)
         let progress: Double
         if weekIndex <= peakWeek {

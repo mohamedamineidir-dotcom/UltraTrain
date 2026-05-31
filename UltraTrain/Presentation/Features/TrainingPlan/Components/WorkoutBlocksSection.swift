@@ -3,6 +3,10 @@ import SwiftUI
 struct WorkoutBlocksSection: View {
     let workout: IntervalWorkout
     var athlete: Athlete?
+    /// One-line "why" derived from the session's `intervalFocus`.
+    /// Rendered as a small accent line between name and description so
+    /// the athlete sees *what* and *why* together. Pass `nil` to skip.
+    var purposeLine: String? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
@@ -13,6 +17,13 @@ struct WorkoutBlocksSection: View {
                 Text(workout.name)
                     .font(.subheadline)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+
+            if let purposeLine, !purposeLine.isEmpty {
+                Text(purposeLine)
+                    .font(.footnote.italic())
+                    .foregroundStyle(Theme.Colors.label.opacity(0.75))
+                    .accessibilityLabel("Purpose: \(purposeLine)")
             }
 
             Text(workout.descriptionText)
