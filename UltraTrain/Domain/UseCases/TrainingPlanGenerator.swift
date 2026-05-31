@@ -260,16 +260,25 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 raceDistanceKm: targetRace.distanceKm
             )
 
-            // Build race context for intermediate race overrides
+            // Build race context for intermediate race overrides.
+            // B2: include the race's day-of-week so bRaceWeekTemplates /
+            // cRaceWeekTemplates can place the .race session on the actual
+            // race date instead of defaulting to Saturday.
             let intermediateRaceContext: SessionTemplateGenerator.RaceContext?
             if let raceId = override?.raceId,
                let intRace = intermediateRaces.first(where: { $0.id == raceId }) {
+                let cal = Calendar.current
+                let weekStartDay = cal.startOfDay(for: skeleton.startDate)
+                let raceDayStart = cal.startOfDay(for: intRace.date)
+                let dayDiff = cal.dateComponents([.day], from: weekStartDay, to: raceDayStart).day ?? 5
+                let raceDayOffset = max(0, min(6, dayDiff))
                 intermediateRaceContext = .init(
                     name: intRace.name,
                     distanceKm: intRace.distanceKm,
                     elevationGainM: intRace.elevationGainM,
                     estimatedDurationSeconds: intRace.estimatedDuration(experience: athlete.experienceLevel),
-                    goalType: intRace.goalType
+                    goalType: intRace.goalType,
+                    dayOffset: raceDayOffset
                 )
             } else {
                 intermediateRaceContext = nil
@@ -809,11 +818,21 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 let intermediateRaceContext: SessionTemplateGenerator.RaceContext?
                 let raceId = override.raceId
                 if let intRace = intermediateRaces.first(where: { $0.id == raceId }) {
+                    // B2: compute the race day relative to the week's start
+                    // so the .race session lands on the actual race date
+                    // (e.g. Sunday) instead of the hardcoded Saturday slot
+                    // the legacy templates used.
+                    let cal = Calendar.current
+                    let weekStartDay = cal.startOfDay(for: skeleton.startDate)
+                    let raceDayStart = cal.startOfDay(for: intRace.date)
+                    let dayDiff = cal.dateComponents([.day], from: weekStartDay, to: raceDayStart).day ?? 5
+                    let raceDayOffset = max(0, min(6, dayDiff))
                     intermediateRaceContext = .init(
                         name: intRace.name, distanceKm: intRace.distanceKm,
                         elevationGainM: intRace.elevationGainM,
                         estimatedDurationSeconds: intRace.estimatedDuration(experience: athlete.experienceLevel),
-                        goalType: intRace.goalType
+                        goalType: intRace.goalType,
+                        dayOffset: raceDayOffset
                     )
                 } else {
                     intermediateRaceContext = nil
@@ -1173,7 +1192,12 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         ) ?? skeleton.startDate.addingTimeInterval(TimeInterval(template.dayOffset * 86400))
 
         let avgPace: Double = 330 // ~5:30/km default
-        let distanceKm = template.durationSeconds > 0 ? template.durationSeconds / avgPace : 0
+        // Race sessions carry the real race distance (10K, half, marathon)
+        // through `distanceKmOverride`; without it, the duration-based
+        // estimate kicks in (a 36-min 10K race ÷ 5:30/km = 6.5 km, which
+        // is the bug B1 fixes by preferring the override when set).
+        let derivedDistanceKm = template.durationSeconds > 0 ? template.durationSeconds / avgPace : 0
+        let distanceKm = template.distanceKmOverride ?? derivedDistanceKm
         let elevationM = distanceKm * template.elevationFraction * 50 // Minimal for road
 
         return TrainingSession(

@@ -55,10 +55,14 @@ enum RoadRaceWeekTemplates {
             ))
         }
 
-        // Race day
-        templates.append(SessionTemplateGenerator.tpl(
-            raceDayOffset, .race, .maxEffort,
-            raceDuration, 0, raceDesc
+        // Race day. Carries the real race distance via the template's
+        // distanceKmOverride so the session card reads "10.0 km" instead
+        // of the duration ÷ 5:30 derivation (B1).
+        templates.append(SessionTemplateGenerator.SessionTemplate(
+            dayOffset: raceDayOffset, type: .race, intensity: .maxEffort,
+            durationSeconds: raceDuration, elevationFraction: 0,
+            description: raceDesc,
+            distanceKmOverride: targetRace.distanceKm > 0 ? targetRace.distanceKm : nil
         ))
 
         // Post-race days within the same week (e.g. Saturday race

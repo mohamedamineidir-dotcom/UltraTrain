@@ -9,6 +9,27 @@ enum SessionTemplateGenerator {
         let durationSeconds: TimeInterval
         let elevationFraction: Double
         let description: String
+        /// Hard-set distance for templates whose distance can't be derived
+        /// from `duration / averagePace` (e.g. `.race` sessions, where the
+        /// distance is the race's real distance, not "race duration ÷ 5:30").
+        /// Nil for normal templates: the session generator falls back to
+        /// duration-based distance.
+        let distanceKmOverride: Double?
+
+        init(
+            dayOffset: Int, type: SessionType, intensity: Intensity,
+            durationSeconds: TimeInterval, elevationFraction: Double,
+            description: String,
+            distanceKmOverride: Double? = nil
+        ) {
+            self.dayOffset = dayOffset
+            self.type = type
+            self.intensity = intensity
+            self.durationSeconds = durationSeconds
+            self.elevationFraction = elevationFraction
+            self.description = description
+            self.distanceKmOverride = distanceKmOverride
+        }
     }
 
     // MARK: - Public
@@ -716,6 +737,24 @@ enum SessionTemplateGenerator {
         let elevationGainM: Double
         let estimatedDurationSeconds: TimeInterval
         let goalType: RaceGoal
+        /// Day-of-week offset for the race within its week skeleton
+        /// (0 = Monday … 6 = Sunday). Nil when the caller can't compute it
+        /// (older call sites), in which case the templates fall back to the
+        /// historical hardcoded Saturday placement.
+        let dayOffset: Int?
+
+        init(
+            name: String, distanceKm: Double, elevationGainM: Double,
+            estimatedDurationSeconds: TimeInterval, goalType: RaceGoal,
+            dayOffset: Int? = nil
+        ) {
+            self.name = name
+            self.distanceKm = distanceKm
+            self.elevationGainM = elevationGainM
+            self.estimatedDurationSeconds = estimatedDurationSeconds
+            self.goalType = goalType
+            self.dayOffset = dayOffset
+        }
     }
 
     static func overrideTemplates(
@@ -838,6 +877,7 @@ enum SessionTemplateGenerator {
         let raceName = raceContext?.name ?? "B-Race"
         let raceDistKm = raceContext?.distanceKm ?? 30
         let raceElevM = raceContext?.elevationGainM ?? 0
+        let raceDay = raceContext?.dayOffset ?? 5
 
         let raceDesc: String
         if raceDistKm > 0 {
@@ -854,9 +894,17 @@ enum SessionTemplateGenerator {
         // Stress score: combines distance + elevation to determine adaptation level
         let stressScore = raceDistKm + (raceElevM / 100)
 
+        let raceTpl = SessionTemplate(
+            dayOffset: 5, type: .race, intensity: .maxEffort,
+            durationSeconds: raceDuration, elevationFraction: 0,
+            description: raceDesc,
+            distanceKmOverride: raceDistKm > 0 ? raceDistKm : nil
+        )
+
+        let baseTemplates: [SessionTemplate]
         if stressScore < 25 {
             // Short race (<20K, low D+): almost normal week, 1 rest day before
-            return [
+            baseTemplates = [
                 tpl(0, .recovery, .easy, baseEasy * 0.85, 0,
                     "Easy run. Normal routine."),
                 tpl(1, .intervals, .moderate, baseInterval * 0.7, 0,
@@ -867,13 +915,13 @@ enum SessionTemplateGenerator {
                     "Easy run. Start freshening up."),
                 tpl(4, .rest, .easy, 0, 0,
                     "Rest day. Prep gear and nutrition."),
-                tpl(5, .race, .maxEffort, raceDuration, 0, raceDesc),
+                raceTpl,
                 tpl(6, .recovery, .easy, baseEasy * 0.6, 0,
                     "Easy shakeout. Recover from race effort."),
             ]
         } else if stressScore < 55 {
             // Medium race (20-40K or moderate D+): 1-2 rest days before
-            return [
+            baseTemplates = [
                 tpl(0, .recovery, .easy, baseEasy * 0.8, 0,
                     "Easy run. Keep routine going."),
                 tpl(1, .recovery, .easy, baseEasy * 0.7, 0,
@@ -884,13 +932,13 @@ enum SessionTemplateGenerator {
                     "Rest day. Prep gear, nutrition, and race plan."),
                 tpl(4, .rest, .easy, 0, 0,
                     "Rest day. Visualize your race. Stay confident."),
-                tpl(5, .race, .maxEffort, raceDuration, 0, raceDesc),
+                raceTpl,
                 tpl(6, .recovery, .easy, baseEasy * 0.5, 0,
                     "Easy shakeout if legs allow. Walk/stretch if not."),
             ]
         } else {
             // Long/hard race (50K+ or big D+): 2-3 rest days before
-            return [
+            baseTemplates = [
                 tpl(0, .recovery, .easy, baseEasy * 0.7, 0,
                     "Easy run. Keep legs loose."),
                 tpl(1, .recovery, .easy, baseEasy * 0.6, 0,
@@ -901,11 +949,13 @@ enum SessionTemplateGenerator {
                     "Rest day. Prep gear, nutrition, race plan."),
                 tpl(4, .recovery, .easy, baseEasy * 0.35, 0,
                     "Very short shakeout. 10-15 min to stay loose."),
-                tpl(5, .race, .maxEffort, raceDuration, 0, raceDesc),
+                raceTpl,
                 tpl(6, .rest, .easy, 0, 0,
                     "Complete rest. Body needs recovery after a big effort."),
             ]
         }
+
+        return shiftRaceTemplatesIfNeeded(baseTemplates, currentRaceDay: 5, desiredRaceDay: raceDay)
     }
 
     // MARK: - C-Race Week
@@ -923,6 +973,7 @@ enum SessionTemplateGenerator {
         let raceName = raceContext?.name ?? "C-Race"
         let raceDistKm = raceContext?.distanceKm ?? 20
         let raceElevM = raceContext?.elevationGainM ?? 0
+        let raceDay = raceContext?.dayOffset ?? 5
 
         let raceDesc: String
         if raceDistKm > 0 {
@@ -936,29 +987,78 @@ enum SessionTemplateGenerator {
         let baseEasy = volume?.baseSessionDurations.easyRun1Seconds ?? 2700
         let baseInterval = volume?.baseSessionDurations.intervalSeconds ?? 3000
 
+        let raceTpl = SessionTemplate(
+            dayOffset: 5, type: .race, intensity: .maxEffort,
+            durationSeconds: raceDuration, elevationFraction: 0,
+            description: raceDesc,
+            distanceKmOverride: raceDistKm > 0 ? raceDistKm : nil
+        )
+
+        let baseTemplates: [SessionTemplate]
         if raceDistKm < 30 {
             // Short C-race: keep a quality session, almost normal week
-            return [
+            baseTemplates = [
                 tpl(0, .recovery, .easy, baseEasy * 0.9, 0, "Easy run. Normal start to the week."),
                 tpl(1, .intervals, .moderate, baseInterval * 0.7, 0, "Opener intervals. Stay sharp for race."),
                 tpl(2, .recovery, .easy, baseEasy * 0.85, 0, "Easy run at conversational pace."),
                 tpl(3, .recovery, .easy, baseEasy * 0.75, 0, "Easy run. Freshening up."),
                 tpl(4, .rest, .easy, 0, 0, "Rest day. Prepare gear."),
-                tpl(5, .race, .maxEffort, raceDuration, 0, raceDesc),
+                raceTpl,
                 tpl(6, .recovery, .easy, baseEasy * 0.6, 0, "Easy recovery run. Shake out race legs."),
             ]
         } else {
             // Longer C-race (30K+): drop quality, more easy days before
-            return [
+            baseTemplates = [
                 tpl(0, .recovery, .easy, baseEasy * 0.85, 0, "Easy run. Normal start to the week."),
                 tpl(1, .recovery, .easy, baseEasy * 0.8, 0, "Easy run at conversational pace."),
                 tpl(2, .recovery, .easy, baseEasy * 0.7, 0, "Easy run. Starting to freshen up."),
                 tpl(3, .recovery, .easy, baseEasy * 0.5, 0, "Short easy run."),
                 tpl(4, .rest, .easy, 0, 0, "Rest day. Prepare gear and nutrition."),
-                tpl(5, .race, .maxEffort, raceDuration, 0, raceDesc),
+                raceTpl,
                 tpl(6, .recovery, .easy, baseEasy * 0.5, 0, "Easy recovery run. Shake out race legs."),
             ]
         }
+
+        return shiftRaceTemplatesIfNeeded(baseTemplates, currentRaceDay: 5, desiredRaceDay: raceDay)
+    }
+
+    // MARK: - Race-day shift helper
+
+    /// Shifts a B/C-race-week template list so the `.race` lands on the
+    /// athlete's actual race day instead of the historical hardcoded
+    /// Saturday. Days that get pushed past Sunday are dropped; missing
+    /// slots at the start of the week become rest days. Templates whose
+    /// `dayOffset` doesn't shift are kept as-is.
+    private static func shiftRaceTemplatesIfNeeded(
+        _ baseTemplates: [SessionTemplate],
+        currentRaceDay: Int,
+        desiredRaceDay: Int
+    ) -> [SessionTemplate] {
+        let clampedDesired = max(0, min(6, desiredRaceDay))
+        let shift = clampedDesired - currentRaceDay
+        guard shift != 0 else { return baseTemplates }
+
+        var shifted: [SessionTemplate] = []
+        for template in baseTemplates {
+            let newDay = template.dayOffset + shift
+            guard newDay >= 0 && newDay <= 6 else { continue }
+            shifted.append(SessionTemplate(
+                dayOffset: newDay,
+                type: template.type,
+                intensity: template.intensity,
+                durationSeconds: template.durationSeconds,
+                elevationFraction: template.elevationFraction,
+                description: template.description,
+                distanceKmOverride: template.distanceKmOverride
+            ))
+        }
+
+        let usedDays = Set(shifted.map(\.dayOffset))
+        for day in 0...6 where !usedDays.contains(day) {
+            shifted.append(tpl(day, .rest, .easy, 0, 0, "Rest day. Normal weekly start."))
+        }
+
+        return shifted.sorted { $0.dayOffset < $1.dayOffset }
     }
 
     // MARK: - Post-Race Recovery (week after B-race)
