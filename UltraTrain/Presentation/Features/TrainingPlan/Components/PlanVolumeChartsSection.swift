@@ -233,15 +233,18 @@ struct PlanVolumeChartsSection: View {
                 .foregroundStyle(Color.mint.opacity(0.08))
             }
 
-            // Current week, filled accent pill
+            // Current week, filled accent pill.
             // Shortened RuleMark (yEnd ~60% of max) keeps the NOW badge inside
             // the plot area so it never overlaps the summary stats above.
-            // Annotation alignment flips toward the chart's interior when the
-            // current week sits within ~2 weeks of either edge so the pill
-            // never gets clipped against the left/right plot boundary
-            // (.fit(to: .chart) alone left the "N" of "NOW" cut on Week 1
-            // and would do the same in the final 2 weeks).
-            if let currentWeek = dataPoints.first(where: \.isCurrentWeek) {
+            // The pill is suppressed entirely on the first/last few weeks of
+            // the plan: even with alignment flipping the pill's visual centre
+            // sits 1-2 columns away from the actual rule mark (Week 1 with
+            // .leading anchor visually reads as W2-W3), which is more
+            // confusing than just not showing it. Edge buffer scales with
+            // plan length so short plans still get a NOW pill in the middle
+            // few weeks.
+            if let currentWeek = dataPoints.first(where: \.isCurrentWeek),
+               shouldShowNowPill(weekNumber: currentWeek.weekNumber) {
                 RuleMark(
                     x: .value("Current", currentWeek.weekNumber),
                     yStart: .value("Start", 0),
@@ -251,7 +254,6 @@ struct PlanVolumeChartsSection: View {
                     .lineStyle(StrokeStyle(lineWidth: 1))
                     .annotation(
                         position: .top,
-                        alignment: nowPillAlignment(weekNumber: currentWeek.weekNumber),
                         spacing: 2,
                         overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))
                     ) {
@@ -644,18 +646,19 @@ struct PlanVolumeChartsSection: View {
         return base * 0.6
     }
 
-    /// Horizontal alignment of the "NOW" pill relative to its rule mark.
-    /// `.center` for middle weeks; flips inward at the edges so the pill
-    /// never overflows the chart on early or late weeks. Edge threshold
-    /// scales with plan length: 2 weeks on each side for typical plans,
-    /// 1 week for very short plans (≤6 weeks) so we don't accidentally
-    /// reposition the pill on most of the plan.
-    private func nowPillAlignment(weekNumber: Int) -> Alignment {
+    /// Whether the "NOW" pill should render for the given week. Returns
+    /// false on the first / last few weeks of the plan so the pill is
+    /// never visually misaligned with the rule mark it points to. Edge
+    /// buffer scales with plan length so short prep plans still get a
+    /// NOW indicator in their middle weeks:
+    /// * 12+ week plans: hide first 3 + last 3 (1-3 / N-2..N).
+    /// * 8-11 week plans: hide first 2 + last 2.
+    /// * ≤7 week plans: hide first 1 + last 1.
+    private func shouldShowNowPill(weekNumber: Int) -> Bool {
         let total = dataPoints.count
-        let edgeThreshold = total <= 6 ? 1 : 2
-        if weekNumber <= edgeThreshold { return .leading }
-        if weekNumber > total - edgeThreshold { return .trailing }
-        return .center
+        guard total > 0 else { return false }
+        let edgeBuffer = max(1, min(3, total / 5))
+        return weekNumber > edgeBuffer && weekNumber <= total - edgeBuffer
     }
 
     private var peakWeekValue: String? {
