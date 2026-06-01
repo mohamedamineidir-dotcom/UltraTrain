@@ -163,20 +163,28 @@ struct PlanVolumeChartsSection: View {
             //    losing the phase narrative.
             ForEach(phaseSegments) { segment in
                 if segment.points.count == 1, let only = segment.points.first {
-                    // Single-week segment (athlete has just validated
-                    // W1). Swift Charts can't draw a Line or Area with
-                    // one point, so render a thin phase-coloured
-                    // vertical stem from baseline up to the completed
-                    // value. No permanent dot on top, dots are
-                    // reserved for the drag-inspect interaction so the
-                    // chart stays clean while idle.
-                    RuleMark(
-                        x: .value("Week", only.weekNumber),
-                        yStart: .value("Floor", 0),
-                        yEnd: .value("Completed", completedValue(for: only))
-                    )
-                    .foregroundStyle(phaseColor(segment.phase))
-                    .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
+                    // Single-week segment. Swift Charts can't draw a
+                    // Line or Area from one point, so for the genuine
+                    // "week 1, no curve yet" state we render a thin
+                    // phase-coloured vertical stem from baseline up to
+                    // the completed value, giving the athlete something
+                    // to read before a curve exists.
+                    //
+                    // Once 2+ weeks are filled in (`phaseSegments.count
+                    // > 1`) a real curve is drawn, and any remaining
+                    // single-point segment is just a phase-transition
+                    // boundary already connected to the previous phase's
+                    // line, so the stem would be a redundant floating
+                    // bar. Suppress it in that case.
+                    if phaseSegments.count == 1 {
+                        RuleMark(
+                            x: .value("Week", only.weekNumber),
+                            yStart: .value("Floor", 0),
+                            yEnd: .value("Completed", completedValue(for: only))
+                        )
+                        .foregroundStyle(phaseColor(segment.phase))
+                        .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
+                    }
                 } else {
                     ForEach(segment.points) { point in
                         AreaMark(
