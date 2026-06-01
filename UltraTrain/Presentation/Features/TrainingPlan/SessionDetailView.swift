@@ -57,10 +57,6 @@ struct SessionDetailView: View {
                 } else {
                     statsSection
 
-                    if let athlete, session.type != .rest {
-                        paceTargetsSection(athlete: athlete)
-                    }
-
                     // Resolve the linked workout once. When present,
                     // WorkoutBlocksSection carries the athlete-facing
                     // structure + per-phase visual breakdown, the
@@ -71,6 +67,19 @@ struct SessionDetailView: View {
                         guard let id = session.intervalWorkoutId else { return nil }
                         return workouts.first(where: { $0.id == id && !$0.phases.isEmpty })
                     }()
+
+                    // Pace & HR targets card shows a single averaged
+                    // pace band for the whole session. That's helpful
+                    // for steady sessions (base endurance, long runs
+                    // with no pace variation) but misleading when the
+                    // workout has distinct paces per block: it averages
+                    // warm-up / work / recovery into one range that
+                    // matches none of them. For structured workouts the
+                    // per-block breakdown in WorkoutBlocksSection already
+                    // carries the real paces, so we suppress the card.
+                    if let athlete, session.type != .rest, resolvedWorkout == nil {
+                        paceTargetsSection(athlete: athlete)
+                    }
 
                     if resolvedWorkout == nil {
                         // No structured workout → keep the description
