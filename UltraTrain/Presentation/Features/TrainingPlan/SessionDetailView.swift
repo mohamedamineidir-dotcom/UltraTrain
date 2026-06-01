@@ -81,10 +81,14 @@ struct SessionDetailView: View {
                         paceTargetsSection(athlete: athlete)
                     }
 
-                    if resolvedWorkout == nil {
-                        // No structured workout → keep the description
-                        // text card as the only place the athlete sees
-                        // what they're meant to do.
+                    // The coach card is a richer, athlete-facing version
+                    // of the description (same guidance, plus the "why" and
+                    // a concrete pace/HR target), so it makes the plain
+                    // Description card redundant. Show Description only when
+                    // there's neither a structured workout nor a coach card,
+                    // i.e. it's the only place left to say what to do.
+                    let hasCoachCard = !(session.coachAdvice?.isEmpty ?? true)
+                    if resolvedWorkout == nil && !hasCoachCard {
                         descriptionSection
                     }
 
@@ -576,7 +580,7 @@ struct SessionDetailView: View {
                                 .foregroundStyle(metricsTint)
                         }
                     } else {
-                        let range = PaceCalculator.paceRange(for: session.intensity, thresholdPacePerKm: thresholdPace)
+                        let range = targetPaceRange(athlete: athlete, thresholdPace: thresholdPace)
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Target Pace")
                                 .font(.caption)
@@ -606,6 +610,18 @@ struct SessionDetailView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .futuristicGlassStyle(phaseTint: metricsTint)
         }
+    }
+
+    /// Target pace range (sec/km) for the card. Easy runs use the
+    /// calibrated road profile (via RoadEasyPace) so the card matches the
+    /// coach card exactly; every other intensity keeps the threshold-based
+    /// estimate.
+    private func targetPaceRange(athlete: Athlete, thresholdPace: TimeInterval) -> (min: TimeInterval, max: TimeInterval) {
+        if session.intensity == .easy, let easy = RoadEasyPace.range(for: athlete) {
+            return (easy.lowerBound, easy.upperBound)
+        }
+        let range = PaceCalculator.paceRange(for: session.intensity, thresholdPacePerKm: thresholdPace)
+        return (range.min, range.max)
     }
 
     private var showsEffortInsteadOfPace: Bool {
