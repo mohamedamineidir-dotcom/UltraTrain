@@ -13638,6 +13638,54 @@
         }
       }
     },
+    "profile.deleteRace.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this race?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer cette course ?"
+          }
+        }
+      }
+    },
+    "profile.deleteRace.confirm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Race"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer la course"
+          }
+        }
+      }
+    },
+    "profile.deleteRace.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ will be removed from your calendar and your training plan will adapt around it. This can't be undone."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ sera retirée de votre calendrier et votre plan d'entraînement s'adaptera en conséquence. Cette action est irréversible."
+          }
+        }
+      }
+    },
     "profile.personalRecords" : {
       "localizations" : {
         "en" : {

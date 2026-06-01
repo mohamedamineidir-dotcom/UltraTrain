@@ -142,6 +142,9 @@ extension ProfileView {
             }
             .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 12))
             .swipeActions(edge: .trailing) {
+                Button("Delete", role: .destructive) {
+                    viewModel.raceToDelete = race
+                }
                 Button("Edit") {
                     viewModel.raceToEdit = race
                 }
@@ -152,12 +155,6 @@ extension ProfileView {
                     }
                     .tint(Theme.Colors.success)
                 }
-            }
-        }
-        .onDelete { indexSet in
-            let upcoming = viewModel.upcomingRaces
-            for index in indexSet {
-                Task { await viewModel.deleteRace(id: upcoming[index].id) }
             }
         }
     }
@@ -196,16 +193,13 @@ extension ProfileView {
             }
             .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 12))
             .swipeActions(edge: .trailing) {
+                Button("Delete", role: .destructive) {
+                    viewModel.raceToDelete = race
+                }
                 Button("Edit") {
                     viewModel.raceToEdit = race
                 }
                 .tint(.blue)
-            }
-        }
-        .onDelete { indexSet in
-            let completed = viewModel.completedRaces
-            for index in indexSet {
-                Task { await viewModel.deleteRace(id: completed[index].id) }
             }
         }
     }

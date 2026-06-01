@@ -22,6 +22,10 @@ final class ProfileViewModel {
     var showingEditAthlete = false
     var showingAddRace = false
     var raceToEdit: Race?
+    /// Race pending deletion, drives the confirmation dialog. Deleting a
+    /// race re-adapts the active plan (via `deleteRace`), so the action is
+    /// gated behind an explicit confirm rather than firing on swipe.
+    var raceToDelete: Race?
     var planWasAutoAdjusted = false
     /// True while a logged PR is being persisted and the active plan's
     /// future sessions are being walked + their pace targets refreshed.

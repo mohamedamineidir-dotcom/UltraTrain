@@ -245,6 +245,30 @@ struct ProfileView: View {
                     finishEstimateRepository: finishEstimateRepository
                 )
             }
+            .confirmationDialog(
+                Text(String(localized: "profile.deleteRace.title", defaultValue: "Delete this race?")),
+                isPresented: Binding(
+                    get: { viewModel.raceToDelete != nil },
+                    set: { if !$0 { viewModel.raceToDelete = nil } }
+                ),
+                titleVisibility: .visible,
+                presenting: viewModel.raceToDelete
+            ) { race in
+                Button(role: .destructive) {
+                    Task { await viewModel.deleteRace(id: race.id) }
+                } label: {
+                    Text(String(localized: "profile.deleteRace.confirm", defaultValue: "Delete Race"))
+                }
+                Button(role: .cancel) {} label: {
+                    Text(String(localized: "common.cancel", defaultValue: "Cancel"))
+                }
+            } message: { race in
+                Text(String(
+                    format: String(localized: "profile.deleteRace.message",
+                                   defaultValue: "%@ will be removed from your calendar and your training plan will adapt around it. This can't be undone."),
+                    race.name
+                ))
+            }
         }
     }
 
