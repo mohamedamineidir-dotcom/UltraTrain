@@ -90,10 +90,10 @@ struct PaywallPlanCard: View {
                     lineWidth: isSelected ? 2 : 1
                 )
         )
-        .overlay(alignment: .top) {
+        .overlay(alignment: .topTrailing) {
             if isRecommended {
                 bestValuePill
-                    .offset(y: -8)
+                    .offset(x: -Theme.Spacing.md, y: -9)
             }
         }
         .shadow(
@@ -104,23 +104,25 @@ struct PaywallPlanCard: View {
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
-    /// Floats above the card's top border so it doesn't change the card's
+    /// Small corner badge notched into the card's top-right border, away
+    /// from the savings pill in the lower-left so the two no longer crowd
+    /// each other. Floats above the border so it doesn't change the card's
     /// measured height. Lives on the recommended (yearly) plan only.
     private var bestValuePill: some View {
-        HStack(spacing: 3) {
+        HStack(spacing: 2) {
             Image(systemName: "star.fill")
-                .font(.system(size: 8, weight: .bold))
+                .font(.system(size: 7, weight: .bold))
             Text("paywall.bestValue")
-                .font(.system(size: 9, weight: .bold))
-                .tracking(0.4)
+                .font(.system(size: 8, weight: .bold))
+                .tracking(0.3)
         }
         .foregroundStyle(.black)
-        .padding(.horizontal, 7)
+        .padding(.horizontal, 6)
         .padding(.vertical, 2)
         .background(
             Capsule().fill(Theme.Gradients.goldPremium)
         )
-        .shadow(color: Theme.Colors.goldAccent.opacity(0.4), radius: 5, y: 2)
+        .shadow(color: Theme.Colors.goldAccent.opacity(0.4), radius: 4, y: 1)
     }
 
     /// "1 week free" pill. Coral-tinted so it differs from the gold
