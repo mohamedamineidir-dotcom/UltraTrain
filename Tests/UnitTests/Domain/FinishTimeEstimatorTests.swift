@@ -1058,4 +1058,57 @@ struct FinishTimeEstimatorTests {
         #expect(recentSpread < oldSpread,
             "Recent PB (\(recentSpread) spread) should produce tighter range than old PB (\(oldSpread))")
     }
+
+    // MARK: - quickEstimate (B/C-race day session seeding)
+
+    private func makeRoadRace(
+        distanceKm: Double = 10,
+        elevationGainM: Double = 10,
+        goal: RaceGoal = .finish
+    ) -> Race {
+        Race(
+            id: UUID(), name: "Road race",
+            date: Date.now.adding(days: 30),
+            distanceKm: distanceKm, elevationGainM: elevationGainM,
+            elevationLossM: elevationGainM,
+            priority: .bRace, goalType: goal, checkpoints: [],
+            terrainDifficulty: .easy, raceType: .road
+        )
+    }
+
+    @Test("quickEstimate projects from the athlete's PB, not a generic default")
+    func quickEstimateUsesPersonalBest() {
+        var pbAthlete = athlete
+        pbAthlete.experienceLevel = .advanced
+        pbAthlete.personalBests = [
+            // 37:00 over 10K.
+            PersonalBest(id: UUID(), distance: .tenK, timeSeconds: 2220, date: .now)
+        ]
+        let race = makeRoadRace()
+        let estimate = FinishTimeEstimator.quickEstimate(athlete: pbAthlete, race: race)
+
+        // Lands near the 37-min PB, nowhere near the ~1h31 experience
+        // heuristic (10.1 effective km × 9 min/km for an advanced athlete).
+        #expect(estimate > 2000 && estimate < 2700)
+        let generic = race.estimatedDuration(experience: .advanced)
+        #expect(estimate < generic * 0.7)
+    }
+
+    @Test("quickEstimate honours an explicit goal time")
+    func quickEstimateHonoursTargetTime() {
+        let race = makeRoadRace(goal: .targetTime(2400))
+        let estimate = FinishTimeEstimator.quickEstimate(athlete: athlete, race: race)
+        #expect(estimate == 2400)
+    }
+
+    @Test("quickEstimate falls back to the experience heuristic without fitness data")
+    func quickEstimateFallsBackWithoutData() {
+        var noData = athlete
+        noData.personalBests = []
+        noData.trailPersonalBests = []
+        noData.vmaKmh = nil
+        let race = makeRoadRace()
+        let estimate = FinishTimeEstimator.quickEstimate(athlete: noData, race: race)
+        #expect(estimate == race.estimatedDuration(experience: noData.experienceLevel))
+    }
 }

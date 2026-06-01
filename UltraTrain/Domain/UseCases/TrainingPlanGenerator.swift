@@ -276,7 +276,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     name: intRace.name,
                     distanceKm: intRace.distanceKm,
                     elevationGainM: intRace.elevationGainM,
-                    estimatedDurationSeconds: intRace.estimatedDuration(experience: athlete.experienceLevel),
+                    estimatedDurationSeconds: FinishTimeEstimator.quickEstimate(athlete: athlete, race: intRace),
                     goalType: intRace.goalType,
                     dayOffset: raceDayOffset
                 )
@@ -872,7 +872,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     intermediateRaceContext = .init(
                         name: intRace.name, distanceKm: intRace.distanceKm,
                         elevationGainM: intRace.elevationGainM,
-                        estimatedDurationSeconds: intRace.estimatedDuration(experience: athlete.experienceLevel),
+                        estimatedDurationSeconds: FinishTimeEstimator.quickEstimate(athlete: athlete, race: intRace),
                         goalType: intRace.goalType,
                         dayOffset: raceDayOffset
                     )

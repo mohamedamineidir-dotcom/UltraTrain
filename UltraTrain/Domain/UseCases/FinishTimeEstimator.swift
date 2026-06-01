@@ -160,6 +160,42 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         )
     }
 
+    // MARK: - Quick synchronous estimate
+
+    /// Fitness-aware finish-time estimate without the full async pipeline
+    /// (recent runs, weather, ML). Used to seed planned durations such as a
+    /// B/C-race day session, where a generic experience-level default
+    /// ("1h30 for any 10K") looks absurd next to a 37-minute PR.
+    ///
+    /// Order of preference:
+    /// 1. Explicit goal time, when the athlete set one.
+    /// 2. Projection from the athlete's PBs / VMA (Riegel + terrain), the
+    ///    same signal the real estimator uses for its day-0 prediction.
+    /// 3. Experience-level heuristic, only when there's no fitness signal.
+    ///
+    /// Mirrors the deterministic core of `execute` with form, calibration
+    /// and weather held neutral at 1.0 (those need data this path lacks).
+    static func quickEstimate(athlete: Athlete, race: Race) -> TimeInterval {
+        if case .targetTime(let time) = race.goalType { return time }
+
+        let estimator = FinishTimeEstimator()
+        let effectiveKm = race.effectiveDistanceKm
+        let pbPaces = estimator.pbsAsWeightedPaces(
+            athlete: athlete, race: race, raceEffectiveKm: effectiveKm
+        )
+        guard !pbPaces.isEmpty else {
+            return race.estimatedDuration(experience: athlete.experienceLevel)
+        }
+        let medianPace = estimator.weightedPercentile(pbPaces, p: 0.5)
+        let terrain = estimator.terrainMultiplier(race.terrainDifficulty)
+        let descent = estimator.descentPenalty(race)
+        let ultra = estimator.ultraFatigueMultiplier(
+            experienceLevel: athlete.experienceLevel,
+            raceDistanceKm: race.distanceKm
+        )
+        return effectiveKm * medianPace * terrain * descent * ultra
+    }
+
     // MARK: - PB-based prediction (Day-0 prediction support)
 
     /// Converts an athlete's PBs into target-race pace samples via
