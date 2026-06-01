@@ -1543,6 +1543,7 @@
 		DEC4FD264484050E257717FC /* LocalAchievementRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA8662FC702C131CB313315 /* LocalAchievementRepository.swift */; };
 		DEDAFD2F06F99DAD168761B1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B758A4B56B04735C8D81E67D /* Assets.xcassets */; };
 		DEFA7E3207AFE7E19F5E7900 /* WatchComplicationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27FA75252EE3C95C2C990821 /* WatchComplicationData.swift */; };
+		DF259A4AB589A671A910C727 /* PersonalBestDistance+UI.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDEE4FFC3488FA7C795FA916 /* PersonalBestDistance+UI.swift */; };
 		DF350FBB53A2AE11463AAEFB /* CSVExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE27523E1E8B64C7132153C4 /* CSVExporter.swift */; };
 		DF53E593D5089911437D3CF1 /* WidgetDataKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D7817E939E1BC2A2E011683 /* WidgetDataKeys.swift */; };
 		DFB62C222C74570454DA686F /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6835133C2E79A4761E97804E /* NotificationService.swift */; };
@@ -3416,6 +3417,7 @@
 		DDB01C30E44612C7B7A75966 /* ChallengeProgressCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeProgressCalculator.swift; sourceTree = "<group>"; };
 		DDB2299BCB5EFC61438E2DCC /* SafetyConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafetyConfig.swift; sourceTree = "<group>"; };
 		DDDBF0B34C407888F8DA577C /* PacingZoneIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacingZoneIndicator.swift; sourceTree = "<group>"; };
+		DDEE4FFC3488FA7C795FA916 /* PersonalBestDistance+UI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersonalBestDistance+UI.swift"; sourceTree = "<group>"; };
 		DE107D49C1E54C21B6E6AECC /* RecoveryStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoveryStatus.swift; sourceTree = "<group>"; };
 		DE27523E1E8B64C7132153C4 /* CSVExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVExporter.swift; sourceTree = "<group>"; };
 		DE440A2B60F539DFA980B299 /* EnvironmentValues+SyncStatusMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EnvironmentValues+SyncStatusMonitor.swift"; sourceTree = "<group>"; };
@@ -5487,6 +5489,7 @@
 				498E7B9A8336CF6D6D848805 /* EditRaceSheet.swift */,
 				1A30509F4B3F5693228084B5 /* EditRaceSheet+Sections.swift */,
 				5476978CD370769D81CD2AED /* HRZoneConfigurationView.swift */,
+				DDEE4FFC3488FA7C795FA916 /* PersonalBestDistance+UI.swift */,
 				0EE5997A321D9B6A3BED92B3 /* PersonalRecordsView.swift */,
 				B1D95D1D72E03AB1BC55D04A /* ProfileView.swift */,
 				1FF77AC45481F960F483C467 /* ProfileView+Sections.swift */,
@@ -7641,6 +7644,7 @@
 				253458C4CD22ED2DA82E7D5D /* PerformanceTrendSparkline.swift in Sources */,
 				6327B1C446009AB07257277A /* PerformanceTrendType.swift in Sources */,
 				B9054477693E62B84A678CD2 /* PersonalBest.swift in Sources */,
+				DF259A4AB589A671A910C727 /* PersonalBestDistance+UI.swift in Sources */,
 				FEE99E07323B086A07F5EC84 /* PersonalBestsStepView.swift in Sources */,
 				C109B28C3FD70D0DD31D38DC /* PersonalRecord.swift in Sources */,
 				4F06BF44020B39AAB1778BC6 /* PersonalRecordCalculator.swift in Sources */,

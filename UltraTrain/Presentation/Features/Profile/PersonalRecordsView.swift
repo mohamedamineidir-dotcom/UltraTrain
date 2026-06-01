@@ -8,6 +8,7 @@ import SwiftUI
 /// active plan.
 struct PersonalRecordsView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     @State var viewModel: ProfileViewModel
     @State private var showingEditSheet = false
     @State private var presetDistance: PersonalBestDistance? = nil
@@ -35,7 +36,10 @@ struct PersonalRecordsView: View {
             .padding(.top, Theme.Spacing.sm)
             .padding(.bottom, Theme.Spacing.xxl)
         }
-        .background(Theme.Colors.background.ignoresSafeArea())
+        .background(
+            Theme.Gradients.futuristicBackground(colorScheme: colorScheme)
+                .ignoresSafeArea()
+        )
         .navigationTitle(Text(String(localized: "pr.title", defaultValue: "Personal records")))
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
@@ -135,7 +139,26 @@ struct PersonalRecordsView: View {
 
     @ViewBuilder
     private func row(for estimate: MultiDistanceEstimator.Estimate) -> some View {
+        let accent = estimate.distance.accent
+        let isRecorded = estimate.recordedPR != nil
         HStack(alignment: .center, spacing: Theme.Spacing.md) {
+            // Per-distance identity disc, mirrors the session-detail
+            // header treatment so the page reads as part of the app.
+            // Recorded PRs glow in their distance accent; projections
+            // sit muted so the eye lands on the times the athlete has
+            // actually earned.
+            ZStack {
+                Circle()
+                    .fill(accent.opacity(isRecorded ? 0.16 : 0.07))
+                Circle()
+                    .stroke(accent.opacity(isRecorded ? 0.4 : 0.18), lineWidth: 1)
+                Image(systemName: estimate.distance.icon)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(isRecorded ? accent : Theme.Colors.secondaryLabel)
+            }
+            .frame(width: 40, height: 40)
+            .accessibilityHidden(true)
+
             VStack(alignment: .leading, spacing: 4) {
                 Text(estimate.distance.shortLabel)
                     .font(.system(.headline, design: .rounded, weight: .semibold))
@@ -148,9 +171,7 @@ struct PersonalRecordsView: View {
             VStack(alignment: .trailing, spacing: 4) {
                 Text(timeString(estimate))
                     .font(.system(.title3, design: .rounded, weight: .bold).monospacedDigit())
-                    .foregroundStyle(estimate.recordedPR != nil
-                                     ? Theme.Colors.accentColor
-                                     : Theme.Colors.label)
+                    .foregroundStyle(isRecorded ? accent : Theme.Colors.label)
                 if let pace = estimate.pacePerKm {
                     Text("\(formatPace(pace))/km")
                         .font(.caption.monospacedDigit())
@@ -165,16 +186,17 @@ struct PersonalRecordsView: View {
 
     @ViewBuilder
     private func statusRow(for estimate: MultiDistanceEstimator.Estimate) -> some View {
+        let accent = estimate.distance.accent
         HStack(spacing: 6) {
             if let pr = estimate.recordedPR {
                 Text("PR")
                     .font(.caption2.weight(.heavy))
                     .tracking(0.5)
-                    .foregroundStyle(Theme.Colors.accentColor)
+                    .foregroundStyle(accent)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
                     .background(
-                        Capsule().fill(Theme.Colors.accentColor.opacity(0.18))
+                        Capsule().fill(accent.opacity(0.18))
                     )
                 Text(pr.date, format: .dateTime.month(.abbreviated).year())
                     .font(.caption)
