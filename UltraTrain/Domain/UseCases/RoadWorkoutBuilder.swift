@@ -128,8 +128,11 @@ enum RoadWorkoutBuilder {
             let paceStr = RoadCoachAdviceGenerator.formatPace(pace)
             compactName = "\(template.repCount)×\(template.repDistanceM)m @ \(paceStr)/km"
         } else if template.repCount > 1 {
-            let mins = Int(template.totalWorkMinutes) / template.repCount
-            compactName = "\(template.repCount)×\(mins)min @ T-pace"
+            // Per-rep duration in seconds, not floored to whole minutes.
+            // Short reps (e.g. 6×20s strides) used to integer-divide to
+            // 0 and render "6×0min", so format sub-minute reps in seconds.
+            let perRepSeconds = Int((template.totalWorkMinutes * 60).rounded()) / template.repCount
+            compactName = "\(template.repCount)×\(Self.formatRepDuration(perRepSeconds)) @ T-pace"
         } else {
             compactName = template.name
         }
@@ -147,6 +150,16 @@ enum RoadWorkoutBuilder {
     }
 
     // MARK: - Helpers
+
+    /// Compact per-rep duration for workout names. Sub-minute reps read
+    /// in seconds ("20sec"), whole minutes drop the seconds ("5min"),
+    /// and mixed durations keep both ("2m30s").
+    private static func formatRepDuration(_ seconds: Int) -> String {
+        if seconds < 60 { return "\(seconds)sec" }
+        let mins = seconds / 60
+        let secRemainder = seconds % 60
+        return secRemainder > 0 ? "\(mins)m\(secRemainder)s" : "\(mins)min"
+    }
 
     private static func intensityForZone(_ zone: RoadIntervalLibrary.PaceZone) -> Intensity {
         switch zone {

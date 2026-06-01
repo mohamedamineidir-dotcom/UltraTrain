@@ -110,9 +110,18 @@ struct WorkoutBlockCard: View {
     private var repDescription: String {
         switch phase.trigger {
         case .duration(let seconds):
-            let perRep = Int(seconds) / 60
-            let secRemainder = Int(seconds) % 60
-            let repText = secRemainder > 0 ? "\(perRep)m\(secRemainder)s" : "\(perRep)min"
+            let totalSec = Int(seconds)
+            let perRep = totalSec / 60
+            let secRemainder = totalSec % 60
+            let repText: String
+            if perRep == 0 {
+                // Sub-minute reps: just "20s", no redundant "0m" prefix.
+                repText = "\(secRemainder)s"
+            } else if secRemainder > 0 {
+                repText = "\(perRep)m\(secRemainder)s"
+            } else {
+                repText = "\(perRep)min"
+            }
             return "\(repText) per rep at \(phase.targetIntensity.displayName)"
         case .distance(let km):
             let meters = Int(km * 1000)
