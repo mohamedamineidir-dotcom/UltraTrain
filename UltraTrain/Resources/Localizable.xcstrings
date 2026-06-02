@@ -13130,6 +13130,70 @@
         }
       }
     },
+    "pr.block.fitness" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current fitness"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forme actuelle"
+          }
+        }
+      }
+    },
+    "pr.block.fitness.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Equivalent times from your best recent result"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temps équivalents d'après votre meilleur résultat récent"
+          }
+        }
+      }
+    },
+    "pr.block.official" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your records"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vos records"
+          }
+        }
+      }
+    },
+    "pr.edit.currentBest" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Best %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Record %@"
+          }
+        }
+      }
+    },
     "pr.edit.date" : {
       "localizations" : {
         "en" : {
@@ -13162,18 +13226,18 @@
         }
       }
     },
-    "pr.edit.currentBest" : {
+    "pr.edit.distance" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Best %@"
+            "value" : "Distance"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Record %@"
+            "value" : "Distance"
           }
         }
       }
@@ -13194,38 +13258,6 @@
         }
       }
     },
-    "pr.edit.timePrompt" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Set your finish time"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Définissez votre temps"
-          }
-        }
-      }
-    },
-    "pr.edit.distance" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Distance"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Distance"
-          }
-        }
-      }
-    },
     "pr.edit.time" : {
       "localizations" : {
         "en" : {
@@ -13238,6 +13270,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Temps"
+          }
+        }
+      }
+    },
+    "pr.edit.timePrompt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set your finish time"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Définissez votre temps"
           }
         }
       }
@@ -13354,7 +13402,24 @@
         }
       }
     },
+    "pr.row.estimated" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimated"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimé"
+          }
+        }
+      }
+    },
     "pr.row.projected" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -13371,6 +13436,7 @@
       }
     },
     "pr.row.unknown" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -13382,70 +13448,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ajoutez un record pour estimer"
-          }
-        }
-      }
-    },
-    "pr.block.official" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your records"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vos records"
-          }
-        }
-      }
-    },
-    "pr.block.fitness" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Current fitness"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Forme actuelle"
-          }
-        }
-      }
-    },
-    "pr.block.fitness.subtitle" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Equivalent times from your best recent result"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Temps équivalents d'après votre meilleur résultat récent"
-          }
-        }
-      }
-    },
-    "pr.row.estimated" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estimated"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estimé"
           }
         }
       }
@@ -13467,6 +13469,7 @@
       }
     },
     "pr.section.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -13702,22 +13705,6 @@
         }
       }
     },
-    "profile.deleteRace.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete this race?"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Supprimer cette course ?"
-          }
-        }
-      }
-    },
     "profile.deleteRace.confirm" : {
       "localizations" : {
         "en" : {
@@ -13746,6 +13733,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ sera retirée de votre calendrier et votre plan d'entraînement s'adaptera en conséquence. Cette action est irréversible."
+          }
+        }
+      }
+    },
+    "profile.deleteRace.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this race?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer cette course ?"
           }
         }
       }
