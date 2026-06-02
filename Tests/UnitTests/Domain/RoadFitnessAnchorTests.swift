@@ -103,6 +103,25 @@ struct RoadFitnessAnchorTests {
         #expect(pace[.halfMarathon]! < pace[.marathon]!)
     }
 
+    @Test("Current fitness is at least PR level for recent PRs")
+    func currentFitnessAtLeastPRLevel() {
+        // Recent (2-3 month) PRs: 5K 17:45, 10K 36:00. The estimate must
+        // never read slower than the athlete's own recent results.
+        let athlete = makeAthlete(personalBests: [
+            pb(.fiveK, 1065, daysAgo: 60),
+            pb(.tenK, 2160, daysAgo: 90),
+            pb(.halfMarathon, 4898, daysAgo: 60),
+            pb(.marathon, 10212, daysAgo: 60)
+        ])
+        let proj = MultiDistanceEstimator.fitnessProjections(for: athlete)!
+        let time = Dictionary(uniqueKeysWithValues: proj.map { ($0.distance, $0.projectedSeconds ?? 0) })
+        // 5K estimate at least as fast as the 5K PR (the 10K is a stronger
+        // performance, so it can be a touch faster), and the 10K estimate
+        // tracks the 10K PR rather than ballooning past it.
+        #expect(time[.fiveK]! <= 1065)
+        #expect(time[.tenK]! <= 2160 + 5)
+    }
+
     @Test("Fitness projections fall back to VMA, else nil")
     func projectionsVMAFallback() {
         #expect(MultiDistanceEstimator.fitnessProjections(for: makeAthlete(vmaKmh: 18.0)) != nil)

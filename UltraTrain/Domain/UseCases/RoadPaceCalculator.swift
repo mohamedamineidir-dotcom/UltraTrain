@@ -174,7 +174,16 @@ enum RoadPaceCalculator {
                 fromDistanceKm: pb.distance.distanceKm,
                 toDistanceKm: 5.0
             )
-            return equivalent / max(pb.recencyWeight(relativeTo: referenceDate), 0.85)
+            // A recent result IS current fitness, it must project at face
+            // value so the estimate never reads slower than a PR the
+            // athlete just ran. Only genuinely stale results get marked
+            // down, gently and capped. (The previous `/ max(recency, 0.85)`
+            // inflated even a 2-month-old PR by ~17%, which is what made
+            // "current fitness" come out slower than the PRs themselves.)
+            let ageDays = max(0, referenceDate.timeIntervalSince(pb.date) / 86400.0)
+            let staleDays = max(0, ageDays - 90)
+            let markup = 1.0 + min(0.12, staleDays / 365.0 * 0.10)
+            return equivalent * markup
         }.min()
     }
 
