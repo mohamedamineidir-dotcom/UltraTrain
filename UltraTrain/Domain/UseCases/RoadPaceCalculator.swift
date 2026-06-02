@@ -164,27 +164,63 @@ enum RoadPaceCalculator {
     /// distance is a stronger signal changes.
     static func bestFitness5KTime(
         personalBests: [PersonalBest],
+        recentRuns: [CompletedRun] = [],
         referenceDate: Date = .now
     ) -> TimeInterval? {
-        let candidates = personalBests.filter { $0.timeSeconds > 0 }
-        guard !candidates.isEmpty else { return nil }
-        return candidates.map { pb in
-            let equivalent = riegelEquivalent(
-                fromTime: pb.timeSeconds,
-                fromDistanceKm: pb.distance.distanceKm,
-                toDistanceKm: 5.0
-            )
-            // A recent result IS current fitness, it must project at face
-            // value so the estimate never reads slower than a PR the
-            // athlete just ran. Only genuinely stale results get marked
-            // down, gently and capped. (The previous `/ max(recency, 0.85)`
-            // inflated even a 2-month-old PR by ~17%, which is what made
-            // "current fitness" come out slower than the PRs themselves.)
-            let ageDays = max(0, referenceDate.timeIntervalSince(pb.date) / 86400.0)
-            let staleDays = max(0, ageDays - 90)
-            let markup = 1.0 + min(0.12, staleDays / 365.0 * 0.10)
-            return equivalent * markup
-        }.min()
+        // PR candidates: Riegel-equivalent at 5K, marked up gently if stale.
+        var candidates: [TimeInterval] = personalBests
+            .filter { $0.timeSeconds > 0 }
+            .map { pb in
+                let equivalent = riegelEquivalent(
+                    fromTime: pb.timeSeconds,
+                    fromDistanceKm: pb.distance.distanceKm,
+                    toDistanceKm: 5.0
+                )
+                return equivalent * stalenessMarkup(date: pb.date, referenceDate: referenceDate)
+            }
+
+        // Recent training efforts also reveal fitness. Each run is projected
+        // to a 5K-equivalent the same way (Riegel on effective km). Because
+        // we keep only the FASTEST candidate, easy runs are ignored and only
+        // a sustained effort that beats the athlete's PR-implied fitness
+        // moves the anchor, so current fitness improves as training produces
+        // faster runs even without a freshly logged PR.
+        candidates += recentRuns.compactMap {
+            runFitness5KTime($0, referenceDate: referenceDate)
+        }
+
+        return candidates.min()
+    }
+
+    /// 5K-equivalent (sec) implied by a completed run, or nil when the run
+    /// is too short, too old, or too downhill to trust as a fitness signal.
+    private static func runFitness5KTime(
+        _ run: CompletedRun,
+        referenceDate: Date
+    ) -> TimeInterval? {
+        let ageDays = referenceDate.timeIntervalSince(run.date) / 86400.0
+        guard ageDays >= 0, ageDays <= 90 else { return nil }
+        let effectiveKm = run.distanceKm + run.elevationGainM / 100.0
+        guard run.distanceKm >= 3.0, effectiveKm >= 3.0, run.duration > 0 else { return nil }
+        // Effective km credits climbing but not descent, so a big net
+        // downhill would read faster than the effort warrants, exclude it.
+        guard run.elevationLossM - run.elevationGainM <= 150 else { return nil }
+
+        let t5K = riegelEquivalent(
+            fromTime: run.duration, fromDistanceKm: effectiveKm, toDistanceKm: 5.0
+        )
+        guard t5K >= 720 else { return nil }  // sanity floor (~world-class 5K)
+        return t5K * stalenessMarkup(date: run.date, referenceDate: referenceDate)
+    }
+
+    /// Gentle staleness markup shared by PRs and runs: a recent result
+    /// projects at face value (current fitness must never read slower than
+    /// something the athlete just ran), then a small linear markup capped at
+    /// 12% for genuinely old results.
+    private static func stalenessMarkup(date: Date, referenceDate: Date) -> Double {
+        let ageDays = max(0, referenceDate.timeIntervalSince(date) / 86400.0)
+        let staleDays = max(0, ageDays - 90)
+        return 1.0 + min(0.12, staleDays / 365.0 * 0.10)
     }
 
     // MARK: - Riegel Race Equivalence

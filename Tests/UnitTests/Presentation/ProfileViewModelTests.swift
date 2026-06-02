@@ -97,6 +97,7 @@ struct ProfileViewModelTests {
             raceRepository: raceRepo,
             planRepository: planRepo,
             planAutoAdjustmentService: adjustmentService,
+            runRepository: MockRunRepository(),
             widgetDataWriter: writer
         )
         return (vm, adjustmentService)

@@ -65,11 +65,14 @@ enum MultiDistanceEstimator {
     /// Returns nil when there's no fitness signal at all (no PR, no VMA).
     static func fitnessProjections(
         for athlete: Athlete,
+        recentRuns: [CompletedRun] = [],
         referenceDate: Date = .now
     ) -> [Estimate]? {
         let anchor5KTime: TimeInterval
         if let best = RoadPaceCalculator.bestFitness5KTime(
-            personalBests: athlete.personalBests, referenceDate: referenceDate
+            personalBests: athlete.personalBests,
+            recentRuns: recentRuns,
+            referenceDate: referenceDate
         ) {
             anchor5KTime = best
         } else if let vma = athlete.vmaKmh, vma > 0 {

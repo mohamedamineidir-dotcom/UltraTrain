@@ -19,7 +19,9 @@ struct PersonalRecordsView: View {
             VStack(spacing: Theme.Spacing.lg) {
                 if let athlete = viewModel.athlete {
                     let officialPRs = sortedOfficialPRs(athlete)
-                    let fitness = MultiDistanceEstimator.fitnessProjections(for: athlete)
+                    let fitness = MultiDistanceEstimator.fitnessProjections(
+                        for: athlete, recentRuns: viewModel.recentRuns
+                    )
                     if officialPRs.isEmpty && fitness == nil {
                         emptyStateCard
                     } else {

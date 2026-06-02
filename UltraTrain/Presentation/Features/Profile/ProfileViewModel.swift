@@ -11,12 +11,17 @@ final class ProfileViewModel {
     private let raceRepository: any RaceRepository
     private let planRepository: any TrainingPlanRepository
     private let planAutoAdjustmentService: any PlanAutoAdjustmentService
+    private let runRepository: any RunRepository
     private let widgetDataWriter: WidgetDataWriter
 
     // MARK: - State
 
     var athlete: Athlete?
     var races: [Race] = []
+    /// Recent completed runs, used to let the "current fitness" estimate
+    /// evolve as the athlete trains (a faster sustained effort improves it,
+    /// no new PR required). Loaded alongside the athlete.
+    var recentRuns: [CompletedRun] = []
     var isLoading = false
     var error: String?
     var showingEditAthlete = false
@@ -40,12 +45,14 @@ final class ProfileViewModel {
         raceRepository: any RaceRepository,
         planRepository: any TrainingPlanRepository,
         planAutoAdjustmentService: any PlanAutoAdjustmentService,
+        runRepository: any RunRepository,
         widgetDataWriter: WidgetDataWriter
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
         self.planRepository = planRepository
         self.planAutoAdjustmentService = planAutoAdjustmentService
+        self.runRepository = runRepository
         self.widgetDataWriter = widgetDataWriter
     }
 
@@ -56,8 +63,12 @@ final class ProfileViewModel {
         error = nil
 
         do {
-            athlete = try await athleteRepository.getAthlete()
+            let loadedAthlete = try await athleteRepository.getAthlete()
+            athlete = loadedAthlete
             races = try await raceRepository.getRaces()
+            if let loadedAthlete {
+                recentRuns = (try? await runRepository.getRuns(for: loadedAthlete.id)) ?? []
+            }
         } catch {
             self.error = error.localizedDescription
             Logger.app.error("Failed to load profile: \(error)")

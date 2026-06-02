@@ -85,6 +85,7 @@ struct ProfileView: View {
             raceRepository: raceRepository,
             planRepository: planRepository,
             planAutoAdjustmentService: planAutoAdjustmentService,
+            runRepository: runRepository,
             widgetDataWriter: widgetDataWriter
         ))
         self.athleteRepository = athleteRepository

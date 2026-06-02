@@ -36,6 +36,28 @@ struct RoadFitnessAnchorTests {
         )
     }
 
+    private func makeRun(
+        distanceKm: Double,
+        elevationGainM: Double = 20,
+        elevationLossM: Double = 20,
+        duration: TimeInterval,
+        daysAgo: Double
+    ) -> CompletedRun {
+        CompletedRun(
+            id: UUID(), athleteId: UUID(),
+            date: Date.now.addingTimeInterval(-daysAgo * 86400),
+            distanceKm: distanceKm,
+            elevationGainM: elevationGainM,
+            elevationLossM: elevationLossM,
+            duration: duration,
+            averageHeartRate: 150, maxHeartRate: 175,
+            averagePaceSecondsPerKm: duration / distanceKm,
+            gpsTrack: [], splits: [],
+            linkedSessionId: nil, linkedRaceId: nil,
+            notes: nil, pausedDuration: 0
+        )
+    }
+
     // MARK: - Anchor selection
 
     @Test("A stronger 10K overrides a stale, slower-equivalent 5K")
@@ -126,5 +148,46 @@ struct RoadFitnessAnchorTests {
     func projectionsVMAFallback() {
         #expect(MultiDistanceEstimator.fitnessProjections(for: makeAthlete(vmaKmh: 18.0)) != nil)
         #expect(MultiDistanceEstimator.fitnessProjections(for: makeAthlete()) == nil)
+    }
+
+    // MARK: - Evolving from completed runs (no new PR)
+
+    @Test("A fast sustained run improves the estimate without a new PR")
+    func runImprovesEstimate() {
+        let prs = [pb(.tenK, 2160, daysAgo: 30)]  // 36:00 10K
+        let baseline = RoadPaceCalculator.bestFitness5KTime(personalBests: prs)!
+        // A recent hard 8 km effort at ~3:25/km, faster than PR fitness.
+        let run = makeRun(distanceKm: 8, duration: 8 * 205, daysAgo: 5)
+        let withRun = RoadPaceCalculator.bestFitness5KTime(
+            personalBests: prs, recentRuns: [run]
+        )!
+        #expect(withRun < baseline)
+    }
+
+    @Test("Easy runs do not drag the estimate down")
+    func easyRunsIgnored() {
+        let prs = [pb(.fiveK, 1065, daysAgo: 30)]
+        let baseline = RoadPaceCalculator.bestFitness5KTime(personalBests: prs)!
+        let easy = makeRun(distanceKm: 15, duration: 15 * 320, daysAgo: 3)  // 5:20/km
+        let withEasy = RoadPaceCalculator.bestFitness5KTime(
+            personalBests: prs, recentRuns: [easy]
+        )!
+        #expect(abs(withEasy - baseline) < 0.5)
+    }
+
+    @Test("Stale, too-short, and downhill runs are excluded")
+    func runGuards() {
+        let prs = [pb(.fiveK, 1065, daysAgo: 30)]
+        let baseline = RoadPaceCalculator.bestFitness5KTime(personalBests: prs)!
+        let old = makeRun(distanceKm: 8, duration: 8 * 200, daysAgo: 200)
+        let short = makeRun(distanceKm: 2, duration: 2 * 200, daysAgo: 5)
+        let downhill = makeRun(
+            distanceKm: 8, elevationGainM: 0, elevationLossM: 600,
+            duration: 8 * 200, daysAgo: 5
+        )
+        let withAll = RoadPaceCalculator.bestFitness5KTime(
+            personalBests: prs, recentRuns: [old, short, downhill]
+        )!
+        #expect(abs(withAll - baseline) < 0.5)
     }
 }
