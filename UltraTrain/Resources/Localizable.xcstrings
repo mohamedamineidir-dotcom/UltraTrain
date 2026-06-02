@@ -13386,18 +13386,82 @@
         }
       }
     },
-    "pr.section.footer" : {
+    "pr.block.official" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Recorded PRs anchor your training paces. Projections are estimates from your other data. Log a PR at that distance to lock it in."
+            "value" : "Your records"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les records officiels ancrent vos allures d'entraînement. Les projections sont des estimations basées sur vos autres données. Enregistrez un record à cette distance pour le verrouiller."
+            "value" : "Vos records"
+          }
+        }
+      }
+    },
+    "pr.block.fitness" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current fitness"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forme actuelle"
+          }
+        }
+      }
+    },
+    "pr.block.fitness.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Equivalent times from your best recent result"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temps équivalents d'après votre meilleur résultat récent"
+          }
+        }
+      }
+    },
+    "pr.row.estimated" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimated"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimé"
+          }
+        }
+      }
+    },
+    "pr.section.footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your records are the times you've actually run. Current fitness projects equivalents across every distance from your best recent result, and updates as you train or log a faster PR."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vos records sont les temps que vous avez réellement réalisés. La forme actuelle projette des équivalents sur chaque distance à partir de votre meilleur résultat récent, et évolue à mesure que vous vous entraînez ou enregistrez un record plus rapide."
           }
         }
       }

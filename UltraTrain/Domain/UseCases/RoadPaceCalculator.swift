@@ -128,21 +128,15 @@ enum RoadPaceCalculator {
         vmaKmh: Double?,
         experience: ExperienceLevel
     ) -> Double {
-        // Priority 1: Direct 5K PR
-        if let fiveKPB = personalBests.first(where: { $0.distance == .fiveK && $0.timeSeconds > 0 }) {
-            let decayedTime = fiveKPB.timeSeconds / max(fiveKPB.recencyWeight(), 0.85)
-            return decayedTime / 5.0
-        }
-
-        // Priority 2: Riegel conversion from nearest PR
-        if let bestPB = bestMatchingPR(personalBests: personalBests, targetDistanceKm: 5.0) {
-            let equivalent5KTime = riegelEquivalent(
-                fromTime: bestPB.timeSeconds,
-                fromDistanceKm: bestPB.distance.distanceKm,
-                toDistanceKm: 5.0
-            )
-            let decayedTime = equivalent5KTime / max(bestPB.recencyWeight(), 0.85)
-            return decayedTime / 5.0
+        // Priority 1: best current-fitness signal across ALL PRs.
+        // We DON'T short-circuit on a same-distance PR, an athlete who
+        // logs a brilliant 10K but carries a stale, slower-equivalent 5K
+        // should see their paces track the 10K, not stay pinned to the
+        // 5K. `bestFitness5KTime` picks the fastest recency-decayed
+        // Riegel-equivalent, so the strongest recent performance wins and
+        // a new PR that beats the current estimate actually moves paces.
+        if let best5KTime = bestFitness5KTime(personalBests: personalBests) {
+            return best5KTime / 5.0
         }
 
         // Priority 3: Derive from VMA
@@ -155,6 +149,33 @@ enum RoadPaceCalculator {
         // Priority 4: Experience-based fallback
         // Based on typical 5K times by experience level
         return fallback5KPace(experience: experience)
+    }
+
+    /// The athlete's best current-fitness 5K-equivalent TIME (seconds),
+    /// taken as the fastest recency-decayed Riegel projection across every
+    /// road PR. This is the single fitness anchor the training paces and
+    /// the "current fitness" projections both hang off, so a new PR at any
+    /// distance that beats the current estimate immediately tightens paces
+    /// everywhere. Returns nil when the athlete has no road PR.
+    ///
+    /// For a lone 5K PR this is identical to the old direct-PR path
+    /// (Riegel 5K→5K is the time itself), so single-PR and already-
+    /// consistent athletes are unaffected; only the case where another
+    /// distance is a stronger signal changes.
+    static func bestFitness5KTime(
+        personalBests: [PersonalBest],
+        referenceDate: Date = .now
+    ) -> TimeInterval? {
+        let candidates = personalBests.filter { $0.timeSeconds > 0 }
+        guard !candidates.isEmpty else { return nil }
+        return candidates.map { pb in
+            let equivalent = riegelEquivalent(
+                fromTime: pb.timeSeconds,
+                fromDistanceKm: pb.distance.distanceKm,
+                toDistanceKm: 5.0
+            )
+            return equivalent / max(pb.recencyWeight(relativeTo: referenceDate), 0.85)
+        }.min()
     }
 
     // MARK: - Riegel Race Equivalence

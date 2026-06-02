@@ -53,6 +53,48 @@ enum MultiDistanceEstimator {
         }
     }
 
+    /// A single, internally CONSISTENT set of projections across the four
+    /// distances, all derived from one fitness anchor (the athlete's best
+    /// recency-weighted 5K-equivalent, or VMA as a fallback). Unlike
+    /// `estimates`, this never substitutes a same-distance PR, so the
+    /// paces are always monotonic (5K faster per km than 10K than Half
+    /// than Marathon). This is the "current fitness estimate" the athlete
+    /// reads as their equivalence across distances, and it moves whenever
+    /// a new PR beats the current anchor.
+    ///
+    /// Returns nil when there's no fitness signal at all (no PR, no VMA).
+    static func fitnessProjections(
+        for athlete: Athlete,
+        referenceDate: Date = .now
+    ) -> [Estimate]? {
+        let anchor5KTime: TimeInterval
+        if let best = RoadPaceCalculator.bestFitness5KTime(
+            personalBests: athlete.personalBests, referenceDate: referenceDate
+        ) {
+            anchor5KTime = best
+        } else if let vma = athlete.vmaKmh, vma > 0 {
+            anchor5KTime = (3600.0 / vma) * 1.02 * 5.0
+        } else {
+            return nil
+        }
+
+        return PersonalBestDistance.allCases.map { distance in
+            let time = distance == .fiveK
+                ? anchor5KTime
+                : RoadPaceCalculator.riegelEquivalent(
+                    fromTime: anchor5KTime,
+                    fromDistanceKm: 5.0,
+                    toDistanceKm: distance.distanceKm
+                )
+            return Estimate(
+                distance: distance,
+                projectedSeconds: time,
+                pacePerKm: time / distance.distanceKm,
+                recordedPR: nil
+            )
+        }
+    }
+
     // MARK: - Projection
 
     /// Projects a finish time at `distance` from the athlete's fitness.
