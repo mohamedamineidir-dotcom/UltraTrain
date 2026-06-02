@@ -64,6 +64,15 @@ struct Athlete: Identifiable, Equatable, Sendable {
     /// Pace at ~30 min threshold (seuil 30) in seconds/km.
     var thresholdPace30MinPerKm: Double?
 
+    /// Adaptive training-fitness anchor: a 5K-equivalent time (seconds)
+    /// that ratchets faster as the athlete demonstrates sustained
+    /// improvement across their training (faster quality/easy efforts at
+    /// the right effort). Nil until enough evidence accumulates, then it
+    /// floors the PR/VMA-derived fitness so training paces evolve a little
+    /// over a prep without waiting for a freshly logged PR. Bounded by an
+    /// experience-scaled ceiling so it stays realistic and gradual.
+    var adaptiveFitness5KSeconds: TimeInterval?
+
     // MARK: - Menstrual cycle awareness (opt-in)
 
     var age: Int {

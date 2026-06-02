@@ -58,7 +58,8 @@ enum AthleteSwiftDataMapper {
             vo2max: model.vo2max,
             vmaKmh: model.vmaKmh,
             thresholdPace60MinPerKm: model.thresholdPace60MinPerKm,
-            thresholdPace30MinPerKm: model.thresholdPace30MinPerKm
+            thresholdPace30MinPerKm: model.thresholdPace30MinPerKm,
+            adaptiveFitness5KSeconds: model.adaptiveFitness5KSeconds
         )
     }
 
@@ -98,6 +99,7 @@ enum AthleteSwiftDataMapper {
             vmaKmh: athlete.vmaKmh,
             thresholdPace60MinPerKm: athlete.thresholdPace60MinPerKm,
             thresholdPace30MinPerKm: athlete.thresholdPace30MinPerKm,
+            adaptiveFitness5KSeconds: athlete.adaptiveFitness5KSeconds,
             verticalGainEnvironmentRaw: athlete.verticalGainEnvironment.rawValue,
             painFrequencyRaw: athlete.painFrequency.rawValue,
             injuryCountLastYearRaw: athlete.injuryCountLastYear.rawValue,

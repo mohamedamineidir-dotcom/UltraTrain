@@ -28,7 +28,8 @@ enum RoadPaceCalculator {
         raceDistanceKm: Double,
         personalBests: [PersonalBest],
         vmaKmh: Double?,
-        experience: ExperienceLevel
+        experience: ExperienceLevel,
+        adaptiveFitness5KSeconds: TimeInterval? = nil
     ) -> RoadPaceProfile {
         // B1: paces are data-derived when the athlete has at least one PR
         // or a measured VMA. A declared goal time alone is an aspiration,
@@ -59,7 +60,8 @@ enum RoadPaceCalculator {
         // aspiration asks the body to run intensities it hasn't earned, and
         // erodes the calibration that the rest of the plan relies on.
         let fitness5KPace = estimate5KPace(
-            personalBests: personalBests, vmaKmh: vmaKmh, experience: experience
+            personalBests: personalBests, vmaKmh: vmaKmh, experience: experience,
+            adaptiveFitness5KSeconds: adaptiveFitness5KSeconds
         )
 
         // Step 3: Goal realism check
@@ -124,6 +126,23 @@ enum RoadPaceCalculator {
     /// Estimates the athlete's current 5K pace from the best available data.
     /// This is the anchor for ALL other pace calculations.
     private static func estimate5KPace(
+        personalBests: [PersonalBest],
+        vmaKmh: Double?,
+        experience: ExperienceLevel,
+        adaptiveFitness5KSeconds: TimeInterval? = nil
+    ) -> Double {
+        let base = baseEstimate5KPace(
+            personalBests: personalBests, vmaKmh: vmaKmh, experience: experience
+        )
+        // The adaptive anchor (AdaptiveFitnessCalculator) only ever ratchets
+        // FASTER than the PR/VMA baseline, so floor the base pace with it.
+        if let adaptive = adaptiveFitness5KSeconds, adaptive > 0 {
+            return min(base, adaptive / 5.0)
+        }
+        return base
+    }
+
+    private static func baseEstimate5KPace(
         personalBests: [PersonalBest],
         vmaKmh: Double?,
         experience: ExperienceLevel

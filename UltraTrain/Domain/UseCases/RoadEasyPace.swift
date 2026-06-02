@@ -24,7 +24,8 @@ enum RoadEasyPace {
             raceDistanceKm: 42.195,
             personalBests: athlete.personalBests,
             vmaKmh: athlete.vmaKmh,
-            experience: athlete.experienceLevel
+            experience: athlete.experienceLevel,
+            adaptiveFitness5KSeconds: athlete.adaptiveFitness5KSeconds
         )
         return profile.easyPacePerKm
     }

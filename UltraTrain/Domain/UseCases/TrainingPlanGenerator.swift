@@ -612,7 +612,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             raceDistanceKm: targetRace.distanceKm,
             personalBests: athlete.personalBests,
             vmaKmh: athlete.vmaKmh,
-            experience: athlete.experienceLevel
+            experience: athlete.experienceLevel,
+            adaptiveFitness5KSeconds: athlete.adaptiveFitness5KSeconds
         )
 
         // IR-2: blend in recent per-rep feedback to adjust target paces.

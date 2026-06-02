@@ -23,6 +23,9 @@ extension TrainingPlanViewModel {
             checkForAdjustments()
             refreshMissedSessionPattern()
             refreshScheduledReminders()
+            if session.isCompleted {
+                await applyAdaptiveTrainingRecalibration()
+            }
         } catch {
             self.error = error.localizedDescription
             Logger.training.error("Failed to update session: \(error)")
@@ -60,9 +63,87 @@ extension TrainingPlanViewModel {
             checkForAdjustments()
             refreshMissedSessionPattern()
             refreshScheduledReminders()
+            await applyAdaptiveTrainingRecalibration()
         } catch {
             self.error = error.localizedDescription
             Logger.training.error("Failed to complete session manually: \(error)")
+        }
+    }
+
+    // MARK: - Adaptive Training-Pace Recalibration
+
+    /// After a session is completed, re-evaluate the athlete's adaptive
+    /// training-fitness anchor from accumulated evidence (easy efforts held
+    /// faster at an easy RPE + quality reps faster at a controlled RPE) and
+    /// ease future paces toward it. Runs quietly and self-limits:
+    ///  - road A-race plans only (paces are pace-based there);
+    ///  - no-op when the anchor doesn't meaningfully move, so it doesn't
+    ///    churn the plan on every completion;
+    ///  - future weeks only, never the in-progress week.
+    /// Easy/base pace is live-derived from the athlete's anchor, so the
+    /// displayed range eases down immediately; quality workouts are rebuilt
+    /// from the next week forward.
+    func applyAdaptiveTrainingRecalibration() async {
+        guard var currentPlan = plan,
+              var athlete = try? await athleteRepository.getAthlete() else { return }
+
+        let races = (try? await raceRepository.getRaces()) ?? []
+        guard let targetRace = races
+            .filter({ $0.priority == .aRace })
+            .sorted(by: { $0.date < $1.date })
+            .last,
+            targetRace.raceType == .road else { return }
+
+        let completedSessions = currentPlan.weeks.flatMap { $0.sessions }
+        let feedback = await loadRecentIntervalFeedback()
+
+        let newAdaptive = AdaptiveFitnessCalculator.compute(
+            athlete: athlete,
+            completedSessions: completedSessions,
+            intervalFeedback: feedback
+        )
+
+        // Skip when the anchor doesn't move (within a second), avoids
+        // rebuilding the plan on every single completion once it plateaus.
+        if abs((newAdaptive ?? 0) - (athlete.adaptiveFitness5KSeconds ?? 0)) < 1 { return }
+
+        athlete.adaptiveFitness5KSeconds = newAdaptive
+        try? await athleteRepository.updateAthlete(athlete)
+
+        let goalTime: TimeInterval?
+        switch targetRace.goalType {
+        case .targetTime(let t): goalTime = t
+        case .targetRanking:
+            goalTime = targetRace.estimatedDuration(experience: athlete.experienceLevel) * 0.93
+        case .finish: goalTime = nil
+        }
+        let profile = RoadPaceCalculator.paceProfile(
+            goalTime: goalTime,
+            raceDistanceKm: targetRace.distanceKm,
+            personalBests: athlete.personalBests,
+            vmaKmh: athlete.vmaKmh,
+            experience: athlete.experienceLevel,
+            adaptiveFitness5KSeconds: newAdaptive
+        )
+
+        let nextWeek = max((currentPlan.currentWeekIndex ?? -1) + 1, 0)
+        guard nextWeek < currentPlan.weeks.count else { return }
+
+        let updated = PaceProfileApplier.apply(
+            to: &currentPlan,
+            fromWeekIndex: nextWeek,
+            profile: profile,
+            targetRace: targetRace,
+            athlete: athlete
+        )
+        guard updated > 0 else { return }
+
+        do {
+            try await planRepository.savePlan(currentPlan)
+            plan = currentPlan
+            Logger.training.info("Adaptive recalibration: anchor \(String(describing: newAdaptive)), touched \(updated) sessions")
+        } catch {
+            Logger.training.error("Adaptive recalibration save failed: \(error)")
         }
     }
 
