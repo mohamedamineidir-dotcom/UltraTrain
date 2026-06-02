@@ -144,6 +144,29 @@ struct RoadFitnessAnchorTests {
         #expect(time[.tenK]! <= 2160 + 5)
     }
 
+    @Test("Coach realistic-goal estimate matches a recent PR, not an inflated value")
+    func realisticGoalMatchesRecentPR() {
+        // A 2:50 marathon PR (10212s), ~2 months old, plus supporting PRs.
+        let athlete = makeAthlete(personalBests: [
+            pb(.marathon, 10212, daysAgo: 60),
+            pb(.halfMarathon, 4898, daysAgo: 60),
+            pb(.tenK, 2220, daysAgo: 60)
+        ])
+        let profile = RoadPaceCalculator.paceProfile(
+            goalTime: 9600,  // 2:40 goal
+            raceDistanceKm: 42.195,
+            personalBests: athlete.personalBests,
+            vmaKmh: nil,
+            experience: .advanced
+        )
+        // The recommended (realistic) marathon time must sit at or below the
+        // athlete's actual 2:50 PR, not balloon past 3:00 as the old
+        // recency-inflated path did.
+        let recommended = profile.recommendedGoalTime ?? .infinity
+        #expect(recommended <= 10212 + 60)   // ~2:50 or faster
+        #expect(recommended < 10800)         // well under 3:00
+    }
+
     @Test("Fitness projections fall back to VMA, else nil")
     func projectionsVMAFallback() {
         #expect(MultiDistanceEstimator.fitnessProjections(for: makeAthlete(vmaKmh: 18.0)) != nil)

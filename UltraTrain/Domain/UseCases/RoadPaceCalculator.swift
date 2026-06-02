@@ -170,6 +170,28 @@ enum RoadPaceCalculator {
         return fallback5KPace(experience: experience)
     }
 
+    /// The athlete's best current-fitness equivalent TIME (seconds) at any
+    /// distance, taken as the fastest gently-staleness-adjusted Riegel
+    /// projection across every road PR. Mirrors `bestFitness5KTime` for an
+    /// arbitrary distance so the coach's realistic-goal estimate matches the
+    /// PR-page fitness projection instead of an independently-inflated value.
+    static func bestFitnessTime(
+        personalBests: [PersonalBest],
+        toDistanceKm: Double,
+        referenceDate: Date = .now
+    ) -> TimeInterval? {
+        personalBests
+            .filter { $0.timeSeconds > 0 }
+            .map { pb in
+                riegelEquivalent(
+                    fromTime: pb.timeSeconds,
+                    fromDistanceKm: pb.distance.distanceKm,
+                    toDistanceKm: toDistanceKm
+                ) * stalenessMarkup(date: pb.date, referenceDate: referenceDate)
+            }
+            .min()
+    }
+
     /// The athlete's best current-fitness 5K-equivalent TIME (seconds),
     /// taken as the fastest recency-decayed Riegel projection across every
     /// road PR. This is the single fitness anchor the training paces and
@@ -289,18 +311,17 @@ enum RoadPaceCalculator {
         targetDistanceKm: Double,
         experience: ExperienceLevel
     ) -> Double {
-        if let bestPB = bestMatchingPR(personalBests: personalBests, targetDistanceKm: targetDistanceKm) {
-            let equivalentTime = riegelEquivalent(
-                fromTime: bestPB.timeSeconds,
-                fromDistanceKm: bestPB.distance.distanceKm,
-                toDistanceKm: targetDistanceKm
-            )
-            let decayedTime = equivalentTime / max(bestPB.recencyWeight(), 0.85)
-            return decayedTime / targetDistanceKm
+        // Use the same best-fitness anchor the PR page projects from, with
+        // the gentle staleness markup, so the coach's "realistic target"
+        // matches the displayed fitness estimate. The old path divided by
+        // max(recency, 0.85), inflating a recent PR by ~17%, which is what
+        // made a 2:50 marathon PR read as a ~3:12 "realistic" target.
+        if let best = bestFitnessTime(personalBests: personalBests, toDistanceKm: targetDistanceKm) {
+            return best / targetDistanceKm
         }
 
-        // Derive from 5K estimate
-        let fiveKPace = estimate5KPace(personalBests: personalBests, vmaKmh: vmaKmh, experience: experience)
+        // Derive from 5K estimate (VMA / experience fallback).
+        let fiveKPace = baseEstimate5KPace(personalBests: personalBests, vmaKmh: vmaKmh, experience: experience)
         let fiveKTime = fiveKPace * 5.0
         let equivalentTime = riegelEquivalent(fromTime: fiveKTime, fromDistanceKm: 5.0, toDistanceKm: targetDistanceKm)
         return equivalentTime / targetDistanceKm
@@ -321,26 +342,5 @@ enum RoadPaceCalculator {
         case .advanced:     240  // 4:00/km → ~20:00 5K
         case .elite:        195  // 3:15/km → ~16:15 5K
         }
-    }
-
-    // MARK: - PR Selection
-
-    private static func bestMatchingPR(
-        personalBests: [PersonalBest],
-        targetDistanceKm: Double
-    ) -> PersonalBest? {
-        guard !personalBests.isEmpty else { return nil }
-        return personalBests
-            .filter { $0.timeSeconds > 0 }
-            .max { pb1, pb2 in
-                prScore(pb1, targetDistanceKm: targetDistanceKm)
-                    < prScore(pb2, targetDistanceKm: targetDistanceKm)
-            }
-    }
-
-    private static func prScore(_ pb: PersonalBest, targetDistanceKm: Double) -> Double {
-        let distanceRatio = pb.distance.distanceKm / targetDistanceKm
-        let closeness = 1.0 / (1.0 + abs(log2(max(distanceRatio, 0.1))))
-        return closeness * pb.recencyWeight()
     }
 }
