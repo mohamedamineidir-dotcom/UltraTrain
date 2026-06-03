@@ -23,6 +23,20 @@ final class PremiumGate {
     }
 }
 
+#if DEBUG
+/// DEBUG-only override to preview the free tier in the simulator without
+/// fiddling with StoreKit. When on, the app treats the user as free
+/// (features locked, scenario picker shown) regardless of real status.
+/// Toggled from Settings ▸ Debug.
+enum DebugEntitlement {
+    private static let key = "debug_simulateFreeTier"
+    static var simulateFreeTier: Bool {
+        get { UserDefaults.standard.bool(forKey: key) }
+        set { UserDefaults.standard.set(newValue, forKey: key) }
+    }
+}
+#endif
+
 // MARK: - Premium lock modifier
 
 /// Gates a premium feature for free users with a blurred teaser + an

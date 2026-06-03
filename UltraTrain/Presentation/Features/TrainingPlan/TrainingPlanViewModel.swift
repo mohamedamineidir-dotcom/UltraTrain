@@ -211,7 +211,10 @@ final class TrainingPlanViewModel {
     /// and inactive). Unknown / loading defaults to premium so we never
     /// wrongly restrict a paying user.
     var isFreeTier: Bool {
-        !(subscriptionStatus?.isActive ?? true)
+        #if DEBUG
+        if DebugEntitlement.simulateFreeTier { return true }
+        #endif
+        return !(subscriptionStatus?.isActive ?? true)
     }
 
     /// Loads the athlete + target race + plan length so the sheet has

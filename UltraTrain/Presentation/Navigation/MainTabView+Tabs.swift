@@ -31,9 +31,15 @@ extension MainTabView {
         .environment(premiumGate)
         .task {
             guard let service = subscriptionService else { return }
-            premiumGate.isUnlocked = service.currentStatus.isActive
+            func unlocked(_ status: SubscriptionStatus) -> Bool {
+                #if DEBUG
+                if DebugEntitlement.simulateFreeTier { return false }
+                #endif
+                return status.isActive
+            }
+            premiumGate.isUnlocked = unlocked(service.currentStatus)
             for await status in service.statusUpdates {
-                premiumGate.isUnlocked = status.isActive
+                premiumGate.isUnlocked = unlocked(status)
             }
         }
         .sheet(isPresented: Binding(

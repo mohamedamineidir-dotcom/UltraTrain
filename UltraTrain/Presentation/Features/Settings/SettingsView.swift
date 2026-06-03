@@ -86,6 +86,9 @@ struct SettingsView: View {
                 }
                 accountSection
                 aboutSection
+                #if DEBUG
+                debugSection
+                #endif
             }
         }
         .navigationTitle("Settings")
@@ -131,4 +134,27 @@ struct SettingsView: View {
     @Environment(\.unitPreference) var units
     @Environment(\.syncStatusMonitor) var syncStatusMonitor
     @Environment(\.syncService) var syncService
+    @Environment(PremiumGate.self) var premiumGate: PremiumGate?
+
+    #if DEBUG
+    // MARK: - Debug
+
+    /// QA helper: force the free tier so the premium locks, scenario picker
+    /// and gated buttons are visible without an expired StoreKit
+    /// subscription. DEBUG builds only, never ships.
+    private var debugSection: some View {
+        Section("Debug") {
+            Toggle("Simulate free tier", isOn: Binding(
+                get: { DebugEntitlement.simulateFreeTier },
+                set: { on in
+                    DebugEntitlement.simulateFreeTier = on
+                    premiumGate?.isUnlocked = !on
+                }
+            ))
+            Text("Locks premium features and shows the free-plan picker, as a non-subscriber would see.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
+    #endif
 }
