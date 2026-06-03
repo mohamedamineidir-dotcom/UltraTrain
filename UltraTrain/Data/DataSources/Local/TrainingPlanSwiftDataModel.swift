@@ -19,6 +19,8 @@ final class TrainingPlanSwiftDataModel {
     /// True for free-tier fixed scenario plans (comeback / 5K). Default
     /// false for SwiftData migration.
     var isScenarioPlan: Bool = false
+    /// Dormant/preserved plan (not the active one). Default false.
+    var isArchived: Bool = false
 
     init(
         id: UUID = UUID(),
@@ -31,7 +33,8 @@ final class TrainingPlanSwiftDataModel {
         workoutsData: Data? = nil,
         updatedAt: Date = Date(),
         pendingRetestOriginalBaselineVma: Double? = nil,
-        isScenarioPlan: Bool = false
+        isScenarioPlan: Bool = false,
+        isArchived: Bool = false
     ) {
         self.id = id
         self.athleteId = athleteId
@@ -44,5 +47,6 @@ final class TrainingPlanSwiftDataModel {
         self.updatedAt = updatedAt
         self.pendingRetestOriginalBaselineVma = pendingRetestOriginalBaselineVma
         self.isScenarioPlan = isScenarioPlan
+        self.isArchived = isArchived
     }
 }

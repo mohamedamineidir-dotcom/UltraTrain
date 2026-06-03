@@ -4,6 +4,8 @@ import SwiftUI
 // @unchecked Sendable: stateless preview stub
 private struct PreviewPlanRepository: TrainingPlanRepository, @unchecked Sendable {
     func getActivePlan() async throws -> TrainingPlan? { nil }
+    func getAllPlans() async throws -> [TrainingPlan] { [] }
+    func setActivePlan(id: UUID) async throws {}
     func getPlan(id: UUID) async throws -> TrainingPlan? { nil }
     func savePlan(_ plan: TrainingPlan) async throws {}
     func updatePlan(_ plan: TrainingPlan) async throws {}

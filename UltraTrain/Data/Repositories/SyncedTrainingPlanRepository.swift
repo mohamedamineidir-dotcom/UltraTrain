@@ -36,6 +36,14 @@ final class SyncedTrainingPlanRepository: TrainingPlanRepository, @unchecked Sen
         }
     }
 
+    func getAllPlans() async throws -> [TrainingPlan] {
+        try await local.getAllPlans()
+    }
+
+    func setActivePlan(id: UUID) async throws {
+        try await local.setActivePlan(id: id)
+    }
+
     func getPlan(id: UUID) async throws -> TrainingPlan? {
         try await local.getPlan(id: id)
     }

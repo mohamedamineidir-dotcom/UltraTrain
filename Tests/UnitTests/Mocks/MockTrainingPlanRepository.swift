@@ -12,6 +12,16 @@ final class MockTrainingPlanRepository: TrainingPlanRepository, @unchecked Senda
         return activePlan
     }
 
+    func getAllPlans() async throws -> [TrainingPlan] {
+        if shouldThrow { throw DomainError.persistenceError(message: "Mock error") }
+        return Array(plans.values)
+    }
+
+    func setActivePlan(id: UUID) async throws {
+        if shouldThrow { throw DomainError.persistenceError(message: "Mock error") }
+        activePlan = plans[id]
+    }
+
     func getPlan(id: UUID) async throws -> TrainingPlan? {
         if shouldThrow { throw DomainError.persistenceError(message: "Mock error") }
         return plans[id]

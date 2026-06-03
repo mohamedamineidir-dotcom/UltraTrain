@@ -894,6 +894,9 @@
         }
       }
     },
+    "%@. Premium feature." : {
+
+    },
     "%@/%@" : {
       "localizations" : {
         "en" : {
@@ -5352,6 +5355,9 @@
         }
       }
     },
+    "Debug" : {
+
+    },
     "Decline" : {
       "localizations" : {
         "fr" : {
@@ -6017,6 +6023,9 @@
           }
         }
       }
+    },
+    "Double-tap to unlock with Premium." : {
+
     },
     "Double-tap to validate this session as completed" : {
       "localizations" : {
@@ -9539,6 +9548,9 @@
           }
         }
       }
+    },
+    "Locks premium features and shows the free-plan picker, as a non-subscriber would see." : {
+
     },
     "Log %@" : {
       "localizations" : {
@@ -13501,124 +13513,6 @@
         }
       }
     },
-    "premium.unlock.cta" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Unlock with Premium" }
-        },
-        "fr" : {
-          "stringUnit" : { "state" : "translated", "value" : "Débloquer avec Premium" }
-        }
-      }
-    },
-    "premium.lock.volumeChart.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Training trends" }
-        },
-        "fr" : {
-          "stringUnit" : { "state" : "translated", "value" : "Tendances d'entraînement" }
-        }
-      }
-    },
-    "premium.lock.volumeChart.message" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "See how your volume builds across the whole block." }
-        },
-        "fr" : {
-          "stringUnit" : { "state" : "translated", "value" : "Voyez comment votre volume progresse sur tout le bloc." }
-        }
-      }
-    },
-    "premium.lock.fitness.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Current fitness" }
-        },
-        "fr" : {
-          "stringUnit" : { "state" : "translated", "value" : "Forme actuelle" }
-        }
-      }
-    },
-    "premium.lock.fitness.message" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Unlock your live fitness estimate across every distance." }
-        },
-        "fr" : {
-          "stringUnit" : { "state" : "translated", "value" : "Débloquez votre estimation de forme en direct sur toutes les distances." }
-        }
-      }
-    },
-    "premium.lock.finishEstimate.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Finish-time prediction" }
-        },
-        "fr" : {
-          "stringUnit" : { "state" : "translated", "value" : "Prédiction du temps d'arrivée" }
-        }
-      }
-    },
-    "premium.lock.finishEstimate.message" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Unlock your predicted race time, splits and confidence range." }
-        },
-        "fr" : {
-          "stringUnit" : { "state" : "translated", "value" : "Débloquez votre temps de course estimé, vos splits et la marge de confiance." }
-        }
-      }
-    },
-    "scenario.title" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Choose your plan" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisissez votre plan" } }
-      }
-    },
-    "scenario.header" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pick a free 12-week plan, personalized to your level. Upgrade anytime to train for your own race." } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisissez un plan gratuit de 12 semaines, personnalisé à votre niveau. Passez à Premium quand vous voulez pour préparer votre propre course." } }
-      }
-    },
-    "scenario.weeks" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "12 weeks" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "12 semaines" } }
-      }
-    },
-    "scenario.comeback.title" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Back to running" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Reprise de la course" } }
-      }
-    },
-    "scenario.comeback.subtitle" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rebuild your aerobic base and get back in shape, at your pace." } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Reconstruisez votre base aérobie et retrouvez la forme, à votre rythme." } }
-      }
-    },
-    "scenario.fiveK.title" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Prepare a 5K" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Préparer un 5K" } }
-      }
-    },
-    "scenario.fiveK.subtitle" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Build speed and endurance for a strong 5K." } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Développez vitesse et endurance pour un 5K solide." } }
-      }
-    },
-    "scenario.upgrade.cta" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Train for your own race with Premium" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Préparez votre propre course avec Premium" } }
-      }
-    },
     "Practice your race-day nutrition during this run." : {
       "localizations" : {
         "fr" : {
@@ -13715,6 +13609,118 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unités préférées"
+          }
+        }
+      }
+    },
+    "premium.lock.finishEstimate.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock your predicted race time, splits and confidence range."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Débloquez votre temps de course estimé, vos splits et la marge de confiance."
+          }
+        }
+      }
+    },
+    "premium.lock.finishEstimate.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finish-time prediction"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prédiction du temps d'arrivée"
+          }
+        }
+      }
+    },
+    "premium.lock.fitness.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock your live fitness estimate across every distance."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Débloquez votre estimation de forme en direct sur toutes les distances."
+          }
+        }
+      }
+    },
+    "premium.lock.fitness.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current fitness"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forme actuelle"
+          }
+        }
+      }
+    },
+    "premium.lock.volumeChart.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See how your volume builds across the whole block."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voyez comment votre volume progresse sur tout le bloc."
+          }
+        }
+      }
+    },
+    "premium.lock.volumeChart.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Training trends"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tendances d'entraînement"
+          }
+        }
+      }
+    },
+    "premium.unlock.cta" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock with Premium"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Débloquer avec Premium"
           }
         }
       }
@@ -15572,6 +15578,164 @@
         }
       }
     },
+    "scenario.comeback.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebuild your aerobic base and get back in shape, at your pace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reconstruisez votre base aérobie et retrouvez la forme, à votre rythme."
+          }
+        }
+      }
+    },
+    "scenario.comeback.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back to running"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reprise de la course"
+          }
+        }
+      }
+    },
+    "scenario.fiveK.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Build speed and endurance for a strong 5K."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Développez vitesse et endurance pour un 5K solide."
+          }
+        }
+      }
+    },
+    "scenario.fiveK.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepare a 5K"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparer un 5K"
+          }
+        }
+      }
+    },
+    "scenario.header" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick a free 12-week plan, personalized to your level. Upgrade anytime to train for your own race."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisissez un plan gratuit de 12 semaines, personnalisé à votre niveau. Passez à Premium quand vous voulez pour préparer votre propre course."
+          }
+        }
+      }
+    },
+    "scenario.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose your plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisissez votre plan"
+          }
+        }
+      }
+    },
+    "lockedPlan.defaultName" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your training plan" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Votre plan d'entraînement" } }
+      }
+    },
+    "lockedPlan.weeks" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%d-week plan · progress saved" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Plan de %d semaines · progression sauvegardée" } }
+      }
+    },
+    "lockedPlan.body" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your plan and everything you've completed are saved. Resubscribe to pick up exactly where you left off." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Votre plan et tout ce que vous avez accompli sont sauvegardés. Réabonnez-vous pour reprendre exactement où vous en étiez." } }
+      }
+    },
+    "lockedPlan.resubscribe" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Resubscribe to continue" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Se réabonner pour continuer" } }
+      }
+    },
+    "lockedPlan.startFree" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Start a free 12-week plan instead" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Démarrer plutôt un plan gratuit de 12 semaines" } }
+      }
+    },
+    "scenario.upgrade.cta" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Train for your own race with Premium"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparez votre propre course avec Premium"
+          }
+        }
+      }
+    },
+    "scenario.weeks" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12 weeks"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12 semaines"
+          }
+        }
+      }
+    },
     "Schedule" : {
       "localizations" : {
         "fr" : {
@@ -16866,6 +17030,9 @@
           }
         }
       }
+    },
+    "Simulate free tier" : {
+
     },
     "Skip" : {
       "localizations" : {

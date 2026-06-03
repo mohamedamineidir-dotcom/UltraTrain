@@ -37,6 +37,7 @@ enum TrainingPlanSwiftDataMapper {
         plan.workouts = workouts
         plan.pendingRetestOriginalBaselineVma = model.pendingRetestOriginalBaselineVma
         plan.isScenarioPlan = model.isScenarioPlan
+        plan.isArchived = model.isArchived
         return plan
     }
 
@@ -113,7 +114,8 @@ enum TrainingPlanSwiftDataMapper {
             intermediateRaceSnapshotsData: snapshotsData,
             workoutsData: workoutsData,
             pendingRetestOriginalBaselineVma: plan.pendingRetestOriginalBaselineVma,
-            isScenarioPlan: plan.isScenarioPlan
+            isScenarioPlan: plan.isScenarioPlan,
+            isArchived: plan.isArchived
         )
     }
 

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TrainingPlanView: View {
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(PremiumGate.self) private var premiumGate: PremiumGate?
     @State var viewModel: TrainingPlanViewModel
     /// Index into `phaseGroups` for the phase whose weeks are currently
     /// rendered below the charts. Initialised to the phase containing
@@ -70,6 +71,13 @@ struct TrainingPlanView: View {
                 } else if viewModel.isLoading {
                     ProgressView()
                         .frame(maxWidth: .infinity, minHeight: 200)
+                } else if viewModel.isCustomPlanLocked, let plan = viewModel.plan {
+                    LockedCustomPlanView(
+                        weekCount: plan.weeks.count,
+                        planName: viewModel.targetRace?.name,
+                        onResubscribe: { premiumGate?.presentPaywall() },
+                        onStartFreePlan: { viewModel.showPlanScenarioSheet = true }
+                    )
                 } else if let plan = viewModel.plan {
                     planContent(plan)
                 } else {
@@ -109,6 +117,11 @@ struct TrainingPlanView: View {
             .animation(.easeInOut(duration: 0.3), value: viewModel.isGenerating)
             .task {
                 await viewModel.loadPlan()
+            }
+            .onChange(of: premiumGate?.isUnlocked) { _, _ in
+                // Tier flipped (subscribed / cancelled) while on this tab,
+                // re-resolve which plan is active + its lock state.
+                Task { await viewModel.loadPlan() }
             }
             .onAppear {
                 Task { await viewModel.refreshRaces() }

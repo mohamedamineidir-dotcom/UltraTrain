@@ -375,4 +375,36 @@ struct LocalTrainingPlanRepositoryTests {
         #expect(fetched?.weeks[3].targetVolumeKm == 55)
         #expect(fetched?.weeks[0].isRecoveryWeek == false)
     }
+
+    // MARK: - Freemium: preserve custom plan across a scenario save
+
+    @Test("Saving a scenario plan preserves (archives) the custom plan; restore works")
+    func scenarioSavePreservesCustomPlan() async throws {
+        let container = try makeContainer()
+        let repo = LocalTrainingPlanRepository(modelContainer: container)
+        let athleteId = UUID()
+
+        var custom = makePlan(athleteId: athleteId)   // isScenarioPlan = false
+        try await repo.savePlan(custom)
+
+        var scenario = makePlan(athleteId: athleteId)
+        scenario.isScenarioPlan = true
+        try await repo.savePlan(scenario)
+
+        // Both plans coexist; the custom one was NOT deleted.
+        let all = try await repo.getAllPlans()
+        #expect(all.count == 2)
+        #expect(all.contains { $0.id == custom.id })
+
+        // The scenario is active; the custom is archived (preserved).
+        let active = try await repo.getActivePlan()
+        #expect(active?.id == scenario.id)
+        #expect(all.first { $0.id == custom.id }?.isArchived == true)
+
+        // Re-subscribe path: restore the custom plan as active.
+        try await repo.setActivePlan(id: custom.id)
+        let restored = try await repo.getActivePlan()
+        #expect(restored?.id == custom.id)
+        #expect(restored?.weeks.count == custom.weeks.count)
+    }
 }

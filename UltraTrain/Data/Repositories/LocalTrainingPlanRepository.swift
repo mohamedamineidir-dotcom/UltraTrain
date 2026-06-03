@@ -17,11 +17,32 @@ final class LocalTrainingPlanRepository: TrainingPlanRepository, @unchecked Send
         )
         let results = try context.fetch(descriptor)
 
-        guard let model = results.first else { return nil }
+        // Prefer the active (non-archived) plan; fall back to most-recent so
+        // legacy data (no archive flag set) keeps working.
+        guard let model = results.first(where: { !$0.isArchived }) ?? results.first else {
+            return nil
+        }
         guard let plan = TrainingPlanSwiftDataMapper.toDomain(model) else {
             throw DomainError.persistenceError(message: "Failed to map stored training plan data")
         }
         return plan
+    }
+
+    func getAllPlans() async throws -> [TrainingPlan] {
+        let context = ModelContext(modelContainer)
+        let descriptor = FetchDescriptor<TrainingPlanSwiftDataModel>(
+            sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
+        )
+        return try context.fetch(descriptor).compactMap { TrainingPlanSwiftDataMapper.toDomain($0) }
+    }
+
+    func setActivePlan(id: UUID) async throws {
+        let context = ModelContext(modelContainer)
+        let all = try context.fetch(FetchDescriptor<TrainingPlanSwiftDataModel>())
+        for model in all {
+            model.isArchived = (model.id != id)
+        }
+        try context.save()
     }
 
     func getPlan(id: UUID) async throws -> TrainingPlan? {
@@ -39,19 +60,30 @@ final class LocalTrainingPlanRepository: TrainingPlanRepository, @unchecked Send
     func savePlan(_ plan: TrainingPlan) async throws {
         let context = ModelContext(modelContainer)
 
-        // Delete existing plans for the same athlete (one active plan at a time)
         let athleteId = plan.athleteId
-        let existing = FetchDescriptor<TrainingPlanSwiftDataModel>(
+        let isScenario = plan.isScenarioPlan
+        let existing = try context.fetch(FetchDescriptor<TrainingPlanSwiftDataModel>(
             predicate: #Predicate { $0.athleteId == athleteId }
-        )
-        for old in try context.fetch(existing) {
-            context.delete(old)
+        ))
+        for old in existing {
+            if old.isScenarioPlan == isScenario {
+                // Replace a prior plan of the SAME kind (e.g. regenerating
+                // the custom plan, or re-picking a scenario).
+                context.delete(old)
+            } else {
+                // Preserve the OTHER kind (e.g. a paying user's custom plan
+                // when a free scenario is saved), but archive it so only the
+                // newly-saved plan is active.
+                old.isArchived = true
+            }
         }
 
-        let model = TrainingPlanSwiftDataMapper.toSwiftData(plan)
+        var active = plan
+        active.isArchived = false
+        let model = TrainingPlanSwiftDataMapper.toSwiftData(active)
         context.insert(model)
         try context.save()
-        Logger.persistence.info("Training plan saved with \(plan.weeks.count) weeks")
+        Logger.persistence.info("Training plan saved with \(plan.weeks.count) weeks (scenario=\(isScenario))")
     }
 
     func updatePlan(_ plan: TrainingPlan) async throws {

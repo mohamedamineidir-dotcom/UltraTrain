@@ -23,6 +23,13 @@ struct TrainingPlan: Identifiable, Equatable, Sendable, Codable {
     /// the paid week-window gates.
     var isScenarioPlan: Bool = false
 
+    /// Whether this plan is dormant/preserved rather than active. Exactly
+    /// one plan is active at a time (`getActivePlan` returns it); the other
+    /// is kept untouched. This is how a paying user's custom plan survives a
+    /// downgrade to free (and a free scenario plan survives an upgrade), so
+    /// re-subscribing restores the custom plan with all its progress intact.
+    var isArchived: Bool = false
+
     var totalWeeks: Int { weeks.count }
     var currentWeekIndex: Int? {
         weeks.firstIndex { $0.containsToday }

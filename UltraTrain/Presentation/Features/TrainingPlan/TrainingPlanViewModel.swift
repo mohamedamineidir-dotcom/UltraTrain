@@ -106,23 +106,52 @@ final class TrainingPlanViewModel {
         isLoading = true
         error = nil
 
+        // Refresh subscription status first, the active-plan resolution
+        // (which plan to surface, and whether it's locked) depends on tier.
+        subscriptionStatus = await subscriptionService?.refreshStatus()
+
         do {
-            plan = try await planRepository.getActivePlan()
             races = try await raceRepository.getRaces()
             athlete = try await athleteRepository.getAthlete()
             nutritionPreferences = try await nutritionRepository.getNutritionPreferences()
+            await resolveActivePlan()
         } catch {
             self.error = error.localizedDescription
             Logger.training.error("Failed to load plan: \(error)")
         }
-
-        subscriptionStatus = await subscriptionService?.refreshStatus()
 
         isLoading = false
         checkForAdjustments()
         refreshInjuryRiskProjection()
         refreshMissedSessionPattern()
         refreshScheduledReminders()
+    }
+
+    /// Picks which preserved plan to surface based on tier, and whether it's
+    /// locked. Premium: restore the custom plan as active (a free scenario,
+    /// if any, stays archived). Free: keep the active plan, a custom plan
+    /// there is shown locked; once the user starts a free scenario it becomes
+    /// active and the custom is archived (preserved for resubscribe).
+    func resolveActivePlan() async {
+        do {
+            let all = try await planRepository.getAllPlans()
+            let customPlan = all.first { !$0.isScenarioPlan }
+
+            if !isFreeTier,
+               let customPlan,
+               let active = all.first(where: { !$0.isArchived }),
+               active.isScenarioPlan {
+                // Re-subscribed: bring the preserved custom plan back as active.
+                try await planRepository.setActivePlan(id: customPlan.id)
+            }
+
+            plan = try await planRepository.getActivePlan()
+            hasPreservedCustomPlan = customPlan != nil
+            isCustomPlanLocked = isFreeTier && (plan.map { !$0.isScenarioPlan } ?? false)
+        } catch {
+            self.error = error.localizedDescription
+            Logger.training.error("Failed to resolve active plan: \(error)")
+        }
     }
 
     /// Recomputes the next-7-day injury-risk projection from the
@@ -206,6 +235,15 @@ final class TrainingPlanViewModel {
     var showPlanScenarioSheet: Bool = false
     /// Scenario selected by a free user; drives the next `generatePlan()`.
     var pendingScenario: FreePlanScenario?
+
+    /// True when the surfaced plan is a custom (premium) plan being shown to
+    /// a free user, render it locked (resubscribe to continue) and offer a
+    /// free plan instead. The plan + its progress are preserved, not deleted.
+    var isCustomPlanLocked = false
+    /// True when a custom plan is preserved in storage (active-but-locked, or
+    /// archived behind a free scenario plan). Drives the "your race plan is
+    /// saved, resubscribe" banner.
+    var hasPreservedCustomPlan = false
 
     /// True only when we KNOW the user is on the free tier (status loaded
     /// and inactive). Unknown / loading defaults to premium so we never
