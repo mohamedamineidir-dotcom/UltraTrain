@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ProfileView: View {
     @Environment(\.unitPreference) var units
+    @Environment(PremiumGate.self) var premiumGate: PremiumGate?
     @State var viewModel: ProfileViewModel
     let athleteRepository: any AthleteRepository
     let raceRepository: any RaceRepository

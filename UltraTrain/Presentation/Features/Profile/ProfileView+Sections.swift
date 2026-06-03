@@ -96,9 +96,15 @@ extension ProfileView {
                 Text("Races")
                 Spacer()
                 Button {
-                    viewModel.showingAddRace = true
+                    // Custom races are premium: free users get the paywall.
+                    if premiumGate?.isUnlocked == false {
+                        premiumGate?.presentPaywall()
+                    } else {
+                        viewModel.showingAddRace = true
+                    }
                 } label: {
-                    Image(systemName: "plus.circle.fill")
+                    Image(systemName: premiumGate?.isUnlocked == false
+                          ? "lock.circle.fill" : "plus.circle.fill")
                         .accessibilityLabel("Add Race")
                 }
                 .accessibilityIdentifier("profile.addRaceButton")

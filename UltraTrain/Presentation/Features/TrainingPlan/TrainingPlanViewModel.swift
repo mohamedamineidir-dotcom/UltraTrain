@@ -449,6 +449,9 @@ final class TrainingPlanViewModel {
 
     var isPlanStale: Bool {
         guard let plan else { return false }
+        // Free scenario plans are intentionally not tied to the athlete's
+        // A-race, so a dormant onboarding race shouldn't flag them stale.
+        if plan.isScenarioPlan { return false }
         // If user added an A-race after generating a no-race plan, mark stale
         if let target = targetRace, plan.targetRaceId != target.id {
             return true

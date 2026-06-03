@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct RaceCalendarGridView: View {
+    @Environment(PremiumGate.self) private var premiumGate: PremiumGate?
     @State private var viewModel: RaceCalendarGridViewModel
 
     init(
@@ -38,9 +39,13 @@ struct RaceCalendarGridView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    viewModel.showingAddRace = true
+                    if premiumGate?.isUnlocked == false {
+                        premiumGate?.presentPaywall()
+                    } else {
+                        viewModel.showingAddRace = true
+                    }
                 } label: {
-                    Image(systemName: "plus")
+                    Image(systemName: premiumGate?.isUnlocked == false ? "lock" : "plus")
                 }
                 .accessibilityLabel("Add race")
                 .accessibilityHint("Opens form to add a new race")
