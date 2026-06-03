@@ -144,6 +144,38 @@ struct RoadFitnessAnchorTests {
         #expect(time[.tenK]! <= 2160 + 5)
     }
 
+    @Test("Comeback pace factor decays from the handicap to 1.0 by the end date")
+    func comebackFactorDecays() {
+        var a = makeAthlete()
+        let now = Date.now
+        a.comebackPaceFactor = 1.08
+        a.comebackStart = now
+        a.comebackUntil = now.addingTimeInterval(28 * 86400)  // 4 weeks
+        #expect(abs(a.currentComebackPaceFactor(asOf: now) - 1.08) < 0.001)
+        #expect(a.currentComebackPaceFactor(asOf: now.addingTimeInterval(28 * 86400)) == 1.0)
+        let mid = a.currentComebackPaceFactor(asOf: now.addingTimeInterval(14 * 86400))
+        #expect(abs(mid - 1.04) < 0.005)  // ~halfway
+        // No handicap set => 1.0.
+        #expect(makeAthlete().currentComebackPaceFactor() == 1.0)
+    }
+
+    @Test("Comeback handicap eases the derived training paces")
+    func comebackEasesPaces() {
+        let prs = [PersonalBest(id: UUID(), distance: .tenK, timeSeconds: 2400, date: .now)]
+        let normal = RoadPaceCalculator.paceProfile(
+            goalTime: nil, raceDistanceKm: 10, personalBests: prs,
+            vmaKmh: nil, experience: .advanced
+        )
+        let eased = RoadPaceCalculator.paceProfile(
+            goalTime: nil, raceDistanceKm: 10, personalBests: prs,
+            vmaKmh: nil, experience: .advanced, comebackPaceFactor: 1.06
+        )
+        #expect(eased.easyPacePerKm.lowerBound > normal.easyPacePerKm.lowerBound)
+        #expect(eased.thresholdPacePerKm > normal.thresholdPacePerKm)
+        // ~6% slower.
+        #expect(abs(eased.thresholdPacePerKm / normal.thresholdPacePerKm - 1.06) < 0.01)
+    }
+
     @Test("Coach realistic-goal estimate matches a recent PR, not an inflated value")
     func realisticGoalMatchesRecentPR() {
         // A 2:50 marathon PR (10212s), ~2 months old, plus supporting PRs.

@@ -73,6 +73,28 @@ struct Athlete: Identifiable, Equatable, Sendable {
     /// experience-scaled ceiling so it stays realistic and gradual.
     var adaptiveFitness5KSeconds: TimeInterval?
 
+    // MARK: - Comeback pace handicap
+
+    /// Temporary slowdown applied to ALL derived training paces after a
+    /// break (e.g. 1.06 = 6% slower), decaying linearly back to 1.0 between
+    /// `comebackStart` and `comebackUntil`. Lets a returning, detrained
+    /// athlete train at appropriate (easier) paces, then recover to normal
+    /// over the rebuild. Nil = no handicap.
+    var comebackPaceFactor: Double?
+    var comebackStart: Date?
+    var comebackUntil: Date?
+
+    /// Current comeback pace multiplier (≥ 1.0), interpolated by date.
+    /// Returns 1.0 (no effect) once the handicap has decayed or isn't set.
+    func currentComebackPaceFactor(asOf date: Date = .now) -> Double {
+        guard let factor = comebackPaceFactor, let start = comebackStart, let until = comebackUntil,
+              factor > 1.0, until > start else { return 1.0 }
+        if date <= start { return factor }
+        if date >= until { return 1.0 }
+        let progress = date.timeIntervalSince(start) / until.timeIntervalSince(start)
+        return factor + (1.0 - factor) * progress
+    }
+
     // MARK: - Menstrual cycle awareness (opt-in)
 
     var age: Int {

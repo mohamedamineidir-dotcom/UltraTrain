@@ -195,12 +195,50 @@ final class TrainingPlanViewModel {
             raceDistanceKm: raceDistance,
             weeksUntilRace: weeksUntil
         )
+
+        // Pace handicap: a detrained athlete should train SLOWER, recovering
+        // over the rebuild. Persist on the athlete BEFORE regenerating so the
+        // generator (and the live easy-pace card) prescribe eased paces.
+        await applyComebackPaceHandicap(adjustment: adjustment, gapLevel: gapLevel)
+
         pendingPlanOptions = PlanGenerationOptions(
             includeFitnessTest: false,
             recentFitnessChange: adjustment.fitnessChange == .none ? nil : adjustment.fitnessChange,
             comebackEasyOnlyWeeks: adjustment.easyOnlyWeeks
         )
         await generatePlan()
+    }
+
+    private func applyComebackPaceHandicap(adjustment: ComebackAdjustment, gapLevel: GapTrainingLevel) async {
+        guard var updated = athlete else { return }
+
+        // Detraining pace loss by severity (VO2max loss ~ 0.7x pace loss:
+        // ~6-15% VO2max -> ~3-8% slower).
+        let pct: Double
+        switch adjustment.fitnessChange {
+        case .minor:       pct = 0.03
+        case .moderate:    pct = 0.05
+        case .significant: pct = 0.08
+        case .none:        pct = 0.0
+        }
+
+        if gapLevel != .keptTraining, pct > 0 {
+            updated.comebackPaceFactor = 1.0 + pct
+            updated.comebackStart = .now
+            let recoverWeeks = max(3, adjustment.easyOnlyWeeks + 2)
+            updated.comebackUntil = Calendar.current.date(byAdding: .weekOfYear, value: recoverWeeks, to: .now)
+            // Pre-break demonstrated fitness is stale, the adaptive anchor
+            // re-measures from new runs as the athlete rebuilds.
+            updated.adaptiveFitness5KSeconds = nil
+        } else {
+            // Kept training (or no loss): clear any stale handicap.
+            updated.comebackPaceFactor = nil
+            updated.comebackStart = nil
+            updated.comebackUntil = nil
+        }
+
+        try? await athleteRepository.updateAthlete(updated)
+        athlete = updated
     }
 
     /// Recomputes the next-7-day injury-risk projection from the

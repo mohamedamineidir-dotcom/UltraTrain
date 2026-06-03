@@ -25,7 +25,8 @@ enum RoadEasyPace {
             personalBests: athlete.personalBests,
             vmaKmh: athlete.vmaKmh,
             experience: athlete.experienceLevel,
-            adaptiveFitness5KSeconds: athlete.adaptiveFitness5KSeconds
+            adaptiveFitness5KSeconds: athlete.adaptiveFitness5KSeconds,
+            comebackPaceFactor: athlete.currentComebackPaceFactor()
         )
         return profile.easyPacePerKm
     }

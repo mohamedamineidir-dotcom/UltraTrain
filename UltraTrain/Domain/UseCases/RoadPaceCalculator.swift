@@ -29,7 +29,8 @@ enum RoadPaceCalculator {
         personalBests: [PersonalBest],
         vmaKmh: Double?,
         experience: ExperienceLevel,
-        adaptiveFitness5KSeconds: TimeInterval? = nil
+        adaptiveFitness5KSeconds: TimeInterval? = nil,
+        comebackPaceFactor: Double = 1.0
     ) -> RoadPaceProfile {
         // B1: paces are data-derived when the athlete has at least one PR
         // or a measured VMA. A declared goal time alone is an aspiration,
@@ -61,7 +62,8 @@ enum RoadPaceCalculator {
         // erodes the calibration that the rest of the plan relies on.
         let fitness5KPace = estimate5KPace(
             personalBests: personalBests, vmaKmh: vmaKmh, experience: experience,
-            adaptiveFitness5KSeconds: adaptiveFitness5KSeconds
+            adaptiveFitness5KSeconds: adaptiveFitness5KSeconds,
+            comebackPaceFactor: comebackPaceFactor
         )
 
         // Step 3: Goal realism check
@@ -129,17 +131,23 @@ enum RoadPaceCalculator {
         personalBests: [PersonalBest],
         vmaKmh: Double?,
         experience: ExperienceLevel,
-        adaptiveFitness5KSeconds: TimeInterval? = nil
+        adaptiveFitness5KSeconds: TimeInterval? = nil,
+        comebackPaceFactor: Double = 1.0
     ) -> Double {
         let base = baseEstimate5KPace(
             personalBests: personalBests, vmaKmh: vmaKmh, experience: experience
         )
         // The adaptive anchor (AdaptiveFitnessCalculator) only ever ratchets
         // FASTER than the PR/VMA baseline, so floor the base pace with it.
+        let anchored: Double
         if let adaptive = adaptiveFitness5KSeconds, adaptive > 0 {
-            return min(base, adaptive / 5.0)
+            anchored = min(base, adaptive / 5.0)
+        } else {
+            anchored = base
         }
-        return base
+        // Comeback handicap (>= 1.0) eases ALL derived paces after a break,
+        // decaying to 1.0 (no effect) over the rebuild.
+        return anchored * max(1.0, comebackPaceFactor)
     }
 
     private static func baseEstimate5KPace(

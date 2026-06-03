@@ -31,6 +31,9 @@ final class AthleteSwiftDataModel {
     var thresholdPace60MinPerKm: Double? = nil
     var thresholdPace30MinPerKm: Double? = nil
     var adaptiveFitness5KSeconds: Double? = nil
+    var comebackPaceFactor: Double? = nil
+    var comebackStart: Date? = nil
+    var comebackUntil: Date? = nil
     var verticalGainEnvironmentRaw: String = "mountain"
     var painFrequencyRaw: String = "never"
     var injuryCountLastYearRaw: String = "none"
@@ -72,6 +75,9 @@ final class AthleteSwiftDataModel {
         thresholdPace60MinPerKm: Double? = nil,
         thresholdPace30MinPerKm: Double? = nil,
         adaptiveFitness5KSeconds: Double? = nil,
+        comebackPaceFactor: Double? = nil,
+        comebackStart: Date? = nil,
+        comebackUntil: Date? = nil,
         verticalGainEnvironmentRaw: String = "mountain",
         painFrequencyRaw: String = "never",
         injuryCountLastYearRaw: String = "none",
@@ -110,6 +116,9 @@ final class AthleteSwiftDataModel {
         self.vo2max = vo2max
         self.vmaKmh = vmaKmh
         self.adaptiveFitness5KSeconds = adaptiveFitness5KSeconds
+        self.comebackPaceFactor = comebackPaceFactor
+        self.comebackStart = comebackStart
+        self.comebackUntil = comebackUntil
         self.thresholdPace60MinPerKm = thresholdPace60MinPerKm
         self.thresholdPace30MinPerKm = thresholdPace30MinPerKm
         self.verticalGainEnvironmentRaw = verticalGainEnvironmentRaw
