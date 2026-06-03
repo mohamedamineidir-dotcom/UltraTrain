@@ -16,6 +16,9 @@ final class TrainingPlanSwiftDataModel {
     /// Baseline VMA captured when a regression-pending re-test was
     /// scheduled. Optional with default nil for SwiftData migration.
     var pendingRetestOriginalBaselineVma: Double? = nil
+    /// True for free-tier fixed scenario plans (comeback / 5K). Default
+    /// false for SwiftData migration.
+    var isScenarioPlan: Bool = false
 
     init(
         id: UUID = UUID(),
@@ -27,7 +30,8 @@ final class TrainingPlanSwiftDataModel {
         intermediateRaceSnapshotsData: Data? = nil,
         workoutsData: Data? = nil,
         updatedAt: Date = Date(),
-        pendingRetestOriginalBaselineVma: Double? = nil
+        pendingRetestOriginalBaselineVma: Double? = nil,
+        isScenarioPlan: Bool = false
     ) {
         self.id = id
         self.athleteId = athleteId
@@ -39,5 +43,6 @@ final class TrainingPlanSwiftDataModel {
         self.workoutsData = workoutsData
         self.updatedAt = updatedAt
         self.pendingRetestOriginalBaselineVma = pendingRetestOriginalBaselineVma
+        self.isScenarioPlan = isScenarioPlan
     }
 }

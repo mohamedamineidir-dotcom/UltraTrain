@@ -13571,6 +13571,54 @@
         }
       }
     },
+    "scenario.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Choose your plan" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisissez votre plan" } }
+      }
+    },
+    "scenario.header" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pick a free 12-week plan, personalized to your level. Upgrade anytime to train for your own race." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisissez un plan gratuit de 12 semaines, personnalisé à votre niveau. Passez à Premium quand vous voulez pour préparer votre propre course." } }
+      }
+    },
+    "scenario.weeks" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "12 weeks" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "12 semaines" } }
+      }
+    },
+    "scenario.comeback.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Back to running" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Reprise de la course" } }
+      }
+    },
+    "scenario.comeback.subtitle" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rebuild your aerobic base and get back in shape, at your pace." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Reconstruisez votre base aérobie et retrouvez la forme, à votre rythme." } }
+      }
+    },
+    "scenario.fiveK.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Prepare a 5K" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Préparer un 5K" } }
+      }
+    },
+    "scenario.fiveK.subtitle" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Build speed and endurance for a strong 5K." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Développez vitesse et endurance pour un 5K solide." } }
+      }
+    },
+    "scenario.upgrade.cta" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Train for your own race with Premium" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Préparez votre propre course avec Premium" } }
+      }
+    },
     "Practice your race-day nutrition during this run." : {
       "localizations" : {
         "fr" : {

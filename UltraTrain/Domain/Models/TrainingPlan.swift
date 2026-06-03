@@ -17,6 +17,12 @@ struct TrainingPlan: Identifiable, Equatable, Sendable, Codable {
     /// regressed result). Cleared once the re-test completes.
     var pendingRetestOriginalBaselineVma: Double? = nil
 
+    /// True when this is one of the free-tier fixed scenario plans (12-week
+    /// comeback or 5K). Such plans are always fully visible regardless of
+    /// subscription (they ARE the free taster), unlike custom plans which
+    /// the paid week-window gates.
+    var isScenarioPlan: Bool = false
+
     var totalWeeks: Int { weeks.count }
     var currentWeekIndex: Int? {
         weeks.firstIndex { $0.containsToday }

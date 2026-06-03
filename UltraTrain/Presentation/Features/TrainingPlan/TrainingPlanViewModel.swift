@@ -201,12 +201,31 @@ final class TrainingPlanViewModel {
     private(set) var planOptionsSheetTargetRace: Race?
     private(set) var planOptionsSheetTotalWeeks: Int = 0
 
+    /// Free-tier scenario picker (comeback / 5K) shown instead of the
+    /// custom-race options sheet for free users.
+    var showPlanScenarioSheet: Bool = false
+    /// Scenario selected by a free user; drives the next `generatePlan()`.
+    var pendingScenario: FreePlanScenario?
+
+    /// True only when we KNOW the user is on the free tier (status loaded
+    /// and inactive). Unknown / loading defaults to premium so we never
+    /// wrongly restrict a paying user.
+    var isFreeTier: Bool {
+        !(subscriptionStatus?.isActive ?? true)
+    }
+
     /// Loads the athlete + target race + plan length so the sheet has
     /// everything it needs, then presents it. Called by the view when
     /// the user taps "Generate plan" / "Update plan". Falls back to
     /// direct generation (skipping the sheet) when the prerequisites
     /// can't be loaded, better than blocking the user.
     func prepareToGeneratePlan() async {
+        // Free tier: no custom race options, pick one of the two fixed
+        // scenarios (comeback / 5K) instead.
+        if isFreeTier {
+            showPlanScenarioSheet = true
+            return
+        }
         do {
             guard let athlete = try await athleteRepository.getAthlete() else {
                 await generatePlan()
@@ -236,6 +255,14 @@ final class TrainingPlanViewModel {
         await generatePlan()
     }
 
+    /// Free-tier path: generate one of the two fixed 12-week scenario
+    /// plans. Called from the scenario picker.
+    func generateScenarioPlan(_ scenario: FreePlanScenario) async {
+        pendingScenario = scenario
+        showPlanScenarioSheet = false
+        await generatePlan()
+    }
+
     func generatePlan() async {
         guard !isGenerating else { return }
         isGenerating = true
@@ -248,16 +275,25 @@ final class TrainingPlanViewModel {
             }
 
             let allRaces = try await raceRepository.getRaces()
-            // Two-A-race seasons: target is the LATEST A-race; earlier
-            // A-races flow through IntermediateRaceHandler with full
-            // 2-week taper + 2-3 week recovery.
-            let aRacesByDate = allRaces
-                .filter { $0.priority == .aRace }
-                .sorted { $0.date < $1.date }
-            let targetRace = aRacesByDate.last ?? Race.generalFitness(startingFrom: .now)
-
-            let intermediateRaces = allRaces.filter { race in
-                race.id != targetRace.id && race.date < targetRace.date
+            // Free-tier scenario plan: synthetic 12-week comeback / 5K race,
+            // no intermediate races. Otherwise the normal custom-race path.
+            let scenario = pendingScenario
+            let targetRace: Race
+            let intermediateRaces: [Race]
+            if let scenario {
+                targetRace = Race.scenarioRace(for: scenario)
+                intermediateRaces = []
+            } else {
+                // Two-A-race seasons: target is the LATEST A-race; earlier
+                // A-races flow through IntermediateRaceHandler with full
+                // 2-week taper + 2-3 week recovery.
+                let aRacesByDate = allRaces
+                    .filter { $0.priority == .aRace }
+                    .sorted { $0.date < $1.date }
+                targetRace = aRacesByDate.last ?? Race.generalFitness(startingFrom: .now)
+                intermediateRaces = allRaces.filter { race in
+                    race.id != targetRace.id && race.date < targetRace.date
+                }
             }
 
             // Snapshot old session progress before regenerating
@@ -282,6 +318,10 @@ final class TrainingPlanViewModel {
                 recentIntervalFeedback: recentFeedback,
                 planOptions: options
             )
+            // Mark + clear scenario state. Scenario plans stay fully visible
+            // regardless of subscription (free taster).
+            newPlan.isScenarioPlan = scenario != nil
+            pendingScenario = nil
 
             // Restore progress from old plan to matching sessions
             PlanProgressPreserver.restore(oldProgress, into: &newPlan)
@@ -327,6 +367,11 @@ final class TrainingPlanViewModel {
 
     var visibleWeeks: [TrainingWeek] {
         guard let plan else { return [] }
+
+        // Free-tier scenario plans (comeback / 5K) are the taster, always
+        // fully visible regardless of subscription. The week-window gate
+        // below only applies to custom plans.
+        if plan.isScenarioPlan { return plan.weeks }
 
         // No subscription service → show all (e.g. debug/dev)
         guard let status = subscriptionStatus else { return plan.weeks }

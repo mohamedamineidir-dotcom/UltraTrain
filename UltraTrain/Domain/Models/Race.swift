@@ -64,6 +64,31 @@ struct Race: Identifiable, Equatable, Sendable, Codable {
         return effectiveDistanceKm * paceMinPerKm * 60
     }
 
+    /// Synthetic target races for the free-tier scenario plans. Passed to
+    /// the plan generator (to set length + distance + road pipeline) but NOT
+    /// saved to the race calendar, the resulting plan carries `isScenarioPlan`
+    /// and shows up with no A-race, like the general-fitness path.
+    static func scenarioRace(for scenario: FreePlanScenario, startingFrom date: Date = .now) -> Race {
+        // invariant: a 12-week offset always resolves.
+        let end = Calendar.current.date(byAdding: .weekOfYear, value: 12, to: date)!
+        switch scenario {
+        case .comeback:
+            return Race(
+                id: UUID(), name: "Back to Running", date: end,
+                distanceKm: 10, elevationGainM: 0, elevationLossM: 0,
+                priority: .aRace, goalType: .finish, checkpoints: [],
+                terrainDifficulty: .easy, raceType: .road
+            )
+        case .fiveK:
+            return Race(
+                id: UUID(), name: "5K Plan", date: end,
+                distanceKm: 5, elevationGainM: 0, elevationLossM: 0,
+                priority: .aRace, goalType: .finish, checkpoints: [],
+                terrainDifficulty: .easy, raceType: .road
+            )
+        }
+    }
+
     /// Creates a synthetic race for users without a target race.
     /// Used as input to the training plan generator, not saved to the database.
     static func generalFitness(startingFrom date: Date = .now) -> Race {

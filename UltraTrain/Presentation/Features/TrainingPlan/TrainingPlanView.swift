@@ -148,6 +148,11 @@ struct TrainingPlanView: View {
                     )
                 }
             }
+            .sheet(isPresented: $viewModel.showPlanScenarioSheet) {
+                PlanScenarioPickerSheet { scenario in
+                    Task { await viewModel.generateScenarioPlan(scenario) }
+                }
+            }
             .sheet(item: $viewModel.fitnessTestRecommendation) { recommendation in
                 FitnessTestResultBanner(
                     recommendation: recommendation,
