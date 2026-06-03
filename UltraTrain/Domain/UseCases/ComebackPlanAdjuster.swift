@@ -19,23 +19,54 @@ enum ComebackPlanAdjuster {
         guard start < end else { return }
 
         for wi in start..<end {
+            // Ramp the long run back in gradually: the longer the easy-only
+            // block, the more the FIRST long runs are trimmed (most injuries
+            // on return come from jumping straight back into a big long run).
+            // Earliest week is cut most, easing back to full by the end.
+            let weekOffset = wi - start
+            let longRunFactor = longRunRampFactor(weekOffset: weekOffset, totalEasyWeeks: easyOnlyWeeks)
+
             for si in plan.weeks[wi].sessions.indices {
                 let session = plan.weeks[wi].sessions[si]
-                guard session.type == .intervals || session.type == .tempo,
-                      !session.isCompleted, !session.isSkipped else { continue }
+                guard !session.isCompleted, !session.isSkipped else { continue }
 
-                var soft = session
-                soft.type = .recovery
-                soft.intensity = .easy
-                soft.intervalWorkoutId = nil
-                soft.intervalFocus = nil
-                soft.targetHeartRateZone = 2
-                // Keep planned duration / distance, volume is retained, only
-                // the intensity is dialled back.
-                soft.description = "Easy aerobic run. Rebuilding your base before quality returns."
-                soft.coachAdvice = "Back from a break, base before intensity. Keep this fully easy and conversational; the hard sessions come back once you've strung together a few consistent weeks."
-                plan.weeks[wi].sessions[si] = soft
+                switch session.type {
+                case .intervals, .tempo:
+                    var soft = session
+                    soft.type = .recovery
+                    soft.intensity = .easy
+                    soft.intervalWorkoutId = nil
+                    soft.intervalFocus = nil
+                    soft.targetHeartRateZone = 2
+                    // Keep planned duration / distance, volume is retained,
+                    // only the intensity is dialled back.
+                    soft.description = "Easy aerobic run. Rebuilding your base before quality returns."
+                    soft.coachAdvice = "Back from a break, base before intensity. Keep this fully easy and conversational; the hard sessions come back once you've strung together a few consistent weeks."
+                    plan.weeks[wi].sessions[si] = soft
+
+                case .longRun, .backToBack:
+                    guard longRunFactor < 1.0 else { continue }
+                    var capped = session
+                    capped.plannedDuration *= longRunFactor
+                    capped.plannedDistanceKm *= longRunFactor
+                    capped.plannedElevationGainM *= longRunFactor
+                    capped.coachAdvice = "Easing the long run back in after your break, build it up gradually. Keep the effort easy; run/walk if you need to."
+                    plan.weeks[wi].sessions[si] = capped
+
+                default:
+                    continue
+                }
             }
         }
+    }
+
+    /// How much of the planned long run to keep in a given easy-only week.
+    /// First week back is trimmed most; ramps linearly to full by the last
+    /// easy-only week, so the long run rebuilds rather than spiking.
+    private static func longRunRampFactor(weekOffset: Int, totalEasyWeeks: Int) -> Double {
+        guard totalEasyWeeks > 1 else { return 0.7 }
+        // 0.6 on the first week → 1.0 on the last easy-only week.
+        let t = Double(weekOffset) / Double(totalEasyWeeks - 1)
+        return min(1.0, 0.6 + 0.4 * t)
     }
 }

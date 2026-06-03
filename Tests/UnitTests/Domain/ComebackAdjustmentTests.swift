@@ -107,5 +107,11 @@ struct ComebackAdjustmentTests {
         #expect(plan.weeks[1].sessions[0].type == .recovery)
         // Week 3 (beyond the window) keeps its quality.
         #expect(plan.weeks[2].sessions[0].type == .intervals)
+
+        // Long run ramps back: first easy week trimmed (×0.6), last easy
+        // week at full; week beyond the window untouched.
+        #expect(plan.weeks[0].sessions[1].plannedDuration == 2400 * 0.6)
+        #expect(plan.weeks[1].sessions[1].plannedDuration == 2400)
+        #expect(plan.weeks[2].sessions[1].plannedDuration == 2400)
     }
 }
