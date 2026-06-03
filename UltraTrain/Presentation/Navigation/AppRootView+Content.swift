@@ -22,19 +22,11 @@ extension AppRootView {
                     switch hasActiveSubscription {
                     case .none:
                         ProgressView("Loading...")
-                    case .some(false):
-                        PaywallView(
-                            subscriptionService: subscriptionService,
-                            firstName: cachedFirstName ?? pendingFirstName ?? "Runner",
-                            isDismissable: false,
-                            onSubscribed: {
-                                hasActiveSubscription = true
-                                if !hasSeenFeatureTour {
-                                    showFeatureTour = true
-                                }
-                            }
-                        )
-                    case .some(true):
+                    case .some:
+                        // Freemium: onboarded users always enter the app.
+                        // Free users (inactive) get a one-time, dismissable
+                        // trial offer; premium features stay locked in-app
+                        // until they subscribe or start the trial.
                         MainTabView(
                             deepLinkRouter: deepLinkRouter,
                             athleteRepository: athleteRepository,
@@ -106,6 +98,31 @@ extension AppRootView {
                             FeatureTourView {
                                 hasSeenFeatureTour = true
                                 showFeatureTour = false
+                            }
+                        }
+                        .fullScreenCover(
+                            isPresented: $showInitialOffer,
+                            onDismiss: { hasSeenInitialPaywallOffer = true }
+                        ) {
+                            PaywallView(
+                                subscriptionService: subscriptionService,
+                                firstName: cachedFirstName ?? pendingFirstName ?? "Runner",
+                                isDismissable: true,
+                                onSubscribed: {
+                                    hasActiveSubscription = true
+                                    showInitialOffer = false
+                                    if !hasSeenFeatureTour {
+                                        showFeatureTour = true
+                                    }
+                                },
+                                onDismiss: { showInitialOffer = false }
+                            )
+                        }
+                        .task(id: hasActiveSubscription) {
+                            // Show the one-time trial offer once a free user
+                            // lands in the app. Premium / trial users skip it.
+                            if hasActiveSubscription == false, !hasSeenInitialPaywallOffer {
+                                showInitialOffer = true
                             }
                         }
                     }
