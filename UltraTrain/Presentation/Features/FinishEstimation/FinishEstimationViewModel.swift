@@ -17,9 +17,11 @@ final class FinishEstimationViewModel {
 
     // MARK: - State
 
-    let race: Race
+    private(set) var race: Race
     var estimate: FinishEstimate?
     var isLoading = false
+    /// True while a one-tap goal adjustment persists and re-estimates.
+    var isAdjustingGoal = false
     var error: String?
     var weatherImpact: WeatherImpactCalculator.WeatherImpact?
     var weatherSnapshot: WeatherSnapshot?
@@ -98,6 +100,29 @@ final class FinishEstimationViewModel {
         }
 
         isLoading = false
+    }
+
+    // MARK: - Goal adjustment
+
+    /// Adopts a new target-time goal for the race, persists it, and
+    /// re-estimates so the screen reflects the change immediately. Used by
+    /// the one-tap "adjust my goal" action when the declared goal has
+    /// drifted far from current fitness.
+    func updateGoal(to targetTime: TimeInterval) async {
+        guard targetTime > 0 else { return }
+        isAdjustingGoal = true
+        defer { isAdjustingGoal = false }
+
+        var updated = race
+        updated.goalType = .targetTime(targetTime)
+        do {
+            try await raceRepository.updateRace(updated)
+            race = updated
+            await load()
+        } catch {
+            self.error = error.localizedDescription
+            Logger.training.error("Failed to update race goal: \(error)")
+        }
     }
 
     // MARK: - Calibration

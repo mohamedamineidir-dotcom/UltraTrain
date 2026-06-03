@@ -83,6 +83,19 @@ struct FinishEstimationView: View {
                         }
                     }
                     scenarioCards(estimate)
+                    if let drift = GoalDriftAssessment.assess(
+                        goal: viewModel.race.goalType,
+                        expectedFinish: estimate.expectedTime
+                    ), drift.isDrifted {
+                        GoalDriftCard(
+                            assessment: drift,
+                            raceDistanceKm: viewModel.race.distanceKm,
+                            onAdjust: { newTime in
+                                Task { await viewModel.updateGoal(to: newTime) }
+                            },
+                            isAdjusting: viewModel.isAdjustingGoal
+                        )
+                    }
                     if let source = estimate.predictionSource {
                         dataSourceBadge(source: source)
                     }

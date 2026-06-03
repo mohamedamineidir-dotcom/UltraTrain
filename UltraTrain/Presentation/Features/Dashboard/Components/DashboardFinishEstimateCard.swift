@@ -100,10 +100,19 @@ struct DashboardFinishEstimateCard: View {
                     .foregroundStyle(Theme.Colors.tertiaryLabel)
                     .padding(.top, 2)
             }
+
+            if let drift = goalDrift, drift.isDrifted {
+                Divider()
+                GoalDriftFlagRow(assessment: drift, raceDistanceKm: race.distanceKm)
+            }
         }
         .appCardStyle()
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityDescription)
+    }
+
+    private var goalDrift: GoalDriftAssessment.Assessment? {
+        GoalDriftAssessment.assess(goal: race.goalType, expectedFinish: estimate.expectedTime)
     }
 
     private var rangeHint: String {
