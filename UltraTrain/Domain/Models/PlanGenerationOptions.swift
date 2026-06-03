@@ -17,6 +17,12 @@ struct PlanGenerationOptions: Sendable, Equatable {
     /// volume the athlete hasn't built up to.
     var recentFitnessChange: RecentFitnessChange? = nil
 
+    /// Comeback "volume before intensity" window: the first N upcoming
+    /// weeks have their hard quality (intervals / tempo) softened to easy
+    /// aerobic, so a returning athlete rebuilds a base before resuming
+    /// intensity. Set by the comeback flow; 0 means no softening.
+    var comebackEasyOnlyWeeks: Int = 0
+
     static let standard = PlanGenerationOptions()
 }
 

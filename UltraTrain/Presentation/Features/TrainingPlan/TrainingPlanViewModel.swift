@@ -385,6 +385,13 @@ final class TrainingPlanViewModel {
             newPlan.isScenarioPlan = scenario != nil
             pendingScenario = nil
 
+            // Comeback "volume before intensity": soften the first N upcoming
+            // weeks' quality to easy aerobic (the generator already dampened
+            // volume via recentFitnessChange).
+            ComebackPlanAdjuster.softenEarlyQuality(
+                in: &newPlan, easyOnlyWeeks: options.comebackEasyOnlyWeeks
+            )
+
             // Restore progress from old plan to matching sessions
             PlanProgressPreserver.restore(oldProgress, into: &newPlan)
 
