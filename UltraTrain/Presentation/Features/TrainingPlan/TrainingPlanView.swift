@@ -8,6 +8,7 @@ struct TrainingPlanView: View {
     /// rendered below the charts. Initialised to the phase containing
     /// today on first appear of each loaded plan via .task(id:).
     @State var selectedPhaseIndex: Int = 0
+    @State private var showingNewRaceSheet = false
     private let raceRepository: any RaceRepository
     private let planRepository: any TrainingPlanRepository
     private let runRepository: any RunRepository
@@ -71,6 +72,8 @@ struct TrainingPlanView: View {
                 } else if viewModel.isLoading {
                     ProgressView()
                         .frame(maxWidth: .infinity, minHeight: 200)
+                } else if viewModel.isActivePlanExpired {
+                    expiredPlanView
                 } else if viewModel.isCustomPlanLocked, let plan = viewModel.plan {
                     LockedCustomPlanView(
                         weekCount: plan.weeks.count,
@@ -166,6 +169,11 @@ struct TrainingPlanView: View {
                     Task { await viewModel.generateScenarioPlan(scenario) }
                 }
             }
+            .sheet(isPresented: $showingNewRaceSheet) {
+                EditRaceSheet(mode: .add) { race in
+                    Task { await viewModel.setUpNewRace(race) }
+                }
+            }
             .sheet(item: $viewModel.fitnessTestRecommendation) { recommendation in
                 FitnessTestResultBanner(
                     recommendation: recommendation,
@@ -173,5 +181,29 @@ struct TrainingPlanView: View {
                 )
             }
         }
+    }
+
+    /// The expired-plan state: the active plan's race/window has passed.
+    /// Free users are steered to a fresh free plan (with a resubscribe nudge);
+    /// premium users set up a new race.
+    private var expiredPlanView: some View {
+        let isFree = premiumGate?.isUnlocked == false
+        return ExpiredPlanView(
+            isScenario: viewModel.plan?.isScenarioPlan ?? false,
+            primaryTitle: isFree
+                ? String(localized: "expiredPlan.startFree", defaultValue: "Start a free plan")
+                : String(localized: "expiredPlan.newRace", defaultValue: "Set up a new race"),
+            onPrimary: {
+                if isFree {
+                    viewModel.showPlanScenarioSheet = true
+                } else {
+                    showingNewRaceSheet = true
+                }
+            },
+            secondaryTitle: isFree
+                ? String(localized: "expiredPlan.resubscribe", defaultValue: "Resubscribe for a custom race plan")
+                : nil,
+            onSecondary: isFree ? { premiumGate?.presentPaywall() } : nil
+        )
     }
 }

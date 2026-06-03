@@ -1784,6 +1784,7 @@
 		FB6DEF38C4A6E89D92A768D1 /* WidgetPendingActionProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1F9E002DFD12E3A5B527F38 /* WidgetPendingActionProcessor.swift */; };
 		FB7FF2DC9E206568464F12CA /* MockAchievementRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0D4B7F02F9B0B65BD12D9B2 /* MockAchievementRepository.swift */; };
 		FC1F577072C4AABCB37AD3E8 /* TrainingPlanRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C503BBC3D7A5A67C8636504D /* TrainingPlanRepository.swift */; };
+		FC7096C7217C070C7222B095 /* ExpiredPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6BAF2605F69BCAEED22CE3 /* ExpiredPlanView.swift */; };
 		FCA320D8472A6F3416E2088B /* SessionMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A427C63C8438824DDE13BAE0 /* SessionMatcher.swift */; };
 		FCC6B663BD737C907EEBF9BC /* WeeklyElevationChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2ADC57A850F8B36EF48717 /* WeeklyElevationChartView.swift */; };
 		FD04EF36E0756C62EB07D515 /* SocialProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B84CE033511CAD00E8775093 /* SocialProfileView.swift */; };
@@ -3543,6 +3544,7 @@
 		EEF29E8AFAACD0C3F0A86723 /* WorkoutRecipeSwiftDataMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutRecipeSwiftDataMapper.swift; sourceTree = "<group>"; };
 		EF1A6BC6E7BAF1CF58F1EB0E /* WatchConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchConfiguration.swift; sourceTree = "<group>"; };
 		EF4F15F5061B0424E8821E73 /* IntervalWorkoutSwiftDataMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntervalWorkoutSwiftDataMapper.swift; sourceTree = "<group>"; };
+		EF6BAF2605F69BCAEED22CE3 /* ExpiredPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpiredPlanView.swift; sourceTree = "<group>"; };
 		EF8D71E92959C7FF4F41AA52 /* UltraTrainWatchWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = UltraTrainWatchWidgets.entitlements; sourceTree = "<group>"; };
 		EFCBA3747112D539E6EF693F /* SharedRunCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedRunCard.swift; sourceTree = "<group>"; };
 		F0371FFB86A358180290404A /* OptimalSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimalSession.swift; sourceTree = "<group>"; };
@@ -5220,6 +5222,7 @@
 			isa = PBXGroup;
 			children = (
 				C4C20A01440FA0E58E2EE863 /* Components */,
+				EF6BAF2605F69BCAEED22CE3 /* ExpiredPlanView.swift */,
 				97A3C54B5370E22E19367BB3 /* FitnessTestResultBanner.swift */,
 				472F6138F4DC23C441A2E6FF /* FitnessTestResultPage.swift */,
 				42D5EF960717ED2D2205C75B /* InjuryRiskBanner.swift */,
@@ -7269,6 +7272,7 @@
 				30591B4A6B478E79C9C8CFA2 /* ExperienceLevel.swift in Sources */,
 				C783C3F535A064E06AEAD857 /* ExperienceLevelCard.swift in Sources */,
 				3D47CDC99145C207B4C16F52 /* ExperienceStepView.swift in Sources */,
+				FC7096C7217C070C7222B095 /* ExpiredPlanView.swift in Sources */,
 				0E301958210E2708338629AC /* ExportService.swift in Sources */,
 				40670F31819AA4AAB800BCB5 /* ExportServiceProtocol.swift in Sources */,
 				2CB771EDC58934BA96FE946A /* ExternalService.swift in Sources */,

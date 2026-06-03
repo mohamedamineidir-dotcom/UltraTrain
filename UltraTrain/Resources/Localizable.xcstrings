@@ -15704,6 +15704,48 @@
         "fr" : { "stringUnit" : { "state" : "translated", "value" : "Démarrer plutôt un plan gratuit de 12 semaines" } }
       }
     },
+    "expiredPlan.custom.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your race has passed" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Votre course est passée" } }
+      }
+    },
+    "expiredPlan.custom.body" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The race date for this plan has gone by. Set up a new goal to start a fresh plan, your past training stays in your history." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "La date de course de ce plan est passée. Définissez un nouvel objectif pour démarrer un nouveau plan ; vos entraînements passés restent dans votre historique." } }
+      }
+    },
+    "expiredPlan.scenario.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Plan complete" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Plan terminé" } }
+      }
+    },
+    "expiredPlan.scenario.body" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your 12-week plan has run its course. Ready for the next one?" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Votre plan de 12 semaines est arrivé à son terme. Prêt pour le suivant ?" } }
+      }
+    },
+    "expiredPlan.startFree" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Start a free plan" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Démarrer un plan gratuit" } }
+      }
+    },
+    "expiredPlan.newRace" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Set up a new race" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Configurer une nouvelle course" } }
+      }
+    },
+    "expiredPlan.resubscribe" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Resubscribe for a custom race plan" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Se réabonner pour un plan de course personnalisé" } }
+      }
+    },
     "scenario.upgrade.cta" : {
       "localizations" : {
         "en" : {

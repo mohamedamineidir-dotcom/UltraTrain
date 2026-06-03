@@ -245,6 +245,27 @@ final class TrainingPlanViewModel {
     /// saved, resubscribe" banner.
     var hasPreservedCustomPlan = false
 
+    /// True when the active plan's whole window is already in the past, e.g.
+    /// the athlete paused (or cancelled), came back, and the race they were
+    /// preparing for has now gone by. The plan can't just resume, they need
+    /// a fresh goal.
+    var isActivePlanExpired: Bool {
+        guard let plan, let lastEnd = plan.weeks.last?.endDate else { return false }
+        return lastEnd < Date.now
+    }
+
+    /// Saves a freshly-chosen race and regenerates the plan around it. Used
+    /// from the expired-plan state to set up a new goal.
+    func setUpNewRace(_ race: Race) async {
+        do {
+            try await raceRepository.saveRace(race)
+        } catch {
+            self.error = error.localizedDescription
+            Logger.training.error("Failed to save new race: \(error)")
+        }
+        await generatePlan()
+    }
+
     /// True only when we KNOW the user is on the free tier (status loaded
     /// and inactive). Unknown / loading defaults to premium so we never
     /// wrongly restrict a paying user.
