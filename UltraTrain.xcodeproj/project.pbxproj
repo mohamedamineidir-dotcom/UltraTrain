@@ -1732,6 +1732,7 @@
 		F53AF08C18E242CD00AEF1DE /* MiniFormSparkline.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAD0EA552B80F54ACECDEB0 /* MiniFormSparkline.swift */; };
 		F54D1DF2788E1A452FA2CB2B /* TrainingPlanRemoteMapperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87434C6C6255D69360C93CB1 /* TrainingPlanRemoteMapperTests.swift */; };
 		F58F0084FAEFFCE826594AAA /* SessionDragData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E19CD513F583DA3010AFF6 /* SessionDragData.swift */; };
+		F5B441105C55DFCC7B308001 /* ComebackSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BF9F5C915C8CD9597871BF /* ComebackSheet.swift */; };
 		F5C4D2B55F1886F7ACD65BEA /* PauseRunIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B606B1EBC00FD61B76876D8A /* PauseRunIntent.swift */; };
 		F62DAEBE7554EF0122EF98EB /* MockGenerateNutritionPlanUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67046BD5B89F2ADDC637BD6C /* MockGenerateNutritionPlanUseCase.swift */; };
 		F63110F2715FC8119227E4E7 /* WatchConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1A6BC6E7BAF1CF58F1EB0E /* WatchConfiguration.swift */; };
@@ -2959,6 +2960,7 @@
 		96573A5C30559C0E67DA257F /* AthleteSwiftDataMapperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AthleteSwiftDataMapperTests.swift; sourceTree = "<group>"; };
 		9681963C9C9704E7513A7BF6 /* WeatherSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherSnapshot.swift; sourceTree = "<group>"; };
 		9691297B0EBFD6D9DC907F20 /* AdaptiveGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveGrid.swift; sourceTree = "<group>"; };
+		96BF9F5C915C8CD9597871BF /* ComebackSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComebackSheet.swift; sourceTree = "<group>"; };
 		96E879B38CE27062F469110A /* ZoneDriftAlertBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoneDriftAlertBanner.swift; sourceTree = "<group>"; };
 		96FFB4DC53DB1FFFFD887971 /* DashboardAchievementsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardAchievementsCard.swift; sourceTree = "<group>"; };
 		9726B9BD71E50B3CE2726D43 /* RunFrequencyHeatmapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunFrequencyHeatmapViewModel.swift; sourceTree = "<group>"; };
@@ -5230,6 +5232,7 @@
 			isa = PBXGroup;
 			children = (
 				C4C20A01440FA0E58E2EE863 /* Components */,
+				96BF9F5C915C8CD9597871BF /* ComebackSheet.swift */,
 				EF6BAF2605F69BCAEED22CE3 /* ExpiredPlanView.swift */,
 				97A3C54B5370E22E19367BB3 /* FitnessTestResultBanner.swift */,
 				472F6138F4DC23C441A2E6FF /* FitnessTestResultPage.swift */,
@@ -7170,6 +7173,7 @@
 				3AE9278ECAE5363EF2C5B09D /* CoachingInsightType.swift in Sources */,
 				09A358BAF8FF3FAE30B6CEEC /* ComebackAdjustmentCalculator.swift in Sources */,
 				2423DD458300BF43C3F943F5 /* ComebackPlanAdjuster.swift in Sources */,
+				F5B441105C55DFCC7B308001 /* ComebackSheet.swift in Sources */,
 				990BB78A8D46004B909F629A /* CommonFoodDatabase+AidStation.swift in Sources */,
 				B393BD4C42F557CABAD74C77 /* CommonFoodDatabase+SportsNutrition.swift in Sources */,
 				49BF1FEDE7CF85F747528646 /* CommonFoodDatabase.swift in Sources */,

@@ -15746,6 +15746,90 @@
         "fr" : { "stringUnit" : { "state" : "translated", "value" : "Se réabonner pour un plan de course personnalisé" } }
       }
     },
+    "comeback.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Welcome back" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Bon retour" } }
+      }
+    },
+    "comeback.header" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your race plan is still here. So we can pick the prep back up at the right level, a couple of quick questions." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Votre plan de course est toujours là. Pour reprendre la préparation au bon niveau, deux petites questions." } }
+      }
+    },
+    "comeback.q1" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "While you were away, did you keep training for your race?" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Pendant votre absence, avez-vous continué à vous entraîner pour votre course ?" } }
+      }
+    },
+    "comeback.q1.yes" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Yes, I kept training" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Oui, j'ai continué à m'entraîner" } }
+      }
+    },
+    "comeback.q1.yes.sub" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pick up your plan where today lands." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Reprenez votre plan là où on en est aujourd'hui." } }
+      }
+    },
+    "comeback.q1.no" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No, I took a break" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Non, j'ai fait une pause" } }
+      }
+    },
+    "comeback.q1.no.sub" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "We'll ease you back in." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "On vous remet en route en douceur." } }
+      }
+    },
+    "comeback.q2" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "How much running did you do over those ~%d weeks?" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Combien avez-vous couru pendant ces ~%d semaines ?" } }
+      }
+    },
+    "comeback.q2.some" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Some easy runs" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Quelques footings faciles" } }
+      }
+    },
+    "comeback.q2.some.sub" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Stayed ticking over, no structure." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Entretien, sans structure." } }
+      }
+    },
+    "comeback.q2.occasional" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "A little, here and there" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Un peu, de temps en temps" } }
+      }
+    },
+    "comeback.q2.occasional.sub" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The odd run." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Quelques sorties éparses." } }
+      }
+    },
+    "comeback.q2.stopped" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Almost nothing" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Presque rien" } }
+      }
+    },
+    "comeback.q2.stopped.sub" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pretty much stopped." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Quasiment à l'arrêt." } }
+      }
+    },
     "scenario.upgrade.cta" : {
       "localizations" : {
         "en" : {

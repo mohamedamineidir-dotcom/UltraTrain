@@ -174,6 +174,11 @@ struct TrainingPlanView: View {
                     Task { await viewModel.setUpNewRace(race) }
                 }
             }
+            .sheet(isPresented: $viewModel.showComebackSheet) {
+                ComebackSheet(weeksAway: viewModel.comebackWeeksAway) { level in
+                    Task { await viewModel.applyComeback(level) }
+                }
+            }
             .sheet(item: $viewModel.fitnessTestRecommendation) { recommendation in
                 FitnessTestResultBanner(
                     recommendation: recommendation,

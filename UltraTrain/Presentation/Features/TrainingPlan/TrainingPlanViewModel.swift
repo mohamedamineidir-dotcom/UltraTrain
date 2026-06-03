@@ -143,6 +143,16 @@ final class TrainingPlanViewModel {
                active.isScenarioPlan {
                 // Re-subscribed: bring the preserved custom plan back as active.
                 try await planRepository.setActivePlan(id: customPlan.id)
+
+                // If the race is still ahead but the athlete was away a while,
+                // offer the comeback questionnaire to re-periodize. (A passed
+                // race is handled by the expired-plan state instead.)
+                let raceAhead = (customPlan.weeks.last?.endDate ?? .distantPast) >= .now
+                let weeks = weeksSinceLastCompletedSession(customPlan)
+                if raceAhead, weeks >= 2 {
+                    comebackWeeksAway = weeks
+                    showComebackSheet = true
+                }
             }
 
             plan = try await planRepository.getActivePlan()
@@ -152,6 +162,45 @@ final class TrainingPlanViewModel {
             self.error = error.localizedDescription
             Logger.training.error("Failed to resolve active plan: \(error)")
         }
+    }
+
+    /// Weeks since the athlete last completed a session in this plan, used to
+    /// size the comeback adjustment. 0 when nothing has been completed.
+    private func weeksSinceLastCompletedSession(_ plan: TrainingPlan) -> Int {
+        let lastDate = plan.weeks
+            .flatMap { $0.sessions }
+            .filter { $0.isCompleted }
+            .map { $0.date }
+            .max()
+        guard let lastDate else { return 0 }
+        let days = Calendar.current.dateComponents([.day], from: lastDate, to: .now).day ?? 0
+        return max(0, days / 7)
+    }
+
+    /// Answers the comeback questionnaire: compute a detraining-aware
+    /// adjustment (volume damper + easy-only weeks) and regenerate the plan
+    /// re-anchored to today. "Kept training" yields no adjustment.
+    func applyComeback(_ gapLevel: GapTrainingLevel) async {
+        showComebackSheet = false
+        guard let athlete else { await generatePlan(); return }
+        let race = targetRace
+        let raceDistance = race?.distanceKm ?? plan?.weeks.first?.sessions.first?.plannedDistanceKm ?? 21.1
+        let weeksUntil = race.map { max(1, Date.now.startOfDay.weeksBetween($0.date.startOfDay)) }
+            ?? max(1, (plan?.weeks.count ?? 12))
+
+        let adjustment = ComebackAdjustmentCalculator.compute(
+            gapLevel: gapLevel,
+            weeksAway: comebackWeeksAway,
+            experience: athlete.experienceLevel,
+            raceDistanceKm: raceDistance,
+            weeksUntilRace: weeksUntil
+        )
+        pendingPlanOptions = PlanGenerationOptions(
+            includeFitnessTest: false,
+            recentFitnessChange: adjustment.fitnessChange == .none ? nil : adjustment.fitnessChange,
+            comebackEasyOnlyWeeks: adjustment.easyOnlyWeeks
+        )
+        await generatePlan()
     }
 
     /// Recomputes the next-7-day injury-risk projection from the
@@ -233,6 +282,14 @@ final class TrainingPlanViewModel {
     /// Free-tier scenario picker (comeback / 5K) shown instead of the
     /// custom-race options sheet for free users.
     var showPlanScenarioSheet: Bool = false
+
+    /// Comeback questionnaire shown when a premium custom plan is restored
+    /// after a real gap (race still ahead). Drives a re-periodized,
+    /// detraining-aware regeneration.
+    var showComebackSheet: Bool = false
+    /// Weeks since the athlete last completed a session, fed to the comeback
+    /// adjustment.
+    var comebackWeeksAway: Int = 0
     /// Scenario selected by a free user; drives the next `generatePlan()`.
     var pendingScenario: FreePlanScenario?
 
