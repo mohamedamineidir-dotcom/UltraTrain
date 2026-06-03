@@ -30,6 +30,12 @@ struct PersonalRecordsView: View {
                         }
                         if let fitness {
                             fitnessEstimateCard(fitness)
+                                .premiumLocked(
+                                    title: String(localized: "premium.lock.fitness.title",
+                                                  defaultValue: "Current fitness"),
+                                    message: String(localized: "premium.lock.fitness.message",
+                                                    defaultValue: "Unlock your live fitness estimate across every distance.")
+                                )
                         }
                         footerCaption
                     }

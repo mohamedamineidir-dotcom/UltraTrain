@@ -28,6 +28,27 @@ extension MainTabView {
                 }
             }
         }
+        .environment(premiumGate)
+        .task {
+            guard let service = subscriptionService else { return }
+            premiumGate.isUnlocked = service.currentStatus.isActive
+            for await status in service.statusUpdates {
+                premiumGate.isUnlocked = status.isActive
+            }
+        }
+        .sheet(isPresented: Binding(
+            get: { premiumGate.showPaywall },
+            set: { premiumGate.showPaywall = $0 }
+        )) {
+            if let service = subscriptionService {
+                PaywallView(
+                    subscriptionService: service,
+                    firstName: "Runner",
+                    isDismissable: true,
+                    onSubscribed: { premiumGate.showPaywall = false }
+                )
+            }
+        }
     }
 
     // MARK: - Compact (iPhone)

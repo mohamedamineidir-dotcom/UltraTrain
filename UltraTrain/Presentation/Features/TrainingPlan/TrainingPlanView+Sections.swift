@@ -58,6 +58,12 @@ extension TrainingPlanView {
                 let isRoadPlan = viewModel.targetRace?.raceType == .road
 
                 PlanVolumeChartsSection(plan: plan, isRoad: isRoadPlan)
+                    .premiumLocked(
+                        title: String(localized: "premium.lock.volumeChart.title",
+                                      defaultValue: "Training trends"),
+                        message: String(localized: "premium.lock.volumeChart.message",
+                                        defaultValue: "See how your volume builds across the whole block.")
+                    )
 
                 // Phase-paginated weeks. The flat vertical list of all
                 // weeks meant a 26-week plan required ~5 screenfuls of

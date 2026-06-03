@@ -13501,6 +13501,76 @@
         }
       }
     },
+    "premium.unlock.cta" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Unlock with Premium" }
+        },
+        "fr" : {
+          "stringUnit" : { "state" : "translated", "value" : "Débloquer avec Premium" }
+        }
+      }
+    },
+    "premium.lock.volumeChart.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Training trends" }
+        },
+        "fr" : {
+          "stringUnit" : { "state" : "translated", "value" : "Tendances d'entraînement" }
+        }
+      }
+    },
+    "premium.lock.volumeChart.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "See how your volume builds across the whole block." }
+        },
+        "fr" : {
+          "stringUnit" : { "state" : "translated", "value" : "Voyez comment votre volume progresse sur tout le bloc." }
+        }
+      }
+    },
+    "premium.lock.fitness.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Current fitness" }
+        },
+        "fr" : {
+          "stringUnit" : { "state" : "translated", "value" : "Forme actuelle" }
+        }
+      }
+    },
+    "premium.lock.fitness.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Unlock your live fitness estimate across every distance." }
+        },
+        "fr" : {
+          "stringUnit" : { "state" : "translated", "value" : "Débloquez votre estimation de forme en direct sur toutes les distances." }
+        }
+      }
+    },
+    "premium.lock.finishEstimate.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Finish-time prediction" }
+        },
+        "fr" : {
+          "stringUnit" : { "state" : "translated", "value" : "Prédiction du temps d'arrivée" }
+        }
+      }
+    },
+    "premium.lock.finishEstimate.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Unlock your predicted race time, splits and confidence range." }
+        },
+        "fr" : {
+          "stringUnit" : { "state" : "translated", "value" : "Débloquez votre temps de course estimé, vos splits et la marge de confiance." }
+        }
+      }
+    },
     "Practice your race-day nutrition during this run." : {
       "localizations" : {
         "fr" : {

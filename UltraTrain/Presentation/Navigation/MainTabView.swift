@@ -6,6 +6,10 @@ struct MainTabView: View {
     @State var showWeeklyReview = false
     @State var weeklyReviewViewModel: WeeklyReviewViewModel?
     @State var runnerTabIcon: Image?
+    /// Premium-entitlement coordinator injected into the tab hierarchy so any
+    /// feature can gate itself; `isUnlocked` is updated live from the
+    /// subscription status.
+    @State var premiumGate = PremiumGate()
     @AppStorage("lastReviewedWeekNumber") var lastReviewedWeekNumber = 0
 
     let deepLinkRouter: DeepLinkRouter

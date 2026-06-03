@@ -110,6 +110,12 @@ struct FinishEstimationView: View {
         .task {
             await viewModel.load()
         }
+        .premiumLocked(
+            title: String(localized: "premium.lock.finishEstimate.title",
+                          defaultValue: "Finish-time prediction"),
+            message: String(localized: "premium.lock.finishEstimate.message",
+                            defaultValue: "Unlock your predicted race time, splits and confidence range.")
+        )
     }
 
     // MARK: - Race Header
