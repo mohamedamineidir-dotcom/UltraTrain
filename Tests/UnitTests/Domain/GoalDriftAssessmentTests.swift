@@ -68,8 +68,9 @@ struct GoalDriftAssessmentTests {
 
     @Test("Suggested time rounds to the nearest 30 seconds")
     func suggestedRounds() {
-        // Predicted 2:50:14 (10214s) far over a 2:40 goal => rounds to 10220 (2:50:20).
+        // Predicted 10214s far over a 2:40 goal => nearest 30s is 10200 (10214
+        // is 14s from 10200, 16s from 10230).
         let a = GoalDriftAssessment.assess(goal: .targetTime(9600), expectedFinish: 10214)!
-        #expect(a.suggestedTime == 10220)
+        #expect(a.suggestedTime == 10200)
     }
 }

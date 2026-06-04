@@ -590,6 +590,7 @@
 		54396DC3C914E84C76182A43 /* FoodSearchResultMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B6A275207302E78275BFFB9 /* FoodSearchResultMapper.swift */; };
 		5469594227B8B1998A5E53F6 /* WatchRunCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13FB2814B66CD1A369650C5E /* WatchRunCalculator.swift */; };
 		546C12992C5238FC369B4674 /* CoachAdviceGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A1CC09C10A5F08B1D38142D /* CoachAdviceGenerator.swift */; };
+		54798B2562621BC105F0C00E /* RoadVolumeCurveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BE32D5A9149AB61961F261 /* RoadVolumeCurveTests.swift */; };
 		549AA388CD5E93612604CB1B /* ACRDataPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 822C46A88DED2D1BF78374F3 /* ACRDataPoint.swift */; };
 		54C25B05F286F5D9A29A22E4 /* ReferralInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302DBDB7A2E491D28D5954A5 /* ReferralInfo.swift */; };
 		54CF65529326CCDFAC97C210 /* MockGenerateTrainingPlanUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916A000623DD89CC57C3BC70 /* MockGenerateTrainingPlanUseCase.swift */; };
@@ -3037,6 +3038,7 @@
 		A13958A1750D46FB97399E7F /* GroupChallengesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupChallengesView.swift; sourceTree = "<group>"; };
 		A148F45FC71B24044C1150AE /* PersonalBestsStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalBestsStepView.swift; sourceTree = "<group>"; };
 		A174E13085679CB331E188BA /* SocialTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialTabView.swift; sourceTree = "<group>"; };
+		A1BE32D5A9149AB61961F261 /* RoadVolumeCurveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoadVolumeCurveTests.swift; sourceTree = "<group>"; };
 		A1DF538440870C0FBB3C1413 /* TrainingCalendarHeatmapCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingCalendarHeatmapCalculatorTests.swift; sourceTree = "<group>"; };
 		A24A51FDB374C0B992EFFB26 /* FatigueEvidence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FatigueEvidence.swift; sourceTree = "<group>"; };
 		A25309B89ABFFD67011A67AF /* ComebackAdjustmentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComebackAdjustmentTests.swift; sourceTree = "<group>"; };
@@ -6007,6 +6009,7 @@
 				6ED9317EA367BD0F757A0CF7 /* RoadIntervalLibraryTests.swift */,
 				7F590A3A6E456F4AC44EE121 /* RoadLongRunCalculatorPeakPlacementTests.swift */,
 				AE5591DE68CB0633D89C6C17 /* RoadThresholdPaceRangeTests.swift */,
+				A1BE32D5A9149AB61961F261 /* RoadVolumeCurveTests.swift */,
 				4678E5FB0801E312EBC12297 /* RouteComparisonCalculatorTests.swift */,
 				57D6209A5FA18211086C16AA /* RunHistoryAdvancedFilterTests.swift */,
 				CF02E4091BB04AC9E655FD97 /* RunImportUseCaseTests.swift */,
@@ -6904,6 +6907,7 @@
 				4555ED46D8CA0B42D3C7A016 /* RoadIntervalLibraryTests.swift in Sources */,
 				96CC4F813D5BD2D066F0C375 /* RoadLongRunCalculatorPeakPlacementTests.swift in Sources */,
 				07F08ADA33D17E913A08B504 /* RoadThresholdPaceRangeTests.swift in Sources */,
+				54798B2562621BC105F0C00E /* RoadVolumeCurveTests.swift in Sources */,
 				64DED53168673F12763D6A49 /* RouteComparisonCalculatorTests.swift in Sources */,
 				CCD74D8A32AC80F488FA6AEA /* RouteDrawingViewModelTests.swift in Sources */,
 				8CA28870B871F3F37E2EF325 /* RouteLibraryViewModelTests.swift in Sources */,

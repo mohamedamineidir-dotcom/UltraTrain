@@ -233,9 +233,14 @@ enum RoadLongRunCalculator {
 
         var duration = startDuration + (capDuration - startDuration) * progress
 
-        // Recovery week: reduce by 15% (Pfitzinger: 80-85% of load week long run)
+        // Recovery (deload) week: cut the long run ~28% so the whole week
+        // troughs together with the non-LR sessions (RoadVolumeCalculator
+        // cuts easy/quality to ~0.68/0.74 on the same week). A matching LR
+        // cut is what makes the 3:1 sawtooth legible on the volume chart;
+        // a token 15% LR cut left the deload nearly flat. The LR still owns
+        // its independent taper shape (×0.60) below.
         if isRecoveryWeek {
-            duration *= 0.85
+            duration *= 0.72
         }
 
         // Taper: keep 60% of current duration (40% reduction per Mujika 2003).
