@@ -41,12 +41,12 @@ enum RoadIntervalLibrary {
         /// time by the road plan pipeline (RR-24).
         var displayName: String {
             switch self {
-            case .speed:           return "Speed"
-            case .vo2max:          return "VO2max"
-            case .threshold:       return "Threshold"
-            case .raceSpecific:    return "Race pace"
-            case .progression:     return "Progression"
-            case .longRunVariant:  return "Long run"
+            case .speed:           return String(localized: "interval.category.speed", defaultValue: "Speed")
+            case .vo2max:          return String(localized: "interval.category.vo2max", defaultValue: "VO2max")
+            case .threshold:       return String(localized: "interval.category.threshold", defaultValue: "Threshold")
+            case .raceSpecific:    return String(localized: "interval.category.racePace", defaultValue: "Race pace")
+            case .progression:     return String(localized: "interval.category.progression", defaultValue: "Progression")
+            case .longRunVariant:  return String(localized: "interval.category.longRun", defaultValue: "Long run")
             }
         }
     }

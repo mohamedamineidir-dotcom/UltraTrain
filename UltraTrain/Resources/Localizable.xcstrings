@@ -19202,6 +19202,390 @@
         }
       }
     },
+    "interval.category.longRun" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue"
+          }
+        }
+      }
+    },
+    "interval.category.progression" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progression"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progression"
+          }
+        }
+      }
+    },
+    "interval.category.racePace" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race pace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allure course"
+          }
+        }
+      }
+    },
+    "interval.category.speed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speed"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vitesse"
+          }
+        }
+      }
+    },
+    "interval.category.threshold" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Threshold"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seuil"
+          }
+        }
+      }
+    },
+    "interval.category.vo2max" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO2max"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO2max"
+          }
+        }
+      }
+    },
+    "interval.desc.fallback" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quality session at %@ effort."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Séance de qualité à effort %@."
+          }
+        }
+      }
+    },
+    "interval.desc.recovery" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery-week primer. Keep it light and short; fatigue should drop to zero."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activation de semaine de récupération. Gardez court et léger ; la fatigue doit tomber à zéro."
+          }
+        }
+      }
+    },
+    "interval.label.mpTempo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MP tempo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tempo AM"
+          }
+        }
+      }
+    },
+    "interval.label.progression" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "progression"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "progression"
+          }
+        }
+      }
+    },
+    "interval.label.tempo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tempo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tempo"
+          }
+        }
+      }
+    },
+    "interval.name.mixedPrimer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mixed primer"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activation mixte"
+          }
+        }
+      }
+    },
+    "interval.name.strides" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×20s strides"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×20s lignes droites"
+          }
+        }
+      }
+    },
+    "interval.note.cooldown" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy jog cool-down."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retour au calme : footing facile."
+          }
+        }
+      }
+    },
+    "interval.note.target" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Target: %@/km"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cible : %@/km"
+          }
+        }
+      }
+    },
+    "interval.recovery.float" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Float recovery (moderate jog)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération active (footing modéré)"
+          }
+        }
+      }
+    },
+    "interval.recovery.jog" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy jog recovery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération en footing facile"
+          }
+        }
+      }
+    },
+    "interval.recovery.standing" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standing or very slow jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À l'arrêt ou footing très lent"
+          }
+        }
+      }
+    },
+    "interval.recovery.walk" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walk recovery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération en marchant"
+          }
+        }
+      }
+    },
+    "interval.shape.cutdown" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cutdown"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descendante"
+          }
+        }
+      }
+    },
+    "interval.shape.pyramid" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pyramid"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pyramide"
+          }
+        }
+      }
+    },
+    "interval.warmup.intro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy jog to warm up."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile pour s'échauffer."
+          }
+        }
+      }
+    },
+    "interval.warmup.pace" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@/km or slower."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@/km ou plus lent."
+          }
+        }
+      }
+    },
+    "interval.warmup.strides" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Include 4-6 strides in the last 2 minutes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incluez 4-6 lignes droites dans les 2 dernières minutes."
+          }
+        }
+      }
+    },
     "intervalFocus.mixed" : {
       "extractionState" : "extracted_with_value",
       "localizations" : {
@@ -20838,6 +21222,630 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "résultats"
+          }
+        }
+      }
+    },
+    "road.coach.cooldown" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cool-down: 5-10min easy jog."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retour au calme : 5-10 min de footing facile."
+          }
+        }
+      }
+    },
+    "road.coach.easy.intro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep it truly easy, at conversational pace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restez vraiment facile, à allure de conversation."
+          }
+        }
+      }
+    },
+    "road.coach.easy.outro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This is where your aerobic engine grows. Resist the urge to push."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C'est ici que votre moteur aérobie se développe. Résistez à l'envie de forcer."
+          }
+        }
+      }
+    },
+    "road.coach.firstTimer.half" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First-timer note: keep the first 15 km conservative. A common first-half-marathon mistake is starting at 10K effort and blowing up at 17 km. Save a little for the final 5 km."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note débutant : restez prudent sur les 15 premiers kilomètres. Une erreur fréquente au premier semi est de partir à l'effort du 10 km et d'exploser au 17e km. Gardez-en un peu pour les 5 derniers kilomètres."
+          }
+        }
+      }
+    },
+    "road.coach.firstTimer.marathon" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First-timer note: prioritize finishing strong over hitting a specific time. First-time marathoners most often blow up in the final 10K from going out too hard. Hold marathon pace even when it feels too easy in the first half. The fast target belongs to race #2."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note débutant : privilégiez une arrivée solide plutôt qu'un temps précis. Les marathoniens débutants explosent le plus souvent dans les 10 derniers kilomètres pour être partis trop vite. Tenez l'allure marathon même si elle semble trop facile en première moitié. Le temps rapide, ce sera pour le marathon n°2."
+          }
+        }
+      }
+    },
+    "road.coach.firstTimer.tenK" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First-timer note: most first 10Ks go out too hard. Settle into goal pace by 2 km and save a surge for the final 2 km, not the first."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note débutant : la plupart des premiers 10 km partent trop vite. Installez-vous à l'allure objectif dès le 2e km et gardez une accélération pour les 2 derniers, pas les premiers."
+          }
+        }
+      }
+    },
+    "road.coach.goal.ambitious" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note: goal is ambitious. Training paces reflect current fitness; race-specific work unlocks in late peak."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remarque : objectif ambitieux. Les allures d'entraînement reflètent votre forme actuelle ; le travail spécifique course se débloque en fin de pic."
+          }
+        }
+      }
+    },
+    "road.coach.goal.veryAmbitious" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⚠ Goal is very ambitious vs current fitness. Race pace unlocks only if your tune-up trial confirms it."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⚠ Objectif très ambitieux par rapport à votre forme actuelle. L'allure de course ne se débloque que si votre test de validation le confirme."
+          }
+        }
+      }
+    },
+    "road.coach.goal.veryAmbitious.withTarget" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⚠ Goal is very ambitious. A realistic target right now is ~%@. Race pace unlocks only if your tune-up trial confirms it."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⚠ Objectif très ambitieux. Une cible réaliste actuellement est ~%@. L'allure de course ne se débloque que si votre test de validation le confirme."
+          }
+        }
+      }
+    },
+    "road.coach.hotRace" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hot-race advisory: forecast suggests warm/humid race conditions. Practical acclimation: (1) sauna sessions 20-30 min at 60-80 °C, 3× per week starting 2 weeks out (passive heat exposure yields ~50-70% of active-heat benefit); (2) overdress on easy runs during the final 10 days; (3) pre-cool with ice slurry or cold water 15 min before the race; (4) expect to pace 10-30 s/km slower than your cool-weather goal pace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alerte course par temps chaud : les prévisions annoncent des conditions chaudes/humides. Acclimatation pratique : (1) séances de sauna de 20-30 min à 60-80 °C, 3× par semaine à partir de 2 semaines avant (l'exposition passive à la chaleur apporte ~50-70 % du bénéfice de la chaleur active) ; (2) habillez-vous chaudement sur les footings faciles les 10 derniers jours ; (3) pré-refroidissez avec une boisson glacée ou de l'eau froide 15 min avant la course ; (4) attendez-vous à courir 10-30 s/km plus lentement que votre allure objectif par temps frais."
+          }
+        }
+      }
+    },
+    "road.coach.interval.base" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speed strides and short reps. Focus on form and leg turnover, not raw speed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lignes droites et répétitions courtes. Concentrez-vous sur la technique et la fréquence de jambes, pas la vitesse pure."
+          }
+        }
+      }
+    },
+    "road.coach.interval.build" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO2max session. Run the intervals at a controlled hard effort, working hard but not sprinting."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Séance VO2max. Courez les fractions à un effort dur mais contrôlé, intense sans sprinter."
+          }
+        }
+      }
+    },
+    "road.coach.interval.default" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light speed work to stay sharp."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Travail de vitesse léger pour rester affûté."
+          }
+        }
+      }
+    },
+    "road.coach.interval.peak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race-specific work. This is your %@ pace. Memorize how it feels."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Travail spécifique course. C'est votre allure %@. Mémorisez la sensation."
+          }
+        }
+      }
+    },
+    "road.coach.interval.warmup" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warm-up: 10-15min easy jog + 4-6 strides."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échauffement : 10-15 min de footing facile + 4-6 lignes droites."
+          }
+        }
+      }
+    },
+    "road.coach.longRun.base" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy long run. The goal is time on feet, not pace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue facile. L'objectif est le temps passé à courir, pas l'allure."
+          }
+        }
+      }
+    },
+    "road.coach.longRun.baseRange" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stay in the %1$@-%2$@/km range."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restez dans la plage %1$@-%2$@/km."
+          }
+        }
+      }
+    },
+    "road.coach.longRun.build" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Structured long run. Start easy and build into a moderate effort in the second half. Practice your race-day nutrition."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue structurée. Partez facile et montez vers un effort modéré en seconde moitié. Entraînez votre nutrition de course."
+          }
+        }
+      }
+    },
+    "road.coach.longRun.default" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy long run to maintain aerobic fitness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue facile pour entretenir la forme aérobie."
+          }
+        }
+      }
+    },
+    "road.coach.longRun.peak.marathon" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marathon-specific long run. Include blocks at marathon pace. This is your dress rehearsal. Practice everything: pacing, fueling, gear."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue spécifique marathon. Incluez des blocs à allure marathon. C'est votre répétition générale. Répétez tout : allure, ravitaillement, matériel."
+          }
+        }
+      }
+    },
+    "road.coach.longRun.peak.other" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race-specific long run. Include a faster segment at race pace. Practice your race-day routine."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue spécifique course. Incluez un segment plus rapide à allure course. Répétez votre routine de course."
+          }
+        }
+      }
+    },
+    "road.coach.refine.quickened" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "quickened"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "accélérée"
+          }
+        }
+      }
+    },
+    "road.coach.refine.reason.fitnessHeadroom" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "you've been clearing the work at RPE %@/10 with all reps completed; fitness has room"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vous bouclez le travail à RPE %@/10 avec toutes les répétitions terminées ; votre forme a de la marge"
+          }
+        }
+      }
+    },
+    "road.coach.refine.reason.highRPE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "you've been hitting target but at a perceived effort of %@/10, unsustainable across a block"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vous tenez la cible mais à un effort perçu de %@/10, intenable sur tout un bloc"
+          }
+        }
+      }
+    },
+    "road.coach.refine.reason.incompleteReps" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "you've bailed on reps across multiple sessions; the previous target was too hard"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vous avez abandonné des répétitions sur plusieurs séances ; la cible précédente était trop dure"
+          }
+        }
+      }
+    },
+    "road.coach.refine.reason.paceDrift" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "your recent reps have been running %llds/km slower than target"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vos répétitions récentes sont %lld s/km plus lentes que la cible"
+          }
+        }
+      }
+    },
+    "road.coach.refine.slowed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "slowed"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ralentie"
+          }
+        }
+      }
+    },
+    "road.coach.refine.summary" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "📊 Target %1$@ %2$llds/km (%3$@ → %4$@) based on %5$lld recent sessions: %6$@. The fitness baseline is unchanged; only this session's prescription adapts."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "📊 Cible %1$@ de %2$lld s/km (%3$@ → %4$@) d'après %5$lld séances récentes : %6$@. La base de forme est inchangée ; seule la prescription de cette séance s'adapte."
+          }
+        }
+      }
+    },
+    "road.coach.rest" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest is where adaptation happens. Trust the process."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C'est au repos que se produit l'adaptation. Faites confiance au processus."
+          }
+        }
+      }
+    },
+    "road.coach.shortPrep.half" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compressed prep alert: HM prep benefits from at least 8 weeks for meaningful threshold development. Your plan is running shorter. Consider a conservative finish goal, and trust your aerobic base rather than chasing speed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alerte préparation compressée : une prépa semi profite d'au moins 8 semaines pour un vrai développement du seuil. Votre plan est plus court. Envisagez un objectif d'arrivée prudent et fiez-vous à votre base aérobie plutôt que de courir après la vitesse."
+          }
+        }
+      }
+    },
+    "road.coach.shortPrep.marathon" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compressed prep alert: marathon builds typically run 16-18 weeks, with 8 weeks of aerobic base development alone. Your base is truncated, which caps how much aerobic engine you can build before race day. Strongly recommend a conservative finish goal (add 5-10% to your target) or deferring to a later race if the calendar allows."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alerte préparation compressée : un cycle marathon dure généralement 16-18 semaines, dont 8 semaines de développement de la base aérobie. Votre base est tronquée, ce qui limite le moteur aérobie que vous pouvez construire avant le jour J. Nous recommandons fortement un objectif d'arrivée prudent (ajoutez 5-10 % à votre cible) ou de reporter à une course ultérieure si le calendrier le permet."
+          }
+        }
+      }
+    },
+    "road.coach.shortPrep.tenK" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compressed prep alert: 10K plans normally run 6+ weeks. Your base is short. Prioritize finishing cleanly over hitting a hard target."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alerte préparation compressée : un plan 10 km dure normalement 6 semaines ou plus. Votre base est courte. Privilégiez une arrivée propre plutôt qu'un objectif difficile."
+          }
+        }
+      }
+    },
+    "road.coach.targetHR" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Target HR: %1$lld-%2$lld bpm."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FC cible : %1$lld-%2$lld bpm."
+          }
+        }
+      }
+    },
+    "road.coach.targetPace" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Target: %@/km."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cible : %@/km."
+          }
+        }
+      }
+    },
+    "road.coach.targetRange" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Target: %1$@-%2$@/km."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cible : %1$@-%2$@/km."
+          }
+        }
+      }
+    },
+    "road.coach.tempo.baseBuild" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Threshold pace: comfortably hard. Speak in short phrases but not a conversation."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allure seuil : difficile mais soutenable. Vous pouvez parler par phrases courtes, sans tenir une conversation."
+          }
+        }
+      }
+    },
+    "road.coach.tempo.default" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy tempo to maintain feel."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo facile pour entretenir les sensations."
+          }
+        }
+      }
+    },
+    "road.coach.tempo.peak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race-pace threshold work. Sustain your target %@ pace with control."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Travail au seuil à allure course. Tenez votre allure %@ cible avec contrôle."
+          }
+        }
+      }
+    },
+    "road.coach.tempo.warmup" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warm-up: 10min easy jog + 4 strides."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échauffement : 10 min de footing facile + 4 lignes droites."
           }
         }
       }

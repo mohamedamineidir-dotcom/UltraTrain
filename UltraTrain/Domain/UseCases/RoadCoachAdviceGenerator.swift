@@ -5,6 +5,10 @@ import Foundation
 /// Key difference from trail advice: references paces in min/km, uses
 /// road-specific terminology (tempo, threshold, VO2max intervals),
 /// no trail/hiking/elevation language.
+///
+/// All user-facing copy is localized via `String(localized:)`; the English
+/// text is the `defaultValue`, so en-locale builds (and tests) resolve to
+/// the original strings while French users get the translated catalog value.
 enum RoadCoachAdviceGenerator {
 
     /// Generates coach advice for a road training session.
@@ -47,7 +51,8 @@ enum RoadCoachAdviceGenerator {
         case .longRun:
             advice = longRunAdvice(phase: phase, discipline: discipline, paceProfile: paceProfile)
         case .rest:
-            advice = "Rest is where adaptation happens. Trust the process."
+            advice = String(localized: "road.coach.rest",
+                            defaultValue: "Rest is where adaptation happens. Trust the process.")
         default:
             break
         }
@@ -103,12 +108,15 @@ enum RoadCoachAdviceGenerator {
             let warning: String
             if realism == .veryAmbitious {
                 if let recommended = paceProfile?.recommendedGoalTime {
-                    warning = " ⚠ Goal is very ambitious. A realistic target right now is ~\(formatFinishTime(recommended)). Race pace unlocks only if your tune-up trial confirms it."
+                    warning = " " + String(localized: "road.coach.goal.veryAmbitious.withTarget",
+                        defaultValue: "⚠ Goal is very ambitious. A realistic target right now is ~\(formatFinishTime(recommended)). Race pace unlocks only if your tune-up trial confirms it.")
                 } else {
-                    warning = " ⚠ Goal is very ambitious vs current fitness. Race pace unlocks only if your tune-up trial confirms it."
+                    warning = " " + String(localized: "road.coach.goal.veryAmbitious",
+                        defaultValue: "⚠ Goal is very ambitious vs current fitness. Race pace unlocks only if your tune-up trial confirms it.")
                 }
             } else {
-                warning = " Note: goal is ambitious. Training paces reflect current fitness; race-specific work unlocks in late peak."
+                warning = " " + String(localized: "road.coach.goal.ambitious",
+                    defaultValue: "Note: goal is ambitious. Training paces reflect current fitness; race-specific work unlocks in late peak.")
             }
             advice = (advice ?? "") + warning
         }
@@ -123,7 +131,8 @@ enum RoadCoachAdviceGenerator {
             let range = PaceCalculator.heartRateRange(
                 for: intensity, restingHR: restingHR, maxHR: maxHR
             )
-            current += " Target HR: \(range.min)-\(range.max) bpm."
+            current += " " + String(localized: "road.coach.targetHR",
+                defaultValue: "Target HR: \(range.min)-\(range.max) bpm.")
             advice = current
         }
 
@@ -155,19 +164,26 @@ enum RoadCoachAdviceGenerator {
         let from = formatPace(entry.originalPacePerKm)
         let to = formatPace(entry.adjustedPacePerKm)
         let deltaSeconds = Int(abs(entry.adjustedPacePerKm - entry.originalPacePerKm).rounded())
-        let direction = entry.adjustedPacePerKm > entry.originalPacePerKm ? "slowed" : "quickened"
+        let direction = entry.adjustedPacePerKm > entry.originalPacePerKm
+            ? String(localized: "road.coach.refine.slowed", defaultValue: "slowed")
+            : String(localized: "road.coach.refine.quickened", defaultValue: "quickened")
         let reasonText: String
         switch entry.reason {
         case .slowDownPaceDrift:
-            reasonText = "your recent reps have been running \(Int(entry.meanDeviationSecondsPerKm.rounded()))s/km slower than target"
+            reasonText = String(localized: "road.coach.refine.reason.paceDrift",
+                defaultValue: "your recent reps have been running \(Int(entry.meanDeviationSecondsPerKm.rounded()))s/km slower than target")
         case .slowDownHighRPE:
-            reasonText = "you've been hitting target but at a perceived effort of \(String(format: "%.1f", entry.meanRPE))/10, unsustainable across a block"
+            reasonText = String(localized: "road.coach.refine.reason.highRPE",
+                defaultValue: "you've been hitting target but at a perceived effort of \(String(format: "%.1f", entry.meanRPE))/10, unsustainable across a block")
         case .slowDownIncompleteReps:
-            reasonText = "you've bailed on reps across multiple sessions; the previous target was too hard"
+            reasonText = String(localized: "road.coach.refine.reason.incompleteReps",
+                defaultValue: "you've bailed on reps across multiple sessions; the previous target was too hard")
         case .speedUpFitnessHeadroom:
-            reasonText = "you've been clearing the work at RPE \(String(format: "%.1f", entry.meanRPE))/10 with all reps completed; fitness has room"
+            reasonText = String(localized: "road.coach.refine.reason.fitnessHeadroom",
+                defaultValue: "you've been clearing the work at RPE \(String(format: "%.1f", entry.meanRPE))/10 with all reps completed; fitness has room")
         }
-        return "📊 Target \(direction) \(deltaSeconds)s/km (\(from) → \(to)) based on \(entry.evidenceCount) recent sessions: \(reasonText). The fitness baseline is unchanged; only this session's prescription adapts."
+        return String(localized: "road.coach.refine.summary",
+            defaultValue: "📊 Target \(direction) \(deltaSeconds)s/km (\(from) → \(to)) based on \(entry.evidenceCount) recent sessions: \(reasonText). The fitness baseline is unchanged; only this session's prescription adapts.")
     }
 
     /// RR-22: Hot-race advisory, practical heat-acclimation options the
@@ -176,7 +192,8 @@ enum RoadCoachAdviceGenerator {
     /// of active heat training (Scoon 2007, Zurawlew 2016). Heat acclimation
     /// starts at 5-7 days but optimal benefit at 10-14 days.
     private static func hotRaceAdvice() -> String {
-        return "Hot-race advisory: forecast suggests warm/humid race conditions. Practical acclimation: (1) sauna sessions 20-30 min at 60-80 °C, 3× per week starting 2 weeks out (passive heat exposure yields ~50-70% of active-heat benefit); (2) overdress on easy runs during the final 10 days; (3) pre-cool with ice slurry or cold water 15 min before the race; (4) expect to pace 10-30 s/km slower than your cool-weather goal pace."
+        return String(localized: "road.coach.hotRace",
+            defaultValue: "Hot-race advisory: forecast suggests warm/humid race conditions. Practical acclimation: (1) sauna sessions 20-30 min at 60-80 °C, 3× per week starting 2 weeks out (passive heat exposure yields ~50-70% of active-heat benefit); (2) overdress on easy runs during the final 10 days; (3) pre-cool with ice slurry or cold water 15 min before the race; (4) expect to pace 10-30 s/km slower than your cool-weather goal pace.")
     }
 
     /// RR-21: Short-prep advisory for compressed plans. Surfaced only during
@@ -185,11 +202,14 @@ enum RoadCoachAdviceGenerator {
     private static func shortPrepAdvice(discipline: RoadRaceDiscipline) -> String {
         switch discipline {
         case .roadMarathon:
-            return "Compressed prep alert: marathon builds typically run 16-18 weeks, with 8 weeks of aerobic base development alone. Your base is truncated, which caps how much aerobic engine you can build before race day. Strongly recommend a conservative finish goal (add 5-10% to your target) or deferring to a later race if the calendar allows."
+            return String(localized: "road.coach.shortPrep.marathon",
+                defaultValue: "Compressed prep alert: marathon builds typically run 16-18 weeks, with 8 weeks of aerobic base development alone. Your base is truncated, which caps how much aerobic engine you can build before race day. Strongly recommend a conservative finish goal (add 5-10% to your target) or deferring to a later race if the calendar allows.")
         case .roadHalf:
-            return "Compressed prep alert: HM prep benefits from at least 8 weeks for meaningful threshold development. Your plan is running shorter. Consider a conservative finish goal, and trust your aerobic base rather than chasing speed."
+            return String(localized: "road.coach.shortPrep.half",
+                defaultValue: "Compressed prep alert: HM prep benefits from at least 8 weeks for meaningful threshold development. Your plan is running shorter. Consider a conservative finish goal, and trust your aerobic base rather than chasing speed.")
         case .road10K:
-            return "Compressed prep alert: 10K plans normally run 6+ weeks. Your base is short. Prioritize finishing cleanly over hitting a hard target."
+            return String(localized: "road.coach.shortPrep.tenK",
+                defaultValue: "Compressed prep alert: 10K plans normally run 6+ weeks. Your base is short. Prioritize finishing cleanly over hitting a hard target.")
         }
     }
 
@@ -199,11 +219,14 @@ enum RoadCoachAdviceGenerator {
     private static func firstTimerAdvice(discipline: RoadRaceDiscipline) -> String {
         switch discipline {
         case .roadMarathon:
-            return "First-timer note: prioritize finishing strong over hitting a specific time. First-time marathoners most often blow up in the final 10K from going out too hard. Hold marathon pace even when it feels too easy in the first half. The fast target belongs to race #2."
+            return String(localized: "road.coach.firstTimer.marathon",
+                defaultValue: "First-timer note: prioritize finishing strong over hitting a specific time. First-time marathoners most often blow up in the final 10K from going out too hard. Hold marathon pace even when it feels too easy in the first half. The fast target belongs to race #2.")
         case .roadHalf:
-            return "First-timer note: keep the first 15 km conservative. A common first-half-marathon mistake is starting at 10K effort and blowing up at 17 km. Save a little for the final 5 km."
+            return String(localized: "road.coach.firstTimer.half",
+                defaultValue: "First-timer note: keep the first 15 km conservative. A common first-half-marathon mistake is starting at 10K effort and blowing up at 17 km. Save a little for the final 5 km.")
         case .road10K:
-            return "First-timer note: most first 10Ks go out too hard. Settle into goal pace by 2 km and save a surge for the final 2 km, not the first."
+            return String(localized: "road.coach.firstTimer.tenK",
+                defaultValue: "First-timer note: most first 10Ks go out too hard. Settle into goal pace by 2 km and save a surge for the final 2 km, not the first.")
         }
     }
 
@@ -228,13 +251,16 @@ enum RoadCoachAdviceGenerator {
     // MARK: - Specific Advice
 
     private static func easyRunAdvice(phase: TrainingPhase, paceProfile: RoadPaceProfile?) -> String {
-        var advice = "Keep it truly easy, at conversational pace."
+        var advice = String(localized: "road.coach.easy.intro",
+            defaultValue: "Keep it truly easy, at conversational pace.")
         if let profile = paceProfile {
             let slowPace = formatPace(profile.easyPacePerKm.upperBound)
             let fastPace = formatPace(profile.easyPacePerKm.lowerBound)
-            advice += " Target: \(fastPace)-\(slowPace)/km."
+            advice += " " + String(localized: "road.coach.targetRange",
+                defaultValue: "Target: \(fastPace)-\(slowPace)/km.")
         }
-        advice += " This is where your aerobic engine grows. Resist the urge to push."
+        advice += " " + String(localized: "road.coach.easy.outro",
+            defaultValue: "This is where your aerobic engine grows. Resist the urge to push.")
         return advice
     }
 
@@ -244,26 +270,32 @@ enum RoadCoachAdviceGenerator {
         paceProfile: RoadPaceProfile?,
         template: RoadIntervalLibrary.Template?
     ) -> String {
-        var advice = "Warm-up: 10-15min easy jog + 4-6 strides."
+        var advice = String(localized: "road.coach.interval.warmup",
+            defaultValue: "Warm-up: 10-15min easy jog + 4-6 strides.")
         switch phase {
         case .base:
-            advice += " Speed strides and short reps. Focus on form and leg turnover, not raw speed."
+            advice += " " + String(localized: "road.coach.interval.base",
+                defaultValue: "Speed strides and short reps. Focus on form and leg turnover, not raw speed.")
         case .build:
-            advice += " VO2max session. Run the intervals at a controlled hard effort, working hard but not sprinting."
+            advice += " " + String(localized: "road.coach.interval.build",
+                defaultValue: "VO2max session. Run the intervals at a controlled hard effort, working hard but not sprinting.")
             if let profile = paceProfile {
                 let pace = paceForTemplate(template: template, profile: profile, fallback: profile.intervalPacePerKm)
-                advice += " Target: \(formatPace(pace))/km."
+                advice += " " + targetPaceText(pace)
             }
         case .peak:
-            advice += " Race-specific work. This is your \(discipline.displayName) pace. Memorize how it feels."
+            advice += " " + String(localized: "road.coach.interval.peak",
+                defaultValue: "Race-specific work. This is your \(discipline.displayName) pace. Memorize how it feels.")
             if let profile = paceProfile {
                 let pace = paceForTemplate(template: template, profile: profile, fallback: profile.racePacePerKm)
-                advice += " Target: \(formatPace(pace))/km."
+                advice += " " + targetPaceText(pace)
             }
         default:
-            advice += " Light speed work to stay sharp."
+            advice += " " + String(localized: "road.coach.interval.default",
+                defaultValue: "Light speed work to stay sharp.")
         }
-        advice += " Cool-down: 5-10min easy jog."
+        advice += " " + String(localized: "road.coach.cooldown",
+            defaultValue: "Cool-down: 5-10min easy jog.")
         return advice
     }
 
@@ -273,25 +305,36 @@ enum RoadCoachAdviceGenerator {
         paceProfile: RoadPaceProfile?,
         template: RoadIntervalLibrary.Template?
     ) -> String {
-        var advice = "Warm-up: 10min easy jog + 4 strides."
+        var advice = String(localized: "road.coach.tempo.warmup",
+            defaultValue: "Warm-up: 10min easy jog + 4 strides.")
         switch phase {
         case .base, .build:
-            advice += " Threshold pace: comfortably hard. Speak in short phrases but not a conversation."
+            advice += " " + String(localized: "road.coach.tempo.baseBuild",
+                defaultValue: "Threshold pace: comfortably hard. Speak in short phrases but not a conversation.")
             if let profile = paceProfile {
                 let pace = paceForTemplate(template: template, profile: profile, fallback: profile.thresholdPacePerKm)
-                advice += " Target: \(formatPace(pace))/km."
+                advice += " " + targetPaceText(pace)
             }
         case .peak:
-            advice += " Race-pace threshold work. Sustain your target \(discipline.displayName) pace with control."
+            advice += " " + String(localized: "road.coach.tempo.peak",
+                defaultValue: "Race-pace threshold work. Sustain your target \(discipline.displayName) pace with control.")
             if let profile = paceProfile {
                 let pace = paceForTemplate(template: template, profile: profile, fallback: profile.racePacePerKm)
-                advice += " Target: \(formatPace(pace))/km."
+                advice += " " + targetPaceText(pace)
             }
         default:
-            advice += " Easy tempo to maintain feel."
+            advice += " " + String(localized: "road.coach.tempo.default",
+                defaultValue: "Easy tempo to maintain feel.")
         }
-        advice += " Cool-down: 5-10min easy jog."
+        advice += " " + String(localized: "road.coach.cooldown",
+            defaultValue: "Cool-down: 5-10min easy jog.")
         return advice
+    }
+
+    /// "Target: <pace>/km." — shared across interval/tempo prescriptions.
+    private static func targetPaceText(_ pace: Double) -> String {
+        String(localized: "road.coach.targetPace",
+               defaultValue: "Target: \(formatPace(pace))/km.")
     }
 
     /// Returns the prescribed pace for a quality session. When a template
@@ -322,31 +365,40 @@ enum RoadCoachAdviceGenerator {
     ) -> String {
         switch phase {
         case .base:
-            var advice = "Easy long run. The goal is time on feet, not pace."
+            var advice = String(localized: "road.coach.longRun.base",
+                defaultValue: "Easy long run. The goal is time on feet, not pace.")
             if let profile = paceProfile {
-                advice += " Stay in the \(formatPace(profile.easyPacePerKm.lowerBound))-\(formatPace(profile.easyPacePerKm.upperBound))/km range."
+                advice += " " + String(localized: "road.coach.longRun.baseRange",
+                    defaultValue: "Stay in the \(formatPace(profile.easyPacePerKm.lowerBound))-\(formatPace(profile.easyPacePerKm.upperBound))/km range.")
             }
             return advice
         case .build:
-            return "Structured long run. Start easy and build into a moderate effort in the second half. Practice your race-day nutrition."
+            return String(localized: "road.coach.longRun.build",
+                defaultValue: "Structured long run. Start easy and build into a moderate effort in the second half. Practice your race-day nutrition.")
         case .peak:
             if discipline == .roadMarathon {
-                return "Marathon-specific long run. Include blocks at marathon pace. This is your dress rehearsal. Practice everything: pacing, fueling, gear."
+                return String(localized: "road.coach.longRun.peak.marathon",
+                    defaultValue: "Marathon-specific long run. Include blocks at marathon pace. This is your dress rehearsal. Practice everything: pacing, fueling, gear.")
             }
-            return "Race-specific long run. Include a faster segment at race pace. Practice your race-day routine."
+            return String(localized: "road.coach.longRun.peak.other",
+                defaultValue: "Race-specific long run. Include a faster segment at race pace. Practice your race-day routine.")
         default:
-            return "Easy long run to maintain aerobic fitness."
+            return String(localized: "road.coach.longRun.default",
+                defaultValue: "Easy long run to maintain aerobic fitness.")
         }
     }
 
     private static func recoveryWeekAdvice(type: SessionType) -> String {
         switch type {
         case .longRun:
-            "Shorter long run this week. Your body is absorbing recent training. Let it work."
+            String(localized: "road.coach.recoveryWeek.longRun",
+                   defaultValue: "Shorter long run this week. Your body is absorbing recent training. Let it work.")
         case .recovery:
-            "Easy effort. Recovery weeks are when you get stronger. Trust the process."
+            String(localized: "road.coach.recoveryWeek.recovery",
+                   defaultValue: "Easy effort. Recovery weeks are when you get stronger. Trust the process.")
         default:
-            "Recovery week. Keep it easy."
+            String(localized: "road.coach.recoveryWeek.default",
+                   defaultValue: "Recovery week. Keep it easy.")
         }
     }
 

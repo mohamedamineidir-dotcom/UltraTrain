@@ -26,7 +26,8 @@ extension IntervalSessionComposer {
             let isLast = i == segments.count - 1
             let pace = pace(for: seg, ctx: ctx)
             let intensity = intensity(for: seg.zone)
-            let note = "Target: \(RoadCoachAdviceGenerator.formatPace(pace))/km"
+            let note = String(localized: "interval.note.target",
+                              defaultValue: "Target: \(RoadCoachAdviceGenerator.formatPace(pace))/km")
 
             if seg.repDistanceM > 0 {
                 phases.append(IntervalPhase(
@@ -59,7 +60,8 @@ extension IntervalSessionComposer {
         phases.append(IntervalPhase(
             id: UUID(), phaseType: .coolDown,
             trigger: .duration(seconds: coolDown * 60), targetIntensity: .easy,
-            repeatCount: 1, notes: "Easy jog cool-down."
+            repeatCount: 1,
+            notes: String(localized: "interval.note.cooldown", defaultValue: "Easy jog cool-down.")
         ))
 
         // Duration phases carry their own time; distance phases (which report
@@ -181,23 +183,32 @@ extension IntervalSessionComposer {
 
     private static func name(_ ctx: Context, segments: [Segment], shape: Shape) -> String {
         if ctx.isRecoveryWeek {
-            return ctx.slotIndex == 0 ? "6×20s strides" : "Mixed primer"
+            return ctx.slotIndex == 0
+                ? String(localized: "interval.name.strides", defaultValue: "6×20s strides")
+                : String(localized: "interval.name.mixedPrimer", defaultValue: "Mixed primer")
         }
         switch shape {
         case .pyramid:
             let mins = segments.map { fmtRep(distanceM: $0.repDistanceM, durationSec: $0.repDurationSec) }
             let tag = segments.first.map { zoneTag($0.zone) } ?? ""
-            return "Pyramid \(mins.joined(separator: "-")) \(tag)"
+            return String(localized: "interval.shape.pyramid", defaultValue: "Pyramid")
+                + " \(mins.joined(separator: "-")) \(tag)"
         case .mixedContrast:
+            // Counts + zone tags only (T / I / MP) — no translatable words.
             return segments.map { "\($0.repCount)×\(fmtRep(distanceM: $0.repDistanceM, durationSec: $0.repDurationSec)) \(zoneTag($0.zone))" }
                 .joined(separator: " + ")
         case .cutdown:
             let tag = segments.first.map { zoneTag($0.zone) } ?? ""
-            return "Cutdown " + segments.map { "\($0.repCount)×\(fmtRep(distanceM: $0.repDistanceM, durationSec: $0.repDurationSec))" }.joined(separator: "/") + " \(tag)"
+            return String(localized: "interval.shape.cutdown", defaultValue: "Cutdown")
+                + " " + segments.map { "\($0.repCount)×\(fmtRep(distanceM: $0.repDistanceM, durationSec: $0.repDurationSec))" }.joined(separator: "/") + " \(tag)"
         case .progression:
             guard let s = segments.first else { return ctx.category.displayName }
             let mins = s.repDurationSec / 60
-            let label = ctx.category == .raceSpecific ? "MP tempo" : (ctx.category == .threshold ? "tempo" : "progression")
+            let label = ctx.category == .raceSpecific
+                ? String(localized: "interval.label.mpTempo", defaultValue: "MP tempo")
+                : (ctx.category == .threshold
+                    ? String(localized: "interval.label.tempo", defaultValue: "tempo")
+                    : String(localized: "interval.label.progression", defaultValue: "progression"))
             return s.repCount > 1 ? "\(s.repCount)×\(mins)min \(label)" : "\(mins)min \(label)"
         case .uniform:
             guard let s = segments.first else { return ctx.category.displayName }
@@ -231,10 +242,12 @@ extension IntervalSessionComposer {
 
     private static func description(_ ctx: Context, shape: Shape) -> String {
         if ctx.isRecoveryWeek {
-            return "Recovery-week primer. Keep it light and short; fatigue should drop to zero."
+            return String(localized: "interval.desc.recovery",
+                          defaultValue: "Recovery-week primer. Keep it light and short; fatigue should drop to zero.")
         }
         return RoadIntervalLibrary.purposeLine(for: ctx.category.displayName)
-            ?? "Quality session at \(ctx.category.displayName) effort."
+            ?? String(localized: "interval.desc.fallback",
+                      defaultValue: "Quality session at \(ctx.category.displayName) effort.")
     }
 
     static func signature(_ ctx: Context, segments: [Segment], shape: Shape) -> String {
@@ -244,20 +257,22 @@ extension IntervalSessionComposer {
     }
 
     private static func warmUpNotes(_ ctx: Context) -> String {
-        var note = "Easy jog to warm up."
+        var note = String(localized: "interval.warmup.intro", defaultValue: "Easy jog to warm up.")
         if let p = ctx.paceProfile {
-            note += " ~\(RoadCoachAdviceGenerator.formatPace(p.easyPacePerKm.upperBound))/km or slower."
+            note += " " + String(localized: "interval.warmup.pace",
+                defaultValue: "~\(RoadCoachAdviceGenerator.formatPace(p.easyPacePerKm.upperBound))/km or slower.")
         }
-        note += " Include 4-6 strides in the last 2 minutes."
+        note += " " + String(localized: "interval.warmup.strides",
+            defaultValue: "Include 4-6 strides in the last 2 minutes.")
         return note
     }
 
     private static func recoveryNote(_ type: RoadIntervalLibrary.RecoveryType) -> String {
         switch type {
-        case .jog:      return "Easy jog recovery"
-        case .walk:     return "Walk recovery"
-        case .float:    return "Float recovery (moderate jog)"
-        case .standing: return "Standing or very slow jog"
+        case .jog:      return String(localized: "interval.recovery.jog", defaultValue: "Easy jog recovery")
+        case .walk:     return String(localized: "interval.recovery.walk", defaultValue: "Walk recovery")
+        case .float:    return String(localized: "interval.recovery.float", defaultValue: "Float recovery (moderate jog)")
+        case .standing: return String(localized: "interval.recovery.standing", defaultValue: "Standing or very slow jog")
         }
     }
 }

@@ -1795,6 +1795,7 @@
 		FB6CF12C6B0847996AA422DC /* CourseProgressTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507119780219B8CAAA10C5E2 /* CourseProgressTracker.swift */; };
 		FB6DEF38C4A6E89D92A768D1 /* WidgetPendingActionProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1F9E002DFD12E3A5B527F38 /* WidgetPendingActionProcessor.swift */; };
 		FB7FF2DC9E206568464F12CA /* MockAchievementRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0D4B7F02F9B0B65BD12D9B2 /* MockAchievementRepository.swift */; };
+		FB984892B4832AFFB8CB97BA /* RoadCoachAdviceLocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AD489ADD84F20D6C3A23C1 /* RoadCoachAdviceLocalizationTests.swift */; };
 		FC1F577072C4AABCB37AD3E8 /* TrainingPlanRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C503BBC3D7A5A67C8636504D /* TrainingPlanRepository.swift */; };
 		FC7096C7217C070C7222B095 /* ExpiredPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6BAF2605F69BCAEED22CE3 /* ExpiredPlanView.swift */; };
 		FCA320D8472A6F3416E2088B /* SessionMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A427C63C8438824DDE13BAE0 /* SessionMatcher.swift */; };
@@ -3603,6 +3604,7 @@
 		F35B086F0FA6DB05DF2F6D6D /* VoiceCueBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCueBuilder.swift; sourceTree = "<group>"; };
 		F39948033F010164EE4D3640 /* RefineRoadPaceFromFeedbackUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefineRoadPaceFromFeedbackUseCaseTests.swift; sourceTree = "<group>"; };
 		F3A43CE12AA7226878A9CB08 /* RacePacingGuidance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RacePacingGuidance.swift; sourceTree = "<group>"; };
+		F3AD489ADD84F20D6C3A23C1 /* RoadCoachAdviceLocalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoadCoachAdviceLocalizationTests.swift; sourceTree = "<group>"; };
 		F3C5408F9DA9AC668572C4B7 /* SharedRunRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedRunRepository.swift; sourceTree = "<group>"; };
 		F3D94862CB265BE1D6B3B254 /* LocalAthleteRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAthleteRepository.swift; sourceTree = "<group>"; };
 		F481F44145FD7876FE3C3042 /* FinishTimePredictionServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishTimePredictionServiceProtocol.swift; sourceTree = "<group>"; };
@@ -6017,6 +6019,7 @@
 				84D7232FDB7814A812A8F93E /* RecoveryScoreCalculatorTests.swift */,
 				A74A61D53BEAC00C6BEBFD38 /* RefineNutritionPlanFromFeedbackUseCaseTests.swift */,
 				F39948033F010164EE4D3640 /* RefineRoadPaceFromFeedbackUseCaseTests.swift */,
+				F3AD489ADD84F20D6C3A23C1 /* RoadCoachAdviceLocalizationTests.swift */,
 				1A63C7A75382496B1CD2B0CC /* RoadFitnessAnchorTests.swift */,
 				6ED9317EA367BD0F757A0CF7 /* RoadIntervalLibraryTests.swift */,
 				7F590A3A6E456F4AC44EE121 /* RoadLongRunCalculatorPeakPlacementTests.swift */,
@@ -6916,6 +6919,7 @@
 				9B053D7FB3AD3978459BC94B /* RemoteRunDataSourceTests.swift in Sources */,
 				AED19CE756DA88E9F023CF89 /* RequestDeduplicationTests.swift in Sources */,
 				76A6D9DB76A7310D98DF4572 /* RequestSigningInterceptorTests.swift in Sources */,
+				FB984892B4832AFFB8CB97BA /* RoadCoachAdviceLocalizationTests.swift in Sources */,
 				408F1B88FF270BBFE2CE909D /* RoadFitnessAnchorTests.swift in Sources */,
 				4555ED46D8CA0B42D3C7A016 /* RoadIntervalLibraryTests.swift in Sources */,
 				96CC4F813D5BD2D066F0C375 /* RoadLongRunCalculatorPeakPlacementTests.swift in Sources */,
