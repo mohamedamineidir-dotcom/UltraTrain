@@ -23887,6 +23887,294 @@
         }
       }
     },
+    "wpe.b2b.day1.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B2B Day 1: warmup → steady → negative split last third → cooldown"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc Jour 1 : échauffement → régulier → negative split dernier tiers → retour au calme"
+          }
+        }
+      }
+    },
+    "wpe.b2b.day1.name" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B2B Day 1"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc Jour 1"
+          }
+        }
+      }
+    },
+    "wpe.b2b.day1Sim.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B2B Day 1 race simulation: %1$lld×%2$lld min at race effort with 15 min easy between, embedded in a long aerobic run."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc Jour 1 simulation de course : %1$lld×%2$lld min à effort course avec 15 min facile entre, intégrés dans une longue sortie aérobie."
+          }
+        }
+      }
+    },
+    "wpe.b2b.day1Sim.name" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B2B Day 1 (race sim)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc Jour 1 (simu course)"
+          }
+        }
+      }
+    },
+    "wpe.b2b.day2.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B2B Day 2: warmup → fatigued effort → push last 20% → cooldown"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc J2 : échauffement → effort sur fatigue → relance derniers 20 % → retour au calme"
+          }
+        }
+      }
+    },
+    "wpe.b2b.day2.name" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B2B Day 2"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc J2"
+          }
+        }
+      }
+    },
+    "wpe.b2b.note.aerobicFinish" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy aerobic finish. Don't bury yourself, Day 2 still runs on this fatigue."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fin aérobie facile. Ne vous enterrez pas, le J2 se court sur cette fatigue."
+          }
+        }
+      }
+    },
+    "wpe.b2b.note.betweenBlocks" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy jog between race blocks. Eat, drink, reset."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile entre les blocs course. Mangez, buvez, repartez."
+          }
+        }
+      }
+    },
+    "wpe.b2b.note.cooldownDay2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cool down. Refuel well, Day 2 starts now."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retour au calme. Rechargez bien, le J2 commence maintenant."
+          }
+        }
+      }
+    },
+    "wpe.b2b.note.cooldownTomorrow" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cool down. Refuel well, tomorrow runs on today's fatigue."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retour au calme. Rechargez bien, demain se court sur la fatigue d'aujourd'hui."
+          }
+        }
+      }
+    },
+    "wpe.b2b.note.extraWarmup" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extra-long warmup on tired legs. Walk → jog → easy run."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échauffement extra-long sur jambes fatiguées. Marche → footing → course facile."
+          }
+        }
+      }
+    },
+    "wpe.b2b.note.fatiguedEffort" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Steady fatigued effort at easy pace. Embrace the discomfort."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort régulier sur fatigue à allure facile. Acceptez l'inconfort."
+          }
+        }
+      }
+    },
+    "wpe.b2b.note.negSplit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Negative split, build effort in the last third"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Negative split, montez l'effort sur le dernier tiers"
+          }
+        }
+      }
+    },
+    "wpe.b2b.note.preamble" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy aerobic preamble. Fuel as you will on race day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préambule aérobie facile. Ravitaillez comme le jour de course."
+          }
+        }
+      }
+    },
+    "wpe.b2b.note.progWarmup" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progressive warmup. Race-day morning routine if you can."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échauffement progressif. Routine du matin de course si possible."
+          }
+        }
+      }
+    },
+    "wpe.b2b.note.pushSection" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push section, build to race effort in the last 20%"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Section de relance, montez à l'effort course sur les derniers 20 %"
+          }
+        }
+      }
+    },
+    "wpe.b2b.note.raceEffort" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race effort. Full race kit, full fueling, this is the dress rehearsal before tomorrow's tired-legs day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort course. Tenue complète, ravitaillement complet : c'est la répétition générale avant la journée jambes fatiguées de demain."
+          }
+        }
+      }
+    },
+    "wpe.b2b.note.walkCooldown" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walk to cool down. Refuel immediately."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marchez pour le retour au calme. Rechargez immédiatement."
+          }
+        }
+      }
+    },
     "x%lld" : {
       "localizations" : {
         "fr" : {

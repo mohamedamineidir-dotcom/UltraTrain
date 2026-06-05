@@ -235,13 +235,13 @@ enum WorkoutProgressionEngine {
         let steady = self.phase(.work, duration: steadyDuration, intensity: .easy, reps: 1,
                                 notes: "Steady effort at easy pace. Fuel consistently.")
         let negativeSplit = self.phase(.work, duration: negativeSplitDuration, intensity: .moderate, reps: 1,
-                                       notes: "Negative split, build effort in the last third")
+                                       notes: String(localized: "wpe.b2b.note.negSplit", defaultValue: "Negative split, build effort in the last third"))
         let coolDown = self.phase(.coolDown, duration: coolDownDuration, intensity: .easy, reps: 1,
-                                  notes: "Cool down. Refuel well, tomorrow runs on today's fatigue.")
+                                  notes: String(localized: "wpe.b2b.note.cooldownTomorrow", defaultValue: "Cool down. Refuel well, tomorrow runs on today's fatigue."))
 
         return WorkoutTemplate(
-            name: "B2B Day 1",
-            description: "B2B Day 1: warmup → steady → negative split last third → cooldown",
+            name: String(localized: "wpe.b2b.day1.name", defaultValue: "B2B Day 1"),
+            description: String(localized: "wpe.b2b.day1.desc", defaultValue: "B2B Day 1: warmup → steady → negative split last third → cooldown"),
             phases: [warmUp, steady, negativeSplit, coolDown]
         )
     }
@@ -273,27 +273,27 @@ enum WorkoutProgressionEngine {
 
         var phases: [IntervalPhase] = []
         phases.append(self.phase(.warmUp, duration: warmUpDur, intensity: .easy, reps: 1,
-                                 notes: "Progressive warmup. Race-day morning routine if you can."))
+                                 notes: String(localized: "wpe.b2b.note.progWarmup", defaultValue: "Progressive warmup. Race-day morning routine if you can.")))
         if easyBefore > 60 {
             phases.append(self.phase(.work, duration: easyBefore, intensity: .easy, reps: 1,
-                                     notes: "Easy aerobic preamble. Fuel as you will on race day."))
+                                     notes: String(localized: "wpe.b2b.note.preamble", defaultValue: "Easy aerobic preamble. Fuel as you will on race day.")))
         }
         phases.append(self.phase(.work, duration: workPerBlock, intensity: .moderate, reps: blockCount,
-                                 notes: "Race effort. Full race kit, full fueling, this is the dress rehearsal before tomorrow's tired-legs day."))
+                                 notes: String(localized: "wpe.b2b.note.raceEffort", defaultValue: "Race effort. Full race kit, full fueling, this is the dress rehearsal before tomorrow's tired-legs day.")))
         phases.append(self.phase(.recovery, duration: recoveryBetween, intensity: .easy, reps: 1,
-                                 notes: "Easy jog between race blocks. Eat, drink, reset."))
+                                 notes: String(localized: "wpe.b2b.note.betweenBlocks", defaultValue: "Easy jog between race blocks. Eat, drink, reset.")))
         if easyAfter > 60 {
             phases.append(self.phase(.work, duration: easyAfter, intensity: .easy, reps: 1,
-                                     notes: "Easy aerobic finish. Don't bury yourself, Day 2 still runs on this fatigue."))
+                                     notes: String(localized: "wpe.b2b.note.aerobicFinish", defaultValue: "Easy aerobic finish. Don't bury yourself, Day 2 still runs on this fatigue.")))
         }
         phases.append(self.phase(.coolDown, duration: coolDownDur, intensity: .easy, reps: 1,
-                                 notes: "Cool down. Refuel well, Day 2 starts now."))
+                                 notes: String(localized: "wpe.b2b.note.cooldownDay2", defaultValue: "Cool down. Refuel well, Day 2 starts now.")))
 
         let workMin = Int(workPerBlock) / 60
-        let desc = "B2B Day 1 race simulation: \(blockCount)×\(workMin) min at race effort with 15 min easy between, embedded in a long aerobic run."
+        let desc = String(localized: "wpe.b2b.day1Sim.desc", defaultValue: "B2B Day 1 race simulation: \(blockCount)×\(workMin) min at race effort with 15 min easy between, embedded in a long aerobic run.")
 
         return WorkoutTemplate(
-            name: "B2B Day 1 (race sim)",
+            name: String(localized: "wpe.b2b.day1Sim.name", defaultValue: "B2B Day 1 (race sim)"),
             description: desc,
             phases: phases
         )
@@ -309,17 +309,17 @@ enum WorkoutProgressionEngine {
         let mainDuration = remaining - pushDuration
 
         let warmUp = phase(.warmUp, duration: warmUpDuration, intensity: .easy, reps: 1,
-                           notes: "Extra-long warmup on tired legs. Walk → jog → easy run.")
+                           notes: String(localized: "wpe.b2b.note.extraWarmup", defaultValue: "Extra-long warmup on tired legs. Walk → jog → easy run."))
         let main = phase(.work, duration: mainDuration, intensity: .easy, reps: 1,
-                         notes: "Steady fatigued effort at easy pace. Embrace the discomfort.")
+                         notes: String(localized: "wpe.b2b.note.fatiguedEffort", defaultValue: "Steady fatigued effort at easy pace. Embrace the discomfort."))
         let push = phase(.work, duration: pushDuration, intensity: .moderate, reps: 1,
-                         notes: "Push section, build to race effort in the last 20%")
+                         notes: String(localized: "wpe.b2b.note.pushSection", defaultValue: "Push section, build to race effort in the last 20%"))
         let coolDown = phase(.coolDown, duration: coolDownDuration, intensity: .easy, reps: 1,
-                             notes: "Walk to cool down. Refuel immediately.")
+                             notes: String(localized: "wpe.b2b.note.walkCooldown", defaultValue: "Walk to cool down. Refuel immediately."))
 
         return WorkoutTemplate(
-            name: "B2B Day 2",
-            description: "B2B Day 2: warmup → fatigued effort → push last 20% → cooldown",
+            name: String(localized: "wpe.b2b.day2.name", defaultValue: "B2B Day 2"),
+            description: String(localized: "wpe.b2b.day2.desc", defaultValue: "B2B Day 2: warmup → fatigued effort → push last 20% → cooldown"),
             phases: [warmUp, main, push, coolDown]
         )
     }
