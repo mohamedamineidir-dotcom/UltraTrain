@@ -4,8 +4,10 @@ import SwiftData
 
 struct MigrationPlanTests {
 
-    @Test func schemaV1Has36Models() {
-        #expect(SchemaV1.models.count == 36)
+    @Test func schemaV1HasExpectedModelCount() {
+        // Guard: bump this consciously when adding/removing an @Model so
+        // schema changes stay deliberate (migration safety).
+        #expect(SchemaV1.models.count == 38)
     }
 
     @Test func schemaV1VersionIsCorrect() {

@@ -50,16 +50,25 @@ extension SettingsViewModel {
 
     func logout() async {
         guard let authService else { return }
+        // The auth logout (clearing the session/tokens) is the operation that
+        // must succeed. If it fails, surface an error and stay logged in,
+        // don't claim a logout that didn't happen.
         do {
             try await authService.logout()
-            // Clear all local data so the next account starts fresh
-            try await clearAllDataUseCase.execute()
-            didLogout = true
         } catch {
-            // Even if data clearing fails, still log out
-            didLogout = true
+            self.error = String(localized: "settings.logout.failed",
+                                defaultValue: "Could not log out. Please try again.")
             Logger.settings.error("Logout failed: \(error)")
+            return
         }
+        // Session is cleared. Clearing local data is best-effort so the next
+        // account starts fresh; a failure here shouldn't trap the user.
+        do {
+            try await clearAllDataUseCase.execute()
+        } catch {
+            Logger.settings.error("Clear data after logout failed: \(error)")
+        }
+        didLogout = true
     }
 
     func changePassword() async {

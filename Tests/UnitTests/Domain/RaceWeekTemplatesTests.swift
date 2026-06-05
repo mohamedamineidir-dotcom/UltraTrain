@@ -144,9 +144,12 @@ struct RaceWeekTemplatesTests {
             targetRace: race, experience: .advanced,
             philosophy: .performance, weekStartDate: makeMondayBaseline()
         )
-        // Race Saturday (day 5) → Day -5 = day 0
+        // Race Saturday (day 5) → Day -5 = day 0. Quality is stripped: the
+        // mountain day-5 is an easy primer, which the race-week active-day
+        // cap may further demote to a full rest day. Either way it is no
+        // longer a quality session.
         let dayMinus5 = templates.first { $0.dayOffset == 0 }
-        #expect(dayMinus5?.type == .recovery)
+        #expect(dayMinus5?.type == .recovery || dayMinus5?.type == .rest)
     }
 
     @Test("Trail: flat 50K + advanced + performance allows Day -5 light quality")

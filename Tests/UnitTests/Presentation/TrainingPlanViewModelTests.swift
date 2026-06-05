@@ -384,12 +384,20 @@ struct TrainingPlanViewModelTests {
         #expect(vm.targetRace?.id == aRace.id)
     }
 
-    @Test("isPlanStale ignores A-race changes")
+    @Test("isPlanStale detects an A-race switch")
     @MainActor
-    func isPlanStaleIgnoresARace() {
+    func isPlanStaleDetectsARaceChange() {
         let race = makeRace()
         let plan = makePlan(athlete: makeAthlete(), race: race)
-        // Different A-race ID doesn't make plan stale (only intermediate races matter)
+        let vm = makeViewModel()
+        vm.plan = plan
+
+        // Same A-race, no intermediate races — the plan is current.
+        vm.races = [race]
+        #expect(vm.isPlanStale == false)
+
+        // Switching to a different A-race makes the plan stale: it was built
+        // for the old race and must be regenerated for the new goal.
         let differentARace = Race(
             id: UUID(), name: "Different A",
             date: Date.now.adding(weeks: 20),
@@ -397,13 +405,8 @@ struct TrainingPlanViewModelTests {
             priority: .aRace, goalType: .finish, checkpoints: [],
             terrainDifficulty: .moderate
         )
-
-        let vm = makeViewModel()
-        vm.plan = plan
         vm.races = [differentARace]
-
-        // No intermediate races, plan has no intermediate race IDs — should match
-        #expect(vm.isPlanStale == false)
+        #expect(vm.isPlanStale == true)
     }
 
     // MARK: - Refresh Races

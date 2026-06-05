@@ -164,13 +164,13 @@ struct OnboardingViewModelTests {
         #expect(vm.canAdvance == true)
     }
 
-    // MARK: - Step 6 Validation (Race Name)
+    // MARK: - Step 7 Validation (Race Name)
 
     @Test("Cannot advance with empty race name")
     @MainActor
     func raceNameRequired() {
         let (vm, _, _) = makeViewModel()
-        vm.currentStep = 6
+        vm.currentStep = 7  // race step (step 6 is now injury/strength)
         vm.raceName = ""
         #expect(vm.canAdvance == false)
         vm.raceName = "UTMB"

@@ -63,7 +63,11 @@ struct PlanAutoAdjustmentServiceTests {
         with intermediateRaces: [Race],
         completedSessionInWeek1: Bool = false
     ) -> TrainingPlan {
-        let weekStart = Date.now.startOfWeek
+        // Align the plan's (single) week to the target race week so the
+        // service's raceWeekChanged guard only fires when the race actually
+        // moves, not just because this helper built a one-week stub. A real
+        // plan for a race 16 weeks out ends in that race's week.
+        let weekStart = Date.now.adding(weeks: 16).startOfWeek
 
         let session = TrainingSession(
             id: UUID(),

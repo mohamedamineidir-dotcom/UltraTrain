@@ -191,14 +191,18 @@ struct WorkoutProgressionEngineProgressionTests {
 
     @Test("higher elevation density race produces more VG work")
     func vgElevationDensityScaling() {
+        // Use the threshold60 focus (the typical VG-session focus, 40-min cap)
+        // so the density scaling is observable. The vo2max focus caps VG work
+        // at 20 min, which deliberately clamps both flat and mountainous to
+        // the same ceiling.
         let flat = WorkoutProgressionEngine.workout(
             type: .verticalGain, phase: .build, weekInPhase: 2, intensity: .hard,
-            totalDuration: 3600, phaseFocus: .vo2max,
+            totalDuration: 3600, phaseFocus: .threshold60,
             progressionContext: ctx(effectiveKm: 100, elevationM: 2000, weekIndex: 12)
         )
         let mountainous = WorkoutProgressionEngine.workout(
             type: .verticalGain, phase: .build, weekInPhase: 2, intensity: .hard,
-            totalDuration: 3600, phaseFocus: .vo2max,
+            totalDuration: 3600, phaseFocus: .threshold60,
             progressionContext: ctx(effectiveKm: 100, elevationM: 8000, weekIndex: 12)
         )
         #expect(mountainous.totalWorkDuration > flat.totalWorkDuration)

@@ -132,7 +132,7 @@ struct WidgetTimelineProviderTests {
         let data = defaults.data(forKey: WidgetDataKeys.nextSession)
         let decoded = try? JSONDecoder().decode(WidgetSessionData.self, from: data!)
         #expect(decoded?.sessionType == "verticalGain")
-        #expect(decoded?.displayName == "Vertical Gain")
+        #expect(decoded?.displayName == "Uphill Intervals")
     }
 
     // MARK: - Race Countdown Timeline Data

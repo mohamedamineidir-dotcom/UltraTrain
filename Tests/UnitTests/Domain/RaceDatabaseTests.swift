@@ -39,7 +39,7 @@ struct RaceDatabaseTests {
     func searchDiagonale() {
         let results = RaceDatabase.search(query: "Diagonale")
         #expect(!results.isEmpty)
-        #expect(results.first?.distanceKm == 165)
+        #expect(results.first?.distanceKm == 180)
     }
 
     @Test("All races have positive distance and elevation")

@@ -153,7 +153,7 @@ struct WorkoutProgressionEngineTests {
         #expect(types.last == .coolDown)
     }
 
-    @Test("recovery run produces structured warmup/main/cooldown")
+    @Test("recovery run is a single easy conversational block")
     func recoveryRunStructured() {
         let workout = WorkoutProgressionEngine.workout(
             type: .recovery,
@@ -163,10 +163,11 @@ struct WorkoutProgressionEngineTests {
             totalDuration: 2700
         )
 
-        #expect(workout.phases.count >= 3, "Recovery run should have warmup + main + cooldown")
-        let types = workout.phases.map(\.phaseType)
-        #expect(types.first == .warmUp)
-        #expect(types.last == .coolDown)
+        // A recovery run is intentionally one easy block (no warm-up/cool-down
+        // split): it's all conversational pace for blood flow, not a workout.
+        #expect(workout.phases.count == 1)
+        #expect(workout.phases.first?.phaseType == .work)
+        #expect(workout.phases.first?.targetIntensity == .easy)
     }
 
     @Test("B2B Day 1 produces structured workout with negative split")
@@ -237,7 +238,10 @@ struct WorkoutProgressionEngineTests {
         )
 
         #expect(!workout.phases.isEmpty)
-        #expect(workout.descriptionText.lowercased().contains("threshold"))
+        // The threshold30 focus trains the threshold zone (Z4); the trail
+        // description surfaces it as "(z4)" rather than the literal word.
+        let desc = workout.descriptionText.lowercased()
+        #expect(desc.contains("threshold") || desc.contains("z4"))
     }
 
     @Test("vo2max focus produces VO2max interval workout")

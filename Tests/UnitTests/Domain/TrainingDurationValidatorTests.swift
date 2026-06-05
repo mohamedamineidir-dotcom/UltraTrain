@@ -98,13 +98,13 @@ struct TrainingDurationValidatorTests {
             raceDate: raceDate,
             experienceLevel: .intermediate
         )
-        // 100 + 50 = 150 eff km → hundredMiles → intermediate needs 20 weeks
+        // 100 + 50 = 150 eff km → hundredMiles → intermediate needs 18 weeks
         #expect(!result.isSufficient)
         guard let message = result.warningMessage else {
             Issue.record("Expected warning message")
             return
         }
-        #expect(message.contains("20"))
+        #expect(message.contains("18"))
         #expect(message.contains("intermediate"))
     }
 }

@@ -14,58 +14,50 @@ struct RoadIntervalLibraryTests {
     /// plateau in weeks 1+. Sorting by `totalWorkMinutes` ascending is the
     /// fix; this test pins the property so a future refactor that reverts
     /// the sort blows up here.
-    @Test("Peak marathon raceSpecific — totalWork is non-decreasing across weeks")
+    /// The walk-forward builds monotonically to the hardest template, then
+    /// oscillates between the top TWO templates for variety (see
+    /// `plateauOscillatingIndex`). So work is non-decreasing up to the first
+    /// peak and never drops below the second-hardest value thereafter — not
+    /// strictly monotonic across all weeks.
+    private func collectWork(slotIndex: Int, phase: TrainingPhase, discipline: RoadRaceDiscipline) -> [Double] {
+        (0..<8).map { week in
+            let pick = RoadIntervalLibrary.selectForSlot(
+                slotIndex: slotIndex, phase: phase, discipline: discipline,
+                experience: .intermediate, weekInPhase: week
+            )
+            #expect(pick != nil)
+            return pick?.totalWorkMinutes ?? 0
+        }
+    }
+
+    private func assertBuildsThenOscillates(_ works: [Double]) {
+        guard let maxWork = works.max(), let firstPeak = works.firstIndex(of: maxWork) else {
+            Issue.record("no work values"); return
+        }
+        if firstPeak >= 1 {
+            for i in 1...firstPeak {
+                #expect(works[i] >= works[i - 1], "regressed before peak at week \(i): \(works)")
+            }
+        }
+        let secondHardest = works.filter { $0 < maxWork }.max() ?? maxWork
+        for i in firstPeak..<works.count {
+            #expect(works[i] >= secondHardest, "dropped below 2nd-hardest at week \(i): \(works)")
+        }
+    }
+
+    @Test("Peak marathon raceSpecific — builds to a peak then oscillates the top two")
     func peakMarathonRaceSpecificMonotonic() {
-        var prev: Double = 0
-        for week in 0..<8 {
-            let pick = RoadIntervalLibrary.selectForSlot(
-                slotIndex: 0,
-                phase: .peak,
-                discipline: .roadMarathon,
-                experience: .intermediate,
-                weekInPhase: week
-            )
-            #expect(pick != nil)
-            let work = pick?.totalWorkMinutes ?? 0
-            #expect(work >= prev, "Week \(week) (\(work)min) regressed below week \(week-1) (\(prev)min)")
-            prev = work
-        }
+        assertBuildsThenOscillates(collectWork(slotIndex: 0, phase: .peak, discipline: .roadMarathon))
     }
 
-    @Test("Peak marathon threshold slot — totalWork is non-decreasing")
+    @Test("Peak marathon threshold slot — builds to a peak then oscillates the top two")
     func peakMarathonThresholdMonotonic() {
-        var prev: Double = 0
-        for week in 0..<8 {
-            let pick = RoadIntervalLibrary.selectForSlot(
-                slotIndex: 1,
-                phase: .peak,
-                discipline: .roadMarathon,
-                experience: .intermediate,
-                weekInPhase: week
-            )
-            #expect(pick != nil)
-            let work = pick?.totalWorkMinutes ?? 0
-            #expect(work >= prev, "Week \(week) (\(work)min) regressed below week \(week-1) (\(prev)min)")
-            prev = work
-        }
+        assertBuildsThenOscillates(collectWork(slotIndex: 1, phase: .peak, discipline: .roadMarathon))
     }
 
-    @Test("Build VO2max for 10K — totalWork is non-decreasing")
+    @Test("Build VO2max for 10K — builds to a peak then oscillates the top two")
     func buildTenKVO2maxMonotonic() {
-        var prev: Double = 0
-        for week in 0..<8 {
-            let pick = RoadIntervalLibrary.selectForSlot(
-                slotIndex: 0,
-                phase: .build,
-                discipline: .road10K,
-                experience: .intermediate,
-                weekInPhase: week
-            )
-            #expect(pick != nil)
-            let work = pick?.totalWorkMinutes ?? 0
-            #expect(work >= prev, "Week \(week) (\(work)min) regressed below week \(week-1) (\(prev)min)")
-            prev = work
-        }
+        assertBuildsThenOscillates(collectWork(slotIndex: 0, phase: .build, discipline: .road10K))
     }
 
     // MARK: - First-timer cap
