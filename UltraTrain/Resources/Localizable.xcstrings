@@ -21040,6 +21040,310 @@
         }
       }
     },
+    "prebrief.focus.b2b" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Second day of back-to-back: practice running on tired legs."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deuxième jour du Weekend Choc : entraînez-vous à courir sur jambes fatiguées."
+          }
+        }
+      }
+    },
+    "prebrief.focus.crossTraining" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active recovery through cross-training. Keep it enjoyable."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération active en cross-training. Gardez le plaisir."
+          }
+        }
+      }
+    },
+    "prebrief.focus.free" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Free run: enjoy the movement."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Course libre : profitez du mouvement."
+          }
+        }
+      }
+    },
+    "prebrief.focus.intervals" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push hard on the work intervals, recover fully between sets."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poussez fort sur les fractions de travail, récupérez complètement entre les séries."
+          }
+        }
+      }
+    },
+    "prebrief.focus.longRun" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Focus on consistent effort and practice race-day nutrition."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concentrez-vous sur un effort régulier et entraînez votre nutrition de course."
+          }
+        }
+      }
+    },
+    "prebrief.focus.race" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race day: execute your plan, trust your fitness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de course : exécutez votre plan, faites confiance à votre forme."
+          }
+        }
+      }
+    },
+    "prebrief.focus.recovery" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy does it. This run is about blood flow, not fitness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On y va tranquille. Cette sortie, c'est la circulation, pas la performance."
+          }
+        }
+      }
+    },
+    "prebrief.focus.rest" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day: recovery is when adaptation happens."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos : c'est pendant la récupération que se produit l'adaptation."
+          }
+        }
+      }
+    },
+    "prebrief.focus.strength" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strength session: focus on form and controlled movement."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Séance de renforcement : concentrez-vous sur la technique et le mouvement contrôlé."
+          }
+        }
+      }
+    },
+    "prebrief.focus.tempo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintain a comfortably hard effort. You should be able to speak in short phrases."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintenez un effort difficile mais soutenable. Vous devriez pouvoir parler par phrases courtes."
+          }
+        }
+      }
+    },
+    "prebrief.focus.vg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hike the steeps, run the flats. Focus on vertical efficiency."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marchez les raides, courez les plats. Concentrez-vous sur l'efficacité en montée."
+          }
+        }
+      }
+    },
+    "prebrief.nutrition.over2h" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run over 2 hours: bring fuel and hydration. Aim for %1$lld-%2$lld cal/hr."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie de plus de 2 heures : emportez ravitaillement et hydratation. Visez %1$lld-%2$lld cal/h."
+          }
+        }
+      }
+    },
+    "prebrief.nutrition.over90" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run over 90 min: consider bringing water and a gel."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie de plus de 90 min : pensez à emporter de l'eau et un gel."
+          }
+        }
+      }
+    },
+    "prebrief.pacing.fatigued" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep effort easy. Focus on time on feet rather than pace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gardez un effort facile. Visez le temps passé debout plutôt que l'allure."
+          }
+        }
+      }
+    },
+    "prebrief.pacing.moderate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start conservative and assess how you feel after the first 2 km."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partez prudent et évaluez vos sensations après les 2 premiers kilomètres."
+          }
+        }
+      }
+    },
+    "prebrief.pacing.needsRest" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consider skipping this session or keeping it very light."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envisagez de sauter cette séance ou de la garder très légère."
+          }
+        }
+      }
+    },
+    "prebrief.pacing.noData" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No readiness data. Start easy and adjust by feel."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune donnée de fraîcheur. Partez facile et ajustez aux sensations."
+          }
+        }
+      }
+    },
+    "prebrief.pacing.ready" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Good to push today. Run by feel within the planned intensity."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bon pour pousser aujourd'hui. Courez aux sensations dans l'intensité prévue."
+          }
+        }
+      }
+    },
+    "prebrief.summary" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last 7 days: %1$@ km, %2$lld m D+ across %3$lld runs."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7 derniers jours : %1$@ km, %2$lld m D+ sur %3$lld sorties."
+          }
+        }
+      }
+    },
     "premium.lock.finishEstimate.message" : {
       "localizations" : {
         "en" : {
