@@ -1,20 +1,45 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "--" : {
-
-    },
     "%@" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@"
+          }
+        }
+      }
     },
     "%lld" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        }
+      }
     },
     "%lld bpm" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld bpm"
+          }
+        }
+      }
     },
     "%lld%%" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%%"
+          }
+        }
+      }
     },
     "%lldd to %@" : {
       "localizations" : {
@@ -23,11 +48,34 @@
             "state" : "new",
             "value" : "%1$lldd to %2$@"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld j avant %2$@"
+          }
+        }
+      }
+    },
+    "--" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "--"
+          }
         }
       }
     },
     "14-day fitness form trend with sparkline." : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tendance de forme sur 14 jours avec mini-graphique."
+          }
+        }
+      }
     },
     "Analysis" : {
       "localizations" : {
@@ -40,23 +88,34 @@
       }
     },
     "Complete Session" : {
-
-    },
-    "Date" : {
-
-    },
-    "days" : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "jours"
+            "value" : "Terminer la séance"
+          }
+        }
+      }
+    },
+    "Date" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date"
           }
         }
       }
     },
     "Days until your A-race with plan progress." : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jours avant votre course A avec progression du plan."
+          }
+        }
+      }
     },
     "Distance" : {
       "extractionState" : "stale",
@@ -102,7 +161,14 @@
       }
     },
     "Finish: %@" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrivée : %@"
+          }
+        }
+      }
     },
     "Fitness %lld | Fatigue %lld" : {
       "localizations" : {
@@ -111,14 +177,34 @@
             "state" : "new",
             "value" : "Fitness %1$lld | Fatigue %2$lld"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forme %1$lld | Fatigue %2$lld"
+          }
         }
       }
     },
     "Fitness Form" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forme physique"
+          }
+        }
+      }
     },
     "Fitness Status" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "État de forme"
+          }
+        }
+      }
     },
     "Fitness Trend" : {
       "localizations" : {
@@ -171,14 +257,35 @@
         }
       }
     },
-    "Mark session ${sessionId} as complete" : {
-
-    },
     "Mark Session Complete" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marquer la séance terminée"
+          }
+        }
+      }
+    },
+    "Mark session ${sessionId} as complete" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marquer la séance ${sessionId} comme terminée"
+          }
+        }
+      }
     },
     "Marks the next training session as completed." : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marque la prochaine séance d'entraînement comme terminée."
+          }
+        }
+      }
     },
     "Neutral" : {
       "extractionState" : "stale",
@@ -192,7 +299,14 @@
       }
     },
     "Next Session" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prochaine séance"
+          }
+        }
+      }
     },
     "No Fitness Data" : {
       "localizations" : {
@@ -204,14 +318,25 @@
         }
       }
     },
-    "No fitness data available yet." : {
-
-    },
     "No Plan" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun plan"
+          }
+        }
+      }
     },
     "No Race" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune course"
+          }
+        }
+      }
     },
     "No Race Scheduled" : {
       "localizations" : {
@@ -253,26 +378,85 @@
         }
       }
     },
+    "No fitness data available yet." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune donnée de forme pour le moment."
+          }
+        }
+      }
+    },
     "No upcoming race found." : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune course à venir."
+          }
+        }
+      }
     },
     "No upcoming session found." : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune séance à venir."
+          }
+        }
+      }
     },
     "No weekly progress data available." : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune donnée de progression hebdomadaire."
+          }
+        }
+      }
     },
     "Opens UltraTrain to the run history screen." : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvre UltraTrain sur l'historique des courses."
+          }
+        }
+      }
     },
     "Opens UltraTrain to the run tracking screen." : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvre UltraTrain sur le suivi de course."
+          }
+        }
+      }
     },
     "Opens UltraTrain to your progress dashboard." : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvre UltraTrain sur votre tableau de bord de progression."
+          }
+        }
+      }
     },
     "Opens UltraTrain to your training plan." : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvre UltraTrain sur votre plan d'entraînement."
+          }
+        }
+      }
     },
     "Pause" : {
       "localizations" : {
@@ -285,16 +469,44 @@
       }
     },
     "Pause Run" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mettre en pause"
+          }
+        }
+      }
     },
     "Pauses the active run from the Live Activity." : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Met en pause la course active depuis l'activité en direct."
+          }
+        }
+      }
     },
     "Quick stats from your most recent run." : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Statistiques rapides de votre dernière course."
+          }
+        }
+      }
     },
     "Race Countdown" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compte à rebours de la course"
+          }
+        }
+      }
     },
     "Rest" : {
       "localizations" : {
@@ -317,49 +529,154 @@
       }
     },
     "Resume Run" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reprendre la course"
+          }
+        }
+      }
     },
     "Resumes the paused run from the Live Activity." : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reprend la course en pause depuis l'activité en direct."
+          }
+        }
+      }
     },
     "Run History" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Historique des courses"
+          }
+        }
+      }
     },
     "See your next training session at a glance." : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voyez votre prochaine séance d'un coup d'œil."
+          }
+        }
+      }
     },
     "Session ID" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ID de séance"
+          }
+        }
+      }
     },
     "Show Fitness Summary" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher le résumé de forme"
+          }
+        }
+      }
     },
     "Show Next Session" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher la prochaine séance"
+          }
+        }
+      }
     },
     "Show Progress" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher la progression"
+          }
+        }
+      }
     },
     "Show Race Countdown" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher le compte à rebours"
+          }
+        }
+      }
     },
     "Show Training Plan" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher le plan d'entraînement"
+          }
+        }
+      }
     },
     "Show Weekly Progress" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher la progression hebdomadaire"
+          }
+        }
+      }
     },
     "Shows details about your next training session." : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiche les détails de votre prochaine séance d'entraînement."
+          }
+        }
+      }
     },
     "Shows how many days until your next race." : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiche le nombre de jours avant votre prochaine course."
+          }
+        }
+      }
     },
     "Shows your current fitness, fatigue, and form." : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiche votre forme, votre fatigue et votre état actuels."
+          }
+        }
+      }
     },
     "Shows your training progress for the current week." : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiche votre progression d'entraînement pour la semaine en cours."
+          }
+        }
+      }
     },
     "Skip" : {
       "localizations" : {
@@ -372,13 +689,34 @@
       }
     },
     "Skip Session" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passer la séance"
+          }
+        }
+      }
     },
     "Skip session ${sessionId}" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passer la séance ${sessionId}"
+          }
+        }
+      }
     },
     "Skips the next training session." : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passe la prochaine séance d'entraînement."
+          }
+        }
+      }
     },
     "Start" : {
       "localizations" : {
@@ -390,11 +728,25 @@
         }
       }
     },
-    "Start a Run" : {
-
-    },
     "Start Run" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Démarrer la course"
+          }
+        }
+      }
+    },
+    "Start a Run" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Démarrer une course"
+          }
+        }
+      }
     },
     "Today" : {
       "extractionState" : "stale",
@@ -419,10 +771,24 @@
       }
     },
     "Track your training volume this week." : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suivez votre volume d'entraînement cette semaine."
+          }
+        }
+      }
     },
     "Training Plan" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan d'entraînement"
+          }
+        }
+      }
     },
     "Trend" : {
       "localizations" : {
@@ -455,13 +821,34 @@
       }
     },
     "View Run History" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voir l'historique des courses"
+          }
+        }
+      }
     },
     "Week %lld" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semaine %lld"
+          }
+        }
+      }
     },
     "Weekly Progress" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progression hebdomadaire"
+          }
+        }
+      }
     },
     "Yesterday" : {
       "extractionState" : "stale",
@@ -475,7 +862,24 @@
       }
     },
     "Your current training form at a glance." : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre forme d'entraînement actuelle d'un coup d'œil."
+          }
+        }
+      }
+    },
+    "days" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "jours"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

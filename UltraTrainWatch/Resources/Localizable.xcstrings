@@ -2,22 +2,64 @@
   "sourceLanguage" : "en",
   "strings" : {
     "%lld" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        }
+      }
     },
     "%lld bpm" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld bpm"
+          }
+        }
+      }
     },
     "%lldm" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lldm"
+          }
+        }
+      }
     },
     "+%lld m" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%lld m"
+          }
+        }
+      }
     },
     "+%lldm" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%lldm"
+          }
+        }
+      }
     },
     "0m" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0m"
+          }
+        }
+      }
     },
     "Allow location to track runs" : {
       "localizations" : {
@@ -94,20 +136,24 @@
       }
     },
     "History (%lld)" : {
-
-    },
-    "iPhone not connected" : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "iPhone non connecté"
+            "value" : "Historique (%lld)"
           }
         }
       }
     },
     "KM %lld" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "KM %lld"
+          }
+        }
+      }
     },
     "Location denied. Enable in Settings." : {
       "localizations" : {
@@ -212,22 +258,22 @@
         }
       }
     },
-    "Start a run on your iPhone to see live metrics here." : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Démarrez une course sur votre iPhone pour voir les métriques en direct ici."
-          }
-        }
-      }
-    },
     "Start Run" : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Démarrer la course"
+          }
+        }
+      }
+    },
+    "Start a run on your iPhone to see live metrics here." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Démarrez une course sur votre iPhone pour voir les métriques en direct ici."
           }
         }
       }
@@ -264,7 +310,24 @@
       }
     },
     "UltraTrain" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UltraTrain"
+          }
+        }
+      }
+    },
+    "iPhone not connected" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone non connecté"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

@@ -1,14 +1,17 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "--" : {
-
-    },
     "%@ %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "%1$@ %2$@"
           }
         }
@@ -21,11 +24,144 @@
             "state" : "new",
             "value" : "%1$@: %2$lldd"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ : %2$lld j"
+          }
         }
       }
     },
     "%lld" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        }
+      }
+    },
+    "--" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "--"
+          }
+        }
+      }
+    },
+    "Days until your A-race." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jours avant votre course A."
+          }
+        }
+      }
+    },
+    "Enjoy the rest!" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profitez du repos !"
+          }
+        }
+      }
+    },
+    "Next Session" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prochaine séance"
+          }
+        }
+      }
+    },
+    "No Race" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune course"
+          }
+        }
+      }
+    },
+    "No Session" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune séance"
+          }
+        }
+      }
+    },
+    "No race scheduled" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune course programmée"
+          }
+        }
+      }
+    },
+    "No session planned" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune séance prévue"
+          }
+        }
+      }
+    },
+    "Race Countdown" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compte à rebours de la course"
+          }
+        }
+      }
+    },
+    "Rest" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos"
+          }
+        }
+      }
+    },
+    "Set up a race in the app" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Configurez une course dans l'application"
+          }
+        }
+      }
+    },
+    "Your next training session." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre prochaine séance d'entraînement."
+          }
+        }
+      }
     },
     "day to go" : {
       "localizations" : {
@@ -56,88 +192,6 @@
           }
         }
       }
-    },
-    "Days until your A-race." : {
-
-    },
-    "Enjoy the rest!" : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Profitez du repos !"
-          }
-        }
-      }
-    },
-    "Next Session" : {
-
-    },
-    "No Race" : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucune course"
-          }
-        }
-      }
-    },
-    "No race scheduled" : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucune course programmée"
-          }
-        }
-      }
-    },
-    "No Session" : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucune séance"
-          }
-        }
-      }
-    },
-    "No session planned" : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucune séance prévue"
-          }
-        }
-      }
-    },
-    "Race Countdown" : {
-
-    },
-    "Rest" : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Repos"
-          }
-        }
-      }
-    },
-    "Set up a race in the app" : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Configurez une course dans l'application"
-          }
-        }
-      }
-    },
-    "Your next training session." : {
-
     }
   },
   "version" : "1.0"
