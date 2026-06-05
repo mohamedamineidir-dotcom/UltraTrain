@@ -22618,6 +22618,758 @@
         }
       }
     },
+    "sdesc.b2b.day1.build" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back-to-back Day 1: Long run building fatigue for tomorrow. Easy pace. Practice fueling."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc Jour 1 : Sortie longue qui accumule la fatigue pour demain. Allure facile. Entraînez le ravitaillement."
+          }
+        }
+      }
+    },
+    "sdesc.b2b.day1.default" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back-to-back Day 1: Long run at easy pace. Fuel well for tomorrow."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc Jour 1 : Sortie longue à allure facile. Ravitaillez-vous bien pour demain."
+          }
+        }
+      }
+    },
+    "sdesc.b2b.day1.peak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back-to-back Day 1: Long effort building toward race intensity. Include terrain-specific sections."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc Jour 1 : Effort long montant vers l'intensité course. Incluez des sections spécifiques au terrain."
+          }
+        }
+      }
+    },
+    "sdesc.b2b.day2.build" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back-to-back Day 2: Run on tired legs. First hour very easy, then build to race effort."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc J2 : Courez sur jambes fatiguées. Première heure très facile, puis montée à l'effort course."
+          }
+        }
+      }
+    },
+    "sdesc.b2b.day2.default" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back-to-back Day 2: Long run on tired legs. Stay patient, keep it easy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc J2 : Sortie longue sur jambes fatiguées. Restez patient, gardez facile."
+          }
+        }
+      }
+    },
+    "sdesc.b2b.day2.peak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back-to-back Day 2: Start on yesterday's fatigue. Build from easy to race effort. Full race simulation."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc J2 : Démarrez sur la fatigue d'hier. Montez de facile à effort course. Simulation de course complète."
+          }
+        }
+      }
+    },
+    "sdesc.crossTraining" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cross-training: cycling, swimming, hiking, or yoga. Active recovery without impact."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cross-training : vélo, natation, randonnée ou yoga. Récupération active sans impact."
+          }
+        }
+      }
+    },
+    "sdesc.easy.default" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run at conversational pace. Active recovery between quality sessions."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile à allure de conversation. Récupération active entre les séances de qualité."
+          }
+        }
+      }
+    },
+    "sdesc.easy.preLong" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run to loosen up before the long run. Keep it conversational."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile pour se délier avant la sortie longue. Restez à allure de conversation."
+          }
+        }
+      }
+    },
+    "sdesc.easy.preRace" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pre-race shakeout. Short easy jog. Stay loose and relaxed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déverrouillage d'avant-course. Footing court et facile. Restez souple et détendu."
+          }
+        }
+      }
+    },
+    "sdesc.easy.recovery" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery week easy jog. Conversational pace. Blood flow, not fitness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile de semaine de récupération. Allure de conversation. Circulation, pas performance."
+          }
+        }
+      }
+    },
+    "sdesc.intervals.base" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uphill threshold intervals. Short reps with equal recovery."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fractionné en côte au seuil. Répétitions courtes avec récupération égale."
+          }
+        }
+      }
+    },
+    "sdesc.intervals.buildEarly" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hill repeats at high intensity. Short hard climbs with full recovery."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétitions en côte à haute intensité. Montées courtes et dures avec récupération complète."
+          }
+        }
+      }
+    },
+    "sdesc.intervals.buildLate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sustained threshold work at race effort on rolling terrain. Practice fueling."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Travail au seuil soutenu à effort course sur terrain vallonné. Entraînez le ravitaillement."
+          }
+        }
+      }
+    },
+    "sdesc.intervals.peak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Threshold intervals at race effort. Medium reps building endurance."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fractionné au seuil à effort course. Répétitions moyennes qui développent l'endurance."
+          }
+        }
+      }
+    },
+    "sdesc.intervals.recovery" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery week: no hard intervals. Easy effort only."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semaine de récupération : pas de fractionné dur. Effort facile uniquement."
+          }
+        }
+      }
+    },
+    "sdesc.intervals.recoveryRace" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy effort. No hard intervals this week."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort facile. Pas de fractionné dur cette semaine."
+          }
+        }
+      }
+    },
+    "sdesc.intervals.taper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short opener intervals to stay sharp without fatiguing."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fractionné court de déverrouillage pour rester affûté sans fatiguer."
+          }
+        }
+      }
+    },
+    "sdesc.longRun.base" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long run at easy effort. Focus on building time on feet. Walk uphills freely."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue à effort facile. Concentrez-vous sur le temps passé debout. Marchez les montées librement."
+          }
+        }
+      }
+    },
+    "sdesc.longRun.build" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long run with blocks at race effort. Practice your nutrition strategy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue avec blocs à effort course. Entraînez votre stratégie nutritionnelle."
+          }
+        }
+      }
+    },
+    "sdesc.longRun.peak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race simulation long run. Start easy, build to race effort. Full nutrition and gear rehearsal."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue de simulation de course. Partez facile, montez à l'effort course. Répétition complète nutrition et matériel."
+          }
+        }
+      }
+    },
+    "sdesc.longRun.recovery" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery week long run. Easy effort, no pace targets. Just enjoy the trail."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue de semaine de récupération. Effort facile, sans cible d'allure. Profitez simplement du trail."
+          }
+        }
+      }
+    },
+    "sdesc.longRun.recoveryRace" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy long run. Conversational pace. Focus on recovery and movement quality."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue facile. Allure de conversation. Concentrez-vous sur la récupération et la qualité du mouvement."
+          }
+        }
+      }
+    },
+    "sdesc.longRun.taper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reduced long run at easy effort. Trust your fitness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue réduite à effort facile. Faites confiance à votre forme."
+          }
+        }
+      }
+    },
+    "sdesc.rest.default" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day. Recovery is part of training. Prioritize sleep."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos. La récupération fait partie de l'entraînement. Priorisez le sommeil."
+          }
+        }
+      }
+    },
+    "sdesc.rest.preRace" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day. Final gear check, carb-load, and visualize your race plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos. Vérification finale du matériel, recharge glucidique et visualisation de votre plan de course."
+          }
+        }
+      }
+    },
+    "sdesc.rest.recovery" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery week rest. Sleep well, eat well. Your body is adapting."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos de semaine de récupération. Dormez bien, mangez bien. Votre corps s'adapte."
+          }
+        }
+      }
+    },
+    "sdesc.taperEasy.tt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short easy run. Keep legs loose for race day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile court. Gardez les jambes souples pour le jour J."
+          }
+        }
+      }
+    },
+    "sdesc.taperEasy.vt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy taper run. Volume is dropping by design."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile d'affûtage. Le volume baisse volontairement."
+          }
+        }
+      }
+    },
+    "sdesc.taperInt.tt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opener strides. Short pickups to stay sharp."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lignes droites de déverrouillage. Accélérations courtes pour rester affûté."
+          }
+        }
+      }
+    },
+    "sdesc.taperInt.vt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taper intervals. Short reps at race effort to maintain sharpness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fractionné d'affûtage. Répétitions courtes à effort course pour maintenir l'affûtage."
+          }
+        }
+      }
+    },
+    "sdesc.taperLong.tt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short taper long run. Easy effort. Your fitness is locked in."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue d'affûtage courte. Effort facile. Votre forme est acquise."
+          }
+        }
+      }
+    },
+    "sdesc.taperLong.vt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taper long run. Reduced volume, easy effort. Practice your nutrition one last time."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue d'affûtage. Volume réduit, effort facile. Entraînez votre nutrition une dernière fois."
+          }
+        }
+      }
+    },
+    "sdesc.taperStrides" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opener strides: short pickups at fast but controlled effort. Full recovery between reps."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lignes droites de déverrouillage : accélérations courtes rapides mais contrôlées. Récupération complète entre les répétitions."
+          }
+        }
+      }
+    },
+    "sdesc.taperVG.tt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hard climbing this week. Easy terrain only."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas de grimpe dure cette semaine. Terrain facile uniquement."
+          }
+        }
+      }
+    },
+    "sdesc.taperVG.vt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light uphill intervals. Short climbs at moderate effort."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Côtes légères. Montées courtes à effort modéré."
+          }
+        }
+      }
+    },
+    "sdesc.tempo.base" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo run at threshold effort. Build sustained race pace ability."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo à effort seuil. Développez la capacité à tenir l'allure course."
+          }
+        }
+      }
+    },
+    "sdesc.tempo.build" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo blocks at race effort. Practice pacing and fueling."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blocs de tempo à effort course. Entraînez la gestion d'allure et le ravitaillement."
+          }
+        }
+      }
+    },
+    "sdesc.tempo.default" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy tempo at comfortable effort."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo facile à effort confortable."
+          }
+        }
+      }
+    },
+    "sdesc.tempo.peak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race-pace tempo on varied terrain."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo à allure course sur terrain varié."
+          }
+        }
+      }
+    },
+    "sdesc.tempo.taper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short tempo to stay sharp. Controlled effort."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo court pour rester affûté. Effort contrôlé."
+          }
+        }
+      }
+    },
+    "sdesc.vg.base" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uphill intervals at moderate effort. Focus on form, cadence, and power hiking technique."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Côtes à effort modéré. Concentrez-vous sur la technique, la cadence et la marche active en montée."
+          }
+        }
+      }
+    },
+    "sdesc.vg.build" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uphill intervals at threshold effort. Build race-specific climbing endurance."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Côtes à effort seuil. Développez l'endurance de grimpe spécifique à la course."
+          }
+        }
+      }
+    },
+    "sdesc.vg.peak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race-specific climbing. Short steep repeats mimicking your race profile."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grimpe spécifique course. Répétitions courtes et raides reproduisant le profil de votre course."
+          }
+        }
+      }
+    },
+    "sdesc.vg.recovery" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light uphill intervals. Easy climbing effort. No pushing."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Côtes légères. Effort de montée facile. Sans forcer."
+          }
+        }
+      }
+    },
+    "sdesc.vg.recoveryRace" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy uphill intervals at comfortable effort."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Côtes faciles à effort confortable."
+          }
+        }
+      }
+    },
+    "sdesc.vg.taper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light uphill intervals. Short climbs to stay sharp."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Côtes légères. Montées courtes pour rester affûté."
+          }
+        }
+      }
+    },
     "sec" : {
       "localizations" : {
         "fr" : {
