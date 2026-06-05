@@ -21850,6 +21850,646 @@
         }
       }
     },
+    "roadLR.desc.fastFinish" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy pace, then the last quarter at race pace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allure facile, puis le dernier quart à allure course."
+          }
+        }
+      }
+    },
+    "roadLR.desc.mpBlocks" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alternating blocks of marathon-pace effort. Lock in race pace %lld times with easy recovery between."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blocs alternés à allure marathon. Ancrez l'allure course %lld fois avec récupération facile entre les blocs."
+          }
+        }
+      }
+    },
+    "roadLR.desc.mpIntro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy throughout, then a single %lld-minute marathon-pace block near the end. Locks in MP feel before peak."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Facile tout du long, puis un seul bloc de %lld minutes à allure marathon vers la fin. Ancre la sensation AM avant le pic."
+          }
+        }
+      }
+    },
+    "roadLR.desc.progressive" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ease in, build to half-marathon effort, finish at marathon pace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Démarrez doucement, montez à l'effort semi, terminez à allure marathon."
+          }
+        }
+      }
+    },
+    "roadLR.desc.raceSim" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Full rehearsal: warm up, sustained race-pace block, cool down."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétition complète : échauffement, bloc soutenu à allure course, retour au calme."
+          }
+        }
+      }
+    },
+    "roadLR.desc.twoPart" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy first half, race pace second half."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Première moitié facile, seconde à allure course."
+          }
+        }
+      }
+    },
+    "roadLR.name.fastFinish" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fast-finish long run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue à finish rapide"
+          }
+        }
+      }
+    },
+    "roadLR.name.mpBlocks" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld×%2$lld min MP long run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue %1$lld×%2$lld min AM"
+          }
+        }
+      }
+    },
+    "roadLR.name.mpIntro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MP intro long run (%lld min @ MP)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue intro AM (%lld min à AM)"
+          }
+        }
+      }
+    },
+    "roadLR.name.progressive" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progressive long run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue progressive"
+          }
+        }
+      }
+    },
+    "roadLR.name.raceSim" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race simulation (%lld min at race pace)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulation de course (%lld min à allure course)"
+          }
+        }
+      }
+    },
+    "roadLR.name.twoPart" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Two-part long run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue en deux parties"
+          }
+        }
+      }
+    },
+    "roadLR.note.cooldown" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cool-down"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retour au calme"
+          }
+        }
+      }
+    },
+    "roadLR.note.easyBuildup" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy build-up"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Montée en douceur"
+          }
+        }
+      }
+    },
+    "roadLR.note.easyCooldown" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy cool-down"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retour au calme facile"
+          }
+        }
+      }
+    },
+    "roadLR.note.easyFirstHalf" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy first half"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Première moitié facile"
+          }
+        }
+      }
+    },
+    "roadLR.note.easyJogRecovery" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy jog recovery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération en footing facile"
+          }
+        }
+      }
+    },
+    "roadLR.note.easyPace" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy pace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allure facile"
+          }
+        }
+      }
+    },
+    "roadLR.note.easyWarmup" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy warm-up"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échauffement facile"
+          }
+        }
+      }
+    },
+    "roadLR.note.hmEffort" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Half-marathon effort"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort allure semi"
+          }
+        }
+      }
+    },
+    "roadLR.note.mp" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marathon pace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allure marathon"
+          }
+        }
+      }
+    },
+    "roadLR.note.mpBlock" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marathon pace block, controlled, not surge"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bloc allure marathon, contrôlé, sans à-coup"
+          }
+        }
+      }
+    },
+    "roadLR.note.racePaceFinish" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race pace finish"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fin à allure course"
+          }
+        }
+      }
+    },
+    "roadLR.note.racePaceSecondHalf" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race pace second half"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seconde moitié à allure course"
+          }
+        }
+      }
+    },
+    "roadLR.note.raceSim" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race simulation, lock in race pace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulation de course, ancrez l'allure course"
+          }
+        }
+      }
+    },
+    "roadSel.conversationalPace" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "conversational pace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "allure de conversation"
+          }
+        }
+      }
+    },
+    "roadSel.crossTraining" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cross-training %lld min (cycling / swim / pool running) at moderate effort. Zero-impact aerobic work while your injury resolves, replaces intervals."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cross-training %lld min (vélo / natation / course en piscine) à effort modéré. Travail aérobie sans impact pendant que votre blessure guérit, remplace le fractionné."
+          }
+        }
+      }
+    },
+    "roadSel.dressRehearsal" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dress rehearsal, %1$lld min easy with 15-20 min @ %2$@. Wear race shoes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétition générale, %1$lld min facile avec 15-20 min @ %2$@. Portez vos chaussures de course."
+          }
+        }
+      }
+    },
+    "roadSel.easyLongRecovery" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy long run, recovery week, reduced volume"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue facile, semaine de récupération, volume réduit"
+          }
+        }
+      }
+    },
+    "roadSel.easyRun" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run @ %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile @ %@"
+          }
+        }
+      }
+    },
+    "roadSel.marathonEffort" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "marathon effort"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "effort marathon"
+          }
+        }
+      }
+    },
+    "roadSel.mediumLong" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Medium-long run, aerobic builder. Easy pace throughout, no surges."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie moyenne-longue, développement aérobie. Allure facile tout du long, sans accélération."
+          }
+        }
+      }
+    },
+    "roadSel.preRaceShakeout" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pre-race shakeout, 20 min easy + 4 strides @ %@ at the end. Last run before race day. Wake the legs, don't tire them."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déverrouillage d'avant-course, 20 min facile + 4 lignes droites @ %@ à la fin. Dernière sortie avant le jour J. Réveillez les jambes sans les fatiguer."
+          }
+        }
+      }
+    },
+    "roadSel.recoveryRun" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery run @ %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing de récupération @ %@"
+          }
+        }
+      }
+    },
+    "roadSel.restDay" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos."
+          }
+        }
+      }
+    },
+    "roadSel.restDayRecovery" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day. Recovery week."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos. Semaine de récupération."
+          }
+        }
+      }
+    },
+    "roadSel.shakeout" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shakeout, 20 min easy + 4 strides @ %@ at the end. Wakes the legs without burning glycogen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déverrouillage, 20 min facile + 4 lignes droites @ %@ à la fin. Réveille les jambes sans brûler de glycogène."
+          }
+        }
+      }
+    },
+    "roadSel.stridePace.plain" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "race pace or slightly slower"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "allure course ou un peu plus lent"
+          }
+        }
+      }
+    },
+    "roadSel.stridePace.withPace" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@/km (race pace) or slightly slower"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@/km (allure course) ou un peu plus lent"
+          }
+        }
+      }
+    },
+    "roadSel.tempoRecovery" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo run, reduced volume (recovery week)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo, volume réduit (semaine de récupération)"
+          }
+        }
+      }
+    },
     "scenario.comeback.subtitle" : {
       "localizations" : {
         "en" : {

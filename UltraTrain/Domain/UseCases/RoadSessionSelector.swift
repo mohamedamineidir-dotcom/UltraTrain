@@ -172,7 +172,7 @@ enum RoadSessionSelector {
             let slow = RoadCoachAdviceGenerator.formatPace(p.easyPacePerKm.upperBound)
             easyPace = "\(fast)-\(slow)/km"
         } else {
-            easyPace = "conversational pace"
+            easyPace = String(localized: "roadSel.conversationalPace", defaultValue: "conversational pace")
         }
 
         let q1Desc: String
@@ -236,11 +236,12 @@ enum RoadSessionSelector {
             let stridePace: String
             if let p = paceProfile, hasDataDerivedPaces {
                 let pace = RoadCoachAdviceGenerator.formatPace(p.racePacePerKm)
-                stridePace = "\(pace)/km (race pace) or slightly slower"
+                stridePace = String(localized: "roadSel.stridePace.withPace", defaultValue: "\(pace)/km (race pace) or slightly slower")
             } else {
-                stridePace = "race pace or slightly slower"
+                stridePace = String(localized: "roadSel.stridePace.plain", defaultValue: "race pace or slightly slower")
             }
-            effectiveIntervalDesc = "Shakeout, 20 min easy + 4 strides @ \(stridePace) at the end. Wakes the legs without burning glycogen."
+            effectiveIntervalDesc = String(localized: "roadSel.shakeout",
+                defaultValue: "Shakeout, 20 min easy + 4 strides @ \(stridePace) at the end. Wakes the legs without burning glycogen.")
             effectiveIntervalType = .recovery
         } else {
             effectiveIntervalSeconds = scaledInterval
@@ -259,16 +260,17 @@ enum RoadSessionSelector {
         let effectiveTempoDesc: String
         if isBaseQuietQ2 {
             effectiveTempoSeconds = scaledEasy2
-            effectiveTempoDesc = "Easy run @ \(easyPace)"
+            effectiveTempoDesc = String(localized: "roadSel.easyRun", defaultValue: "Easy run @ \(easyPace)")
         } else if shouldDressRehearse {
             effectiveTempoSeconds = scaledTempo
             let mpPace: String
             if let p = paceProfile {
                 mpPace = RoadCoachAdviceGenerator.formatPace(p.marathonPacePerKm) + "/km"
             } else {
-                mpPace = "marathon effort"
+                mpPace = String(localized: "roadSel.marathonEffort", defaultValue: "marathon effort")
             }
-            effectiveTempoDesc = "Dress rehearsal, \(Int(scaledTempo / 60)) min easy with 15-20 min @ \(mpPace). Wear race shoes."
+            effectiveTempoDesc = String(localized: "roadSel.dressRehearsal",
+                defaultValue: "Dress rehearsal, \(Int(scaledTempo / 60)) min easy with 15-20 min @ \(mpPace). Wear race shoes.")
         } else {
             effectiveTempoSeconds = scaledTempo
             effectiveTempoDesc = q2Desc
@@ -281,8 +283,8 @@ enum RoadSessionSelector {
         // are there to deliver, and most athletes don't need the extra
         // neuromuscular work twice a week during build/peak when quality
         // sessions already cover it.
-        let mondayEasyDesc = "Easy run @ \(easyPace)"
-        let fridayEasyDesc = "Easy run @ \(easyPace)"
+        let mondayEasyDesc = String(localized: "roadSel.easyRun", defaultValue: "Easy run @ \(easyPace)")
+        let fridayEasyDesc = String(localized: "roadSel.easyRun", defaultValue: "Easy run @ \(easyPace)")
 
         // RR-10: Pool order depends on preferredRunsPerWeek so that low-volume
         // athletes always get at least one easy run. The previous fixed order
@@ -320,11 +322,12 @@ enum RoadSessionSelector {
             let stridePace: String
             if let p = paceProfile, hasDataDerivedPaces {
                 let pace = RoadCoachAdviceGenerator.formatPace(p.racePacePerKm)
-                stridePace = "\(pace)/km (race pace) or slightly slower"
+                stridePace = String(localized: "roadSel.stridePace.withPace", defaultValue: "\(pace)/km (race pace) or slightly slower")
             } else {
-                stridePace = "race pace or slightly slower"
+                stridePace = String(localized: "roadSel.stridePace.plain", defaultValue: "race pace or slightly slower")
             }
-            let shakeoutDesc = "Pre-race shakeout, 20 min easy + 4 strides @ \(stridePace) at the end. Last run before race day. Wake the legs, don't tire them."
+            let shakeoutDesc = String(localized: "roadSel.preRaceShakeout",
+                defaultValue: "Pre-race shakeout, 20 min easy + 4 strides @ \(stridePace) at the end. Last run before race day. Wake the legs, don't tire them.")
             slotLong = (5, tpl(5, .recovery, .easy, shakeoutDuration, 0, shakeoutDesc))
         } else {
             slotLong = (5, tpl(5, .longRun, .easy, longRunDuration, longRunElev, longRunDesc))
@@ -333,7 +336,8 @@ enum RoadSessionSelector {
         if replaceWithCrossTraining {
             let minutes = Int(effectiveIntervalSeconds / 60)
             slotIntervals = (1, tpl(1, .crossTraining, .moderate, effectiveIntervalSeconds, 0,
-                    "Cross-training \(minutes) min (cycling / swim / pool running) at moderate effort. Zero-impact aerobic work while your injury resolves, replaces intervals."))
+                    String(localized: "roadSel.crossTraining",
+                        defaultValue: "Cross-training \(minutes) min (cycling / swim / pool running) at moderate effort. Zero-impact aerobic work while your injury resolves, replaces intervals.")))
         } else {
             slotIntervals = (1, tpl(1, effectiveIntervalType, isTrueTaperWeek ? .easy : q1Intensity, effectiveIntervalSeconds, 0, effectiveIntervalDesc))
         }
@@ -342,8 +346,8 @@ enum RoadSessionSelector {
         let slotTempo  = (3, tpl(3, slotTempoType, slotTempoIntensity, effectiveTempoSeconds, 0, effectiveTempoDesc))
         let slotEasyMon = (0, tpl(0, .recovery, .easy, scaledEasy1, 0, mondayEasyDesc))
         let slotEasyFri = (4, tpl(4, .recovery, .easy, scaledEasy2, 0, fridayEasyDesc))
-        let slotEasyWed = (2, tpl(2, .recovery, .easy, scaledEasy1, 0, "Recovery run @ \(easyPace)"))
-        let slotEasySun = (6, tpl(6, .recovery, .easy, scaledEasy2, 0, "Easy run @ \(easyPace)"))
+        let slotEasyWed = (2, tpl(2, .recovery, .easy, scaledEasy1, 0, String(localized: "roadSel.recoveryRun", defaultValue: "Recovery run @ \(easyPace)")))
+        let slotEasySun = (6, tpl(6, .recovery, .easy, scaledEasy2, 0, String(localized: "roadSel.easyRun", defaultValue: "Easy run @ \(easyPace)")))
 
         var pool: [(day: Int, template: SessionTemplateGenerator.SessionTemplate)]
         switch preferredRunsPerWeek {
@@ -384,7 +388,8 @@ enum RoadSessionSelector {
             // (marathon), drop the Friday easy in favour of an MLR on Wed
             // so the week becomes Mon-easy / Tue-Q1 / Wed-MLR / Thu-Q2 /
             // Sat-long. Friday + Sunday rest.
-            let mlrDescription = "Medium-long run, aerobic builder. Easy pace throughout, no surges."
+            let mlrDescription = String(localized: "roadSel.mediumLong",
+            defaultValue: "Medium-long run, aerobic builder. Easy pace throughout, no surges.")
             let mlrSlot = (2, tpl(2, .recovery, .easy, medLongDuration, 0, mlrDescription))
             if preferredRunsPerWeek >= 6 {
                 // Replaces Wednesday easy in the 6+/wk pool
@@ -408,7 +413,8 @@ enum RoadSessionSelector {
             if let slot = activeSlots.first(where: { $0.day == day }) {
                 templates.append(slot.template)
             } else {
-                templates.append(tpl(day, .rest, .easy, 0, 0, "Rest day."))
+                templates.append(tpl(day, .rest, .easy, 0, 0,
+                    String(localized: "roadSel.restDay", defaultValue: "Rest day.")))
             }
         }
         return templates
@@ -465,7 +471,7 @@ enum RoadSessionSelector {
                 qualityDesc = "\(t.name) @ \(pace)/km (recovery week, reduced volume)"
             }
         } else {
-            qualityDesc = "Tempo run, reduced volume (recovery week)"
+            qualityDesc = String(localized: "roadSel.tempoRecovery", defaultValue: "Tempo run, reduced volume (recovery week)")
         }
 
         let easyPace: String
@@ -474,7 +480,7 @@ enum RoadSessionSelector {
             let slow = RoadCoachAdviceGenerator.formatPace(p.easyPacePerKm.upperBound)
             easyPace = "\(fast)-\(slow)/km"
         } else {
-            easyPace = "conversational pace"
+            easyPace = String(localized: "roadSel.conversationalPace", defaultValue: "conversational pace")
         }
 
         // Mirror normal-week layout (Mon=0, Tue=1 quality, Wed=2 easy,
@@ -482,18 +488,18 @@ enum RoadSessionSelector {
         // on Thursday (mid-week) to keep the week's rhythm.
         let pool: [(day: Int, template: SessionTemplateGenerator.SessionTemplate)] = [
             (5, tpl(5, .longRun, .easy, longRunDuration, 0,
-                    "Easy long run, recovery week, reduced volume")),
+                    String(localized: "roadSel.easyLongRecovery", defaultValue: "Easy long run, recovery week, reduced volume"))),
             (3, tpl(3, .tempo, qualityIntensity, qualityDuration, 0, qualityDesc)),
             (1, tpl(1, .recovery, .easy, base.easyRun1Seconds, 0,
-                    "Easy run @ \(easyPace)")),
+                    String(localized: "roadSel.easyRun", defaultValue: "Easy run @ \(easyPace)"))),
             (0, tpl(0, .recovery, .easy, base.easyRun1Seconds, 0,
-                    "Easy run @ \(easyPace)")),
+                    String(localized: "roadSel.easyRun", defaultValue: "Easy run @ \(easyPace)"))),
             (4, tpl(4, .recovery, .easy, base.easyRun2Seconds, 0,
-                    "Easy run @ \(easyPace)")),
+                    String(localized: "roadSel.easyRun", defaultValue: "Easy run @ \(easyPace)"))),
             (2, tpl(2, .recovery, .easy, base.easyRun1Seconds, 0,
-                    "Recovery run @ \(easyPace)")),
+                    String(localized: "roadSel.recoveryRun", defaultValue: "Recovery run @ \(easyPace)"))),
             (6, tpl(6, .recovery, .easy, base.easyRun2Seconds, 0,
-                    "Easy run @ \(easyPace)")),
+                    String(localized: "roadSel.easyRun", defaultValue: "Easy run @ \(easyPace)"))),
         ]
 
         // Same session count as normal week (Pfitzinger: keep the rhythm)
@@ -504,7 +510,8 @@ enum RoadSessionSelector {
             if let slot = activeSlots.first(where: { $0.day == day }) {
                 templates.append(slot.template)
             } else {
-                templates.append(tpl(day, .rest, .easy, 0, 0, "Rest day. Recovery week."))
+                templates.append(tpl(day, .rest, .easy, 0, 0,
+                    String(localized: "roadSel.restDayRecovery", defaultValue: "Rest day. Recovery week.")))
             }
         }
         return templates

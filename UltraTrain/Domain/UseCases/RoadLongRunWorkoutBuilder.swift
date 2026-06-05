@@ -11,6 +11,9 @@ import Foundation
 /// or Canova "alternating 4 km easy / 3 km MP × 4" becomes an executable
 /// structured workout that `IntervalGuidanceHandler` can drive.
 ///
+/// User-facing names / descriptions / phase notes are localized via
+/// `String(localized:)`; the English text is the `defaultValue`.
+///
 /// Research basis:
 /// - **Pfitzinger**: MP segments in long runs grow progressively across
 ///   peak (8 → 10 → 12 → 14 mi at MP).
@@ -61,25 +64,25 @@ enum RoadLongRunWorkoutBuilder {
                 id: UUID(), phaseType: .warmUp,
                 trigger: .duration(seconds: warmUp),
                 targetIntensity: .easy, repeatCount: 1,
-                notes: paceNote("Easy build-up", easyPace(paceProfile))
+                notes: paceNote(String(localized: "roadLR.note.easyBuildup", defaultValue: "Easy build-up"), easyPace(paceProfile))
             ),
             IntervalPhase(
                 id: UUID(), phaseType: .work,
                 trigger: .duration(seconds: blockDuration),
                 targetIntensity: .moderate, repeatCount: 1,
-                notes: paceNote("Marathon pace block, controlled, not surge", paceProfile?.marathonPacePerKm)
+                notes: paceNote(String(localized: "roadLR.note.mpBlock", defaultValue: "Marathon pace block, controlled, not surge"), paceProfile?.marathonPacePerKm)
             ),
             IntervalPhase(
                 id: UUID(), phaseType: .coolDown,
                 trigger: .duration(seconds: coolDown),
                 targetIntensity: .easy, repeatCount: 1,
-                notes: paceNote("Easy cool-down", easyPace(paceProfile))
+                notes: paceNote(String(localized: "roadLR.note.easyCooldown", defaultValue: "Easy cool-down"), easyPace(paceProfile))
             ),
         ]
         let blockMins = Int(blockDuration / 60)
         return workout(
-            name: "MP intro long run (\(blockMins) min @ MP)",
-            description: "Easy throughout, then a single \(blockMins)-minute marathon-pace block near the end. Locks in MP feel before peak.",
+            name: String(localized: "roadLR.name.mpIntro", defaultValue: "MP intro long run (\(blockMins) min @ MP)"),
+            description: String(localized: "roadLR.desc.mpIntro", defaultValue: "Easy throughout, then a single \(blockMins)-minute marathon-pace block near the end. Locks in MP feel before peak."),
             phases: phases,
             totalDuration: totalDuration,
             paceProfile: paceProfile
@@ -100,24 +103,24 @@ enum RoadLongRunWorkoutBuilder {
                 id: UUID(), phaseType: .warmUp,
                 trigger: .duration(seconds: easyPart),
                 targetIntensity: .easy, repeatCount: 1,
-                notes: paceNote("Easy pace", easyPace(paceProfile))
+                notes: paceNote(String(localized: "roadLR.note.easyPace", defaultValue: "Easy pace"), easyPace(paceProfile))
             ),
             IntervalPhase(
                 id: UUID(), phaseType: .work,
                 trigger: .duration(seconds: hmpPart),
                 targetIntensity: .moderate, repeatCount: 1,
-                notes: paceNote("Half-marathon effort", paceProfile?.thresholdPacePerKm)
+                notes: paceNote(String(localized: "roadLR.note.hmEffort", defaultValue: "Half-marathon effort"), paceProfile?.thresholdPacePerKm)
             ),
             IntervalPhase(
                 id: UUID(), phaseType: .work,
                 trigger: .duration(seconds: mpPart),
                 targetIntensity: .moderate, repeatCount: 1,
-                notes: paceNote("Marathon pace", paceProfile?.marathonPacePerKm)
+                notes: paceNote(String(localized: "roadLR.note.mp", defaultValue: "Marathon pace"), paceProfile?.marathonPacePerKm)
             ),
         ]
         return workout(
-            name: "Progressive long run",
-            description: "Ease in, build to half-marathon effort, finish at marathon pace.",
+            name: String(localized: "roadLR.name.progressive", defaultValue: "Progressive long run"),
+            description: String(localized: "roadLR.desc.progressive", defaultValue: "Ease in, build to half-marathon effort, finish at marathon pace."),
             phases: phases,
             totalDuration: totalDuration,
             paceProfile: paceProfile
@@ -134,18 +137,18 @@ enum RoadLongRunWorkoutBuilder {
                 id: UUID(), phaseType: .warmUp,
                 trigger: .duration(seconds: easyPart),
                 targetIntensity: .easy, repeatCount: 1,
-                notes: paceNote("Easy pace", easyPace(paceProfile))
+                notes: paceNote(String(localized: "roadLR.note.easyPace", defaultValue: "Easy pace"), easyPace(paceProfile))
             ),
             IntervalPhase(
                 id: UUID(), phaseType: .work,
                 trigger: .duration(seconds: racePart),
                 targetIntensity: .hard, repeatCount: 1,
-                notes: paceNote("Race pace finish", paceProfile?.racePacePerKm)
+                notes: paceNote(String(localized: "roadLR.note.racePaceFinish", defaultValue: "Race pace finish"), paceProfile?.racePacePerKm)
             ),
         ]
         return workout(
-            name: "Fast-finish long run",
-            description: "Easy pace, then the last quarter at race pace.",
+            name: String(localized: "roadLR.name.fastFinish", defaultValue: "Fast-finish long run"),
+            description: String(localized: "roadLR.desc.fastFinish", defaultValue: "Easy pace, then the last quarter at race pace."),
             phases: phases,
             totalDuration: totalDuration,
             paceProfile: paceProfile
@@ -176,32 +179,32 @@ enum RoadLongRunWorkoutBuilder {
                 id: UUID(), phaseType: .warmUp,
                 trigger: .duration(seconds: warmUp),
                 targetIntensity: .easy, repeatCount: 1,
-                notes: paceNote("Easy warm-up", easyPace(paceProfile))
+                notes: paceNote(String(localized: "roadLR.note.easyWarmup", defaultValue: "Easy warm-up"), easyPace(paceProfile))
             ),
             IntervalPhase(
                 id: UUID(), phaseType: .work,
                 trigger: .duration(seconds: blockDuration),
                 targetIntensity: .moderate, repeatCount: numBlocks,
-                notes: paceNote("Marathon pace", paceProfile?.marathonPacePerKm)
+                notes: paceNote(String(localized: "roadLR.note.mp", defaultValue: "Marathon pace"), paceProfile?.marathonPacePerKm)
             ),
             IntervalPhase(
                 id: UUID(), phaseType: .recovery,
                 trigger: .duration(seconds: restBetween),
                 targetIntensity: .easy, repeatCount: max(numBlocks - 1, 1),
-                notes: paceNote("Easy jog recovery", easyPace(paceProfile))
+                notes: paceNote(String(localized: "roadLR.note.easyJogRecovery", defaultValue: "Easy jog recovery"), easyPace(paceProfile))
             ),
             IntervalPhase(
                 id: UUID(), phaseType: .coolDown,
                 trigger: .duration(seconds: coolDown),
                 targetIntensity: .easy, repeatCount: 1,
-                notes: paceNote("Cool-down", easyPace(paceProfile))
+                notes: paceNote(String(localized: "roadLR.note.cooldown", defaultValue: "Cool-down"), easyPace(paceProfile))
             ),
         ]
 
         let blockMins = Int(blockDuration / 60)
         return workout(
-            name: "\(numBlocks)×\(blockMins) min MP long run",
-            description: "Alternating blocks of marathon-pace effort. Lock in race pace \(numBlocks) times with easy recovery between.",
+            name: String(localized: "roadLR.name.mpBlocks", defaultValue: "\(numBlocks)×\(blockMins) min MP long run"),
+            description: String(localized: "roadLR.desc.mpBlocks", defaultValue: "Alternating blocks of marathon-pace effort. Lock in race pace \(numBlocks) times with easy recovery between."),
             phases: phases,
             totalDuration: totalDuration,
             paceProfile: paceProfile
@@ -217,18 +220,18 @@ enum RoadLongRunWorkoutBuilder {
                 id: UUID(), phaseType: .warmUp,
                 trigger: .duration(seconds: half),
                 targetIntensity: .easy, repeatCount: 1,
-                notes: paceNote("Easy first half", easyPace(paceProfile))
+                notes: paceNote(String(localized: "roadLR.note.easyFirstHalf", defaultValue: "Easy first half"), easyPace(paceProfile))
             ),
             IntervalPhase(
                 id: UUID(), phaseType: .work,
                 trigger: .duration(seconds: half),
                 targetIntensity: .hard, repeatCount: 1,
-                notes: paceNote("Race pace second half", paceProfile?.racePacePerKm)
+                notes: paceNote(String(localized: "roadLR.note.racePaceSecondHalf", defaultValue: "Race pace second half"), paceProfile?.racePacePerKm)
             ),
         ]
         return workout(
-            name: "Two-part long run",
-            description: "Easy first half, race pace second half.",
+            name: String(localized: "roadLR.name.twoPart", defaultValue: "Two-part long run"),
+            description: String(localized: "roadLR.desc.twoPart", defaultValue: "Easy first half, race pace second half."),
             phases: phases,
             totalDuration: totalDuration,
             paceProfile: paceProfile
@@ -252,25 +255,25 @@ enum RoadLongRunWorkoutBuilder {
                 id: UUID(), phaseType: .warmUp,
                 trigger: .duration(seconds: warmUp),
                 targetIntensity: .easy, repeatCount: 1,
-                notes: paceNote("Easy warm-up", easyPace(paceProfile))
+                notes: paceNote(String(localized: "roadLR.note.easyWarmup", defaultValue: "Easy warm-up"), easyPace(paceProfile))
             ),
             IntervalPhase(
                 id: UUID(), phaseType: .work,
                 trigger: .duration(seconds: blockDuration),
                 targetIntensity: .hard, repeatCount: 1,
-                notes: paceNote("Race simulation, lock in race pace", paceProfile?.racePacePerKm)
+                notes: paceNote(String(localized: "roadLR.note.raceSim", defaultValue: "Race simulation, lock in race pace"), paceProfile?.racePacePerKm)
             ),
             IntervalPhase(
                 id: UUID(), phaseType: .coolDown,
                 trigger: .duration(seconds: coolDown),
                 targetIntensity: .easy, repeatCount: 1,
-                notes: paceNote("Easy cool-down", easyPace(paceProfile))
+                notes: paceNote(String(localized: "roadLR.note.easyCooldown", defaultValue: "Easy cool-down"), easyPace(paceProfile))
             ),
         ]
         let blockMins = Int(blockDuration / 60)
         return workout(
-            name: "Race simulation (\(blockMins) min at race pace)",
-            description: "Full rehearsal: warm up, sustained race-pace block, cool down.",
+            name: String(localized: "roadLR.name.raceSim", defaultValue: "Race simulation (\(blockMins) min at race pace)"),
+            description: String(localized: "roadLR.desc.raceSim", defaultValue: "Full rehearsal: warm up, sustained race-pace block, cool down."),
             phases: phases,
             totalDuration: totalDuration,
             paceProfile: paceProfile
