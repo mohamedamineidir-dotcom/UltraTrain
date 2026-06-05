@@ -727,6 +727,13 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
 
         let raceEffectiveKm = targetRace.distanceKm + (targetRace.elevationGainM / 100.0)
 
+        // RR-33: quality-session variety state. `qualityOrdinal` is the
+        // per-category progression coordinate (recovery weeks don't advance
+        // it, so the build resumes after a deload); `usedQualitySignatures`
+        // guarantees no two quality sessions in the plan share a work part.
+        var qualityOrdinal: [RoadIntervalLibrary.Category: Int] = [:]
+        var usedQualitySignatures: Set<String> = []
+
         let weeks: [TrainingWeek] = zip(skeletons, volumes).enumerated().map { index, pair in
             let (skeleton, volume) = pair
             let override = overrides.first { $0.weekNumber == skeleton.weekNumber }
@@ -972,20 +979,33 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 // mirror the selector's first-timer template cap so the
                 // workout structure matches what the session description
                 // already says.
-                let q1Template = RoadIntervalLibrary.selectForSlot(
-                    slotIndex: 0, phase: skeleton.phase, discipline: discipline,
-                    experience: athlete.experienceLevel, weekInPhase: phaseCounters[index],
-                    isFirstTimerAtDistance: isFirstTimer
-                )
-                let q2Template = RoadIntervalLibrary.selectForSlot(
-                    slotIndex: 1, phase: skeleton.phase, discipline: discipline,
-                    experience: athlete.experienceLevel, weekInPhase: phaseCounters[index],
-                    excludeCategory: q1Template?.category,
-                    isFirstTimerAtDistance: isFirstTimer
-                )
-
-                let q1Workout = q1Template.map { RoadWorkoutBuilder.build(from: $0, paceProfile: paceProfile, experience: athlete.experienceLevel, athleteAge: athlete.age) }
-                let q2Workout = q2Template.map { RoadWorkoutBuilder.build(from: $0, paceProfile: paceProfile, experience: athlete.experienceLevel, athleteAge: athlete.age) }
+                // RR-33: compose quality sessions parametrically (athlete
+                // profile + per-category block progression + shape rotation)
+                // rather than picking from the fixed template menu. This is
+                // what stops two different athletes getting identical sessions
+                // and stops the same work part recurring week to week.
+                let q1Cat = RoadIntervalLibrary.slotCategory(
+                    phase: skeleton.phase, discipline: discipline, slotIndex: 0,
+                    weekInPhase: phaseCounters[index])
+                let q2Cat = RoadIntervalLibrary.slotCategory(
+                    phase: skeleton.phase, discipline: discipline, slotIndex: 1,
+                    weekInPhase: phaseCounters[index], exclude: q1Cat)
+                let q1Composed = Self.composeQuality(
+                    category: q1Cat, slotIndex: 0, skeleton: skeleton,
+                    discipline: discipline, athlete: athlete,
+                    weekVolumeKm: volume.targetVolumeKm, paceProfile: paceProfile,
+                    isFirstTimer: isFirstTimer,
+                    ordinals: &qualityOrdinal, used: &usedQualitySignatures)
+                let q2Composed = Self.composeQuality(
+                    category: q2Cat, slotIndex: 1, skeleton: skeleton,
+                    discipline: discipline, athlete: athlete,
+                    weekVolumeKm: volume.targetVolumeKm, paceProfile: paceProfile,
+                    isFirstTimer: isFirstTimer,
+                    ordinals: &qualityOrdinal, used: &usedQualitySignatures)
+                let q1Template: RoadIntervalLibrary.Template? = q1Composed.template
+                let q2Template: RoadIntervalLibrary.Template? = q2Composed.template
+                let q1Workout: IntervalWorkout? = q1Composed.workout
+                let q2Workout: IntervalWorkout? = q2Composed.workout
 
                 if let w = q1Workout { allWorkouts.append(w) }
                 if let w = q2Workout { allWorkouts.append(w) }
@@ -1397,6 +1417,49 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
     /// totals the athlete sees when they tap into the workout detail
     ///, instead of the abstract budget that didn't account for
     /// warmup + cooldown around quality sessions.
+    /// RR-33: composes one quality session via `IntervalSessionComposer`,
+    /// advancing the per-category progression ordinal and guaranteeing the
+    /// work part hasn't been used elsewhere in the plan. Recovery weeks
+    /// compose a light primer and do NOT advance the ordinal (so the build
+    /// resumes after the deload) or reserve a signature (primers may repeat).
+    private static func composeQuality(
+        category: RoadIntervalLibrary.Category,
+        slotIndex: Int,
+        skeleton: WeekSkeletonBuilder.WeekSkeleton,
+        discipline: RoadRaceDiscipline,
+        athlete: Athlete,
+        weekVolumeKm: Double,
+        paceProfile: RoadPaceProfile?,
+        isFirstTimer: Bool,
+        ordinals: inout [RoadIntervalLibrary.Category: Int],
+        used: inout Set<String>
+    ) -> IntervalSessionComposer.Composed {
+        func make(_ ordinal: Int) -> IntervalSessionComposer.Composed {
+            IntervalSessionComposer.compose(IntervalSessionComposer.Context(
+                category: category, phase: skeleton.phase, discipline: discipline,
+                experience: athlete.experienceLevel, weeklyVolumeKm: weekVolumeKm,
+                paceProfile: paceProfile, ordinal: ordinal, slotIndex: slotIndex,
+                isRecoveryWeek: skeleton.isRecoveryWeek, isFirstTimer: isFirstTimer,
+                athleteAge: athlete.age
+            ))
+        }
+
+        // Recovery-week primers repeat by design; don't track them.
+        guard !skeleton.isRecoveryWeek else { return make(ordinals[category] ?? 0) }
+
+        var ordinal = ordinals[category] ?? 0
+        var composed = make(ordinal)
+        var tries = 0
+        while used.contains(composed.signature) && tries < 4 {
+            ordinal += 1
+            composed = make(ordinal)
+            tries += 1
+        }
+        used.insert(composed.signature)
+        ordinals[category] = ordinal + 1
+        return composed
+    }
+
     private func alignSessionWithWorkout(_ session: inout TrainingSession, workout: IntervalWorkout) {
         guard workout.estimatedDurationSeconds > 0 else { return }
         let avgPaceSecPerKm: Double = 330  // ~5:30/km baseline (matches makeSession)

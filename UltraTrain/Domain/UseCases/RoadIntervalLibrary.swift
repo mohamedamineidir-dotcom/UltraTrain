@@ -268,6 +268,27 @@ enum RoadIntervalLibrary {
         return overshoot.isMultiple(of: 2) ? cap : cap - 1
     }
 
+    /// The physiological target category for a quality slot in a given
+    /// context, used by `IntervalSessionComposer` to know WHAT to compose.
+    /// Mirrors `selectForSlot`'s category choice: slot 0 takes the primary
+    /// preference; slot 1 takes the first preference different from `exclude`.
+    static func slotCategory(
+        phase: TrainingPhase,
+        discipline: RoadRaceDiscipline,
+        slotIndex: Int,
+        weekInPhase: Int,
+        exclude: Category? = nil
+    ) -> Category {
+        let prefs = categoryPreferences(
+            phase: phase, discipline: discipline,
+            slotIndex: slotIndex, weekInPhase: weekInPhase
+        )
+        if let exclude {
+            return prefs.first(where: { $0.0 != exclude })?.0 ?? prefs.first?.0 ?? .threshold
+        }
+        return prefs.first?.0 ?? .threshold
+    }
+
     // MARK: - Distance-Specific Category Preferences
 
     /// Returns ordered category preferences based on distance, phase, slot,
