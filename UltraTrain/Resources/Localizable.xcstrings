@@ -2413,6 +2413,16 @@
         }
       }
     },
+    "Adapts as you train" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "S'adapte à mesure que vous vous entraînez"
+          }
+        }
+      }
+    },
     "Add" : {
       "localizations" : {
         "fr" : {
@@ -3324,6 +3334,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Import automatique depuis Apple Santé"
+          }
+        }
+      }
+    },
+    "Automatic Strava sync" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Synchronisation Strava automatique"
           }
         }
       }
@@ -4431,6 +4451,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Passer à l'étape suivante"
+          }
+        }
+      }
+    },
+    "Continue with Apple" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer avec Apple"
+          }
+        }
+      }
+    },
+    "Continue with Google" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer avec Google"
+          }
+        }
+      }
+    },
+    "Continue with Strava" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer avec Strava"
           }
         }
       }
@@ -6629,6 +6679,16 @@
         }
       }
     },
+    "Finish time predictions" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prédictions de temps d'arrivée"
+          }
+        }
+      }
+    },
     "Finish. Predicted %@, actual %@, %@" : {
       "localizations" : {
         "en" : {
@@ -6661,6 +6721,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Forme"
+          }
+        }
+      }
+    },
+    "Fitness & fatigue tracking" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suivi de la forme et de la fatigue"
           }
         }
       }
@@ -6923,6 +6993,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "GO !"
+          }
+        }
+      }
+    },
+    "GPS tracking with live pace, elevation profile, and heart rate zones." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suivi GPS avec allure en direct, profil de dénivelé et zones de fréquence cardiaque."
           }
         }
       }
@@ -7731,6 +7811,16 @@
         }
       }
     },
+    "I already have an account" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "J'ai déjà un compte"
+          }
+        }
+      }
+    },
     "I bonked / hit the wall" : {
       "localizations" : {
         "fr" : {
@@ -8489,6 +8579,16 @@
         }
       }
     },
+    "Let's Get Started" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C'est parti"
+          }
+        }
+      }
+    },
     "Let's Go!" : {
       "localizations" : {
         "fr" : {
@@ -8555,6 +8655,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lié à une activité"
+          }
+        }
+      }
+    },
+    "Live GPS tracking" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suivi GPS en direct"
           }
         }
       }
@@ -11041,6 +11151,16 @@
         }
       }
     },
+    "Password (8+ characters)" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mot de passe (8+ caractères)"
+          }
+        }
+      }
+    },
     "Password Changed" : {
       "localizations" : {
         "fr" : {
@@ -11183,6 +11303,16 @@
         }
       }
     },
+    "Periodized training built around your race with smart recovery and adaptive adjustments." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entraînement périodisé construit autour de votre course, avec récupération intelligente et ajustements adaptatifs."
+          }
+        }
+      }
+    },
     "Permanently deletes all training data, plans, and settings" : {
       "localizations" : {
         "fr" : {
@@ -11236,6 +11366,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Record personnel, %1$@ %2$lld, allure %3$@"
+          }
+        }
+      }
+    },
+    "Personalized training plans" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plans d'entraînement personnalisés"
           }
         }
       }
@@ -11383,6 +11523,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Le plan est peut-être obsolète"
+          }
+        }
+      }
+    },
+    "Plan adherence score" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score de respect du plan"
           }
         }
       }
@@ -11562,6 +11712,16 @@
       }
     },
     "Post-Race Analysis" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analyse post-course"
+          }
+        }
+      }
+    },
+    "Post-run analysis" : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -12090,6 +12250,16 @@
         }
       }
     },
+    "Race Forecast" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prévision de course"
+          }
+        }
+      }
+    },
     "Race Goal" : {
       "localizations" : {
         "fr" : {
@@ -12259,6 +12429,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La course est trop proche du début de votre plan pour projeter une courbe d'évolution."
+          }
+        }
+      }
+    },
+    "Race-day nutrition strategy" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stratégie nutritionnelle le jour J"
           }
         }
       }
@@ -14237,6 +14417,7 @@
         }
       }
     },
+    "Set goal to %@" : {},
     "Set how many running sessions per week you prefer" : {
       "localizations" : {
         "fr" : {
@@ -14695,6 +14876,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rappels intelligents"
+          }
+        }
+      }
+    },
+    "Smart recovery weeks" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semaines de récupération intelligentes"
           }
         }
       }
@@ -15175,6 +15366,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "CIBLE"
+          }
+        }
+      }
+    },
+    "Tailored to your race" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adapté à votre course"
           }
         }
       }
@@ -15789,6 +15990,16 @@
         }
       }
     },
+    "Today" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aujourd'hui"
+          }
+        }
+      }
+    },
     "Today is a rest day" : {
       "localizations" : {
         "fr" : {
@@ -15929,12 +16140,32 @@
         }
       }
     },
+    "Track Every Step" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suivez chaque pas"
+          }
+        }
+      }
+    },
     "Track your crew's location in real time during a run or race." : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Suivez la position de votre équipe en temps réel pendant une course."
+          }
+        }
+      }
+    },
+    "Track your fitness trend, weekly volume, and training load from your personalized dashboard." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suivez votre tendance de forme, votre volume hebdomadaire et votre charge d'entraînement depuis votre tableau de bord personnalisé."
           }
         }
       }
@@ -17156,6 +17387,16 @@
         }
       }
     },
+    "Weekly volume charts" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Graphiques de volume hebdomadaire"
+          }
+        }
+      }
+    },
     "Weight Goal" : {
       "localizations" : {
         "fr" : {
@@ -17615,6 +17856,16 @@
         }
       }
     },
+    "Your Personalized Plan" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre plan personnalisé"
+          }
+        }
+      }
+    },
     "Your Physical Data" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -17672,6 +17923,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Votre parcours de coureur"
+          }
+        }
+      }
+    },
+    "Your Training Hub" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre centre d'entraînement"
           }
         }
       }
@@ -21866,6 +22127,39 @@
         }
       }
     },
+    "road.coach.recoveryWeek.default" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Recovery week. Keep it easy."
+          }
+        }
+      }
+    },
+    "road.coach.recoveryWeek.longRun" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Shorter long run this week. Your body is absorbing recent training. Let it work."
+          }
+        }
+      }
+    },
+    "road.coach.recoveryWeek.recovery" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Easy effort. Recovery weeks are when you get stronger. Trust the process."
+          }
+        }
+      }
+    },
     "road.coach.refine.quickened" : {
       "localizations" : {
         "en" : {
@@ -23990,6 +24284,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "séances"
+          }
+        }
+      }
+    },
+    "settings.logout.failed" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Could not log out. Please try again."
           }
         }
       }

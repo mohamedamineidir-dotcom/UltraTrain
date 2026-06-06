@@ -12,7 +12,7 @@ struct SecondaryOnboardingButton: View {
                     ProgressView()
                         .tint(Theme.Colors.label)
                 } else {
-                    Text(title)
+                    Text(LocalizedStringKey(title))
                         .font(.headline)
                         .fontWeight(.medium)
                 }

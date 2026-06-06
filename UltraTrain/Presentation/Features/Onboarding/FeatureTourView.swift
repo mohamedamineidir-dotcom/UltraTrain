@@ -59,7 +59,7 @@ struct FeatureTourView: View {
                     onDismiss()
                 }
             } label: {
-                Text(currentPage < pages.count - 1 ? "Next" : "Let's Go!")
+                Text(LocalizedStringKey(currentPage < pages.count - 1 ? "Next" : "Let's Go!"))
                     .font(.headline.bold())
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -108,14 +108,14 @@ struct FeatureTourView: View {
             .opacity(showContent ? 1 : 0)
 
             // Title
-            Text(page.title)
+            Text(LocalizedStringKey(page.title))
                 .font(.title.bold())
                 .foregroundStyle(Theme.Colors.label)
                 .opacity(showContent ? 1 : 0)
                 .offset(y: showContent ? 0 : 10)
 
             // Description
-            Text(page.description)
+            Text(LocalizedStringKey(page.description))
                 .font(.subheadline)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
                 .multilineTextAlignment(.center)
@@ -129,7 +129,7 @@ struct FeatureTourView: View {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.subheadline)
                             .foregroundStyle(page.color)
-                        Text(feature)
+                        Text(LocalizedStringKey(feature))
                             .font(.subheadline)
                             .foregroundStyle(Theme.Colors.label)
                     }

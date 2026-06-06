@@ -25,7 +25,8 @@ struct SectionHeader: View {
                         .font(.caption.weight(.bold))
                         .foregroundStyle(tint)
                 }
-                Text(title.uppercased())
+                Text(LocalizedStringKey(title))
+                    .textCase(.uppercase)
                     .font(.caption.bold())
                     .tracking(Theme.LetterSpacing.tracked)
                     .foregroundStyle(Theme.Colors.secondaryLabel)

@@ -36,7 +36,7 @@ struct SocialAuthButton: View {
                 } else {
                     Image(systemName: provider.iconName)
                         .font(.title3)
-                    Text(provider.label)
+                    Text(LocalizedStringKey(provider.label))
                         .font(.subheadline)
                         .fontWeight(.medium)
                 }

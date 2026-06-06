@@ -13,7 +13,7 @@ struct PrimaryOnboardingButton: View {
                     ProgressView()
                         .tint(.white)
                 } else {
-                    Text(title)
+                    Text(LocalizedStringKey(title))
                         .font(.headline)
                         .fontWeight(.semibold)
                 }

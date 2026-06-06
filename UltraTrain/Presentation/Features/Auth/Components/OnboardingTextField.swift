@@ -13,10 +13,10 @@ struct OnboardingTextField: View {
     var body: some View {
         Group {
             if isSecure {
-                SecureField(placeholder, text: $text)
+                SecureField(LocalizedStringKey(placeholder), text: $text)
                     .textContentType(textContentType)
             } else {
-                TextField(placeholder, text: $text)
+                TextField(LocalizedStringKey(placeholder), text: $text)
                     .keyboardType(keyboardType)
                     .textContentType(textContentType)
                     .textInputAutocapitalization(autocapitalization)

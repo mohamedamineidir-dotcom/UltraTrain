@@ -142,7 +142,7 @@ struct HeroLandingView: View {
                 .font(.title3)
                 .frame(width: 28)
                 .foregroundStyle(Theme.Colors.warmCoral)
-            Text(text)
+            Text(LocalizedStringKey(text))
                 .font(.subheadline)
                 .foregroundStyle(.primary.opacity(0.85))
             Spacer()
