@@ -1965,12 +1965,32 @@
         }
       }
     },
+    "1-2 weeks reduced. Plan eases the first 1-2 weeks." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1-2 semaines réduites. Le plan allège les 1-2 premières semaines."
+          }
+        }
+      }
+    },
     "12 Months" : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "12 mois"
+          }
+        }
+      }
+    },
+    "2-4 weeks off or managed injury. Conservative ramp." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2-4 semaines d'arrêt ou blessure gérée. Montée prudente."
           }
         }
       }
@@ -1991,6 +2011,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "3 courses minimum. Les jours en plus deviennent des jours de repos."
+          }
+        }
+      }
+    },
+    "30 min on a treadmill at 8-12% incline at threshold effort. Designed for flat-region athletes prepping for mountain races." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min sur tapis à 8-12 % d'inclinaison à effort seuil. Conçu pour les athlètes de régions plates préparant des courses de montagne."
+          }
+        }
+      }
+    },
+    "30 min uphill at threshold effort on a sustained climb. Calibrates your trail threshold zones." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min en montée à effort seuil sur une côte soutenue. Calibre vos zones de seuil en trail."
           }
         }
       }
@@ -2025,6 +2065,36 @@
         }
       }
     },
+    "4 × 6-8 min uphill at threshold effort, jog-down recovery. Threshold calibration when you don't have a 30-min sustained climb." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4 × 6-8 min en montée à effort seuil, récupération en descente. Calibrage du seuil quand vous n'avez pas de côte soutenue de 30 min."
+          }
+        }
+      }
+    },
+    "4+ weeks off. Plan rebuilds gradually from the base." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4+ semaines d'arrêt. Le plan reconstruit progressivement depuis la base."
+          }
+        }
+      }
+    },
+    "5-6 × 4 min uphill at threshold effort. Threshold calibration for shorter hills." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5-6 × 4 min en montée à effort seuil. Calibrage du seuil pour les côtes plus courtes."
+          }
+        }
+      }
+    },
     "5-Run Average" : {
       "localizations" : {
         "fr" : {
@@ -2045,12 +2115,32 @@
         }
       }
     },
+    "5K time trial all-out. Result re-anchors all your pace targets." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contre-la-montre 5 km à fond. Le résultat réancre toutes vos allures cibles."
+          }
+        }
+      }
+    },
     "6 Months" : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "6 mois"
+          }
+        }
+      }
+    },
+    "6 min all-out on flat (track ideal). Distance covered ÷ 100 = your VMA. Re-anchors all training paces." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6 min à fond sur le plat (piste idéale). Distance parcourue ÷ 100 = votre VMA. Réancre toutes les allures d'entraînement."
           }
         }
       }
@@ -2732,6 +2822,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ajoutez vos chaussures de trail et autres équipements pour suivre leur kilométrage et savoir quand les remplacer."
+          }
+        }
+      }
+    },
+    "Adding any B or C races now lets the plan shape its build, taper and recovery around them." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter des courses B ou C maintenant permet au plan d'organiser sa montée en charge, son affûtage et sa récupération autour d'elles."
           }
         }
       }
@@ -7058,6 +7158,16 @@
         }
       }
     },
+    "Generate a personalized plan based on your profile and race goals." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Générez un plan personnalisé selon votre profil et vos objectifs de course."
+          }
+        }
+      }
+    },
     "Generate a personalized training plan based on your profile and race goal." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -7785,6 +7895,16 @@
         }
       }
     },
+    "How were the last 4 weeks?" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comment se sont passées les 4 dernières semaines ?"
+          }
+        }
+      }
+    },
     "Hydration" : {
       "localizations" : {
         "fr" : {
@@ -8182,6 +8302,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Blessures et renforcement"
+          }
+        }
+      }
+    },
+    "Injury, illness, or time off changes how aggressively we should ramp." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une blessure, une maladie ou une coupure change l'agressivité de la montée en charge."
           }
         }
       }
@@ -8619,6 +8749,16 @@
         }
       }
     },
+    "Light setback" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Léger contretemps"
+          }
+        }
+      }
+    },
     "Likes this activity" : {
       "localizations" : {
         "fr" : {
@@ -9002,6 +9142,16 @@
         }
       }
     },
+    "Major setback" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contretemps majeur"
+          }
+        }
+      }
+    },
     "Makes your profile visible to all users" : {
       "localizations" : {
         "fr" : {
@@ -9254,6 +9404,16 @@
         }
       }
     },
+    "Mid-prep fitness test" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test de forme en milieu de prépa"
+          }
+        }
+      }
+    },
     "Min" : {
       "localizations" : {
         "fr" : {
@@ -9280,6 +9440,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mode"
+          }
+        }
+      }
+    },
+    "Moderate setback" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contretemps modéré"
           }
         }
       }
@@ -11584,6 +11754,16 @@
         }
       }
     },
+    "Plan ramps as designed." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le plan monte en charge comme prévu."
+          }
+        }
+      }
+    },
     "Plan refined from your training" : {
       "localizations" : {
         "fr" : {
@@ -12459,6 +12639,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Courses"
+          }
+        }
+      }
+    },
+    "Races during prep?" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Des courses pendant la prépa ?"
           }
         }
       }
@@ -16347,6 +16537,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Style d'entraînement"
+          }
+        }
+      }
+    },
+    "Training as usual" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entraînement habituel"
           }
         }
       }
@@ -20910,6 +21110,22 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Travail"
+          }
+        }
+      }
+    },
+    "planOpts.testTypeBlurb" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Around week 4-5 we'll schedule a %@ to recalibrate your training paces."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vers la semaine 4-5, nous programmerons un %@ pour recalibrer vos allures d'entraînement."
           }
         }
       }
