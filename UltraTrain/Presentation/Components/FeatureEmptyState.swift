@@ -42,11 +42,11 @@ struct FeatureEmptyState: View {
             iconBadge
 
             VStack(spacing: Theme.Spacing.sm) {
-                Text(title)
+                Text(LocalizedStringKey(title))
                     .font(.title2.bold())
                     .multilineTextAlignment(.center)
                 if let message {
-                    Text(message)
+                    Text(LocalizedStringKey(message))
                         .font(.subheadline)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                         .multilineTextAlignment(.center)
@@ -96,10 +96,10 @@ struct FeatureEmptyState: View {
                     ProgressView()
                         .tint(.white)
                 } else if let systemImage = action.systemImage {
-                    Label(action.title, systemImage: systemImage)
+                    Label(LocalizedStringKey(action.title), systemImage: systemImage)
                         .font(.headline)
                 } else {
-                    Text(action.title)
+                    Text(LocalizedStringKey(action.title))
                         .font(.headline)
                 }
             }
@@ -126,9 +126,9 @@ struct FeatureEmptyState: View {
         } label: {
             Group {
                 if let systemImage = action.systemImage {
-                    Label(action.title, systemImage: systemImage)
+                    Label(LocalizedStringKey(action.title), systemImage: systemImage)
                 } else {
-                    Text(action.title)
+                    Text(LocalizedStringKey(action.title))
                 }
             }
             .font(.subheadline.weight(.semibold))

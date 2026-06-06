@@ -231,10 +231,10 @@ struct PlanGenerationOptionsSheet: View {
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(optionTitle(option))
+                    Text(LocalizedStringKey(optionTitle(option)))
                         .font(.subheadline.bold())
                         .foregroundStyle(.primary)
-                    Text(optionEffect(option))
+                    Text(LocalizedStringKey(optionEffect(option)))
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                         .multilineTextAlignment(.leading)
@@ -284,10 +284,10 @@ struct PlanGenerationOptionsSheet: View {
             } label: {
                 HStack(spacing: Theme.Spacing.md) {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(includeFitnessTest ? "Scheduled around week 4-5" : "Skip the test")
+                        Text(LocalizedStringKey(includeFitnessTest ? "Scheduled around week 4-5" : "Skip the test"))
                             .font(.subheadline.bold())
                             .foregroundStyle(.primary)
-                        Text(includeFitnessTest ? "Recalibrates your pace targets" : "Plan keeps current pace anchors")
+                        Text(LocalizedStringKey(includeFitnessTest ? "Recalibrates your pace targets" : "Plan keeps current pace anchors"))
                             .font(.caption)
                             .foregroundStyle(Theme.Colors.secondaryLabel)
                     }
@@ -312,7 +312,7 @@ struct PlanGenerationOptionsSheet: View {
                     Image(systemName: "info.circle.fill")
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.primary)
-                    Text(testDetailBlurb)
+                    Text(LocalizedStringKey(testDetailBlurb))
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                         .fixedSize(horizontal: false, vertical: true)
@@ -484,10 +484,10 @@ struct PlanGenerationOptionsSheet: View {
                 .shadow(color: tint.opacity(0.4), radius: 6, y: 3)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(title)
+                Text(LocalizedStringKey(title))
                     .font(.headline)
                     .foregroundStyle(.primary)
-                Text(subtitle)
+                Text(LocalizedStringKey(subtitle))
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
                     .fixedSize(horizontal: false, vertical: true)
@@ -646,7 +646,8 @@ struct PlanGenerationOptionsSheet: View {
 
     private var testTypeBlurb: String {
         let variant = FitnessTestScheduler.pickVariant(targetRace: targetRace, athlete: athlete)
-        return "Around week 4-5 we'll schedule a \(variant.displayName.lowercased()) to recalibrate your training paces."
+        return String(localized: "planOpts.testTypeBlurb",
+                      defaultValue: "Around week 4-5 we'll schedule a \(variant.displayName.lowercased()) to recalibrate your training paces.")
     }
 
     private var testDetailBlurb: String {
