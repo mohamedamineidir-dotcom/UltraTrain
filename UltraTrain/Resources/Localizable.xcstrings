@@ -1965,6 +1965,16 @@
         }
       }
     },
+    "1-2 coffees or equivalent per day" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1-2 cafés ou équivalent par jour"
+          }
+        }
+      }
+    },
     "1-2 weeks reduced. Plan eases the first 1-2 weeks." : {
       "localizations" : {
         "fr" : {
@@ -2011,6 +2021,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "3 courses minimum. Les jours en plus deviennent des jours de repos."
+          }
+        }
+      }
+    },
+    "3+ coffees or strong daily habit" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3+ cafés ou forte habitude quotidienne"
           }
         }
       }
@@ -3137,6 +3157,16 @@
         }
       }
     },
+    "Analyzing race profile" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analyse du profil de course"
+          }
+        }
+      }
+    },
     "Analyzing your food..." : {
       "localizations" : {
         "fr" : {
@@ -3227,12 +3257,52 @@
         }
       }
     },
+    "Any go-to brands?" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Des marques préférées ?"
+          }
+        }
+      }
+    },
     "Any pacing insights or details?" : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Des observations sur votre stratégie d'allure ?"
+          }
+        }
+      }
+    },
+    "Any stomach trouble in past races?" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Des soucis d'estomac sur vos courses passées ?"
+          }
+        }
+      }
+    },
+    "Any training data to calibrate?" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Des données d'entraînement à calibrer ?"
+          }
+        }
+      }
+    },
+    "Anything to avoid?" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quelque chose à éviter ?"
           }
         }
       }
@@ -3718,6 +3788,16 @@
         }
       }
     },
+    "Building hydration strategy" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Élaboration de la stratégie d'hydratation"
+          }
+        }
+      }
+    },
     "Building race plan..." : {
       "localizations" : {
         "fr" : {
@@ -3784,6 +3864,16 @@
         }
       }
     },
+    "Calculating energy needs" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calcul des besoins énergétiques"
+          }
+        }
+      }
+    },
     "Calculating..." : {
       "localizations" : {
         "fr" : {
@@ -3831,6 +3921,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Calories"
+          }
+        }
+      }
+    },
+    "Calories, carbs & fat oxidation rates" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calories, glucides et taux d'oxydation des lipides"
           }
         }
       }
@@ -5455,6 +5555,16 @@
         }
       }
     },
+    "Distance, elevation & expected duration" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distance, dénivelé et durée prévue"
+          }
+        }
+      }
+    },
     "Don't have an account? Create one" : {
       "localizations" : {
         "fr" : {
@@ -6729,6 +6839,16 @@
         }
       }
     },
+    "Finalizing nutrition plan" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finalisation du plan nutritionnel"
+          }
+        }
+      }
+    },
     "Finish" : {
       "localizations" : {
         "fr" : {
@@ -6851,6 +6971,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Plancher"
+          }
+        }
+      }
+    },
+    "Fluid intake & electrolyte balance" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apport hydrique et équilibre électrolytique"
           }
         }
       }
@@ -7175,6 +7305,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Générez un plan d'entraînement personnalisé basé sur votre profil et objectif de course."
+          }
+        }
+      }
+    },
+    "Generate a plan and we'll flag the long runs worth practicing on." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Générez un plan et nous signalerons les sorties longues à exploiter."
           }
         }
       }
@@ -7657,6 +7797,16 @@
         }
       }
     },
+    "High (3+ coffees/day)" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Élevée (3+ cafés/jour)"
+          }
+        }
+      }
+    },
     "High temperature: %lld degrees Celsius" : {
       "localizations" : {
         "fr" : {
@@ -7814,6 +7964,16 @@
         }
       }
     },
+    "How long before race start do you like to eat? Tunes the morning fuelling plan." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Combien de temps avant le départ aimez-vous manger ? Ajuste le plan de ravitaillement du matin."
+          }
+        }
+      }
+    },
     "How long is the longest uphill near you?" : {
       "localizations" : {
         "fr" : {
@@ -7851,6 +8011,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Combien de blessures vous ont empêché(e) de courir ?"
+          }
+        }
+      }
+    },
+    "How much caffeine?" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Combien de caféine ?"
           }
         }
       }
@@ -9102,6 +9272,16 @@
         }
       }
     },
+    "Low (new to caffeine)" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faible (nouveau à la caféine)"
+          }
+        }
+      }
+    },
     "Low temperature: %lld degrees Celsius" : {
       "localizations" : {
         "fr" : {
@@ -9440,6 +9620,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mode"
+          }
+        }
+      }
+    },
+    "Moderate (1-2 coffees/day)" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modérée (1-2 cafés/jour)"
           }
         }
       }
@@ -10040,12 +10230,32 @@
         }
       }
     },
+    "No caffeine" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas de caféine"
+          }
+        }
+      }
+    },
     "No checkpoints added yet" : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aucun point de passage ajouté"
+          }
+        }
+      }
+    },
+    "No coffee, tea, or caffeinated drinks" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ni café, ni thé, ni boissons caféinées"
           }
         }
       }
@@ -10167,6 +10377,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aucune donnée de plan"
+          }
+        }
+      }
+    },
+    "No practice runs linked yet" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune sortie d'entraînement liée pour le moment"
           }
         }
       }
@@ -10584,6 +10804,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "OK"
+          }
+        }
+      }
+    },
+    "Occasional, not a daily drinker" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Occasionnel, pas quotidien"
           }
         }
       }
@@ -11657,6 +11887,16 @@
         }
       }
     },
+    "Pick the brands you already trust per format. We'll build your plan around their exact products. Skip anything where you have no preference." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisissez les marques en qui vous avez confiance par format. Nous construirons votre plan autour de leurs produits exacts. Passez ce pour quoi vous n'avez pas de préférence."
+          }
+        }
+      }
+    },
     "Plan" : {
       "localizations" : {
         "fr" : {
@@ -11931,6 +12171,16 @@
         }
       }
     },
+    "Pre-race meal timing" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timing du repas d'avant-course"
+          }
+        }
+      }
+    },
     "Predicted" : {
       "localizations" : {
         "fr" : {
@@ -12087,6 +12337,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bibliothèque de produits"
+          }
+        }
+      }
+    },
+    "Products, timing & gut training schedule" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Produits, timing et planning d'entraînement digestif"
           }
         }
       }
@@ -12375,6 +12635,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Date de course"
+          }
+        }
+      }
+    },
+    "Race Day" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour J"
           }
         }
       }
@@ -15570,6 +15840,16 @@
         }
       }
     },
+    "Take with a sip of water" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À prendre avec une gorgée d'eau"
+          }
+        }
+      }
+    },
     "Taken" : {
       "localizations" : {
         "fr" : {
@@ -15616,6 +15896,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tapez un autre jour pour le déplacer"
+          }
+        }
+      }
+    },
+    "Tap every format you're happy to use on race day." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touchez chaque format que vous acceptez d'utiliser le jour J."
           }
         }
       }
@@ -15873,6 +16163,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ces contacts seront prévenus en cas d'urgence pendant vos courses."
+          }
+        }
+      }
+    },
+    "Things that have caused issues before (gels, fructose, gluten…)." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce qui a déjà posé problème (gels, fructose, gluten…)."
           }
         }
       }
@@ -17291,12 +17591,32 @@
         }
       }
     },
+    "We use this to calibrate race-day dose." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous l'utilisons pour calibrer la dose du jour J."
+          }
+        }
+      }
+    },
     "We'll factor this into the refinement." : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nous prendrons cela en compte dans l'affinement."
+          }
+        }
+      }
+    },
+    "We'll only suggest products that fit." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous ne suggérerons que des produits adaptés."
           }
         }
       }
@@ -17658,6 +17978,16 @@
         }
       }
     },
+    "What do you like to fuel with?" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec quoi aimez-vous vous ravitailler ?"
+          }
+        }
+      }
+    },
     "What is the maximum incline on your treadmill?" : {
       "localizations" : {
         "fr" : {
@@ -17735,6 +18065,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Quand désactivé, ce contact ne sera pas prévenu en cas d'urgence"
+          }
+        }
+      }
+    },
+    "When do you crave savoury food?" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quand avez-vous envie de salé ?"
           }
         }
       }

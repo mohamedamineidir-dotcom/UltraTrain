@@ -140,7 +140,7 @@ struct NutritionView: View {
     private var tabPicker: some View {
         Picker("Nutrition Tab", selection: $viewModel.selectedTab) {
             ForEach(NutritionTab.allCases, id: \.self) { tab in
-                Text(tab.rawValue).tag(tab)
+                Text(LocalizedStringKey(tab.rawValue)).tag(tab)
             }
         }
         .pickerStyle(.segmented)

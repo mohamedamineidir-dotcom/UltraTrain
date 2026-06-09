@@ -186,11 +186,11 @@ struct FuturisticGenerationView: View {
                 .kerning(Theme.LetterSpacing.tracked)
                 .foregroundStyle(accentColor.opacity(0.6))
 
-            Text(steps[currentStep].title)
+            Text(LocalizedStringKey(steps[currentStep].title))
                 .font(.title3.bold())
                 .foregroundStyle(.white)
 
-            Text(steps[currentStep].subtitle)
+            Text(LocalizedStringKey(steps[currentStep].subtitle))
                 .font(.subheadline)
                 .foregroundStyle(Color.white.opacity(0.45))
 

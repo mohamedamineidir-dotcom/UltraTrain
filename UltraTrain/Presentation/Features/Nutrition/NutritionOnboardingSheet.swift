@@ -223,11 +223,11 @@ struct NutritionOnboardingSheet: View {
                 .background(Circle().fill(NutritionPalette.gradient))
                 .shadow(color: NutritionPalette.tint.opacity(0.3), radius: 8, y: 4)
 
-            Text(currentStep.title)
+            Text(LocalizedStringKey(currentStep.title))
                 .font(.title2.bold())
                 .multilineTextAlignment(.center)
 
-            Text(currentStep.subtitle)
+            Text(LocalizedStringKey(currentStep.subtitle))
                 .font(.subheadline)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
                 .multilineTextAlignment(.center)
@@ -745,10 +745,10 @@ private struct SelectableCard: View {
                         )
                     )
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
+                    Text(LocalizedStringKey(title))
                         .font(.subheadline.weight(.semibold))
                     if let subtitle {
-                        Text(subtitle)
+                        Text(LocalizedStringKey(subtitle))
                             .font(.caption)
                             .foregroundStyle(Theme.Colors.secondaryLabel)
                     }
@@ -800,7 +800,7 @@ private struct ChipsGrid<Item: Hashable>: View {
                             Image(systemName: iconName)
                                 .font(.caption2.weight(.bold))
                         }
-                        Text(title(item))
+                        Text(LocalizedStringKey(title(item)))
                             .font(.subheadline.weight(.medium))
                     }
                     .padding(.horizontal, Theme.Spacing.sm + 2)
