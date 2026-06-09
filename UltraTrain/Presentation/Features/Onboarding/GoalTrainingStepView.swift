@@ -33,7 +33,7 @@ struct GoalTrainingStepView: View {
                             .font(.headline)
                         Picker("Goal Type", selection: $viewModel.raceGoalType) {
                             ForEach(RaceGoalSelection.allCases, id: \.self) { goal in
-                                Text(goal.displayName).tag(goal)
+                                Text(LocalizedStringKey(goal.displayName)).tag(goal)
                             }
                         }
                         .pickerStyle(.segmented)
@@ -96,9 +96,9 @@ struct GoalTrainingStepView: View {
                                         .frame(width: 36)
 
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text(philosophy.displayName)
+                                        Text(LocalizedStringKey(philosophy.displayName))
                                             .font(.subheadline.bold())
-                                        Text(philosophy.subtitle)
+                                        Text(LocalizedStringKey(philosophy.subtitle))
                                             .font(.caption)
                                             .foregroundStyle(viewModel.trainingPhilosophy == philosophy ? .white.opacity(0.85) : Theme.Colors.secondaryLabel)
                                     }
@@ -155,7 +155,7 @@ struct GoalTrainingStepView: View {
                             }
                         )) {
                             ForEach(TerrainType.allCases, id: \.self) { terrain in
-                                Text(terrain.displayName).tag(terrain)
+                                Text(LocalizedStringKey(terrain.displayName)).tag(terrain)
                             }
                         }
                         .pickerStyle(.segmented)
@@ -172,7 +172,7 @@ struct GoalTrainingStepView: View {
                                 .foregroundStyle(Theme.Colors.secondaryLabel)
                             Picker("Environment", selection: $viewModel.verticalGainEnvironment) {
                                 ForEach(VerticalGainEnvironment.allCases, id: \.self) { env in
-                                    Text(env.displayName).tag(env)
+                                    Text(LocalizedStringKey(env.displayName)).tag(env)
                                 }
                             }
                             .pickerStyle(.segmented)

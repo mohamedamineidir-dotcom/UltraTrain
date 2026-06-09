@@ -3678,6 +3678,22 @@
         }
       }
     },
+    "Balanced" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Balanced"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Équilibré"
+          }
+        }
+      }
+    },
     "Base" : {
       "localizations" : {
         "fr" : {
@@ -6336,6 +6352,22 @@
         }
       }
     },
+    "Enjoy the Journey" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enjoy the Journey"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prendre du plaisir"
+          }
+        }
+      }
+    },
     "Enter a name for your new route." : {
       "localizations" : {
         "fr" : {
@@ -7640,6 +7672,22 @@
         }
       }
     },
+    "Half Marathon" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Half Marathon"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semi-marathon"
+          }
+        }
+      }
+    },
     "Hands-free audio announcements during your runs. Lowers music volume while speaking." : {
       "localizations" : {
         "fr" : {
@@ -7817,6 +7865,38 @@
         }
       }
     },
+    "Higher volume and intensity. Push your limits." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Higher volume and intensity. Push your limits."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume et intensité élevés. Repoussez vos limites."
+          }
+        }
+      }
+    },
+    "Hill" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hill"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Colline"
+          }
+        }
+      }
+    },
     "Hold for SOS" : {
       "localizations" : {
         "fr" : {
@@ -7859,6 +7939,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Objectifs horaires : %1$lld kcal/h, %2$lld ml d'hydratation/h, %3$lld mg de sodium/h. Total : %4$lld kcal. %5$lld séances d'entraînement gastrique"
+          }
+        }
+      }
+    },
+    "Hours" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hours"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heures"
           }
         }
       }
@@ -8071,6 +8167,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Comment se sont passées les 4 dernières semaines ?"
+          }
+        }
+      }
+    },
+    "Hrs" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hrs"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heures"
           }
         }
       }
@@ -9292,6 +9404,22 @@
         }
       }
     },
+    "Lower volume, more rest. Focus on finishing strong." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lower volume, more rest. Focus on finishing strong."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume réduit, plus de repos. L'objectif : finir en forme."
+          }
+        }
+      }
+    },
     "Macronutrients (optional)" : {
       "localizations" : {
         "fr" : {
@@ -9462,6 +9590,22 @@
         }
       }
     },
+    "Max HR" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Max HR"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FC max"
+          }
+        }
+      }
+    },
     "Max HR (30d)" : {
       "localizations" : {
         "fr" : {
@@ -9614,6 +9758,22 @@
         }
       }
     },
+    "Mixed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mixed"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mixte"
+          }
+        }
+      }
+    },
     "Mode" : {
       "localizations" : {
         "fr" : {
@@ -9720,6 +9880,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zones les plus fréquentées"
+          }
+        }
+      }
+    },
+    "Mountain / Trail" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mountain / Trail"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Montagne / Trail"
           }
         }
       }
@@ -11693,6 +11869,22 @@
         }
       }
     },
+    "Performance" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Performance"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Performance"
+          }
+        }
+      }
+    },
     "Period" : {
       "localizations" : {
         "fr" : {
@@ -12388,6 +12580,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Progression : %@"
+          }
+        }
+      }
+    },
+    "Progressive training. Recommended for most runners." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progressive training. Recommended for most runners."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entraînement progressif. Recommandé pour la plupart des coureurs."
           }
         }
       }
@@ -13593,6 +13801,38 @@
         }
       }
     },
+    "Road" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Road"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Route"
+          }
+        }
+      }
+    },
+    "Road Races" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Road Races"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courses sur route"
+          }
+        }
+      }
+    },
     "Rotate" : {
       "localizations" : {
         "fr" : {
@@ -14428,6 +14668,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Recherche..."
+          }
+        }
+      }
+    },
+    "Sec" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sec"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sec"
           }
         }
       }
@@ -15370,6 +15626,22 @@
         }
       }
     },
+    "Sodium" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sodium"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sodium"
+          }
+        }
+      }
+    },
     "Soon" : {
       "localizations" : {
         "fr" : {
@@ -16006,6 +16278,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Allure cible"
+          }
+        }
+      }
+    },
+    "Target Position" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Target Position"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Position visée"
+          }
+        }
+      }
+    },
+    "Target Ranking" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Target Ranking"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Classement visé"
+          }
+        }
+      }
+    },
+    "Target Time" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Target Time"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temps visé"
           }
         }
       }
@@ -16680,12 +17000,44 @@
         }
       }
     },
+    "Trail" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trail"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trail"
+          }
+        }
+      }
+    },
     "Trail Race %lld" : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Course en trail %lld"
+          }
+        }
+      }
+    },
+    "Trail Races" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trail Races"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courses en trail"
           }
         }
       }
@@ -16914,6 +17266,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Graphique de volume d'entraînement"
+          }
+        }
+      }
+    },
+    "Treadmill" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Treadmill"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tapis de course"
           }
         }
       }

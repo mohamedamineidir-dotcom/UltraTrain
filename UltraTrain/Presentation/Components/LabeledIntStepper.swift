@@ -17,7 +17,7 @@ struct LabeledIntStepper: View {
     var body: some View {
         HStack(spacing: compact ? 2 : 6) {
             if !compact {
-                Text(label)
+                Text(LocalizedStringKey(label))
                     .font(.subheadline)
                     .fixedSize()
                 Spacer(minLength: 2)
