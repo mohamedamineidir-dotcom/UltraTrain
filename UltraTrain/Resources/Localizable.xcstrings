@@ -25163,6 +25163,374 @@
         }
       }
     },
+    "rfp.2daysOut" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2 days out"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2 jours avant"
+          }
+        }
+      }
+    },
+    "rfp.3daysOut" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3 days out"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3 jours avant"
+          }
+        }
+      }
+    },
+    "rfp.day.before" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Day before"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La veille"
+          }
+        }
+      }
+    },
+    "rfp.detail.2daysOut" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start carb-focused eating. Reduce fibre and fat. Regular small meals beat one big plate."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencez l'alimentation axée glucides. Réduisez fibres et graisses. Plusieurs petits repas valent mieux qu'une grosse assiette."
+          }
+        }
+      }
+    },
+    "rfp.detail.2daysOut.ultra" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep loading, keep hydration up. Regular small meals. +500 mg sodium/day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poursuivez la charge, maintenez l'hydratation. Plusieurs petits repas. +500 mg de sodium/jour."
+          }
+        }
+      }
+    },
+    "rfp.detail.3daysOut" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Begin the load. Shift plate composition toward carbs, rice, pasta, bread, potatoes, fruit. Reduce fibre."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Démarrez la charge. Réorientez l'assiette vers les glucides : riz, pâtes, pain, pommes de terre, fruits. Réduisez les fibres."
+          }
+        }
+      }
+    },
+    "rfp.detail.dayBefore.peak800" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peak load. Low fibre, familiar foods. +800 mg sodium. Light pasta/rice dinner, done eating by 20:00."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Charge maximale. Peu de fibres, aliments familiers. +800 mg de sodium. Dîner léger pâtes/riz, fini de manger avant 20h00."
+          }
+        }
+      }
+    },
+    "rfp.detail.dayBefore.ultra" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peak. Familiar low-fibre foods only. +800 mg sodium. Early dinner, early bed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maximum. Uniquement des aliments familiers pauvres en fibres. +800 mg de sodium. Dîner tôt, coucher tôt."
+          }
+        }
+      }
+    },
+    "rfp.detail.short1day" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carb-focused meals, low fibre, familiar foods. Light pasta/rice dinner. Extra 500 mg sodium across the day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repas axés sur les glucides, peu de fibres, aliments familiers. Dîner léger pâtes/riz. 500 mg de sodium en plus sur la journée."
+          }
+        }
+      }
+    },
+    "rfp.during.long" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "During: %1$lld-%2$lld g carbs/hr. 400-600 ml fluid/hr with 500-700 mg sodium/hr (warm weather upper end)."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pendant : %1$lld-%2$lld g de glucides/h. 400-600 ml de liquide/h avec 500-700 mg de sodium/h (haut de la fourchette par temps chaud)."
+          }
+        }
+      }
+    },
+    "rfp.during.short" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "During: a few sips of water, no carbs needed for a race this short."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pendant : quelques gorgées d'eau, aucun glucide nécessaire pour une course aussi courte."
+          }
+        }
+      }
+    },
+    "rfp.morning.1h.detail" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tight window: keep it small and liquid-leaning. Half a banana + honey, or 300 ml sports drink + a slice of toast. Skip fibre, fat, and protein, no room for digestion."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fenêtre serrée : restez léger et plutôt liquide. Une demi-banane + miel, ou 300 ml de boisson énergétique + une tranche de pain grillé. Pas de fibres, de graisses ni de protéines, pas de temps pour digérer."
+          }
+        }
+      }
+    },
+    "rfp.morning.1h.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race morning (1h before)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Matin de course (1h avant)"
+          }
+        }
+      }
+    },
+    "rfp.morning.2h.detail" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moderate carb meal: oatmeal with honey + banana, or a bagel with jam. 400 ml water + electrolytes. Low fibre, familiar foods only."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repas glucidique modéré : flocons d'avoine au miel + banane, ou un bagel avec de la confiture. 400 ml d'eau + électrolytes. Peu de fibres, aliments familiers uniquement."
+          }
+        }
+      }
+    },
+    "rfp.morning.2h.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race morning (2h before)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Matin de course (2h avant)"
+          }
+        }
+      }
+    },
+    "rfp.morning.3h.detail" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Full carb meal: bagel + honey + jam + banana, oatmeal with maple syrup, or white toast with jam. 500 ml water + electrolytes. No fibre or fat."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repas glucidique complet : bagel + miel + confiture + banane, flocons d'avoine au sirop d'érable, ou pain blanc grillé avec confiture. 500 ml d'eau + électrolytes. Pas de fibres ni de graisses."
+          }
+        }
+      }
+    },
+    "rfp.morning.3h.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race morning (3h before)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Matin de course (3h avant)"
+          }
+        }
+      }
+    },
+    "rfp.morning.4h.detail" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Full meal with time to digest: bagels + peanut butter + honey, or rice with honey + scrambled egg white. 500 ml water + electrolytes. Back to bed afterwards is fine."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repas complet avec le temps de digérer : bagels + beurre de cacahuète + miel, ou riz au miel + blanc d'œuf brouillé. 500 ml d'eau + électrolytes. Vous pouvez retourner vous coucher ensuite."
+          }
+        }
+      }
+    },
+    "rfp.morning.4h.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race morning (4h before)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Matin de course (4h avant)"
+          }
+        }
+      }
+    },
+    "rfp.rationale.1day" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A 90-180 min race benefits from 1 day of focused carb-loading at ~8 g/kg, enough to top up glycogen without overloading."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une course de 90 à 180 min profite d'1 jour de charge glucidique ciblée à ~8 g/kg, assez pour refaire le plein de glycogène sans surcharge."
+          }
+        }
+      }
+    },
+    "rfp.rationale.2day" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For a 3-5 hr race, 2 days of loading at 8-9 g/kg maximises glycogen stores, classic marathon protocol (Burke 2011)."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour une course de 3 à 5 h, 2 jours de charge à 8-9 g/kg maximisent les réserves de glycogène, le protocole marathon classique (Burke 2011)."
+          }
+        }
+      }
+    },
+    "rfp.rationale.short" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race duration is under 90 min, so a multi-day carb load isn't needed, normal high-carb eating plus the pre-race meal is enough."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La course dure moins de 90 min : une charge glucidique sur plusieurs jours est inutile, une alimentation riche en glucides habituelle plus le repas d'avant-course suffisent."
+          }
+        }
+      }
+    },
+    "rfp.rationale.ultra" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For an ultra-endurance race, a full 3-day load at 8-10 g/kg/day is worth it, you'll burn through stored glycogen inside the first 2-3 hours."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour une course d'ultra-endurance, une charge complète de 3 jours à 8-10 g/kg/jour en vaut la peine : vous épuiserez vos réserves de glycogène dès les 2-3 premières heures."
+          }
+        }
+      }
+    },
     "road.coach.cooldown" : {
       "localizations" : {
         "en" : {
