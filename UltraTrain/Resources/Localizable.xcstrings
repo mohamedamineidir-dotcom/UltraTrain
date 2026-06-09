@@ -22534,6 +22534,134 @@
         }
       }
     },
+    "irc.combined.msg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "High load combined with monotonous training pattern."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Charge élevée combinée à un schéma d'entraînement monotone."
+          }
+        }
+      }
+    },
+    "irc.combined.rec" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take a recovery day immediately. When resuming, vary session types and reduce volume by 20-30%."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prenez un jour de récupération immédiatement. À la reprise, variez les séances et réduisez le volume de 20 à 30%."
+          }
+        }
+      }
+    },
+    "irc.highACR.msg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acute-to-chronic ratio is %@, dangerously high."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le ratio aigu/chronique est de %@, dangereusement élevé."
+          }
+        }
+      }
+    },
+    "irc.highACR.rec" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reduce training intensity and volume for the next 3-5 days. Focus on recovery runs or rest."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduisez l'intensité et le volume d'entraînement pendant 3 à 5 jours. Privilégiez les footings de récupération ou le repos."
+          }
+        }
+      }
+    },
+    "irc.monotony.msg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Training monotony is %@, too repetitive."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La monotonie d'entraînement est de %@, trop répétitive."
+          }
+        }
+      }
+    },
+    "irc.monotony.rec" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vary session types and intensities. Mix easy, tempo, and long runs across the week."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Variez les types de séances et les intensités. Alternez footing, tempo et sorties longues dans la semaine."
+          }
+        }
+      }
+    },
+    "irc.spike.msg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week-over-week volume increased by %@%%."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le volume a augmenté de %@%% d'une semaine à l'autre."
+          }
+        }
+      }
+    },
+    "irc.spike.rec" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Increase weekly distance by no more than 10% to reduce injury risk. Consider dropping back next week."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "N'augmentez pas la distance hebdomadaire de plus de 10% pour réduire le risque de blessure. Envisagez de réduire la charge la semaine prochaine."
+          }
+        }
+      }
+    },
     "km" : {
       "localizations" : {
         "fr" : {
@@ -23030,6 +23158,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ou"
+          }
+        }
+      }
+    },
+    "pace.backOnPace" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back on target pace!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De retour à l'allure cible !"
+          }
+        }
+      }
+    },
+    "pace.tooFast.major" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Way too fast! %lld%% above target pace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beaucoup trop rapide ! %lld%% au-dessus de l'allure cible"
+          }
+        }
+      }
+    },
+    "pace.tooFast.minor" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slightly fast, %lld%% above target pace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Légèrement rapide, %lld%% au-dessus de l'allure cible"
+          }
+        }
+      }
+    },
+    "pace.tooSlow.major" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Falling behind! %lld%% below target pace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous décrochez ! %lld%% en dessous de l'allure cible"
+          }
+        }
+      }
+    },
+    "pace.tooSlow.minor" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slightly slow, %lld%% below target pace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Légèrement lent, %lld%% en dessous de l'allure cible"
           }
         }
       }
