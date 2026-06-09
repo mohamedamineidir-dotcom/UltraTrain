@@ -21023,6 +21023,758 @@
         }
       }
     },
+    "insight.consistency.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're nailing the plan this week. Keep it up."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous suivez le plan à la perfection cette semaine. Continuez comme ça."
+          }
+        }
+      }
+    },
+    "insight.consistency.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Great Consistency"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Belle régularité"
+          }
+        }
+      }
+    },
+    "insight.day" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "day"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "jour"
+          }
+        }
+      }
+    },
+    "insight.days" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "days"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "jours"
+          }
+        }
+      }
+    },
+    "insight.detraining.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Training load has been dropping. Stay consistent to protect what you've built."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La charge d'entraînement baisse. Restez régulier pour préserver ce que vous avez construit."
+          }
+        }
+      }
+    },
+    "insight.detraining.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detraining Risk"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Risque de désentraînement"
+          }
+        }
+      }
+    },
+    "insight.formPeaking.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your fitness-to-fatigue balance is excellent right now. Great day for a quality session."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre équilibre forme-fatigue est excellent en ce moment. Excellente journée pour une séance de qualité."
+          }
+        }
+      }
+    },
+    "insight.formPeaking.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Form is Peaking"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La forme est au sommet"
+          }
+        }
+      }
+    },
+    "insight.guidance.base" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Building your aerobic foundation. Keep most runs easy and gradually increase volume."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous construisez votre fondation aérobie. Gardez la plupart des sorties faciles et augmentez le volume progressivement."
+          }
+        }
+      }
+    },
+    "insight.guidance.build" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time to add race-specific work. Tempo, climbing, and longer efforts alongside your long runs."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il est temps d'ajouter du travail spécifique à la course. Tempo, montées et efforts plus longs en parallèle de vos sorties longues."
+          }
+        }
+      }
+    },
+    "insight.guidance.peak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quality over quantity now. Your hardest sessions happen here, but total volume levels off."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La qualité prime sur la quantité maintenant. Vos séances les plus dures arrivent ici, mais le volume total se stabilise."
+          }
+        }
+      }
+    },
+    "insight.guidance.race" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race week. Stay loose, eat well, hydrate, and trust your preparation."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semaine de course. Restez relâché, mangez bien, hydratez-vous et faites confiance à votre préparation."
+          }
+        }
+      }
+    },
+    "insight.guidance.recovery" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy effort only. Let your body fully recover before the next block."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort facile uniquement. Laissez votre corps récupérer complètement avant le prochain bloc."
+          }
+        }
+      }
+    },
+    "insight.guidance.taper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cutting volume but keeping some intensity. Your body is absorbing everything you've built."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On réduit le volume mais on garde un peu d'intensité. Votre corps assimile tout ce que vous avez construit."
+          }
+        }
+      }
+    },
+    "insight.hrvDeclining.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your heart rate variability has dropped. Consider going easier this week."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre variabilité de fréquence cardiaque a chuté. Envisagez de lever le pied cette semaine."
+          }
+        }
+      }
+    },
+    "insight.hrvDeclining.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HRV Declining"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VFC en baisse"
+          }
+        }
+      }
+    },
+    "insight.hrvImproving.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HRV is trending up. Your body is responding well to the training."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La VFC est en hausse. Votre corps répond bien à l'entraînement."
+          }
+        }
+      }
+    },
+    "insight.hrvImproving.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HRV Improving"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VFC en hausse"
+          }
+        }
+      }
+    },
+    "insight.longRun.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your long run is still coming this week. Plan your route and nutrition in advance."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre sortie longue est encore à venir cette semaine. Planifiez votre parcours et votre nutrition à l'avance."
+          }
+        }
+      }
+    },
+    "insight.longRun.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long Run Ahead"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue à venir"
+          }
+        }
+      }
+    },
+    "insight.lowReadiness.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@. Your body needs more recovery."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@. Votre corps a besoin de plus de récupération."
+          }
+        }
+      }
+    },
+    "insight.lowReadiness.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low Readiness"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disponibilité faible"
+          }
+        }
+      }
+    },
+    "insight.lowRecovery.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery score is %1$lld/100. %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score de récupération : %1$lld/100. %2$@"
+          }
+        }
+      }
+    },
+    "insight.lowRecovery.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low Recovery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération faible"
+          }
+        }
+      }
+    },
+    "insight.phase.base" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Base"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Base"
+          }
+        }
+      }
+    },
+    "insight.phase.build" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Build"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Développement"
+          }
+        }
+      }
+    },
+    "insight.phase.peak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peak"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pic"
+          }
+        }
+      }
+    },
+    "insight.phase.race" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Course"
+          }
+        }
+      }
+    },
+    "insight.phase.recovery" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération"
+          }
+        }
+      }
+    },
+    "insight.phase.taper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taper"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affûtage"
+          }
+        }
+      }
+    },
+    "insight.phaseTransition.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entering %@ Phase"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passage en phase %@"
+          }
+        }
+      }
+    },
+    "insight.raceWeek.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ is in %2$lld %3$@. Keep the volume low, legs fresh. You've done the work."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ a lieu dans %2$lld %3$@. Gardez le volume bas, les jambes fraîches. Le travail est fait."
+          }
+        }
+      }
+    },
+    "insight.raceWeek.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race Week"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semaine de course"
+          }
+        }
+      }
+    },
+    "insight.readyForQuality.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Readiness is high. %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La disponibilité est élevée. %@."
+          }
+        }
+      }
+    },
+    "insight.readyForQuality.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready for Quality Work"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prêt pour du travail de qualité"
+          }
+        }
+      }
+    },
+    "insight.readyToRace.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're in great shape for %@. Your form is strong right now."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous êtes en grande forme pour %@. Votre forme est solide en ce moment."
+          }
+        }
+      }
+    },
+    "insight.readyToRace.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race Ready"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prêt pour la course"
+          }
+        }
+      }
+    },
+    "insight.recoveryNeeded.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fatigue is piling up. Prioritize sleep, good food, and easy sessions this week."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La fatigue s'accumule. Priorisez le sommeil, une bonne alimentation et des séances faciles cette semaine."
+          }
+        }
+      }
+    },
+    "insight.recoveryNeeded.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery Needed"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération nécessaire"
+          }
+        }
+      }
+    },
+    "insight.sleepDeficit.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sleep quality has been low. Try getting to bed earlier tonight."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La qualité de sommeil est faible. Essayez de vous coucher plus tôt ce soir."
+          }
+        }
+      }
+    },
+    "insight.sleepDeficit.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sleep Deficit"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déficit de sommeil"
+          }
+        }
+      }
+    },
+    "insight.taper.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cut the volume but keep some intensity. Feeling flat or restless is totally normal during taper."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduisez le volume mais gardez un peu d'intensité. Se sentir plat ou agité est tout à fait normal pendant l'affûtage."
+          }
+        }
+      }
+    },
+    "insight.taper.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taper Phase"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phase d'affûtage"
+          }
+        }
+      }
+    },
+    "insight.volumeOnTrack.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekly distance is right where it needs to be. Solid work."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La distance hebdomadaire est exactement là où elle doit être. Du bon travail."
+          }
+        }
+      }
+    },
+    "insight.volumeOnTrack.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume on Track"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume sur la bonne voie"
+          }
+        }
+      }
+    },
+    "insight.wellRecovered.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery score is %1$lld/100. Good day for a quality session."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score de récupération : %1$lld/100. Bonne journée pour une séance de qualité."
+          }
+        }
+      }
+    },
+    "insight.wellRecovered.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Well Recovered"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bien récupéré"
+          }
+        }
+      }
+    },
     "intensity.easy" : {
       "extractionState" : "extracted_with_value",
       "localizations" : {
