@@ -5,16 +5,16 @@ enum NotificationContentBuilder {
     static func trainingReminderBody(_ session: TrainingSession) -> String {
         var parts: [String] = []
         let typeName: String = switch session.type {
-        case .longRun: "Long Run"
-        case .tempo: "Tempo"
-        case .intervals: "Intervals"
-        case .verticalGain: "Uphill Intervals"
-        case .backToBack: "Back-to-Back"
-        case .recovery: "Recovery Run"
-        case .crossTraining: "Cross Training"
-        case .strengthConditioning: "Strength & Conditioning"
-        case .race: "Race Day"
-        case .rest: "Rest Day"
+        case .longRun: String(localized: "notif.type.longRun", defaultValue: "Long Run")
+        case .tempo: String(localized: "notif.type.tempo", defaultValue: "Tempo")
+        case .intervals: String(localized: "notif.type.intervals", defaultValue: "Intervals")
+        case .verticalGain: String(localized: "notif.type.verticalGain", defaultValue: "Uphill Intervals")
+        case .backToBack: String(localized: "notif.type.backToBack", defaultValue: "Back-to-Back")
+        case .recovery: String(localized: "notif.type.recovery", defaultValue: "Recovery Run")
+        case .crossTraining: String(localized: "notif.type.crossTraining", defaultValue: "Cross Training")
+        case .strengthConditioning: String(localized: "notif.type.strength", defaultValue: "Strength & Conditioning")
+        case .race: String(localized: "notif.type.race", defaultValue: "Race Day")
+        case .rest: String(localized: "notif.type.rest", defaultValue: "Rest Day")
         }
         parts.append(typeName)
         if session.plannedDistanceKm > 0 {
@@ -23,27 +23,33 @@ enum NotificationContentBuilder {
         if session.plannedElevationGainM > 0 {
             parts.append(String(format: "%.0f m D+", session.plannedElevationGainM))
         }
-        return "Tomorrow: " + parts.joined(separator: " \u{2014} ")
+        return String(localized: "notif.tomorrowPrefix", defaultValue: "Tomorrow: ") + parts.joined(separator: ", ")
     }
 
     static func raceCountdownBody(raceName: String, daysRemaining: Int) -> String {
         if daysRemaining == 1 {
-            return "Your race \(raceName) is tomorrow! Good luck!"
+            return String(localized: "notif.race.tomorrow", defaultValue: "Your race \(raceName) is tomorrow! Good luck!")
         } else if daysRemaining <= 7 {
-            return "Your race \(raceName) is in \(daysRemaining) days!"
+            return String(localized: "notif.race.days", defaultValue: "Your race \(raceName) is in \(daysRemaining) days!")
         } else {
             let weeks = daysRemaining / 7
-            return "\(weeks) week\(weeks == 1 ? "" : "s") until \(raceName). Stay focused!"
+            let weekWord = weeks == 1
+                ? String(localized: "notif.week", defaultValue: "week")
+                : String(localized: "notif.weeks", defaultValue: "weeks")
+            return String(localized: "notif.race.weeks", defaultValue: "\(weeks) \(weekWord) until \(raceName). Stay focused!")
         }
     }
 
     static func recoveryReminderBody() -> String {
-        "Rest day \u{2014} remember to stretch, hydrate, and recover well."
+        String(localized: "notif.recovery", defaultValue: "Rest day, remember to stretch, hydrate, and recover well.")
     }
 
     static func weeklySummaryBody(distanceKm: Double, elevationM: Double, runCount: Int) -> String {
         let distStr = String(format: "%.1f", distanceKm)
         let elevStr = String(format: "%.0f", elevationM)
-        return "This week: \(distStr) km, \(elevStr) m D+ across \(runCount) run\(runCount == 1 ? "" : "s"). Keep it up!"
+        let runWord = runCount == 1
+            ? String(localized: "notif.run", defaultValue: "run")
+            : String(localized: "notif.runs", defaultValue: "runs")
+        return String(localized: "notif.weekly", defaultValue: "This week: \(distStr) km, \(elevStr) m D+ across \(runCount) \(runWord). Keep it up!")
     }
 }
