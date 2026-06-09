@@ -28231,6 +28231,1366 @@
         }
       }
     },
+    "str.loc.gym" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gym"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salle"
+          }
+        }
+      }
+    },
+    "str.loc.home" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Home"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maison"
+          }
+        }
+      }
+    },
+    "str.name.ankleStar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ankle Stability - Star Reach"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stabilité de cheville - étoile"
+          }
+        }
+      }
+    },
+    "str.name.calfRaise" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slow Eccentric Calf Raise"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extension des mollets en excentrique lent"
+          }
+        }
+      }
+    },
+    "str.name.gluteBridge" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glute Bridge"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pont fessier"
+          }
+        }
+      }
+    },
+    "str.name.hexDeadlift" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hex Bar Deadlift"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soulevé de terre barre hexagonale"
+          }
+        }
+      }
+    },
+    "str.name.hipHike" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hip Hike on Step"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Élévation de hanche sur marche"
+          }
+        }
+      }
+    },
+    "str.name.pushups" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push-Ups"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pompes"
+          }
+        }
+      }
+    },
+    "str.name.rdl" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Romanian Deadlift"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soulevé de terre roumain"
+          }
+        }
+      }
+    },
+    "str.name.reverseLunge" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reverse Lunge"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fente arrière"
+          }
+        }
+      }
+    },
+    "str.name.row" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bent Over Row"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rowing buste penché"
+          }
+        }
+      }
+    },
+    "str.name.sidePlank" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Side Plank"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gainage latéral"
+          }
+        }
+      }
+    },
+    "str.name.sidePlankAbd" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Side Plank with Hip Abduction"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gainage latéral avec abduction de hanche"
+          }
+        }
+      }
+    },
+    "str.name.slBalance" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Single-Leg Balance"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Équilibre sur une jambe"
+          }
+        }
+      }
+    },
+    "str.name.slBalanceClosed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Single-Leg Balance (Eyes Closed)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Équilibre sur une jambe (yeux fermés)"
+          }
+        }
+      }
+    },
+    "str.name.slHipThrust" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Single-Leg Hip Thrust"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hip Thrust unijambiste"
+          }
+        }
+      }
+    },
+    "str.name.slRdl" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Single-Leg Romanian Deadlift"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soulevé de terre roumain unijambiste"
+          }
+        }
+      }
+    },
+    "str.name.stepDown" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Step-Down (slow eccentric)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descente de marche (excentrique lent)"
+          }
+        }
+      }
+    },
+    "str.name.walkingLunge" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walking Lunge"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fente marchée"
+          }
+        }
+      }
+    },
+    "str.name.walkingLunges" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walking Lunges"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fentes marchées"
+          }
+        }
+      }
+    },
+    "str.note.ankleStar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stand on one leg, reach other foot in 4 directions. Ankle proprioception for trails."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sur une jambe, pointez l'autre pied dans 4 directions. Proprioception de la cheville pour le trail."
+          }
+        }
+      }
+    },
+    "str.note.backSquat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Control the descent. Knees track over toes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contrôlez la descente. Les genoux suivent l'axe des orteils."
+          }
+        }
+      }
+    },
+    "str.note.birdDog" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extend opposite arm and leg. Hold 2 seconds at full extension."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tendez bras et jambe opposés. Tenez 2 secondes en pleine extension."
+          }
+        }
+      }
+    },
+    "str.note.boxStepUp" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drive through the heel. Mimics uphill running."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poussez sur le talon. Reproduit la course en montée."
+          }
+        }
+      }
+    },
+    "str.note.bulgarianGym" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rear foot on bench. Keep front knee over ankle."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pied arrière sur un banc. Gardez le genou avant au-dessus de la cheville."
+          }
+        }
+      }
+    },
+    "str.note.bulgarianHome" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rear foot on a couch or chair. Control the descent."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pied arrière sur un canapé ou une chaise. Contrôlez la descente."
+          }
+        }
+      }
+    },
+    "str.note.calfRaise" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3-second lowering. Both straight and bent knee. The calf-Achilles complex absorbs ~3× bodyweight per stride, calf endurance predicts late-marathon pace fade."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descente de 3 secondes. Jambe tendue et fléchie. Le complexe mollet-Achille absorbe ~3× le poids du corps par foulée ; l'endurance des mollets prédit la baisse d'allure en fin de marathon."
+          }
+        }
+      }
+    },
+    "str.note.clamshell" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep feet together. Feel the burn in outer hip."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gardez les pieds joints. Sentez le travail sur la hanche externe."
+          }
+        }
+      }
+    },
+    "str.note.clamshellBand" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glute medius activation. Prevents IT band issues and knee pain."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activation du moyen fessier. Prévient les douleurs du fascia lata et du genou."
+          }
+        }
+      }
+    },
+    "str.note.deadBug" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Press lower back into floor. Slow and controlled."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plaquez le bas du dos au sol. Lentement et avec contrôle."
+          }
+        }
+      }
+    },
+    "str.note.deadBugAct" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gentle core activation. Keep lower back flat."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activation douce du gainage. Gardez le bas du dos plaqué."
+          }
+        }
+      }
+    },
+    "str.note.frontSquat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elbows high, core tight. Builds upright climbing posture."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coudes hauts, gainage serré. Développe une posture droite pour la montée."
+          }
+        }
+      }
+    },
+    "str.note.gluteBridge2s" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drive through heels. Squeeze glutes at top for 2 seconds."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poussez sur les talons. Serrez les fessiers 2 secondes en haut."
+          }
+        }
+      }
+    },
+    "str.note.gluteBridgeAct" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activate glutes before running or as standalone."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activez les fessiers avant de courir ou en exercice isolé."
+          }
+        }
+      }
+    },
+    "str.note.gobletSquat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hold any weight at chest level, or bodyweight. Full depth."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tenez une charge au niveau de la poitrine, ou au poids du corps. Pleine amplitude."
+          }
+        }
+      }
+    },
+    "str.note.hexDeadlift" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drive through your whole foot. Keep chest up."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poussez sur tout le pied. Gardez la poitrine haute."
+          }
+        }
+      }
+    },
+    "str.note.hipHike" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stand on step edge. Lower hip then raise. Strengthens glute medius and hip stabilizers."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tenez-vous au bord d'une marche. Abaissez puis relevez la hanche. Renforce le moyen fessier et les stabilisateurs de hanche."
+          }
+        }
+      }
+    },
+    "str.note.hipThrust" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Squeeze glutes at the top. Pause 1 second."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Serrez les fessiers en haut. Marquez 1 seconde de pause."
+          }
+        }
+      }
+    },
+    "str.note.lateralBounds" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stick the landing on one foot. Critical for trail terrain changes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stabilisez la réception sur un pied. Essentiel pour les changements de terrain en trail."
+          }
+        }
+      }
+    },
+    "str.note.lowBox" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30-45 cm box. Soft landing, full recovery between reps. Reactive strength, not a max test."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Box de 30 à 45 cm. Réception souple, récupération complète entre les répétitions. Force réactive, pas un test maximal."
+          }
+        }
+      }
+    },
+    "str.note.pallof" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anti-rotation. Press cable away from chest, hold 2 sec."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anti-rotation. Poussez la poulie devant la poitrine, tenez 2 s."
+          }
+        }
+      }
+    },
+    "str.note.pallofRoad" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anti-rotation core. Prevents trunk twist that wastes energy at high cadence."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gainage anti-rotation. Évite la torsion du tronc qui gaspille de l'énergie à cadence élevée."
+          }
+        }
+      }
+    },
+    "str.note.pistol" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sit to a chair if needed. Build toward full pistol over weeks."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asseyez-vous sur une chaise si besoin. Progressez vers le pistol complet au fil des semaines."
+          }
+        }
+      }
+    },
+    "str.note.plankTap" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stay stable through the hips. No rotation."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restez stable au niveau des hanches. Aucune rotation."
+          }
+        }
+      }
+    },
+    "str.note.pogoBuild" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quick ground contact. Stiff ankles, minimal knee bend. Builds tendon stiffness, strongly correlated with running economy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contact au sol rapide. Chevilles rigides, flexion de genou minimale. Développe la raideur des tendons, fortement corrélée à l'économie de course."
+          }
+        }
+      }
+    },
+    "str.note.pogoPeak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quick ground contact. Stiff ankles. Maintain tendon stiffness through peak."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contact au sol rapide. Chevilles rigides. Maintenez la raideur des tendons pendant le pic."
+          }
+        }
+      }
+    },
+    "str.note.pogoPeakTrail" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quick ground contact. Stiff ankles. Minimal knee bend."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contact au sol rapide. Chevilles rigides. Flexion de genou minimale."
+          }
+        }
+      }
+    },
+    "str.note.pushups" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Full range of motion. Modify on knees if needed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pleine amplitude. Sur les genoux si besoin."
+          }
+        }
+      }
+    },
+    "str.note.rdl" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hinge at hips, soft knees. Feel the hamstring stretch."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Charnière aux hanches, genoux souples. Sentez l'étirement des ischio-jambiers."
+          }
+        }
+      }
+    },
+    "str.note.reverseLunge" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Step back, lower with control. Drive through front heel."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reculez, descendez avec contrôle. Poussez sur le talon avant."
+          }
+        }
+      }
+    },
+    "str.note.row" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Squeeze shoulder blades together. Posture maintenance for long efforts."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resserrez les omoplates. Maintien de la posture sur les longs efforts."
+          }
+        }
+      }
+    },
+    "str.note.sidePlankAbd" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stack hips, lift the top leg slowly. Glute-med specific, directly counters the pelvic drop behind ITBS and PFP."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empilez les hanches, levez lentement la jambe supérieure. Spécifique au moyen fessier, contre directement la bascule du bassin à l'origine du syndrome de l'essuie-glace et du syndrome fémoro-patellaire."
+          }
+        }
+      }
+    },
+    "str.note.sidePlankCore" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stack hips. Keep body in a straight line."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empilez les hanches. Gardez le corps bien aligné."
+          }
+        }
+      }
+    },
+    "str.note.slBalance" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eyes open first. Progress to eyes closed when stable."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeux ouverts d'abord. Passez aux yeux fermés une fois stable."
+          }
+        }
+      }
+    },
+    "str.note.slBalanceClosed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Advanced proprioception. Essential for technical trail terrain."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Proprioception avancée. Essentielle pour les terrains techniques en trail."
+          }
+        }
+      }
+    },
+    "str.note.slHipThrust" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One leg planted, other extended. Max glute activation."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une jambe ancrée, l'autre tendue. Activation maximale des fessiers."
+          }
+        }
+      }
+    },
+    "str.note.slRdl" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep hips level. Touch floor if flexible enough."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gardez les hanches à niveau. Touchez le sol si vous êtes assez souple."
+          }
+        }
+      }
+    },
+    "str.note.squatJumps" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Land softly. Full squat depth before jumping."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réception souple. Squat complet avant de sauter."
+          }
+        }
+      }
+    },
+    "str.note.stepDown" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30-50 cm box. 4-second lowering. Best single exercise for downhill quad tolerance, directly trains the eccentric loading that destroys late-race ultras."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Box de 30 à 50 cm. Descente de 4 secondes. Le meilleur exercice pour la tolérance des quadriceps en descente ; entraîne directement le travail excentrique qui détruit les jambes en fin d'ultra."
+          }
+        }
+      }
+    },
+    "str.note.walkingLungeAct" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slow and controlled. Feel the stretch in hip flexors."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lent et contrôlé. Sentez l'étirement des fléchisseurs de hanche."
+          }
+        }
+      }
+    },
+    "str.note.walkingLunges" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long stride, controlled descent. Mimics uphill stride pattern."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grande foulée, descente contrôlée. Reproduit la foulée en montée."
+          }
+        }
+      }
+    },
+    "str.note.woodchop" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rotate from the hips, not the shoulders. Control the return."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tournez depuis les hanches, pas les épaules. Contrôlez le retour."
+          }
+        }
+      }
+    },
+    "str.phase.activation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activation"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activation"
+          }
+        }
+      }
+    },
+    "str.phase.foundation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foundation"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fondation"
+          }
+        }
+      }
+    },
+    "str.phase.maintenance" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintenance"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintien"
+          }
+        }
+      }
+    },
+    "str.phase.preRace" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pre-Race"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pré-course"
+          }
+        }
+      }
+    },
+    "str.phase.recovery" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération"
+          }
+        }
+      }
+    },
+    "str.phase.strengthPower" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strength-Power"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Force-Puissance"
+          }
+        }
+      }
+    },
+    "str.reps.10leg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10 per leg"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10 par jambe"
+          }
+        }
+      }
+    },
+    "str.reps.10side" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10 per side"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10 par côté"
+          }
+        }
+      }
+    },
+    "str.reps.1215side" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12-15 per side"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12-15 par côté"
+          }
+        }
+      }
+    },
+    "str.reps.12side" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12 per side"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12 par côté"
+          }
+        }
+      }
+    },
+    "str.reps.1520secLeg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "15-20 sec per leg"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "15-20 s par jambe"
+          }
+        }
+      }
+    },
+    "str.reps.2030secSide" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20-30 sec per side"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20-30 s par côté"
+          }
+        }
+      }
+    },
+    "str.reps.30secLeg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 sec per leg"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 s par jambe"
+          }
+        }
+      }
+    },
+    "str.reps.3roundsLeg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3 rounds per leg"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3 tours par jambe"
+          }
+        }
+      }
+    },
+    "str.reps.68leg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6-8 per leg"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6-8 par jambe"
+          }
+        }
+      }
+    },
+    "str.reps.810leg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8-10 per leg"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8-10 par jambe"
+          }
+        }
+      }
+    },
+    "str.reps.810side" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8-10 per side"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8-10 par côté"
+          }
+        }
+      }
+    },
+    "str.reps.812leg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8-12 per leg"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8-12 par jambe"
+          }
+        }
+      }
+    },
+    "str.reps.8leg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8 per leg"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8 par jambe"
+          }
+        }
+      }
+    },
+    "str.reps.8side" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8 per side"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8 par côté"
+          }
+        }
+      }
+    },
+    "str.wname.activation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activation & Mobility"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activation et mobilité"
+          }
+        }
+      }
+    },
+    "str.wname.full" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ S&C (%2$@)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renfo %1$@ (%2$@)"
+          }
+        }
+      }
+    },
+    "str.wname.quick" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ Quick S&C (%2$@)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renfo express %1$@ (%2$@)"
+          }
+        }
+      }
+    },
     "tcoach.altitude.high" : {
       "localizations" : {
         "en" : {
