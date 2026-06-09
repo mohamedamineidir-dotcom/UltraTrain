@@ -22812,6 +22812,438 @@
         }
       }
     },
+    "nadv.avoid.fiberFat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avoid high-fiber and high-fat foods close to the session"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Évitez les aliments riches en fibres et en graisses juste avant la séance"
+          }
+        }
+      }
+    },
+    "nadv.during.gutNote" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Practice your race-day nutrition strategy during this session"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profitez de cette séance pour tester votre stratégie nutritionnelle de course"
+          }
+        }
+      }
+    },
+    "nadv.freq.bar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Half every 60 min"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La moitié toutes les 60 min"
+          }
+        }
+      }
+    },
+    "nadv.freq.drink" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sip regularly"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buvez régulièrement par petites gorgées"
+          }
+        }
+      }
+    },
+    "nadv.freq.gel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 every 30-45 min"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 toutes les 30-45 min"
+          }
+        }
+      }
+    },
+    "nadv.freq.salt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 every 60 min"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 toutes les 60 min"
+          }
+        }
+      }
+    },
+    "nadv.meal.balanced" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Balanced meal at your usual time"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repas équilibré à votre heure habituelle"
+          }
+        }
+      }
+    },
+    "nadv.meal.banana" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Banana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Banane"
+          }
+        }
+      }
+    },
+    "nadv.meal.bananaBar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Banana with a small energy bar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Banane avec une petite barre énergétique"
+          }
+        }
+      }
+    },
+    "nadv.meal.chickenRice" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chicken breast with rice and vegetables"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blanc de poulet avec riz et légumes"
+          }
+        }
+      }
+    },
+    "nadv.meal.eggsToast" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eggs on toast"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Œufs sur pain grillé"
+          }
+        }
+      }
+    },
+    "nadv.meal.fruitNuts" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fruit and a handful of nuts"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fruits et une poignée de noix"
+          }
+        }
+      }
+    },
+    "nadv.meal.greekYogurt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Greek yogurt with granola and berries"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yaourt grec avec granola et fruits rouges"
+          }
+        }
+      }
+    },
+    "nadv.meal.lightSnack" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light snack or toast"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collation légère ou pain grillé"
+          }
+        }
+      }
+    },
+    "nadv.meal.oatmeal" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oatmeal with banana and honey"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flocons d'avoine avec banane et miel"
+          }
+        }
+      }
+    },
+    "nadv.meal.recoveryShake" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery shake with protein and banana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shake de récupération avec protéines et banane"
+          }
+        }
+      }
+    },
+    "nadv.meal.riceCake" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rice cake with jam"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Galette de riz avec confiture"
+          }
+        }
+      }
+    },
+    "nadv.meal.riceSauce" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rice with a light sauce"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riz avec une sauce légère"
+          }
+        }
+      }
+    },
+    "nadv.meal.smoothie" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Smoothie with protein powder and fruit"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Smoothie avec poudre de protéines et fruits"
+          }
+        }
+      }
+    },
+    "nadv.meal.toastHoney" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toast with honey"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pain grillé au miel"
+          }
+        }
+      }
+    },
+    "nadv.meal.toastJamBanana" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toast with jam and a banana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pain grillé avec confiture et une banane"
+          }
+        }
+      }
+    },
+    "nadv.meal.turkey" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turkey sandwich"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sandwich à la dinde"
+          }
+        }
+      }
+    },
+    "nadv.timing.1_2h" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1-2 hours before"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1-2 heures avant"
+          }
+        }
+      }
+    },
+    "nadv.timing.2_3h" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2-3 hours before"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2-3 heures avant"
+          }
+        }
+      }
+    },
+    "nadv.window.30" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Within 30 minutes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans les 30 minutes"
+          }
+        }
+      }
+    },
+    "nadv.window.60" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Within 60 minutes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans les 60 minutes"
+          }
+        }
+      }
+    },
+    "nadv.window.normal" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Normal meal timing"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Horaire de repas normal"
+          }
+        }
+      }
+    },
     "notif.race.days" : {
       "localizations" : {
         "en" : {
