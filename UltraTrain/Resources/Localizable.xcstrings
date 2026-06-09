@@ -25804,6 +25804,326 @@
         }
       }
     },
+    "rre.allGood.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're well recovered. Train as planned and stay hydrated!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous êtes bien récupéré. Entraînez-vous comme prévu et restez hydraté !"
+          }
+        }
+      }
+    },
+    "rre.allGood.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All Systems Go"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout est au vert"
+          }
+        }
+      }
+    },
+    "rre.foam.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "High muscle soreness detected. Spend 15-20 minutes on foam rolling and dynamic stretching before any activity."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courbatures musculaires importantes détectées. Passez 15 à 20 minutes au rouleau et aux étirements dynamiques avant toute activité."
+          }
+        }
+      }
+    },
+    "rre.foam.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foam Rolling & Stretching"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rouleau et étirements"
+          }
+        }
+      }
+    },
+    "rre.fullRest.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your recovery score is %@. Take a complete rest day to avoid overtraining."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre score de récupération est %@. Prenez une journée de repos complet pour éviter le surentraînement."
+          }
+        }
+      }
+    },
+    "rre.fullRest.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Full Rest Day Recommended"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Journée de repos complet recommandée"
+          }
+        }
+      }
+    },
+    "rre.improveSleep.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sleep quality has been declining. Maintain a consistent bedtime and cool sleeping environment."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La qualité de votre sommeil décline. Maintenez une heure de coucher régulière et un environnement de sommeil frais."
+          }
+        }
+      }
+    },
+    "rre.improveSleep.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Improve Sleep Routine"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Améliorez votre routine de sommeil"
+          }
+        }
+      }
+    },
+    "rre.lightStretch.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moderate soreness. A gentle stretching routine will help with recovery."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courbatures modérées. Une routine d'étirements doux aidera à la récupération."
+          }
+        }
+      }
+    },
+    "rre.lightStretch.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light Stretching"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Étirements légers"
+          }
+        }
+      }
+    },
+    "rre.mental.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low mood can impact performance. Consider cross-training, yoga, or a nature walk instead of a hard session."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un moral en berne peut affecter la performance. Envisagez du cross-training, du yoga ou une marche en nature plutôt qu'une séance dure."
+          }
+        }
+      }
+    },
+    "rre.mental.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mental Break"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pause mentale"
+          }
+        }
+      }
+    },
+    "rre.reduceIntensity.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low readiness score. Swap any planned hard session for an easy effort or rest day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score de disponibilité bas. Remplacez toute séance dure prévue par un effort facile ou un jour de repos."
+          }
+        }
+      }
+    },
+    "rre.reduceIntensity.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reduce Training Intensity"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduisez l'intensité de l'entraînement"
+          }
+        }
+      }
+    },
+    "rre.restEasy.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low energy levels. Consider taking a rest day or a very easy 20-30 min recovery jog."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niveau d'énergie bas. Envisagez un jour de repos ou un footing de récupération très facile de 20 à 30 min."
+          }
+        }
+      }
+    },
+    "rre.restEasy.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest or Easy Recovery Run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos ou footing de récupération"
+          }
+        }
+      }
+    },
+    "rre.sleepTonight.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poor sleep quality. Aim for 8+ hours tonight. Avoid screens 1 hour before bed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qualité de sommeil médiocre. Visez 8 h et plus ce soir. Évitez les écrans 1 heure avant le coucher."
+          }
+        }
+      }
+    },
+    "rre.sleepTonight.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prioritize Sleep Tonight"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Priorisez le sommeil ce soir"
+          }
+        }
+      }
+    },
+    "rre.word.critical" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "critical"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "critique"
+          }
+        }
+      }
+    },
+    "rre.word.low" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "low"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bas"
+          }
+        }
+      }
+    },
     "scenario.comeback.subtitle" : {
       "localizations" : {
         "en" : {
