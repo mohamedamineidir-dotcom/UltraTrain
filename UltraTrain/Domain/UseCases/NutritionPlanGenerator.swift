@@ -437,13 +437,13 @@ enum NutritionScheduleBuilder {
             if durationMinutes >= 40 {
                 entries.append(entry(product: gel,
                                      timingMinutes: durationMinutes / 2,
-                                     notes: "Optional, take only if you feel energy dropping"))
+                                     notes: String(localized: "npg.note.optional", defaultValue: "Optional, take only if you feel energy dropping")))
             }
         } else {
             // 60-90 min: 1 gel every 30 min
             for minute in stride(from: 30, through: durationMinutes - 15, by: 30) {
                 entries.append(entry(product: gel, timingMinutes: minute,
-                                     notes: "Take with a sip of water"))
+                                     notes: String(localized: "npg.note.sipWater", defaultValue: "Take with a sip of water")))
             }
         }
         return entries
@@ -467,7 +467,7 @@ enum NutritionScheduleBuilder {
         // Drink base every 60 min provides ~40-60 g + sodium
         for minute in stride(from: 60, through: durationMinutes - 15, by: 60) {
             entries.append(entry(product: drink, timingMinutes: minute,
-                                 notes: "Mix with \(drink.fluidMlPerServing ?? 500) ml water. Sip over 45-60 min."))
+                                 notes: String(localized: "npg.note.mixSip", defaultValue: "Mix with \(drink.fluidMlPerServing ?? 500) ml water. Sip over 45-60 min.")))
         }
 
         // Gel every 30-45 min (more frequent if carb target is high)
@@ -476,7 +476,7 @@ enum NutritionScheduleBuilder {
             // Skip if a drink is already delivered this minute
             if minute % 60 == 0 { continue }
             entries.append(entry(product: gel, timingMinutes: minute,
-                                 notes: "Take with 150-200 ml water"))
+                                 notes: String(localized: "npg.note.with150", defaultValue: "Take with 150-200 ml water")))
         }
 
         // Solids for 4-8 h range, one every 90 min after hour 2
@@ -484,7 +484,7 @@ enum NutritionScheduleBuilder {
            let solid = NutritionProductSelector.pickSolid(preferences: preferences) {
             for minute in stride(from: 120, through: durationMinutes - 30, by: 90) {
                 entries.append(entry(product: solid, timingMinutes: minute,
-                                     notes: "At aid station if possible, chew thoroughly"))
+                                     notes: String(localized: "npg.note.aidChew", defaultValue: "At aid station if possible, chew thoroughly")))
             }
         }
 
@@ -493,7 +493,7 @@ enum NutritionScheduleBuilder {
            let salt = NutritionProductSelector.pick(type: .salt, caffeinated: false, preferences: preferences) {
             for minute in stride(from: 60, through: durationMinutes - 30, by: 60) {
                 entries.append(entry(product: salt, timingMinutes: minute,
-                                     notes: "Heavy salty sweater dose"))
+                                     notes: String(localized: "npg.note.saltySweater", defaultValue: "Heavy salty sweater dose")))
             }
         }
 
@@ -516,7 +516,7 @@ enum NutritionScheduleBuilder {
         // Continuous drink base every 45 min (to hit carb + sodium target together)
         for minute in stride(from: 45, through: durationMinutes - 20, by: 45) {
             entries.append(entry(product: drink, timingMinutes: minute,
-                                 notes: "Mix with \(drink.fluidMlPerServing ?? 500) ml water"))
+                                 notes: String(localized: "npg.note.mix", defaultValue: "Mix with \(drink.fluidMlPerServing ?? 500) ml water")))
         }
 
         // Gel every 45 min in first half (most athletes go off sweet after hour 4-6)
@@ -524,7 +524,7 @@ enum NutritionScheduleBuilder {
         if let gel = NutritionProductSelector.pick(type: .gel, caffeinated: false, preferences: preferences) {
             for minute in stride(from: 30, through: gelCutoff, by: 45) {
                 entries.append(entry(product: gel, timingMinutes: minute,
-                                     notes: "Take with water"))
+                                     notes: String(localized: "npg.note.withWater", defaultValue: "Take with water")))
             }
         }
 
@@ -532,7 +532,7 @@ enum NutritionScheduleBuilder {
         if let solid = NutritionProductSelector.pickSolid(preferences: preferences) {
             for minute in stride(from: 120, through: durationMinutes - 30, by: 60) {
                 entries.append(entry(product: solid, timingMinutes: minute,
-                                     notes: "Real food, best at aid stations"))
+                                     notes: String(localized: "npg.note.realFood", defaultValue: "Real food, best at aid stations")))
             }
         }
 
@@ -540,7 +540,7 @@ enum NutritionScheduleBuilder {
         if let savory = NutritionProductSelector.pickSavory(preferences: preferences) {
             for minute in stride(from: 4 * 60, through: durationMinutes - 30, by: 120) {
                 entries.append(entry(product: savory, timingMinutes: minute,
-                                     notes: "Savory break, eat slowly at aid station"))
+                                     notes: String(localized: "npg.note.savory", defaultValue: "Savory break, eat slowly at aid station")))
             }
         }
 
@@ -548,7 +548,7 @@ enum NutritionScheduleBuilder {
         if let salt = NutritionProductSelector.pick(type: .salt, caffeinated: false, preferences: preferences) {
             for minute in stride(from: 60, through: durationMinutes - 30, by: 60) {
                 entries.append(entry(product: salt, timingMinutes: minute,
-                                     notes: "Take with water"))
+                                     notes: String(localized: "npg.note.withWater", defaultValue: "Take with water")))
             }
         }
 
@@ -587,9 +587,9 @@ enum NutritionScheduleBuilder {
             let halfway = roundedToNearestFiveMinutes(durationMinutes * 45 / 100)
             let threeQuarter = roundedToNearestFiveMinutes(durationMinutes * 75 / 100)
             entries.append(entry(product: caffGel, timingMinutes: halfway,
-                                 notes: "Caffeinated gel, peaks ~45 min later, hits the back-half suffer zone"))
+                                 notes: String(localized: "npg.note.caffPeak", defaultValue: "Caffeinated gel, peaks ~45 min later, hits the back-half suffer zone")))
             entries.append(entry(product: caffGel, timingMinutes: threeQuarter,
-                                 notes: "Final caffeine dose, peaks near the finish surge"))
+                                 notes: String(localized: "npg.note.caffFinal", defaultValue: "Final caffeine dose, peaks near the finish surge")))
         } else {
             // Ultra: back-loaded. 1 dose every 2 h starting at hour 3,
             // concentrated during predicted low points (night hours).
@@ -597,7 +597,7 @@ enum NutritionScheduleBuilder {
             let endHour = Int(durationHours) - 1
             for hour in stride(from: startHour, through: endHour, by: 2) {
                 entries.append(entry(product: caffGel, timingMinutes: hour * 60,
-                                     notes: "Caffeinated gel, back-loaded dose"))
+                                     notes: String(localized: "npg.note.caffBack", defaultValue: "Caffeinated gel, back-loaded dose")))
             }
         }
         return entries

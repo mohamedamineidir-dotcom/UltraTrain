@@ -9,7 +9,7 @@ enum NutritionReminderScheduler {
             .map { entry in
                 let triggerTime = TimeInterval(entry.timingMinutes) * 60
                 let quantityLabel = entry.quantity > 1 ? "\(entry.quantity)x " : ""
-                let message = "Take \(quantityLabel)\(entry.product.name)"
+                let message = String(localized: "nrs.take", defaultValue: "Take \(quantityLabel)\(entry.product.name)")
                 let type = reminderType(for: entry.product.type)
 
                 return NutritionReminder(
@@ -35,7 +35,7 @@ enum NutritionReminderScheduler {
         while time <= maxDurationSeconds {
             reminders.append(NutritionReminder(
                 triggerTimeSeconds: time,
-                message: "Time to hydrate, drink water or electrolytes",
+                message: String(localized: "nrs.hydrate", defaultValue: "Time to hydrate, drink water or electrolytes"),
                 type: .hydration
             ))
             time += hydrationIntervalSeconds
@@ -45,7 +45,7 @@ enum NutritionReminderScheduler {
         while time <= maxDurationSeconds {
             reminders.append(NutritionReminder(
                 triggerTimeSeconds: time,
-                message: "Time to fuel, take a gel or snack",
+                message: String(localized: "nrs.fuel", defaultValue: "Time to fuel, take a gel or snack"),
                 type: .fuel
             ))
             time += fuelIntervalSeconds
@@ -56,7 +56,7 @@ enum NutritionReminderScheduler {
             while time <= maxDurationSeconds {
                 reminders.append(NutritionReminder(
                     triggerTimeSeconds: time,
-                    message: "Time for electrolytes, take salt tabs or electrolyte drink",
+                    message: String(localized: "nrs.electrolytes", defaultValue: "Time for electrolytes, take salt tabs or electrolyte drink"),
                     type: .electrolyte
                 ))
                 time += electrolyteIntervalSeconds

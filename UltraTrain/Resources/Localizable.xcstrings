@@ -23564,6 +23564,278 @@
         }
       }
     },
+    "npg.note.aidChew" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "At aid station if possible, chew thoroughly"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Au ravitaillement si possible, mâchez bien"
+          }
+        }
+      }
+    },
+    "npg.note.caffBack" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caffeinated gel, back-loaded dose"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gel caféiné, dose pour la fin de course"
+          }
+        }
+      }
+    },
+    "npg.note.caffFinal" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Final caffeine dose, peaks near the finish surge"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dernière dose de caféine, pic vers le sprint final"
+          }
+        }
+      }
+    },
+    "npg.note.caffPeak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caffeinated gel, peaks ~45 min later, hits the back-half suffer zone"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gel caféiné, pic ~45 min plus tard, pour la zone difficile de la seconde moitié"
+          }
+        }
+      }
+    },
+    "npg.note.mix" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mix with %lld ml water"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mélangez avec %lld ml d'eau"
+          }
+        }
+      }
+    },
+    "npg.note.mixSip" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mix with %lld ml water. Sip over 45-60 min."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mélangez avec %lld ml d'eau. Buvez par gorgées sur 45-60 min."
+          }
+        }
+      }
+    },
+    "npg.note.optional" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optional, take only if you feel energy dropping"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optionnel, à prendre seulement si vous sentez l'énergie baisser"
+          }
+        }
+      }
+    },
+    "npg.note.realFood" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Real food, best at aid stations"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vraie nourriture, idéale aux ravitaillements"
+          }
+        }
+      }
+    },
+    "npg.note.saltySweater" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heavy salty sweater dose"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dose pour gros transpireur salé"
+          }
+        }
+      }
+    },
+    "npg.note.savory" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Savory break, eat slowly at aid station"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pause salée, mangez lentement au ravitaillement"
+          }
+        }
+      }
+    },
+    "npg.note.sipWater" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take with a sip of water"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À prendre avec une gorgée d'eau"
+          }
+        }
+      }
+    },
+    "npg.note.with150" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take with 150-200 ml water"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À prendre avec 150-200 ml d'eau"
+          }
+        }
+      }
+    },
+    "npg.note.withWater" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take with water"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À prendre avec de l'eau"
+          }
+        }
+      }
+    },
+    "nrs.electrolytes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time for electrolytes, take salt tabs or electrolyte drink"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C'est l'heure des électrolytes, prenez des pastilles de sel ou une boisson électrolytique"
+          }
+        }
+      }
+    },
+    "nrs.fuel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time to fuel, take a gel or snack"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C'est l'heure de vous alimenter, prenez un gel ou une collation"
+          }
+        }
+      }
+    },
+    "nrs.hydrate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time to hydrate, drink water or electrolytes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C'est l'heure de vous hydrater, buvez de l'eau ou des électrolytes"
+          }
+        }
+      }
+    },
+    "nrs.take" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take %1$@%2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prendre %1$@%2$@"
+          }
+        }
+      }
+    },
     "of %@" : {
       "localizations" : {
         "fr" : {
