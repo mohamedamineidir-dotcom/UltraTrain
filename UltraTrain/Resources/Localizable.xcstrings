@@ -25271,6 +25271,1030 @@
         }
       }
     },
+    "tcoach.altitude.high" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your race tops out at %@m. Above 3000m every effort feels harder for the same pace. Plan 3-4 weeks at race elevation pre-race, or use altitude tents / live-low train-high. Without acclimatization, expect a 10-15%% pace cost in the highest sections."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre course culmine à %@m. Au-dessus de 3000m, chaque effort semble plus dur à allure égale. Prévoyez 3 à 4 semaines à l'altitude de la course avant l'épreuve, ou utilisez des tentes d'altitude / vivre-bas s'entraîner-haut. Sans acclimatation, attendez-vous à un coût de 10-15%% sur l'allure dans les sections les plus hautes."
+          }
+        }
+      }
+    },
+    "tcoach.altitude.moderate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your race tops out at %@m. At altitude every effort feels harder for the same pace. If you can, schedule 1-2 weeks at race elevation pre-race. Otherwise expect a 5-10%% pace cost above 3000m and budget extra fueling."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre course culmine à %@m. En altitude, chaque effort semble plus dur à allure égale. Si possible, planifiez 1 à 2 semaines à l'altitude de la course avant l'épreuve. Sinon, attendez-vous à un coût de 5-10%% sur l'allure au-dessus de 3000m et prévoyez un ravitaillement supplémentaire."
+          }
+        }
+      }
+    },
+    "tcoach.b2b.day1.default" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Day 1 to build fatigue for tomorrow. Easy to moderate effort. Fuel consistently so your body has something to work with tomorrow."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc Jour 1 pour accumuler de la fatigue pour demain. Effort facile à modéré. Alimentez-vous régulièrement pour que votre corps ait des réserves demain."
+          }
+        }
+      }
+    },
+    "tcoach.b2b.day1.peak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Day 1 at steady effort. Fuel well because tomorrow you run on today's tired legs. Try to include terrain that matches your race."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc Jour 1 à effort régulier. Alimentez-vous bien car demain vous courrez sur les jambes fatiguées d'aujourd'hui. Essayez d'inclure un terrain proche de votre course."
+          }
+        }
+      }
+    },
+    "tcoach.b2b.day2.default" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Day 2 on yesterday's fatigue. Start very easy for the first hour, then gradually build. If you bonk, slow down and eat. Just like you would on race day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc J2 sur la fatigue de la veille. Partez très facile la première heure, puis montez progressivement. Si vous êtes dans le dur, ralentissez et mangez. Exactement comme le jour J."
+          }
+        }
+      }
+    },
+    "tcoach.b2b.day2.peak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Day 2 on tired legs. Start very easy to warm up, then build to race effort. This is what the second half of your ultra will feel like."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc J2 sur jambes fatiguées. Partez très facile pour vous échauffer, puis montez à effort de course. C'est la sensation de la seconde moitié de votre ultra."
+          }
+        }
+      }
+    },
+    "tcoach.crossTraining" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep it light and fun. Different movements help your body recover while staying active."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restez léger et prenez du plaisir. Des mouvements variés aident votre corps à récupérer tout en restant actif."
+          }
+        }
+      }
+    },
+    "tcoach.descent" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Pick a route with sustained descent. Practice relaxed quads, slight forward lean, quick foot turnover. Quad tolerance is the #1 race-day limiter for big-D- races."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Choisissez un parcours avec de la descente soutenue. Travaillez des quadriceps relâchés, un léger buste vers l'avant, une foulée rapide. La résistance des quadriceps est le facteur limitant n°1 le jour J sur les courses à gros D-."
+          }
+        }
+      }
+    },
+    "tcoach.effort.easy" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stay at conversational effort throughout. If HR climbs but the effort feels the same, trust the effort."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restez à un effort de conversation tout du long. Si la FC monte mais que l'effort semble identique, fiez-vous à l'effort."
+          }
+        }
+      }
+    },
+    "tcoach.effort.hard" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hard effort but sustainable. Pace by feel, not by HR. Long-effort cardiac drift will lie to you."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort intense mais soutenable. Gérez à la sensation, pas à la FC. Sur un long effort, la dérive cardiaque vous trompera."
+          }
+        }
+      }
+    },
+    "tcoach.effort.maxEffort" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race effort. RPE-driven. HR drift makes the bpm number meaningless after the first hour."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort de course. Piloté à la sensation (RPE). La dérive cardiaque rend le chiffre de FC inutile après la première heure."
+          }
+        }
+      }
+    },
+    "tcoach.effort.moderate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moderate effort the whole way. Past 2 hours your HR will drift up at the same effort. That's normal, ignore it."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort modéré sur toute la sortie. Après 2 heures, votre FC va dériver vers le haut à effort égal. C'est normal, ignorez-la."
+          }
+        }
+      }
+    },
+    "tcoach.focus.roadVG" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One hill session every few weeks keeps your legs strong and makes your flat running more efficient. Trust the process."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une séance de côtes toutes les quelques semaines garde vos jambes fortes et rend votre course sur le plat plus efficace. Faites confiance au processus."
+          }
+        }
+      }
+    },
+    "tcoach.focus.speed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speed is what closes races. Today we work on yours."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La vitesse, c'est ce qui conclut les courses. Aujourd'hui on travaille la vôtre."
+          }
+        }
+      }
+    },
+    "tcoach.focus.uphill" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your climbing is a weapon. We are going to keep sharpening it."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre capacité à grimper est une arme. Nous allons continuer à l'aiguiser."
+          }
+        }
+      }
+    },
+    "tcoach.hot.session" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Today's forecast is hot. Consider swapping with tomorrow's easy day or moving this to dawn."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " La météo du jour est chaude. Envisagez d'échanger avec la séance facile de demain ou de déplacer celle-ci à l'aube."
+          }
+        }
+      }
+    },
+    "tcoach.hr.maffetone" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Aerobic ceiling: keep HR ≤%lld bpm (Maffetone 180−age, Zone 2). If no HR data, target conversational pace where you could speak in full sentences."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Plafond aérobie : gardez la FC ≤%lld bpm (Maffetone 180−âge, Zone 2). Sans données de FC, visez une allure de conversation où vous pourriez parler en phrases complètes."
+          }
+        }
+      }
+    },
+    "tcoach.hr.target" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Target HR: %1$lld-%2$lld bpm."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " FC cible : %1$lld-%2$lld bpm."
+          }
+        }
+      }
+    },
+    "tcoach.hr.zone2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Target HR: %1$lld-%2$lld bpm (Zone 2, your aerobic engine)."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " FC cible : %1$lld-%2$lld bpm (Zone 2, votre moteur aérobie)."
+          }
+        }
+      }
+    },
+    "tcoach.intervals.base" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hill repeats at a controlled effort today. Focus on smooth form and consistent pacing. Full recovery between each rep."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétitions en côte à effort contrôlé aujourd'hui. Concentrez-vous sur une technique fluide et un rythme régulier. Récupération complète entre chaque répétition."
+          }
+        }
+      }
+    },
+    "tcoach.intervals.buildEarly" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push hard on the climbs but stay in control. If your form starts breaking down, stop the set early. Quality over quantity."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poussez fort dans les montées mais restez maître. Si votre technique se dégrade, arrêtez la série plus tôt. La qualité prime sur la quantité."
+          }
+        }
+      }
+    },
+    "tcoach.intervals.buildLate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sustained effort on rolling terrain today. Stay controlled and eat on schedule. This type of work builds real ultra fitness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort soutenu sur terrain vallonné aujourd'hui. Restez contrôlé et mangez selon votre plan. Ce type de travail bâtit une vraie forme d'ultra."
+          }
+        }
+      }
+    },
+    "tcoach.intervals.default" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Full recovery between reps matters more than speed. If your form breaks down, call it."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La récupération complète entre les répétitions compte plus que la vitesse. Si votre technique se dégrade, arrêtez."
+          }
+        }
+      }
+    },
+    "tcoach.intervals.peak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short and sharp today. You're already fit, this is just fine-tuning. Maximum quality, not maximum volume."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Court et vif aujourd'hui. Vous êtes déjà en forme, c'est juste du réglage fin. Qualité maximale, pas volume maximal."
+          }
+        }
+      }
+    },
+    "tcoach.intervals.taper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Just enough to keep your legs sharp. Controlled effort, don't chase times. Save the fire for race day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Juste assez pour garder les jambes vives. Effort contrôlé, ne courez pas après les chronos. Gardez le feu pour le jour J."
+          }
+        }
+      }
+    },
+    "tcoach.longRun.baseEarly" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pure aerobic building today. Walk all the uphills, keep it easy, focus on time on feet. This is where your foundation gets built."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Construction purement aérobie aujourd'hui. Marchez toutes les montées, gardez en facile, concentrez-vous sur le temps passé debout. C'est ici que se bâtit votre fondation."
+          }
+        }
+      }
+    },
+    "tcoach.longRun.baseLate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep the effort easy and steady. Practice walking technical sections. You're building your engine right now."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gardez l'effort facile et régulier. Travaillez la marche dans les sections techniques. Vous construisez votre moteur en ce moment."
+          }
+        }
+      }
+    },
+    "tcoach.longRun.buildEarly" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start easy, then include some sections at race effort in the second half. Practice eating and drinking on the move."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partez facile, puis incluez des sections à effort de course sur la seconde moitié. Entraînez-vous à manger et boire en mouvement."
+          }
+        }
+      }
+    },
+    "tcoach.longRun.buildLate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Include some blocks at your goal race pace. Eat and drink on schedule. Treat this like a mini dress rehearsal."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incluez des blocs à votre allure de course visée. Mangez et buvez selon votre plan. Traitez ça comme une mini répétition générale."
+          }
+        }
+      }
+    },
+    "tcoach.longRun.easy" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Focus on time on feet, not pace. Walk the uphills if you need to."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concentrez-vous sur le temps passé debout, pas sur l'allure. Marchez les montées si besoin."
+          }
+        }
+      }
+    },
+    "tcoach.longRun.hard" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push the pace but stay controlled. Practice fueling at effort."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poussez l'allure mais restez contrôlé. Entraînez-vous à vous alimenter à l'effort."
+          }
+        }
+      }
+    },
+    "tcoach.longRun.moderate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Find a steady rhythm and lock in. Good time to practice your race nutrition too."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trouvez un rythme régulier et installez-vous. Bon moment pour tester aussi votre nutrition de course."
+          }
+        }
+      }
+    },
+    "tcoach.longRun.peak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race simulation day. Start easy, then settle into race effort. Wear your race gear and practice your full fueling plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de simulation de course. Partez facile, puis installez-vous à effort de course. Portez votre tenue de course et testez tout votre plan d'alimentation."
+          }
+        }
+      }
+    },
+    "tcoach.longRun.taper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep it short and easy. Your fitness is locked in. Just enjoy the trail."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gardez court et facile. Votre forme est acquise. Profitez simplement du trail."
+          }
+        }
+      }
+    },
+    "tcoach.mental.buildQuality" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hard, not desperate. Hold form when it stings."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intense, pas désespéré. Gardez la technique quand ça pique."
+          }
+        }
+      }
+    },
+    "tcoach.mental.peakLong" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If a bad patch hits, walk 60 seconds, fuel, then run. Patches pass."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si un coup de moins bien arrive, marchez 60 secondes, alimentez-vous, puis repartez. Ça passe."
+          }
+        }
+      }
+    },
+    "tcoach.mental.peakRace" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race-pace work. Pace by feel for the first half, push when you'd want to fade."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Travail à allure de course. Gérez à la sensation sur la première moitié, poussez au moment où vous voudriez lâcher."
+          }
+        }
+      }
+    },
+    "tcoach.mental.race" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trust your training. The race goes to who's calmest, not who's fittest."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faites confiance à votre entraînement. La course revient au plus calme, pas au plus en forme."
+          }
+        }
+      }
+    },
+    "tcoach.mental.taperLong" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visualise the race tonight: start, mid-race, finish. Three minutes is enough."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visualisez la course ce soir : départ, mi-parcours, arrivée. Trois minutes suffisent."
+          }
+        }
+      }
+    },
+    "tcoach.mental.taperQuality" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sharpening, not building. Stay relaxed; speed comes from looseness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On affûte, on ne construit plus. Restez relâché ; la vitesse vient du relâchement."
+          }
+        }
+      }
+    },
+    "tcoach.poles" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Poles are allowed in your race. If you plan to use them, practice with poles on this VG session, since uphill is the natural slot. Athletes who race with poles untrained typically fight technique on race day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Les bâtons (Poles) sont autorisés sur votre course. Si vous comptez les utiliser, entraînez-vous avec sur cette séance de D+, la montée est le moment naturel. Les athlètes qui courent avec des bâtons sans s'entraîner luttent souvent avec la technique le jour J."
+          }
+        }
+      }
+    },
+    "tcoach.race" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race day. Trust your training, execute your pacing plan, and stay fueled."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de course. Faites confiance à votre entraînement, déroulez votre plan d'allure et restez alimenté."
+          }
+        }
+      }
+    },
+    "tcoach.recoveryRun.default" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When in doubt, go slower. This run is about blood flow, not building fitness. You should be able to hold a full conversation."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans le doute, ralentissez. Cette sortie sert à la circulation sanguine, pas à construire de la forme. Vous devez pouvoir tenir une conversation complète."
+          }
+        }
+      }
+    },
+    "tcoach.recoveryRun.strides" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " End with 4-6 × 100m strides at controlled fast pace, full recovery between. Keeps top-end speed alive without aerobic cost."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Terminez par 4 à 6 lignes droites de 100m à allure rapide contrôlée, récupération complète entre chaque. Entretient la vitesse de pointe sans coût aérobie."
+          }
+        }
+      }
+    },
+    "tcoach.recoveryRun.taper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Just a short easy jog to keep the legs moving. If anything feels off, cut it short. You're almost there."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Juste un petit footing facile pour garder les jambes en mouvement. Si quelque chose cloche, écourtez. Vous y êtes presque."
+          }
+        }
+      }
+    },
+    "tcoach.recoveryWeekPrefix" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery week, so keep everything easy. Your body adapts when you rest. "
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semaine de récupération : gardez tout en facile. Votre corps progresse quand vous vous reposez. "
+          }
+        }
+      }
+    },
+    "tcoach.rest.default" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foam roll, walk, stretch. A good night of sleep tonight will do more for your fitness than any run."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rouleau, marche, étirements. Une bonne nuit de sommeil ce soir fera plus pour votre forme que n'importe quelle sortie."
+          }
+        }
+      }
+    },
+    "tcoach.rest.recoveryWeek" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your body is absorbing the training right now. Focus on sleeping well, eating well, and maybe some gentle stretching."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre corps assimile l'entraînement en ce moment. Concentrez-vous sur un bon sommeil, une bonne alimentation, et peut-être quelques étirements doux."
+          }
+        }
+      }
+    },
+    "tcoach.rest.taper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trust your training. Take a walk, foam roll, relax. You've done the work."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faites confiance à votre entraînement. Marchez, passez le rouleau, détendez-vous. Le travail est fait."
+          }
+        }
+      }
+    },
+    "tcoach.tempo.base" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Find a rhythm you can hold for the whole session. You should be able to speak in short phrases. This builds your threshold."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trouvez un rythme tenable sur toute la séance. Vous devez pouvoir parler par courtes phrases. Cela développe votre seuil."
+          }
+        }
+      }
+    },
+    "tcoach.tempo.build" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sustained effort at race pace. Push the tempo but stay in control. This is how you develop race-day pacing."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort soutenu à allure de course. Poussez le tempo mais restez maître. C'est ainsi que se développe la gestion d'allure le jour J."
+          }
+        }
+      }
+    },
+    "tcoach.tempo.default" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Find a rhythm you can sustain. If you can't finish a sentence, back off a touch."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trouvez un rythme soutenable. Si vous ne pouvez pas finir une phrase, levez un peu le pied."
+          }
+        }
+      }
+    },
+    "tcoach.tempo.peak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lock into your goal race effort. Practice holding form when fatigue starts to build."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calez-vous sur votre effort de course visé. Travaillez à garder la technique quand la fatigue monte."
+          }
+        }
+      }
+    },
+    "tcoach.vg.base" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Build your climbing confidence. Short steps, hands on thighs, rhythmic breathing. Good power hiking technique matters more than speed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Construisez votre confiance en montée. Petits pas, mains sur les cuisses, respiration rythmée. Une bonne technique de marche active compte plus que la vitesse."
+          }
+        }
+      }
+    },
+    "tcoach.vg.build" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push the effort on the climbs today. This is where ultra trail races are won and lost."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poussez l'effort dans les montées aujourd'hui. C'est là que les ultras trail se gagnent et se perdent."
+          }
+        }
+      }
+    },
+    "tcoach.vg.default" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consistent effort on the uphills today. Focus on your climbing rhythm."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort régulier dans les montées aujourd'hui. Concentrez-vous sur votre rythme d'ascension."
+          }
+        }
+      }
+    },
+    "tcoach.vg.env.hill" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Find a hill with a few minutes of sustained climbing."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Trouvez une côte offrant quelques minutes de montée soutenue."
+          }
+        }
+      }
+    },
+    "tcoach.vg.env.mixed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Mix outdoor and treadmill climbing."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Alternez montée en extérieur et sur tapis."
+          }
+        }
+      }
+    },
+    "tcoach.vg.env.mountain" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Find trails with sustained elevation."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Trouvez des sentiers avec du dénivelé soutenu."
+          }
+        }
+      }
+    },
+    "tcoach.vg.peak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race-specific climbing. Try to mimic the kind of gradients you'll face on race day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Montée spécifique à la course. Essayez de reproduire le type de pentes que vous affronterez le jour J."
+          }
+        }
+      }
+    },
+    "tcoach.vg.taper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light climbing to keep the mountain legs without the fatigue. Short efforts, easy intensity."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Montée légère pour garder les jambes de montagne sans la fatigue. Efforts courts, intensité facile."
+          }
+        }
+      }
+    },
+    "tcoach.vg.treadmill.easy" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Set the incline to 8-10% and walk at a brisk pace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Réglez l'inclinaison à 8-10% et marchez d'un bon pas."
+          }
+        }
+      }
+    },
+    "tcoach.vg.treadmill.hard" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Set the incline to 10-15% at a brisk pace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Réglez l'inclinaison à 10-15% à un bon rythme."
+          }
+        }
+      }
+    },
+    "tcoach.vg.treadmill.max" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Crank the incline to 15%+ and go hard."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Montez l'inclinaison à 15%+ et partez fort."
+          }
+        }
+      }
+    },
     "this week" : {
       "localizations" : {
         "fr" : {
