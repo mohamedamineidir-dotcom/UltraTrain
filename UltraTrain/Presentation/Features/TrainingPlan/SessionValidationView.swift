@@ -971,7 +971,7 @@ private func sectionLabel(_ text: String, icon: String) -> some View {
             Image(systemName: icon)
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.warmCoral)
-            Text(text)
+            Text(LocalizedStringKey(text))
                 .font(.subheadline.weight(.semibold))
         }
         .padding(.horizontal, Theme.Spacing.xs)

@@ -13167,6 +13167,22 @@
         }
       }
     },
+    "Rate Your Effort" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rate Your Effort"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Évaluez votre effort"
+          }
+        }
+      }
+    },
     "Rate of Perceived Exertion" : {
       "localizations" : {
         "fr" : {
@@ -24914,7 +24930,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Sortie longue (B2B)"
+            "value" : "Weekend Choc"
           }
         }
       }
