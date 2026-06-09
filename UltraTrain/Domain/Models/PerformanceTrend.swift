@@ -28,10 +28,10 @@ struct PerformanceTrend: Identifiable, Equatable, Sendable {
 
     var displayName: String {
         switch type {
-        case .aerobicEfficiency: return "Aerobic Efficiency"
-        case .climbingEfficiency: return "Climbing Efficiency"
-        case .enduranceFade: return "Endurance Fade"
-        case .recoveryRate: return "Recovery Rate"
+        case .aerobicEfficiency: return String(localized: "ptrend.aerobic", defaultValue: "Aerobic Efficiency")
+        case .climbingEfficiency: return String(localized: "ptrend.climbing", defaultValue: "Climbing Efficiency")
+        case .enduranceFade: return String(localized: "ptrend.fade", defaultValue: "Endurance Fade")
+        case .recoveryRate: return String(localized: "ptrend.recovery", defaultValue: "Recovery Rate")
         }
     }
 }

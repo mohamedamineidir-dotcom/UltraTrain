@@ -26,23 +26,23 @@ enum PreRaceMealTiming: String, CaseIterable, Codable, Sendable {
 
     var displayName: String {
         switch self {
-        case .oneHour:    return "1 hour before"
-        case .twoHours:   return "2 hours before"
-        case .threeHours: return "3 hours before"
-        case .fourHours:  return "4 hours before"
+        case .oneHour:    return String(localized: "prmt.1h.title", defaultValue: "1 hour before")
+        case .twoHours:   return String(localized: "prmt.2h.title", defaultValue: "2 hours before")
+        case .threeHours: return String(localized: "prmt.3h.title", defaultValue: "3 hours before")
+        case .fourHours:  return String(localized: "prmt.4h.title", defaultValue: "4 hours before")
         }
     }
 
     var subtitle: String {
         switch self {
         case .oneHour:
-            return "Tight window, lighter meal, mostly liquid calories"
+            return String(localized: "prmt.1h.desc", defaultValue: "Tight window, lighter meal, mostly liquid calories")
         case .twoHours:
-            return "Most common, moderate meal, familiar foods"
+            return String(localized: "prmt.2h.desc", defaultValue: "Most common, moderate meal, familiar foods")
         case .threeHours:
-            return "Traditional, full carb meal, lowest GI risk"
+            return String(localized: "prmt.3h.desc", defaultValue: "Traditional, full carb meal, lowest GI risk")
         case .fourHours:
-            return "Long window, full meal, early wake-up"
+            return String(localized: "prmt.4h.desc", defaultValue: "Long window, full meal, early wake-up")
         }
     }
 
