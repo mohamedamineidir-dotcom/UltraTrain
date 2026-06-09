@@ -21229,6 +21229,166 @@
         }
       }
     },
+    "hcc.climbing.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Climbing efficiency %lld%%, faster than expected on uphills"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Efficacité en montée de %lld%%, plus rapide que prévu en côte"
+          }
+        }
+      }
+    },
+    "hcc.climbing.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Climbing Machine"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Machine à grimper"
+          }
+        }
+      }
+    },
+    "hcc.consistency.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pace variability under 5%, rock-solid pacing"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Variabilité d'allure sous les 5%, une gestion en béton"
+          }
+        }
+      }
+    },
+    "hcc.consistency.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consistency King"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Roi de la régularité"
+          }
+        }
+      }
+    },
+    "hcc.elevation.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%@, your most climbing ever"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%@, votre plus gros dénivelé jamais grimpé"
+          }
+        }
+      }
+    },
+    "hcc.elevation.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Most Elevation"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus gros dénivelé"
+          }
+        }
+      }
+    },
+    "hcc.longest.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, your longest run yet"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, votre plus longue sortie à ce jour"
+          }
+        }
+      }
+    },
+    "hcc.longest.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Longest Run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus longue sortie"
+          }
+        }
+      }
+    },
+    "hcc.pace.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@, a new personal best"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@, un nouveau record personnel"
+          }
+        }
+      }
+    },
+    "hcc.pace.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fastest Pace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allure la plus rapide"
+          }
+        }
+      }
+    },
     "hours" : {
       "localizations" : {
         "fr" : {
@@ -22812,6 +22972,102 @@
         }
       }
     },
+    "msr.convert.action" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Convert"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Convertir"
+          }
+        }
+      }
+    },
+    "msr.convert.msg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Convert an upcoming recovery run to replace your missed %@ session."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Convertissez un prochain footing de récupération pour remplacer votre séance %@ manquée."
+          }
+        }
+      }
+    },
+    "msr.convert.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Convert Recovery to %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Convertir une récupération en %@"
+          }
+        }
+      }
+    },
+    "msr.redist.action" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redistribute"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redistribuer"
+          }
+        }
+      }
+    },
+    "msr.redist.msg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your missed %1$@ session's volume will be spread across %2$lld upcoming sessions."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le volume de votre séance %1$@ manquée sera réparti sur %2$lld prochaines séances."
+          }
+        }
+      }
+    },
+    "msr.redist.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redistribute Missed Volume"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redistribuer le volume manqué"
+          }
+        }
+      }
+    },
     "nadv.avoid.fiberFat" : {
       "localizations" : {
         "en" : {
@@ -23862,6 +24118,214 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ou"
+          }
+        }
+      }
+    },
+    "pac.lowerTargets.msg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You've missed %1$lld km in the last 2 weeks. Reduce remaining targets by %2$lld%% to avoid overreaching."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous avez manqué %1$lld km ces 2 dernières semaines. Réduisez les objectifs restants de %2$lld%% pour éviter le surmenage."
+          }
+        }
+      }
+    },
+    "pac.lowerTargets.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lower Plan Targets"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abaissez les objectifs du plan"
+          }
+        }
+      }
+    },
+    "pac.recCritical.msg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery score is %1$lld/100. Swap your %2$@ to a recovery run."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score de récupération : %1$lld/100. Remplacez votre %2$@ par un footing de récupération."
+          }
+        }
+      }
+    },
+    "pac.recCritical.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery Critical"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération critique"
+          }
+        }
+      }
+    },
+    "pac.reduce.action" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reduce %lld%%"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduire de %lld%%"
+          }
+        }
+      }
+    },
+    "pac.reduceIntensity.action" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reduce Intensity"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduire l'intensité"
+          }
+        }
+      }
+    },
+    "pac.reduceLoad.msg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "High fatigue detected (form: %1$lld, ACR: %2$@). Reduce remaining sessions by %3$lld%%."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forte fatigue détectée (forme : %1$lld, ratio A/C : %2$@). Réduisez les séances restantes de %3$lld%%."
+          }
+        }
+      }
+    },
+    "pac.reduceLoad.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reduce Training Load"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduisez la charge d'entraînement"
+          }
+        }
+      }
+    },
+    "pac.reduceLowRec.msg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery score is %lld/100. Consider reducing today's session intensity by 20%%."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score de récupération : %lld/100. Envisagez de réduire l'intensité de la séance du jour de 20%%."
+          }
+        }
+      }
+    },
+    "pac.reduceLowRec.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reduce Load, Low Recovery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduisez la charge, récupération faible"
+          }
+        }
+      }
+    },
+    "pac.swap.action" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swap to Recovery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passer en récupération"
+          }
+        }
+      }
+    },
+    "pac.swap.msg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ACR is %1$@, injury risk is high. Swap your %2$@ to a recovery run."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le ratio A/C est de %1$@, le risque de blessure est élevé. Remplacez votre %2$@ par un footing de récupération."
+          }
+        }
+      }
+    },
+    "pac.swap.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swap to Recovery Run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passer en footing de récupération"
           }
         }
       }

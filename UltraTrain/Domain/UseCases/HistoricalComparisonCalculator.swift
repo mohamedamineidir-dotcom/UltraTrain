@@ -81,8 +81,8 @@ enum HistoricalComparisonCalculator {
         if let maxDistance = allDistances.max(), run.distanceKm > maxDistance {
             badges.append(ImprovementBadge(
                 id: UUID(),
-                title: "Longest Run",
-                description: "\(UnitFormatter.formatDistance(run.distanceKm, unit: unit)), your longest run yet",
+                title: String(localized: "hcc.longest.title", defaultValue: "Longest Run"),
+                description: String(localized: "hcc.longest.desc", defaultValue: "\(UnitFormatter.formatDistance(run.distanceKm, unit: unit)), your longest run yet"),
                 icon: "road.lanes"
             ))
         }
@@ -91,8 +91,8 @@ enum HistoricalComparisonCalculator {
         if let maxElevation = allElevation.max(), run.elevationGainM > maxElevation {
             badges.append(ImprovementBadge(
                 id: UUID(),
-                title: "Most Elevation",
-                description: "+\(UnitFormatter.formatElevation(run.elevationGainM, unit: unit)), your most climbing ever",
+                title: String(localized: "hcc.elevation.title", defaultValue: "Most Elevation"),
+                description: String(localized: "hcc.elevation.desc", defaultValue: "+\(UnitFormatter.formatElevation(run.elevationGainM, unit: unit)), your most climbing ever"),
                 icon: "mountain.2.fill"
             ))
         }
@@ -101,8 +101,8 @@ enum HistoricalComparisonCalculator {
         if let bestPace = allPaces.min(), run.averagePaceSecondsPerKm < bestPace {
             badges.append(ImprovementBadge(
                 id: UUID(),
-                title: "Fastest Pace",
-                description: "\(RunStatisticsCalculator.formatPace(run.averagePaceSecondsPerKm, unit: unit)) \(UnitFormatter.paceLabel(unit)), a new personal best",
+                title: String(localized: "hcc.pace.title", defaultValue: "Fastest Pace"),
+                description: String(localized: "hcc.pace.desc", defaultValue: "\(RunStatisticsCalculator.formatPace(run.averagePaceSecondsPerKm, unit: unit)) \(UnitFormatter.paceLabel(unit)), a new personal best"),
                 icon: "bolt.fill"
             ))
         }
@@ -111,8 +111,8 @@ enum HistoricalComparisonCalculator {
         if variability > 0, variability < 0.05 {
             badges.append(ImprovementBadge(
                 id: UUID(),
-                title: "Consistency King",
-                description: "Pace variability under 5%, rock-solid pacing",
+                title: String(localized: "hcc.consistency.title", defaultValue: "Consistency King"),
+                description: String(localized: "hcc.consistency.desc", defaultValue: "Pace variability under 5%, rock-solid pacing"),
                 icon: "metronome.fill"
             ))
         }
@@ -121,8 +121,8 @@ enum HistoricalComparisonCalculator {
            efficiency < 0.85 {
             badges.append(ImprovementBadge(
                 id: UUID(),
-                title: "Climbing Machine",
-                description: "Climbing efficiency \(Int(efficiency * 100))%, faster than expected on uphills",
+                title: String(localized: "hcc.climbing.title", defaultValue: "Climbing Machine"),
+                description: String(localized: "hcc.climbing.desc", defaultValue: "Climbing efficiency \(Int(efficiency * 100))%, faster than expected on uphills"),
                 icon: "figure.hiking"
             ))
         }

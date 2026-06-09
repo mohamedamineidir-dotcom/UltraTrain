@@ -31,9 +31,9 @@ extension PlanAdjustmentCalculator {
             id: UUID(),
             type: .reduceFatigueLoad,
             severity: severity,
-            title: "Reduce Training Load",
-            message: "High fatigue detected (form: \(Int(snapshot.form)), ACR: \(String(format: "%.1f", snapshot.acuteToChronicRatio))). Reduce remaining sessions by \(reductionPct)%.",
-            actionLabel: "Reduce \(reductionPct)%",
+            title: String(localized: "pac.reduceLoad.title", defaultValue: "Reduce Training Load"),
+            message: String(localized: "pac.reduceLoad.msg", defaultValue: "High fatigue detected (form: \(Int(snapshot.form)), ACR: \(String(format: "%.1f", snapshot.acuteToChronicRatio))). Reduce remaining sessions by \(reductionPct)%."),
+            actionLabel: String(localized: "pac.reduce.action", defaultValue: "Reduce \(reductionPct)%"),
             affectedSessionIds: affectedIds
         ))
     }
@@ -65,9 +65,9 @@ extension PlanAdjustmentCalculator {
             id: UUID(),
             type: .swapToRecovery,
             severity: .urgent,
-            title: "Swap to Recovery Run",
-            message: "ACR is \(String(format: "%.1f", snapshot.acuteToChronicRatio)), injury risk is high. Swap your \(session.type.rawValue) to a recovery run.",
-            actionLabel: "Swap to Recovery",
+            title: String(localized: "pac.swap.title", defaultValue: "Swap to Recovery Run"),
+            message: String(localized: "pac.swap.msg", defaultValue: "ACR is \(String(format: "%.1f", snapshot.acuteToChronicRatio)), injury risk is high. Swap your \(session.type.displayName) to a recovery run."),
+            actionLabel: String(localized: "pac.swap.action", defaultValue: "Swap to Recovery"),
             affectedSessionIds: [session.id]
         ))
     }
@@ -98,9 +98,9 @@ extension PlanAdjustmentCalculator {
                     id: UUID(),
                     type: .swapToRecoveryLowRecovery,
                     severity: .urgent,
-                    title: "Recovery Critical",
-                    message: "Recovery score is \(recovery.overallScore)/100. Swap your \(session.type.rawValue) to a recovery run.",
-                    actionLabel: "Swap to Recovery",
+                    title: String(localized: "pac.recCritical.title", defaultValue: "Recovery Critical"),
+                    message: String(localized: "pac.recCritical.msg", defaultValue: "Recovery score is \(recovery.overallScore)/100. Swap your \(session.type.displayName) to a recovery run."),
+                    actionLabel: String(localized: "pac.swap.action", defaultValue: "Swap to Recovery"),
                     affectedSessionIds: [session.id]
                 ))
                 return
@@ -118,9 +118,9 @@ extension PlanAdjustmentCalculator {
             id: UUID(),
             type: .reduceLoadLowRecovery,
             severity: .recommended,
-            title: "Reduce Load, Low Recovery",
-            message: "Recovery score is \(recovery.overallScore)/100. Consider reducing today's session intensity by 20%.",
-            actionLabel: "Reduce Intensity",
+            title: String(localized: "pac.reduceLowRec.title", defaultValue: "Reduce Load, Low Recovery"),
+            message: String(localized: "pac.reduceLowRec.msg", defaultValue: "Recovery score is \(recovery.overallScore)/100. Consider reducing today's session intensity by 20%."),
+            actionLabel: String(localized: "pac.reduceIntensity.action", defaultValue: "Reduce Intensity"),
             affectedSessionIds: affectedIds
         ))
     }
@@ -151,9 +151,9 @@ extension PlanAdjustmentCalculator {
             id: UUID(),
             type: .reduceTargetDueToAccumulatedMissed,
             severity: .urgent,
-            title: "Lower Plan Targets",
-            message: "You've missed \(Int(missedDist)) km in the last 2 weeks. Reduce remaining targets by \(pct)% to avoid overreaching.",
-            actionLabel: "Reduce \(pct)%",
+            title: String(localized: "pac.lowerTargets.title", defaultValue: "Lower Plan Targets"),
+            message: String(localized: "pac.lowerTargets.msg", defaultValue: "You've missed \(Int(missedDist)) km in the last 2 weeks. Reduce remaining targets by \(pct)% to avoid overreaching."),
+            actionLabel: String(localized: "pac.reduce.action", defaultValue: "Reduce \(pct)%"),
             affectedSessionIds: affectedIds
         ))
     }
