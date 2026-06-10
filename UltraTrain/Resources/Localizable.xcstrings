@@ -20219,6 +20219,326 @@
         }
       }
     },
+    "chl.001" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "50 km Month"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mois 50 km"
+          }
+        }
+      }
+    },
+    "chl.002" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run a total of 50 km in one month."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courez 50 km au total en un mois."
+          }
+        }
+      }
+    },
+    "chl.003" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Century Month"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mois centurion"
+          }
+        }
+      }
+    },
+    "chl.004" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run a total of 100 km in one month."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courez 100 km au total en un mois."
+          }
+        }
+      }
+    },
+    "chl.005" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ultra Month"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mois ultra"
+          }
+        }
+      }
+    },
+    "chl.006" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run a total of 200 km in one month. Ultra distance, ultra commitment."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courez 200 km au total en un mois. Distance ultra, engagement ultra."
+          }
+        }
+      }
+    },
+    "chl.007" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mountain Goat"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chamois"
+          }
+        }
+      }
+    },
+    "chl.008" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accumulate 2,000 m of elevation gain in one month."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cumulez 2 000 m de dénivelé positif en un mois."
+          }
+        }
+      }
+    },
+    "chl.009" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Summit Seeker"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chasseur de sommets"
+          }
+        }
+      }
+    },
+    "chl.010" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accumulate 5,000 m of elevation gain in one month."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cumulez 5 000 m de dénivelé positif en un mois."
+          }
+        }
+      }
+    },
+    "chl.011" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consistent Runner"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coureur régulier"
+          }
+        }
+      }
+    },
+    "chl.012" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run at least 3 times per week for 4 consecutive weeks."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courez au moins 3 fois par semaine pendant 4 semaines consécutives."
+          }
+        }
+      }
+    },
+    "chl.013" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daily Grinder"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bourreau de travail"
+          }
+        }
+      }
+    },
+    "chl.014" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run at least 5 times per week for 4 consecutive weeks."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courez au moins 5 fois par semaine pendant 4 semaines consécutives."
+          }
+        }
+      }
+    },
+    "chl.015" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7-Day Streak"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Série de 7 jours"
+          }
+        }
+      }
+    },
+    "chl.016" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run every single day for 7 days straight."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courez chaque jour pendant 7 jours d'affilée."
+          }
+        }
+      }
+    },
+    "chl.017" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "14-Day Streak"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Série de 14 jours"
+          }
+        }
+      }
+    },
+    "chl.018" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run every single day for 14 days straight."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courez chaque jour pendant 14 jours d'affilée."
+          }
+        }
+      }
+    },
+    "chl.019" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30-Day Streak"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Série de 30 jours"
+          }
+        }
+      }
+    },
+    "chl.020" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run every single day for 30 days. The ultimate consistency test."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courez chaque jour pendant 30 jours. Le test ultime de régularité."
+          }
+        }
+      }
+    },
     "coach.backToBack" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -29852,6 +30172,102 @@
         }
       }
     },
+    "rsc.001" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable sleep tracking for a more accurate recovery score."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activez le suivi du sommeil pour un score de récupération plus précis."
+          }
+        }
+      }
+    },
+    "rsc.002" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery is low. Consider reducing intensity and prioritizing rest."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La récupération est faible. Envisagez de réduire l'intensité et de prioriser le repos."
+          }
+        }
+      }
+    },
+    "rsc.003" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resting heart rate is elevated. Your body may need extra recovery."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La fréquence cardiaque au repos est élevée. Votre corps a peut-être besoin de récupération supplémentaire."
+          }
+        }
+      }
+    },
+    "rsc.004" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sleep quality was low. Prioritize an earlier bedtime tonight."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La qualité de sommeil était faible. Priorisez un coucher plus tôt ce soir."
+          }
+        }
+      }
+    },
+    "rsc.005" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Training load is high. Consider an easy day to let your body adapt."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La charge d'entraînement est élevée. Envisagez un jour facile pour laisser votre corps s'adapter."
+          }
+        }
+      }
+    },
+    "rsc.006" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Well recovered. Great day for a quality session."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bien récupéré. Excellente journée pour une séance de qualité."
+          }
+        }
+      }
+    },
     "rwt.easy25" : {
       "localizations" : {
         "en" : {
@@ -35159,6 +35575,870 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "à"
+          }
+        }
+      }
+    },
+    "trrt.001" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete rest. Massage, sleep, eat."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos complet. Massage, sommeil, alimentation."
+          }
+        }
+      }
+    },
+    "trrt.002" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete rest. Nutrition and sleep are the only training."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos complet. La nutrition et le sommeil sont le seul entraînement."
+          }
+        }
+      }
+    },
+    "trrt.003" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete rest. The race is in your legs, let it dissipate."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos complet. La course est dans vos jambes, laissez-la se dissiper."
+          }
+        }
+      }
+    },
+    "trrt.004" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete rest. Walk only if you feel like it."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos complet. Marchez seulement si vous en avez envie."
+          }
+        }
+      }
+    },
+    "trrt.005" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete rest. You finished a 100. Sleep, eat, hydrate."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos complet. Vous avez terminé un 100. Dormez, mangez, hydratez-vous."
+          }
+        }
+      }
+    },
+    "trrt.006" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 25 min jog (run-walk acceptable). Pace by feel."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile de 25 min (course-marche acceptée). Allure à la sensation."
+          }
+        }
+      }
+    },
+    "trrt.007" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 25 min jog. Run-walk if needed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile de 25 min. Course-marche si besoin."
+          }
+        }
+      }
+    },
+    "trrt.008" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 25 min on flat. Run-walk if legs feel heavy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "25 min faciles sur le plat. Course-marche si les jambes sont lourdes."
+          }
+        }
+      }
+    },
+    "trrt.009" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 25 min, light, performance retains some volume."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "25 min faciles, légères, l'approche performance conserve un peu de volume."
+          }
+        }
+      }
+    },
+    "trrt.010" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 25-30 min jog (run-walk if needed). Skip if you're limping."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile de 25-30 min (course-marche si besoin). À sauter si vous boitez."
+          }
+        }
+      }
+    },
+    "trrt.011" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 30 min + 4 strides if legs are clean."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min faciles + 4 lignes droites si les jambes sont nettes."
+          }
+        }
+      }
+    },
+    "trrt.012" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 30 min + 4 strides if legs feel sharp."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min faciles + 4 lignes droites si les jambes sont vives."
+          }
+        }
+      }
+    },
+    "trrt.013" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 30 min + 4 strides if no soreness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min faciles + 4 lignes droites si aucune courbature."
+          }
+        }
+      }
+    },
+    "trrt.014" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 30 min on flat. First 'real' run since the race."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min faciles sur le plat. Première « vraie » sortie depuis la course."
+          }
+        }
+      }
+    },
+    "trrt.015" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 30 min on flat. Shake out race effort."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min faciles sur le plat. Évacuez l'effort de course."
+          }
+        }
+      }
+    },
+    "trrt.016" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 30 min on flat."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min faciles sur le plat."
+          }
+        }
+      }
+    },
+    "trrt.017" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 30 min, conversational."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min faciles, en aisance respiratoire."
+          }
+        }
+      }
+    },
+    "trrt.018" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 30 min, light."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min faciles, légères."
+          }
+        }
+      }
+    },
+    "trrt.019" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 30 min, performance philosophy retains volume."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min faciles, l'approche performance conserve le volume."
+          }
+        }
+      }
+    },
+    "trrt.020" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 30 min, performance retains volume."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min faciles, l'approche performance conserve son volume."
+          }
+        }
+      }
+    },
+    "trrt.021" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 30-40 min on flat. Conversational pace only."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30-40 min faciles sur le plat. Allure d'aisance uniquement."
+          }
+        }
+      }
+    },
+    "trrt.022" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 35 min + 6 strides."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "35 min faciles + 6 lignes droites."
+          }
+        }
+      }
+    },
+    "trrt.023" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 35 min on flat."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "35 min faciles sur le plat."
+          }
+        }
+      }
+    },
+    "trrt.024" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 35 min, conversational pace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "35 min faciles, allure d'aisance."
+          }
+        }
+      }
+    },
+    "trrt.025" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 35 min, conversational."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "35 min faciles, en aisance respiratoire."
+          }
+        }
+      }
+    },
+    "trrt.026" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 35 min, light."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "35 min faciles, légères."
+          }
+        }
+      }
+    },
+    "trrt.027" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 35-40 min on flat or rolling."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "35-40 min faciles sur le plat ou vallonné."
+          }
+        }
+      }
+    },
+    "trrt.028" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 40 min + 4 strides."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "40 min faciles + 4 lignes droites."
+          }
+        }
+      }
+    },
+    "trrt.029" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 40 min on flat or rolling."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "40 min faciles sur le plat ou vallonné."
+          }
+        }
+      }
+    },
+    "trrt.030" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 40 min on flat. Pace by feel only."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "40 min faciles sur le plat. Allure à la sensation uniquement."
+          }
+        }
+      }
+    },
+    "trrt.031" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 40 min on flat."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "40 min faciles sur le plat."
+          }
+        }
+      }
+    },
+    "trrt.032" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 40 min, conversational pace only."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "40 min faciles, allure d'aisance uniquement."
+          }
+        }
+      }
+    },
+    "trrt.033" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 40 min, conversational."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "40 min faciles, en aisance respiratoire."
+          }
+        }
+      }
+    },
+    "trrt.034" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 40 min, light."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "40 min faciles, légères."
+          }
+        }
+      }
+    },
+    "trrt.035" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 45 min + 4 strides."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "45 min faciles + 4 lignes droites."
+          }
+        }
+      }
+    },
+    "trrt.036" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 45 min on flat or rolling."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "45 min faciles sur le plat ou vallonné."
+          }
+        }
+      }
+    },
+    "trrt.037" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 45 min, conversational."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "45 min faciles, en aisance respiratoire."
+          }
+        }
+      }
+    },
+    "trrt.038" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 45-50 min on flat. Strides only if you feel sharp."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "45-50 min faciles sur le plat. Lignes droites seulement si vous vous sentez vif."
+          }
+        }
+      }
+    },
+    "trrt.039" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 50 min on flat or gentle rolling."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "50 min faciles sur le plat ou légèrement vallonné."
+          }
+        }
+      }
+    },
+    "trrt.040" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 50 min on flat or rolling."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "50 min faciles sur le plat ou vallonné."
+          }
+        }
+      }
+    },
+    "trrt.041" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 50 min, conversational."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "50 min faciles, en aisance respiratoire."
+          }
+        }
+      }
+    },
+    "trrt.042" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 50-60 min on flat or rolling."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "50-60 min faciles sur le plat ou vallonné."
+          }
+        }
+      }
+    },
+    "trrt.043" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 60 min on flat or rolling."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "60 min faciles sur le plat ou vallonné."
+          }
+        }
+      }
+    },
+    "trrt.044" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 60 min on flat. No pace targets."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "60 min faciles sur le plat. Aucun objectif d'allure."
+          }
+        }
+      }
+    },
+    "trrt.045" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 70-80 min on flat. No vertical work yet."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "70-80 min faciles sur le plat. Pas encore de travail vertical."
+          }
+        }
+      }
+    },
+    "trrt.046" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 70-90 min. Flat or gentle rolling, no big climbs."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "70-90 min faciles. Plat ou légèrement vallonné, pas de grosses montées."
+          }
+        }
+      }
+    },
+    "trrt.047" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 75-90 min. First longer run, flat or rolling, no big climbs."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "75-90 min faciles. Première sortie plus longue, plat ou vallonné, pas de grosses montées."
+          }
+        }
+      }
+    },
+    "trrt.048" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optional 20 min very easy jog. First run since the race, pace by feel, walk if needed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing très facile de 20 min, optionnel. Première sortie depuis la course, allure à la sensation, marchez si besoin."
+          }
+        }
+      }
+    },
+    "trrt.049" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optional 20 min very easy jog. Skip if anything hurts."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing très facile de 20 min, optionnel. À sauter si quelque chose fait mal."
+          }
+        }
+      }
+    },
+    "trrt.050" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day. Recovery is the work."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos. La récupération, c'est le travail."
+          }
+        }
+      }
+    },
+    "trrt.051" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest. Body still rebuilding from race."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos. Le corps se reconstruit encore après la course."
+          }
+        }
+      }
+    },
+    "trrt.052" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest. Take an extra easy day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos. Prenez un jour facile supplémentaire."
+          }
+        }
+      }
+    },
+    "trrt.cross" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cross-training %lld min, easy bike, swim, or elliptical. Concentric only, no eccentric loading. Promotes blood flow without re-damaging quads."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cross-training %lld min : vélo, natation ou elliptique en facile. Concentrique uniquement, pas de charge excentrique. Favorise la circulation sans réendommager les quadriceps."
+          }
+        }
+      }
+    },
+    "trrt.walk" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walking %lld min, easy. Light movement, no impact. If you have stairs at home, take them, gentle eccentric reload helps quads remap."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marche %lld min, facile. Mouvement léger, sans impact. Si vous avez des escaliers chez vous, prenez-les : une légère recharge excentrique aide les quadriceps à se réadapter."
           }
         }
       }

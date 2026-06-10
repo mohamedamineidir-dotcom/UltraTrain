@@ -173,23 +173,23 @@ enum RecoveryScoreCalculator {
         hasSleepData: Bool
     ) -> String {
         if !hasSleepData {
-            return "Enable sleep tracking for a more accurate recovery score."
+            return String(localized: "rsc.001", defaultValue: "Enable sleep tracking for a more accurate recovery score.")
         }
         if score >= 80 {
-            return "Well recovered. Great day for a quality session."
+            return String(localized: "rsc.006", defaultValue: "Well recovered. Great day for a quality session.")
         }
         if score < AppConfiguration.Recovery.lowRecoveryThreshold {
-            return "Recovery is low. Consider reducing intensity and prioritizing rest."
+            return String(localized: "rsc.002", defaultValue: "Recovery is low. Consider reducing intensity and prioritizing rest.")
         }
 
         let lowestComponent = min(sleepQuality, hrScore, loadBalance)
         if lowestComponent == sleepQuality {
-            return "Sleep quality was low. Prioritize an earlier bedtime tonight."
+            return String(localized: "rsc.004", defaultValue: "Sleep quality was low. Prioritize an earlier bedtime tonight.")
         }
         if lowestComponent == hrScore {
-            return "Resting heart rate is elevated. Your body may need extra recovery."
+            return String(localized: "rsc.003", defaultValue: "Resting heart rate is elevated. Your body may need extra recovery.")
         }
-        return "Training load is high. Consider an easy day to let your body adapt."
+        return String(localized: "rsc.005", defaultValue: "Training load is high. Consider an easy day to let your body adapt.")
     }
 
     // MARK: - Math Helpers

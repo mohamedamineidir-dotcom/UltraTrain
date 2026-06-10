@@ -80,7 +80,7 @@ enum TrailRaceRecoveryTemplates {
         for day in 0...6 where !usedDays.contains(day) {
             result.append(SessionTemplateGenerator.tpl(
                 day, .rest, .easy, 0, 0,
-                "Rest day. Recovery is the work."
+                String(localized: "trrt.050", defaultValue: "Rest day. Recovery is the work.")
             ))
         }
         return result.sorted { $0.dayOffset < $1.dayOffset }
@@ -171,13 +171,13 @@ enum TrailRaceRecoveryTemplates {
         // or enjoyment philosophy.
         [
             (0, rest()),
-            (1, easy(scaled(30, mod), "Easy 30 min on flat. Shake out race effort.")),
+            (1, easy(scaled(30, mod), String(localized: "trrt.015", defaultValue: "Easy 30 min on flat. Shake out race effort."))),
             (2, mod.isMountain
                 ? cross(scaled(30, mod))
-                : (mod.isBeginner ? rest("Rest. Take an extra easy day.") : easy(scaled(35, mod), "Easy 35 min, conversational pace."))),
-            (3, easy(scaled(35, mod), "Easy 35-40 min on flat or rolling.")),
+                : (mod.isBeginner ? rest(String(localized: "trrt.052", defaultValue: "Rest. Take an extra easy day.")) : easy(scaled(35, mod), String(localized: "trrt.024", defaultValue: "Easy 35 min, conversational pace.")))),
+            (3, easy(scaled(35, mod), String(localized: "trrt.027", defaultValue: "Easy 35-40 min on flat or rolling."))),
             (4, rest()),
-            (5, easy(scaled(50, mod), "Easy 45-50 min on flat. Strides only if you feel sharp.")),
+            (5, easy(scaled(50, mod), String(localized: "trrt.038", defaultValue: "Easy 45-50 min on flat. Strides only if you feel sharp."))),
             (6, mod.isEnjoyment ? walk(30) : rest()),
         ]
     }
@@ -189,11 +189,11 @@ enum TrailRaceRecoveryTemplates {
         // 4-5 rest days.
         [
             (0, rest()),
-            (1, mod.isBeginner ? rest("Rest. Body still rebuilding from race.") : walk(scaled(25, mod))),
+            (1, mod.isBeginner ? rest(String(localized: "trrt.051", defaultValue: "Rest. Body still rebuilding from race.")) : walk(scaled(25, mod))),
             (2, rest()),
-            (3, mod.isMountain ? cross(scaled(30, mod)) : easy(scaled(25, mod), "Easy 25 min on flat. Run-walk if legs feel heavy.")),
+            (3, mod.isMountain ? cross(scaled(30, mod)) : easy(scaled(25, mod), String(localized: "trrt.008", defaultValue: "Easy 25 min on flat. Run-walk if legs feel heavy."))),
             (4, rest()),
-            (5, easy(scaled(35, mod), "Easy 30-40 min on flat. Conversational pace only.")),
+            (5, easy(scaled(35, mod), String(localized: "trrt.021", defaultValue: "Easy 30-40 min on flat. Conversational pace only."))),
             (6, rest()),
         ]
     }
@@ -202,12 +202,12 @@ enum TrailRaceRecoveryTemplates {
         // W2 of 2. ~50% of peak. Gradual return to easy training.
         [
             (0, rest()),
-            (1, easy(scaled(35, mod), "Easy 35 min, conversational.")),
-            (2, mod.isMountain ? cross(scaled(35, mod)) : easy(scaled(30, mod), "Easy 30 min + 4 strides if no soreness.")),
+            (1, easy(scaled(35, mod), String(localized: "trrt.025", defaultValue: "Easy 35 min, conversational."))),
+            (2, mod.isMountain ? cross(scaled(35, mod)) : easy(scaled(30, mod), String(localized: "trrt.013", defaultValue: "Easy 30 min + 4 strides if no soreness."))),
             (3, rest()),
-            (4, easy(scaled(40, mod), "Easy 40 min on flat or rolling.")),
-            (5, easy(scaled(35, mod), "Easy 35 min, light.")),
-            (6, easy(scaled(60, mod), "Easy 60 min on flat. No pace targets.")),
+            (4, easy(scaled(40, mod), String(localized: "trrt.029", defaultValue: "Easy 40 min on flat or rolling."))),
+            (5, easy(scaled(35, mod), String(localized: "trrt.026", defaultValue: "Easy 35 min, light."))),
+            (6, easy(scaled(60, mod), String(localized: "trrt.044", defaultValue: "Easy 60 min on flat. No pace targets."))),
         ]
     }
 
@@ -217,12 +217,12 @@ enum TrailRaceRecoveryTemplates {
         // W1 of 3. ~15% of peak. Mostly rest. Cross-training over
         // running because of cumulative quad/calf damage.
         [
-            (0, rest("Complete rest. Massage, sleep, eat.")),
+            (0, rest(String(localized: "trrt.001", defaultValue: "Complete rest. Massage, sleep, eat."))),
             (1, walk(scaled(30, mod))),
             (2, rest()),
             (3, cross(scaled(30, mod))),
             (4, rest()),
-            (5, mod.isAdvanced ? easy(scaled(25, mod), "Easy 25-30 min jog (run-walk if needed). Skip if you're limping.") : walk(scaled(30, mod))),
+            (5, mod.isAdvanced ? easy(scaled(25, mod), String(localized: "trrt.010", defaultValue: "Easy 25-30 min jog (run-walk if needed). Skip if you're limping.")) : walk(scaled(30, mod))),
             (6, rest()),
         ]
     }
@@ -231,12 +231,12 @@ enum TrailRaceRecoveryTemplates {
         // W2 of 3. ~40% of peak. Building back, still cross-training.
         [
             (0, rest()),
-            (1, easy(scaled(30, mod), "Easy 30 min on flat. First 'real' run since the race.")),
-            (2, mod.isMountain || mod.isEnjoyment ? cross(scaled(30, mod)) : easy(scaled(30, mod), "Easy 30 min, conversational.")),
+            (1, easy(scaled(30, mod), String(localized: "trrt.014", defaultValue: "Easy 30 min on flat. First 'real' run since the race."))),
+            (2, mod.isMountain || mod.isEnjoyment ? cross(scaled(30, mod)) : easy(scaled(30, mod), String(localized: "trrt.017", defaultValue: "Easy 30 min, conversational."))),
             (3, rest()),
-            (4, easy(scaled(40, mod), "Easy 40 min on flat. Pace by feel only.")),
-            (5, easy(scaled(30, mod), "Easy 30 min + 4 strides if no soreness.")),
-            (6, easy(scaled(50, mod), "Easy 50 min on flat or rolling.")),
+            (4, easy(scaled(40, mod), String(localized: "trrt.030", defaultValue: "Easy 40 min on flat. Pace by feel only."))),
+            (5, easy(scaled(30, mod), String(localized: "trrt.013", defaultValue: "Easy 30 min + 4 strides if no soreness."))),
+            (6, easy(scaled(50, mod), String(localized: "trrt.040", defaultValue: "Easy 50 min on flat or rolling."))),
         ]
     }
 
@@ -244,12 +244,12 @@ enum TrailRaceRecoveryTemplates {
         // W3 of 3. ~65% of peak. Near-baseline easy training.
         [
             (0, rest()),
-            (1, easy(scaled(40, mod), "Easy 40 min + 4 strides.")),
-            (2, easy(scaled(35, mod), "Easy 35 min, conversational.")),
-            (3, mod.isPerformance ? easy(scaled(30, mod), "Easy 30 min, performance philosophy retains volume.") : rest()),
-            (4, easy(scaled(45, mod), "Easy 45 min on flat or rolling.")),
-            (5, easy(scaled(30, mod), "Easy 30 min, light.")),
-            (6, easy(scaled(75, mod), "Easy 70-80 min on flat. No vertical work yet.")),
+            (1, easy(scaled(40, mod), String(localized: "trrt.028", defaultValue: "Easy 40 min + 4 strides."))),
+            (2, easy(scaled(35, mod), String(localized: "trrt.025", defaultValue: "Easy 35 min, conversational."))),
+            (3, mod.isPerformance ? easy(scaled(30, mod), String(localized: "trrt.019", defaultValue: "Easy 30 min, performance philosophy retains volume.")) : rest()),
+            (4, easy(scaled(45, mod), String(localized: "trrt.036", defaultValue: "Easy 45 min on flat or rolling."))),
+            (5, easy(scaled(30, mod), String(localized: "trrt.018", defaultValue: "Easy 30 min, light."))),
+            (6, easy(scaled(75, mod), String(localized: "trrt.045", defaultValue: "Easy 70-80 min on flat. No vertical work yet."))),
         ]
     }
 
@@ -259,12 +259,12 @@ enum TrailRaceRecoveryTemplates {
         // W1 of 4. ~10% of peak. Almost full rest. Cross-training only
         // if athlete has the energy.
         [
-            (0, rest("Complete rest. The race is in your legs, let it dissipate.")),
+            (0, rest(String(localized: "trrt.003", defaultValue: "Complete rest. The race is in your legs, let it dissipate."))),
             (1, rest()),
             (2, mod.isBeginner ? rest() : walk(scaled(30, mod))),
             (3, rest()),
             (4, cross(scaled(30, mod))),
-            (5, mod.isAdvanced && !mod.isMountain ? easy(scaled(20, mod), "Optional 20 min very easy jog. Skip if anything hurts.") : walk(scaled(25, mod))),
+            (5, mod.isAdvanced && !mod.isMountain ? easy(scaled(20, mod), String(localized: "trrt.049", defaultValue: "Optional 20 min very easy jog. Skip if anything hurts.")) : walk(scaled(25, mod))),
             (6, rest()),
         ]
     }
@@ -273,12 +273,12 @@ enum TrailRaceRecoveryTemplates {
         // W2 of 4. ~30% of peak. Running returns gradually.
         [
             (0, rest()),
-            (1, easy(scaled(25, mod), "Easy 25 min jog (run-walk acceptable). Pace by feel.")),
-            (2, mod.isMountain ? cross(scaled(35, mod)) : easy(scaled(30, mod), "Easy 30 min, conversational.")),
+            (1, easy(scaled(25, mod), String(localized: "trrt.006", defaultValue: "Easy 25 min jog (run-walk acceptable). Pace by feel."))),
+            (2, mod.isMountain ? cross(scaled(35, mod)) : easy(scaled(30, mod), String(localized: "trrt.017", defaultValue: "Easy 30 min, conversational."))),
             (3, rest()),
-            (4, easy(scaled(35, mod), "Easy 35 min on flat.")),
-            (5, mod.isPerformance ? easy(scaled(25, mod), "Easy 25 min, light, performance retains some volume.") : rest()),
-            (6, easy(scaled(45, mod), "Easy 45 min, conversational.")),
+            (4, easy(scaled(35, mod), String(localized: "trrt.023", defaultValue: "Easy 35 min on flat."))),
+            (5, mod.isPerformance ? easy(scaled(25, mod), String(localized: "trrt.009", defaultValue: "Easy 25 min, light, performance retains some volume.")) : rest()),
+            (6, easy(scaled(45, mod), String(localized: "trrt.037", defaultValue: "Easy 45 min, conversational."))),
         ]
     }
 
@@ -286,12 +286,12 @@ enum TrailRaceRecoveryTemplates {
         // W3 of 4. ~50% of peak. Return to standard easy week shape.
         [
             (0, rest()),
-            (1, easy(scaled(35, mod), "Easy 35 min on flat.")),
-            (2, easy(scaled(30, mod), "Easy 30 min + 4 strides if legs are clean.")),
+            (1, easy(scaled(35, mod), String(localized: "trrt.023", defaultValue: "Easy 35 min on flat."))),
+            (2, easy(scaled(30, mod), String(localized: "trrt.011", defaultValue: "Easy 30 min + 4 strides if legs are clean."))),
             (3, rest()),
-            (4, easy(scaled(40, mod), "Easy 40 min, conversational.")),
-            (5, easy(scaled(30, mod), "Easy 30 min, light.")),
-            (6, easy(scaled(60, mod), "Easy 60 min on flat or rolling.")),
+            (4, easy(scaled(40, mod), String(localized: "trrt.033", defaultValue: "Easy 40 min, conversational."))),
+            (5, easy(scaled(30, mod), String(localized: "trrt.018", defaultValue: "Easy 30 min, light."))),
+            (6, easy(scaled(60, mod), String(localized: "trrt.043", defaultValue: "Easy 60 min on flat or rolling."))),
         ]
     }
 
@@ -300,12 +300,12 @@ enum TrailRaceRecoveryTemplates {
         // resume after this week (next plan or A-race-window close).
         [
             (0, rest()),
-            (1, easy(scaled(45, mod), "Easy 45 min + 4 strides.")),
-            (2, easy(scaled(35, mod), "Easy 35 min, conversational.")),
-            (3, mod.isPerformance ? easy(scaled(30, mod), "Easy 30 min, performance retains volume.") : rest()),
-            (4, easy(scaled(50, mod), "Easy 50 min on flat or gentle rolling.")),
-            (5, easy(scaled(40, mod), "Easy 40 min, light.")),
-            (6, easy(scaled(85, mod), "Easy 75-90 min. First longer run, flat or rolling, no big climbs.")),
+            (1, easy(scaled(45, mod), String(localized: "trrt.035", defaultValue: "Easy 45 min + 4 strides."))),
+            (2, easy(scaled(35, mod), String(localized: "trrt.025", defaultValue: "Easy 35 min, conversational."))),
+            (3, mod.isPerformance ? easy(scaled(30, mod), String(localized: "trrt.020", defaultValue: "Easy 30 min, performance retains volume.")) : rest()),
+            (4, easy(scaled(50, mod), String(localized: "trrt.039", defaultValue: "Easy 50 min on flat or gentle rolling."))),
+            (5, easy(scaled(40, mod), String(localized: "trrt.034", defaultValue: "Easy 40 min, light."))),
+            (6, easy(scaled(85, mod), String(localized: "trrt.047", defaultValue: "Easy 75-90 min. First longer run, flat or rolling, no big climbs."))),
         ]
     }
 
@@ -315,8 +315,8 @@ enum TrailRaceRecoveryTemplates {
         // W1 of 5. ~5% of peak. ALL rest or walking, Koop/Jurek
         // consensus: zero structured exercise after 100mi for 5-7 days.
         [
-            (0, rest("Complete rest. You finished a 100. Sleep, eat, hydrate.")),
-            (1, rest("Complete rest. Nutrition and sleep are the only training.")),
+            (0, rest(String(localized: "trrt.005", defaultValue: "Complete rest. You finished a 100. Sleep, eat, hydrate."))),
+            (1, rest(String(localized: "trrt.002", defaultValue: "Complete rest. Nutrition and sleep are the only training."))),
             (2, rest()),
             (3, walk(20)),
             (4, rest()),
@@ -334,7 +334,7 @@ enum TrailRaceRecoveryTemplates {
             (3, cross(scaled(30, mod))),
             (4, rest()),
             (5, mod.isAdvanced && !mod.isMountain
-                ? easy(scaled(20, mod), "Optional 20 min very easy jog. First run since the race, pace by feel, walk if needed.")
+                ? easy(scaled(20, mod), String(localized: "trrt.048", defaultValue: "Optional 20 min very easy jog. First run since the race, pace by feel, walk if needed."))
                 : walk(scaled(25, mod))),
             (6, rest()),
         ]
@@ -344,12 +344,12 @@ enum TrailRaceRecoveryTemplates {
         // W3 of 5. ~25% of peak. Easy running returns.
         [
             (0, rest()),
-            (1, easy(scaled(25, mod), "Easy 25 min jog. Run-walk if needed.")),
-            (2, mod.isMountain ? cross(scaled(30, mod)) : easy(scaled(30, mod), "Easy 30 min, conversational.")),
+            (1, easy(scaled(25, mod), String(localized: "trrt.007", defaultValue: "Easy 25 min jog. Run-walk if needed."))),
+            (2, mod.isMountain ? cross(scaled(30, mod)) : easy(scaled(30, mod), String(localized: "trrt.017", defaultValue: "Easy 30 min, conversational."))),
             (3, rest()),
-            (4, easy(scaled(30, mod), "Easy 30 min on flat.")),
+            (4, easy(scaled(30, mod), String(localized: "trrt.016", defaultValue: "Easy 30 min on flat."))),
             (5, rest()),
-            (6, easy(scaled(40, mod), "Easy 40 min, conversational pace only.")),
+            (6, easy(scaled(40, mod), String(localized: "trrt.032", defaultValue: "Easy 40 min, conversational pace only."))),
         ]
     }
 
@@ -357,12 +357,12 @@ enum TrailRaceRecoveryTemplates {
         // W4 of 5. ~45% of peak.
         [
             (0, rest()),
-            (1, easy(scaled(35, mod), "Easy 35 min, conversational.")),
-            (2, easy(scaled(30, mod), "Easy 30 min + 4 strides if legs feel sharp.")),
-            (3, mod.isPerformance ? easy(scaled(30, mod), "Easy 30 min, performance retains volume.") : rest()),
-            (4, easy(scaled(40, mod), "Easy 40 min on flat.")),
-            (5, easy(scaled(30, mod), "Easy 30 min, light.")),
-            (6, easy(scaled(60, mod), "Easy 50-60 min on flat or rolling.")),
+            (1, easy(scaled(35, mod), String(localized: "trrt.025", defaultValue: "Easy 35 min, conversational."))),
+            (2, easy(scaled(30, mod), String(localized: "trrt.012", defaultValue: "Easy 30 min + 4 strides if legs feel sharp."))),
+            (3, mod.isPerformance ? easy(scaled(30, mod), String(localized: "trrt.020", defaultValue: "Easy 30 min, performance retains volume.")) : rest()),
+            (4, easy(scaled(40, mod), String(localized: "trrt.031", defaultValue: "Easy 40 min on flat."))),
+            (5, easy(scaled(30, mod), String(localized: "trrt.018", defaultValue: "Easy 30 min, light."))),
+            (6, easy(scaled(60, mod), String(localized: "trrt.042", defaultValue: "Easy 50-60 min on flat or rolling."))),
         ]
     }
 
@@ -370,12 +370,12 @@ enum TrailRaceRecoveryTemplates {
         // W5 of 5. ~65% of peak. Near-baseline.
         [
             (0, rest()),
-            (1, easy(scaled(50, mod), "Easy 50 min, conversational.")),
-            (2, easy(scaled(35, mod), "Easy 35 min + 6 strides.")),
+            (1, easy(scaled(50, mod), String(localized: "trrt.041", defaultValue: "Easy 50 min, conversational."))),
+            (2, easy(scaled(35, mod), String(localized: "trrt.022", defaultValue: "Easy 35 min + 6 strides."))),
             (3, rest()),
-            (4, easy(scaled(45, mod), "Easy 45 min on flat or rolling.")),
-            (5, easy(scaled(40, mod), "Easy 40 min, conversational.")),
-            (6, easy(scaled(85, mod), "Easy 70-90 min. Flat or gentle rolling, no big climbs.")),
+            (4, easy(scaled(45, mod), String(localized: "trrt.036", defaultValue: "Easy 45 min on flat or rolling."))),
+            (5, easy(scaled(40, mod), String(localized: "trrt.033", defaultValue: "Easy 40 min, conversational."))),
+            (6, easy(scaled(85, mod), String(localized: "trrt.046", defaultValue: "Easy 70-90 min. Flat or gentle rolling, no big climbs."))),
         ]
     }
 
@@ -386,7 +386,7 @@ enum TrailRaceRecoveryTemplates {
         // (PTL, MDS) deplete glycogen, sleep, and tissue more than any
         // other category, recovery is measured in weeks, not days.
         [
-            (0, rest("Complete rest. Walk only if you feel like it.")),
+            (0, rest(String(localized: "trrt.004", defaultValue: "Complete rest. Walk only if you feel like it."))),
             (1, rest()),
             (2, rest()),
             (3, walk(15)),
@@ -412,7 +412,7 @@ enum TrailRaceRecoveryTemplates {
 
     // MARK: - Helpers
 
-    private static func rest(_ desc: String = "Rest day. Recovery is the work.") -> RecoverySession {
+    private static func rest(_ desc: String = String(localized: "trrt.050", defaultValue: "Rest day. Recovery is the work.")) -> RecoverySession {
         RecoverySession(type: .rest, intensity: .easy, durationSeconds: 0, description: desc)
     }
 
@@ -428,7 +428,7 @@ enum TrailRaceRecoveryTemplates {
         RecoverySession(
             type: .crossTraining, intensity: .easy,
             durationSeconds: TimeInterval(minutes * 60),
-            description: "Cross-training \(minutes) min, easy bike, swim, or elliptical. Concentric only, no eccentric loading. Promotes blood flow without re-damaging quads."
+            description: String(localized: "trrt.cross", defaultValue: "Cross-training \(minutes) min, easy bike, swim, or elliptical. Concentric only, no eccentric loading. Promotes blood flow without re-damaging quads.")
         )
     }
 
@@ -436,7 +436,7 @@ enum TrailRaceRecoveryTemplates {
         RecoverySession(
             type: .crossTraining, intensity: .easy,
             durationSeconds: TimeInterval(minutes * 60),
-            description: "Walking \(minutes) min, easy. Light movement, no impact. If you have stairs at home, take them, gentle eccentric reload helps quads remap."
+            description: String(localized: "trrt.walk", defaultValue: "Walking \(minutes) min, easy. Light movement, no impact. If you have stairs at home, take them, gentle eccentric reload helps quads remap.")
         )
     }
 
