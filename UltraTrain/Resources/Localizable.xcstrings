@@ -28539,6 +28539,1638 @@
         }
       }
     },
+    "ril.001" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "200m Repeats"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétitions 200m"
+          }
+        }
+      }
+    },
+    "ril.002" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fast 200m reps to build leg speed and running economy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétitions rapides de 200m pour développer la vitesse de jambes et l'économie de course."
+          }
+        }
+      }
+    },
+    "ril.003" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "400m Repeats"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétitions 400m"
+          }
+        }
+      }
+    },
+    "ril.004" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Classic 400m repeats at R-pace. Neuromuscular speed work."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétitions 400m classiques à allure R. Travail de vitesse neuromusculaire."
+          }
+        }
+      }
+    },
+    "ril.005" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "600m Repeats"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétitions 600m"
+          }
+        }
+      }
+    },
+    "ril.006" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Longer speed reps bridging to VO2max work."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétitions de vitesse plus longues, transition vers le travail VO2max."
+          }
+        }
+      }
+    },
+    "ril.007" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "800m VO2max"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "800m VO2max"
+          }
+        }
+      }
+    },
+    "ril.008" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×800m at I-pace. Core VO2max development."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×800m à allure I. Développement central de la VO2max."
+          }
+        }
+      }
+    },
+    "ril.009" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1000m VO2max"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1000m VO2max"
+          }
+        }
+      }
+    },
+    "ril.010" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×1000m at I-pace. Staple VO2max interval session."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×1000m à allure I. Séance de fractionné VO2max incontournable."
+          }
+        }
+      }
+    },
+    "ril.011" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1200m VO2max"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1200m VO2max"
+          }
+        }
+      }
+    },
+    "ril.012" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×1200m at I-pace. Extended aerobic power intervals."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×1200m à allure I. Intervalles de puissance aérobie prolongés."
+          }
+        }
+      }
+    },
+    "ril.013" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1600m VO2max"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1600m VO2max"
+          }
+        }
+      }
+    },
+    "ril.014" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×1600m at I-pace. Long VO2max intervals for sustained power."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×1600m à allure I. Longs intervalles VO2max pour une puissance soutenue."
+          }
+        }
+      }
+    },
+    "ril.015" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2000m VO2max"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2000m VO2max"
+          }
+        }
+      }
+    },
+    "ril.016" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×2000m at I-pace. Bridges VO2max to race-specific for HM."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×2000m à allure I. Transition de la VO2max au spécifique course pour le semi."
+          }
+        }
+      }
+    },
+    "ril.017" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Norwegian 1K Floats"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Floats 1K norvégiens"
+          }
+        }
+      }
+    },
+    "ril.018" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8×1000m at 97% 10K pace with 400m float recovery. Norwegian model."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8×1000m à 97% de l'allure 10K avec 400m de float en récupération. Modèle norvégien."
+          }
+        }
+      }
+    },
+    "ril.019" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cruise Intervals 1K"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cruise intervals 1K"
+          }
+        }
+      }
+    },
+    "ril.020" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×1000m at T-pace, 90s rest. Cruise intervals at threshold."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×1000m à allure T, 90s de récup. Cruise intervals au seuil."
+          }
+        }
+      }
+    },
+    "ril.021" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cruise Intervals 1600m"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cruise intervals 1600m"
+          }
+        }
+      }
+    },
+    "ril.022" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×1600m at T-pace, 3min rest. Extended cruise intervals."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×1600m à allure T, 3min de récup. Cruise intervals prolongés."
+          }
+        }
+      }
+    },
+    "ril.023" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo 20min"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo 20min"
+          }
+        }
+      }
+    },
+    "ril.024" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20min continuous at T-pace. Lactate threshold builder."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20min en continu à allure T. Développe le seuil lactique."
+          }
+        }
+      }
+    },
+    "ril.025" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double Tempo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double tempo"
+          }
+        }
+      }
+    },
+    "ril.026" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2×20min at T-pace, 3min jog. Lactate threshold staple."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2×20min à allure T, 3min de footing. Classique du seuil lactique."
+          }
+        }
+      }
+    },
+    "ril.027" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extended Tempo 30min"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo prolongé 30min"
+          }
+        }
+      }
+    },
+    "ril.028" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30min continuous at T-pace. Advanced threshold endurance."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30min en continu à allure T. Endurance au seuil pour niveau avancé."
+          }
+        }
+      }
+    },
+    "ril.029" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Norwegian Double Threshold"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double seuil norvégien"
+          }
+        }
+      }
+    },
+    "ril.030" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2×4000m at T-pace, 4min jog. Ingebrigtsen system."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2×4000m à allure T, 4min de footing. Système Ingebrigtsen."
+          }
+        }
+      }
+    },
+    "ril.031" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Threshold Ladder 2K"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échelle de seuil 2K"
+          }
+        }
+      }
+    },
+    "ril.032" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×2000m at T-pace, 2min jog. Marathon lactate endurance."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×2000m à allure T, 2min de footing. Endurance lactique pour le marathon."
+          }
+        }
+      }
+    },
+    "ril.033" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MP Cruise 3×1.5K"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MP Cruise 3×1.5K"
+          }
+        }
+      }
+    },
+    "ril.034" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×1500m at marathon pace, 60s jog. Intro MP work, late build."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×1500m à allure marathon, 60s de footing. Introduction au travail MP, fin de build."
+          }
+        }
+      }
+    },
+    "ril.035" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MP Cruise 4×1.5K"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MP Cruise 4×1.5K"
+          }
+        }
+      }
+    },
+    "ril.036" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×1500m at marathon pace, 60s jog. Extended MP intro for advanced."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×1500m à allure marathon, 60s de footing. Introduction MP prolongée pour avancés."
+          }
+        }
+      }
+    },
+    "ril.037" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MP Cruise 3×2K"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MP Cruise 3×2K"
+          }
+        }
+      }
+    },
+    "ril.038" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×2000m at marathon pace, 90s jog. Bridging MP block to peak."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×2000m à allure marathon, 90s de footing. Transition du bloc MP vers le pic."
+          }
+        }
+      }
+    },
+    "ril.039" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10K Pace 1000m"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allure 10K 1000m"
+          }
+        }
+      }
+    },
+    "ril.040" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8×1000m at 10K pace, 90s jog. Lock in race rhythm."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8×1000m à allure 10K, 90s de footing. Ancrez le rythme de course."
+          }
+        }
+      }
+    },
+    "ril.041" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10K Pace 2000m"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allure 10K 2000m"
+          }
+        }
+      }
+    },
+    "ril.042" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×2000m at 10K pace, 90s jog. Extended race-specific intervals."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×2000m à allure 10K, 90s de footing. Intervalles spécifiques course prolongés."
+          }
+        }
+      }
+    },
+    "ril.043" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10K Pace 3000m"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allure 10K 3000m"
+          }
+        }
+      }
+    },
+    "ril.044" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×3000m at 10K pace, 3min jog. Advanced 10K simulation."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×3000m à allure 10K, 3min de footing. Simulation 10K avancée."
+          }
+        }
+      }
+    },
+    "ril.045" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10K Tempo Simulation"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulation tempo 10K"
+          }
+        }
+      }
+    },
+    "ril.046" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuous 8-10min at 10K race pace. Full-system rehearsal."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8-10min en continu à allure de course 10K. Répétition de tout le système."
+          }
+        }
+      }
+    },
+    "ril.047" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HM Pace 1600m"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allure semi 1600m"
+          }
+        }
+      }
+    },
+    "ril.048" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×1600m at HM pace, 90s jog. Half-marathon race rhythm."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×1600m à allure semi, 90s de footing. Rythme de course du semi-marathon."
+          }
+        }
+      }
+    },
+    "ril.049" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HM Pace 3000m"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allure semi 3000m"
+          }
+        }
+      }
+    },
+    "ril.050" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×3000m at HM pace, 2min jog. Sustained race-pace endurance."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×3000m à allure semi, 2min de footing. Endurance soutenue à allure de course."
+          }
+        }
+      }
+    },
+    "ril.051" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HM Pace 5000m"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allure semi 5000m"
+          }
+        }
+      }
+    },
+    "ril.052" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×5000m at HM pace, 3min jog. Long HM-specific blocks."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×5000m à allure semi, 3min de footing. Longs blocs spécifiques semi."
+          }
+        }
+      }
+    },
+    "ril.053" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marathon Pace 3K Blocks"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blocs allure marathon 3K"
+          }
+        }
+      }
+    },
+    "ril.054" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×3000m at 103% MP with 1000m float. Marathon-specific block."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×3000m à 103% de l'allure marathon avec 1000m de float. Bloc spécifique marathon."
+          }
+        }
+      }
+    },
+    "ril.055" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marathon Pace 5K Blocks"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blocs allure marathon 5K"
+          }
+        }
+      }
+    },
+    "ril.056" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×5000m at MP, 1000m jog. Extended marathon-specific endurance."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×5000m à allure marathon, 1000m de footing. Endurance spécifique marathon prolongée."
+          }
+        }
+      }
+    },
+    "ril.057" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marathon Pace 7K Blocks"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blocs allure marathon 7K"
+          }
+        }
+      }
+    },
+    "ril.058" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×7000m at MP, 1000m jog. Special block for advanced runners."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×7000m à allure marathon, 1000m de footing. Bloc spécial pour coureurs avancés."
+          }
+        }
+      }
+    },
+    "ril.059" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short Progression"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progression courte"
+          }
+        }
+      }
+    },
+    "ril.060" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "25min building from easy to 108% race pace. Progressive stimulus."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "25min en montant de facile à 108% de l'allure de course. Stimulus progressif."
+          }
+        }
+      }
+    },
+    "ril.061" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Medium Progression"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progression moyenne"
+          }
+        }
+      }
+    },
+    "ril.062" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "45min building from 88% to 105% race pace. Kenyan-style."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "45min en montant de 88% à 105% de l'allure de course. Style kényan."
+          }
+        }
+      }
+    },
+    "ril.063" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long Progression"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progression longue"
+          }
+        }
+      }
+    },
+    "ril.064" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "60min building from 80% to race pace. Advanced aerobic power."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "60min en montant de 80% à l'allure de course. Puissance aérobie avancée."
+          }
+        }
+      }
+    },
+    "ril.065" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marathon Threshold 25min"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seuil marathon 25min"
+          }
+        }
+      }
+    },
+    "ril.066" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "25min continuous at T-pace. Marathon lactate clearance."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "25min en continu à allure T. Élimination du lactate pour le marathon."
+          }
+        }
+      }
+    },
+    "ril.067" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HM Tempo Run 20min"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo semi 20min"
+          }
+        }
+      }
+    },
+    "ril.068" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20min continuous at HM pace. Race rhythm builder."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20min en continu à allure semi. Développe le rythme de course."
+          }
+        }
+      }
+    },
+    "ril.069" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progressive Tempo 30min"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo progressif 30min"
+          }
+        }
+      }
+    },
+    "ril.070" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30min building from easy to T-pace. Progressive threshold stimulus."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30min en montant de facile à allure T. Stimulus progressif au seuil."
+          }
+        }
+      }
+    },
+    "ril.071" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Billat 30/30"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Billat 30/30"
+          }
+        }
+      }
+    },
+    "ril.072" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "14×(30s hard / 30s easy). VO2max stimulus with minimal recovery."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "14×(30s intense / 30s facile). Stimulus VO2max avec récupération minimale."
+          }
+        }
+      }
+    },
+    "ril.073" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2Q Tempo + VO2max"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2Q Tempo + VO2max"
+          }
+        }
+      }
+    },
+    "ril.074" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "15min tempo (T-pace) then 4×3min VO2max (I-pace). Threshold-to-VO2max combo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "15min de tempo (allure T) puis 4×3min de VO2max (allure I). Combo seuil-VO2max."
+          }
+        }
+      }
+    },
+    "ril.075" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marathon Tempo 30min"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo marathon 30min"
+          }
+        }
+      }
+    },
+    "ril.076" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30min continuous at marathon pace. Lock in race rhythm."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30min en continu à allure marathon. Ancrez le rythme de course."
+          }
+        }
+      }
+    },
+    "ril.077" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Threshold 5×5min"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seuil 5×5min"
+          }
+        }
+      }
+    },
+    "ril.078" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×5min at T-pace, 90s rest. Lactate clearance training."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×5min à allure T, 90s de récup. Entraînement à l'élimination du lactate."
+          }
+        }
+      }
+    },
+    "ril.079" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LR + VO2 Surges"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SL + pointes VO2"
+          }
+        }
+      }
+    },
+    "ril.080" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy long run with 6×2min surges at I-pace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue facile avec 6×2min de pointes à allure I."
+          }
+        }
+      }
+    },
+    "ril.081" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LR + Tempo Blocks"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SL + blocs tempo"
+          }
+        }
+      }
+    },
+    "ril.082" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy long run with 2×12min blocks at T-pace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue facile avec 2×12min de blocs à allure T."
+          }
+        }
+      }
+    },
+    "ril.083" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alternating Long Run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue alternée"
+          }
+        }
+      }
+    },
+    "ril.084" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy + 3×3km MP blocks + easy. Marathon-specific endurance."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Facile + 3×3km de blocs MP + facile. Endurance spécifique marathon."
+          }
+        }
+      }
+    },
+    "ril.085" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo + Surges"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo + pointes"
+          }
+        }
+      }
+    },
+    "ril.086" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20min tempo with 4×1min surges at 10K pace mid-run."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20min de tempo avec 4×1min de pointes à allure 10K en milieu de séance."
+          }
+        }
+      }
+    },
+    "ril.087" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "300m Repeats"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétitions 300m"
+          }
+        }
+      }
+    },
+    "ril.088" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8×300m at R-pace. Speed rhythm bridge."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8×300m à allure R. Transition de rythme de vitesse."
+          }
+        }
+      }
+    },
+    "ril.089" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strides 6×20s"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lignes droites 6×20s"
+          }
+        }
+      }
+    },
+    "ril.090" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min easy + 6×20-second strides at R-pace, 90s walk. Neuromuscular freshness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min faciles + 6 lignes droites de 20 secondes à allure R, 90s de marche. Fraîcheur neuromusculaire."
+          }
+        }
+      }
+    },
+    "ril.091" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MP 4×2K"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MP 4×2K"
+          }
+        }
+      }
+    },
+    "ril.092" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×2000m at marathon pace, 90s jog. Intro-level MP block."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×2000m à allure marathon, 90s de footing. Bloc MP niveau introduction."
+          }
+        }
+      }
+    },
+    "ril.093" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MP 8K Continuous"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MP 8K continu"
+          }
+        }
+      }
+    },
+    "ril.094" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8000m continuous at marathon pace. Sustained MP block."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8000m en continu à allure marathon. Bloc MP soutenu."
+          }
+        }
+      }
+    },
+    "ril.095" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MP Pyramid 1-2-3-2-1"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pyramide MP 1-2-3-2-1"
+          }
+        }
+      }
+    },
+    "ril.096" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1K + 2K + 3K + 2K + 1K at MP, 60s jog between reps. Pyramid block."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1K + 2K + 3K + 2K + 1K à allure marathon, 60s de footing entre les répétitions. Bloc en pyramide."
+          }
+        }
+      }
+    },
+    "ril.097" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MP Cutdown 6K"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MP dégressif 6K"
+          }
+        }
+      }
+    },
+    "ril.098" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6000m progressing from MP+10s/km to HM pace over the final 2K. Race-finish skill."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6000m en progressant de allure marathon +10s/km à allure semi sur les 2 derniers K. Compétence de fin de course."
+          }
+        }
+      }
+    },
+    "ril.099" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MP 6×1K Sharpener"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MP 6×1K affûtage"
+          }
+        }
+      }
+    },
+    "ril.100" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×1000m at marathon pace, 60s jog. Late-peak MP sharpener."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×1000m à allure marathon, 60s de footing. Affûtage MP de fin de pic."
+          }
+        }
+      }
+    },
+    "ril.101" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MP Cruise 5×1K"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MP Cruise 5×1K"
+          }
+        }
+      }
+    },
+    "ril.102" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×1000m at marathon pace, 60s jog. Early MP intro for late build."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×1000m à allure marathon, 60s de footing. Introduction MP précoce pour fin de build."
+          }
+        }
+      }
+    },
     "road.coach.cooldown" : {
       "localizations" : {
         "en" : {
