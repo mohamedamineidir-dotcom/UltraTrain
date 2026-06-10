@@ -73,14 +73,14 @@ enum SexSpecificAdviceHelper {
     // MARK: - Copy (short, coach-voice, no em-dashes)
 
     private static let fuellingNote =
-        "Note for female athletes: research (Sims 2016) suggests higher carb demand on long efforts, especially through the luteal phase. Fuel generously, 30-60 g carbs per hour, starting before you feel you need it."
+        String(localized: "sxa.carb", defaultValue: "Note for female athletes: research (Sims 2016) suggests higher carb demand on long efforts, especially through the luteal phase. Fuel generously, 30-60 g carbs per hour, starting before you feel you need it.")
 
     private static let ironNote =
-        "Note for female athletes: high-intensity blocks raise iron turnover. If you're trending tired beyond what training explains, a ferritin check is worth it. Target 15-18 mg/day through diet or supplementation (Sims 2016)."
+        String(localized: "sxa.iron", defaultValue: "Note for female athletes: high-intensity blocks raise iron turnover. If you're trending tired beyond what training explains, a ferritin check is worth it. Target 15-18 mg/day through diet or supplementation (Sims 2016).")
 
     private static let redSNote =
-        "Note for female athletes: through heavy training weeks, watch energy availability. Under-fuelling risks bone health and hormonal balance (RED-S, Mountjoy 2014). Eat to support the load, not to control weight."
+        String(localized: "sxa.redS", defaultValue: "Note for female athletes: through heavy training weeks, watch energy availability. Under-fuelling risks bone health and hormonal balance (RED-S, Mountjoy 2014). Eat to support the load, not to control weight.")
 
     private static let descentInjuryNote =
-        "Note for female athletes: descent-running carries higher ACL/knee load for women due to Q-angle and quad-hamstring ratio (Stachenfeld). Keep descents controlled, strong cadence, soft landings."
+        String(localized: "sxa.descentACL", defaultValue: "Note for female athletes: descent-running carries higher ACL/knee load for women due to Q-angle and quad-hamstring ratio (Stachenfeld). Keep descents controlled, strong cadence, soft landings.")
 }

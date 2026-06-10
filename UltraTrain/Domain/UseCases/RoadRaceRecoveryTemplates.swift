@@ -67,7 +67,7 @@ enum RoadRaceRecoveryTemplates {
         for day in 0...6 where !usedDays.contains(day) {
             result.append(SessionTemplateGenerator.tpl(
                 day, .rest, .easy, 0, 0,
-                "Rest day. Recovery is the work."
+                String(localized: "rrt.restWork", defaultValue: "Rest day. Recovery is the work.")
             ))
         }
         return result.sorted { $0.dayOffset < $1.dayOffset }
@@ -138,12 +138,12 @@ enum RoadRaceRecoveryTemplates {
         // running again by Day 1.
         [
             (0, rest()),
-            (1, easy(scaled(30, mod), "Easy 30 min jog. Shake out race effort.")),
-            (2, mod.isBeginner ? rest("Rest. Beginners take an extra easy day.") : easy(scaled(35, mod), "Easy 35 min, conversational.")),
-            (3, easy(scaled(35, mod), "Easy 35 min + 4 strides if legs feel sharp.")),
+            (1, easy(scaled(30, mod), String(localized: "rrt.jog30Shake", defaultValue: "Easy 30 min jog. Shake out race effort."))),
+            (2, mod.isBeginner ? rest(String(localized: "rrt.restBeginnerExtra", defaultValue: "Rest. Beginners take an extra easy day.")) : easy(scaled(35, mod), String(localized: "rrt.easy35Conv", defaultValue: "Easy 35 min, conversational."))),
+            (3, easy(scaled(35, mod), String(localized: "rrt.easy35Strides", defaultValue: "Easy 35 min + 4 strides if legs feel sharp."))),
             (4, rest()),
-            (5, easy(scaled(45, mod), "Easy 45-50 min on flat.")),
-            (6, mod.isPerformance ? easy(scaled(30, mod), "Easy 30 min, performance retains volume.") : rest()),
+            (5, easy(scaled(45, mod), String(localized: "rrt.easy4550Flat", defaultValue: "Easy 45-50 min on flat."))),
+            (6, mod.isPerformance ? easy(scaled(30, mod), String(localized: "rrt.easy30PerfVol", defaultValue: "Easy 30 min, performance retains volume.")) : rest()),
         ]
     }
 
@@ -154,12 +154,12 @@ enum RoadRaceRecoveryTemplates {
         // glycogen depletion / muscle damage from the longer effort.
         [
             (0, rest()),
-            (1, easy(scaled(35, mod), "Easy 35 min jog. Shake out the effort.")),
-            (2, mod.isBeginner ? rest() : easy(scaled(30, mod), "Easy 30 min, conversational.")),
-            (3, easy(scaled(40, mod), "Easy 40 min + 4 strides.")),
+            (1, easy(scaled(35, mod), String(localized: "rrt.jog35Shake", defaultValue: "Easy 35 min jog. Shake out the effort."))),
+            (2, mod.isBeginner ? rest() : easy(scaled(30, mod), String(localized: "rrt.easy30Conv", defaultValue: "Easy 30 min, conversational."))),
+            (3, easy(scaled(40, mod), String(localized: "rrt.easy40Strides", defaultValue: "Easy 40 min + 4 strides."))),
             (4, rest()),
-            (5, easy(scaled(50, mod), "Easy 50 min on flat.")),
-            (6, mod.isPerformance ? easy(scaled(30, mod), "Easy 30 min, performance philosophy.") : rest()),
+            (5, easy(scaled(50, mod), String(localized: "rrt.easy50Flat", defaultValue: "Easy 50 min on flat."))),
+            (6, mod.isPerformance ? easy(scaled(30, mod), String(localized: "rrt.easy30Perf", defaultValue: "Easy 30 min, performance philosophy.")) : rest()),
         ]
     }
 
@@ -170,12 +170,12 @@ enum RoadRaceRecoveryTemplates {
         // first, then progressive return.
         [
             (0, rest()),
-            (1, mod.isBeginner ? rest("Rest. Beginners need an extra day after a half.") : walk(scaled(30, mod))),
-            (2, easy(scaled(30, mod), "Easy 30 min very gentle. Pace by feel.")),
+            (1, mod.isBeginner ? rest(String(localized: "rrt.restHalfExtra", defaultValue: "Rest. Beginners need an extra day after a half.")) : walk(scaled(30, mod))),
+            (2, easy(scaled(30, mod), String(localized: "rrt.easy30Gentle", defaultValue: "Easy 30 min very gentle. Pace by feel."))),
             (3, rest()),
-            (4, easy(scaled(35, mod), "Easy 35 min, conversational.")),
-            (5, mod.isEnjoyment ? walk(scaled(30, mod)) : easy(scaled(35, mod), "Easy 35 min, light.")),
-            (6, easy(scaled(55, mod), "Easy 50-55 min on flat. No pace targets, by feel only.")),
+            (4, easy(scaled(35, mod), String(localized: "rrt.easy35Conv", defaultValue: "Easy 35 min, conversational."))),
+            (5, mod.isEnjoyment ? walk(scaled(30, mod)) : easy(scaled(35, mod), String(localized: "rrt.easy35Light", defaultValue: "Easy 35 min, light."))),
+            (6, easy(scaled(55, mod), String(localized: "rrt.easy5055FlatFeel", defaultValue: "Easy 50-55 min on flat. No pace targets, by feel only."))),
         ]
     }
 
@@ -186,15 +186,15 @@ enum RoadRaceRecoveryTemplates {
         // of zero structured running after a marathon. Walking and
         // very light cross-training only.
         [
-            (0, rest("Complete rest. Eat, sleep, hydrate.")),
+            (0, rest(String(localized: "rrt.completeRestFull", defaultValue: "Complete rest. Eat, sleep, hydrate."))),
             (1, mod.isPerformance ? walk(scaled(25, mod)) : rest()),
             (2, rest()),
             (3, mod.isBeginner ? rest() : walk(scaled(30, mod))),
             (4, mod.isAdvanced && !mod.isEnjoyment
-                ? easy(scaled(25, mod), "Optional 25 min very easy jog. Skip if anything still hurts.")
+                ? easy(scaled(25, mod), String(localized: "rrt.optionalJogSkip", defaultValue: "Optional 25 min very easy jog. Skip if anything still hurts."))
                 : cross(scaled(30, mod))),
             (5, rest()),
-            (6, easy(scaled(30, mod), "Easy 30 min jog. First 'real' run since the marathon.")),
+            (6, easy(scaled(30, mod), String(localized: "rrt.jog30First", defaultValue: "Easy 30 min jog. First 'real' run since the marathon."))),
         ]
     }
 
@@ -208,12 +208,12 @@ enum RoadRaceRecoveryTemplates {
         // takes 2-3 weeks to clear (Saugy 2013, Hammerle & Tartaruga 2019).
         [
             (0, rest()),
-            (1, easy(scaled(35, mod), "Easy 35 min, conversational.")),
+            (1, easy(scaled(35, mod), String(localized: "rrt.easy35Conv", defaultValue: "Easy 35 min, conversational."))),
             (2, rest()),
-            (3, mod.isEnjoyment ? cross(scaled(30, mod)) : easy(scaled(30, mod), "Easy 30 min. Strides only if no soreness.")),
+            (3, mod.isEnjoyment ? cross(scaled(30, mod)) : easy(scaled(30, mod), String(localized: "rrt.easy30Strides", defaultValue: "Easy 30 min. Strides only if no soreness."))),
             (4, rest()),
-            (5, easy(scaled(35, mod), "Easy 35 min on flat.")),
-            (6, easy(scaled(55, mod), "Easy 50-55 min. By feel only.")),
+            (5, easy(scaled(35, mod), String(localized: "rrt.easy35Flat", defaultValue: "Easy 35 min on flat."))),
+            (6, easy(scaled(55, mod), String(localized: "rrt.easy5055Feel", defaultValue: "Easy 50-55 min. By feel only."))),
         ]
     }
 
@@ -224,12 +224,12 @@ enum RoadRaceRecoveryTemplates {
         // keeps day 2 as cross-training instead of an extra run.
         [
             (0, rest()),
-            (1, easy(scaled(45, mod), "Easy 45 min + 4 strides if legs feel sharp.")),
-            (2, mod.isEnjoyment ? cross(scaled(30, mod)) : easy(scaled(35, mod), "Easy 35 min, conversational.")),
+            (1, easy(scaled(45, mod), String(localized: "rrt.easy45Strides", defaultValue: "Easy 45 min + 4 strides if legs feel sharp."))),
+            (2, mod.isEnjoyment ? cross(scaled(30, mod)) : easy(scaled(35, mod), String(localized: "rrt.easy35Conv", defaultValue: "Easy 35 min, conversational."))),
             (3, rest()),
-            (4, easy(scaled(mod.isPerformance ? 55 : 50, mod), "Easy 50-55 min on flat.")),
-            (5, easy(scaled(35, mod), "Easy 35 min, light.")),
-            (6, easy(scaled(70, mod), "Easy 65-75 min on flat. Normal training resumes next week.")),
+            (4, easy(scaled(mod.isPerformance ? 55 : 50, mod), String(localized: "rrt.easy5055Flat", defaultValue: "Easy 50-55 min on flat."))),
+            (5, easy(scaled(35, mod), String(localized: "rrt.easy35Light", defaultValue: "Easy 35 min, light."))),
+            (6, easy(scaled(70, mod), String(localized: "rrt.easy6575Flat", defaultValue: "Easy 65-75 min on flat. Normal training resumes next week."))),
         ]
     }
 
@@ -238,13 +238,13 @@ enum RoadRaceRecoveryTemplates {
     private static func ultraRoadWeek1(_ mod: Modifiers) -> [(Int, RecoverySession)] {
         // W1 of 3. ~10% of peak. Like marathon W1 but stretched.
         [
-            (0, rest("Complete rest.")),
+            (0, rest(String(localized: "rrt.completeRest", defaultValue: "Complete rest."))),
             (1, rest()),
             (2, walk(scaled(25, mod))),
             (3, rest()),
             (4, cross(scaled(30, mod))),
             (5, rest()),
-            (6, mod.isAdvanced ? easy(scaled(25, mod), "Optional 25 min very easy jog.") : walk(scaled(25, mod))),
+            (6, mod.isAdvanced ? easy(scaled(25, mod), String(localized: "rrt.optionalJog", defaultValue: "Optional 25 min very easy jog.")) : walk(scaled(25, mod))),
         ]
     }
 
@@ -252,12 +252,12 @@ enum RoadRaceRecoveryTemplates {
         // W2 of 3. ~35% of peak.
         [
             (0, rest()),
-            (1, easy(scaled(30, mod), "Easy 30 min, conversational.")),
-            (2, easy(scaled(30, mod), "Easy 30 min.")),
+            (1, easy(scaled(30, mod), String(localized: "rrt.easy30Conv", defaultValue: "Easy 30 min, conversational."))),
+            (2, easy(scaled(30, mod), String(localized: "rrt.easy30", defaultValue: "Easy 30 min."))),
             (3, rest()),
-            (4, easy(scaled(35, mod), "Easy 35 min on flat.")),
+            (4, easy(scaled(35, mod), String(localized: "rrt.easy35Flat", defaultValue: "Easy 35 min on flat."))),
             (5, rest()),
-            (6, easy(scaled(50, mod), "Easy 50 min on flat.")),
+            (6, easy(scaled(50, mod), String(localized: "rrt.easy50Flat", defaultValue: "Easy 50 min on flat."))),
         ]
     }
 
@@ -265,18 +265,18 @@ enum RoadRaceRecoveryTemplates {
         // W3 of 3. ~60% of peak. Near-baseline.
         [
             (0, rest()),
-            (1, easy(scaled(40, mod), "Easy 40 min + 4 strides.")),
-            (2, easy(scaled(35, mod), "Easy 35 min, conversational.")),
-            (3, mod.isPerformance ? easy(scaled(30, mod), "Easy 30 min, performance retains volume.") : rest()),
-            (4, easy(scaled(45, mod), "Easy 45 min on flat.")),
-            (5, easy(scaled(35, mod), "Easy 35 min, light.")),
-            (6, easy(scaled(75, mod), "Easy 70-80 min on flat.")),
+            (1, easy(scaled(40, mod), String(localized: "rrt.easy40Strides", defaultValue: "Easy 40 min + 4 strides."))),
+            (2, easy(scaled(35, mod), String(localized: "rrt.easy35Conv", defaultValue: "Easy 35 min, conversational."))),
+            (3, mod.isPerformance ? easy(scaled(30, mod), String(localized: "rrt.easy30PerfVol", defaultValue: "Easy 30 min, performance retains volume.")) : rest()),
+            (4, easy(scaled(45, mod), String(localized: "rrt.easy45Flat", defaultValue: "Easy 45 min on flat."))),
+            (5, easy(scaled(35, mod), String(localized: "rrt.easy35Light", defaultValue: "Easy 35 min, light."))),
+            (6, easy(scaled(75, mod), String(localized: "rrt.easy7080Flat", defaultValue: "Easy 70-80 min on flat."))),
         ]
     }
 
     // MARK: - Helpers
 
-    private static func rest(_ desc: String = "Rest day. Recovery is the work.") -> RecoverySession {
+    private static func rest(_ desc: String = String(localized: "rrt.restWork", defaultValue: "Rest day. Recovery is the work.")) -> RecoverySession {
         RecoverySession(type: .rest, intensity: .easy, durationSeconds: 0, description: desc)
     }
 
@@ -292,7 +292,7 @@ enum RoadRaceRecoveryTemplates {
         RecoverySession(
             type: .crossTraining, intensity: .easy,
             durationSeconds: TimeInterval(minutes * 60),
-            description: "Cross-training \(minutes) min, easy bike, swim, or elliptical. Low-impact aerobic work while running tissue rebuilds."
+            description: String(localized: "rrt.crossTraining", defaultValue: "Cross-training \(minutes) min, easy bike, swim, or elliptical. Low-impact aerobic work while running tissue rebuilds.")
         )
     }
 
@@ -300,7 +300,7 @@ enum RoadRaceRecoveryTemplates {
         RecoverySession(
             type: .crossTraining, intensity: .easy,
             durationSeconds: TimeInterval(minutes * 60),
-            description: "Walking \(minutes) min, easy. Light movement to promote blood flow."
+            description: String(localized: "rrt.walking", defaultValue: "Walking \(minutes) min, easy. Light movement to promote blood flow.")
         )
     }
 

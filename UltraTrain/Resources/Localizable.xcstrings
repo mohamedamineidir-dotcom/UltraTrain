@@ -28316,6 +28316,518 @@
         }
       }
     },
+    "rrt.completeRest" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete rest."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos complet."
+          }
+        }
+      }
+    },
+    "rrt.completeRestFull" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete rest. Eat, sleep, hydrate."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos complet. Mangez, dormez, hydratez-vous."
+          }
+        }
+      }
+    },
+    "rrt.crossTraining" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cross-training %lld min, easy bike, swim, or elliptical. Low-impact aerobic work while running tissue rebuilds."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cross-training %lld min : vélo, natation ou elliptique en facile. Travail aérobie à faible impact pendant que les tissues de la course se reconstruisent."
+          }
+        }
+      }
+    },
+    "rrt.easy30" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 30 min."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min faciles."
+          }
+        }
+      }
+    },
+    "rrt.easy30Conv" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 30 min, conversational."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min faciles, en aisance respiratoire."
+          }
+        }
+      }
+    },
+    "rrt.easy30Gentle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 30 min very gentle. Pace by feel."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min faciles très douces. Allure à la sensation."
+          }
+        }
+      }
+    },
+    "rrt.easy30Perf" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 30 min, performance philosophy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min faciles, approche performance."
+          }
+        }
+      }
+    },
+    "rrt.easy30PerfVol" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 30 min, performance retains volume."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min faciles, l'approche performance conserve le volume."
+          }
+        }
+      }
+    },
+    "rrt.easy30Strides" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 30 min. Strides only if no soreness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min faciles. Lignes droites seulement si aucune courbature."
+          }
+        }
+      }
+    },
+    "rrt.easy35Conv" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 35 min, conversational."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "35 min faciles, en aisance respiratoire."
+          }
+        }
+      }
+    },
+    "rrt.easy35Flat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 35 min on flat."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "35 min faciles sur le plat."
+          }
+        }
+      }
+    },
+    "rrt.easy35Light" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 35 min, light."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "35 min faciles, légères."
+          }
+        }
+      }
+    },
+    "rrt.easy35Strides" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 35 min + 4 strides if legs feel sharp."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "35 min faciles + 4 lignes droites si les jambes sont vives."
+          }
+        }
+      }
+    },
+    "rrt.easy40Strides" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 40 min + 4 strides."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "40 min faciles + 4 lignes droites."
+          }
+        }
+      }
+    },
+    "rrt.easy4550Flat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 45-50 min on flat."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "45-50 min faciles sur le plat."
+          }
+        }
+      }
+    },
+    "rrt.easy45Flat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 45 min on flat."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "45 min faciles sur le plat."
+          }
+        }
+      }
+    },
+    "rrt.easy45Strides" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 45 min + 4 strides if legs feel sharp."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "45 min faciles + 4 lignes droites si les jambes sont vives."
+          }
+        }
+      }
+    },
+    "rrt.easy5055Feel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 50-55 min. By feel only."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "50-55 min faciles. À la sensation uniquement."
+          }
+        }
+      }
+    },
+    "rrt.easy5055Flat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 50-55 min on flat."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "50-55 min faciles sur le plat."
+          }
+        }
+      }
+    },
+    "rrt.easy5055FlatFeel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 50-55 min on flat. No pace targets, by feel only."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "50-55 min faciles sur le plat. Aucun objectif d'allure, à la sensation uniquement."
+          }
+        }
+      }
+    },
+    "rrt.easy50Flat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 50 min on flat."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "50 min faciles sur le plat."
+          }
+        }
+      }
+    },
+    "rrt.easy6575Flat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 65-75 min on flat. Normal training resumes next week."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "65-75 min faciles sur le plat. L'entraînement normal reprend la semaine prochaine."
+          }
+        }
+      }
+    },
+    "rrt.easy7080Flat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 70-80 min on flat."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "70-80 min faciles sur le plat."
+          }
+        }
+      }
+    },
+    "rrt.jog30First" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 30 min jog. First 'real' run since the marathon."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile de 30 min. Première « vraie » sortie depuis le marathon."
+          }
+        }
+      }
+    },
+    "rrt.jog30Shake" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 30 min jog. Shake out race effort."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile de 30 min. Évacuez l'effort de course."
+          }
+        }
+      }
+    },
+    "rrt.jog35Shake" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 35 min jog. Shake out the effort."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile de 35 min. Évacuez l'effort."
+          }
+        }
+      }
+    },
+    "rrt.optionalJog" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optional 25 min very easy jog."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing très facile de 25 min, optionnel."
+          }
+        }
+      }
+    },
+    "rrt.optionalJogSkip" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optional 25 min very easy jog. Skip if anything still hurts."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing très facile de 25 min, optionnel. À sauter si quelque chose fait encore mal."
+          }
+        }
+      }
+    },
+    "rrt.restBeginnerExtra" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest. Beginners take an extra easy day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos. Les débutants prennent un jour facile de plus."
+          }
+        }
+      }
+    },
+    "rrt.restHalfExtra" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest. Beginners need an extra day after a half."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos. Les débutants ont besoin d'un jour de plus après un semi."
+          }
+        }
+      }
+    },
+    "rrt.restWork" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day. Recovery is the work."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos. La récupération, c'est le travail."
+          }
+        }
+      }
+    },
+    "rrt.walking" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walking %lld min, easy. Light movement to promote blood flow."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marche %lld min, facile. Mouvement léger pour favoriser la circulation sanguine."
+          }
+        }
+      }
+    },
     "rwt.easy25" : {
       "localizations" : {
         "en" : {
@@ -31523,6 +32035,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Renfo express %1$@ (%2$@)"
+          }
+        }
+      }
+    },
+    "sxa.carb" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note for female athletes: research (Sims 2016) suggests higher carb demand on long efforts, especially through the luteal phase. Fuel generously, 30-60 g carbs per hour, starting before you feel you need it."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note pour les athlètes féminines : la recherche (Sims 2016) suggère un besoin accru en glucides sur les longs efforts, surtout pendant la phase lutéale. Alimentez-vous généreusement, 30-60 g de glucides par heure, en commençant avant d'en ressentir le besoin."
+          }
+        }
+      }
+    },
+    "sxa.descentACL" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note for female athletes: descent-running carries higher ACL/knee load for women due to Q-angle and quad-hamstring ratio (Stachenfeld). Keep descents controlled, strong cadence, soft landings."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note pour les athlètes féminines : la course en descente sollicite davantage le LCA et le genou chez les femmes en raison de l'angle Q et du ratio quadriceps-ischio-jambiers (Stachenfeld). Gardez des descentes contrôlées, une cadence soutenue, des réceptions souples."
+          }
+        }
+      }
+    },
+    "sxa.iron" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note for female athletes: high-intensity blocks raise iron turnover. If you're trending tired beyond what training explains, a ferritin check is worth it. Target 15-18 mg/day through diet or supplementation (Sims 2016)."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note pour les athlètes féminines : les blocs à haute intensité augmentent le renouvellement du fer. Si vous vous sentez fatiguée au-delà de ce que l'entraînement explique, un dosage de ferritine vaut le coup. Visez 15-18 mg/jour via l'alimentation ou la supplémentation (Sims 2016)."
+          }
+        }
+      }
+    },
+    "sxa.redS" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note for female athletes: through heavy training weeks, watch energy availability. Under-fuelling risks bone health and hormonal balance (RED-S, Mountjoy 2014). Eat to support the load, not to control weight."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note pour les athlètes féminines : pendant les semaines de charge, surveillez votre disponibilité énergétique. Un sous-apport menace la santé osseuse et l'équilibre hormonal (RED-S, Mountjoy 2014). Mangez pour soutenir la charge, pas pour contrôler votre poids."
           }
         }
       }
