@@ -19158,6 +19158,774 @@
         }
       }
     },
+    "ach.001" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Century Runner"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Centurion du kilomètre"
+          }
+        }
+      }
+    },
+    "ach.002" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run a total of 100 km."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courez 100 km au total."
+          }
+        }
+      }
+    },
+    "ach.003" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Road Warrior"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guerrier de la route"
+          }
+        }
+      }
+    },
+    "ach.004" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run a total of 500 km."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courez 500 km au total."
+          }
+        }
+      }
+    },
+    "ach.005" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thousand Miler"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mille bornes"
+          }
+        }
+      }
+    },
+    "ach.006" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run a total of 1,000 km."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courez 1 000 km au total."
+          }
+        }
+      }
+    },
+    "ach.007" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ultra Legend"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Légende de l'ultra"
+          }
+        }
+      }
+    },
+    "ach.008" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run a total of 2,500 km."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courez 2 500 km au total."
+          }
+        }
+      }
+    },
+    "ach.009" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First 10K"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premier 10K"
+          }
+        }
+      }
+    },
+    "ach.010" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete a single run of 10 km or more."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réalisez une sortie unique de 10 km ou plus."
+          }
+        }
+      }
+    },
+    "ach.011" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marathoner"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marathonien"
+          }
+        }
+      }
+    },
+    "ach.012" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete a single run of 42.2 km or more."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réalisez une sortie unique de 42,2 km ou plus."
+          }
+        }
+      }
+    },
+    "ach.013" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ultra Runner"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ultra-traileur"
+          }
+        }
+      }
+    },
+    "ach.014" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete a single run of 50 km or more."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réalisez une sortie unique de 50 km ou plus."
+          }
+        }
+      }
+    },
+    "ach.015" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Centurion"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Centurion"
+          }
+        }
+      }
+    },
+    "ach.016" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete a single run of 100 km or more."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réalisez une sortie unique de 100 km ou plus."
+          }
+        }
+      }
+    },
+    "ach.017" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hill Climber"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grimpeur"
+          }
+        }
+      }
+    },
+    "ach.018" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accumulate 5,000 m of total elevation gain."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cumulez 5 000 m de dénivelé positif total."
+          }
+        }
+      }
+    },
+    "ach.019" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mountain Goat"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chamois"
+          }
+        }
+      }
+    },
+    "ach.020" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accumulate 10,000 m of total elevation gain."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cumulez 10 000 m de dénivelé positif total."
+          }
+        }
+      }
+    },
+    "ach.021" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Everester"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Everester"
+          }
+        }
+      }
+    },
+    "ach.022" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accumulate 25,000 m of total elevation gain."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cumulez 25 000 m de dénivelé positif total."
+          }
+        }
+      }
+    },
+    "ach.023" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vertical Kilometer"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kilomètre vertical"
+          }
+        }
+      }
+    },
+    "ach.024" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gain 1,000 m of elevation in a single run."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grimpez 1 000 m de dénivelé en une seule sortie."
+          }
+        }
+      }
+    },
+    "ach.025" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sky Runner"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skyrunner"
+          }
+        }
+      }
+    },
+    "ach.026" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gain 2,000 m of elevation in a single run."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grimpez 2 000 m de dénivelé en une seule sortie."
+          }
+        }
+      }
+    },
+    "ach.027" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Getting Started"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premiers pas"
+          }
+        }
+      }
+    },
+    "ach.028" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete 10 runs."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réalisez 10 sorties."
+          }
+        }
+      }
+    },
+    "ach.029" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dedicated Runner"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coureur assidu"
+          }
+        }
+      }
+    },
+    "ach.030" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete 50 runs."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réalisez 50 sorties."
+          }
+        }
+      }
+    },
+    "ach.031" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Triple Digits"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cap des 100"
+          }
+        }
+      }
+    },
+    "ach.032" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete 100 runs."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réalisez 100 sorties."
+          }
+        }
+      }
+    },
+    "ach.033" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unstoppable"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inarrêtable"
+          }
+        }
+      }
+    },
+    "ach.034" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete 250 runs."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réalisez 250 sorties."
+          }
+        }
+      }
+    },
+    "ach.035" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week Warrior"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guerrier de la semaine"
+          }
+        }
+      }
+    },
+    "ach.036" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run every day for 7 days straight."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courez tous les jours pendant 7 jours d'affilée."
+          }
+        }
+      }
+    },
+    "ach.037" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iron Will"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volonté de fer"
+          }
+        }
+      }
+    },
+    "ach.038" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run every day for 30 days straight."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courez tous les jours pendant 30 jours d'affilée."
+          }
+        }
+      }
+    },
+    "ach.039" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race Debut"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Première course"
+          }
+        }
+      }
+    },
+    "ach.040" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete your first race."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminez votre première course."
+          }
+        }
+      }
+    },
+    "ach.041" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seasoned Racer"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compétiteur aguerri"
+          }
+        }
+      }
+    },
+    "ach.042" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete 5 races."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminez 5 courses."
+          }
+        }
+      }
+    },
+    "ach.043" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Challenge Accepted"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Défi relevé"
+          }
+        }
+      }
+    },
+    "ach.044" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete your first challenge."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminez votre premier défi."
+          }
+        }
+      }
+    },
+    "ach.045" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Challenge Champion"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Champion des défis"
+          }
+        }
+      }
+    },
+    "ach.046" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete 5 challenges."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminez 5 défis."
+          }
+        }
+      }
+    },
+    "ach.047" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personal Best"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Record personnel"
+          }
+        }
+      }
+    },
+    "ach.048" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set your first personal record."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Établissez votre premier record personnel."
+          }
+        }
+      }
+    },
     "activities" : {
       "localizations" : {
         "fr" : {
@@ -38888,6 +39656,646 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "intensité de course"
+          }
+        }
+      }
+    },
+    "wtl.001" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Technical Descent Focus"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Travail de descente technique"
+          }
+        }
+      }
+    },
+    "wtl.002" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Focus on downhill technique on technical single-track. Practice foot placement, quick cadence, and staying relaxed on steep descents."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Travaillez la technique de descente sur single-track technique. Travaillez le placement des appuis, une cadence rapide et le relâchement dans les descentes raides."
+          }
+        }
+      }
+    },
+    "wtl.003" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Night Trail Run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie trail de nuit"
+          }
+        }
+      }
+    },
+    "wtl.004" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Practice running with a headlamp on familiar trails. Build confidence for night sections during ultra races."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entraînez-vous à courir avec une frontale sur des sentiers familiers. Gagnez en confiance pour les sections de nuit en ultra."
+          }
+        }
+      }
+    },
+    "wtl.005" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Single-Track Agility"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agilité en single-track"
+          }
+        }
+      }
+    },
+    "wtl.006" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short bursts on technical terrain with frequent direction changes. Improves proprioception and trail agility."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pointes courtes sur terrain technique avec changements de direction fréquents. Améliore la proprioception et l'agilité en trail."
+          }
+        }
+      }
+    },
+    "wtl.007" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trail Fartlek"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fartlek trail"
+          }
+        }
+      }
+    },
+    "wtl.008" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unstructured speed play: alternate fast and easy efforts using terrain as cues. Surge on climbs, recover on flats."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeu d'allure libre : alternez efforts rapides et faciles en vous servant du terrain. Accélérez dans les montées, récupérez sur le plat."
+          }
+        }
+      }
+    },
+    "wtl.009" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lactate Threshold Run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Séance au seuil lactique"
+          }
+        }
+      }
+    },
+    "wtl.010" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sustained effort at comfortably hard pace (Zone 4). Build the ability to run faster for longer at threshold intensity."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort soutenu à allure confortablement dure (Zone 4). Développez la capacité à courir plus vite plus longtemps à l'intensité du seuil."
+          }
+        }
+      }
+    },
+    "wtl.011" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Track Intervals"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervalles sur piste"
+          }
+        }
+      }
+    },
+    "wtl.012" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6-8 x 3-minute hard efforts with 2-minute recovery jog. Classic VO2max builder on flat terrain."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6-8 × 3 minutes d'efforts intenses avec 2 minutes de footing de récupération. Classique pour développer la VO2max sur terrain plat."
+          }
+        }
+      }
+    },
+    "wtl.013" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progressive Tempo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo progressif"
+          }
+        }
+      }
+    },
+    "wtl.014" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start easy and gradually increase pace every 3 km until finishing at tempo effort. Teaches pacing discipline."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partez facile et augmentez l'allure progressivement tous les 3 km pour finir à effort tempo. Apprend la discipline d'allure."
+          }
+        }
+      }
+    },
+    "wtl.015" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hill Repeats"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétitions en côte"
+          }
+        }
+      }
+    },
+    "wtl.016" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8-10 x 3-minute uphill hard efforts with jog-down recovery. Build climbing power and muscular endurance."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8-10 × 3 minutes d'efforts intenses en montée avec descente en footing pour récupérer. Développe la puissance en côte et l'endurance musculaire."
+          }
+        }
+      }
+    },
+    "wtl.017" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Power Hiking Session"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Séance de marche active"
+          }
+        }
+      }
+    },
+    "wtl.018" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sustained steep uphill hiking with poles. Practice race-specific power hiking technique at 600-900 m/hr vertical speed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marche active soutenue en forte pente avec bâtons. Travaillez la technique de marche active spécifique à la course à 600-900 m/h de vitesse ascensionnelle."
+          }
+        }
+      }
+    },
+    "wtl.019" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Staircase Session"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Séance d'escaliers"
+          }
+        }
+      }
+    },
+    "wtl.020" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stair climbing repeats for vertical gain. 10 x 50m D+ with walk-down recovery. Great for building leg strength."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétitions de montée d'escaliers pour le dénivelé. 10 × 50m D+ avec descente en marche pour récupérer. Excellent pour renforcer les jambes."
+          }
+        }
+      }
+    },
+    "wtl.021" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery Shakeout"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing de déblocage"
+          }
+        }
+      }
+    },
+    "wtl.022" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Very easy, short run to promote blood flow and recovery. Stay in Zone 1-2, conversational pace only."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie courte et très facile pour favoriser la circulation et la récupération. Restez en Zone 1-2, allure d'aisance uniquement."
+          }
+        }
+      }
+    },
+    "wtl.023" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active Recovery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération active"
+          }
+        }
+      }
+    },
+    "wtl.024" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light cross-training: swimming, cycling, or yoga. Keep effort very easy to aid recovery without adding run stress."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cross-training léger : natation, vélo ou yoga. Gardez un effort très facile pour aider la récupération sans ajouter de stress de course."
+          }
+        }
+      }
+    },
+    "wtl.025" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trail Walk"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marche en trail"
+          }
+        }
+      }
+    },
+    "wtl.026" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy hike on trails with light elevation. Active recovery that keeps you moving without running impact."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Randonnée facile sur sentiers avec un léger dénivelé. Récupération active qui vous garde en mouvement sans l'impact de la course."
+          }
+        }
+      }
+    },
+    "wtl.027" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dress Rehearsal Run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie répétition générale"
+          }
+        }
+      }
+    },
+    "wtl.028" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run in full race kit: vest, poles, nutrition, headlamp. Practice everything you'll use on race day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courez en tenue de course complète : gilet, bâtons, nutrition, frontale. Testez tout ce que vous utiliserez le jour J."
+          }
+        }
+      }
+    },
+    "wtl.029" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nutrition Rehearsal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétition nutrition"
+          }
+        }
+      }
+    },
+    "wtl.030" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Practice your race-day nutrition plan during a long run. Test gels, hydration timing, and stomach tolerance."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Testez votre plan nutritionnel de course pendant une sortie longue. Testez les gels, le timing d'hydratation et la tolérance digestive."
+          }
+        }
+      }
+    },
+    "wtl.031" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Course Recon Run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie de reconnaissance"
+          }
+        }
+      }
+    },
+    "wtl.032" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run a section of your target race course. Learn the terrain, identify key landmarks, and plan pacing strategy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courez une portion du parcours de votre course cible. Apprenez le terrain, repérez les points clés et planifiez votre stratégie d'allure."
+          }
+        }
+      }
+    },
+    "wtl.033" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race Pace Simulation"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulation d'allure de course"
+          }
+        }
+      }
+    },
+    "wtl.034" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run at your target race pace on similar terrain. Build confidence in your pacing strategy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courez à votre allure de course cible sur terrain similaire. Gagnez en confiance dans votre stratégie d'allure."
+          }
+        }
+      }
+    },
+    "wtl.035" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Road Tempo Run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo sur route"
+          }
+        }
+      }
+    },
+    "wtl.036" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sustained threshold effort on flat terrain. The cornerstone of road race preparation."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort soutenu au seuil sur terrain plat. La pierre angulaire de la préparation aux courses sur route."
+          }
+        }
+      }
+    },
+    "wtl.037" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Road VO2max Intervals"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervalles VO2max sur route"
+          }
+        }
+      }
+    },
+    "wtl.038" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Track-style VO2max intervals at 5K race pace. Build your aerobic power ceiling."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervalles VO2max façon piste à allure 5K. Développez votre plafond de puissance aérobie."
+          }
+        }
+      }
+    },
+    "wtl.039" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race-Pace Long Run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue à allure de course"
+          }
+        }
+      }
+    },
+    "wtl.040" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long run with embedded blocks at race pace. Race-day simulation for road events."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue avec des blocs à allure de course intégrés. Simulation du jour J pour les courses sur route."
           }
         }
       }
