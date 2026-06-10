@@ -15,9 +15,9 @@ enum FinishPredictionSource: String, Sendable, Codable {
     /// Short user-facing label.
     var shortLabel: String {
         switch self {
-        case .runs:               return "Refined from your training"
-        case .personalBests:      return "Early estimate from your profile data"
-        case .experienceFallback: return "General estimate"
+        case .runs:               return String(localized: "fe.004", defaultValue: "Refined from your training")
+        case .personalBests:      return String(localized: "fe.002", defaultValue: "Early estimate from your profile data")
+        case .experienceFallback: return String(localized: "fe.003", defaultValue: "General estimate")
         }
     }
 
@@ -27,11 +27,11 @@ enum FinishPredictionSource: String, Sendable, Codable {
     var explainer: String {
         switch self {
         case .runs:
-            return "Updated from your recent training data. Range tightens as you log more sessions."
+            return String(localized: "fe.005", defaultValue: "Updated from your recent training data. Range tightens as you log more sessions.")
         case .personalBests:
-            return "Built from your race PBs and any test results. Will refine as you log training, log a few runs to tighten the range."
+            return String(localized: "fe.001", defaultValue: "Built from your race PBs and any test results. Will refine as you log training, log a few runs to tighten the range.")
         case .experienceFallback:
-            return "We don't have PBs or training data yet. Add a recent race time on your profile, or log a few runs to refine the prediction."
+            return String(localized: "fe.006", defaultValue: "We don't have PBs or training data yet. Add a recent race time on your profile, or log a few runs to refine the prediction.")
         }
     }
 }

@@ -22277,6 +22277,102 @@
         }
       }
     },
+    "fe.001" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Built from your race PBs and any test results. Will refine as you log training, log a few runs to tighten the range."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Établi à partir de vos records de course et de tout résultat de test. S'affinera au fil de votre entraînement ; enregistrez quelques sorties pour resserrer la fourchette."
+          }
+        }
+      }
+    },
+    "fe.002" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Early estimate from your profile data"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimation précoce à partir des données de votre profil"
+          }
+        }
+      }
+    },
+    "fe.003" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "General estimate"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimation générale"
+          }
+        }
+      }
+    },
+    "fe.004" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Refined from your training"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiné à partir de votre entraînement"
+          }
+        }
+      }
+    },
+    "fe.005" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updated from your recent training data. Range tightens as you log more sessions."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mis à jour à partir de vos données d'entraînement récentes. La fourchette se resserre à mesure que vous enregistrez des séances."
+          }
+        }
+      }
+    },
+    "fe.006" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We don't have PBs or training data yet. Add a recent race time on your profile, or log a few runs to refine the prediction."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n'avons pas encore de records ni de données d'entraînement. Ajoutez un temps de course récent sur votre profil, ou enregistrez quelques sorties pour affiner la prédiction."
+          }
+        }
+      }
+    },
     "ft" : {
       "localizations" : {
         "fr" : {
@@ -38148,6 +38244,518 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Semaine %lld"
+          }
+        }
+      }
+    },
+    "wn.001" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A little more vertical this week. Most runs still easy. The engine compounds in the background."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un peu plus de dénivelé cette semaine. La plupart des sorties restent faciles. Le moteur se construit en arrière-plan."
+          }
+        }
+      }
+    },
+    "wn.002" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Building. One quality session, the rest aerobic. Protect that one hard effort, it's where the adaptation lives."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On construit. Une séance de qualité, le reste en aérobie. Protégez cet unique effort dur, c'est là que vit l'adaptation."
+          }
+        }
+      }
+    },
+    "wn.003" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easier days. More sleep. No new tests."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Journées plus faciles. Plus de sommeil. Aucun nouveau test."
+          }
+        }
+      }
+    },
+    "wn.004" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Execute the key session well. Everything else is support."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réussissez bien la séance clé. Tout le reste n'est qu'accompagnement."
+          }
+        }
+      }
+    },
+    "wn.005" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hit your quality targets without dragging fatigue into the long run."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atteignez vos objectifs de qualité sans traîner de fatigue dans la sortie longue."
+          }
+        }
+      }
+    },
+    "wn.006" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hit your weekly volume target without pushing intensity."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atteignez votre objectif de volume hebdomadaire sans forcer l'intensité."
+          }
+        }
+      }
+    },
+    "wn.007" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hold the rhythm. Most runs should feel unremarkable, that's the point of base training."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tenez le rythme. La plupart des sorties doivent sembler banales, c'est tout l'intérêt du travail de base."
+          }
+        }
+      }
+    },
+    "wn.008" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep the legs familiar with race pace. More sleep."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gardez les jambes familières avec l'allure de course. Plus de sommeil."
+          }
+        }
+      }
+    },
+    "wn.009" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Legs need time. Easy running only, or full rest if anything still aches from race day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les jambes ont besoin de temps. Uniquement de la course facile, ou repos complet si quelque chose fait encore mal après la course."
+          }
+        }
+      }
+    },
+    "wn.010" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hard efforts this week. Let the body absorb the effort."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun effort dur cette semaine. Laissez le corps assimiler l'effort."
+          }
+        }
+      }
+    },
+    "wn.011" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peak volume with race-specific intensity. Execution quality matters more than hitting numbers."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume de pic avec une intensité spécifique à la course. La qualité d'exécution compte plus que les chiffres."
+          }
+        }
+      }
+    },
+    "wn.012" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peak weeks stack the specificity. The hard sessions are the ones that count, everything else supports them."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les semaines de pic empilent la spécificité. Les séances dures sont celles qui comptent, tout le reste les soutient."
+          }
+        }
+      }
+    },
+    "wn.013" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Protect sleep. Avoid new foods. Keep the routine boring."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Protégez votre sommeil. Évitez les nouveaux aliments. Gardez une routine ennuyeuse."
+          }
+        }
+      }
+    },
+    "wn.014" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Protect sleep. Eat normally. Get to the start line unhurried."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Protégez votre sommeil. Mangez normalement. Arrivez à la ligne de départ sans précipitation."
+          }
+        }
+      }
+    },
+    "wn.015" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quality layers onto your base. Two focused sessions this week, one for VO2max, one for threshold or race pace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La qualité se superpose à votre base. Deux séances ciblées cette semaine : une pour la VO2max, une pour le seuil ou l'allure de course."
+          }
+        }
+      }
+    },
+    "wn.016" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quality sits on top of your base. Two hard sessions this week. Keep easy days genuinely easy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La qualité repose sur votre base. Deux séances dures cette semaine. Gardez les jours faciles vraiment faciles."
+          }
+        }
+      }
+    },
+    "wn.017" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race-specific work. Intervals at race pace, long runs with structured blocks. This is the hardest week of the block, don't skimp on sleep."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Travail spécifique à la course. Fractionné à allure de course, sorties longues avec blocs structurés. C'est la semaine la plus dure du bloc, ne lésinez pas sur le sommeil."
+          }
+        }
+      }
+    },
+    "wn.018" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Second taper week. Even lighter volume, short sharp efforts. Anxiety spikes are normal. Trust the work already done."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deuxième semaine d'affûtage. Volume encore plus réduit, efforts courts et vifs. Les pics d'anxiété sont normaux. Faites confiance au travail déjà accompli."
+          }
+        }
+      }
+    },
+    "wn.019" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set the floor. Easy miles, conversational pace. Volume will build gradually over the next few weeks."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Posez les fondations. Kilomètres faciles, allure d'aisance. Le volume montera progressivement sur les prochaines semaines."
+          }
+        }
+      }
+    },
+    "wn.020" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short, easy, confident. The work is done, your job now is arriving rested."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Court, facile, confiant. Le travail est fait, votre mission maintenant est d'arriver reposé."
+          }
+        }
+      }
+    },
+    "wn.021" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stay consistent. Easy days easy, long run steady."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restez régulier. Jours faciles faciles, sortie longue régulière."
+          }
+        }
+      }
+    },
+    "wn.022" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume drops about 25%. If anything felt overloaded the last two weeks, this is where it clears."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le volume baisse d'environ 25%. Si quelque chose semblait en surcharge ces deux dernières semaines, c'est ici que ça se dissipe."
+          }
+        }
+      }
+    },
+    "wn.023" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume drops, intensity stays sharp. You may feel flat, that's fatigue clearing, not fitness leaving (Mujika 2003)."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le volume baisse, l'intensité reste vive. Vous pouvez vous sentir plat : c'est la fatigue qui se dissipe, pas la forme qui s'en va (Mujika 2003)."
+          }
+        }
+      }
+    },
+    "wn.024" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume ticks up again. Most runs should still feel easy. The aerobic engine is quietly compounding."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le volume remonte. La plupart des sorties doivent encore sembler faciles. Le moteur aérobie se construit tranquillement."
+          }
+        }
+      }
+    },
+    "wn.025" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race week"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semaine de course"
+          }
+        }
+      }
+    },
+    "wn.026" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Post-race recovery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération post-course"
+          }
+        }
+      }
+    },
+    "wn.027" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cutback week"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semaine de récupération"
+          }
+        }
+      }
+    },
+    "wn.body.lrExtends" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long run extends to around %lld min this week."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La sortie longue s'allonge à environ %lld min cette semaine."
+          }
+        }
+      }
+    },
+    "wn.title.base" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aerobic base · Week %lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Base aérobie · Semaine %lld"
+          }
+        }
+      }
+    },
+    "wn.title.build" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Build · Week %lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Développement · Semaine %lld"
+          }
+        }
+      }
+    },
+    "wn.title.peak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peak · Week %lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pic · Semaine %lld"
+          }
+        }
+      }
+    },
+    "wn.title.taper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taper · Week %lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affûtage · Semaine %lld"
           }
         }
       }
