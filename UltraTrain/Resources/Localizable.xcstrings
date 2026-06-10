@@ -35239,6 +35239,1238 @@
         }
       }
     },
+    "stg.001" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Build phase: increase weight or difficulty. Add power movements. Quality over quantity, stop if form breaks down. Allow 4-6 hours between running and this session."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phase de développement : augmentez la charge ou la difficulté. Ajoutez des mouvements de puissance. La qualité prime sur la quantité, arrêtez si la technique se dégrade. Laissez 4-6 heures entre la course et cette séance."
+          }
+        }
+      }
+    },
+    "stg.002" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carry water and fuel for this session."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emportez de l'eau et de quoi vous alimenter pour cette séance."
+          }
+        }
+      }
+    },
+    "stg.003" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete rest. Body needs recovery after a big effort."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos complet. Le corps a besoin de récupérer après un gros effort."
+          }
+        }
+      }
+    },
+    "stg.004" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete rest. Let your body recover."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos complet. Laissez votre corps récupérer."
+          }
+        }
+      }
+    },
+    "stg.005" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete rest. Recover from a big effort."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos complet. Récupérez d'un gros effort."
+          }
+        }
+      }
+    },
+    "stg.006" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy jog. Shake out race legs."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile. Évacuez les jambes de course."
+          }
+        }
+      }
+    },
+    "stg.007" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy pre-long-run loosener."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déverrouillage facile avant la sortie longue."
+          }
+        }
+      }
+    },
+    "stg.008" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy recovery run. Keep it relaxed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing de récupération facile. Restez relâché."
+          }
+        }
+      }
+    },
+    "stg.009" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy recovery run. Shake out race legs."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing de récupération facile. Évacuez les jambes de course."
+          }
+        }
+      }
+    },
+    "stg.010" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run at conversational pace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile à allure d'aisance."
+          }
+        }
+      }
+    },
+    "stg.011" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run with strides at the end. Stay sharp."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile avec des lignes droites à la fin. Restez vif."
+          }
+        }
+      }
+    },
+    "stg.012" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run. Building back."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile. On reconstruit."
+          }
+        }
+      }
+    },
+    "stg.013" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run. Freshening up."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile. On retrouve de la fraîcheur."
+          }
+        }
+      }
+    },
+    "stg.014" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run. Gradually rebuilding."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile. Reconstruction progressive."
+          }
+        }
+      }
+    },
+    "stg.015" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run. Keep legs loose before race week."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile. Gardez les jambes souples avant la semaine de course."
+          }
+        }
+      }
+    },
+    "stg.016" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run. Keep legs loose."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile. Gardez les jambes souples."
+          }
+        }
+      }
+    },
+    "stg.017" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run. Keep routine going."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile. Maintenez la routine."
+          }
+        }
+      }
+    },
+    "stg.018" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run. Legs should be feeling better."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile. Les jambes devraient aller mieux."
+          }
+        }
+      }
+    },
+    "stg.019" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run. Normal routine."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile. Routine normale."
+          }
+        }
+      }
+    },
+    "stg.020" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run. Normal start to the week."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile. Début de semaine normal."
+          }
+        }
+      }
+    },
+    "stg.021" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run. Normal week structure, slightly reduced volume."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile. Structure de semaine normale, volume légèrement réduit."
+          }
+        }
+      }
+    },
+    "stg.022" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run. Pre-long-run loosener."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile. Déverrouillage avant la sortie longue."
+          }
+        }
+      }
+    },
+    "stg.023" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run. Shake out race effort."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile. Évacuez l'effort de course."
+          }
+        }
+      }
+    },
+    "stg.024" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run. Start freshening up."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile. Commencez à retrouver de la fraîcheur."
+          }
+        }
+      }
+    },
+    "stg.025" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run. Starting to freshen up."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile. La fraîcheur revient."
+          }
+        }
+      }
+    },
+    "stg.026" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy shakeout if legs allow. Walk/stretch if not."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déverrouillage facile si les jambes le permettent. Marche/étirements sinon."
+          }
+        }
+      }
+    },
+    "stg.027" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy shakeout. Recover from race effort."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déverrouillage facile. Récupérez de l'effort de course."
+          }
+        }
+      }
+    },
+    "stg.028" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First easy jog. Short and gentle."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premier footing facile. Court et doux."
+          }
+        }
+      }
+    },
+    "stg.029" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First easy jog. Very short and gentle."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premier footing facile. Très court et doux."
+          }
+        }
+      }
+    },
+    "stg.030" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foundation phase: focus on learning proper form with moderate loads. Build the strength base that will support harder training later. Take 60-90 sec rest between sets."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phase de fondation : concentrez-vous sur l'apprentissage de la bonne technique avec des charges modérées. Construisez la base de force qui soutiendra un entraînement plus dur ensuite. Prenez 60-90 s de récup entre les séries."
+          }
+        }
+      }
+    },
+    "stg.031" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gentle activation to promote blood flow and recovery. Stop immediately if anything feels off."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activation douce pour favoriser la circulation et la récupération. Arrêtez immédiatement si quelque chose cloche."
+          }
+        }
+      }
+    },
+    "stg.032" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervals at moderate effort. Maintain sharpness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fractionné à effort modéré. Conservez la vivacité."
+          }
+        }
+      }
+    },
+    "stg.033" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervals at normal intensity, slightly reduced volume. Stay sharp."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fractionné à intensité normale, volume légèrement réduit. Restez vif."
+          }
+        }
+      }
+    },
+    "stg.034" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep it controlled and focused. Listen to your body."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restez contrôlé et concentré. Écoutez votre corps."
+          }
+        }
+      }
+    },
+    "stg.035" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light activation only. No soreness allowed, your race is close. These movements keep muscles firing without creating fatigue."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activation légère uniquement. Pas de courbatures, votre course approche. Ces mouvements gardent les muscles actifs sans créer de fatigue."
+          }
+        }
+      }
+    },
+    "stg.036" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light activation routine. Wake up the stabilizers before your next run."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Routine d'activation légère. Réveillez les stabilisateurs avant votre prochaine sortie."
+          }
+        }
+      }
+    },
+    "stg.037" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long run at reduced volume. Save energy for race week."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue à volume réduit. Gardez de l'énergie pour la semaine de course."
+          }
+        }
+      }
+    },
+    "stg.038" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moderate intervals. Reintroduce leg speed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fractionné modéré. Réintroduisez la vitesse de jambes."
+          }
+        }
+      }
+    },
+    "stg.039" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moderate intervals. Reintroduce quality, don't force it."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fractionné modéré. Réintroduisez la qualité, sans forcer."
+          }
+        }
+      }
+    },
+    "stg.040" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moderate tempo. Rebuild threshold feel without overloading fresh-from-race legs."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo modéré. Retrouvez la sensation de seuil sans surcharger des jambes encore marquées par la course."
+          }
+        }
+      }
+    },
+    "stg.041" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moderately shortened long run. Back toward normal."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue modérément raccourcie. Retour vers la normale."
+          }
+        }
+      }
+    },
+    "stg.042" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Near-normal long run. Back on track."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue presque normale. De retour sur les rails."
+          }
+        }
+      }
+    },
+    "stg.043" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opener intervals. Stay sharp for race."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fractionné d'ouverture. Restez vif pour la course."
+          }
+        }
+      }
+    },
+    "stg.044" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peak maintenance: keep loads moderate, reduce volume. You're preserving strength, not building it. 2-3 sets max per exercise."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintien en phase de pic : gardez des charges modérées, réduisez le volume. Vous préservez la force, vous ne la construisez plus. 2-3 séries max par exercice."
+          }
+        }
+      }
+    },
+    "stg.045" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quick maintenance session: hit the key movements with reduced volume. 2-3 sets, don't push to failure. Keep the neuromuscular connection alive."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Séance de maintien rapide : faites les mouvements clés à volume réduit. 2-3 séries, n'allez pas à l'échec. Gardez la connexion neuromusculaire active."
+          }
+        }
+      }
+    },
+    "stg.046" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day after your race."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos après votre course."
+          }
+        }
+      }
+    },
+    "stg.047" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day. Begin carb-loading if needed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos. Commencez la recharge glucidique si besoin."
+          }
+        }
+      }
+    },
+    "stg.048" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day. Normal weekly start."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos. Début de semaine normal."
+          }
+        }
+      }
+    },
+    "stg.049" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day. Prep gear and nutrition."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos. Préparez le matériel et la nutrition."
+          }
+        }
+      }
+    },
+    "stg.050" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day. Prep gear, nutrition, and race plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos. Préparez le matériel, la nutrition et le plan de course."
+          }
+        }
+      }
+    },
+    "stg.051" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day. Prep gear, nutrition, race plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos. Préparez matériel, nutrition, plan de course."
+          }
+        }
+      }
+    },
+    "stg.052" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day. Prepare gear and nutrition."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos. Préparez le matériel et la nutrition."
+          }
+        }
+      }
+    },
+    "stg.053" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day. Prepare gear."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos. Préparez le matériel."
+          }
+        }
+      }
+    },
+    "stg.054" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day. Race week starts tomorrow."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos. La semaine de course commence demain."
+          }
+        }
+      }
+    },
+    "stg.055" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day. Visualize your race. Stay confident."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos. Visualisez votre course. Restez confiant."
+          }
+        }
+      }
+    },
+    "stg.056" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest. Walk if you feel like it."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos. Marchez si vous en avez envie."
+          }
+        }
+      }
+    },
+    "stg.057" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short easy run. Light strides at the end."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile court. Lignes droites légères à la fin."
+          }
+        }
+      }
+    },
+    "stg.058" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short easy run."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile court."
+          }
+        }
+      }
+    },
+    "stg.059" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short intervals at moderate effort. Reawaken leg speed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fractionné court à effort modéré. Réveillez la vitesse de jambes."
+          }
+        }
+      }
+    },
+    "stg.060" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short opener intervals. Stay sharp for race."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fractionné d'ouverture court. Restez vif pour la course."
+          }
+        }
+      }
+    },
+    "stg.061" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short shakeout. Conversational pace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déverrouillage court. Allure d'aisance."
+          }
+        }
+      }
+    },
+    "stg.062" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short threshold tempo, dress rehearsal of race effort. Stay sharp."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo court au seuil, répétition générale de l'effort de course. Restez vif."
+          }
+        }
+      }
+    },
+    "stg.063" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shortened long run. Rebuild aerobic base gently."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue raccourcie. Reconstruisez la base aérobie en douceur."
+          }
+        }
+      }
+    },
+    "stg.064" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shortened long run. Rebuild the aerobic engine."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue raccourcie. Reconstruisez le moteur aérobie."
+          }
+        }
+      }
+    },
+    "stg.065" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uphill session at moderate effort. Rebuild vertical strength."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Séance en côte à effort modéré. Reconstruisez la force verticale."
+          }
+        }
+      }
+    },
+    "stg.066" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uphill session, slightly reduced. Maintain vertical efficiency."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Séance en côte, légèrement réduite. Maintenez l'efficacité verticale."
+          }
+        }
+      }
+    },
+    "stg.067" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Very short shakeout. 10-15 min to stay loose."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déverrouillage très court. 10-15 min pour rester souple."
+          }
+        }
+      }
+    },
+    "stg.068" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos."
+          }
+        }
+      }
+    },
+    "stg.069" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B-Race"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Course B"
+          }
+        }
+      }
+    },
+    "stg.070" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C-Race"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Course C"
+          }
+        }
+      }
+    },
+    "stg.071" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Practice your race-day nutrition plan. Train your gut."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Testez votre plan nutritionnel de course. Entraînez votre système digestif."
+          }
+        }
+      }
+    },
+    "stg.carb" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Aim for ~%1$lld–%2$lld g carbs/hour (gels, bars, or real food)."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Visez ~%1$lld à %2$lld g de glucides/heure (gels, barres ou vraie nourriture)."
+          }
+        }
+      }
+    },
+    "stg.duration" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duration: ~%lld min"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durée : ~%lld min"
+          }
+        }
+      }
+    },
+    "stg.raceDayExec" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RACE DAY: %@. Execute your plan. Trust your fitness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JOUR J : %@. Déroulez votre plan. Faites confiance à votre forme."
+          }
+        }
+      }
+    },
+    "stg.raceDayHard" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RACE DAY: %@. Use as a hard training effort."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JOUR J : %@. À utiliser comme un effort d'entraînement dur."
+          }
+        }
+      }
+    },
+    "stg.raceExec" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RACE: %1$@ (%2$@%3$@). Execute your plan. Trust your fitness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "COURSE : %1$@ (%2$@%3$@). Déroulez votre plan. Faites confiance à votre forme."
+          }
+        }
+      }
+    },
+    "stg.raceHard" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RACE: %1$@ (%2$@%3$@). Use as a hard training effort."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "COURSE : %1$@ (%2$@%3$@). À utiliser comme un effort d'entraînement dur."
+          }
+        }
+      }
+    },
     "str.loc.gym" : {
       "localizations" : {
         "en" : {
