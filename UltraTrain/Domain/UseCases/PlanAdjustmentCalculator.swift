@@ -180,7 +180,7 @@ enum PlanAdjustmentCalculator {
             type: .reduceVolumeAfterLowAdherence,
             severity: severity,
             title: String(localized: "pac2.reduceVol.title", defaultValue: "Reduce This Week's Volume"),
-            message: "Last week's adherence was \(Int(adherence * 100))%. Reduce remaining sessions by \(pct)% to ease back in.\(peakNote)",
+            message: String(localized: "pac2.reduceVol.msg", defaultValue: "Last week's adherence was \(Int(adherence * 100))%. Reduce remaining sessions by \(pct)% to ease back in.\(peakNote)"),
             actionLabel: String(localized: "pac2.reduceVol.action", defaultValue: "Reduce Volume"),
             affectedSessionIds: affectedIds
         ))
