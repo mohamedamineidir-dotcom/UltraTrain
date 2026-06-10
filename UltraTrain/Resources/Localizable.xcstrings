@@ -25532,6 +25532,198 @@
         }
       }
     },
+    "ns.act.dismiss" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dismiss"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ignorer"
+          }
+        }
+      }
+    },
+    "ns.act.skipSession" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip Session"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passer la séance"
+          }
+        }
+      }
+    },
+    "ns.act.startRun" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start a Run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Démarrer une sortie"
+          }
+        }
+      }
+    },
+    "ns.act.viewProgress" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View Progress"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voir la progression"
+          }
+        }
+      }
+    },
+    "ns.act.viewRace" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View Race"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voir la course"
+          }
+        }
+      }
+    },
+    "ns.act.viewSession" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View Session"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voir la séance"
+          }
+        }
+      }
+    },
+    "ns.body.fewDays" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It's been a few days since your last run. Lace up and get out there!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cela fait quelques jours depuis votre dernière sortie. Enfilez vos chaussures et sortez !"
+          }
+        }
+      }
+    },
+    "ns.title.raceCountdown" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race Countdown"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compte à rebours de la course"
+          }
+        }
+      }
+    },
+    "ns.title.restDay" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest Day"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos"
+          }
+        }
+      }
+    },
+    "ns.title.timeToRun" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time to Run!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C'est l'heure de courir !"
+          }
+        }
+      }
+    },
+    "ns.title.tomorrow" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tomorrow's Training"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entraînement de demain"
+          }
+        }
+      }
+    },
+    "ns.title.weekly" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekly Training Summary"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Résumé d'entraînement hebdomadaire"
+          }
+        }
+      }
+    },
     "of %@" : {
       "localizations" : {
         "fr" : {
@@ -25766,6 +25958,214 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Passer en footing de récupération"
+          }
+        }
+      }
+    },
+    "pac2.cleanup.action" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip All Missed"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passer toutes les manquées"
+          }
+        }
+      }
+    },
+    "pac2.cleanup.msg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld past sessions are unmarked. Mark them as skipped to keep your plan tidy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld séances passées ne sont pas marquées. Marquez-les comme passées pour garder votre plan en ordre."
+          }
+        }
+      }
+    },
+    "pac2.cleanup.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clean Up Missed Sessions"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nettoyer les séances manquées"
+          }
+        }
+      }
+    },
+    "pac2.convertRec.action" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Convert to Recovery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passer en récupération"
+          }
+        }
+      }
+    },
+    "pac2.convertRec.msg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No training logged in %lld+ days. Ease back with a lighter recovery week."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun entraînement enregistré depuis %lld+ jours. Reprenez en douceur avec une semaine de récupération allégée."
+          }
+        }
+      }
+    },
+    "pac2.convertRec.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Convert to Recovery Week"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Convertir en semaine de récupération"
+          }
+        }
+      }
+    },
+    "pac2.peakNote" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " You're in the peak phase, every session counts toward race day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Vous êtes en phase de pic, chaque séance compte pour le jour J."
+          }
+        }
+      }
+    },
+    "pac2.reduceVol.action" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reduce Volume"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduire le volume"
+          }
+        }
+      }
+    },
+    "pac2.reduceVol.msg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last week's adherence was %1$lld%%. Reduce remaining sessions by %2$lld%% to ease back in.%3$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'assiduité de la semaine dernière était de %1$lld%%. Réduisez les séances restantes de %2$lld%% pour reprendre en douceur.%3$@"
+          }
+        }
+      }
+    },
+    "pac2.reduceVol.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reduce This Week's Volume"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduire le volume de cette semaine"
+          }
+        }
+      }
+    },
+    "pac2.reschedule.action" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reschedule"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reprogrammer"
+          }
+        }
+      }
+    },
+    "pac2.reschedule.msg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You missed your %1$@ session. Move it to %2$@?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous avez manqué votre séance %1$@. La déplacer au %2$@ ?"
+          }
+        }
+      }
+    },
+    "pac2.reschedule.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reschedule %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reprogrammer %@"
           }
         }
       }
