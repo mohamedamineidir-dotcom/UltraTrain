@@ -30935,6 +30935,998 @@
         }
       }
     },
+    "sk.001" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A couple motivation dips noted. No changes yet, reach out if it persists."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quelques baisses de motivation notées. Aucun changement pour l'instant, signalez-le si cela persiste."
+          }
+        }
+      }
+    },
+    "sk.002" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adjust for adherence"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajuster selon l'assiduité"
+          }
+        }
+      }
+    },
+    "sk.003" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All remaining sessions this week should be rest or gentle cross-training (swimming, cycling). Do not run through an injury."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toutes les séances restantes de la semaine devraient être du repos ou du cross-training doux (natation, vélo). Ne courez pas sur une blessure."
+          }
+        }
+      }
+    },
+    "sk.004" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel remaining"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annuler les séances restantes"
+          }
+        }
+      }
+    },
+    "sk.005" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consider easing next hard session"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envisagez d'alléger la prochaine séance dure"
+          }
+        }
+      }
+    },
+    "sk.006" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Convert to easy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Convertir en facile"
+          }
+        }
+      }
+    },
+    "sk.007" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Don't try to make up missed sessions. A single miss is meaningless."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "N'essayez pas de rattraper les séances manquées. Une seule séance manquée n'a aucune importance."
+          }
+        }
+      }
+    },
+    "sk.008" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ease next hard session"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allégez la prochaine séance dure"
+          }
+        }
+      }
+    },
+    "sk.009" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ease off while unwell"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Levez le pied tant que vous êtes souffrant"
+          }
+        }
+      }
+    },
+    "sk.010" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ease off, fatigue pattern detected"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Levez le pied, schéma de fatigue détecté"
+          }
+        }
+      }
+    },
+    "sk.011" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ease slightly"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allégez légèrement"
+          }
+        }
+      }
+    },
+    "sk.012" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fatigue noted. A single rest is often all you need, no plan changes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fatigue notée. Un seul jour de repos suffit souvent, aucun changement au plan."
+          }
+        }
+      }
+    },
+    "sk.013" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fatigue noted. As a newer runner, listen to your body, you can ease the next hard session if needed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fatigue notée. En tant que coureur débutant, écoutez votre corps : vous pouvez alléger la prochaine séance dure si besoin."
+          }
+        }
+      }
+    },
+    "sk.014" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frequent time-based skips. The plan might not match your schedule, consider adjusting your preferred runs per week."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Séances souvent manquées par manque de temps. Le plan ne correspond peut-être pas à votre emploi du temps : envisagez d'ajuster votre nombre de séances par semaine."
+          }
+        }
+      }
+    },
+    "sk.015" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hard training suppresses immunity. Remaining hard sessions this week converted to easy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'entraînement intense affaiblit l'immunité. Les séances dures restantes de la semaine sont converties en facile."
+          }
+        }
+      }
+    },
+    "sk.016" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If an athlete misses for non-physiological reasons, the best response is nothing."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si un athlète manque une séance pour des raisons non physiologiques, la meilleure réponse est de ne rien faire."
+          }
+        }
+      }
+    },
+    "sk.017" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Illness noted. Remaining hard sessions eased off. Light reduction next week to support recovery."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maladie notée. Séances dures restantes allégées. Légère réduction la semaine prochaine pour soutenir la récupération."
+          }
+        }
+      }
+    },
+    "sk.018" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Injury reported. All remaining sessions cancelled. Next week significantly reduced. Do NOT run through pain, cross-train if possible. See a professional if pain persists beyond 48-72h."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blessure signalée. Toutes les séances restantes sont annulées. Semaine prochaine fortement réduite. Ne courez PAS sur la douleur, faites du cross-training si possible. Consultez un professionnel si la douleur persiste au-delà de 48-72h."
+          }
+        }
+      }
+    },
+    "sk.019" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lighter next week"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semaine prochaine allégée"
+          }
+        }
+      }
+    },
+    "sk.020" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lighter week after illness"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semaine allégée après la maladie"
+          }
+        }
+      }
+    },
+    "sk.021" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logged as menstrual-cycle skip. Symptom-specific options will surface separately if you flagged bleed-day or PMS symptoms."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistré comme séance manquée liée au cycle menstruel. Des options spécifiques aux symptômes apparaîtront séparément si vous avez signalé des symptômes de règles ou de SPM."
+          }
+        }
+      }
+    },
+    "sk.022" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Multiple illness skips logged in the last 2 weeks. Two-week stair-step reduction in place, return to full load only when symptom-free 48h+. Persistent illness > 10 days warrants a doctor."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plusieurs séances manquées pour maladie ces 2 dernières semaines. Réduction par paliers sur deux semaines en place ; reprise de la charge complète seulement après 48h+ sans symptômes. Une maladie persistante > 10 jours justifie une consultation médicale."
+          }
+        }
+      }
+    },
+    "sk.023" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Multiple injury skips logged in the last 2 weeks. Two-week stair-step rebuild in place, return to running only when pain-free, and if pain returns or persists, see a sports-med professional."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plusieurs séances manquées pour blessure ces 2 dernières semaines. Reprise par paliers sur deux semaines en place ; retour à la course seulement sans douleur, et si la douleur revient ou persiste, consultez un médecin du sport."
+          }
+        }
+      }
+    },
+    "sk.024" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Multiple sessions skipped recently. Small adjustment to keep the plan achievable."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plusieurs séances manquées récemment. Petit ajustement pour garder le plan réalisable."
+          }
+        }
+      }
+    },
+    "sk.025" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Off day, everyone has them. No plan changes needed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour sans, tout le monde en a. Aucun changement au plan nécessaire."
+          }
+        }
+      }
+    },
+    "sk.026" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recurring fatigue detected. Easing intensity this week."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fatigue récurrente détectée. Allègement de l'intensité cette semaine."
+          }
+        }
+      }
+    },
+    "sk.027" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recurring fatigue detected. Light volume reduction next week."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fatigue récurrente détectée. Légère réduction du volume la semaine prochaine."
+          }
+        }
+      }
+    },
+    "sk.028" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recurring motivation dips. Slight ease-up suggested, often this helps reignite drive."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Baisses de motivation récurrentes. Un léger relâchement est suggéré, cela aide souvent à raviver l'envie."
+          }
+        }
+      }
+    },
+    "sk.029" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recurring soreness. Next hard session eased as precaution. Consider mobility work."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courbatures récurrentes. Prochaine séance dure allégée par précaution. Pensez au travail de mobilité."
+          }
+        }
+      }
+    },
+    "sk.030" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reduce volume"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduire le volume"
+          }
+        }
+      }
+    },
+    "sk.031" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reduced load after injury"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Charge réduite après blessure"
+          }
+        }
+      }
+    },
+    "sk.032" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repeated motivation dips can signal mental overload. A tiny volume reduction can help reset."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Des baisses de motivation répétées peuvent signaler une surcharge mentale. Une petite réduction du volume peut aider à se réinitialiser."
+          }
+        }
+      }
+    },
+    "sk.033" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reschedule long run?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reprogrammer la sortie longue ?"
+          }
+        }
+      }
+    },
+    "sk.034" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reschedule"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reprogrammer"
+          }
+        }
+      }
+    },
+    "sk.035" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest, injury reported"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos, blessure signalée"
+          }
+        }
+      }
+    },
+    "sk.036" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session skipped. No plan adaptation needed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Séance manquée. Aucune adaptation du plan nécessaire."
+          }
+        }
+      }
+    },
+    "sk.037" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Several sessions skipped recently. A small adjustment helps keep the plan realistic."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plusieurs séances manquées récemment. Un petit ajustement aide à garder le plan réaliste."
+          }
+        }
+      }
+    },
+    "sk.038" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skipped due to weather. No training adaptation needed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Séance manquée à cause de la météo. Aucune adaptation de l'entraînement nécessaire."
+          }
+        }
+      }
+    },
+    "sk.039" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skipped for time. No plan changes needed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Séance manquée par manque de temps. Aucun changement au plan nécessaire."
+          }
+        }
+      }
+    },
+    "sk.040" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slight ease-up"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Léger relâchement"
+          }
+        }
+      }
+    },
+    "sk.041" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soreness noted. Rest was the right call. No plan changes needed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courbatures notées. Le repos était le bon choix. Aucun changement au plan nécessaire."
+          }
+        }
+      }
+    },
+    "sk.042" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stair-step back the week after"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reprise par paliers la semaine suivante"
+          }
+        }
+      }
+    },
+    "sk.043" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Two-week ease-off, illness pattern"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allègement sur deux semaines, schéma de maladie"
+          }
+        }
+      }
+    },
+    "sk.044" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " The long run is the most important session for endurance development. Consider rescheduling to another day this week if possible."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " La sortie longue est la séance la plus importante pour le développement de l'endurance. Envisagez de la reprogrammer à un autre jour cette semaine si possible."
+          }
+        }
+      }
+    },
+    "sk.045" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " (Peak phase, every session counts.)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " (Phase de pic, chaque séance compte.)"
+          }
+        }
+      }
+    },
+    "sk.046" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " (Race in 1-3 weeks, every session matters.)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " (Course dans 1-3 semaines, chaque séance compte.)"
+          }
+        }
+      }
+    },
+    "sk.047" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " (Race week, protect freshness, no experiments.)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " (Semaine de course, préservez la fraîcheur, pas d'expériences.)"
+          }
+        }
+      }
+    },
+    "sk.048" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " (Race in days, minimum interventions only.)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " (Course dans quelques jours, interventions minimales uniquement.)"
+          }
+        }
+      }
+    },
+    "sk.049" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " You've logged multiple illness skips recently, keeping load lighter for two weeks instead of one."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Vous avez enregistré plusieurs séances manquées pour maladie récemment ; la charge reste allégée sur deux semaines au lieu d'une."
+          }
+        }
+      }
+    },
+    "sk.050" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Return to normal the week after."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Retour à la normale la semaine suivante."
+          }
+        }
+      }
+    },
+    "sk.051" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " You've logged multiple injury skips recently, extending the reduction over two weeks instead of one."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " Vous avez enregistré plusieurs séances manquées pour blessure récemment ; la réduction est étendue sur deux semaines au lieu d'une."
+          }
+        }
+      }
+    },
+    "sk.i.baseConvert" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're still building your base. If fatigue persists, converting %@ to easy could help."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous construisez encore votre base. Si la fatigue persiste, convertir %@ en facile pourrait aider."
+          }
+        }
+      }
+    },
+    "sk.i.fatigueConvert" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Multiple fatigue signals recently. Converting %@ to easy this week."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plusieurs signaux de fatigue récemment. Conversion de %@ en facile cette semaine."
+          }
+        }
+      }
+    },
+    "sk.i.fatiguePct" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fatigue pattern detected. Reducing next week ~%lld%% to help recovery."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schéma de fatigue détecté. Réduction de ~%lld%% la semaine prochaine pour favoriser la récupération."
+          }
+        }
+      }
+    },
+    "sk.i.immuneReduce" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reducing next week by ~%1$lld%% to support immune recovery.%2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduction de ~%1$lld%% la semaine prochaine pour soutenir la récupération immunitaire.%2$@"
+          }
+        }
+      }
+    },
+    "sk.i.injuryReduce" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reducing next week by ~%1$lld%%. Return to running only when pain-free. Consider cross-training (swimming, cycling) to maintain fitness.%2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduction de ~%1$lld%% la semaine prochaine. Retour à la course seulement sans douleur. Pensez au cross-training (natation, vélo) pour maintenir la forme.%2$@"
+          }
+        }
+      }
+    },
+    "sk.i.keyMoved" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Key session missed for time. It can be moved to %@ if your schedule allows."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Séance clé manquée par manque de temps. Elle peut être déplacée au %@ si votre emploi du temps le permet."
+          }
+        }
+      }
+    },
+    "sk.i.lrMove" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The long run builds endurance that can't be replaced by other sessions. Move it to %@ if possible."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La sortie longue développe une endurance que les autres séances ne peuvent remplacer. Déplacez-la au %@ si possible."
+          }
+        }
+      }
+    },
+    "sk.i.reschedule" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reschedule %@?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reprogrammer %@ ?"
+          }
+        }
+      }
+    },
+    "sk.i.soreConvert" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recurring soreness, converting %@ to easy to protect against injury."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courbatures récurrentes, conversion de %@ en facile pour prévenir les blessures."
+          }
+        }
+      }
+    },
+    "sk.i.week2Immune" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week 2 stays ~%lld%% under normal so the immune system finishes recovering before full load resumes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La semaine 2 reste ~%lld%% sous la normale pour que le système immunitaire finisse de récupérer avant la reprise de la charge complète."
+          }
+        }
+      }
+    },
+    "sk.i.week2Injury" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week 2 stays ~%lld%% under normal, re-injury risk is highest when ramp is too fast. Confirm pain-free running before adding back."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La semaine 2 reste ~%lld%% sous la normale ; le risque de rechute est maximal quand la remontée est trop rapide. Confirmez une course sans douleur avant de remettre de la charge."
+          }
+        }
+      }
+    },
     "str.loc.gym" : {
       "localizations" : {
         "en" : {

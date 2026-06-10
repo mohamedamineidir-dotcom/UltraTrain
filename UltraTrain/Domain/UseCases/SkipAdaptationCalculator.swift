@@ -6,8 +6,8 @@ import Foundation
 /// A single missed session has essentially ZERO measurable impact on fitness.
 /// **Mujika & Padilla (2000, 2003)**: VO2max drops ~7% only after 2+ weeks of no training.
 /// **Hickson et al. (1985)**: Reducing frequency by 1/3 for 15 weeks maintained VO2max.
-/// **Koop**: "Don't try to make up missed sessions. A single miss is meaningless."
-/// **Roche**: "If an athlete misses for non-physiological reasons, the best response is nothing."
+/// **Koop**: String(localized: "sk.007", defaultValue: "Don't try to make up missed sessions. A single miss is meaningless.")
+/// **Roche**: String(localized: "sk.016", defaultValue: "If an athlete misses for non-physiological reasons, the best response is nothing.")
 ///
 /// ## When adaptation IS warranted
 /// - **Illness**: Immune suppression is real. Nieman (1994) showed training while sick
@@ -175,7 +175,7 @@ enum SkipAdaptationCalculator {
         case .weather:
             result = Adaptation(
                 recommendations: [],
-                note: "Skipped due to weather. No training adaptation needed."
+                note: String(localized: "sk.038", defaultValue: "Skipped due to weather. No training adaptation needed.")
             )
 
         case .other:
@@ -189,13 +189,13 @@ enum SkipAdaptationCalculator {
             // case so the two pipelines don't double-recommend.
             result = Adaptation(
                 recommendations: [],
-                note: "Logged as menstrual-cycle skip. Symptom-specific options will surface separately if you flagged bleed-day or PMS symptoms."
+                note: String(localized: "sk.021", defaultValue: "Logged as menstrual-cycle skip. Symptom-specific options will surface separately if you flagged bleed-day or PMS symptoms.")
             )
         }
 
         // Issue #3: Long run skips, special handling (Pfitzinger: "most important session")
         if isLongRun && reason != .weather && reason != .injury && reason != .illness {
-            let lrNote = " The long run is the most important session for endurance development. Consider rescheduling to another day this week if possible."
+            let lrNote = String(localized: "sk.044", defaultValue: " The long run is the most important session for endurance development. Consider rescheduling to another day this week if possible.")
             result = Adaptation(
                 recommendations: result.recommendations + longRunRescheduleRecommendation(context: context),
                 note: result.note + lrNote
@@ -210,7 +210,7 @@ enum SkipAdaptationCalculator {
                     if rec.severity == .suggestion {
                         upgraded = PlanAdjustmentRecommendation(
                             id: rec.id, type: rec.type, severity: .recommended,
-                            title: rec.title, message: rec.message + " (Peak phase, every session counts.)",
+                            title: rec.title, message: rec.message + String(localized: "sk.045", defaultValue: " (Peak phase, every session counts.)"),
                             actionLabel: rec.actionLabel, affectedSessionIds: rec.affectedSessionIds,
                             volumeAdjustments: rec.volumeAdjustments
                         )
@@ -229,9 +229,9 @@ enum SkipAdaptationCalculator {
         if proximity.bumpsSeverity && !result.recommendations.isEmpty {
             let suffix: String? = {
                 switch proximity {
-                case .approaching:    return " (Race in 1-3 weeks, every session matters.)"
-                case .raceWeek:       return " (Race week, protect freshness, no experiments.)"
-                case .taperLockdown:  return " (Race in days, minimum interventions only.)"
+                case .approaching:    return String(localized: "sk.046", defaultValue: " (Race in 1-3 weeks, every session matters.)")
+                case .raceWeek:       return String(localized: "sk.047", defaultValue: " (Race week, protect freshness, no experiments.)")
+                case .taperLockdown:  return String(localized: "sk.048", defaultValue: " (Race in days, minimum interventions only.)")
                 default:              return nil
                 }
             }()
@@ -304,9 +304,9 @@ enum SkipAdaptationCalculator {
                 id: UUID(),
                 type: .swapToRecovery,
                 severity: .recommended,
-                title: "Ease off while unwell",
-                message: "Hard training suppresses immunity. Remaining hard sessions this week converted to easy.",
-                actionLabel: "Convert to easy",
+                title: String(localized: "sk.009", defaultValue: "Ease off while unwell"),
+                message: String(localized: "sk.015", defaultValue: "Hard training suppresses immunity. Remaining hard sessions this week converted to easy."),
+                actionLabel: String(localized: "sk.006", defaultValue: "Convert to easy"),
                 affectedSessionIds: remainingHard.map(\.id)
             ))
         }
@@ -332,15 +332,15 @@ enum SkipAdaptationCalculator {
             if !volumeAdj.isEmpty {
                 let pct = Int((1 - factor) * 100)
                 let extraNote = sustained
-                    ? " You've logged multiple illness skips recently, keeping load lighter for two weeks instead of one."
-                    : " Return to normal the week after."
+                    ? String(localized: "sk.049", defaultValue: " You've logged multiple illness skips recently, keeping load lighter for two weeks instead of one.")
+                    : String(localized: "sk.050", defaultValue: " Return to normal the week after.")
                 recs.append(PlanAdjustmentRecommendation(
                     id: UUID(),
                     type: .reduceFatigueLoad,
                     severity: sustained ? .urgent : .recommended,
-                    title: sustained ? "Two-week ease-off, illness pattern" : "Lighter week after illness",
-                    message: "Reducing next week by ~\(pct)% to support immune recovery.\(extraNote)",
-                    actionLabel: "Reduce volume",
+                    title: sustained ? String(localized: "sk.043", defaultValue: "Two-week ease-off, illness pattern") : String(localized: "sk.020", defaultValue: "Lighter week after illness"),
+                    message: String(localized: "sk.i.immuneReduce", defaultValue: "Reducing next week by ~\(pct)% to support immune recovery.\(extraNote)"),
+                    actionLabel: String(localized: "sk.030", defaultValue: "Reduce volume"),
                     affectedSessionIds: volumeAdj.map(\.sessionId),
                     volumeAdjustments: volumeAdj
                 ))
@@ -361,9 +361,9 @@ enum SkipAdaptationCalculator {
                     id: UUID(),
                     type: .reduceFatigueLoad,
                     severity: .recommended,
-                    title: "Stair-step back the week after",
-                    message: "Week 2 stays ~\(pct)% under normal so the immune system finishes recovering before full load resumes.",
-                    actionLabel: "Reduce volume",
+                    title: String(localized: "sk.042", defaultValue: "Stair-step back the week after"),
+                    message: String(localized: "sk.i.week2Immune", defaultValue: "Week 2 stays ~\(pct)% under normal so the immune system finishes recovering before full load resumes."),
+                    actionLabel: String(localized: "sk.030", defaultValue: "Reduce volume"),
                     affectedSessionIds: volumeAdj.map(\.sessionId),
                     volumeAdjustments: volumeAdj
                 ))
@@ -372,9 +372,9 @@ enum SkipAdaptationCalculator {
 
         let note: String
         if sustained {
-            note = "Multiple illness skips logged in the last 2 weeks. Two-week stair-step reduction in place, return to full load only when symptom-free 48h+. Persistent illness > 10 days warrants a doctor."
+            note = String(localized: "sk.022", defaultValue: "Multiple illness skips logged in the last 2 weeks. Two-week stair-step reduction in place, return to full load only when symptom-free 48h+. Persistent illness > 10 days warrants a doctor.")
         } else {
-            note = "Illness noted. Remaining hard sessions eased off. Light reduction next week to support recovery."
+            note = String(localized: "sk.017", defaultValue: "Illness noted. Remaining hard sessions eased off. Light reduction next week to support recovery.")
         }
         return Adaptation(recommendations: recs, note: note)
     }
@@ -425,18 +425,18 @@ enum SkipAdaptationCalculator {
                             id: UUID(),
                             type: .swapToRecovery,
                             severity: .suggestion,
-                            title: "Consider easing next hard session",
-                            message: "You're still building your base. If fatigue persists, converting \(next.type.displayName) to easy could help.",
-                            actionLabel: "Convert to easy",
+                            title: String(localized: "sk.005", defaultValue: "Consider easing next hard session"),
+                            message: String(localized: "sk.i.baseConvert", defaultValue: "You're still building your base. If fatigue persists, converting \(next.type.displayName) to easy could help."),
+                            actionLabel: String(localized: "sk.006", defaultValue: "Convert to easy"),
                             affectedSessionIds: [next.id]
                         )],
-                        note: "Fatigue noted. As a newer runner, listen to your body, you can ease the next hard session if needed."
+                        note: String(localized: "sk.013", defaultValue: "Fatigue noted. As a newer runner, listen to your body, you can ease the next hard session if needed.")
                     )
                 }
             }
             return Adaptation(
                 recommendations: [],
-                note: "Fatigue noted. A single rest is often all you need, no plan changes."
+                note: String(localized: "sk.012", defaultValue: "Fatigue noted. A single rest is often all you need, no plan changes.")
             )
         }
 
@@ -452,13 +452,13 @@ enum SkipAdaptationCalculator {
                     id: UUID(),
                     type: .swapToRecovery,
                     severity: pattern >= .elevated ? .urgent : .recommended,
-                    title: "Ease off, fatigue pattern detected",
-                    message: "Multiple fatigue signals recently. Converting \(next.type.displayName) to easy this week.",
-                    actionLabel: "Convert to easy",
+                    title: String(localized: "sk.010", defaultValue: "Ease off, fatigue pattern detected"),
+                    message: String(localized: "sk.i.fatigueConvert", defaultValue: "Multiple fatigue signals recently. Converting \(next.type.displayName) to easy this week."),
+                    actionLabel: String(localized: "sk.006", defaultValue: "Convert to easy"),
                     affectedSessionIds: [next.id]
                 ))
             }
-            note = "Recurring fatigue detected. Easing intensity this week."
+            note = String(localized: "sk.026", defaultValue: "Recurring fatigue detected. Easing intensity this week.")
         } else {
             // Late in week: light reduction next week
             if let nextWeek = context.nextWeek {
@@ -470,15 +470,15 @@ enum SkipAdaptationCalculator {
                         id: UUID(),
                         type: .reduceFatigueLoad,
                         severity: pattern >= .elevated ? .urgent : .recommended,
-                        title: "Lighter next week",
-                        message: "Fatigue pattern detected. Reducing next week ~\(pct)% to help recovery.",
-                        actionLabel: "Reduce volume",
+                        title: String(localized: "sk.019", defaultValue: "Lighter next week"),
+                        message: String(localized: "sk.i.fatiguePct", defaultValue: "Fatigue pattern detected. Reducing next week ~\(pct)% to help recovery."),
+                        actionLabel: String(localized: "sk.030", defaultValue: "Reduce volume"),
                         affectedSessionIds: volumeAdj.map(\.sessionId),
                         volumeAdjustments: volumeAdj
                     ))
                 }
             }
-            note = "Recurring fatigue detected. Light volume reduction next week."
+            note = String(localized: "sk.027", defaultValue: "Recurring fatigue detected. Light volume reduction next week.")
         }
 
         return Adaptation(recommendations: recs, note: note)
@@ -496,7 +496,7 @@ enum SkipAdaptationCalculator {
         guard pattern != .none else {
             return Adaptation(
                 recommendations: [],
-                note: "Soreness noted. Rest was the right call. No plan changes needed."
+                note: String(localized: "sk.041", defaultValue: "Soreness noted. Rest was the right call. No plan changes needed.")
             )
         }
 
@@ -513,9 +513,9 @@ enum SkipAdaptationCalculator {
                     id: UUID(),
                     type: .swapToRecovery,
                     severity: .recommended,
-                    title: "Ease next hard session",
-                    message: "Recurring soreness, converting \(target.type.displayName) to easy to protect against injury.",
-                    actionLabel: "Convert to easy",
+                    title: String(localized: "sk.008", defaultValue: "Ease next hard session"),
+                    message: String(localized: "sk.i.soreConvert", defaultValue: "Recurring soreness, converting \(target.type.displayName) to easy to protect against injury."),
+                    actionLabel: String(localized: "sk.006", defaultValue: "Convert to easy"),
                     affectedSessionIds: [target.id]
                 ))
             }
@@ -523,7 +523,7 @@ enum SkipAdaptationCalculator {
 
         return Adaptation(
             recommendations: recs,
-            note: "Recurring soreness. Next hard session eased as precaution. Consider mobility work."
+            note: String(localized: "sk.029", defaultValue: "Recurring soreness. Next hard session eased as precaution. Consider mobility work.")
         )
     }
 
@@ -540,7 +540,7 @@ enum SkipAdaptationCalculator {
         guard pattern != .none else {
             return Adaptation(
                 recommendations: [],
-                note: "Off day, everyone has them. No plan changes needed."
+                note: String(localized: "sk.025", defaultValue: "Off day, everyone has them. No plan changes needed.")
             )
         }
 
@@ -555,9 +555,9 @@ enum SkipAdaptationCalculator {
                         id: UUID(),
                         type: .reduceFatigueLoad,
                         severity: .suggestion,
-                        title: "Slight ease-up",
-                        message: "Repeated motivation dips can signal mental overload. A tiny volume reduction can help reset.",
-                        actionLabel: "Ease slightly",
+                        title: String(localized: "sk.040", defaultValue: "Slight ease-up"),
+                        message: String(localized: "sk.032", defaultValue: "Repeated motivation dips can signal mental overload. A tiny volume reduction can help reset."),
+                        actionLabel: String(localized: "sk.011", defaultValue: "Ease slightly"),
                         affectedSessionIds: volumeAdj.map(\.sessionId),
                         volumeAdjustments: volumeAdj
                     ))
@@ -565,14 +565,14 @@ enum SkipAdaptationCalculator {
             }
             return Adaptation(
                 recommendations: recs,
-                note: "Recurring motivation dips. Slight ease-up suggested, often this helps reignite drive."
+                note: String(localized: "sk.028", defaultValue: "Recurring motivation dips. Slight ease-up suggested, often this helps reignite drive.")
             )
         }
 
         // Mild pattern: just acknowledge
         return Adaptation(
             recommendations: [],
-            note: "A couple motivation dips noted. No changes yet, reach out if it persists."
+            note: String(localized: "sk.001", defaultValue: "A couple motivation dips noted. No changes yet, reach out if it persists.")
         )
     }
 
@@ -599,9 +599,9 @@ enum SkipAdaptationCalculator {
                     id: UUID(),
                     type: .rescheduleKeySession,
                     severity: .suggestion,
-                    title: "Reschedule \(context.skippedSession.type.displayName)?",
-                    message: "Key session missed for time. It can be moved to \(slot.date.formatted(.dateTime.weekday(.wide))) if your schedule allows.",
-                    actionLabel: "Reschedule",
+                    title: String(localized: "sk.i.reschedule", defaultValue: "Reschedule \(context.skippedSession.type.displayName)?"),
+                    message: String(localized: "sk.i.keyMoved", defaultValue: "Key session missed for time. It can be moved to \(slot.date.formatted(.dateTime.weekday(.wide))) if your schedule allows."),
+                    actionLabel: String(localized: "sk.034", defaultValue: "Reschedule"),
                     affectedSessionIds: [context.skippedSession.id, slot.id]
                 ))
             }
@@ -609,9 +609,9 @@ enum SkipAdaptationCalculator {
 
         let note: String
         if pattern >= .elevated {
-            note = "Frequent time-based skips. The plan might not match your schedule, consider adjusting your preferred runs per week."
+            note = String(localized: "sk.014", defaultValue: "Frequent time-based skips. The plan might not match your schedule, consider adjusting your preferred runs per week.")
         } else {
-            note = "Skipped for time. No plan changes needed."
+            note = String(localized: "sk.039", defaultValue: "Skipped for time. No plan changes needed.")
         }
 
         return Adaptation(recommendations: recs, note: note)
@@ -625,7 +625,7 @@ enum SkipAdaptationCalculator {
         guard pattern >= .elevated else {
             return Adaptation(
                 recommendations: [],
-                note: "Session skipped. No plan adaptation needed."
+                note: String(localized: "sk.036", defaultValue: "Session skipped. No plan adaptation needed.")
             )
         }
 
@@ -639,9 +639,9 @@ enum SkipAdaptationCalculator {
                     id: UUID(),
                     type: .reduceVolumeAfterLowAdherence,
                     severity: .suggestion,
-                    title: "Adjust for adherence",
-                    message: "Several sessions skipped recently. A small adjustment helps keep the plan realistic.",
-                    actionLabel: "Ease slightly",
+                    title: String(localized: "sk.002", defaultValue: "Adjust for adherence"),
+                    message: String(localized: "sk.037", defaultValue: "Several sessions skipped recently. A small adjustment helps keep the plan realistic."),
+                    actionLabel: String(localized: "sk.011", defaultValue: "Ease slightly"),
                     affectedSessionIds: volumeAdj.map(\.sessionId),
                     volumeAdjustments: volumeAdj
                 ))
@@ -650,7 +650,7 @@ enum SkipAdaptationCalculator {
 
         return Adaptation(
             recommendations: recs,
-            note: "Multiple sessions skipped recently. Small adjustment to keep the plan achievable."
+            note: String(localized: "sk.024", defaultValue: "Multiple sessions skipped recently. Small adjustment to keep the plan achievable.")
         )
     }
 
@@ -805,9 +805,9 @@ enum SkipAdaptationCalculator {
                 id: UUID(),
                 type: .swapToRecovery,
                 severity: .urgent,
-                title: "Rest, injury reported",
-                message: "All remaining sessions this week should be rest or gentle cross-training (swimming, cycling). Do not run through an injury.",
-                actionLabel: "Cancel remaining",
+                title: String(localized: "sk.035", defaultValue: "Rest, injury reported"),
+                message: String(localized: "sk.003", defaultValue: "All remaining sessions this week should be rest or gentle cross-training (swimming, cycling). Do not run through an injury."),
+                actionLabel: String(localized: "sk.004", defaultValue: "Cancel remaining"),
                 affectedSessionIds: remaining.map(\.id)
             ))
         }
@@ -836,15 +836,15 @@ enum SkipAdaptationCalculator {
             if !volumeAdj.isEmpty {
                 let pct = Int((1.0 - factor) * 100)
                 let extraNote = sustained
-                    ? " You've logged multiple injury skips recently, extending the reduction over two weeks instead of one."
+                    ? String(localized: "sk.051", defaultValue: " You've logged multiple injury skips recently, extending the reduction over two weeks instead of one.")
                     : ""
                 recs.append(PlanAdjustmentRecommendation(
                     id: UUID(),
                     type: .reduceFatigueLoad,
                     severity: .urgent,
-                    title: "Reduced load after injury",
-                    message: "Reducing next week by ~\(pct)%. Return to running only when pain-free. Consider cross-training (swimming, cycling) to maintain fitness.\(extraNote)",
-                    actionLabel: "Reduce volume",
+                    title: String(localized: "sk.031", defaultValue: "Reduced load after injury"),
+                    message: String(localized: "sk.i.injuryReduce", defaultValue: "Reducing next week by ~\(pct)%. Return to running only when pain-free. Consider cross-training (swimming, cycling) to maintain fitness.\(extraNote)"),
+                    actionLabel: String(localized: "sk.030", defaultValue: "Reduce volume"),
                     affectedSessionIds: volumeAdj.map(\.sessionId),
                     volumeAdjustments: volumeAdj
                 ))
@@ -869,9 +869,9 @@ enum SkipAdaptationCalculator {
                     id: UUID(),
                     type: .reduceFatigueLoad,
                     severity: .recommended,
-                    title: "Stair-step back the week after",
-                    message: "Week 2 stays ~\(pct)% under normal, re-injury risk is highest when ramp is too fast. Confirm pain-free running before adding back.",
-                    actionLabel: "Reduce volume",
+                    title: String(localized: "sk.042", defaultValue: "Stair-step back the week after"),
+                    message: String(localized: "sk.i.week2Injury", defaultValue: "Week 2 stays ~\(pct)% under normal, re-injury risk is highest when ramp is too fast. Confirm pain-free running before adding back."),
+                    actionLabel: String(localized: "sk.030", defaultValue: "Reduce volume"),
                     affectedSessionIds: volumeAdj.map(\.sessionId),
                     volumeAdjustments: volumeAdj
                 ))
@@ -880,9 +880,9 @@ enum SkipAdaptationCalculator {
 
         let note: String
         if sustained {
-            note = "Multiple injury skips logged in the last 2 weeks. Two-week stair-step rebuild in place, return to running only when pain-free, and if pain returns or persists, see a sports-med professional."
+            note = String(localized: "sk.023", defaultValue: "Multiple injury skips logged in the last 2 weeks. Two-week stair-step rebuild in place, return to running only when pain-free, and if pain returns or persists, see a sports-med professional.")
         } else {
-            note = "Injury reported. All remaining sessions cancelled. Next week significantly reduced. Do NOT run through pain, cross-train if possible. See a professional if pain persists beyond 48-72h."
+            note = String(localized: "sk.018", defaultValue: "Injury reported. All remaining sessions cancelled. Next week significantly reduced. Do NOT run through pain, cross-train if possible. See a professional if pain persists beyond 48-72h.")
         }
         return Adaptation(recommendations: recs, note: note)
     }
@@ -901,9 +901,9 @@ enum SkipAdaptationCalculator {
             id: UUID(),
             type: .rescheduleKeySession,
             severity: .recommended,
-            title: "Reschedule long run?",
-            message: "The long run builds endurance that can't be replaced by other sessions. Move it to \(slot.date.formatted(.dateTime.weekday(.wide))) if possible.",
-            actionLabel: "Reschedule",
+            title: String(localized: "sk.033", defaultValue: "Reschedule long run?"),
+            message: String(localized: "sk.i.lrMove", defaultValue: "The long run builds endurance that can't be replaced by other sessions. Move it to \(slot.date.formatted(.dateTime.weekday(.wide))) if possible."),
+            actionLabel: String(localized: "sk.034", defaultValue: "Reschedule"),
             affectedSessionIds: [context.skippedSession.id, slot.id]
         )]
     }
