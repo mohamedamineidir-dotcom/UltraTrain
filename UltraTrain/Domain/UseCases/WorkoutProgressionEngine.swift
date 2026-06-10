@@ -64,7 +64,7 @@ enum WorkoutProgressionEngine {
             // all-easy `longRunTemplate`, but the coach advice for
             // build LR week 4+ explicitly says "include blocks at
             // goal race pace", card and detail disagreed. Now they
-            // align. Pfitzinger Ch. 6 / Hudson "Run Faster":
+            // align. Pfitzinger Ch. 6 / Hudson String(localized: "wpe.w117", defaultValue: "Run Faster"):
             // progressive long runs in build phase.
             let template = longRunBuildTemplate(totalDuration: totalDuration)
             phases = template.phases
@@ -114,10 +114,10 @@ enum WorkoutProgressionEngine {
     private static func recoveryRunTemplate(totalDuration: TimeInterval) -> WorkoutTemplate {
         let totalMin = Int(totalDuration) / 60
         let main = phase(.work, duration: totalDuration, intensity: .easy, reps: 1,
-                         notes: "Easy conversational pace (Zone 2). Focus on recovery and blood flow.")
+                         notes: String(localized: "wpe.w066", defaultValue: "Easy conversational pace (Zone 2). Focus on recovery and blood flow."))
         return WorkoutTemplate(
-            name: "Base Endurance",
-            description: "Base Endurance: \(totalMin)min at conversational pace",
+            name: String(localized: "wpe.w056", defaultValue: "Base Endurance"),
+            description: String(localized: "wpe.baseEnd", defaultValue: "Base Endurance: \(totalMin)min at conversational pace"),
             phases: [main]
         )
     }
@@ -130,7 +130,7 @@ enum WorkoutProgressionEngine {
     /// already promised race-effort sections, card and detail used to
     /// disagree.
     ///
-    /// Trail/ultra deliberately uses "race intensity" / "race effort"
+    /// Trail/ultra deliberately uses String(localized: "wpe.w141", defaultValue: "race intensity") / String(localized: "wpe.w140", defaultValue: "race effort")
     /// rather than a specific pace. On trail there IS no single race
     /// pace, terrain varies section to section. The athlete dials in
     /// race effort by feel, not by min/km.
@@ -138,7 +138,7 @@ enum WorkoutProgressionEngine {
     /// Shape: warmup → easy aerobic block (70% of remaining easy time)
     /// → race-intensity block (25% of total) → easy finish (30% of
     /// remaining easy time) → cooldown. Pfitzinger Ch. 6 progressive
-    /// long runs; Hudson "Run Faster" build-phase LR pattern. The
+    /// long runs; Hudson String(localized: "wpe.w117", defaultValue: "Run Faster") build-phase LR pattern. The
     /// block goes in the second half but is followed by an easy block
     /// + cooldown so the athlete doesn't end on peak intensity.
     private static func longRunBuildTemplate(totalDuration: TimeInterval) -> WorkoutTemplate {
@@ -155,21 +155,21 @@ enum WorkoutProgressionEngine {
         let easyAfter = availableForEasy * 0.30
 
         let warmUp = phase(.warmUp, duration: warmUpDur, intensity: .easy, reps: 1,
-                           notes: "Easy warmup, settle in")
+                           notes: String(localized: "wpe.w078", defaultValue: "Easy warmup, settle in"))
         let easyMain = phase(.work, duration: easyBefore, intensity: .easy, reps: 1,
-                             notes: "Easy aerobic block, conversational effort, fuel as you'll fuel on race day.")
+                             notes: String(localized: "wpe.w062", defaultValue: "Easy aerobic block, conversational effort, fuel as you'll fuel on race day."))
         let racePace = phase(.work, duration: racePaceBlock, intensity: .moderate, reps: 1,
-                             notes: "Race-intensity block. Run at the EFFORT you'd hold at race-day, controlled, repeatable, NOT all-out. On trail your pace varies with terrain; the EFFORT is the constant.")
+                             notes: String(localized: "wpe.w113", defaultValue: "Race-intensity block. Run at the EFFORT you'd hold at race-day, controlled, repeatable, NOT all-out. On trail your pace varies with terrain; the EFFORT is the constant."))
         let easyFinish = phase(.work, duration: easyAfter, intensity: .easy, reps: 1,
-                               notes: "Easy finish, practice running tired but in control.")
+                               notes: String(localized: "wpe.w067", defaultValue: "Easy finish, practice running tired but in control."))
         let coolDown = phase(.coolDown, duration: coolDownDur, intensity: .easy, reps: 1,
-                             notes: "Walk to cool down. Stretch. Refuel within 30 min.")
+                             notes: String(localized: "wpe.w137", defaultValue: "Walk to cool down. Stretch. Refuel within 30 min."))
 
         let blockMin = Int(racePaceBlock) / 60
         let totalMin = Int(totalDuration) / 60
         return WorkoutTemplate(
-            name: "Progressive long run",
-            description: "Progressive long run \(totalMin) min: warmup → easy → \(blockMin) min at race intensity → easy → cooldown",
+            name: String(localized: "wpe.w102", defaultValue: "Progressive long run"),
+            description: String(localized: "wpe.progLR", defaultValue: "Progressive long run \(totalMin) min: warmup → easy → \(blockMin) min at race intensity → easy → cooldown"),
             phases: [warmUp, easyMain, racePace, easyFinish, coolDown]
         )
     }
@@ -182,7 +182,7 @@ enum WorkoutProgressionEngine {
         let mainDuration = max(totalDuration - warmUpDuration - coolDownDuration, 600)
 
         let warmUp = phase(.warmUp, duration: warmUpDuration, intensity: .easy, reps: 1,
-                           notes: "Progressive warmup, start walking, build to easy jog")
+                           notes: String(localized: "wpe.w103", defaultValue: "Progressive warmup, start walking, build to easy jog"))
 
         // Split main effort into nutrition segments (~45min each)
         let segmentLength: TimeInterval = 2700 // 45min
@@ -191,16 +191,16 @@ enum WorkoutProgressionEngine {
 
         let main = phase(.work, duration: actualSegment, intensity: .easy, reps: segmentCount,
                          notes: segmentCount > 1
-                             ? "Easy pace. Eat/drink at each segment break."
-                             : "Easy pace throughout.")
+                             ? String(localized: "wpe.w076", defaultValue: "Easy pace. Eat/drink at each segment break.")
+                             : String(localized: "wpe.w075", defaultValue: "Easy pace throughout."))
 
         let coolDown = phase(.coolDown, duration: coolDownDuration, intensity: .easy, reps: 1,
-                             notes: "Walk to cool down. Stretch. Refuel within 30min.")
+                             notes: String(localized: "wpe.w138", defaultValue: "Walk to cool down. Stretch. Refuel within 30min."))
 
         let totalMin = Int(totalDuration) / 60
         return WorkoutTemplate(
-            name: "Long run",
-            description: "Long run \(totalMin)min: warmup → \(segmentCount)×\(Int(actualSegment)/60)min → cooldown",
+            name: String(localized: "wpe.w091", defaultValue: "Long run"),
+            description: String(localized: "wpe.longRunSeg", defaultValue: "Long run \(totalMin)min: warmup → \(segmentCount)×\(Int(actualSegment)/60)min → cooldown"),
             phases: [warmUp, main, coolDown]
         )
     }
@@ -231,9 +231,9 @@ enum WorkoutProgressionEngine {
         let steadyDuration = remaining - negativeSplitDuration
 
         let warmUp = self.phase(.warmUp, duration: warmUpDuration, intensity: .easy, reps: 1,
-                                notes: "Progressive warmup")
+                                notes: String(localized: "wpe.w105", defaultValue: "Progressive warmup"))
         let steady = self.phase(.work, duration: steadyDuration, intensity: .easy, reps: 1,
-                                notes: "Steady effort at easy pace. Fuel consistently.")
+                                notes: String(localized: "wpe.w125", defaultValue: "Steady effort at easy pace. Fuel consistently."))
         let negativeSplit = self.phase(.work, duration: negativeSplitDuration, intensity: .moderate, reps: 1,
                                        notes: String(localized: "wpe.b2b.note.negSplit", defaultValue: "Negative split, build effort in the last third"))
         let coolDown = self.phase(.coolDown, duration: coolDownDuration, intensity: .easy, reps: 1,
@@ -249,7 +249,7 @@ enum WorkoutProgressionEngine {
     /// Peak-phase B2B Day 1 with race-simulation blocks. Same rehearsal
     /// pattern as the single peak long run: easy aerobic surrounding
     /// 2 × race-effort blocks (≤ 90 min each) with 15 min easy recovery
-    /// between. Day 2 still runs as the easy "running tired" session,
+    /// between. Day 2 still runs as the easy String(localized: "wpe.w139", defaultValue: "running tired") session,
     /// so the B2B as a whole simulates: race effort on fresh legs, then
     /// long aerobic on tired legs the next day.
     private static func b2bDay1PeakRaceSimTemplate(
@@ -348,8 +348,8 @@ enum WorkoutProgressionEngine {
             )
         }
 
-        let warmUp = phase(.warmUp, duration: 900, intensity: .easy, reps: 1, notes: "Easy jog, progressive pace")
-        let coolDown = phase(.coolDown, duration: 600, intensity: .easy, reps: 1, notes: "Easy jog, stretching")
+        let warmUp = phase(.warmUp, duration: 900, intensity: .easy, reps: 1, notes: String(localized: "wpe.w073", defaultValue: "Easy jog, progressive pace"))
+        let coolDown = phase(.coolDown, duration: 600, intensity: .easy, reps: 1, notes: String(localized: "wpe.w074", defaultValue: "Easy jog, stretching"))
 
         if effectiveFocus == .sharpening {
             if isSecondary {
@@ -395,7 +395,7 @@ enum WorkoutProgressionEngine {
         let reps: Int
         let actualSetSec: Double
         let restSec: Double
-        var sessionName = "Interval session"
+        var sessionName = String(localized: "wpe.w086", defaultValue: "Interval session")
         var workNotes: String?
 
         switch progressionMode {
@@ -411,8 +411,8 @@ enum WorkoutProgressionEngine {
             reps = min(max(Int((totalWorkSec / longerSet).rounded()), 2), max(params.maxReps - 2, 2))
             actualSetSec = roundToNearest15(totalWorkSec / Double(reps))
             restSec = roundToNearest15(actualSetSec / params.workRestRatio)
-            sessionName = "Long intervals"
-            workNotes = "Fewer reps, longer efforts. Build sustained power at this intensity."
+            sessionName = String(localized: "wpe.w090", defaultValue: "Long intervals")
+            workNotes = String(localized: "wpe.w081", defaultValue: "Fewer reps, longer efforts. Build sustained power at this intensity.")
         case 2:
             // Mode C: standard reps, phase-aware reduced rest
             let targetSet = params.setDurationSec
@@ -420,8 +420,8 @@ enum WorkoutProgressionEngine {
             actualSetSec = roundToNearest15(totalWorkSec / Double(reps))
             let restReduction = progressionRestReduction(for: effectiveFocus)
             restSec = roundToNearest15(actualSetSec / (params.workRestRatio * restReduction))
-            sessionName = "Dense intervals"
-            workNotes = "Reduced rest between reps. The accumulated fatigue is the point."
+            sessionName = String(localized: "wpe.w061", defaultValue: "Dense intervals")
+            workNotes = String(localized: "wpe.w116", defaultValue: "Reduced rest between reps. The accumulated fatigue is the point.")
         default:
             // Mode D: alternating short/long reps (replaces fake pyramid)
             // Use shorter reps with slightly more of them for a different feel
@@ -429,8 +429,8 @@ enum WorkoutProgressionEngine {
             reps = min(max(Int((totalWorkSec / shorterSet).rounded()), 3), params.maxReps + 2)
             actualSetSec = roundToNearest15(totalWorkSec / Double(reps))
             restSec = roundToNearest15(actualSetSec / params.workRestRatio)
-            sessionName = "Short & sharp intervals"
-            workNotes = "More reps, shorter efforts. Focus on crisp execution each rep."
+            sessionName = String(localized: "wpe.w118", defaultValue: "Short & sharp intervals")
+            workNotes = String(localized: "wpe.w098", defaultValue: "More reps, shorter efforts. Focus on crisp execution each rep.")
         }
 
         let desc = formatIntervalDescription(
@@ -461,11 +461,11 @@ enum WorkoutProgressionEngine {
             let reps = min(max(Int((secondaryWork / repSec).rounded()), 4), 16)
             let actualRep = roundToNearest15(secondaryWork / Double(reps))
             let rest = roundToNearest15(actualRep * 0.75) // shorter rest than primary
-            let desc = "\(reps)x\(Int(actualRep))s threshold (Z3-4) / \(Int(rest))s jog"
+            let desc = String(localized: "wpe.iv.thresh", defaultValue: "\(reps)x\(Int(actualRep))s threshold (Z3-4) / \(Int(rest))s jog")
             let work = phase(.work, duration: actualRep, intensity: .hard, reps: reps,
-                            notes: "Short and sharp. Stay in threshold zone but keep the tempo high.")
+                            notes: String(localized: "wpe.w119", defaultValue: "Short and sharp. Stay in threshold zone but keep the tempo high."))
             let recovery = phase(.recovery, duration: rest, intensity: .easy, reps: reps, notes: nil)
-            return WorkoutTemplate(name: "Threshold repeats", description: desc, phases: [warmUp, work, recovery, coolDown])
+            return WorkoutTemplate(name: String(localized: "wpe.w132", defaultValue: "Threshold repeats"), description: desc, phases: [warmUp, work, recovery, coolDown])
 
         case .vo2max:
             // Shorter bursts at higher intensity (VMA zone, 30-90s)
@@ -473,11 +473,11 @@ enum WorkoutProgressionEngine {
             let reps = min(max(Int((secondaryWork / repSec).rounded()), 4), 14)
             let actualRep = roundToNearest15(secondaryWork / Double(reps))
             let rest = roundToNearest15(actualRep * 1.5) // longer rest for higher intensity
-            let desc = "\(reps)x\(Int(actualRep))s at VMA (Z5) / \(Int(rest))s jog"
+            let desc = String(localized: "wpe.iv.vma", defaultValue: "\(reps)x\(Int(actualRep))s at VMA (Z5) / \(Int(rest))s jog")
             let work = phase(.work, duration: actualRep, intensity: .maxEffort, reps: reps,
-                            notes: "Max effort bursts. These are short for a reason. Go hard.")
+                            notes: String(localized: "wpe.w095", defaultValue: "Max effort bursts. These are short for a reason. Go hard."))
             let recovery = phase(.recovery, duration: rest, intensity: .easy, reps: reps, notes: nil)
-            return WorkoutTemplate(name: "VMA bursts", description: desc, phases: [warmUp, work, recovery, coolDown])
+            return WorkoutTemplate(name: String(localized: "wpe.w135", defaultValue: "VMA bursts"), description: desc, phases: [warmUp, work, recovery, coolDown])
 
         case .threshold60:
             // Fragmented into shorter blocks with reduced rest
@@ -485,23 +485,23 @@ enum WorkoutProgressionEngine {
             let reps = min(max(Int((secondaryWork / repSec).rounded()), 3), 10)
             let actualRep = roundToNearest15(secondaryWork / Double(reps))
             let rest: Double = 60 // short rest to keep intensity high
-            let desc = "\(reps)x\(Int(actualRep/60))min threshold / 1min jog"
+            let desc = String(localized: "wpe.iv.threshMin", defaultValue: "\(reps)x\(Int(actualRep/60))min threshold / 1min jog")
             let work = phase(.work, duration: actualRep, intensity: .moderate, reps: reps,
-                            notes: "Shorter blocks, less rest. The accumulated fatigue builds threshold endurance differently than long reps.")
+                            notes: String(localized: "wpe.w121", defaultValue: "Shorter blocks, less rest. The accumulated fatigue builds threshold endurance differently than long reps."))
             let recovery = phase(.recovery, duration: rest, intensity: .easy, reps: reps, notes: nil)
-            return WorkoutTemplate(name: "Tempo fragments", description: desc, phases: [warmUp, work, recovery, coolDown])
+            return WorkoutTemplate(name: String(localized: "wpe.w130", defaultValue: "Tempo fragments"), description: desc, phases: [warmUp, work, recovery, coolDown])
 
         case .sharpening:
-            let desc = "6x1min race effort / 1:30 jog"
-            let work = phase(.work, duration: 60, intensity: .hard, reps: 6, notes: "Race effort strides. Stay smooth.")
+            let desc = String(localized: "wpe.w041", defaultValue: "6x1min race effort / 1:30 jog")
+            let work = phase(.work, duration: 60, intensity: .hard, reps: 6, notes: String(localized: "wpe.w108", defaultValue: "Race effort strides. Stay smooth."))
             let recovery = phase(.recovery, duration: 90, intensity: .easy, reps: 6, notes: nil)
-            return WorkoutTemplate(name: "Race strides", description: desc, phases: [warmUp, work, recovery, coolDown])
+            return WorkoutTemplate(name: String(localized: "wpe.w112", defaultValue: "Race strides"), description: desc, phases: [warmUp, work, recovery, coolDown])
 
         case .postRaceRecovery:
-            let desc = "4x2min easy tempo / 2min jog"
-            let work = phase(.work, duration: 120, intensity: .easy, reps: 4, notes: "Gentle tempo. Just waking the legs up.")
+            let desc = String(localized: "wpe.w027", defaultValue: "4x2min easy tempo / 2min jog")
+            let work = phase(.work, duration: 120, intensity: .easy, reps: 4, notes: String(localized: "wpe.w082", defaultValue: "Gentle tempo. Just waking the legs up."))
             let recovery = phase(.recovery, duration: 120, intensity: .easy, reps: 4, notes: nil)
-            return WorkoutTemplate(name: "Recovery tempo", description: desc, phases: [warmUp, work, recovery, coolDown])
+            return WorkoutTemplate(name: String(localized: "wpe.w115", defaultValue: "Recovery tempo"), description: desc, phases: [warmUp, work, recovery, coolDown])
         }
     }
 
@@ -513,7 +513,7 @@ enum WorkoutProgressionEngine {
         let desc = formatIntervalDescription(reps: reps, workSec: workSec, restSec: restSec, focus: focus)
         let work = phase(.work, duration: workSec, intensity: params.intensity, reps: reps, notes: nil)
         let recovery = phase(.recovery, duration: restSec, intensity: .easy, reps: reps, notes: nil)
-        return WorkoutTemplate(name: "Interval session", description: desc, phases: [warmUp, work, recovery, coolDown])
+        return WorkoutTemplate(name: String(localized: "wpe.w086", defaultValue: "Interval session"), description: desc, phases: [warmUp, work, recovery, coolDown])
     }
 
     // MARK: - Legacy Interval Template (backward compat when no ProgressionContext)
@@ -523,53 +523,53 @@ enum WorkoutProgressionEngine {
         weekInPhase: Int,
         intensity: Intensity
     ) -> WorkoutTemplate {
-        let warmUp = phase(.warmUp, duration: 900, intensity: .easy, reps: 1, notes: "Easy jog, progressive pace")
-        let coolDown = phase(.coolDown, duration: 600, intensity: .easy, reps: 1, notes: "Easy jog, stretching")
+        let warmUp = phase(.warmUp, duration: 900, intensity: .easy, reps: 1, notes: String(localized: "wpe.w073", defaultValue: "Easy jog, progressive pace"))
+        let coolDown = phase(.coolDown, duration: 600, intensity: .easy, reps: 1, notes: String(localized: "wpe.w074", defaultValue: "Easy jog, stretching"))
 
         let workPhases: (reps: Int, workSec: Double, restSec: Double, desc: String)
 
         switch effectiveFocus {
         case .threshold30:
             let variants: [(Int, Double, Double, String)] = [
-                (8,  30,  30, "8×30s hard uphill (Z4) / 30s jog down"),
-                (6,  60,  90, "6×1min uphill at threshold (Z3-4) / 1:30 jog"),
-                (6, 120, 150, "6×2min uphill at threshold (Z3-4) / 2:30 jog"),
-                (8,  90, 120, "8×1:30 uphill at threshold (Z3-4) / 2min jog"),
-                (10, 60,  60, "10×1min hard uphill (Z4) / 1min jog down"),
-                (7, 150, 150, "7×2:30 uphill at threshold (Z3-4) / 2:30 jog"),
+                (8,  30,  30, String(localized: "wpe.w048", defaultValue: "8×30s hard uphill (Z4) / 30s jog down")),
+                (6,  60,  90, String(localized: "wpe.w034", defaultValue: "6×1min uphill at threshold (Z3-4) / 1:30 jog")),
+                (6, 120, 150, String(localized: "wpe.w035", defaultValue: "6×2min uphill at threshold (Z3-4) / 2:30 jog")),
+                (8,  90, 120, String(localized: "wpe.w045", defaultValue: "8×1:30 uphill at threshold (Z3-4) / 2min jog")),
+                (10, 60,  60, String(localized: "wpe.w001", defaultValue: "10×1min hard uphill (Z4) / 1min jog down")),
+                (7, 150, 150, String(localized: "wpe.w042", defaultValue: "7×2:30 uphill at threshold (Z3-4) / 2:30 jog")),
             ]
             workPhases = variants[min(weekInPhase, variants.count - 1)]
         case .vo2max:
             let variants: [(Int, Double, Double, String)] = [
-                (6, 180, 120, "6×3min at VO2max (Z4) / 2min jog"),
-                (7, 180, 90,  "7×3min at VO2max (Z4) / 90s jog"),
-                (5, 240, 120, "5×4min at VO2max (Z4) / 2min jog"),
-                (8, 150, 90,  "8×2min30 at VO2max (Z4) / 90s jog"),
-                (6, 240, 120, "6×4min at VO2max (Z4) / 2min jog"),
-                (10, 120, 60, "10×2min at VO2max (Z4) / 1min jog"),
+                (6, 180, 120, String(localized: "wpe.w036", defaultValue: "6×3min at VO2max (Z4) / 2min jog")),
+                (7, 180, 90,  String(localized: "wpe.w043", defaultValue: "7×3min at VO2max (Z4) / 90s jog")),
+                (5, 240, 120, String(localized: "wpe.w031", defaultValue: "5×4min at VO2max (Z4) / 2min jog")),
+                (8, 150, 90,  String(localized: "wpe.w047", defaultValue: "8×2min30 at VO2max (Z4) / 90s jog")),
+                (6, 240, 120, String(localized: "wpe.w040", defaultValue: "6×4min at VO2max (Z4) / 2min jog")),
+                (10, 120, 60, String(localized: "wpe.w002", defaultValue: "10×2min at VO2max (Z4) / 1min jog")),
             ]
             workPhases = variants[weekInPhase % variants.count]
         case .threshold60:
             let variants: [(Int, Double, Double, String)] = [
-                (5, 180,  90, "5×3min at threshold (Z3-4) / 1:30 jog"),
-                (6, 240, 120, "6×4min at threshold (Z3-4) / 2min jog"),
-                (4, 360, 120, "4×6min at threshold (Z3-4) / 2min jog"),
-                (8, 240, 120, "8×4min at threshold (Z3-4) / 2min jog"),
-                (5, 480, 150, "5×8min at threshold (Z3-4) / 2:30 jog"),
-                (3, 600, 180, "3×10min at threshold (Z3-4) / 3min jog"),
+                (5, 180,  90, String(localized: "wpe.w029", defaultValue: "5×3min at threshold (Z3-4) / 1:30 jog")),
+                (6, 240, 120, String(localized: "wpe.w039", defaultValue: "6×4min at threshold (Z3-4) / 2min jog")),
+                (4, 360, 120, String(localized: "wpe.w024", defaultValue: "4×6min at threshold (Z3-4) / 2min jog")),
+                (8, 240, 120, String(localized: "wpe.w049", defaultValue: "8×4min at threshold (Z3-4) / 2min jog")),
+                (5, 480, 150, String(localized: "wpe.w033", defaultValue: "5×8min at threshold (Z3-4) / 2:30 jog")),
+                (3, 600, 180, String(localized: "wpe.w014", defaultValue: "3×10min at threshold (Z3-4) / 3min jog")),
             ]
             workPhases = variants[weekInPhase % variants.count]
         case .sharpening:
-            workPhases = (4, 120, 120, "4×2min at threshold (Z3) / 2min jog")
+            workPhases = (4, 120, 120, String(localized: "wpe.w022", defaultValue: "4×2min at threshold (Z3) / 2min jog"))
         case .postRaceRecovery:
-            workPhases = (5, 180, 120, "5×3min at threshold (Z3) / 2min jog")
+            workPhases = (5, 180, 120, String(localized: "wpe.w030", defaultValue: "5×3min at threshold (Z3) / 2min jog"))
         }
 
         let work = self.phase(.work, duration: workPhases.workSec, intensity: intensity, reps: workPhases.reps, notes: nil)
         let recovery = self.phase(.recovery, duration: workPhases.restSec, intensity: .easy, reps: workPhases.reps, notes: nil)
 
         return WorkoutTemplate(
-            name: "Interval session",
+            name: String(localized: "wpe.w086", defaultValue: "Interval session"),
             description: workPhases.desc,
             phases: [warmUp, work, recovery, coolDown]
         )
@@ -593,8 +593,8 @@ enum WorkoutProgressionEngine {
             )
         }
 
-        let warmUp = phase(.warmUp, duration: 900, intensity: .easy, reps: 1, notes: "Easy jog to the climb")
-        let coolDown = phase(.coolDown, duration: 600, intensity: .easy, reps: 1, notes: "Easy jog back, stretching")
+        let warmUp = phase(.warmUp, duration: 900, intensity: .easy, reps: 1, notes: String(localized: "wpe.w071", defaultValue: "Easy jog to the climb"))
+        let coolDown = phase(.coolDown, duration: 600, intensity: .easy, reps: 1, notes: String(localized: "wpe.w068", defaultValue: "Easy jog back, stretching"))
 
         // Fixed templates for sharpening / recovery
         if effectiveFocus == .sharpening {
@@ -633,9 +633,9 @@ enum WorkoutProgressionEngine {
             let restSec = roundToNearest15(actualSetSec * 0.8)
             let desc = formatVGDescription(reps: reps, workSec: actualSetSec, restSec: restSec, focus: effectiveFocus)
             let work = self.phase(.work, duration: actualSetSec, intensity: params.intensity, reps: reps,
-                                 notes: "Shorter, punchier climbs. Higher cadence than your primary session.")
-            let recovery = self.phase(.recovery, duration: restSec, intensity: .easy, reps: reps, notes: "Quick descent")
-            return WorkoutTemplate(name: "Hill repeats (short)", description: desc, phases: [warmUp, work, recovery, coolDown])
+                                 notes: String(localized: "wpe.w123", defaultValue: "Shorter, punchier climbs. Higher cadence than your primary session."))
+            let recovery = self.phase(.recovery, duration: restSec, intensity: .easy, reps: reps, notes: String(localized: "wpe.w107", defaultValue: "Quick descent"))
+            return WorkoutTemplate(name: String(localized: "wpe.w084", defaultValue: "Hill repeats (short)"), description: desc, phases: [warmUp, work, recovery, coolDown])
         }
 
         // Primary VG session with week-over-week progression variety
@@ -644,8 +644,8 @@ enum WorkoutProgressionEngine {
         let actualSetSec: Double
         let restSec: Double
         var vgName = vgWorkoutName(for: effectiveFocus)
-        var climbNotes = "Climb at steady effort"
-        var descentNotes = "Jog/walk descent"
+        var climbNotes = String(localized: "wpe.w057", defaultValue: "Climb at steady effort")
+        var descentNotes = String(localized: "wpe.w087", defaultValue: "Jog/walk descent")
         var includesDownhill = false
 
         switch progressionMode {
@@ -668,8 +668,8 @@ enum WorkoutProgressionEngine {
             let avgSet = totalWorkSec / Double(reps)
             actualSetSec = roundToNearest15(min(avgSet, longerSet))
             restSec = roundToNearest15(actualSetSec / params.workRestRatio)
-            vgName = "Long hill repeats"
-            climbNotes = "Sustained climbing. Longer reps build endurance for race-day climbs."
+            vgName = String(localized: "wpe.w089", defaultValue: "Long hill repeats")
+            climbNotes = String(localized: "wpe.w128", defaultValue: "Sustained climbing. Longer reps build endurance for race-day climbs.")
         case 2:
             // Mode C: reduced rest (phase-aware)
             let targetSet = params.setDurationSec
@@ -677,7 +677,7 @@ enum WorkoutProgressionEngine {
             actualSetSec = roundToNearest15(totalWorkSec / Double(reps))
             let restReduction = progressionRestReduction(for: effectiveFocus)
             restSec = roundToNearest15(actualSetSec / (params.workRestRatio * restReduction))
-            climbNotes = "Shorter rest between climbs. Accumulated fatigue builds climbing endurance."
+            climbNotes = String(localized: "wpe.w122", defaultValue: "Shorter rest between climbs. Accumulated fatigue builds climbing endurance.")
         default:
             // Mode D: Up+Down combo (build/peak) or short reps (base)
             // For build/peak: integrated downhill training
@@ -690,17 +690,17 @@ enum WorkoutProgressionEngine {
                 let downhillSec = roundToNearest15(actualSetSec * 0.7)
                 restSec = roundToNearest15(max(downhillSec * 0.5, 60))
                 includesDownhill = true
-                vgName = "Up + Down hill repeats"
-                climbNotes = "Hard climb, then fast controlled descent. This builds the eccentric quad strength you need for race-day descents."
-                descentNotes = "Run the descent with purpose. Controlled speed, light feet. Then jog \(Int(restSec/60))min recovery."
+                vgName = String(localized: "wpe.w134", defaultValue: "Up + Down hill repeats")
+                climbNotes = String(localized: "wpe.w083", defaultValue: "Hard climb, then fast controlled descent. This builds the eccentric quad strength you need for race-day descents.")
+                descentNotes = String(localized: "wpe.descentPurpose", defaultValue: "Run the descent with purpose. Controlled speed, light feet. Then jog \(Int(restSec/60))min recovery.")
             } else {
                 // Base phase: shorter punchier climbs
                 let shorterSet = params.setDurationSec * 0.75
                 reps = min(max(Int((totalWorkSec / shorterSet).rounded()), 3), params.maxReps + 2)
                 actualSetSec = roundToNearest15(totalWorkSec / Double(reps))
                 restSec = roundToNearest15(actualSetSec / params.workRestRatio)
-                vgName = "Short hill repeats"
-                climbNotes = "More reps, shorter climbs. Focus on quick powerful steps."
+                vgName = String(localized: "wpe.w120", defaultValue: "Short hill repeats")
+                climbNotes = String(localized: "wpe.w097", defaultValue: "More reps, shorter climbs. Focus on quick powerful steps.")
             }
         }
 
@@ -717,18 +717,18 @@ enum WorkoutProgressionEngine {
     ) -> WorkoutTemplate {
         let params = vgFocusParams(focus, planProgress: 0)
         let desc = formatVGDescription(reps: reps, workSec: workSec, restSec: restSec, focus: focus)
-        let work = phase(.work, duration: workSec, intensity: params.intensity, reps: reps, notes: "Climb at steady effort")
-        let recovery = phase(.recovery, duration: restSec, intensity: .easy, reps: reps, notes: "Jog/walk descent")
+        let work = phase(.work, duration: workSec, intensity: params.intensity, reps: reps, notes: String(localized: "wpe.w057", defaultValue: "Climb at steady effort"))
+        let recovery = phase(.recovery, duration: restSec, intensity: .easy, reps: reps, notes: String(localized: "wpe.w087", defaultValue: "Jog/walk descent"))
         return WorkoutTemplate(name: vgWorkoutName(for: focus), description: desc, phases: [warmUp, work, recovery, coolDown])
     }
 
     private static func vgWorkoutName(for focus: PhaseFocus) -> String {
         switch focus {
-        case .threshold30:      "Aerobic climbing"
-        case .vo2max:           "Hill repeats"
-        case .threshold60:      "Endurance climbing"
-        case .sharpening:       "Maintenance climbing"
-        case .postRaceRecovery: "Easy climbing"
+        case .threshold30:      String(localized: "wpe.w050", defaultValue: "Aerobic climbing")
+        case .vo2max:           String(localized: "wpe.w085", defaultValue: "Hill repeats")
+        case .threshold60:      String(localized: "wpe.w079", defaultValue: "Endurance climbing")
+        case .sharpening:       String(localized: "wpe.w093", defaultValue: "Maintenance climbing")
+        case .postRaceRecovery: String(localized: "wpe.w065", defaultValue: "Easy climbing")
         }
     }
 
@@ -737,8 +737,8 @@ enum WorkoutProgressionEngine {
     private static func legacyVerticalTemplate(
         trainingPhase: TrainingPhase, weekInPhase: Int, intensity: Intensity
     ) -> WorkoutTemplate {
-        let warmUp = phase(.warmUp, duration: 900, intensity: .easy, reps: 1, notes: "Easy jog to the climb")
-        let coolDown = phase(.coolDown, duration: 600, intensity: .easy, reps: 1, notes: "Easy jog back, stretching")
+        let warmUp = phase(.warmUp, duration: 900, intensity: .easy, reps: 1, notes: String(localized: "wpe.w071", defaultValue: "Easy jog to the climb"))
+        let coolDown = phase(.coolDown, duration: 600, intensity: .easy, reps: 1, notes: String(localized: "wpe.w068", defaultValue: "Easy jog back, stretching"))
 
         let workPhases: (reps: Int, workSec: Double, restSec: Double, desc: String, name: String)
 
@@ -746,43 +746,43 @@ enum WorkoutProgressionEngine {
         case .base:
             switch weekInPhase {
             case 0...1:
-                workPhases = (3, 480, 300, "3×8min climb at threshold (Z3) / 5min jog down", "Aerobic climbing")
+                workPhases = (3, 480, 300, String(localized: "wpe.w020", defaultValue: "3×8min climb at threshold (Z3) / 5min jog down"), String(localized: "wpe.w050", defaultValue: "Aerobic climbing"))
             case 2...3:
-                workPhases = (4, 480, 300, "4×8min climb at threshold (Z3) / 5min jog down", "Aerobic climbing")
+                workPhases = (4, 480, 300, String(localized: "wpe.w026", defaultValue: "4×8min climb at threshold (Z3) / 5min jog down"), String(localized: "wpe.w050", defaultValue: "Aerobic climbing"))
             case 4...5:
-                workPhases = (4, 600, 360, "4×10min climb at threshold (Z3) / 6min jog down", "Endurance climbing")
+                workPhases = (4, 600, 360, String(localized: "wpe.w021", defaultValue: "4×10min climb at threshold (Z3) / 6min jog down"), String(localized: "wpe.w079", defaultValue: "Endurance climbing"))
             default:
-                workPhases = (5, 600, 360, "5×10min climb at threshold (Z3) / 6min jog down", "Endurance climbing")
+                workPhases = (5, 600, 360, String(localized: "wpe.w028", defaultValue: "5×10min climb at threshold (Z3) / 6min jog down"), String(localized: "wpe.w079", defaultValue: "Endurance climbing"))
             }
         case .build:
             switch weekInPhase {
             case 0...1:
-                workPhases = (4, 240, 180, "4×4min climb at VO2max (Z4) / 3min jog down", "Hill repeats")
+                workPhases = (4, 240, 180, String(localized: "wpe.w023", defaultValue: "4×4min climb at VO2max (Z4) / 3min jog down"), String(localized: "wpe.w085", defaultValue: "Hill repeats"))
             case 2...3:
-                workPhases = (5, 240, 180, "5×4min climb at VO2max (Z4) / 3min jog down", "Hill repeats")
+                workPhases = (5, 240, 180, String(localized: "wpe.w032", defaultValue: "5×4min climb at VO2max (Z4) / 3min jog down"), String(localized: "wpe.w085", defaultValue: "Hill repeats"))
             case 4...5:
-                workPhases = (6, 180, 120, "6×3min steep climb at VO2max (Z4) / 2min jog down", "Steep repeats")
+                workPhases = (6, 180, 120, String(localized: "wpe.w038", defaultValue: "6×3min steep climb at VO2max (Z4) / 2min jog down"), String(localized: "wpe.w127", defaultValue: "Steep repeats"))
             default:
-                workPhases = (7, 180, 120, "7×3min steep climb at VO2max (Z4) / 2min jog down", "Steep repeats")
+                workPhases = (7, 180, 120, String(localized: "wpe.w044", defaultValue: "7×3min steep climb at VO2max (Z4) / 2min jog down"), String(localized: "wpe.w127", defaultValue: "Steep repeats"))
             }
         case .peak:
             switch weekInPhase {
             case 0...1:
-                workPhases = (6, 180, 120, "6×3min climb at VO2max (Z4) / 2min jog down", "Power climbing")
+                workPhases = (6, 180, 120, String(localized: "wpe.w037", defaultValue: "6×3min climb at VO2max (Z4) / 2min jog down"), String(localized: "wpe.w101", defaultValue: "Power climbing"))
             case 2...3:
-                workPhases = (8, 120, 120, "8×2min max effort climb (Z5) / 2min jog down", "Max effort climbing")
+                workPhases = (8, 120, 120, String(localized: "wpe.w046", defaultValue: "8×2min max effort climb (Z5) / 2min jog down"), String(localized: "wpe.w096", defaultValue: "Max effort climbing"))
             default:
-                workPhases = (10, 90, 90, "10×90s max effort climb (Z5) / 90s jog down", "Sprint climbing")
+                workPhases = (10, 90, 90, String(localized: "wpe.w003", defaultValue: "10×90s max effort climb (Z5) / 90s jog down"), String(localized: "wpe.w124", defaultValue: "Sprint climbing"))
             }
         case .taper:
-            workPhases = (3, 180, 180, "3×3min climb at threshold (Z3) / 3min jog down", "Maintenance climbing")
+            workPhases = (3, 180, 180, String(localized: "wpe.w019", defaultValue: "3×3min climb at threshold (Z3) / 3min jog down"), String(localized: "wpe.w093", defaultValue: "Maintenance climbing"))
         case .recovery, .race:
-            workPhases = (2, 240, 240, "2×4min easy climb (Z2) / 4min jog down", "Easy climbing")
+            workPhases = (2, 240, 240, String(localized: "wpe.w012", defaultValue: "2×4min easy climb (Z2) / 4min jog down"), String(localized: "wpe.w065", defaultValue: "Easy climbing"))
         }
 
         let workIntensity: Intensity = (trainingPhase == .base || trainingPhase == .recovery) ? .moderate : intensity
-        let work = self.phase(.work, duration: workPhases.workSec, intensity: workIntensity, reps: workPhases.reps, notes: "Climb at steady effort")
-        let recovery = self.phase(.recovery, duration: workPhases.restSec, intensity: .easy, reps: workPhases.reps, notes: "Jog/walk descent")
+        let work = self.phase(.work, duration: workPhases.workSec, intensity: workIntensity, reps: workPhases.reps, notes: String(localized: "wpe.w057", defaultValue: "Climb at steady effort"))
+        let recovery = self.phase(.recovery, duration: workPhases.restSec, intensity: .easy, reps: workPhases.reps, notes: String(localized: "wpe.w087", defaultValue: "Jog/walk descent"))
 
         return WorkoutTemplate(
             name: workPhases.name,
@@ -794,45 +794,45 @@ enum WorkoutProgressionEngine {
     // MARK: - Tempo Templates
 
     private static func tempoTemplate(phase trainingPhase: TrainingPhase, weekInPhase: Int, intensity: Intensity) -> WorkoutTemplate {
-        let warmUp = phase(.warmUp, duration: 900, intensity: .easy, reps: 1, notes: "Easy jog, build gradually")
-        let coolDown = phase(.coolDown, duration: 600, intensity: .easy, reps: 1, notes: "Easy jog, stretching")
+        let warmUp = phase(.warmUp, duration: 900, intensity: .easy, reps: 1, notes: String(localized: "wpe.w072", defaultValue: "Easy jog, build gradually"))
+        let coolDown = phase(.coolDown, duration: 600, intensity: .easy, reps: 1, notes: String(localized: "wpe.w074", defaultValue: "Easy jog, stretching"))
 
         let workPhases: (reps: Int, workSec: Double, restSec: Double, desc: String, name: String)
 
         switch trainingPhase {
         case .base:
             let variants: [(Int, Double, Double, String, String)] = [
-                (2, 600, 180, "2×10min at threshold (Z3) / 3min jog", "Threshold tempo"),
-                (2, 720, 180, "2×12min at threshold (Z3) / 3min jog", "Threshold tempo"),
-                (2, 900, 300, "2×15min at threshold (Z3) / 5min jog", "Sustained tempo"),
-                (2, 900, 240, "2×15min at threshold (Z3) / 4min jog", "Sustained tempo"),
-                (3, 600, 180, "3×10min at threshold (Z3) / 3min jog", "Sustained tempo"),
-                (2, 1200, 300, "2×20min at threshold (Z3) / 5min jog", "Long tempo"),
+                (2, 600, 180, String(localized: "wpe.w005", defaultValue: "2×10min at threshold (Z3) / 3min jog"), String(localized: "wpe.w133", defaultValue: "Threshold tempo")),
+                (2, 720, 180, String(localized: "wpe.w006", defaultValue: "2×12min at threshold (Z3) / 3min jog"), String(localized: "wpe.w133", defaultValue: "Threshold tempo")),
+                (2, 900, 300, String(localized: "wpe.w008", defaultValue: "2×15min at threshold (Z3) / 5min jog"), String(localized: "wpe.w129", defaultValue: "Sustained tempo")),
+                (2, 900, 240, String(localized: "wpe.w007", defaultValue: "2×15min at threshold (Z3) / 4min jog"), String(localized: "wpe.w129", defaultValue: "Sustained tempo")),
+                (3, 600, 180, String(localized: "wpe.w015", defaultValue: "3×10min at threshold (Z3) / 3min jog"), String(localized: "wpe.w129", defaultValue: "Sustained tempo")),
+                (2, 1200, 300, String(localized: "wpe.w010", defaultValue: "2×20min at threshold (Z3) / 5min jog"), String(localized: "wpe.w092", defaultValue: "Long tempo")),
             ]
             workPhases = variants[min(weekInPhase, variants.count - 1)]
 
         case .build:
             let variants: [(Int, Double, Double, String, String)] = [
-                (2, 1200, 300, "2×20min at tempo (Z3-Z4) / 5min jog", "Tempo run"),
-                (3, 900, 240, "3×15min at tempo (Z3-Z4) / 4min jog", "Tempo run"),
-                (2, 1500, 300, "2×25min at tempo (Z3-Z4) / 5min jog", "Long tempo"),
-                (3, 1200, 300, "3×20min at tempo (Z3-Z4) / 5min jog", "Long tempo"),
+                (2, 1200, 300, String(localized: "wpe.w009", defaultValue: "2×20min at tempo (Z3-Z4) / 5min jog"), String(localized: "wpe.w131", defaultValue: "Tempo run")),
+                (3, 900, 240, String(localized: "wpe.w017", defaultValue: "3×15min at tempo (Z3-Z4) / 4min jog"), String(localized: "wpe.w131", defaultValue: "Tempo run")),
+                (2, 1500, 300, String(localized: "wpe.w011", defaultValue: "2×25min at tempo (Z3-Z4) / 5min jog"), String(localized: "wpe.w092", defaultValue: "Long tempo")),
+                (3, 1200, 300, String(localized: "wpe.w018", defaultValue: "3×20min at tempo (Z3-Z4) / 5min jog"), String(localized: "wpe.w092", defaultValue: "Long tempo")),
             ]
             workPhases = variants[weekInPhase % variants.count]
 
         case .peak:
             let variants: [(Int, Double, Double, String, String)] = [
-                (3, 600, 180, "3×10min at race pace (Z4) / 3min jog", "Race-pace tempo"),
-                (4, 480, 150, "4×8min at race pace (Z4) / 2min30 jog", "Race-pace tempo"),
-                (3, 720, 180, "3×12min at race pace (Z4) / 3min jog", "Race-pace tempo"),
+                (3, 600, 180, String(localized: "wpe.w013", defaultValue: "3×10min at race pace (Z4) / 3min jog"), String(localized: "wpe.w114", defaultValue: "Race-pace tempo")),
+                (4, 480, 150, String(localized: "wpe.w025", defaultValue: "4×8min at race pace (Z4) / 2min30 jog"), String(localized: "wpe.w114", defaultValue: "Race-pace tempo")),
+                (3, 720, 180, String(localized: "wpe.w016", defaultValue: "3×12min at race pace (Z4) / 3min jog"), String(localized: "wpe.w114", defaultValue: "Race-pace tempo")),
             ]
             workPhases = variants[weekInPhase % variants.count]
 
         case .taper:
-            workPhases = (1, 900, 0, "1×15min at threshold (Z3)", "Maintenance tempo")
+            workPhases = (1, 900, 0, String(localized: "wpe.w004", defaultValue: "1×15min at threshold (Z3)"), String(localized: "wpe.w094", defaultValue: "Maintenance tempo"))
 
         default:
-            workPhases = (2, 600, 180, "2×10min at threshold (Z3) / 3min jog", "Threshold tempo")
+            workPhases = (2, 600, 180, String(localized: "wpe.w005", defaultValue: "2×10min at threshold (Z3) / 3min jog"), String(localized: "wpe.w133", defaultValue: "Threshold tempo"))
         }
 
         let work = self.phase(.work, duration: workPhases.workSec, intensity: intensity, reps: workPhases.reps, notes: nil)
@@ -867,7 +867,7 @@ enum WorkoutProgressionEngine {
         // duration. Koop / Roche / Jurek consensus: peak race sims max
         // out at 50–70 km / ≤75% of race duration. Without this guard,
         // an elite performance-mode athlete with a 24h target
-        // (100-miler) could see an 18h "peak race sim", far too much
+        // (100-miler) could see an 18h String(localized: "wpe.w100", defaultValue: "peak race sim"), far too much
         // recovery cost. Upstream `peakSingleLongRun` already caps via
         // tier fractions, but those don't *explicitly* enforce the
         // 75% rule; this is defense-in-depth.
@@ -902,27 +902,27 @@ enum WorkoutProgressionEngine {
 
         var phases: [IntervalPhase] = []
         phases.append(phase(.warmUp, duration: warmUpDur, intensity: .easy, reps: 1,
-                            notes: "Easy warmup, settle in"))
+                            notes: String(localized: "wpe.w078", defaultValue: "Easy warmup, settle in")))
         if easyBefore > 60 {
             phases.append(phase(.work, duration: easyBefore, intensity: .easy, reps: 1,
-                                notes: "Long easy aerobic block before race blocks. Fuel as you would on race day."))
+                                notes: String(localized: "wpe.w088", defaultValue: "Long easy aerobic block before race blocks. Fuel as you would on race day.")))
         }
         phases.append(phase(.work, duration: workPerBlock, intensity: .moderate, reps: blockCount,
-                            notes: "Race effort, full kit, full fueling, hold steady. This is the dress rehearsal."))
+                            notes: String(localized: "wpe.w109", defaultValue: "Race effort, full kit, full fueling, hold steady. This is the dress rehearsal.")))
         phases.append(phase(.recovery, duration: recoveryBetween, intensity: .easy, reps: 1,
-                            notes: "Easy jog between race blocks, recover before the next one"))
+                            notes: String(localized: "wpe.w069", defaultValue: "Easy jog between race blocks, recover before the next one")))
         if easyAfter > 60 {
             phases.append(phase(.work, duration: easyAfter, intensity: .easy, reps: 1,
-                                notes: "Easy running on tired legs, practice late-race execution."))
+                                notes: String(localized: "wpe.w077", defaultValue: "Easy running on tired legs, practice late-race execution.")))
         }
         phases.append(phase(.coolDown, duration: coolDownDur, intensity: .easy, reps: 1,
-                            notes: "Cool down. Note what worked: gear, fueling, pacing."))
+                            notes: String(localized: "wpe.w058", defaultValue: "Cool down. Note what worked: gear, fueling, pacing.")))
 
         let workMin = Int(workPerBlock) / 60
-        let desc = "Race simulation: \(blockCount)×\(workMin) min at race effort with 15 min easy between, embedded in a long aerobic run."
+        let desc = String(localized: "wpe.raceSim", defaultValue: "Race simulation: \(blockCount)×\(workMin) min at race effort with 15 min easy between, embedded in a long aerobic run.")
 
         return WorkoutTemplate(
-            name: "Race simulation long run",
+            name: String(localized: "wpe.w111", defaultValue: "Race simulation long run"),
             description: desc,
             phases: phases
         )
@@ -952,7 +952,7 @@ enum WorkoutProgressionEngine {
         return IntervalWorkout(
             id: UUID(),
             name: type.displayName,
-            descriptionText: "Steady \(intensity.displayName) effort",
+            descriptionText: String(localized: "wpe.steadyEffort", defaultValue: "Steady \(intensity.displayName) effort"),
             phases: [work],
             category: type == .recovery ? .recovery : .trailSpecific,
             estimatedDurationSeconds: duration,

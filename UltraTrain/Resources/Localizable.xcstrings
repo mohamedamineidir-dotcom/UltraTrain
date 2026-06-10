@@ -34668,6 +34668,2422 @@
         }
       }
     },
+    "wpe.b2b1Sim" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B2B Day 1 race simulation: %1$lld×%2$lld min at race effort with 15 min easy between, embedded in a long aerobic run."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc Jour 1 simulation de course : %1$lld×%2$lld min à effort de course avec 15 min faciles entre, intégrés dans une longue sortie aérobie."
+          }
+        }
+      }
+    },
+    "wpe.baseEnd" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Base Endurance: %lldmin at conversational pace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Endurance de base : %lldmin à allure d'aisance"
+          }
+        }
+      }
+    },
+    "wpe.descentPurpose" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run the descent with purpose. Controlled speed, light feet. Then jog %lldmin recovery."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courez la descente avec intention. Vitesse contrôlée, pieds légers. Puis %lldmin de footing de récupération."
+          }
+        }
+      }
+    },
+    "wpe.iv.thresh" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lldx%2$llds threshold (Z3-4) / %3$llds jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lldx%2$llds seuil (Z3-4) / %3$llds footing"
+          }
+        }
+      }
+    },
+    "wpe.iv.threshMin" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lldx%2$lldmin threshold / 1min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lldx%2$lldmin seuil / 1min footing"
+          }
+        }
+      }
+    },
+    "wpe.iv.vma" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lldx%2$llds at VMA (Z5) / %3$llds jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lldx%2$llds à VMA (Z5) / %3$llds footing"
+          }
+        }
+      }
+    },
+    "wpe.longRunSeg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long run %1$lldmin: warmup → %2$lld×%3$lldmin → cooldown"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue %1$lldmin : échauffement → %2$lld×%3$lldmin → retour au calme"
+          }
+        }
+      }
+    },
+    "wpe.progLR" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progressive long run %1$lld min: warmup → easy → %2$lld min at race intensity → easy → cooldown"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue progressive %1$lld min : échauffement → facile → %2$lld min à intensité de course → facile → retour au calme"
+          }
+        }
+      }
+    },
+    "wpe.raceSim" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race simulation: %1$lld×%2$lld min at race effort with 15 min easy between, embedded in a long aerobic run."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulation de course : %1$lld×%2$lld min à effort de course avec 15 min faciles entre, intégrés dans une longue sortie aérobie."
+          }
+        }
+      }
+    },
+    "wpe.steadyEffort" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Steady %@ effort"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort %@ régulier"
+          }
+        }
+      }
+    },
+    "wpe.w001" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10×1min hard uphill (Z4) / 1min jog down"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10×1min côte intense (Z4) / 1min footing en descente"
+          }
+        }
+      }
+    },
+    "wpe.w002" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10×2min at VO2max (Z4) / 1min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10×2min à VO2max (Z4) / 1min footing"
+          }
+        }
+      }
+    },
+    "wpe.w003" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10×90s max effort climb (Z5) / 90s jog down"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10×90s côte effort max (Z5) / 90s footing en descente"
+          }
+        }
+      }
+    },
+    "wpe.w004" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1×15min at threshold (Z3)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1×15min au seuil (Z3)"
+          }
+        }
+      }
+    },
+    "wpe.w005" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2×10min at threshold (Z3) / 3min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2×10min au seuil (Z3) / 3min footing"
+          }
+        }
+      }
+    },
+    "wpe.w006" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2×12min at threshold (Z3) / 3min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2×12min au seuil (Z3) / 3min footing"
+          }
+        }
+      }
+    },
+    "wpe.w007" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2×15min at threshold (Z3) / 4min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2×15min au seuil (Z3) / 4min footing"
+          }
+        }
+      }
+    },
+    "wpe.w008" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2×15min at threshold (Z3) / 5min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2×15min au seuil (Z3) / 5min footing"
+          }
+        }
+      }
+    },
+    "wpe.w009" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2×20min at tempo (Z3-Z4) / 5min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2×20min au tempo (Z3-Z4) / 5min footing"
+          }
+        }
+      }
+    },
+    "wpe.w010" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2×20min at threshold (Z3) / 5min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2×20min au seuil (Z3) / 5min footing"
+          }
+        }
+      }
+    },
+    "wpe.w011" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2×25min at tempo (Z3-Z4) / 5min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2×25min au tempo (Z3-Z4) / 5min footing"
+          }
+        }
+      }
+    },
+    "wpe.w012" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2×4min easy climb (Z2) / 4min jog down"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2×4min côte facile (Z2) / 4min footing en descente"
+          }
+        }
+      }
+    },
+    "wpe.w013" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×10min at race pace (Z4) / 3min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×10min à allure de course (Z4) / 3min footing"
+          }
+        }
+      }
+    },
+    "wpe.w014" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×10min at threshold (Z3-4) / 3min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×10min au seuil (Z3-4) / 3min footing"
+          }
+        }
+      }
+    },
+    "wpe.w015" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×10min at threshold (Z3) / 3min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×10min au seuil (Z3) / 3min footing"
+          }
+        }
+      }
+    },
+    "wpe.w016" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×12min at race pace (Z4) / 3min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×12min à allure de course (Z4) / 3min footing"
+          }
+        }
+      }
+    },
+    "wpe.w017" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×15min at tempo (Z3-Z4) / 4min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×15min au tempo (Z3-Z4) / 4min footing"
+          }
+        }
+      }
+    },
+    "wpe.w018" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×20min at tempo (Z3-Z4) / 5min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×20min au tempo (Z3-Z4) / 5min footing"
+          }
+        }
+      }
+    },
+    "wpe.w019" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×3min climb at threshold (Z3) / 3min jog down"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×3min côte au seuil (Z3) / 3min footing en descente"
+          }
+        }
+      }
+    },
+    "wpe.w020" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×8min climb at threshold (Z3) / 5min jog down"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3×8min côte au seuil (Z3) / 5min footing en descente"
+          }
+        }
+      }
+    },
+    "wpe.w021" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×10min climb at threshold (Z3) / 6min jog down"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×10min côte au seuil (Z3) / 6min footing en descente"
+          }
+        }
+      }
+    },
+    "wpe.w022" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×2min at threshold (Z3) / 2min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×2min au seuil (Z3) / 2min footing"
+          }
+        }
+      }
+    },
+    "wpe.w023" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×4min climb at VO2max (Z4) / 3min jog down"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×4min côte à VO2max (Z4) / 3min footing en descente"
+          }
+        }
+      }
+    },
+    "wpe.w024" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×6min at threshold (Z3-4) / 2min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×6min au seuil (Z3-4) / 2min footing"
+          }
+        }
+      }
+    },
+    "wpe.w025" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×8min at race pace (Z4) / 2min30 jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×8min à allure de course (Z4) / 2min30 footing"
+          }
+        }
+      }
+    },
+    "wpe.w026" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×8min climb at threshold (Z3) / 5min jog down"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4×8min côte au seuil (Z3) / 5min footing en descente"
+          }
+        }
+      }
+    },
+    "wpe.w027" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4x2min easy tempo / 2min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4x2min tempo facile / 2min footing"
+          }
+        }
+      }
+    },
+    "wpe.w028" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×10min climb at threshold (Z3) / 6min jog down"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×10min côte au seuil (Z3) / 6min footing en descente"
+          }
+        }
+      }
+    },
+    "wpe.w029" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×3min at threshold (Z3-4) / 1:30 jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×3min au seuil (Z3-4) / 1:30 footing"
+          }
+        }
+      }
+    },
+    "wpe.w030" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×3min at threshold (Z3) / 2min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×3min au seuil (Z3) / 2min footing"
+          }
+        }
+      }
+    },
+    "wpe.w031" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×4min at VO2max (Z4) / 2min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×4min à VO2max (Z4) / 2min footing"
+          }
+        }
+      }
+    },
+    "wpe.w032" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×4min climb at VO2max (Z4) / 3min jog down"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×4min côte à VO2max (Z4) / 3min footing en descente"
+          }
+        }
+      }
+    },
+    "wpe.w033" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×8min at threshold (Z3-4) / 2:30 jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5×8min au seuil (Z3-4) / 2:30 footing"
+          }
+        }
+      }
+    },
+    "wpe.w034" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×1min uphill at threshold (Z3-4) / 1:30 jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×1min côte au seuil (Z3-4) / 1:30 footing"
+          }
+        }
+      }
+    },
+    "wpe.w035" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×2min uphill at threshold (Z3-4) / 2:30 jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×2min côte au seuil (Z3-4) / 2:30 footing"
+          }
+        }
+      }
+    },
+    "wpe.w036" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×3min at VO2max (Z4) / 2min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×3min à VO2max (Z4) / 2min footing"
+          }
+        }
+      }
+    },
+    "wpe.w037" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×3min climb at VO2max (Z4) / 2min jog down"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×3min côte à VO2max (Z4) / 2min footing en descente"
+          }
+        }
+      }
+    },
+    "wpe.w038" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×3min steep climb at VO2max (Z4) / 2min jog down"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×3min côte raide à VO2max (Z4) / 2min footing en descente"
+          }
+        }
+      }
+    },
+    "wpe.w039" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×4min at threshold (Z3-4) / 2min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×4min au seuil (Z3-4) / 2min footing"
+          }
+        }
+      }
+    },
+    "wpe.w040" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×4min at VO2max (Z4) / 2min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6×4min à VO2max (Z4) / 2min footing"
+          }
+        }
+      }
+    },
+    "wpe.w041" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6x1min race effort / 1:30 jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6x1min effort de course / 1:30 footing"
+          }
+        }
+      }
+    },
+    "wpe.w042" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7×2:30 uphill at threshold (Z3-4) / 2:30 jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7×2:30 côte au seuil (Z3-4) / 2:30 footing"
+          }
+        }
+      }
+    },
+    "wpe.w043" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7×3min at VO2max (Z4) / 90s jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7×3min à VO2max (Z4) / 90s footing"
+          }
+        }
+      }
+    },
+    "wpe.w044" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7×3min steep climb at VO2max (Z4) / 2min jog down"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7×3min côte raide à VO2max (Z4) / 2min footing en descente"
+          }
+        }
+      }
+    },
+    "wpe.w045" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8×1:30 uphill at threshold (Z3-4) / 2min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8×1:30 côte au seuil (Z3-4) / 2min footing"
+          }
+        }
+      }
+    },
+    "wpe.w046" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8×2min max effort climb (Z5) / 2min jog down"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8×2min côte effort max (Z5) / 2min footing en descente"
+          }
+        }
+      }
+    },
+    "wpe.w047" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8×2min30 at VO2max (Z4) / 90s jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8×2min30 à VO2max (Z4) / 90s footing"
+          }
+        }
+      }
+    },
+    "wpe.w048" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8×30s hard uphill (Z4) / 30s jog down"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8×30s côte intense (Z4) / 30s footing en descente"
+          }
+        }
+      }
+    },
+    "wpe.w049" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8×4min at threshold (Z3-4) / 2min jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8×4min au seuil (Z3-4) / 2min footing"
+          }
+        }
+      }
+    },
+    "wpe.w050" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aerobic climbing"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Côte aérobie"
+          }
+        }
+      }
+    },
+    "wpe.w051" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B2B Day 1 (race sim)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc Jour 1 (simu course)"
+          }
+        }
+      }
+    },
+    "wpe.w052" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B2B Day 1: warmup → steady → negative split last third → cooldown"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc Jour 1 : échauffement → régulier → négatif sur le dernier tiers → retour au calme"
+          }
+        }
+      }
+    },
+    "wpe.w053" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B2B Day 1"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc Jour 1"
+          }
+        }
+      }
+    },
+    "wpe.w054" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B2B Day 2: warmup → fatigued effort → push last 20% → cooldown"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc J2 : échauffement → effort fatigué → accélération sur les derniers 20% → retour au calme"
+          }
+        }
+      }
+    },
+    "wpe.w055" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B2B Day 2"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc J2"
+          }
+        }
+      }
+    },
+    "wpe.w056" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Base Endurance"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Endurance de base"
+          }
+        }
+      }
+    },
+    "wpe.w057" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Climb at steady effort"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Côte à effort régulier"
+          }
+        }
+      }
+    },
+    "wpe.w058" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cool down. Note what worked: gear, fueling, pacing."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retour au calme. Notez ce qui a marché : matériel, alimentation, allure."
+          }
+        }
+      }
+    },
+    "wpe.w059" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cool down. Refuel well, Day 2 starts now."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retour au calme. Rechargez bien, le Jour 2 commence maintenant."
+          }
+        }
+      }
+    },
+    "wpe.w060" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cool down. Refuel well, tomorrow runs on today's fatigue."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retour au calme. Rechargez bien, demain se court sur la fatigue d'aujourd'hui."
+          }
+        }
+      }
+    },
+    "wpe.w061" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dense intervals"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fractionné dense"
+          }
+        }
+      }
+    },
+    "wpe.w062" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy aerobic block, conversational effort, fuel as you'll fuel on race day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bloc aérobie facile, effort en aisance, alimentez-vous comme le jour de course."
+          }
+        }
+      }
+    },
+    "wpe.w063" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy aerobic finish. Don't bury yourself, Day 2 still runs on this fatigue."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fin aérobie facile. Ne vous enterrez pas, le Jour 2 se court encore sur cette fatigue."
+          }
+        }
+      }
+    },
+    "wpe.w064" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy aerobic preamble. Fuel as you will on race day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préambule aérobie facile. Alimentez-vous comme le jour de course."
+          }
+        }
+      }
+    },
+    "wpe.w065" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy climbing"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Côte facile"
+          }
+        }
+      }
+    },
+    "wpe.w066" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy conversational pace (Zone 2). Focus on recovery and blood flow."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allure facile en aisance (Zone 2). Concentrez-vous sur la récupération et la circulation."
+          }
+        }
+      }
+    },
+    "wpe.w067" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy finish, practice running tired but in control."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fin facile, travaillez à courir fatigué mais maître."
+          }
+        }
+      }
+    },
+    "wpe.w068" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy jog back, stretching"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile de retour, étirements"
+          }
+        }
+      }
+    },
+    "wpe.w069" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy jog between race blocks, recover before the next one"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile entre les blocs de course, récupérez avant le suivant"
+          }
+        }
+      }
+    },
+    "wpe.w070" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy jog between race blocks. Eat, drink, reset."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile entre les blocs de course. Mangez, buvez, réinitialisez."
+          }
+        }
+      }
+    },
+    "wpe.w071" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy jog to the climb"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile jusqu'à la côte"
+          }
+        }
+      }
+    },
+    "wpe.w072" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy jog, build gradually"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile, montez progressivement"
+          }
+        }
+      }
+    },
+    "wpe.w073" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy jog, progressive pace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile, allure progressive"
+          }
+        }
+      }
+    },
+    "wpe.w074" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy jog, stretching"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile, étirements"
+          }
+        }
+      }
+    },
+    "wpe.w075" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy pace throughout."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allure facile tout du long."
+          }
+        }
+      }
+    },
+    "wpe.w076" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy pace. Eat/drink at each segment break."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allure facile. Mangez/buvez à chaque pause de segment."
+          }
+        }
+      }
+    },
+    "wpe.w077" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy running on tired legs, practice late-race execution."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Course facile sur jambes fatiguées, travaillez l'exécution de fin de course."
+          }
+        }
+      }
+    },
+    "wpe.w078" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy warmup, settle in"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échauffement facile, installez-vous"
+          }
+        }
+      }
+    },
+    "wpe.w079" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Endurance climbing"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Côte d'endurance"
+          }
+        }
+      }
+    },
+    "wpe.w080" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extra-long warmup on tired legs. Walk → jog → easy run."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échauffement très long sur jambes fatiguées. Marche → footing → course facile."
+          }
+        }
+      }
+    },
+    "wpe.w081" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fewer reps, longer efforts. Build sustained power at this intensity."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moins de répétitions, efforts plus longs. Développez une puissance soutenue à cette intensité."
+          }
+        }
+      }
+    },
+    "wpe.w082" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gentle tempo. Just waking the legs up."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo doux. Juste de quoi réveiller les jambes."
+          }
+        }
+      }
+    },
+    "wpe.w083" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hard climb, then fast controlled descent. This builds the eccentric quad strength you need for race-day descents."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Côte intense, puis descente rapide et contrôlée. Cela développe la force excentrique des quadriceps nécessaire pour les descentes du jour J."
+          }
+        }
+      }
+    },
+    "wpe.w084" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hill repeats (short)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétitions en côte (courtes)"
+          }
+        }
+      }
+    },
+    "wpe.w085" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hill repeats"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétitions en côte"
+          }
+        }
+      }
+    },
+    "wpe.w086" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interval session"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Séance de fractionné"
+          }
+        }
+      }
+    },
+    "wpe.w087" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jog/walk descent"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descente footing/marche"
+          }
+        }
+      }
+    },
+    "wpe.w088" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long easy aerobic block before race blocks. Fuel as you would on race day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long bloc aérobie facile avant les blocs de course. Alimentez-vous comme le jour de course."
+          }
+        }
+      }
+    },
+    "wpe.w089" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long hill repeats"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétitions en côte longues"
+          }
+        }
+      }
+    },
+    "wpe.w090" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long intervals"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fractionné long"
+          }
+        }
+      }
+    },
+    "wpe.w091" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue"
+          }
+        }
+      }
+    },
+    "wpe.w092" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long tempo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo long"
+          }
+        }
+      }
+    },
+    "wpe.w093" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintenance climbing"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Côte d'entretien"
+          }
+        }
+      }
+    },
+    "wpe.w094" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintenance tempo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo d'entretien"
+          }
+        }
+      }
+    },
+    "wpe.w095" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Max effort bursts. These are short for a reason. Go hard."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pointes à effort max. Elles sont courtes pour une raison. Allez-y fort."
+          }
+        }
+      }
+    },
+    "wpe.w096" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Max effort climbing"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Côte à effort max"
+          }
+        }
+      }
+    },
+    "wpe.w097" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More reps, shorter climbs. Focus on quick powerful steps."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus de répétitions, côtes plus courtes. Concentrez-vous sur des appuis rapides et puissants."
+          }
+        }
+      }
+    },
+    "wpe.w098" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More reps, shorter efforts. Focus on crisp execution each rep."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus de répétitions, efforts plus courts. Concentrez-vous sur une exécution nette à chaque répétition."
+          }
+        }
+      }
+    },
+    "wpe.w099" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Negative split, build effort in the last third"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Négatif, montez l'effort sur le dernier tiers"
+          }
+        }
+      }
+    },
+    "wpe.w100" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "peak race sim"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "simu course pic"
+          }
+        }
+      }
+    },
+    "wpe.w101" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Power climbing"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Côte en puissance"
+          }
+        }
+      }
+    },
+    "wpe.w102" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progressive long run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue progressive"
+          }
+        }
+      }
+    },
+    "wpe.w103" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progressive warmup, start walking, build to easy jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échauffement progressif, commencez en marchant, montez vers un footing facile"
+          }
+        }
+      }
+    },
+    "wpe.w104" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progressive warmup. Race-day morning routine if you can."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échauffement progressif. Routine du matin de course si possible."
+          }
+        }
+      }
+    },
+    "wpe.w105" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progressive warmup"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échauffement progressif"
+          }
+        }
+      }
+    },
+    "wpe.w106" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push section, build to race effort in the last 20%"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Section d'accélération, montez à l'effort de course sur les derniers 20%"
+          }
+        }
+      }
+    },
+    "wpe.w107" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quick descent"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descente rapide"
+          }
+        }
+      }
+    },
+    "wpe.w108" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race effort strides. Stay smooth."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lignes droites à effort de course. Restez fluide."
+          }
+        }
+      }
+    },
+    "wpe.w109" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race effort, full kit, full fueling, hold steady. This is the dress rehearsal."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort de course, tenue complète, alimentation complète, tenez régulier. C'est la répétition générale."
+          }
+        }
+      }
+    },
+    "wpe.w110" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race effort. Full race kit, full fueling, this is the dress rehearsal before tomorrow's tired-legs day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort de course. Tenue de course complète, alimentation complète, c'est la répétition générale avant la journée jambes fatiguées de demain."
+          }
+        }
+      }
+    },
+    "wpe.w111" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race simulation long run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue de simulation de course"
+          }
+        }
+      }
+    },
+    "wpe.w112" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race strides"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lignes droites de course"
+          }
+        }
+      }
+    },
+    "wpe.w113" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race-intensity block. Run at the EFFORT you'd hold at race-day, controlled, repeatable, NOT all-out. On trail your pace varies with terrain; the EFFORT is the constant."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bloc à intensité de course. Courez à l'EFFORT que vous tiendriez le jour J : contrôlé, répétable, PAS à fond. En trail votre allure varie avec le terrain ; l'EFFORT est la constante."
+          }
+        }
+      }
+    },
+    "wpe.w114" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race-pace tempo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo à allure de course"
+          }
+        }
+      }
+    },
+    "wpe.w115" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery tempo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo de récupération"
+          }
+        }
+      }
+    },
+    "wpe.w116" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reduced rest between reps. The accumulated fatigue is the point."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération réduite entre les répétitions. La fatigue accumulée, c'est le but."
+          }
+        }
+      }
+    },
+    "wpe.w117" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run Faster"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courir plus vite"
+          }
+        }
+      }
+    },
+    "wpe.w118" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short & sharp intervals"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fractionné court et vif"
+          }
+        }
+      }
+    },
+    "wpe.w119" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short and sharp. Stay in threshold zone but keep the tempo high."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Court et vif. Restez en zone de seuil mais gardez un tempo élevé."
+          }
+        }
+      }
+    },
+    "wpe.w120" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short hill repeats"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétitions en côte courtes"
+          }
+        }
+      }
+    },
+    "wpe.w121" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shorter blocks, less rest. The accumulated fatigue builds threshold endurance differently than long reps."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blocs plus courts, moins de récupération. La fatigue accumulée développe l'endurance au seuil différemment des longues répétitions."
+          }
+        }
+      }
+    },
+    "wpe.w122" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shorter rest between climbs. Accumulated fatigue builds climbing endurance."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération plus courte entre les côtes. La fatigue accumulée développe l'endurance en côte."
+          }
+        }
+      }
+    },
+    "wpe.w123" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shorter, punchier climbs. Higher cadence than your primary session."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Côtes plus courtes et plus toniques. Cadence plus élevée que votre séance principale."
+          }
+        }
+      }
+    },
+    "wpe.w124" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprint climbing"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Côte en sprint"
+          }
+        }
+      }
+    },
+    "wpe.w125" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Steady effort at easy pace. Fuel consistently."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort régulier à allure facile. Alimentez-vous régulièrement."
+          }
+        }
+      }
+    },
+    "wpe.w126" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Steady fatigued effort at easy pace. Embrace the discomfort."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort fatigué régulier à allure facile. Acceptez l'inconfort."
+          }
+        }
+      }
+    },
+    "wpe.w127" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Steep repeats"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétitions raides"
+          }
+        }
+      }
+    },
+    "wpe.w128" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sustained climbing. Longer reps build endurance for race-day climbs."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Côte soutenue. Des répétitions plus longues développent l'endurance pour les montées du jour J."
+          }
+        }
+      }
+    },
+    "wpe.w129" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sustained tempo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo soutenu"
+          }
+        }
+      }
+    },
+    "wpe.w130" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo fragments"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fragments de tempo"
+          }
+        }
+      }
+    },
+    "wpe.w131" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Séance tempo"
+          }
+        }
+      }
+    },
+    "wpe.w132" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Threshold repeats"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétitions au seuil"
+          }
+        }
+      }
+    },
+    "wpe.w133" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Threshold tempo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo au seuil"
+          }
+        }
+      }
+    },
+    "wpe.w134" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Up + Down hill repeats"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétitions montée + descente"
+          }
+        }
+      }
+    },
+    "wpe.w135" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VMA bursts"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pointes VMA"
+          }
+        }
+      }
+    },
+    "wpe.w136" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walk to cool down. Refuel immediately."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marche pour récupérer. Rechargez immédiatement."
+          }
+        }
+      }
+    },
+    "wpe.w137" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walk to cool down. Stretch. Refuel within 30 min."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marche pour récupérer. Étirez-vous. Rechargez dans les 30 min."
+          }
+        }
+      }
+    },
+    "wpe.w138" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walk to cool down. Stretch. Refuel within 30min."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marche pour récupérer. Étirez-vous. Rechargez dans les 30min."
+          }
+        }
+      }
+    },
+    "wpe.w139" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "running tired"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "course fatiguée"
+          }
+        }
+      }
+    },
+    "wpe.w140" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "race effort"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "effort de course"
+          }
+        }
+      }
+    },
+    "wpe.w141" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "race intensity"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "intensité de course"
+          }
+        }
+      }
+    },
     "x%lld" : {
       "localizations" : {
         "fr" : {
