@@ -28316,6 +28316,406 @@
         }
       }
     },
+    "rwt.easy25" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 25 min + 4-6 × 100m strides. Keep CNS firing."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "25 min faciles + 4-6 × 100m en lignes droites. Gardez le système nerveux actif."
+          }
+        }
+      }
+    },
+    "rwt.easy30" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 30 min + 6 × 100m strides. Neuromuscular."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min faciles + 6 × 100m en lignes droites. Neuromusculaire."
+          }
+        }
+      }
+    },
+    "rwt.easy3035" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 30-35 min + 6 × 100m strides. CNS prime."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30-35 min faciles + 6 × 100m en lignes droites. Activation du système nerveux."
+          }
+        }
+      }
+    },
+    "rwt.easy56glyco" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 5-6 mi + 6 × 100m strides. Glycogen-loading begins."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5-6 miles faciles + 6 × 100m en lignes droites. La recharge en glycogène commence."
+          }
+        }
+      }
+    },
+    "rwt.easyOrRest" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy %lld min OR rest if legs feel heavy. Listen to your body."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld min faciles OU repos si les jambes sont lourdes. Écoutez votre corps."
+          }
+        }
+      }
+    },
+    "rwt.easyPerf" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 7-8 mi. Performance philosophy, preserve aerobic fitness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7-8 miles faciles. Approche performance, préservez la forme aérobie."
+          }
+        }
+      }
+    },
+    "rwt.q1km" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3 × 1km at 10K pace, full recovery. Sharpen race rhythm without depletion."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3 × 1km à allure 10K, récupération complète. Affûtez le rythme de course sans vous vider."
+          }
+        }
+      }
+    },
+    "rwt.q1mile" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3 × 1 mile at half-marathon pace, 90s rec. Dress rehearsal, last quality."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3 × 1 mile à allure semi-marathon, 90s de récup. Répétition générale, dernière séance de qualité."
+          }
+        }
+      }
+    },
+    "rwt.q200hmp" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20-25 min easy + 2-3 × 200m at HMP. Prime + prevent staleness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20-25 min faciles + 2-3 × 200m à allure semi. Activation + éviter la stagnation."
+          }
+        }
+      }
+    },
+    "rwt.q800" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3-4 × 800m at 5K race pace, 90s rec. Race-pace tune-up, last sharpener."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3-4 × 800m à allure 5K, 90s de récup. Mise au point à allure de course, dernier affûtage."
+          }
+        }
+      }
+    },
+    "rwt.q8mi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8 mi total: 5 mi easy + 3 mi at marathon pace. Dress rehearsal, last MP touch."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8 miles au total : 5 miles faciles + 3 miles à allure marathon. Répétition générale, dernier rappel d'allure marathon."
+          }
+        }
+      }
+    },
+    "rwt.raceDay" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RACE: %1$@ (%2$@). Execute your plan. Trust your fitness. Pace the first 25%%, hold through 50%%, race the last half."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "COURSE : %1$@ (%2$@). Déroulez votre plan. Faites confiance à votre forme. Gérez les premiers 25%%, tenez jusqu'à 50%%, lâchez les chevaux sur la seconde moitié."
+          }
+        }
+      }
+    },
+    "rwt.recovery" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run, conversational. Recovery."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile, en aisance respiratoire. Récupération."
+          }
+        }
+      }
+    },
+    "rwt.recoveryYesterday" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run, conversational. Recovery from yesterday."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile, en aisance respiratoire. Récupération de la veille."
+          }
+        }
+      }
+    },
+    "rwt.restCelebrate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest / very easy walk. Race is done, celebrate, refuel, reflect."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos / marche très facile. La course est finie : célébrez, rechargez, faites le bilan."
+          }
+        }
+      }
+    },
+    "rwt.restConserve" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day. Conserve energy for race day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos. Conservez votre énergie pour le jour J."
+          }
+        }
+      }
+    },
+    "rwt.restDialedBack" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day. Race-week frequency dialed back to keep your legs fresh."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos. Fréquence réduite en semaine de course pour garder les jambes fraîches."
+          }
+        }
+      }
+    },
+    "rwt.restGlycoFresh" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest. Glycogen + freshness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos. Glycogène + fraîcheur."
+          }
+        }
+      }
+    },
+    "rwt.restGlycoSuper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest. Glycogen super-compensation begins."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos. La surcompensation du glycogène commence."
+          }
+        }
+      }
+    },
+    "rwt.shakeout1520" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shakeout 15-20 min + 2-3 × 100m + 1 × 30s @ goal pace. Prime CNS."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing de déblocage 15-20 min + 2-3 × 100m + 1 × 30s à allure cible. Activez le système nerveux."
+          }
+        }
+      }
+    },
+    "rwt.shakeout2030" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shakeout 20-30 min + 4 × 100m strides. Prime, prevent stiffness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing de déblocage 20-30 min + 4 × 100m en lignes droites. Activation, éviter les raideurs."
+          }
+        }
+      }
+    },
+    "rwt.shakeout20_10k" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shakeout 20 min + 4 × 100m strides + 1 × 200m @ 10K pace. Prime."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing de déblocage 20 min + 4 × 100m en lignes droites + 1 × 200m à allure 10K. Activation."
+          }
+        }
+      }
+    },
+    "rwt.strides" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run + 4 × 100m strides."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile + 4 × 100m en lignes droites."
+          }
+        }
+      }
+    },
+    "rwt.strides5kTune" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run + 4 × 100m strides. Aerobic ticking, sharp legs."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile + 4 × 100m en lignes droites. Aérobie entretenu, jambes vives."
+          }
+        }
+      }
+    },
+    "rwt.stridesAerobic" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run + 4 × 100m strides. Aerobic."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile + 4 × 100m en lignes droites. Aérobie."
+          }
+        }
+      }
+    },
     "scenario.comeback.subtitle" : {
       "localizations" : {
         "en" : {
