@@ -34395,6 +34395,822 @@
         }
       }
     },
+    "trt.001" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 20 min steady-state pickup. Only for elites with high training age."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 20 min d'accélération en régime stable. Réservé aux élites avec un grand âge d'entraînement."
+          }
+        }
+      }
+    },
+    "trt.002" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 × 1 min at steady on race-specific terrain. Performance philosophy, light primer."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 × 1 min en régime stable sur terrain spécifique à la course. Approche performance, légère mise en route."
+          }
+        }
+      }
+    },
+    "trt.003" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 × 100m strides. Aerobic ticking."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 × 100m en lignes droites. Aérobie entretenu."
+          }
+        }
+      }
+    },
+    "trt.004" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 × 100m strides. Aerobic."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 × 100m en lignes droites. Aérobie."
+          }
+        }
+      }
+    },
+    "trt.005" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 × 20s hill strides. Climb prime."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 × 20s en lignes droites en côte. Activation de la montée."
+          }
+        }
+      }
+    },
+    "trt.006" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 × 30s hill strides. Light primer."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 × 30s en lignes droites en côte. Légère mise en route."
+          }
+        }
+      }
+    },
+    "trt.007" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 × 30s pickups. Light primer, no hard work this close to race day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 × 30s d'accélérations. Légère mise en route, aucun travail dur si près de la course."
+          }
+        }
+      }
+    },
+    "trt.008" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 strides. Aerobic ticking."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 lignes droites. Aérobie entretenu."
+          }
+        }
+      }
+    },
+    "trt.009" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 strides. Keep legs alive."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 lignes droites. Gardez les jambes vivantes."
+          }
+        }
+      }
+    },
+    "trt.010" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 strides. Last 'real' run before final descent into rest."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 lignes droites. Dernière « vraie » sortie avant la descente finale vers le repos."
+          }
+        }
+      }
+    },
+    "trt.011" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 strides. Last 'real' run before taper deepens."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 lignes droites. Dernière « vraie » sortie avant que l'affûtage s'accentue."
+          }
+        }
+      }
+    },
+    "trt.012" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 strides. Last short run."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 lignes droites. Dernière sortie courte."
+          }
+        }
+      }
+    },
+    "trt.013" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 strides. Light."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4 lignes droites. Légère."
+          }
+        }
+      }
+    },
+    "trt.014" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4-6 × 100m strides. CNS prime."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 4-6 × 100m en lignes droites. Activation du système nerveux."
+          }
+        }
+      }
+    },
+    "trt.015" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min easy + 5 × 1 min at threshold or 4 × 30s hill strides. Light primer, sharpening only."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 min faciles + 5 × 1 min au seuil ou 4 × 30s en lignes droites en côte. Légère mise en route, affûtage uniquement."
+          }
+        }
+      }
+    },
+    "trt.016" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4-5 × 3 min at controlled threshold on rolling terrain, 2 min easy between. Specific stimulus with a fast-finish mentality."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4-5 × 3 min au seuil contrôlé sur terrain vallonné, 2 min faciles entre. Stimulus spécifique avec un état d'esprit de finish rapide."
+          }
+        }
+      }
+    },
+    "trt.017" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversational pace, light strides at the end."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allure d'aisance, lignes droites légères à la fin."
+          }
+        }
+      }
+    },
+    "trt.018" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversational pace, recovery from peak block."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allure d'aisance, récupération du bloc de pic."
+          }
+        }
+      }
+    },
+    "trt.019" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversational pace, recovery."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allure d'aisance, récupération."
+          }
+        }
+      }
+    },
+    "trt.020" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversational pace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allure d'aisance."
+          }
+        }
+      }
+    },
+    "trt.021" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversational. Easy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En aisance. Facile."
+          }
+        }
+      }
+    },
+    "trt.022" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversational. Recovery."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En aisance. Récupération."
+          }
+        }
+      }
+    },
+    "trt.023" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 25-30 min. No hill strides, keep climbing legs fresh."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "25-30 min faciles. Pas de lignes droites en côte, gardez les jambes de grimpe fraîches."
+          }
+        }
+      }
+    },
+    "trt.024" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy OR rest if legs feel heavy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Facile OU repos si les jambes sont lourdes."
+          }
+        }
+      }
+    },
+    "trt.025" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optional 10-15 min jog if legs feel locked up. Otherwise rest is fine."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing optionnel de 10-15 min si les jambes sont nouées. Sinon, le repos convient."
+          }
+        }
+      }
+    },
+    "trt.026" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optional 15-min jog if legs feel locked up. Otherwise rest."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing optionnel de 15 min si les jambes sont nouées. Sinon, repos."
+          }
+        }
+      }
+    },
+    "trt.027" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery from yesterday."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération de la veille."
+          }
+        }
+      }
+    },
+    "trt.028" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery, conversational pace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération, allure d'aisance."
+          }
+        }
+      }
+    },
+    "trt.029" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest / travel day. Final gear check."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos / jour de voyage. Vérification finale du matériel."
+          }
+        }
+      }
+    },
+    "trt.030" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest / very easy walk. Race is done, refuel, hydrate, reflect. Recovery starts now."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos / marche très facile. La course est finie : rechargez, hydratez-vous, faites le bilan. La récupération commence maintenant."
+          }
+        }
+      }
+    },
+    "trt.031" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day. Conserve energy for race day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos. Conservez votre énergie pour le jour J."
+          }
+        }
+      }
+    },
+    "trt.032" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day. Race-week frequency dialed back to keep your legs fresh."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos. Fréquence réduite en semaine de course pour garder les jambes fraîches."
+          }
+        }
+      }
+    },
+    "trt.033" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest or 20 min very easy. Mental + physical reset."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos ou 20 min très faciles. Réinitialisation mentale et physique."
+          }
+        }
+      }
+    },
+    "trt.034" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest. Beginners prioritize recovery this close to race day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos. Si près de la course, les débutants priorisent la récupération."
+          }
+        }
+      }
+    },
+    "trt.035" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest. Glycogen + freshness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos. Glycogène + fraîcheur."
+          }
+        }
+      }
+    },
+    "trt.036" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest. Glycogen + travel + headspace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos. Glycogène + voyage + sérénité."
+          }
+        }
+      }
+    },
+    "trt.037" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest. Glycogen super-compensation, mental prep."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos. Surcompensation du glycogène, préparation mentale."
+          }
+        }
+      }
+    },
+    "trt.038" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest. Hydrate, eat, sleep."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos. Hydratez-vous, mangez, dormez."
+          }
+        }
+      }
+    },
+    "trt.039" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest. Mental prep, visualize aid stations, fueling timing."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos. Préparation mentale, visualisez les ravitaillements, le timing d'alimentation."
+          }
+        }
+      }
+    },
+    "trt.040" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest. Race tomorrow, sleep, hydrate, eat real food, calm the mind."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos. Course demain : dormez, hydratez-vous, mangez de vrais aliments, apaisez l'esprit."
+          }
+        }
+      }
+    },
+    "trt.041" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest. Scout the course mentally. Pack drop bags."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos. Repérez le parcours mentalement. Préparez vos sacs de ravitaillement."
+          }
+        }
+      }
+    },
+    "trt.042" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest. Stage 1 starts tomorrow, pacing strategy beats fitness fine-tuning."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos. L'étape 1 commence demain : la stratégie d'allure prime sur les derniers réglages de forme."
+          }
+        }
+      }
+    },
+    "trt.043" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest. Travel day for most. Mental reset, Jurek: race-week stillness equals race-day strength."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repos. Jour de voyage pour la plupart. Réinitialisation mentale, Jurek : le calme en semaine de course égale la force le jour J."
+          }
+        }
+      }
+    },
+    "trt.044" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shakeout 15-20 min + 2 × 30s @ race effort uphill. Prime climbing legs."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing de déblocage 15-20 min + 2 × 30s à effort de course en côte. Activez les jambes de grimpe."
+          }
+        }
+      }
+    },
+    "trt.045" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shakeout 15-20 min + 2 strides. Prime."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing de déblocage 15-20 min + 2 lignes droites. Activation."
+          }
+        }
+      }
+    },
+    "trt.046" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shakeout 15-20 min + 2-3 strides. Performance openers, keep CNS engaged."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing de déblocage 15-20 min + 2-3 lignes droites. Ouvreurs performance, gardez le système nerveux engagé."
+          }
+        }
+      }
+    },
+    "trt.047" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shakeout 15-20 min on flat. Stay loose."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing de déblocage 15-20 min sur le plat. Restez relâché."
+          }
+        }
+      }
+    },
+    "trt.048" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shakeout 20-25 min + 2-3 strides. Prime."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing de déblocage 20-25 min + 2-3 lignes droites. Activation."
+          }
+        }
+      }
+    },
+    "trt.easyDesc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy %1$lld min. %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld min faciles. %2$@"
+          }
+        }
+      }
+    },
+    "trt.elevSuffix" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " / D+ %lldm"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " / D+ %lldm"
+          }
+        }
+      }
+    },
+    "trt.raceDay" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RACE: %1$@ (%2$@%3$@). The journey ends here. Trust your training, fuel like clockwork, manage the climbs, respect the descents. The first half is for patience, the second half is for grit."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "COURSE : %1$@ (%2$@%3$@). Le voyage se termine ici. Faites confiance à votre entraînement, alimentez-vous comme une horloge, gérez les montées, respectez les descentes. La première moitié est pour la patience, la seconde pour le cran."
+          }
+        }
+      }
+    },
     "upt.early.desc" : {
       "localizations" : {
         "en" : {
