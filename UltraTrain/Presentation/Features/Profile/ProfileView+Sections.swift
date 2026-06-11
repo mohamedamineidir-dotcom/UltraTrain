@@ -43,7 +43,8 @@ extension ProfileView {
 
     func statItem(label: String, value: String, unit: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(label.uppercased())
+            Text(LocalizedStringKey(label))
+                .textCase(.uppercase)
                 .font(.caption2.weight(.semibold))
                 .tracking(0.4)
                 .foregroundStyle(Theme.Colors.secondaryLabel)

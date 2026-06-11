@@ -117,25 +117,25 @@ struct MissedSessionBanner: View {
 
     private var headline: String {
         if pattern.flags.contains(.extendedInactivity) {
-            return "Plan is ahead of where you actually are"
+            return String(localized: "msb.headline.inactivity", defaultValue: "Plan is ahead of where you actually are")
         }
         if pattern.flags.contains(.multiSessionSkip) {
-            return "Missed \(pattern.skipCountRecent) sessions recently"
+            return String(localized: "msb.headline.multiSkip", defaultValue: "Missed \(pattern.skipCountRecent) sessions recently")
         }
-        return "Quality work has drifted"
+        return String(localized: "msb.headline.qualityDrift", defaultValue: "Quality work has drifted")
     }
 
     private var body_: String {
         var lines: [String] = []
 
         if pattern.flags.contains(.extendedInactivity) {
-            lines.append("It's been \(pattern.daysSinceLastCompletion) days since your last completed session. The plan's later blocks assume fitness built in between. Rebalancing re-anchors the paces and load targets to what you've actually done.")
+            lines.append(String(localized: "msb.body.inactivity", defaultValue: "It's been \(pattern.daysSinceLastCompletion) days since your last completed session. The plan's later blocks assume fitness built in between. Rebalancing re-anchors the paces and load targets to what you've actually done."))
         } else if pattern.flags.contains(.multiSessionSkip) {
-            lines.append("You've skipped \(pattern.skipCountRecent) sessions in the last 14 days. The plan keeps prescribing work based on the original schedule, a rebalance pulls everything into line with your current trajectory.")
+            lines.append(String(localized: "msb.body.multiSkip", defaultValue: "You've skipped \(pattern.skipCountRecent) sessions in the last 14 days. The plan keeps prescribing work based on the original schedule, a rebalance pulls everything into line with your current trajectory."))
         }
 
         if pattern.flags.contains(.qualitySessionDrift) {
-            lines.append("\(pattern.qualityDriftCount) quality sessions have been skipped or under-executed. Quality is what builds the specific adaptations the later blocks assume, without it, race-pace targets may be ambitious.")
+            lines.append(String(localized: "msb.body.qualityDrift", defaultValue: "\(pattern.qualityDriftCount) quality sessions have been skipped or under-executed. Quality is what builds the specific adaptations the later blocks assume, without it, race-pace targets may be ambitious."))
         }
 
         return lines.joined(separator: " ")

@@ -2939,6 +2939,22 @@
         }
       }
     },
+    "Adjusting your plan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adjusting your plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajustement de votre plan"
+          }
+        }
+      }
+    },
     "Adjusts reminder timing based on your pace and conditions" : {
       "localizations" : {
         "fr" : {
@@ -3901,6 +3917,22 @@
         }
       }
     },
+    "Caffeine" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caffeine"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caféine"
+          }
+        }
+      }
+    },
     "Calculating energy needs" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -3990,6 +4022,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Annuler l'alerte d'urgence"
+          }
+        }
+      }
+    },
+    "Carbs" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carbs"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glucides"
           }
         }
       }
@@ -5046,6 +5094,38 @@
         }
       }
     },
+    "DAY" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DAY"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JOUR"
+          }
+        }
+      }
+    },
+    "DAYS" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DAYS"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JOURS"
+          }
+        }
+      }
+    },
     "DURATION" : {
       "localizations" : {
         "fr" : {
@@ -6069,6 +6149,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Modifier la recette"
+          }
+        }
+      }
+    },
+    "Edit preferences" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit preferences"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifier les préférences"
           }
         }
       }
@@ -7831,6 +7927,22 @@
         }
       }
     },
+    "Height" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Height"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taille"
+          }
+        }
+      }
+    },
     "Help us keep you healthy and strong." : {
       "localizations" : {
         "fr" : {
@@ -8233,6 +8345,12 @@
     },
     "Hydration" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hydration"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9354,6 +9472,22 @@
         }
       }
     },
+    "Longest Run" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Longest Run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus longue sortie"
+          }
+        }
+      }
+    },
     "Longest run distance" : {
       "localizations" : {
         "fr" : {
@@ -9468,6 +9602,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Volume réduit, plus de repos. L'objectif : finir en forme."
+          }
+        }
+      }
+    },
+    "MONTH" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MONTH"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MOIS"
+          }
+        }
+      }
+    },
+    "MONTHS" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MONTHS"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MOIS"
           }
         }
       }
@@ -10021,10 +10187,16 @@
     },
     "NOW" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NOW"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MAINTENANT"
+            "value" : "MAINT."
           }
         }
       }
@@ -11480,6 +11652,22 @@
         }
       }
     },
+    "Optimizing upcoming sessions" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optimizing upcoming sessions"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optimisation des prochaines séances"
+          }
+        }
+      }
+    },
     "Optional notes" : {
       "localizations" : {
         "fr" : {
@@ -11586,6 +11774,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "P : %lld g"
+          }
+        }
+      }
+    },
+    "PAST" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PAST"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PASSÉ"
           }
         }
       }
@@ -12797,6 +13001,12 @@
     },
     "RACE DAY" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RACE DAY"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13382,6 +13592,12 @@
     },
     "Rebuilding" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebuilding"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13564,6 +13780,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Actualiser les prévisions"
+          }
+        }
+      }
+    },
+    "Regenerate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regenerate"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Régénérer"
           }
         }
       }
@@ -16206,6 +16438,22 @@
         }
       }
     },
+    "TODAY" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TODAY"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AUJOURD'HUI"
+          }
+        }
+      }
+    },
     "Tailored to your race" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -17989,6 +18237,38 @@
         }
       }
     },
+    "WEEK" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WEEK"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SEMAINE"
+          }
+        }
+      }
+    },
+    "WEEKS" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WEEKS"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SEMAINES"
+          }
+        }
+      }
+    },
     "Wants to be your friend" : {
       "localizations" : {
         "fr" : {
@@ -18349,6 +18629,22 @@
         }
       }
     },
+    "Weekly Vol" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekly Vol"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vol. hebdo"
+          }
+        }
+      }
+    },
     "Weekly Volume Estimate" : {
       "localizations" : {
         "fr" : {
@@ -18402,6 +18698,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Graphiques de volume hebdomadaire"
+          }
+        }
+      }
+    },
+    "Weight" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weight"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poids"
           }
         }
       }
@@ -20343,6 +20655,22 @@
         }
       }
     },
+    "chart.week" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W%lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "S%lld"
+          }
+        }
+      }
+    },
     "chart.weeksDone" : {
       "extractionState" : "extracted_with_value",
       "localizations" : {
@@ -22020,6 +22348,22 @@
         }
       }
     },
+    "distance" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "distance"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "distance"
+          }
+        }
+      }
+    },
     "e.g. 'legs heavy from rep 3', 'windy'" : {
       "localizations" : {
         "fr" : {
@@ -22218,18 +22562,50 @@
         }
       }
     },
+    "elevation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "elevation"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dénivelé"
+          }
+        }
+      }
+    },
+    "expected" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "expected"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "prévu"
+          }
+        }
+      }
+    },
     "experience.advanced" : {
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "Advanced"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Avancé"
           }
         }
@@ -22257,13 +22633,13 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "Beginner"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Débutant"
           }
         }
@@ -22291,13 +22667,13 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "Elite"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Élite"
           }
         }
@@ -22325,13 +22701,13 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "Intermediate"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Intermédiaire"
           }
         }
@@ -22562,6 +22938,70 @@
         }
       }
     },
+    "fe.scn.conservative" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conservative"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prudent"
+          }
+        }
+      }
+    },
+    "fe.scn.expected" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expected"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Attendu"
+          }
+        }
+      }
+    },
+    "fe.scn.optimistic" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optimistic"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optimiste"
+          }
+        }
+      }
+    },
+    "fe.scn.range" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Range"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fourchette"
+          }
+        }
+      }
+    },
     "fpd.hr" : {
       "localizations" : {
         "en" : {
@@ -22648,6 +23088,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "pi"
+          }
+        }
+      }
+    },
+    "fte.intro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If you stick with the plan, your projected finish time evolves like this:"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si vous suivez le plan, votre temps d'arrivée projeté évolue ainsi :"
+          }
+        }
+      }
+    },
+    "fte.projectedCurve" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Projected curve"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courbe projetée"
+          }
+        }
+      }
+    },
+    "fte.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time evolution"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Évolution dans le temps"
+          }
+        }
+      }
+    },
+    "fte.weeksToGo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld weeks to go"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus que %lld semaines"
           }
         }
       }
@@ -22920,10 +23424,272 @@
     },
     "g/hr" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "g/hr"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "g/h"
+          }
+        }
+      }
+    },
+    "goalDrift.full.ambitious" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your goal of %1$@ is a little faster than your predicted %2$@. It is within reach if your training keeps trending up."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre objectif de %1$@ est un peu plus rapide que votre prédiction de %2$@. Il est atteignable si votre entraînement continue de progresser."
+          }
+        }
+      }
+    },
+    "goalDrift.full.comfortable" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your goal of %1$@ is a touch easier than your predicted %2$@. You have room to aim faster."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre objectif de %1$@ est un peu plus facile que votre prédiction de %2$@. Vous avez de la marge pour viser plus rapide."
+          }
+        }
+      }
+    },
+    "goalDrift.full.onTrack" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your goal of %1$@ lines up with your predicted %2$@. Stay the course."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre objectif de %1$@ s'aligne sur votre prédiction de %2$@. Gardez le cap."
+          }
+        }
+      }
+    },
+    "goalDrift.full.veryAmbitious" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your goal of %1$@ is well ahead of your predicted %2$@. Keep building, or set a target that matches your current fitness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre objectif de %1$@ est bien au-delà de votre prédiction de %2$@. Continuez à progresser, ou fixez une cible en phase avec votre forme actuelle."
+          }
+        }
+      }
+    },
+    "goalDrift.full.wellWithinReach" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your goal of %1$@ sits well inside your predicted %2$@. Consider a faster, more motivating target."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre objectif de %1$@ est bien en deçà de votre prédiction de %2$@. Envisagez une cible plus rapide et plus motivante."
+          }
+        }
+      }
+    },
+    "goalDrift.setGoal" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set goal to %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Définir l'objectif à %@"
+          }
+        }
+      }
+    },
+    "goalDrift.short.ambitious" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Goal %1$@ is a stretch vs your %2$@ prediction"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'objectif %1$@ est exigeant face à votre prédiction de %2$@"
+          }
+        }
+      }
+    },
+    "goalDrift.short.comfortable" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Goal %1$@ is easier than your %2$@ prediction"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'objectif %1$@ est plus facile que votre prédiction de %2$@"
+          }
+        }
+      }
+    },
+    "goalDrift.short.onTrack" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Goal %1$@ matches your %2$@ prediction"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'objectif %1$@ correspond à votre prédiction de %2$@"
+          }
+        }
+      }
+    },
+    "goalDrift.short.veryAmbitious" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Goal %1$@ is well ahead of your %2$@ prediction"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'objectif %1$@ est bien au-delà de votre prédiction de %2$@"
+          }
+        }
+      }
+    },
+    "goalDrift.short.wellWithinReach" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Goal %1$@ sits well inside your %2$@ prediction"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'objectif %1$@ est bien en deçà de votre prédiction de %2$@"
+          }
+        }
+      }
+    },
+    "goalDrift.title.aimHigher" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aim higher"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visez plus haut"
+          }
+        }
+      }
+    },
+    "goalDrift.title.ambitious" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stretch goal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Objectif exigeant"
+          }
+        }
+      }
+    },
+    "goalDrift.title.comfortable" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Room to push"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De la marge"
+          }
+        }
+      }
+    },
+    "goalDrift.title.onTrack" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On track"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sur la bonne voie"
+          }
+        }
+      }
+    },
+    "goalDrift.title.veryAmbitious" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ambitious goal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Objectif ambitieux"
           }
         }
       }
@@ -24435,6 +25201,150 @@
         }
       }
     },
+    "ips.chip.on" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
+      }
+    },
+    "ips.head.all" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All %lld reps done"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toutes les %lld répétitions faites"
+          }
+        }
+      }
+    },
+    "ips.head.partial" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld of %2$lld reps done"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld répétitions sur %2$lld faites"
+          }
+        }
+      }
+    },
+    "ips.onTarget" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On target"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans la cible"
+          }
+        }
+      }
+    },
+    "ips.sub.drift" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pace drift + incomplete reps = stronger slow-down signal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dérive d'allure + répétitions incomplètes = signal de ralentissement plus fort"
+          }
+        }
+      }
+    },
+    "ips.sub.dropped" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap toggle if you dropped reps"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appuyez sur le bouton si vous avez raté des répétitions"
+          }
+        }
+      }
+    },
+    "ips.sub.lastOne" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Missed just the last one, noted"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Juste la dernière manquée, c'est noté"
+          }
+        }
+      }
+    },
+    "ips.sub.record" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap a pill to record how many you managed"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appuyez sur une pastille pour noter combien vous en avez fait"
+          }
+        }
+      }
+    },
+    "ips.vsTarget" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@%2$llds vs target"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@%2$llds vs cible"
+          }
+        }
+      }
+    },
     "irc.combined.msg" : {
       "localizations" : {
         "en" : {
@@ -24829,6 +25739,54 @@
         }
       }
     },
+    "lbl.distance" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distance"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distance"
+          }
+        }
+      }
+    },
+    "lbl.duration" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duration"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durée"
+          }
+        }
+      }
+    },
+    "lbl.elevation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elevation"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dénivelé"
+          }
+        }
+      }
+    },
     "lockedPlan.body" : {
       "localizations" : {
         "en" : {
@@ -24971,6 +25929,38 @@
         }
       }
     },
+    "mg total" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mg total"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mg au total"
+          }
+        }
+      }
+    },
+    "mg/hr" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mg/hr"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mg/h"
+          }
+        }
+      }
+    },
     "mi" : {
       "localizations" : {
         "fr" : {
@@ -24991,12 +25981,124 @@
         }
       }
     },
+    "ml/hr" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ml/hr"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ml/h"
+          }
+        }
+      }
+    },
     "ms" : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "ms"
+          }
+        }
+      }
+    },
+    "msb.body.inactivity" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It's been %lld days since your last completed session. The plan's later blocks assume fitness built in between. Rebalancing re-anchors the paces and load targets to what you've actually done."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cela fait %lld jours depuis votre dernière séance terminée. Les blocs suivants du plan supposent une forme construite entretemps. Le rééquilibrage réancre les allures et les objectifs de charge sur ce que vous avez réellement fait."
+          }
+        }
+      }
+    },
+    "msb.body.multiSkip" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You've skipped %lld sessions in the last 14 days. The plan keeps prescribing work based on the original schedule, a rebalance pulls everything into line with your current trajectory."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous avez manqué %lld séances ces 14 derniers jours. Le plan continue de prescrire du travail selon le planning d'origine ; un rééquilibrage aligne tout sur votre trajectoire actuelle."
+          }
+        }
+      }
+    },
+    "msb.body.qualityDrift" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld quality sessions have been skipped or under-executed. Quality is what builds the specific adaptations the later blocks assume, without it, race-pace targets may be ambitious."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld séances de qualité ont été manquées ou sous-exécutées. La qualité construit les adaptations spécifiques que supposent les blocs suivants ; sans elle, les objectifs d'allure de course peuvent être ambitieux."
+          }
+        }
+      }
+    },
+    "msb.headline.inactivity" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan is ahead of where you actually are"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le plan est en avance sur où vous en êtes vraiment"
+          }
+        }
+      }
+    },
+    "msb.headline.multiSkip" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Missed %lld sessions recently"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld séances manquées récemment"
+          }
+        }
+      }
+    },
+    "msb.headline.qualityDrift" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quality work has drifted"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le travail de qualité a dérivé"
           }
         }
       }
@@ -26313,6 +27415,22 @@
         }
       }
     },
+    "nutcard.flat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "flat"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "plat"
+          }
+        }
+      }
+    },
     "of %@" : {
       "localizations" : {
         "fr" : {
@@ -27315,6 +28433,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Annuel"
+          }
+        }
+      }
+    },
+    "pb.shortLabel.half" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Half"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semi"
           }
         }
       }
@@ -28650,6 +29784,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "4 heures avant"
+          }
+        }
+      }
+    },
+    "profile.age" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld yrs"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld ans"
           }
         }
       }
@@ -32149,6 +33299,150 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ : Beaucoup trop rapide ! %2$lld%% au-dessus de l'objectif"
+          }
+        }
+      }
+    },
+    "rpe.allOut" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All-out"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À fond"
+          }
+        }
+      }
+    },
+    "rpe.controlled" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Controlled"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contrôlé"
+          }
+        }
+      }
+    },
+    "rpe.easy" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Facile"
+          }
+        }
+      }
+    },
+    "rpe.hard" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hard"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intense"
+          }
+        }
+      }
+    },
+    "rpe.moderate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moderate"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modéré"
+          }
+        }
+      }
+    },
+    "rpe.nearlyMax" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nearly max"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presque max"
+          }
+        }
+      }
+    },
+    "rpe.steady" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Steady"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Régulier"
+          }
+        }
+      }
+    },
+    "rpe.veryEasy" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Very easy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Très facile"
+          }
+        }
+      }
+    },
+    "rpe.veryHard" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Very hard"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Très intense"
           }
         }
       }
@@ -36150,6 +37444,86 @@
         }
       }
     },
+    "snut.during" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "During"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pendant"
+          }
+        }
+      }
+    },
+    "snut.postRun" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Post-Run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Après"
+          }
+        }
+      }
+    },
+    "snut.postRun.detail" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · %2$lldg protein"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · %2$lldg de protéines"
+          }
+        }
+      }
+    },
+    "snut.preRun" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pre-Run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avant"
+          }
+        }
+      }
+    },
+    "snut.preRun.detail" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · %2$lldg carbs"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · %2$lldg de glucides"
+          }
+        }
+      }
+    },
     "stg.001" : {
       "localizations" : {
         "en" : {
@@ -38742,6 +40116,102 @@
         }
       }
     },
+    "sv.enterManually" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter manually"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saisir manuellement"
+          }
+        }
+      }
+    },
+    "sv.enterManually.sub" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type your distance, duration, and elevation."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saisissez votre distance, votre durée et votre dénivelé."
+          }
+        }
+      }
+    },
+    "sv.enterTest" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter test result"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saisir le résultat du test"
+          }
+        }
+      }
+    },
+    "sv.enterTest.sub" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log your test result so we can recalibrate your training paces."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrez votre résultat de test pour recalibrer vos allures d'entraînement."
+          }
+        }
+      }
+    },
+    "sv.syncApp" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sync from an app"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Synchroniser depuis une app"
+          }
+        }
+      }
+    },
+    "sv.syncApp.sub" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import from Strava, Garmin, Coros, or Suunto."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importer depuis Strava, Garmin, Coros ou Suunto."
+          }
+        }
+      }
+    },
     "sxa.carb" : {
       "localizations" : {
         "en" : {
@@ -39885,6 +41355,70 @@
         }
       }
     },
+    "terrain.easy" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Facile"
+          }
+        }
+      }
+    },
+    "terrain.extreme" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extreme"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extrême"
+          }
+        }
+      }
+    },
+    "terrain.moderate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moderate"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modéré"
+          }
+        }
+      }
+    },
+    "terrain.technical" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Technical"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Technique"
+          }
+        }
+      }
+    },
     "this week" : {
       "localizations" : {
         "fr" : {
@@ -39901,6 +41435,118 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "à"
+          }
+        }
+      }
+    },
+    "tpl.lockedPlanWide" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld locked plan-wide · %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld verrouillées dans le plan · %2$@"
+          }
+        }
+      }
+    },
+    "tpl.moreWeeks" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld more %2$@ in %3$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encore %1$lld %2$@ en %3$@"
+          }
+        }
+      }
+    },
+    "tpl.phaseLocked" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ phase locked"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phase %@ verrouillée"
+          }
+        }
+      }
+    },
+    "tpl.phaseXofY" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phase %1$lld of %2$lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phase %1$lld sur %2$lld"
+          }
+        }
+      }
+    },
+    "tpl.upgradeSubtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upgrade your plan or wait for your subscription to renew"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passez à un plan supérieur ou attendez le renouvellement de votre abonnement"
+          }
+        }
+      }
+    },
+    "tpl.week" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "week"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "semaine"
+          }
+        }
+      }
+    },
+    "tpl.weeks" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "weeks"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "semaines"
           }
         }
       }
@@ -41582,6 +43228,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "COURSE : %1$@ (%2$@%3$@). Le voyage se termine ici. Faites confiance à votre entraînement, alimentez-vous comme une horloge, gérez les montées, respectez les descentes. La première moitié est pour la patience, la seconde pour le cran."
+          }
+        }
+      }
+    },
+    "unit.imperial" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imperial"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impérial"
+          }
+        }
+      }
+    },
+    "unit.metric" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metric"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Métrique"
           }
         }
       }
@@ -43451,6 +45129,294 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Semaine %lld"
+          }
+        }
+      }
+    },
+    "why.body.b2b" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Two long days stacked trains your legs to run tired. Core ultra-specific stimulus."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deux longues journées enchaînées entraînent vos jambes à courir fatiguées. Stimulus central spécifique à l'ultra."
+          }
+        }
+      }
+    },
+    "why.body.intervals" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short fast reps push your VO2max ceiling. The recovery between reps is part of the work."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Des répétitions courtes et rapides repoussent votre plafond de VO2max. La récupération entre les répétitions fait partie du travail."
+          }
+        }
+      }
+    },
+    "why.body.longRun" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time on feet builds the aerobic base everything else sits on. Easy and long wins."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le temps passé debout construit la base aérobie sur laquelle tout repose. Facile et long, c'est gagnant."
+          }
+        }
+      }
+    },
+    "why.body.race" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Execute the plan. Trust the training."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déroulez le plan. Faites confiance à l'entraînement."
+          }
+        }
+      }
+    },
+    "why.body.recovery" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adaptation happens when you recover, not when you train. Keep it genuinely easy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'adaptation se produit pendant la récupération, pas pendant l'entraînement. Restez vraiment facile."
+          }
+        }
+      }
+    },
+    "why.body.strength" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keeps the chassis strong through heavy weeks. Fewer injuries, better economy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Garde le châssis solide pendant les semaines chargées. Moins de blessures, meilleure économie."
+          }
+        }
+      }
+    },
+    "why.body.tempo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This is race-pace sustainability work. Comfortably hard, not all-out."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C'est du travail de tenue à allure de course. Confortablement dur, pas à fond."
+          }
+        }
+      }
+    },
+    "why.body.today" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Every session has a purpose. Stay consistent."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chaque séance a un but. Restez régulier."
+          }
+        }
+      }
+    },
+    "why.body.vertical" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Climbing-specific strength. Power-hike the steep stuff; that's the specificity."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Force spécifique à la grimpe. Marchez activement les passages raides ; c'est ça la spécificité."
+          }
+        }
+      }
+    },
+    "why.title.b2b" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WHY BACK-TO-BACK"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "POURQUOI LE WEEKEND CHOC"
+          }
+        }
+      }
+    },
+    "why.title.intervals" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WHY INTERVALS"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "POURQUOI LE FRACTIONNÉ"
+          }
+        }
+      }
+    },
+    "why.title.longRun" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WHY THE LONG RUN"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "POURQUOI LA SORTIE LONGUE"
+          }
+        }
+      }
+    },
+    "why.title.race" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RACE DAY"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JOUR DE COURSE"
+          }
+        }
+      }
+    },
+    "why.title.recovery" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WHY RECOVERY"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "POURQUOI LA RÉCUPÉRATION"
+          }
+        }
+      }
+    },
+    "why.title.strength" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WHY STRENGTH"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "POURQUOI LE RENFORCEMENT"
+          }
+        }
+      }
+    },
+    "why.title.tempo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WHY TEMPO"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "POURQUOI LE TEMPO"
+          }
+        }
+      }
+    },
+    "why.title.today" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TODAY'S SESSION"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SÉANCE DU JOUR"
+          }
+        }
+      }
+    },
+    "why.title.vertical" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WHY VERTICAL"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "POURQUOI LE DÉNIVELÉ"
           }
         }
       }

@@ -47,7 +47,7 @@ struct RaceCalendarRow: View {
     private var weekInfo: some View {
         VStack(alignment: .leading, spacing: 2) {
             HStack(spacing: Theme.Spacing.xs) {
-                Text("W\(week.weekNumber)")
+                Text(String(localized: "chart.week", defaultValue: "W\(week.weekNumber)"))
                     .font(.subheadline.bold())
                 PhaseBadge(phase: week.phase)
                 if week.isRecoveryWeek && week.phase != .recovery {

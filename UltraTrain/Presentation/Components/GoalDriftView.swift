@@ -7,11 +7,11 @@ extension GoalDriftAssessment.Level {
     /// Short headline shown on the badge.
     var title: String {
         switch self {
-        case .veryAmbitious:   return "Ambitious goal"
-        case .ambitious:       return "Stretch goal"
-        case .onTrack:         return "On track"
-        case .comfortable:     return "Room to push"
-        case .wellWithinReach: return "Aim higher"
+        case .veryAmbitious:   return String(localized: "goalDrift.title.veryAmbitious", defaultValue: "Ambitious goal")
+        case .ambitious:       return String(localized: "goalDrift.title.ambitious", defaultValue: "Stretch goal")
+        case .onTrack:         return String(localized: "goalDrift.title.onTrack", defaultValue: "On track")
+        case .comfortable:     return String(localized: "goalDrift.title.comfortable", defaultValue: "Room to push")
+        case .wellWithinReach: return String(localized: "goalDrift.title.aimHigher", defaultValue: "Aim higher")
         }
     }
 
@@ -45,11 +45,11 @@ extension GoalDriftAssessment.Assessment {
         let goal = time(goalTime, raceDistanceKm: raceDistanceKm)
         let pred = time(predictedTime, raceDistanceKm: raceDistanceKm)
         switch level {
-        case .veryAmbitious:   return "Goal \(goal) is well ahead of your \(pred) prediction"
-        case .ambitious:       return "Goal \(goal) is a stretch vs your \(pred) prediction"
-        case .onTrack:         return "Goal \(goal) matches your \(pred) prediction"
-        case .comfortable:     return "Goal \(goal) is easier than your \(pred) prediction"
-        case .wellWithinReach: return "Goal \(goal) sits well inside your \(pred) prediction"
+        case .veryAmbitious:   return String(localized: "goalDrift.short.veryAmbitious", defaultValue: "Goal \(goal) is well ahead of your \(pred) prediction")
+        case .ambitious:       return String(localized: "goalDrift.short.ambitious", defaultValue: "Goal \(goal) is a stretch vs your \(pred) prediction")
+        case .onTrack:         return String(localized: "goalDrift.short.onTrack", defaultValue: "Goal \(goal) matches your \(pred) prediction")
+        case .comfortable:     return String(localized: "goalDrift.short.comfortable", defaultValue: "Goal \(goal) is easier than your \(pred) prediction")
+        case .wellWithinReach: return String(localized: "goalDrift.short.wellWithinReach", defaultValue: "Goal \(goal) sits well inside your \(pred) prediction")
         }
     }
 
@@ -59,15 +59,15 @@ extension GoalDriftAssessment.Assessment {
         let pred = time(predictedTime, raceDistanceKm: raceDistanceKm)
         switch level {
         case .veryAmbitious:
-            return "Your goal of \(goal) is well ahead of your predicted \(pred). Keep building, or set a target that matches your current fitness."
+            return String(localized: "goalDrift.full.veryAmbitious", defaultValue: "Your goal of \(goal) is well ahead of your predicted \(pred). Keep building, or set a target that matches your current fitness.")
         case .ambitious:
-            return "Your goal of \(goal) is a little faster than your predicted \(pred). It is within reach if your training keeps trending up."
+            return String(localized: "goalDrift.full.ambitious", defaultValue: "Your goal of \(goal) is a little faster than your predicted \(pred). It is within reach if your training keeps trending up.")
         case .onTrack:
-            return "Your goal of \(goal) lines up with your predicted \(pred). Stay the course."
+            return String(localized: "goalDrift.full.onTrack", defaultValue: "Your goal of \(goal) lines up with your predicted \(pred). Stay the course.")
         case .comfortable:
-            return "Your goal of \(goal) is a touch easier than your predicted \(pred). You have room to aim faster."
+            return String(localized: "goalDrift.full.comfortable", defaultValue: "Your goal of \(goal) is a touch easier than your predicted \(pred). You have room to aim faster.")
         case .wellWithinReach:
-            return "Your goal of \(goal) sits well inside your predicted \(pred). Consider a faster, more motivating target."
+            return String(localized: "goalDrift.full.wellWithinReach", defaultValue: "Your goal of \(goal) sits well inside your predicted \(pred). Consider a faster, more motivating target.")
         }
     }
 }
@@ -131,7 +131,7 @@ struct GoalDriftCard: View {
                         } else {
                             Image(systemName: "target")
                         }
-                        Text("Set goal to \(FinishEstimate.formatDuration(assessment.suggestedTime, raceDistanceKm: raceDistanceKm))")
+                        Text(String(localized: "goalDrift.setGoal", defaultValue: "Set goal to \(FinishEstimate.formatDuration(assessment.suggestedTime, raceDistanceKm: raceDistanceKm))"))
                             .fontWeight(.semibold)
                     }
                     .frame(maxWidth: .infinity)

@@ -125,7 +125,8 @@ struct NutritionTargetsCard: View {
                                 : AnyShapeStyle(iconColor.opacity(0.20))
                         )
                     )
-                Text(label.uppercased())
+                Text(LocalizedStringKey(label))
+                    .textCase(.uppercase)
                     .font(.caption2.weight(.bold))
                     .tracking(0.8)
                     .foregroundStyle(accent ? NutritionPalette.tint : Theme.Colors.secondaryLabel)
@@ -144,7 +145,7 @@ struct NutritionTargetsCard: View {
                             : AnyShapeStyle(Theme.Colors.label)
                     )
                 if !unit.isEmpty {
-                    Text(unit)
+                    Text(LocalizedStringKey(unit))
                         .font(.caption.weight(.medium))
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }

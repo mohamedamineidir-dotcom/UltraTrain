@@ -39,7 +39,7 @@ enum PersonalBestDistance: String, CaseIterable, Sendable, Codable {
         switch self {
         case .fiveK: "5K"
         case .tenK: "10K"
-        case .halfMarathon: "Half"
+        case .halfMarathon: String(localized: "pb.shortLabel.half", defaultValue: "Half")
         case .marathon: "Marathon"
         }
     }

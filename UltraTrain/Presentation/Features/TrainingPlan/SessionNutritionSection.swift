@@ -17,25 +17,25 @@ struct SessionNutritionSection: View {
             header
             if let preRun = advice.preRun {
                 phaseLine(
-                    title: "Pre-Run",
+                    title: String(localized: "snut.preRun", defaultValue: "Pre-Run"),
                     icon: "cup.and.saucer.fill",
                     iconColor: .orange,
-                    detail: "\(preRun.timingDescription) · \(preRun.carbsGrams)g carbs"
+                    detail: String(localized: "snut.preRun.detail", defaultValue: "\(preRun.timingDescription) · \(preRun.carbsGrams)g carbs")
                 )
             }
             if let duringRun = advice.duringRun {
                 phaseLine(
-                    title: "During",
+                    title: String(localized: "snut.during", defaultValue: "During"),
                     icon: "bolt.fill",
                     iconColor: .blue,
                     detail: "\(duringRun.caloriesPerHour) cal/h · \(duringRun.hydrationMlPerHour) ml/h"
                 )
             }
             phaseLine(
-                title: "Post-Run",
+                title: String(localized: "snut.postRun", defaultValue: "Post-Run"),
                 icon: "heart.circle.fill",
                 iconColor: .green,
-                detail: "\(advice.postRun.windowDescription) · \(advice.postRun.proteinGrams)g protein"
+                detail: String(localized: "snut.postRun.detail", defaultValue: "\(advice.postRun.windowDescription) · \(advice.postRun.proteinGrams)g protein")
             )
         }
         .frame(maxWidth: .infinity, alignment: .leading)

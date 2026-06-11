@@ -238,7 +238,7 @@ struct NutritionView: View {
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
-            Label(title, systemImage: systemImage)
+            Label(LocalizedStringKey(title), systemImage: systemImage)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(NutritionPalette.tint)
                 .frame(maxWidth: .infinity)

@@ -55,17 +55,17 @@ extension FinishEstimationView {
 
             HStack(spacing: Theme.Spacing.sm) {
                 scenarioCard(
-                    title: "Optimistic",
+                    title: String(localized: "fe.scn.optimistic", defaultValue: "Optimistic"),
                     time: estimate.optimisticTime,
                     color: Theme.Colors.success
                 )
                 scenarioCard(
-                    title: "Expected",
+                    title: String(localized: "fe.scn.expected", defaultValue: "Expected"),
                     time: estimate.expectedTime,
                     color: Theme.Colors.primary
                 )
                 scenarioCard(
-                    title: "Conservative",
+                    title: String(localized: "fe.scn.conservative", defaultValue: "Conservative"),
                     time: estimate.conservativeTime,
                     color: Theme.Colors.warning
                 )
