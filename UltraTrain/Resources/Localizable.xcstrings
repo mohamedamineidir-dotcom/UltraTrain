@@ -19936,6 +19936,38 @@
         }
       }
     },
+    "ap.raceFinished" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finished a race: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Course terminée : %@"
+          }
+        }
+      }
+    },
+    "ap.runCompleted" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Completed a %@ run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie de %@ terminée"
+          }
+        }
+      }
+    },
     "atype.cycling" : {
       "localizations" : {
         "en" : {
@@ -32396,6 +32428,134 @@
         }
       }
     },
+    "rse.eff.compHard" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "comfortably hard (~1-hour-race effort)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "confortablement dur (~effort de course d'1 heure)"
+          }
+        }
+      }
+    },
+    "rse.eff.conv" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "conversational"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "en aisance"
+          }
+        }
+      }
+    },
+    "rse.eff.hard" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hard (~5K race effort, unable to hold a conversation)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dur (~effort de course 5K, impossible de tenir une conversation)"
+          }
+        }
+      }
+    },
+    "rse.eff.raceSpec" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "race-specific effort"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "effort spécifique à la course"
+          }
+        }
+      }
+    },
+    "rse.eff.sustHard" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sustained hard (should feel controlled over 2-3 hours)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dur soutenu (doit rester contrôlé sur 2-3 heures)"
+          }
+        }
+      }
+    },
+    "rse.eff.veryHard" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "very hard (mile-race effort, quick recovery)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "très dur (effort de course sur mile, récupération rapide)"
+          }
+        }
+      }
+    },
+    "rse.q.effort" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, %2$@ effort"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, effort %2$@"
+          }
+        }
+      }
+    },
+    "rse.q.repsEffort" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, %2$lld×%3$lldm at %4$@ effort"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, %2$lld×%3$lldm à effort %4$@"
+          }
+        }
+      }
+    },
     "rwt.easy25" : {
       "localizations" : {
         "en" : {
@@ -41351,6 +41511,982 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@. Zone %2$lld depuis %3$@, la cible est la zone %4$lld."
+          }
+        }
+      }
+    },
+    "vga.001" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Banded Hip Flexor Drive"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Montée de genou contre élastique"
+          }
+        }
+      }
+    },
+    "vga.002" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bulgarian Split Squat (eccentric focus)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bulgarian Split Squat (focus excentrique)"
+          }
+        }
+      }
+    },
+    "vga.003" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calf Raise (straight + bent knee)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extension des mollets (jambe tendue + fléchie)"
+          }
+        }
+      }
+    },
+    "vga.004" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eccentric Squat (4-sec lowering)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Squat excentrique (descente de 4 s)"
+          }
+        }
+      }
+    },
+    "vga.005" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Step-Up (40cm box, loaded if possible)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Step-Up (box de 40cm, chargé si possible)"
+          }
+        }
+      }
+    },
+    "vga.006" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Climbing Strength (VG companion)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Force de grimpe (complément D+)"
+          }
+        }
+      }
+    },
+    "vga.007" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flat Power Intervals (VG substitute)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervalles de puissance sur plat (substitut D+)"
+          }
+        }
+      }
+    },
+    "vga.008" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Integrated flat+hill intervals"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervalles intégrés plat+côte"
+          }
+        }
+      }
+    },
+    "vga.009" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy jog recovery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile de récupération"
+          }
+        }
+      }
+    },
+    "vga.010" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy warm-up, include 4-6 strides"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échauffement facile, inclure 4-6 lignes droites"
+          }
+        }
+      }
+    },
+    "vga.011" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12 per side"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12 par côté"
+          }
+        }
+      }
+    },
+    "vga.012" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12-15 each"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12-15 chaque"
+          }
+        }
+      }
+    },
+    "vga.013" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10 per leg"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10 par jambe"
+          }
+        }
+      }
+    },
+    "vga.014" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6-8 per leg"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6-8 par jambe"
+          }
+        }
+      }
+    },
+    "vga.015" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8 per leg"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8 par jambe"
+          }
+        }
+      }
+    },
+    "vga.016" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2-second hold at top. Straight-leg for power push-off, bent-knee for endurance. Your Achilles depends on this."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tenue de 2 secondes en haut. Jambe tendue pour la poussée explosive, fléchie pour l'endurance. Votre tendon d'Achille en dépend."
+          }
+        }
+      }
+    },
+    "vga.017" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3-second lowering phase. Builds the single-leg power and hip flexor stretch you need for steep terrain."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phase de descente de 3 secondes. Développe la puissance unijambiste et l'étirement des fléchisseurs de hanche nécessaires en terrain raide."
+          }
+        }
+      }
+    },
+    "vga.018" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A companion climbing strength session is paired with this to cover the muscle groups your legs would normally work on hills."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une séance de renforcement de grimpe complémentaire accompagne celle-ci pour cibler les groupes musculaires que vos jambes travailleraient normalement en côte."
+          }
+        }
+      }
+    },
+    "vga.019" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add 2-3 sets of slow eccentric step-downs or Nordic curls after this session to cover that gap."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoutez 2-3 séries de step-downs excentriques lents ou de Nordic curls après cette séance pour combler ce manque."
+          }
+        }
+      }
+    },
+    "vga.020" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do this strength session the same morning as your power intervals, with at least 6 hours between the two. "
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faites cette séance de renforcement le même matin que vos intervalles de puissance, avec au moins 6 heures entre les deux. "
+          }
+        }
+      }
+    },
+    "vga.021" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hard effort on flat. High cadence, powerful leg drive. Lean slightly forward and push off like you are climbing."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort intense sur le plat. Cadence élevée, poussée de jambes puissante. Penchez-vous légèrement en avant et poussez comme si vous grimpiez."
+          }
+        }
+      }
+    },
+    "vga.022" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "High knee drive against resistance. Trains the hip flexor power that drives you uphill at km 60."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Montée de genou puissante contre résistance. Entraîne la puissance des fléchisseurs de hanche qui vous propulse en montée au km 60."
+          }
+        }
+      }
+    },
+    "vga.023" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If you can access stadium stairs, parking garage ramps, or any incline, use those instead."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si vous avez accès à des escaliers de stade, des rampes de parking ou toute pente, utilisez-les plutôt."
+          }
+        }
+      }
+    },
+    "vga.024" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If you cannot fit both in one day, do this strength session the day before instead so your legs carry that fatigue into the intervals."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si vous ne pouvez pas caser les deux le même jour, faites plutôt cette séance de renforcement la veille pour que vos jambes amènent cette fatigue dans les intervalles."
+          }
+        }
+      }
+    },
+    "vga.025" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If you have access to stadium stairs or a parking garage ramp, use those instead for a more climbing-specific stimulus."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si vous avez accès à des escaliers de stade ou à une rampe de parking, utilisez-les plutôt pour un stimulus plus spécifique à la grimpe."
+          }
+        }
+      }
+    },
+    "vga.026" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervals: set 12-15% for hard reps, drop to 0% for recovery jogs. Same structure as outdoor hills."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervalles : réglez 12-15% pour les répétitions dures, redescendez à 0% pour les footings de récupération. Même structure que les côtes en extérieur."
+          }
+        }
+      }
+    },
+    "vga.027" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep the flat portion at a steady moderate effort. The goal is to arrive at the hill already working, not sprinting."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gardez la portion plate à un effort modéré régulier. Le but est d'arriver à la côte déjà en action, pas en sprint."
+          }
+        }
+      }
+    },
+    "vga.028" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep your form upright, shorten your stride, drive your knees. "
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gardez le buste droit, raccourcissez la foulée, montez les genoux. "
+          }
+        }
+      }
+    },
+    "vga.029" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Look for any available incline: stadium stairs, parking garage ramps, bridges, or overpasses."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cherchez toute pente disponible : escaliers de stade, rampes de parking, ponts ou passages supérieurs."
+          }
+        }
+      }
+    },
+    "vga.030" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hills or treadmill available, so this is adapted to flat power intervals. "
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas de côtes ni de tapis disponibles, donc adapté en intervalles de puissance sur plat. "
+          }
+        }
+      }
+    },
+    "vga.031" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One thing treadmill cannot replicate: downhill eccentric loading. "
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une chose que le tapis ne peut pas reproduire : le travail excentrique en descente. "
+          }
+        }
+      }
+    },
+    "vga.032" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "paired with a climbing-specific strength session on the same day. "
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "associé à une séance de renforcement spécifique à la grimpe le même jour. "
+          }
+        }
+      }
+    },
+    "vga.033" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race simulation: alternate between flat running and max-grade hiking to match the rhythm of your race profile."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulation de course : alternez course sur plat et marche à pente maximale pour coller au rythme de votre profil de course."
+          }
+        }
+      }
+    },
+    "vga.034" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race simulation. Run the flat portion at race effort, hit the hill at race climbing effort. Practice transitioning between flat running and climbing, exactly like race day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulation de course. Courez la portion plate à effort de course, attaquez la côte à effort de grimpe de course. Travaillez la transition entre course sur plat et grimpe, exactement comme le jour J."
+          }
+        }
+      }
+    },
+    "vga.035" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Same intensity, same duration, same effort. High cadence with powerful leg drive. "
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Même intensité, même durée, même effort. Cadence élevée avec une poussée de jambes puissante. "
+          }
+        }
+      }
+    },
+    "vga.036" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set the grade to 10-12%. Sustained moderate effort. Focus on building climbing endurance at an easy pace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réglez la pente à 10-12%. Effort modéré soutenu. Concentrez-vous sur l'endurance de grimpe à allure facile."
+          }
+        }
+      }
+    },
+    "vga.037" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set the grade to 8-10% for moderate efforts, 12-15% for hard efforts."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réglez la pente à 8-10% pour les efforts modérés, 12-15% pour les efforts durs."
+          }
+        }
+      }
+    },
+    "vga.038" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slow controlled descent. This eccentric strength is what saves your quads on race-day descents."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descente lente et contrôlée. Cette force excentrique est ce qui sauve vos quadriceps dans les descentes du jour J."
+          }
+        }
+      }
+    },
+    "vga.039" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stadium stairs, parking garage ramps, or even a weighted vest (5-8% bodyweight) will make this more climbing-specific."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Des escaliers de stade, des rampes de parking ou même un gilet lesté (5-8% du poids du corps) rendront cela plus spécifique à la grimpe."
+          }
+        }
+      }
+    },
+    "vga.040" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Steady effort on the flat, same intensity on the hill. Smooth transition between the two."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort régulier sur le plat, même intensité sur la côte. Transition fluide entre les deux."
+          }
+        }
+      }
+    },
+    "vga.041" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "THE most climbing-specific exercise. Drive through the heel, full hip extension at top. This is your race-day climbing engine."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'exercice LE plus spécifique à la grimpe. Poussez sur le talon, pleine extension de hanche en haut. C'est votre moteur de grimpe du jour J."
+          }
+        }
+      }
+    },
+    "vga.042" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The residual leg fatigue from strength makes the flat intervals feel more like real climbing. "
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La fatigue résiduelle des jambes après le renforcement rend les intervalles sur plat plus proches d'une vraie grimpe. "
+          }
+        }
+      }
+    },
+    "vga.043" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The strength pre-fatigues your legs so the flat intervals simulate climbing demand. "
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le renforcement pré-fatigue vos jambes pour que les intervalles sur plat simulent la demande de la grimpe. "
+          }
+        }
+      }
+    },
+    "vga.044" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The total rep is the same duration as a full mountain rep. "
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La répétition totale a la même durée qu'une répétition complète en montagne. "
+          }
+        }
+      }
+    },
+    "vga.045" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "These exercises target your glutes, hip flexors, quads, and calves. Do not skip this."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ces exercices ciblent vos fessiers, fléchisseurs de hanche, quadriceps et mollets. Ne sautez pas cette séance."
+          }
+        }
+      }
+    },
+    "vga.046" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This approach is used by Uphill Athlete and elite coaches for flat-area athletes. "
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette approche est utilisée par Uphill Athlete et des coachs de haut niveau pour les athlètes de région plate. "
+          }
+        }
+      }
+    },
+    "vga.047" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This close to race day, try to find any incline available, even 30-60 min drive away. One real hill session now is worth three flat substitutes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si près de la course, essayez de trouver toute pente disponible, même à 30-60 min de route. Une vraie séance de côte maintenant en vaut trois sur plat."
+          }
+        }
+      }
+    },
+    "vga.048" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This strength session replaces the climbing stimulus you cannot get from hills. "
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette séance de renforcement remplace le stimulus de grimpe que vous ne pouvez pas obtenir des côtes. "
+          }
+        }
+      }
+    },
+    "vga.049" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time your approach so you arrive at the base of the climb right when the flat portion ends. "
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calez votre approche pour arriver au pied de la montée juste quand la portion plate se termine. "
+          }
+        }
+      }
+    },
+    "vga.050" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Treadmill session. "
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Séance sur tapis. "
+          }
+        }
+      }
+    },
+    "vga.051" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "with targeted leg strength work. Look for any available incline: stairs, ramps, bridges."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "avec un travail ciblé de force des jambes. Cherchez toute pente disponible : escaliers, rampes, ponts."
+          }
+        }
+      }
+    },
+    "vga.052" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your terrain has no hills, so climbing sessions are adapted to flat power intervals "
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre terrain n'a pas de côtes, donc les séances de grimpe sont adaptées en intervalles de puissance sur plat "
+          }
+        }
+      }
+    },
+    "vga.053" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your terrain has no hills, so we adapted your climbing sessions to flat power intervals "
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre terrain n'a pas de côtes, donc nous avons adapté vos séances de grimpe en intervalles de puissance sur plat "
+          }
+        }
+      }
+    },
+    "vga.duration" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duration: ~%lld min"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durée : ~%lld min"
+          }
+        }
+      }
+    },
+    "vga.finishesHill" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "at the target intensity, then finishes with %lld minutes on your hill. "
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "à l'intensité cible, puis se termine par %lld minutes sur votre côte. "
+          }
+        }
+      }
+    },
+    "vga.flatSubst" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flat power intervals (VG substitute). Same intensity, same duration. %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervalles de puissance sur plat (substitut D+). Même intensité, même durée. %@"
+          }
+        }
+      }
+    },
+    "vga.flatThenHill" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lldmin flat at target intensity, then %2$@ uphill. Time your run to arrive at the hill for the final portion."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lldmin sur plat à l'intensité cible, puis %2$@ en montée. Calez votre sortie pour arriver à la côte sur la portion finale."
+          }
+        }
+      }
+    },
+    "vga.flatThreshold" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The flat portion should be at your threshold effort. By the time you hit the hill, your legs should feel like you have been climbing for %lld minutes already."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La portion plate doit être à votre effort de seuil. Au moment d'attaquer la côte, vos jambes doivent avoir la sensation d'avoir déjà grimpé pendant %lld minutes."
+          }
+        }
+      }
+    },
+    "vga.hillShorter" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your hill is shorter than the ideal rep length, so each rep starts with %lld minutes of flat running "
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre côte est plus courte que la longueur idéale de répétition, donc chaque répétition commence par %lld minutes de course sur plat "
+          }
+        }
+      }
+    },
+    "vga.repStructure" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lldx(%2$lldmin flat + %3$lldmin uphill) at target intensity / jog back"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lldx(%2$lldmin plat + %3$lldmin côte) à l'intensité cible / footing de retour"
+          }
+        }
+      }
+    },
+    "vga.treadmillControl" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Treadmill gives you full control over incline and duration. %@ "
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le tapis vous donne un contrôle total sur l'inclinaison et la durée. %@ "
           }
         }
       }

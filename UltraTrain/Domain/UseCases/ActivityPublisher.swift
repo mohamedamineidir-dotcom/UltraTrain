@@ -43,11 +43,11 @@ enum ActivityPublisher {
         let distanceText = String(format: "%.1f km", run.distanceKm)
         switch type {
         case .raceFinished:
-            return "Finished a race: \(distanceText)"
+            return String(localized: "ap.raceFinished", defaultValue: "Finished a race: \(distanceText)")
         case .completedRun:
-            return "Completed a \(distanceText) run"
+            return String(localized: "ap.runCompleted", defaultValue: "Completed a \(distanceText) run")
         default:
-            return "Completed a \(distanceText) run"
+            return String(localized: "ap.runCompleted", defaultValue: "Completed a \(distanceText) run")
         }
     }
 
