@@ -89,7 +89,7 @@ struct AdherenceTrendChartView: View {
                         let cardWidth: CGFloat = 120
                         let clampedX = min(max(xPos, cardWidth / 2), plotFrame.width - cardWidth / 2)
                         ChartAnnotationCard(
-                            title: "Week \(week.weekNumber)",
+                            title: String(localized: "wk.week", defaultValue: "Week \(week.weekNumber)"),
                             value: String(format: "%.0f%%", week.percent),
                             subtitle: "\(week.completed)/\(week.total) sessions"
                         )

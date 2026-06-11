@@ -110,7 +110,7 @@ struct TrainingNutritionView: View {
             Image(systemName: "flag.fill")
                 .font(.caption)
                 .accessibilityHidden(true)
-            Text(phase.rawValue.capitalized)
+            Text(phase.displayName)
                 .font(.caption.bold())
             Text("Phase")
                 .font(.caption)

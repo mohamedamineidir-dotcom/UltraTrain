@@ -378,17 +378,17 @@ private struct ManualValidationPage: View {
 
         var title: String {
             switch self {
-            case .stats:   return "Enter your stats"
-            case .feeling: return "How did it feel?"
-            case .rpe:     return "Rate your effort"
+            case .stats:   return String(localized: "sv.step.stats.title", defaultValue: "Enter your stats")
+            case .feeling: return String(localized: "sv.step.feeling.title", defaultValue: "How did it feel?")
+            case .rpe:     return String(localized: "sv.step.rpe.title", defaultValue: "Rate your effort")
             }
         }
 
         var subtitle: String {
             switch self {
-            case .stats:   return "Planned values are pre-filled, adjust anything that came out different."
-            case .feeling: return "Overall impression from start to finish."
-            case .rpe:     return "1 is walking-easy, 10 is the hardest effort you can imagine."
+            case .stats:   return String(localized: "sv.step.stats.sub", defaultValue: "Planned values are pre-filled, adjust anything that came out different.")
+            case .feeling: return String(localized: "sv.step.feeling.sub", defaultValue: "Overall impression from start to finish.")
+            case .rpe:     return String(localized: "sv.step.rpe.sub", defaultValue: "1 is walking-easy, 10 is the hardest effort you can imagine.")
             }
         }
 
@@ -1364,7 +1364,13 @@ private func sectionLabel(_ text: String, icon: String) -> some View {
     }
 
     private func feelingLabel(for f: PerceivedFeeling) -> String {
-        switch f { case .great: "Great"; case .good: "Good"; case .ok: "OK"; case .tough: "Tough"; case .terrible: "Terrible" }
+        switch f {
+        case .great:    String(localized: "feeling.great", defaultValue: "Great")
+        case .good:     String(localized: "feeling.good", defaultValue: "Good")
+        case .ok:       String(localized: "feeling.ok", defaultValue: "OK")
+        case .tough:    String(localized: "feeling.tough", defaultValue: "Tough")
+        case .terrible: String(localized: "feeling.terrible", defaultValue: "Terrible")
+        }
     }
 
     private func rpeColor(_ value: Int) -> Color {

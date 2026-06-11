@@ -14,21 +14,29 @@ enum CommonFoodDatabase {
         let category: String
     }
 
+    /// Folds away diacritics + case so an accent-free query like "pates"
+    /// matches "Pâtes" (and vice versa). French users routinely type
+    /// accented words without the accents, so food search has to be
+    /// accent-insensitive in both directions.
+    private static func fold(_ s: String) -> String {
+        s.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+    }
+
     static func search(_ query: String) -> [FoodSearchResult] {
-        let trimmed = query.trimmingCharacters(in: .whitespaces).lowercased()
+        let trimmed = fold(query.trimmingCharacters(in: .whitespaces))
         guard !trimmed.isEmpty else { return [] }
 
         let isFrench = Locale.current.language.languageCode?.identifier == "fr"
 
         let matches = allFoods.filter { food in
             let displayName = (isFrench ? food.nameFr : nil) ?? food.name
-            return displayName.localizedCaseInsensitiveContains(trimmed)
-                || food.name.localizedCaseInsensitiveContains(trimmed)
+            return fold(displayName).contains(trimmed)
+                || fold(food.name).contains(trimmed)
         }
 
         let sorted = matches.sorted { a, b in
-            let aName = ((isFrench ? a.nameFr : nil) ?? a.name).lowercased()
-            let bName = ((isFrench ? b.nameFr : nil) ?? b.name).lowercased()
+            let aName = fold((isFrench ? a.nameFr : nil) ?? a.name)
+            let bName = fold((isFrench ? b.nameFr : nil) ?? b.name)
             let aPrefix = aName.hasPrefix(trimmed)
             let bPrefix = bName.hasPrefix(trimmed)
             if aPrefix != bPrefix { return aPrefix }

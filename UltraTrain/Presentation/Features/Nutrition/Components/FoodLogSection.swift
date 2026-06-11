@@ -123,13 +123,13 @@ struct FoodLogSection: View {
 extension MealType {
     var displayName: String {
         switch self {
-        case .breakfast: return "Breakfast"
-        case .preRun: return "Pre-Run"
-        case .duringRun: return "During Run"
-        case .postRun: return "Post-Run"
-        case .lunch: return "Lunch"
-        case .dinner: return "Dinner"
-        case .snack: return "Snack"
+        case .breakfast: return String(localized: "meal.breakfast", defaultValue: "Breakfast")
+        case .preRun: return String(localized: "meal.preRun", defaultValue: "Pre-Run")
+        case .duringRun: return String(localized: "meal.duringRun", defaultValue: "During Run")
+        case .postRun: return String(localized: "meal.postRun", defaultValue: "Post-Run")
+        case .lunch: return String(localized: "meal.lunch", defaultValue: "Lunch")
+        case .dinner: return String(localized: "meal.dinner", defaultValue: "Dinner")
+        case .snack: return String(localized: "meal.snack", defaultValue: "Snack")
         }
     }
 

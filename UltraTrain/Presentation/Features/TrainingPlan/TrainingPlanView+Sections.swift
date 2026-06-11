@@ -225,7 +225,7 @@ extension TrainingPlanView {
         VStack(spacing: Theme.Spacing.md) {
             PhaseHeaderCard(
                 phase: group.phase,
-                weekRange: firstNum == lastNum ? "Week \(firstNum)" : "Weeks \(firstNum)-\(lastNum)",
+                weekRange: firstNum == lastNum ? String(localized: "wk.week1", defaultValue: "Week \(firstNum)") : String(localized: "wk.weeksRange", defaultValue: "Weeks \(firstNum)-\(lastNum)"),
                 completedWeeks: completedWeeks,
                 totalWeeks: group.weeks.count,
                 description: PhaseHeaderCard.description(
@@ -537,7 +537,7 @@ extension TrainingPlanView {
                                 .fill(currentWeek.phase.color)
                                 .frame(width: 8, height: 8)
                                 .shadow(color: currentWeek.phase.color.opacity(0.5), radius: 3)
-                            Text("Week \(currentWeek.weekNumber)")
+                            Text(String(localized: "wk.week", defaultValue: "Week \(currentWeek.weekNumber)"))
                                 .font(.subheadline.weight(.semibold))
                             Text("·")
                                 .foregroundStyle(Theme.Colors.tertiaryLabel)

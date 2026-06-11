@@ -24,7 +24,7 @@ struct RaceCalendarRow: View {
     }
 
     private var rowAccessibilityLabel: String {
-        var label = "Week \(week.weekNumber), \(week.phase.displayName) phase"
+        var label = String(localized: "wk.a11y", defaultValue: "Week \(week.weekNumber), \(week.phase.displayName) phase")
         if isCurrentWeek {
             label += ", current week"
         }

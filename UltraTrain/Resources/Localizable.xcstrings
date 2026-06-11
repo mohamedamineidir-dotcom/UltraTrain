@@ -1609,6 +1609,7 @@
       }
     },
     "%lld weeks to go" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -2940,6 +2941,7 @@
       }
     },
     "Adjusting your plan" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3918,6 +3920,7 @@
       }
     },
     "Caffeine" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4027,6 +4030,7 @@
       }
     },
     "Carbs" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5095,6 +5099,7 @@
       }
     },
     "DAY" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5111,6 +5116,7 @@
       }
     },
     "DAYS" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -6154,6 +6160,7 @@
       }
     },
     "Edit preferences" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -6920,6 +6927,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rapide"
+          }
+        }
+      }
+    },
+    "Fat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fat"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lipides"
           }
         }
       }
@@ -7928,6 +7951,7 @@
       }
     },
     "Height" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -8459,6 +8483,7 @@
       }
     },
     "If you stick with the plan, your projected finish time evolves like this:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -9473,6 +9498,7 @@
       }
     },
     "Longest Run" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -9607,6 +9633,7 @@
       }
     },
     "MONTH" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -9623,6 +9650,7 @@
       }
     },
     "MONTHS" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -11653,6 +11681,7 @@
       }
     },
     "Optimizing upcoming sessions" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -11779,6 +11808,7 @@
       }
     },
     "PAST" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12254,6 +12284,7 @@
       }
     },
     "Phase %lld of %lld" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12900,6 +12931,7 @@
       }
     },
     "Projected curve" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -12915,6 +12947,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Temps d'arrivée projeté, %@"
+          }
+        }
+      }
+    },
+    "Protein" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Protein"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Protéines"
           }
         }
       }
@@ -13785,6 +13833,7 @@
       }
     },
     "Regenerate" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -15466,7 +15515,6 @@
         }
       }
     },
-    "Set goal to %@" : {},
     "Set how many running sessions per week you prefer" : {
       "localizations" : {
         "fr" : {
@@ -16439,6 +16487,7 @@
       }
     },
     "TODAY" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -17068,6 +17117,7 @@
       }
     },
     "Time evolution" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -18228,6 +18278,7 @@
       }
     },
     "W%lld" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -18238,6 +18289,7 @@
       }
     },
     "WEEK" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -18254,6 +18306,7 @@
       }
     },
     "WEEKS" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -18630,6 +18683,7 @@
       }
     },
     "Weekly Vol" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -18703,6 +18757,7 @@
       }
     },
     "Weight" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -22349,6 +22404,7 @@
       }
     },
     "distance" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -22563,6 +22619,7 @@
       }
     },
     "elevation" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -22579,6 +22636,7 @@
       }
     },
     "expected" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -22595,7 +22653,6 @@
       }
     },
     "experience.advanced" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -22629,7 +22686,6 @@
       }
     },
     "experience.beginner" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -22663,7 +22719,6 @@
       }
     },
     "experience.elite" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -22697,7 +22752,6 @@
       }
     },
     "experience.intermediate" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -22998,6 +23052,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fourchette"
+          }
+        }
+      }
+    },
+    "feeling.good" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Good"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bien"
+          }
+        }
+      }
+    },
+    "feeling.great" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Great"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Génial"
+          }
+        }
+      }
+    },
+    "feeling.ok" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Correct"
+          }
+        }
+      }
+    },
+    "feeling.terrible" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terrible"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Horrible"
+          }
+        }
+      }
+    },
+    "feeling.tough" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tough"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dur"
           }
         }
       }
@@ -23690,6 +23824,150 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Objectif ambitieux"
+          }
+        }
+      }
+    },
+    "gut.allLogged" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All gut-training runs logged"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toutes les sorties d'entraînement digestif enregistrées"
+          }
+        }
+      }
+    },
+    "gut.eachFeedback" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each feedback tunes your race-day plan to what your gut actually tolerates."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chaque retour ajuste votre plan de course à ce que votre système digestif tolère vraiment."
+          }
+        }
+      }
+    },
+    "gut.emptyState" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No gut-training runs linked yet. Generate a plan and we'll flag the long runs worth practicing on."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune sortie d'entraînement digestif liée pour l'instant. Générez un plan et nous signalerons les sorties longues idéales pour vous entraîner."
+          }
+        }
+      }
+    },
+    "gut.generatePlan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generate a plan and we'll flag the long runs worth practicing on."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Générez un plan et nous signalerons les sorties longues idéales pour vous entraîner."
+          }
+        }
+      }
+    },
+    "gut.logFeedback" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log your feedback"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrez votre retour"
+          }
+        }
+      }
+    },
+    "gut.loopComplete" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feedback loop complete. Plan refined."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boucle de retour terminée. Plan affiné."
+          }
+        }
+      }
+    },
+    "gut.noPractice" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No practice runs linked yet"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune sortie d'entraînement liée pour l'instant"
+          }
+        }
+      }
+    },
+    "gut.runsLogged" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld of %2$lld runs logged"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld sorties sur %2$lld enregistrées"
+          }
+        }
+      }
+    },
+    "gut.tapToLog" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap to log feedback and refine your race-day plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appuyez pour enregistrer un retour et affiner votre plan de course"
           }
         }
       }
@@ -25929,7 +26207,120 @@
         }
       }
     },
+    "meal.breakfast" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Breakfast"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Petit-déjeuner"
+          }
+        }
+      }
+    },
+    "meal.dinner" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dinner"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dîner"
+          }
+        }
+      }
+    },
+    "meal.duringRun" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "During Run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pendant la sortie"
+          }
+        }
+      }
+    },
+    "meal.lunch" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lunch"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déjeuner"
+          }
+        }
+      }
+    },
+    "meal.postRun" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Post-Run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Après la sortie"
+          }
+        }
+      }
+    },
+    "meal.preRun" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pre-Run"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avant la sortie"
+          }
+        }
+      }
+    },
+    "meal.snack" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Snack"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collation"
+          }
+        }
+      }
+    },
     "mg total" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -25946,6 +26337,7 @@
       }
     },
     "mg/hr" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -25982,6 +26374,7 @@
       }
     },
     "ml/hr" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -27411,6 +27804,166 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Résumé d'entraînement hebdomadaire"
+          }
+        }
+      }
+    },
+    "ntx.caffeine.body" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3 to 6 mg per kg of body weight, tuned to your tolerance. Spread across the race, with night doses for ultras."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3 à 6 mg par kg de poids corporel, ajusté à votre tolérance. Réparti sur la course, avec des doses nocturnes pour les ultras."
+          }
+        }
+      }
+    },
+    "ntx.caffeine.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caffeine"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caféine"
+          }
+        }
+      }
+    },
+    "ntx.carbs.body" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scaled to your race duration. Most runners need 60 to 90 g per hour, from a mix of glucose and fructose to avoid GI issues."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adapté à la durée de votre course. La plupart des coureurs ont besoin de 60 à 90 g par heure, à partir d'un mélange de glucose et de fructose pour éviter les troubles digestifs."
+          }
+        }
+      }
+    },
+    "ntx.carbs.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carbs per hour"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glucides par heure"
+          }
+        }
+      }
+    },
+    "ntx.hydration.body" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set from your sweat rate, or estimated from your weight and the weather. We aim to replace about 80% of what you lose."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Défini d'après votre taux de transpiration, ou estimé d'après votre poids et la météo. Nous visons à remplacer environ 80% de ce que vous perdez."
+          }
+        }
+      }
+    },
+    "ntx.hydration.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hydration"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hydratation"
+          }
+        }
+      }
+    },
+    "ntx.sodium.body" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Matched to how salty your sweat is. Races over 6 hours apply a 575 mg per liter floor."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajusté à la salinité de votre sueur. Les courses de plus de 6 heures appliquent un plancher de 575 mg par litre."
+          }
+        }
+      }
+    },
+    "ntx.sodium.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sodium"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sodium"
+          }
+        }
+      }
+    },
+    "ntx.why.body" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your gut can be trained. Start at 40 g per hour, add 10 g every two weeks, and test your full race intake on two long runs before the event."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre système digestif s'entraîne. Commencez à 40 g par heure, ajoutez 10 g toutes les deux semaines, et testez votre apport complet de course sur deux sorties longues avant l'épreuve."
+          }
+        }
+      }
+    },
+    "ntx.why.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Why practice this in training?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pourquoi s'entraîner à ceci ?"
           }
         }
       }
@@ -40180,6 +40733,102 @@
         }
       }
     },
+    "sv.step.feeling.sub" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Overall impression from start to finish."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impression générale du début à la fin."
+          }
+        }
+      }
+    },
+    "sv.step.feeling.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How did it feel?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comment c'était ?"
+          }
+        }
+      }
+    },
+    "sv.step.rpe.sub" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 is walking-easy, 10 is the hardest effort you can imagine."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 = très facile (marche), 10 = l'effort le plus dur imaginable."
+          }
+        }
+      }
+    },
+    "sv.step.rpe.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rate your effort"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Évaluez votre effort"
+          }
+        }
+      }
+    },
+    "sv.step.stats.sub" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planned values are pre-filled, adjust anything that came out different."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les valeurs prévues sont pré-remplies, ajustez ce qui a différé."
+          }
+        }
+      }
+    },
+    "sv.step.stats.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter your stats"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saisissez vos données"
+          }
+        }
+      }
+    },
     "sv.syncApp" : {
       "localizations" : {
         "en" : {
@@ -45417,6 +46066,102 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "POURQUOI LE DÉNIVELÉ"
+          }
+        }
+      }
+    },
+    "wk.a11y" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week %1$lld, %2$@ phase"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semaine %1$lld, phase %2$@"
+          }
+        }
+      }
+    },
+    "wk.phaseWeek" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · Week %2$lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · Semaine %2$lld"
+          }
+        }
+      }
+    },
+    "wk.reviewNoRuns" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week %1$lld had %2$lld planned sessions with no recorded runs."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La semaine %1$lld comptait %2$lld séances prévues sans aucune sortie enregistrée."
+          }
+        }
+      }
+    },
+    "wk.week" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week %lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semaine %lld"
+          }
+        }
+      }
+    },
+    "wk.week1" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week %lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semaine %lld"
+          }
+        }
+      }
+    },
+    "wk.weeksRange" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weeks %1$lld-%2$lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semaines %1$lld-%2$lld"
           }
         }
       }

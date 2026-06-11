@@ -166,7 +166,7 @@ extension WeekCardView {
             VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                 // Line 1: Week N + phase badge + progress fraction
                 HStack {
-                    Text("Week \(week.weekNumber)")
+                    Text(String(localized: "wk.week", defaultValue: "Week \(week.weekNumber)"))
                         .font(.title3.bold())
                         .foregroundStyle(Theme.Colors.label)
                     Text(week.phase.displayName)
@@ -229,7 +229,7 @@ extension WeekCardView {
     }
 
     private var weekHeaderAccessibilityLabel: String {
-        var label = "Week \(week.weekNumber), \(week.phase.displayName) phase"
+        var label = String(localized: "wk.a11y", defaultValue: "Week \(week.weekNumber), \(week.phase.displayName) phase")
         if week.isRecoveryWeek { label += ", recovery week" }
         label += ". \(formattedWeekDuration)"
         if isRoad {
@@ -400,7 +400,7 @@ extension WeekCardView {
         let completedBefore = runs.prefix(idx).filter(\.isCompleted).count
         let phaseLabel = week.isRecoveryWeek
             ? "\(week.phase.displayName) · recovery"
-            : "\(week.phase.displayName) · Week \(week.weekNumber)"
+            : String(localized: "wk.phaseWeek", defaultValue: "\(week.phase.displayName) · Week \(week.weekNumber)")
         // Next run in the same week after this one. Nil when current is
         // last of the week, the "Next up" card hides in that case and
         // the page simply shows more breathing room.
