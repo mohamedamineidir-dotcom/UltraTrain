@@ -44,9 +44,9 @@ enum MenstrualAdaptationCalculator {
             id: UUID(),
             type: .menstrualMultiSkipPattern,
             severity: .recommended,
-            title: "Cycle pattern this week, name it",
-            message: "You've logged \(menstrualSkips.count) cycle-related skips in the last week. Your body's already dialled the load, let this week be a soft deload (easy + recovery only, no key quality), then resume normal training next week. McNulty 2020: when symptoms drive availability, listen.",
-            actionLabel: "Got it",
+            title: String(localized: "mac.title", defaultValue: "Cycle pattern this week, name it"),
+            message: String(localized: "mac.msg", defaultValue: "You've logged \(menstrualSkips.count) cycle-related skips in the last week. Your body's already dialled the load, let this week be a soft deload (easy + recovery only, no key quality), then resume normal training next week. McNulty 2020: when symptoms drive availability, listen."),
+            actionLabel: String(localized: "common.gotIt", defaultValue: "Got it"),
             affectedSessionIds: menstrualSkips.map(\.id)
         )]
     }

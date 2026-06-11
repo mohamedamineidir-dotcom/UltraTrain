@@ -112,7 +112,7 @@ enum DefaultChecklistGenerator {
     private static func technicalTerrainItems() -> [ChecklistItem] {
         [
             makeItem("Ankle-high trail shoes (recommended)", category: .gear,
-                     notes: "Technical terrain, consider shoes with good ankle support"),
+                     notes: String(localized: "dcg.technical", defaultValue: "Technical terrain, consider shoes with good ankle support")),
             makeItem("Protective gloves for scrambling", category: .clothing)
         ]
     }
@@ -120,7 +120,7 @@ enum DefaultChecklistGenerator {
     private static func aidStationItems(count: Int) -> [ChecklistItem] {
         [
             makeItem("Aid station nutrition plan (what to eat/drink at each)", category: .nutrition,
-                     notes: "\(count) aid station(s) on course"),
+                     notes: String(localized: "dcg.aid", defaultValue: "\(count) aid station(s) on course")),
             makeItem("Personal cup (if required by race)", category: .gear)
         ]
     }

@@ -21067,6 +21067,22 @@
         }
       }
     },
+    "common.gotIt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Got it"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compris"
+          }
+        }
+      }
+    },
     "common.hours" : {
       "localizations" : {
         "en" : {
@@ -21155,6 +21171,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "jours restants"
+          }
+        }
+      }
+    },
+    "dcg.aid" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld aid station(s) on course"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld ravitaillement(s) sur le parcours"
+          }
+        }
+      }
+    },
+    "dcg.technical" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Technical terrain, consider shoes with good ankle support"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terrain technique, envisagez des chaussures avec un bon maintien de cheville"
           }
         }
       }
@@ -22405,6 +22453,86 @@
         }
       }
     },
+    "fpd.hr" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heart rate is rising at the same effort level. Your cardiovascular system may need recovery."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La fréquence cardiaque monte au même niveau d'effort. Votre système cardiovasculaire a peut-être besoin de récupération."
+          }
+        }
+      }
+    },
+    "fpd.multi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Multiple fatigue signals detected. Consider %lld days of reduced training."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plusieurs signaux de fatigue détectés. Envisagez %lld jours d'entraînement réduit."
+          }
+        }
+      }
+    },
+    "fpd.paceDecline" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pace at similar heart rate is declining. Consider reducing training load for %lld days."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'allure à fréquence cardiaque similaire baisse. Envisagez de réduire la charge d'entraînement pendant %lld jours."
+          }
+        }
+      }
+    },
+    "fpd.rpe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perceived effort is rising. Runs feel harder even though the training load hasn't changed, a classic fatigue signal."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'effort perçu augmente. Les sorties semblent plus dures alors que la charge n'a pas changé, un signal de fatigue classique."
+          }
+        }
+      }
+    },
+    "fpd.sleep" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sleep quality has dropped significantly. Prioritize sleep hygiene and an earlier bedtime."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La qualité de sommeil a chuté nettement. Priorisez l'hygiène de sommeil et un coucher plus tôt."
+          }
+        }
+      }
+    },
     "ft" : {
       "localizations" : {
         "fr" : {
@@ -22897,6 +23025,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Synchronisation iCloud"
+          }
+        }
+      }
+    },
+    "import.strava" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imported from Strava: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importé depuis Strava : %@"
+          }
+        }
+      }
+    },
+    "import.watch" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recorded on Apple Watch"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistré sur Apple Watch"
           }
         }
       }
@@ -24294,6 +24454,262 @@
         }
       }
     },
+    "iwl.01d" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Classic 1km repeats with 400m jog recovery. Great for building speed endurance."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétitions classiques de 1km avec 400m de footing de récupération. Idéal pour l'endurance de vitesse."
+          }
+        }
+      }
+    },
+    "iwl.01n" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4x1km Repeats"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétitions 4x1km"
+          }
+        }
+      }
+    },
+    "iwl.02d" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "800m repeats at near-max effort for VO2max development."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répétitions de 800m à effort quasi maximal pour développer la VO2max."
+          }
+        }
+      }
+    },
+    "iwl.02n" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6x800m VO2max"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6x800m VO2max"
+          }
+        }
+      }
+    },
+    "iwl.03d" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ascending and descending work intervals with equal recovery. Builds mental toughness."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervalles d'effort ascendants puis descendants avec récupération égale. Développe la résistance mentale."
+          }
+        }
+      }
+    },
+    "iwl.03n" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pyramid 1-2-3-2-1"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pyramide 1-2-3-2-1"
+          }
+        }
+      }
+    },
+    "iwl.04d" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alternating 3min hard and 2min easy. Perfect for trail running rhythm."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alternance de 3min intenses et 2min faciles. Parfait pour le rythme du trail."
+          }
+        }
+      }
+    },
+    "iwl.04n" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Structured Trail Fartlek"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fartlek trail structuré"
+          }
+        }
+      }
+    },
+    "iwl.05d" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3-minute uphill efforts with jog-down recovery. Builds climbing strength."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Efforts de 3 minutes en montée avec descente en footing pour récupérer. Développe la force de grimpe."
+          }
+        }
+      }
+    },
+    "iwl.05n" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hill Intervals 8x3min"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fractionné en côte 8x3min"
+          }
+        }
+      }
+    },
+    "iwl.06d" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20 rounds of 30s hard, 30s easy. High-frequency VO2max stimulus."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20 séries de 30s intenses, 30s faciles. Stimulus VO2max à haute fréquence."
+          }
+        }
+      }
+    },
+    "iwl.06n" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30/30 Intervals"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fractionné 30/30"
+          }
+        }
+      }
+    },
+    "iwl.07d" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Two 10-minute tempo efforts with 3-minute recovery. Builds lactate threshold."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deux efforts tempo de 10 minutes avec 3 minutes de récupération. Développe le seuil lactique."
+          }
+        }
+      }
+    },
+    "iwl.07n" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2x10min Tempo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2x10min Tempo"
+          }
+        }
+      }
+    },
+    "iwl.08d" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long threshold repeats with 800m jog recovery. Race-specific fitness builder."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Longues répétitions au seuil avec 800m de footing de récupération. Développe une forme spécifique à la course."
+          }
+        }
+      }
+    },
+    "iwl.08n" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3x2km Threshold"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3x2km au seuil"
+          }
+        }
+      }
+    },
     "km" : {
       "localizations" : {
         "fr" : {
@@ -24410,6 +24826,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "m:ss"
+          }
+        }
+      }
+    },
+    "mac.msg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You've logged %lld cycle-related skips in the last week. Your body's already dialled the load, let this week be a soft deload (easy + recovery only, no key quality), then resume normal training next week. McNulty 2020: when symptoms drive availability, listen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous avez enregistré %lld séances manquées liées au cycle cette dernière semaine. Votre corps a déjà ajusté la charge ; faites de cette semaine un léger allègement (facile + récupération uniquement, aucune qualité clé), puis reprenez l'entraînement normal la semaine prochaine. McNulty 2020 : quand les symptômes dictent la disponibilité, écoutez."
+          }
+        }
+      }
+    },
+    "mac.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cycle pattern this week, name it"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schéma de cycle cette semaine, identifiez-le"
           }
         }
       }
@@ -27517,6 +27965,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Records personnels"
+          }
+        }
+      }
+    },
+    "prc.msg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your B-race %1$@ (%2$@, ~%3$@ effective km) is more demanding than your A-race %4$@ (~%5$@ effective km), and falls only ~%6$lld weeks before. Recovery from an effort that size realistically takes 4-6 weeks, your A-race goal will likely be affected. Consider whether to swap A/B priority, set a more conservative A-race goal, or push the A-race further out."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre course B %1$@ (%2$@, ~%3$@ km effectifs) est plus exigeante que votre course A %4$@ (~%5$@ km effectifs), et tombe seulement ~%6$lld semaines avant. La récupération d'un effort de cette taille prend réellement 4-6 semaines ; votre objectif de course A en sera probablement affecté. Envisagez d'inverser la priorité A/B, de fixer un objectif de course A plus prudent, ou de repousser la course A."
+          }
+        }
+      }
+    },
+    "prc.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B-race may compromise A-race goal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La course B pourrait compromettre l'objectif de la course A"
           }
         }
       }
@@ -31500,6 +31980,70 @@
         }
       }
     },
+    "rpac.fallBehind" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@: Falling behind! %2$lld%% below target"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ : Vous décrochez ! %2$lld%% sous l'objectif"
+          }
+        }
+      }
+    },
+    "rpac.slightFast" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@: Slightly fast, %2$lld%% above target"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ : Légèrement rapide, %2$lld%% au-dessus de l'objectif"
+          }
+        }
+      }
+    },
+    "rpac.slightSlow" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@: Slightly slow, %2$lld%% below target"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ : Légèrement lent, %2$lld%% sous l'objectif"
+          }
+        }
+      }
+    },
+    "rpac.tooFast" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@: Way too fast! %2$lld%% above target"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ : Beaucoup trop rapide ! %2$lld%% au-dessus de l'objectif"
+          }
+        }
+      }
+    },
     "rre.allGood.desc" : {
       "localizations" : {
         "en" : {
@@ -32552,6 +33096,102 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@, %2$lld×%3$lldm à effort %4$@"
+          }
+        }
+      }
+    },
+    "rss.lr1" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progressive long run, easy → race pace final 1/3"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue progressive, facile → allure de course sur le dernier tiers"
+          }
+        }
+      }
+    },
+    "rss.lr2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fast-finish long run, last 20% at race pace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue à finish rapide, derniers 20% à allure de course"
+          }
+        }
+      }
+    },
+    "rss.lr3" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MP intro long run, easy with a single 15-20 min block at marathon pace near the end. Bridges into peak-phase MP work."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue d'introduction MP, facile avec un seul bloc de 15-20 min à allure marathon vers la fin. Transition vers le travail MP de la phase de pic."
+          }
+        }
+      }
+    },
+    "rss.lr4" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MP long run, 2-3 blocks at marathon pace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue MP, 2-3 blocs à allure marathon"
+          }
+        }
+      }
+    },
+    "rss.lr5" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Two-part long run, easy then race pace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue en deux parties, facile puis allure de course"
+          }
+        }
+      }
+    },
+    "rss.lr6" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race simulation, extended block at race pace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulation de course, bloc prolongé à allure de course"
           }
         }
       }

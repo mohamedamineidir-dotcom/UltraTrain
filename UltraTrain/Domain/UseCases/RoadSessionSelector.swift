@@ -535,17 +535,17 @@ enum RoadSessionSelector {
         case .easy:
             return "Easy long run, conversational pace"
         case .progressive:
-            return "Progressive long run, easy → race pace final 1/3"
+            return String(localized: "rss.lr1", defaultValue: "Progressive long run, easy → race pace final 1/3")
         case .fastFinish:
-            return "Fast-finish long run, last 20% at race pace"
+            return String(localized: "rss.lr2", defaultValue: "Fast-finish long run, last 20% at race pace")
         case .marathonPaceIntro:
-            return "MP intro long run, easy with a single 15-20 min block at marathon pace near the end. Bridges into peak-phase MP work."
+            return String(localized: "rss.lr3", defaultValue: "MP intro long run, easy with a single 15-20 min block at marathon pace near the end. Bridges into peak-phase MP work.")
         case .marathonPaceBlocks:
-            return "MP long run, 2-3 blocks at marathon pace"
+            return String(localized: "rss.lr4", defaultValue: "MP long run, 2-3 blocks at marathon pace")
         case .twoPart:
-            return "Two-part long run, easy then race pace"
+            return String(localized: "rss.lr5", defaultValue: "Two-part long run, easy then race pace")
         case .raceSimulation:
-            return "Race simulation, extended block at race pace"
+            return String(localized: "rss.lr6", defaultValue: "Race simulation, extended block at race pace")
         }
     }
 

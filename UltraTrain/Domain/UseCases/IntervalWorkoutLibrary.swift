@@ -17,8 +17,8 @@ enum IntervalWorkoutLibrary {
 
     static let fourByOneKm = IntervalWorkout(
         id: UUID(uuidString: "A0000001-0001-0001-0001-000000000001")!,
-        name: "4x1km Repeats",
-        descriptionText: "Classic 1km repeats with 400m jog recovery. Great for building speed endurance.",
+        name: String(localized: "iwl.01n", defaultValue: "4x1km Repeats"),
+        descriptionText: String(localized: "iwl.01d", defaultValue: "Classic 1km repeats with 400m jog recovery. Great for building speed endurance."),
         phases: [
             IntervalPhase(id: UUID(uuidString: "A0000001-0001-0001-0001-100000000001")!,
                           phaseType: .warmUp, trigger: .duration(seconds: 600),
@@ -43,8 +43,8 @@ enum IntervalWorkoutLibrary {
 
     static let sixByEightHundred = IntervalWorkout(
         id: UUID(uuidString: "A0000001-0001-0001-0001-000000000002")!,
-        name: "6x800m VO2max",
-        descriptionText: "800m repeats at near-max effort for VO2max development.",
+        name: String(localized: "iwl.02n", defaultValue: "6x800m VO2max"),
+        descriptionText: String(localized: "iwl.02d", defaultValue: "800m repeats at near-max effort for VO2max development."),
         phases: [
             IntervalPhase(id: UUID(uuidString: "A0000001-0001-0001-0002-100000000001")!,
                           phaseType: .warmUp, trigger: .duration(seconds: 600),
@@ -69,8 +69,8 @@ enum IntervalWorkoutLibrary {
 
     static let pyramid = IntervalWorkout(
         id: UUID(uuidString: "A0000001-0001-0001-0001-000000000003")!,
-        name: "Pyramid 1-2-3-2-1",
-        descriptionText: "Ascending and descending work intervals with equal recovery. Builds mental toughness.",
+        name: String(localized: "iwl.03n", defaultValue: "Pyramid 1-2-3-2-1"),
+        descriptionText: String(localized: "iwl.03d", defaultValue: "Ascending and descending work intervals with equal recovery. Builds mental toughness."),
         phases: buildPyramidPhases(),
         category: .speedWork,
         estimatedDurationSeconds: 3600,
@@ -82,8 +82,8 @@ enum IntervalWorkoutLibrary {
 
     static let trailFartlek = IntervalWorkout(
         id: UUID(uuidString: "A0000001-0001-0001-0001-000000000004")!,
-        name: "Structured Trail Fartlek",
-        descriptionText: "Alternating 3min hard and 2min easy. Perfect for trail running rhythm.",
+        name: String(localized: "iwl.04n", defaultValue: "Structured Trail Fartlek"),
+        descriptionText: String(localized: "iwl.04d", defaultValue: "Alternating 3min hard and 2min easy. Perfect for trail running rhythm."),
         phases: [
             IntervalPhase(id: UUID(uuidString: "A0000001-0001-0001-0004-100000000001")!,
                           phaseType: .warmUp, trigger: .duration(seconds: 600),
@@ -108,8 +108,8 @@ enum IntervalWorkoutLibrary {
 
     static let hillIntervals = IntervalWorkout(
         id: UUID(uuidString: "A0000001-0001-0001-0001-000000000005")!,
-        name: "Hill Intervals 8x3min",
-        descriptionText: "3-minute uphill efforts with jog-down recovery. Builds climbing strength.",
+        name: String(localized: "iwl.05n", defaultValue: "Hill Intervals 8x3min"),
+        descriptionText: String(localized: "iwl.05d", defaultValue: "3-minute uphill efforts with jog-down recovery. Builds climbing strength."),
         phases: [
             IntervalPhase(id: UUID(uuidString: "A0000001-0001-0001-0005-100000000001")!,
                           phaseType: .warmUp, trigger: .duration(seconds: 600),
@@ -134,8 +134,8 @@ enum IntervalWorkoutLibrary {
 
     static let thirtyThirty = IntervalWorkout(
         id: UUID(uuidString: "A0000001-0001-0001-0001-000000000006")!,
-        name: "30/30 Intervals",
-        descriptionText: "20 rounds of 30s hard, 30s easy. High-frequency VO2max stimulus.",
+        name: String(localized: "iwl.06n", defaultValue: "30/30 Intervals"),
+        descriptionText: String(localized: "iwl.06d", defaultValue: "20 rounds of 30s hard, 30s easy. High-frequency VO2max stimulus."),
         phases: [
             IntervalPhase(id: UUID(uuidString: "A0000001-0001-0001-0006-100000000001")!,
                           phaseType: .warmUp, trigger: .duration(seconds: 600),
@@ -160,8 +160,8 @@ enum IntervalWorkoutLibrary {
 
     static let tempoIntervals = IntervalWorkout(
         id: UUID(uuidString: "A0000001-0001-0001-0001-000000000007")!,
-        name: "2x10min Tempo",
-        descriptionText: "Two 10-minute tempo efforts with 3-minute recovery. Builds lactate threshold.",
+        name: String(localized: "iwl.07n", defaultValue: "2x10min Tempo"),
+        descriptionText: String(localized: "iwl.07d", defaultValue: "Two 10-minute tempo efforts with 3-minute recovery. Builds lactate threshold."),
         phases: [
             IntervalPhase(id: UUID(uuidString: "A0000001-0001-0001-0007-100000000001")!,
                           phaseType: .warmUp, trigger: .duration(seconds: 600),
@@ -186,8 +186,8 @@ enum IntervalWorkoutLibrary {
 
     static let threeByTwoKm = IntervalWorkout(
         id: UUID(uuidString: "A0000001-0001-0001-0001-000000000008")!,
-        name: "3x2km Threshold",
-        descriptionText: "Long threshold repeats with 800m jog recovery. Race-specific fitness builder.",
+        name: String(localized: "iwl.08n", defaultValue: "3x2km Threshold"),
+        descriptionText: String(localized: "iwl.08d", defaultValue: "Long threshold repeats with 800m jog recovery. Race-specific fitness builder."),
         phases: [
             IntervalPhase(id: UUID(uuidString: "A0000001-0001-0001-0008-100000000001")!,
                           phaseType: .warmUp, trigger: .duration(seconds: 600),
