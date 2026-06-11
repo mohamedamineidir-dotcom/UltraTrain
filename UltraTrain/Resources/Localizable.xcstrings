@@ -1966,6 +1966,7 @@
       }
     },
     "1-2 coffees or equivalent per day" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -1976,6 +1977,7 @@
       }
     },
     "1-2 weeks reduced. Plan eases the first 1-2 weeks." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -1996,6 +1998,7 @@
       }
     },
     "2-4 weeks off or managed injury. Conservative ramp." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -2026,6 +2029,7 @@
       }
     },
     "3+ coffees or strong daily habit" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -2036,6 +2040,7 @@
       }
     },
     "30 min on a treadmill at 8-12% incline at threshold effort. Designed for flat-region athletes prepping for mountain races." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -2046,6 +2051,7 @@
       }
     },
     "30 min uphill at threshold effort on a sustained climb. Calibrates your trail threshold zones." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -2086,6 +2092,7 @@
       }
     },
     "4 × 6-8 min uphill at threshold effort, jog-down recovery. Threshold calibration when you don't have a 30-min sustained climb." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -2096,6 +2103,7 @@
       }
     },
     "4+ weeks off. Plan rebuilds gradually from the base." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -2106,6 +2114,7 @@
       }
     },
     "5-6 × 4 min uphill at threshold effort. Threshold calibration for shorter hills." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -2136,6 +2145,7 @@
       }
     },
     "5K time trial all-out. Result re-anchors all your pace targets." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -2156,6 +2166,7 @@
       }
     },
     "6 min all-out on flat (track ideal). Distance covered ÷ 100 = your VMA. Re-anchors all training paces." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -2524,6 +2535,7 @@
       }
     },
     "Adapts as you train" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -2847,6 +2859,7 @@
       }
     },
     "Adding any B or C races now lets the plan shape its build, taper and recovery around them." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -3158,6 +3171,7 @@
       }
     },
     "Analyzing race profile" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -3258,6 +3272,7 @@
       }
     },
     "Any go-to brands?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -3278,6 +3293,7 @@
       }
     },
     "Any stomach trouble in past races?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -3288,6 +3304,7 @@
       }
     },
     "Any training data to calibrate?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -3298,6 +3315,7 @@
       }
     },
     "Anything to avoid?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -3509,6 +3527,7 @@
       }
     },
     "Automatic Strava sync" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -3679,6 +3698,7 @@
       }
     },
     "Balanced" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3805,6 +3825,7 @@
       }
     },
     "Building hydration strategy" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -3881,6 +3902,7 @@
       }
     },
     "Calculating energy needs" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -3942,6 +3964,7 @@
       }
     },
     "Calories, carbs & fat oxidation rates" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -4672,6 +4695,7 @@
       }
     },
     "Continue with Apple" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -4682,6 +4706,7 @@
       }
     },
     "Continue with Google" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -4692,6 +4717,7 @@
       }
     },
     "Continue with Strava" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -5035,7 +5061,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tableau de bord"
+            "value" : "Menu"
           }
         }
       }
@@ -5572,6 +5598,7 @@
       }
     },
     "Distance, elevation & expected duration" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -6353,6 +6380,7 @@
       }
     },
     "Enjoy the Journey" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -6872,6 +6900,7 @@
       }
     },
     "Finalizing nutrition plan" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -6932,6 +6961,7 @@
       }
     },
     "Finish time predictions" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -6978,6 +7008,7 @@
       }
     },
     "Fitness & fatigue tracking" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -7008,6 +7039,7 @@
       }
     },
     "Fluid intake & electrolyte balance" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -7260,6 +7292,7 @@
       }
     },
     "GPS tracking with live pace, elevation profile, and heart rate zones." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -7321,6 +7354,7 @@
       }
     },
     "Generate a personalized plan based on your profile and race goals." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -7342,6 +7376,7 @@
       }
     },
     "Generate a plan and we'll flag the long runs worth practicing on." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -7673,6 +7708,7 @@
       }
     },
     "Half Marathon" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -7846,6 +7882,7 @@
       }
     },
     "High (3+ coffees/day)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -7866,6 +7903,7 @@
       }
     },
     "Higher volume and intensity. Push your limits." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -7882,6 +7920,7 @@
       }
     },
     "Hill" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -7944,6 +7983,7 @@
       }
     },
     "Hours" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -8061,6 +8101,7 @@
       }
     },
     "How long before race start do you like to eat? Tunes the morning fuelling plan." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -8112,6 +8153,7 @@
       }
     },
     "How much caffeine?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -8162,6 +8204,7 @@
       }
     },
     "How were the last 4 weeks?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -8172,6 +8215,7 @@
       }
     },
     "Hrs" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -8214,6 +8258,7 @@
       }
     },
     "I already have an account" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -8589,6 +8634,7 @@
       }
     },
     "Injury, illness, or time off changes how aggressively we should ramp." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -8992,6 +9038,7 @@
       }
     },
     "Let's Get Started" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -9002,6 +9049,7 @@
       }
     },
     "Let's Go!" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -9032,6 +9080,7 @@
       }
     },
     "Light setback" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -9082,6 +9131,7 @@
       }
     },
     "Live GPS tracking" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -9385,6 +9435,7 @@
       }
     },
     "Low (new to caffeine)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -9405,6 +9456,7 @@
       }
     },
     "Lower volume, more rest. Focus on finishing strong." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -9451,6 +9503,7 @@
       }
     },
     "Major setback" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -9591,6 +9644,7 @@
       }
     },
     "Max HR" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -9729,6 +9783,7 @@
       }
     },
     "Mid-prep fitness test" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -9759,6 +9814,7 @@
       }
     },
     "Mixed" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -9785,6 +9841,7 @@
       }
     },
     "Moderate (1-2 coffees/day)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -9795,6 +9852,7 @@
       }
     },
     "Moderate setback" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -9885,6 +9943,7 @@
       }
     },
     "Mountain / Trail" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -10407,6 +10466,7 @@
       }
     },
     "No caffeine" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -10427,6 +10487,7 @@
       }
     },
     "No coffee, tea, or caffeinated drinks" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -10558,6 +10619,7 @@
       }
     },
     "No practice runs linked yet" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -10985,6 +11047,7 @@
       }
     },
     "Occasional, not a daily drinker" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -11728,6 +11791,7 @@
       }
     },
     "Password (8+ characters)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -11870,6 +11934,7 @@
       }
     },
     "Performance" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -11896,6 +11961,7 @@
       }
     },
     "Periodized training built around your race with smart recovery and adaptive adjustments." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -11963,6 +12029,7 @@
       }
     },
     "Personalized training plans" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -12080,6 +12147,7 @@
       }
     },
     "Pick the brands you already trust per format. We'll build your plan around their exact products. Skip anything where you have no preference." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -12130,6 +12198,7 @@
       }
     },
     "Plan adherence score" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -12156,6 +12225,7 @@
       }
     },
     "Plan keeps current pace anchors" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -12187,6 +12257,7 @@
       }
     },
     "Plan ramps as designed." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -12334,6 +12405,7 @@
       }
     },
     "Post-run analysis" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -12364,6 +12436,7 @@
       }
     },
     "Pre-race meal timing" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -12534,6 +12607,7 @@
       }
     },
     "Products, timing & gut training schedule" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -12585,6 +12659,7 @@
       }
     },
     "Progressive training. Recommended for most runners." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12848,6 +12923,7 @@
       }
     },
     "Race Day" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -12909,6 +12985,7 @@
       }
     },
     "Race Forecast" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -13092,6 +13169,7 @@
       }
     },
     "Race-day nutrition strategy" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -13122,6 +13200,7 @@
       }
     },
     "Races during prep?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -13168,6 +13247,7 @@
       }
     },
     "Rate Your Effort" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -13321,6 +13401,7 @@
       }
     },
     "Recalibrates your pace targets" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -13818,6 +13899,7 @@
       }
     },
     "Road" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -13834,6 +13916,7 @@
       }
     },
     "Road Races" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -14497,6 +14580,7 @@
       }
     },
     "Scheduled around week 4-5" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -14689,6 +14773,7 @@
       }
     },
     "Sec" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -15505,6 +15590,7 @@
       }
     },
     "Skip the test" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -15613,6 +15699,7 @@
       }
     },
     "Smart recovery weeks" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -15643,6 +15730,7 @@
       }
     },
     "Sodium" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -16119,6 +16207,7 @@
       }
     },
     "Tailored to your race" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -16129,6 +16218,7 @@
       }
     },
     "Take with a sip of water" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -16189,6 +16279,7 @@
       }
     },
     "Tap every format you're happy to use on race day." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -16299,6 +16390,7 @@
       }
     },
     "Target Position" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -16315,6 +16407,7 @@
       }
     },
     "Target Ranking" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -16331,6 +16424,7 @@
       }
     },
     "Target Time" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -16504,6 +16598,7 @@
       }
     },
     "Things that have caused issues before (gels, fructose, gluten…)." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -16817,6 +16912,7 @@
       }
     },
     "Today" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -16967,6 +17063,7 @@
       }
     },
     "Track Every Step" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -16987,6 +17084,7 @@
       }
     },
     "Track your fitness trend, weekly volume, and training load from your personalized dashboard." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -17017,6 +17115,7 @@
       }
     },
     "Trail" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -17043,6 +17142,7 @@
       }
     },
     "Trail Races" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -17210,6 +17310,7 @@
       }
     },
     "Training as usual" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -17287,6 +17388,7 @@
       }
     },
     "Treadmill" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -17976,6 +18078,7 @@
       }
     },
     "We use this to calibrate race-day dose." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -17996,6 +18099,7 @@
       }
     },
     "We'll only suggest products that fit." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -18292,6 +18396,7 @@
       }
     },
     "Weekly volume charts" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -18363,6 +18468,7 @@
       }
     },
     "What do you like to fuel with?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -18454,6 +18560,7 @@
       }
     },
     "When do you crave savoury food?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -18781,6 +18888,7 @@
       }
     },
     "Your Personalized Plan" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -18852,6 +18960,7 @@
       }
     },
     "Your Training Hub" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -35144,6 +35253,7 @@
       }
     },
     "sk.007" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -35288,6 +35398,7 @@
       }
     },
     "sk.016" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -38935,6 +39046,61 @@
         }
       }
     },
+    "tcoach.heat.peakLong" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Race-day forecast is hot. Start your 10-14 day heat-acclimation block by training in the warmest part of the day, layered, or in a sauna 20-30 min post-run."
+          }
+        }
+      }
+    },
+    "tcoach.heat.peakQuality" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Heat block in progress: dial today's pace by feel, not the watch. Heat compresses pace bands. Cool the head + neck immediately post-rep."
+          }
+        }
+      }
+    },
+    "tcoach.heat.peakRace" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Race day will be hot. Pre-cool if possible, sip-and-eat early before thirst/hunger spikes, and drop pace targets 5-10% in heat."
+          }
+        }
+      }
+    },
+    "tcoach.heat.taperLong" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Stay heat-adapted: short heat exposures (warm bath, sauna 15 min) every 2-3 days through taper. Don't add new training stress."
+          }
+        }
+      }
+    },
+    "tcoach.heat.taperQuality" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Final heat reminder: keep one short hot exposure every 2-3 days; on race day expect 5-10% slower pace at same effort."
+          }
+        }
+      }
+    },
     "tcoach.hot.session" : {
       "localizations" : {
         "en" : {
@@ -41388,6 +41554,7 @@
       }
     },
     "trt.elevSuffix" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -44173,6 +44340,7 @@
       }
     },
     "wpe.b2b1Sim" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -45133,6 +45301,7 @@
       }
     },
     "wpe.w051" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -45149,6 +45318,7 @@
       }
     },
     "wpe.w052" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -45165,6 +45335,7 @@
       }
     },
     "wpe.w053" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -45181,6 +45352,7 @@
       }
     },
     "wpe.w054" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -45197,6 +45369,7 @@
       }
     },
     "wpe.w055" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -45261,6 +45434,7 @@
       }
     },
     "wpe.w059" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -45277,6 +45451,7 @@
       }
     },
     "wpe.w060" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -45325,6 +45500,7 @@
       }
     },
     "wpe.w063" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -45341,6 +45517,7 @@
       }
     },
     "wpe.w064" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -45437,6 +45614,7 @@
       }
     },
     "wpe.w070" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -45597,6 +45775,7 @@
       }
     },
     "wpe.w080" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -45901,6 +46080,7 @@
       }
     },
     "wpe.w099" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -45917,6 +46097,7 @@
       }
     },
     "wpe.w100" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -45981,6 +46162,7 @@
       }
     },
     "wpe.w104" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -46013,6 +46195,7 @@
       }
     },
     "wpe.w106" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -46077,6 +46260,7 @@
       }
     },
     "wpe.w110" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -46189,6 +46373,7 @@
       }
     },
     "wpe.w117" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -46333,6 +46518,7 @@
       }
     },
     "wpe.w126" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -46493,6 +46679,7 @@
       }
     },
     "wpe.w136" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -46541,6 +46728,7 @@
       }
     },
     "wpe.w139" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -46557,6 +46745,7 @@
       }
     },
     "wpe.w140" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -46573,6 +46762,7 @@
       }
     },
     "wpe.w141" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
