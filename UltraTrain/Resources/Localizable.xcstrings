@@ -1402,6 +1402,7 @@
       }
     },
     "%lld of %lld runs logged" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3191,6 +3192,12 @@
     "Analyzing race profile" : {
       "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analyzing race profile"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3205,6 +3212,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Analyse de votre repas..."
+          }
+        }
+      }
+    },
+    "Analyzing your profile" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analyzing your profile"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analyse de votre profil"
           }
         }
       }
@@ -3742,12 +3765,44 @@
         }
       }
     },
+    "Base, build, peak & taper phases" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Base, build, peak & taper phases"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phases base, développement, pic et affûtage"
+          }
+        }
+      }
+    },
     "Before First Intake" : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Avant première prise"
+          }
+        }
+      }
+    },
+    "Beginner" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beginner"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Débutant"
           }
         }
       }
@@ -3845,10 +3900,32 @@
     "Building hydration strategy" : {
       "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Building hydration strategy"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Élaboration de la stratégie d'hydratation"
+            "value" : "Construction de la stratégie d'hydratation"
+          }
+        }
+      }
+    },
+    "Building periodization" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Building periodization"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Construction de la périodisation"
           }
         }
       }
@@ -3939,6 +4016,12 @@
     "Calculating energy needs" : {
       "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calculating energy needs"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4001,6 +4084,12 @@
     "Calories, carbs & fat oxidation rates" : {
       "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calories, carbs & fat oxidation rates"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4996,6 +5085,22 @@
         }
       }
     },
+    "Current Volume" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current Volume"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume actuel"
+          }
+        }
+      }
+    },
     "Current form: %@%@" : {
       "localizations" : {
         "en" : {
@@ -5686,10 +5791,16 @@
     "Distance, elevation & expected duration" : {
       "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distance, elevation & expected duration"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Distance, dénivelé et durée prévue"
+            "value" : "Distance, dénivelé et durée estimée"
           }
         }
       }
@@ -6039,6 +6150,7 @@
       }
     },
     "Each feedback tunes your race-day plan to what your gut actually tolerates." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -6719,6 +6831,22 @@
         }
       }
     },
+    "Experience, fitness history & goals" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Experience, fitness history & goals"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expérience, historique de forme et objectifs"
+          }
+        }
+      }
+    },
     "Export" : {
       "localizations" : {
         "fr" : {
@@ -6932,6 +7060,7 @@
       }
     },
     "Fat" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -7021,6 +7150,12 @@
     "Finalizing nutrition plan" : {
       "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finalizing nutrition plan"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7160,6 +7295,12 @@
     "Fluid intake & electrolyte balance" : {
       "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fluid intake & electrolyte balance"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7562,6 +7703,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Généré par UltraTrain"
+          }
+        }
+      }
+    },
+    "Generating sessions" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generating sessions"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Génération des séances"
           }
         }
       }
@@ -9497,6 +9654,22 @@
         }
       }
     },
+    "Long runs, intervals & recovery" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long runs, intervals & recovery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sorties longues, fractionné et récupération"
+          }
+        }
+      }
+    },
     "Longest Run" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -10718,6 +10891,7 @@
       }
     },
     "No gut-training runs linked yet. Generate a plan and we'll flag the long runs worth practicing on." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -12761,6 +12935,22 @@
         }
       }
     },
+    "Preparing nutrition plan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparing nutrition plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation du plan nutritionnel"
+          }
+        }
+      }
+    },
     "Previous month" : {
       "localizations" : {
         "fr" : {
@@ -12844,6 +13034,12 @@
     "Products, timing & gut training schedule" : {
       "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Products, timing & gut training schedule"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12952,6 +13148,7 @@
       }
     },
     "Protein" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -13426,6 +13623,22 @@
         }
       }
     },
+    "Race-day fueling strategy" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race-day fueling strategy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stratégie d'alimentation de course"
+          }
+        }
+      }
+    },
     "Race-day nutrition strategy" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -13664,6 +13877,22 @@
         }
       }
     },
+    "Recalculating fitness & fatigue" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recalculating fitness & fatigue"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recalcul de la forme et de la fatigue"
+          }
+        }
+      }
+    },
     "Recalibrates your pace targets" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -13701,6 +13930,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enregistrez une course dans l'app, puis revenez pour la lier."
+          }
+        }
+      }
+    },
+    "Recording stats & performance data" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recording stats & performance data"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrement des stats et données de performance"
           }
         }
       }
@@ -14815,6 +15060,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enregistre les modifications de votre profil social"
+          }
+        }
+      }
+    },
+    "Saving your session" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saving your session"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrement de votre séance"
           }
         }
       }
@@ -18005,6 +18266,22 @@
         }
       }
     },
+    "Updating training load" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updating training load"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mise à jour de la charge d'entraînement"
+          }
+        }
+      }
+    },
     "Updating your training plan..." : {
       "localizations" : {
         "fr" : {
@@ -18523,6 +18800,7 @@
       }
     },
     "Week %lld had %lld planned sessions with no recorded runs." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -36860,7 +37138,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Récupération"
+            "value" : "Endurance Fondamentale"
           }
         }
       }
@@ -45621,6 +45899,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Le tapis vous donne un contrôle total sur l'inclinaison et la durée. %@ "
+          }
+        }
+      }
+    },
+    "vp.justStarting" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Just starting"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout juste commencé"
+          }
+        }
+      }
+    },
+    "vp.kmPerWeek" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%1$lld-%2$lld km/week"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%1$lld-%2$lld km/sem"
+          }
+        }
+      }
+    },
+    "vp.perWeek" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "/week"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "/sem"
+          }
+        }
+      }
+    },
+    "vp.runsPerWeek" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld runs/week"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld sorties/sem"
           }
         }
       }

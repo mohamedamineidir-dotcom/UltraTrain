@@ -101,16 +101,16 @@ struct VolumePreviewStepView: View {
             VStack(spacing: 0) {
                 summaryRow(
                     label: "Level",
-                    value: viewModel.experienceLevel?.rawValue.capitalized ?? "Beginner"
+                    value: viewModel.experienceLevel?.displayName ?? String(localized: "experience.beginner", defaultValue: "Beginner")
                 )
                 thinDivider
                 summaryRow(
                     label: "Current Volume",
                     value: viewModel.isNewRunner
-                        ? "Just starting"
+                        ? String(localized: "vp.justStarting", defaultValue: "Just starting")
                         : UnitFormatter.formatDistance(
                             viewModel.weeklyVolumeKm, unit: viewModel.preferredUnit, decimals: 0
-                        ) + "/week"
+                        ) + String(localized: "vp.perWeek", defaultValue: "/week")
                 )
                 thinDivider
                 summaryRow(
@@ -179,14 +179,14 @@ struct VolumePreviewStepView: View {
 
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: Theme.Spacing.xs) {
-                        Text("\(estimate.runsPerWeek) runs/week")
+                        Text(String(localized: "vp.runsPerWeek", defaultValue: "\(estimate.runsPerWeek) runs/week"))
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(isSelected ? Theme.Colors.warmCoral : .primary)
                         if estimate.isRecommended {
                             recommendedBadge
                         }
                     }
-                    Text("~\(estimate.weeklyKmMin)--\(estimate.weeklyKmMax) km/week")
+                    Text(String(localized: "vp.kmPerWeek", defaultValue: "~\(estimate.weeklyKmMin)-\(estimate.weeklyKmMax) km/week"))
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
@@ -261,7 +261,7 @@ struct VolumePreviewStepView: View {
 
     private func summaryRow(label: String, value: String) -> some View {
         HStack {
-            Text(label)
+            Text(LocalizedStringKey(label))
                 .font(.subheadline)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
             Spacer()
