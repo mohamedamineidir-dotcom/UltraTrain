@@ -7,9 +7,9 @@ enum RaceGoalSelection: String, CaseIterable, Sendable {
 
     var displayName: String {
         switch self {
-        case .finish: return "Finish"
-        case .targetTime: return "Target Time"
-        case .targetRanking: return "Target Ranking"
+        case .finish: return String(localized: "raceGoal.finish", defaultValue: "Finish")
+        case .targetTime: return String(localized: "raceGoal.targetTime", defaultValue: "Target Time")
+        case .targetRanking: return String(localized: "raceGoal.targetRanking", defaultValue: "Target Ranking")
         }
     }
 }

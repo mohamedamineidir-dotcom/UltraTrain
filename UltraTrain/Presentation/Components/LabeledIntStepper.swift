@@ -19,7 +19,8 @@ struct LabeledIntStepper: View {
             if !compact {
                 Text(LocalizedStringKey(label))
                     .font(.subheadline)
-                    .fixedSize()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
                 Spacer(minLength: 2)
             }
             Button {

@@ -22,11 +22,11 @@ enum PhaseFocus: String, CaseIterable, Sendable, Codable {
             }
         }
         return switch self {
-        case .threshold30:      "30' Threshold"
-        case .vo2max:           "VO2max Hills"
-        case .threshold60:      "60' Threshold"
-        case .sharpening:       "Sharpening"
-        case .postRaceRecovery: "Post-Race Recovery"
+        case .threshold30:      String(localized: "phase.trail.threshold30", defaultValue: "30' Threshold")
+        case .vo2max:           String(localized: "phase.trail.vo2max", defaultValue: "VO2max Hills")
+        case .threshold60:      String(localized: "phase.trail.threshold60", defaultValue: "60' Threshold")
+        case .sharpening:       String(localized: "phase.trail.sharpening", defaultValue: "Sharpening")
+        case .postRaceRecovery: String(localized: "phase.trail.postRace", defaultValue: "Post-Race Recovery")
         }
     }
 
@@ -56,15 +56,20 @@ enum PhaseFocus: String, CaseIterable, Sendable, Codable {
         }
         return switch self {
         case .threshold30:
-            "Build aerobic power with 30-minute threshold efforts on hills"
+            String(localized: "phase.trail.threshold30.desc",
+                   defaultValue: "Build aerobic power with 30-minute threshold efforts on hills")
         case .vo2max:
-            "VO2max intervals on steep climbs, short, intense hill repeats"
+            String(localized: "phase.trail.vo2max.desc",
+                   defaultValue: "VO2max intervals on steep climbs, short, intense hill repeats")
         case .threshold60:
-            "Sustained 60-minute threshold on rolling terrain, race-specific endurance"
+            String(localized: "phase.trail.threshold60.desc",
+                   defaultValue: "Sustained 60-minute threshold on rolling terrain, race-specific endurance")
         case .sharpening:
-            "Volume reduction and race-day sharpening"
+            String(localized: "phase.trail.sharpening.desc",
+                   defaultValue: "Volume reduction and race-day sharpening")
         case .postRaceRecovery:
-            "Active recovery and adaptation after competition"
+            String(localized: "phase.trail.postRace.desc",
+                   defaultValue: "Active recovery and adaptation after competition")
         }
     }
 }

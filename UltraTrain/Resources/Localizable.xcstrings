@@ -3138,6 +3138,7 @@
       }
     },
     "All optional. Skip what you don't know, we'll use evidence-based defaults." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3791,6 +3792,7 @@
       }
     },
     "Bars" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4416,6 +4418,7 @@
       }
     },
     "Chews" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -6182,6 +6185,7 @@
       }
     },
     "Drinks" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -7615,6 +7619,7 @@
       }
     },
     "From a lab test. Skip if untested." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -7631,6 +7636,7 @@
       }
     },
     "From training. Leave blank if you haven't gut-trained." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -7724,6 +7730,7 @@
       }
     },
     "Gels" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -10204,6 +10211,7 @@
       }
     },
     "Max carbs/hour you've tolerated" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -14005,6 +14013,7 @@
       }
     },
     "Real food" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -15096,6 +15105,7 @@
       }
     },
     "Salt caps" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -16866,6 +16876,7 @@
       }
     },
     "Sweat rate" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -16882,6 +16893,7 @@
       }
     },
     "Sweat sodium" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -23031,6 +23043,7 @@
       }
     },
     "e.g. 1000" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -23097,6 +23110,7 @@
       }
     },
     "e.g. 80" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -23113,6 +23127,7 @@
       }
     },
     "e.g. 900" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -27145,6 +27160,7 @@
       }
     },
     "mg/L" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -30246,6 +30262,358 @@
         }
       }
     },
+    "phase.trail.postRace" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Post-Race Recovery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération post-course"
+          }
+        }
+      }
+    },
+    "phase.trail.postRace.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active recovery and adaptation after competition"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération active et adaptation après la compétition"
+          }
+        }
+      }
+    },
+    "phase.trail.sharpening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sharpening"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affûtage"
+          }
+        }
+      }
+    },
+    "phase.trail.sharpening.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume reduction and race-day sharpening"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduction du volume et affûtage pour le jour J"
+          }
+        }
+      }
+    },
+    "phase.trail.threshold30" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30' Threshold"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seuil 30'"
+          }
+        }
+      }
+    },
+    "phase.trail.threshold30.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Build aerobic power with 30-minute threshold efforts on hills"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Développez la puissance aérobie avec des efforts au seuil de 30 minutes en côte"
+          }
+        }
+      }
+    },
+    "phase.trail.threshold60" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "60' Threshold"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seuil 60'"
+          }
+        }
+      }
+    },
+    "phase.trail.threshold60.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sustained 60-minute threshold on rolling terrain, race-specific endurance"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seuil soutenu de 60 minutes sur terrain vallonné : endurance spécifique à la course"
+          }
+        }
+      }
+    },
+    "phase.trail.vo2max" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO2max Hills"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Côtes VO2max"
+          }
+        }
+      }
+    },
+    "phase.trail.vo2max.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO2max intervals on steep climbs, short, intense hill repeats"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervalles VO2max sur pentes raides : répétitions de côte courtes et intenses"
+          }
+        }
+      }
+    },
+    "phaseDesc.race" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race week"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semaine de course"
+          }
+        }
+      }
+    },
+    "phaseDesc.recovery" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active recovery and adaptation"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération active et adaptation"
+          }
+        }
+      }
+    },
+    "phaseDesc.road.base" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Build aerobic foundation with easy running and strides"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Développez la base aérobie avec footing facile et lignes droites"
+          }
+        }
+      }
+    },
+    "phaseDesc.road.build" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO2max intervals and tempo runs to build speed"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervalles VO2max et tempo pour gagner en vitesse"
+          }
+        }
+      }
+    },
+    "phaseDesc.road.peak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race-specific workouts at target pace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Séances spécifiques à l'allure de course"
+          }
+        }
+      }
+    },
+    "phaseDesc.road.taper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume reduction with race-pace sharpeners"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduction du volume avec rappels à l'allure de course"
+          }
+        }
+      }
+    },
+    "phaseDesc.trail.base" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hill threshold foundation, 30-minute tempo efforts on hills"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Base de seuil en côte : efforts tempo de 30 minutes en côte"
+          }
+        }
+      }
+    },
+    "phaseDesc.trail.build" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO2max intervals on steep climbs, short, intense hill repeats"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervalles VO2max sur pentes raides : répétitions de côte courtes et intenses"
+          }
+        }
+      }
+    },
+    "phaseDesc.trail.peak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sustained threshold on rolling terrain, race-specific endurance"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seuil soutenu sur terrain vallonné : endurance spécifique à la course"
+          }
+        }
+      }
+    },
+    "phaseDesc.trail.taper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume reduction, freshness for race day"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduction du volume, fraîcheur pour le jour de course"
+          }
+        }
+      }
+    },
+    "phaseHeader.raceWeek" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race Week"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semaine de course"
+          }
+        }
+      }
+    },
+    "phaseHeader.recovery" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récupération"
+          }
+        }
+      }
+    },
     "phaseType.coolDown" : {
       "extractionState" : "extracted_with_value",
       "localizations" : {
@@ -31913,6 +32281,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Difficulté du terrain"
+          }
+        }
+      }
+    },
+    "raceGoal.finish" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finish"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminer"
+          }
+        }
+      }
+    },
+    "raceGoal.targetRanking" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Target Ranking"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Classement cible"
+          }
+        }
+      }
+    },
+    "raceGoal.targetTime" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Target Time"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temps cible"
           }
         }
       }

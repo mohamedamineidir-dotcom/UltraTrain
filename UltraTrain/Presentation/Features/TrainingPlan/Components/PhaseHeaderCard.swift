@@ -90,8 +90,8 @@ struct PhaseHeaderCard: View {
         // surrounding weeks). The phase-level identity is what matters
         // to the athlete on race week or in a post-race recovery block.
         switch phase {
-        case .race:     return "Race Week"
-        case .recovery: return "Recovery"
+        case .race:     return String(localized: "phaseHeader.raceWeek", defaultValue: "Race Week")
+        case .recovery: return String(localized: "phaseHeader.recovery", defaultValue: "Recovery")
         default:        return phaseFocus?.displayName(isRoad: isRoad) ?? phase.displayName
         }
     }
@@ -147,27 +147,27 @@ struct PhaseHeaderCard: View {
         }
         if isRoad {
             switch phase {
-            case .base:     return "Build aerobic foundation with easy running and strides"
-            case .build:    return "VO2max intervals and tempo runs to build speed"
-            case .peak:     return "Race-specific workouts at target pace"
-            case .taper:    return "Volume reduction with race-pace sharpeners"
-            case .recovery: return "Active recovery and adaptation"
-            case .race:     return "Race week"
+            case .base:     return String(localized: "phaseDesc.road.base", defaultValue: "Build aerobic foundation with easy running and strides")
+            case .build:    return String(localized: "phaseDesc.road.build", defaultValue: "VO2max intervals and tempo runs to build speed")
+            case .peak:     return String(localized: "phaseDesc.road.peak", defaultValue: "Race-specific workouts at target pace")
+            case .taper:    return String(localized: "phaseDesc.road.taper", defaultValue: "Volume reduction with race-pace sharpeners")
+            case .recovery: return String(localized: "phaseDesc.recovery", defaultValue: "Active recovery and adaptation")
+            case .race:     return String(localized: "phaseDesc.race", defaultValue: "Race week")
             }
         }
         switch phase {
         case .base:
-            return "Hill threshold foundation, 30-minute tempo efforts on hills"
+            return String(localized: "phaseDesc.trail.base", defaultValue: "Hill threshold foundation, 30-minute tempo efforts on hills")
         case .build:
-            return "VO2max intervals on steep climbs, short, intense hill repeats"
+            return String(localized: "phaseDesc.trail.build", defaultValue: "VO2max intervals on steep climbs, short, intense hill repeats")
         case .peak:
-            return "Sustained threshold on rolling terrain, race-specific endurance"
+            return String(localized: "phaseDesc.trail.peak", defaultValue: "Sustained threshold on rolling terrain, race-specific endurance")
         case .taper:
-            return "Volume reduction, freshness for race day"
+            return String(localized: "phaseDesc.trail.taper", defaultValue: "Volume reduction, freshness for race day")
         case .recovery:
-            return "Active recovery and adaptation"
+            return String(localized: "phaseDesc.recovery", defaultValue: "Active recovery and adaptation")
         case .race:
-            return "Race week"
+            return String(localized: "phaseDesc.race", defaultValue: "Race week")
         }
     }
 }
