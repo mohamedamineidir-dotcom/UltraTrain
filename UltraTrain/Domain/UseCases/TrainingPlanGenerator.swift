@@ -1044,13 +1044,26 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     // e.g. "Intervals 16min / 3.0km" while the detail
                     // unpacked to a 5×1km session totalling 42 min /
                     // 13 km, two truths visible to the user.
-                    if session.type == .intervals, let w = q1Workout {
+                    // RR-34: the COMPOSED workout is the single source of
+                    // truth for the quality session. We match the slot by the
+                    // template's original type (.intervals = Q1, .tempo = Q2),
+                    // then (a) write the composed workout's structural name as
+                    // the card description so card and detail agree and the
+                    // text varies week to week, and (b) re-type the session
+                    // from the composed content so a rep workout reads
+                    // "Intervals" and a sustained block reads "Tempo",
+                    // regardless of which slot it landed in.
+                    if tpl.type == .intervals, let w = q1Workout {
                         session.intervalWorkoutId = w.id
                         session.intervalFocus = q1Template?.category.displayName
+                        session.description = w.name
+                        session.type = q1Composed.isTempo ? .tempo : .intervals
                         alignSessionWithWorkout(&session, workout: w)
-                    } else if session.type == .tempo, let w = q2Workout {
+                    } else if tpl.type == .tempo, let w = q2Workout {
                         session.intervalWorkoutId = w.id
                         session.intervalFocus = q2Template?.category.displayName
+                        session.description = w.name
+                        session.type = q2Composed.isTempo ? .tempo : .intervals
                         alignSessionWithWorkout(&session, workout: w)
                     } else if session.type == .longRun, let w = longRunWorkout {
                         session.intervalWorkoutId = w.id
@@ -1077,8 +1090,12 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     // for threshold sessions; MP for raceSpecific late-
                     // build, etc.) instead of falling back to the
                     // phase-default which can desync from the workout.
+                    // Keyed off the original slot type (tpl.type), not the
+                    // re-typed session.type: after RR-34 both quality slots
+                    // can resolve to .intervals, so session.type no longer
+                    // uniquely identifies which composed template to use.
                     let qualityTemplate: RoadIntervalLibrary.Template?
-                    switch session.type {
+                    switch tpl.type {
                     case .intervals: qualityTemplate = q1Template
                     case .tempo:     qualityTemplate = q2Template
                     default:         qualityTemplate = nil

@@ -51,6 +51,12 @@ enum IntervalSessionComposer {
         /// segment, so existing downstream code (intervalFocus label, coach
         /// advice pace selection) keeps working without change.
         let template: RoadIntervalLibrary.Template
+        /// True when the work is a sustained continuous effort (one or two
+        /// long blocks at threshold / marathon pace) — a genuine *tempo*.
+        /// Rep-based shapes (uniform reps, pyramid, cutdown, mixed-contrast)
+        /// are *intervals*. The generator types the session from this so a
+        /// "5×1K" never shows under a "Tempo" title and vice-versa.
+        let isTempo: Bool
     }
 
     enum Shape: Int, CaseIterable, Sendable {
@@ -89,6 +95,17 @@ enum IntervalSessionComposer {
     // MARK: - Shape selection
 
     private static func chooseShape(_ ctx: Context) -> Shape {
+        // Threshold is the road runner's bread-and-butter, and it's most
+        // often prescribed as a sustained TEMPO, not reps. So alternate the
+        // threshold slot between a continuous tempo (progression) and a
+        // rep variant every other session: each block reads tempo ⇄ cruise
+        // intervals, the week reliably carries one true tempo, and structure
+        // never repeats two threshold sessions running.
+        if ctx.category == .threshold {
+            if ctx.ordinal % 2 == 0 { return .progression }
+            let reps: [Shape] = [.uniform, .cutdown, .mixedContrast]
+            return reps[(ctx.ordinal / 2) % reps.count]
+        }
         let valid = validShapes(for: ctx.category, phase: ctx.phase)
         // Rotate by ordinal so successive sessions of a category differ;
         // salt by slot so Q1 and Q2 never use the same shape the same week.

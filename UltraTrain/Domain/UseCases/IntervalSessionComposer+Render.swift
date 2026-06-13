@@ -87,7 +87,11 @@ extension IntervalSessionComposer {
             workout: workout,
             signature: signature(ctx, segments: segments, shape: shape),
             focus: ctx.category.displayName,
-            template: synthesizedTemplate(ctx, segments: segments, name: name)
+            template: synthesizedTemplate(ctx, segments: segments, name: name),
+            // A progression shape is the only sustained, continuous work the
+            // composer builds (one unbroken block or two long broken blocks).
+            // Every other shape is repeated efforts, i.e. intervals.
+            isTempo: shape == .progression && !ctx.isRecoveryWeek
         )
     }
 
@@ -212,9 +216,16 @@ extension IntervalSessionComposer {
             return s.repCount > 1 ? "\(s.repCount)×\(mins)min \(label)" : "\(mins)min \(label)"
         case .uniform:
             guard let s = segments.first else { return ctx.category.displayName }
-            let pace = pace(for: s, ctx: ctx)
-            let paceStr = RoadCoachAdviceGenerator.formatPace(pace)
-            return "\(s.repCount)×\(fmtRep(distanceM: s.repDistanceM, durationSec: s.repDurationSec)) @ \(paceStr)/km"
+            let reps = "\(s.repCount)×\(fmtRep(distanceM: s.repDistanceM, durationSec: s.repDurationSec))"
+            // Only append a pace when it's data-derived (PRs / VMA / goal
+            // time). Fabricating "5:00/km" for an athlete with no baseline
+            // reads as false precision (RR-17); the zone tag carries the
+            // intent instead.
+            guard ctx.paceProfile?.isDataDerived == true else {
+                return "\(reps) \(zoneTag(s.zone))"
+            }
+            let paceStr = RoadCoachAdviceGenerator.formatPace(pace(for: s, ctx: ctx))
+            return "\(reps) @ \(paceStr)/km"
         }
     }
 

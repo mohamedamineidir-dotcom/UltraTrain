@@ -163,7 +163,10 @@ extension IntervalSessionComposer {
                         recoverySec: rec.sec, recoveryType: rec.type)
             }
         }
-        let sizes = [rep.durationSec, Int(Double(rep.durationSec) * 0.66)].map { max(30, $0) }
+        // Round the shortened rep to a clean 15-second step so a cutdown
+        // reads "3min / 2min", never "2m1m58s / 59s".
+        let shortened = roundToStep(Double(rep.durationSec) * 0.66, step: 15)
+        let sizes = [rep.durationSec, max(30, shortened)]
         return sizes.map {
             Segment(repCount: 2, repDistanceM: 0, repDurationSec: $0, zone: zone,
                     recoverySec: rec.sec, recoveryType: rec.type)
@@ -191,7 +194,11 @@ extension IntervalSessionComposer {
     /// sessions differ in structure as well as length (the `progression`
     /// category itself stays a single continuous build).
     static func progressionSegments(_ ctx: Context) -> [Segment] {
-        let minutes = workBudgetMinutes(ctx)
+        // Tempo blocks are sustained continuous efforts, so their length is
+        // expressed in WHOLE minutes (a coach says "20 min at marathon pace",
+        // never "29 min 18 s"). Rounding here is what keeps odd seconds off
+        // every time-based tempo the athlete reads.
+        let minutes = workBudgetMinutes(ctx).rounded()
         let zone: RoadIntervalLibrary.PaceZone = switch ctx.category {
         case .raceSpecific: .marathonPace
         case .threshold:    .threshold
@@ -199,16 +206,24 @@ extension IntervalSessionComposer {
         }
         let broken = ctx.category != .progression && (ctx.ordinal / 2) % 2 == 1
         if broken {
-            let per = Int((minutes * 60 / 2).rounded())
-            return [Segment(repCount: 2, repDistanceM: 0, repDurationSec: per,
+            // Two equal blocks, each a whole number of minutes.
+            let perMin = max(5.0, (minutes / 2).rounded())
+            return [Segment(repCount: 2, repDistanceM: 0, repDurationSec: Int(perMin) * 60,
                             zone: zone, recoverySec: 120, recoveryType: .jog)]
         }
         return [Segment(repCount: 1, repDistanceM: 0,
-                        repDurationSec: Int((minutes * 60).rounded()),
+                        repDurationSec: Int(minutes) * 60,
                         zone: zone, recoverySec: 0, recoveryType: .standing)]
     }
 
     // MARK: - Helpers
+
+    /// Rounds a seconds value to the nearest `step` seconds (min one step),
+    /// so composed time-based reps read as clean coach numbers.
+    static func roundToStep(_ seconds: Double, step: Int) -> Int {
+        let s = Double(step)
+        return max(step, Int((seconds / s).rounded()) * step)
+    }
 
     static func targetZone(_ ctx: Context) -> RoadIntervalLibrary.PaceZone {
         switch ctx.category {
