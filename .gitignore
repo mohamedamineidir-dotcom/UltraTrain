@@ -42,3 +42,6 @@ fastlane/test_output
 *.gcno
 website/.git
 website/.DS_Store
+
+# Claude Code local session files
+.claude/
