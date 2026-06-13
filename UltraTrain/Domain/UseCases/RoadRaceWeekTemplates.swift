@@ -268,7 +268,7 @@ enum RoadRaceWeekTemplates {
                     isPerformance: isPerformance,
                     quality: PrepSession(type: .intervals, intensity: .moderate,
                                          durationSeconds: minutes(50),
-                                         description: String(localized: "rwt.q1mile", defaultValue: "3 × 1 mile at half-marathon pace, 90s rec. Dress rehearsal, last quality.")),
+                                         description: String(localized: "rwt.q1mile", defaultValue: "3 × 5 min at half-marathon pace, 90s rec. Dress rehearsal, last quality.")),
                     fallback: PrepSession(type: .recovery, intensity: .easy,
                                           durationSeconds: minutes(45),
                                           description: String(localized: "rwt.strides", defaultValue: "Easy run + 4 × 100m strides."))
@@ -300,7 +300,7 @@ enum RoadRaceWeekTemplates {
                     isPerformance: isPerformance,
                     quality: PrepSession(type: .tempo, intensity: .moderate,
                                          durationSeconds: minutes(60),
-                                         description: String(localized: "rwt.q8mi", defaultValue: "8 mi total: 5 mi easy + 3 mi at marathon pace. Dress rehearsal, last MP touch.")),
+                                         description: String(localized: "rwt.q8mi", defaultValue: "60 min total: 40 min easy + the last 20 min at marathon pace. Dress rehearsal, last MP touch.")),
                     fallback: PrepSession(type: .recovery, intensity: .easy,
                                           durationSeconds: minutes(45),
                                           description: String(localized: "rwt.strides", defaultValue: "Easy run + 4 × 100m strides."))
@@ -308,11 +308,11 @@ enum RoadRaceWeekTemplates {
                 (4, PrepSession(type: .recovery, intensity: .easy,
                                 durationSeconds: isPerformance ? minutes(50) : minutes(40),
                                 description: isPerformance
-                                    ? String(localized: "rwt.easyPerf", defaultValue: "Easy 7-8 mi. Performance philosophy, preserve aerobic fitness.")
+                                    ? String(localized: "rwt.easyPerf", defaultValue: "Easy 50 min. Performance philosophy, preserve aerobic fitness.")
                                     : String(localized: "rwt.recovery", defaultValue: "Easy run, conversational. Recovery."))),
                 (3, PrepSession(type: .recovery, intensity: .easy,
                                 durationSeconds: minutes(35),
-                                description: String(localized: "rwt.easy56glyco", defaultValue: "Easy 5-6 mi + 6 × 100m strides. Glycogen-loading begins."))),
+                                description: String(localized: "rwt.easy56glyco", defaultValue: "Easy 35 min + 6 × 100m strides. Glycogen-loading begins."))),
                 (2, restOrEasy(isBeginner: false, isEnjoyment: isEnjoyment, easyMin: 25)),
                 (1, PrepSession(type: .recovery, intensity: .easy,
                                 durationSeconds: minutes(25),
