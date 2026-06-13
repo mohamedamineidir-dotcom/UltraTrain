@@ -38,6 +38,10 @@ enum IntervalSessionComposer {
         let isRecoveryWeek: Bool
         let isFirstTimer: Bool
         let athleteAge: Int
+        /// The sibling quality session's shape this week (Q1's shape when
+        /// composing Q2). The chosen shape avoids it so a week never runs two
+        /// pyramids / two cutdowns / etc. nil for Q1 (nothing to avoid yet).
+        var avoidShape: Shape? = nil
     }
 
     struct Composed: Sendable {
@@ -57,6 +61,9 @@ enum IntervalSessionComposer {
         /// are *intervals*. The generator types the session from this so a
         /// "5×1K" never shows under a "Tempo" title and vice-versa.
         let isTempo: Bool
+        /// The shape used, so the generator can pass it as the sibling's
+        /// `avoidShape` when composing the week's other quality session.
+        let shape: Shape
     }
 
     enum Shape: Int, CaseIterable, Sendable {
@@ -95,33 +102,44 @@ enum IntervalSessionComposer {
     // MARK: - Shape selection
 
     private static func chooseShape(_ ctx: Context) -> Shape {
-        // Threshold is the road runner's bread-and-butter, and it's most
-        // often prescribed as a sustained TEMPO, not reps. So alternate the
-        // threshold slot between a continuous tempo (progression) and a
-        // rep variant every other session: each block reads tempo ⇄ cruise
-        // intervals, the week reliably carries one true tempo, and structure
-        // never repeats two threshold sessions running.
+        let candidate = candidateShape(ctx)
+        // Q1 and Q2 must not share a shape the same week (no week of two
+        // pyramids / two cutdowns). When the natural pick collides with the
+        // sibling's shape, fall to the next valid shape for this category.
+        guard let avoid = ctx.avoidShape, candidate == avoid else { return candidate }
+        let pool = shapePool(ctx)
+        return pool.first { $0 != avoid } ?? candidate
+    }
+
+    /// The natural shape for this session before sibling de-confliction.
+    private static func candidateShape(_ ctx: Context) -> Shape {
+        // Threshold is the road runner's bread-and-butter, most often a
+        // sustained TEMPO rather than reps. Q1 (the hard slot) keeps it as
+        // cruise intervals so it complements the Q2 tempo (otherwise HM weeks,
+        // threshold on both slots, end up with two tempos). Q2 (the tempo
+        // slot) alternates a sustained tempo with a cruise variant so the week
+        // reliably carries one true tempo and never repeats two thresholds.
         if ctx.category == .threshold {
             let reps: [Shape] = [.uniform, .cutdown, .mixedContrast]
-            // Q1 is the week's hard interval slot: keep threshold as cruise
-            // intervals so it complements (not duplicates) the Q2 tempo —
-            // otherwise half-marathon weeks, where both slots lean threshold,
-            // end up with two tempos and no interval variety.
             if ctx.slotIndex == 0 {
                 return reps[ctx.ordinal % reps.count]
             }
-            // Q2 is the tempo slot: alternate a sustained tempo with a cruise
-            // variant so the week reliably carries one true tempo and the
-            // structure never repeats two threshold sessions running.
             if ctx.ordinal % 2 == 0 { return .progression }
             return reps[(ctx.ordinal / 2) % reps.count]
         }
         let valid = validShapes(for: ctx.category, phase: ctx.phase)
         // Rotate by ordinal so successive sessions of a category differ;
-        // salt by slot so Q1 and Q2 never use the same shape the same week.
+        // salt by slot so Q1 and Q2 tend to diverge the same week.
         let salt = ctx.slotIndex * 2 + categorySalt(ctx.category)
-        let idx = (ctx.ordinal + salt) % valid.count
-        return valid[idx]
+        return valid[(ctx.ordinal + salt) % valid.count]
+    }
+
+    /// Shapes available for a category, used to pick an alternative when the
+    /// natural shape collides with the sibling's.
+    private static func shapePool(_ ctx: Context) -> [Shape] {
+        ctx.category == .threshold
+            ? [.progression, .uniform, .cutdown, .mixedContrast]
+            : validShapes(for: ctx.category, phase: ctx.phase)
     }
 
     private static func validShapes(for category: RoadIntervalLibrary.Category,

@@ -91,7 +91,8 @@ extension IntervalSessionComposer {
             // A progression shape is the only sustained, continuous work the
             // composer builds (one unbroken block or two long broken blocks).
             // Every other shape is repeated efforts, i.e. intervals.
-            isTempo: shape == .progression && !ctx.isRecoveryWeek
+            isTempo: shape == .progression && !ctx.isRecoveryWeek,
+            shape: shape
         )
     }
 

@@ -1001,6 +1001,9 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     discipline: discipline, athlete: athlete,
                     weekVolumeKm: volume.targetVolumeKm, paceProfile: paceProfile,
                     isFirstTimer: isFirstTimer,
+                    // De-conflict the week's two quality shapes: Q2 avoids
+                    // Q1's shape so a week never runs e.g. two pyramids.
+                    avoidShape: q1Composed.shape,
                     ordinals: &qualityOrdinal, used: &usedQualitySignatures)
                 let q1Template: RoadIntervalLibrary.Template? = q1Composed.template
                 let q2Template: RoadIntervalLibrary.Template? = q2Composed.template
@@ -1448,6 +1451,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         weekVolumeKm: Double,
         paceProfile: RoadPaceProfile?,
         isFirstTimer: Bool,
+        avoidShape: IntervalSessionComposer.Shape? = nil,
         ordinals: inout [RoadIntervalLibrary.Category: Int],
         used: inout Set<String>
     ) -> IntervalSessionComposer.Composed {
@@ -1457,7 +1461,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 experience: athlete.experienceLevel, weeklyVolumeKm: weekVolumeKm,
                 paceProfile: paceProfile, ordinal: ordinal, slotIndex: slotIndex,
                 isRecoveryWeek: skeleton.isRecoveryWeek, isFirstTimer: isFirstTimer,
-                athleteAge: athlete.age
+                athleteAge: athlete.age, avoidShape: avoidShape
             ))
         }
 
