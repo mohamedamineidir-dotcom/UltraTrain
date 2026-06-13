@@ -17,12 +17,12 @@ enum GISensitivity: String, CaseIterable, Codable, Sendable {
 
     var displayName: String {
         switch self {
-        case .lactose: "Lactose"
-        case .fructose: "High fructose"
-        case .fiber:   "High fiber"
-        case .fat:     "High fat"
-        case .gluten:  "Gluten"
-        case .fodmap:  "FODMAP foods"
+        case .lactose: String(localized: "gi.lactose", defaultValue: "Lactose")
+        case .fructose: String(localized: "gi.fructose", defaultValue: "High fructose")
+        case .fiber:   String(localized: "gi.fiber", defaultValue: "High fiber")
+        case .fat:     String(localized: "gi.fat", defaultValue: "High fat")
+        case .gluten:  String(localized: "gi.gluten", defaultValue: "Gluten")
+        case .fodmap:  String(localized: "gi.fodmap", defaultValue: "FODMAP foods")
         }
     }
 }

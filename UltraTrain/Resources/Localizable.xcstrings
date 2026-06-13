@@ -2001,6 +2001,7 @@
       }
     },
     "12-week progressive plan" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3136,6 +3137,22 @@
         }
       }
     },
+    "All optional. Skip what you don't know, we'll use evidence-based defaults." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All optional. Skip what you don't know, we'll use evidence-based defaults."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout est optionnel. Passez ce que vous ne savez pas, nous utiliserons des valeurs par défaut fondées sur des données."
+          }
+        }
+      }
+    },
     "All sessions completed this week!" : {
       "localizations" : {
         "fr" : {
@@ -3773,6 +3790,22 @@
         }
       }
     },
+    "Bars" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bars"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Barres"
+          }
+        }
+      }
+    },
     "Base" : {
       "localizations" : {
         "fr" : {
@@ -4378,6 +4411,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Points de passage (%lld)"
+          }
+        }
+      }
+    },
+    "Chews" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chews"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gommes"
           }
         }
       }
@@ -5260,6 +5309,7 @@
       }
     },
     "DURATION" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -6127,6 +6177,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tracer un itinéraire"
+          }
+        }
+      }
+    },
+    "Drinks" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drinks"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boissons"
           }
         }
       }
@@ -7548,6 +7614,38 @@
         }
       }
     },
+    "From a lab test. Skip if untested." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From a lab test. Skip if untested."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "D'après un test en laboratoire. Passez si non testé."
+          }
+        }
+      }
+    },
+    "From training. Leave blank if you haven't gut-trained." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From training. Leave blank if you haven't gut-trained."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "D'après vos entraînements. Laissez vide si vous n'avez pas entraîné votre intestin."
+          }
+        }
+      }
+    },
     "Full screen route map showing %lld segments colored by %@. Tap to view segment details." : {
       "localizations" : {
         "en" : {
@@ -7625,7 +7723,24 @@
         }
       }
     },
+    "Gels" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gels"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gels"
+          }
+        }
+      }
+    },
     "General Fitness" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -10084,6 +10199,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La FC max doit être supérieure à la FC au repos"
+          }
+        }
+      }
+    },
+    "Max carbs/hour you've tolerated" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Max carbs/hour you've tolerated"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glucides/heure max tolérés"
           }
         }
       }
@@ -13873,6 +14004,22 @@
         }
       }
     },
+    "Real food" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Real food"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vraie nourriture"
+          }
+        }
+      }
+    },
     "Reason" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -14944,6 +15091,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Durée du chrono de sécurité"
+          }
+        }
+      }
+    },
+    "Salt caps" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salt caps"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gélules de sel"
           }
         }
       }
@@ -16698,6 +16861,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Échanger avec une autre séance"
+          }
+        }
+      }
+    },
+    "Sweat rate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sweat rate"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taux de sudation"
+          }
+        }
+      }
+    },
+    "Sweat sodium" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sweat sodium"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sodium de la sueur"
           }
         }
       }
@@ -22728,6 +22923,86 @@
         }
       }
     },
+    "diet.dairyFree" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dairy-free"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sans produits laitiers"
+          }
+        }
+      }
+    },
+    "diet.glutenFree" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gluten-free"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sans gluten"
+          }
+        }
+      }
+    },
+    "diet.nutFree" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nut-free"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sans fruits à coque"
+          }
+        }
+      }
+    },
+    "diet.vegan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vegan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Végétalien"
+          }
+        }
+      }
+    },
+    "diet.vegetarian" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vegetarian"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Végétarien"
+          }
+        }
+      }
+    },
     "distance" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -22751,6 +23026,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ex. 'jambes lourdes dès la rép 3', 'vent fort'"
+          }
+        }
+      }
+    },
+    "e.g. 1000" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "e.g. 1000"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ex. 1000"
           }
         }
       }
@@ -22801,6 +23092,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ex. 65"
+          }
+        }
+      }
+    },
+    "e.g. 80" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "e.g. 80"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ex. 80"
+          }
+        }
+      }
+    },
+    "e.g. 900" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "e.g. 900"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ex. 900"
           }
         }
       }
@@ -23893,6 +24216,102 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "g/h"
+          }
+        }
+      }
+    },
+    "gi.fat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "High fat"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riche en lipides"
+          }
+        }
+      }
+    },
+    "gi.fiber" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "High fiber"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riche en fibres"
+          }
+        }
+      }
+    },
+    "gi.fodmap" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FODMAP foods"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aliments FODMAP"
+          }
+        }
+      }
+    },
+    "gi.fructose" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "High fructose"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fructose élevé"
+          }
+        }
+      }
+    },
+    "gi.gluten" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gluten"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gluten"
+          }
+        }
+      }
+    },
+    "gi.lactose" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lactose"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lactose"
           }
         }
       }
@@ -26721,6 +27140,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "mg au total"
+          }
+        }
+      }
+    },
+    "mg/L" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mg/L"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mg/L"
           }
         }
       }
@@ -30854,6 +31289,246 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "4 heures avant"
+          }
+        }
+      }
+    },
+    "prod.bar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Barre"
+          }
+        }
+      }
+    },
+    "prod.chew" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chew"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gomme"
+          }
+        }
+      }
+    },
+    "prod.drink" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drink"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boisson"
+          }
+        }
+      }
+    },
+    "prod.gel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gel"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gel"
+          }
+        }
+      }
+    },
+    "prod.realFood" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Real Food"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vraie nourriture"
+          }
+        }
+      }
+    },
+    "prod.salt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salt"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sel"
+          }
+        }
+      }
+    },
+    "prodname.applesauce" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Applesauce Pouch"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compote de pommes (gourde)"
+          }
+        }
+      }
+    },
+    "prodname.banana" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Banana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Banane"
+          }
+        }
+      }
+    },
+    "prodname.boiledPotato" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boiled Potato (salted)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomme de terre bouillie (salée)"
+          }
+        }
+      }
+    },
+    "prodname.boneBroth" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bone Broth Cup"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tasse de bouillon d'os"
+          }
+        }
+      }
+    },
+    "prodname.medjoolDate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Medjool Date"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datte Medjool"
+          }
+        }
+      }
+    },
+    "prodname.pbj" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PB & J Quarter"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quart de sandwich cacahuète-confiture"
+          }
+        }
+      }
+    },
+    "prodname.pretzels" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pretzels (handful)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bretzels (une poignée)"
+          }
+        }
+      }
+    },
+    "prodname.riceBall" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rice Ball (Onigiri)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boule de riz (onigiri)"
+          }
+        }
+      }
+    },
+    "prodname.saltCapsule" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salt Capsule"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gélule de sel"
           }
         }
       }
@@ -40707,6 +41382,7 @@
       }
     },
     "str.note.deadBug" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -40723,6 +41399,7 @@
       }
     },
     "str.note.deadBugAct" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -40883,6 +41560,7 @@
       }
     },
     "str.note.pallof" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -40899,6 +41577,7 @@
       }
     },
     "str.note.pallofRoad" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -40915,6 +41594,7 @@
       }
     },
     "str.note.pistol" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -41507,6 +42187,7 @@
       }
     },
     "str.reps.68leg" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

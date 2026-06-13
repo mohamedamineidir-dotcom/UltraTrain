@@ -11,7 +11,7 @@ struct NutritionEntryRow: View {
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(entry.product.name)
+                Text(entry.product.displayName)
                     .font(.subheadline)
                     .fontWeight(.medium)
                 if let notes = entry.notes {
@@ -34,7 +34,7 @@ struct NutritionEntryRow: View {
         }
         .padding(.vertical, Theme.Spacing.xs)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(entry.product.name), \(entry.product.type.displayName), at \(formattedTiming), \(entry.product.caloriesPerServing * entry.quantity) kilocalories")
+        .accessibilityLabel("\(entry.product.displayName), \(entry.product.type.displayName), at \(formattedTiming), \(entry.product.caloriesPerServing * entry.quantity) kilocalories")
     }
 
     private var formattedTiming: String {
@@ -74,12 +74,12 @@ extension ProductType {
 
     var displayName: String {
         switch self {
-        case .gel:      "Gel"
-        case .bar:      "Bar"
-        case .drink:    "Drink"
-        case .chew:     "Chew"
-        case .realFood: "Real Food"
-        case .salt:     "Salt"
+        case .gel:      String(localized: "prod.gel", defaultValue: "Gel")
+        case .bar:      String(localized: "prod.bar", defaultValue: "Bar")
+        case .drink:    String(localized: "prod.drink", defaultValue: "Drink")
+        case .chew:     String(localized: "prod.chew", defaultValue: "Chew")
+        case .realFood: String(localized: "prod.realFood", defaultValue: "Real Food")
+        case .salt:     String(localized: "prod.salt", defaultValue: "Salt")
         }
     }
 }

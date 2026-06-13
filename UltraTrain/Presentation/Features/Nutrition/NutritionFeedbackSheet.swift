@@ -486,7 +486,7 @@ struct NutritionFeedbackSheet: View {
                         .foregroundStyle(product.type.color)
                         .tracking(0.5)
                 }
-                Text(product.name)
+                Text(product.displayName)
                     .font(.subheadline.weight(.semibold))
                     .lineLimit(1)
             }

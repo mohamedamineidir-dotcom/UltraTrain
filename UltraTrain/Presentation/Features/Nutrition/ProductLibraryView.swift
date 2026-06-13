@@ -69,7 +69,7 @@ struct ProductLibraryView: View {
                 .foregroundStyle(excluded ? Theme.Colors.secondaryLabel : product.type.color)
                 .accessibilityHidden(true)
             VStack(alignment: .leading) {
-                Text(product.name)
+                Text(product.displayName)
                     .font(.subheadline)
                     .strikethrough(excluded)
                     .foregroundStyle(excluded ? Theme.Colors.secondaryLabel : Theme.Colors.label)

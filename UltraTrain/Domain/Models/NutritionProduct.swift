@@ -21,6 +21,25 @@ struct NutritionProduct: Identifiable, Equatable, Sendable, Codable {
 
     var caffeinated: Bool { caffeineMgPerServing > 0 }
 
+    /// Localized name for display. `name` stays the canonical English key
+    /// (used for internal matching, e.g. savory-food detection and stored
+    /// plan records), while this maps the generic unbranded foods to the
+    /// athlete's language. Branded products fall through to their name.
+    var displayName: String {
+        switch name {
+        case "Boiled Potato (salted)": return String(localized: "prodname.boiledPotato", defaultValue: "Boiled Potato (salted)")
+        case "Banana":                 return String(localized: "prodname.banana", defaultValue: "Banana")
+        case "Rice Ball (Onigiri)":    return String(localized: "prodname.riceBall", defaultValue: "Rice Ball (Onigiri)")
+        case "PB & J Quarter":         return String(localized: "prodname.pbj", defaultValue: "PB & J Quarter")
+        case "Pretzels (handful)":     return String(localized: "prodname.pretzels", defaultValue: "Pretzels (handful)")
+        case "Bone Broth Cup":         return String(localized: "prodname.boneBroth", defaultValue: "Bone Broth Cup")
+        case "Applesauce Pouch":       return String(localized: "prodname.applesauce", defaultValue: "Applesauce Pouch")
+        case "Medjool Date":           return String(localized: "prodname.medjoolDate", defaultValue: "Medjool Date")
+        case "Salt Capsule":           return String(localized: "prodname.saltCapsule", defaultValue: "Salt Capsule")
+        default:                       return name
+        }
+    }
+
     // MARK: - Backwards-compatible Codable
 
     /// Legacy records (pre-brand/caffeineMg/carbRatio) decode cleanly by
