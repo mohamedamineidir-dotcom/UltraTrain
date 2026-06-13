@@ -40,7 +40,29 @@ extension IntervalSessionComposer {
         case .longRunVariant: 18
         }
         let firstTimer = ctx.isFirstTimer ? 0.85 : 1.0
-        return base * expFactor * volFactor * growth * firstTimer
+        return raceDistanceCapped(ctx, minutes: base * expFactor * volFactor * growth * firstTimer)
+    }
+
+    /// Caps the at-pace work so a session never approaches the goal race
+    /// distance. Running the full race distance (or more) at race pace in
+    /// training is racing, not training. The ceiling sits at ~80% of race
+    /// distance for race-pace work — the standard hardest-week 10K dose is
+    /// about 8 km at target pace (8×1K, 4×2K), so a 10K caps near 8 km, not
+    /// the full 10. VO2max (I-pace, faster than race pace) caps lower. Only
+    /// the fast, race-specific work is capped; threshold and progression runs
+    /// are slower and stay sustainable at higher volume.
+    private static func raceDistanceCapped(_ ctx: Context, minutes: Double) -> Double {
+        let fraction: Double
+        switch ctx.category {
+        case .raceSpecific: fraction = 0.80   // ~8 km at 10K pace for a 10K
+        case .vo2max:       fraction = 0.55   // I-pace is faster than race pace
+        default:            return minutes
+        }
+        let capKm = ctx.discipline.nominalDistanceKm * fraction
+        let paceSecPerKm = zonePaceSeconds(ctx, repLengthSec: 240)
+        guard paceSecPerKm > 0 else { return minutes }
+        let capMinutes = capKm * paceSecPerKm / 60.0
+        return min(minutes, capMinutes)
     }
 
     // MARK: - Rep sizing

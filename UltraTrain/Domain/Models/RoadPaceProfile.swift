@@ -84,6 +84,17 @@ enum RoadRaceDiscipline: String, Sendable {
         }
     }
 
+    /// Nominal race distance in km. Used to keep race-pace specific work a
+    /// sensible fraction of the goal distance (running 10K+ at 10K pace in
+    /// training is racing, not training).
+    var nominalDistanceKm: Double {
+        switch self {
+        case .road10K:      10
+        case .roadHalf:     21.0975
+        case .roadMarathon: 42.195
+        }
+    }
+
     /// Maximum long run distance in km. Daniels: LR ≤ 25% of weekly volume
     /// or distance cap. Pfitzinger 18/55: 16mi (26km), 18/70: 20mi (32km),
     /// 18/85: 22mi (35km). Hanson: 16mi (26km) regardless of athlete tier.
