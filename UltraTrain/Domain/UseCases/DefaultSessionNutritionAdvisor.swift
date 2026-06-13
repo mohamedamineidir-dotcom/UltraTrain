@@ -36,15 +36,15 @@ struct DefaultSessionNutritionAdvisor: SessionNutritionAdvisor {
     // MARK: - Pre-Run
 
     private func buildPreRun(session: TrainingSession, isLong: Bool, isHard: Bool) -> PreRunAdvice {
-        let timing = "2-3 hours before"
+        let timing = String(localized: "nadv.timing.2_3h", defaultValue: "2-3 hours before")
 
         if isLong || session.type == .longRun || session.type == .backToBack || session.type == .race {
             return PreRunAdvice(
                 timingDescription: timing,
                 carbsGrams: 100,
                 hydrationMl: 500,
-                mealSuggestions: ["Oatmeal with banana and honey", "Rice with a light sauce", "Toast with jam and a banana"],
-                avoidNotes: isHard ? "Avoid high-fiber and high-fat foods close to the session" : nil
+                mealSuggestions: [String(localized: "nadv.meal.oatmeal", defaultValue: "Oatmeal with banana and honey"), String(localized: "nadv.meal.riceSauce", defaultValue: "Rice with a light sauce"), String(localized: "nadv.meal.toastJamBanana", defaultValue: "Toast with jam and a banana")],
+                avoidNotes: isHard ? String(localized: "nadv.avoid.fiberFat", defaultValue: "Avoid high-fiber and high-fat foods close to the session") : nil
             )
         }
 
@@ -53,16 +53,16 @@ struct DefaultSessionNutritionAdvisor: SessionNutritionAdvisor {
                 timingDescription: timing,
                 carbsGrams: 60,
                 hydrationMl: 500,
-                mealSuggestions: ["Toast with honey", "Banana with a small energy bar", "Rice cake with jam"],
-                avoidNotes: "Avoid high-fiber and high-fat foods close to the session"
+                mealSuggestions: [String(localized: "nadv.meal.toastHoney", defaultValue: "Toast with honey"), String(localized: "nadv.meal.bananaBar", defaultValue: "Banana with a small energy bar"), String(localized: "nadv.meal.riceCake", defaultValue: "Rice cake with jam")],
+                avoidNotes: String(localized: "nadv.avoid.fiberFat", defaultValue: "Avoid high-fiber and high-fat foods close to the session")
             )
         }
 
         return PreRunAdvice(
-            timingDescription: "1-2 hours before",
+            timingDescription: String(localized: "nadv.timing.1_2h", defaultValue: "1-2 hours before"),
             carbsGrams: 25,
             hydrationMl: 400,
-            mealSuggestions: ["Banana", "Light snack or toast"],
+            mealSuggestions: [String(localized: "nadv.meal.banana", defaultValue: "Banana"), String(localized: "nadv.meal.lightSnack", defaultValue: "Light snack or toast")],
             avoidNotes: nil
         )
     }
@@ -89,28 +89,28 @@ struct DefaultSessionNutritionAdvisor: SessionNutritionAdvisor {
         if !preferences.excludedProductIds.contains(DefaultProducts.gel.id) {
             products.append(ProductSuggestion(
                 product: DefaultProducts.gel,
-                frequencyDescription: "1 every 30-45 min"
+                frequencyDescription: String(localized: "nadv.freq.gel", defaultValue: "1 every 30-45 min")
             ))
         }
 
         if !preferences.excludedProductIds.contains(DefaultProducts.drink.id) {
             products.append(ProductSuggestion(
                 product: DefaultProducts.drink,
-                frequencyDescription: "Sip regularly"
+                frequencyDescription: String(localized: "nadv.freq.drink", defaultValue: "Sip regularly")
             ))
         }
 
         if durationHours >= 2 && !preferences.excludedProductIds.contains(DefaultProducts.bar.id) {
             products.append(ProductSuggestion(
                 product: DefaultProducts.bar,
-                frequencyDescription: "Half every 60 min"
+                frequencyDescription: String(localized: "nadv.freq.bar", defaultValue: "Half every 60 min")
             ))
         }
 
         if durationHours >= 3 && !preferences.excludedProductIds.contains(DefaultProducts.saltCapsule.id) {
             products.append(ProductSuggestion(
                 product: DefaultProducts.saltCapsule,
-                frequencyDescription: "1 every 60 min"
+                frequencyDescription: String(localized: "nadv.freq.salt", defaultValue: "1 every 60 min")
             ))
         }
 
@@ -119,7 +119,7 @@ struct DefaultSessionNutritionAdvisor: SessionNutritionAdvisor {
         }
 
         let notes: String? = isGutTrainingSession(session, durationHours: durationHours)
-            ? "Practice your race-day nutrition strategy during this session"
+            ? String(localized: "nadv.during.gutNote", defaultValue: "Practice your race-day nutrition strategy during this session")
             : nil
 
         return DuringRunAdvice(
@@ -163,39 +163,39 @@ struct DefaultSessionNutritionAdvisor: SessionNutritionAdvisor {
         case .high:
             return PostRunAdvice(
                 priority: .high,
-                windowDescription: "Within 30 minutes",
+                windowDescription: String(localized: "nadv.window.30", defaultValue: "Within 30 minutes"),
                 proteinGrams: Int(0.5 * weightKg).clamped(to: 30...40),
                 carbsGrams: Int(1.2 * weightKg),
                 hydrationMl: 750,
                 mealSuggestions: [
-                    "Recovery shake with protein and banana",
-                    "Chicken breast with rice and vegetables",
-                    "Greek yogurt with granola and berries"
+                    String(localized: "nadv.meal.recoveryShake", defaultValue: "Recovery shake with protein and banana"),
+                    String(localized: "nadv.meal.chickenRice", defaultValue: "Chicken breast with rice and vegetables"),
+                    String(localized: "nadv.meal.greekYogurt", defaultValue: "Greek yogurt with granola and berries")
                 ]
             )
         case .moderate:
             return PostRunAdvice(
                 priority: .moderate,
-                windowDescription: "Within 60 minutes",
+                windowDescription: String(localized: "nadv.window.60", defaultValue: "Within 60 minutes"),
                 proteinGrams: Int(0.35 * weightKg).clamped(to: 20...30),
                 carbsGrams: Int(0.8 * weightKg),
                 hydrationMl: 500,
                 mealSuggestions: [
-                    "Smoothie with protein powder and fruit",
-                    "Eggs on toast",
-                    "Turkey sandwich"
+                    String(localized: "nadv.meal.smoothie", defaultValue: "Smoothie with protein powder and fruit"),
+                    String(localized: "nadv.meal.eggsToast", defaultValue: "Eggs on toast"),
+                    String(localized: "nadv.meal.turkey", defaultValue: "Turkey sandwich")
                 ]
             )
         case .low:
             return PostRunAdvice(
                 priority: .low,
-                windowDescription: "Normal meal timing",
+                windowDescription: String(localized: "nadv.window.normal", defaultValue: "Normal meal timing"),
                 proteinGrams: 20,
                 carbsGrams: Int(0.5 * weightKg),
                 hydrationMl: 500,
                 mealSuggestions: [
-                    "Balanced meal at your usual time",
-                    "Fruit and a handful of nuts"
+                    String(localized: "nadv.meal.balanced", defaultValue: "Balanced meal at your usual time"),
+                    String(localized: "nadv.meal.fruitNuts", defaultValue: "Fruit and a handful of nuts")
                 ]
             )
         }

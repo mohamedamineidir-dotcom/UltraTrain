@@ -53,7 +53,7 @@ final class WatchRunImportService: Sendable {
             splits: splits,
             linkedSessionId: data.linkedSessionId,
             linkedRaceId: nil,
-            notes: "Recorded on Apple Watch",
+            notes: String(localized: "import.watch", defaultValue: "Recorded on Apple Watch"),
             pausedDuration: data.pausedDuration
         )
 

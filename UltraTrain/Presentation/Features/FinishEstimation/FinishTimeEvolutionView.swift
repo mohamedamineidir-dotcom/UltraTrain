@@ -27,7 +27,7 @@ struct FinishTimeEvolutionView: View {
             }
             .padding(Theme.Spacing.md)
         }
-        .navigationTitle("Time evolution")
+        .navigationTitle(String(localized: "fte.title", defaultValue: "Time evolution"))
         .navigationBarTitleDisplayMode(.inline)
         .background(
             LinearGradient(
@@ -56,11 +56,11 @@ struct FinishTimeEvolutionView: View {
                     .foregroundStyle(Theme.Colors.secondaryLabel)
                 Text("·")
                     .foregroundStyle(Theme.Colors.tertiaryLabel)
-                Text("\(weeksToRace) weeks to go")
+                Text(String(localized: "fte.weeksToGo", defaultValue: "\(weeksToRace) weeks to go"))
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
-            Text("If you stick with the plan, your projected finish time evolves like this:")
+            Text(String(localized: "fte.intro", defaultValue: "If you stick with the plan, your projected finish time evolves like this:"))
                 .font(.subheadline)
                 .foregroundStyle(Theme.Colors.label)
                 .padding(.top, 2)
@@ -78,12 +78,12 @@ struct FinishTimeEvolutionView: View {
                 Image(systemName: "chart.line.downtrend.xyaxis")
                     .font(.subheadline.weight(.bold))
                     .foregroundStyle(primaryTint)
-                Text("Projected curve")
+                Text(String(localized: "fte.projectedCurve", defaultValue: "Projected curve"))
                     .font(.subheadline.bold())
                     .foregroundStyle(primaryTint)
                 Spacer()
-                legendDot(color: primaryTint, label: "Expected")
-                legendDot(color: bandLegendColor, label: "Range")
+                legendDot(color: primaryTint, label: String(localized: "fe.scn.expected", defaultValue: "Expected"))
+                legendDot(color: bandLegendColor, label: String(localized: "fe.scn.range", defaultValue: "Range"))
             }
 
             Chart {
@@ -163,7 +163,7 @@ struct FinishTimeEvolutionView: View {
                     AxisGridLine().foregroundStyle(gridLineColor)
                     AxisValueLabel {
                         if let w = value.as(Int.self) {
-                            Text("W\(w)").font(.caption2)
+                            Text(String(localized: "chart.week", defaultValue: "W\(w)")).font(.caption2)
                         }
                     }
                 }

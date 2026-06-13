@@ -186,12 +186,12 @@ enum RoadSessionSelector {
         } else if let t = q1 {
             let effortLabel = rpeLabel(for: t.targetPaceZone)
             if t.repDistanceM > 0 {
-                q1Desc = "\(t.name), \(t.repCount)×\(t.repDistanceM)m at \(effortLabel) effort"
+                q1Desc = String(localized: "rse.q.repsEffort", defaultValue: "\(t.name), \(t.repCount)×\(t.repDistanceM)m at \(effortLabel) effort")
             } else {
-                q1Desc = "\(t.name), \(effortLabel) effort"
+                q1Desc = String(localized: "rse.q.effort", defaultValue: "\(t.name), \(effortLabel) effort")
             }
         } else {
-            q1Desc = "Intervals"
+            q1Desc = String(localized: "session.intervals", defaultValue: "Intervals")
         }
 
         let q2Desc: String
@@ -205,9 +205,9 @@ enum RoadSessionSelector {
         } else if let t = q2 {
             let effortLabel = rpeLabel(for: t.targetPaceZone)
             if t.repDistanceM > 0 {
-                q2Desc = "\(t.name), \(t.repCount)×\(t.repDistanceM)m at \(effortLabel) effort"
+                q2Desc = String(localized: "rse.q.repsEffort", defaultValue: "\(t.name), \(t.repCount)×\(t.repDistanceM)m at \(effortLabel) effort")
             } else {
-                q2Desc = "\(t.name), \(effortLabel) effort"
+                q2Desc = String(localized: "rse.q.effort", defaultValue: "\(t.name), \(effortLabel) effort")
             }
         } else {
             q2Desc = "Tempo"
@@ -535,17 +535,17 @@ enum RoadSessionSelector {
         case .easy:
             return "Easy long run, conversational pace"
         case .progressive:
-            return "Progressive long run, easy → race pace final 1/3"
+            return String(localized: "rss.lr1", defaultValue: "Progressive long run, easy → race pace final 1/3")
         case .fastFinish:
-            return "Fast-finish long run, last 20% at race pace"
+            return String(localized: "rss.lr2", defaultValue: "Fast-finish long run, last 20% at race pace")
         case .marathonPaceIntro:
-            return "MP intro long run, easy with a single 15-20 min block at marathon pace near the end. Bridges into peak-phase MP work."
+            return String(localized: "rss.lr3", defaultValue: "MP intro long run, easy with a single 15-20 min block at marathon pace near the end. Bridges into peak-phase MP work.")
         case .marathonPaceBlocks:
-            return "MP long run, 2-3 blocks at marathon pace"
+            return String(localized: "rss.lr4", defaultValue: "MP long run, 2-3 blocks at marathon pace")
         case .twoPart:
-            return "Two-part long run, easy then race pace"
+            return String(localized: "rss.lr5", defaultValue: "Two-part long run, easy then race pace")
         case .raceSimulation:
-            return "Race simulation, extended block at race pace"
+            return String(localized: "rss.lr6", defaultValue: "Race simulation, extended block at race pace")
         }
     }
 
@@ -555,12 +555,12 @@ enum RoadSessionSelector {
     /// (no PRs, no VMA, no goal time). Better than fabricating pace numbers.
     private static func rpeLabel(for zone: RoadIntervalLibrary.PaceZone) -> String {
         switch zone {
-        case .easy:          "conversational"
-        case .marathonPace:  "sustained hard (should feel controlled over 2-3 hours)"
-        case .threshold:     "comfortably hard (~1-hour-race effort)"
-        case .interval:      "hard (~5K race effort, unable to hold a conversation)"
-        case .repetition:    "very hard (mile-race effort, quick recovery)"
-        case .racePace:      "race-specific effort"
+        case .easy:          String(localized: "rse.eff.conv", defaultValue: "conversational")
+        case .marathonPace:  String(localized: "rse.eff.sustHard", defaultValue: "sustained hard (should feel controlled over 2-3 hours)")
+        case .threshold:     String(localized: "rse.eff.compHard", defaultValue: "comfortably hard (~1-hour-race effort)")
+        case .interval:      String(localized: "rse.eff.hard", defaultValue: "hard (~5K race effort, unable to hold a conversation)")
+        case .repetition:    String(localized: "rse.eff.veryHard", defaultValue: "very hard (mile-race effort, quick recovery)")
+        case .racePace:      String(localized: "rse.eff.raceSpec", defaultValue: "race-specific effort")
         }
     }
 

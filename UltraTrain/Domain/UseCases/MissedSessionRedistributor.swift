@@ -131,9 +131,9 @@ enum MissedSessionRedistributor {
             id: UUID(),
             type: .redistributeMissedVolume,
             severity: .recommended,
-            title: "Redistribute Missed Volume",
-            message: "Your missed \(missed.type.rawValue) session's volume will be spread across \(adjustments.count) upcoming sessions.",
-            actionLabel: "Redistribute",
+            title: String(localized: "msr.redist.title", defaultValue: "Redistribute Missed Volume"),
+            message: String(localized: "msr.redist.msg", defaultValue: "Your missed \(missed.type.displayName) session's volume will be spread across \(adjustments.count) upcoming sessions."),
+            actionLabel: String(localized: "msr.redist.action", defaultValue: "Redistribute"),
             affectedSessionIds: [missed.id] + adjustments.map(\.sessionId),
             volumeAdjustments: adjustments
         )
@@ -166,9 +166,9 @@ enum MissedSessionRedistributor {
             id: UUID(),
             type: .convertEasyToQuality,
             severity: .suggestion,
-            title: "Convert Recovery to \(missed.type.rawValue.capitalized)",
-            message: "Convert an upcoming recovery run to replace your missed \(missed.type.rawValue) session.",
-            actionLabel: "Convert",
+            title: String(localized: "msr.convert.title", defaultValue: "Convert Recovery to \(missed.type.displayName)"),
+            message: String(localized: "msr.convert.msg", defaultValue: "Convert an upcoming recovery run to replace your missed \(missed.type.displayName) session."),
+            actionLabel: String(localized: "msr.convert.action", defaultValue: "Convert"),
             affectedSessionIds: [missed.id, target.id],
             volumeAdjustments: [adjustment]
         )

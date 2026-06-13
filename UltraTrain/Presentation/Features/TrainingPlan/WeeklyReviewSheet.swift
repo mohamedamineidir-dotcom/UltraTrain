@@ -68,7 +68,7 @@ extension WeeklyReviewSheet {
             Text("How was last week?")
                 .font(.title2.bold())
                 .foregroundStyle(.white)
-            Text("Week \(viewModel.previousWeekNumber) had \(viewModel.nonRestSessions.count) planned sessions with no recorded runs.")
+            Text(String(localized: "wk.reviewNoRuns", defaultValue: "Week \(viewModel.previousWeekNumber) had \(viewModel.nonRestSessions.count) planned sessions with no recorded runs."))
                 .font(.subheadline)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
                 .multilineTextAlignment(.center)

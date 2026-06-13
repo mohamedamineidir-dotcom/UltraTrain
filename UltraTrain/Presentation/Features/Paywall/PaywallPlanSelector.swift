@@ -131,6 +131,8 @@ struct PaywallPlanCard: View {
     private var trialBadge: some View {
         Text("paywall.freeWeek")
             .font(.caption2.bold())
+            .lineLimit(1)
+            .fixedSize(horizontal: true, vertical: false)
             .foregroundStyle(Theme.Colors.warmCoral)
             .padding(.horizontal, 8)
             .padding(.vertical, 3)
@@ -147,6 +149,8 @@ struct PaywallPlanCard: View {
     private func savingsBadge(savings: Int) -> some View {
         Text(String(localized: "paywall.save \(savings)"))
             .font(.caption2.bold())
+            .lineLimit(1)
+            .fixedSize(horizontal: true, vertical: false)
             .foregroundStyle(.black)
             .padding(.horizontal, 8)
             .padding(.vertical, 3)

@@ -77,9 +77,9 @@ enum RaceFuellingProtocolGenerator {
         if raceMinutes >= 60 {
             let low = raceMinutes >= 120 ? 60 : 30
             let high = raceMinutes >= 120 ? 90 : 60
-            during = "During: \(low)-\(high) g carbs/hr. 400-600 ml fluid/hr with 500-700 mg sodium/hr (warm weather upper end)."
+            during = String(localized: "rfp.during.long", defaultValue: "During: \(low)-\(high) g carbs/hr. 400-600 ml fluid/hr with 500-700 mg sodium/hr (warm weather upper end).")
         } else {
-            during = "During: a few sips of water, no carbs needed for a race this short."
+            during = String(localized: "rfp.during.short", defaultValue: "During: a few sips of water, no carbs needed for a race this short.")
         }
 
         // Short races: no multi-day load. Just the pre-race meal and
@@ -89,7 +89,7 @@ enum RaceFuellingProtocolGenerator {
                 loadingPhases: [],
                 morning: morning,
                 during: during,
-                rationale: "Race duration is under 90 min, so a multi-day carb load isn't needed, normal high-carb eating plus the pre-race meal is enough."
+                rationale: String(localized: "rfp.rationale.short", defaultValue: "Race duration is under 90 min, so a multi-day carb load isn't needed, normal high-carb eating plus the pre-race meal is enough.")
             )
         }
 
@@ -97,17 +97,17 @@ enum RaceFuellingProtocolGenerator {
         if raceMinutes < 180 {
             let phases = [
                 Phase(
-                    title: "Day before",
+                    title: String(localized: "rfp.day.before", defaultValue: "Day before"),
                     carbsGrams: Int((weight * 8.0).rounded()),
                     carbsPerKg: 8.0,
-                    detail: "Carb-focused meals, low fibre, familiar foods. Light pasta/rice dinner. Extra 500 mg sodium across the day."
+                    detail: String(localized: "rfp.detail.short1day", defaultValue: "Carb-focused meals, low fibre, familiar foods. Light pasta/rice dinner. Extra 500 mg sodium across the day.")
                 )
             ]
             return FuellingPlan(
                 loadingPhases: phases,
                 morning: morning,
                 during: during,
-                rationale: "A 90-180 min race benefits from 1 day of focused carb-loading at ~8 g/kg, enough to top up glycogen without overloading."
+                rationale: String(localized: "rfp.rationale.1day", defaultValue: "A 90-180 min race benefits from 1 day of focused carb-loading at ~8 g/kg, enough to top up glycogen without overloading.")
             )
         }
 
@@ -115,52 +115,52 @@ enum RaceFuellingProtocolGenerator {
         if raceMinutes < 300 {
             let phases = [
                 Phase(
-                    title: "2 days out",
+                    title: String(localized: "rfp.2daysOut", defaultValue: "2 days out"),
                     carbsGrams: Int((weight * 8.0).rounded()),
                     carbsPerKg: 8.0,
-                    detail: "Start carb-focused eating. Reduce fibre and fat. Regular small meals beat one big plate."
+                    detail: String(localized: "rfp.detail.2daysOut", defaultValue: "Start carb-focused eating. Reduce fibre and fat. Regular small meals beat one big plate.")
                 ),
                 Phase(
-                    title: "Day before",
+                    title: String(localized: "rfp.day.before", defaultValue: "Day before"),
                     carbsGrams: Int((weight * 9.0).rounded()),
                     carbsPerKg: 9.0,
-                    detail: "Peak load. Low fibre, familiar foods. +800 mg sodium. Light pasta/rice dinner, done eating by 20:00."
+                    detail: String(localized: "rfp.detail.dayBefore.peak800", defaultValue: "Peak load. Low fibre, familiar foods. +800 mg sodium. Light pasta/rice dinner, done eating by 20:00.")
                 )
             ]
             return FuellingPlan(
                 loadingPhases: phases,
                 morning: morning,
                 during: during,
-                rationale: "For a 3-5 hr race, 2 days of loading at 8-9 g/kg maximises glycogen stores, classic marathon protocol (Burke 2011)."
+                rationale: String(localized: "rfp.rationale.2day", defaultValue: "For a 3-5 hr race, 2 days of loading at 8-9 g/kg maximises glycogen stores, classic marathon protocol (Burke 2011).")
             )
         }
 
         // > 300 min (ultra): 3 days at 10 g/kg.
         let phases = [
             Phase(
-                title: "3 days out",
+                title: String(localized: "rfp.3daysOut", defaultValue: "3 days out"),
                 carbsGrams: Int((weight * 8.0).rounded()),
                 carbsPerKg: 8.0,
-                detail: "Begin the load. Shift plate composition toward carbs, rice, pasta, bread, potatoes, fruit. Reduce fibre."
+                detail: String(localized: "rfp.detail.3daysOut", defaultValue: "Begin the load. Shift plate composition toward carbs, rice, pasta, bread, potatoes, fruit. Reduce fibre.")
             ),
             Phase(
-                title: "2 days out",
+                title: String(localized: "rfp.2daysOut", defaultValue: "2 days out"),
                 carbsGrams: Int((weight * 9.0).rounded()),
                 carbsPerKg: 9.0,
-                detail: "Keep loading, keep hydration up. Regular small meals. +500 mg sodium/day."
+                detail: String(localized: "rfp.detail.2daysOut.ultra", defaultValue: "Keep loading, keep hydration up. Regular small meals. +500 mg sodium/day.")
             ),
             Phase(
-                title: "Day before",
+                title: String(localized: "rfp.day.before", defaultValue: "Day before"),
                 carbsGrams: Int((weight * 10.0).rounded()),
                 carbsPerKg: 10.0,
-                detail: "Peak. Familiar low-fibre foods only. +800 mg sodium. Early dinner, early bed."
+                detail: String(localized: "rfp.detail.dayBefore.ultra", defaultValue: "Peak. Familiar low-fibre foods only. +800 mg sodium. Early dinner, early bed.")
             )
         ]
         return FuellingPlan(
             loadingPhases: phases,
             morning: morning,
             during: during,
-            rationale: "For an ultra-endurance race, a full 3-day load at 8-10 g/kg/day is worth it, you'll burn through stored glycogen inside the first 2-3 hours."
+            rationale: String(localized: "rfp.rationale.ultra", defaultValue: "For an ultra-endurance race, a full 3-day load at 8-10 g/kg/day is worth it, you'll burn through stored glycogen inside the first 2-3 hours.")
         )
     }
 
@@ -179,20 +179,20 @@ enum RaceFuellingProtocolGenerator {
         switch resolved {
         case .oneHour:
             carbsPerKg = 1.0
-            title = "Race morning (1h before)"
-            detail = "Tight window: keep it small and liquid-leaning. Half a banana + honey, or 300 ml sports drink + a slice of toast. Skip fibre, fat, and protein, no room for digestion."
+            title = String(localized: "rfp.morning.1h.title", defaultValue: "Race morning (1h before)")
+            detail = String(localized: "rfp.morning.1h.detail", defaultValue: "Tight window: keep it small and liquid-leaning. Half a banana + honey, or 300 ml sports drink + a slice of toast. Skip fibre, fat, and protein, no room for digestion.")
         case .twoHours:
             carbsPerKg = 2.0
-            title = "Race morning (2h before)"
-            detail = "Moderate carb meal: oatmeal with honey + banana, or a bagel with jam. 400 ml water + electrolytes. Low fibre, familiar foods only."
+            title = String(localized: "rfp.morning.2h.title", defaultValue: "Race morning (2h before)")
+            detail = String(localized: "rfp.morning.2h.detail", defaultValue: "Moderate carb meal: oatmeal with honey + banana, or a bagel with jam. 400 ml water + electrolytes. Low fibre, familiar foods only.")
         case .threeHours:
             carbsPerKg = 3.0
-            title = "Race morning (3h before)"
-            detail = "Full carb meal: bagel + honey + jam + banana, oatmeal with maple syrup, or white toast with jam. 500 ml water + electrolytes. No fibre or fat."
+            title = String(localized: "rfp.morning.3h.title", defaultValue: "Race morning (3h before)")
+            detail = String(localized: "rfp.morning.3h.detail", defaultValue: "Full carb meal: bagel + honey + jam + banana, oatmeal with maple syrup, or white toast with jam. 500 ml water + electrolytes. No fibre or fat.")
         case .fourHours:
             carbsPerKg = 4.0
-            title = "Race morning (4h before)"
-            detail = "Full meal with time to digest: bagels + peanut butter + honey, or rice with honey + scrambled egg white. 500 ml water + electrolytes. Back to bed afterwards is fine."
+            title = String(localized: "rfp.morning.4h.title", defaultValue: "Race morning (4h before)")
+            detail = String(localized: "rfp.morning.4h.detail", defaultValue: "Full meal with time to digest: bagels + peanut butter + honey, or rice with honey + scrambled egg white. 500 ml water + electrolytes. Back to bed afterwards is fine.")
         }
         return Phase(
             title: title,

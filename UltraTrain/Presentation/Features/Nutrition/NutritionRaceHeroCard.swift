@@ -53,7 +53,7 @@ struct NutritionRaceHeroCard: View {
             Text(countdownValue)
                 .font(.title3.bold().monospacedDigit())
                 .foregroundStyle(.white)
-            Text(countdownUnit)
+            Text(LocalizedStringKey(countdownUnit))
                 .font(.caption2.weight(.semibold))
                 .tracking(0.5)
                 .foregroundStyle(.white.opacity(0.85))
@@ -98,7 +98,7 @@ struct NutritionRaceHeroCard: View {
             Text(value)
                 .font(.subheadline.bold().monospacedDigit())
                 .foregroundStyle(Theme.Colors.label)
-            Text(label)
+            Text(LocalizedStringKey(label))
                 .font(.caption2)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
@@ -117,7 +117,7 @@ struct NutritionRaceHeroCard: View {
     private var formattedDistance: String { "\(Int(distanceKm)) km" }
 
     private var formattedElevation: String {
-        elevationGainM < 50 ? "flat" : "\(Int(elevationGainM)) m D+"
+        elevationGainM < 50 ? String(localized: "nutcard.flat", defaultValue: "flat") : "\(Int(elevationGainM)) m D+"
     }
 
     private var formattedDuration: String {

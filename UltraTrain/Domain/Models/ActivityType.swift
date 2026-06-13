@@ -12,14 +12,14 @@ enum ActivityType: String, CaseIterable, Sendable, Codable {
 
     var displayName: String {
         switch self {
-        case .running: return "Running"
-        case .trailRunning: return "Trail Running"
-        case .cycling: return "Cycling"
-        case .swimming: return "Swimming"
-        case .hiking: return "Hiking"
-        case .strength: return "Strength"
-        case .yoga: return "Yoga"
-        case .other: return "Other"
+        case .running: return String(localized: "atype.running", defaultValue: "Running")
+        case .trailRunning: return String(localized: "atype.trail", defaultValue: "Trail Running")
+        case .cycling: return String(localized: "atype.cycling", defaultValue: "Cycling")
+        case .swimming: return String(localized: "atype.swimming", defaultValue: "Swimming")
+        case .hiking: return String(localized: "atype.hiking", defaultValue: "Hiking")
+        case .strength: return String(localized: "atype.strength", defaultValue: "Strength")
+        case .yoga: return String(localized: "atype.yoga", defaultValue: "Yoga")
+        case .other: return String(localized: "atype.other", defaultValue: "Other")
         }
     }
 

@@ -51,93 +51,93 @@ extension DomainError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .athleteNotFound:
-            return "Athlete profile not found. Please complete onboarding."
+            return String(localized: "derr.athleteNotFound", defaultValue: "Athlete profile not found. Please complete onboarding.")
         case .raceNotFound:
-            return "Race not found."
+            return String(localized: "derr.raceNotFound", defaultValue: "Race not found.")
         case .trainingPlanNotFound:
-            return "No active training plan found."
+            return String(localized: "derr.trainingPlanNotFound", defaultValue: "No active training plan found.")
         case .nutritionPlanNotFound:
-            return "No nutrition plan found for this race."
+            return String(localized: "derr.nutritionPlanNotFound", defaultValue: "No nutrition plan found for this race.")
         case .invalidTrainingPlan(let reason):
-            return "Invalid training plan: \(reason)"
+            return String(localized: "derr.invalidTrainingPlan", defaultValue: "Invalid training plan: \(reason)")
         case .insufficientData(let reason):
-            return "Not enough data: \(reason)"
+            return String(localized: "derr.insufficientData", defaultValue: "Not enough data: \(reason)")
         case .networkUnavailable:
-            return "No internet connection. Please try again later."
+            return String(localized: "derr.networkUnavailable", defaultValue: "No internet connection. Please try again later.")
         case .unauthorized:
-            return "Session expired. Please sign in again."
+            return String(localized: "derr.unauthorized", defaultValue: "Session expired. Please sign in again.")
         case .serverError(let message):
-            return "Server error: \(message)"
+            return String(localized: "derr.serverError", defaultValue: "Server error: \(message)")
         case .persistenceError(let message):
-            return "Storage error: \(message)"
+            return String(localized: "derr.persistenceError", defaultValue: "Storage error: \(message)")
         case .locationUnavailable:
-            return "Location services are unavailable."
+            return String(localized: "derr.locationUnavailable", defaultValue: "Location services are unavailable.")
         case .healthKitUnavailable:
-            return "HealthKit is not available on this device."
+            return String(localized: "derr.healthKitUnavailable", defaultValue: "HealthKit is not available on this device.")
         case .healthKitWriteDenied:
-            return "Cannot save workouts to Apple Health. Please allow write access in the Health app."
+            return String(localized: "derr.healthKitWriteDenied", defaultValue: "Cannot save workouts to Apple Health. Please allow write access in the Health app.")
         case .settingsNotFound:
-            return "App settings not found."
+            return String(localized: "derr.settingsNotFound", defaultValue: "App settings not found.")
         case .exportFailed(let reason):
-            return "Export failed: \(reason)"
+            return String(localized: "derr.exportFailed", defaultValue: "Export failed: \(reason)")
         case .importFailed(let reason):
-            return "Import failed: \(reason)"
+            return String(localized: "derr.importFailed", defaultValue: "Import failed: \(reason)")
         case .gpxParsingFailed(let reason):
-            return "Failed to parse GPX file: \(reason)"
+            return String(localized: "derr.gpxParsingFailed", defaultValue: "Failed to parse GPX file: \(reason)")
         case .stravaAuthFailed(let reason):
-            return "Strava authentication failed: \(reason)"
+            return String(localized: "derr.stravaAuthFailed", defaultValue: "Strava authentication failed: \(reason)")
         case .stravaUploadFailed(let reason):
-            return "Failed to upload to Strava: \(reason)"
+            return String(localized: "derr.stravaUploadFailed", defaultValue: "Failed to upload to Strava: \(reason)")
         case .stravaImportFailed(let reason):
-            return "Failed to import from Strava: \(reason)"
+            return String(localized: "derr.stravaImportFailed", defaultValue: "Failed to import from Strava: \(reason)")
         case .biometricFailed(let reason):
-            return "Biometric authentication failed: \(reason)"
+            return String(localized: "derr.biometricFailed", defaultValue: "Biometric authentication failed: \(reason)")
         case .notificationDenied:
-            return "Notification permission was denied. Enable in iOS Settings."
+            return String(localized: "derr.notificationDenied", defaultValue: "Notification permission was denied. Enable in iOS Settings.")
         case .gearNotFound:
-            return "Gear item not found."
+            return String(localized: "derr.gearNotFound", defaultValue: "Gear item not found.")
         case .workoutRecipeNotFound:
-            return "Workout recipe not found."
+            return String(localized: "derr.workoutRecipeNotFound", defaultValue: "Workout recipe not found.")
         case .challengeNotFound:
-            return "Challenge not found."
+            return String(localized: "derr.challengeNotFound", defaultValue: "Challenge not found.")
         case .iCloudAccountUnavailable:
-            return "iCloud account is not available. Sign in to iCloud in iOS Settings."
+            return String(localized: "derr.iCloudAccountUnavailable", defaultValue: "iCloud account is not available. Sign in to iCloud in iOS Settings.")
         case .iCloudSyncFailed(let reason):
-            return "iCloud sync failed: \(reason)"
+            return String(localized: "derr.iCloudSyncFailed", defaultValue: "iCloud sync failed: \(reason)")
         case .weatherUnavailable(let reason):
-            return "Weather data unavailable: \(reason)"
+            return String(localized: "derr.weatherUnavailable", defaultValue: "Weather data unavailable: \(reason)")
         case .socialProfileNotFound:
-            return "Social profile not found. Please set up your profile."
+            return String(localized: "derr.socialProfileNotFound", defaultValue: "Social profile not found. Please set up your profile.")
         case .friendRequestFailed(let reason):
-            return "Friend request failed: \(reason)"
+            return String(localized: "derr.friendRequestFailed", defaultValue: "Friend request failed: \(reason)")
         case .sharingFailed(let reason):
-            return "Sharing failed: \(reason)"
+            return String(localized: "derr.sharingFailed", defaultValue: "Sharing failed: \(reason)")
         case .cloudKitPermissionDenied:
-            return "CloudKit permission denied. Please allow access in Settings."
+            return String(localized: "derr.cloudKitPermissionDenied", defaultValue: "CloudKit permission denied. Please allow access in Settings.")
         case .groupChallengeNotFound:
-            return "Group challenge not found."
+            return String(localized: "derr.groupChallengeNotFound", defaultValue: "Group challenge not found.")
         case .routeNotFound:
-            return "Route not found."
+            return String(localized: "derr.routeNotFound", defaultValue: "Route not found.")
         case .invalidIntervalWorkout(let reason):
-            return "Invalid interval workout: \(reason)"
+            return String(localized: "derr.invalidIntervalWorkout", defaultValue: "Invalid interval workout: \(reason)")
         case .intervalWorkoutNotFound:
-            return "Interval workout not found."
+            return String(localized: "derr.intervalWorkoutNotFound", defaultValue: "Interval workout not found.")
         case .emergencyContactNotFound:
-            return "Emergency contact not found."
+            return String(localized: "derr.emergencyContactNotFound", defaultValue: "Emergency contact not found.")
         case .motionServiceUnavailable:
-            return "Motion services are unavailable on this device."
+            return String(localized: "derr.motionServiceUnavailable", defaultValue: "Motion services are unavailable on this device.")
         case .crewTrackingUnavailable:
-            return "Crew tracking is currently unavailable."
+            return String(localized: "derr.crewTrackingUnavailable", defaultValue: "Crew tracking is currently unavailable.")
         case .validationFailed(let field, let reason):
-            return "Invalid \(field): \(reason)"
+            return String(localized: "derr.validationFailed", defaultValue: "Invalid \(field): \(reason)")
         case .invalidGPSData(let reason):
-            return "Invalid GPS data: \(reason)"
+            return String(localized: "derr.invalidGPSData", defaultValue: "Invalid GPS data: \(reason)")
         case .subscriptionRequired:
-            return "A subscription is required to use UltraTrain."
+            return String(localized: "derr.subscriptionRequired", defaultValue: "A subscription is required to use UltraTrain.")
         case .purchaseFailed(let reason):
-            return "Purchase failed: \(reason)"
+            return String(localized: "derr.purchaseFailed", defaultValue: "Purchase failed: \(reason)")
         case .unknown(let message):
-            return "An unexpected error occurred: \(message)"
+            return String(localized: "derr.unknown", defaultValue: "An unexpected error occurred: \(message)")
         }
     }
 }

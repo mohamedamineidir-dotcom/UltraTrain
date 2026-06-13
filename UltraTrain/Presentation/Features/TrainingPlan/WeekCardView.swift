@@ -166,7 +166,7 @@ extension WeekCardView {
             VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                 // Line 1: Week N + phase badge + progress fraction
                 HStack {
-                    Text("Week \(week.weekNumber)")
+                    Text(String(localized: "wk.week", defaultValue: "Week \(week.weekNumber)"))
                         .font(.title3.bold())
                         .foregroundStyle(Theme.Colors.label)
                     Text(week.phase.displayName)
@@ -229,7 +229,7 @@ extension WeekCardView {
     }
 
     private var weekHeaderAccessibilityLabel: String {
-        var label = "Week \(week.weekNumber), \(week.phase.displayName) phase"
+        var label = String(localized: "wk.a11y", defaultValue: "Week \(week.weekNumber), \(week.phase.displayName) phase")
         if week.isRecoveryWeek { label += ", recovery week" }
         label += ". \(formattedWeekDuration)"
         if isRoad {
@@ -288,6 +288,23 @@ extension WeekCardView {
 // MARK: - Sessions List
 
 extension WeekCardView {
+
+    /// Position of a session within a back-to-back ("Weekend Choc") weekend.
+    /// Day 2 is the explicit `.backToBack` session; day 1 is the long run on
+    /// the calendar day immediately before it. nil for everything else, so
+    /// only the genuine weekend pair is relabelled "Weekend Choc (1/2)/(2/2)".
+    private func b2bPosition(for session: TrainingSession) -> Int? {
+        if session.type == .backToBack { return 2 }
+        guard session.type == .longRun else { return nil }
+        let cal = Calendar.current
+        guard let nextDay = cal.date(
+            byAdding: .day, value: 1, to: cal.startOfDay(for: session.date)
+        ) else { return nil }
+        let hasB2BNextDay = week.sessions.contains {
+            $0.type == .backToBack && cal.startOfDay(for: $0.date) == nextDay
+        }
+        return hasB2BNextDay ? 1 : nil
+    }
 
     /// Groups sessions by calendar day so same-day S&C + run appear together.
     private var dayGroupedSessions: [(day: Date, sessions: [(index: Int, session: TrainingSession)])] {
@@ -400,7 +417,7 @@ extension WeekCardView {
         let completedBefore = runs.prefix(idx).filter(\.isCompleted).count
         let phaseLabel = week.isRecoveryWeek
             ? "\(week.phase.displayName) · recovery"
-            : "\(week.phase.displayName) · Week \(week.weekNumber)"
+            : String(localized: "wk.phaseWeek", defaultValue: "\(week.phase.displayName) · Week \(week.weekNumber)")
         // Next run in the same week after this one. Nil when current is
         // last of the week, the "Next up" card hides in that case and
         // the page simply shows more breathing room.
@@ -423,6 +440,38 @@ extension WeekCardView {
         )
     }
 
+    /// Compact same-day strength chip, rendered inline on the session's
+    /// second line (via SessionRowView.inlineAccessory) rather than as a
+    /// row beneath it, so the day keeps the same height as the others.
+    /// Stays a NavigationLink so tapping it still opens the S&C exercises.
+    private func scChip(_ sc: (index: Int, session: TrainingSession)) -> AnyView {
+        AnyView(
+            NavigationLink(destination: sessionDetailView(for: sc.session, at: sc.index)) {
+                HStack(spacing: 3) {
+                    Image(systemName: "dumbbell.fill")
+                        .font(.system(size: 8))
+                    Text("S&C")
+                        .font(.system(size: 10, weight: .semibold))
+                    Text("\(Int(sc.session.plannedDuration / 60))min")
+                        .font(.system(size: 10, weight: .regular).monospacedDigit())
+                    if sc.session.isCompleted {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 9))
+                    }
+                }
+                .foregroundStyle(sc.session.isCompleted ? Theme.Colors.success : .mint)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(
+                    Capsule().fill(
+                        (sc.session.isCompleted ? Theme.Colors.success : Color.mint).opacity(0.10)
+                    )
+                )
+            }
+            .buttonStyle(.plain)
+        )
+    }
+
     private func sessionRow(
         _ sessionIndex: Int,
         _ session: TrainingSession,
@@ -430,54 +479,18 @@ extension WeekCardView {
     ) -> some View {
         VStack(spacing: 0) {
             NavigationLink(destination: sessionDetailView(for: session, at: sessionIndex)) {
-                VStack(spacing: 0) {
-                    SessionRowView(session: session) {
-                        if !session.isCompleted && onValidateSession != nil {
-                            Task {
-                                validateRecentRuns = await recentRunsProvider?(session.date) ?? []
-                                validateItem = ContextSheetItem(sessionIndex: sessionIndex, session: session)
-                            }
-                        } else {
-                            onToggleSession(sessionIndex)
+                SessionRowView(
+                    session: session,
+                    b2bPosition: b2bPosition(for: session),
+                    inlineAccessory: scSessions.first.map { scChip($0) }
+                ) {
+                    if !session.isCompleted && onValidateSession != nil {
+                        Task {
+                            validateRecentRuns = await recentRunsProvider?(session.date) ?? []
+                            validateItem = ContextSheetItem(sessionIndex: sessionIndex, session: session)
                         }
-                    }
-
-                    // S&C chip under the session row
-                    if let sc = scSessions.first {
-                        NavigationLink(destination: sessionDetailView(for: sc.session, at: sc.index)) {
-                            HStack(spacing: 5) {
-                                Rectangle()
-                                    .fill(Color.clear)
-                                    .frame(width: 40)
-
-                                HStack(spacing: 4) {
-                                    Image(systemName: "dumbbell.fill")
-                                        .font(.system(size: 9))
-                                    Text("S&C")
-                                        .font(.system(size: 11, weight: .semibold))
-                                    Text("\(Int(sc.session.plannedDuration / 60))min")
-                                        .font(.system(size: 11, weight: .regular).monospacedDigit())
-                                    if sc.session.isCompleted {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .font(.system(size: 10))
-                                    }
-                                }
-                                .foregroundStyle(sc.session.isCompleted ? Theme.Colors.success : .mint)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(
-                                    Capsule().fill(
-                                        sc.session.isCompleted
-                                            ? Theme.Colors.success.opacity(0.08)
-                                            : Color.mint.opacity(0.08)
-                                    )
-                                )
-
-                                Spacer()
-                            }
-                            .padding(.bottom, 2)
-                        }
-                        .buttonStyle(.plain)
+                    } else {
+                        onToggleSession(sessionIndex)
                     }
                 }
             }

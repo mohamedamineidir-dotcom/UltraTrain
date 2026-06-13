@@ -6,8 +6,8 @@ enum StrengthTrainingPreference: String, CaseIterable, Sendable, Codable {
 
     var displayName: String {
         switch self {
-        case .yes: "Yes, include it"
-        case .no:  "No, running only"
+        case .yes: String(localized: "stp.yes", defaultValue: "Yes, include it")
+        case .no:  String(localized: "stp.no", defaultValue: "No, running only")
         }
     }
 }

@@ -136,22 +136,22 @@ struct NutritionGutTrainingLogSection: View {
 
     private var primaryLine: String {
         if sessions.isEmpty {
-            return "No practice runs linked yet"
+            return String(localized: "gut.noPractice", defaultValue: "No practice runs linked yet")
         }
         if feedbacks.count >= sessions.count {
-            return "All gut-training runs logged"
+            return String(localized: "gut.allLogged", defaultValue: "All gut-training runs logged")
         }
-        return nextSessionTitle ?? "Log your feedback"
+        return nextSessionTitle ?? String(localized: "gut.logFeedback", defaultValue: "Log your feedback")
     }
 
     private var secondaryLine: String {
         if sessions.isEmpty {
-            return "Generate a plan and we'll flag the long runs worth practicing on."
+            return String(localized: "gut.generatePlan", defaultValue: "Generate a plan and we'll flag the long runs worth practicing on.")
         }
         if feedbacks.count >= sessions.count {
-            return "Feedback loop complete. Plan refined."
+            return String(localized: "gut.loopComplete", defaultValue: "Feedback loop complete. Plan refined.")
         }
-        return "Tap to log feedback and refine your race-day plan"
+        return String(localized: "gut.tapToLog", defaultValue: "Tap to log feedback and refine your race-day plan")
     }
 
     /// Nearest un-logged session label (future-dated preferred, else most recent past).
@@ -215,9 +215,9 @@ private struct GutTrainingLogSheet: View {
                 .frame(width: 44, height: 44)
                 .background(Circle().fill(NutritionPalette.gradient))
             VStack(alignment: .leading, spacing: 2) {
-                Text("\(feedbacks.count) of \(sessions.count) runs logged")
+                Text(String(localized: "gut.runsLogged", defaultValue: "\(feedbacks.count) of \(sessions.count) runs logged"))
                     .font(.subheadline.weight(.semibold))
-                Text("Each feedback tunes your race-day plan to what your gut actually tolerates.")
+                Text(String(localized: "gut.eachFeedback", defaultValue: "Each feedback tunes your race-day plan to what your gut actually tolerates."))
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
                     .fixedSize(horizontal: false, vertical: true)
@@ -236,7 +236,7 @@ private struct GutTrainingLogSheet: View {
     }
 
     private var emptyState: some View {
-        Text("No gut-training runs linked yet. Generate a plan and we'll flag the long runs worth practicing on.")
+        Text(String(localized: "gut.emptyState", defaultValue: "No gut-training runs linked yet. Generate a plan and we'll flag the long runs worth practicing on."))
             .font(.subheadline)
             .foregroundStyle(Theme.Colors.secondaryLabel)
             .multilineTextAlignment(.center)

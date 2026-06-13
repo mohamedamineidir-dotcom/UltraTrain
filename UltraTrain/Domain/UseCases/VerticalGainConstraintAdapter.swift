@@ -174,7 +174,7 @@ enum VerticalGainConstraintAdapter {
                     trigger: .duration(seconds: totalRepSec),
                     targetIntensity: phase.targetIntensity,
                     repeatCount: phase.repeatCount,
-                    notes: "\(flatMin)min flat at target intensity, then \(hillTimeStr) uphill. Time your run to arrive at the hill for the final portion."
+                    notes: String(localized: "vga.flatThenHill", defaultValue: "\(flatMin)min flat at target intensity, then \(hillTimeStr) uphill. Time your run to arrive at the hill for the final portion.")
                 ))
             } else {
                 newPhases.append(phase)
@@ -186,8 +186,8 @@ enum VerticalGainConstraintAdapter {
         let repCount = newPhases.first(where: { $0.phaseType == .work })?.repeatCount ?? 0
         let flatMin = Int(max((longestWorkRepDuration(in: workout) - hillMaxSec), 0)) / 60
         let hillMin = Int(hillMaxSec) / 60
-        adapted.descriptionText = "\(repCount)x(\(flatMin)min flat + \(hillMin)min uphill) at target intensity / jog back"
-        adapted.name = "Integrated flat+hill intervals"
+        adapted.descriptionText = String(localized: "vga.repStructure", defaultValue: "\(repCount)x(\(flatMin)min flat + \(hillMin)min uphill) at target intensity / jog back")
+        adapted.name = String(localized: "vga.008", defaultValue: "Integrated flat+hill intervals")
 
         return adapted
     }
@@ -199,25 +199,25 @@ enum VerticalGainConstraintAdapter {
         config: Config
     ) -> TrainingSession {
         var s = session
-        let prefix = "Treadmill session. "
+        let prefix = String(localized: "vga.050", defaultValue: "Treadmill session. ")
         s.description = prefix + session.description
 
         let gradeAdvice: String
         switch config.phase {
         case .base:
-            gradeAdvice = "Set the grade to 10-12%. Sustained moderate effort. Focus on building climbing endurance at an easy pace."
+            gradeAdvice = String(localized: "vga.036", defaultValue: "Set the grade to 10-12%. Sustained moderate effort. Focus on building climbing endurance at an easy pace.")
         case .build:
-            gradeAdvice = "Intervals: set 12-15% for hard reps, drop to 0% for recovery jogs. Same structure as outdoor hills."
+            gradeAdvice = String(localized: "vga.026", defaultValue: "Intervals: set 12-15% for hard reps, drop to 0% for recovery jogs. Same structure as outdoor hills.")
         case .peak:
-            gradeAdvice = "Race simulation: alternate between flat running and max-grade hiking to match the rhythm of your race profile."
+            gradeAdvice = String(localized: "vga.033", defaultValue: "Race simulation: alternate between flat running and max-grade hiking to match the rhythm of your race profile.")
         default:
-            gradeAdvice = "Set the grade to 8-10% for moderate efforts, 12-15% for hard efforts."
+            gradeAdvice = String(localized: "vga.037", defaultValue: "Set the grade to 8-10% for moderate efforts, 12-15% for hard efforts.")
         }
 
-        s.coachAdvice = "Treadmill gives you full control over incline and duration. \(gradeAdvice) "
-            + "Keep your form upright, shorten your stride, drive your knees. "
-            + "One thing treadmill cannot replicate: downhill eccentric loading. "
-            + "Add 2-3 sets of slow eccentric step-downs or Nordic curls after this session to cover that gap."
+        s.coachAdvice = String(localized: "vga.treadmillControl", defaultValue: "Treadmill gives you full control over incline and duration. \(gradeAdvice) ")
+            + String(localized: "vga.028", defaultValue: "Keep your form upright, shorten your stride, drive your knees. ")
+            + String(localized: "vga.031", defaultValue: "One thing treadmill cannot replicate: downhill eccentric loading. ")
+            + String(localized: "vga.019", defaultValue: "Add 2-3 sets of slow eccentric step-downs or Nordic curls after this session to cover that gap.")
         return s
     }
 
@@ -228,17 +228,17 @@ enum VerticalGainConstraintAdapter {
         config: Config
     ) -> IntervalWorkout {
         var adapted = workout
-        adapted.name = "Flat Power Intervals (VG substitute)"
+        adapted.name = String(localized: "vga.007", defaultValue: "Flat Power Intervals (VG substitute)")
         adapted.category = .speedWork
 
         adapted.phases = workout.phases.map { phase in
             var p = phase
             if phase.phaseType == .work {
-                p.notes = "Hard effort on flat. High cadence, powerful leg drive. Lean slightly forward and push off like you are climbing."
+                p.notes = String(localized: "vga.021", defaultValue: "Hard effort on flat. High cadence, powerful leg drive. Lean slightly forward and push off like you are climbing.")
             } else if phase.phaseType == .recovery {
-                p.notes = "Easy jog recovery"
+                p.notes = String(localized: "vga.009", defaultValue: "Easy jog recovery")
             } else if phase.phaseType == .warmUp {
-                p.notes = "Easy warm-up, include 4-6 strides"
+                p.notes = String(localized: "vga.010", defaultValue: "Easy warm-up, include 4-6 strides")
             }
             return p
         }
@@ -246,16 +246,16 @@ enum VerticalGainConstraintAdapter {
         let alternatives: String
         switch config.phase {
         case .base:
-            alternatives = "If you have access to stadium stairs or a parking garage ramp, use those instead for a more climbing-specific stimulus."
+            alternatives = String(localized: "vga.025", defaultValue: "If you have access to stadium stairs or a parking garage ramp, use those instead for a more climbing-specific stimulus.")
         case .build:
-            alternatives = "Stadium stairs, parking garage ramps, or even a weighted vest (5-8% bodyweight) will make this more climbing-specific."
+            alternatives = String(localized: "vga.039", defaultValue: "Stadium stairs, parking garage ramps, or even a weighted vest (5-8% bodyweight) will make this more climbing-specific.")
         case .peak:
-            alternatives = "This close to race day, try to find any incline available, even 30-60 min drive away. One real hill session now is worth three flat substitutes."
+            alternatives = String(localized: "vga.047", defaultValue: "This close to race day, try to find any incline available, even 30-60 min drive away. One real hill session now is worth three flat substitutes.")
         default:
-            alternatives = "Look for any available incline: stadium stairs, parking garage ramps, bridges, or overpasses."
+            alternatives = String(localized: "vga.029", defaultValue: "Look for any available incline: stadium stairs, parking garage ramps, bridges, or overpasses.")
         }
 
-        adapted.descriptionText = "Flat power intervals (VG substitute). Same intensity, same duration. \(alternatives)"
+        adapted.descriptionText = String(localized: "vga.flatSubst", defaultValue: "Flat power intervals (VG substitute). Same intensity, same duration. \(alternatives)")
         return adapted
     }
 
@@ -270,29 +270,29 @@ enum VerticalGainConstraintAdapter {
 
         let exercises: [StrengthExercise] = [
             StrengthExercise(
-                name: "Step-Up (40cm box, loaded if possible)",
-                category: .lowerBody, sets: sets, reps: isHeavy ? "6-8 per leg" : "10 per leg",
-                notes: "THE most climbing-specific exercise. Drive through the heel, full hip extension at top. This is your race-day climbing engine."
+                name: String(localized: "vga.005", defaultValue: "Step-Up (40cm box, loaded if possible)"),
+                category: .lowerBody, sets: sets, reps: isHeavy ? String(localized: "vga.014", defaultValue: "6-8 per leg") : String(localized: "vga.013", defaultValue: "10 per leg"),
+                notes: String(localized: "vga.041", defaultValue: "THE most climbing-specific exercise. Drive through the heel, full hip extension at top. This is your race-day climbing engine.")
             ),
             StrengthExercise(
-                name: "Bulgarian Split Squat (eccentric focus)",
-                category: .singleLegStability, sets: sets, reps: isHeavy ? "8 per leg" : "10 per leg",
-                notes: "3-second lowering phase. Builds the single-leg power and hip flexor stretch you need for steep terrain."
+                name: String(localized: "vga.002", defaultValue: "Bulgarian Split Squat (eccentric focus)"),
+                category: .singleLegStability, sets: sets, reps: isHeavy ? String(localized: "vga.015", defaultValue: "8 per leg") : String(localized: "vga.013", defaultValue: "10 per leg"),
+                notes: String(localized: "vga.017", defaultValue: "3-second lowering phase. Builds the single-leg power and hip flexor stretch you need for steep terrain.")
             ),
             StrengthExercise(
-                name: "Eccentric Squat (4-sec lowering)",
+                name: String(localized: "vga.004", defaultValue: "Eccentric Squat (4-sec lowering)"),
                 category: .lowerBody, sets: sets, reps: isHeavy ? "6" : "8-10",
-                notes: "Slow controlled descent. This eccentric strength is what saves your quads on race-day descents."
+                notes: String(localized: "vga.038", defaultValue: "Slow controlled descent. This eccentric strength is what saves your quads on race-day descents.")
             ),
             StrengthExercise(
-                name: "Calf Raise (straight + bent knee)",
-                category: .lowerBody, sets: sets, reps: "12-15 each",
-                notes: "2-second hold at top. Straight-leg for power push-off, bent-knee for endurance. Your Achilles depends on this."
+                name: String(localized: "vga.003", defaultValue: "Calf Raise (straight + bent knee)"),
+                category: .lowerBody, sets: sets, reps: String(localized: "vga.012", defaultValue: "12-15 each"),
+                notes: String(localized: "vga.016", defaultValue: "2-second hold at top. Straight-leg for power push-off, bent-knee for endurance. Your Achilles depends on this.")
             ),
             StrengthExercise(
-                name: "Banded Hip Flexor Drive",
-                category: .lowerBody, sets: 2, reps: "12 per side",
-                notes: "High knee drive against resistance. Trains the hip flexor power that drives you uphill at km 60."
+                name: String(localized: "vga.001", defaultValue: "Banded Hip Flexor Drive"),
+                category: .lowerBody, sets: 2, reps: String(localized: "vga.011", defaultValue: "12 per side"),
+                notes: String(localized: "vga.022", defaultValue: "High knee drive against resistance. Trains the hip flexor power that drives you uphill at km 60.")
             ),
         ]
 
@@ -303,7 +303,7 @@ enum VerticalGainConstraintAdapter {
         )
 
         return StrengthWorkout(
-            name: "Climbing Strength (VG companion)",
+            name: String(localized: "vga.006", defaultValue: "Climbing Strength (VG companion)"),
             category: .full,
             exercises: exercises,
             estimatedDurationMinutes: duration,
@@ -321,9 +321,9 @@ enum VerticalGainConstraintAdapter {
     ) -> TrainingSession {
         var s = session
         s.description = workout.descriptionText
-        s.coachAdvice = "No hills or treadmill available, so this is adapted to flat power intervals. "
-            + "Same intensity, same duration, same effort. High cadence with powerful leg drive. "
-            + "A companion climbing strength session is paired with this to cover the muscle groups your legs would normally work on hills."
+        s.coachAdvice = String(localized: "vga.030", defaultValue: "No hills or treadmill available, so this is adapted to flat power intervals. ")
+            + String(localized: "vga.035", defaultValue: "Same intensity, same duration, same effort. High cadence with powerful leg drive. ")
+            + String(localized: "vga.018", defaultValue: "A companion climbing strength session is paired with this to cover the muscle groups your legs would normally work on hills.")
         return s
     }
 
@@ -345,19 +345,19 @@ enum VerticalGainConstraintAdapter {
         let phaseAdvice: String
         switch config.phase {
         case .base:
-            phaseAdvice = "Keep the flat portion at a steady moderate effort. The goal is to arrive at the hill already working, not sprinting."
+            phaseAdvice = String(localized: "vga.027", defaultValue: "Keep the flat portion at a steady moderate effort. The goal is to arrive at the hill already working, not sprinting.")
         case .build:
-            phaseAdvice = "The flat portion should be at your threshold effort. By the time you hit the hill, your legs should feel like you have been climbing for \(flatMin) minutes already."
+            phaseAdvice = String(localized: "vga.flatThreshold", defaultValue: "The flat portion should be at your threshold effort. By the time you hit the hill, your legs should feel like you have been climbing for \(flatMin) minutes already.")
         case .peak:
-            phaseAdvice = "Race simulation. Run the flat portion at race effort, hit the hill at race climbing effort. Practice transitioning between flat running and climbing, exactly like race day."
+            phaseAdvice = String(localized: "vga.034", defaultValue: "Race simulation. Run the flat portion at race effort, hit the hill at race climbing effort. Practice transitioning between flat running and climbing, exactly like race day.")
         default:
-            phaseAdvice = "Steady effort on the flat, same intensity on the hill. Smooth transition between the two."
+            phaseAdvice = String(localized: "vga.040", defaultValue: "Steady effort on the flat, same intensity on the hill. Smooth transition between the two.")
         }
 
-        s.coachAdvice = "Your hill is shorter than the ideal rep length, so each rep starts with \(flatMin) minutes of flat running "
-            + "at the target intensity, then finishes with \(hillMin) minutes on your hill. "
-            + "Time your approach so you arrive at the base of the climb right when the flat portion ends. "
-            + "The total rep is the same duration as a full mountain rep. "
+        s.coachAdvice = String(localized: "vga.hillShorter", defaultValue: "Your hill is shorter than the ideal rep length, so each rep starts with \(flatMin) minutes of flat running ")
+            + String(localized: "vga.finishesHill", defaultValue: "at the target intensity, then finishes with \(hillMin) minutes on your hill. ")
+            + String(localized: "vga.049", defaultValue: "Time your approach so you arrive at the base of the climb right when the flat portion ends. ")
+            + String(localized: "vga.044", defaultValue: "The total rep is the same duration as a full mountain rep. ")
             + "\(phaseAdvice)"
         return s
     }
@@ -392,12 +392,12 @@ enum VerticalGainConstraintAdapter {
 
         let stackingAdvice: String
         if isSameDay {
-            stackingAdvice = "Do this strength session the same morning as your power intervals, with at least 6 hours between the two. "
-                + "The residual leg fatigue from strength makes the flat intervals feel more like real climbing. "
-                + "If you cannot fit both in one day, do this strength session the day before instead so your legs carry that fatigue into the intervals."
+            stackingAdvice = String(localized: "vga.020", defaultValue: "Do this strength session the same morning as your power intervals, with at least 6 hours between the two. ")
+                + String(localized: "vga.042", defaultValue: "The residual leg fatigue from strength makes the flat intervals feel more like real climbing. ")
+                + String(localized: "vga.024", defaultValue: "If you cannot fit both in one day, do this strength session the day before instead so your legs carry that fatigue into the intervals.")
         } else {
-            stackingAdvice = "This strength session replaces the climbing stimulus you cannot get from hills. "
-                + "These exercises target your glutes, hip flexors, quads, and calves. Do not skip this."
+            stackingAdvice = String(localized: "vga.048", defaultValue: "This strength session replaces the climbing stimulus you cannot get from hills. ")
+                + String(localized: "vga.045", defaultValue: "These exercises target your glutes, hip flexors, quads, and calves. Do not skip this.")
         }
 
         let scSession = TrainingSession(
@@ -425,22 +425,22 @@ enum VerticalGainConstraintAdapter {
 
     private static func flatAreaPlanNote(config: Config) -> String {
         if config.phase == .build || config.phase == .peak {
-            return "Your terrain has no hills, so we adapted your climbing sessions to flat power intervals "
-                + "paired with a climbing-specific strength session on the same day. "
-                + "This approach is used by Uphill Athlete and elite coaches for flat-area athletes. "
-                + "The strength pre-fatigues your legs so the flat intervals simulate climbing demand. "
-                + "If you can access stadium stairs, parking garage ramps, or any incline, use those instead."
+            return String(localized: "vga.053", defaultValue: "Your terrain has no hills, so we adapted your climbing sessions to flat power intervals ")
+                + String(localized: "vga.032", defaultValue: "paired with a climbing-specific strength session on the same day. ")
+                + String(localized: "vga.046", defaultValue: "This approach is used by Uphill Athlete and elite coaches for flat-area athletes. ")
+                + String(localized: "vga.043", defaultValue: "The strength pre-fatigues your legs so the flat intervals simulate climbing demand. ")
+                + String(localized: "vga.023", defaultValue: "If you can access stadium stairs, parking garage ramps, or any incline, use those instead.")
         }
-        return "Your terrain has no hills, so climbing sessions are adapted to flat power intervals "
-            + "with targeted leg strength work. Look for any available incline: stairs, ramps, bridges."
+        return String(localized: "vga.052", defaultValue: "Your terrain has no hills, so climbing sessions are adapted to flat power intervals ")
+            + String(localized: "vga.051", defaultValue: "with targeted leg strength work. Look for any available incline: stairs, ramps, bridges.")
     }
 
     // MARK: - Helpers
 
     private static func formatCompanionDescription(_ workout: StrengthWorkout) -> String {
-        var lines: [String] = [workout.name, "Duration: ~\(workout.estimatedDurationMinutes) min", ""]
+        var lines: [String] = [workout.name, String(localized: "vga.duration", defaultValue: "Duration: ~\(workout.estimatedDurationMinutes) min"), ""]
         for ex in workout.exercises {
-            lines.append("  \u{2022} \(ex.name) \u{2014} \(ex.sets)x\(ex.reps)")
+            lines.append("  \u{2022} \(ex.name), \(ex.sets)x\(ex.reps)")
             if !ex.notes.isEmpty {
                 lines.append("    \(ex.notes)")
             }

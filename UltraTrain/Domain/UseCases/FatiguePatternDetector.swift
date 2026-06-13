@@ -48,7 +48,7 @@ enum FatiguePatternDetector {
                 type: .compoundFatigue,
                 severity: .significant,
                 evidence: patterns.flatMap(\.evidence),
-                recommendation: "Multiple fatigue signals detected. Consider \(deloadDays) days of reduced training.",
+                recommendation: String(localized: "fpd.multi", defaultValue: "Multiple fatigue signals detected. Consider \(deloadDays) days of reduced training."),
                 suggestedDeloadDays: deloadDays,
                 detectedDate: Date.now
             )
@@ -97,7 +97,7 @@ enum FatiguePatternDetector {
                 changePercent: changePercent * 100,
                 period: "Last \(moderateRuns.count) moderate-effort runs"
             )],
-            recommendation: "Pace at similar heart rate is declining. Consider reducing training load for \(AppConfiguration.AICoach.deloadSuggestionDays) days.",
+            recommendation: String(localized: "fpd.paceDecline", defaultValue: "Pace at similar heart rate is declining. Consider reducing training load for \(AppConfiguration.AICoach.deloadSuggestionDays) days."),
             suggestedDeloadDays: AppConfiguration.AICoach.deloadSuggestionDays,
             detectedDate: Date.now
         )
@@ -152,7 +152,7 @@ enum FatiguePatternDetector {
                 changePercent: changePercent * 100,
                 period: "Last \(similarPaceRuns.count) similar-pace runs"
             )],
-            recommendation: "Heart rate is rising at the same effort level. Your cardiovascular system may need recovery.",
+            recommendation: String(localized: "fpd.hr", defaultValue: "Heart rate is rising at the same effort level. Your cardiovascular system may need recovery."),
             suggestedDeloadDays: AppConfiguration.AICoach.deloadSuggestionDays,
             detectedDate: Date.now
         )
@@ -201,7 +201,7 @@ enum FatiguePatternDetector {
                 changePercent: changePercent * 100,
                 period: "Last 3 nights vs 7-night baseline"
             )],
-            recommendation: "Sleep quality has dropped significantly. Prioritize sleep hygiene and an earlier bedtime.",
+            recommendation: String(localized: "fpd.sleep", defaultValue: "Sleep quality has dropped significantly. Prioritize sleep hygiene and an earlier bedtime."),
             suggestedDeloadDays: nil,
             detectedDate: Date.now
         )
@@ -248,7 +248,7 @@ enum FatiguePatternDetector {
                 changePercent: (rpeRise / max(firstHalfAvg, 1)) * 100,
                 period: "Last \(runsWithRPE.count) rated runs"
             )],
-            recommendation: "Perceived effort is rising. Runs feel harder even though the training load hasn't changed, a classic fatigue signal.",
+            recommendation: String(localized: "fpd.rpe", defaultValue: "Perceived effort is rising. Runs feel harder even though the training load hasn't changed, a classic fatigue signal."),
             suggestedDeloadDays: AppConfiguration.AICoach.deloadSuggestionDays,
             detectedDate: Date.now
         )

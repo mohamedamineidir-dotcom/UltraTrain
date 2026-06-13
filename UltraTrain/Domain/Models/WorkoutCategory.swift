@@ -10,12 +10,12 @@ enum WorkoutCategory: String, CaseIterable, Sendable, Codable {
 
     var displayName: String {
         switch self {
-        case .trailSpecific: return "Trail Specific"
-        case .speedWork: return "Speed Work"
-        case .hillTraining: return "Hill Training"
-        case .recovery: return "Recovery"
-        case .racePrep: return "Race Prep"
-        case .roadSpecific: return "Road Specific"
+        case .trailSpecific: return String(localized: "wcat.trail", defaultValue: "Trail Specific")
+        case .speedWork: return String(localized: "wcat.speed", defaultValue: "Speed Work")
+        case .hillTraining: return String(localized: "wcat.hill", defaultValue: "Hill Training")
+        case .recovery: return String(localized: "wcat.recovery", defaultValue: "Recovery")
+        case .racePrep: return String(localized: "wcat.racePrep", defaultValue: "Race Prep")
+        case .roadSpecific: return String(localized: "wcat.road", defaultValue: "Road Specific")
         }
     }
 

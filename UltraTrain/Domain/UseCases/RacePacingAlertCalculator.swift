@@ -27,7 +27,7 @@ enum RacePacingAlertCalculator {
                     id: UUID(),
                     type: .backOnPace,
                     severity: .positive,
-                    message: "Back on target pace!",
+                    message: String(localized: "pace.backOnPace", defaultValue: "Back on target pace!"),
                     deviationPercent: deviationPercent
                 )
             }
@@ -65,10 +65,10 @@ enum RacePacingAlertCalculator {
     ) -> String {
         let pct = Int(deviationPercent)
         return switch (type, severity) {
-        case (.tooFast, .major): "\(segmentName): Way too fast! \(pct)% above target"
-        case (.tooFast, .minor): "\(segmentName): Slightly fast, \(pct)% above target"
-        case (.tooSlow, .major): "\(segmentName): Falling behind! \(pct)% below target"
-        case (.tooSlow, .minor): "\(segmentName): Slightly slow, \(pct)% below target"
+        case (.tooFast, .major): String(localized: "rpac.tooFast", defaultValue: "\(segmentName): Way too fast! \(pct)% above target")
+        case (.tooFast, .minor): String(localized: "rpac.slightFast", defaultValue: "\(segmentName): Slightly fast, \(pct)% above target")
+        case (.tooSlow, .major): String(localized: "rpac.fallBehind", defaultValue: "\(segmentName): Falling behind! \(pct)% below target")
+        case (.tooSlow, .minor): String(localized: "rpac.slightSlow", defaultValue: "\(segmentName): Slightly slow, \(pct)% below target")
         default: ""
         }
     }

@@ -95,7 +95,7 @@ final class StravaImportService: StravaImportServiceProtocol {
             splits: splits,
             linkedSessionId: nil,
             linkedRaceId: nil,
-            notes: "Imported from Strava: \(activity.name)",
+            notes: String(localized: "import.strava", defaultValue: "Imported from Strava: \(activity.name)"),
             pausedDuration: 0,
             stravaActivityId: activity.id,
             isStravaImport: true,

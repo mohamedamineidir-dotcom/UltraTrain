@@ -108,10 +108,10 @@ extension EditRaceSheet {
 
     var locationSection: some View {
         glassCard(
-            title: "Location",
+            title: String(localized: "race.location", defaultValue: "Location"),
             icon: "mappin.and.ellipse",
             tint: Theme.Colors.info,
-            footer: "Used for weather forecasts in your race day estimate."
+            footer: String(localized: "race.location.footer", defaultValue: "Used for weather forecasts in your race day estimate.")
         ) {
             if let name = locationName {
                 HStack(spacing: Theme.Spacing.sm) {
@@ -132,7 +132,7 @@ extension EditRaceSheet {
                 .background(fieldChrome)
             } else {
                 pillButton(
-                    title: "Set race location",
+                    title: String(localized: "race.setLocation", defaultValue: "Set race location"),
                     icon: "mappin.and.ellipse",
                     tint: Theme.Colors.info
                 ) {
@@ -146,7 +146,7 @@ extension EditRaceSheet {
 
     var prioritySection: some View {
         glassCard(
-            title: "Priority",
+            title: String(localized: "race.priority", defaultValue: "Priority"),
             icon: "star.fill",
             tint: Theme.Colors.amberAccent
         ) {
@@ -164,7 +164,7 @@ extension EditRaceSheet {
 
     var goalSection: some View {
         glassCard(
-            title: "Goal",
+            title: String(localized: "race.goal", defaultValue: "Goal"),
             icon: "target",
             tint: Theme.Colors.success
         ) {
@@ -216,13 +216,13 @@ extension EditRaceSheet {
 
     var terrainSection: some View {
         glassCard(
-            title: "Terrain difficulty",
+            title: String(localized: "race.terrain", defaultValue: "Terrain difficulty"),
             icon: "mountain.2",
             tint: Theme.Colors.warning
         ) {
             Picker("Terrain", selection: $terrainDifficulty) {
                 ForEach(TerrainDifficulty.allCases, id: \.self) { terrain in
-                    Text(terrain.rawValue.capitalized).tag(terrain)
+                    Text(terrain.displayName).tag(terrain)
                 }
             }
             .pickerStyle(.segmented)
@@ -234,14 +234,14 @@ extension EditRaceSheet {
 
     var checkpointsSection: some View {
         glassCard(
-            title: "Checkpoints",
+            title: String(localized: "race.checkpoints", defaultValue: "Checkpoints"),
             icon: "mappin.circle.fill",
             tint: Theme.Colors.primary,
-            footer: "Import a GPX file or add waypoints manually for predicted split times."
+            footer: String(localized: "race.checkpoints.footer", defaultValue: "Import a GPX file or add waypoints manually for predicted split times.")
         ) {
             VStack(spacing: Theme.Spacing.sm) {
                 pillButton(
-                    title: "Import GPX course",
+                    title: String(localized: "race.importGPX", defaultValue: "Import GPX course"),
                     icon: "doc.badge.arrow.up",
                     tint: Theme.Colors.primary
                 ) {
@@ -250,7 +250,7 @@ extension EditRaceSheet {
 
                 if routeRepository != nil {
                     pillButton(
-                        title: "Pick from route library",
+                        title: String(localized: "race.pickRoute", defaultValue: "Pick from route library"),
                         icon: "map.fill",
                         tint: Theme.Colors.primary
                     ) {

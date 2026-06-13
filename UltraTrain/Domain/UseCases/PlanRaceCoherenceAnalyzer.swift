@@ -78,9 +78,9 @@ enum PlanRaceCoherenceAnalyzer {
                 id: UUID(),
                 type: .bRaceMismatch,
                 severity: .recommended,
-                title: "B-race may compromise A-race goal",
-                message: "Your B-race \(bRace.name) (\(bDate), ~\(bEffStr) effective km) is more demanding than your A-race \(targetRace.name) (~\(tEffStr) effective km), and falls only ~\(weeksBefore) weeks before. Recovery from an effort that size realistically takes 4-6 weeks, your A-race goal will likely be affected. Consider whether to swap A/B priority, set a more conservative A-race goal, or push the A-race further out.",
-                actionLabel: "Got it",
+                title: String(localized: "prc.title", defaultValue: "B-race may compromise A-race goal"),
+                message: String(localized: "prc.msg", defaultValue: "Your B-race \(bRace.name) (\(bDate), ~\(bEffStr) effective km) is more demanding than your A-race \(targetRace.name) (~\(tEffStr) effective km), and falls only ~\(weeksBefore) weeks before. Recovery from an effort that size realistically takes 4-6 weeks, your A-race goal will likely be affected. Consider whether to swap A/B priority, set a more conservative A-race goal, or push the A-race further out."),
+                actionLabel: String(localized: "common.gotIt", defaultValue: "Got it"),
                 affectedSessionIds: []
             ))
         }

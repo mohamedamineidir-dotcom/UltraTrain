@@ -15,12 +15,19 @@ enum SessionTemplateGenerator {
         /// Nil for normal templates: the session generator falls back to
         /// duration-based distance.
         let distanceKmOverride: Double?
+        /// Hard-set elevation gain (m) for templates whose D+ is a real
+        /// fixed figure rather than a fraction of the week's budget, the
+        /// `.race` session on race week, where the athlete will climb the
+        /// race's actual D+ (e.g. 4500 m) no matter how tapered the week.
+        /// Nil for normal templates: D+ = `targetElevationGainM × fraction`.
+        let elevationGainMOverride: Double?
 
         init(
             dayOffset: Int, type: SessionType, intensity: Intensity,
             durationSeconds: TimeInterval, elevationFraction: Double,
             description: String,
-            distanceKmOverride: Double? = nil
+            distanceKmOverride: Double? = nil,
+            elevationGainMOverride: Double? = nil
         ) {
             self.dayOffset = dayOffset
             self.type = type
@@ -29,6 +36,7 @@ enum SessionTemplateGenerator {
             self.elevationFraction = elevationFraction
             self.description = description
             self.distanceKmOverride = distanceKmOverride
+            self.elevationGainMOverride = elevationGainMOverride
         }
     }
 
@@ -113,7 +121,11 @@ enum SessionTemplateGenerator {
 
         let sessions = templates.map { template in
             let rawDuration = template.durationSeconds
-            let rawElevation = volume.targetElevationGainM * template.elevationFraction
+            // Race day carries the race's real D+ (e.g. 4500 m on a
+            // mountain ultra) via an explicit override; every other
+            // session scales D+ from the week's tapered elevation budget.
+            let rawElevation = template.elevationGainMOverride
+                ?? (volume.targetElevationGainM * template.elevationFraction)
 
             // Round duration to nearest 5min for non-precise session types
             let duration: TimeInterval
@@ -368,7 +380,7 @@ enum SessionTemplateGenerator {
     private static func formatSCDescription(_ workout: StrengthWorkout) -> String {
         var lines: [String] = []
         lines.append(workout.name)
-        lines.append("Duration: ~\(workout.estimatedDurationMinutes) min")
+        lines.append(String(localized: "stg.duration", defaultValue: "Duration: ~\(workout.estimatedDurationMinutes) min"))
         lines.append("")
         lines.append(workout.warmUpNotes)
         lines.append("")
@@ -398,24 +410,24 @@ enum SessionTemplateGenerator {
         case .full:
             switch config.phase {
             case .base:
-                return "Foundation phase: focus on learning proper form with moderate loads. Build the strength base that will support harder training later. Take 60-90 sec rest between sets."
+                return String(localized: "stg.030", defaultValue: "Foundation phase: focus on learning proper form with moderate loads. Build the strength base that will support harder training later. Take 60-90 sec rest between sets.")
             case .build:
-                return "Build phase: increase weight or difficulty. Add power movements. Quality over quantity, stop if form breaks down. Allow 4-6 hours between running and this session."
+                return String(localized: "stg.001", defaultValue: "Build phase: increase weight or difficulty. Add power movements. Quality over quantity, stop if form breaks down. Allow 4-6 hours between running and this session.")
             case .peak:
-                return "Peak maintenance: keep loads moderate, reduce volume. You're preserving strength, not building it. 2-3 sets max per exercise."
+                return String(localized: "stg.044", defaultValue: "Peak maintenance: keep loads moderate, reduce volume. You're preserving strength, not building it. 2-3 sets max per exercise.")
             default:
-                return "Keep it controlled and focused. Listen to your body."
+                return String(localized: "stg.034", defaultValue: "Keep it controlled and focused. Listen to your body.")
             }
         case .maintenance:
-            return "Quick maintenance session: hit the key movements with reduced volume. 2-3 sets, don't push to failure. Keep the neuromuscular connection alive."
+            return String(localized: "stg.045", defaultValue: "Quick maintenance session: hit the key movements with reduced volume. 2-3 sets, don't push to failure. Keep the neuromuscular connection alive.")
         case .activation:
             switch config.phase {
             case .taper:
-                return "Light activation only. No soreness allowed, your race is close. These movements keep muscles firing without creating fatigue."
+                return String(localized: "stg.035", defaultValue: "Light activation only. No soreness allowed, your race is close. These movements keep muscles firing without creating fatigue.")
             case .recovery:
-                return "Gentle activation to promote blood flow and recovery. Stop immediately if anything feels off."
+                return String(localized: "stg.031", defaultValue: "Gentle activation to promote blood flow and recovery. Stop immediately if anything feels off.")
             default:
-                return "Light activation routine. Wake up the stabilizers before your next run."
+                return String(localized: "stg.036", defaultValue: "Light activation routine. Wake up the stabilizers before your next run.")
             }
         }
     }
@@ -799,7 +811,7 @@ enum SessionTemplateGenerator {
         var result = templates
         for i in result.indices.reversed() where excess > 0 {
             if result[i].type == .recovery {
-                result[i] = tpl(result[i].dayOffset, .rest, .easy, 0, 0, "Rest day.")
+                result[i] = tpl(result[i].dayOffset, .rest, .easy, 0, 0, String(localized: "stg.068", defaultValue: "Rest day."))
                 excess -= 1
             }
         }
@@ -839,25 +851,25 @@ enum SessionTemplateGenerator {
         // fraction). Trail races retain the uphill day + hilly long run.
         let day3Type: SessionType = isRoadRace ? .tempo : .verticalGain
         let day3Desc: String = isRoadRace
-            ? "Short threshold tempo, dress rehearsal of race effort. Stay sharp."
-            : "Uphill session, slightly reduced. Maintain vertical efficiency."
+            ? String(localized: "stg.062", defaultValue: "Short threshold tempo, dress rehearsal of race effort. Stay sharp.")
+            : String(localized: "stg.066", defaultValue: "Uphill session, slightly reduced. Maintain vertical efficiency.")
         let longRunElevFraction: Double = isRoadRace ? 0 : 0.5
 
         return [
             tpl(0, .recovery, .easy, base.easyRun1Seconds * reductionFactor, 0,
-                "Easy run. Normal week structure, slightly reduced volume."),
+                String(localized: "stg.021", defaultValue: "Easy run. Normal week structure, slightly reduced volume.")),
             tpl(1, .intervals, .moderate, base.intervalSeconds * reductionFactor, 0,
-                "Intervals at normal intensity, slightly reduced volume. Stay sharp."),
+                String(localized: "stg.033", defaultValue: "Intervals at normal intensity, slightly reduced volume. Stay sharp.")),
             tpl(2, .recovery, .easy, base.easyRun1Seconds * reductionFactor, 0,
-                "Easy run at conversational pace."),
+                String(localized: "stg.010", defaultValue: "Easy run at conversational pace.")),
             tpl(3, day3Type, .moderate, base.vgSeconds * reductionFactor, 0,
                 day3Desc),
             tpl(4, .recovery, .easy, base.easyRun2Seconds * reductionFactor, 0,
-                "Easy run. Keep legs loose before race week."),
+                String(localized: "stg.015", defaultValue: "Easy run. Keep legs loose before race week.")),
             tpl(5, .longRun, .easy, volume.targetLongRunDurationSeconds * reductionFactor, longRunElevFraction,
-                "Long run at reduced volume. Save energy for race week."),
+                String(localized: "stg.037", defaultValue: "Long run at reduced volume. Save energy for race week.")),
             tpl(6, .rest, .easy, 0, 0,
-                "Rest day. Race week starts tomorrow."),
+                String(localized: "stg.054", defaultValue: "Rest day. Race week starts tomorrow.")),
         ]
     }
 
@@ -874,7 +886,7 @@ enum SessionTemplateGenerator {
         raceContext: RaceContext? = nil
     ) -> [SessionTemplate] {
         let raceDuration = raceContext?.estimatedDurationSeconds ?? 0
-        let raceName = raceContext?.name ?? "B-Race"
+        let raceName = raceContext?.name ?? String(localized: "stg.069", defaultValue: "B-Race")
         let raceDistKm = raceContext?.distanceKm ?? 30
         let raceElevM = raceContext?.elevationGainM ?? 0
         let raceDay = raceContext?.dayOffset ?? 5
@@ -883,9 +895,9 @@ enum SessionTemplateGenerator {
         if raceDistKm > 0 {
             let distStr = raceDistKm >= 100 ? String(format: "%.0f km", raceDistKm) : String(format: "%.1f km", raceDistKm)
             let elevStr = raceElevM > 0 ? " / D+ \(Int(raceElevM))m" : ""
-            raceDesc = "RACE: \(raceName) (\(distStr)\(elevStr)). Execute your plan. Trust your fitness."
+            raceDesc = String(localized: "stg.raceExec", defaultValue: "RACE: \(raceName) (\(distStr)\(elevStr)). Execute your plan. Trust your fitness.")
         } else {
-            raceDesc = "RACE DAY: \(raceName). Execute your plan. Trust your fitness."
+            raceDesc = String(localized: "stg.raceDayExec", defaultValue: "RACE DAY: \(raceName). Execute your plan. Trust your fitness.")
         }
 
         let baseEasy = volume?.baseSessionDurations.easyRun1Seconds ?? 2700
@@ -898,7 +910,8 @@ enum SessionTemplateGenerator {
             dayOffset: 5, type: .race, intensity: .maxEffort,
             durationSeconds: raceDuration, elevationFraction: 0,
             description: raceDesc,
-            distanceKmOverride: raceDistKm > 0 ? raceDistKm : nil
+            distanceKmOverride: raceDistKm > 0 ? raceDistKm : nil,
+            elevationGainMOverride: raceElevM > 0 ? raceElevM : nil
         )
 
         let baseTemplates: [SessionTemplate]
@@ -906,52 +919,52 @@ enum SessionTemplateGenerator {
             // Short race (<20K, low D+): almost normal week, 1 rest day before
             baseTemplates = [
                 tpl(0, .recovery, .easy, baseEasy * 0.85, 0,
-                    "Easy run. Normal routine."),
+                    String(localized: "stg.019", defaultValue: "Easy run. Normal routine.")),
                 tpl(1, .intervals, .moderate, baseInterval * 0.7, 0,
-                    "Short opener intervals. Stay sharp for race."),
+                    String(localized: "stg.060", defaultValue: "Short opener intervals. Stay sharp for race.")),
                 tpl(2, .recovery, .easy, baseEasy * 0.8, 0,
-                    "Easy run at conversational pace."),
+                    String(localized: "stg.010", defaultValue: "Easy run at conversational pace.")),
                 tpl(3, .recovery, .easy, baseEasy * 0.7, 0,
-                    "Easy run. Start freshening up."),
+                    String(localized: "stg.024", defaultValue: "Easy run. Start freshening up.")),
                 tpl(4, .rest, .easy, 0, 0,
-                    "Rest day. Prep gear and nutrition."),
+                    String(localized: "stg.049", defaultValue: "Rest day. Prep gear and nutrition.")),
                 raceTpl,
                 tpl(6, .recovery, .easy, baseEasy * 0.6, 0,
-                    "Easy shakeout. Recover from race effort."),
+                    String(localized: "stg.027", defaultValue: "Easy shakeout. Recover from race effort.")),
             ]
         } else if stressScore < 55 {
             // Medium race (20-40K or moderate D+): 1-2 rest days before
             baseTemplates = [
                 tpl(0, .recovery, .easy, baseEasy * 0.8, 0,
-                    "Easy run. Keep routine going."),
+                    String(localized: "stg.017", defaultValue: "Easy run. Keep routine going.")),
                 tpl(1, .recovery, .easy, baseEasy * 0.7, 0,
-                    "Easy run with strides at the end. Stay sharp."),
+                    String(localized: "stg.011", defaultValue: "Easy run with strides at the end. Stay sharp.")),
                 tpl(2, .recovery, .easy, baseEasy * 0.6, 0,
-                    "Short shakeout. Conversational pace."),
+                    String(localized: "stg.061", defaultValue: "Short shakeout. Conversational pace.")),
                 tpl(3, .rest, .easy, 0, 0,
-                    "Rest day. Prep gear, nutrition, and race plan."),
+                    String(localized: "stg.050", defaultValue: "Rest day. Prep gear, nutrition, and race plan.")),
                 tpl(4, .rest, .easy, 0, 0,
-                    "Rest day. Visualize your race. Stay confident."),
+                    String(localized: "stg.055", defaultValue: "Rest day. Visualize your race. Stay confident.")),
                 raceTpl,
                 tpl(6, .recovery, .easy, baseEasy * 0.5, 0,
-                    "Easy shakeout if legs allow. Walk/stretch if not."),
+                    String(localized: "stg.026", defaultValue: "Easy shakeout if legs allow. Walk/stretch if not.")),
             ]
         } else {
             // Long/hard race (50K+ or big D+): 2-3 rest days before
             baseTemplates = [
                 tpl(0, .recovery, .easy, baseEasy * 0.7, 0,
-                    "Easy run. Keep legs loose."),
+                    String(localized: "stg.016", defaultValue: "Easy run. Keep legs loose.")),
                 tpl(1, .recovery, .easy, baseEasy * 0.6, 0,
-                    "Short easy run. Light strides at the end."),
+                    String(localized: "stg.057", defaultValue: "Short easy run. Light strides at the end.")),
                 tpl(2, .rest, .easy, 0, 0,
-                    "Rest day. Begin carb-loading if needed."),
+                    String(localized: "stg.047", defaultValue: "Rest day. Begin carb-loading if needed.")),
                 tpl(3, .rest, .easy, 0, 0,
-                    "Rest day. Prep gear, nutrition, race plan."),
+                    String(localized: "stg.051", defaultValue: "Rest day. Prep gear, nutrition, race plan.")),
                 tpl(4, .recovery, .easy, baseEasy * 0.35, 0,
-                    "Very short shakeout. 10-15 min to stay loose."),
+                    String(localized: "stg.067", defaultValue: "Very short shakeout. 10-15 min to stay loose.")),
                 raceTpl,
                 tpl(6, .rest, .easy, 0, 0,
-                    "Complete rest. Body needs recovery after a big effort."),
+                    String(localized: "stg.003", defaultValue: "Complete rest. Body needs recovery after a big effort.")),
             ]
         }
 
@@ -970,7 +983,7 @@ enum SessionTemplateGenerator {
         raceContext: RaceContext? = nil
     ) -> [SessionTemplate] {
         let raceDuration = raceContext?.estimatedDurationSeconds ?? 0
-        let raceName = raceContext?.name ?? "C-Race"
+        let raceName = raceContext?.name ?? String(localized: "stg.070", defaultValue: "C-Race")
         let raceDistKm = raceContext?.distanceKm ?? 20
         let raceElevM = raceContext?.elevationGainM ?? 0
         let raceDay = raceContext?.dayOffset ?? 5
@@ -979,9 +992,9 @@ enum SessionTemplateGenerator {
         if raceDistKm > 0 {
             let distStr = raceDistKm >= 100 ? String(format: "%.0f km", raceDistKm) : String(format: "%.1f km", raceDistKm)
             let elevStr = raceElevM > 0 ? " / D+ \(Int(raceElevM))m" : ""
-            raceDesc = "RACE: \(raceName) (\(distStr)\(elevStr)). Use as a hard training effort."
+            raceDesc = String(localized: "stg.raceHard", defaultValue: "RACE: \(raceName) (\(distStr)\(elevStr)). Use as a hard training effort.")
         } else {
-            raceDesc = "RACE DAY: \(raceName). Use as a hard training effort."
+            raceDesc = String(localized: "stg.raceDayHard", defaultValue: "RACE DAY: \(raceName). Use as a hard training effort.")
         }
 
         let baseEasy = volume?.baseSessionDurations.easyRun1Seconds ?? 2700
@@ -991,31 +1004,32 @@ enum SessionTemplateGenerator {
             dayOffset: 5, type: .race, intensity: .maxEffort,
             durationSeconds: raceDuration, elevationFraction: 0,
             description: raceDesc,
-            distanceKmOverride: raceDistKm > 0 ? raceDistKm : nil
+            distanceKmOverride: raceDistKm > 0 ? raceDistKm : nil,
+            elevationGainMOverride: raceElevM > 0 ? raceElevM : nil
         )
 
         let baseTemplates: [SessionTemplate]
         if raceDistKm < 30 {
             // Short C-race: keep a quality session, almost normal week
             baseTemplates = [
-                tpl(0, .recovery, .easy, baseEasy * 0.9, 0, "Easy run. Normal start to the week."),
-                tpl(1, .intervals, .moderate, baseInterval * 0.7, 0, "Opener intervals. Stay sharp for race."),
-                tpl(2, .recovery, .easy, baseEasy * 0.85, 0, "Easy run at conversational pace."),
-                tpl(3, .recovery, .easy, baseEasy * 0.75, 0, "Easy run. Freshening up."),
-                tpl(4, .rest, .easy, 0, 0, "Rest day. Prepare gear."),
+                tpl(0, .recovery, .easy, baseEasy * 0.9, 0, String(localized: "stg.020", defaultValue: "Easy run. Normal start to the week.")),
+                tpl(1, .intervals, .moderate, baseInterval * 0.7, 0, String(localized: "stg.043", defaultValue: "Opener intervals. Stay sharp for race.")),
+                tpl(2, .recovery, .easy, baseEasy * 0.85, 0, String(localized: "stg.010", defaultValue: "Easy run at conversational pace.")),
+                tpl(3, .recovery, .easy, baseEasy * 0.75, 0, String(localized: "stg.013", defaultValue: "Easy run. Freshening up.")),
+                tpl(4, .rest, .easy, 0, 0, String(localized: "stg.053", defaultValue: "Rest day. Prepare gear.")),
                 raceTpl,
-                tpl(6, .recovery, .easy, baseEasy * 0.6, 0, "Easy recovery run. Shake out race legs."),
+                tpl(6, .recovery, .easy, baseEasy * 0.6, 0, String(localized: "stg.009", defaultValue: "Easy recovery run. Shake out race legs.")),
             ]
         } else {
             // Longer C-race (30K+): drop quality, more easy days before
             baseTemplates = [
-                tpl(0, .recovery, .easy, baseEasy * 0.85, 0, "Easy run. Normal start to the week."),
-                tpl(1, .recovery, .easy, baseEasy * 0.8, 0, "Easy run at conversational pace."),
-                tpl(2, .recovery, .easy, baseEasy * 0.7, 0, "Easy run. Starting to freshen up."),
-                tpl(3, .recovery, .easy, baseEasy * 0.5, 0, "Short easy run."),
-                tpl(4, .rest, .easy, 0, 0, "Rest day. Prepare gear and nutrition."),
+                tpl(0, .recovery, .easy, baseEasy * 0.85, 0, String(localized: "stg.020", defaultValue: "Easy run. Normal start to the week.")),
+                tpl(1, .recovery, .easy, baseEasy * 0.8, 0, String(localized: "stg.010", defaultValue: "Easy run at conversational pace.")),
+                tpl(2, .recovery, .easy, baseEasy * 0.7, 0, String(localized: "stg.025", defaultValue: "Easy run. Starting to freshen up.")),
+                tpl(3, .recovery, .easy, baseEasy * 0.5, 0, String(localized: "stg.058", defaultValue: "Short easy run.")),
+                tpl(4, .rest, .easy, 0, 0, String(localized: "stg.052", defaultValue: "Rest day. Prepare gear and nutrition.")),
                 raceTpl,
-                tpl(6, .recovery, .easy, baseEasy * 0.5, 0, "Easy recovery run. Shake out race legs."),
+                tpl(6, .recovery, .easy, baseEasy * 0.5, 0, String(localized: "stg.009", defaultValue: "Easy recovery run. Shake out race legs.")),
             ]
         }
 
@@ -1055,7 +1069,7 @@ enum SessionTemplateGenerator {
 
         let usedDays = Set(shifted.map(\.dayOffset))
         for day in 0...6 where !usedDays.contains(day) {
-            shifted.append(tpl(day, .rest, .easy, 0, 0, "Rest day. Normal weekly start."))
+            shifted.append(tpl(day, .rest, .easy, 0, 0, String(localized: "stg.048", defaultValue: "Rest day. Normal weekly start.")))
         }
 
         return shifted.sorted { $0.dayOffset < $1.dayOffset }
@@ -1106,76 +1120,76 @@ enum SessionTemplateGenerator {
         let lrElevFraction055: Double = isRoadRace ? 0 : 0.55
         let day4Type: SessionType = isRoadRace ? .tempo : .verticalGain
         let day4Desc: String = isRoadRace
-            ? "Moderate tempo. Rebuild threshold feel without overloading fresh-from-race legs."
-            : "Uphill session at moderate effort. Rebuild vertical strength."
+            ? String(localized: "stg.040", defaultValue: "Moderate tempo. Rebuild threshold feel without overloading fresh-from-race legs.")
+            : String(localized: "stg.065", defaultValue: "Uphill session at moderate effort. Rebuild vertical strength.")
 
         let baseTemplates: [SessionTemplate]
         if raceKm > 100 {
             // Ultra 100K+: 2 rest days, easy mid-week, short quality Thu, shortened long run
             baseTemplates = [
-                tpl(0, .rest, .easy, 0, 0, "Complete rest. Recover from a big effort."),
-                tpl(1, .rest, .easy, 0, 0, "Rest. Walk if you feel like it."),
+                tpl(0, .rest, .easy, 0, 0, String(localized: "stg.005", defaultValue: "Complete rest. Recover from a big effort.")),
+                tpl(1, .rest, .easy, 0, 0, String(localized: "stg.056", defaultValue: "Rest. Walk if you feel like it.")),
                 tpl(2, .recovery, .easy, base.easyRun1Seconds * 0.5, 0,
-                    "First easy jog. Very short and gentle."),
+                    String(localized: "stg.029", defaultValue: "First easy jog. Very short and gentle.")),
                 tpl(3, .recovery, .easy, base.easyRun1Seconds * 0.6, 0,
-                    "Easy run. Gradually rebuilding."),
+                    String(localized: "stg.014", defaultValue: "Easy run. Gradually rebuilding.")),
                 tpl(4, .intervals, .moderate, base.intervalSeconds * 0.5, 0,
-                    "Short intervals at moderate effort. Reawaken leg speed."),
+                    String(localized: "stg.059", defaultValue: "Short intervals at moderate effort. Reawaken leg speed.")),
                 tpl(5, .recovery, .easy, base.easyRun2Seconds * 0.6, 0,
-                    "Easy run. Pre-long-run loosener."),
+                    String(localized: "stg.022", defaultValue: "Easy run. Pre-long-run loosener.")),
                 tpl(6, .longRun, .easy, longRun * 0.55, lrElevFraction04,
-                    "Shortened long run. Rebuild aerobic base gently."),
+                    String(localized: "stg.063", defaultValue: "Shortened long run. Rebuild aerobic base gently.")),
             ]
         } else if raceKm > 50 {
             // 50-100K: 1 rest day, easy Tue, quality Wed-Thu, shortened long run
             baseTemplates = [
-                tpl(0, .rest, .easy, 0, 0, "Complete rest. Let your body recover."),
+                tpl(0, .rest, .easy, 0, 0, String(localized: "stg.004", defaultValue: "Complete rest. Let your body recover.")),
                 tpl(1, .recovery, .easy, base.easyRun1Seconds * 0.6, 0,
-                    "First easy jog. Short and gentle."),
+                    String(localized: "stg.028", defaultValue: "First easy jog. Short and gentle.")),
                 tpl(2, .recovery, .easy, base.easyRun1Seconds * 0.7, 0,
-                    "Easy recovery run. Keep it relaxed."),
+                    String(localized: "stg.008", defaultValue: "Easy recovery run. Keep it relaxed.")),
                 tpl(3, .intervals, .moderate, base.intervalSeconds * 0.6, 0,
-                    "Moderate intervals. Reintroduce quality, don't force it."),
+                    String(localized: "stg.039", defaultValue: "Moderate intervals. Reintroduce quality, don't force it.")),
                 tpl(4, .recovery, .easy, base.easyRun2Seconds * 0.7, 0,
-                    "Easy run. Legs should be feeling better."),
+                    String(localized: "stg.018", defaultValue: "Easy run. Legs should be feeling better.")),
                 tpl(5, .recovery, .easy, base.easyRun2Seconds * 0.65, 0,
-                    "Easy pre-long-run loosener."),
+                    String(localized: "stg.007", defaultValue: "Easy pre-long-run loosener.")),
                 tpl(6, .longRun, .easy, longRun * 0.65, lrElevFraction045,
-                    "Shortened long run. Rebuild the aerobic engine."),
+                    String(localized: "stg.064", defaultValue: "Shortened long run. Rebuild the aerobic engine.")),
             ]
         } else if raceKm > 25 {
             // 25-50K: 1 rest day, quick return to quality + long run
             baseTemplates = [
-                tpl(0, .rest, .easy, 0, 0, "Rest day after your race."),
+                tpl(0, .rest, .easy, 0, 0, String(localized: "stg.046", defaultValue: "Rest day after your race.")),
                 tpl(1, .recovery, .easy, base.easyRun1Seconds * 0.7, 0,
-                    "Easy jog. Shake out race legs."),
+                    String(localized: "stg.006", defaultValue: "Easy jog. Shake out race legs.")),
                 tpl(2, .recovery, .easy, base.easyRun1Seconds * 0.75, 0,
-                    "Easy run at conversational pace."),
+                    String(localized: "stg.010", defaultValue: "Easy run at conversational pace.")),
                 tpl(3, .intervals, .moderate, base.intervalSeconds * 0.65, 0,
-                    "Moderate intervals. Reintroduce leg speed."),
+                    String(localized: "stg.038", defaultValue: "Moderate intervals. Reintroduce leg speed.")),
                 tpl(4, .recovery, .easy, base.easyRun2Seconds * 0.75, 0,
-                    "Easy run. Building back."),
+                    String(localized: "stg.012", defaultValue: "Easy run. Building back.")),
                 tpl(5, .recovery, .easy, base.easyRun2Seconds * 0.7, 0,
-                    "Easy pre-long-run loosener."),
+                    String(localized: "stg.007", defaultValue: "Easy pre-long-run loosener.")),
                 tpl(6, .longRun, .easy, longRun * 0.7, lrElevFraction05,
-                    "Moderately shortened long run. Back toward normal."),
+                    String(localized: "stg.041", defaultValue: "Moderately shortened long run. Back toward normal.")),
             ]
         } else {
             // < 25K: almost normal week, fast return to quality + near-full long run
             baseTemplates = [
-                tpl(0, .rest, .easy, 0, 0, "Rest day after your race."),
+                tpl(0, .rest, .easy, 0, 0, String(localized: "stg.046", defaultValue: "Rest day after your race.")),
                 tpl(1, .recovery, .easy, base.easyRun1Seconds * 0.8, 0,
-                    "Easy run. Shake out race effort."),
+                    String(localized: "stg.023", defaultValue: "Easy run. Shake out race effort.")),
                 tpl(2, .intervals, .moderate, base.intervalSeconds * 0.7, 0,
-                    "Intervals at moderate effort. Maintain sharpness."),
+                    String(localized: "stg.032", defaultValue: "Intervals at moderate effort. Maintain sharpness.")),
                 tpl(3, .recovery, .easy, base.easyRun1Seconds * 0.8, 0,
-                    "Easy run at conversational pace."),
+                    String(localized: "stg.010", defaultValue: "Easy run at conversational pace.")),
                 tpl(4, day4Type, .moderate, base.vgSeconds * 0.7, 0,
                     day4Desc),
                 tpl(5, .recovery, .easy, base.easyRun2Seconds * 0.8, 0,
-                    "Easy pre-long-run loosener."),
+                    String(localized: "stg.007", defaultValue: "Easy pre-long-run loosener.")),
                 tpl(6, .longRun, .easy, longRun * 0.8, lrElevFraction055,
-                    "Near-normal long run. Back on track."),
+                    String(localized: "stg.042", defaultValue: "Near-normal long run. Back on track.")),
             ]
         }
 
@@ -1231,7 +1245,7 @@ enum SessionTemplateGenerator {
         let hours = duration / 3600.0
         guard hours > 1.0 else { return nil }
 
-        var notes = "Carry water and fuel for this session."
+        var notes = String(localized: "stg.002", defaultValue: "Carry water and fuel for this session.")
 
         if hours > 1.5 {
             // T12: carb/h target scales by race distance, experience,
@@ -1246,10 +1260,10 @@ enum SessionTemplateGenerator {
                 experience: experience,
                 philosophy: philosophy
             )
-            notes += " Aim for ~\(Int(range.lower))–\(Int(range.upper)) g carbs/hour (gels, bars, or real food)."
+            notes += String(localized: "stg.carb", defaultValue: " Aim for ~\(Int(range.lower))–\(Int(range.upper)) g carbs/hour (gels, bars, or real food).")
         }
         if hours > 2.0 {
-            notes += " Practice your race-day nutrition plan. Train your gut."
+            notes += String(localized: "stg.071", defaultValue: " Practice your race-day nutrition plan. Train your gut.")
         }
         return notes
     }

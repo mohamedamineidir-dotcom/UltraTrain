@@ -216,7 +216,7 @@ extension WorkoutProgressionEngine {
         let workText = formatDuration(workSec)
         let restText = formatDuration(restSec)
         let zoneText = zoneLabel(for: focus)
-        return "\(reps)\u{00D7}\(workText) \(zoneText) / \(restText) jog"
+        return String(localized: "wpe.intervalDesc", defaultValue: "\(reps)\u{00D7}\(workText) \(zoneText) / \(restText) jog")
     }
 
     static func formatVGDescription(
@@ -228,7 +228,7 @@ extension WorkoutProgressionEngine {
         let workText = formatDuration(workSec)
         let restText = formatDuration(restSec)
         let zoneText = vgZoneLabel(for: focus)
-        return "\(reps)\u{00D7}\(workText) \(zoneText) / \(restText) jog down"
+        return String(localized: "wpe.vgDesc", defaultValue: "\(reps)\u{00D7}\(workText) \(zoneText) / \(restText) jog down")
     }
 
     // MARK: - Rounding
@@ -253,21 +253,21 @@ extension WorkoutProgressionEngine {
 
     private static func zoneLabel(for focus: PhaseFocus) -> String {
         switch focus {
-        case .threshold30:      "at threshold (Z3-4)"
-        case .vo2max:           "at VO2max (Z4-5)"
-        case .threshold60:      "at threshold (Z3)"
-        case .sharpening:       "at threshold (Z3)"
-        case .postRaceRecovery: "easy (Z2)"
+        case .threshold30:      String(localized: "wpe.zone.threshold34", defaultValue: "at threshold (Z3-4)")
+        case .vo2max:           String(localized: "wpe.zone.vo2max", defaultValue: "at VO2max (Z4-5)")
+        case .threshold60:      String(localized: "wpe.zone.threshold3", defaultValue: "at threshold (Z3)")
+        case .sharpening:       String(localized: "wpe.zone.threshold3", defaultValue: "at threshold (Z3)")
+        case .postRaceRecovery: String(localized: "wpe.zone.easy", defaultValue: "easy (Z2)")
         }
     }
 
     private static func vgZoneLabel(for focus: PhaseFocus) -> String {
         switch focus {
-        case .threshold30:      "climb at threshold (Z3)"
-        case .vo2max:           "steep climb at VO2max (Z4-5)"
-        case .threshold60:      "climb at threshold (Z3-4)"
-        case .sharpening:       "easy climb (Z2)"
-        case .postRaceRecovery: "easy climb (Z2)"
+        case .threshold30:      String(localized: "wpe.vgzone.threshold3", defaultValue: "climb at threshold (Z3)")
+        case .vo2max:           String(localized: "wpe.vgzone.vo2max", defaultValue: "steep climb at VO2max (Z4-5)")
+        case .threshold60:      String(localized: "wpe.vgzone.threshold34", defaultValue: "climb at threshold (Z3-4)")
+        case .sharpening:       String(localized: "wpe.vgzone.easy", defaultValue: "easy climb (Z2)")
+        case .postRaceRecovery: String(localized: "wpe.vgzone.easy", defaultValue: "easy climb (Z2)")
         }
     }
 }

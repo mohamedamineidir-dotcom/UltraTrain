@@ -226,9 +226,9 @@ struct NutritionProductCard: View {
     /// product name for brandless generics.
     private var displayTitle: String {
         if let brand = entry.product.brand, !brand.isEmpty {
-            return "\(brand) \(entry.product.name)"
+            return "\(brand) \(entry.product.displayName)"
         }
-        return entry.product.name
+        return entry.product.displayName
     }
 
     /// Secondary line: type + caffeine/fluid hints. Tells the athlete

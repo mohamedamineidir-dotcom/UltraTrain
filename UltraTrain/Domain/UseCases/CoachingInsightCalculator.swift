@@ -22,12 +22,15 @@ enum CoachingInsightCalculator {
 
         // 1. Race week (highest priority)
         if let race = nextRace, let days = daysUntilRace, days >= 0, days <= 7 {
+            let dayWord = days == 1
+                ? String(localized: "insight.day", defaultValue: "day")
+                : String(localized: "insight.days", defaultValue: "days")
             insights.append(CoachingInsight(
                 id: UUID(),
                 type: .raceWeek,
                 category: .guidance,
-                title: "Race Week",
-                message: "\(race.name) is in \(days) day\(days == 1 ? "" : "s"). Keep the volume low, legs fresh. You've done the work.",
+                title: String(localized: "insight.raceWeek.title", defaultValue: "Race Week"),
+                message: String(localized: "insight.raceWeek.message", defaultValue: "\(race.name) is in \(days) \(dayWord). Keep the volume low, legs fresh. You've done the work."),
                 icon: "flag.checkered"
             ))
         }
@@ -39,8 +42,8 @@ enum CoachingInsightCalculator {
                 id: UUID(),
                 type: .readyToRace,
                 category: .positive,
-                title: "Race Ready",
-                message: "You're in great shape for \(race.name). Your form is strong right now.",
+                title: String(localized: "insight.readyToRace.title", defaultValue: "Race Ready"),
+                message: String(localized: "insight.readyToRace.message", defaultValue: "You're in great shape for \(race.name). Your form is strong right now."),
                 icon: "star.fill"
             ))
         }
@@ -52,8 +55,8 @@ enum CoachingInsightCalculator {
                 id: UUID(),
                 type: .taperGuidance,
                 category: .guidance,
-                title: "Taper Phase",
-                message: "Cut the volume but keep some intensity. Feeling flat or restless is totally normal during taper.",
+                title: String(localized: "insight.taper.title", defaultValue: "Taper Phase"),
+                message: String(localized: "insight.taper.message", defaultValue: "Cut the volume but keep some intensity. Feeling flat or restless is totally normal during taper."),
                 icon: "arrow.down.right.circle"
             ))
         }
@@ -65,8 +68,8 @@ enum CoachingInsightCalculator {
                 id: UUID(),
                 type: .formPeaking,
                 category: .positive,
-                title: "Form is Peaking",
-                message: "Your fitness-to-fatigue balance is excellent right now. Great day for a quality session.",
+                title: String(localized: "insight.formPeaking.title", defaultValue: "Form is Peaking"),
+                message: String(localized: "insight.formPeaking.message", defaultValue: "Your fitness-to-fatigue balance is excellent right now. Great day for a quality session."),
                 icon: "bolt.fill"
             ))
         }
@@ -77,8 +80,8 @@ enum CoachingInsightCalculator {
                 id: UUID(),
                 type: .recoveryNeeded,
                 category: .warning,
-                title: "Recovery Needed",
-                message: "Fatigue is piling up. Prioritize sleep, good food, and easy sessions this week.",
+                title: String(localized: "insight.recoveryNeeded.title", defaultValue: "Recovery Needed"),
+                message: String(localized: "insight.recoveryNeeded.message", defaultValue: "Fatigue is piling up. Prioritize sleep, good food, and easy sessions this week."),
                 icon: "bed.double.fill"
             ))
         }
@@ -89,8 +92,8 @@ enum CoachingInsightCalculator {
                 id: UUID(),
                 type: .detrainingRisk,
                 category: .warning,
-                title: "Detraining Risk",
-                message: "Training load has been dropping. Stay consistent to protect what you've built.",
+                title: String(localized: "insight.detraining.title", defaultValue: "Detraining Risk"),
+                message: String(localized: "insight.detraining.message", defaultValue: "Training load has been dropping. Stay consistent to protect what you've built."),
                 icon: "arrow.down.circle"
             ))
         }
@@ -103,7 +106,7 @@ enum CoachingInsightCalculator {
                 id: UUID(),
                 type: .phaseTransition,
                 category: .guidance,
-                title: "Entering \(current.phase.rawValue.capitalized) Phase",
+                title: String(localized: "insight.phaseTransition.title", defaultValue: "Entering \(localizedPhaseName(current.phase)) Phase"),
                 message: phaseMessage,
                 icon: "arrow.right.circle"
             ))
@@ -115,8 +118,8 @@ enum CoachingInsightCalculator {
                 id: UUID(),
                 type: .consistentTraining,
                 category: .positive,
-                title: "Great Consistency",
-                message: "You're nailing the plan this week. Keep it up.",
+                title: String(localized: "insight.consistency.title", defaultValue: "Great Consistency"),
+                message: String(localized: "insight.consistency.message", defaultValue: "You're nailing the plan this week. Keep it up."),
                 icon: "checkmark.seal.fill"
             ))
         }
@@ -129,8 +132,8 @@ enum CoachingInsightCalculator {
                     id: UUID(),
                     type: .volumeOnTrack,
                     category: .positive,
-                    title: "Volume on Track",
-                    message: "Weekly distance is right where it needs to be. Solid work.",
+                    title: String(localized: "insight.volumeOnTrack.title", defaultValue: "Volume on Track"),
+                    message: String(localized: "insight.volumeOnTrack.message", defaultValue: "Weekly distance is right where it needs to be. Solid work."),
                     icon: "chart.bar.fill"
                 ))
             }
@@ -145,8 +148,8 @@ enum CoachingInsightCalculator {
                     id: UUID(),
                     type: .longRunReminder,
                     category: .guidance,
-                    title: "Long Run Ahead",
-                    message: "Your long run is still coming this week. Plan your route and nutrition in advance.",
+                    title: String(localized: "insight.longRun.title", defaultValue: "Long Run Ahead"),
+                    message: String(localized: "insight.longRun.message", defaultValue: "Your long run is still coming this week. Plan your route and nutrition in advance."),
                     icon: "figure.run"
                 ))
             }
@@ -159,8 +162,8 @@ enum CoachingInsightCalculator {
                     id: UUID(),
                     type: .poorSleepRecovery,
                     category: .warning,
-                    title: "Low Recovery",
-                    message: "Recovery score is \(recovery.overallScore)/100. \(recovery.recommendation)",
+                    title: String(localized: "insight.lowRecovery.title", defaultValue: "Low Recovery"),
+                    message: String(localized: "insight.lowRecovery.message", defaultValue: "Recovery score is \(recovery.overallScore)/100. \(recovery.recommendation)"),
                     icon: "moon.zzz.fill"
                 ))
             } else if recovery.sleepQualityScore < AppConfiguration.Recovery.lowRecoveryThreshold
@@ -169,8 +172,8 @@ enum CoachingInsightCalculator {
                     id: UUID(),
                     type: .sleepDeficit,
                     category: .warning,
-                    title: "Sleep Deficit",
-                    message: "Sleep quality has been low. Try getting to bed earlier tonight.",
+                    title: String(localized: "insight.sleepDeficit.title", defaultValue: "Sleep Deficit"),
+                    message: String(localized: "insight.sleepDeficit.message", defaultValue: "Sleep quality has been low. Try getting to bed earlier tonight."),
                     icon: "bed.double.fill"
                 ))
             } else if recovery.overallScore >= 80 {
@@ -178,8 +181,8 @@ enum CoachingInsightCalculator {
                     id: UUID(),
                     type: .goodRecovery,
                     category: .positive,
-                    title: "Well Recovered",
-                    message: "Recovery score is \(recovery.overallScore)/100. Good day for a quality session.",
+                    title: String(localized: "insight.wellRecovered.title", defaultValue: "Well Recovered"),
+                    message: String(localized: "insight.wellRecovered.message", defaultValue: "Recovery score is \(recovery.overallScore)/100. Good day for a quality session."),
                     icon: "battery.100.bolt"
                 ))
             }
@@ -191,8 +194,8 @@ enum CoachingInsightCalculator {
                 id: UUID(),
                 type: .hrvDeclining,
                 category: .warning,
-                title: "HRV Declining",
-                message: "Your heart rate variability has dropped. Consider going easier this week.",
+                title: String(localized: "insight.hrvDeclining.title", defaultValue: "HRV Declining"),
+                message: String(localized: "insight.hrvDeclining.message", defaultValue: "Your heart rate variability has dropped. Consider going easier this week."),
                 icon: "heart.text.square"
             ))
         }
@@ -203,8 +206,8 @@ enum CoachingInsightCalculator {
                 id: UUID(),
                 type: .hrvImproving,
                 category: .positive,
-                title: "HRV Improving",
-                message: "HRV is trending up. Your body is responding well to the training.",
+                title: String(localized: "insight.hrvImproving.title", defaultValue: "HRV Improving"),
+                message: String(localized: "insight.hrvImproving.message", defaultValue: "HRV is trending up. Your body is responding well to the training."),
                 icon: "heart.text.square"
             ))
         }
@@ -216,8 +219,8 @@ enum CoachingInsightCalculator {
                 id: UUID(),
                 type: .readyForQualitySession,
                 category: .positive,
-                title: "Ready for Quality Work",
-                message: "Readiness is high. \(readiness.sessionRecommendation.displayText).",
+                title: String(localized: "insight.readyForQuality.title", defaultValue: "Ready for Quality Work"),
+                message: String(localized: "insight.readyForQuality.message", defaultValue: "Readiness is high. \(readiness.sessionRecommendation.displayText)."),
                 icon: "bolt.heart.fill"
             ))
         }
@@ -229,8 +232,8 @@ enum CoachingInsightCalculator {
                 id: UUID(),
                 type: .sessionTooIntenseForReadiness,
                 category: .warning,
-                title: "Low Readiness",
-                message: "\(readiness.sessionRecommendation.displayText). Your body needs more recovery.",
+                title: String(localized: "insight.lowReadiness.title", defaultValue: "Low Readiness"),
+                message: String(localized: "insight.lowReadiness.message", defaultValue: "\(readiness.sessionRecommendation.displayText). Your body needs more recovery."),
                 icon: "exclamationmark.triangle"
             ))
         }
@@ -256,17 +259,29 @@ enum CoachingInsightCalculator {
     private static func phaseGuidance(_ phase: TrainingPhase) -> String {
         switch phase {
         case .base:
-            "Building your aerobic foundation. Keep most runs easy and gradually increase volume."
+            String(localized: "insight.guidance.base", defaultValue: "Building your aerobic foundation. Keep most runs easy and gradually increase volume.")
         case .build:
-            "Time to add race-specific work. Tempo, climbing, and longer efforts alongside your long runs."
+            String(localized: "insight.guidance.build", defaultValue: "Time to add race-specific work. Tempo, climbing, and longer efforts alongside your long runs.")
         case .peak:
-            "Quality over quantity now. Your hardest sessions happen here, but total volume levels off."
+            String(localized: "insight.guidance.peak", defaultValue: "Quality over quantity now. Your hardest sessions happen here, but total volume levels off.")
         case .taper:
-            "Cutting volume but keeping some intensity. Your body is absorbing everything you've built."
+            String(localized: "insight.guidance.taper", defaultValue: "Cutting volume but keeping some intensity. Your body is absorbing everything you've built.")
         case .recovery:
-            "Easy effort only. Let your body fully recover before the next block."
+            String(localized: "insight.guidance.recovery", defaultValue: "Easy effort only. Let your body fully recover before the next block.")
         case .race:
-            "Race week. Stay loose, eat well, hydrate, and trust your preparation."
+            String(localized: "insight.guidance.race", defaultValue: "Race week. Stay loose, eat well, hydrate, and trust your preparation.")
+        }
+    }
+
+    /// Localized short phase name for the "Entering X Phase" insight title.
+    private static func localizedPhaseName(_ phase: TrainingPhase) -> String {
+        switch phase {
+        case .base:     String(localized: "insight.phase.base", defaultValue: "Base")
+        case .build:    String(localized: "insight.phase.build", defaultValue: "Build")
+        case .peak:     String(localized: "insight.phase.peak", defaultValue: "Peak")
+        case .taper:    String(localized: "insight.phase.taper", defaultValue: "Taper")
+        case .recovery: String(localized: "insight.phase.recovery", defaultValue: "Recovery")
+        case .race:     String(localized: "insight.phase.race", defaultValue: "Race")
         }
     }
 }

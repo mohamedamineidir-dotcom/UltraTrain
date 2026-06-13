@@ -400,24 +400,24 @@ enum RoadIntervalLibrary {
 
     private static let speedTemplates: [Template] = [
         Template(
-            name: "200m Repeats",
-            category: .speed, description: "Fast 200m reps to build leg speed and running economy.",
+            name: String(localized: "ril.001", defaultValue: "200m Repeats"),
+            category: .speed, description: String(localized: "ril.002", defaultValue: "Fast 200m reps to build leg speed and running economy."),
             targetPaceZone: .repetition, repDistanceM: 200, repCount: 10,
             recoverySeconds: 60, recoveryType: .jog, totalWorkMinutes: 8,
             applicablePhases: [.base, .build], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
             minExperience: .beginner
         ),
         Template(
-            name: "400m Repeats",
-            category: .speed, description: "Classic 400m repeats at R-pace. Neuromuscular speed work.",
+            name: String(localized: "ril.003", defaultValue: "400m Repeats"),
+            category: .speed, description: String(localized: "ril.004", defaultValue: "Classic 400m repeats at R-pace. Neuromuscular speed work."),
             targetPaceZone: .repetition, repDistanceM: 400, repCount: 8,
             recoverySeconds: 90, recoveryType: .jog, totalWorkMinutes: 12,
             applicablePhases: [.base, .build], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
             minExperience: .beginner
         ),
         Template(
-            name: "600m Repeats",
-            category: .speed, description: "Longer speed reps bridging to VO2max work.",
+            name: String(localized: "ril.005", defaultValue: "600m Repeats"),
+            category: .speed, description: String(localized: "ril.006", defaultValue: "Longer speed reps bridging to VO2max work."),
             targetPaceZone: .repetition, repDistanceM: 600, repCount: 6,
             recoverySeconds: 90, recoveryType: .jog, totalWorkMinutes: 12,
             applicablePhases: [.base, .build], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
@@ -429,48 +429,48 @@ enum RoadIntervalLibrary {
 
     private static let vo2maxTemplates: [Template] = [
         Template(
-            name: "800m VO2max",
-            category: .vo2max, description: "6×800m at I-pace. Core VO2max development.",
+            name: String(localized: "ril.007", defaultValue: "800m VO2max"),
+            category: .vo2max, description: String(localized: "ril.008", defaultValue: "6×800m at I-pace. Core VO2max development."),
             targetPaceZone: .interval, repDistanceM: 800, repCount: 6,
             recoverySeconds: 120, recoveryType: .jog, totalWorkMinutes: 18,
             applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
             minExperience: .beginner
         ),
         Template(
-            name: "1000m VO2max",
-            category: .vo2max, description: "5×1000m at I-pace. Staple VO2max interval session.",
+            name: String(localized: "ril.009", defaultValue: "1000m VO2max"),
+            category: .vo2max, description: String(localized: "ril.010", defaultValue: "5×1000m at I-pace. Staple VO2max interval session."),
             targetPaceZone: .interval, repDistanceM: 1000, repCount: 5,
             recoverySeconds: 150, recoveryType: .jog, totalWorkMinutes: 20,
             applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
             minExperience: .beginner
         ),
         Template(
-            name: "1200m VO2max",
-            category: .vo2max, description: "4×1200m at I-pace. Extended aerobic power intervals.",
+            name: String(localized: "ril.011", defaultValue: "1200m VO2max"),
+            category: .vo2max, description: String(localized: "ril.012", defaultValue: "4×1200m at I-pace. Extended aerobic power intervals."),
             targetPaceZone: .interval, repDistanceM: 1200, repCount: 4,
             recoverySeconds: 180, recoveryType: .jog, totalWorkMinutes: 20,
             applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
             minExperience: .intermediate
         ),
         Template(
-            name: "1600m VO2max",
-            category: .vo2max, description: "4×1600m at I-pace. Long VO2max intervals for sustained power.",
+            name: String(localized: "ril.013", defaultValue: "1600m VO2max"),
+            category: .vo2max, description: String(localized: "ril.014", defaultValue: "4×1600m at I-pace. Long VO2max intervals for sustained power."),
             targetPaceZone: .interval, repDistanceM: 1600, repCount: 4,
             recoverySeconds: 210, recoveryType: .jog, totalWorkMinutes: 24,
             applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
             minExperience: .intermediate
         ),
         Template(
-            name: "2000m VO2max",
-            category: .vo2max, description: "3×2000m at I-pace. Bridges VO2max to race-specific for HM.",
+            name: String(localized: "ril.015", defaultValue: "2000m VO2max"),
+            category: .vo2max, description: String(localized: "ril.016", defaultValue: "3×2000m at I-pace. Bridges VO2max to race-specific for HM."),
             targetPaceZone: .interval, repDistanceM: 2000, repCount: 3,
             recoverySeconds: 240, recoveryType: .jog, totalWorkMinutes: 24,
             applicablePhases: [.build, .peak], applicableDistances: [.roadHalf, .roadMarathon],
             minExperience: .advanced
         ),
         Template(
-            name: "Norwegian 1K Floats",
-            category: .vo2max, description: "8×1000m at 97% 10K pace with 400m float recovery. Norwegian model.",
+            name: String(localized: "ril.017", defaultValue: "Norwegian 1K Floats"),
+            category: .vo2max, description: String(localized: "ril.018", defaultValue: "8×1000m at 97% 10K pace with 400m float recovery. Norwegian model."),
             targetPaceZone: .interval, repDistanceM: 1000, repCount: 8,
             recoverySeconds: 100, recoveryType: .float, totalWorkMinutes: 28,
             applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf],
@@ -482,56 +482,56 @@ enum RoadIntervalLibrary {
 
     private static let thresholdTemplates: [Template] = [
         Template(
-            name: "Cruise Intervals 1K",
-            category: .threshold, description: "5×1000m at T-pace, 90s rest. Cruise intervals at threshold.",
+            name: String(localized: "ril.019", defaultValue: "Cruise Intervals 1K"),
+            category: .threshold, description: String(localized: "ril.020", defaultValue: "5×1000m at T-pace, 90s rest. Cruise intervals at threshold."),
             targetPaceZone: .threshold, repDistanceM: 1000, repCount: 5,
             recoverySeconds: 90, recoveryType: .standing, totalWorkMinutes: 20,
             applicablePhases: [.base, .build, .peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
             minExperience: .beginner
         ),
         Template(
-            name: "Cruise Intervals 1600m",
-            category: .threshold, description: "4×1600m at T-pace, 3min rest. Extended cruise intervals.",
+            name: String(localized: "ril.021", defaultValue: "Cruise Intervals 1600m"),
+            category: .threshold, description: String(localized: "ril.022", defaultValue: "4×1600m at T-pace, 3min rest. Extended cruise intervals."),
             targetPaceZone: .threshold, repDistanceM: 1600, repCount: 4,
             recoverySeconds: 180, recoveryType: .standing, totalWorkMinutes: 24,
             applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
             minExperience: .intermediate
         ),
         Template(
-            name: "Tempo 20min",
-            category: .threshold, description: "20min continuous at T-pace. Lactate threshold builder.",
+            name: String(localized: "ril.023", defaultValue: "Tempo 20min"),
+            category: .threshold, description: String(localized: "ril.024", defaultValue: "20min continuous at T-pace. Lactate threshold builder."),
             targetPaceZone: .threshold, repDistanceM: 0, repCount: 1,
             recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 20,
             applicablePhases: [.base, .build], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
             minExperience: .beginner
         ),
         Template(
-            name: "Double Tempo",
-            category: .threshold, description: "2×20min at T-pace, 3min jog. Lactate threshold staple.",
+            name: String(localized: "ril.025", defaultValue: "Double Tempo"),
+            category: .threshold, description: String(localized: "ril.026", defaultValue: "2×20min at T-pace, 3min jog. Lactate threshold staple."),
             targetPaceZone: .threshold, repDistanceM: 0, repCount: 2,
             recoverySeconds: 180, recoveryType: .jog, totalWorkMinutes: 40,
             applicablePhases: [.build, .peak], applicableDistances: [.roadHalf, .roadMarathon],
             minExperience: .intermediate
         ),
         Template(
-            name: "Extended Tempo 30min",
-            category: .threshold, description: "30min continuous at T-pace. Advanced threshold endurance.",
+            name: String(localized: "ril.027", defaultValue: "Extended Tempo 30min"),
+            category: .threshold, description: String(localized: "ril.028", defaultValue: "30min continuous at T-pace. Advanced threshold endurance."),
             targetPaceZone: .threshold, repDistanceM: 0, repCount: 1,
             recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 30,
             applicablePhases: [.peak], applicableDistances: [.roadHalf, .roadMarathon],
             minExperience: .advanced
         ),
         Template(
-            name: "Norwegian Double Threshold",
-            category: .threshold, description: "2×4000m at T-pace, 4min jog. Ingebrigtsen system.",
+            name: String(localized: "ril.029", defaultValue: "Norwegian Double Threshold"),
+            category: .threshold, description: String(localized: "ril.030", defaultValue: "2×4000m at T-pace, 4min jog. Ingebrigtsen system."),
             targetPaceZone: .threshold, repDistanceM: 4000, repCount: 2,
             recoverySeconds: 240, recoveryType: .jog, totalWorkMinutes: 28,
             applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf],
             minExperience: .advanced
         ),
         Template(
-            name: "Threshold Ladder 2K",
-            category: .threshold, description: "3×2000m at T-pace, 2min jog. Marathon lactate endurance.",
+            name: String(localized: "ril.031", defaultValue: "Threshold Ladder 2K"),
+            category: .threshold, description: String(localized: "ril.032", defaultValue: "3×2000m at T-pace, 2min jog. Marathon lactate endurance."),
             targetPaceZone: .threshold, repDistanceM: 2000, repCount: 3,
             recoverySeconds: 120, recoveryType: .jog, totalWorkMinutes: 24,
             applicablePhases: [.build], applicableDistances: [.roadMarathon],
@@ -547,24 +547,24 @@ enum RoadIntervalLibrary {
         // very short recovery, before peak ramps to 3 km / 5 km / 7 km blocks.
         // Sits in build phase so the athlete meets marathon pace gradually.
         Template(
-            name: "MP Cruise 3×1.5K",
-            category: .raceSpecific, description: "3×1500m at marathon pace, 60s jog. Intro MP work, late build.",
+            name: String(localized: "ril.033", defaultValue: "MP Cruise 3×1.5K"),
+            category: .raceSpecific, description: String(localized: "ril.034", defaultValue: "3×1500m at marathon pace, 60s jog. Intro MP work, late build."),
             targetPaceZone: .marathonPace, repDistanceM: 1500, repCount: 3,
             recoverySeconds: 60, recoveryType: .jog, totalWorkMinutes: 18,
             applicablePhases: [.build], applicableDistances: [.roadMarathon],
             minExperience: .intermediate
         ),
         Template(
-            name: "MP Cruise 4×1.5K",
-            category: .raceSpecific, description: "4×1500m at marathon pace, 60s jog. Extended MP intro for advanced.",
+            name: String(localized: "ril.035", defaultValue: "MP Cruise 4×1.5K"),
+            category: .raceSpecific, description: String(localized: "ril.036", defaultValue: "4×1500m at marathon pace, 60s jog. Extended MP intro for advanced."),
             targetPaceZone: .marathonPace, repDistanceM: 1500, repCount: 4,
             recoverySeconds: 60, recoveryType: .jog, totalWorkMinutes: 24,
             applicablePhases: [.build], applicableDistances: [.roadMarathon],
             minExperience: .advanced
         ),
         Template(
-            name: "MP Cruise 3×2K",
-            category: .raceSpecific, description: "3×2000m at marathon pace, 90s jog. Bridging MP block to peak.",
+            name: String(localized: "ril.037", defaultValue: "MP Cruise 3×2K"),
+            category: .raceSpecific, description: String(localized: "ril.038", defaultValue: "3×2000m at marathon pace, 90s jog. Bridging MP block to peak."),
             targetPaceZone: .marathonPace, repDistanceM: 2000, repCount: 3,
             recoverySeconds: 90, recoveryType: .jog, totalWorkMinutes: 24,
             applicablePhases: [.build], applicableDistances: [.roadMarathon],
@@ -572,32 +572,32 @@ enum RoadIntervalLibrary {
         ),
         // 10K specific
         Template(
-            name: "10K Pace 1000m",
-            category: .raceSpecific, description: "8×1000m at 10K pace, 90s jog. Lock in race rhythm.",
+            name: String(localized: "ril.039", defaultValue: "10K Pace 1000m"),
+            category: .raceSpecific, description: String(localized: "ril.040", defaultValue: "8×1000m at 10K pace, 90s jog. Lock in race rhythm."),
             targetPaceZone: .racePace, repDistanceM: 1000, repCount: 8,
             recoverySeconds: 90, recoveryType: .jog, totalWorkMinutes: 28,
             applicablePhases: [.peak], applicableDistances: [.road10K],
             minExperience: .beginner
         ),
         Template(
-            name: "10K Pace 2000m",
-            category: .raceSpecific, description: "4×2000m at 10K pace, 90s jog. Extended race-specific intervals.",
+            name: String(localized: "ril.041", defaultValue: "10K Pace 2000m"),
+            category: .raceSpecific, description: String(localized: "ril.042", defaultValue: "4×2000m at 10K pace, 90s jog. Extended race-specific intervals."),
             targetPaceZone: .racePace, repDistanceM: 2000, repCount: 4,
             recoverySeconds: 90, recoveryType: .jog, totalWorkMinutes: 28,
             applicablePhases: [.peak], applicableDistances: [.road10K],
             minExperience: .intermediate
         ),
         Template(
-            name: "10K Pace 3000m",
-            category: .raceSpecific, description: "3×3000m at 10K pace, 3min jog. Advanced 10K simulation.",
+            name: String(localized: "ril.043", defaultValue: "10K Pace 3000m"),
+            category: .raceSpecific, description: String(localized: "ril.044", defaultValue: "3×3000m at 10K pace, 3min jog. Advanced 10K simulation."),
             targetPaceZone: .racePace, repDistanceM: 3000, repCount: 3,
             recoverySeconds: 180, recoveryType: .jog, totalWorkMinutes: 30,
             applicablePhases: [.peak], applicableDistances: [.road10K],
             minExperience: .advanced
         ),
         Template(
-            name: "10K Tempo Simulation",
-            category: .raceSpecific, description: "Continuous 8-10min at 10K race pace. Full-system rehearsal.",
+            name: String(localized: "ril.045", defaultValue: "10K Tempo Simulation"),
+            category: .raceSpecific, description: String(localized: "ril.046", defaultValue: "Continuous 8-10min at 10K race pace. Full-system rehearsal."),
             targetPaceZone: .racePace, repDistanceM: 0, repCount: 1,
             recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 9,
             applicablePhases: [.peak], applicableDistances: [.road10K],
@@ -605,24 +605,24 @@ enum RoadIntervalLibrary {
         ),
         // Half Marathon specific
         Template(
-            name: "HM Pace 1600m",
-            category: .raceSpecific, description: "6×1600m at HM pace, 90s jog. Half-marathon race rhythm.",
+            name: String(localized: "ril.047", defaultValue: "HM Pace 1600m"),
+            category: .raceSpecific, description: String(localized: "ril.048", defaultValue: "6×1600m at HM pace, 90s jog. Half-marathon race rhythm."),
             targetPaceZone: .racePace, repDistanceM: 1600, repCount: 6,
             recoverySeconds: 90, recoveryType: .jog, totalWorkMinutes: 30,
             applicablePhases: [.peak], applicableDistances: [.roadHalf],
             minExperience: .beginner
         ),
         Template(
-            name: "HM Pace 3000m",
-            category: .raceSpecific, description: "4×3000m at HM pace, 2min jog. Sustained race-pace endurance.",
+            name: String(localized: "ril.049", defaultValue: "HM Pace 3000m"),
+            category: .raceSpecific, description: String(localized: "ril.050", defaultValue: "4×3000m at HM pace, 2min jog. Sustained race-pace endurance."),
             targetPaceZone: .racePace, repDistanceM: 3000, repCount: 4,
             recoverySeconds: 120, recoveryType: .jog, totalWorkMinutes: 40,
             applicablePhases: [.peak], applicableDistances: [.roadHalf],
             minExperience: .intermediate
         ),
         Template(
-            name: "HM Pace 5000m",
-            category: .raceSpecific, description: "3×5000m at HM pace, 3min jog. Long HM-specific blocks.",
+            name: String(localized: "ril.051", defaultValue: "HM Pace 5000m"),
+            category: .raceSpecific, description: String(localized: "ril.052", defaultValue: "3×5000m at HM pace, 3min jog. Long HM-specific blocks."),
             targetPaceZone: .racePace, repDistanceM: 5000, repCount: 3,
             recoverySeconds: 180, recoveryType: .jog, totalWorkMinutes: 48,
             applicablePhases: [.peak], applicableDistances: [.roadHalf],
@@ -630,24 +630,24 @@ enum RoadIntervalLibrary {
         ),
         // Marathon specific (Canova-style)
         Template(
-            name: "Marathon Pace 3K Blocks",
-            category: .raceSpecific, description: "5×3000m at 103% MP with 1000m float. Marathon-specific block.",
+            name: String(localized: "ril.053", defaultValue: "Marathon Pace 3K Blocks"),
+            category: .raceSpecific, description: String(localized: "ril.054", defaultValue: "5×3000m at 103% MP with 1000m float. Marathon-specific block."),
             targetPaceZone: .marathonPace, repDistanceM: 3000, repCount: 5,
             recoverySeconds: 240, recoveryType: .float, totalWorkMinutes: 40,
             applicablePhases: [.peak], applicableDistances: [.roadMarathon],
             minExperience: .intermediate
         ),
         Template(
-            name: "Marathon Pace 5K Blocks",
-            category: .raceSpecific, description: "4×5000m at MP, 1000m jog. Extended marathon-specific endurance.",
+            name: String(localized: "ril.055", defaultValue: "Marathon Pace 5K Blocks"),
+            category: .raceSpecific, description: String(localized: "ril.056", defaultValue: "4×5000m at MP, 1000m jog. Extended marathon-specific endurance."),
             targetPaceZone: .marathonPace, repDistanceM: 5000, repCount: 4,
             recoverySeconds: 300, recoveryType: .jog, totalWorkMinutes: 60,
             applicablePhases: [.peak], applicableDistances: [.roadMarathon],
             minExperience: .advanced
         ),
         Template(
-            name: "Marathon Pace 7K Blocks",
-            category: .raceSpecific, description: "3×7000m at MP, 1000m jog. Special block for advanced runners.",
+            name: String(localized: "ril.057", defaultValue: "Marathon Pace 7K Blocks"),
+            category: .raceSpecific, description: String(localized: "ril.058", defaultValue: "3×7000m at MP, 1000m jog. Special block for advanced runners."),
             targetPaceZone: .marathonPace, repDistanceM: 7000, repCount: 3,
             recoverySeconds: 300, recoveryType: .jog, totalWorkMinutes: 63,
             applicablePhases: [.peak], applicableDistances: [.roadMarathon],
@@ -659,24 +659,24 @@ enum RoadIntervalLibrary {
 
     private static let progressionTemplates: [Template] = [
         Template(
-            name: "Short Progression",
-            category: .progression, description: "25min building from easy to 108% race pace. Progressive stimulus.",
+            name: String(localized: "ril.059", defaultValue: "Short Progression"),
+            category: .progression, description: String(localized: "ril.060", defaultValue: "25min building from easy to 108% race pace. Progressive stimulus."),
             targetPaceZone: .racePace, repDistanceM: 0, repCount: 1,
             recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 25,
             applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
             minExperience: .beginner
         ),
         Template(
-            name: "Medium Progression",
-            category: .progression, description: "45min building from 88% to 105% race pace. Kenyan-style.",
+            name: String(localized: "ril.061", defaultValue: "Medium Progression"),
+            category: .progression, description: String(localized: "ril.062", defaultValue: "45min building from 88% to 105% race pace. Kenyan-style."),
             targetPaceZone: .racePace, repDistanceM: 0, repCount: 1,
             recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 45,
             applicablePhases: [.build, .peak], applicableDistances: [.roadHalf, .roadMarathon],
             minExperience: .intermediate
         ),
         Template(
-            name: "Long Progression",
-            category: .progression, description: "60min building from 80% to race pace. Advanced aerobic power.",
+            name: String(localized: "ril.063", defaultValue: "Long Progression"),
+            category: .progression, description: String(localized: "ril.064", defaultValue: "60min building from 80% to race pace. Advanced aerobic power."),
             targetPaceZone: .racePace, repDistanceM: 0, repCount: 1,
             recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 60,
             applicablePhases: [.peak], applicableDistances: [.roadMarathon],
@@ -693,8 +693,8 @@ enum RoadIntervalLibrary {
         [
             // Marathon-specific threshold in peak (Pfitzinger: threshold continues through peak)
             Template(
-                name: "Marathon Threshold 25min",
-                category: .threshold, description: "25min continuous at T-pace. Marathon lactate clearance.",
+                name: String(localized: "ril.065", defaultValue: "Marathon Threshold 25min"),
+                category: .threshold, description: String(localized: "ril.066", defaultValue: "25min continuous at T-pace. Marathon lactate clearance."),
                 targetPaceZone: .threshold, repDistanceM: 0, repCount: 1,
                 recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 25,
                 applicablePhases: [.peak], applicableDistances: [.roadMarathon],
@@ -702,8 +702,8 @@ enum RoadIntervalLibrary {
             ),
             // HM-pace tempo work for peak (Pfitzinger: lock in race rhythm)
             Template(
-                name: "HM Tempo Run 20min",
-                category: .raceSpecific, description: "20min continuous at HM pace. Race rhythm builder.",
+                name: String(localized: "ril.067", defaultValue: "HM Tempo Run 20min"),
+                category: .raceSpecific, description: String(localized: "ril.068", defaultValue: "20min continuous at HM pace. Race rhythm builder."),
                 targetPaceZone: .racePace, repDistanceM: 0, repCount: 1,
                 recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 20,
                 applicablePhases: [.peak], applicableDistances: [.roadHalf],
@@ -711,8 +711,8 @@ enum RoadIntervalLibrary {
             ),
             // Progressive tempo (Canova: vary stimulus without intervals)
             Template(
-                name: "Progressive Tempo 30min",
-                category: .threshold, description: "30min building from easy to T-pace. Progressive threshold stimulus.",
+                name: String(localized: "ril.069", defaultValue: "Progressive Tempo 30min"),
+                category: .threshold, description: String(localized: "ril.070", defaultValue: "30min building from easy to T-pace. Progressive threshold stimulus."),
                 targetPaceZone: .threshold, repDistanceM: 0, repCount: 1,
                 recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 30,
                 applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
@@ -720,8 +720,8 @@ enum RoadIntervalLibrary {
             ),
             // Billat 30/30 VO2max (Billat, INSEP research)
             Template(
-                name: "Billat 30/30",
-                category: .vo2max, description: "14×(30s hard / 30s easy). VO2max stimulus with minimal recovery.",
+                name: String(localized: "ril.071", defaultValue: "Billat 30/30"),
+                category: .vo2max, description: String(localized: "ril.072", defaultValue: "14×(30s hard / 30s easy). VO2max stimulus with minimal recovery."),
                 targetPaceZone: .interval, repDistanceM: 0, repCount: 14,
                 recoverySeconds: 30, recoveryType: .jog, totalWorkMinutes: 14,
                 applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf],
@@ -729,8 +729,8 @@ enum RoadIntervalLibrary {
             ),
             // Daniels 2Q combo: tempo + VO2max in one session (advanced/elite)
             Template(
-                name: "2Q Tempo + VO2max",
-                category: .vo2max, description: "15min tempo (T-pace) then 4×3min VO2max (I-pace). Threshold-to-VO2max combo.",
+                name: String(localized: "ril.073", defaultValue: "2Q Tempo + VO2max"),
+                category: .vo2max, description: String(localized: "ril.074", defaultValue: "15min tempo (T-pace) then 4×3min VO2max (I-pace). Threshold-to-VO2max combo."),
                 targetPaceZone: .interval, repDistanceM: 0, repCount: 4,
                 recoverySeconds: 180, recoveryType: .jog, totalWorkMinutes: 27,
                 applicablePhases: [.peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
@@ -738,8 +738,8 @@ enum RoadIntervalLibrary {
             ),
             // Marathon continuous tempo at MP (not threshold, race-specific tempo)
             Template(
-                name: "Marathon Tempo 30min",
-                category: .raceSpecific, description: "30min continuous at marathon pace. Lock in race rhythm.",
+                name: String(localized: "ril.075", defaultValue: "Marathon Tempo 30min"),
+                category: .raceSpecific, description: String(localized: "ril.076", defaultValue: "30min continuous at marathon pace. Lock in race rhythm."),
                 targetPaceZone: .marathonPace, repDistanceM: 0, repCount: 1,
                 recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 30,
                 applicablePhases: [.peak], applicableDistances: [.roadMarathon],
@@ -747,8 +747,8 @@ enum RoadIntervalLibrary {
             ),
             // Billat threshold 5×5min (lactate clearance)
             Template(
-                name: "Threshold 5×5min",
-                category: .threshold, description: "5×5min at T-pace, 90s rest. Lactate clearance training.",
+                name: String(localized: "ril.077", defaultValue: "Threshold 5×5min"),
+                category: .threshold, description: String(localized: "ril.078", defaultValue: "5×5min at T-pace, 90s rest. Lactate clearance training."),
                 targetPaceZone: .threshold, repDistanceM: 0, repCount: 5,
                 recoverySeconds: 90, recoveryType: .jog, totalWorkMinutes: 25,
                 applicablePhases: [.build, .peak], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
@@ -756,8 +756,8 @@ enum RoadIntervalLibrary {
             ),
             // Long run + VO2 surges (marathon build)
             Template(
-                name: "LR + VO2 Surges",
-                category: .longRunVariant, description: "Easy long run with 6×2min surges at I-pace.",
+                name: String(localized: "ril.079", defaultValue: "LR + VO2 Surges"),
+                category: .longRunVariant, description: String(localized: "ril.080", defaultValue: "Easy long run with 6×2min surges at I-pace."),
                 targetPaceZone: .interval, repDistanceM: 0, repCount: 6,
                 recoverySeconds: 180, recoveryType: .jog, totalWorkMinutes: 12,
                 applicablePhases: [.build], applicableDistances: [.roadHalf, .roadMarathon],
@@ -765,8 +765,8 @@ enum RoadIntervalLibrary {
             ),
             // Long run + tempo blocks (marathon peak)
             Template(
-                name: "LR + Tempo Blocks",
-                category: .longRunVariant, description: "Easy long run with 2×12min blocks at T-pace.",
+                name: String(localized: "ril.081", defaultValue: "LR + Tempo Blocks"),
+                category: .longRunVariant, description: String(localized: "ril.082", defaultValue: "Easy long run with 2×12min blocks at T-pace."),
                 targetPaceZone: .threshold, repDistanceM: 0, repCount: 2,
                 recoverySeconds: 300, recoveryType: .jog, totalWorkMinutes: 24,
                 applicablePhases: [.build, .peak], applicableDistances: [.roadMarathon],
@@ -774,8 +774,8 @@ enum RoadIntervalLibrary {
             ),
             // Canova alternating long run (marathon peak, MP blocks)
             Template(
-                name: "Alternating Long Run",
-                category: .longRunVariant, description: "Easy + 3×3km MP blocks + easy. Marathon-specific endurance.",
+                name: String(localized: "ril.083", defaultValue: "Alternating Long Run"),
+                category: .longRunVariant, description: String(localized: "ril.084", defaultValue: "Easy + 3×3km MP blocks + easy. Marathon-specific endurance."),
                 targetPaceZone: .marathonPace, repDistanceM: 3000, repCount: 3,
                 recoverySeconds: 300, recoveryType: .jog, totalWorkMinutes: 30,
                 applicablePhases: [.peak], applicableDistances: [.roadMarathon],
@@ -783,8 +783,8 @@ enum RoadIntervalLibrary {
             ),
             // Tempo with surges (Pfitzinger near-peak: tempo + surges at 10K pace)
             Template(
-                name: "Tempo + Surges",
-                category: .threshold, description: "20min tempo with 4×1min surges at 10K pace mid-run.",
+                name: String(localized: "ril.085", defaultValue: "Tempo + Surges"),
+                category: .threshold, description: String(localized: "ril.086", defaultValue: "20min tempo with 4×1min surges at 10K pace mid-run."),
                 targetPaceZone: .threshold, repDistanceM: 0, repCount: 1,
                 recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 24,
                 applicablePhases: [.peak], applicableDistances: [.road10K, .roadHalf],
@@ -792,8 +792,8 @@ enum RoadIntervalLibrary {
             ),
             // 300m repeats (bridge between 200m and 400m)
             Template(
-                name: "300m Repeats",
-                category: .speed, description: "8×300m at R-pace. Speed rhythm bridge.",
+                name: String(localized: "ril.087", defaultValue: "300m Repeats"),
+                category: .speed, description: String(localized: "ril.088", defaultValue: "8×300m at R-pace. Speed rhythm bridge."),
                 targetPaceZone: .repetition, repDistanceM: 300, repCount: 8,
                 recoverySeconds: 75, recoveryType: .jog, totalWorkMinutes: 10,
                 applicablePhases: [.base, .build], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
@@ -807,8 +807,8 @@ enum RoadIntervalLibrary {
             // usual speed/repetition workouts unchanged. Slot 0 base
             // preferences pull this in on every 3rd base week.
             Template(
-                name: "Strides 6×20s",
-                category: .speed, description: "30 min easy + 6×20-second strides at R-pace, 90s walk. Neuromuscular freshness.",
+                name: String(localized: "ril.089", defaultValue: "Strides 6×20s"),
+                category: .speed, description: String(localized: "ril.090", defaultValue: "30 min easy + 6×20-second strides at R-pace, 90s walk. Neuromuscular freshness."),
                 targetPaceZone: .repetition, repDistanceM: 0, repCount: 6,
                 recoverySeconds: 90, recoveryType: .walk, totalWorkMinutes: 2,
                 applicablePhases: [.base], applicableDistances: [.road10K, .roadHalf, .roadMarathon],
@@ -827,8 +827,8 @@ enum RoadIntervalLibrary {
             // Intro-level MP block — sits BELOW MP 3K Blocks on the
             // difficulty ladder so peak W1 isn't a Canova 5×3km cold.
             Template(
-                name: "MP 4×2K",
-                category: .raceSpecific, description: "4×2000m at marathon pace, 90s jog. Intro-level MP block.",
+                name: String(localized: "ril.091", defaultValue: "MP 4×2K"),
+                category: .raceSpecific, description: String(localized: "ril.092", defaultValue: "4×2000m at marathon pace, 90s jog. Intro-level MP block."),
                 targetPaceZone: .marathonPace, repDistanceM: 2000, repCount: 4,
                 recoverySeconds: 90, recoveryType: .jog, totalWorkMinutes: 32,
                 applicablePhases: [.peak], applicableDistances: [.roadMarathon],
@@ -838,8 +838,8 @@ enum RoadIntervalLibrary {
             // (Pfitzinger 18/70 prescribes 8 km continuous @ MP within
             // a longer session as a sustained lactate-tolerance test).
             Template(
-                name: "MP 8K Continuous",
-                category: .raceSpecific, description: "8000m continuous at marathon pace. Sustained MP block.",
+                name: String(localized: "ril.093", defaultValue: "MP 8K Continuous"),
+                category: .raceSpecific, description: String(localized: "ril.094", defaultValue: "8000m continuous at marathon pace. Sustained MP block."),
                 targetPaceZone: .marathonPace, repDistanceM: 0, repCount: 1,
                 recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 36,
                 applicablePhases: [.peak], applicableDistances: [.roadMarathon],
@@ -850,8 +850,8 @@ enum RoadIntervalLibrary {
             // descending length — same MP work, different rhythm
             // than uniform-rep blocks.
             Template(
-                name: "MP Pyramid 1-2-3-2-1",
-                category: .raceSpecific, description: "1K + 2K + 3K + 2K + 1K at MP, 60s jog between reps. Pyramid block.",
+                name: String(localized: "ril.095", defaultValue: "MP Pyramid 1-2-3-2-1"),
+                category: .raceSpecific, description: String(localized: "ril.096", defaultValue: "1K + 2K + 3K + 2K + 1K at MP, 60s jog between reps. Pyramid block."),
                 targetPaceZone: .marathonPace, repDistanceM: 0, repCount: 5,
                 recoverySeconds: 60, recoveryType: .jog, totalWorkMinutes: 40,
                 applicablePhases: [.peak], applicableDistances: [.roadMarathon],
@@ -861,8 +861,8 @@ enum RoadIntervalLibrary {
             // ~HM-pace. Teaches the athlete to finish strong from
             // marathon-pace fatigue (race-day skill).
             Template(
-                name: "MP Cutdown 6K",
-                category: .raceSpecific, description: "6000m progressing from MP+10s/km to HM pace over the final 2K. Race-finish skill.",
+                name: String(localized: "ril.097", defaultValue: "MP Cutdown 6K"),
+                category: .raceSpecific, description: String(localized: "ril.098", defaultValue: "6000m progressing from MP+10s/km to HM pace over the final 2K. Race-finish skill."),
                 targetPaceZone: .marathonPace, repDistanceM: 0, repCount: 1,
                 recoverySeconds: 0, recoveryType: .standing, totalWorkMinutes: 28,
                 applicablePhases: [.peak], applicableDistances: [.roadMarathon],
@@ -873,8 +873,8 @@ enum RoadIntervalLibrary {
             // sharpener that holds MP touch without the cumulative
             // fatigue of long blocks.
             Template(
-                name: "MP 6×1K Sharpener",
-                category: .raceSpecific, description: "6×1000m at marathon pace, 60s jog. Late-peak MP sharpener.",
+                name: String(localized: "ril.099", defaultValue: "MP 6×1K Sharpener"),
+                category: .raceSpecific, description: String(localized: "ril.100", defaultValue: "6×1000m at marathon pace, 60s jog. Late-peak MP sharpener."),
                 targetPaceZone: .marathonPace, repDistanceM: 1000, repCount: 6,
                 recoverySeconds: 60, recoveryType: .jog, totalWorkMinutes: 24,
                 applicablePhases: [.peak], applicableDistances: [.roadMarathon],
@@ -886,8 +886,8 @@ enum RoadIntervalLibrary {
             // (24 min) so 4-week late build has 4 walk-forward
             // templates instead of 3.
             Template(
-                name: "MP Cruise 5×1K",
-                category: .raceSpecific, description: "5×1000m at marathon pace, 60s jog. Early MP intro for late build.",
+                name: String(localized: "ril.101", defaultValue: "MP Cruise 5×1K"),
+                category: .raceSpecific, description: String(localized: "ril.102", defaultValue: "5×1000m at marathon pace, 60s jog. Early MP intro for late build."),
                 targetPaceZone: .marathonPace, repDistanceM: 1000, repCount: 5,
                 recoverySeconds: 60, recoveryType: .jog, totalWorkMinutes: 20,
                 applicablePhases: [.build], applicableDistances: [.roadMarathon],

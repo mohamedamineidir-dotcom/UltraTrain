@@ -16,10 +16,13 @@ struct LabeledStepper: View {
     }
 
     var body: some View {
-        HStack {
+        HStack(spacing: Theme.Spacing.sm) {
             Text(label)
                 .font(.subheadline)
-            Spacer()
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+                .layoutPriority(0)
+            Spacer(minLength: Theme.Spacing.xs)
             Button {
                 value = max(range.lowerBound, value - step)
             } label: {
@@ -43,8 +46,11 @@ struct LabeledStepper: View {
             } else {
                 Text("\(value, specifier: specifier) \(unit)")
                     .font(.body.monospacedDigit())
+                    .lineLimit(1)
+                    .fixedSize(horizontal: true, vertical: false)
                     .frame(minWidth: 70)
                     .multilineTextAlignment(.center)
+                    .layoutPriority(1)
                     .contentShape(Rectangle())
                     .onTapGesture { beginEdit() }
             }

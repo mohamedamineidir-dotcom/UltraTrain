@@ -41,7 +41,7 @@ enum CoachAdviceGenerator {
         racePolesAllowed: Bool? = nil
     ) -> String? {
         let recoveryPrefix = isRecoveryWeek
-            ? "Recovery week, so keep everything easy. Your body adapts when you rest. "
+            ? String(localized: "tcoach.recoveryWeekPrefix", defaultValue: "Recovery week, so keep everything easy. Your body adapts when you rest. ")
             : ""
 
         let focusPrefix = focusAdvice(type: type, focus: intervalFocus, isRoadRace: isRoadRace, weekInPhase: weekInPhase)
@@ -53,7 +53,7 @@ enum CoachAdviceGenerator {
         case .recovery:
             baseAdvice = recoveryRunAdvice(phase: phase, isRoadRace: isRoadRace, weekInPhase: weekInPhase)
         case .crossTraining:
-            baseAdvice = "Keep it light and fun. Different movements help your body recover while staying active."
+            baseAdvice = String(localized: "tcoach.crossTraining", defaultValue: "Keep it light and fun. Different movements help your body recover while staying active.")
         case .backToBack:
             baseAdvice = b2bAdvice(phase: phase, isDay2: isB2BDay2)
         case .longRun:
@@ -67,7 +67,7 @@ enum CoachAdviceGenerator {
         case .strengthConditioning:
             baseAdvice = nil
         case .race:
-            baseAdvice = "Race day. Trust your training, execute your pacing plan, and stay fueled."
+            baseAdvice = String(localized: "tcoach.race", defaultValue: "Race day. Trust your training, execute your pacing plan, and stay fueled.")
         }
 
         guard let advice = baseAdvice else { return nil }
@@ -95,9 +95,9 @@ enum CoachAdviceGenerator {
             // concept (Roche, Koop, Maffetone). Other intensities keep
             // their plain "Target HR" wording.
             if intensity == .easy {
-                result += " Target HR: \(range.min)-\(range.max) bpm (Zone 2, your aerobic engine)."
+                result += String(localized: "tcoach.hr.zone2", defaultValue: " Target HR: \(range.min)-\(range.max) bpm (Zone 2, your aerobic engine).")
             } else {
-                result += " Target HR: \(range.min)-\(range.max) bpm."
+                result += String(localized: "tcoach.hr.target", defaultValue: " Target HR: \(range.min)-\(range.max) bpm.")
             }
         } else if type != .rest, type != .strengthConditioning, type != .crossTraining,
                   !isLongSession,
@@ -109,16 +109,16 @@ enum CoachAdviceGenerator {
             // runs. Only fires for .easy intensity short sessions
             // Maffetone isn't meant to prescribe quality work.
             let mafCeiling = max(120, 180 - athleteAge)
-            result += " Aerobic ceiling: keep HR ≤\(mafCeiling) bpm (Maffetone 180−age, Zone 2). If no HR data, target conversational pace where you could speak in full sentences."
+            result += String(localized: "tcoach.hr.maffetone", defaultValue: " Aerobic ceiling: keep HR ≤\(mafCeiling) bpm (Maffetone 180−age, Zone 2). If no HR data, target conversational pace where you could speak in full sentences.")
         } else if type != .rest, type != .strengthConditioning, type != .crossTraining,
                   isLongSession {
             // Pure RPE guidance for long sessions, HR drifts, effort doesn't.
             let effortLabel: String
             switch intensity {
-            case .easy:      effortLabel = "Stay at conversational effort throughout. If HR climbs but the effort feels the same, trust the effort."
-            case .moderate:  effortLabel = "Moderate effort the whole way. Past 2 hours your HR will drift up at the same effort. That's normal, ignore it."
-            case .hard:      effortLabel = "Hard effort but sustainable. Pace by feel, not by HR. Long-effort cardiac drift will lie to you."
-            case .maxEffort: effortLabel = "Race effort. RPE-driven. HR drift makes the bpm number meaningless after the first hour."
+            case .easy:      effortLabel = String(localized: "tcoach.effort.easy", defaultValue: "Stay at conversational effort throughout. If HR climbs but the effort feels the same, trust the effort.")
+            case .moderate:  effortLabel = String(localized: "tcoach.effort.moderate", defaultValue: "Moderate effort the whole way. Past 2 hours your HR will drift up at the same effort. That's normal, ignore it.")
+            case .hard:      effortLabel = String(localized: "tcoach.effort.hard", defaultValue: "Hard effort but sustainable. Pace by feel, not by HR. Long-effort cardiac drift will lie to you.")
+            case .maxEffort: effortLabel = String(localized: "tcoach.effort.maxEffort", defaultValue: "Race effort. RPE-driven. HR drift makes the bpm number meaningless after the first hour.")
             }
             result += " " + effortLabel
         }
@@ -153,7 +153,7 @@ enum CoachAdviceGenerator {
         // morning). One short sentence, no over-stuffed card.
         if isHotSessionForecast,
            type == .intervals || type == .tempo || type == .verticalGain {
-            result += " Today's forecast is hot. Consider swapping with tomorrow's easy day or moving this to dawn."
+            result += String(localized: "tcoach.hot.session", defaultValue: " Today's forecast is hot. Consider swapping with tomorrow's easy day or moving this to dawn.")
         }
         // Descent emphasis. For races with heavy D- (UTMB / Hardrock /
         // Madeira / TDS class), quad damage tolerance is the limiter
@@ -166,7 +166,7 @@ enum CoachAdviceGenerator {
            (type == .longRun || type == .backToBack),
            (phase == .build || phase == .peak),
            !isRecoveryWeek {
-            result += " Pick a route with sustained descent. Practice relaxed quads, slight forward lean, quick foot turnover. Quad tolerance is the #1 race-day limiter for big-D- races."
+            result += String(localized: "tcoach.descent", defaultValue: " Pick a route with sustained descent. Practice relaxed quads, slight forward lean, quick foot turnover. Quad tolerance is the #1 race-day limiter for big-D- races.")
         }
         // T8, altitude-acclimatization advisory. Surfaces on long
         // runs in build/peak when the target race tops out ≥ 2500m.
@@ -189,7 +189,7 @@ enum CoachAdviceGenerator {
            type == .verticalGain,
            (phase == .build || phase == .peak),
            !isRecoveryWeek {
-            result += " Poles are allowed in your race. If you plan to use them, practice with poles on this VG session, since uphill is the natural slot. Athletes who race with poles untrained typically fight technique on race day."
+            result += String(localized: "tcoach.poles", defaultValue: " Poles are allowed in your race. If you plan to use them, practice with poles on this VG session, since uphill is the natural slot. Athletes who race with poles untrained typically fight technique on race day.")
         }
         // Mental cue. Short, one sentence. Surfaces only on the few
         // sessions where it actually matters: peak-phase race-effort
@@ -212,17 +212,17 @@ enum CoachAdviceGenerator {
     ) -> String? {
         switch (phase, type) {
         case (.race, .race):
-            return "Trust your training. The race goes to who's calmest, not who's fittest."
+            return String(localized: "tcoach.mental.race", defaultValue: "Trust your training. The race goes to who's calmest, not who's fittest.")
         case (.taper, .longRun), (.taper, .backToBack):
-            return "Visualise the race tonight: start, mid-race, finish. Three minutes is enough."
+            return String(localized: "tcoach.mental.taperLong", defaultValue: "Visualise the race tonight: start, mid-race, finish. Three minutes is enough.")
         case (.taper, .intervals), (.taper, .tempo):
-            return "Sharpening, not building. Stay relaxed; speed comes from looseness."
+            return String(localized: "tcoach.mental.taperQuality", defaultValue: "Sharpening, not building. Stay relaxed; speed comes from looseness.")
         case (.peak, .longRun), (.peak, .backToBack):
-            return "If a bad patch hits, walk 60 seconds, fuel, then run. Patches pass."
+            return String(localized: "tcoach.mental.peakLong", defaultValue: "If a bad patch hits, walk 60 seconds, fuel, then run. Patches pass.")
         case (.peak, .race):
-            return "Race-pace work. Pace by feel for the first half, push when you'd want to fade."
+            return String(localized: "tcoach.mental.peakRace", defaultValue: "Race-pace work. Pace by feel for the first half, push when you'd want to fade.")
         case (.build, .intervals), (.build, .tempo):
-            return "Hard, not desperate. Hold form when it stings."
+            return String(localized: "tcoach.mental.buildQuality", defaultValue: "Hard, not desperate. Hold form when it stings.")
         default:
             return nil
         }
@@ -239,10 +239,10 @@ enum CoachAdviceGenerator {
     private static func altitudeAdvisory(maxElevationM: Double) -> String {
         if maxElevationM >= 3500 {
             let elevStr = String(Int(maxElevationM))
-            return "Your race tops out at \(elevStr)m. Above 3000m every effort feels harder for the same pace. Plan 3-4 weeks at race elevation pre-race, or use altitude tents / live-low train-high. Without acclimatization, expect a 10-15% pace cost in the highest sections."
+            return String(localized: "tcoach.altitude.high", defaultValue: "Your race tops out at \(elevStr)m. Above 3000m every effort feels harder for the same pace. Plan 3-4 weeks at race elevation pre-race, or use altitude tents / live-low train-high. Without acclimatization, expect a 10-15% pace cost in the highest sections.")
         } else {
             let elevStr = String(Int(maxElevationM))
-            return "Your race tops out at \(elevStr)m. At altitude every effort feels harder for the same pace. If you can, schedule 1-2 weeks at race elevation pre-race. Otherwise expect a 5-10% pace cost above 3000m and budget extra fueling."
+            return String(localized: "tcoach.altitude.moderate", defaultValue: "Your race tops out at \(elevStr)m. At altitude every effort feels harder for the same pace. If you can, schedule 1-2 weeks at race elevation pre-race. Otherwise expect a 5-10% pace cost above 3000m and budget extra fueling.")
         }
     }
 
@@ -257,19 +257,19 @@ enum CoachAdviceGenerator {
         switch (phase, type) {
         // Peak long run / B2B, kick off the 10-14 day acclimation block
         case (.peak, .longRun), (.peak, .backToBack):
-            return "Race-day forecast is hot. Start your 10-14 day heat-acclimation block by training in the warmest part of the day, layered, or in a sauna 20-30 min post-run."
+            return String(localized: "tcoach.heat.peakLong", defaultValue: "Race-day forecast is hot. Start your 10-14 day heat-acclimation block by training in the warmest part of the day, layered, or in a sauna 20-30 min post-run.")
         // Peak quality (intervals/tempo/VG), heat-specific pacing reminder
         case (.peak, .intervals), (.peak, .tempo), (.peak, .verticalGain):
-            return "Heat block in progress: dial today's pace by feel, not the watch. Heat compresses pace bands. Cool the head + neck immediately post-rep."
+            return String(localized: "tcoach.heat.peakQuality", defaultValue: "Heat block in progress: dial today's pace by feel, not the watch. Heat compresses pace bands. Cool the head + neck immediately post-rep.")
         // Taper big efforts (LR / B2B / race), maintain and don't chase new stress
         case (.taper, .longRun), (.taper, .backToBack), (.taper, .race):
-            return "Stay heat-adapted: short heat exposures (warm bath, sauna 15 min) every 2-3 days through taper. Don't add new training stress."
+            return String(localized: "tcoach.heat.taperLong", defaultValue: "Stay heat-adapted: short heat exposures (warm bath, sauna 15 min) every 2-3 days through taper. Don't add new training stress.")
         // Taper quality (intervals/tempo), reinforce maintenance + race-day pacing
         case (.taper, .intervals), (.taper, .tempo):
-            return "Final heat reminder: keep one short hot exposure every 2-3 days; on race day expect 5-10% slower pace at same effort."
+            return String(localized: "tcoach.heat.taperQuality", defaultValue: "Final heat reminder: keep one short hot exposure every 2-3 days; on race day expect 5-10% slower pace at same effort.")
         // Race day in peak, full pre-cool / fueling / pacing brief
         case (.peak, .race):
-            return "Race day will be hot. Pre-cool if possible, sip-and-eat early before thirst/hunger spikes, and drop pace targets 5-10% in heat."
+            return String(localized: "tcoach.heat.peakRace", defaultValue: "Race day will be hot. Pre-cool if possible, sip-and-eat early before thirst/hunger spikes, and drop pace targets 5-10% in heat.")
         default:
             return nil
         }
@@ -287,19 +287,19 @@ enum CoachAdviceGenerator {
         guard let focus else { return nil }
 
         if isRoadRace && type == .verticalGain {
-            return "One hill session every few weeks keeps your legs strong and makes your flat running more efficient. Trust the process."
+            return String(localized: "tcoach.focus.roadVG", defaultValue: "One hill session every few weeks keeps your legs strong and makes your flat running more efficient. Trust the process.")
         }
 
         switch focus {
         case .uphill where type == .verticalGain:
-            return "Your climbing is a weapon. We are going to keep sharpening it."
+            return String(localized: "tcoach.focus.uphill", defaultValue: "Your climbing is a weapon. We are going to keep sharpening it.")
         case .speed where type == .intervals:
-            return "Speed is what closes races. Today we work on yours."
+            return String(localized: "tcoach.focus.speed", defaultValue: "Speed is what closes races. Today we work on yours.")
         case .mixed:
             if weekInPhase % 2 == 0 && type == .verticalGain {
-                return "Your climbing is a weapon. We are going to keep sharpening it."
+                return String(localized: "tcoach.focus.uphill", defaultValue: "Your climbing is a weapon. We are going to keep sharpening it.")
             } else if weekInPhase % 2 != 0 && type == .intervals {
-                return "Speed is what closes races. Today we work on yours."
+                return String(localized: "tcoach.focus.speed", defaultValue: "Speed is what closes races. Today we work on yours.")
             }
             return nil
         default:
@@ -311,13 +311,13 @@ enum CoachAdviceGenerator {
 
     private static func restAdvice(phase: TrainingPhase, isRecoveryWeek: Bool) -> String {
         if isRecoveryWeek {
-            return "Your body is absorbing the training right now. Focus on sleeping well, eating well, and maybe some gentle stretching."
+            return String(localized: "tcoach.rest.recoveryWeek", defaultValue: "Your body is absorbing the training right now. Focus on sleeping well, eating well, and maybe some gentle stretching.")
         }
         switch phase {
         case .taper:
-            return "Trust your training. Take a walk, foam roll, relax. You've done the work."
+            return String(localized: "tcoach.rest.taper", defaultValue: "Trust your training. Take a walk, foam roll, relax. You've done the work.")
         default:
-            return "Foam roll, walk, stretch. A good night of sleep tonight will do more for your fitness than any run."
+            return String(localized: "tcoach.rest.default", defaultValue: "Foam roll, walk, stretch. A good night of sleep tonight will do more for your fitness than any run.")
         }
     }
 
@@ -331,9 +331,9 @@ enum CoachAdviceGenerator {
         let base: String
         switch phase {
         case .taper:
-            base = "Just a short easy jog to keep the legs moving. If anything feels off, cut it short. You're almost there."
+            base = String(localized: "tcoach.recoveryRun.taper", defaultValue: "Just a short easy jog to keep the legs moving. If anything feels off, cut it short. You're almost there.")
         default:
-            base = "When in doubt, go slower. This run is about blood flow, not building fitness. You should be able to hold a full conversation."
+            base = String(localized: "tcoach.recoveryRun.default", defaultValue: "When in doubt, go slower. This run is about blood flow, not building fitness. You should be able to hold a full conversation.")
         }
         // Road-only weekly strides cue. Daniels + Pfitzinger prescribe
         // 4-6 × 100m strides at the end of one easy run/week during
@@ -347,7 +347,7 @@ enum CoachAdviceGenerator {
         if isRoadRace,
            (phase == .base || phase == .build),
            weekInPhase % 2 == 0 {
-            return base + " End with 4-6 × 100m strides at controlled fast pace, full recovery between. Keeps top-end speed alive without aerobic cost."
+            return base + String(localized: "tcoach.recoveryRun.strides", defaultValue: " End with 4-6 × 100m strides at controlled fast pace, full recovery between. Keeps top-end speed alive without aerobic cost.")
         }
         return base
     }
@@ -358,18 +358,18 @@ enum CoachAdviceGenerator {
         switch phase {
         case .base:
             if weekInPhase < 3 {
-                return "Pure aerobic building today. Walk all the uphills, keep it easy, focus on time on feet. This is where your foundation gets built."
+                return String(localized: "tcoach.longRun.baseEarly", defaultValue: "Pure aerobic building today. Walk all the uphills, keep it easy, focus on time on feet. This is where your foundation gets built.")
             }
-            return "Keep the effort easy and steady. Practice walking technical sections. You're building your engine right now."
+            return String(localized: "tcoach.longRun.baseLate", defaultValue: "Keep the effort easy and steady. Practice walking technical sections. You're building your engine right now.")
         case .build:
             if weekInPhase < 4 {
-                return "Start easy, then include some sections at race effort in the second half. Practice eating and drinking on the move."
+                return String(localized: "tcoach.longRun.buildEarly", defaultValue: "Start easy, then include some sections at race effort in the second half. Practice eating and drinking on the move.")
             }
-            return "Include some blocks at your goal race pace. Eat and drink on schedule. Treat this like a mini dress rehearsal."
+            return String(localized: "tcoach.longRun.buildLate", defaultValue: "Include some blocks at your goal race pace. Eat and drink on schedule. Treat this like a mini dress rehearsal.")
         case .peak:
-            return "Race simulation day. Start easy, then settle into race effort. Wear your race gear and practice your full fueling plan."
+            return String(localized: "tcoach.longRun.peak", defaultValue: "Race simulation day. Start easy, then settle into race effort. Wear your race gear and practice your full fueling plan.")
         case .taper:
-            return "Keep it short and easy. Your fitness is locked in. Just enjoy the trail."
+            return String(localized: "tcoach.longRun.taper", defaultValue: "Keep it short and easy. Your fitness is locked in. Just enjoy the trail.")
         default:
             return longRunByIntensity(intensity)
         }
@@ -378,11 +378,11 @@ enum CoachAdviceGenerator {
     private static func longRunByIntensity(_ intensity: Intensity) -> String {
         switch intensity {
         case .easy:
-            return "Focus on time on feet, not pace. Walk the uphills if you need to."
+            return String(localized: "tcoach.longRun.easy", defaultValue: "Focus on time on feet, not pace. Walk the uphills if you need to.")
         case .moderate:
-            return "Find a steady rhythm and lock in. Good time to practice your race nutrition too."
+            return String(localized: "tcoach.longRun.moderate", defaultValue: "Find a steady rhythm and lock in. Good time to practice your race nutrition too.")
         case .hard, .maxEffort:
-            return "Push the pace but stay controlled. Practice fueling at effort."
+            return String(localized: "tcoach.longRun.hard", defaultValue: "Push the pace but stay controlled. Practice fueling at effort.")
         }
     }
 
@@ -392,16 +392,16 @@ enum CoachAdviceGenerator {
         if isDay2 {
             switch phase {
             case .peak:
-                return "Day 2 on tired legs. Start very easy to warm up, then build to race effort. This is what the second half of your ultra will feel like."
+                return String(localized: "tcoach.b2b.day2.peak", defaultValue: "Day 2 on tired legs. Start very easy to warm up, then build to race effort. This is what the second half of your ultra will feel like.")
             default:
-                return "Day 2 on yesterday's fatigue. Start very easy for the first hour, then gradually build. If you bonk, slow down and eat. Just like you would on race day."
+                return String(localized: "tcoach.b2b.day2.default", defaultValue: "Day 2 on yesterday's fatigue. Start very easy for the first hour, then gradually build. If you bonk, slow down and eat. Just like you would on race day.")
             }
         }
         switch phase {
         case .peak:
-            return "Day 1 at steady effort. Fuel well because tomorrow you run on today's tired legs. Try to include terrain that matches your race."
+            return String(localized: "tcoach.b2b.day1.peak", defaultValue: "Day 1 at steady effort. Fuel well because tomorrow you run on today's tired legs. Try to include terrain that matches your race.")
         default:
-            return "Day 1 to build fatigue for tomorrow. Easy to moderate effort. Fuel consistently so your body has something to work with tomorrow."
+            return String(localized: "tcoach.b2b.day1.default", defaultValue: "Day 1 to build fatigue for tomorrow. Easy to moderate effort. Fuel consistently so your body has something to work with tomorrow.")
         }
     }
 
@@ -410,18 +410,18 @@ enum CoachAdviceGenerator {
     private static func intervalAdvice(phase: TrainingPhase, weekInPhase: Int = 0) -> String {
         switch phase {
         case .base:
-            return "Hill repeats at a controlled effort today. Focus on smooth form and consistent pacing. Full recovery between each rep."
+            return String(localized: "tcoach.intervals.base", defaultValue: "Hill repeats at a controlled effort today. Focus on smooth form and consistent pacing. Full recovery between each rep.")
         case .build:
             if weekInPhase < 6 {
-                return "Push hard on the climbs but stay in control. If your form starts breaking down, stop the set early. Quality over quantity."
+                return String(localized: "tcoach.intervals.buildEarly", defaultValue: "Push hard on the climbs but stay in control. If your form starts breaking down, stop the set early. Quality over quantity.")
             }
-            return "Sustained effort on rolling terrain today. Stay controlled and eat on schedule. This type of work builds real ultra fitness."
+            return String(localized: "tcoach.intervals.buildLate", defaultValue: "Sustained effort on rolling terrain today. Stay controlled and eat on schedule. This type of work builds real ultra fitness.")
         case .peak:
-            return "Short and sharp today. You're already fit, this is just fine-tuning. Maximum quality, not maximum volume."
+            return String(localized: "tcoach.intervals.peak", defaultValue: "Short and sharp today. You're already fit, this is just fine-tuning. Maximum quality, not maximum volume.")
         case .taper:
-            return "Just enough to keep your legs sharp. Controlled effort, don't chase times. Save the fire for race day."
+            return String(localized: "tcoach.intervals.taper", defaultValue: "Just enough to keep your legs sharp. Controlled effort, don't chase times. Save the fire for race day.")
         default:
-            return "Full recovery between reps matters more than speed. If your form breaks down, call it."
+            return String(localized: "tcoach.intervals.default", defaultValue: "Full recovery between reps matters more than speed. If your form breaks down, call it.")
         }
     }
 
@@ -430,13 +430,13 @@ enum CoachAdviceGenerator {
     private static func tempoAdvice(phase: TrainingPhase) -> String {
         switch phase {
         case .base:
-            return "Find a rhythm you can hold for the whole session. You should be able to speak in short phrases. This builds your threshold."
+            return String(localized: "tcoach.tempo.base", defaultValue: "Find a rhythm you can hold for the whole session. You should be able to speak in short phrases. This builds your threshold.")
         case .build:
-            return "Sustained effort at race pace. Push the tempo but stay in control. This is how you develop race-day pacing."
+            return String(localized: "tcoach.tempo.build", defaultValue: "Sustained effort at race pace. Push the tempo but stay in control. This is how you develop race-day pacing.")
         case .peak:
-            return "Lock into your goal race effort. Practice holding form when fatigue starts to build."
+            return String(localized: "tcoach.tempo.peak", defaultValue: "Lock into your goal race effort. Practice holding form when fatigue starts to build.")
         default:
-            return "Find a rhythm you can sustain. If you can't finish a sentence, back off a touch."
+            return String(localized: "tcoach.tempo.default", defaultValue: "Find a rhythm you can sustain. If you can't finish a sentence, back off a touch.")
         }
     }
 
@@ -450,27 +450,27 @@ enum CoachAdviceGenerator {
         let phaseAdvice: String
         switch phase {
         case .base:
-            phaseAdvice = "Build your climbing confidence. Short steps, hands on thighs, rhythmic breathing. Good power hiking technique matters more than speed."
+            phaseAdvice = String(localized: "tcoach.vg.base", defaultValue: "Build your climbing confidence. Short steps, hands on thighs, rhythmic breathing. Good power hiking technique matters more than speed.")
         case .build:
-            phaseAdvice = "Push the effort on the climbs today. This is where ultra trail races are won and lost."
+            phaseAdvice = String(localized: "tcoach.vg.build", defaultValue: "Push the effort on the climbs today. This is where ultra trail races are won and lost.")
         case .peak:
-            phaseAdvice = "Race-specific climbing. Try to mimic the kind of gradients you'll face on race day."
+            phaseAdvice = String(localized: "tcoach.vg.peak", defaultValue: "Race-specific climbing. Try to mimic the kind of gradients you'll face on race day.")
         case .taper:
-            phaseAdvice = "Light climbing to keep the mountain legs without the fatigue. Short efforts, easy intensity."
+            phaseAdvice = String(localized: "tcoach.vg.taper", defaultValue: "Light climbing to keep the mountain legs without the fatigue. Short efforts, easy intensity.")
         default:
-            phaseAdvice = "Consistent effort on the uphills today. Focus on your climbing rhythm."
+            phaseAdvice = String(localized: "tcoach.vg.default", defaultValue: "Consistent effort on the uphills today. Focus on your climbing rhythm.")
         }
 
         let envTip: String
         switch environment {
         case .mountain:
-            envTip = " Find trails with sustained elevation."
+            envTip = String(localized: "tcoach.vg.env.mountain", defaultValue: " Find trails with sustained elevation.")
         case .hill:
-            envTip = " Find a hill with a few minutes of sustained climbing."
+            envTip = String(localized: "tcoach.vg.env.hill", defaultValue: " Find a hill with a few minutes of sustained climbing.")
         case .treadmill:
             envTip = treadmillTip(intensity: intensity)
         case .mixed:
-            envTip = " Mix outdoor and treadmill climbing."
+            envTip = String(localized: "tcoach.vg.env.mixed", defaultValue: " Mix outdoor and treadmill climbing.")
         }
 
         return phaseAdvice + envTip
@@ -479,11 +479,11 @@ enum CoachAdviceGenerator {
     private static func treadmillTip(intensity: Intensity) -> String {
         switch intensity {
         case .easy, .moderate:
-            return " Set the incline to 8-10% and walk at a brisk pace."
+            return String(localized: "tcoach.vg.treadmill.easy", defaultValue: " Set the incline to 8-10% and walk at a brisk pace.")
         case .hard:
-            return " Set the incline to 10-15% at a brisk pace."
+            return String(localized: "tcoach.vg.treadmill.hard", defaultValue: " Set the incline to 10-15% at a brisk pace.")
         case .maxEffort:
-            return " Crank the incline to 15%+ and go hard."
+            return String(localized: "tcoach.vg.treadmill.max", defaultValue: " Crank the incline to 15%+ and go hard.")
         }
     }
 }

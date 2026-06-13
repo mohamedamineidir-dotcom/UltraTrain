@@ -147,7 +147,7 @@ struct FinishEstimationView: View {
                     systemImage: "mountain.2"
                 )
                 Label(
-                    viewModel.race.terrainDifficulty.rawValue.capitalized,
+                    viewModel.race.terrainDifficulty.displayName,
                     systemImage: "map"
                 )
             }

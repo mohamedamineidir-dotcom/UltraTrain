@@ -273,7 +273,7 @@ struct EditRaceSheet: View {
 
     private var raceInfoSection: some View {
         glassCard(
-            title: "Race info",
+            title: String(localized: "race.info", defaultValue: "Race info"),
             icon: "flag.checkered",
             tint: Theme.Colors.warmCoral
         ) {
@@ -298,7 +298,7 @@ struct EditRaceSheet: View {
                 .background(fieldChrome)
 
                 LabeledStepper(
-                    label: "Distance",
+                    label: String(localized: "race.distanceLabel", defaultValue: "Distance"),
                     value: distanceBinding,
                     range: isImperial ? 1...310 : 1...500,
                     step: isImperial ? 3 : 5,
@@ -313,13 +313,13 @@ struct EditRaceSheet: View {
 
     private var elevationSection: some View {
         glassCard(
-            title: "Elevation",
+            title: String(localized: "race.elevation", defaultValue: "Elevation"),
             icon: "mountain.2.fill",
             tint: Theme.Colors.info
         ) {
             VStack(spacing: Theme.Spacing.sm) {
                 LabeledStepper(
-                    label: "D+ (gain)",
+                    label: String(localized: "race.dplus", defaultValue: "D+ (gain)"),
                     value: elevationGainBinding,
                     range: isImperial ? 0...65600 : 0...20000,
                     step: isImperial ? 300 : 100,
@@ -330,7 +330,7 @@ struct EditRaceSheet: View {
                 .background(fieldChrome)
 
                 LabeledStepper(
-                    label: "D- (loss)",
+                    label: String(localized: "race.dminus", defaultValue: "D- (loss)"),
                     value: elevationLossBinding,
                     range: isImperial ? 0...65600 : 0...20000,
                     step: isImperial ? 300 : 100,

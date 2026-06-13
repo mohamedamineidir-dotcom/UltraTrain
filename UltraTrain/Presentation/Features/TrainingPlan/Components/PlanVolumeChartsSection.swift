@@ -387,7 +387,7 @@ struct PlanVolumeChartsSection: View {
                     ZStack(alignment: .topLeading) {
                         ForEach(visibleWeekNumbers, id: \.self) { weekNum in
                             if let xPos = proxy.position(forX: weekNum) {
-                                Text("W\(weekNum)")
+                                Text(String(localized: "chart.week", defaultValue: "W\(weekNum)"))
                                     .font(.system(size: 10, weight: .medium, design: .rounded))
                                     .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.75))
                                     .fixedSize()
@@ -673,7 +673,7 @@ struct PlanVolumeChartsSection: View {
         guard let peak = dataPoints.max(by: { plannedValue(for: $0) < plannedValue(for: $1) }) else {
             return nil
         }
-        return "W\(peak.weekNumber)"
+        return String(localized: "chart.week", defaultValue: "W\(peak.weekNumber)")
     }
 
     // MARK: - Value Accessors

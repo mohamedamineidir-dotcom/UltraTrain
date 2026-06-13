@@ -42,6 +42,7 @@ struct NutritionView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
+                header
                 tabPicker
 
                 Group {
@@ -61,7 +62,8 @@ struct NutritionView: View {
                     }
                 }
             }
-            .navigationTitle("Nutrition")
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     if viewModel.selectedTab == .raceDay {
@@ -135,6 +137,24 @@ struct NutritionView: View {
         return "Gut training · \(formatter.string(from: session.date))"
     }
 
+    // MARK: - Header
+
+    /// Custom large title instead of the system large nav title: because the
+    /// tab picker sits between the nav bar and the scroll view, the system
+    /// large title never collapses and leaves the whole header sitting too
+    /// low. A compact custom header keeps the bold left-aligned look while
+    /// pulling everything up under the (now inline) nav bar.
+    private var header: some View {
+        HStack {
+            Text("Nutrition")
+                .font(.largeTitle.bold())
+            Spacer()
+        }
+        .padding(.horizontal, Theme.Spacing.md)
+        .padding(.top, Theme.Spacing.xs)
+        .padding(.bottom, Theme.Spacing.xs)
+    }
+
     // MARK: - Tab Picker
 
     private var tabPicker: some View {
@@ -145,7 +165,7 @@ struct NutritionView: View {
         }
         .pickerStyle(.segmented)
         .padding(.horizontal, Theme.Spacing.md)
-        .padding(.vertical, Theme.Spacing.sm)
+        .padding(.bottom, Theme.Spacing.sm)
         .accessibilityIdentifier("nutrition.tabPicker")
     }
 
@@ -238,7 +258,7 @@ struct NutritionView: View {
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
-            Label(title, systemImage: systemImage)
+            Label(LocalizedStringKey(title), systemImage: systemImage)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(NutritionPalette.tint)
                 .frame(maxWidth: .infinity)

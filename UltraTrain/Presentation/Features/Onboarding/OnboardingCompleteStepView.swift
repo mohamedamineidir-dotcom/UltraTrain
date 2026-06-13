@@ -18,7 +18,7 @@ struct OnboardingCompleteStepView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: Theme.Spacing.lg) {
+            VStack(spacing: Theme.Spacing.md) {
                 heroSection
                     .scaleEffect(showRunner ? 1 : 0.5)
                     .opacity(showRunner ? 1 : 0)
@@ -73,7 +73,7 @@ struct OnboardingCompleteStepView: View {
                 .colorMultiply(colorScheme == .dark ? .white : Theme.Colors.warmCoral)
                 .shadow(color: Theme.Colors.warmCoral.opacity(0.25), radius: 20, y: 8)
         }
-        .padding(.top, Theme.Spacing.xxl)
+        .padding(.top, Theme.Spacing.md)
         .accessibilityHidden(true)
     }
 
@@ -101,8 +101,8 @@ struct OnboardingCompleteStepView: View {
             summaryRow(
                 icon: "figure.run",
                 iconColor: Theme.Colors.warmCoral,
-                title: viewModel.experienceLevel?.rawValue.capitalized ?? "Beginner",
-                detail: "\(viewModel.preferredRunsPerWeek) runs/week \u{00B7} \(viewModel.trainingPhilosophy.displayName)"
+                title: viewModel.experienceLevel?.displayName ?? String(localized: "experience.beginner", defaultValue: "Beginner"),
+                detail: String(localized: "onb.complete.profileDetail", defaultValue: "\(viewModel.preferredRunsPerWeek) runs/week") + " \u{00B7} \(viewModel.trainingPhilosophy.displayName)"
             )
 
             if !viewModel.hasNoRace {
@@ -137,8 +137,8 @@ struct OnboardingCompleteStepView: View {
                 summaryRow(
                     icon: "arrow.up.right",
                     iconColor: Theme.Colors.zone3,
-                    title: "General Fitness",
-                    detail: "12-week progressive plan"
+                    title: String(localized: "onb.complete.generalFitness", defaultValue: "General Fitness"),
+                    detail: String(localized: "onb.complete.progressivePlan", defaultValue: "12-week progressive plan")
                 )
             }
         }
@@ -157,7 +157,7 @@ struct OnboardingCompleteStepView: View {
         let weeks = Calendar.current.dateComponents(
             [.weekOfYear], from: .now, to: viewModel.raceDate
         ).weekOfYear ?? 0
-        return weeks > 0 ? "\(weeks) weeks to go" : ""
+        return weeks > 0 ? String(localized: "onb.complete.weeksToGo", defaultValue: "\(weeks) weeks to go") : ""
     }
 
     private func summaryRow(icon: String, iconColor: Color, title: String, detail: String) -> some View {

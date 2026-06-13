@@ -8,10 +8,10 @@ enum PainFrequency: String, CaseIterable, Sendable, Codable {
 
     var displayName: String {
         switch self {
-        case .never:     "No pain"
-        case .rarely:    "Rarely (few times a year)"
-        case .sometimes: "Sometimes (monthly)"
-        case .often:     "Often (weekly)"
+        case .never:     String(localized: "pain.never", defaultValue: "No pain")
+        case .rarely:    String(localized: "pain.rarely", defaultValue: "Rarely (few times a year)")
+        case .sometimes: String(localized: "pain.sometimes", defaultValue: "Sometimes (monthly)")
+        case .often:     String(localized: "pain.often", defaultValue: "Often (weekly)")
         }
     }
 }

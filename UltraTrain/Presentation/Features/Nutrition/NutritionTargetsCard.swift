@@ -125,7 +125,8 @@ struct NutritionTargetsCard: View {
                                 : AnyShapeStyle(iconColor.opacity(0.20))
                         )
                     )
-                Text(label.uppercased())
+                Text(LocalizedStringKey(label))
+                    .textCase(.uppercase)
                     .font(.caption2.weight(.bold))
                     .tracking(0.8)
                     .foregroundStyle(accent ? NutritionPalette.tint : Theme.Colors.secondaryLabel)
@@ -144,7 +145,7 @@ struct NutritionTargetsCard: View {
                             : AnyShapeStyle(Theme.Colors.label)
                     )
                 if !unit.isEmpty {
-                    Text(unit)
+                    Text(LocalizedStringKey(unit))
                         .font(.caption.weight(.medium))
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
@@ -241,24 +242,24 @@ private struct TargetsExplainerSheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: Theme.Spacing.md) {
                     section(
-                        title: "Carbs per hour",
-                        body: "Scaled to your race duration. Most runners need 60 to 90 g per hour, from a mix of glucose and fructose to avoid GI issues."
+                        title: String(localized: "ntx.carbs.title", defaultValue: "Carbs per hour"),
+                        body: String(localized: "ntx.carbs.body", defaultValue: "Scaled to your race duration. Most runners need 60 to 90 g per hour, from a mix of glucose and fructose to avoid GI issues.")
                     )
                     section(
-                        title: "Hydration",
-                        body: "Set from your sweat rate, or estimated from your weight and the weather. We aim to replace about 80% of what you lose."
+                        title: String(localized: "ntx.hydration.title", defaultValue: "Hydration"),
+                        body: String(localized: "ntx.hydration.body", defaultValue: "Set from your sweat rate, or estimated from your weight and the weather. We aim to replace about 80% of what you lose.")
                     )
                     section(
-                        title: "Sodium",
-                        body: "Matched to how salty your sweat is. Races over 6 hours apply a 575 mg per liter floor."
+                        title: String(localized: "ntx.sodium.title", defaultValue: "Sodium"),
+                        body: String(localized: "ntx.sodium.body", defaultValue: "Matched to how salty your sweat is. Races over 6 hours apply a 575 mg per liter floor.")
                     )
                     section(
-                        title: "Caffeine",
-                        body: "3 to 6 mg per kg of body weight, tuned to your tolerance. Spread across the race, with night doses for ultras."
+                        title: String(localized: "ntx.caffeine.title", defaultValue: "Caffeine"),
+                        body: String(localized: "ntx.caffeine.body", defaultValue: "3 to 6 mg per kg of body weight, tuned to your tolerance. Spread across the race, with night doses for ultras.")
                     )
                     section(
-                        title: "Why practice this in training?",
-                        body: "Your gut can be trained. Start at 40 g per hour, add 10 g every two weeks, and test your full race intake on two long runs before the event."
+                        title: String(localized: "ntx.why.title", defaultValue: "Why practice this in training?"),
+                        body: String(localized: "ntx.why.body", defaultValue: "Your gut can be trained. Start at 40 g per hour, add 10 g every two weeks, and test your full race intake on two long runs before the event.")
                     )
                 }
                 .padding()

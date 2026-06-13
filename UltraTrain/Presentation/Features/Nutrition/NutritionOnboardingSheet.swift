@@ -583,18 +583,18 @@ struct NutritionOnboardingSheet: View {
         hint: String?
     ) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(label)
+            Text(LocalizedStringKey(label))
                 .font(.subheadline.weight(.semibold))
             HStack {
-                TextField(placeholder, text: text)
+                TextField(LocalizedStringKey(placeholder), text: text)
                     .keyboardType(.numberPad)
                     .font(.title3.monospacedDigit())
-                Text(unit)
+                Text(LocalizedStringKey(unit))
                     .font(.caption.weight(.medium))
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
             if let hint {
-                Text(hint)
+                Text(LocalizedStringKey(hint))
                     .font(.caption2)
                     .foregroundStyle(Theme.Colors.tertiaryLabel)
             }

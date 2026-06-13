@@ -236,23 +236,23 @@ enum StrengthSessionGenerator {
                 // Week A pattern: squat-focused
                 [
                     StrengthExercise(name: "Back Squat", category: .lowerBody, sets: sets, reps: reps,
-                                    notes: "Control the descent. Knees track over toes.", requiresEquipment: true),
-                    StrengthExercise(name: "Romanian Deadlift", category: .lowerBody, sets: sets, reps: "8-10",
-                                    notes: "Hinge at hips, soft knees. Feel the hamstring stretch.", requiresEquipment: true),
+                                    notes: String(localized: "str.note.backSquat", defaultValue: "Control the descent. Knees track over toes."), requiresEquipment: true),
+                    StrengthExercise(name: String(localized: "str.name.rdl", defaultValue: "Romanian Deadlift"), category: .lowerBody, sets: sets, reps: "8-10",
+                                    notes: String(localized: "str.note.rdl", defaultValue: "Hinge at hips, soft knees. Feel the hamstring stretch."), requiresEquipment: true),
                 ],
                 // Week B pattern: hinge-focused
                 [
-                    StrengthExercise(name: "Hex Bar Deadlift", category: .lowerBody, sets: sets, reps: reps,
-                                    notes: "Drive through your whole foot. Keep chest up.", requiresEquipment: true),
+                    StrengthExercise(name: String(localized: "str.name.hexDeadlift", defaultValue: "Hex Bar Deadlift"), category: .lowerBody, sets: sets, reps: reps,
+                                    notes: String(localized: "str.note.hexDeadlift", defaultValue: "Drive through your whole foot. Keep chest up."), requiresEquipment: true),
                     StrengthExercise(name: "Hip Thrust", category: .lowerBody, sets: sets, reps: "10-12",
-                                    notes: "Squeeze glutes at the top. Pause 1 second.", requiresEquipment: true),
+                                    notes: String(localized: "str.note.hipThrust", defaultValue: "Squeeze glutes at the top. Pause 1 second."), requiresEquipment: true),
                 ],
                 // Week C pattern: unilateral-focused
                 [
                     StrengthExercise(name: "Front Squat", category: .lowerBody, sets: sets, reps: reps,
-                                    notes: "Elbows high, core tight. Builds upright climbing posture.", requiresEquipment: true),
-                    StrengthExercise(name: "Walking Lunges", category: .lowerBody, sets: sets, reps: "10 per leg",
-                                    notes: "Long stride, controlled descent. Mimics uphill stride pattern.", requiresEquipment: true),
+                                    notes: String(localized: "str.note.frontSquat", defaultValue: "Elbows high, core tight. Builds upright climbing posture."), requiresEquipment: true),
+                    StrengthExercise(name: String(localized: "str.name.walkingLunges", defaultValue: "Walking Lunges"), category: .lowerBody, sets: sets, reps: String(localized: "str.reps.10leg", defaultValue: "10 per leg"),
+                                    notes: String(localized: "str.note.walkingLunges", defaultValue: "Long stride, controlled descent. Mimics uphill stride pattern."), requiresEquipment: true),
                 ],
             ]
             return pool[phaseAdjustedIndex % pool.count]
@@ -260,21 +260,21 @@ enum StrengthSessionGenerator {
             let pool: [[StrengthExercise]] = [
                 [
                     StrengthExercise(name: "Goblet Squat", category: .lowerBody, sets: sets, reps: reps,
-                                    notes: "Hold any weight at chest level, or bodyweight. Full depth."),
-                    StrengthExercise(name: "Single-Leg Romanian Deadlift", category: .lowerBody, sets: sets, reps: "8-10 per side",
-                                    notes: "Keep hips level. Touch floor if flexible enough."),
+                                    notes: String(localized: "str.note.gobletSquat", defaultValue: "Hold any weight at chest level, or bodyweight. Full depth.")),
+                    StrengthExercise(name: String(localized: "str.name.slRdl", defaultValue: "Single-Leg Romanian Deadlift"), category: .lowerBody, sets: sets, reps: String(localized: "str.reps.810side", defaultValue: "8-10 per side"),
+                                    notes: String(localized: "str.note.slRdl", defaultValue: "Keep hips level. Touch floor if flexible enough.")),
                 ],
                 [
-                    StrengthExercise(name: "Reverse Lunge", category: .lowerBody, sets: sets, reps: "10 per leg",
-                                    notes: "Step back, lower with control. Drive through front heel."),
-                    StrengthExercise(name: "Glute Bridge", category: .lowerBody, sets: sets, reps: "12-15",
-                                    notes: "Drive through heels. Squeeze glutes at top for 2 seconds."),
+                    StrengthExercise(name: String(localized: "str.name.reverseLunge", defaultValue: "Reverse Lunge"), category: .lowerBody, sets: sets, reps: String(localized: "str.reps.10leg", defaultValue: "10 per leg"),
+                                    notes: String(localized: "str.note.reverseLunge", defaultValue: "Step back, lower with control. Drive through front heel.")),
+                    StrengthExercise(name: String(localized: "str.name.gluteBridge", defaultValue: "Glute Bridge"), category: .lowerBody, sets: sets, reps: "12-15",
+                                    notes: String(localized: "str.note.gluteBridge2s", defaultValue: "Drive through heels. Squeeze glutes at top for 2 seconds.")),
                 ],
                 [
-                    StrengthExercise(name: "Pistol Squat Progression", category: .lowerBody, sets: sets, reps: "6-8 per leg",
-                                    notes: "Sit to a chair if needed. Build toward full pistol over weeks."),
-                    StrengthExercise(name: "Single-Leg Hip Thrust", category: .lowerBody, sets: sets, reps: "10 per side",
-                                    notes: "One leg planted, other extended. Max glute activation."),
+                    StrengthExercise(name: "Step-Up", category: .lowerBody, sets: sets, reps: String(localized: "str.reps.10leg", defaultValue: "10 per leg"),
+                                    notes: String(localized: "str.note.stepUpLeg", defaultValue: "Step onto a sturdy box or stair, drive through the top leg, lower with control. Builds the climbing strength trails demand.")),
+                    StrengthExercise(name: String(localized: "str.name.slHipThrust", defaultValue: "Single-Leg Hip Thrust"), category: .lowerBody, sets: sets, reps: String(localized: "str.reps.10side", defaultValue: "10 per side"),
+                                    notes: String(localized: "str.note.slHipThrust", defaultValue: "One leg planted, other extended. Max glute activation.")),
                 ],
             ]
             return pool[phaseAdjustedIndex % pool.count]
@@ -289,10 +289,10 @@ enum StrengthSessionGenerator {
 
         // Rotate core exercises for variety
         let corePool: [(String, String, String)] = [
-            ("Dead Bug", "8-10 per side", "Press lower back into floor. Slow and controlled."),
-            ("Side Plank", "20-30 sec per side", "Stack hips. Keep body in a straight line."),
-            ("Bird Dog", "10 per side", "Extend opposite arm and leg. Hold 2 seconds at full extension."),
-            ("Plank Shoulder Tap", "8-10 per side", "Stay stable through the hips. No rotation."),
+            ("Bicycle Crunch", String(localized: "str.reps.1215side", defaultValue: "12-15 per side"), String(localized: "str.note.bicycleCrunch", defaultValue: "Bring your opposite elbow toward your knee, slow and controlled. Keep your lower back on the floor.")),
+            (String(localized: "str.name.sidePlank", defaultValue: "Side Plank"), String(localized: "str.reps.2030secSide", defaultValue: "20-30 sec per side"), String(localized: "str.note.sidePlankCore", defaultValue: "Stack hips. Keep body in a straight line.")),
+            ("Bird Dog", String(localized: "str.reps.10side", defaultValue: "10 per side"), String(localized: "str.note.birdDog", defaultValue: "Extend opposite arm and leg. Hold 2 seconds at full extension.")),
+            ("Plank Shoulder Tap", String(localized: "str.reps.810side", defaultValue: "8-10 per side"), String(localized: "str.note.plankTap", defaultValue: "Stay stable through the hips. No rotation.")),
         ]
 
         let startIdx = weekVariation % corePool.count
@@ -303,10 +303,10 @@ enum StrengthSessionGenerator {
 
         if isGym {
             let gymCore = weekVariation % 2 == 0
-                ? StrengthExercise(name: "Pallof Press", category: .core, sets: sets, reps: "10 per side",
-                                  notes: "Anti-rotation. Press cable away from chest, hold 2 sec.", requiresEquipment: true)
-                : StrengthExercise(name: "Cable Woodchop", category: .core, sets: sets, reps: "10 per side",
-                                  notes: "Rotate from the hips, not the shoulders. Control the return.", requiresEquipment: true)
+                ? StrengthExercise(name: "Russian Twist", category: .core, sets: sets, reps: String(localized: "str.reps.10side", defaultValue: "10 per side"),
+                                  notes: String(localized: "str.note.russianTwist", defaultValue: "Sit back slightly and rotate your torso side to side under control. Trains the rotational core that keeps you steady on uneven ground."))
+                : StrengthExercise(name: "Cable Woodchop", category: .core, sets: sets, reps: String(localized: "str.reps.10side", defaultValue: "10 per side"),
+                                  notes: String(localized: "str.note.woodchop", defaultValue: "Rotate from the hips, not the shoulders. Control the return."), requiresEquipment: true)
             exercises.append(gymCore)
         } else {
             let nextIdx = (startIdx + 1) % corePool.count
@@ -326,14 +326,14 @@ enum StrengthSessionGenerator {
             return [
                 StrengthExercise(
                     name: "Bulgarian Split Squat",
-                    category: .singleLegStability, sets: sets, reps: "8-10 per leg",
-                    notes: "Rear foot on bench. Keep front knee over ankle.",
+                    category: .singleLegStability, sets: sets, reps: String(localized: "str.reps.810leg", defaultValue: "8-10 per leg"),
+                    notes: String(localized: "str.note.bulgarianGym", defaultValue: "Rear foot on bench. Keep front knee over ankle."),
                     requiresEquipment: true
                 ),
                 StrengthExercise(
                     name: "Box Step-Up",
-                    category: .singleLegStability, sets: sets, reps: "10 per leg",
-                    notes: "Drive through the heel. Mimics uphill running.",
+                    category: .singleLegStability, sets: sets, reps: String(localized: "str.reps.10leg", defaultValue: "10 per leg"),
+                    notes: String(localized: "str.note.boxStepUp", defaultValue: "Drive through the heel. Mimics uphill running."),
                     requiresEquipment: true
                 ),
             ]
@@ -341,13 +341,13 @@ enum StrengthSessionGenerator {
             return [
                 StrengthExercise(
                     name: "Bulgarian Split Squat",
-                    category: .singleLegStability, sets: sets, reps: "8-10 per leg",
-                    notes: "Rear foot on a couch or chair. Control the descent."
+                    category: .singleLegStability, sets: sets, reps: String(localized: "str.reps.810leg", defaultValue: "8-10 per leg"),
+                    notes: String(localized: "str.note.bulgarianHome", defaultValue: "Rear foot on a couch or chair. Control the descent.")
                 ),
                 StrengthExercise(
-                    name: "Single-Leg Balance",
-                    category: .singleLegStability, sets: sets, reps: "30 sec per leg",
-                    notes: "Eyes open first. Progress to eyes closed when stable."
+                    name: String(localized: "str.name.slBalance", defaultValue: "Single-Leg Balance"),
+                    category: .singleLegStability, sets: sets, reps: String(localized: "str.reps.30secLeg", defaultValue: "30 sec per leg"),
+                    notes: String(localized: "str.note.slBalance", defaultValue: "Eyes open first. Progress to eyes closed when stable.")
                 ),
             ]
         }
@@ -378,12 +378,12 @@ enum StrengthSessionGenerator {
                     StrengthExercise(
                         name: "Pogo Hops",
                         category: .plyometric, sets: sets, reps: "20-30",
-                        notes: "Quick ground contact. Stiff ankles, minimal knee bend. Builds tendon stiffness, strongly correlated with running economy."
+                        notes: String(localized: "str.note.pogoBuild", defaultValue: "Quick ground contact. Stiff ankles, minimal knee bend. Builds tendon stiffness, strongly correlated with running economy.")
                     ),
                     StrengthExercise(
                         name: "Low Box Jumps",
                         category: .plyometric, sets: sets, reps: "5-6",
-                        notes: "30-45 cm box. Soft landing, full recovery between reps. Reactive strength, not a max test."
+                        notes: String(localized: "str.note.lowBox", defaultValue: "30-45 cm box. Soft landing, full recovery between reps. Reactive strength, not a max test.")
                     ),
                 ]
             } else {
@@ -392,7 +392,7 @@ enum StrengthSessionGenerator {
                     StrengthExercise(
                         name: "Pogo Hops",
                         category: .plyometric, sets: 2, reps: "15-20",
-                        notes: "Quick ground contact. Stiff ankles. Maintain tendon stiffness through peak."
+                        notes: String(localized: "str.note.pogoPeak", defaultValue: "Quick ground contact. Stiff ankles. Maintain tendon stiffness through peak.")
                     ),
                 ]
             }
@@ -402,12 +402,12 @@ enum StrengthSessionGenerator {
                     StrengthExercise(
                         name: "Squat Jumps",
                         category: .plyometric, sets: sets, reps: "8-10",
-                        notes: "Land softly. Full squat depth before jumping."
+                        notes: String(localized: "str.note.squatJumps", defaultValue: "Land softly. Full squat depth before jumping.")
                     ),
                     StrengthExercise(
                         name: "Lateral Bounds",
-                        category: .plyometric, sets: sets, reps: "8 per side",
-                        notes: "Stick the landing on one foot. Critical for trail terrain changes."
+                        category: .plyometric, sets: sets, reps: String(localized: "str.reps.8side", defaultValue: "8 per side"),
+                        notes: String(localized: "str.note.lateralBounds", defaultValue: "Stick the landing on one foot. Critical for trail terrain changes.")
                     ),
                 ]
             } else {
@@ -416,7 +416,7 @@ enum StrengthSessionGenerator {
                     StrengthExercise(
                         name: "Pogo Hops",
                         category: .plyometric, sets: 2, reps: "15-20",
-                        notes: "Quick ground contact. Stiff ankles. Minimal knee bend."
+                        notes: String(localized: "str.note.pogoPeakTrail", defaultValue: "Quick ground contact. Stiff ankles. Minimal knee bend.")
                     ),
                 ]
             }
@@ -431,18 +431,18 @@ enum StrengthSessionGenerator {
         if isGym {
             return [
                 StrengthExercise(
-                    name: "Bent Over Row",
+                    name: String(localized: "str.name.row", defaultValue: "Bent Over Row"),
                     category: .upperBody, sets: sets, reps: "8-10",
-                    notes: "Squeeze shoulder blades together. Posture maintenance for long efforts.",
+                    notes: String(localized: "str.note.row", defaultValue: "Squeeze shoulder blades together. Posture maintenance for long efforts."),
                     requiresEquipment: true
                 ),
             ]
         } else {
             return [
                 StrengthExercise(
-                    name: "Push-Ups",
+                    name: String(localized: "str.name.pushups", defaultValue: "Push-Ups"),
                     category: .upperBody, sets: sets, reps: "10-15",
-                    notes: "Full range of motion. Modify on knees if needed."
+                    notes: String(localized: "str.note.pushups", defaultValue: "Full range of motion. Modify on knees if needed.")
                 ),
             ]
         }
@@ -453,24 +453,24 @@ enum StrengthSessionGenerator {
     private static func selectActivation(isGym: Bool) -> [StrengthExercise] {
         [
             StrengthExercise(
-                name: "Glute Bridge",
+                name: String(localized: "str.name.gluteBridge", defaultValue: "Glute Bridge"),
                 category: .lowerBody, sets: 2, reps: "12",
-                notes: "Activate glutes before running or as standalone."
+                notes: String(localized: "str.note.gluteBridgeAct", defaultValue: "Activate glutes before running or as standalone.")
             ),
             StrengthExercise(
                 name: "Clamshell",
-                category: .injuryPrevention, sets: 2, reps: "12 per side",
-                notes: "Keep feet together. Feel the burn in outer hip."
+                category: .injuryPrevention, sets: 2, reps: String(localized: "str.reps.12side", defaultValue: "12 per side"),
+                notes: String(localized: "str.note.clamshell", defaultValue: "Keep feet together. Feel the burn in outer hip.")
             ),
             StrengthExercise(
-                name: "Dead Bug",
-                category: .core, sets: 2, reps: "8 per side",
-                notes: "Gentle core activation. Keep lower back flat."
+                name: "Bird Dog",
+                category: .core, sets: 2, reps: String(localized: "str.reps.8side", defaultValue: "8 per side"),
+                notes: String(localized: "str.note.birdDogAct", defaultValue: "Gentle core activation. Reach the opposite arm and leg, keep your back flat and still.")
             ),
             StrengthExercise(
-                name: "Walking Lunge",
-                category: .lowerBody, sets: 2, reps: "8 per leg",
-                notes: "Slow and controlled. Feel the stretch in hip flexors."
+                name: String(localized: "str.name.walkingLunge", defaultValue: "Walking Lunge"),
+                category: .lowerBody, sets: 2, reps: String(localized: "str.reps.8leg", defaultValue: "8 per leg"),
+                notes: String(localized: "str.note.walkingLungeAct", defaultValue: "Slow and controlled. Feel the stretch in hip flexors.")
             ),
         ]
     }
@@ -495,52 +495,52 @@ enum StrengthSessionGenerator {
         switch config.raceType {
         case .road:
             exercises.append(StrengthExercise(
-                name: "Side Plank with Hip Abduction",
-                category: .injuryPrevention, sets: sets, reps: "8-10 per side",
-                notes: "Stack hips, lift the top leg slowly. Glute-med specific, directly counters the pelvic drop behind ITBS and PFP."
+                name: String(localized: "str.name.sidePlankAbd", defaultValue: "Side Plank with Hip Abduction"),
+                category: .injuryPrevention, sets: sets, reps: String(localized: "str.reps.810side", defaultValue: "8-10 per side"),
+                notes: String(localized: "str.note.sidePlankAbd", defaultValue: "Stack hips, lift the top leg slowly. Glute-med specific, directly counters the pelvic drop behind ITBS and PFP.")
             ))
             exercises.append(StrengthExercise(
-                name: "Slow Eccentric Calf Raise",
+                name: String(localized: "str.name.calfRaise", defaultValue: "Slow Eccentric Calf Raise"),
                 category: .injuryPrevention, sets: sets, reps: "12-15",
-                notes: "3-second lowering. Both straight and bent knee. The calf-Achilles complex absorbs ~3× bodyweight per stride, calf endurance predicts late-marathon pace fade."
+                notes: String(localized: "str.note.calfRaise", defaultValue: "3-second lowering. Both straight and bent knee. The calf-Achilles complex absorbs ~3× bodyweight per stride, calf endurance predicts late-marathon pace fade.")
             ))
             if config.painFrequency == .often || config.hasRecentInjury {
                 exercises.append(StrengthExercise(
-                    name: "Pallof Press",
-                    category: .injuryPrevention, sets: sets, reps: "10 per side",
-                    notes: "Anti-rotation core. Prevents trunk twist that wastes energy at high cadence."
+                    name: "Russian Twist",
+                    category: .injuryPrevention, sets: sets, reps: String(localized: "str.reps.10side", defaultValue: "10 per side"),
+                    notes: String(localized: "str.note.russianTwistRoad", defaultValue: "Rotational core control. A steady trunk stops the energy-wasting twist that creeps in at high cadence.")
                 ))
             }
 
         case .trail:
             exercises.append(StrengthExercise(
                 name: "Clamshell with Band",
-                category: .injuryPrevention, sets: sets, reps: "12-15 per side",
-                notes: "Glute medius activation. Prevents IT band issues and knee pain."
+                category: .injuryPrevention, sets: sets, reps: String(localized: "str.reps.1215side", defaultValue: "12-15 per side"),
+                notes: String(localized: "str.note.clamshellBand", defaultValue: "Glute medius activation. Prevents IT band issues and knee pain.")
             ))
             exercises.append(StrengthExercise(
-                name: "Step-Down (slow eccentric)",
-                category: .injuryPrevention, sets: sets, reps: "8-12 per leg",
-                notes: "30-50 cm box. 4-second lowering. Best single exercise for downhill quad tolerance, directly trains the eccentric loading that destroys late-race ultras."
+                name: String(localized: "str.name.stepDown", defaultValue: "Step-Down (slow eccentric)"),
+                category: .injuryPrevention, sets: sets, reps: String(localized: "str.reps.812leg", defaultValue: "8-12 per leg"),
+                notes: String(localized: "str.note.stepDown", defaultValue: "30-50 cm box. 4-second lowering. Best single exercise for downhill quad tolerance, directly trains the eccentric loading that destroys late-race ultras.")
             ))
             if config.painFrequency == .often || config.hasRecentInjury {
                 exercises.append(StrengthExercise(
-                    name: "Hip Hike on Step",
-                    category: .injuryPrevention, sets: sets, reps: "12 per side",
-                    notes: "Stand on step edge. Lower hip then raise. Strengthens glute medius and hip stabilizers."
+                    name: String(localized: "str.name.hipHike", defaultValue: "Hip Hike on Step"),
+                    category: .injuryPrevention, sets: sets, reps: String(localized: "str.reps.12side", defaultValue: "12 per side"),
+                    notes: String(localized: "str.note.hipHike", defaultValue: "Stand on step edge. Lower hip then raise. Strengthens glute medius and hip stabilizers.")
                 ))
                 exercises.append(StrengthExercise(
-                    name: "Ankle Stability - Star Reach",
-                    category: .injuryPrevention, sets: 2, reps: "3 rounds per leg",
-                    notes: "Stand on one leg, reach other foot in 4 directions. Ankle proprioception for trails."
+                    name: String(localized: "str.name.ankleStar", defaultValue: "Ankle Stability - Star Reach"),
+                    category: .injuryPrevention, sets: 2, reps: String(localized: "str.reps.3roundsLeg", defaultValue: "3 rounds per leg"),
+                    notes: String(localized: "str.note.ankleStar", defaultValue: "Stand on one leg, reach other foot in 4 directions. Ankle proprioception for trails.")
                 ))
             }
             // For ultra trail: extra ankle and quad eccentric work
             if config.raceEffectiveKm > 50 {
                 exercises.append(StrengthExercise(
-                    name: "Single-Leg Balance (Eyes Closed)",
-                    category: .injuryPrevention, sets: 2, reps: "15-20 sec per leg",
-                    notes: "Advanced proprioception. Essential for technical trail terrain."
+                    name: String(localized: "str.name.slBalanceClosed", defaultValue: "Single-Leg Balance (Eyes Closed)"),
+                    category: .injuryPrevention, sets: 2, reps: String(localized: "str.reps.1520secLeg", defaultValue: "15-20 sec per leg"),
+                    notes: String(localized: "str.note.slBalanceClosed", defaultValue: "Advanced proprioception. Essential for technical trail terrain.")
                 ))
             }
         }
@@ -605,23 +605,23 @@ enum StrengthSessionGenerator {
     ) -> String {
         let phaseName: String
         switch config.phase {
-        case .base: phaseName = "Foundation"
-        case .build: phaseName = "Strength-Power"
-        case .peak: phaseName = "Maintenance"
-        case .taper: phaseName = "Activation"
-        case .recovery: phaseName = "Recovery"
-        case .race: phaseName = "Pre-Race"
+        case .base: phaseName = String(localized: "str.phase.foundation", defaultValue: "Foundation")
+        case .build: phaseName = String(localized: "str.phase.strengthPower", defaultValue: "Strength-Power")
+        case .peak: phaseName = String(localized: "str.phase.maintenance", defaultValue: "Maintenance")
+        case .taper: phaseName = String(localized: "str.phase.activation", defaultValue: "Activation")
+        case .recovery: phaseName = String(localized: "str.phase.recovery", defaultValue: "Recovery")
+        case .race: phaseName = String(localized: "str.phase.preRace", defaultValue: "Pre-Race")
         }
 
-        let locationSuffix = config.location == .gym ? "Gym" : "Home"
+        let locationSuffix = config.location == .gym ? String(localized: "str.loc.gym", defaultValue: "Gym") : String(localized: "str.loc.home", defaultValue: "Home")
 
         switch category {
         case .full:
-            return "\(phaseName) S&C (\(locationSuffix))"
+            return String(localized: "str.wname.full", defaultValue: "\(phaseName) S&C (\(locationSuffix))")
         case .maintenance:
-            return "\(phaseName) Quick S&C (\(locationSuffix))"
+            return String(localized: "str.wname.quick", defaultValue: "\(phaseName) Quick S&C (\(locationSuffix))")
         case .activation:
-            return "Activation & Mobility"
+            return String(localized: "str.wname.activation", defaultValue: "Activation & Mobility")
         }
     }
 }

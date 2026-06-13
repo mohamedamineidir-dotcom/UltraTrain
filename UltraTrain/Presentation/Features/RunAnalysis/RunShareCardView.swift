@@ -94,7 +94,7 @@ struct RunShareCardView: View {
                 Text(RunStatisticsCalculator.formatDuration(run.duration))
                     .font(.system(size: heroValueSize, weight: .bold, design: .rounded).monospacedDigit())
                     .foregroundStyle(.white)
-                Text("DURATION")
+                Text(String(localized: "share.duration", defaultValue: "DURATION"))
                     .font(.system(size: heroLabelSize, weight: .medium))
                     .tracking(3)
                     .foregroundStyle(.white.opacity(0.5))
@@ -107,18 +107,18 @@ struct RunShareCardView: View {
     private var secondaryStats: some View {
         HStack(spacing: 0) {
             statPill(
-                label: "AVG PACE",
+                label: String(localized: "share.avgPace", defaultValue: "AVG PACE"),
                 value: RunStatisticsCalculator.formatPace(run.averagePaceSecondsPerKm, unit: unitPreference)
                     + " " + UnitFormatter.paceLabel(unitPreference)
             )
             statDivider
             statPill(
-                label: "ELEVATION",
+                label: String(localized: "share.elevation", defaultValue: "ELEVATION"),
                 value: "+\(UnitFormatter.formatElevation(run.elevationGainM, unit: unitPreference)) / -\(UnitFormatter.formatElevation(run.elevationLossM, unit: unitPreference))"
             )
             if let hr = run.averageHeartRate {
                 statDivider
-                statPill(label: "AVG HR", value: "\(hr) bpm")
+                statPill(label: String(localized: "share.avgHR", defaultValue: "AVG HR"), value: "\(hr) bpm")
             }
         }
         .padding(.horizontal, 60)

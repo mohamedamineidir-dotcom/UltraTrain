@@ -321,9 +321,11 @@ struct ProfileView: View {
                     // yrs"). `.fixedSize` per chip prevents wrapping
                     // regardless of available width.
                     HStack(spacing: 6) {
-                        athleteChip(label: "\(athlete.age) yrs", icon: "calendar")
-                        athleteChip(label: athlete.experienceLevel.rawValue.capitalized, icon: "figure.run")
-                        athleteChip(label: athlete.preferredUnit.rawValue.capitalized, icon: "ruler")
+                        athleteChip(label: String(localized: "profile.age", defaultValue: "\(athlete.age) yrs"), icon: "calendar")
+                        athleteChip(label: athlete.experienceLevel.displayName, icon: "figure.run")
+                        athleteChip(label: athlete.preferredUnit == .metric
+                            ? String(localized: "unit.metric", defaultValue: "Metric")
+                            : String(localized: "unit.imperial", defaultValue: "Imperial"), icon: "ruler")
                         Spacer(minLength: 0)
                     }
 

@@ -25,23 +25,23 @@ enum UltraPalateTiming: String, CaseIterable, Codable, Sendable {
 
     var displayName: String {
         switch self {
-        case .early:  return "Early (under 2 hours)"
-        case .mid:    return "Mid-race (2-4 hours in)"
-        case .late:   return "Late (past 4 hours)"
-        case .never:  return "Never, I'm fine with sweet all race"
+        case .early:  return String(localized: "upt.early.title", defaultValue: "Early (under 2 hours)")
+        case .mid:    return String(localized: "upt.mid.title", defaultValue: "Mid-race (2-4 hours in)")
+        case .late:   return String(localized: "upt.late.title", defaultValue: "Late (past 4 hours)")
+        case .never:  return String(localized: "upt.never.title", defaultValue: "Never, I'm fine with sweet all race")
         }
     }
 
     var subtitle: String {
         switch self {
         case .early:
-            return "Plan real food from the first aid stations"
+            return String(localized: "upt.early.desc", defaultValue: "Plan real food from the first aid stations")
         case .mid:
-            return "Gels early, switch to real food mid-race"
+            return String(localized: "upt.mid.desc", defaultValue: "Gels early, switch to real food mid-race")
         case .late:
-            return "Gels through most of the race, real food late"
+            return String(localized: "upt.late.desc", defaultValue: "Gels through most of the race, real food late")
         case .never:
-            return "Stay gel-centric throughout"
+            return String(localized: "upt.never.desc", defaultValue: "Stay gel-centric throughout")
         }
     }
 }

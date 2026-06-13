@@ -95,7 +95,7 @@ struct PersonalBestsStepView: View {
             Image(systemName: icon)
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Theme.Colors.warmCoral)
-            Text(title)
+            Text(LocalizedStringKey(title))
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Theme.Colors.label)
             Spacer()
@@ -378,7 +378,7 @@ private struct PBEntryCard: View {
         VStack(alignment: .leading, spacing: 0) {
             Button(action: onToggle) {
                 HStack {
-                    Text(distance.rawValue)
+                    Text(LocalizedStringKey(distance.rawValue))
                         .font(.headline)
                         .foregroundStyle(Theme.Colors.label)
                     Spacer()

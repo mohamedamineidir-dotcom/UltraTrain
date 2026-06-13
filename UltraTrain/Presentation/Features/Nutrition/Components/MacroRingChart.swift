@@ -102,7 +102,7 @@ struct MacroRingChart: View {
 
         return VStack(alignment: .leading, spacing: 2) {
             HStack {
-                Text(label)
+                Text(LocalizedStringKey(label))
                     .font(.caption.bold())
                     .foregroundStyle(Theme.Colors.label)
                 Spacer()

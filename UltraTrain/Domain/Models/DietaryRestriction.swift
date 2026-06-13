@@ -10,11 +10,11 @@ enum DietaryRestriction: String, CaseIterable, Codable, Sendable {
 
     var displayName: String {
         switch self {
-        case .vegan:      "Vegan"
-        case .vegetarian: "Vegetarian"
-        case .glutenFree: "Gluten-free"
-        case .dairyFree:  "Dairy-free"
-        case .nutFree:    "Nut-free"
+        case .vegan:      String(localized: "diet.vegan", defaultValue: "Vegan")
+        case .vegetarian: String(localized: "diet.vegetarian", defaultValue: "Vegetarian")
+        case .glutenFree: String(localized: "diet.glutenFree", defaultValue: "Gluten-free")
+        case .dairyFree:  String(localized: "diet.dairyFree", defaultValue: "Dairy-free")
+        case .nutFree:    String(localized: "diet.nutFree", defaultValue: "Nut-free")
         }
     }
 }

@@ -3,7 +3,25 @@ import SwiftUI
 struct SessionRowView: View {
     @Environment(\.unitPreference) private var units
     let session: TrainingSession
+    /// Position within a back-to-back ("Weekend Choc") weekend pair: 1 for
+    /// the first long run, 2 for the second. nil for any non-B2B session.
+    /// When set, the row title reads "Weekend Choc (1/2)" / "(2/2)" instead
+    /// of the plain session-type name, so both days read as one block.
+    var b2bPosition: Int? = nil
+    /// Optional inline accessory (the same-day S&C / "PPG" chip) rendered on
+    /// the session's second line instead of a separate row beneath it, so a
+    /// day that also carries strength work stays the same height as the rest.
+    var inlineAccessory: AnyView? = nil
     let onToggle: () -> Void
+
+    /// Title shown on the row: the B2B pair label when this session belongs
+    /// to a Weekend Choc weekend, otherwise the plain session-type name.
+    private var titleText: String {
+        if let pos = b2bPosition {
+            return String(localized: "session.b2bPairLabel", defaultValue: "Weekend Choc (\(pos)/2)")
+        }
+        return session.type.displayName
+    }
 
     var body: some View {
         if session.type == .rest {
@@ -121,7 +139,7 @@ struct SessionRowView: View {
 
     private var topLine: some View {
         HStack(spacing: Theme.Spacing.xs) {
-            Text(session.type.displayName)
+            Text(titleText)
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(session.isCompleted || session.isSkipped
                     ? Theme.Colors.secondaryLabel : Theme.Colors.label)
@@ -199,6 +217,12 @@ struct SessionRowView: View {
             if session.isGutTrainingRecommended && !session.isSkipped {
                 GutTrainingBadge()
             }
+
+            // Same-day strength work rides on this line as a compact chip
+            // so the day doesn't grow a second row and tower over the others.
+            if let inlineAccessory {
+                inlineAccessory
+            }
         }
     }
 
@@ -261,9 +285,9 @@ struct SessionRowView: View {
     // MARK: - Toggle State
 
     private var statusAccessibilityLabel: String {
-        if session.isCompleted { return "\(session.type.displayName), completed" }
-        if session.isSkipped { return "\(session.type.displayName), skipped" }
-        return "Mark \(session.type.displayName) as completed"
+        if session.isCompleted { return "\(titleText), completed" }
+        if session.isSkipped { return "\(titleText), skipped" }
+        return "Mark \(titleText) as completed"
     }
 }
 

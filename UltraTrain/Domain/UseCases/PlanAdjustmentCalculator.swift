@@ -126,9 +126,9 @@ enum PlanAdjustmentCalculator {
                 id: UUID(),
                 type: .rescheduleKeySession,
                 severity: .recommended,
-                title: "Reschedule \(missed.session.type.rawValue.capitalized)",
-                message: "You missed your \(missed.session.type.rawValue) session. Move it to \(targetDay)?",
-                actionLabel: "Reschedule",
+                title: String(localized: "pac2.reschedule.title", defaultValue: "Reschedule \(missed.session.type.displayName)"),
+                message: String(localized: "pac2.reschedule.msg", defaultValue: "You missed your \(missed.session.type.displayName) session. Move it to \(targetDay)?"),
+                actionLabel: String(localized: "pac2.reschedule.action", defaultValue: "Reschedule"),
                 affectedSessionIds: [missed.session.id, slot.session.id]
             ))
         }
@@ -173,15 +173,15 @@ enum PlanAdjustmentCalculator {
         let severity: AdjustmentSeverity = (currentWeek.phase == .peak || currentWeek.phase == .taper)
             ? .urgent : .recommended
         let peakNote = severity == .urgent
-            ? " You're in the peak phase, every session counts toward race day."
+            ? String(localized: "pac2.peakNote", defaultValue: " You're in the peak phase, every session counts toward race day.")
             : ""
         recommendations.append(PlanAdjustmentRecommendation(
             id: UUID(),
             type: .reduceVolumeAfterLowAdherence,
             severity: severity,
-            title: "Reduce This Week's Volume",
-            message: "Last week's adherence was \(Int(adherence * 100))%. Reduce remaining sessions by \(pct)% to ease back in.\(peakNote)",
-            actionLabel: "Reduce Volume",
+            title: String(localized: "pac2.reduceVol.title", defaultValue: "Reduce This Week's Volume"),
+            message: String(localized: "pac2.reduceVol.msg", defaultValue: "Last week's adherence was \(Int(adherence * 100))%. Reduce remaining sessions by \(pct)% to ease back in.\(peakNote)"),
+            actionLabel: String(localized: "pac2.reduceVol.action", defaultValue: "Reduce Volume"),
             affectedSessionIds: affectedIds
         ))
     }
@@ -231,9 +231,9 @@ enum PlanAdjustmentCalculator {
             id: UUID(),
             type: .convertToRecoveryWeek,
             severity: .urgent,
-            title: "Convert to Recovery Week",
-            message: "No training logged in \(gapDays)+ days. Ease back with a lighter recovery week.",
-            actionLabel: "Convert to Recovery",
+            title: String(localized: "pac2.convertRec.title", defaultValue: "Convert to Recovery Week"),
+            message: String(localized: "pac2.convertRec.msg", defaultValue: "No training logged in \(gapDays)+ days. Ease back with a lighter recovery week."),
+            actionLabel: String(localized: "pac2.convertRec.action", defaultValue: "Convert to Recovery"),
             affectedSessionIds: affectedIds
         ))
 
@@ -263,9 +263,9 @@ enum PlanAdjustmentCalculator {
             id: UUID(),
             type: .bulkMarkMissedAsSkipped,
             severity: .suggestion,
-            title: "Clean Up Missed Sessions",
-            message: "\(missedSessions.count) past sessions are unmarked. Mark them as skipped to keep your plan tidy.",
-            actionLabel: "Skip All Missed",
+            title: String(localized: "pac2.cleanup.title", defaultValue: "Clean Up Missed Sessions"),
+            message: String(localized: "pac2.cleanup.msg", defaultValue: "\(missedSessions.count) past sessions are unmarked. Mark them as skipped to keep your plan tidy."),
+            actionLabel: String(localized: "pac2.cleanup.action", defaultValue: "Skip All Missed"),
             affectedSessionIds: missedSessions.map(\.id)
         ))
     }

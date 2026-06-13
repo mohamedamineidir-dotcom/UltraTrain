@@ -161,7 +161,7 @@ extension TrainingPlanView {
                     .font(.caption2.weight(.bold))
                     .tracking(1.2)
                     .foregroundStyle(phase.color)
-                Text("Phase \(currentIndex + 1) of \(groups.count)")
+                Text(String(localized: "tpl.phaseXofY", defaultValue: "Phase \(currentIndex + 1) of \(groups.count)"))
                     .font(.caption2)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
                 HStack(spacing: 5) {
@@ -225,7 +225,7 @@ extension TrainingPlanView {
         VStack(spacing: Theme.Spacing.md) {
             PhaseHeaderCard(
                 phase: group.phase,
-                weekRange: firstNum == lastNum ? "Week \(firstNum)" : "Weeks \(firstNum)-\(lastNum)",
+                weekRange: firstNum == lastNum ? String(localized: "wk.week1", defaultValue: "Week \(firstNum)") : String(localized: "wk.weeksRange", defaultValue: "Weeks \(firstNum)-\(lastNum)"),
                 completedWeeks: completedWeeks,
                 totalWeeks: group.weeks.count,
                 description: PhaseHeaderCard.description(
@@ -295,15 +295,18 @@ extension TrainingPlanView {
     ) -> some View {
         let title: String = {
             if isFullyLocked {
-                return "\(phase.displayName) phase locked"
+                return String(localized: "tpl.phaseLocked", defaultValue: "\(phase.displayName) phase locked")
             }
-            return "\(lockedCount) more \(lockedCount == 1 ? "week" : "weeks") in \(phase.displayName)"
+            let weekWord = lockedCount == 1
+                ? String(localized: "tpl.week", defaultValue: "week")
+                : String(localized: "tpl.weeks", defaultValue: "weeks")
+            return String(localized: "tpl.moreWeeks", defaultValue: "\(lockedCount) more \(weekWord) in \(phase.displayName)")
         }()
         // Plan-wide total goes in the subtitle (not the title) so the
         // bold phase-line stays on one line at the existing card width.
         let subtitle: String = {
             if totalLockedInPlan > lockedCount {
-                return "\(totalLockedInPlan) locked plan-wide · \(viewModel.lockedWeeksBannerSubtitle)"
+                return String(localized: "tpl.lockedPlanWide", defaultValue: "\(totalLockedInPlan) locked plan-wide · \(viewModel.lockedWeeksBannerSubtitle)")
             }
             return viewModel.lockedWeeksBannerSubtitle
         }()
@@ -534,7 +537,7 @@ extension TrainingPlanView {
                                 .fill(currentWeek.phase.color)
                                 .frame(width: 8, height: 8)
                                 .shadow(color: currentWeek.phase.color.opacity(0.5), radius: 3)
-                            Text("Week \(currentWeek.weekNumber)")
+                            Text(String(localized: "wk.week", defaultValue: "Week \(currentWeek.weekNumber)"))
                                 .font(.subheadline.weight(.semibold))
                             Text("·")
                                 .foregroundStyle(Theme.Colors.tertiaryLabel)

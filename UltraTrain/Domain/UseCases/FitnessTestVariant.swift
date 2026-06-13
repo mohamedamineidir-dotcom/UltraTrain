@@ -51,12 +51,12 @@ enum FitnessTestVariant: String, Sendable, Codable {
 
     var displayName: String {
         switch self {
-        case .vmaFlat6Min:           "VMA 6-min flat test"
-        case .fiveKTT:               "5K time trial"
-        case .uphillSustained30Min:  "30-min sustained uphill test"
-        case .uphillRepeats4x8:      "4 × 6-8 min uphill repeats"
-        case .uphillRepeats6x4:      "5-6 × 4 min uphill repeats"
-        case .treadmillIncline30Min: "Treadmill 30-min incline test"
+        case .vmaFlat6Min:           String(localized: "ftv.name.vma", defaultValue: "VMA 6-min flat test")
+        case .fiveKTT:               String(localized: "ftv.name.5k", defaultValue: "5K time trial")
+        case .uphillSustained30Min:  String(localized: "ftv.name.up30", defaultValue: "30-min sustained uphill test")
+        case .uphillRepeats4x8:      String(localized: "ftv.name.up4x8", defaultValue: "4 × 6-8 min uphill repeats")
+        case .uphillRepeats6x4:      String(localized: "ftv.name.up6x4", defaultValue: "5-6 × 4 min uphill repeats")
+        case .treadmillIncline30Min: String(localized: "ftv.name.tread", defaultValue: "Treadmill 30-min incline test")
         }
     }
 
@@ -65,7 +65,7 @@ enum FitnessTestVariant: String, Sendable, Codable {
     var description: String {
         switch self {
         case .vmaFlat6Min:
-            return """
+            return String(localized: "ftv.desc.vma", defaultValue: """
             VMA 6-min flat test (Léger-Boucher).
 
             Warm up 15-20 min easy + 4-6 strides.
@@ -76,9 +76,9 @@ enum FitnessTestVariant: String, Sendable, Codable {
             (e.g., 1500m → VMA 15 km/h)
 
             The result re-anchors all your training paces, easy, threshold, intervals, race pace.
-            """
+            """)
         case .fiveKTT:
-            return """
+            return String(localized: "ftv.desc.5k", defaultValue: """
             5K time trial.
 
             Warm up 15-20 min easy + 4-6 strides.
@@ -86,9 +86,9 @@ enum FitnessTestVariant: String, Sendable, Codable {
             Cool down 10-15 min easy.
 
             Record your finish time. The result re-anchors your half-marathon and marathon pace targets.
-            """
+            """)
         case .uphillSustained30Min:
-            return """
+            return String(localized: "ftv.desc.up30", defaultValue: """
             30-min sustained uphill test.
 
             Warm up 15-20 min easy on flat.
@@ -97,9 +97,9 @@ enum FitnessTestVariant: String, Sendable, Codable {
 
             Record average HR + total elevation gain.
             Calibrates your threshold zones for the rest of the plan.
-            """
+            """)
         case .uphillRepeats4x8:
-            return """
+            return String(localized: "ftv.desc.up4x8", defaultValue: """
             4 × 6-8 min uphill repeats.
 
             Warm up 15-20 min easy.
@@ -108,9 +108,9 @@ enum FitnessTestVariant: String, Sendable, Codable {
 
             Record average HR over the work intervals + average pace.
             Substitute for the 30-min sustained test when you don't have a long enough climb. Same threshold signal.
-            """
+            """)
         case .uphillRepeats6x4:
-            return """
+            return String(localized: "ftv.desc.up6x4", defaultValue: """
             5-6 × 4 min uphill repeats.
 
             Warm up 15-20 min easy.
@@ -119,9 +119,9 @@ enum FitnessTestVariant: String, Sendable, Codable {
 
             Record average HR over the work intervals + average pace.
             Threshold calibration for athletes with shorter hills.
-            """
+            """)
         case .treadmillIncline30Min:
-            return """
+            return String(localized: "ftv.desc.tread", defaultValue: """
             30-min treadmill incline test.
 
             Warm up 10 min on flat (or 0% incline).
@@ -130,7 +130,7 @@ enum FitnessTestVariant: String, Sendable, Codable {
 
             Record average HR + speed used.
             Calibrates your threshold zones. Designed for flat-region athletes.
-            """
+            """)
         }
     }
 
@@ -138,13 +138,13 @@ enum FitnessTestVariant: String, Sendable, Codable {
     var coachAdvice: String {
         switch self {
         case .vmaFlat6Min:
-            return "📊 VMA test, not a workout. Go all-out over 6 min, no pacing games. Track or flat road. Distance covered ÷ 100 = your VMA. Log it on validate so we can re-anchor your paces."
+            return String(localized: "ftv.advice.vma", defaultValue: "📊 VMA test, not a workout. Go all-out over 6 min, no pacing games. Track or flat road. Distance covered ÷ 100 = your VMA. Log it on validate so we can re-anchor your paces.")
         case .fiveKTT:
-            return "📊 5K time trial. Test, not workout. Even pacing, first 1K should not be the fastest. Log your finish time so we can re-anchor your paces."
+            return String(localized: "ftv.advice.5k", defaultValue: "📊 5K time trial. Test, not workout. Even pacing, first 1K should not be the fastest. Log your finish time so we can re-anchor your paces.")
         case .uphillSustained30Min, .uphillRepeats4x8, .uphillRepeats6x4:
-            return "📊 Threshold test, hardest sustainable effort, NOT all-out. You should be able to speak in 3-4 word fragments, not full sentences. Log your average HR (and pace if you have it) on validate."
+            return String(localized: "ftv.advice.threshold", defaultValue: "📊 Threshold test, hardest sustainable effort, NOT all-out. You should be able to speak in 3-4 word fragments, not full sentences. Log your average HR (and pace if you have it) on validate.")
         case .treadmillIncline30Min:
-            return "📊 Treadmill threshold test. Pick an incline you can sustain for 30 min, start conservative, you can always push the speed up after 10 min if it feels too easy. Log average HR + speed."
+            return String(localized: "ftv.advice.tread", defaultValue: "📊 Treadmill threshold test. Pick an incline you can sustain for 30 min, start conservative, you can always push the speed up after 10 min if it feels too easy. Log average HR + speed.")
         }
     }
 

@@ -240,10 +240,12 @@ struct SessionValidationView: View {
                     validationOptionCard(
                         icon: fitnessTestVariant != nil ? "stopwatch.fill" : "pencil.and.list.clipboard",
                         iconColor: Theme.Colors.primary,
-                        title: fitnessTestVariant != nil ? "Enter test result" : "Enter manually",
+                        title: fitnessTestVariant != nil
+                            ? String(localized: "sv.enterTest", defaultValue: "Enter test result")
+                            : String(localized: "sv.enterManually", defaultValue: "Enter manually"),
                         subtitle: fitnessTestVariant != nil
-                            ? "Log your test result so we can recalibrate your training paces."
-                            : "Type your distance, duration, and elevation."
+                            ? String(localized: "sv.enterTest.sub", defaultValue: "Log your test result so we can recalibrate your training paces.")
+                            : String(localized: "sv.enterManually.sub", defaultValue: "Type your distance, duration, and elevation.")
                     )
                 }
                 .buttonStyle(.plain)
@@ -255,8 +257,8 @@ struct SessionValidationView: View {
                     validationOptionCard(
                         icon: "arrow.triangle.2.circlepath",
                         iconColor: Theme.Colors.warmCoral,
-                        title: "Sync from an app",
-                        subtitle: "Import from Strava, Garmin, Coros, or Suunto."
+                        title: String(localized: "sv.syncApp", defaultValue: "Sync from an app"),
+                        subtitle: String(localized: "sv.syncApp.sub", defaultValue: "Import from Strava, Garmin, Coros, or Suunto.")
                     )
                 }
                 .buttonStyle(.plain)
@@ -376,17 +378,17 @@ private struct ManualValidationPage: View {
 
         var title: String {
             switch self {
-            case .stats:   return "Enter your stats"
-            case .feeling: return "How did it feel?"
-            case .rpe:     return "Rate your effort"
+            case .stats:   return String(localized: "sv.step.stats.title", defaultValue: "Enter your stats")
+            case .feeling: return String(localized: "sv.step.feeling.title", defaultValue: "How did it feel?")
+            case .rpe:     return String(localized: "sv.step.rpe.title", defaultValue: "Rate your effort")
             }
         }
 
         var subtitle: String {
             switch self {
-            case .stats:   return "Planned values are pre-filled, adjust anything that came out different."
-            case .feeling: return "Overall impression from start to finish."
-            case .rpe:     return "1 is walking-easy, 10 is the hardest effort you can imagine."
+            case .stats:   return String(localized: "sv.step.stats.sub", defaultValue: "Planned values are pre-filled, adjust anything that came out different.")
+            case .feeling: return String(localized: "sv.step.feeling.sub", defaultValue: "Overall impression from start to finish.")
+            case .rpe:     return String(localized: "sv.step.rpe.sub", defaultValue: "1 is walking-easy, 10 is the hardest effort you can imagine.")
             }
         }
 
@@ -680,7 +682,7 @@ private struct ManualValidationPage: View {
             VStack(spacing: 2) {
                 if !isStrengthSession {
                     inlineInputRow(
-                        label: "Distance",
+                        label: String(localized: "lbl.distance", defaultValue: "Distance"),
                         icon: "point.topleft.down.to.point.bottomright.curvepath",
                         iconColor: Theme.Colors.primary,
                         isFocused: focusedField == .distance,
@@ -689,7 +691,7 @@ private struct ManualValidationPage: View {
                     )
                 }
                 inlineInputRow(
-                    label: "Duration",
+                    label: String(localized: "lbl.duration", defaultValue: "Duration"),
                     icon: "clock",
                     iconColor: Theme.Colors.zone3,
                     isFocused: false,
@@ -698,7 +700,7 @@ private struct ManualValidationPage: View {
                 )
                 if !isStrengthSession {
                     inlineInputRow(
-                        label: "Elevation",
+                        label: String(localized: "lbl.elevation", defaultValue: "Elevation"),
                         icon: "mountain.2.fill",
                         iconColor: Theme.Colors.success,
                         isFocused: focusedField == .elevation,
@@ -971,7 +973,7 @@ private func sectionLabel(_ text: String, icon: String) -> some View {
             Image(systemName: icon)
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.warmCoral)
-            Text(text)
+            Text(LocalizedStringKey(text))
                 .font(.subheadline.weight(.semibold))
         }
         .padding(.horizontal, Theme.Spacing.xs)
@@ -1163,38 +1165,38 @@ private func sectionLabel(_ text: String, icon: String) -> some View {
 
     private var rationaleTitle: String {
         switch session.type {
-        case .intervals:            return "WHY INTERVALS"
-        case .tempo:                return "WHY TEMPO"
-        case .longRun:              return "WHY THE LONG RUN"
-        case .backToBack:           return "WHY BACK-TO-BACK"
-        case .recovery:             return "WHY RECOVERY"
-        case .verticalGain:         return "WHY VERTICAL"
-        case .strengthConditioning: return "WHY STRENGTH"
-        case .race:                 return "RACE DAY"
-        default:                    return "TODAY'S SESSION"
+        case .intervals:            return String(localized: "why.title.intervals", defaultValue: "WHY INTERVALS")
+        case .tempo:                return String(localized: "why.title.tempo", defaultValue: "WHY TEMPO")
+        case .longRun:              return String(localized: "why.title.longRun", defaultValue: "WHY THE LONG RUN")
+        case .backToBack:           return String(localized: "why.title.b2b", defaultValue: "WHY BACK-TO-BACK")
+        case .recovery:             return String(localized: "why.title.recovery", defaultValue: "WHY RECOVERY")
+        case .verticalGain:         return String(localized: "why.title.vertical", defaultValue: "WHY VERTICAL")
+        case .strengthConditioning: return String(localized: "why.title.strength", defaultValue: "WHY STRENGTH")
+        case .race:                 return String(localized: "why.title.race", defaultValue: "RACE DAY")
+        default:                    return String(localized: "why.title.today", defaultValue: "TODAY'S SESSION")
         }
     }
 
     private var rationaleBody: String {
         switch session.type {
         case .intervals:
-            return "Short fast reps push your VO2max ceiling. The recovery between reps is part of the work."
+            return String(localized: "why.body.intervals", defaultValue: "Short fast reps push your VO2max ceiling. The recovery between reps is part of the work.")
         case .tempo:
-            return "This is race-pace sustainability work. Comfortably hard, not all-out."
+            return String(localized: "why.body.tempo", defaultValue: "This is race-pace sustainability work. Comfortably hard, not all-out.")
         case .longRun:
-            return "Time on feet builds the aerobic base everything else sits on. Easy and long wins."
+            return String(localized: "why.body.longRun", defaultValue: "Time on feet builds the aerobic base everything else sits on. Easy and long wins.")
         case .backToBack:
-            return "Two long days stacked trains your legs to run tired. Core ultra-specific stimulus."
+            return String(localized: "why.body.b2b", defaultValue: "Two long days stacked trains your legs to run tired. Core ultra-specific stimulus.")
         case .recovery:
-            return "Adaptation happens when you recover, not when you train. Keep it genuinely easy."
+            return String(localized: "why.body.recovery", defaultValue: "Adaptation happens when you recover, not when you train. Keep it genuinely easy.")
         case .verticalGain:
-            return "Climbing-specific strength. Power-hike the steep stuff; that's the specificity."
+            return String(localized: "why.body.vertical", defaultValue: "Climbing-specific strength. Power-hike the steep stuff; that's the specificity.")
         case .strengthConditioning:
-            return "Keeps the chassis strong through heavy weeks. Fewer injuries, better economy."
+            return String(localized: "why.body.strength", defaultValue: "Keeps the chassis strong through heavy weeks. Fewer injuries, better economy.")
         case .race:
-            return "Execute the plan. Trust the training."
+            return String(localized: "why.body.race", defaultValue: "Execute the plan. Trust the training.")
         default:
-            return "Every session has a purpose. Stay consistent."
+            return String(localized: "why.body.today", defaultValue: "Every session has a purpose. Stay consistent.")
         }
     }
 
@@ -1362,7 +1364,13 @@ private func sectionLabel(_ text: String, icon: String) -> some View {
     }
 
     private func feelingLabel(for f: PerceivedFeeling) -> String {
-        switch f { case .great: "Great"; case .good: "Good"; case .ok: "OK"; case .tough: "Tough"; case .terrible: "Terrible" }
+        switch f {
+        case .great:    String(localized: "feeling.great", defaultValue: "Great")
+        case .good:     String(localized: "feeling.good", defaultValue: "Good")
+        case .ok:       String(localized: "feeling.ok", defaultValue: "OK")
+        case .tough:    String(localized: "feeling.tough", defaultValue: "Tough")
+        case .terrible: String(localized: "feeling.terrible", defaultValue: "Terrible")
+        }
     }
 
     private func rpeColor(_ value: Int) -> Color {

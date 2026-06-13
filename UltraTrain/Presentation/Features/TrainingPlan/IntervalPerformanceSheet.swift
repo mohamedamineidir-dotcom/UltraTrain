@@ -203,7 +203,7 @@ struct IntervalPerformanceContent: View {
             HStack(spacing: 6) {
                 quickChip(label: "−6s", delta: -6)
                 quickChip(label: "−3s", delta: -3)
-                quickChip(label: "On", delta: 0)
+                quickChip(label: String(localized: "ips.chip.on", defaultValue: "On"), delta: 0)
                 quickChip(label: "+3s", delta: 3)
                 quickChip(label: "+6s", delta: 6)
             }
@@ -387,15 +387,15 @@ struct IntervalPerformanceContent: View {
     private var completedAll: Bool { completedReps >= prescribedRepCount }
 
     private var completionHeadline: String {
-        if completedAll { return "All \(prescribedRepCount) reps done" }
-        return "\(completedReps) of \(prescribedRepCount) reps done"
+        if completedAll { return String(localized: "ips.head.all", defaultValue: "All \(prescribedRepCount) reps done") }
+        return String(localized: "ips.head.partial", defaultValue: "\(completedReps) of \(prescribedRepCount) reps done")
     }
 
     private var completionSubtitle: String {
-        if completedAll { return "Tap toggle if you dropped reps" }
-        if completedReps == 0 { return "Tap a pill to record how many you managed" }
-        if completedReps == prescribedRepCount - 1 { return "Missed just the last one, noted" }
-        return "Pace drift + incomplete reps = stronger slow-down signal"
+        if completedAll { return String(localized: "ips.sub.dropped", defaultValue: "Tap toggle if you dropped reps") }
+        if completedReps == 0 { return String(localized: "ips.sub.record", defaultValue: "Tap a pill to record how many you managed") }
+        if completedReps == prescribedRepCount - 1 { return String(localized: "ips.sub.lastOne", defaultValue: "Missed just the last one, noted") }
+        return String(localized: "ips.sub.drift", defaultValue: "Pace drift + incomplete reps = stronger slow-down signal")
     }
 
     @ViewBuilder
@@ -611,9 +611,9 @@ struct IntervalPerformanceContent: View {
     }
 
     private func deltaLabel(_ delta: Int) -> String {
-        if delta == 0 { return "On target" }
+        if delta == 0 { return String(localized: "ips.onTarget", defaultValue: "On target") }
         let sign = delta > 0 ? "+" : ""
-        return "\(sign)\(delta)s vs target"
+        return String(localized: "ips.vsTarget", defaultValue: "\(sign)\(delta)s vs target")
     }
 
     private func deltaColor(_ delta: Int) -> Color {
@@ -657,15 +657,15 @@ struct IntervalPerformanceContent: View {
 
     private func rpeDescription(_ value: Int) -> String {
         switch value {
-        case 1...2: return "Very easy"
-        case 3:     return "Easy"
-        case 4:     return "Moderate"
-        case 5:     return "Steady"
-        case 6:     return "Controlled"
-        case 7:     return "Hard"
-        case 8:     return "Very hard"
-        case 9:     return "Nearly max"
-        default:    return "All-out"
+        case 1...2: return String(localized: "rpe.veryEasy", defaultValue: "Very easy")
+        case 3:     return String(localized: "rpe.easy", defaultValue: "Easy")
+        case 4:     return String(localized: "rpe.moderate", defaultValue: "Moderate")
+        case 5:     return String(localized: "rpe.steady", defaultValue: "Steady")
+        case 6:     return String(localized: "rpe.controlled", defaultValue: "Controlled")
+        case 7:     return String(localized: "rpe.hard", defaultValue: "Hard")
+        case 8:     return String(localized: "rpe.veryHard", defaultValue: "Very hard")
+        case 9:     return String(localized: "rpe.nearlyMax", defaultValue: "Nearly max")
+        default:    return String(localized: "rpe.allOut", defaultValue: "All-out")
         }
     }
 

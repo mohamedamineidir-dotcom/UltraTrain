@@ -20,31 +20,31 @@ extension SocialError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .notAuthenticated:
-            return "You need to be signed into iCloud to use social features."
+            return String(localized: "serr.notAuth", defaultValue: "You need to be signed into iCloud to use social features.")
         case .profileNotFound:
-            return "Social profile not found."
+            return String(localized: "serr.profileNotFound", defaultValue: "Social profile not found.")
         case .friendRequestAlreadySent:
-            return "A friend request has already been sent to this person."
+            return String(localized: "serr.friendAlreadySent", defaultValue: "A friend request has already been sent to this person.")
         case .friendRequestNotFound:
-            return "Friend request not found."
+            return String(localized: "serr.friendNotFound", defaultValue: "Friend request not found.")
         case .alreadyFriends:
-            return "You are already friends with this person."
+            return String(localized: "serr.alreadyFriends", defaultValue: "You are already friends with this person.")
         case .shareCreationFailed(let reason):
-            return "Failed to share: \(reason)"
+            return String(localized: "serr.shareCreateFailed", defaultValue: "Failed to share: \(reason)")
         case .shareAcceptFailed(let reason):
-            return "Failed to accept share: \(reason)"
+            return String(localized: "serr.shareAcceptFailed", defaultValue: "Failed to accept share: \(reason)")
         case .cloudKitPermissionDenied:
-            return "CloudKit permission denied. Please allow access in Settings."
+            return String(localized: "serr.ckPermission", defaultValue: "CloudKit permission denied. Please allow access in Settings.")
         case .cloudKitUnavailable:
-            return "iCloud is not available. Sign in to iCloud in iOS Settings."
+            return String(localized: "serr.ckUnavailable", defaultValue: "iCloud is not available. Sign in to iCloud in iOS Settings.")
         case .recordNotFound:
-            return "Record not found in CloudKit."
+            return String(localized: "serr.recordNotFound", defaultValue: "Record not found in CloudKit.")
         case .zoneFetchFailed(let reason):
-            return "Failed to fetch data: \(reason)"
+            return String(localized: "serr.zoneFetchFailed", defaultValue: "Failed to fetch data: \(reason)")
         case .quotaExceeded:
-            return "iCloud storage quota exceeded."
+            return String(localized: "serr.quota", defaultValue: "iCloud storage quota exceeded.")
         case .networkError(let reason):
-            return "Network error: \(reason)"
+            return String(localized: "serr.network", defaultValue: "Network error: \(reason)")
         }
     }
 }

@@ -24,13 +24,13 @@ final class NotificationService: NotificationServiceProtocol, @unchecked Sendabl
     // MARK: - Categories
 
     func registerNotificationCategories() async {
-        let viewSession = UNNotificationAction(identifier: "viewSession", title: "View Session")
-        let skipSession = UNNotificationAction(identifier: "skipSession", title: "Skip Session")
-        let viewRace = UNNotificationAction(identifier: "viewRace", title: "View Race")
-        let viewProgress = UNNotificationAction(identifier: "viewProgress", title: "View Progress")
-        let dismiss = UNNotificationAction(identifier: "dismiss", title: "Dismiss")
+        let viewSession = UNNotificationAction(identifier: "viewSession", title: String(localized: "ns.act.viewSession", defaultValue: "View Session"))
+        let skipSession = UNNotificationAction(identifier: "skipSession", title: String(localized: "ns.act.skipSession", defaultValue: "Skip Session"))
+        let viewRace = UNNotificationAction(identifier: "viewRace", title: String(localized: "ns.act.viewRace", defaultValue: "View Race"))
+        let viewProgress = UNNotificationAction(identifier: "viewProgress", title: String(localized: "ns.act.viewProgress", defaultValue: "View Progress"))
+        let dismiss = UNNotificationAction(identifier: "dismiss", title: String(localized: "ns.act.dismiss", defaultValue: "Dismiss"))
 
-        let startRun = UNNotificationAction(identifier: "startRun", title: "Start a Run")
+        let startRun = UNNotificationAction(identifier: "startRun", title: String(localized: "ns.act.startRun", defaultValue: "Start a Run"))
 
         let categories: Set<UNNotificationCategory> = [
             UNNotificationCategory(identifier: "training", actions: [viewSession, skipSession], intentIdentifiers: []),
@@ -58,7 +58,7 @@ final class NotificationService: NotificationServiceProtocol, @unchecked Sendabl
         components.minute = 0
 
         let content = UNMutableNotificationContent()
-        content.title = "Tomorrow's Training"
+        content.title = String(localized: "ns.title.tomorrow", defaultValue: "Tomorrow's Training")
         content.body = NotificationContentBuilder.trainingReminderBody(session)
         content.sound = resolveSound(for: .training)
         content.categoryIdentifier = "training"
@@ -92,7 +92,7 @@ final class NotificationService: NotificationServiceProtocol, @unchecked Sendabl
             components.minute = 0
 
             let content = UNMutableNotificationContent()
-            content.title = "Race Countdown"
+            content.title = String(localized: "ns.title.raceCountdown", defaultValue: "Race Countdown")
             content.body = NotificationContentBuilder.raceCountdownBody(raceName: race.name, daysRemaining: days)
             content.sound = resolveSound(for: .race)
             content.categoryIdentifier = "race"
@@ -121,7 +121,7 @@ final class NotificationService: NotificationServiceProtocol, @unchecked Sendabl
         components.minute = 0
 
         let content = UNMutableNotificationContent()
-        content.title = "Rest Day"
+        content.title = String(localized: "ns.title.restDay", defaultValue: "Rest Day")
         content.body = NotificationContentBuilder.recoveryReminderBody()
         content.sound = resolveSound(for: .recovery)
         content.categoryIdentifier = "recovery"
@@ -156,7 +156,7 @@ final class NotificationService: NotificationServiceProtocol, @unchecked Sendabl
         let triggerComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: nextSunday)
 
         let content = UNMutableNotificationContent()
-        content.title = "Weekly Training Summary"
+        content.title = String(localized: "ns.title.weekly", defaultValue: "Weekly Training Summary")
         content.body = NotificationContentBuilder.weeklySummaryBody(
             distanceKm: distanceKm,
             elevationM: elevationM,
@@ -192,8 +192,8 @@ final class NotificationService: NotificationServiceProtocol, @unchecked Sendabl
         components.minute = 0
 
         let content = UNMutableNotificationContent()
-        content.title = "Time to Run!"
-        content.body = "It's been a few days since your last run. Lace up and get out there!"
+        content.title = String(localized: "ns.title.timeToRun", defaultValue: "Time to Run!")
+        content.body = String(localized: "ns.body.fewDays", defaultValue: "It's been a few days since your last run. Lace up and get out there!")
         content.sound = resolveSound(for: .inactivity)
         content.categoryIdentifier = "inactivity"
 
