@@ -238,6 +238,8 @@ struct SessionDetailView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(session.type.displayName)
                     .font(.title2.bold())
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
                 if let focus = session.intervalFocus {
                     Text(focus.uppercased())
                         .font(.caption2.weight(.bold))

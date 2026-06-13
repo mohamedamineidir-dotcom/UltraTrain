@@ -8,6 +8,10 @@ struct SessionRowView: View {
     /// When set, the row title reads "Weekend Choc (1/2)" / "(2/2)" instead
     /// of the plain session-type name, so both days read as one block.
     var b2bPosition: Int? = nil
+    /// Optional inline accessory (the same-day S&C / "PPG" chip) rendered on
+    /// the session's second line instead of a separate row beneath it, so a
+    /// day that also carries strength work stays the same height as the rest.
+    var inlineAccessory: AnyView? = nil
     let onToggle: () -> Void
 
     /// Title shown on the row: the B2B pair label when this session belongs
@@ -212,6 +216,12 @@ struct SessionRowView: View {
 
             if session.isGutTrainingRecommended && !session.isSkipped {
                 GutTrainingBadge()
+            }
+
+            // Same-day strength work rides on this line as a compact chip
+            // so the day doesn't grow a second row and tower over the others.
+            if let inlineAccessory {
+                inlineAccessory
             }
         }
     }

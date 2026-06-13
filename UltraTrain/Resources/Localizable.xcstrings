@@ -40562,6 +40562,22 @@
         }
       }
     },
+    "str.note.bicycleCrunch" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bring your opposite elbow toward your knee, slow and controlled. Keep your lower back on the floor."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amenez le coude vers le genou opposé, lentement et sous contrôle. Gardez le bas du dos plaqué au sol."
+          }
+        }
+      }
+    },
     "str.note.birdDog" : {
       "localizations" : {
         "en" : {
@@ -40574,6 +40590,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tendez bras et jambe opposés. Tenez 2 secondes en pleine extension."
+          }
+        }
+      }
+    },
+    "str.note.birdDogAct" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gentle core activation. Reach the opposite arm and leg, keep your back flat and still."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activation douce du gainage. Tendez le bras et la jambe opposés, gardez le dos plat et immobile."
           }
         }
       }
@@ -41026,6 +41058,38 @@
         }
       }
     },
+    "str.note.russianTwist" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sit back slightly and rotate your torso side to side under control. Trains the rotational core that keeps you steady on uneven ground."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inclinez-vous légèrement en arrière et faites pivoter le buste d'un côté à l'autre sous contrôle. Renforce le gainage en rotation qui vous stabilise sur terrain irrégulier."
+          }
+        }
+      }
+    },
+    "str.note.russianTwistRoad" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rotational core control. A steady trunk stops the energy-wasting twist that creeps in at high cadence."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contrôle du gainage en rotation. Un buste stable évite la torsion qui gaspille de l'énergie à cadence élevée."
+          }
+        }
+      }
+    },
     "str.note.sidePlankAbd" : {
       "localizations" : {
         "en" : {
@@ -41150,6 +41214,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Box de 30 à 50 cm. Descente de 4 secondes. Le meilleur exercice pour la tolérance des quadriceps en descente ; entraîne directement le travail excentrique qui détruit les jambes en fin d'ultra."
+          }
+        }
+      }
+    },
+    "str.note.stepUpLeg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Step onto a sturdy box or stair, drive through the top leg, lower with control. Builds the climbing strength trails demand."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Montez sur une marche ou une box stable, poussez sur la jambe du haut, redescendez sous contrôle. Développe la force en montée qu'exige le trail."
           }
         }
       }

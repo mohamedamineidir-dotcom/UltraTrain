@@ -271,8 +271,8 @@ enum StrengthSessionGenerator {
                                     notes: String(localized: "str.note.gluteBridge2s", defaultValue: "Drive through heels. Squeeze glutes at top for 2 seconds.")),
                 ],
                 [
-                    StrengthExercise(name: "Pistol Squat Progression", category: .lowerBody, sets: sets, reps: String(localized: "str.reps.68leg", defaultValue: "6-8 per leg"),
-                                    notes: String(localized: "str.note.pistol", defaultValue: "Sit to a chair if needed. Build toward full pistol over weeks.")),
+                    StrengthExercise(name: "Step-Up", category: .lowerBody, sets: sets, reps: String(localized: "str.reps.10leg", defaultValue: "10 per leg"),
+                                    notes: String(localized: "str.note.stepUpLeg", defaultValue: "Step onto a sturdy box or stair, drive through the top leg, lower with control. Builds the climbing strength trails demand.")),
                     StrengthExercise(name: String(localized: "str.name.slHipThrust", defaultValue: "Single-Leg Hip Thrust"), category: .lowerBody, sets: sets, reps: String(localized: "str.reps.10side", defaultValue: "10 per side"),
                                     notes: String(localized: "str.note.slHipThrust", defaultValue: "One leg planted, other extended. Max glute activation.")),
                 ],
@@ -289,7 +289,7 @@ enum StrengthSessionGenerator {
 
         // Rotate core exercises for variety
         let corePool: [(String, String, String)] = [
-            ("Dead Bug", String(localized: "str.reps.810side", defaultValue: "8-10 per side"), String(localized: "str.note.deadBug", defaultValue: "Press lower back into floor. Slow and controlled.")),
+            ("Bicycle Crunch", String(localized: "str.reps.1215side", defaultValue: "12-15 per side"), String(localized: "str.note.bicycleCrunch", defaultValue: "Bring your opposite elbow toward your knee, slow and controlled. Keep your lower back on the floor.")),
             (String(localized: "str.name.sidePlank", defaultValue: "Side Plank"), String(localized: "str.reps.2030secSide", defaultValue: "20-30 sec per side"), String(localized: "str.note.sidePlankCore", defaultValue: "Stack hips. Keep body in a straight line.")),
             ("Bird Dog", String(localized: "str.reps.10side", defaultValue: "10 per side"), String(localized: "str.note.birdDog", defaultValue: "Extend opposite arm and leg. Hold 2 seconds at full extension.")),
             ("Plank Shoulder Tap", String(localized: "str.reps.810side", defaultValue: "8-10 per side"), String(localized: "str.note.plankTap", defaultValue: "Stay stable through the hips. No rotation.")),
@@ -303,8 +303,8 @@ enum StrengthSessionGenerator {
 
         if isGym {
             let gymCore = weekVariation % 2 == 0
-                ? StrengthExercise(name: "Pallof Press", category: .core, sets: sets, reps: String(localized: "str.reps.10side", defaultValue: "10 per side"),
-                                  notes: String(localized: "str.note.pallof", defaultValue: "Anti-rotation. Press cable away from chest, hold 2 sec."), requiresEquipment: true)
+                ? StrengthExercise(name: "Russian Twist", category: .core, sets: sets, reps: String(localized: "str.reps.10side", defaultValue: "10 per side"),
+                                  notes: String(localized: "str.note.russianTwist", defaultValue: "Sit back slightly and rotate your torso side to side under control. Trains the rotational core that keeps you steady on uneven ground."))
                 : StrengthExercise(name: "Cable Woodchop", category: .core, sets: sets, reps: String(localized: "str.reps.10side", defaultValue: "10 per side"),
                                   notes: String(localized: "str.note.woodchop", defaultValue: "Rotate from the hips, not the shoulders. Control the return."), requiresEquipment: true)
             exercises.append(gymCore)
@@ -463,9 +463,9 @@ enum StrengthSessionGenerator {
                 notes: String(localized: "str.note.clamshell", defaultValue: "Keep feet together. Feel the burn in outer hip.")
             ),
             StrengthExercise(
-                name: "Dead Bug",
+                name: "Bird Dog",
                 category: .core, sets: 2, reps: String(localized: "str.reps.8side", defaultValue: "8 per side"),
-                notes: String(localized: "str.note.deadBugAct", defaultValue: "Gentle core activation. Keep lower back flat.")
+                notes: String(localized: "str.note.birdDogAct", defaultValue: "Gentle core activation. Reach the opposite arm and leg, keep your back flat and still.")
             ),
             StrengthExercise(
                 name: String(localized: "str.name.walkingLunge", defaultValue: "Walking Lunge"),
@@ -506,9 +506,9 @@ enum StrengthSessionGenerator {
             ))
             if config.painFrequency == .often || config.hasRecentInjury {
                 exercises.append(StrengthExercise(
-                    name: "Pallof Press",
+                    name: "Russian Twist",
                     category: .injuryPrevention, sets: sets, reps: String(localized: "str.reps.10side", defaultValue: "10 per side"),
-                    notes: String(localized: "str.note.pallofRoad", defaultValue: "Anti-rotation core. Prevents trunk twist that wastes energy at high cadence.")
+                    notes: String(localized: "str.note.russianTwistRoad", defaultValue: "Rotational core control. A steady trunk stops the energy-wasting twist that creeps in at high cadence.")
                 ))
             }
 

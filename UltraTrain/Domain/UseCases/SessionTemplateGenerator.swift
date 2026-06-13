@@ -15,12 +15,19 @@ enum SessionTemplateGenerator {
         /// Nil for normal templates: the session generator falls back to
         /// duration-based distance.
         let distanceKmOverride: Double?
+        /// Hard-set elevation gain (m) for templates whose D+ is a real
+        /// fixed figure rather than a fraction of the week's budget, the
+        /// `.race` session on race week, where the athlete will climb the
+        /// race's actual D+ (e.g. 4500 m) no matter how tapered the week.
+        /// Nil for normal templates: D+ = `targetElevationGainM × fraction`.
+        let elevationGainMOverride: Double?
 
         init(
             dayOffset: Int, type: SessionType, intensity: Intensity,
             durationSeconds: TimeInterval, elevationFraction: Double,
             description: String,
-            distanceKmOverride: Double? = nil
+            distanceKmOverride: Double? = nil,
+            elevationGainMOverride: Double? = nil
         ) {
             self.dayOffset = dayOffset
             self.type = type
@@ -29,6 +36,7 @@ enum SessionTemplateGenerator {
             self.elevationFraction = elevationFraction
             self.description = description
             self.distanceKmOverride = distanceKmOverride
+            self.elevationGainMOverride = elevationGainMOverride
         }
     }
 
@@ -113,7 +121,11 @@ enum SessionTemplateGenerator {
 
         let sessions = templates.map { template in
             let rawDuration = template.durationSeconds
-            let rawElevation = volume.targetElevationGainM * template.elevationFraction
+            // Race day carries the race's real D+ (e.g. 4500 m on a
+            // mountain ultra) via an explicit override; every other
+            // session scales D+ from the week's tapered elevation budget.
+            let rawElevation = template.elevationGainMOverride
+                ?? (volume.targetElevationGainM * template.elevationFraction)
 
             // Round duration to nearest 5min for non-precise session types
             let duration: TimeInterval
@@ -898,7 +910,8 @@ enum SessionTemplateGenerator {
             dayOffset: 5, type: .race, intensity: .maxEffort,
             durationSeconds: raceDuration, elevationFraction: 0,
             description: raceDesc,
-            distanceKmOverride: raceDistKm > 0 ? raceDistKm : nil
+            distanceKmOverride: raceDistKm > 0 ? raceDistKm : nil,
+            elevationGainMOverride: raceElevM > 0 ? raceElevM : nil
         )
 
         let baseTemplates: [SessionTemplate]
@@ -991,7 +1004,8 @@ enum SessionTemplateGenerator {
             dayOffset: 5, type: .race, intensity: .maxEffort,
             durationSeconds: raceDuration, elevationFraction: 0,
             description: raceDesc,
-            distanceKmOverride: raceDistKm > 0 ? raceDistKm : nil
+            distanceKmOverride: raceDistKm > 0 ? raceDistKm : nil,
+            elevationGainMOverride: raceElevM > 0 ? raceElevM : nil
         )
 
         let baseTemplates: [SessionTemplate]

@@ -59,10 +59,14 @@ enum TrailRaceWeekTemplates {
             ))
         }
 
-        // Race day
-        templates.append(SessionTemplateGenerator.tpl(
-            raceDayOffset, .race, .maxEffort,
-            raceDuration, 1.0, raceDesc
+        // Race day. D+ is the race's real elevation gain, not a slice of
+        // the tapered week budget, so the week card and the session detail
+        // both show the climbing the athlete will actually do on race day.
+        templates.append(SessionTemplateGenerator.SessionTemplate(
+            dayOffset: raceDayOffset, type: .race, intensity: .maxEffort,
+            durationSeconds: raceDuration, elevationFraction: 1.0,
+            description: raceDesc,
+            elevationGainMOverride: targetRace.elevationGainM > 0 ? targetRace.elevationGainM : nil
         ))
 
         // Post-race days (Saturday races leave Sunday open). Guarded

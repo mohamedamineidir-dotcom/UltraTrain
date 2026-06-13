@@ -440,6 +440,38 @@ extension WeekCardView {
         )
     }
 
+    /// Compact same-day strength chip, rendered inline on the session's
+    /// second line (via SessionRowView.inlineAccessory) rather than as a
+    /// row beneath it, so the day keeps the same height as the others.
+    /// Stays a NavigationLink so tapping it still opens the S&C exercises.
+    private func scChip(_ sc: (index: Int, session: TrainingSession)) -> AnyView {
+        AnyView(
+            NavigationLink(destination: sessionDetailView(for: sc.session, at: sc.index)) {
+                HStack(spacing: 3) {
+                    Image(systemName: "dumbbell.fill")
+                        .font(.system(size: 8))
+                    Text("S&C")
+                        .font(.system(size: 10, weight: .semibold))
+                    Text("\(Int(sc.session.plannedDuration / 60))min")
+                        .font(.system(size: 10, weight: .regular).monospacedDigit())
+                    if sc.session.isCompleted {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 9))
+                    }
+                }
+                .foregroundStyle(sc.session.isCompleted ? Theme.Colors.success : .mint)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(
+                    Capsule().fill(
+                        (sc.session.isCompleted ? Theme.Colors.success : Color.mint).opacity(0.10)
+                    )
+                )
+            }
+            .buttonStyle(.plain)
+        )
+    }
+
     private func sessionRow(
         _ sessionIndex: Int,
         _ session: TrainingSession,
@@ -447,54 +479,18 @@ extension WeekCardView {
     ) -> some View {
         VStack(spacing: 0) {
             NavigationLink(destination: sessionDetailView(for: session, at: sessionIndex)) {
-                VStack(spacing: 0) {
-                    SessionRowView(session: session, b2bPosition: b2bPosition(for: session)) {
-                        if !session.isCompleted && onValidateSession != nil {
-                            Task {
-                                validateRecentRuns = await recentRunsProvider?(session.date) ?? []
-                                validateItem = ContextSheetItem(sessionIndex: sessionIndex, session: session)
-                            }
-                        } else {
-                            onToggleSession(sessionIndex)
+                SessionRowView(
+                    session: session,
+                    b2bPosition: b2bPosition(for: session),
+                    inlineAccessory: scSessions.first.map { scChip($0) }
+                ) {
+                    if !session.isCompleted && onValidateSession != nil {
+                        Task {
+                            validateRecentRuns = await recentRunsProvider?(session.date) ?? []
+                            validateItem = ContextSheetItem(sessionIndex: sessionIndex, session: session)
                         }
-                    }
-
-                    // S&C chip under the session row
-                    if let sc = scSessions.first {
-                        NavigationLink(destination: sessionDetailView(for: sc.session, at: sc.index)) {
-                            HStack(spacing: 5) {
-                                Rectangle()
-                                    .fill(Color.clear)
-                                    .frame(width: 40)
-
-                                HStack(spacing: 4) {
-                                    Image(systemName: "dumbbell.fill")
-                                        .font(.system(size: 9))
-                                    Text("S&C")
-                                        .font(.system(size: 11, weight: .semibold))
-                                    Text("\(Int(sc.session.plannedDuration / 60))min")
-                                        .font(.system(size: 11, weight: .regular).monospacedDigit())
-                                    if sc.session.isCompleted {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .font(.system(size: 10))
-                                    }
-                                }
-                                .foregroundStyle(sc.session.isCompleted ? Theme.Colors.success : .mint)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(
-                                    Capsule().fill(
-                                        sc.session.isCompleted
-                                            ? Theme.Colors.success.opacity(0.08)
-                                            : Color.mint.opacity(0.08)
-                                    )
-                                )
-
-                                Spacer()
-                            }
-                            .padding(.bottom, 2)
-                        }
-                        .buttonStyle(.plain)
+                    } else {
+                        onToggleSession(sessionIndex)
                     }
                 }
             }
