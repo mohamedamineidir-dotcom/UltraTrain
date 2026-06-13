@@ -102,8 +102,18 @@ enum IntervalSessionComposer {
         // intervals, the week reliably carries one true tempo, and structure
         // never repeats two threshold sessions running.
         if ctx.category == .threshold {
-            if ctx.ordinal % 2 == 0 { return .progression }
             let reps: [Shape] = [.uniform, .cutdown, .mixedContrast]
+            // Q1 is the week's hard interval slot: keep threshold as cruise
+            // intervals so it complements (not duplicates) the Q2 tempo —
+            // otherwise half-marathon weeks, where both slots lean threshold,
+            // end up with two tempos and no interval variety.
+            if ctx.slotIndex == 0 {
+                return reps[ctx.ordinal % reps.count]
+            }
+            // Q2 is the tempo slot: alternate a sustained tempo with a cruise
+            // variant so the week reliably carries one true tempo and the
+            // structure never repeats two threshold sessions running.
+            if ctx.ordinal % 2 == 0 { return .progression }
             return reps[(ctx.ordinal / 2) % reps.count]
         }
         let valid = validShapes(for: ctx.category, phase: ctx.phase)
