@@ -1553,6 +1553,7 @@
       }
     },
     "%lld runs/week" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -1995,6 +1996,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "12 mois"
+          }
+        }
+      }
+    },
+    "12-week progressive plan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12-week progressive plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan progressif de 12 semaines"
           }
         }
       }
@@ -3217,6 +3234,7 @@
       }
     },
     "Analyzing your profile" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3766,6 +3784,7 @@
       }
     },
     "Base, build, peak & taper phases" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3792,6 +3811,7 @@
       }
     },
     "Beginner" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3915,6 +3935,7 @@
       }
     },
     "Building periodization" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5086,6 +5107,7 @@
       }
     },
     "Current Volume" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -6832,6 +6854,7 @@
       }
     },
     "Experience, fitness history & goals" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -7602,6 +7625,22 @@
         }
       }
     },
+    "General Fitness" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "General Fitness"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forme générale"
+          }
+        }
+      }
+    },
     "Generate Plan" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -7708,6 +7747,7 @@
       }
     },
     "Generating sessions" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -9655,6 +9695,7 @@
       }
     },
     "Long runs, intervals & recovery" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12936,6 +12977,7 @@
       }
     },
     "Preparing nutrition plan" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -13624,6 +13666,7 @@
       }
     },
     "Race-day fueling strategy" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -13878,6 +13921,7 @@
       }
     },
     "Recalculating fitness & fatigue" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -13935,6 +13979,7 @@
       }
     },
     "Recording stats & performance data" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -15065,6 +15110,7 @@
       }
     },
     "Saving your session" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -18267,6 +18313,7 @@
       }
     },
     "Updating training load" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -19516,7 +19563,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Votre course A"
+            "value" : "Votre course principale"
           }
         }
       }
@@ -19527,7 +19574,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Votre objectif de course A"
+            "value" : "Votre objectif principal"
           }
         }
       }
@@ -24502,6 +24549,70 @@
         }
       }
     },
+    "injc.none" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune"
+          }
+        }
+      }
+    },
+    "injc.one" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 injury"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 blessure"
+          }
+        }
+      }
+    },
+    "injc.three" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3+ injuries"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3+ blessures"
+          }
+        }
+      }
+    },
+    "injc.two" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2 injuries"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2 blessures"
+          }
+        }
+      }
+    },
     "insight.consistency.message" : {
       "localizations" : {
         "en" : {
@@ -28282,6 +28393,70 @@
         }
       }
     },
+    "onb.complete.generalFitness" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "General Fitness"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forme générale"
+          }
+        }
+      }
+    },
+    "onb.complete.profileDetail" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld runs/week"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld séances/sem."
+          }
+        }
+      }
+    },
+    "onb.complete.progressivePlan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12-week progressive plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan progressif de 12 semaines"
+          }
+        }
+      }
+    },
+    "onb.complete.weeksToGo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld weeks to go"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans %lld semaines"
+          }
+        }
+      }
+    },
     "or" : {
       "localizations" : {
         "fr" : {
@@ -28788,6 +28963,70 @@
         }
       }
     },
+    "pain.never" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pain"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune douleur"
+          }
+        }
+      }
+    },
+    "pain.often" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Often (weekly)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Souvent (toutes les semaines)"
+          }
+        }
+      }
+    },
+    "pain.rarely" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rarely (few times a year)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rarement (quelques fois par an)"
+          }
+        }
+      }
+    },
+    "pain.sometimes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sometimes (monthly)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parfois (tous les mois)"
+          }
+        }
+      }
+    },
     "paywall.bestValue" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -28885,7 +29124,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1 semaine gratuite"
+            "value" : "7 jours gratuits"
           }
         }
       }
@@ -30759,6 +30998,246 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vitesse de récupération"
+          }
+        }
+      }
+    },
+    "race.checkpoints" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checkpoints"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Points de passage"
+          }
+        }
+      }
+    },
+    "race.checkpoints.footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import a GPX file or add waypoints manually for predicted split times."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importez un fichier GPX ou ajoutez des points manuellement pour estimer les temps de passage."
+          }
+        }
+      }
+    },
+    "race.distanceLabel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distance"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distance"
+          }
+        }
+      }
+    },
+    "race.dminus" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "D- (loss)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "D- (négatif)"
+          }
+        }
+      }
+    },
+    "race.dplus" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "D+ (gain)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "D+ (positif)"
+          }
+        }
+      }
+    },
+    "race.elevation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elevation"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dénivelé"
+          }
+        }
+      }
+    },
+    "race.goal" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Goal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Objectif"
+          }
+        }
+      }
+    },
+    "race.importGPX" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import GPX course"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importer un parcours GPX"
+          }
+        }
+      }
+    },
+    "race.info" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race info"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Infos course"
+          }
+        }
+      }
+    },
+    "race.location" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Location"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lieu"
+          }
+        }
+      }
+    },
+    "race.location.footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Used for weather forecasts in your race day estimate."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utilisé pour les prévisions météo de votre estimation le jour de la course."
+          }
+        }
+      }
+    },
+    "race.pickRoute" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick from route library"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisir dans la bibliothèque d'itinéraires"
+          }
+        }
+      }
+    },
+    "race.priority" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Priority"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Priorité"
+          }
+        }
+      }
+    },
+    "race.setLocation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set race location"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Définir le lieu de la course"
+          }
+        }
+      }
+    },
+    "race.terrain" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terrain difficulty"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Difficulté du terrain"
           }
         }
       }
@@ -36928,6 +37407,22 @@
         }
       }
     },
+    "session.b2bPairLabel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc (%lld/2)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekend Choc (%lld/2)"
+          }
+        }
+      }
+    },
     "session.backToBack" : {
       "extractionState" : "extracted_with_value",
       "localizations" : {
@@ -37277,6 +37772,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Abonnement"
+          }
+        }
+      }
+    },
+    "share.avgHR" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AVG HR"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FC MOY."
+          }
+        }
+      }
+    },
+    "share.avgPace" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AVG PACE"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ALLURE MOY."
+          }
+        }
+      }
+    },
+    "share.duration" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DURATION"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DURÉE"
+          }
+        }
+      }
+    },
+    "share.elevation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ELEVATION"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DÉNIVELÉ"
           }
         }
       }
@@ -39583,6 +40142,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "COURSE : %1$@ (%2$@%3$@). À utiliser comme un effort d'entraînement dur."
+          }
+        }
+      }
+    },
+    "stloc.gym" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gym (equipment available)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salle (équipement disponible)"
+          }
+        }
+      }
+    },
+    "stloc.home" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Home (bodyweight / bands)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maison (poids du corps / élastiques)"
+          }
+        }
+      }
+    },
+    "stp.no" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No, running only"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non, course uniquement"
+          }
+        }
+      }
+    },
+    "stp.yes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yes, include it"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oui, l'inclure"
           }
         }
       }
@@ -44191,6 +44814,54 @@
         }
       }
     },
+    "uph.2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Up to 2 min"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jusqu'à 2 min"
+          }
+        }
+      }
+    },
+    "uph.none" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No uphill nearby"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune montée à proximité"
+          }
+        }
+      }
+    },
+    "uph.over8" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8+ min (long climb)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8+ min (longue montée)"
+          }
+        }
+      }
+    },
     "upt.early.desc" : {
       "localizations" : {
         "en" : {
@@ -47441,6 +48112,22 @@
         }
       }
     },
+    "wpe.intervalDesc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld×%2$@ %3$@ / %4$@ jog"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld×%2$@ %3$@ / %4$@ footing"
+          }
+        }
+      }
+    },
     "wpe.iv.thresh" : {
       "localizations" : {
         "en" : {
@@ -47549,6 +48236,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Effort %@ régulier"
+          }
+        }
+      }
+    },
+    "wpe.vgDesc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld×%2$@ %3$@ / %4$@ jog down"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld×%2$@ %3$@ / %4$@ footing descente"
+          }
+        }
+      }
+    },
+    "wpe.vgzone.easy" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "easy climb (Z2)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "montée facile (Z2)"
+          }
+        }
+      }
+    },
+    "wpe.vgzone.threshold3" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "climb at threshold (Z3)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "montée au seuil (Z3)"
+          }
+        }
+      }
+    },
+    "wpe.vgzone.threshold34" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "climb at threshold (Z3-4)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "montée au seuil (Z3-4)"
+          }
+        }
+      }
+    },
+    "wpe.vgzone.vo2max" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "steep climb at VO2max (Z4-5)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "montée raide à VO2max (Z4-5)"
           }
         }
       }
@@ -49831,6 +50598,70 @@
         }
       }
     },
+    "wpe.zone.easy" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "easy (Z2)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "facile (Z2)"
+          }
+        }
+      }
+    },
+    "wpe.zone.threshold3" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "at threshold (Z3)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "au seuil (Z3)"
+          }
+        }
+      }
+    },
+    "wpe.zone.threshold34" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "at threshold (Z3-4)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "au seuil (Z3-4)"
+          }
+        }
+      }
+    },
+    "wpe.zone.vo2max" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "at VO2max (Z4-5)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "à VO2max (Z4-5)"
+          }
+        }
+      }
+    },
     "wtl.001" : {
       "localizations" : {
         "en" : {
@@ -50502,6 +51333,7 @@
       }
     },
     "~%lld--%lld km/week" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

@@ -6,8 +6,8 @@ enum StrengthTrainingLocation: String, CaseIterable, Sendable, Codable {
 
     var displayName: String {
         switch self {
-        case .gym:  "Gym (equipment available)"
-        case .home: "Home (bodyweight / bands)"
+        case .gym:  String(localized: "stloc.gym", defaultValue: "Gym (equipment available)")
+        case .home: String(localized: "stloc.home", defaultValue: "Home (bodyweight / bands)")
         }
     }
 }

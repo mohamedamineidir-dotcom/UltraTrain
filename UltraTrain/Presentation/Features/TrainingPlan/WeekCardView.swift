@@ -289,6 +289,23 @@ extension WeekCardView {
 
 extension WeekCardView {
 
+    /// Position of a session within a back-to-back ("Weekend Choc") weekend.
+    /// Day 2 is the explicit `.backToBack` session; day 1 is the long run on
+    /// the calendar day immediately before it. nil for everything else, so
+    /// only the genuine weekend pair is relabelled "Weekend Choc (1/2)/(2/2)".
+    private func b2bPosition(for session: TrainingSession) -> Int? {
+        if session.type == .backToBack { return 2 }
+        guard session.type == .longRun else { return nil }
+        let cal = Calendar.current
+        guard let nextDay = cal.date(
+            byAdding: .day, value: 1, to: cal.startOfDay(for: session.date)
+        ) else { return nil }
+        let hasB2BNextDay = week.sessions.contains {
+            $0.type == .backToBack && cal.startOfDay(for: $0.date) == nextDay
+        }
+        return hasB2BNextDay ? 1 : nil
+    }
+
     /// Groups sessions by calendar day so same-day S&C + run appear together.
     private var dayGroupedSessions: [(day: Date, sessions: [(index: Int, session: TrainingSession)])] {
         var groups: [(day: Date, sessions: [(index: Int, session: TrainingSession)])] = []
@@ -431,7 +448,7 @@ extension WeekCardView {
         VStack(spacing: 0) {
             NavigationLink(destination: sessionDetailView(for: session, at: sessionIndex)) {
                 VStack(spacing: 0) {
-                    SessionRowView(session: session) {
+                    SessionRowView(session: session, b2bPosition: b2bPosition(for: session)) {
                         if !session.isCompleted && onValidateSession != nil {
                             Task {
                                 validateRecentRuns = await recentRunsProvider?(session.date) ?? []
