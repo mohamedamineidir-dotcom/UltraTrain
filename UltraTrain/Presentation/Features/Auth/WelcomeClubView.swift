@@ -169,7 +169,7 @@ struct WelcomeClubView: View {
             try await referralRepository.applyReferralCode(referralCode.uppercased())
             referralSuccess = true
         } catch {
-            referralError = "Invalid or expired code"
+            referralError = String(localized: "Invalid or expired code")
         }
 
         isApplyingCode = false
