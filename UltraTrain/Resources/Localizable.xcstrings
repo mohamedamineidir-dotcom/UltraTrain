@@ -30232,13 +30232,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ease in, build to half-marathon effort, finish at marathon pace."
+            "value" : "Ease in, settle into marathon pace, lift to half-marathon effort, then flush out easy."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Démarrez doucement, montez à l'effort semi, terminez à allure marathon."
+            "value" : "Démarrez doucement, installez-vous à l'allure marathon, montez à l'effort semi, puis relâchez en footing."
           }
         }
       }

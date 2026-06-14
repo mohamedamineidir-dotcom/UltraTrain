@@ -36,7 +36,7 @@ enum RoadLongRunWorkoutBuilder {
         case .easy:
             return nil
         case .progressive:
-            return buildProgressive(totalDuration: totalDuration, paceProfile: paceProfile)
+            return buildProgressive(totalDuration: totalDuration, paceProfile: paceProfile, weekInPhase: weekInPhase)
         case .fastFinish:
             return buildFastFinish(totalDuration: totalDuration, paceProfile: paceProfile)
         case .marathonPaceIntro:
@@ -91,12 +91,26 @@ enum RoadLongRunWorkoutBuilder {
 
     // MARK: - Variants
 
-    /// Progressive: ease in, steady middle, finish harder.
-    /// 60% easy → 25% at half-marathon pace → 15% at marathon pace.
-    private static func buildProgressive(totalDuration: TimeInterval, paceProfile: RoadPaceProfile?) -> IntervalWorkout {
-        let easyPart = totalDuration * 0.60
-        let hmpPart  = totalDuration * 0.25
-        let mpPart   = totalDuration * 0.15
+    /// Progressive: a true continuous build — ease in, settle into marathon
+    /// pace, lift to the harder half-marathon (threshold) effort, then flush
+    /// out easy. The pace *rises* the whole way and finishes on the hardest
+    /// block, which is the SHORTEST (the faster the pace, the less time held);
+    /// MP gets roughly 1.8× the threshold duration. A long run never ends on
+    /// intensity, so a 5 min easy cool-down is reserved.
+    ///
+    /// The quality dose scales with `weekInPhase` so an early base week stays
+    /// mostly aerobic (~25% quality) and a mature block reaches ~38%.
+    private static func buildProgressive(totalDuration: TimeInterval, paceProfile: RoadPaceProfile?, weekInPhase: Int) -> IntervalWorkout {
+        let coolDown: TimeInterval = 5 * 60
+
+        // Total quality share grows as the block matures, capped. Split ~64% MP
+        // / ~36% threshold, so MP (more sustainable) gets the larger share and
+        // the harder threshold block is the short, hard finish.
+        let maturity = Double(min(max(weekInPhase, 0), 6))
+        let qualityFraction = min(0.38, 0.25 + maturity * 0.025)   // 0.25 → 0.38
+        let mpPart  = totalDuration * qualityFraction * 0.64
+        let thrPart = totalDuration * qualityFraction * 0.36
+        let easyPart = max(0, totalDuration - mpPart - thrPart - coolDown)
 
         let phases = [
             IntervalPhase(
@@ -107,20 +121,26 @@ enum RoadLongRunWorkoutBuilder {
             ),
             IntervalPhase(
                 id: UUID(), phaseType: .work,
-                trigger: .duration(seconds: hmpPart),
-                targetIntensity: .moderate, repeatCount: 1,
-                notes: paceNote(String(localized: "roadLR.note.hmEffort", defaultValue: "Half-marathon effort"), paceProfile?.thresholdPacePerKm)
-            ),
-            IntervalPhase(
-                id: UUID(), phaseType: .work,
                 trigger: .duration(seconds: mpPart),
                 targetIntensity: .moderate, repeatCount: 1,
                 notes: paceNote(String(localized: "roadLR.note.mp", defaultValue: "Marathon pace"), paceProfile?.marathonPacePerKm)
             ),
+            IntervalPhase(
+                id: UUID(), phaseType: .work,
+                trigger: .duration(seconds: thrPart),
+                targetIntensity: .hard, repeatCount: 1,
+                notes: paceNote(String(localized: "roadLR.note.hmEffort", defaultValue: "Half-marathon effort"), paceProfile?.thresholdPacePerKm)
+            ),
+            IntervalPhase(
+                id: UUID(), phaseType: .coolDown,
+                trigger: .duration(seconds: coolDown),
+                targetIntensity: .easy, repeatCount: 1,
+                notes: paceNote(String(localized: "roadLR.note.easyCooldown", defaultValue: "Easy cool-down"), easyPace(paceProfile))
+            ),
         ]
         return workout(
             name: String(localized: "roadLR.name.progressive", defaultValue: "Progressive long run"),
-            description: String(localized: "roadLR.desc.progressive", defaultValue: "Ease in, build to half-marathon effort, finish at marathon pace."),
+            description: String(localized: "roadLR.desc.progressive", defaultValue: "Ease in, settle into marathon pace, lift to half-marathon effort, then flush out easy."),
             phases: phases,
             totalDuration: totalDuration,
             paceProfile: paceProfile
@@ -295,12 +315,44 @@ enum RoadLongRunWorkoutBuilder {
             id: UUID(),
             name: name,
             descriptionText: description,
-            phases: phases,
+            phases: tidyPhaseDurations(phases, totalDuration: totalDuration),
             category: .roadSpecific,
             estimatedDurationSeconds: totalDuration,
             estimatedDistanceKm: round(estKm * 10) / 10,
             isUserCreated: false
         )
+    }
+
+    /// Snap every timed phase to a whole minute so a long run never reads as
+    /// "18min18s" — no coach writes odd seconds. The tiny rounding remainder is
+    /// pushed back into the longest easy phase (warm-up/cool-down), which is
+    /// minutes-or-hours long so the shift is invisible, keeping the total
+    /// session time exact while the quality blocks stay clean whole minutes.
+    private static func tidyPhaseDurations(_ phases: [IntervalPhase], totalDuration: TimeInterval) -> [IntervalPhase] {
+        func seconds(_ phase: IntervalPhase) -> Double? {
+            if case .duration(let s) = phase.trigger { return s }
+            return nil
+        }
+
+        var result = phases
+        for i in result.indices {
+            guard let s = seconds(result[i]) else { continue }
+            result[i].trigger = .duration(seconds: max(60, (s / 60).rounded() * 60))
+        }
+
+        // Absorb the rounding drift into the longest easy phase so the labelled
+        // total duration is preserved to the second.
+        let roundedTotal = result.reduce(0.0) { $0 + $1.totalDuration }
+        let drift = totalDuration - roundedTotal
+        if abs(drift) >= 1,
+           let idx = result.indices
+               .filter({ result[$0].targetIntensity == .easy && seconds(result[$0]) != nil })
+               .max(by: { result[$0].totalDuration < result[$1].totalDuration }),
+           case .duration(let s) = result[idx].trigger,
+           result[idx].repeatCount > 0 {
+            result[idx].trigger = .duration(seconds: max(60, s + drift / Double(result[idx].repeatCount)))
+        }
+        return result
     }
 
     private static func easyPace(_ profile: RoadPaceProfile?) -> Double? {
