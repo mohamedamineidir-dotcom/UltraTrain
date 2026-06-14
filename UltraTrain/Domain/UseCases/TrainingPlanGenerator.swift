@@ -1001,6 +1001,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     discipline: discipline, athlete: athlete,
                     weekVolumeKm: volume.targetVolumeKm, paceProfile: paceProfile,
                     isFirstTimer: isFirstTimer, varietySeed: qualityVarietySeed,
+                    raceDistanceKm: targetRace.distanceKm,
                     ordinals: &qualityOrdinal, used: &usedQualitySignatures)
                 let q2Composed = Self.composeQuality(
                     category: q2Cat, slotIndex: 1, skeleton: skeleton,
@@ -1010,6 +1011,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     // De-conflict the week's two quality shapes: Q2 avoids
                     // Q1's shape so a week never runs e.g. two pyramids.
                     avoidShape: q1Composed.shape, varietySeed: qualityVarietySeed,
+                    raceDistanceKm: targetRace.distanceKm,
                     ordinals: &qualityOrdinal, used: &usedQualitySignatures)
                 let q1Template: RoadIntervalLibrary.Template? = q1Composed.template
                 let q2Template: RoadIntervalLibrary.Template? = q2Composed.template
@@ -1475,6 +1477,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         isFirstTimer: Bool,
         avoidShape: IntervalSessionComposer.Shape? = nil,
         varietySeed: Int,
+        raceDistanceKm: Double,
         ordinals: inout [RoadIntervalLibrary.Category: Int],
         used: inout Set<String>
     ) -> IntervalSessionComposer.Composed {
@@ -1482,7 +1485,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             IntervalSessionComposer.compose(IntervalSessionComposer.Context(
                 category: category, phase: skeleton.phase, discipline: discipline,
                 experience: athlete.experienceLevel, weeklyVolumeKm: weekVolumeKm,
-                paceProfile: paceProfile, ordinal: ordinal, slotIndex: slotIndex,
+                paceProfile: paceProfile, raceDistanceKm: raceDistanceKm,
+                ordinal: ordinal, slotIndex: slotIndex,
                 isRecoveryWeek: skeleton.isRecoveryWeek, isFirstTimer: isFirstTimer,
                 athleteAge: athlete.age, avoidShape: avoidShape, varietySeed: varietySeed
             ))

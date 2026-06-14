@@ -58,7 +58,8 @@ extension IntervalSessionComposer {
         case .vo2max:       fraction = 0.55   // I-pace is faster than race pace
         default:            return minutes
         }
-        let capKm = ctx.discipline.nominalDistanceKm * fraction
+        let raceKm = ctx.raceDistanceKm > 0 ? ctx.raceDistanceKm : ctx.discipline.nominalDistanceKm
+        let capKm = raceKm * fraction
         let paceSecPerKm = zonePaceSeconds(ctx, repLengthSec: 240)
         guard paceSecPerKm > 0 else { return minutes }
         let capMinutes = capKm * paceSecPerKm / 60.0

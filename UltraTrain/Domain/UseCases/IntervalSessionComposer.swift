@@ -28,6 +28,11 @@ enum IntervalSessionComposer {
         let experience: ExperienceLevel
         let weeklyVolumeKm: Double
         let paceProfile: RoadPaceProfile?
+        /// The actual goal-race distance in km. Used to cap race-pace work by
+        /// the real distance, not the discipline's nominal — a 5K (which maps
+        /// to the road10K discipline) must cap race-pace at ~4 km, not 8.
+        /// Falls back to the discipline's nominal distance when 0.
+        var raceDistanceKm: Double = 0
         /// Monotonic per-category session counter (0-based). The progression
         /// coordinate; recovery weeks do NOT increment it, so the build
         /// resumes where it left off after a deload (like Campus Coach).
