@@ -547,6 +547,11 @@ final class TrainingPlanViewModel {
     var visibleWeeks: [TrainingWeek] {
         guard let plan else { return [] }
 
+        #if DEBUG
+        // Simulator testing: reveal the whole plan regardless of entitlement.
+        if DebugEntitlement.unlockAllWeeks { return plan.weeks }
+        #endif
+
         // Free-tier scenario plans (comeback / 5K) are the taster, always
         // fully visible regardless of subscription. The week-window gate
         // below only applies to custom plans.

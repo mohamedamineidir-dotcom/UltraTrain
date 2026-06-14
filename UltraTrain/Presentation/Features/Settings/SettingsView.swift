@@ -154,6 +154,14 @@ struct SettingsView: View {
             Text("Locks premium features and shows the free-plan picker, as a non-subscriber would see.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
+
+            Toggle("Unlock all plan weeks", isOn: Binding(
+                get: { DebugEntitlement.unlockAllWeeks },
+                set: { DebugEntitlement.unlockAllWeeks = $0 }
+            ))
+            Text("Reveals every week of the training plan, not just the free preview, so all sessions can be inspected.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
         }
     }
     #endif

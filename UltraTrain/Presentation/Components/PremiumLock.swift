@@ -39,6 +39,16 @@ enum DebugEntitlement {
         get { UserDefaults.standard.bool(forKey: key) }
         set { UserDefaults.standard.set(newValue, forKey: key) }
     }
+
+    /// DEBUG-only: reveal EVERY week of the plan regardless of subscription
+    /// status, so the full training schedule can be inspected on the simulator
+    /// (a StoreKit-test purchase comes through as a trial, which otherwise caps
+    /// the preview to 3 weeks). Toggled from Settings ▸ Debug.
+    private static let allWeeksKey = "debug_unlockAllWeeks"
+    static var unlockAllWeeks: Bool {
+        get { UserDefaults.standard.bool(forKey: allWeeksKey) }
+        set { UserDefaults.standard.set(newValue, forKey: allWeeksKey) }
+    }
 }
 #endif
 
