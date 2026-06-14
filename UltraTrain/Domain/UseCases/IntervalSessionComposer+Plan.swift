@@ -233,16 +233,25 @@ extension IntervalSessionComposer {
         case .threshold:    .threshold
         default:            .racePace
         }
-        let broken = ctx.category != .progression && (ctx.ordinal / 2) % 2 == 1
-        if broken {
-            // Two equal blocks, each a whole number of minutes.
-            let perMin = max(5.0, (minutes / 2).rounded())
-            return [Segment(repCount: 2, repDistanceM: 0, repDurationSec: Int(perMin) * 60,
-                            zone: zone, recoverySec: 120, recoveryType: .jog)]
+        // A tempo's total work — same pace, same minutes — can be organised
+        // as one block, two, or three ("20min" ⇄ "2×10min" ⇄ "3×7min"). All
+        // are legitimate tempo formats, so the variety is physiologically
+        // equivalent, not cosmetic. The block count is phase-shifted by the
+        // variety seed (so two similar athletes differ) and walks with the
+        // ordinal (so a single athlete's tempos vary week to week instead of
+        // every one being "24min"). This is what gives the continuous tempos
+        // the same athlete-to-athlete diversity the rep sessions already have.
+        let choices = [1, 2, 3]
+        var blocks = choices[(ctx.ordinal + IntervalSessionComposer.mix(ctx.varietySeed, 9100)) % choices.count]
+        // Never split so far that a block drops below a real tempo (~5 min).
+        while blocks > 1 && minutes / Double(blocks) < 5 { blocks -= 1 }
+        if blocks <= 1 {
+            return [Segment(repCount: 1, repDistanceM: 0, repDurationSec: Int(minutes) * 60,
+                            zone: zone, recoverySec: 0, recoveryType: .standing)]
         }
-        return [Segment(repCount: 1, repDistanceM: 0,
-                        repDurationSec: Int(minutes) * 60,
-                        zone: zone, recoverySec: 0, recoveryType: .standing)]
+        let perMin = max(5.0, (minutes / Double(blocks)).rounded())
+        return [Segment(repCount: blocks, repDistanceM: 0, repDurationSec: Int(perMin) * 60,
+                        zone: zone, recoverySec: 120, recoveryType: .jog)]
     }
 
     // MARK: - Helpers
