@@ -73,6 +73,20 @@ struct LiveHRZoneIndicator: View {
             Image(systemName: targetIconName(currentZone: state.currentZone, targetZone: target))
                 .font(.title3.bold())
                 .foregroundStyle(state.isInTargetZone ? .green : .orange)
+                .accessibilityLabel(targetA11yLabel(currentZone: state.currentZone, targetZone: target))
+        }
+    }
+
+    /// VoiceOver text for the target indicator. The icon shape already conveys
+    /// the state visually (incl. for colour-blind users); this adds it for
+    /// non-visual users.
+    private func targetA11yLabel(currentZone: Int, targetZone: Int) -> String {
+        if currentZone == targetZone {
+            return String(localized: "hrzone.a11y.inZone", defaultValue: "In target heart-rate zone")
+        } else if currentZone > targetZone {
+            return String(localized: "hrzone.a11y.tooHigh", defaultValue: "Above target zone, ease off")
+        } else {
+            return String(localized: "hrzone.a11y.tooLow", defaultValue: "Below target zone, pick it up")
         }
     }
 

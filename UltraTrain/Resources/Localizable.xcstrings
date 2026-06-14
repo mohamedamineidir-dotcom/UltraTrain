@@ -13329,6 +13329,24 @@
         }
       }
     },
+    "hrzone.a11y.inZone" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "In target heart-rate zone" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Dans la zone cardiaque cible" } }
+      }
+    },
+    "hrzone.a11y.tooHigh" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Above target zone, ease off" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Au-dessus de la zone cible, relâchez" } }
+      }
+    },
+    "hrzone.a11y.tooLow" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Below target zone, pick it up" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "En dessous de la zone cible, accélérez" } }
+      }
+    },
     "hcc.climbing.desc" : {
       "localizations" : {
         "en" : {

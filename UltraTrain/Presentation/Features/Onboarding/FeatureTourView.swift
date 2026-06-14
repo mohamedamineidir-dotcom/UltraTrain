@@ -62,7 +62,7 @@ struct FeatureTourView: View {
                 Text(LocalizedStringKey(currentPage < pages.count - 1 ? "Next" : "Let's Go!"))
                     .font(.headline.bold())
                     .frame(maxWidth: .infinity)
-                    .frame(height: 56)
+                    .frame(minHeight: 56)
                     .background(Theme.Gradients.warmCoralCTA)
                     .foregroundStyle(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 14))

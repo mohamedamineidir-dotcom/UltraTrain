@@ -134,7 +134,7 @@ struct NutritionTargetsCard: View {
             }
             HStack(alignment: .lastTextBaseline, spacing: 3) {
                 Text(value)
-                    .font(.system(size: 30, weight: .bold, design: .rounded).monospacedDigit())
+                    .font(.system(.title, design: .rounded).weight(.bold).monospacedDigit())
                     .foregroundStyle(
                         accent
                             ? AnyShapeStyle(LinearGradient(

@@ -94,7 +94,7 @@ struct DashboardNextSessionCard: View {
                     .font(.subheadline.bold())
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 48)
+                    .frame(minHeight: 48)
                     .background(
                         Theme.Gradients.warmCoralCTA,
                         in: RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
