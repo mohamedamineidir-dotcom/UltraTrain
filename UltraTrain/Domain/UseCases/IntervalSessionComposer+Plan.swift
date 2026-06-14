@@ -134,18 +134,30 @@ extension IntervalSessionComposer {
     static func recovery(_ ctx: Context, repSeconds: Double) -> (sec: Int, type: RoadIntervalLibrary.RecoveryType) {
         switch ctx.category {
         case .speed:
-            return (Int((repSeconds * 1.5).rounded()), .jog)
+            return (tidyRecoverySec(repSeconds * 1.5), .jog)
         case .vo2max:
             let ratio = max(0.5, 1.0 - Double(ctx.ordinal) * 0.08)  // 1:1 → 1:2
-            return (Int((repSeconds * ratio).rounded()), .jog)
+            return (tidyRecoverySec(repSeconds * ratio), .jog)
         case .threshold:
             let ratio = max(0.33, 0.9 - Double(ctx.ordinal) * 0.1)  // ~1:1 → 1:3
-            return (max(30, Int((repSeconds * ratio).rounded())), .jog)
+            return (max(30, tidyRecoverySec(repSeconds * ratio)), .jog)
         case .raceSpecific:
             return (max(45, 90 - ctx.ordinal * 5), .jog)            // 90s → 45s float-ish jog
         case .progression, .longRunVariant:
             return (0, .standing)
         }
+    }
+
+    /// Snap a raw recovery duration to a clean, intentional-looking value so
+    /// reps never read as "58s" when they obviously mean a minute. Within 3s of
+    /// a whole minute → snap to the minute; otherwise round to the nearest 5s.
+    /// Zero (standing rest, no recovery) stays zero.
+    static func tidyRecoverySec(_ raw: Double) -> Int {
+        let sec = Int(raw.rounded())
+        guard sec > 0 else { return 0 }
+        let nearestMinute = ((sec + 30) / 60) * 60
+        if nearestMinute > 0 && abs(sec - nearestMinute) <= 3 { return nearestMinute }
+        return Int((Double(sec) / 5).rounded()) * 5
     }
 
     // MARK: - Shape builders
