@@ -102,8 +102,8 @@ extension TaperProfile {
     static func forRoadRace(distanceKm: Double) -> TaperProfile {
         let discipline = RoadRaceDiscipline.from(distanceKm: distanceKm)
         switch discipline {
-        case .road10K:
-            // 10K: 1 week sharp taper. Maintain 1 quality sharpener session.
+        case .road5K, .road10K:
+            // 5K/10K: 1 week sharp taper. Maintain 1 quality sharpener session.
             // Daniels: keep one set of I-pace intervals 5 days before race.
             return TaperProfile(
                 totalTaperWeeks: 1,

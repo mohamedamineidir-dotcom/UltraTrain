@@ -64,12 +64,14 @@ enum GoalRealism: String, Sendable, Codable {
 /// Discipline classification for road races.
 /// Determines phase structure, interval selection, and long run caps.
 enum RoadRaceDiscipline: String, Sendable {
+    case road5K
     case road10K
     case roadHalf
     case roadMarathon
 
     static func from(distanceKm: Double) -> RoadRaceDiscipline {
         switch distanceKm {
+        case ..<7.5:   return .road5K
         case ..<15:    return .road10K
         case ..<30:    return .roadHalf
         default:       return .roadMarathon
@@ -78,6 +80,7 @@ enum RoadRaceDiscipline: String, Sendable {
 
     var displayName: String {
         switch self {
+        case .road5K:       "5K"
         case .road10K:      "10K"
         case .roadHalf:     "Half Marathon"
         case .roadMarathon: "Marathon"
@@ -89,6 +92,7 @@ enum RoadRaceDiscipline: String, Sendable {
     /// training is racing, not training).
     var nominalDistanceKm: Double {
         switch self {
+        case .road5K:       5
         case .road10K:      10
         case .roadHalf:     21.0975
         case .roadMarathon: 42.195
@@ -122,10 +126,10 @@ enum RoadRaceDiscipline: String, Sendable {
     ) -> Double {
         let baseline: Double
         switch (self, experience) {
-        case (.road10K, .beginner):          baseline = 16
-        case (.road10K, .intermediate):      baseline = 20
-        case (.road10K, .advanced):          baseline = 24
-        case (.road10K, .elite):             baseline = 24
+        case (.road5K, .beginner), (.road10K, .beginner):          baseline = 16
+        case (.road5K, .intermediate), (.road10K, .intermediate):  baseline = 20
+        case (.road5K, .advanced), (.road10K, .advanced):          baseline = 24
+        case (.road5K, .elite), (.road10K, .elite):                baseline = 24
         case (.roadHalf, .beginner):         baseline = 20
         case (.roadHalf, .intermediate):     baseline = 23
         case (.roadHalf, .advanced):         baseline = 26
@@ -158,7 +162,7 @@ enum RoadRaceDiscipline: String, Sendable {
         let floor: Double
         let ceiling: Double
         switch self {
-        case .road10K:      (floor, ceiling) = (12, 24)
+        case .road5K, .road10K: (floor, ceiling) = (12, 24)
         case .roadHalf:     (floor, ceiling) = (16, 28)
         case .roadMarathon: (floor, ceiling) = (26, 35)
         }
@@ -170,10 +174,10 @@ enum RoadRaceDiscipline: String, Sendable {
     /// 10K: 16/30 → 16/60. HM: 12/50 → 16/80. Marathon: 18/55 → 18/85+.
     func peakWeeklyKm(experience: ExperienceLevel) -> Double {
         switch (self, experience) {
-        case (.road10K, .beginner):       40
-        case (.road10K, .intermediate):   55
-        case (.road10K, .advanced):       70
-        case (.road10K, .elite):          85
+        case (.road5K, .beginner), (.road10K, .beginner):       40
+        case (.road5K, .intermediate), (.road10K, .intermediate):   55
+        case (.road5K, .advanced), (.road10K, .advanced):       70
+        case (.road5K, .elite), (.road10K, .elite):          85
         case (.roadHalf, .beginner):      55
         case (.roadHalf, .intermediate):  70
         case (.roadHalf, .advanced):      90

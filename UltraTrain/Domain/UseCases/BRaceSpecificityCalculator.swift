@@ -179,7 +179,7 @@ enum BRaceSpecificityCalculator {
         // Base prescription by distance.
         let base: Int
         switch discipline {
-        case .road10K:      base = 2
+        case .road5K, .road10K: base = 2
         case .roadHalf:     base = 3
         case .roadMarathon: base = 3
         }
@@ -208,10 +208,10 @@ enum BRaceSpecificityCalculator {
         discipline: RoadRaceDiscipline
     ) -> (Slot, Kind) {
         switch discipline {
-        case .road10K:
+        case .road5K, .road10K:
             // Both injections become VO2max intervals in the intervals
             // slot. W-2 is the lighter primer; substitutor picks
-            // appropriate template.
+            // appropriate template. (5K is VO2max-limited like the 10K.)
             return (.intervals, .vo2maxIntervals)
         case .roadHalf:
             // W-3 → tempo at HMP (longer threshold).

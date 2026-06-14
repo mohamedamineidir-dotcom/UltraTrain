@@ -174,6 +174,7 @@ enum BRaceSpecificitySubstitutor {
     private static func focusLabel(for injection: BRaceSpecificityCalculator.Injection) -> String {
         let raceLabel: String
         switch injection.bRaceDiscipline {
+        case .road5K:       raceLabel = "5K"
         case .road10K:      raceLabel = "10K"
         case .roadHalf:     raceLabel = "HM"
         case .roadMarathon: raceLabel = "Marathon"
@@ -209,7 +210,7 @@ enum BRaceSpecificitySubstitutor {
     ) -> String {
         let secondsPerKm: Double
         switch discipline {
-        case .road10K:
+        case .road5K, .road10K:
             secondsPerKm = profile.intervalPacePerKm
         case .roadHalf:
             secondsPerKm = profile.thresholdPacePerKm

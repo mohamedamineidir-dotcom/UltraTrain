@@ -697,7 +697,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         // still reconsider the target or defer.
         let shortPrepThreshold: Int
         switch discipline {
-        case .road10K:      shortPrepThreshold = 6
+        case .road5K, .road10K: shortPrepThreshold = 6
         case .roadHalf:     shortPrepThreshold = 8
         case .roadMarathon: shortPrepThreshold = 12
         }
@@ -1300,6 +1300,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
     ) -> String {
         var pieces: [String] = []
         switch discipline {
+        case .road5K:
+            pieces.append("5K race day. Plan: it's short and honest, settle into goal pace within the first 400m, no easing in. It bites around 3K, hold form and cadence there. The last kilometre is where you empty the tank.")
         case .road10K:
             pieces.append("10K race day. Plan: settle into goal pace by 1K, first kilometre will feel deceptively easy. Hold rhythm through 5K. From 7K onwards, every kilometre buys the next. Strong final 1K is where the time gets earned.")
         case .roadHalf:
@@ -1380,7 +1382,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         switch discipline {
         case .roadMarathon: offsetBeforeTaper = 2
         case .roadHalf:     offsetBeforeTaper = 1
-        case .road10K:      return nil // Too short to warrant an auto TT
+        case .road5K, .road10K: return nil // Too short to warrant an auto TT
         }
 
         let totalWeeks = skeletons.count
@@ -1410,6 +1412,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
     ) -> Bool {
         let targetDistance: PersonalBestDistance
         switch discipline {
+        case .road5K:       targetDistance = .fiveK
         case .road10K:      targetDistance = .tenK
         case .roadHalf:     targetDistance = .halfMarathon
         case .roadMarathon: targetDistance = .marathon
@@ -1423,6 +1426,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             return "Tune-up 10K Time Trial, 20 min easy warm-up + 4-6 × 20s strides, then 10K all-out sustained effort (HMP-to-10K pace), then 15 min easy cool-down. Your biggest fitness check of the block, execute like a real race."
         case .roadHalf:
             return "Tune-up 5K Time Trial, 15 min easy warm-up + 4-6 × 20s strides, then 5K all-out sustained effort, then 10 min easy cool-down. Ideally on a track or flat route."
+        case .road5K:
+            return "Tune-up 3K Time Trial, 15 min easy warm-up + 4-6 × 20s strides, then 3K all-out at goal-pace-or-faster, then 10 min easy cool-down. Track or flat route ideal."
         case .road10K:
             return "Tune-up time trial."
         }
@@ -1434,7 +1439,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             return "This is your race-pace calibration session. If you nail HMP effort comfortably, your target is achievable. If you struggle to hold pace past 7K, scale marathon target back by 1-2%."
         case .roadHalf:
             return "Your 5K time × 2.11 gives a realistic half-marathon target. Use this to validate your goal time."
-        case .road10K:
+        case .road5K, .road10K:
             return ""
         }
     }

@@ -313,8 +313,8 @@ enum RoadLongRunCalculator {
         case .peak:
             // Peak: race-specific variants based on discipline
             switch discipline {
-            case .road10K:
-                // 10K: fast-finish long runs (final 4-5km at 10K pace)
+            case .road5K, .road10K:
+                // 5K/10K: fast-finish long runs (final 4-5km at race pace)
                 return .fastFinish
 
             case .roadHalf:

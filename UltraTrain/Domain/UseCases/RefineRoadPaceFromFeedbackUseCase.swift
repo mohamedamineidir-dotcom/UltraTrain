@@ -351,7 +351,7 @@ enum RefineRoadPaceFromFeedbackUseCase {
     /// Marathon paces can tolerate a wider adjustment.
     private static func distanceDampen(_ discipline: RoadRaceDiscipline) -> Double {
         switch discipline {
-        case .road10K:      return 0.75
+        case .road5K, .road10K: return 0.75
         case .roadHalf:     return 1.0
         case .roadMarathon: return 1.2
         }

@@ -527,7 +527,7 @@ enum RoadSessionSelector {
     ) -> String {
         let variant = RoadLongRunCalculator.variant(
             phase: phase, weekInPhase: weekInPhase,
-            raceDistanceKm: discipline == .road10K ? 10 : discipline == .roadHalf ? 21.1 : 42.2,
+            raceDistanceKm: discipline.nominalDistanceKm,
             experience: experience, isRecoveryWeek: false
         )
 

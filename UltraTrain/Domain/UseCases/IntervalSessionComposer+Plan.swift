@@ -79,9 +79,12 @@ extension IntervalSessionComposer {
             // VO2max rep distance cycles so successive sessions vary the rep
             // length (400m sharpeners ⇄ 1200m sustained), with overload via
             // total volume + recovery ratio.
-            let menu: [Int] = ctx.discipline == .roadMarathon
-                ? [800, 1000, 1200, 1600]
-                : [400, 600, 800, 1000, 1200]
+            let menu: [Int]
+            switch ctx.discipline {
+            case .roadMarathon: menu = [800, 1000, 1200, 1600]
+            case .road5K:       menu = [300, 400, 600, 800, 1000] // shorter, sharper for 5K
+            default:            menu = [400, 600, 800, 1000, 1200]
+            }
             return (cycleMenu(menu, ctx), 0)
         case .threshold:
             // Time-based cruise reps (Campus Coach 1'→2'→3'→5' family). Cycled
@@ -97,9 +100,13 @@ extension IntervalSessionComposer {
             // another — same total work, different structure. Progression is
             // carried by total volume (up to the race-distance cap), not by
             // forcing every athlete down the same fixed ladder.
-            let menu: [Int] = ctx.discipline == .roadMarathon
-                ? [1000, 1500, 2000, 3000]
-                : (ctx.discipline == .roadHalf ? [1600, 2000, 3000] : [1000, 1600, 2000])
+            let menu: [Int]
+            switch ctx.discipline {
+            case .roadMarathon: menu = [1000, 1500, 2000, 3000]
+            case .roadHalf:     menu = [1600, 2000, 3000]
+            case .road5K:       menu = [600, 800, 1000] // 5K race-pace reps stay short
+            case .road10K:      menu = [1000, 1600, 2000]
+            }
             return (cycleMenu(menu, ctx), 0)
         case .progression, .longRunVariant:
             return (0, 0)  // continuous

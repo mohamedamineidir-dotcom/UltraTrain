@@ -33,6 +33,7 @@ enum PaceProfileApplier {
         let isFirstTimer = !athlete.personalBests.contains { pb in
             pb.timeSeconds > 0 && {
                 switch discipline {
+                case .road5K:       return pb.distance == .fiveK
                 case .road10K:      return pb.distance == .tenK
                 case .roadHalf:     return pb.distance == .halfMarathon
                 case .roadMarathon: return pb.distance == .marathon

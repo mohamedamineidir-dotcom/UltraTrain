@@ -338,8 +338,10 @@ enum RoadIntervalLibrary {
 
         // === BUILD: Distance-specific ===
         // 10K: VO2max is the limiter (Daniels)
-        case (.build, .road10K, 0):     return [(.vo2max, 0), (.speed, 0)]
-        case (.build, .road10K, _):     return [(.threshold, 0), (.vo2max, 0)]
+        // 5K shares the 10K's VO2max-limited emphasis (Daniels: both are
+        // VO2max races). The shorter rep menus + race-pace cap differentiate.
+        case (.build, .road5K, 0), (.build, .road10K, 0):     return [(.vo2max, 0), (.speed, 0)]
+        case (.build, .road5K, _), (.build, .road10K, _):     return [(.threshold, 0), (.vo2max, 0)]
         // HM: Threshold is the limiter (Pfitzinger: "LT is the HM cornerstone")
         case (.build, .roadHalf, 0):    return [(.threshold, 0), (.vo2max, 0)]
         case (.build, .roadHalf, _):    return [(.threshold, 0), (.progression, 0)]
@@ -365,8 +367,8 @@ enum RoadIntervalLibrary {
 
         // === PEAK: Distance-specific ===
         // 10K: Race-specific + VO2max sharpeners
-        case (.peak, .road10K, 0):      return [(.raceSpecific, 0), (.vo2max, 0)]
-        case (.peak, .road10K, _):      return [(.vo2max, 0), (.raceSpecific, 0)]
+        case (.peak, .road5K, 0), (.peak, .road10K, 0):      return [(.raceSpecific, 0), (.vo2max, 0)]
+        case (.peak, .road5K, _), (.peak, .road10K, _):      return [(.vo2max, 0), (.raceSpecific, 0)]
         // HM: Threshold CONTINUES + race-specific (Pfitzinger: LT is cornerstone)
         case (.peak, .roadHalf, 0):     return [(.raceSpecific, 0), (.threshold, 0)]
         case (.peak, .roadHalf, _):     return [(.threshold, 0), (.raceSpecific, 0)]

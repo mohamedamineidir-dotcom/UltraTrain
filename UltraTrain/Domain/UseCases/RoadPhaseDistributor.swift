@@ -86,10 +86,12 @@ enum RoadPhaseDistributor {
         switch (discipline, experience) {
         // 10K: speed-centric. Shorter base, heavy build (VO2max), moderate peak.
         // Daniels: Base 27%, Quality 40%, Specific 20%
-        case (.road10K, .beginner):     return Fractions(base: 0.30, build: 0.35, peak: 0.35)
-        case (.road10K, .intermediate): return Fractions(base: 0.27, build: 0.35, peak: 0.38)
-        case (.road10K, .advanced):     return Fractions(base: 0.25, build: 0.35, peak: 0.40)
-        case (.road10K, .elite):        return Fractions(base: 0.22, build: 0.35, peak: 0.43)
+        // 5K shares 10K's speed-centric distribution; the shorter rep menus +
+        // race-pace cap are what make it 5K-specific.
+        case (.road5K, .beginner), (.road10K, .beginner):     return Fractions(base: 0.30, build: 0.35, peak: 0.35)
+        case (.road5K, .intermediate), (.road10K, .intermediate): return Fractions(base: 0.27, build: 0.35, peak: 0.38)
+        case (.road5K, .advanced), (.road10K, .advanced):     return Fractions(base: 0.25, build: 0.35, peak: 0.40)
+        case (.road5K, .elite), (.road10K, .elite):        return Fractions(base: 0.22, build: 0.35, peak: 0.43)
 
         // HM: threshold-centric. Pfitzinger: "LT is the HM limiter."
         // Pfitzinger 18/55: Base 33%, Build 33%, Peak 16%. Peak must be SHORT.

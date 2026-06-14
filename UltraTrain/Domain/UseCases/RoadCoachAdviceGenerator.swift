@@ -207,9 +207,9 @@ enum RoadCoachAdviceGenerator {
         case .roadHalf:
             return String(localized: "road.coach.shortPrep.half",
                 defaultValue: "Compressed prep alert: HM prep benefits from at least 8 weeks for meaningful threshold development. Your plan is running shorter. Consider a conservative finish goal, and trust your aerobic base rather than chasing speed.")
-        case .road10K:
+        case .road5K, .road10K:
             return String(localized: "road.coach.shortPrep.tenK",
-                defaultValue: "Compressed prep alert: 10K plans normally run 6+ weeks. Your base is short. Prioritize finishing cleanly over hitting a hard target.")
+                defaultValue: "Compressed prep alert: 5K/10K plans normally run 6+ weeks. Your base is short. Prioritize finishing cleanly over hitting a hard target.")
         }
     }
 
@@ -224,9 +224,9 @@ enum RoadCoachAdviceGenerator {
         case .roadHalf:
             return String(localized: "road.coach.firstTimer.half",
                 defaultValue: "First-timer note: keep the first 15 km conservative. A common first-half-marathon mistake is starting at 10K effort and blowing up at 17 km. Save a little for the final 5 km.")
-        case .road10K:
+        case .road5K, .road10K:
             return String(localized: "road.coach.firstTimer.tenK",
-                defaultValue: "First-timer note: most first 10Ks go out too hard. Settle into goal pace by 2 km and save a surge for the final 2 km, not the first.")
+                defaultValue: "First-timer note: most first 5K/10K races go out too hard. Settle into goal pace by 2 km and save a surge for the final 2 km, not the first.")
         }
     }
 

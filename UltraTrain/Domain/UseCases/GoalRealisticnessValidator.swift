@@ -131,6 +131,11 @@ enum GoalRealisticnessValidator {
     ///   Intermediate <4:15/km (sub 42:30), Beginner <5:20/km (sub 53:20)
     private static func roadPaceThresholds(for discipline: RoadRaceDiscipline) -> RoadPaceThresholds {
         switch discipline {
+        case .road5K:
+            // 5K is run faster than 10K: Elite <2:45/km (sub 13:45),
+            // Advanced <3:15/km (sub 16:15), Int <4:00 (sub 20:00),
+            // Beginner <5:05 (sub 25:25).
+            RoadPaceThresholds(elite: 2.75, advanced: 3.25, intermediate: 4.00, beginner: 5.08)
         case .road10K:
             RoadPaceThresholds(elite: 2.87, advanced: 3.42, intermediate: 4.25, beginner: 5.33)
         case .roadHalf:

@@ -34,7 +34,7 @@ enum RoadVolumeCalculator {
     /// The aerobic volume requirement scales with race distance.
     private static func easyParams(experience: ExperienceLevel, discipline: RoadRaceDiscipline) -> SessionParams {
         let distanceMultiplier: Double = switch discipline {
-        case .road10K:      1.0
+        case .road5K, .road10K: 1.0
         case .roadHalf:     1.15
         case .roadMarathon: 1.27  // Marathon easy runs ~27% longer than 10K
         }
@@ -55,7 +55,7 @@ enum RoadVolumeCalculator {
     /// warm-up is more important and work blocks can be 20-40min at MP.
     private static func intervalParams(experience: ExperienceLevel, discipline: RoadRaceDiscipline) -> SessionParams {
         let distanceMultiplier: Double = switch discipline {
-        case .road10K:      1.0
+        case .road5K, .road10K: 1.0
         case .roadHalf:     1.08
         case .roadMarathon: 1.11  // Marathon quality sessions ~11% longer
         }
@@ -74,7 +74,7 @@ enum RoadVolumeCalculator {
     /// Tempo session durations by experience AND distance.
     private static func tempoParams(experience: ExperienceLevel, discipline: RoadRaceDiscipline) -> SessionParams {
         let distanceMultiplier: Double = switch discipline {
-        case .road10K:      1.0
+        case .road5K, .road10K: 1.0
         case .roadHalf:     1.10
         case .roadMarathon: 1.12  // Marathon tempo ~12% longer (more threshold work)
         }
