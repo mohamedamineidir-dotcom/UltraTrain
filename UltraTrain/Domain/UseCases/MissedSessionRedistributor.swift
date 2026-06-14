@@ -115,7 +115,7 @@ enum MissedSessionRedistributor {
         var distribElev = 0.0
 
         for (i, target) in targets.enumerated() {
-            let ratio = i < ratios.count ? ratios[i] : ratios[ratios.count - 1]
+            let ratio = i < ratios.count ? ratios[i] : (ratios.last ?? 0)
             let addDist = min(missed.plannedDistanceKm * ratio, target.plannedDistanceKm * maxPct)
             let addElev = min(missed.plannedElevationGainM * ratio, target.plannedElevationGainM * maxPct)
             adjustments.append(VolumeAdjustment(

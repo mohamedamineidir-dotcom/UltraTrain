@@ -278,7 +278,7 @@ private struct TargetsExplainerSheet: View {
     private func section(title: String, body: String) -> some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
             Text(title).font(.headline)
-            Text(try! AttributedString(markdown: body))
+            Text((try? AttributedString(markdown: body)) ?? AttributedString(body))
                 .font(.subheadline)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }

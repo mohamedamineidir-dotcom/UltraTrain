@@ -1423,7 +1423,11 @@ private struct SyncAppPickerPage: View {
                     app: .strava
                 )
 
-                // Coming soon apps
+                // "Coming soon" wearable integrations aren't functional yet.
+                // Hidden in release so the App Store build never shows
+                // placeholder features (Guideline 2.1 / 4.2); kept in DEBUG for
+                // layout work. Re-enable per provider as each integration ships.
+                #if DEBUG
                 syncAppButton(
                     title: "Garmin Connect",
                     subtitle: "Coming soon",
@@ -1450,6 +1454,7 @@ private struct SyncAppPickerPage: View {
                     isAvailable: false,
                     app: .suunto
                 )
+                #endif
             }
             .padding()
         }

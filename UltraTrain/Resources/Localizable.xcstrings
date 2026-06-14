@@ -22629,6 +22629,12 @@
         }
       }
     },
+    "paywall.legal.autoRenew" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Payment is charged to your Apple Account. Your subscription renews automatically unless turned off at least 24 hours before the end of the current period. Manage or cancel anytime in Settings." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Le paiement est débité de votre compte Apple. Votre abonnement se renouvelle automatiquement sauf résiliation au moins 24 heures avant la fin de la période en cours. Gérez ou résiliez à tout moment dans les Réglages." } }
+      }
+    },
     "paywall.restore" : {
       "localizations" : {
         "en" : {

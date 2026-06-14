@@ -61,6 +61,16 @@ struct PaywallCTASection: View {
                 .disabled(viewModel.isRestoring)
                 .accessibilityIdentifier("paywall.restoreButton")
 
+                // Apple 3.1.2 auto-renewable subscription disclosure: must be
+                // visible in-app near the purchase, alongside functional EULA
+                // (Terms) + Privacy links.
+                Text("paywall.legal.autoRenew")
+                    .font(.system(size: 10))
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.tertiary)
+                    .padding(.horizontal, Theme.Spacing.lg)
+                    .padding(.top, 2)
+
                 HStack(spacing: Theme.Spacing.md) {
                     Link("Terms", destination: URL(string: "https://ultratrain.app/terms")!)
                     Text("|").foregroundStyle(.tertiary)
