@@ -30,7 +30,8 @@ enum RoadLongRunWorkoutBuilder {
         variant: RoadLongRunCalculator.LongRunVariant,
         totalDuration: TimeInterval,
         paceProfile: RoadPaceProfile?,
-        weekInPhase: Int
+        weekInPhase: Int,
+        raceDistanceKm: Double
     ) -> IntervalWorkout? {
         switch variant {
         case .easy:
@@ -38,16 +39,29 @@ enum RoadLongRunWorkoutBuilder {
         case .progressive:
             return buildProgressive(totalDuration: totalDuration, paceProfile: paceProfile, weekInPhase: weekInPhase)
         case .fastFinish:
-            return buildFastFinish(totalDuration: totalDuration, paceProfile: paceProfile)
+            return buildFastFinish(totalDuration: totalDuration, paceProfile: paceProfile, raceDistanceKm: raceDistanceKm)
         case .marathonPaceIntro:
             return buildMarathonPaceIntro(totalDuration: totalDuration, paceProfile: paceProfile)
         case .marathonPaceBlocks:
             return buildMarathonPaceBlocks(totalDuration: totalDuration, paceProfile: paceProfile, weekInPhase: weekInPhase)
         case .twoPart:
-            return buildTwoPart(totalDuration: totalDuration, paceProfile: paceProfile)
+            return buildTwoPart(totalDuration: totalDuration, paceProfile: paceProfile, raceDistanceKm: raceDistanceKm)
         case .raceSimulation:
-            return buildRaceSimulation(totalDuration: totalDuration, paceProfile: paceProfile, weekInPhase: weekInPhase)
+            return buildRaceSimulation(totalDuration: totalDuration, paceProfile: paceProfile, weekInPhase: weekInPhase, raceDistanceKm: raceDistanceKm)
         }
+    }
+
+    /// Ceiling on time spent at hard RACE pace inside a single long run.
+    /// Running a big slab of a long run at goal race pace is racing, not
+    /// training — and for a short, fast race (5K/10K/half) race pace sits near
+    /// threshold, so an uncapped "half the run at race pace" becomes an hour+
+    /// of near-race effort. Pegged to ~half the goal race distance (converted
+    /// to time via race pace). For a marathon, where race pace IS sustainable,
+    /// the ceiling lands high enough that textbook MP long runs are untouched.
+    /// Returns nil (no cap) when race data is missing.
+    private static func maxRacePaceSeconds(raceDistanceKm: Double, paceProfile: RoadPaceProfile?) -> TimeInterval? {
+        guard raceDistanceKm > 0, let racePace = paceProfile?.racePacePerKm, racePace > 0 else { return nil }
+        return raceDistanceKm * 0.5 * racePace
     }
 
     /// Late-build MP intro: warm easy → single 15-20 min MP block near
@@ -147,10 +161,13 @@ enum RoadLongRunWorkoutBuilder {
         )
     }
 
-    /// Fast-finish: last 25% at race pace.
-    private static func buildFastFinish(totalDuration: TimeInterval, paceProfile: RoadPaceProfile?) -> IntervalWorkout {
-        let easyPart = totalDuration * 0.75
-        let racePart = totalDuration * 0.25
+    /// Fast-finish: last 25% at race pace, capped to ~half race distance.
+    private static func buildFastFinish(totalDuration: TimeInterval, paceProfile: RoadPaceProfile?, raceDistanceKm: Double) -> IntervalWorkout {
+        var racePart = totalDuration * 0.25
+        if let cap = maxRacePaceSeconds(raceDistanceKm: raceDistanceKm, paceProfile: paceProfile) {
+            racePart = min(racePart, cap)
+        }
+        let easyPart = totalDuration - racePart
 
         let phases = [
             IntervalPhase(
@@ -231,20 +248,26 @@ enum RoadLongRunWorkoutBuilder {
         )
     }
 
-    /// Half-and-half: 50% easy → 50% at race pace.
-    private static func buildTwoPart(totalDuration: TimeInterval, paceProfile: RoadPaceProfile?) -> IntervalWorkout {
-        let half = totalDuration / 2
+    /// Half-and-half: 50% easy → up to 50% at race pace, with the race-pace
+    /// block capped to ~half race distance (so a short, fast race never gets an
+    /// hour+ at race pace). Freed time returns to the easy first part.
+    private static func buildTwoPart(totalDuration: TimeInterval, paceProfile: RoadPaceProfile?, raceDistanceKm: Double) -> IntervalWorkout {
+        var racePart = totalDuration / 2
+        if let cap = maxRacePaceSeconds(raceDistanceKm: raceDistanceKm, paceProfile: paceProfile) {
+            racePart = min(racePart, cap)
+        }
+        let easyPart = totalDuration - racePart
 
         let phases = [
             IntervalPhase(
                 id: UUID(), phaseType: .warmUp,
-                trigger: .duration(seconds: half),
+                trigger: .duration(seconds: easyPart),
                 targetIntensity: .easy, repeatCount: 1,
                 notes: paceNote(String(localized: "roadLR.note.easyFirstHalf", defaultValue: "Easy first half"), easyPace(paceProfile))
             ),
             IntervalPhase(
                 id: UUID(), phaseType: .work,
-                trigger: .duration(seconds: half),
+                trigger: .duration(seconds: racePart),
                 targetIntensity: .hard, repeatCount: 1,
                 notes: paceNote(String(localized: "roadLR.note.racePaceSecondHalf", defaultValue: "Race pace second half"), paceProfile?.racePacePerKm)
             ),
@@ -260,14 +283,18 @@ enum RoadLongRunWorkoutBuilder {
 
     /// Race simulation: 5 min easy → long race-pace block (60-75%) → easy remainder.
     /// Block length grows with weekInPhase.
-    private static func buildRaceSimulation(totalDuration: TimeInterval, paceProfile: RoadPaceProfile?, weekInPhase: Int) -> IntervalWorkout {
+    private static func buildRaceSimulation(totalDuration: TimeInterval, paceProfile: RoadPaceProfile?, weekInPhase: Int, raceDistanceKm: Double) -> IntervalWorkout {
         let warmUp: TimeInterval = 5 * 60
         let coolMin: TimeInterval = 10 * 60
 
-        // Race-pace block starts at 60% of available time, grows with weekInPhase
+        // Race-pace block starts at 60% of available time, grows with weekInPhase,
+        // then is capped to ~half race distance so it stays a simulation, not a race.
         let availableWork = totalDuration - warmUp - coolMin
         let blockFraction = min(0.75, 0.60 + Double(weekInPhase) * 0.05)
-        let blockDuration = availableWork * blockFraction
+        var blockDuration = availableWork * blockFraction
+        if let cap = maxRacePaceSeconds(raceDistanceKm: raceDistanceKm, paceProfile: paceProfile) {
+            blockDuration = min(blockDuration, cap)
+        }
         let coolDown = max(coolMin, totalDuration - warmUp - blockDuration)
 
         let phases = [
@@ -296,6 +323,52 @@ enum RoadLongRunWorkoutBuilder {
             description: String(localized: "roadLR.desc.raceSim", defaultValue: "Full rehearsal: warm up, sustained race-pace block, cool down."),
             phases: phases,
             totalDuration: totalDuration,
+            paceProfile: paceProfile
+        )
+    }
+
+    /// Structured workout for the tune-up Time Trial so it shows the same
+    /// warm-up → effort → cool-down phase cards as every other quality session
+    /// (instead of a bare description string). Marathon → 10K TT, half → 5K TT;
+    /// shorter races don't auto-insert a TT, so this returns nil for them.
+    static func buildTimeTrial(discipline: RoadRaceDiscipline, paceProfile: RoadPaceProfile?) -> IntervalWorkout? {
+        let ttKm: Int
+        let warmUp: TimeInterval
+        let coolDown: TimeInterval
+        switch discipline {
+        case .roadMarathon: ttKm = 10; warmUp = 20 * 60; coolDown = 15 * 60
+        case .roadHalf:     ttKm = 5;  warmUp = 15 * 60; coolDown = 10 * 60
+        case .road5K, .road10K: return nil
+        }
+        // Effort is all-out (the athlete races it); threshold pace only sizes
+        // the block so the card reads a realistic duration.
+        let ttDuration = Double(ttKm) * (paceProfile?.thresholdPacePerKm ?? 240)
+
+        let phases = [
+            IntervalPhase(
+                id: UUID(), phaseType: .warmUp,
+                trigger: .duration(seconds: warmUp),
+                targetIntensity: .easy, repeatCount: 1,
+                notes: String(localized: "roadLR.tt.warmup", defaultValue: "Easy warm-up + 4-6 × 20s strides")
+            ),
+            IntervalPhase(
+                id: UUID(), phaseType: .work,
+                trigger: .duration(seconds: ttDuration),
+                targetIntensity: .maxEffort, repeatCount: 1,
+                notes: String(localized: "roadLR.tt.effort", defaultValue: "\(ttKm)K all-out time trial, even or negative split")
+            ),
+            IntervalPhase(
+                id: UUID(), phaseType: .coolDown,
+                trigger: .duration(seconds: coolDown),
+                targetIntensity: .easy, repeatCount: 1,
+                notes: paceNote(String(localized: "roadLR.note.easyCooldown", defaultValue: "Easy cool-down"), easyPace(paceProfile))
+            ),
+        ]
+        return workout(
+            name: String(localized: "roadLR.tt.name", defaultValue: "\(ttKm)K Time Trial"),
+            description: String(localized: "roadLR.tt.desc", defaultValue: "Warm up, then a \(ttKm)K all-out time trial, then easy cool-down."),
+            phases: phases,
+            totalDuration: warmUp + ttDuration + coolDown,
             paceProfile: paceProfile
         )
     }

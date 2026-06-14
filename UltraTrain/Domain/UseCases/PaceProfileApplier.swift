@@ -183,7 +183,8 @@ enum PaceProfileApplier {
                 variant: variant,
                 totalDuration: session.plannedDuration,
                 paceProfile: profile,
-                weekInPhase: weekInPhase
+                weekInPhase: weekInPhase,
+                raceDistanceKm: raceDistanceKm
             )
         default:
             return nil

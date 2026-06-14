@@ -318,8 +318,12 @@ enum RoadLongRunCalculator {
                 return .fastFinish
 
             case .roadHalf:
-                // HM: alternate progressive and two-part
-                return weekInPhase.isMultiple(of: 2) ? .twoPart : .progressive
+                // HM: alternate progressive and fast-finish. NOT two-part —
+                // half-marathon race pace is near threshold, so a "50% of the
+                // long run at race pace" block is an hour-plus of racing, not
+                // training. Fast-finish keeps the race-pace dose to the final
+                // portion (and the builder caps it to ~half race distance).
+                return weekInPhase.isMultiple(of: 2) ? .fastFinish : .progressive
 
             case .roadMarathon:
                 // Marathon peak: variants by experience.

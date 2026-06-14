@@ -9955,6 +9955,23 @@
         }
       }
     },
+    "Enter referral code" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter referral code"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saisissez un code de parrainage"
+          }
+        }
+      }
+    },
     "Enter the 6-digit code and your new password" : {
       "localizations" : {
         "fr" : {
@@ -13224,22 +13241,6 @@
         }
       }
     },
-    "Enter referral code" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter referral code"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Saisissez un code de parrainage"
-          }
-        }
-      }
-    },
     "Have a referral code?" : {
       "localizations" : {
         "en" : {
@@ -13252,22 +13253,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vous avez un code de parrainage ?"
-          }
-        }
-      }
-    },
-    "Invalid or expired code" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Invalid or expired code"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Code invalide ou expiré"
           }
         }
       }
@@ -15952,6 +15937,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Montée"
+          }
+        }
+      }
+    },
+    "Invalid or expired code" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid or expired code"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Code invalide ou expiré"
           }
         }
       }
@@ -27646,6 +27647,9 @@
         }
       }
     },
+    "Reveals every week of the training plan, not just the free preview, so all sessions can be inspected." : {
+
+    },
     "rfp.2daysOut" : {
       "localizations" : {
         "en" : {
@@ -30559,6 +30563,30 @@
             "value" : "Montée en douceur"
           }
         }
+      }
+    },
+    "roadLR.tt.warmup" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Easy warm-up + 4-6 × 20s strides" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Échauffement facile + 4 à 6 × 20 s de lignes droites" } }
+      }
+    },
+    "roadLR.tt.effort" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%lldK all-out time trial, even or negative split" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Test chronométré %lld km à fond, allure régulière ou négatif split" } }
+      }
+    },
+    "roadLR.tt.name" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%lldK Time Trial" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Test chronométré %lld km" } }
+      }
+    },
+    "roadLR.tt.desc" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Warm up, then a %lldK all-out time trial, then easy cool-down." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Échauffement, puis un test chronométré %lld km à fond, puis retour au calme facile." } }
       }
     },
     "roadLR.note.easyCooldown" : {
@@ -42775,6 +42803,84 @@
         }
       }
     },
+    "tpg.raceday.5k" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "5K race day. Plan: it's short and honest, settle into goal pace within the first 400m, no easing in. It bites around 3K, hold form and cadence there. The last kilometre is where you empty the tank." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Jour de course 5 km. Plan : c'est court et sans détour, calez-vous sur l'allure cible dès les 400 premiers mètres, sans temporiser. Ça mord vers 3 km, gardez la forme et la cadence à ce moment-là. Le dernier kilomètre, c'est là qu'on vide le réservoir." } }
+      }
+    },
+    "tpg.raceday.10k" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "10K race day. Plan: settle into goal pace by 1K, first kilometre will feel deceptively easy. Hold rhythm through 5K. From 7K onwards, every kilometre buys the next. Strong final 1K is where the time gets earned." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Jour de course 10 km. Plan : calez-vous sur l'allure cible avant le 1er km, le premier kilomètre paraîtra trompeusement facile. Tenez le rythme jusqu'au 5e km. À partir du 7e km, chaque kilomètre paie le suivant. Un dernier kilomètre solide, c'est là que le temps se gagne." } }
+      }
+    },
+    "tpg.raceday.half" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Half marathon race day. Plan: first 5K is for patience, sit on (not under) goal pace. 5-15K hold the rhythm. 15K-end is where you race, pick off targets one at a time, lift cadence on the closing kilometres." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Jour de course semi-marathon. Plan : les 5 premiers kilomètres, c'est la patience, tenez-vous sur l'allure cible (pas en dessous). De 5 à 15 km, gardez le rythme. De 15 km à l'arrivée, c'est là qu'on court vraiment, remontez vos cibles une à une et relancez la cadence sur les derniers kilomètres." } }
+      }
+    },
+    "tpg.raceday.marathon" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Marathon race day. Plan: first 10K is for restraint, even 5 sec/km too quick will cost you 5+ minutes by 35K. Lock into goal pace, fuel from kilometre 5 every 25-30 min, drink at every aid station. The race begins at 30K." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Jour de course marathon. Plan : les 10 premiers kilomètres, c'est la retenue, même 5 sec/km trop vite vous coûteront 5 minutes ou plus au 35e km. Verrouillez l'allure cible, ravitaillez dès le 5e km toutes les 25 à 30 min, buvez à chaque ravitaillement. La course commence au 30e km." } }
+      }
+    },
+    "tpg.raceday.firstTimer" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "First time at this distance: finishing strong matters more than the clock. Negative split if at all possible." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Première fois sur cette distance : finir en forme compte plus que le chrono. Faites un négatif split si possible." } }
+      }
+    },
+    "tpg.raceday.hot" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Hot conditions forecast: drink earlier and more, take electrolytes, slow goal pace 5-10 sec/km from the gun, heat compounds." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Conditions chaudes annoncées : buvez plus tôt et davantage, prenez des électrolytes, ralentissez l'allure cible de 5 à 10 sec/km dès le départ, la chaleur s'accumule." } }
+      }
+    },
+    "tpg.raceday.trust" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Trust your training. Execute your plan." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Faites confiance à votre préparation. Exécutez votre plan." } }
+      }
+    },
+    "tpg.tt.desc.marathon" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tune-up 10K Time Trial, 20 min easy warm-up + 4-6 × 20s strides, then 10K all-out sustained effort (HMP-to-10K pace), then 15 min easy cool-down. Your biggest fitness check of the block, execute like a real race." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Test chronométré 10 km, 20 min d'échauffement facile + 4 à 6 × 20 s de lignes droites, puis 10 km en effort soutenu à fond (allure semi à 10 km), puis 15 min de retour au calme facile. Votre plus grand point de forme du bloc, exécutez-le comme une vraie course." } }
+      }
+    },
+    "tpg.tt.desc.half" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tune-up 5K Time Trial, 15 min easy warm-up + 4-6 × 20s strides, then 5K all-out sustained effort, then 10 min easy cool-down. Ideally on a track or flat route." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Test chronométré 5 km, 15 min d'échauffement facile + 4 à 6 × 20 s de lignes droites, puis 5 km en effort soutenu à fond, puis 10 min de retour au calme facile. Idéalement sur piste ou parcours plat." } }
+      }
+    },
+    "tpg.tt.desc.5k" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tune-up 3K Time Trial, 15 min easy warm-up + 4-6 × 20s strides, then 3K all-out at goal-pace-or-faster, then 10 min easy cool-down. Track or flat route ideal." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Test chronométré 3 km, 15 min d'échauffement facile + 4 à 6 × 20 s de lignes droites, puis 3 km à fond à l'allure cible ou plus vite, puis 10 min de retour au calme facile. Piste ou parcours plat idéal." } }
+      }
+    },
+    "tpg.tt.desc.10k" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tune-up time trial." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Test chronométré." } }
+      }
+    },
+    "tpg.tt.coach.marathon" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "This is your race-pace calibration session. If you nail HMP effort comfortably, your target is achievable. If you struggle to hold pace past 7K, scale marathon target back by 1-2%." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "C'est votre séance de calibrage d'allure de course. Si vous tenez l'effort allure semi confortablement, votre objectif est atteignable. Si vous peinez à tenir l'allure au-delà du 7e km, revoyez l'objectif marathon à la baisse de 1 à 2 %." } }
+      }
+    },
+    "tpg.tt.coach.half" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your 5K time × 2.11 gives a realistic half-marathon target. Use this to validate your goal time." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Votre temps au 5 km × 2,11 donne un objectif semi-marathon réaliste. Servez-vous-en pour valider votre temps cible." } }
+      }
+    },
     "tpl.lockedPlanWide" : {
       "localizations" : {
         "en" : {
@@ -45180,6 +45286,9 @@
           }
         }
       }
+    },
+    "Unlock all plan weeks" : {
+
     },
     "Unskip" : {
       "localizations" : {

@@ -1036,7 +1036,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     variant: longRunVariant,
                     totalDuration: volume.targetLongRunDurationSeconds,
                     paceProfile: paceProfile,
-                    weekInPhase: phaseCounters[index]
+                    weekInPhase: phaseCounters[index],
+                    raceDistanceKm: targetRace.distanceKm
                 )
                 if let w = longRunWorkout { allWorkouts.append(w) }
 
@@ -1148,8 +1149,16 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 let ttDesc = tuneUpTimeTrialDescription(discipline: discipline)
                 sessionsAfterSub[ttIdx].description = ttDesc
                 sessionsAfterSub[ttIdx].intensity = .maxEffort
-                sessionsAfterSub[ttIdx].intervalWorkoutId = nil
                 sessionsAfterSub[ttIdx].coachAdvice = tuneUpTimeTrialCoachAdvice(discipline: discipline)
+                // Attach a structured warm-up → TT effort → cool-down workout so
+                // the athlete sees phase cards, not just the description text.
+                if let ttWorkout = RoadLongRunWorkoutBuilder.buildTimeTrial(discipline: discipline, paceProfile: paceProfile) {
+                    allWorkouts.append(ttWorkout)
+                    sessionsAfterSub[ttIdx].intervalWorkoutId = ttWorkout.id
+                    alignSessionWithWorkout(&sessionsAfterSub[ttIdx], workout: ttWorkout)
+                } else {
+                    sessionsAfterSub[ttIdx].intervalWorkoutId = nil
+                }
             }
 
             // #28: fitness check-in week, replace the week's intervals
@@ -1301,21 +1310,21 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         var pieces: [String] = []
         switch discipline {
         case .road5K:
-            pieces.append("5K race day. Plan: it's short and honest, settle into goal pace within the first 400m, no easing in. It bites around 3K, hold form and cadence there. The last kilometre is where you empty the tank.")
+            pieces.append(String(localized: "tpg.raceday.5k", defaultValue: "5K race day. Plan: it's short and honest, settle into goal pace within the first 400m, no easing in. It bites around 3K, hold form and cadence there. The last kilometre is where you empty the tank."))
         case .road10K:
-            pieces.append("10K race day. Plan: settle into goal pace by 1K, first kilometre will feel deceptively easy. Hold rhythm through 5K. From 7K onwards, every kilometre buys the next. Strong final 1K is where the time gets earned.")
+            pieces.append(String(localized: "tpg.raceday.10k", defaultValue: "10K race day. Plan: settle into goal pace by 1K, first kilometre will feel deceptively easy. Hold rhythm through 5K. From 7K onwards, every kilometre buys the next. Strong final 1K is where the time gets earned."))
         case .roadHalf:
-            pieces.append("Half marathon race day. Plan: first 5K is for patience, sit on (not under) goal pace. 5-15K hold the rhythm. 15K-end is where you race, pick off targets one at a time, lift cadence on the closing kilometres.")
+            pieces.append(String(localized: "tpg.raceday.half", defaultValue: "Half marathon race day. Plan: first 5K is for patience, sit on (not under) goal pace. 5-15K hold the rhythm. 15K-end is where you race, pick off targets one at a time, lift cadence on the closing kilometres."))
         case .roadMarathon:
-            pieces.append("Marathon race day. Plan: first 10K is for restraint, even 5 sec/km too quick will cost you 5+ minutes by 35K. Lock into goal pace, fuel from kilometre 5 every 25-30 min, drink at every aid station. The race begins at 30K.")
+            pieces.append(String(localized: "tpg.raceday.marathon", defaultValue: "Marathon race day. Plan: first 10K is for restraint, even 5 sec/km too quick will cost you 5+ minutes by 35K. Lock into goal pace, fuel from kilometre 5 every 25-30 min, drink at every aid station. The race begins at 30K."))
         }
         if isFirstTimer {
-            pieces.append("First time at this distance: finishing strong matters more than the clock. Negative split if at all possible.")
+            pieces.append(String(localized: "tpg.raceday.firstTimer", defaultValue: "First time at this distance: finishing strong matters more than the clock. Negative split if at all possible."))
         }
         if hotRaceForecast {
-            pieces.append("Hot conditions forecast: drink earlier and more, take electrolytes, slow goal pace 5-10 sec/km from the gun, heat compounds.")
+            pieces.append(String(localized: "tpg.raceday.hot", defaultValue: "Hot conditions forecast: drink earlier and more, take electrolytes, slow goal pace 5-10 sec/km from the gun, heat compounds."))
         }
-        pieces.append("Trust your training. Execute your plan.")
+        pieces.append(String(localized: "tpg.raceday.trust", defaultValue: "Trust your training. Execute your plan."))
         return pieces.joined(separator: " ")
     }
 
@@ -1423,22 +1432,22 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
     private func tuneUpTimeTrialDescription(discipline: RoadRaceDiscipline) -> String {
         switch discipline {
         case .roadMarathon:
-            return "Tune-up 10K Time Trial, 20 min easy warm-up + 4-6 × 20s strides, then 10K all-out sustained effort (HMP-to-10K pace), then 15 min easy cool-down. Your biggest fitness check of the block, execute like a real race."
+            return String(localized: "tpg.tt.desc.marathon", defaultValue: "Tune-up 10K Time Trial, 20 min easy warm-up + 4-6 × 20s strides, then 10K all-out sustained effort (HMP-to-10K pace), then 15 min easy cool-down. Your biggest fitness check of the block, execute like a real race.")
         case .roadHalf:
-            return "Tune-up 5K Time Trial, 15 min easy warm-up + 4-6 × 20s strides, then 5K all-out sustained effort, then 10 min easy cool-down. Ideally on a track or flat route."
+            return String(localized: "tpg.tt.desc.half", defaultValue: "Tune-up 5K Time Trial, 15 min easy warm-up + 4-6 × 20s strides, then 5K all-out sustained effort, then 10 min easy cool-down. Ideally on a track or flat route.")
         case .road5K:
-            return "Tune-up 3K Time Trial, 15 min easy warm-up + 4-6 × 20s strides, then 3K all-out at goal-pace-or-faster, then 10 min easy cool-down. Track or flat route ideal."
+            return String(localized: "tpg.tt.desc.5k", defaultValue: "Tune-up 3K Time Trial, 15 min easy warm-up + 4-6 × 20s strides, then 3K all-out at goal-pace-or-faster, then 10 min easy cool-down. Track or flat route ideal.")
         case .road10K:
-            return "Tune-up time trial."
+            return String(localized: "tpg.tt.desc.10k", defaultValue: "Tune-up time trial.")
         }
     }
 
     private func tuneUpTimeTrialCoachAdvice(discipline: RoadRaceDiscipline) -> String {
         switch discipline {
         case .roadMarathon:
-            return "This is your race-pace calibration session. If you nail HMP effort comfortably, your target is achievable. If you struggle to hold pace past 7K, scale marathon target back by 1-2%."
+            return String(localized: "tpg.tt.coach.marathon", defaultValue: "This is your race-pace calibration session. If you nail HMP effort comfortably, your target is achievable. If you struggle to hold pace past 7K, scale marathon target back by 1-2%.")
         case .roadHalf:
-            return "Your 5K time × 2.11 gives a realistic half-marathon target. Use this to validate your goal time."
+            return String(localized: "tpg.tt.coach.half", defaultValue: "Your 5K time × 2.11 gives a realistic half-marathon target. Use this to validate your goal time.")
         case .road5K, .road10K:
             return ""
         }

@@ -118,7 +118,8 @@ enum BRaceSpecificitySubstitutor {
                 variant: .marathonPaceBlocks,
                 totalDuration: totalDuration,
                 paceProfile: paceProfile,
-                weekInPhase: 0
+                weekInPhase: 0,
+                raceDistanceKm: discipline.nominalDistanceKm
             )
         }
     }
