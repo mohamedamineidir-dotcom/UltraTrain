@@ -31,11 +31,18 @@ extension MainTabView {
         .environment(premiumGate)
         .task {
             guard let service = subscriptionService else { return }
+            // Referral reward: a server-granted free-premium window that
+            // unlocks premium on TOP of StoreKit. Fetched once on appear;
+            // a network failure leaves it nil so it can never grant access
+            // it shouldn't. Re-checked each launch (and on the referral page).
+            let bonusUntil = (try? await referralRepository?.getMyReferralCode())?.bonusAccessUntil
             func unlocked(_ status: SubscriptionStatus) -> Bool {
                 #if DEBUG
                 if DebugEntitlement.simulateFreeTier { return false }
                 #endif
-                return status.isActive
+                if status.isActive { return true }
+                if let bonusUntil, bonusUntil > .now { return true }
+                return false
             }
             premiumGate.isUnlocked = unlocked(service.currentStatus)
             for await status in service.statusUpdates {

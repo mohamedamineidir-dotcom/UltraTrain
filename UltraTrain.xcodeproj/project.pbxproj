@@ -208,6 +208,7 @@
 		1AC25C12ED90703A8C12732C /* SharedWithMeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3F839440B138A91305EE458 /* SharedWithMeViewModel.swift */; };
 		1B5ECF04BFF599ED5186119C /* LocalIntervalPerformanceRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28398EB26563EC458C7B947D /* LocalIntervalPerformanceRepositoryTests.swift */; };
 		1B71CEBDF95835CAEC949947 /* LongRunCurveCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA29CAB56609A401B4A7CAB /* LongRunCurveCalculatorTests.swift */; };
+		1B8835AFF510543DC4090E13 /* ReferralRewardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01780E07856E0D3275EC2BAE /* ReferralRewardView.swift */; };
 		1B8996B8265E05926F27BA41 /* InteractiveCourseProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A0BF6A26C99B9C997AACE3 /* InteractiveCourseProfileViewModel.swift */; };
 		1BE37EF8340594B5A3369B77 /* AchievementsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A1D84D70B98523EE88491A /* AchievementsViewModel.swift */; };
 		1C3B13BF1562288B17026C69 /* DashboardWeatherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D478E4C17B6C752575758859 /* DashboardWeatherTests.swift */; };
@@ -1929,6 +1930,7 @@
 		01228ED3BF8E44379E632CED /* RaceCourseProfileCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceCourseProfileCalculatorTests.swift; sourceTree = "<group>"; };
 		0151200203A51A7506B4B74F /* AthleteMapperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AthleteMapperTests.swift; sourceTree = "<group>"; };
 		01527B2C1E79493751CF949B /* RaceRemoteMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceRemoteMapper.swift; sourceTree = "<group>"; };
+		01780E07856E0D3275EC2BAE /* ReferralRewardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferralRewardView.swift; sourceTree = "<group>"; };
 		019E0FBBC83421CEE919B190 /* OnboardingProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingProgressBar.swift; sourceTree = "<group>"; };
 		01B9E00FE2F57946928229DC /* AthleteEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AthleteEndpoints.swift; sourceTree = "<group>"; };
 		01FCAC6DD4A0EDD0B6D23A06 /* GroupChallengeParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupChallengeParticipant.swift; sourceTree = "<group>"; };
@@ -6187,6 +6189,7 @@
 			children = (
 				89DF54D9109B0EC84B431F88 /* NotificationSoundPickerRow.swift */,
 				BA5BCB2AE76C85CD800D65F7 /* NutritionIntervalPicker.swift */,
+				01780E07856E0D3275EC2BAE /* ReferralRewardView.swift */,
 				403E9E2ED1D62D8FF61E3177 /* ReferralSettingsView.swift */,
 				744EC33B04F3D11D2617B138 /* ReferralSettingsViewModel.swift */,
 				0DC5E47BCEA16D2AC3DC417F /* SettingsView.swift */,
@@ -7903,6 +7906,7 @@
 				0932F91763A85BE6580A9FD0 /* ReferralEndpoints.swift in Sources */,
 				54C25B05F286F5D9A29A22E4 /* ReferralInfo.swift in Sources */,
 				09FD0E253D6307993EDD1569 /* ReferralRepository.swift in Sources */,
+				1B8835AFF510543DC4090E13 /* ReferralRewardView.swift in Sources */,
 				9E9F231E1D74B97159F5E06D /* ReferralSettingsView.swift in Sources */,
 				4BDE1662ED46CC8783B97B39 /* ReferralSettingsViewModel.swift in Sources */,
 				64CB2A08378C49263BA6341D /* RefineNutritionPlanFromFeedbackUseCase.swift in Sources */,

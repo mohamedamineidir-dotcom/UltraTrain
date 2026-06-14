@@ -35,6 +35,11 @@ struct SocialAuthResponseDTO: Decodable, Sendable {
 struct ReferralCodeResponseDTO: Decodable, Sendable {
     let referralCode: String
     let referralCount: Int
+    /// Free-premium window from referral rewards, epoch seconds. Optional for
+    /// backward-compatibility with a pre-reward backend.
+    let bonusAccessUntil: Double?
+    let rewardClaimed: Bool?
+    let wasReferred: Bool?
 }
 
 struct ApplyReferralRequestDTO: Encodable, Sendable {

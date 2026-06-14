@@ -98,7 +98,7 @@ struct WelcomeClubView: View {
                     } label: {
                         HStack(spacing: Theme.Spacing.sm) {
                             Image(systemName: "ticket.fill")
-                            Text("Have a friend's code?")
+                            Text("Have a referral code?")
                         }
                         .font(.subheadline)
                         .foregroundStyle(Theme.Colors.warmCoral)
@@ -147,7 +147,7 @@ struct WelcomeClubView: View {
             }
 
             if referralSuccess {
-                Label("Code applied! You'll get 2 extra free weeks.", systemImage: "checkmark.circle.fill")
+                Label("Code applied! Refer a friend yourself to unlock 7 free days.", systemImage: "checkmark.circle.fill")
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.success)
             }

@@ -22,17 +22,19 @@ struct ReferralController: RouteCollection {
             throw Abort(.notFound)
         }
 
-        guard let code = user.referralCode else {
+        if user.referralCode == nil {
             // Generate one if missing (shouldn't happen for new users)
-            let newCode = try await generateUniqueCode(on: req.db)
-            user.referralCode = newCode
+            user.referralCode = try await generateUniqueCode(on: req.db)
             try await user.save(on: req.db)
-            let count = try await referralCount(for: userId, on: req.db)
-            return ReferralCodeResponse(referralCode: newCode, referralCount: count)
         }
-
         let count = try await referralCount(for: userId, on: req.db)
-        return ReferralCodeResponse(referralCode: code, referralCount: count)
+        return ReferralCodeResponse(
+            referralCode: user.referralCode ?? "",
+            referralCount: count,
+            bonusAccessUntil: user.referralBonusUntil?.timeIntervalSince1970,
+            rewardClaimed: user.referralRewardClaimedAt != nil,
+            wasReferred: user.referredByUserId != nil
+        )
     }
 
     // MARK: - Apply Referral Code
@@ -66,6 +68,18 @@ struct ReferralController: RouteCollection {
 
         user.referredByUserId = referrer.id
         try await user.save(on: req.db)
+
+        // Reward the REFERRER with a one-time +7 free-premium days. Once only
+        // (non-cumulative) so a code can't be farmed for unlimited free access.
+        // Banks onto any existing bonus window, floored at "now" so a lapsed
+        // window doesn't shorten the grant.
+        if referrer.referralRewardClaimedAt == nil {
+            let now = Date()
+            let base = max(referrer.referralBonusUntil ?? now, now)
+            referrer.referralBonusUntil = base.addingTimeInterval(7 * 24 * 60 * 60)
+            referrer.referralRewardClaimedAt = now
+            try await referrer.save(on: req.db)
+        }
 
         return MessageResponse(message: "Referral code applied successfully")
     }

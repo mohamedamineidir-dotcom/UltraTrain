@@ -12,7 +12,13 @@ final class RemoteReferralRepository: ReferralRepository, Sendable {
         let dto: ReferralCodeResponseDTO = try await apiClient.send(
             ReferralEndpoints.GetMyCode()
         )
-        return ReferralInfo(code: dto.referralCode, referralCount: dto.referralCount)
+        return ReferralInfo(
+            code: dto.referralCode,
+            referralCount: dto.referralCount,
+            bonusAccessUntil: dto.bonusAccessUntil.map { Date(timeIntervalSince1970: $0) },
+            rewardClaimed: dto.rewardClaimed ?? false,
+            wasReferred: dto.wasReferred ?? false
+        )
     }
 
     func applyReferralCode(_ code: String) async throws {

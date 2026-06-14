@@ -47,6 +47,17 @@ final class UserModel: Model, Content, @unchecked Sendable {
     @OptionalField(key: "referred_by_user_id")
     var referredByUserId: UUID?
 
+    /// Server-granted free-premium window from referral rewards. The app
+    /// unlocks premium when StoreKit is active OR this date is in the future.
+    @OptionalField(key: "referral_bonus_until")
+    var referralBonusUntil: Date?
+
+    /// When the user claimed their ONE-TIME referral reward (+7 days for
+    /// referring a friend who completes registration). nil = not yet claimed.
+    /// Non-cumulative: only the first successful referral grants the bonus.
+    @OptionalField(key: "referral_reward_claimed_at")
+    var referralRewardClaimedAt: Date?
+
     @OptionalField(key: "apple_user_id")
     var appleUserId: String?
 

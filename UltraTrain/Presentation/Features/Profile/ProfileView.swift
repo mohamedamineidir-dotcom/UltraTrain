@@ -134,6 +134,7 @@ struct ProfileView: View {
                     ProgressView()
                 } else {
                     athleteSection
+                    referralSection
                     personalRecordsSection
                     racesSection
                     gearSection
@@ -271,6 +272,43 @@ struct ProfileView: View {
                     race.name
                 ))
             }
+        }
+    }
+
+    // MARK: - Referral
+
+    /// Highlighted "get 7 days free" referral entry near the top of the
+    /// profile so users immediately see they can earn free access by inviting
+    /// a friend.
+    @ViewBuilder
+    private var referralSection: some View {
+        if let referralRepository {
+            Section {
+                NavigationLink {
+                    ReferralRewardView(referralRepository: referralRepository)
+                } label: {
+                    HStack(spacing: Theme.Spacing.md) {
+                        Image(systemName: "gift.fill")
+                            .font(.title3)
+                            .foregroundStyle(.white)
+                            .frame(width: 40, height: 40)
+                            .background(Circle().fill(Theme.Gradients.warmCoralCTA))
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(String(localized: "referral.profile.title", defaultValue: "Get 7 days free"))
+                                .font(.subheadline.weight(.bold))
+                                .foregroundStyle(.primary)
+                            Text(String(localized: "referral.profile.sub", defaultValue: "Invite a friend, get a week of full access free."))
+                                .font(.caption)
+                                .foregroundStyle(Theme.Colors.secondaryLabel)
+                        }
+                    }
+                    .padding(.vertical, 2)
+                }
+            }
+            .listRowBackground(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                    .fill(Theme.Colors.warmCoral.opacity(0.10))
+            )
         }
     }
 
