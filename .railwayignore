@@ -1,0 +1,18 @@
+# The Railway service's Root Directory is /Backend, so only that folder is
+# built. `railway up` must run from the repo ROOT (so the upload contains the
+# Backend/ folder), but everything else here is dead weight for the deploy —
+# exclude the iOS app, assets and tooling to keep the upload small and fast.
+/UltraTrain/
+/UltraTrain.xcodeproj/
+/UltraTrainClip/
+/UltraTrainWatch/
+/UltraTrainWatchWidgets/
+/UltraTrainWidgets/
+/Tests/
+/Configuration/
+/Scripts/
+/Tools/
+/website/
+/generated_logos/
+/.claude/
+/Backend/.build/
