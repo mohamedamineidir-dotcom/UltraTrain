@@ -42,6 +42,13 @@ enum IntervalSessionComposer {
         /// composing Q2). The chosen shape avoids it so a week never runs two
         /// pyramids / two cutdowns / etc. nil for Q1 (nothing to avoid yet).
         var avoidShape: Shape? = nil
+        /// Per-(athlete, race) phase offset for the rep-length menus and shape
+        /// rotation. Two similar athletes — or the same athlete's next prep
+        /// (a new race) — start the rotations at a different point, so the
+        /// hardest-week dose is 8×1K for one and 4×2K for another even though
+        /// the total work is identical. Stable for a given prep (deterministic
+        /// regeneration); derived from the race + athlete id by the generator.
+        var varietySeed: Int = 0
     }
 
     struct Composed: Sendable {
@@ -99,6 +106,20 @@ enum IntervalSessionComposer {
         return render(ctx, segments: segments, shape: shape)
     }
 
+    /// Avalanche hash of (seed, salt) → a decorrelated phase offset per
+    /// call site. Adding the raw seed to several small menus (size 3-5) would
+    /// let two preps collide whenever the seeds merely agree mod ~60; mixing
+    /// with a per-menu salt makes a full-plan collision astronomically rare,
+    /// so the same athlete's next prep is reliably different. Deterministic
+    /// (pure arithmetic) so a given prep always reproduces.
+    static func mix(_ seed: Int, _ salt: Int) -> Int {
+        var z = UInt64(bitPattern: Int64(seed)) &+ (UInt64(bitPattern: Int64(salt)) &* 0x9E37_79B9_7F4A_7C15)
+        z = (z ^ (z >> 30)) &* 0xBF58_476D_1CE4_E5B9
+        z = (z ^ (z >> 27)) &* 0x94D0_49BB_1331_11EB
+        z = z ^ (z >> 31)
+        return Int(z & 0x7FFF_FFFF)
+    }
+
     // MARK: - Shape selection
 
     private static func chooseShape(_ ctx: Context) -> Shape {
@@ -119,19 +140,24 @@ enum IntervalSessionComposer {
         // threshold on both slots, end up with two tempos). Q2 (the tempo
         // slot) alternates a sustained tempo with a cruise variant so the week
         // reliably carries one true tempo and never repeats two thresholds.
+        // The variety seed phase-shifts every rotation (via a decorrelated
+        // mix) so two similar athletes — or the same athlete's next prep —
+        // get different shapes, while a given prep stays deterministic.
         if ctx.category == .threshold {
             let reps: [Shape] = [.uniform, .cutdown, .mixedContrast]
+            let n = ctx.ordinal + mix(ctx.varietySeed, 8000 + ctx.slotIndex)
             if ctx.slotIndex == 0 {
-                return reps[ctx.ordinal % reps.count]
+                return reps[n % reps.count]
             }
-            if ctx.ordinal % 2 == 0 { return .progression }
-            return reps[(ctx.ordinal / 2) % reps.count]
+            if n % 2 == 0 { return .progression }
+            return reps[(n / 2) % reps.count]
         }
         let valid = validShapes(for: ctx.category, phase: ctx.phase)
         // Rotate by ordinal so successive sessions of a category differ;
         // salt by slot so Q1 and Q2 tend to diverge the same week.
         let salt = ctx.slotIndex * 2 + categorySalt(ctx.category)
-        return valid[(ctx.ordinal + salt) % valid.count]
+        let off = mix(ctx.varietySeed, 7000 + categorySalt(ctx.category) * 10 + ctx.slotIndex)
+        return valid[(ctx.ordinal + salt + off) % valid.count]
     }
 
     /// Shapes available for a category, used to pick an alternative when the

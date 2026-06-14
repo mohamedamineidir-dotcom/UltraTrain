@@ -73,8 +73,7 @@ extension IntervalSessionComposer {
     static func primaryRep(_ ctx: Context) -> (distanceM: Int, durationSec: Int) {
         switch ctx.category {
         case .speed:
-            let menu = [200, 300, 400, 400]
-            return (menu[min(ctx.ordinal, menu.count - 1)], 0)
+            return (cycleMenu([200, 300, 400], ctx), 0)
         case .vo2max:
             // VO2max rep distance cycles so successive sessions vary the rep
             // length (400m sharpeners ⇄ 1200m sustained), with overload via
@@ -92,33 +91,33 @@ extension IntervalSessionComposer {
             let menu = [60, 90, 120, 180, 300]
             return (0, cycleMenu(menu, ctx))
         case .raceSpecific:
-            // Race-pace blocks walk forward (progression matters here).
+            // Race-pace block length is cycled (with the variety seed) so the
+            // hardest-week dose is 8×1K for one athlete, 4×2K or 5×1600m for
+            // another — same total work, different structure. Progression is
+            // carried by total volume (up to the race-distance cap), not by
+            // forcing every athlete down the same fixed ladder.
             let menu: [Int] = ctx.discipline == .roadMarathon
                 ? [1000, 1500, 2000, 3000]
                 : (ctx.discipline == .roadHalf ? [1600, 2000, 3000] : [1000, 1600, 2000])
-            return (cappedMenu(menu, ctx), 0)
+            return (cycleMenu(menu, ctx), 0)
         case .progression, .longRunVariant:
             return (0, 0)  // continuous
         }
     }
 
-    /// Walks a menu by ordinal, capping at the top (one notch short for
-    /// first-timers so they don't jump straight to the longest rep). Used
-    /// where forward progression matters (race-pace blocks, speed).
-    private static func cappedMenu(_ menu: [Int], _ ctx: Context) -> Int {
-        let last = menu.count - 1
-        let cap = ctx.isFirstTimer ? max(0, last - 1) : last
-        return menu[min(ctx.ordinal, cap)]
-    }
-
     /// Cycles a menu so the rep length keeps changing each session and visits
-    /// every entry. The shape rotation has a different period (3-4), so the
-    /// (shape × length) pair only repeats after lcm(shapes, menu) sessions —
-    /// far more than a plan ever contains. First-timers stay off the longest
-    /// entry.
+    /// every entry. The `varietySeed` phase-shifts the cycle so two similar
+    /// athletes (or a repeat prep) start on a different rep length. The shape
+    /// rotation has a different period (3-4), so the (shape × length) pair
+    /// only repeats after lcm(shapes, menu) sessions — far more than a plan
+    /// ever contains. First-timers stay off the longest entry.
     private static func cycleMenu(_ menu: [Int], _ ctx: Context) -> Int {
         let usable = ctx.isFirstTimer ? Array(menu.dropLast()) : menu
-        return usable[ctx.ordinal % usable.count]
+        // Per-menu salt (distinct per category) so the seed's offset into each
+        // menu is independent — two preps must collide on EVERY menu to look
+        // identical, which is astronomically unlikely.
+        let off = IntervalSessionComposer.mix(ctx.varietySeed, menu.count * 1000 + (menu.first ?? 0))
+        return usable[(ctx.ordinal + off) % usable.count]
     }
 
     /// Recovery duration (sec) for a rep, with the work:rest ratio tightening

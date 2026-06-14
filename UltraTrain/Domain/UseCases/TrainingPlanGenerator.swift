@@ -733,6 +733,12 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         // guarantees no two quality sessions in the plan share a work part.
         var qualityOrdinal: [RoadIntervalLibrary.Category: Int] = [:]
         var usedQualitySignatures: Set<String> = []
+        // Per-(athlete, race) phase offset for rep-length menus and shape
+        // rotation, so two similar athletes — and the same athlete's NEXT
+        // prep (a new race) — get different structures for the same dose
+        // (8×1K vs 4×2K). Stable for a given prep: regenerating the same
+        // (athlete, race) reproduces the same plan.
+        let qualityVarietySeed = Self.stableSeed(athlete.id, targetRace.id)
 
         let weeks: [TrainingWeek] = zip(skeletons, volumes).enumerated().map { index, pair in
             let (skeleton, volume) = pair
@@ -994,7 +1000,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     category: q1Cat, slotIndex: 0, skeleton: skeleton,
                     discipline: discipline, athlete: athlete,
                     weekVolumeKm: volume.targetVolumeKm, paceProfile: paceProfile,
-                    isFirstTimer: isFirstTimer,
+                    isFirstTimer: isFirstTimer, varietySeed: qualityVarietySeed,
                     ordinals: &qualityOrdinal, used: &usedQualitySignatures)
                 let q2Composed = Self.composeQuality(
                     category: q2Cat, slotIndex: 1, skeleton: skeleton,
@@ -1003,7 +1009,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     isFirstTimer: isFirstTimer,
                     // De-conflict the week's two quality shapes: Q2 avoids
                     // Q1's shape so a week never runs e.g. two pyramids.
-                    avoidShape: q1Composed.shape,
+                    avoidShape: q1Composed.shape, varietySeed: qualityVarietySeed,
                     ordinals: &qualityOrdinal, used: &usedQualitySignatures)
                 let q1Template: RoadIntervalLibrary.Template? = q1Composed.template
                 let q2Template: RoadIntervalLibrary.Template? = q2Composed.template
@@ -1442,6 +1448,22 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
     /// work part hasn't been used elsewhere in the plan. Recovery weeks
     /// compose a light primer and do NOT advance the ordinal (so the build
     /// resumes after the deload) or reserve a signature (primers may repeat).
+    /// Deterministic, launch-stable hash of UUIDs (FNV-1a over their bytes).
+    /// Swift's `hashValue` is per-process randomized, so it can't seed plan
+    /// variety, regenerating the same prep must reproduce the same plan.
+    private static func stableSeed(_ ids: UUID...) -> Int {
+        var h: UInt64 = 1469598103934665603 // FNV-1a offset basis
+        for id in ids {
+            let b = id.uuid
+            let bytes = [b.0, b.1, b.2, b.3, b.4, b.5, b.6, b.7,
+                         b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15]
+            for byte in bytes {
+                h = (h ^ UInt64(byte)) &* 1099511628211 // FNV-1a prime
+            }
+        }
+        return Int(h & 0x7FFF_FFFF)
+    }
+
     private static func composeQuality(
         category: RoadIntervalLibrary.Category,
         slotIndex: Int,
@@ -1452,6 +1474,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         paceProfile: RoadPaceProfile?,
         isFirstTimer: Bool,
         avoidShape: IntervalSessionComposer.Shape? = nil,
+        varietySeed: Int,
         ordinals: inout [RoadIntervalLibrary.Category: Int],
         used: inout Set<String>
     ) -> IntervalSessionComposer.Composed {
@@ -1461,7 +1484,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 experience: athlete.experienceLevel, weeklyVolumeKm: weekVolumeKm,
                 paceProfile: paceProfile, ordinal: ordinal, slotIndex: slotIndex,
                 isRecoveryWeek: skeleton.isRecoveryWeek, isFirstTimer: isFirstTimer,
-                athleteAge: athlete.age, avoidShape: avoidShape
+                athleteAge: athlete.age, avoidShape: avoidShape, varietySeed: varietySeed
             ))
         }
 
