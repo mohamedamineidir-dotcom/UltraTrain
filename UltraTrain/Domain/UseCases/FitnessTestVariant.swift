@@ -60,6 +60,19 @@ enum FitnessTestVariant: String, Sendable, Codable {
         }
     }
 
+    /// Compact label for the weekly-card pill. The full `displayName` (and the
+    /// raw `intervalFocusEncoded`) are too long and wrap to two lines.
+    var shortLabel: String {
+        switch self {
+        case .vmaFlat6Min:           String(localized: "ftv.short.vma", defaultValue: "VMA test")
+        case .fiveKTT:               String(localized: "ftv.short.5k", defaultValue: "5K test")
+        case .uphillSustained30Min,
+             .uphillRepeats4x8,
+             .uphillRepeats6x4,
+             .treadmillIncline30Min: String(localized: "ftv.short.threshold", defaultValue: "Threshold test")
+        }
+    }
+
     /// Descriptive copy shown on the session card. Kept structured so
     /// athletes know exactly what to do without coaching context.
     var description: String {
@@ -202,6 +215,80 @@ enum FitnessTestVariant: String, Sendable, Codable {
     static func isFitnessTestFocus(_ focus: String?) -> Bool {
         focus?.hasPrefix("\(intervalFocusLabel):") == true
             || focus == intervalFocusLabel
+    }
+
+    /// Human-facing label for a session's `intervalFocus`, decoding the
+    /// fitness-test encoding ("Fitness Test:vmaFlat6Min") to a short test name
+    /// so the card pill / detail subtitle never show the raw encoded string.
+    /// Non-test focuses (RoadIntervalLibrary category names) pass through.
+    static func displayLabel(forFocus focus: String) -> String {
+        if let variant = fromIntervalFocus(focus) { return variant.shortLabel }
+        if isFitnessTestFocus(focus) {
+            return String(localized: "ftv.short.generic", defaultValue: "Fitness test")
+        }
+        return focus
+    }
+
+    // MARK: - Structured workout
+
+    /// Warm-up → test effort → cool-down phases so the test shows the same
+    /// structured cards as any other quality session (instead of only a
+    /// description). Effort-based: the athlete races/tests it, so no pace
+    /// targets are attached.
+    var workout: IntervalWorkout {
+        let warm = String(localized: "ftv.phase.warmup", defaultValue: "Easy warm-up + strides")
+        let cool = String(localized: "ftv.phase.cooldown", defaultValue: "Easy cool-down")
+        let jog  = String(localized: "ftv.phase.jogdown", defaultValue: "Jog down recovery")
+
+        var phases: [IntervalPhase]
+        switch self {
+        case .vmaFlat6Min:
+            phases = [Self.ph(.warmUp, 18 * 60, .easy, warm),
+                      Self.ph(.work, 6 * 60, .maxEffort, String(localized: "ftv.phase.vma", defaultValue: "6 min all-out, flat")),
+                      Self.ph(.coolDown, 10 * 60, .easy, cool)]
+        case .fiveKTT:
+            phases = [Self.ph(.warmUp, 18 * 60, .easy, warm),
+                      Self.ph(.work, 20 * 60, .maxEffort, String(localized: "ftv.phase.5k", defaultValue: "5 km time trial")),
+                      Self.ph(.coolDown, 12 * 60, .easy, cool)]
+        case .uphillSustained30Min:
+            phases = [Self.ph(.warmUp, 18 * 60, .easy, warm),
+                      Self.ph(.work, 30 * 60, .hard, String(localized: "ftv.phase.up30", defaultValue: "30 min uphill at threshold")),
+                      Self.ph(.coolDown, 10 * 60, .easy, cool)]
+        case .uphillRepeats4x8:
+            phases = [Self.ph(.warmUp, 18 * 60, .easy, warm),
+                      Self.ph(.work, 7 * 60, .hard, String(localized: "ftv.phase.uphillRep", defaultValue: "Uphill at threshold"), reps: 4),
+                      Self.ph(.recovery, 3 * 60, .easy, jog, reps: 4),
+                      Self.ph(.coolDown, 10 * 60, .easy, cool)]
+        case .uphillRepeats6x4:
+            phases = [Self.ph(.warmUp, 18 * 60, .easy, warm),
+                      Self.ph(.work, 4 * 60, .hard, String(localized: "ftv.phase.uphillRep", defaultValue: "Uphill at threshold"), reps: 5),
+                      Self.ph(.recovery, 2 * 60, .easy, jog, reps: 5),
+                      Self.ph(.coolDown, 10 * 60, .easy, cool)]
+        case .treadmillIncline30Min:
+            phases = [Self.ph(.warmUp, 10 * 60, .easy, warm),
+                      Self.ph(.work, 30 * 60, .hard, String(localized: "ftv.phase.tread", defaultValue: "30 min at incline threshold")),
+                      Self.ph(.coolDown, 8 * 60, .easy, cool)]
+        }
+
+        let total = phases.reduce(0.0) { $0 + $1.totalDuration }
+        return IntervalWorkout(
+            id: UUID(),
+            name: displayName,
+            descriptionText: description,
+            phases: phases,
+            category: .roadSpecific,
+            estimatedDurationSeconds: total,
+            estimatedDistanceKm: round(total / 330 * 10) / 10,
+            isUserCreated: false
+        )
+    }
+
+    private static func ph(_ type: IntervalPhaseType, _ seconds: Int, _ intensity: Intensity, _ note: String, reps: Int = 1) -> IntervalPhase {
+        IntervalPhase(
+            id: UUID(), phaseType: type,
+            trigger: .duration(seconds: Double(seconds)),
+            targetIntensity: intensity, repeatCount: reps, notes: note
+        )
     }
 
     enum ResultPrompt: Equatable, Sendable {

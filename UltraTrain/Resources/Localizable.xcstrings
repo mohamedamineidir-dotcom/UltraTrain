@@ -11674,6 +11674,78 @@
         }
       }
     },
+    "ftv.phase.warmup" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Easy warm-up + strides" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Échauffement facile + lignes droites" } }
+      }
+    },
+    "ftv.phase.cooldown" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Easy cool-down" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Retour au calme facile" } }
+      }
+    },
+    "ftv.phase.jogdown" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Jog down recovery" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Récupération en descente footing" } }
+      }
+    },
+    "ftv.phase.vma" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "6 min all-out, flat" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "6 min à fond, à plat" } }
+      }
+    },
+    "ftv.phase.5k" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "5 km time trial" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Test chronométré 5 km" } }
+      }
+    },
+    "ftv.phase.up30" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "30 min uphill at threshold" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "30 min en côte au seuil" } }
+      }
+    },
+    "ftv.phase.uphillRep" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Uphill at threshold" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Côte au seuil" } }
+      }
+    },
+    "ftv.phase.tread" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "30 min at incline threshold" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "30 min au seuil en pente" } }
+      }
+    },
+    "ftv.short.vma" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "VMA test" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Test VMA" } }
+      }
+    },
+    "ftv.short.5k" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "5K test" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Test 5 km" } }
+      }
+    },
+    "ftv.short.threshold" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Threshold test" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Test seuil" } }
+      }
+    },
+    "ftv.short.generic" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Fitness test" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Test de forme" } }
+      }
+    },
     "ftv.advice.5k" : {
       "localizations" : {
         "en" : {

@@ -241,7 +241,7 @@ struct SessionDetailView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
                 if let focus = session.intervalFocus {
-                    Text(focus.uppercased())
+                    Text(FitnessTestVariant.displayLabel(forFocus: focus).uppercased())
                         .font(.caption2.weight(.bold))
                         .tracking(0.5)
                         .foregroundStyle(tint)

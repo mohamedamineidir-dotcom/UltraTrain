@@ -417,7 +417,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                schedule.weekNumber == skeleton.weekNumber {
                 substituteFitnessTest(
                     sessions: &roundedSessions,
-                    variant: schedule.variant
+                    variant: schedule.variant,
+                    allWorkouts: &allWorkouts
                 )
             }
 
@@ -1186,7 +1187,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                override == nil {
                 substituteFitnessTest(
                     sessions: &sessionsAfterSub,
-                    variant: schedule.variant
+                    variant: schedule.variant,
+                    allWorkouts: &allWorkouts
                 )
             }
 
@@ -1565,7 +1567,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
     /// session-validation flow can recover it without separate state.
     private func substituteFitnessTest(
         sessions: inout [TrainingSession],
-        variant: FitnessTestVariant
+        variant: FitnessTestVariant,
+        allWorkouts: inout [IntervalWorkout]
     ) {
         let qualityPriority: [SessionType] = [.intervals, .tempo, .verticalGain]
         for type in qualityPriority {
@@ -1573,9 +1576,14 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 sessions[idx].description = variant.description
                 sessions[idx].coachAdvice = variant.coachAdvice
                 sessions[idx].intensity = .maxEffort
-                sessions[idx].intervalWorkoutId = nil
                 sessions[idx].intervalFocus = variant.intervalFocusEncoded
                 sessions[idx].isKeySession = true
+                // Attach a structured warm-up → effort → cool-down workout so
+                // the test shows phase cards, not just description text.
+                let workout = variant.workout
+                allWorkouts.append(workout)
+                sessions[idx].intervalWorkoutId = workout.id
+                alignSessionWithWorkout(&sessions[idx], workout: workout)
                 return
             }
         }

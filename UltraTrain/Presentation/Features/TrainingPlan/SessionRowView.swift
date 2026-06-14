@@ -151,7 +151,7 @@ struct SessionRowView: View {
             // a small coloured pill so the athlete can tell VO2max
             // reps from race-pace reps at a glance.
             if let focus = session.intervalFocus, !session.isSkipped {
-                focusPill(focus)
+                focusPill(FitnessTestVariant.displayLabel(forFocus: focus))
             }
 
             if session.isSkipped {
@@ -175,6 +175,8 @@ struct SessionRowView: View {
         Text(label)
             .font(.caption2.weight(.semibold))
             .foregroundStyle(accentColor)
+            .lineLimit(1)
+            .fixedSize(horizontal: true, vertical: false)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
             .background(
