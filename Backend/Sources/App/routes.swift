@@ -48,4 +48,7 @@ func routes(_ app: Application) throws {
 
     // Referral — auth required
     try api.register(collection: ReferralController())
+
+    // AI proxy (OpenAI vision) — auth required; key stays server-side
+    try api.register(collection: AIController())
 }

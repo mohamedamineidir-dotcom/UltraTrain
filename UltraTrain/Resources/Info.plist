@@ -90,8 +90,6 @@
     <string>$(HMAC_SIGNING_SECRET)</string>
     <key>GOOGLE_CLIENT_ID</key>
     <string>$(GOOGLE_CLIENT_ID)</string>
-    <key>OPENAI_API_KEY</key>
-    <string>$(OPENAI_API_KEY)</string>
     <key>CFBundleURLTypes</key>
     <array>
         <dict>

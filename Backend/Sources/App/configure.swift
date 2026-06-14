@@ -124,6 +124,10 @@ func configure(_ app: Application) async throws {
 
     app.routes.defaultMaxBodySize = "10mb"
 
+    // Outbound HTTP client timeout. OpenAI vision calls (AIController) can take
+    // 15-30s, longer than the default, so allow a generous read window.
+    app.http.client.configuration.timeout = .init(connect: .seconds(10), read: .seconds(60))
+
     // MARK: - Middleware
 
     let allowedOrigin: CORSMiddleware.AllowOriginSetting

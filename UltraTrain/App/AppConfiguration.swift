@@ -220,11 +220,10 @@ enum AppConfiguration {
         }()
     }
 
-    enum OpenAI {
-        static let apiKey: String = Bundle.main.infoDictionary?["OPENAI_API_KEY"] as? String ?? ""
-        static let visionModel = "gpt-4o"
-        static let maxTokens = 1024
-        static let apiURL = "https://api.openai.com/v1/chat/completions"
+    /// On-device image-processing settings for the food-photo feature. The
+    /// OpenAI key and vision call now live on the backend (AIController), so no
+    /// secret is held here — only how aggressively to resize before upload.
+    enum FoodPhoto {
         static let maxImageDimension: CGFloat = 1024
         static let jpegCompressionQuality: CGFloat = 0.8
     }
