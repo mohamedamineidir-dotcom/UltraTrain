@@ -9,6 +9,27 @@ struct APNSConfiguredKey: StorageKey {
     typealias Value = Bool
 }
 
+/// Rebuilds a valid PKCS#8 PEM from a `.p8` env var that may have lost its
+/// newlines (single line) or carry literal "\n". Strips the markers and all
+/// whitespace to the raw base64, then re-wraps at 64 chars with proper
+/// BEGIN/END lines. Returns "" if there's no key body to work with.
+func normalizeP8PEM(_ raw: String) -> String {
+    let body = raw
+        .replacingOccurrences(of: "\\n", with: "\n")
+        .replacingOccurrences(of: "-----BEGIN PRIVATE KEY-----", with: "")
+        .replacingOccurrences(of: "-----END PRIVATE KEY-----", with: "")
+    let base64 = body.components(separatedBy: .whitespacesAndNewlines).joined()
+    guard !base64.isEmpty else { return "" }
+    var wrapped = ""
+    var i = base64.startIndex
+    while i < base64.endIndex {
+        let j = base64.index(i, offsetBy: 64, limitedBy: base64.endIndex) ?? base64.endIndex
+        wrapped += base64[i..<j] + "\n"
+        i = j
+    }
+    return "-----BEGIN PRIVATE KEY-----\n" + wrapped + "-----END PRIVATE KEY-----"
+}
+
 func configure(_ app: Application) async throws {
     // MARK: - Database
 
@@ -128,31 +149,30 @@ func configure(_ app: Application) async throws {
     if let apnsKeyContent = Environment.get("APNS_KEY_CONTENT"),
        let apnsKeyId = Environment.get("APNS_KEY_ID"),
        let apnsTeamId = Environment.get("APNS_TEAM_ID") {
-        // Normalize PEM: Railway env vars may use literal \n instead of newlines
-        let normalizedKey = apnsKeyContent
-            .replacingOccurrences(of: "\\n", with: "\n")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-
-        guard normalizedKey.contains("-----BEGIN PRIVATE KEY-----") else {
-            app.logger.error("APNS_KEY_CONTENT is not valid PEM — must include -----BEGIN PRIVATE KEY----- header. Check that the .p8 file content is pasted correctly with newlines.")
-            if app.environment == .production {
-                app.logger.critical("APNs will not work. Push notifications are disabled.")
-            }
-            return // Skip APNs configuration but don't crash
-        }
-
-        do {
-            app.apns.configure(
-                .jwt(
-                    privateKey: try .loadFrom(string: normalizedKey),
-                    keyIdentifier: apnsKeyId,
-                    teamIdentifier: apnsTeamId
+        // Rebuild a clean PEM no matter how the env var stored the .p8.
+        // Pasting a multi-line key into Railway often collapses it to a single
+        // line or stores literal "\n", which leaves the BEGIN header present
+        // (so the old substring check passed) but the PEM structurally invalid
+        // (so swift-crypto threw invalidPEMDocument). We strip the markers and
+        // all whitespace down to the raw base64, then re-wrap at 64 chars with
+        // proper headers — accepting any paste format.
+        let pem = normalizeP8PEM(apnsKeyContent)
+        if pem.isEmpty {
+            app.logger.error("APNS_KEY_CONTENT has no usable key body. Push notifications disabled.")
+        } else {
+            do {
+                app.apns.configure(
+                    .jwt(
+                        privateKey: try .loadFrom(string: pem),
+                        keyIdentifier: apnsKeyId,
+                        teamIdentifier: apnsTeamId
+                    )
                 )
-            )
-            app.storage[APNSConfiguredKey.self] = true
-            app.logger.notice("APNs configured successfully")
-        } catch {
-            app.logger.error("Failed to configure APNs: \(error). Verify APNS_KEY_CONTENT is a valid .p8 private key.")
+                app.storage[APNSConfiguredKey.self] = true
+                app.logger.notice("APNs configured successfully")
+            } catch {
+                app.logger.error("Failed to configure APNs: \(error). Verify APNS_KEY_CONTENT is the full .p8 file content (the base64 body between the BEGIN/END lines).")
+            }
         }
     } else {
         app.logger.warning("APNs not configured — missing APNS_KEY_CONTENT, APNS_KEY_ID, or APNS_TEAM_ID")
