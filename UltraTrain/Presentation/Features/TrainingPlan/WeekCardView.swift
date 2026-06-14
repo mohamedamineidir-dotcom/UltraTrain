@@ -169,17 +169,25 @@ extension WeekCardView {
                     Text(String(localized: "wk.week", defaultValue: "Week \(week.weekNumber)"))
                         .font(.title3.bold())
                         .foregroundStyle(Theme.Colors.label)
+                        .lineLimit(1)
+                        .fixedSize(horizontal: true, vertical: false)
+                        .layoutPriority(1)
                     Text(week.phase.displayName)
                         .font(.caption2.bold())
                         .foregroundStyle(phaseAccentColor)
+                        .lineLimit(1)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
                         .background(phaseAccentColor.opacity(0.12))
                         .clipShape(Capsule())
-                    if week.isRecoveryWeek {
+                    // Only show the recovery-week badge when the phase isn't
+                    // already "Recovery" — otherwise the row reads "Recovery
+                    // Recovery" (the 3:1 deload badge duplicating the phase).
+                    if week.isRecoveryWeek && week.phase != .recovery {
                         Text(String(localized: "week.recovery", defaultValue: "Recovery"))
                             .font(.caption2)
                             .foregroundStyle(.mint)
+                            .lineLimit(1)
                             .padding(.horizontal, 5)
                             .padding(.vertical, 2)
                             .background(.mint.opacity(0.15))
