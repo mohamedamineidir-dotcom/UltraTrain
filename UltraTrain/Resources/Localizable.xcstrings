@@ -18031,6 +18031,22 @@
         }
       }
     },
+    "Training Focus" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Training Focus"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Objectif d'entraînement"
+          }
+        }
+      }
+    },
     "Training Load" : {
       "localizations" : {
         "fr" : {
@@ -19373,6 +19389,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Avec quoi aimez-vous vous ravitailler ?"
+          }
+        }
+      }
+    },
+    "What do you want from your training right now?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What do you want from your training right now?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Que voulez-vous de votre entraînement en ce moment ?"
           }
         }
       }
@@ -23799,6 +23831,134 @@
         }
       }
     },
+    "focus.buildBase" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Build aerobic base"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Développer la base aérobie"
+          }
+        }
+      }
+    },
+    "focus.buildBase.sub" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grow your aerobic engine with easy mileage and a weekly tempo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Développez votre moteur aérobie avec du volume facile et un tempo hebdomadaire."
+          }
+        }
+      }
+    },
+    "focus.health" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "General health & weight"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Santé générale & poids"
+          }
+        }
+      }
+    },
+    "focus.health.sub" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frequent easy running for fitness, energy and weight management."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Course facile et régulière pour la forme, l'énergie et la gestion du poids."
+          }
+        }
+      }
+    },
+    "focus.maintain" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintain fitness"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintenir la forme"
+          }
+        }
+      }
+    },
+    "focus.maintain.sub" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hold your current fitness with a balanced, sustainable week."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conservez votre forme actuelle avec une semaine équilibrée et durable."
+          }
+        }
+      }
+    },
+    "focus.speed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep speed sharp"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Garder la vitesse"
+          }
+        }
+      }
+    },
+    "focus.speed.sub" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Two quality sessions a week to keep your speed and edge."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deux séances de qualité par semaine pour garder vitesse et tranchant."
+          }
+        }
+      }
+    },
     "fpd.hr" : {
       "localizations" : {
         "en" : {
@@ -24231,6 +24391,294 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "g/h"
+          }
+        }
+      }
+    },
+    "gf.easy" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy aerobic run @ %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing aérobie facile @ %@."
+          }
+        }
+      }
+    },
+    "gf.easy.strides" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run @ %@ + 6 × 20s strides at the end."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile @ %@ + 6 × 20s d'accélérations à la fin."
+          }
+        }
+      }
+    },
+    "gf.focus.climbing" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Climbing"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grimpe"
+          }
+        }
+      }
+    },
+    "gf.focus.hills" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hills"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Côtes"
+          }
+        }
+      }
+    },
+    "gf.long.down" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy long run, kept short this week. Conversational throughout."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue facile, raccourcie cette semaine. Au rythme de la conversation."
+          }
+        }
+      }
+    },
+    "gf.long.road" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long run at an easy, conversational pace. Pure aerobic time on feet."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue à allure facile et conversationnelle. Du temps en aérobie pur."
+          }
+        }
+      }
+    },
+    "gf.long.trail" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long trail run, easy aerobic effort. Hike the steep climbs, stay conversational."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie longue en trail, effort aérobie facile. Marchez les montées raides, restez conversationnel."
+          }
+        }
+      }
+    },
+    "gf.rest" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day. Easy walk or full rest."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos. Marche facile ou repos complet."
+          }
+        }
+      }
+    },
+    "gf.road.cruise" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld × 5 min at threshold%2$@, 90s jog. Cruise intervals."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld × 5 min au seuil%2$@, 90s footing. Intervalles au seuil."
+          }
+        }
+      }
+    },
+    "gf.road.fartlek" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fartlek: warm up, then %lld × (1 min strong / 2 min easy), cool down. Run by feel."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fartlek : échauffement, puis %lld × (1 min soutenu / 2 min facile), retour au calme. Au ressenti."
+          }
+        }
+      }
+    },
+    "gf.road.hillStrides" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run + 8 × 20s hill strides with full recovery. Power and economy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing facile + 8 × 20s d'accélérations en côte avec récupération complète. Puissance et économie."
+          }
+        }
+      }
+    },
+    "gf.road.progression" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progression run: start easy and build to a comfortably-hard effort over the final third."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Course en progression : commencez facile et montez vers un effort soutenu sur le dernier tiers."
+          }
+        }
+      }
+    },
+    "gf.road.tempo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo: 15 min easy, then %1$lld min at threshold%2$@, 10 min easy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo : 15 min facile, puis %1$lld min au seuil%2$@, 10 min facile."
+          }
+        }
+      }
+    },
+    "gf.road.vo2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld × 2 min hard%2$@, 2 min jog. Keeps the top end sharp."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld × 2 min rapide%2$@, 2 min footing. Garde le haut du moteur affûté."
+          }
+        }
+      }
+    },
+    "gf.trail.climb" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sustained climb: %lld min uphill at a controlled-hard effort you could just hold a few words at."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Montée soutenue : %lld min en côte à un effort contrôlé où vous pouvez à peine dire quelques mots."
+          }
+        }
+      }
+    },
+    "gf.trail.fartlek" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rolling fartlek: surge every climb, float the descents, easy on the flats."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fartlek vallonné : accélérez dans chaque montée, relâchez dans les descentes, facile sur le plat."
+          }
+        }
+      }
+    },
+    "gf.trail.hillRepeats" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld × 2 min uphill at steady-hard effort, jog or walk down to recover."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld × 2 min en montée à effort soutenu, footing ou marche en descente pour récupérer."
+          }
+        }
+      }
+    },
+    "gf.trail.strides" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy trail run + 6 × 20s strides on a smooth, flat section. Leg speed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Footing trail facile + 6 × 20s d'accélérations sur une section plate et roulante. Vitesse de jambes."
           }
         }
       }
@@ -25863,6 +26311,22 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Modéré"
+          }
+        }
+      }
+    },
+    "interval.category.fartlek" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fartlek"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fartlek"
           }
         }
       }

@@ -26,6 +26,38 @@ struct GoalTrainingStepView: View {
                 .padding(.top, Theme.Spacing.xl)
 
                 VStack(spacing: Theme.Spacing.lg) {
+                    // Training focus (shown only when NOT preparing for a race).
+                    if viewModel.hasNoRace {
+                        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                            Text("Training Focus")
+                                .font(.headline)
+                            Text("What do you want from your training right now?")
+                                .font(.subheadline)
+                                .foregroundStyle(Theme.Colors.secondaryLabel)
+                            ForEach(TrainingFocus.allCases, id: \.self) { focus in
+                                Button {
+                                    viewModel.trainingFocus = focus
+                                } label: {
+                                    HStack(alignment: .top, spacing: Theme.Spacing.sm) {
+                                        Image(systemName: viewModel.trainingFocus == focus ? "largecircle.fill.circle" : "circle")
+                                            .foregroundStyle(viewModel.trainingFocus == focus ? Theme.Colors.warmCoral : Theme.Colors.tertiaryLabel)
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(focus.displayName)
+                                                .font(.subheadline.weight(.semibold))
+                                                .foregroundStyle(.primary)
+                                            Text(focus.subtitle)
+                                                .font(.caption)
+                                                .foregroundStyle(Theme.Colors.secondaryLabel)
+                                                .multilineTextAlignment(.leading)
+                                        }
+                                        Spacer(minLength: 0)
+                                    }
+                                    .padding(.vertical, Theme.Spacing.xs)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    }
                     // Goal type (hidden when no race)
                     if !viewModel.hasNoRace {
                     VStack(alignment: .leading, spacing: Theme.Spacing.sm) {

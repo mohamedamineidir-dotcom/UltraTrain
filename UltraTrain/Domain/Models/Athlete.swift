@@ -17,6 +17,9 @@ struct Athlete: Identifiable, Equatable, Sendable {
     var personalBests: [PersonalBest] = []
     var trailPersonalBests: [TrailPersonalBest] = []
     var trainingPhilosophy: TrainingPhilosophy = .balanced
+    /// What the athlete wants from training when NOT preparing for a race.
+    /// Drives the general-fitness plan; ignored when an A-race is set.
+    var trainingFocus: TrainingFocus = .maintainFitness
     var preferredRunsPerWeek: Int = 5
     var displayName: String? = nil
     var bio: String? = nil

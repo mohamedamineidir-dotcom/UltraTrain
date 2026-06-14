@@ -114,6 +114,8 @@ final class OnboardingViewModel {
     // MARK: - Step 5: Race Goal
 
     var trainingPhilosophy: TrainingPhilosophy = .balanced
+    /// Chosen by athletes not preparing for a race; drives the general-fitness plan.
+    var trainingFocus: TrainingFocus = .maintainFitness
     var preferredRunsPerWeek: Int = 4
     var raceName = ""
     var raceDate = Calendar.current.date(byAdding: .month, value: 6, to: .now)!
@@ -416,6 +418,7 @@ final class OnboardingViewModel {
             personalBests: pbs,
             trailPersonalBests: trailPbs,
             trainingPhilosophy: trainingPhilosophy,
+            trainingFocus: trainingFocus,
             preferredRunsPerWeek: preferredRunsPerWeek,
             weightGoal: weightGoal,
             biologicalSex: biologicalSex,
@@ -584,6 +587,7 @@ final class OnboardingViewModel {
             longestRunKm: isNewRunner ? 0 : longestRunKm,
             preferredUnit: preferredUnit,
             trainingPhilosophy: trainingPhilosophy,
+            trainingFocus: trainingFocus,
             preferredRunsPerWeek: preferredRunsPerWeek,
             weightGoal: weightGoal,
             biologicalSex: biologicalSex,

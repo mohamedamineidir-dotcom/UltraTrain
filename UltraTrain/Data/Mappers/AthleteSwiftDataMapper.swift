@@ -19,6 +19,7 @@ enum AthleteSwiftDataMapper {
             return try? JSONDecoder().decode([TrailPersonalBest].self, from: data)
         } ?? []
         let philosophy = TrainingPhilosophy(rawValue: model.trainingPhilosophyRaw) ?? .balanced
+        let focus = TrainingFocus(rawValue: model.trainingFocusRaw) ?? .maintainFitness
         let weightGoal = WeightGoal(rawValue: model.weightGoalRaw) ?? .maintain
         let biologicalSex = BiologicalSex(rawValue: model.biologicalSexRaw) ?? .male
         return Athlete(
@@ -38,6 +39,7 @@ enum AthleteSwiftDataMapper {
             personalBests: personalBests,
             trailPersonalBests: trailPersonalBests,
             trainingPhilosophy: philosophy,
+            trainingFocus: focus,
             preferredRunsPerWeek: model.preferredRunsPerWeek ?? 5,
             displayName: model.displayName,
             bio: model.bio,
@@ -91,6 +93,7 @@ enum AthleteSwiftDataMapper {
             customZoneThresholdsRaw: athlete.customZoneThresholds?.map(String.init).joined(separator: ","),
             personalBestsRaw: pbRaw,
             trainingPhilosophyRaw: athlete.trainingPhilosophy.rawValue,
+            trainingFocusRaw: athlete.trainingFocus.rawValue,
             preferredRunsPerWeek: athlete.preferredRunsPerWeek,
             displayName: athlete.displayName,
             bio: athlete.bio,

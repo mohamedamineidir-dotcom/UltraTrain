@@ -435,6 +435,12 @@ final class TrainingPlanViewModel {
             // Free-tier scenario plan: synthetic 12-week comeback / 5K race,
             // no intermediate races. Otherwise the normal custom-race path.
             let scenario = pendingScenario
+            let aRacesByDate = allRaces
+                .filter { $0.priority == .aRace }
+                .sorted { $0.date < $1.date }
+            // Not preparing for a race → a sustainable general-fitness plan
+            // (no peak/taper/race), driven by the athlete's training focus.
+            let isGeneralFitness = scenario == nil && aRacesByDate.isEmpty
             let targetRace: Race
             let intermediateRaces: [Race]
             if let scenario {
@@ -444,9 +450,6 @@ final class TrainingPlanViewModel {
                 // Two-A-race seasons: target is the LATEST A-race; earlier
                 // A-races flow through IntermediateRaceHandler with full
                 // 2-week taper + 2-3 week recovery.
-                let aRacesByDate = allRaces
-                    .filter { $0.priority == .aRace }
-                    .sorted { $0.date < $1.date }
                 targetRace = aRacesByDate.last ?? Race.generalFitness(startingFrom: .now)
                 intermediateRaces = allRaces.filter { race in
                     race.id != targetRace.id && race.date < targetRace.date
@@ -468,13 +471,25 @@ final class TrainingPlanViewModel {
             let options = pendingPlanOptions
             pendingPlanOptions = .standard
 
-            var newPlan = try await planGenerator.execute(
-                athlete: athlete,
-                targetRace: targetRace,
-                intermediateRaces: intermediateRaces,
-                recentIntervalFeedback: recentFeedback,
-                planOptions: options
-            )
+            var newPlan: TrainingPlan
+            if isGeneralFitness {
+                let weeks = GeneralFitnessPlanGenerator.generate(
+                    athlete: athlete, targetRaceId: targetRace.id
+                )
+                newPlan = TrainingPlan(
+                    id: UUID(), athleteId: athlete.id, targetRaceId: targetRace.id,
+                    createdAt: .now, weeks: weeks,
+                    intermediateRaceIds: [], intermediateRaceSnapshots: []
+                )
+            } else {
+                newPlan = try await planGenerator.execute(
+                    athlete: athlete,
+                    targetRace: targetRace,
+                    intermediateRaces: intermediateRaces,
+                    recentIntervalFeedback: recentFeedback,
+                    planOptions: options
+                )
+            }
             // Mark + clear scenario state. Scenario plans stay fully visible
             // regardless of subscription (free taster).
             newPlan.isScenarioPlan = scenario != nil
