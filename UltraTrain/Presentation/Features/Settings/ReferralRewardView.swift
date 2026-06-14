@@ -114,23 +114,52 @@ struct ReferralRewardView: View {
     }
 
     private func infoCard(title: String, lines: [(done: Bool, text: String)]) -> some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text(title).font(.headline)
-            ForEach(Array(lines.enumerated()), id: \.offset) { _, line in
-                HStack(alignment: .top, spacing: Theme.Spacing.sm) {
-                    Image(systemName: line.done ? "checkmark.circle.fill" : "circle")
-                        .foregroundStyle(line.done ? Theme.Colors.success : Theme.Colors.tertiaryLabel)
-                    Text(line.text)
-                        .font(.subheadline)
-                        .foregroundStyle(Theme.Colors.secondaryLabel)
-                    Spacer(minLength: 0)
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+            Text(title)
+                .font(.headline)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            VStack(spacing: 0) {
+                ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
+                    HStack(spacing: Theme.Spacing.md) {
+                        stepBadge(number: index + 1, done: line.done)
+                        Text(line.text)
+                            .font(.subheadline)
+                            .foregroundStyle(Theme.Colors.label)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .frame(minHeight: 52)
+
+                    if index < lines.count - 1 {
+                        Divider().overlay(Color.primary.opacity(0.06))
+                    }
                 }
             }
         }
-        .padding(Theme.Spacing.md)
+        .padding(Theme.Spacing.lg)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(RoundedRectangle(cornerRadius: Theme.CornerRadius.md).fill(.ultraThinMaterial))
         .overlay(RoundedRectangle(cornerRadius: Theme.CornerRadius.md).stroke(Color.primary.opacity(0.06), lineWidth: 1))
+    }
+
+    /// Uniform leading badge for a "how it works" step: a numbered coral disc,
+    /// or a green check once that step is done. Fixed size so every row aligns.
+    private func stepBadge(number: Int, done: Bool) -> some View {
+        ZStack {
+            Circle()
+                .fill(done ? Theme.Colors.success : Theme.Colors.warmCoral.opacity(0.15))
+            if done {
+                Image(systemName: "checkmark")
+                    .font(.footnote.weight(.bold))
+                    .foregroundStyle(.white)
+            } else {
+                Text("\(number)")
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(Theme.Colors.warmCoral)
+            }
+        }
+        .frame(width: 30, height: 30)
     }
 
     // MARK: - Code
