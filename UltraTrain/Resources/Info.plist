@@ -84,8 +84,6 @@
     <string>$(API_ENVIRONMENT)</string>
     <key>STRAVA_CLIENT_ID</key>
     <string>$(STRAVA_CLIENT_ID)</string>
-    <key>STRAVA_CLIENT_SECRET</key>
-    <string>$(STRAVA_CLIENT_SECRET)</string>
     <key>HMAC_SIGNING_SECRET</key>
     <string>$(HMAC_SIGNING_SECRET)</string>
     <key>GOOGLE_CLIENT_ID</key>

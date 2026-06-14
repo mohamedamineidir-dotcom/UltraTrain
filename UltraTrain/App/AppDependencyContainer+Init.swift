@@ -135,7 +135,7 @@ extension AppDependencyContainer {
         )
         exportService = ExportService()
         runImportUseCase = DefaultRunImportUseCase(gpxParser: GPXParser(), runRepository: runRepository)
-        stravaAuthService = StravaAuthService()
+        stravaAuthService = StravaAuthService(apiClient: client)
         stravaUploadService = StravaUploadService(authService: stravaAuthService)
         stravaImportService = StravaImportService(
             authService: stravaAuthService, runRepository: runRepository

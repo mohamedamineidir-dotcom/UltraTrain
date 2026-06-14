@@ -230,10 +230,10 @@ enum AppConfiguration {
 
     enum Strava {
         static let clientId: String = Bundle.main.infoDictionary?["STRAVA_CLIENT_ID"] as? String ?? ""
-        static let clientSecret: String = Bundle.main.infoDictionary?["STRAVA_CLIENT_SECRET"] as? String ?? ""
+        // No clientSecret here: the token exchange/refresh runs on the backend
+        // (StravaIntegrationController) so the secret never ships in the app.
         static let callbackURLScheme = "ultratrain"
         static let authorizeURL = "https://www.strava.com/oauth/mobile/authorize"
-        static let tokenURL = "https://www.strava.com/oauth/token"
         static let apiBaseURL = "https://www.strava.com/api/v3"
         static let requiredScopes = "read,activity:read_all,activity:write"
     }

@@ -176,6 +176,7 @@
 		15C369953FC4195E475EB5AE /* ViewRunHistoryIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC4B04DC13B610771132C123 /* ViewRunHistoryIntent.swift */; };
 		15D63F9E486E630F79E1FDEA /* SessionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A94682E81D1D2CB2242498 /* SessionDetailView.swift */; };
 		15F32C97E816E639E3E86DFA /* RouteLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD094F721308F3B1B4D1BB2E /* RouteLibraryViewModel.swift */; };
+		161540F065A95EF72845B8C0 /* StravaIntegrationDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56BC84C62187EDB80323BFAD /* StravaIntegrationDTO.swift */; };
 		162E271DCFE8AFD727102179 /* SwapSessionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23424DB8E3558DDE844EC874 /* SwapSessionSheet.swift */; };
 		168462D86580942E95CFB05A /* AdaptiveGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9691297B0EBFD6D9DC907F20 /* AdaptiveGrid.swift */; };
 		1686564A1EDC91B5AE477CCC /* Course3DCameraControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32A33224B416221155C4548 /* Course3DCameraControls.swift */; };
@@ -871,6 +872,7 @@
 		7BD9D567B544975B8BDB3E74 /* PacingAlertCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDF08541592EE6603C2D557 /* PacingAlertCalculator.swift */; };
 		7C6B64B6D69824973A1A7E9C /* EnvironmentValues+UnitPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36240136D6EADC9B9F658802 /* EnvironmentValues+UnitPreference.swift */; };
 		7CAA9B0A2ECE6F410C78C1DF /* RaceCategoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39B0F171F7CD90C0DAF159ED /* RaceCategoryTests.swift */; };
+		7CEB19BEE346B98F71545E01 /* StravaEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81D6A41CE72547F318722CC4 /* StravaEndpoints.swift */; };
 		7CF9127E1D1B8D55DABFB6C1 /* WatchRunCalculatorSplitCheckTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A561B055DDBE6117825056B5 /* WatchRunCalculatorSplitCheckTests.swift */; };
 		7D4C8D3CA3A9630D0976F561 /* RaceCalibrationServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C79B3BE573434C722CA5A8 /* RaceCalibrationServiceTests.swift */; };
 		7D7A3A8FB51C258CBED2FA73 /* UltraTrain.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 31829809167760B04E232DD8 /* UltraTrain.storekit */; };
@@ -2523,6 +2525,7 @@
 		561F7134AD6D0674436DF878 /* RaceDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceDTO.swift; sourceTree = "<group>"; };
 		563CA3C5158E6CD9CE874702 /* VoiceCoachingServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCoachingServiceTests.swift; sourceTree = "<group>"; };
 		56BAAB80F939F16A67D1B247 /* MockSessionNutritionAdvisor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSessionNutritionAdvisor.swift; sourceTree = "<group>"; };
+		56BC84C62187EDB80323BFAD /* StravaIntegrationDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StravaIntegrationDTO.swift; sourceTree = "<group>"; };
 		56C861519DF92BF9D158C529 /* ElevationPaceScatterChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevationPaceScatterChart.swift; sourceTree = "<group>"; };
 		56DB1D90EB04FF74F0B6A89A /* ElevationPaceOverlayCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevationPaceOverlayCalculator.swift; sourceTree = "<group>"; };
 		5703CE86AE2C9240E52878CC /* MockSubscriptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSubscriptionService.swift; sourceTree = "<group>"; };
@@ -2821,6 +2824,7 @@
 		8167AD141E4E1BE8CB4F09E9 /* ReadinessStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadinessStatus.swift; sourceTree = "<group>"; };
 		8171771EF74B3627041DD0A8 /* RecoveryTrendChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoveryTrendChart.swift; sourceTree = "<group>"; };
 		8188BCBA6751355FBB820EA9 /* SyncedNutritionRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncedNutritionRepositoryTests.swift; sourceTree = "<group>"; };
+		81D6A41CE72547F318722CC4 /* StravaEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StravaEndpoints.swift; sourceTree = "<group>"; };
 		82037E746577FB35AF3DEF7A /* GroupChallengeRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupChallengeRepository.swift; sourceTree = "<group>"; };
 		821DECB27698CA197CF7B0E7 /* DataCleanerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCleanerTests.swift; sourceTree = "<group>"; };
 		822C46A88DED2D1BF78374F3 /* ACRDataPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRDataPoint.swift; sourceTree = "<group>"; };
@@ -5381,6 +5385,7 @@
 				92A69D7ECB0F6B856CC4C4BC /* RunEndpoints.swift */,
 				A2AE61A1290E147C0DCEB2C3 /* SharedRunEndpoints.swift */,
 				ADEA8EF31046B38019E0AA2A /* SocialEndpoints.swift */,
+				81D6A41CE72547F318722CC4 /* StravaEndpoints.swift */,
 				2FFCA7CFDD292674ED9EC0D7 /* TrainingPlanEndpoints.swift */,
 			);
 			path = Endpoints;
@@ -5880,6 +5885,7 @@
 				184B644CABC286D7DA5BBC52 /* RunDTO.swift */,
 				E65FEF8065A3AE14EF249395 /* SharedRunDTO.swift */,
 				6B2847AD70FE1BF5F562009A /* SocialProfileDTO.swift */,
+				56BC84C62187EDB80323BFAD /* StravaIntegrationDTO.swift */,
 				150881532CCDB394CC9BD444 /* TrainingPlanDTO.swift */,
 			);
 			path = DTOs;
@@ -8108,9 +8114,11 @@
 				DD6FBA2AE27848E87530868F /* StravaActivity.swift in Sources */,
 				06AA13F31DB9F38C7A96CABC /* StravaAuthService.swift in Sources */,
 				D51DD92CB98B6B0062B4C7A6 /* StravaAuthServiceProtocol.swift in Sources */,
+				7CEB19BEE346B98F71545E01 /* StravaEndpoints.swift in Sources */,
 				0FC0553A873C895D90590965 /* StravaImportService.swift in Sources */,
 				29141C70F2496B691E06BF0D /* StravaImportServiceProtocol.swift in Sources */,
 				CAC1413B97C91C4AC05F7C7A /* StravaImportView.swift in Sources */,
+				161540F065A95EF72845B8C0 /* StravaIntegrationDTO.swift in Sources */,
 				C2040F33798F7C948B536DA3 /* StravaQueueItemStatus.swift in Sources */,
 				868F75682B09C79E03DF716F /* StravaStatusSection.swift in Sources */,
 				FB4E158A0C20CA1E0B133C5F /* StravaToken.swift in Sources */,

@@ -51,4 +51,7 @@ func routes(_ app: Application) throws {
 
     // AI proxy (OpenAI vision) — auth required; key stays server-side
     try api.register(collection: AIController())
+
+    // Strava OAuth token exchange — auth required; client secret stays server-side
+    try api.register(collection: StravaIntegrationController())
 }

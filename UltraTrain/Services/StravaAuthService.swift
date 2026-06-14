@@ -8,8 +8,10 @@ final class StravaAuthService: StravaAuthServiceProtocol, @unchecked Sendable {
     private static let keychainKey = "strava_token"
 
     private var token: StravaToken?
+    private let apiClient: APIClient
 
-    init() {
+    init(apiClient: APIClient) {
+        self.apiClient = apiClient
         do {
             token = try KeychainManager.load(StravaToken.self, for: Self.keychainKey)
         } catch {
@@ -127,98 +129,41 @@ final class StravaAuthService: StravaAuthServiceProtocol, @unchecked Sendable {
     // MARK: - Token Exchange
 
     private func exchangeCodeForToken(_ code: String) async throws -> StravaToken {
-        let config = AppConfiguration.Strava.self
-
-        // invariant: tokenURL is a compile-time constant string
-        var request = URLRequest(url: URL(string: config.tokenURL)!)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        let body: [String: String] = [
-            "client_id": config.clientId,
-            "client_secret": config.clientSecret,
-            "code": code,
-            "grant_type": "authorization_code"
-        ]
-        var httpBody = try JSONEncoder().encode(body)
-        request.httpBody = httpBody
-        defer { httpBody.resetBytes(in: 0..<httpBody.count) }
-
-        let (data, response) = try await URLSession.shared.data(for: request)
-
-        guard let httpResponse = response as? HTTPURLResponse,
-              (200...299).contains(httpResponse.statusCode) else {
-            Self.logger.error("Strava token exchange failed")
+        // The backend holds the client secret and performs the exchange.
+        do {
+            let dto = try await apiClient.send(StravaEndpoints.Exchange(code: code))
+            return makeToken(from: dto)
+        } catch {
+            Self.logger.error("Strava token exchange failed: \(error.localizedDescription)")
             throw DomainError.stravaAuthFailed(reason: "Token exchange failed")
         }
-
-        return try parseTokenResponse(data)
     }
 
     // MARK: - Token Refresh
 
     private func refreshToken(_ expiredToken: StravaToken) async throws -> StravaToken {
-        let config = AppConfiguration.Strava.self
-
-        // invariant: tokenURL is a compile-time constant string
-        var request = URLRequest(url: URL(string: config.tokenURL)!)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        let body: [String: String] = [
-            "client_id": config.clientId,
-            "client_secret": config.clientSecret,
-            "refresh_token": expiredToken.refreshToken,
-            "grant_type": "refresh_token"
-        ]
-        var httpBody = try JSONEncoder().encode(body)
-        request.httpBody = httpBody
-        defer { httpBody.resetBytes(in: 0..<httpBody.count) }
-
-        let (data, response) = try await URLSession.shared.data(for: request)
-
-        guard let httpResponse = response as? HTTPURLResponse,
-              (200...299).contains(httpResponse.statusCode) else {
-            Self.logger.error("Strava token refresh failed")
+        do {
+            let dto = try await apiClient.send(StravaEndpoints.Refresh(refreshToken: expiredToken.refreshToken))
+            Self.logger.info("Strava: token refreshed")
+            return makeToken(from: dto)
+        } catch {
+            Self.logger.error("Strava token refresh failed: \(error.localizedDescription)")
             throw DomainError.stravaAuthFailed(reason: "Token refresh failed")
         }
-
-        Self.logger.info("Strava: token refreshed")
-        return try parseTokenResponse(data)
     }
 
-    // MARK: - Response Parsing
+    // MARK: - Response Mapping
 
-    private func parseTokenResponse(_ data: Data) throws -> StravaToken {
-        struct TokenResponse: Decodable {
-            let accessToken: String
-            let refreshToken: String
-            let expiresAt: Int
-            let athlete: Athlete?
-
-            struct Athlete: Decodable {
-                let id: Int
-                let firstname: String
-                let lastname: String
-            }
-
-            enum CodingKeys: String, CodingKey {
-                case accessToken = "access_token"
-                case refreshToken = "refresh_token"
-                case expiresAt = "expires_at"
-                case athlete
-            }
-        }
-
-        let decoded = try JSONDecoder().decode(TokenResponse.self, from: data)
-        let athleteName = decoded.athlete.map { "\($0.firstname) \($0.lastname)" }
-            ?? token?.athleteName ?? "Strava Athlete"
-        let athleteId = decoded.athlete?.id ?? token?.athleteId ?? 0
+    private func makeToken(from dto: StravaTokenDTO) -> StravaToken {
+        // `athlete*` are only present on the initial exchange, not on refresh —
+        // fall back to the stored token so a refresh keeps the athlete identity.
+        let athleteName = dto.athleteName ?? token?.athleteName ?? "Strava Athlete"
+        let athleteId = dto.athleteId ?? token?.athleteId ?? 0
 
         return StravaToken(
-            accessToken: decoded.accessToken,
-            refreshToken: decoded.refreshToken,
-            expiresAt: Date(timeIntervalSince1970: TimeInterval(decoded.expiresAt)),
+            accessToken: dto.accessToken,
+            refreshToken: dto.refreshToken,
+            expiresAt: Date(timeIntervalSince1970: TimeInterval(dto.expiresAt)),
             athleteId: athleteId,
             athleteName: athleteName
         )
