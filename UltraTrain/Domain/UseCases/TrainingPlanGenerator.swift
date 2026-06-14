@@ -510,7 +510,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             athleteId: athlete.id,
             targetRaceId: targetRace.id,
             createdAt: .now,
-            weeks: weeks,
+            weeks: Self.applyPreRaceSpilloverTaper(weeks, raceDate: raceDate),
             intermediateRaceIds: intermediateRaces.map(\.id),
             intermediateRaceSnapshots: snapshots
         )
@@ -1290,7 +1290,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             athleteId: athlete.id,
             targetRaceId: targetRace.id,
             createdAt: .now,
-            weeks: weeks,
+            weeks: Self.applyPreRaceSpilloverTaper(weeks, raceDate: raceDate),
             intermediateRaceIds: intermediateRaces.map(\.id),
             intermediateRaceSnapshots: snapshots
         )
@@ -1587,5 +1587,63 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                 return
             }
         }
+    }
+
+    /// Day-aware pre-race taper guard. The taper is allocated by calendar WEEK,
+    /// so when the A-race falls EARLY in its week (e.g. a Monday race), the real
+    /// final days before the race spill into the PRIOR calendar week — which
+    /// stays at full peak volume, leaving things like a 2-hour long run two days
+    /// out. This downgrades any long run / quality session landing within 4 days
+    /// before the race in a week earlier than the race week into a short easy
+    /// shakeout. Races on Thu-Sun are unaffected: their final days already fit
+    /// inside the race week's own taper.
+    static func applyPreRaceSpilloverTaper(_ weeks: [TrainingWeek], raceDate: Date) -> [TrainingWeek] {
+        let cal = Calendar.current
+        let raceDay = cal.startOfDay(for: raceDate)
+        let raceWeekStart = cal.date(
+            from: cal.dateComponents([.yearForWeekOfYear, .weekOfYear], from: raceDay)
+        ) ?? raceDay
+
+        return weeks.map { week in
+            var w = week
+            w.sessions = week.sessions.map { session in
+                let sDay = cal.startOfDay(for: session.date)
+                // Never touch the race week itself (its taper is already right).
+                guard sDay < raceWeekStart else { return session }
+                let days = cal.dateComponents([.day], from: sDay, to: raceDay).day ?? 99
+                guard days >= 1, days <= 4 else { return session }
+                return downgradeToPreRaceShakeout(session, daysUntilRace: days)
+            }
+            return w
+        }
+    }
+
+    /// Turns a too-close-to-race session into a short easy shakeout (or trims an
+    /// already-easy run). Closer to the race ⇒ shorter cap.
+    static func downgradeToPreRaceShakeout(_ session: TrainingSession, daysUntilRace: Int) -> TrainingSession {
+        let cap: TimeInterval = daysUntilRace <= 1 ? 25 * 60 : (daysUntilRace == 2 ? 30 * 60 : 40 * 60)
+        let heavy: Set<SessionType> = [.longRun, .intervals, .tempo, .verticalGain, .backToBack]
+
+        if heavy.contains(session.type) {
+            var out = session
+            out.type = .recovery
+            out.intensity = .easy
+            out.plannedDuration = min(session.plannedDuration, cap)
+            out.plannedElevationGainM = 0
+            out.plannedDistanceKm = round(out.plannedDuration / 330 * 10) / 10
+            out.intervalWorkoutId = nil
+            out.intervalFocus = nil
+            out.isKeySession = false
+            out.coachAdvice = nil
+            out.description = String(localized: "tpg.preRace.shakeout", defaultValue: "Easy pre-race shakeout, keep it short and relaxed.")
+            return out
+        }
+        if session.type == .recovery, session.plannedDuration > cap {
+            var out = session
+            out.plannedDuration = cap
+            out.plannedDistanceKm = round(cap / 330 * 10) / 10
+            return out
+        }
+        return session
     }
 }

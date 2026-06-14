@@ -42875,6 +42875,12 @@
         }
       }
     },
+    "tpg.preRace.shakeout" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Easy pre-race shakeout, keep it short and relaxed." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Footing de déblocage avant course, court et relâché." } }
+      }
+    },
     "tpg.raceday.5k" : {
       "localizations" : {
         "en" : { "stringUnit" : { "state" : "translated", "value" : "5K race day. Plan: it's short and honest, settle into goal pace within the first 400m, no easing in. It bites around 3K, hold form and cadence there. The last kilometre is where you empty the tank." } },
