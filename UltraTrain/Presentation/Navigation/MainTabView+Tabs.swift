@@ -30,23 +30,39 @@ extension MainTabView {
         }
         .environment(premiumGate)
         .task {
+            // StoreKit entitlement gate — must wire up IMMEDIATELY so a
+            // purchase unlocks features on the first try. Nothing slow (e.g.
+            // the referral network fetch below) may run before this loop, or
+            // the first purchase's status update is missed until the next event.
             guard let service = subscriptionService else { return }
-            // Referral reward: a server-granted free-premium window that
-            // unlocks premium on TOP of StoreKit. Fetched once on appear;
-            // a network failure leaves it nil so it can never grant access
-            // it shouldn't. Re-checked each launch (and on the referral page).
-            let bonusUntil = (try? await referralRepository?.getMyReferralCode())?.bonusAccessUntil
-            func unlocked(_ status: SubscriptionStatus) -> Bool {
+            @MainActor func unlocked(_ status: SubscriptionStatus) -> Bool {
                 #if DEBUG
                 if DebugEntitlement.simulateFreeTier { return false }
                 #endif
                 if status.isActive { return true }
-                if let bonusUntil, bonusUntil > .now { return true }
+                if let until = premiumGate.referralBonusUntil, until > .now { return true }
                 return false
             }
             premiumGate.isUnlocked = unlocked(service.currentStatus)
             for await status in service.statusUpdates {
                 premiumGate.isUnlocked = unlocked(status)
+            }
+        }
+        .task {
+            // Referral reward: a server-granted free-premium window that
+            // unlocks premium on TOP of StoreKit. Fetched in its OWN task so a
+            // slow/failed call can never delay the entitlement gate above. A
+            // network failure leaves the bonus nil (never grants false access).
+            guard let referralRepository, let service = subscriptionService else { return }
+            let bonusUntil = (try? await referralRepository.getMyReferralCode())?.bonusAccessUntil
+            premiumGate.referralBonusUntil = bonusUntil
+            // Re-evaluate now that the bonus is known (StoreKit already set the
+            // gate; only widen access, never revoke a live subscription).
+            #if DEBUG
+            if DebugEntitlement.simulateFreeTier { return }
+            #endif
+            if !service.currentStatus.isActive, let bonusUntil, bonusUntil > .now {
+                premiumGate.isUnlocked = true
             }
         }
         .sheet(isPresented: Binding(

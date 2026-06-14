@@ -14,6 +14,11 @@ final class PremiumGate {
     var isUnlocked: Bool
     var showPaywall = false
 
+    /// Server-granted free-access window from the referral reward. Held here
+    /// so it can be fetched off the critical path (a slow/failed network call
+    /// must never delay the StoreKit entitlement check). `nil` = no bonus.
+    var referralBonusUntil: Date?
+
     init(isUnlocked: Bool = true) {
         self.isUnlocked = isUnlocked
     }
