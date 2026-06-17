@@ -17,17 +17,17 @@ struct PaywallHeaderSection: View {
                             ],
                             center: .center,
                             startRadius: 0,
-                            endRadius: 90
+                            endRadius: 70
                         )
                     )
-                    .frame(width: 180, height: 180)
-                    .blur(radius: 6)
+                    .frame(width: 130, height: 130)
+                    .blur(radius: 4)
 
                 Image("LaunchIcon")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 84, height: 84)
-                    .shadow(color: Theme.Colors.warmCoral.opacity(0.55), radius: 20, y: 6)
+                    .frame(width: 64, height: 64)
+                    .shadow(color: Theme.Colors.warmCoral.opacity(0.55), radius: 16, y: 5)
                     .accessibilityHidden(true)
             }
 
