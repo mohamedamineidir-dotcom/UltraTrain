@@ -66,10 +66,15 @@ struct PaywallView: View {
                                 .padding(.horizontal, Theme.Spacing.lg)
                         }
                     }
-                    .padding(.bottom, 140)
+                    .padding(.top, Theme.Spacing.sm)
+                    .padding(.bottom, Theme.Spacing.lg)
                 }
-
-                PaywallCTASection(viewModel: viewModel)
+                // Pinned CTA. safeAreaInset reserves EXACTLY the bar's height
+                // (which grows with the legal disclosure / Dynamic Type), so the
+                // plans never slide underneath it — a fixed bottom pad couldn't.
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    PaywallCTASection(viewModel: viewModel)
+                }
             }
         }
         .overlay(alignment: .topTrailing) {

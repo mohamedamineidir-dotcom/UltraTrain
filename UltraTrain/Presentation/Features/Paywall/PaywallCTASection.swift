@@ -5,8 +5,6 @@ struct PaywallCTASection: View {
     let viewModel: PaywallViewModel
 
     var body: some View {
-        VStack(spacing: 0) {
-            Spacer()
             VStack(spacing: Theme.Spacing.sm) {
                 Button {
                     Task { await viewModel.purchase() }
@@ -79,15 +77,13 @@ struct PaywallCTASection: View {
                 .font(.caption2)
                 .foregroundStyle(.tertiary)
             }
-            .padding(.vertical, Theme.Spacing.md)
+            .frame(maxWidth: .infinity)
+            .padding(.top, Theme.Spacing.md)
+            .padding(.bottom, Theme.Spacing.sm)
             .background(
-                LinearGradient(
-                    colors: [Color.clear, colorScheme == .dark ? Theme.Colors.premiumBgBottom : Color(red: 0.95, green: 0.97, blue: 0.99)],
-                    startPoint: .top,
-                    endPoint: .center
-                )
-                .ignoresSafeArea()
+                (colorScheme == .dark ? Theme.Colors.premiumBgBottom : Color(red: 0.95, green: 0.97, blue: 0.99))
+                    .opacity(0.92)
+                    .ignoresSafeArea(edges: .bottom)
             )
-        }
     }
 }
