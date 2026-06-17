@@ -65,15 +65,13 @@ struct PaywallView: View {
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal, Theme.Spacing.lg)
                         }
+
+                        // CTA flows as the last block of the same scrollable
+                        // page — one layer, no pinned bar, no separate colour.
+                        PaywallCTASection(viewModel: viewModel)
                     }
                     .padding(.top, Theme.Spacing.sm)
                     .padding(.bottom, Theme.Spacing.lg)
-                }
-                // Pinned CTA. safeAreaInset reserves EXACTLY the bar's height
-                // (which grows with the legal disclosure / Dynamic Type), so the
-                // plans never slide underneath it — a fixed bottom pad couldn't.
-                .safeAreaInset(edge: .bottom, spacing: 0) {
-                    PaywallCTASection(viewModel: viewModel)
                 }
             }
         }

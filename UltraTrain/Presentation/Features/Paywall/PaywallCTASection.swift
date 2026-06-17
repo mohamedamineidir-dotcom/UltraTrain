@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct PaywallCTASection: View {
-    @Environment(\.colorScheme) private var colorScheme
     let viewModel: PaywallViewModel
 
     var body: some View {
@@ -78,12 +77,5 @@ struct PaywallCTASection: View {
                 .foregroundStyle(.tertiary)
             }
             .frame(maxWidth: .infinity)
-            .padding(.top, Theme.Spacing.md)
-            .padding(.bottom, Theme.Spacing.sm)
-            .background(
-                (colorScheme == .dark ? Theme.Colors.premiumBgBottom : Color(red: 0.95, green: 0.97, blue: 0.99))
-                    .opacity(0.92)
-                    .ignoresSafeArea(edges: .bottom)
-            )
     }
 }
