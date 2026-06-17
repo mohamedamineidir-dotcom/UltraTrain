@@ -145,7 +145,6 @@ struct SessionRowView: View {
                     ? Theme.Colors.secondaryLabel : Theme.Colors.label)
                 .strikethrough(session.isSkipped)
                 .lineLimit(1)
-                .fixedSize(horizontal: true, vertical: false)
                 .layoutPriority(1)
 
             // RR-24: Intervals and tempo sessions carry an
@@ -247,6 +246,8 @@ struct SessionRowView: View {
         Text(String(localized: "session.skipped", defaultValue: "Skipped"))
             .font(.caption2)
             .foregroundStyle(.orange)
+            .lineLimit(1)
+            .fixedSize(horizontal: true, vertical: false)
             .padding(.horizontal, 4)
             .padding(.vertical, 1)
             .background(.orange.opacity(0.15))
@@ -257,6 +258,8 @@ struct SessionRowView: View {
         Text(String(localized: "session.key", defaultValue: "Key"))
             .font(.caption2.bold())
             .foregroundStyle(.white)
+            .lineLimit(1)
+            .fixedSize(horizontal: true, vertical: false)
             .padding(.horizontal, 5)
             .padding(.vertical, 1)
             .background(Theme.Colors.primary)
