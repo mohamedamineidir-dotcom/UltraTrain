@@ -7,13 +7,13 @@ struct PaywallFeatureBullets: View {
         let key: LocalizedStringKey
     }
 
-    // Trimmed to the two strongest differentiators (personalized plans + the
-    // nutrition / finish-prediction coaching layer) so the paywall fits one
-    // screen. Apple Watch / Strava sync is table-stakes, kept off the paywall.
     private let features: [Feature] = [
         Feature(icon: "figure.run.circle.fill",
                 tint: Theme.Colors.warmCoral,
                 key: "paywall.feature.plans"),
+        Feature(icon: "applewatch.radiowaves.left.and.right",
+                tint: Theme.Colors.info,
+                key: "paywall.feature.sync"),
         Feature(icon: "fork.knife.circle.fill",
                 tint: Theme.Colors.goldAccent,
                 key: "paywall.feature.coaching")

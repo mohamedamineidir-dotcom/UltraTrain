@@ -46,13 +46,14 @@ struct PaywallView: View {
                     .tint(Color.primary)
             } else {
                 ScrollView {
-                    VStack(spacing: Theme.Spacing.md) {
+                    VStack(spacing: Theme.Spacing.lg) {
                         PaywallHeaderSection()
                         PaywallFeatureBullets()
                         PaywallPlanSelector(
                             plans: viewModel.plans,
                             selectedPlanId: $viewModel.selectedPlanId
                         )
+                        PaywallTrialTimeline()
 
                         if let error = viewModel.error {
                             Text(error)
