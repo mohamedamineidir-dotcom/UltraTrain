@@ -26,7 +26,7 @@ enum GeneralFitnessPlanGenerator {
         targetRaceId: UUID,
         weeks: Int = 12,
         startDate: Date = .now
-    ) -> [TrainingWeek] {
+    ) -> (weeks: [TrainingWeek], workouts: [IntervalWorkout]) {
         let focus = athlete.trainingFocus
         let isTrail = athlete.runningTerrain == .trail
         let runs = max(3, min(athlete.preferredRunsPerWeek, 7))
@@ -47,6 +47,7 @@ enum GeneralFitnessPlanGenerator {
         let seed = stableSeed(athlete.id)
 
         var result: [TrainingWeek] = []
+        var allWorkouts: [IntervalWorkout] = []
         for i in 0..<weeks {
             let weekStart = cal.date(byAdding: .weekOfYear, value: i, to: cal.startOfDay(for: startDate)) ?? startDate
             let weekEnd = cal.date(byAdding: .day, value: 6, to: weekStart) ?? weekStart
@@ -56,12 +57,13 @@ enum GeneralFitnessPlanGenerator {
             let trend = pow(focus.blockGrowth, Double(block))
             let volume = (baseVolume * withinBlock * trend).rounded()
 
-            let sessions = buildWeek(
+            let (sessions, weekWorkouts) = buildWeek(
                 weekIndex: i, weekStart: weekStart, isDown: isDown,
                 volume: volume, runs: runs, focus: focus, isTrail: isTrail,
                 experience: athlete.experienceLevel, paceProfile: paceProfile,
                 dataDerived: dataDerived, easyPaceSec: easyPaceSec, seed: seed
             )
+            allWorkouts.append(contentsOf: weekWorkouts)
             let totalDuration = sessions.filter { $0.type != .rest }.reduce(0) { $0 + $1.plannedDuration }
             result.append(TrainingWeek(
                 id: UUID(), weekNumber: i + 1, startDate: weekStart, endDate: weekEnd,
@@ -70,7 +72,7 @@ enum GeneralFitnessPlanGenerator {
                 targetDurationSeconds: totalDuration, phaseFocus: nil
             ))
         }
-        return result
+        return (result, allWorkouts)
     }
 
     // MARK: - Week assembly
@@ -80,8 +82,9 @@ enum GeneralFitnessPlanGenerator {
         volume: Double, runs: Int, focus: TrainingFocus, isTrail: Bool,
         experience: ExperienceLevel, paceProfile: RoadPaceProfile?,
         dataDerived: Bool, easyPaceSec: Double, seed: Int
-    ) -> [TrainingSession] {
+    ) -> (sessions: [TrainingSession], workouts: [IntervalWorkout]) {
         let cal = Calendar.current
+        var workouts: [IntervalWorkout] = []
 
         // Quality count: focus default, capped by experience / frequency,
         // and trimmed on down weeks.
@@ -121,8 +124,16 @@ enum GeneralFitnessPlanGenerator {
             let idx = (weekIndex + qi * (pool.count / 2 + 1) + seed) % pool.count
             let pick = pool[idx]
             let qs = pick.make(paceProfile, dataDerived, isDown)
-            byDay[qSlots[qi]] = session(qs.type, qs.intensity, qualityDur,
-                                        date: day(qSlots[qi]), focus: qs.focusLabel, desc: qs.desc)
+            var s = session(qs.type, qs.intensity, qualityDur,
+                            date: day(qSlots[qi]), focus: qs.focusLabel, desc: qs.desc)
+            // Attach a structured workout so the session shows phase cards.
+            if let w = qualityWorkout(for: qs) {
+                workouts.append(w)
+                s.intervalWorkoutId = w.id
+                s.plannedDuration = w.estimatedDurationSeconds
+                s.plannedDistanceKm = round(w.estimatedDurationSeconds / 360 * 10) / 10
+            }
+            byDay[qSlots[qi]] = s
         }
 
         // Easy runs fill remaining run days (Mon0, Wed2, Thu3, Fri4, Sun6).
@@ -149,7 +160,7 @@ enum GeneralFitnessPlanGenerator {
                                         desc: String(localized: "gf.rest", defaultValue: "Rest day. Easy walk or full rest.")))
             }
         }
-        return sessions
+        return (sessions, workouts)
     }
 
     // MARK: - Quality pools
@@ -159,6 +170,13 @@ enum GeneralFitnessPlanGenerator {
         let intensity: Intensity
         let focusLabel: String
         let desc: String
+        // Structured shape for the phase cards. reps == 0 => description-only
+        // (a continuous run like a progression or by-feel fartlek).
+        var warmUpMin: Int = 0
+        var reps: Int = 0
+        var workSec: Int = 0
+        var recoverySec: Int = 0
+        var coolDownMin: Int = 0
     }
     private struct QualityTemplate {
         let make: (_ p: RoadPaceProfile?, _ dataDerived: Bool, _ isDown: Bool) -> QualitySpec
@@ -175,19 +193,22 @@ enum GeneralFitnessPlanGenerator {
                 let mins = down ? 12 : 20
                 return QualitySpec(type: .tempo, intensity: .hard,
                     focusLabel: String(localized: "interval.category.threshold", defaultValue: "Threshold"),
-                    desc: String(localized: "gf.road.tempo", defaultValue: "Tempo: 15 min easy, then \(mins) min at threshold\(pace(p, dd, p?.thresholdPacePerKm)), 10 min easy."))
+                    desc: String(localized: "gf.road.tempo", defaultValue: "Tempo: 15 min easy, then \(mins) min at threshold\(pace(p, dd, p?.thresholdPacePerKm)), 10 min easy."),
+                    warmUpMin: 15, reps: 1, workSec: mins * 60, recoverySec: 0, coolDownMin: 10)
             },
             QualityTemplate { p, dd, down in
                 let reps = down ? 3 : 5
                 return QualitySpec(type: .intervals, intensity: .hard,
                     focusLabel: String(localized: "interval.category.threshold", defaultValue: "Threshold"),
-                    desc: String(localized: "gf.road.cruise", defaultValue: "\(reps) × 5 min at threshold\(pace(p, dd, p?.thresholdPacePerKm)), 90s jog. Cruise intervals."))
+                    desc: String(localized: "gf.road.cruise", defaultValue: "\(reps) × 5 min at threshold\(pace(p, dd, p?.thresholdPacePerKm)), 90s jog. Cruise intervals."),
+                    warmUpMin: 12, reps: reps, workSec: 5 * 60, recoverySec: 90, coolDownMin: 10)
             },
             QualityTemplate { _, _, down in
                 let reps = down ? 6 : 8
                 return QualitySpec(type: .intervals, intensity: .moderate,
                     focusLabel: String(localized: "interval.category.fartlek", defaultValue: "Fartlek"),
-                    desc: String(localized: "gf.road.fartlek", defaultValue: "Fartlek: warm up, then \(reps) × (1 min strong / 2 min easy), cool down. Run by feel."))
+                    desc: String(localized: "gf.road.fartlek", defaultValue: "Fartlek: warm up, then \(reps) × (1 min strong / 2 min easy), cool down. Run by feel."),
+                    warmUpMin: 12, reps: reps, workSec: 60, recoverySec: 120, coolDownMin: 10)
             },
             QualityTemplate { _, _, _ in
                 QualitySpec(type: .tempo, intensity: .moderate,
@@ -197,13 +218,15 @@ enum GeneralFitnessPlanGenerator {
             QualityTemplate { _, _, _ in
                 QualitySpec(type: .intervals, intensity: .hard,
                     focusLabel: String(localized: "interval.category.speed", defaultValue: "Speed"),
-                    desc: String(localized: "gf.road.hillStrides", defaultValue: "Easy run + 8 × 20s hill strides with full recovery. Power and economy."))
+                    desc: String(localized: "gf.road.hillStrides", defaultValue: "Easy run + 8 × 20s hill strides with full recovery. Power and economy."),
+                    warmUpMin: 20, reps: 8, workSec: 20, recoverySec: 60, coolDownMin: 5)
             },
             QualityTemplate { p, dd, down in
                 let reps = down ? 4 : 6
                 return QualitySpec(type: .intervals, intensity: .maxEffort,
                     focusLabel: String(localized: "interval.category.vo2max", defaultValue: "VO2max"),
-                    desc: String(localized: "gf.road.vo2", defaultValue: "\(reps) × 2 min hard\(pace(p, dd, p?.intervalPacePerKm)), 2 min jog. Keeps the top end sharp."))
+                    desc: String(localized: "gf.road.vo2", defaultValue: "\(reps) × 2 min hard\(pace(p, dd, p?.intervalPacePerKm)), 2 min jog. Keeps the top end sharp."),
+                    warmUpMin: 12, reps: reps, workSec: 2 * 60, recoverySec: 2 * 60, coolDownMin: 10)
             }
         ]
     }
@@ -214,13 +237,15 @@ enum GeneralFitnessPlanGenerator {
                 let reps = down ? 4 : 6
                 return QualitySpec(type: .verticalGain, intensity: .hard,
                     focusLabel: String(localized: "gf.focus.hills", defaultValue: "Hills"),
-                    desc: String(localized: "gf.trail.hillRepeats", defaultValue: "\(reps) × 2 min uphill at steady-hard effort, jog or walk down to recover."))
+                    desc: String(localized: "gf.trail.hillRepeats", defaultValue: "\(reps) × 2 min uphill at steady-hard effort, jog or walk down to recover."),
+                    warmUpMin: 12, reps: reps, workSec: 2 * 60, recoverySec: 2 * 60, coolDownMin: 10)
             },
             QualityTemplate { _, _, down in
                 let mins = down ? 15 : 22
                 return QualitySpec(type: .verticalGain, intensity: .moderate,
                     focusLabel: String(localized: "gf.focus.climbing", defaultValue: "Climbing"),
-                    desc: String(localized: "gf.trail.climb", defaultValue: "Sustained climb: \(mins) min uphill at a controlled-hard effort you could just hold a few words at."))
+                    desc: String(localized: "gf.trail.climb", defaultValue: "Sustained climb: \(mins) min uphill at a controlled-hard effort you could just hold a few words at."),
+                    warmUpMin: 12, reps: 1, workSec: mins * 60, recoverySec: 0, coolDownMin: 10)
             },
             QualityTemplate { _, _, _ in
                 QualitySpec(type: .intervals, intensity: .moderate,
@@ -230,7 +255,8 @@ enum GeneralFitnessPlanGenerator {
             QualityTemplate { _, _, _ in
                 QualitySpec(type: .intervals, intensity: .hard,
                     focusLabel: String(localized: "interval.category.speed", defaultValue: "Speed"),
-                    desc: String(localized: "gf.trail.strides", defaultValue: "Easy trail run + 6 × 20s strides on a smooth, flat section. Leg speed."))
+                    desc: String(localized: "gf.trail.strides", defaultValue: "Easy trail run + 6 × 20s strides on a smooth, flat section. Leg speed."),
+                    warmUpMin: 20, reps: 6, workSec: 20, recoverySec: 60, coolDownMin: 5)
             }
         ]
     }
@@ -260,6 +286,44 @@ enum GeneralFitnessPlanGenerator {
     }
 
     // MARK: - Helpers
+
+    /// Builds the structured warm-up → reps → cool-down workout for a quality
+    /// spec so the session shows phase cards (not just a description). Returns
+    /// nil for description-only specs (continuous runs like a progression or a
+    /// by-feel fartlek).
+    private static func qualityWorkout(for qs: QualitySpec) -> IntervalWorkout? {
+        guard qs.reps > 0, qs.workSec > 0 else { return nil }
+        let warm = String(localized: "gf.phase.warmup", defaultValue: "Easy warm-up")
+        let recover = String(localized: "gf.phase.recovery", defaultValue: "Easy recovery jog")
+        let cool = String(localized: "gf.phase.cooldown", defaultValue: "Easy cool-down")
+
+        var phases: [IntervalPhase] = []
+        if qs.warmUpMin > 0 {
+            phases.append(IntervalPhase(id: UUID(), phaseType: .warmUp,
+                trigger: .duration(seconds: Double(qs.warmUpMin * 60)),
+                targetIntensity: .easy, repeatCount: 1, notes: warm))
+        }
+        phases.append(IntervalPhase(id: UUID(), phaseType: .work,
+            trigger: .duration(seconds: Double(qs.workSec)),
+            targetIntensity: qs.intensity, repeatCount: qs.reps, notes: qs.focusLabel))
+        if qs.recoverySec > 0 {
+            phases.append(IntervalPhase(id: UUID(), phaseType: .recovery,
+                trigger: .duration(seconds: Double(qs.recoverySec)),
+                targetIntensity: .easy, repeatCount: qs.reps, notes: recover))
+        }
+        if qs.coolDownMin > 0 {
+            phases.append(IntervalPhase(id: UUID(), phaseType: .coolDown,
+                trigger: .duration(seconds: Double(qs.coolDownMin * 60)),
+                targetIntensity: .easy, repeatCount: 1, notes: cool))
+        }
+        let total = phases.reduce(0.0) { $0 + $1.totalDuration }
+        return IntervalWorkout(
+            id: UUID(), name: qs.focusLabel, descriptionText: qs.desc,
+            phases: phases, category: .roadSpecific,
+            estimatedDurationSeconds: total,
+            estimatedDistanceKm: round(total / 360 * 10) / 10,
+            isUserCreated: false)
+    }
 
     private static func session(_ type: SessionType, _ intensity: Intensity, _ duration: TimeInterval,
                                 date: Date, focus: String?, desc: String) -> TrainingSession {

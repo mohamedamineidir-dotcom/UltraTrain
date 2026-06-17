@@ -144,6 +144,9 @@ struct SessionRowView: View {
                 .foregroundStyle(session.isCompleted || session.isSkipped
                     ? Theme.Colors.secondaryLabel : Theme.Colors.label)
                 .strikethrough(session.isSkipped)
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
+                .layoutPriority(1)
 
             // RR-24: Intervals and tempo sessions carry an
             // `intervalFocus` label populated at plan generation from

@@ -473,14 +473,15 @@ final class TrainingPlanViewModel {
 
             var newPlan: TrainingPlan
             if isGeneralFitness {
-                let weeks = GeneralFitnessPlanGenerator.generate(
+                let generated = GeneralFitnessPlanGenerator.generate(
                     athlete: athlete, targetRaceId: targetRace.id
                 )
                 newPlan = TrainingPlan(
                     id: UUID(), athleteId: athlete.id, targetRaceId: targetRace.id,
-                    createdAt: .now, weeks: weeks,
+                    createdAt: .now, weeks: generated.weeks,
                     intermediateRaceIds: [], intermediateRaceSnapshots: []
                 )
+                newPlan.workouts = generated.workouts
             } else {
                 newPlan = try await planGenerator.execute(
                     athlete: athlete,

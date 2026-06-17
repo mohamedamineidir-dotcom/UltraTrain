@@ -38,25 +38,41 @@ struct GoalTrainingStepView: View {
                                 Button {
                                     viewModel.trainingFocus = focus
                                 } label: {
-                                    HStack(alignment: .top, spacing: Theme.Spacing.sm) {
-                                        Image(systemName: viewModel.trainingFocus == focus ? "largecircle.fill.circle" : "circle")
-                                            .foregroundStyle(viewModel.trainingFocus == focus ? Theme.Colors.warmCoral : Theme.Colors.tertiaryLabel)
+                                    HStack(spacing: Theme.Spacing.md) {
+                                        Image(systemName: focus.iconName)
+                                            .font(.title2)
+                                            .foregroundStyle(viewModel.trainingFocus == focus ? .white : Theme.Colors.warmCoral)
+                                            .frame(width: 36)
+
                                         VStack(alignment: .leading, spacing: 2) {
                                             Text(focus.displayName)
-                                                .font(.subheadline.weight(.semibold))
-                                                .foregroundStyle(.primary)
+                                                .font(.subheadline.bold())
                                             Text(focus.subtitle)
                                                 .font(.caption)
-                                                .foregroundStyle(Theme.Colors.secondaryLabel)
+                                                .foregroundStyle(viewModel.trainingFocus == focus ? .white.opacity(0.85) : Theme.Colors.secondaryLabel)
                                                 .multilineTextAlignment(.leading)
                                         }
-                                        Spacer(minLength: 0)
+
+                                        Spacer()
+
+                                        if viewModel.trainingFocus == focus {
+                                            Image(systemName: "checkmark.circle.fill")
+                                                .foregroundStyle(.white)
+                                        }
                                     }
-                                    .padding(.vertical, Theme.Spacing.xs)
+                                    .padding(Theme.Spacing.md)
+                                    .background(
+                                        viewModel.trainingFocus == focus
+                                            ? AnyShapeStyle(Theme.Colors.warmCoral)
+                                            : AnyShapeStyle(Theme.Colors.secondaryBackground)
+                                    )
+                                    .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
                                 }
                                 .buttonStyle(.plain)
                             }
                         }
+                        .onboardingCardStyle()
+                        .animation(.easeInOut(duration: 0.2), value: viewModel.trainingFocus)
                     }
                     // Goal type (hidden when no race)
                     if !viewModel.hasNoRace {

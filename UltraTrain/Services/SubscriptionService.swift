@@ -28,16 +28,40 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
     private(set) var currentStatus: Status = .inactive
     private var products: [Product] = []
     private var updateTask: Task<Void, Never>?
-    private let statusContinuation: AsyncStream<Status>.Continuation
-    let statusUpdates: AsyncStream<Status>
+
+    // Multicast: each caller of `statusUpdates` gets its OWN stream, and every
+    // status change is broadcast to all of them. A single shared AsyncStream
+    // SPLITS events between consumers — and both the premium gate (MainTabView)
+    // and AppRootView listen — so a purchase could reach only one, leaving
+    // premium features locked until the next event. This guarantees both see it.
+    private let continuationsLock = NSLock()
+    private var continuations: [UUID: AsyncStream<Status>.Continuation] = [:]
+
+    var statusUpdates: AsyncStream<Status> {
+        AsyncStream { continuation in
+            let id = UUID()
+            continuationsLock.lock()
+            continuations[id] = continuation
+            continuationsLock.unlock()
+            continuation.onTermination = { [weak self] _ in
+                guard let self else { return }
+                self.continuationsLock.lock()
+                self.continuations[id] = nil
+                self.continuationsLock.unlock()
+            }
+        }
+    }
+
+    private func broadcast(_ status: Status) {
+        continuationsLock.lock()
+        let conts = Array(continuations.values)
+        continuationsLock.unlock()
+        for c in conts { c.yield(status) }
+    }
 
     // MARK: - Init
 
     init() {
-        let (stream, continuation) = AsyncStream<Status>.makeStream()
-        self.statusUpdates = stream
-        self.statusContinuation = continuation
-
         // Restore cached status so the app doesn't show the paywall on relaunch
         // while StoreKit verifies in the background
         if UserDefaults.standard.bool(forKey: Self.cachedActiveKey) {
@@ -57,7 +81,7 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
                 if case .verified(let transaction) = result {
                     await transaction.finish()
                     let status = await self.refreshStatus()
-                    self.statusContinuation.yield(status)
+                    self.broadcast(status)
                 }
             }
         }
@@ -65,7 +89,10 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
 
     deinit {
         updateTask?.cancel()
-        statusContinuation.finish()
+        continuationsLock.lock()
+        continuations.values.forEach { $0.finish() }
+        continuations.removeAll()
+        continuationsLock.unlock()
     }
 
     // MARK: - Fetch Plans
@@ -168,7 +195,7 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
                 Logger.subscription.info("Built status: isActive=\(status.isActive)")
                 currentStatus = status
                 cacheStatus(status)
-                statusContinuation.yield(status)
+                broadcast(status)
                 return status
 
             case .unverified(let transaction, let error):
@@ -196,7 +223,7 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
             )
             currentStatus = debugStatus
             cacheStatus(debugStatus)
-            statusContinuation.yield(debugStatus)
+            broadcast(debugStatus)
             return debugStatus
             #else
             return currentStatus
@@ -213,7 +240,7 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
     func restorePurchases() async throws -> Status {
         try await AppStore.sync()
         let status = await refreshStatus()
-        statusContinuation.yield(status)
+        broadcast(status)
         return status
     }
 

@@ -37,6 +37,16 @@ enum TrainingFocus: String, CaseIterable, Codable, Sendable {
         }
     }
 
+    /// SF Symbol for the onboarding option card.
+    var iconName: String {
+        switch self {
+        case .buildBase:       "lungs.fill"
+        case .maintainFitness: "gauge.with.dots.needle.50percent"
+        case .keepSpeedSharp:  "bolt.fill"
+        case .generalHealth:   "heart.fill"
+        }
+    }
+
     /// Quality (hard) sessions per week before the experience/frequency cap.
     var baseQualityCount: Int {
         switch self {

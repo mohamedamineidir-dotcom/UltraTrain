@@ -12282,6 +12282,24 @@
         }
       }
     },
+    "gf.phase.warmup" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Easy warm-up" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Échauffement facile" } }
+      }
+    },
+    "gf.phase.recovery" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Easy recovery jog" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Footing de récupération facile" } }
+      }
+    },
+    "gf.phase.cooldown" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Easy cool-down" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Retour au calme facile" } }
+      }
+    },
     "gf.focus.climbing" : {
       "localizations" : {
         "en" : {
