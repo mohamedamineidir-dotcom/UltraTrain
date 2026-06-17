@@ -134,6 +134,13 @@ extension AppRootView {
                         healthKitImportService: healthKitImportService,
                         initialFirstName: pendingFirstName,
                         onComplete: {
+                            // Present the initial offer in the SAME state change
+                            // that reveals the main app, so the paywall covers
+                            // from the first frame instead of the app flashing
+                            // for an instant before the cover animates in.
+                            if !hasSeenInitialPaywallOffer {
+                                showInitialOffer = true
+                            }
                             hasCompletedOnboarding = true
                             hasActiveSubscription = false
                         }
