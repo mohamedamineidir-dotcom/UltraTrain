@@ -67,7 +67,6 @@ struct PaywallView: View {
                         // page — one layer, no pinned bar, no separate colour.
                         PaywallCTASection(viewModel: viewModel)
                     }
-                    .padding(.top, Theme.Spacing.sm)
                     .padding(.bottom, Theme.Spacing.lg)
                 }
             }
