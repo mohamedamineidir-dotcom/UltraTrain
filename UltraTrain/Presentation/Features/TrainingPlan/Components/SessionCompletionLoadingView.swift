@@ -11,9 +11,21 @@ struct SessionCompletionLoadingView: View {
     @State private var finished = false
 
     private let steps: [(icon: String, title: String, subtitle: String)] = [
-        ("checkmark.circle", "Saving your session", "Recording stats & performance data"),
-        ("chart.line.uptrend.xyaxis", "Updating training load", "Recalculating fitness & fatigue"),
-        ("calendar.badge.checkmark", "Adjusting your plan", "Optimizing upcoming sessions")
+        (
+            "checkmark.circle",
+            String(localized: "scl.step1.title", defaultValue: "Saving your session"),
+            String(localized: "scl.step1.subtitle", defaultValue: "Recording stats & performance data")
+        ),
+        (
+            "chart.line.uptrend.xyaxis",
+            String(localized: "scl.step2.title", defaultValue: "Updating training load"),
+            String(localized: "scl.step2.subtitle", defaultValue: "Recalculating fitness & fatigue")
+        ),
+        (
+            "calendar.badge.checkmark",
+            String(localized: "scl.step3.title", defaultValue: "Adjusting your plan"),
+            String(localized: "scl.step3.subtitle", defaultValue: "Optimizing upcoming sessions")
+        )
     ]
 
     private let stepDuration: TimeInterval = 1.4

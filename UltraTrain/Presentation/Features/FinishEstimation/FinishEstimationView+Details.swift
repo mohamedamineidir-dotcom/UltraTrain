@@ -128,9 +128,13 @@ extension FinishEstimationView {
     }
 
     func confidenceLabel(_ percent: Double) -> String {
-        if percent >= 70 { return "Strong prediction, good training data available" }
-        if percent >= 50 { return "Moderate prediction, more training data would improve accuracy" }
-        return "Low confidence, keep training to improve prediction accuracy"
+        if percent >= 70 {
+            return String(localized: "fe.confidence.strong", defaultValue: "Strong prediction, good training data available")
+        }
+        if percent >= 50 {
+            return String(localized: "fe.confidence.moderate", defaultValue: "Moderate prediction, more training data would improve accuracy")
+        }
+        return String(localized: "fe.confidence.low", defaultValue: "Low confidence, keep training to improve prediction accuracy")
     }
 
     // MARK: - Data Source Badge

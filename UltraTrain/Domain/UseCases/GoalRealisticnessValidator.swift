@@ -23,7 +23,13 @@ enum GoalRealisticnessValidator {
             let levelName = experienceLevel.rawValue
             return GoalValidation(
                 isRealistic: false,
-                warningMessage: "A top \(targetRanking) finish on a \(category.displayName) race is extremely ambitious for a \(levelName) runner. Top finishes require years of competitive ultra experience."
+                warningMessage: String(
+                    format: String(
+                        localized: "goal.warning.rankingAmbitious",
+                        defaultValue: "A top %d finish on a %@ race is extremely ambitious for a %@ runner. Top finishes require years of competitive ultra experience."
+                    ),
+                    targetRanking, category.displayName, levelName
+                )
             )
         }
         return GoalValidation(isRealistic: true, warningMessage: nil)
@@ -55,16 +61,26 @@ enum GoalRealisticnessValidator {
         if targetPace < thresholds.elite {
             return GoalValidation(
                 isRealistic: false,
-                warningMessage: "This pace would place you among the top professional athletes in the world. Consider a more realistic target time."
+                warningMessage: String(
+                    localized: "goal.warning.elitePace",
+                    defaultValue: "This pace would place you among the top professional athletes in the world. Consider a more realistic target time."
+                )
             )
         }
 
         if let above = levelAbove, targetPace < threshold(for: above, thresholds: thresholds) {
             let hours = Int(targetTimeSeconds) / 3600
             let mins = (Int(targetTimeSeconds) % 3600) / 60
+            let timeString = "\(hours)h\(String(format: "%02d", mins))"
             return GoalValidation(
                 isRealistic: false,
-                warningMessage: "A \(hours)h\(String(format: "%02d", mins)) finish requires a pace typically achieved by \(above.rawValue) or better runners. Consider adjusting your target."
+                warningMessage: String(
+                    format: String(
+                        localized: "goal.warning.paceAboveLevel",
+                        defaultValue: "A %@ finish requires a pace typically achieved by %@ or better runners. Consider adjusting your target."
+                    ),
+                    timeString, above.rawValue
+                )
             )
         }
 
@@ -97,7 +113,10 @@ enum GoalRealisticnessValidator {
         if targetPaceMinPerKm < roadThresholds.elite {
             return GoalValidation(
                 isRealistic: false,
-                warningMessage: "This pace is at the world-class professional level. Consider a more realistic target time."
+                warningMessage: String(
+                    localized: "goal.warning.roadElitePace",
+                    defaultValue: "This pace is at the world-class professional level. Consider a more realistic target time."
+                )
             )
         }
 
@@ -105,9 +124,16 @@ enum GoalRealisticnessValidator {
         if let above = levelAbove, targetPaceMinPerKm < roadThreshold(for: above, thresholds: roadThresholds) {
             let hours = Int(targetTimeSeconds) / 3600
             let mins = (Int(targetTimeSeconds) % 3600) / 60
+            let timeString = "\(hours)h\(String(format: "%02d", mins))"
             return GoalValidation(
                 isRealistic: false,
-                warningMessage: "A \(hours)h\(String(format: "%02d", mins)) finish is typically achieved by \(above.rawValue) or better runners. It's ambitious but possible with the right training."
+                warningMessage: String(
+                    format: String(
+                        localized: "goal.warning.roadPaceAboveLevel",
+                        defaultValue: "A %@ finish is typically achieved by %@ or better runners. It's ambitious but possible with the right training."
+                    ),
+                    timeString, above.rawValue
+                )
             )
         }
 
