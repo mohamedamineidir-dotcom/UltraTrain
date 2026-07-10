@@ -329,6 +329,10 @@ struct SessionValidationView: View {
                     .font(.caption)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
             }
+            // Reserves room for a 2-line title regardless of locale, so
+            // the two option cards match heights even when one title
+            // wraps and the other doesn't (e.g. French vs. English).
+            .frame(minHeight: 44, alignment: .leading)
 
             Spacer()
 
@@ -1405,8 +1409,8 @@ private struct SyncAppPickerPage: View {
 
                 // In-App runs
                 syncAppButton(
-                    title: "In-App Runs",
-                    subtitle: "Runs recorded in UltraTrain",
+                    title: String(localized: "sv.sync.inApp.title", defaultValue: "In-App Runs"),
+                    subtitle: String(localized: "sv.sync.inApp.subtitle", defaultValue: "Runs recorded in UltraTrain"),
                     icon: "figure.run",
                     iconColor: Theme.Colors.primary,
                     isAvailable: true,
@@ -1415,8 +1419,10 @@ private struct SyncAppPickerPage: View {
 
                 // Strava
                 syncAppButton(
-                    title: "Strava",
-                    subtitle: stravaActivitiesProvider != nil ? "Connected" : "Connect to import activities",
+                    title: String(localized: "sv.sync.strava.title", defaultValue: "Strava"),
+                    subtitle: stravaActivitiesProvider != nil
+                        ? String(localized: "sv.sync.connected", defaultValue: "Connected")
+                        : String(localized: "sv.sync.connectToImport", defaultValue: "Connect to import activities"),
                     icon: "figure.run",
                     iconColor: .orange,
                     isAvailable: stravaActivitiesProvider != nil,
@@ -1430,7 +1436,7 @@ private struct SyncAppPickerPage: View {
                 #if DEBUG
                 syncAppButton(
                     title: "Garmin Connect",
-                    subtitle: "Coming soon",
+                    subtitle: String(localized: "sv.sync.comingSoon", defaultValue: "Coming soon"),
                     icon: "applewatch",
                     iconColor: .blue,
                     isAvailable: false,
@@ -1439,7 +1445,7 @@ private struct SyncAppPickerPage: View {
 
                 syncAppButton(
                     title: "COROS",
-                    subtitle: "Coming soon",
+                    subtitle: String(localized: "sv.sync.comingSoon", defaultValue: "Coming soon"),
                     icon: "applewatch",
                     iconColor: .teal,
                     isAvailable: false,
@@ -1448,7 +1454,7 @@ private struct SyncAppPickerPage: View {
 
                 syncAppButton(
                     title: "Suunto",
-                    subtitle: "Coming soon",
+                    subtitle: String(localized: "sv.sync.comingSoon", defaultValue: "Coming soon"),
                     icon: "applewatch",
                     iconColor: .red,
                     isAvailable: false,
@@ -1458,13 +1464,13 @@ private struct SyncAppPickerPage: View {
             }
             .padding()
         }
-        .navigationTitle("Sync from App")
+        .navigationTitle(String(localized: "sv.sync.navTitle", defaultValue: "Sync from App"))
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(item: $selectedApp) { app in
             switch app {
             case .strava:
                 SyncActivityListPage(
-                    title: "Strava Activities",
+                    title: String(localized: "sv.sync.stravaActivities", defaultValue: "Strava Activities"),
                     session: session,
                     stravaProvider: stravaActivitiesProvider,
                     onLinkStrava: onLinkStravaActivity

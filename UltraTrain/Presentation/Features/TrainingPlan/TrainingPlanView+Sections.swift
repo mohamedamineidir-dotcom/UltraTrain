@@ -457,9 +457,9 @@ extension TrainingPlanView {
             recentRunsProvider: { date in
                 await viewModel.recentUnlinkedRuns(near: date)
             },
-            stravaActivitiesProvider: { date in
+            stravaActivitiesProvider: viewModel.stravaAuthService?.isConnected() == true ? { date in
                 await viewModel.recentStravaActivities(near: date)
-            },
+            } : nil,
             onLinkStravaActivity: { sessionIndex, activity in
                 Task {
                     await viewModel.importAndLinkStravaActivity(
