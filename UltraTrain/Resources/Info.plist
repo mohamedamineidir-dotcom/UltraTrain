@@ -74,9 +74,7 @@
     <string>UltraTrain uses motion data to detect your cadence and running dynamics during tracked runs.</string>
     <key>NSFaceIDUsageDescription</key>
     <string>UltraTrain uses Face ID to protect your training and health data.</string>
-    <key>NSUserTrackingUsageDescription</key>
-    <string>UltraTrain uses this permission to measure app performance and improve your training experience. No personal data is shared with third parties.</string>
-    <key>NSSupportsLiveActivities</key>
+<key>NSSupportsLiveActivities</key>
     <true/>
     <key>API_BASE_URL</key>
     <string>$(API_BASE_URL)</string>

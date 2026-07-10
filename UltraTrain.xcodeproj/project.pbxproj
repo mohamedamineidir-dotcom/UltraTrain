@@ -245,6 +245,7 @@
 		2155332377B71ACE1DD31A23 /* SocialProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E4B274FDA10A3ADB47CC6B /* SocialProfile.swift */; };
 		2195D628BE0E044DDDB73B23 /* SessionTemplateGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3091E87D3A6F8FAD34668802 /* SessionTemplateGeneratorTests.swift */; };
 		2195E10927C28395CEAEAC55 /* ShareRunSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F851B9D3EA2F76205F35A1E3 /* ShareRunSheet.swift */; };
+		2223E3A062C9A4291407C74A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9F82434604146BF870C4CCA5 /* Assets.xcassets */; };
 		222C92880093D8FF2360DF9E /* SuuntoAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7026D9D82D95C89BDD416486 /* SuuntoAuthService.swift */; };
 		2233D146F1503F146B15B308 /* ZoneDriftAlertBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E879B38CE27062F469110A /* ZoneDriftAlertBanner.swift */; };
 		224315A651149B7C8B44BC6C /* GearListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28967746EDF2C4D6D4A70626 /* GearListViewModelTests.swift */; };
@@ -3049,6 +3050,7 @@
 		9F3065AAA180FE8A489945BD /* GPXExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPXExporter.swift; sourceTree = "<group>"; };
 		9F556CEA3A5AF5880F047A02 /* RaceRecoveryTemplatesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceRecoveryTemplatesTests.swift; sourceTree = "<group>"; };
 		9F73B63EDA878B65FFE24C40 /* NutritionSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionSyncService.swift; sourceTree = "<group>"; };
+		9F82434604146BF870C4CCA5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9FAC1AC5FE876B18075D7582 /* UltraAidStationCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UltraAidStationCard.swift; sourceTree = "<group>"; };
 		9FE3097D79EE1ECCF5BBF8F0 /* ChallengeProgressRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeProgressRow.swift; sourceTree = "<group>"; };
 		A044DC9D2C0F0DA18E5D2B33 /* AnalyticsEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsEndpoints.swift; sourceTree = "<group>"; };
@@ -4808,6 +4810,15 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		60CDFBCB6755B5F00E9AB281 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				9F82434604146BF870C4CCA5 /* Assets.xcassets */,
+			);
+			name = Resources;
+			path = UltraTrainClip/Resources;
+			sourceTree = "<group>";
+		};
 		60F162E99E1E7C92CDEEF384 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -4890,6 +4901,7 @@
 			isa = PBXGroup;
 			children = (
 				1AC720AA69A290A3A985BF5D /* Configuration */,
+				60CDFBCB6755B5F00E9AB281 /* Resources */,
 				4D7718F9F73027927CFC3399 /* UITests */,
 				50A0218E70FDB129CA7BBEE0 /* UltraTrain */,
 				04611C52F79070D881DB4A9B /* UltraTrainClip */,
@@ -6360,6 +6372,7 @@
 			buildConfigurationList = DB6D7C50BCF232CE8FE60EF7 /* Build configuration list for PBXNativeTarget "UltraTrainClip" */;
 			buildPhases = (
 				8EBD6A708BF5621AC17DB613 /* Sources */,
+				0901FD33764CCEF02264282F /* Resources */,
 			);
 			buildRules = (
 			);
@@ -6523,6 +6536,14 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		0901FD33764CCEF02264282F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2223E3A062C9A4291407C74A /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		35199EE95CBD161FBABC7222 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -8469,12 +8490,16 @@
 		22AF9D5DAA69841316C251FA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = UltraTrainClip/Resources/UltraTrainClip.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "UltraTrain Clip";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -8493,7 +8518,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = UltraTrainWatchWidgets/Resources/UltraTrainWatchWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = UltraTrainWatchWidgets/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
@@ -8512,7 +8537,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = UltraTrainWidgets/Resources/UltraTrainWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = UltraTrainWidgets/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
@@ -8532,7 +8557,7 @@
 				CODE_SIGN_ENTITLEMENTS = UltraTrain/Resources/UltraTrain.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = UltraTrain/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -8571,7 +8596,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = UltraTrainWidgets/Resources/UltraTrainWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = UltraTrainWidgets/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
@@ -8591,7 +8616,7 @@
 				CODE_SIGN_ENTITLEMENTS = UltraTrain/Resources/UltraTrain.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = UltraTrain/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -8681,8 +8706,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = UltraTrainWatch/Resources/UltraTrainWatch.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "UltraTrain reads your heart rate, workout, and activity data to track your training progress and fitness.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "UltraTrain saves your completed runs as workouts in Apple Health.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "UltraTrain uses motion data to detect your cadence and running dynamics during tracked runs.";
+				INFOPLIST_KEY_WKBackgroundModes = "workout-processing";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.ultratrain.app;
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ultratrain.app.watchkitapp;
@@ -8696,12 +8725,16 @@
 		7B4F13243AEDFB4C5FE883ED /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = UltraTrainClip/Resources/UltraTrainClip.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "UltraTrain Clip";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -8815,8 +8848,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = UltraTrainWatch/Resources/UltraTrainWatch.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "UltraTrain reads your heart rate, workout, and activity data to track your training progress and fitness.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "UltraTrain saves your completed runs as workouts in Apple Health.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "UltraTrain uses motion data to detect your cadence and running dynamics during tracked runs.";
+				INFOPLIST_KEY_WKBackgroundModes = "workout-processing";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.ultratrain.app;
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ultratrain.app.watchkitapp;
@@ -8833,7 +8870,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = UltraTrainWatchWidgets/Resources/UltraTrainWatchWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = UltraTrainWatchWidgets/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";

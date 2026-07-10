@@ -6,4 +6,3 @@
 "NSFaceIDUsageDescription" = "UltraTrain uses Face ID to protect your training and health data.";
 "NSCameraUsageDescription" = "UltraTrain uses the camera to scan food product barcodes for quick nutrition entry.";
 "NSMotionUsageDescription" = "UltraTrain uses motion data to detect your cadence and running dynamics during tracked runs.";
-"NSUserTrackingUsageDescription" = "UltraTrain uses this permission to measure app performance and improve your training experience. No personal data is shared with third parties.";
