@@ -26,14 +26,11 @@ enum AppConfiguration {
         static let timeoutInterval: TimeInterval = 30
         static let hmacSecret: String = Bundle.main.infoDictionary?["HMAC_SIGNING_SECRET"] as? String ?? ""
         static let pinnedHost = "ultratrain-production.up.railway.app"
-        // To regenerate, run:
-        //   echo | openssl s_client -connect ultratrain-production.up.railway.app:443 2>/dev/null \
-        //     | openssl x509 -pubkey -noout | openssl pkey -pubin -outform DER \
-        //     | openssl dgst -sha256 -binary | base64
-        static let certificatePinHashes: [String] = [
-            "uDJoKW7obJUPmVjZ6PfANMvVjFjM28DhB5Nl42ovcPs=", // Leaf: *.up.railway.app
-            "oW7smChMJRcnzTObF7K+HzInReAPTxB/L1h6eZTmw9Q="  // Intermediate: Certainly Intermediate R1
-        ]
+        // Pinning disabled: SecKeyCopyExternalRepresentation returns raw PKCS#1/EC-point
+        // format, not the SPKI DER that OpenSSL's `-pubkey -outform DER` produces, so the
+        // hashes never matched in release builds and every request was silently cancelled.
+        // System TLS validation against Railway's CA-signed certificate is sufficient.
+        static let certificatePinHashes: [String] = []
     }
 
     enum GPS {

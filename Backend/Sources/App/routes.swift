@@ -4,9 +4,12 @@ func routes(_ app: Application) throws {
     let rateLimited = app.grouped("v1")
         .grouped(RateLimitMiddleware(maxRequests: 60, windowSeconds: 60))
 
-    // Health check outside HMAC — Railway uses this for health probes
-    rateLimited.get("health") { _ in
-        ["status": "ok"]
+    // Pure liveness probe — no DB query. A hanging or slow Postgres connection
+    // must never block this endpoint; if it did, Railway's ongoing health checks
+    // would time out, mark the service unhealthy, and send crash emails even
+    // though the process is perfectly fine.
+    app.grouped("v1").get("health") { _ async -> [String: String] in
+        return ["status": "ok"]
     }
 
     let api: RoutesBuilder

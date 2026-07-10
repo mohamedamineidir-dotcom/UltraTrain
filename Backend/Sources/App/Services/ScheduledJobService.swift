@@ -1,12 +1,21 @@
 import Vapor
 
-struct ScheduledJobService: LifecycleHandler {
+final class ScheduledJobService: LifecycleHandler {
+    // didBoot and shutdown are called sequentially by Vapor's lifecycle —
+    // never concurrently — so nonisolated(unsafe) is safe here.
+    nonisolated(unsafe) private var loopTask: Task<Void, Never>?
+
     func didBoot(_ application: Application) throws {
         application.logger.notice("ScheduledJobService started")
         let app = application
-        Task {
-            await runLoop(app: app)
+        loopTask = Task { [weak self] in
+            await self?.runLoop(app: app)
         }
+    }
+
+    func shutdown(_ application: Application) {
+        loopTask?.cancel()
+        application.logger.notice("ScheduledJobService: loop cancelled for shutdown")
     }
 
     private func runLoop(app: Application) async {
@@ -17,12 +26,16 @@ struct ScheduledJobService: LifecycleHandler {
         let raceCountdownJob = RaceCountdownJob()
 
         while !Task.isCancelled {
-            try? await Task.sleep(for: .seconds(60))
+            do {
+                try await Task.sleep(for: .seconds(60))
+            } catch {
+                break  // Task cancelled — exit cleanly
+            }
+
             let now = Date()
             let calendar = Calendar(identifier: .gregorian)
             let hour = calendar.component(.hour, from: now)
 
-            // Weekly summary: Sunday between 18:00-19:00 UTC
             if calendar.component(.weekday, from: now) == 1,
                hour == 18,
                !calendar.isDate(lastWeeklySummary, inSameDayAs: now) {
@@ -30,19 +43,19 @@ struct ScheduledJobService: LifecycleHandler {
                 lastWeeklySummary = now
             }
 
-            // Inactivity check: daily at 10:00 UTC
             if hour == 10,
                !calendar.isDate(lastInactivityCheck, inSameDayAs: now) {
                 await inactivityJob.run(app: app)
                 lastInactivityCheck = now
             }
 
-            // Race countdown: daily at 9:00 UTC
             if hour == 9,
                !calendar.isDate(lastRaceCountdown, inSameDayAs: now) {
                 await raceCountdownJob.run(app: app)
                 lastRaceCountdown = now
             }
         }
+
+        app.logger.notice("ScheduledJobService loop exited")
     }
 }

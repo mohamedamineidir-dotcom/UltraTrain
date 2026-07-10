@@ -1,5 +1,5 @@
 # Build stage
-FROM swift:5.9-jammy AS build
+FROM swift:6.1-jammy AS build
 WORKDIR /build
 COPY Package.swift Package.resolved* ./
 RUN swift package resolve

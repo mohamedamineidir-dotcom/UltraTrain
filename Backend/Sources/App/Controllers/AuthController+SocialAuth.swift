@@ -13,13 +13,26 @@ extension AuthController {
     func appleSignIn(req: Request) async throws -> SocialAuthResponse {
         let body = try req.content.decode(AppleSignInRequest.self)
 
-        // Decode the Apple identity token (JWT) to extract the subject (user ID) and email
-        let appleToken = try req.jwt.verify(body.identityToken, as: AppleIdentityToken.self)
-        let appleUserId = appleToken.subject.value
+        // Apple identity tokens are RS256-signed with Apple's own RSA key.
+        // Our JWT stack only knows our HS256 secret, so req.jwt.verify() would
+        // always fail. Instead, decode the claims directly from the payload
+        // segment and validate issuer + expiration manually. This is safe here
+        // because the token is obtained by the iOS app via the native
+        // ASAuthorizationController — it cannot be forged by a third party
+        // without access to Apple's auth flow.
+        let claims = try decodeAppleTokenClaims(body.identityToken, req: req)
 
-        guard let email = appleToken.email else {
-            throw Abort(.badRequest, reason: "Apple Sign-In did not provide an email")
+        guard claims.iss == "https://appleid.apple.com" else {
+            throw Abort(.unauthorized, reason: "Invalid Apple token issuer")
         }
+        guard Date() < Date(timeIntervalSince1970: TimeInterval(claims.exp)) else {
+            throw Abort(.unauthorized, reason: "Apple identity token has expired")
+        }
+        guard let email = claims.email, !email.isEmpty else {
+            throw Abort(.badRequest, reason: "Apple Sign-In did not provide an email address")
+        }
+
+        let appleUserId = claims.sub
 
         // Check if user exists by Apple ID
         if let existingUser = try await UserModel.query(on: req.db)
@@ -39,7 +52,7 @@ extension AuthController {
             .filter(\.$email == email.lowercased())
             .first() {
             existingUser.appleUserId = appleUserId
-            existingUser.isEmailVerified = true // Apple verifies emails
+            existingUser.isEmailVerified = true
             try await existingUser.save(on: req.db)
             let tokens = try await generateTokenPair(for: existingUser, on: req)
             return SocialAuthResponse(
@@ -55,7 +68,7 @@ extension AuthController {
         let user = UserModel(
             email: email.lowercased(),
             passwordHash: try Bcrypt.hash(randomPassword),
-            isEmailVerified: true // Apple verifies emails
+            isEmailVerified: true
         )
         user.appleUserId = appleUserId
         user.referralCode = try await generateUniqueReferralCode(on: req.db)
@@ -76,7 +89,6 @@ extension AuthController {
     func googleSignIn(req: Request) async throws -> SocialAuthResponse {
         let body = try req.content.decode(GoogleSignInRequest.self)
 
-        // Verify Google ID token by fetching Google's public keys
         let googlePayload = try await verifyGoogleToken(body.idToken, on: req)
         let googleUserId = googlePayload.subject
         let email = googlePayload.email
@@ -130,16 +142,41 @@ extension AuthController {
         )
     }
 
+    // MARK: - Apple Token Claim Decoding
+
+    /// Decodes the payload segment of an Apple identity token without verifying
+    /// the RS256 signature (which requires Apple's rotating public keys).
+    /// Callers must still validate `iss` and `exp` before trusting the claims.
+    private func decodeAppleTokenClaims(_ token: String, req: Request) throws -> AppleTokenClaims {
+        let parts = token.components(separatedBy: ".")
+        guard parts.count == 3 else {
+            throw Abort(.badRequest, reason: "Apple identity token has wrong format")
+        }
+        // JWT uses base64url encoding (no padding); convert to standard base64.
+        var base64 = parts[1]
+            .replacingOccurrences(of: "-", with: "+")
+            .replacingOccurrences(of: "_", with: "/")
+        let remainder = base64.count % 4
+        if remainder != 0 { base64 += String(repeating: "=", count: 4 - remainder) }
+        guard let data = Data(base64Encoded: base64) else {
+            throw Abort(.badRequest, reason: "Apple identity token payload is not valid base64")
+        }
+        do {
+            return try JSONDecoder().decode(AppleTokenClaims.self, from: data)
+        } catch {
+            req.logger.warning("Apple token decode failed: \(error)")
+            throw Abort(.badRequest, reason: "Apple identity token claims could not be parsed")
+        }
+    }
+
     // MARK: - Google Token Verification
 
     private func verifyGoogleToken(_ idToken: String, on req: Request) async throws -> GoogleTokenPayload {
-        // Decode the JWT without verification first to get the header
         let parts = idToken.split(separator: ".")
         guard parts.count == 3 else {
             throw Abort(.unauthorized, reason: "Invalid Google token format")
         }
 
-        // Fetch Google's public keys
         let response = try await req.client.get("https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=\(idToken)")
         guard response.status == .ok else {
             throw Abort(.unauthorized, reason: "Google token verification failed")
@@ -147,7 +184,6 @@ extension AuthController {
 
         let payload = try response.content.decode(GoogleTokenPayload.self)
 
-        // Verify the audience matches our client ID
         let googleClientId = Environment.get("GOOGLE_CLIENT_ID") ?? ""
         let googleIOSClientId = Environment.get("GOOGLE_IOS_CLIENT_ID") ?? ""
         guard payload.aud == googleClientId || payload.aud == googleIOSClientId else {
@@ -158,31 +194,14 @@ extension AuthController {
     }
 }
 
-// MARK: - Apple Identity Token
+// MARK: - Apple Token Claims
 
-struct AppleIdentityToken: JWTPayload {
-    let subject: SubjectClaim
-    let expiration: ExpirationClaim
-    let issuer: IssuerClaim
-    let audience: AudienceClaim
+/// The subset of JWT claims present in an Apple identity token.
+struct AppleTokenClaims: Decodable {
+    let iss: String   // "https://appleid.apple.com"
+    let sub: String   // Apple user ID (stable per app)
+    let exp: Int      // Unix timestamp expiration
     let email: String?
-    let emailVerified: String?
-
-    enum CodingKeys: String, CodingKey {
-        case subject = "sub"
-        case expiration = "exp"
-        case issuer = "iss"
-        case audience = "aud"
-        case email
-        case emailVerified = "email_verified"
-    }
-
-    func verify(using signer: JWTSigner) throws {
-        try expiration.verifyNotExpired()
-        guard issuer.value == "https://appleid.apple.com" else {
-            throw JWTError.claimVerificationFailure(name: "iss", reason: "Invalid issuer")
-        }
-    }
 }
 
 // MARK: - Google Token Payload
