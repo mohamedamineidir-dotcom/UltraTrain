@@ -141,13 +141,13 @@ final class FoodPhotoCameraViewController: UIViewController, AVCapturePhotoCaptu
         ])
 
         button.addTarget(self, action: #selector(capturePhoto), for: .touchUpInside)
-        button.accessibilityLabel = "Take photo"
+        button.accessibilityLabel = String(localized: "fpc.takePhoto", defaultValue: "Take photo")
         button.accessibilityIdentifier = "foodPhoto.captureButton"
     }
 
     private func setupInstructionLabel() {
         let label = UILabel()
-        label.text = "Take a photo of your food"
+        label.text = String(localized: "fpc.instruction", defaultValue: "Take a photo of your food")
         label.textColor = .white
         label.font = .preferredFont(forTextStyle: .headline)
         label.textAlignment = .center
@@ -197,7 +197,7 @@ final class FoodPhotoCameraViewController: UIViewController, AVCapturePhotoCaptu
 
     private func showUnavailableLabel() {
         let label = UILabel()
-        label.text = "Camera unavailable.\nTry on a real device."
+        label.text = String(localized: "fpc.unavailable", defaultValue: "Camera unavailable.\nTry on a real device.")
         label.textColor = .white
         label.numberOfLines = 0
         label.textAlignment = .center
@@ -211,7 +211,7 @@ final class FoodPhotoCameraViewController: UIViewController, AVCapturePhotoCaptu
 
     private func showPermissionDeniedLabel() {
         let label = UILabel()
-        label.text = "Camera access denied.\nEnable in Settings > Privacy."
+        label.text = String(localized: "fpc.permissionDenied", defaultValue: "Camera access denied.\nEnable in Settings > Privacy.")
         label.textColor = .white
         label.numberOfLines = 0
         label.textAlignment = .center

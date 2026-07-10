@@ -8,6 +8,7 @@ struct FoodPhotoResultsView: View {
     let onAddItem: (AnalyzedFoodItem) -> Void
     let onAddAll: () -> Void
 
+    @State private var showEditDetails = false
     @State private var expandedItemId: UUID?
 
     var body: some View {
@@ -18,14 +19,14 @@ struct FoodPhotoResultsView: View {
                 } else if items.isEmpty {
                     emptyStateView
                 } else {
-                    resultsList
+                    summaryView
                 }
             }
-            .navigationTitle("Food Analysis")
+            .navigationTitle(String(localized: "Food Analysis"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(String(localized: "Cancel")) { dismiss() }
                 }
             }
         }
@@ -35,25 +36,36 @@ struct FoodPhotoResultsView: View {
 
     private var analyzingView: some View {
         VStack(spacing: Theme.Spacing.lg) {
+            Spacer()
+
             if let photoData, let uiImage = UIImage(data: photoData) {
                 Image(uiImage: uiImage)
                     .resizable()
-                    .scaledToFit()
-                    .frame(maxHeight: 200)
-                    .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
-                    .padding(.horizontal, Theme.Spacing.lg)
+                    .scaledToFill()
+                    .frame(width: 220, height: 220)
+                    .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.lg))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                            .stroke(Theme.Colors.warmCoral.opacity(0.4), lineWidth: 2)
+                    )
+                    .shadow(color: Theme.Colors.warmCoral.opacity(0.25), radius: 16, y: 6)
             }
 
-            ProgressView()
-                .controlSize(.large)
+            VStack(spacing: Theme.Spacing.sm) {
+                ProgressView()
+                    .controlSize(.large)
+                    .tint(Theme.Colors.warmCoral)
 
-            Text("Analyzing your food...")
-                .font(.headline)
-                .foregroundStyle(.secondary)
+                Text(String(localized: "Analyzing your food..."))
+                    .font(.headline)
+                    .foregroundStyle(.secondary)
 
-            Text("AI is identifying items and estimating nutrition")
-                .font(.caption)
-                .foregroundStyle(.tertiary)
+                Text(String(localized: "AI is identifying items and estimating nutrition"))
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
+            }
+
+            Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -62,98 +74,163 @@ struct FoodPhotoResultsView: View {
 
     private var emptyStateView: some View {
         ContentUnavailableView(
-            "No Food Detected",
+            String(localized: "No Food Detected"),
             systemImage: "fork.knife.circle",
-            description: Text("Try taking a clearer photo with better lighting.")
+            description: Text(String(localized: "Try taking a clearer photo with better lighting."))
         )
     }
 
-    // MARK: - Results List
+    // MARK: - Summary (photo → description → macros → confirm)
 
-    private var resultsList: some View {
-        List {
-            photoSection
-            itemsSection
-            totalSection
-            addAllSection
-        }
-    }
+    private var summaryView: some View {
+        ScrollView {
+            VStack(spacing: Theme.Spacing.lg) {
+                photoPreview
 
-    // MARK: - Photo Preview
+                VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+                    Text(mealDescription)
+                        .font(.title3.bold())
+                        .fixedSize(horizontal: false, vertical: true)
 
-    private var photoSection: some View {
-        Section {
-            if let photoData, let uiImage = UIImage(data: photoData) {
-                HStack {
-                    Spacer()
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxHeight: 150)
-                        .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
-                    Spacer()
+                    macroGrid
                 }
-                .listRowBackground(Color.clear)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(Theme.Spacing.md)
+                .appCardStyle()
+
+                editDetailsSection
             }
+            .padding(.horizontal, Theme.Spacing.md)
+            .padding(.top, Theme.Spacing.sm)
+            .padding(.bottom, 110) // room for the floating CTA below
         }
+        .safeAreaInset(edge: .bottom) { confirmButton }
     }
 
-    // MARK: - Food Items
-
-    private var itemsSection: some View {
-        Section("Detected Items (\(items.count))") {
-            ForEach($items) { $item in
-                FoodItemRow(
-                    item: $item,
-                    isExpanded: expandedItemId == item.id,
-                    onToggle: {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            expandedItemId = expandedItemId == item.id ? nil : item.id
-                        }
-                    },
-                    onAdd: {
-                        onAddItem(item)
-                        withAnimation {
-                            items.removeAll { $0.id == item.id }
-                        }
-                    }
-                )
-            }
-        }
-    }
-
-    // MARK: - Totals
-
-    private var totalSection: some View {
-        Section("Total") {
-            HStack {
-                Label("\(totalCalories) kcal", systemImage: "flame.fill")
-                    .foregroundStyle(Theme.Colors.warmCoral)
-                Spacer()
-                Text("C: \(Int(totalCarbs))g")
-                    .foregroundStyle(.secondary)
-                Text("P: \(Int(totalProtein))g")
-                    .foregroundStyle(.secondary)
-                Text("F: \(Int(totalFat))g")
-                    .foregroundStyle(.secondary)
-            }
-            .font(.subheadline.bold())
-        }
-    }
-
-    // MARK: - Add All
-
-    private var addAllSection: some View {
-        Section {
-            Button {
-                onAddAll()
-            } label: {
-                Label("Add All Items", systemImage: "plus.circle.fill")
-                    .font(.headline)
+    private var photoPreview: some View {
+        Group {
+            if let photoData, let uiImage = UIImage(data: photoData) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(height: 220)
                     .frame(maxWidth: .infinity)
+                    .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.lg))
             }
-            .accessibilityIdentifier("foodPhoto.addAllButton")
         }
+    }
+
+    private var mealDescription: String {
+        items.map { $0.name }.joined(separator: ", ")
+    }
+
+    private var macroGrid: some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            macroTile(
+                value: "\(totalCalories)",
+                label: String(localized: "Calories"),
+                color: Theme.Colors.warmCoral
+            )
+            macroTile(
+                value: "\(Int(totalCarbs))g",
+                label: String(localized: "Carbs"),
+                color: .blue
+            )
+            macroTile(
+                value: "\(Int(totalProtein))g",
+                label: String(localized: "Protein"),
+                color: .green
+            )
+            macroTile(
+                value: "\(Int(totalFat))g",
+                label: String(localized: "Fat"),
+                color: .orange
+            )
+        }
+    }
+
+    private func macroTile(value: String, label: String, color: Color) -> some View {
+        VStack(spacing: 2) {
+            Text(value)
+                .font(.subheadline.bold().monospacedDigit())
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, Theme.Spacing.sm)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                .fill(color.opacity(0.12))
+        )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label): \(value)")
+    }
+
+    // MARK: - Add or Edit Details
+
+    private var editDetailsSection: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) { showEditDetails.toggle() }
+            } label: {
+                HStack(spacing: 4) {
+                    Text(String(localized: "fph.addOrEdit", defaultValue: "Add or edit details"))
+                        .font(.subheadline.weight(.medium))
+                    Image(systemName: showEditDetails ? "chevron.up" : "chevron.down")
+                        .font(.caption)
+                }
+                .foregroundStyle(Theme.Colors.primary)
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("foodPhoto.editDetailsToggle")
+
+            if showEditDetails {
+                VStack(spacing: Theme.Spacing.sm) {
+                    ForEach($items) { $item in
+                        FoodItemRow(
+                            item: $item,
+                            isExpanded: expandedItemId == item.id,
+                            onToggle: {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    expandedItemId = expandedItemId == item.id ? nil : item.id
+                                }
+                            },
+                            onAdd: {
+                                onAddItem(item)
+                                withAnimation { items.removeAll { $0.id == item.id } }
+                            }
+                        )
+                    }
+                }
+                .padding(.top, Theme.Spacing.xs)
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+        }
+        .padding(Theme.Spacing.md)
+        .appCardStyle()
+    }
+
+    // MARK: - Confirm CTA
+
+    private var confirmButton: some View {
+        Button {
+            onAddAll()
+        } label: {
+            Text(String(localized: "fph.confirmAndTrack", defaultValue: "Confirm and Track"))
+                .font(.headline.bold())
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, Theme.Spacing.md)
+                .background(Theme.Gradients.warmCoralCTA)
+                .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
+                .shadow(color: Theme.Colors.warmCoral.opacity(0.4), radius: 8, y: 4)
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, Theme.Spacing.md)
+        .padding(.top, Theme.Spacing.sm)
+        .background(.ultraThinMaterial)
+        .accessibilityIdentifier("foodPhoto.addAllButton")
     }
 
     // MARK: - Computed Totals
@@ -182,7 +259,7 @@ private struct FoodItemRow: View {
                     Text("\(Int(item.portionGrams))g · \(item.calories) kcal")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Text("C: \(Int(item.carbsGrams))g · P: \(Int(item.proteinGrams))g · F: \(Int(item.fatGrams))g")
+                    Text("\(String(localized: "Carbs")): \(Int(item.carbsGrams))g · \(String(localized: "Protein")): \(Int(item.proteinGrams))g · \(String(localized: "Fat")): \(Int(item.fatGrams))g")
                         .font(.caption2)
                         .foregroundStyle(.tertiary)
                 }
@@ -207,7 +284,7 @@ private struct FoodItemRow: View {
                             .foregroundStyle(Theme.Colors.warmCoral)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Add \(item.name)")
+                    .accessibilityLabel(String(format: String(localized: "fph.addItem", defaultValue: "Add %@"), item.name))
                 }
             }
             .contentShape(Rectangle())
@@ -217,7 +294,7 @@ private struct FoodItemRow: View {
             if isExpanded {
                 VStack(spacing: Theme.Spacing.xs) {
                     editStepper(
-                        label: "Portion",
+                        label: String(localized: "fph.portion", defaultValue: "Portion"),
                         value: Binding(
                             get: { Int(item.portionGrams) },
                             set: { item.portionGrams = Double($0) }
@@ -227,14 +304,14 @@ private struct FoodItemRow: View {
                         step: item.portionGrams < 50 ? 5 : 10
                     )
                     editStepper(
-                        label: "Calories",
+                        label: String(localized: "Calories"),
                         value: $item.calories,
                         unit: "kcal",
                         range: 0...5000,
                         step: 10
                     )
                     editStepper(
-                        label: "Carbs",
+                        label: String(localized: "Carbs"),
                         value: Binding(
                             get: { Int(item.carbsGrams) },
                             set: { item.carbsGrams = Double($0) }
@@ -244,7 +321,7 @@ private struct FoodItemRow: View {
                         step: 5
                     )
                     editStepper(
-                        label: "Protein",
+                        label: String(localized: "Protein"),
                         value: Binding(
                             get: { Int(item.proteinGrams) },
                             set: { item.proteinGrams = Double($0) }
@@ -254,7 +331,7 @@ private struct FoodItemRow: View {
                         step: 5
                     )
                     editStepper(
-                        label: "Fat",
+                        label: String(localized: "Fat"),
                         value: Binding(
                             get: { Int(item.fatGrams) },
                             set: { item.fatGrams = Double($0) }

@@ -89,11 +89,19 @@ struct AddFoodEntrySheet: View {
                     }
                 }
             }
-            .fullScreenCover(isPresented: $showingFoodPhotoCamera) {
-                FoodPhotoCameraView { photoData in
-                    showingFoodPhotoCamera = false
-                    capturedPhotoData = photoData
+            .fullScreenCover(isPresented: $showingFoodPhotoCamera, onDismiss: {
+                // Starting the next presentation (the results sheet) only
+                // after this cover has FULLY dismissed avoids a SwiftUI
+                // race: presenting a new sheet while this cover is still
+                // mid-dismiss-animation gets silently dropped, so the
+                // results sheet would flash and never actually show.
+                if let photoData = capturedPhotoData {
                     Task { await analyzePhoto(photoData) }
+                }
+            }) {
+                FoodPhotoCameraView { photoData in
+                    capturedPhotoData = photoData
+                    showingFoodPhotoCamera = false
                 }
             }
             .sheet(isPresented: $showingPhotoResults) {
