@@ -1,46 +1,51 @@
 import SwiftUI
 
 struct PaywallHeaderSection: View {
+    @Environment(\.colorScheme) private var colorScheme
+
+    private var isDark: Bool { colorScheme == .dark }
+
     var body: some View {
         VStack(spacing: Theme.Spacing.xs) {
             ZStack {
-                // Soft coral radial behind the glyph so the eye lands here
-                // first and the brand colour anchors the dark backdrop
-                // instead of the gold drifting off-DNA.
+                // A soft radial halo behind the glyph so the eye lands here first.
+                // Dark mode keeps the on-brand coral; light mode swaps to a warm
+                // gold (the coral reads harsh on the pale backdrop).
                 Circle()
                     .fill(
                         RadialGradient(
-                            colors: [
-                                Theme.Colors.warmCoral.opacity(0.28),
-                                Theme.Colors.warmCoral.opacity(0.05),
-                                .clear
-                            ],
+                            colors: isDark
+                                ? [Theme.Colors.warmCoral.opacity(0.28),
+                                   Theme.Colors.warmCoral.opacity(0.05),
+                                   .clear]
+                                : [Theme.Colors.goldAccent.opacity(0.30),
+                                   Theme.Colors.goldAccent.opacity(0.06),
+                                   .clear],
                             center: .center,
                             startRadius: 0,
-                            endRadius: 64
+                            endRadius: 74
                         )
                     )
-                    .frame(width: 128, height: 128)
+                    .frame(width: 150, height: 150)
                     .blur(radius: 5)
 
                 Image("LaunchIcon")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 84, height: 84)
-                    .shadow(color: Theme.Colors.warmCoral.opacity(0.55), radius: 18, y: 5)
+                    .frame(width: 96, height: 96)
+                    .shadow(
+                        color: isDark
+                            ? Theme.Colors.warmCoral.opacity(0.55)
+                            : Theme.Colors.goldAccentDeep.opacity(0.35),
+                        radius: 16, y: 5
+                    )
                     .accessibilityHidden(true)
             }
 
             VStack(spacing: 6) {
                 Text("paywall.title")
                     .font(.largeTitle.weight(.bold))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [.white, .white.opacity(0.7)],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
+                    .foregroundStyle(titleGradient)
                     .multilineTextAlignment(.center)
 
                 Text("paywall.subtitle")
@@ -50,5 +55,16 @@ struct PaywallHeaderSection: View {
                     .padding(.horizontal, Theme.Spacing.lg)
             }
         }
+    }
+
+    // White on dark, deep navy on light — always legible against the backdrop.
+    private var titleGradient: LinearGradient {
+        LinearGradient(
+            colors: isDark
+                ? [.white, .white.opacity(0.7)]
+                : [Theme.Colors.premiumBgTop, Theme.Colors.premiumBgMid],
+            startPoint: .top,
+            endPoint: .bottom
+        )
     }
 }

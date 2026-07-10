@@ -29,7 +29,6 @@ final class WatchLocationService: NSObject, @unchecked Sendable {
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.distanceFilter = WatchConfiguration.GPS.distanceFilterM
         locationManager.activityType = .fitness
-        locationManager.allowsBackgroundLocationUpdates = true
         updateAuthStatus()
     }
 
@@ -44,6 +43,10 @@ final class WatchLocationService: NSObject, @unchecked Sendable {
     func startTracking() -> AsyncStream<CLLocation> {
         AsyncStream { continuation in
             self.locationContinuation = continuation
+            // Enable background location now that we're inside an active workout
+            // context. Setting this in init() without WKBackgroundModes declared
+            // in the Info.plist throws an NSException and crashes on launch.
+            self.locationManager.allowsBackgroundLocationUpdates = true
             self.locationManager.startUpdatingLocation()
             Logger.watch.info("Watch GPS tracking started")
 
