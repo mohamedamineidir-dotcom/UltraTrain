@@ -34,6 +34,11 @@ final class RaceSwiftDataModel {
     var polesAllowed: Bool?
     /// Athlete opted into B/C-race specific prep. Default false.
     var includesSpecificPrep: Bool = false
+    /// Athlete-entered reference finish times for this course (last
+    /// edition's winner / typical finisher), used to calibrate course
+    /// difficulty in the finish-time estimator. Optional; nil = not given.
+    var referenceWinnerTimeSeconds: Double?
+    var referenceMedianTimeSeconds: Double?
 
     init(
         id: UUID = UUID(),
@@ -60,7 +65,9 @@ final class RaceSwiftDataModel {
         serverUpdatedAt: Date? = nil,
         maxElevationM: Double? = nil,
         polesAllowed: Bool? = nil,
-        includesSpecificPrep: Bool = false
+        includesSpecificPrep: Bool = false,
+        referenceWinnerTimeSeconds: Double? = nil,
+        referenceMedianTimeSeconds: Double? = nil
     ) {
         self.id = id
         self.name = name
@@ -87,5 +94,7 @@ final class RaceSwiftDataModel {
         self.maxElevationM = maxElevationM
         self.polesAllowed = polesAllowed
         self.includesSpecificPrep = includesSpecificPrep
+        self.referenceWinnerTimeSeconds = referenceWinnerTimeSeconds
+        self.referenceMedianTimeSeconds = referenceMedianTimeSeconds
     }
 }

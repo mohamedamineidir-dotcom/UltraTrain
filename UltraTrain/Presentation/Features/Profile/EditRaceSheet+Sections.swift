@@ -230,6 +230,57 @@ extension EditRaceSheet {
         }
     }
 
+    // MARK: - Reference Times Section
+
+    /// Reference times are a trail/ultra reliability aid; short flat road
+    /// races don't need them (road PR + Riegel is already accurate there).
+    var showReferenceTimes: Bool {
+        raceType == .trail || distanceKm >= 45 || elevationGainM >= 1000
+    }
+
+    var referenceTimesSection: some View {
+        glassCard(
+            title: String(localized: "race.referenceTimes", defaultValue: "Reference times (optional)"),
+            icon: "trophy.fill",
+            tint: Theme.Colors.goldAccent,
+            footer: String(localized: "race.referenceTimes.footer", defaultValue: "Real finish times from a past edition sharpen your prediction. Trail finish time hinges on course difficulty that distance and D+ alone can't capture. Leave at 0 if unknown.")
+        ) {
+            VStack(spacing: Theme.Spacing.sm) {
+                referenceRow(
+                    label: String(localized: "race.referenceTimes.winner", defaultValue: "Last winner"),
+                    hours: $referenceWinnerHours,
+                    minutes: $referenceWinnerMinutes
+                )
+                referenceRow(
+                    label: String(localized: "race.referenceTimes.median", defaultValue: "Typical finisher"),
+                    hours: $referenceMedianHours,
+                    minutes: $referenceMedianMinutes
+                )
+            }
+        }
+    }
+
+    private func referenceRow(label: String, hours: Binding<Int>, minutes: Binding<Int>) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(label)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.primary)
+            HStack(spacing: Theme.Spacing.md) {
+                compactTimeStepper(
+                    title: String(localized: "race.referenceTimes.hours", defaultValue: "Hours"),
+                    value: hours, range: 0...60, unit: "h"
+                )
+                compactTimeStepper(
+                    title: String(localized: "race.referenceTimes.minutes", defaultValue: "Min"),
+                    value: minutes, range: 0...59, unit: "m"
+                )
+            }
+        }
+        .padding(.horizontal, Theme.Spacing.sm)
+        .padding(.vertical, Theme.Spacing.xs)
+        .background(fieldChrome)
+    }
+
     // MARK: - Checkpoints Section
 
     var checkpointsSection: some View {
@@ -444,6 +495,10 @@ extension EditRaceSheet {
         race.locationLongitude = locationLongitude
         race.locationName = locationName
         race.includesSpecificPrep = includesSpecificPrep
+        let winnerSeconds = referenceWinnerHours * 3600 + referenceWinnerMinutes * 60
+        race.referenceWinnerTimeSeconds = winnerSeconds > 0 ? Double(winnerSeconds) : nil
+        let medianSeconds = referenceMedianHours * 3600 + referenceMedianMinutes * 60
+        race.referenceMedianTimeSeconds = medianSeconds > 0 ? Double(medianSeconds) : nil
         onSave(race)
         dismiss()
     }

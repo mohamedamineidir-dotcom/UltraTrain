@@ -61,6 +61,26 @@ struct RaceSwiftDataMapperTests {
         #expect(restored?.terrainDifficulty == race.terrainDifficulty)
     }
 
+    @Test("Round-trip preserves reference finish times")
+    func roundTripPreservesReferenceTimes() {
+        var race = makeRace()
+        race.referenceWinnerTimeSeconds = 36000   // 10h
+        race.referenceMedianTimeSeconds = 64800   // 18h
+        let restored = RaceSwiftDataMapper.toDomain(RaceSwiftDataMapper.toSwiftData(race))
+        let winner: Double? = restored?.referenceWinnerTimeSeconds
+        let median: Double? = restored?.referenceMedianTimeSeconds
+        #expect(winner == 36000)
+        #expect(median == 64800)
+    }
+
+    @Test("Round-trip preserves nil reference times")
+    func roundTripPreservesNilReferenceTimes() {
+        let race = makeRace()  // no reference times set
+        let restored = RaceSwiftDataMapper.toDomain(RaceSwiftDataMapper.toSwiftData(race))
+        #expect(restored?.referenceWinnerTimeSeconds == nil)
+        #expect(restored?.referenceMedianTimeSeconds == nil)
+    }
+
     @Test("Round-trip preserves checkpoints")
     func roundTripPreservesCheckpoints() {
         let checkpoints = [

@@ -748,32 +748,40 @@ struct FinishTimeEstimatorTests {
         #expect(estimate.weatherImpactSummary == nil)
     }
 
-    @Test("Elite has no ultra fatigue penalty even on long races")
+    @Test("Elite gets no ultra-fatigue penalty; a beginner's long-race ratio is larger")
     func eliteNoUltraPenalty() async throws {
+        // With endurance decay now in the core projection, the long/short
+        // ratio is no longer linear in effective distance. The thing that
+        // still distinguishes experience levels is the ultra-fatigue
+        // penalty, which an elite does NOT incur. So a beginner's
+        // long-vs-short blow-up must exceed an elite's.
         let shortRace = makeRace(distanceKm: 50, elevationGainM: 3000)
         let longRace = makeRace(distanceKm: 150, elevationGainM: 9000)
         let runs = [makeRun()]
 
-        let eliteAthlete = Athlete(
-            id: UUID(), firstName: "Test", lastName: "Runner",
-            dateOfBirth: Calendar.current.date(byAdding: .year, value: -30, to: .now)!,
-            weightKg: 70, heightCm: 175, restingHeartRate: 50, maxHeartRate: 185,
-            experienceLevel: .elite, weeklyVolumeKm: 80,
-            longestRunKm: 60, preferredUnit: .metric
-        )
+        func athlete(_ level: ExperienceLevel) -> Athlete {
+            Athlete(
+                id: UUID(), firstName: "Test", lastName: "Runner",
+                dateOfBirth: Calendar.current.date(byAdding: .year, value: -30, to: .now)!,
+                weightKg: 70, heightCm: 175, restingHeartRate: 50, maxHeartRate: 185,
+                experienceLevel: level, weeklyVolumeKm: 80,
+                longestRunKm: 60, preferredUnit: .metric
+            )
+        }
 
-        let shortEstimate = try await estimator.execute(
-            athlete: eliteAthlete, race: shortRace,
-            recentRuns: runs, currentFitness: nil
-        )
-        let longEstimate = try await estimator.execute(
-            athlete: eliteAthlete, race: longRace,
-            recentRuns: runs, currentFitness: nil
-        )
-        let ratio = longEstimate.expectedTime / shortEstimate.expectedTime
-        let effectiveRatio = longRace.effectiveDistanceKm / shortRace.effectiveDistanceKm
-        let tolerance = 0.05
-        #expect(abs(ratio - effectiveRatio) / effectiveRatio < tolerance)
+        let eliteShort = try await estimator.execute(
+            athlete: athlete(.elite), race: shortRace, recentRuns: runs, currentFitness: nil)
+        let eliteLong = try await estimator.execute(
+            athlete: athlete(.elite), race: longRace, recentRuns: runs, currentFitness: nil)
+        let begShort = try await estimator.execute(
+            athlete: athlete(.beginner), race: shortRace, recentRuns: runs, currentFitness: nil)
+        let begLong = try await estimator.execute(
+            athlete: athlete(.beginner), race: longRace, recentRuns: runs, currentFitness: nil)
+
+        let eliteRatio = eliteLong.expectedTime / eliteShort.expectedTime
+        let beginnerRatio = begLong.expectedTime / begShort.expectedTime
+        #expect(beginnerRatio > eliteRatio,
+            "Beginner suffers an ultra-fatigue penalty on the long race that the elite does not (\(beginnerRatio) vs \(eliteRatio))")
     }
 
     // MARK: - Day-0 PB-based prediction
@@ -1110,5 +1118,84 @@ struct FinishTimeEstimatorTests {
         let race = makeRoadRace()
         let estimate = FinishTimeEstimator.quickEstimate(athlete: noData, race: race)
         #expect(estimate == race.estimatedDuration(experience: noData.experienceLevel))
+    }
+
+    // MARK: - Ultra realism (endurance-decay over mountain-effective km)
+
+    @Test("Road-fast athlete gets a REALISTIC mountain-ultra time, not a road-pace one")
+    func ultraRealisticForRoadFastAthlete() async throws {
+        // A 33:00 10K athlete on a 100K / 4500m D+ mountain ultra. The old
+        // model decayed flat km then bolted on the vertical at road pace and
+        // produced ~8h. With decay applied to the mountain-effective
+        // distance the realistic estimate must land in the ~12-13h range.
+        var pbAthlete = athlete
+        pbAthlete.experienceLevel = .advanced
+        pbAthlete.personalBests = [
+            PersonalBest(id: UUID(), distance: .tenK, timeSeconds: 1980, date: .now)
+        ]
+        let race = Race(
+            id: UUID(), name: "Mountain 100K",
+            date: Date.now.adding(days: 120),
+            distanceKm: 100, elevationGainM: 4500, elevationLossM: 4500,
+            priority: .aRace, goalType: .finish, checkpoints: [],
+            terrainDifficulty: .technical, raceType: .trail
+        )
+        let est = try await estimator.execute(
+            athlete: pbAthlete, race: race, recentRuns: [], currentFitness: nil
+        )
+        let hours = est.expectedTime / 3600
+        #expect(hours > 10.5 && hours < 14.5,
+            "33:00-10K on 100K/4500m should be ~12-13h realistic, got \(hours)h")
+        // And the old absurdity (sub-9h) must be gone.
+        #expect(hours > 10.0, "Must not predict a near-road-pace ultra time")
+    }
+
+    // MARK: - Reference-time course calibration
+
+    @Test("Reference winner/median times calibrate course difficulty")
+    func referenceTimesCalibrateCourse() async throws {
+        var pbAthlete = athlete
+        pbAthlete.personalBests = [
+            PersonalBest(id: UUID(), distance: .tenK, timeSeconds: 1980, date: .now)
+        ]
+        func ultra(winner: TimeInterval?, median: TimeInterval?) -> Race {
+            var r = Race(
+                id: UUID(), name: "Ultra",
+                date: Date.now.adding(days: 90),
+                distanceKm: 100, elevationGainM: 4500, elevationLossM: 4500,
+                priority: .aRace, goalType: .finish, checkpoints: [],
+                terrainDifficulty: .technical, raceType: .trail
+            )
+            r.referenceWinnerTimeSeconds = winner
+            r.referenceMedianTimeSeconds = median
+            return r
+        }
+        let base = try await estimator.execute(
+            athlete: pbAthlete, race: ultra(winner: nil, median: nil),
+            recentRuns: [], currentFitness: nil)
+        let harder = try await estimator.execute(
+            athlete: pbAthlete, race: ultra(winner: 18 * 3600, median: 30 * 3600),
+            recentRuns: [], currentFitness: nil)
+        let easier = try await estimator.execute(
+            athlete: pbAthlete, race: ultra(winner: 7 * 3600, median: 13 * 3600),
+            recentRuns: [], currentFitness: nil)
+        #expect(harder.expectedTime > base.expectedTime,
+            "A slow reference field implies a harder course → slower prediction")
+        #expect(easier.expectedTime < base.expectedTime,
+            "A fast reference field implies an easier course → faster prediction")
+    }
+
+    @Test("No reference times leaves the prediction unchanged")
+    func noReferenceTimesNeutral() async throws {
+        var pbAthlete = athlete
+        pbAthlete.personalBests = [
+            PersonalBest(id: UUID(), distance: .tenK, timeSeconds: 1980, date: .now)
+        ]
+        let factor = estimator.referenceCourseCalibration(
+            race: makeRace(distanceKm: 100, elevationGainM: 4500),
+            raceEffectiveKm: estimator.mountainEffectiveKm(makeRace(distanceKm: 100, elevationGainM: 4500)),
+            terrain: 1.15, descent: 1.03
+        )
+        #expect(factor == 1.0, "Course calibration is neutral (1.0) without reference times")
     }
 }

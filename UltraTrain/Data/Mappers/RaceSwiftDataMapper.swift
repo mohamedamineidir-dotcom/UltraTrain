@@ -54,7 +54,9 @@ enum RaceSwiftDataMapper {
             serverUpdatedAt: model.serverUpdatedAt,
             maxElevationM: model.maxElevationM,
             polesAllowed: model.polesAllowed,
-            includesSpecificPrep: model.includesSpecificPrep
+            includesSpecificPrep: model.includesSpecificPrep,
+            referenceWinnerTimeSeconds: model.referenceWinnerTimeSeconds,
+            referenceMedianTimeSeconds: model.referenceMedianTimeSeconds
         )
     }
 
@@ -95,7 +97,9 @@ enum RaceSwiftDataMapper {
             serverUpdatedAt: race.serverUpdatedAt,
             maxElevationM: race.maxElevationM,
             polesAllowed: race.polesAllowed,
-            includesSpecificPrep: race.includesSpecificPrep
+            includesSpecificPrep: race.includesSpecificPrep,
+            referenceWinnerTimeSeconds: race.referenceWinnerTimeSeconds,
+            referenceMedianTimeSeconds: race.referenceMedianTimeSeconds
         )
     }
 

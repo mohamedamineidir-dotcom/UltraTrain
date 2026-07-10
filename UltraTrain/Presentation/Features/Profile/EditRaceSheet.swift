@@ -46,6 +46,11 @@ struct EditRaceSheet: View {
     @State var showLocationPicker = false
     @State var raceType: RaceType
     @State var includesSpecificPrep: Bool
+    // Optional reference finish times (hours + minutes). 0h0m = not set.
+    @State var referenceWinnerHours: Int
+    @State var referenceWinnerMinutes: Int
+    @State var referenceMedianHours: Int
+    @State var referenceMedianMinutes: Int
 
     let existingId: UUID?
 
@@ -81,6 +86,10 @@ struct EditRaceSheet: View {
             _locationName = State(initialValue: nil)
             _raceType = State(initialValue: .trail)
             _includesSpecificPrep = State(initialValue: false)
+            _referenceWinnerHours = State(initialValue: 0)
+            _referenceWinnerMinutes = State(initialValue: 0)
+            _referenceMedianHours = State(initialValue: 0)
+            _referenceMedianMinutes = State(initialValue: 0)
         case .edit(let race):
             existingId = race.id
             _name = State(initialValue: race.name)
@@ -118,6 +127,12 @@ struct EditRaceSheet: View {
             }
             _raceType = State(initialValue: race.raceType)
             _includesSpecificPrep = State(initialValue: race.includesSpecificPrep)
+            let winner = Int(race.referenceWinnerTimeSeconds ?? 0)
+            _referenceWinnerHours = State(initialValue: winner / 3600)
+            _referenceWinnerMinutes = State(initialValue: (winner % 3600) / 60)
+            let median = Int(race.referenceMedianTimeSeconds ?? 0)
+            _referenceMedianHours = State(initialValue: median / 3600)
+            _referenceMedianMinutes = State(initialValue: (median % 3600) / 60)
         }
     }
 
@@ -143,6 +158,9 @@ struct EditRaceSheet: View {
                                 specificPrepSection
                             }
                             terrainSection
+                            if showReferenceTimes {
+                                referenceTimesSection
+                            }
                             checkpointsSection
                             Color.clear.frame(height: 96)
                         }

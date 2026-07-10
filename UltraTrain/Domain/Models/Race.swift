@@ -40,6 +40,21 @@ struct Race: Identifiable, Equatable, Sendable, Codable {
     /// don't compromise the primary goal silently).
     var includesSpecificPrep: Bool = false
 
+    /// Optional real-world reference finish times for THIS race (or a very
+    /// similar past edition), entered by the athlete. Trail/ultra finish
+    /// time can't be read off road fitness alone, the course's true
+    /// difficulty (technicality, altitude, heat, navigation, cumulative
+    /// vertical) only shows up in how the actual field finished. When the
+    /// athlete supplies last edition's winning and/or typical (median)
+    /// finisher time, the estimator calibrates the course difficulty its
+    /// physiological model can't infer from distance + D+ alone.
+    var referenceWinnerTimeSeconds: TimeInterval? = nil
+    var referenceMedianTimeSeconds: TimeInterval? = nil
+
+    var hasReferenceTimes: Bool {
+        (referenceWinnerTimeSeconds ?? 0) > 0 || (referenceMedianTimeSeconds ?? 0) > 0
+    }
+
     var hasCourseRoute: Bool { !courseRoute.isEmpty }
 
     var isCompleted: Bool { actualFinishTime != nil }

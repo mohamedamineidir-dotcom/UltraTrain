@@ -26,17 +26,25 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
     ) async throws -> FinishEstimate {
         let raceLinkedRuns = recentRuns.filter { $0.linkedRaceId != nil }
         let raceResultsUsed = raceLinkedRuns.count
-        let raceEffectiveKm = race.effectiveDistanceKm
+        let raceEffectiveKm = mountainEffectiveKm(race)
 
         // Pace anchor: prefer recent runs; fall back to PBs (Riegel +
         // Kilian for trail); last resort is experience-level fallback.
         // Day-0 prediction is a first-class citizen: athletes get a
         // credible range from their PBs alone before logging any
         // training. The range widens as data quality decreases.
+        //
+        // Every signal is projected to the race's MOUNTAIN-effective
+        // distance with endurance decay (Riegel), so a short/flat effort
+        // is not naively assumed to hold over a far longer, far hillier
+        // race. This is the fix for road-fast athletes getting absurdly
+        // quick ultra predictions.
         var weightedPaces: [(pace: Double, weight: Double)] = []
         for run in recentRuns {
-            guard let pace = pacePerEffectiveKm(for: run) else { continue }
-            let runEffectiveKm = run.distanceKm + (run.elevationGainM / 100.0)
+            let runEffectiveKm = mountainEffectiveKm(distanceKm: run.distanceKm, elevationGainM: run.elevationGainM)
+            guard runEffectiveKm > 0, run.duration > 0 else { continue }
+            let projected = projectedTime(timeSeconds: run.duration, fromEffectiveKm: runEffectiveKm, toEffectiveKm: raceEffectiveKm)
+            let pace = projected / raceEffectiveKm
             let distanceWeight = 1.0 / (1.0 + abs(runEffectiveKm - raceEffectiveKm) / max(raceEffectiveKm, 1))
             let raceBonus: Double = run.linkedRaceId != nil ? 3.0 : 1.0
             weightedPaces.append((pace, distanceWeight * raceBonus))
@@ -78,7 +86,15 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
 
         let weather = weatherImpact?.multiplier ?? 1.0
 
-        let algorithmicExpected = effectiveKm * medianPace * terrain * descent * form * ultra * calibration * weather
+        // Course-difficulty calibration from real reference finish times
+        // (last edition's winner / typical finisher), when the athlete
+        // supplied them. Corrects what the physiological model can't infer
+        // from distance + D+: technicality, altitude, heat, navigation.
+        let referenceCal = referenceCourseCalibration(
+            race: race, raceEffectiveKm: raceEffectiveKm, terrain: terrain, descent: descent
+        )
+
+        let algorithmicExpected = effectiveKm * medianPace * terrain * descent * form * ultra * calibration * weather * referenceCal
 
         // Source-dependent range. When we have runs, the percentile
         // spread (pace25 / pace75) already captures within-athlete
@@ -93,8 +109,8 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         let conservativeTime: Double
         switch source {
         case .runs:
-            optimisticTime = effectiveKm * pace25 * terrain * descent * ultra * 0.97 * calibration * weather
-            conservativeTime = effectiveKm * pace75 * terrain * descent * ultra * 1.05 * calibration * weather
+            optimisticTime = effectiveKm * pace25 * terrain * descent * ultra * 0.97 * calibration * weather * referenceCal
+            conservativeTime = effectiveKm * pace75 * terrain * descent * ultra * 1.05 * calibration * weather * referenceCal
         case .personalBests, .experienceFallback:
             let aleatoryPct = aleatorySpread(race: race)
             let epistemicPct = epistemicSpread(source: source, athlete: athlete, race: race)
@@ -179,7 +195,7 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         if case .targetTime(let time) = race.goalType { return time }
 
         let estimator = FinishTimeEstimator()
-        let effectiveKm = race.effectiveDistanceKm
+        let effectiveKm = estimator.mountainEffectiveKm(race)
         let pbPaces = estimator.pbsAsWeightedPaces(
             athlete: athlete, race: race, raceEffectiveKm: effectiveKm
         )
@@ -223,8 +239,10 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         for pb in athlete.personalBests where pb.timeSeconds > 0 {
             let pbKm = pb.distance.distanceKm
             guard pbKm > 0 else { continue }
-            let exponent = riegelExponent(toDistanceKm: raceFlatKm)
-            let predictedTime = pb.timeSeconds * pow(raceFlatKm / pbKm, exponent)
+            // Project the flat road PB straight to the mountain-effective
+            // distance: the decay over that much larger distance is what
+            // turns 10K-fast into a credible all-day mountain pace.
+            let predictedTime = projectedTime(timeSeconds: pb.timeSeconds, fromEffectiveKm: pbKm, toEffectiveKm: raceEffectiveKm)
             let pace = predictedTime / max(raceEffectiveKm, 1)
             let recency = pb.recencyWeight()
             let proximity = 1.0 / (1.0 + abs(pbKm - raceFlatKm) / max(raceFlatKm, 1))
@@ -233,10 +251,9 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         }
 
         for tpb in athlete.trailPersonalBests where tpb.timeSeconds > 0 {
-            let pbEffective = tpb.distanceKm + (tpb.elevationGainM / 100.0)
+            let pbEffective = mountainEffectiveKm(distanceKm: tpb.distanceKm, elevationGainM: tpb.elevationGainM)
             guard pbEffective > 0 else { continue }
-            let exponent = riegelExponent(toDistanceKm: raceEffectiveKm)
-            let predictedTime = tpb.timeSeconds * pow(raceEffectiveKm / pbEffective, exponent)
+            let predictedTime = projectedTime(timeSeconds: tpb.timeSeconds, fromEffectiveKm: pbEffective, toEffectiveKm: raceEffectiveKm)
             let pace = predictedTime / max(raceEffectiveKm, 1)
             let recency = tpb.recencyWeight()
             let proximity = 1.0 / (1.0 + abs(pbEffective - raceEffectiveKm) / max(raceEffectiveKm, 1))
@@ -254,8 +271,7 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         if let vma = athlete.vmaKmh, vma > 0 {
             let fiveKPaceSecPerKm = (3600.0 / vma) * 1.02
             let fiveKTimeSec = fiveKPaceSecPerKm * 5
-            let exponent = riegelExponent(toDistanceKm: raceFlatKm)
-            let predictedTime = fiveKTimeSec * pow(raceFlatKm / 5.0, exponent)
+            let predictedTime = projectedTime(timeSeconds: fiveKTimeSec, fromEffectiveKm: 5.0, toEffectiveKm: raceEffectiveKm)
             let pace = predictedTime / max(raceEffectiveKm, 1)
             // Recency: VMA is by definition the most recent fitness
             // measurement (updated on each test). Weight = 1.0 fresh.
@@ -368,12 +384,33 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         }
     }
 
-    // MARK: - Pace
+    // MARK: - Mountain-effective distance & endurance projection
 
-    private func pacePerEffectiveKm(for run: CompletedRun) -> Double? {
-        let effectiveKm = run.distanceKm + (run.elevationGainM / 100.0)
-        guard effectiveKm > 0, run.duration > 0 else { return nil }
-        return run.duration / effectiveKm
+    /// Vertical-gain equivalence: ~80 m of climb costs about the *effort*
+    /// of 1 extra flat km. This is deliberately heavier than the classic
+    /// Kilian 100 m/km, but the decisive correction is not this constant —
+    /// it is that we then project fitness to THIS larger distance with
+    /// endurance decay (`projectedTime`). The previous model decayed the
+    /// flat distance only and added the vertical term at full road pace,
+    /// so 4500 m of climbing barely moved the prediction.
+    static let climbMetersPerEquivalentKm = 80.0
+
+    func mountainEffectiveKm(distanceKm: Double, elevationGainM: Double) -> Double {
+        distanceKm + max(0, elevationGainM) / Self.climbMetersPerEquivalentKm
+    }
+
+    func mountainEffectiveKm(_ race: Race) -> Double {
+        mountainEffectiveKm(distanceKm: race.distanceKm, elevationGainM: race.elevationGainM)
+    }
+
+    /// Riegel endurance-decay projection: a performance over
+    /// `fromEffectiveKm` projected to `toEffectiveKm`. A longer target
+    /// yields a disproportionately slower pace — the essence of why a
+    /// road PR cannot be linearly stretched across an ultra.
+    func projectedTime(timeSeconds: Double, fromEffectiveKm: Double, toEffectiveKm: Double) -> Double {
+        guard fromEffectiveKm > 0, timeSeconds > 0 else { return timeSeconds }
+        let exponent = riegelExponent(toDistanceKm: toEffectiveKm)
+        return timeSeconds * pow(toEffectiveKm / fromEffectiveKm, exponent)
     }
 
     private func weightedPercentile(
@@ -521,6 +558,53 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
 
         guard totalWeight > 0 else { return 1.0 }
         return weightedSum / totalWeight
+    }
+
+    // MARK: - Reference-time course calibration
+
+    /// When the athlete supplies real reference finish times for this
+    /// course (last edition's winner and/or a typical median finisher),
+    /// calibrate the course's true difficulty against the model: "what
+    /// would the model predict for a known-calibre runner here?" then
+    /// scale by how the real field actually finished. This captures
+    /// course-specific difficulty (technicality, altitude, heat,
+    /// navigation, cumulative descent) that distance + D+ alone miss, and
+    /// is exactly the race-data anchoring an ultra needs.
+    ///
+    /// Anchors are central road-fitness equivalents: a competitive
+    /// front-runner (~31:00 10K) and a typical finisher (~52:00 10K). The
+    /// median anchor is weighted higher (more stable, less dependent on a
+    /// single exceptional individual). The factor is bounded so a
+    /// mis-entered reference can't produce an absurd swing.
+    func referenceCourseCalibration(
+        race: Race,
+        raceEffectiveKm: Double,
+        terrain: Double,
+        descent: Double
+    ) -> Double {
+        let winnerAnchorSeconds = 1860.0   // ~31:00 10K-equivalent front-runner
+        let medianAnchorSeconds = 3120.0   // ~52:00 10K-equivalent typical finisher
+
+        func modelTime(forAnchorSeconds anchor: Double) -> Double {
+            projectedTime(timeSeconds: anchor, fromEffectiveKm: 10, toEffectiveKm: raceEffectiveKm) * terrain * descent
+        }
+
+        var weightedSum = 0.0
+        var weightTotal = 0.0
+        if let winner = race.referenceWinnerTimeSeconds, winner > 0 {
+            let model = modelTime(forAnchorSeconds: winnerAnchorSeconds)
+            if model > 0 { weightedSum += (winner / model) * 0.35; weightTotal += 0.35 }
+        }
+        if let median = race.referenceMedianTimeSeconds, median > 0 {
+            let model = modelTime(forAnchorSeconds: medianAnchorSeconds)
+            if model > 0 { weightedSum += (median / model) * 0.65; weightTotal += 0.65 }
+        }
+        guard weightTotal > 0 else { return 1.0 }
+        let raw = weightedSum / weightTotal
+        // Damp toward 1.0: the anchors are central assumptions, so let the
+        // reference refine the model rather than override it. Then bound.
+        let damped = 1.0 + (raw - 1.0) * 0.75
+        return min(1.4, max(0.75, damped))
     }
 
     // MARK: - Confidence
