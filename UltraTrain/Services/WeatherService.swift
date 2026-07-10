@@ -9,6 +9,29 @@ final class AppleWeatherKitService: WeatherServiceProtocol, @unchecked Sendable 
     private let weatherService = WeatherKit.WeatherService.shared
     private let cache = WeatherCache()
 
+    // MARK: - Attribution
+
+    func attribution() async throws -> WeatherAttributionInfo {
+        let cacheKey = WeatherCache.Key(lat: 0, lon: 0, type: .attribution)
+        if let cached: WeatherAttributionInfo = await cache.get(for: cacheKey) {
+            return cached
+        }
+
+        do {
+            let attribution = try await weatherService.attribution
+            let info = WeatherAttributionInfo(
+                legalPageURL: attribution.legalPageURL,
+                combinedMarkLightURL: attribution.combinedMarkLightURL,
+                combinedMarkDarkURL: attribution.combinedMarkDarkURL
+            )
+            await cache.set(info, for: cacheKey, ttl: AppConfiguration.Weather.attributionCacheTTL)
+            return info
+        } catch {
+            Logger.weather.error("WeatherKit attribution fetch failed: \(error)")
+            throw DomainError.weatherUnavailable(reason: error.localizedDescription)
+        }
+    }
+
     // MARK: - Current Weather
 
     func currentWeather(latitude: Double, longitude: Double) async throws -> WeatherSnapshot {

@@ -13,6 +13,7 @@ struct WeatherImpactCard: View {
                 impactBreakdown
             }
             totalImpactBadge
+            WeatherAttributionBadge()
         }
         .cardStyle()
     }

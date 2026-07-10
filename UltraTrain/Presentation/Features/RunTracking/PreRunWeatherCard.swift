@@ -43,6 +43,7 @@ struct PreRunWeatherCard: View {
             weatherRow(for: weather)
             statsRow(for: weather)
             tipsSection(for: weather)
+            WeatherAttributionBadge()
         } else if !isLoading {
             Text("Checking conditions...")
                 .font(.caption)

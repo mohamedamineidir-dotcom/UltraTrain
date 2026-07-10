@@ -82,6 +82,7 @@ struct UltraTrainApp: App {
             .environment(\.syncStatusMonitor, container.syncStatusMonitor)
             .environment(\.syncService, container.syncService)
             .environment(\.networkMonitor, container.networkMonitor)
+            .environment(\.weatherService, container.weatherService)
             .onOpenURL { url in
                 _ = container.deepLinkRouter.handle(url: url)
             }

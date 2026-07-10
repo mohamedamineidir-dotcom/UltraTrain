@@ -107,21 +107,24 @@ struct WatchHomeView: View {
     private var locationBanner: some View {
         switch locationAuthStatus {
         case .notDetermined:
-            Button(action: onRequestLocationPermission) {
-                HStack(spacing: 6) {
+            VStack(spacing: 4) {
+                HStack(spacing: 4) {
                     Image(systemName: "location.fill")
-                        .font(.caption)
-                    Text("Allow location to track runs")
+                        .font(.caption2)
+                    Text("Location needed to track runs")
                         .font(.caption2)
                         .lineLimit(2)
                 }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 6)
-                .frame(maxWidth: .infinity)
-                .background(.blue.opacity(0.8))
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                Button("Continue", action: onRequestLocationPermission)
+                    .font(.caption2)
+                    .buttonStyle(.borderedProminent)
+                    .tint(.blue)
             }
-            .buttonStyle(.plain)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
+            .frame(maxWidth: .infinity)
+            .background(.blue.opacity(0.15))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
         case .denied:
             HStack(spacing: 6) {
                 Image(systemName: "location.slash.fill")

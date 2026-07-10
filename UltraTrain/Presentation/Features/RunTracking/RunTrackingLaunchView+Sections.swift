@@ -12,7 +12,7 @@ extension RunTrackingLaunchView {
         case .notDetermined:
             authBanner(
                 message: "Location access is needed to track your runs.",
-                buttonLabel: "Allow Location"
+                buttonLabel: "Continue"
             ) {
                 locationService.requestWhenInUseAuthorization()
             }

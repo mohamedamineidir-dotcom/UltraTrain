@@ -18,6 +18,7 @@ actor WeatherCache {
         case current
         case hourly
         case daily
+        case attribution
     }
 
     private struct CacheEntry {

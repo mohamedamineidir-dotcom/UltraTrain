@@ -152,6 +152,8 @@ enum AppConfiguration {
         static let dailyCacheTTL: TimeInterval = 3600
         static let maxForecastDays: Int = 10
         static let sessionForecastHoursAhead: Int = 48
+        // Attribution marks/URLs are static per app team, not per-query.
+        static let attributionCacheTTL: TimeInterval = 86400
     }
 
     enum PacingAlerts {

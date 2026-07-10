@@ -57,6 +57,7 @@ struct RaceDayWeatherCard: View {
             conditionRow(forecast)
             statsRow(forecast)
             tipsSection(forecast)
+            WeatherAttributionBadge()
         }
     }
 
