@@ -105,16 +105,23 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         // uncertainty (how well we know athlete's fitness from the
         // available signal). Asymmetric: things go wrong more often
         // than right, so the conservative side is wider.
+        let experienceMultiplier = experienceSpreadMultiplier(athlete.experienceLevel)
         let optimisticTime: Double
         let conservativeTime: Double
         switch source {
         case .runs:
-            optimisticTime = effectiveKm * pace25 * terrain * descent * ultra * 0.97 * calibration * weather * referenceCal
-            conservativeTime = effectiveKm * pace75 * terrain * descent * ultra * 1.05 * calibration * weather * referenceCal
+            // Fixed safety margin around the percentile spread. The
+            // percentile spread itself already reflects this athlete's
+            // real variance and isn't touched; only the flat margin
+            // (originally ±3%/±5%) scales with experience.
+            let optMargin = 0.03 * experienceMultiplier
+            let conMargin = 0.05 * experienceMultiplier
+            optimisticTime = effectiveKm * pace25 * terrain * descent * ultra * (1.0 - optMargin) * calibration * weather * referenceCal
+            conservativeTime = effectiveKm * pace75 * terrain * descent * ultra * (1.0 + conMargin) * calibration * weather * referenceCal
         case .personalBests, .experienceFallback:
             let aleatoryPct = aleatorySpread(race: race)
             let epistemicPct = epistemicSpread(source: source, athlete: athlete, race: race)
-            let totalSpread = (aleatoryPct * aleatoryPct + epistemicPct * epistemicPct).squareRoot()
+            let totalSpread = (aleatoryPct * aleatoryPct + epistemicPct * epistemicPct).squareRoot() * experienceMultiplier
             optimisticTime = algorithmicExpected * (1.0 - totalSpread)
             conservativeTime = algorithmicExpected * (1.0 + totalSpread * 1.4)
         }
@@ -174,6 +181,23 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
             weatherImpactSummary: weatherImpact?.summary,
             predictionSource: source
         )
+    }
+
+    // MARK: - Race-day projection
+
+    /// "What this athlete will likely be capable of on race day, after
+    /// following a training plan" — as opposed to `expectedTime`, which is
+    /// "what they could do if the race were today." Blends toward the
+    /// optimistic scenario, since training between now and race day mostly
+    /// closes the gap between current fitness and best-case fitness.
+    ///
+    /// Used both by `FinishTimeEvolutionView`'s no-goal fallback (so the
+    /// projected curve and this number agree) and by goal-setting, so a
+    /// "realistic target" suggestion is anchored to race-day potential
+    /// rather than today's snapshot — the two must use the same formula
+    /// or a recommended goal can look wrong later once the plan exists.
+    static func projectedRaceDayEstimate(optimisticTime: TimeInterval, expectedTime: TimeInterval) -> TimeInterval {
+        optimisticTime + (expectedTime - optimisticTime) * 0.15
     }
 
     // MARK: - Quick synchronous estimate
@@ -296,6 +320,21 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
     }
 
     // MARK: - Range spread (race-class + data-quality)
+
+    /// Scales the optimistic/conservative spread by athlete experience.
+    /// Real coaching variance is tighter for more experienced athletes —
+    /// they're less exposed to the pacing/fueling/navigation mistakes
+    /// that dominate variance for less experienced runners — so the same
+    /// distance-based aleatory spread should not produce the same
+    /// absolute range for a beginner and an elite athlete.
+    func experienceSpreadMultiplier(_ level: ExperienceLevel) -> Double {
+        switch level {
+        case .beginner:     1.25
+        case .intermediate: 1.05
+        case .advanced:     0.85
+        case .elite:        0.70
+        }
+    }
 
     /// Race-day aleatory uncertainty as a fraction (e.g., 0.02 = ±2%).
     /// Coaching consensus: shorter races have less variability (heat /

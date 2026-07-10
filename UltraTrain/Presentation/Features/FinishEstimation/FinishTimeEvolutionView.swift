@@ -189,8 +189,8 @@ struct FinishTimeEvolutionView: View {
                 )
                 .foregroundStyle(
                     LinearGradient(
-                        colors: [primaryTint.opacity(0.08),
-                                 primaryTint.opacity(0.22)],
+                        colors: [primaryTint.opacity(0.10),
+                                 primaryTint.opacity(0.26)],
                         startPoint: .top,
                         endPoint: .bottom
                     )
@@ -207,8 +207,8 @@ struct FinishTimeEvolutionView: View {
                 )
                 .foregroundStyle(
                     LinearGradient(
-                        colors: [primaryTint.opacity(0.22),
-                                 primaryTint.opacity(0.06)],
+                        colors: [primaryTint.opacity(0.26),
+                                 primaryTint.opacity(0.08)],
                         startPoint: .top,
                         endPoint: .bottom
                     )
@@ -216,14 +216,36 @@ struct FinishTimeEvolutionView: View {
                 .interpolationMethod(.catmullRom)
             }
 
-            // ── Expected line — wide glow pass ────────────────────────
+            // ── Crisp boundary lines at the optimistic/conservative
+            // edges, so the three "lanes" read as distinct zones instead
+            // of blending into one soft gradient blob ──────────────────
+            ForEach(points) { p in
+                LineMark(
+                    x: .value("Week", p.week),
+                    y: .value("Optimistic", p.optimisticSeconds)
+                )
+                .foregroundStyle(primaryTint.opacity(0.35))
+                .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
+                .interpolationMethod(.catmullRom)
+            }
+            ForEach(points) { p in
+                LineMark(
+                    x: .value("Week", p.week),
+                    y: .value("Conservative", p.conservativeSeconds)
+                )
+                .foregroundStyle(primaryTint.opacity(0.35))
+                .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
+                .interpolationMethod(.catmullRom)
+            }
+
+            // ── Expected line — tight glow pass ───────────────────────
             ForEach(points) { p in
                 LineMark(
                     x: .value("Week", p.week),
                     y: .value("Expected", p.expectedSeconds)
                 )
-                .foregroundStyle(primaryTint.opacity(0.18))
-                .lineStyle(StrokeStyle(lineWidth: 12, lineCap: .round))
+                .foregroundStyle(primaryTint.opacity(0.12))
+                .lineStyle(StrokeStyle(lineWidth: 6, lineCap: .round))
                 .interpolationMethod(.catmullRom)
             }
             // ── Expected line — crisp adaptive line on top ────────────
@@ -239,7 +261,7 @@ struct FinishTimeEvolutionView: View {
                         endPoint: .trailing
                     )
                 )
-                .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round))
+                .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
                 .interpolationMethod(.catmullRom)
             }
 
@@ -508,7 +530,7 @@ struct FinishTimeEvolutionView: View {
         let optimistic = estimate.optimisticTime
         let expected   = estimate.expectedTime
         guard let goal = goalTime else {
-            return optimistic + (expected - optimistic) * 0.15
+            return FinishTimeEstimator.projectedRaceDayEstimate(optimisticTime: optimistic, expectedTime: expected)
         }
         if goal >= expected { return optimistic + (expected - optimistic) * 0.10 }
         if goal <= optimistic { return optimistic }

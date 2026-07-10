@@ -672,6 +672,37 @@ final class OnboardingViewModel {
         return race
     }
 
+    // MARK: - Race-day projection hint
+
+    /// A quick, dependency-light finish-time projection used only to ground
+    /// goal-setting in what the athlete is likely capable of BY RACE DAY
+    /// (after training), not just today. Reuses the same `buildAthlete()`/
+    /// `buildRace()` used at save time, so it works with whatever profile
+    /// data has been entered so far — degrades gracefully to the
+    /// experience-level fallback when PBs haven't been entered yet, same
+    /// as the real Day-0 estimate elsewhere in the app.
+    func projectedRaceDayEstimate() async -> TimeInterval? {
+        guard !hasNoRace, raceDistanceKm > 0 else { return nil }
+        let athlete = buildAthlete()
+        let race = buildRace()
+        do {
+            let estimate = try await FinishTimeEstimator().execute(
+                athlete: athlete,
+                race: race,
+                recentRuns: [],
+                currentFitness: nil,
+                pastRaceCalibrations: [],
+                weatherImpact: nil
+            )
+            return FinishTimeEstimator.projectedRaceDayEstimate(
+                optimisticTime: estimate.optimisticTime,
+                expectedTime: estimate.expectedTime
+            )
+        } catch {
+            return nil
+        }
+    }
+
     private func buildRaceGoal() -> RaceGoal {
         switch raceGoalType {
         case .finish:

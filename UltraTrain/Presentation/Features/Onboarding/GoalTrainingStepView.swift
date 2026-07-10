@@ -3,6 +3,8 @@ import SwiftUI
 struct GoalTrainingStepView: View {
     @Bindable var viewModel: OnboardingViewModel
 
+    @State private var raceDayHint: TimeInterval?
+
     var body: some View {
         ScrollView {
             VStack(spacing: Theme.Spacing.xxl) {
@@ -125,6 +127,7 @@ struct GoalTrainingStepView: View {
                     .onboardingCardStyle()
                     .animation(.easeInOut(duration: 0.2), value: viewModel.raceGoalType)
 
+                    raceDayHintCard
                     goalRealisticnessWarning
                     } // end if !hasNoRace
 
@@ -231,6 +234,44 @@ struct GoalTrainingStepView: View {
                 .padding(.horizontal, Theme.Spacing.lg)
             }
         }
+        .task(id: taskIdentity) {
+            raceDayHint = await viewModel.projectedRaceDayEstimate()
+        }
+    }
+
+    /// Recompute the race-day hint only when the profile signals that
+    /// actually change it (not on every target-time keystroke — the
+    /// projection is goal-independent, see `projectedRaceDayEstimate()`).
+    private var taskIdentity: String {
+        "\(viewModel.raceDistanceKm)-\(viewModel.raceElevationGainM)-\(viewModel.raceType)-\(viewModel.experienceLevel?.rawValue ?? "")"
+    }
+
+    @ViewBuilder
+    private var raceDayHintCard: some View {
+        if viewModel.raceGoalType == .targetTime, let raceDayHint {
+            HStack(alignment: .top, spacing: Theme.Spacing.sm) {
+                Image(systemName: "flag.checkered")
+                    .foregroundStyle(Theme.Colors.success)
+                Text(String(
+                    format: String(
+                        localized: "goal.raceDayHint",
+                        defaultValue: "Based on your training window, many athletes at your level end up closer to %@ by race day — today's number is just a starting point."
+                    ),
+                    formatHint(raceDayHint)
+                ))
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+            }
+            .padding(Theme.Spacing.md)
+            .background(Theme.Colors.success.opacity(0.08))
+            .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
+        }
+    }
+
+    private func formatHint(_ seconds: TimeInterval) -> String {
+        let h = Int(seconds) / 3600
+        let m = (Int(seconds) % 3600) / 60
+        return String(format: "%dh%02d", h, m)
     }
 
     @ViewBuilder
