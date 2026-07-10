@@ -244,6 +244,10 @@ struct AppRootView: View {
                             await checkBiometricLockSetting()
                             if !isNewUser {
                                 await checkOnboardingStatus()
+                                // Must be called for returning users: hasActiveSubscription
+                                // starts as .none and is never set otherwise, leaving the
+                                // authenticated view stuck on ProgressView("Loading...").
+                                await checkSubscriptionStatus()
                             }
                             await loadUnitPreference()
                             await registerForPushNotifications()

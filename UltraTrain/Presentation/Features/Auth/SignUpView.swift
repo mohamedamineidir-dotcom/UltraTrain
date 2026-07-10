@@ -37,7 +37,7 @@ struct SignUpView: View {
         }
         .navigationTitle("Create Account")
         .navigationBarTitleDisplayMode(.large)
-        .alert("Error", isPresented: .constant(viewModel.error != nil)) {
+        .alert("Error", isPresented: Binding(get: { viewModel.error != nil }, set: { if !$0 { viewModel.error = nil } })) {
             Button("OK") { viewModel.error = nil }
         } message: {
             Text(viewModel.error ?? "")
@@ -73,13 +73,6 @@ struct SignUpView: View {
     private var formSection: some View {
         VStack(spacing: Theme.Spacing.md) {
             OnboardingTextField(
-                placeholder: "First Name",
-                text: $viewModel.firstName,
-                textContentType: .givenName,
-                autocapitalization: .words
-            )
-
-            OnboardingTextField(
                 placeholder: "Email",
                 text: $viewModel.email,
                 keyboardType: .emailAddress,
@@ -100,9 +93,7 @@ struct SignUpView: View {
         PrimaryOnboardingButton(
             title: "Create Account",
             isLoading: viewModel.isLoading,
-            isEnabled: !viewModel.firstName.trimmingCharacters(in: .whitespaces).isEmpty
-                && !viewModel.email.isEmpty
-                && viewModel.password.count >= 8
+            isEnabled: !viewModel.email.isEmpty && viewModel.password.count >= 8
         ) {
             Task { await viewModel.createAccount() }
         }

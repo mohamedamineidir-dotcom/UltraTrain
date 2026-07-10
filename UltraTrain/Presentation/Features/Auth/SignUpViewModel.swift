@@ -29,10 +29,6 @@ final class SignUpViewModel {
     }
 
     func createAccount() async {
-        guard !firstName.trimmingCharacters(in: .whitespaces).isEmpty else {
-            error = "Please enter your first name"
-            return
-        }
         guard !email.isEmpty, !password.isEmpty else {
             error = "Please enter email and password"
             return
@@ -44,10 +40,9 @@ final class SignUpViewModel {
         do {
             try await authService.register(
                 email: email, password: password,
-                firstName: firstName.trimmingCharacters(in: .whitespaces),
+                firstName: nil,
                 referralCode: nil
             )
-            authenticatedFirstName = firstName.trimmingCharacters(in: .whitespaces)
             isNewUser = true
             isAuthenticated = true
         } catch {
