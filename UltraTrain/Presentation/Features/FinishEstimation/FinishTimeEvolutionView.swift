@@ -155,18 +155,19 @@ struct FinishTimeEvolutionView: View {
                                 defaultValue: "Projected curve"))
                         .font(.footnote.bold())
                         .foregroundStyle(cardLabel.opacity(0.90))
+                }
+
+                // Legend reuses the SAME color coding as the scenario
+                // tiles elsewhere on this screen (Optimistic = green,
+                // Expected = primary, Conservative = orange) — the chart
+                // previously used one color for everything, so it had no
+                // way to visually agree with the tiles the athlete already
+                // understands as three distinct scenarios.
+                HStack(spacing: 12) {
+                    legendSwatch(color: Theme.Colors.success, dashed: true, label: String(localized: "fe.scn.optimistic", defaultValue: "Optimistic"))
+                    legendSwatch(color: primaryTint, dashed: false, label: String(localized: "fe.scn.expected", defaultValue: "Expected"))
+                    legendSwatch(color: Theme.Colors.warning, dashed: true, label: String(localized: "fe.scn.conservative", defaultValue: "Conservative"))
                     Spacer()
-                    HStack(spacing: 4) {
-                        Circle().fill(primaryTint.opacity(0.45)).frame(width: 6, height: 6)
-                        Text(String(localized: "fe.scn.range", defaultValue: "Range"))
-                            .font(.caption2).foregroundStyle(cardSubLabel)
-                    }
-                    HStack(spacing: 4) {
-                        RoundedRectangle(cornerRadius: 1)
-                            .fill(primaryTint).frame(width: 14, height: 2.5)
-                        Text(String(localized: "fe.scn.expected", defaultValue: "Expected"))
-                            .font(.caption2).foregroundStyle(cardLabel.opacity(0.65))
-                    }
                 }
 
                 chart
@@ -178,63 +179,62 @@ struct FinishTimeEvolutionView: View {
         .shadow(color: .black.opacity(cardShadowOpacity), radius: 10, y: 3)
     }
 
+    private func legendSwatch(color: Color, dashed: Bool, label: String) -> some View {
+        HStack(spacing: 4) {
+            if dashed {
+                HStack(spacing: 2) {
+                    ForEach(0..<3, id: \.self) { _ in
+                        RoundedRectangle(cornerRadius: 1).fill(color).frame(width: 3, height: 2)
+                    }
+                }
+            } else {
+                RoundedRectangle(cornerRadius: 1.5)
+                    .fill(color)
+                    .frame(width: 14, height: 3)
+            }
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(cardLabel.opacity(0.75))
+        }
+    }
+
     private var chart: some View {
         Chart {
-            // ── Lower band: expected → conservative (risk side, deeper) ──
-            ForEach(points) { p in
-                AreaMark(
-                    x: .value("Week", p.week),
-                    yStart: .value("Exp", p.expectedSeconds),
-                    yEnd: .value("Con", p.conservativeSeconds)
-                )
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [primaryTint.opacity(0.10),
-                                 primaryTint.opacity(0.26)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-                .interpolationMethod(.catmullRom)
-            }
-
-            // ── Upper band: optimistic → expected (upside, lighter) ───
+            // ── ONE neutral fill spanning the whole range. Deliberately
+            // NOT color-coded — the colored boundary lines below do the
+            // "which scenario is which" work; a neutral fill just reads
+            // as "this is the uncertain zone" instead of competing with
+            // them for meaning ─────────────────────────────────────────
             ForEach(points) { p in
                 AreaMark(
                     x: .value("Week", p.week),
                     yStart: .value("Opt", p.optimisticSeconds),
-                    yEnd: .value("Exp2", p.expectedSeconds)
+                    yEnd: .value("Con", p.conservativeSeconds)
                 )
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [primaryTint.opacity(0.26),
-                                 primaryTint.opacity(0.08)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
+                .foregroundStyle(cardLabel.opacity(0.06))
                 .interpolationMethod(.catmullRom)
             }
 
-            // ── Crisp boundary lines at the optimistic/conservative
-            // edges, so the three "lanes" read as distinct zones instead
-            // of blending into one soft gradient blob ──────────────────
+            // ── Optimistic bound — green, matching the "Optimistic"
+            // scenario tile elsewhere on this screen ──────────────────
             ForEach(points) { p in
                 LineMark(
                     x: .value("Week", p.week),
                     y: .value("Optimistic", p.optimisticSeconds)
                 )
-                .foregroundStyle(primaryTint.opacity(0.35))
-                .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
+                .foregroundStyle(Theme.Colors.success.opacity(0.85))
+                .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
                 .interpolationMethod(.catmullRom)
             }
+            // ── Conservative bound — orange, matching the "Conservative"
+            // scenario tile ────────────────────────────────────────────
             ForEach(points) { p in
                 LineMark(
                     x: .value("Week", p.week),
                     y: .value("Conservative", p.conservativeSeconds)
                 )
-                .foregroundStyle(primaryTint.opacity(0.35))
-                .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
+                .foregroundStyle(Theme.Colors.warning.opacity(0.85))
+                .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
                 .interpolationMethod(.catmullRom)
             }
 
@@ -244,24 +244,20 @@ struct FinishTimeEvolutionView: View {
                     x: .value("Week", p.week),
                     y: .value("Expected", p.expectedSeconds)
                 )
-                .foregroundStyle(primaryTint.opacity(0.12))
-                .lineStyle(StrokeStyle(lineWidth: 6, lineCap: .round))
+                .foregroundStyle(primaryTint.opacity(0.15))
+                .lineStyle(StrokeStyle(lineWidth: 7, lineCap: .round))
                 .interpolationMethod(.catmullRom)
             }
-            // ── Expected line — crisp adaptive line on top ────────────
+            // ── Expected line — bold and solid, unmistakably the "main"
+            // line since it's the only solid (non-dashed) stroke and the
+            // only one at full opacity ────────────────────────────────
             ForEach(points) { p in
                 LineMark(
                     x: .value("Week", p.week),
                     y: .value("Expected", p.expectedSeconds)
                 )
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [cardLabel, primaryTint],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
+                .foregroundStyle(primaryTint)
+                .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
                 .interpolationMethod(.catmullRom)
             }
 
