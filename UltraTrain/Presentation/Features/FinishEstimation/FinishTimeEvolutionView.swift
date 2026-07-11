@@ -208,8 +208,8 @@ struct FinishTimeEvolutionView: View {
             ForEach(points) { p in
                 AreaMark(
                     x: .value("Week", p.week),
-                    yStart: .value("Opt", p.optimisticSeconds),
-                    yEnd: .value("Con", p.conservativeSeconds)
+                    yStart: .value("Seconds", p.optimisticSeconds),
+                    yEnd: .value("Seconds", p.conservativeSeconds)
                 )
                 .foregroundStyle(cardLabel.opacity(0.06))
                 .interpolationMethod(.catmullRom)
@@ -220,7 +220,7 @@ struct FinishTimeEvolutionView: View {
             ForEach(points) { p in
                 LineMark(
                     x: .value("Week", p.week),
-                    y: .value("Optimistic", p.optimisticSeconds)
+                    y: .value("Seconds", p.optimisticSeconds)
                 )
                 .foregroundStyle(Theme.Colors.success.opacity(0.85))
                 .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
@@ -231,7 +231,7 @@ struct FinishTimeEvolutionView: View {
             ForEach(points) { p in
                 LineMark(
                     x: .value("Week", p.week),
-                    y: .value("Conservative", p.conservativeSeconds)
+                    y: .value("Seconds", p.conservativeSeconds)
                 )
                 .foregroundStyle(Theme.Colors.warning.opacity(0.85))
                 .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
@@ -242,7 +242,7 @@ struct FinishTimeEvolutionView: View {
             ForEach(points) { p in
                 LineMark(
                     x: .value("Week", p.week),
-                    y: .value("Expected", p.expectedSeconds)
+                    y: .value("Seconds", p.expectedSeconds)
                 )
                 .foregroundStyle(primaryTint.opacity(0.15))
                 .lineStyle(StrokeStyle(lineWidth: 7, lineCap: .round))
@@ -254,7 +254,7 @@ struct FinishTimeEvolutionView: View {
             ForEach(points) { p in
                 LineMark(
                     x: .value("Week", p.week),
-                    y: .value("Expected", p.expectedSeconds)
+                    y: .value("Seconds", p.expectedSeconds)
                 )
                 .foregroundStyle(primaryTint)
                 .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
@@ -262,7 +262,7 @@ struct FinishTimeEvolutionView: View {
             }
 
             // ── NOW rule ─────────────────────────────────────────────
-            RuleMark(x: .value("Now", currentWeekIndex))
+            RuleMark(x: .value("Week", currentWeekIndex))
                 .foregroundStyle(cardLabel.opacity(0.18))
                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 5]))
                 .annotation(position: .bottom, alignment: .center, spacing: 5) {
@@ -282,11 +282,11 @@ struct FinishTimeEvolutionView: View {
             // ── Today dot ────────────────────────────────────────────
             if let cp = points.first(where: { $0.week == currentWeekIndex }) {
                 PointMark(x: .value("Week", cp.week),
-                          y: .value("Expected", cp.expectedSeconds))
+                          y: .value("Seconds", cp.expectedSeconds))
                     .foregroundStyle(primaryTint.opacity(0.20))
                     .symbolSize(380)
                 PointMark(x: .value("Week", cp.week),
-                          y: .value("Expected", cp.expectedSeconds))
+                          y: .value("Seconds", cp.expectedSeconds))
                     .foregroundStyle(cardLabel)
                     .symbolSize(50)
                     .annotation(position: nowAnnotationPosition, alignment: .center, spacing: 6) {
@@ -315,11 +315,11 @@ struct FinishTimeEvolutionView: View {
             // ── Race-day dot ─────────────────────────────────────────
             if let last = points.last {
                 PointMark(x: .value("Week", last.week),
-                          y: .value("Expected", last.expectedSeconds))
+                          y: .value("Seconds", last.expectedSeconds))
                     .foregroundStyle(Theme.Colors.success.opacity(0.20))
                     .symbolSize(380)
                 PointMark(x: .value("Week", last.week),
-                          y: .value("Expected", last.expectedSeconds))
+                          y: .value("Seconds", last.expectedSeconds))
                     .foregroundStyle(Theme.Colors.success)
                     .symbolSize(50)
                     .annotation(position: .top, alignment: .trailing, spacing: 6) {

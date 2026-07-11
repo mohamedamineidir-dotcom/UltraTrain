@@ -1,214 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "addFood.photoAnalysisFailed" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Could not analyze photo: %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Impossible d'analyser la photo : %@"
-          }
-        }
-      }
-    },
-    "addFood.barcodeNotFound" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Product not found for barcode %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Produit introuvable pour le code-barres %@"
-          }
-        }
-      }
-    },
-    "addFood.barcodeLookupFailed" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Could not look up barcode: %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Impossible de rechercher le code-barres : %@"
-          }
-        }
-      }
-    },
-    "apiError.invalidURL" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Invalid URL."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "URL invalide."
-          }
-        }
-      }
-    },
-    "apiError.invalidResponse" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Invalid server response."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Réponse du serveur invalide."
-          }
-        }
-      }
-    },
-    "apiError.unauthorized" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Invalid email or password."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Email ou mot de passe invalide."
-          }
-        }
-      }
-    },
-    "apiError.sessionExpired" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your session has expired. Please sign in again."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Votre session a expiré. Veuillez vous reconnecter."
-          }
-        }
-      }
-    },
-    "apiError.conflict" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conflict. Please try again."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conflit. Veuillez réessayer."
-          }
-        }
-      }
-    },
-    "apiError.clientError" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Request failed."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La requête a échoué."
-          }
-        }
-      }
-    },
-    "apiError.serverError" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Server error (%d). Please try again."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Erreur serveur (%d). Veuillez réessayer."
-          }
-        }
-      }
-    },
-    "apiError.decodingError" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Failed to process server response."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Échec du traitement de la réponse du serveur."
-          }
-        }
-      }
-    },
-    "apiError.networkError" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Network error: %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Erreur réseau : %@"
-          }
-        }
-      }
-    },
-    "apiError.unknown" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unexpected error (%d)."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Erreur inattendue (%d)."
-          }
-        }
-      }
-    },
     "" : {
       "localizations" : {
         "fr" : {
@@ -3929,6 +3721,54 @@
         }
       }
     },
+    "addFood.barcodeLookupFailed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not look up barcode: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de rechercher le code-barres : %@"
+          }
+        }
+      }
+    },
+    "addFood.barcodeNotFound" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Product not found for barcode %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Produit introuvable pour le code-barres %@"
+          }
+        }
+      }
+    },
+    "addFood.photoAnalysisFailed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not analyze photo: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d'analyser la photo : %@"
+          }
+        }
+      }
+    },
     "Adding any B or C races now lets the plan shape its build, taper and recovery around them." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -4511,6 +4351,166 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sortie de %@ terminée"
+          }
+        }
+      }
+    },
+    "apiError.clientError" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Request failed."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La requête a échoué."
+          }
+        }
+      }
+    },
+    "apiError.conflict" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conflict. Please try again."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conflit. Veuillez réessayer."
+          }
+        }
+      }
+    },
+    "apiError.decodingError" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to process server response."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échec du traitement de la réponse du serveur."
+          }
+        }
+      }
+    },
+    "apiError.invalidResponse" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid server response."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réponse du serveur invalide."
+          }
+        }
+      }
+    },
+    "apiError.invalidURL" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid URL."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL invalide."
+          }
+        }
+      }
+    },
+    "apiError.networkError" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Network error: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erreur réseau : %@"
+          }
+        }
+      }
+    },
+    "apiError.serverError" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Server error (%d). Please try again."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erreur serveur (%d). Veuillez réessayer."
+          }
+        }
+      }
+    },
+    "apiError.sessionExpired" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your session has expired. Please sign in again."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre session a expiré. Veuillez vous reconnecter."
+          }
+        }
+      }
+    },
+    "apiError.unauthorized" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid email or password."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Email ou mot de passe invalide."
+          }
+        }
+      }
+    },
+    "apiError.unknown" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unexpected error (%d)."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erreur inattendue (%d)."
           }
         }
       }
@@ -10356,12 +10356,6 @@
         }
       }
     },
-    "Exp" : {
-
-    },
-    "Exp2" : {
-
-    },
     "Expand" : {
       "localizations" : {
         "fr" : {
@@ -11091,6 +11085,7 @@
       }
     },
     "fe.scn.range" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
