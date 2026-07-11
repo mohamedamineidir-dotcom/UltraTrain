@@ -1106,6 +1106,7 @@
 		9AABCBEFB282F99561326F38 /* NoMovementDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = D499498DF5A5D88583D2095C /* NoMovementDetector.swift */; };
 		9ACF165D2E45DF05738A7366 /* FriendsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6348F434D77B8F007FD9ECCB /* FriendsListView.swift */; };
 		9AE1BC105C7C469366AA96BC /* TrackPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6352CF507DE3AD358EDB2D8 /* TrackPoint.swift */; };
+		9AE94CC3E50E4F7959DACEC3 /* View+DismissKeyboardOnTap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3657F75A5ACB6DAFA1B7A3DA /* View+DismissKeyboardOnTap.swift */; };
 		9AECD39073244CF1AE248CE7 /* WatchActiveRunView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D97BD5E6B16C2F6378F98671 /* WatchActiveRunView.swift */; };
 		9B053D7FB3AD3978459BC94B /* RemoteRunDataSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5769042CF491ACBD405C34E5 /* RemoteRunDataSourceTests.swift */; };
 		9B6E07F9328BEAA5582249C7 /* ElevationPaceScatterChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56C861519DF92BF9D158C529 /* ElevationPaceScatterChart.swift */; };
@@ -2305,6 +2306,7 @@
 		361845E34AFD8277E5C594B5 /* GradientCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientCategory.swift; sourceTree = "<group>"; };
 		36240136D6EADC9B9F658802 /* EnvironmentValues+UnitPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EnvironmentValues+UnitPreference.swift"; sourceTree = "<group>"; };
 		364360DFC64B238891E74FD7 /* QualitySessionRatioResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QualitySessionRatioResolver.swift; sourceTree = "<group>"; };
+		3657F75A5ACB6DAFA1B7A3DA /* View+DismissKeyboardOnTap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+DismissKeyboardOnTap.swift"; sourceTree = "<group>"; };
 		365F0542FF9BAE9B6723B6C1 /* PerformanceEstimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceEstimator.swift; sourceTree = "<group>"; };
 		36E813F94D4567DE4B5097C0 /* Logger+App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Logger+App.swift"; sourceTree = "<group>"; };
 		3751CFC33A4C618706AB7A60 /* MenstrualAdaptationCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenstrualAdaptationCalculatorTests.swift; sourceTree = "<group>"; };
@@ -4227,6 +4229,7 @@
 				36240136D6EADC9B9F658802 /* EnvironmentValues+UnitPreference.swift */,
 				0326DC7ACF4E6BF69D212B16 /* EnvironmentValues+WeatherService.swift */,
 				E0C45C8187289533E62433C7 /* TimeIntervalExtensions.swift */,
+				3657F75A5ACB6DAFA1B7A3DA /* View+DismissKeyboardOnTap.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -8273,6 +8276,7 @@
 				73A9D55ABED15562E6BBBD4F /* UphillDuration.swift in Sources */,
 				5A93C5FADAEECAEE03295BEE /* VerticalGainConstraintAdapter.swift in Sources */,
 				A9F14B142882B40751B8877D /* VerticalGainEnvironment.swift in Sources */,
+				9AE94CC3E50E4F7959DACEC3 /* View+DismissKeyboardOnTap.swift in Sources */,
 				257D3958EF065A6D7B213DEB /* VoiceCoachingConfig.swift in Sources */,
 				32B8A3D05C0DB75EA74FE24C /* VoiceCoachingHandler.swift in Sources */,
 				0B539FDDCA5844C4408554EB /* VoiceCoachingService.swift in Sources */,

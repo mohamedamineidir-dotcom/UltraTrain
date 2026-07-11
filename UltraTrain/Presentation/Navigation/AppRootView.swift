@@ -258,6 +258,7 @@ struct AppRootView: View {
                 }
             }
         }
+        .dismissKeyboardOnBackgroundTap()
         .environment(\.unitPreference, unitPreference)
         .task {
             if let checker = deviceIntegrityChecker {
