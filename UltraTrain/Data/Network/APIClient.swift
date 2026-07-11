@@ -210,9 +210,23 @@ actor APIClient {
                 }
                 throw error
             } catch {
-                if (error as NSError).code == NSURLErrorTimedOut,
+                // Transient network-layer errors — not just timeouts. A
+                // request that takes a while for a legitimate reason (e.g.
+                // uploading a photo for AI analysis) has a longer window
+                // where the OS can tear down the connection (Wi-Fi/cellular
+                // handoff, brief signal loss) and previously only a hard
+                // timeout got retried; a dropped connection failed
+                // immediately with no retry at all.
+                let transientNetworkCodes: Set<Int> = [
+                    NSURLErrorTimedOut,
+                    NSURLErrorNetworkConnectionLost,
+                    NSURLErrorNotConnectedToInternet,
+                    NSURLErrorDataNotAllowed
+                ]
+                if transientNetworkCodes.contains((error as NSError).code),
                    retryInterceptor.shouldRetry(statusCode: 0, attempt: attempt) {
                     let delay = retryInterceptor.delay(for: attempt)
+                    Logger.network.info("Retrying \(path) after transient network error in \(delay)s (attempt \(attempt + 1))")
                     try await Task.sleep(for: .seconds(delay))
                     lastError = error
                     continue
