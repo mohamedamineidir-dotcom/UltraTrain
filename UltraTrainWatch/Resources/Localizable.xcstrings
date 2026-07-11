@@ -62,6 +62,7 @@
       }
     },
     "Allow location to track runs" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -89,6 +90,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "FC moy."
+          }
+        }
+      }
+    },
+    "Continue" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer"
           }
         }
       }
@@ -145,6 +156,16 @@
         }
       }
     },
+    "iPhone not connected" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone non connecté"
+          }
+        }
+      }
+    },
     "KM %lld" : {
       "localizations" : {
         "fr" : {
@@ -164,6 +185,9 @@
           }
         }
       }
+    },
+    "Location needed to track runs" : {
+
     },
     "No runs yet" : {
       "localizations" : {
@@ -258,22 +282,22 @@
         }
       }
     },
-    "Start Run" : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Démarrer la course"
-          }
-        }
-      }
-    },
     "Start a run on your iPhone to see live metrics here." : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Démarrez une course sur votre iPhone pour voir les métriques en direct ici."
+          }
+        }
+      }
+    },
+    "Start Run" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Démarrer la course"
           }
         }
       }
@@ -315,16 +339,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "UltraTrain"
-          }
-        }
-      }
-    },
-    "iPhone not connected" : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "iPhone non connecté"
           }
         }
       }

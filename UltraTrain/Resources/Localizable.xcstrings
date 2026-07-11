@@ -1,502 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "goal.raceDayHint" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Based on your training window, many athletes at your level end up closer to %@ by race day — today's number is just a starting point."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Selon votre fenêtre d'entraînement, de nombreux athlètes de votre niveau se rapprochent de %@ le jour de la course. Le chiffre d'aujourd'hui n'est qu'un point de départ."
-          }
-        }
-      }
-    },
-    "fpc.instruction" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Take a photo of your food"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prenez une photo de votre repas"
-          }
-        }
-      }
-    },
-    "fpc.unavailable" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Camera unavailable.\nTry on a real device."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Caméra indisponible.\nEssayez sur un appareil réel."
-          }
-        }
-      }
-    },
-    "fpc.permissionDenied" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Camera access denied.\nEnable in Settings > Privacy."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Accès à la caméra refusé.\nActivez-le dans Réglages > Confidentialité."
-          }
-        }
-      }
-    },
-    "fpc.takePhoto" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Take photo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prendre une photo"
-          }
-        }
-      }
-    },
-    "fph.addOrEdit" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add or edit details"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajouter ou modifier les détails"
-          }
-        }
-      }
-    },
-    "fph.confirmAndTrack" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Confirm and Track"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Confirmer et enregistrer"
-          }
-        }
-      }
-    },
-    "fph.addItem" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajouter %@"
-          }
-        }
-      }
-    },
-    "fph.portion" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Portion"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Portion"
-          }
-        }
-      }
-    },
-    "goal.warning.elitePace" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This pace would place you among the top professional athletes in the world. Consider a more realistic target time."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cette allure vous placerait parmi les meilleurs athlètes professionnels au monde. Envisagez un objectif plus réaliste."
-          }
-        }
-      }
-    },
-    "goal.warning.rankingAmbitious" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A top %d finish on a %@ race is extremely ambitious for a %@ runner. Top finishes require years of competitive ultra experience."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Une place dans le top %d sur une course %@ est extrêmement ambitieuse pour un coureur %@. Les meilleures places demandent des années d'expérience compétitive en ultra."
-          }
-        }
-      }
-    },
-    "goal.warning.paceAboveLevel" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A %@ finish requires a pace typically achieved by %@ or better runners. Consider adjusting your target."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un temps de %@ nécessite une allure généralement atteinte par des coureurs de niveau %@ ou supérieur. Envisagez d'ajuster votre objectif."
-          }
-        }
-      }
-    },
-    "goal.warning.roadElitePace" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This pace is at the world-class professional level. Consider a more realistic target time."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cette allure est de niveau professionnel mondial. Envisagez un objectif plus réaliste."
-          }
-        }
-      }
-    },
-    "goal.warning.roadPaceAboveLevel" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A %@ finish is typically achieved by %@ or better runners. It's ambitious but possible with the right training."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un temps de %@ est généralement atteint par des coureurs de niveau %@ ou supérieur. C'est ambitieux mais possible avec le bon entraînement."
-          }
-        }
-      }
-    },
-    "scl.step1.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Saving your session"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enregistrement de votre séance"
-          }
-        }
-      }
-    },
-    "scl.step1.subtitle" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recording stats & performance data"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enregistrement des statistiques et des performances"
-          }
-        }
-      }
-    },
-    "scl.step2.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Updating training load"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mise à jour de la charge d'entraînement"
-          }
-        }
-      }
-    },
-    "scl.step2.subtitle" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recalculating fitness & fatigue"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recalcul de la forme et de la fatigue"
-          }
-        }
-      }
-    },
-    "scl.step3.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adjusting your plan"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajustement de votre plan"
-          }
-        }
-      }
-    },
-    "scl.step3.subtitle" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Optimizing upcoming sessions"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Optimisation des prochaines séances"
-          }
-        }
-      }
-    },
-    "sv.sync.inApp.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In-App Runs"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Courses dans l'app"
-          }
-        }
-      }
-    },
-    "sv.sync.inApp.subtitle" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Runs recorded in UltraTrain"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Courses enregistrées dans UltraTrain"
-          }
-        }
-      }
-    },
-    "sv.sync.strava.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Strava"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Strava"
-          }
-        }
-      }
-    },
-    "sv.sync.connected" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connected"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connecté"
-          }
-        }
-      }
-    },
-    "sv.sync.connectToImport" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connect to import activities"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connectez-vous pour importer vos activités"
-          }
-        }
-      }
-    },
-    "sv.sync.comingSoon" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Coming soon"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bientôt disponible"
-          }
-        }
-      }
-    },
-    "sv.sync.navTitle" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sync from App"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Synchroniser depuis l'app"
-          }
-        }
-      }
-    },
-    "sv.sync.stravaActivities" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Strava Activities"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Activités Strava"
-          }
-        }
-      }
-    },
-    "fe.confidence.strong" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Strong prediction, good training data available"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prédiction fiable, bonnes données d'entraînement disponibles"
-          }
-        }
-      }
-    },
-    "fe.confidence.moderate" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Moderate prediction, more training data would improve accuracy"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prédiction modérée, plus de données d'entraînement amélioreraient la précision"
-          }
-        }
-      }
-    },
-    "fe.confidence.low" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Low confidence, keep training to improve prediction accuracy"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Confiance faible, continuez à vous entraîner pour améliorer la précision de la prédiction"
-          }
-        }
-      }
-    },
     "" : {
       "localizations" : {
         "fr" : {
@@ -1344,6 +848,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ : %2$lld%3$@"
+          }
+        }
+      }
+    },
+    "%@: %lldg · %@: %lldg · %@: %lldg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@: %2$lldg · %3$@: %4$lldg · %5$@: %6$lldg"
           }
         }
       }
@@ -3903,6 +3417,7 @@
       }
     },
     "Add %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -3933,6 +3448,7 @@
       }
     },
     "Add All Items" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -5554,6 +5070,7 @@
       }
     },
     "C: %lldg · P: %lldg · F: %lldg" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5702,7 +5219,6 @@
       }
     },
     "Carbs" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -7471,7 +6987,6 @@
       }
     },
     "Conservative" : {
-      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -8088,7 +7603,6 @@
       }
     },
     "Debug" : {
-      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -8953,6 +8467,7 @@
       }
     },
     "Detected Items (%lld)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -11150,7 +10665,6 @@
       }
     },
     "Fat" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -11268,6 +10782,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nous n'avons pas encore de records ni de données d'entraînement. Ajoutez un temps de course récent sur votre profil, ou enregistrez quelques sorties pour affiner la prédiction."
+          }
+        }
+      }
+    },
+    "fe.confidence.low" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low confidence, keep training to improve prediction accuracy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confiance faible, continuez à vous entraîner pour améliorer la précision de la prédiction"
+          }
+        }
+      }
+    },
+    "fe.confidence.moderate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moderate prediction, more training data would improve accuracy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prédiction modérée, plus de données d'entraînement amélioreraient la précision"
+          }
+        }
+      }
+    },
+    "fe.confidence.strong" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strong prediction, good training data available"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prédiction fiable, bonnes données d'entraînement disponibles"
           }
         }
       }
@@ -11933,6 +11495,70 @@
         }
       }
     },
+    "fpc.instruction" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take a photo of your food"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prenez une photo de votre repas"
+          }
+        }
+      }
+    },
+    "fpc.permissionDenied" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Camera access denied.\nEnable in Settings > Privacy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accès à la caméra refusé.\nActivez-le dans Réglages > Confidentialité."
+          }
+        }
+      }
+    },
+    "fpc.takePhoto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take photo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prendre une photo"
+          }
+        }
+      }
+    },
+    "fpc.unavailable" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Camera unavailable.\nTry on a real device."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caméra indisponible.\nEssayez sur un appareil réel."
+          }
+        }
+      }
+    },
     "fpd.hr" : {
       "localizations" : {
         "en" : {
@@ -12009,6 +11635,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La qualité de sommeil a chuté nettement. Priorisez l'hygiène de sommeil et un coucher plus tôt."
+          }
+        }
+      }
+    },
+    "fph.addItem" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter %@"
+          }
+        }
+      }
+    },
+    "fph.addOrEdit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add or edit details"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter ou modifier les détails"
+          }
+        }
+      }
+    },
+    "fph.confirmAndTrack" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirm and Track"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirmer et enregistrer"
+          }
+        }
+      }
+    },
+    "fph.portion" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Portion"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Portion"
           }
         }
       }
@@ -13521,6 +13211,102 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Objectif : Top %lld"
+          }
+        }
+      }
+    },
+    "goal.raceDayHint" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Based on your training window, many athletes at your level end up closer to %@ by race day — today's number is just a starting point."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selon votre fenêtre d'entraînement, de nombreux athlètes de votre niveau se rapprochent de %@ le jour de la course. Le chiffre d'aujourd'hui n'est qu'un point de départ."
+          }
+        }
+      }
+    },
+    "goal.warning.elitePace" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This pace would place you among the top professional athletes in the world. Consider a more realistic target time."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette allure vous placerait parmi les meilleurs athlètes professionnels au monde. Envisagez un objectif plus réaliste."
+          }
+        }
+      }
+    },
+    "goal.warning.paceAboveLevel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A %@ finish requires a pace typically achieved by %@ or better runners. Consider adjusting your target."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un temps de %@ nécessite une allure généralement atteinte par des coureurs de niveau %@ ou supérieur. Envisagez d'ajuster votre objectif."
+          }
+        }
+      }
+    },
+    "goal.warning.rankingAmbitious" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A top %d finish on a %@ race is extremely ambitious for a %@ runner. Top finishes require years of competitive ultra experience."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une place dans le top %d sur une course %@ est extrêmement ambitieuse pour un coureur %@. Les meilleures places demandent des années d'expérience compétitive en ultra."
+          }
+        }
+      }
+    },
+    "goal.warning.roadElitePace" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This pace is at the world-class professional level. Consider a more realistic target time."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette allure est de niveau professionnel mondial. Envisagez un objectif plus réaliste."
+          }
+        }
+      }
+    },
+    "goal.warning.roadPaceAboveLevel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A %@ finish is typically achieved by %@ or better runners. It's ambitious but possible with the right training."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un temps de %@ est généralement atteint par des coureurs de niveau %@ ou supérieur. C'est ambitieux mais possible avec le bon entraînement."
           }
         }
       }
@@ -18052,7 +17838,6 @@
       }
     },
     "Locks premium features and shows the free-plan picker, as a non-subscriber would see." : {
-      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -21948,6 +21733,9 @@
         }
       }
     },
+    "Opens Apple's weather data source information" : {
+
+    },
     "Opens challenges view" : {
       "localizations" : {
         "fr" : {
@@ -22244,7 +22032,6 @@
 
     },
     "Optimistic" : {
-      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -26639,7 +26426,6 @@
       }
     },
     "Protein" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -28655,6 +28441,9 @@
           }
         }
       }
+    },
+    "Reveals every week of the training plan, not just the free preview, so all sessions can be inspected." : {
+
     },
     "rfp.2daysOut" : {
       "localizations" : {
@@ -34633,6 +34422,102 @@
         }
       }
     },
+    "scl.step1.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recording stats & performance data"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrement des statistiques et des performances"
+          }
+        }
+      }
+    },
+    "scl.step1.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saving your session"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrement de votre séance"
+          }
+        }
+      }
+    },
+    "scl.step2.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recalculating fitness & fatigue"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recalcul de la forme et de la fatigue"
+          }
+        }
+      }
+    },
+    "scl.step2.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updating training load"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mise à jour de la charge d'entraînement"
+          }
+        }
+      }
+    },
+    "scl.step3.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optimizing upcoming sessions"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optimisation des prochaines séances"
+          }
+        }
+      }
+    },
+    "scl.step3.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adjusting your plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajustement de votre plan"
+          }
+        }
+      }
+    },
     "Score" : {
       "localizations" : {
         "fr" : {
@@ -36983,7 +36868,6 @@
       }
     },
     "Simulate free tier" : {
-      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -41536,6 +41420,134 @@
         }
       }
     },
+    "sv.sync.comingSoon" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coming soon"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bientôt disponible"
+          }
+        }
+      }
+    },
+    "sv.sync.connected" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connected"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connecté"
+          }
+        }
+      }
+    },
+    "sv.sync.connectToImport" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect to import activities"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connectez-vous pour importer vos activités"
+          }
+        }
+      }
+    },
+    "sv.sync.inApp.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runs recorded in UltraTrain"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courses enregistrées dans UltraTrain"
+          }
+        }
+      }
+    },
+    "sv.sync.inApp.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In-App Runs"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courses dans l'app"
+          }
+        }
+      }
+    },
+    "sv.sync.navTitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sync from App"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Synchroniser depuis l'app"
+          }
+        }
+      }
+    },
+    "sv.sync.strava.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strava"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strava"
+          }
+        }
+      }
+    },
+    "sv.sync.stravaActivities" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strava Activities"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activités Strava"
+          }
+        }
+      }
+    },
     "sv.syncApp" : {
       "localizations" : {
         "en" : {
@@ -41723,6 +41735,7 @@
       }
     },
     "Sync from App" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -43821,6 +43834,7 @@
       }
     },
     "Total" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -46480,6 +46494,9 @@
         }
       }
     },
+    "Unlock all plan weeks" : {
+
+    },
     "Unskip" : {
       "localizations" : {
         "fr" : {
@@ -48929,6 +48946,9 @@
           }
         }
       }
+    },
+    "Weather data attribution" : {
+
     },
     "Weather Impact" : {
       "localizations" : {
