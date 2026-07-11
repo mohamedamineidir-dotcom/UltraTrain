@@ -5,6 +5,15 @@ struct RunTrackingLaunchView: View {
     @State var viewModel: RunTrackingLaunchViewModel
     @State var showCrossTrainingSheet = false
     @State var heroBorderPulse = false
+    // Owned here (not constructed inline in navigationDestination) so an
+    // unrelated re-evaluation of this view's body — e.g. a scenePhase
+    // change when the user locks/unlocks the phone to check the Lock
+    // Screen Live Activity mid-run — can never silently replace the run
+    // in progress with a fresh, empty one. That was the root cause of the
+    // GPS "freezing", the in-app screen resetting, and duplicate Live
+    // Activities: a brand-new ActiveRunViewModel (with its own new
+    // LiveActivityService) got created on top of the still-running one.
+    @State var activeRunViewModel: ActiveRunViewModel?
     let athleteRepository: any AthleteRepository
     let locationService: LocationService
     private let healthKitService: any HealthKitServiceProtocol
@@ -142,55 +151,68 @@ struct RunTrackingLaunchView: View {
             .navigationTitle("Run")
             .task { await viewModel.load() }
             .onChange(of: viewModel.showActiveRun) { _, isShowing in
-                if !isShowing {
+                if isShowing {
+                    if activeRunViewModel == nil, let athlete = viewModel.athlete {
+                        activeRunViewModel = makeActiveRunViewModel(athlete: athlete)
+                    }
+                } else {
+                    activeRunViewModel = nil
                     viewModel.onRunSaved()
                 }
             }
             .navigationDestination(isPresented: $viewModel.showActiveRun) {
-                if let athlete = viewModel.athlete {
+                if let activeRunViewModel {
                     ActiveRunView(
-                        viewModel: ActiveRunViewModel(
-                            locationService: locationService,
-                            healthKitService: healthKitService,
-                            runRepository: runRepository,
-                            planRepository: planRepository,
-                            raceRepository: raceRepository,
-                            nutritionRepository: nutritionRepository,
-                            hapticService: hapticService,
-                            connectivityService: connectivityService,
-                            widgetDataWriter: widgetDataWriter,
-                            stravaUploadQueueService: stravaUploadQueueService,
-                            gearRepository: gearRepository,
-                            finishEstimateRepository: finishEstimateRepository,
-                            weatherService: weatherService,
-                            athlete: athlete,
-                            linkedSession: viewModel.selectedSession,
-                            autoPauseEnabled: viewModel.autoPauseEnabled,
-                            nutritionRemindersEnabled: viewModel.nutritionRemindersEnabled,
-                            nutritionAlertSoundEnabled: viewModel.nutritionAlertSoundEnabled,
-                            hydrationIntervalSeconds: viewModel.hydrationIntervalSeconds,
-                            fuelIntervalSeconds: viewModel.fuelIntervalSeconds,
-                            electrolyteIntervalSeconds: viewModel.electrolyteIntervalSeconds,
-                            smartRemindersEnabled: viewModel.smartRemindersEnabled,
-                            stravaAutoUploadEnabled: viewModel.stravaAutoUploadEnabled,
-                            saveToHealthEnabled: viewModel.saveToHealthEnabled,
-                            pacingAlertsEnabled: viewModel.pacingAlertsEnabled,
-                            raceId: viewModel.raceId,
-                            selectedGearIds: Array(viewModel.selectedGearIds),
-                            voiceCoachingConfig: viewModel.voiceCoachingConfig,
-                            intervalWorkout: viewModel.intervalWorkout,
-                            emergencyContactRepository: emergencyContactRepository,
-                            motionService: motionService,
-                            safetyConfig: viewModel.safetyConfig,
-                            raceCourseRoute: viewModel.raceCourseRoute,
-                            raceCheckpoints: viewModel.raceCheckpoints,
-                            raceCheckpointSplits: viewModel.raceCheckpointSplits,
-                            raceTotalDistanceKm: viewModel.raceTotalDistanceKm
-                        ),
+                        viewModel: activeRunViewModel,
                         exportService: exportService
                     )
                 }
             }
         }
+    }
+
+    /// Constructed exactly once per run, when the run actually starts —
+    /// never inline in `navigationDestination`, so it can't be silently
+    /// replaced by a later, unrelated body re-evaluation. See the comment
+    /// on `activeRunViewModel` above.
+    private func makeActiveRunViewModel(athlete: Athlete) -> ActiveRunViewModel {
+        ActiveRunViewModel(
+            locationService: locationService,
+            healthKitService: healthKitService,
+            runRepository: runRepository,
+            planRepository: planRepository,
+            raceRepository: raceRepository,
+            nutritionRepository: nutritionRepository,
+            hapticService: hapticService,
+            connectivityService: connectivityService,
+            widgetDataWriter: widgetDataWriter,
+            stravaUploadQueueService: stravaUploadQueueService,
+            gearRepository: gearRepository,
+            finishEstimateRepository: finishEstimateRepository,
+            weatherService: weatherService,
+            athlete: athlete,
+            linkedSession: viewModel.selectedSession,
+            autoPauseEnabled: viewModel.autoPauseEnabled,
+            nutritionRemindersEnabled: viewModel.nutritionRemindersEnabled,
+            nutritionAlertSoundEnabled: viewModel.nutritionAlertSoundEnabled,
+            hydrationIntervalSeconds: viewModel.hydrationIntervalSeconds,
+            fuelIntervalSeconds: viewModel.fuelIntervalSeconds,
+            electrolyteIntervalSeconds: viewModel.electrolyteIntervalSeconds,
+            smartRemindersEnabled: viewModel.smartRemindersEnabled,
+            stravaAutoUploadEnabled: viewModel.stravaAutoUploadEnabled,
+            saveToHealthEnabled: viewModel.saveToHealthEnabled,
+            pacingAlertsEnabled: viewModel.pacingAlertsEnabled,
+            raceId: viewModel.raceId,
+            selectedGearIds: Array(viewModel.selectedGearIds),
+            voiceCoachingConfig: viewModel.voiceCoachingConfig,
+            intervalWorkout: viewModel.intervalWorkout,
+            emergencyContactRepository: emergencyContactRepository,
+            motionService: motionService,
+            safetyConfig: viewModel.safetyConfig,
+            raceCourseRoute: viewModel.raceCourseRoute,
+            raceCheckpoints: viewModel.raceCheckpoints,
+            raceCheckpointSplits: viewModel.raceCheckpointSplits,
+            raceTotalDistanceKm: viewModel.raceTotalDistanceKm
+        )
     }
 }

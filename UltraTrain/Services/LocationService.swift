@@ -24,6 +24,11 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
 
     private let locationManager = CLLocationManager()
     private var locationContinuation: AsyncStream<CLLocation>.Continuation?
+    // Bumped on every startTracking() call so a stale continuation's
+    // onTermination (fired asynchronously, after a NEW stream may already
+    // be active) can tell it's no longer current and must not tear down
+    // the new session. See startTracking() for why this matters.
+    private var trackingGeneration = 0
     #if DEBUG
     private let isUITestMode = ProcessInfo.processInfo.arguments.contains("-UITestMode")
     #endif
@@ -55,12 +60,31 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
     // MARK: - Tracking
 
     func startTracking() -> AsyncStream<CLLocation> {
-        AsyncStream { [weak self] continuation in
+        trackingGeneration += 1
+        let generation = trackingGeneration
+        // Defensive: if a previous stream's consumer is still around (this
+        // should not happen once callers own a single, stable tracking
+        // session — but if it ever does), tear it down synchronously
+        // instead of silently orphaning it. An orphaned continuation's
+        // `for await` loop never receives another location and never
+        // terminates either, which looks exactly like "GPS suddenly
+        // stopped updating" to whoever is still awaiting it.
+        if locationContinuation != nil {
+            locationManager.stopUpdatingLocation()
+            locationContinuation?.finish()
+            locationContinuation = nil
+        }
+        return AsyncStream { [weak self] continuation in
             guard let self else { return }
             self.locationContinuation = continuation
             continuation.onTermination = { [weak self] _ in
                 Task { @MainActor in
-                    self?.stopTracking()
+                    // Only the still-current generation may stop the
+                    // location manager / clear state — a stale stream's
+                    // termination firing after a newer one has already
+                    // started must not tear down the new session.
+                    guard let self, self.trackingGeneration == generation else { return }
+                    self.stopTracking()
                 }
             }
             self.configureForActiveTracking()
@@ -97,6 +121,13 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
         locationManager.activityType = .fitness
         locationManager.allowsBackgroundLocationUpdates = true
         locationManager.showsBackgroundLocationIndicator = true
+        // Left at its default (true), iOS can decide the runner has
+        // "stopped" — a brief GPS dropout, standing still at the start —
+        // and autonomously suspend further location callbacks with no
+        // error surfaced anywhere. That silent suspension is exactly what
+        // "GPS worked for a few seconds then froze" looks like from the
+        // app's side.
+        locationManager.pausesLocationUpdatesAutomatically = false
     }
 
     // MARK: - Auth Status

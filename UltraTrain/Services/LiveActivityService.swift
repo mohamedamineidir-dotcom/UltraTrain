@@ -29,10 +29,22 @@ final class LiveActivityService: LiveActivityServiceProtocol {
             return
         }
 
-        // End any stale activity first
-        if currentActivity != nil {
-            endActivity(state: state)
+        // Check the SYSTEM-WIDE list, not just this instance's
+        // `currentActivity` — a previous LiveActivityService instance
+        // (e.g. from an ActiveRunViewModel that got silently replaced
+        // rather than reused) can have started one this instance never
+        // knew about. Leaving it running is how a run could end up with
+        // two separate "RUNNING" Live Activities stacked on the Lock
+        // Screen. Dismissed immediately (not the normal 300s-visible end)
+        // since these are orphaned, not a real run finishing.
+        let staleActivities = Activity<RunActivityAttributes>.activities
+        if !staleActivities.isEmpty {
+            for activity in staleActivities {
+                Task { await activity.end(nil, dismissalPolicy: .immediate) }
+            }
+            Logger.liveActivity.info("Ended \(staleActivities.count) stale Live Activity(ies) before starting a new one")
         }
+        currentActivity = nil
 
         let content = ActivityContent(state: state, staleDate: nil)
 
