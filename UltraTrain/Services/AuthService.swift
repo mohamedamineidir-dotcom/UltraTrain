@@ -132,6 +132,14 @@ final class AuthService: AuthServiceProtocol, @unchecked Sendable {
         return currentToken.accessToken
     }
 
+    func forceRefreshAccessToken() async throws -> String {
+        guard let currentToken = token else {
+            throw DomainError.unauthorized
+        }
+        let refreshed = try await performRefresh(expired: currentToken)
+        return refreshed.accessToken
+    }
+
     func isAuthenticated() -> Bool {
         token != nil
     }

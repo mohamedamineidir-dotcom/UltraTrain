@@ -103,6 +103,25 @@ struct AuthServiceTests {
         }
     }
 
+    @Test("forceRefreshAccessToken returns a fresh token when authenticated")
+    func forceRefreshReturnsTokenWhenAuthenticated() async throws {
+        let auth = makeMockAuth(loggedIn: true)
+
+        let token = try await auth.forceRefreshAccessToken()
+
+        #expect(token == "mock-refreshed-token")
+        #expect(auth.forceRefreshCallCount == 1)
+    }
+
+    @Test("forceRefreshAccessToken throws unauthorized when not logged in")
+    func forceRefreshThrowsWhenNotAuthenticated() async {
+        let auth = makeMockAuth(loggedIn: false)
+
+        await #expect(throws: DomainError.unauthorized) {
+            try await auth.forceRefreshAccessToken()
+        }
+    }
+
     // MARK: - isAuthenticated
 
     @Test("isAuthenticated reflects login state")

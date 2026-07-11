@@ -121,11 +121,21 @@ final class MockAuthService: AuthServiceProtocol, @unchecked Sendable {
         }
     }
 
+    var forceRefreshCallCount = 0
+
     func getValidAccessToken() async throws -> String {
         guard isLoggedIn else {
             throw DomainError.unauthorized
         }
         return "mock-token"
+    }
+
+    func forceRefreshAccessToken() async throws -> String {
+        forceRefreshCallCount += 1
+        guard isLoggedIn else {
+            throw DomainError.unauthorized
+        }
+        return "mock-refreshed-token"
     }
 
     func isAuthenticated() -> Bool {

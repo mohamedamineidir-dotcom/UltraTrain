@@ -78,7 +78,7 @@ actor APIClient {
             )
         }
 
-        return try handleResponse(data: data, statusCode: httpResponse.statusCode)
+        return try handleResponse(data: data, statusCode: httpResponse.statusCode, requiresAuth: requiresAuth)
     }
 
     // MARK: - Typed Endpoint API
@@ -249,7 +249,7 @@ actor APIClient {
         return request
     }
 
-    private func handleResponse<T: Decodable>(data: Data, statusCode: Int) throws -> T {
+    private func handleResponse<T: Decodable>(data: Data, statusCode: Int, requiresAuth: Bool) throws -> T {
         switch statusCode {
         case 200...299:
             if let empty = EmptyResponseBody() as? T {
@@ -257,7 +257,13 @@ actor APIClient {
             }
             return try decoder.decode(T.self, from: data)
         case 401:
-            throw APIError.unauthorized
+            // A 401 on a request that carried a session token means the
+            // token was rejected even after AuthInterceptor already tried
+            // refreshing it — the session is gone, not a credentials
+            // problem. Only a request with no token to begin with (login,
+            // register) reaching here means the credentials themselves
+            // were bad.
+            throw requiresAuth ? APIError.sessionExpired : APIError.unauthorized
         case 409:
             throw APIError.conflict(reason: parseErrorReason(from: data))
         case 400...499:
