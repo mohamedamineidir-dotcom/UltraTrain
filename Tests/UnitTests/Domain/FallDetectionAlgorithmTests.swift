@@ -22,10 +22,14 @@ struct FallDetectionAlgorithmTests {
     }
 
     /// Creates a set of readings simulating an impact followed by stillness.
+    /// Default `count` spans 5.5s after the impact (11 readings * 0.5s) —
+    /// comfortably over `stillnessDurationSeconds` (5.0s), since the
+    /// algorithm now requires the buffer to actually span the full window
+    /// before concluding stillness.
     private func makeImpactThenStillReadings(
         impactG: Double,
         stillnessAcceleration: Double = 1.0,
-        count: Int = 15,
+        count: Int = 17,
         impactIndex: Int = 5
     ) -> [MotionReading] {
         let baseTime = Date.now
@@ -140,5 +144,30 @@ struct FallDetectionAlgorithmTests {
         #expect(result.isFallDetected == false)
         #expect(result.impactG == 0)
         #expect(result.stillnessAfterImpact == false)
+    }
+
+    @Test("Footstrike-sized impact with only a brief calm window (buffer hasn't filled) does not detect a fall")
+    func footstrikeImpactWithBriefWindow_noFall() {
+        // Real-world false positive this test guards against: early in a
+        // run the accelerometer buffer hasn't accumulated much history
+        // yet, so a single hard footstrike (a transient impact above
+        // threshold) is immediately followed by only ~1s of relatively
+        // calm samples before the buffer ends — NOT a genuine 5s
+        // stillness period, just "however much data exists so far."
+        let baseTime = Date.now
+        var readings: [MotionReading] = []
+        for i in 0..<10 {
+            readings.append(makeReading(timestamp: baseTime.addingTimeInterval(Double(i) * 0.1), x: 0, y: 0, z: 1.0))
+        }
+        readings.append(makeReading(timestamp: baseTime.addingTimeInterval(1.0), x: 0, y: 0, z: 3.5)) // footstrike
+        // Only two calm samples follow, spanning 0.2s — nowhere near the
+        // required 5.0s stillness window.
+        readings.append(makeReading(timestamp: baseTime.addingTimeInterval(1.1), x: 0, y: 0, z: 1.0))
+        readings.append(makeReading(timestamp: baseTime.addingTimeInterval(1.2), x: 0, y: 0, z: 1.0))
+
+        let result = FallDetectionAlgorithm.analyze(readings: readings)
+
+        #expect(result.isFallDetected == false)
+        #expect(result.impactG >= FallDetectionAlgorithm.impactThresholdG)
     }
 }

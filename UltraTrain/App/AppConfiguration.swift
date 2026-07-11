@@ -273,6 +273,11 @@ enum AppConfiguration {
         static let noMovementDefaultMinutes: Int = 5
         static let motionBufferSize: Int = 100
         static let sosLongPressSeconds: Double = 1.5
+        // A real fall stops forward motion; GPS speed at/above a slow
+        // walk (~1 m/s) while the accelerometer reports a fall-sized
+        // impact means it was very likely a footstrike or the phone
+        // jostling, not an actual fall.
+        static let fallSpeedGateMps: Double = 1.0
     }
 
     enum VoiceCoaching {

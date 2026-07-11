@@ -26,6 +26,7 @@ final class SafetyHandler {
     // MARK: - Private
 
     private var lastMovementTime: Date = Date.now
+    private var lastKnownSpeed: Double = 0
     private var motionBuffer: [MotionReading] = []
     private var motionTask: Task<Void, Never>?
     private var countdownTask: Task<Void, Never>?
@@ -88,6 +89,7 @@ final class SafetyHandler {
     // MARK: - Tick
 
     func tick(context: RunContext) {
+        lastKnownSpeed = context.currentSpeed
         if context.currentSpeed > 0.3 {
             lastMovementTime = Date.now
         }
@@ -218,6 +220,13 @@ final class SafetyHandler {
 
         let result = FallDetectionAlgorithm.analyze(readings: motionBuffer)
         guard result.isFallDetected else { return }
+
+        // GPS cross-check: a real fall stops forward motion. If GPS still
+        // shows the runner moving at a jogging pace or faster, the motion
+        // "impact" was almost certainly a hard footstrike or the phone
+        // jostling in a pocket/armband, not an actual fall — the raw
+        // accelerometer-magnitude algorithm alone can't tell those apart.
+        guard lastKnownSpeed < AppConfiguration.Safety.fallSpeedGateMps else { return }
 
         motionBuffer.removeAll()
 
