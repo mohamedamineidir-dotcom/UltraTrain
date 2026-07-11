@@ -112,7 +112,11 @@ struct DashboardFinishEstimateCard: View {
     }
 
     private var goalDrift: GoalDriftAssessment.Assessment? {
-        GoalDriftAssessment.assess(goal: race.goalType, expectedFinish: estimate.expectedTime)
+        GoalDriftAssessment.assess(
+            goal: race.goalType,
+            expectedFinish: estimate.expectedTime,
+            optimisticFinish: estimate.optimisticTime
+        )
     }
 
     private var rangeHint: String {

@@ -85,7 +85,8 @@ struct FinishEstimationView: View {
                     scenarioCards(estimate)
                     if let drift = GoalDriftAssessment.assess(
                         goal: viewModel.race.goalType,
-                        expectedFinish: estimate.expectedTime
+                        expectedFinish: estimate.expectedTime,
+                        optimisticFinish: estimate.optimisticTime
                     ), drift.isDrifted {
                         GoalDriftCard(
                             assessment: drift,

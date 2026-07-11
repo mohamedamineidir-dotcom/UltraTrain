@@ -27,16 +27,31 @@ enum GoalDriftAssessment {
         let level: Level
         /// The declared goal time (sec).
         let goalTime: TimeInterval
-        /// The live expected finish (sec).
+        /// The live expected finish (sec) — what this athlete could do TODAY.
         let predictedTime: TimeInterval
+        /// The live optimistic finish (sec) — used with `predictedTime` to
+        /// project what training between now and race day should realistically
+        /// unlock. See `suggestedTime`.
+        let optimisticTime: TimeInterval
         /// Signed gap, `predicted - goal` (sec). Positive => the goal is
         /// faster than the prediction (ambitious side).
         let gapSeconds: TimeInterval
 
-        /// A realistic target to one-tap adopt: the expected prediction,
-        /// rounded to a clean value so the new goal reads tidily.
+        /// A realistic target to one-tap adopt. Deliberately NOT just
+        /// `predictedTime` rounded — that's what this athlete could do if the
+        /// race were today. Suggesting that as their GOAL for a race weeks or
+        /// months out anchors them to today's fitness instead of what
+        /// training between now and race day should realistically unlock,
+        /// which is exactly the confusion this card exists to resolve. Uses
+        /// the same race-day projection as the evolution chart and the
+        /// onboarding goal hint (`FinishTimeEstimator.projectedRaceDayEstimate`)
+        /// so all three stay consistent with each other.
         var suggestedTime: TimeInterval {
-            (predictedTime / 30.0).rounded() * 30.0
+            let projected = FinishTimeEstimator.projectedRaceDayEstimate(
+                optimisticTime: optimisticTime,
+                expectedTime: predictedTime
+            )
+            return (projected / 30.0).rounded() * 30.0
         }
 
         /// Whether the drift is large enough to push an "adjust goal" prompt.
@@ -55,7 +70,11 @@ enum GoalDriftAssessment {
     private static let onTrackBand = 0.02
     private static let largeBand = 0.06
 
-    static func assess(goal: RaceGoal, expectedFinish: TimeInterval) -> Assessment? {
+    static func assess(
+        goal: RaceGoal,
+        expectedFinish: TimeInterval,
+        optimisticFinish: TimeInterval
+    ) -> Assessment? {
         guard case .targetTime(let goalTime) = goal, goalTime > 0, expectedFinish > 0 else {
             return nil
         }
@@ -79,6 +98,7 @@ enum GoalDriftAssessment {
             level: level,
             goalTime: goalTime,
             predictedTime: expectedFinish,
+            optimisticTime: optimisticFinish > 0 ? optimisticFinish : expectedFinish,
             gapSeconds: gap
         )
     }
