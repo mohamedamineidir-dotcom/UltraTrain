@@ -407,15 +407,20 @@ enum CoachAdviceGenerator {
 
     // MARK: - Intervals (Phase-Aware)
 
+    // `.intervals` is the flat/speed session type — `.verticalGain` is the
+    // dedicated hill/climbing type with its own environment-aware copy
+    // just below. These strings must stay terrain-neutral or reference
+    // flat/threshold work; hill language here was a mislabeling bug that
+    // showed "Hill repeats" advice on genuinely flat threshold sessions.
     private static func intervalAdvice(phase: TrainingPhase, weekInPhase: Int = 0) -> String {
         switch phase {
         case .base:
-            return String(localized: "tcoach.intervals.base", defaultValue: "Hill repeats at a controlled effort today. Focus on smooth form and consistent pacing. Full recovery between each rep.")
+            return String(localized: "tcoach.intervals.base", defaultValue: "Threshold intervals at a controlled effort today. Focus on smooth form and consistent pacing. Full recovery between each rep.")
         case .build:
             if weekInPhase < 6 {
-                return String(localized: "tcoach.intervals.buildEarly", defaultValue: "Push hard on the climbs but stay in control. If your form starts breaking down, stop the set early. Quality over quantity.")
+                return String(localized: "tcoach.intervals.buildEarly", defaultValue: "Push hard on the fast reps but stay in control. If your form starts breaking down, stop the set early. Quality over quantity.")
             }
-            return String(localized: "tcoach.intervals.buildLate", defaultValue: "Sustained effort on rolling terrain today. Stay controlled and eat on schedule. This type of work builds real ultra fitness.")
+            return String(localized: "tcoach.intervals.buildLate", defaultValue: "Sustained effort at threshold today. Stay controlled and eat on schedule. This type of work builds real speed endurance.")
         case .peak:
             return String(localized: "tcoach.intervals.peak", defaultValue: "Short and sharp today. You're already fit, this is just fine-tuning. Maximum quality, not maximum volume.")
         case .taper:

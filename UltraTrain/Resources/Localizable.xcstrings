@@ -34824,13 +34824,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uphill threshold intervals. Short reps with equal recovery."
+            "value" : "Flat threshold intervals. Short reps with equal recovery."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fractionné en côte au seuil. Répétitions courtes avec récupération égale."
+            "value" : "Fractionné à plat au seuil. Répétitions courtes avec récupération égale."
           }
         }
       }
@@ -34840,13 +34840,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hill repeats at high intensity. Short hard climbs with full recovery."
+            "value" : "Fast intervals at high intensity. Short hard reps with full recovery."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Répétitions en côte à haute intensité. Montées courtes et dures avec récupération complète."
+            "value" : "Fractionné rapide à haute intensité. Répétitions courtes et dures avec récupération complète."
           }
         }
       }
@@ -34856,13 +34856,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sustained threshold work at race effort on rolling terrain. Practice fueling."
+            "value" : "Sustained threshold work at race effort. Practice fueling."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Travail au seuil soutenu à effort course sur terrain vallonné. Entraînez le ravitaillement."
+            "value" : "Travail au seuil soutenu à effort course. Entraînez le ravitaillement."
           }
         }
       }
@@ -42458,13 +42458,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hill repeats at a controlled effort today. Focus on smooth form and consistent pacing. Full recovery between each rep."
+            "value" : "Threshold intervals at a controlled effort today. Focus on smooth form and consistent pacing. Full recovery between each rep."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Répétitions en côte à effort contrôlé aujourd'hui. Concentrez-vous sur une technique fluide et un rythme régulier. Récupération complète entre chaque répétition."
+            "value" : "Fractionné au seuil à effort contrôlé aujourd'hui. Concentrez-vous sur une technique fluide et un rythme régulier. Récupération complète entre chaque répétition."
           }
         }
       }
@@ -42474,13 +42474,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Push hard on the climbs but stay in control. If your form starts breaking down, stop the set early. Quality over quantity."
+            "value" : "Push hard on the fast reps but stay in control. If your form starts breaking down, stop the set early. Quality over quantity."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Poussez fort dans les montées mais restez maître. Si votre technique se dégrade, arrêtez la série plus tôt. La qualité prime sur la quantité."
+            "value" : "Poussez fort sur les répétitions rapides mais restez maître. Si votre technique se dégrade, arrêtez la série plus tôt. La qualité prime sur la quantité."
           }
         }
       }
@@ -42490,13 +42490,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sustained effort on rolling terrain today. Stay controlled and eat on schedule. This type of work builds real ultra fitness."
+            "value" : "Sustained effort at threshold today. Stay controlled and eat on schedule. This type of work builds real speed endurance."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Effort soutenu sur terrain vallonné aujourd'hui. Restez contrôlé et mangez selon votre plan. Ce type de travail bâtit une vraie forme d'ultra."
+            "value" : "Effort soutenu au seuil aujourd'hui. Restez contrôlé et mangez selon votre plan. Ce type de travail bâtit une vraie endurance de vitesse."
           }
         }
       }

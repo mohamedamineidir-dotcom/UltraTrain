@@ -76,14 +76,18 @@ enum SessionDescriptionGenerator {
         if isRecoveryWeek {
             return String(localized: "sdesc.intervals.recovery", defaultValue: "Recovery week: no hard intervals. Easy effort only.")
         }
+        // `.intervals` is the flat/speed session type — `.verticalGain`
+        // (see the `sdesc.vg.*` cases above) is the dedicated hill/climbing
+        // type. Keep this copy flat/threshold-themed; "uphill"/"hill"/
+        // "climbs" here was a mislabeling bug duplicating the VG copy.
         switch phase {
         case .base:
-            return String(localized: "sdesc.intervals.base", defaultValue: "Uphill threshold intervals. Short reps with equal recovery.")
+            return String(localized: "sdesc.intervals.base", defaultValue: "Flat threshold intervals. Short reps with equal recovery.")
         case .build:
             if weekInPhase < 6 {
-                return String(localized: "sdesc.intervals.buildEarly", defaultValue: "Hill repeats at high intensity. Short hard climbs with full recovery.")
+                return String(localized: "sdesc.intervals.buildEarly", defaultValue: "Fast intervals at high intensity. Short hard reps with full recovery.")
             }
-            return String(localized: "sdesc.intervals.buildLate", defaultValue: "Sustained threshold work at race effort on rolling terrain. Practice fueling.")
+            return String(localized: "sdesc.intervals.buildLate", defaultValue: "Sustained threshold work at race effort. Practice fueling.")
         case .peak:
             return String(localized: "sdesc.intervals.peak", defaultValue: "Threshold intervals at race effort. Medium reps building endurance.")
         case .taper:
