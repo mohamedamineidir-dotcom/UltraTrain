@@ -24,7 +24,11 @@ struct AddFoodEntrySheet: View {
     @State var showingPhotoResults = false
     @State var capturedPhotoData: Data?
     @State var analyzedItems: [AnalyzedFoodItem] = []
-    @State var isAnalyzing = false
+    // Set only on a successful analysis, right before dismissing the
+    // camera cover — onDismiss checks this to decide whether to present
+    // results or just return to the form (a failed analysis already
+    // shows its own alert via lookupError, no results to show).
+    @State var photoAnalysisSucceeded = false
 
     let foodDatabaseService: (any FoodDatabaseServiceProtocol)?
     let foodPhotoAnalysisService: (any FoodPhotoAnalysisServiceProtocol)?
@@ -95,20 +99,37 @@ struct AddFoodEntrySheet: View {
                 // race: presenting a new sheet while this cover is still
                 // mid-dismiss-animation gets silently dropped, so the
                 // results sheet would flash and never actually show.
-                if let photoData = capturedPhotoData {
-                    Task { await analyzePhoto(photoData) }
+                // Analysis already ran to completion INSIDE the cover
+                // (see FoodPhotoCaptureFlow) before we get here, so there's
+                // no gap where the underlying form is visible — the cover
+                // only dismisses once there's something ready to show.
+                if photoAnalysisSucceeded {
+                    photoAnalysisSucceeded = false
+                    showingPhotoResults = true
                 }
             }) {
-                FoodPhotoCameraView { photoData in
-                    capturedPhotoData = photoData
-                    showingFoodPhotoCamera = false
+                if let service = foodPhotoAnalysisService {
+                    FoodPhotoCaptureFlow(analysisService: service) { photoData, result in
+                        capturedPhotoData = photoData
+                        switch result {
+                        case .success(let items):
+                            analyzedItems = items
+                            photoAnalysisSucceeded = true
+                        case .failure(let error):
+                            lookupError = String(
+                                format: String(localized: "addFood.photoAnalysisFailed", defaultValue: "Could not analyze photo: %@"),
+                                error.localizedDescription
+                            )
+                        }
+                        showingFoodPhotoCamera = false
+                    }
                 }
             }
             .sheet(isPresented: $showingPhotoResults) {
                 FoodPhotoResultsView(
                     items: $analyzedItems,
                     photoData: capturedPhotoData,
-                    isAnalyzing: isAnalyzing,
+                    isAnalyzing: false,
                     onAddItem: { item in
                         addAnalyzedItem(item)
                     },

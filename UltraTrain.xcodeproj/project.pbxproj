@@ -922,6 +922,7 @@
 		82F8A730D9F2CD60BE58E8E8 /* SocialProfileSwiftDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13EB2AD43DAF86B2992AA2C /* SocialProfileSwiftDataModel.swift */; };
 		83359A6A13EE6CF7142A445F /* RaceReflectionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34D69A85AF5CE4C4785B944A /* RaceReflectionRepository.swift */; };
 		83A53BBC6A539916314E092C /* NutritionProduct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933D2001D16E672629328EAB /* NutritionProduct.swift */; };
+		83B909B9E493738811F4CCA2 /* FoodPhotoCaptureFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BEF0E0D32B4E9EC8E3FA15 /* FoodPhotoCaptureFlow.swift */; };
 		83CF1CB4C418CD32AB6AE971 /* RaceReadinessCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8A515BDA51899CD655D746B /* RaceReadinessCalculator.swift */; };
 		83E9DDF7E197E9EE29D0D903 /* FinishEstimateEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3360B97911C73754D91310 /* FinishEstimateEndpoints.swift */; };
 		83F79AD07824D8EB909347DF /* SyncedFinishEstimateRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AE246552F1E2861E31327F0 /* SyncedFinishEstimateRepositoryTests.swift */; };
@@ -1724,6 +1725,7 @@
 		F1EED5558810EDDFD2F2495D /* AnalyticsServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE32EE5463507D4923605E7F /* AnalyticsServiceTests.swift */; };
 		F1F3E28A96E738B077240525 /* SettingsViewModel+Export.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42190DB88EEC22B2C5D9A52 /* SettingsViewModel+Export.swift */; };
 		F2183C01ECE9D3CE14660B01 /* IntervalGuidanceHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68BB88C75657BE90DD7494F /* IntervalGuidanceHandler.swift */; };
+		F2258ED139DEDDE3B30D22DF /* AnalyzingFoodPhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99998AE692AC66E427B44EE1 /* AnalyzingFoodPhotoView.swift */; };
 		F2259312142F4E4400FCED09 /* FinishTimeEstimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75E749F948B7C2701AFB693 /* FinishTimeEstimator.swift */; };
 		F230016B8178EB35AA674612 /* WatchMessageCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5E86B58A373F909B4DE6A5 /* WatchMessageCoder.swift */; };
 		F2338028897BA05B042A9331 /* BackgroundUploadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD490BA7A19C9106CA0C421 /* BackgroundUploadService.swift */; };
@@ -3009,6 +3011,7 @@
 		98C79B3BE573434C722CA5A8 /* RaceCalibrationServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceCalibrationServiceTests.swift; sourceTree = "<group>"; };
 		98E104C71D8FD99DAF6873DF /* FriendStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendStatus.swift; sourceTree = "<group>"; };
 		98F6EA430FFB5038E83BB25C /* EmergencyContactRelationship.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmergencyContactRelationship.swift; sourceTree = "<group>"; };
+		99998AE692AC66E427B44EE1 /* AnalyzingFoodPhotoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyzingFoodPhotoView.swift; sourceTree = "<group>"; };
 		99A3CADB23B8D20AB5E4BD1A /* WatchNextSessionComplicationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchNextSessionComplicationView.swift; sourceTree = "<group>"; };
 		99DB496A788625289B84E605 /* DashboardViewModel+Fitness.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DashboardViewModel+Fitness.swift"; sourceTree = "<group>"; };
 		99E19CD513F583DA3010AFF6 /* SessionDragData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDragData.swift; sourceTree = "<group>"; };
@@ -3170,6 +3173,7 @@
 		B06644138D9A06E667EF5FBE /* LockedCustomPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockedCustomPlanView.swift; sourceTree = "<group>"; };
 		B08ED336A716396D3FDEA708 /* FeatureEmptyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureEmptyState.swift; sourceTree = "<group>"; };
 		B092558B4E9ABDAEEF66191F /* SessionDescriptionGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDescriptionGenerator.swift; sourceTree = "<group>"; };
+		B0BEF0E0D32B4E9EC8E3FA15 /* FoodPhotoCaptureFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodPhotoCaptureFlow.swift; sourceTree = "<group>"; };
 		B0C37E2F9A3FB6CAFAB58CC6 /* XCUIElement+Waiters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+Waiters.swift"; sourceTree = "<group>"; };
 		B0D4B7F02F9B0B65BD12D9B2 /* MockAchievementRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAchievementRepository.swift; sourceTree = "<group>"; };
 		B0D531034998D3E38D1CEB76 /* PrivacyTrackingServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyTrackingServiceTests.swift; sourceTree = "<group>"; };
@@ -3769,6 +3773,7 @@
 				9C2579DD83DCFF5FE9E03DB7 /* Map */,
 				9691297B0EBFD6D9DC907F20 /* AdaptiveGrid.swift */,
 				600264C881306C4F7D7E677E /* AdaptiveHStack.swift */,
+				99998AE692AC66E427B44EE1 /* AnalyzingFoodPhotoView.swift */,
 				43FAE04B6B2A7BF9DD0FC2CC /* AppLockView.swift */,
 				5EC4543E5545FA2F93A20660 /* ChartAnnotationCard.swift */,
 				F1E1F5EC0FA6B945898AF4EF /* DocumentPicker.swift */,
@@ -4234,6 +4239,7 @@
 				11CCA5C54095C10453E867C0 /* BarcodeScannerView.swift */,
 				B90A631183D0323EF5A1F139 /* FoodLogSection.swift */,
 				F2ADD075C0E5A985E676CD6D /* FoodPhotoCameraView.swift */,
+				B0BEF0E0D32B4E9EC8E3FA15 /* FoodPhotoCaptureFlow.swift */,
 				AE16185DF0376392E3A2DABE /* FoodPhotoResultsView.swift */,
 				B6C38E1BF8C60ED6251EB854 /* FoodSearchSheet.swift */,
 				85C1E8AF813BE6D2F431887B /* MacroRingChart.swift */,
@@ -7156,6 +7162,7 @@
 				5ED18245A501951C9DDDCFE4 /* AnalyticsEndpoints.swift in Sources */,
 				2C3B3AE65293FBB60FBC6B08 /* AnalyticsService.swift in Sources */,
 				BB6CEB9DD6D37CE75B13B57B /* AnalyticsServiceProtocol.swift in Sources */,
+				F2258ED139DEDDE3B30D22DF /* AnalyzingFoodPhotoView.swift in Sources */,
 				906BFB14AAA34E69CCDCCC45 /* Animation+Ultra.swift in Sources */,
 				57BDAE3021DB3B21733DD703 /* AppConfiguration.swift in Sources */,
 				39CBE8D81B233ABC47447237 /* AppConstants.swift in Sources */,
@@ -7434,6 +7441,7 @@
 				E860043625748C6F4D82A23F /* FoodPhotoAnalysisService.swift in Sources */,
 				735F8311D0E9259636A6A65D /* FoodPhotoAnalysisServiceProtocol.swift in Sources */,
 				A1B8B7279D9348E7D87D055C /* FoodPhotoCameraView.swift in Sources */,
+				83B909B9E493738811F4CCA2 /* FoodPhotoCaptureFlow.swift in Sources */,
 				4269FE67F412C0320D1F65F3 /* FoodPhotoResultsView.swift in Sources */,
 				E7F1E599831E77C8646D4D21 /* FoodSearchResult.swift in Sources */,
 				54396DC3C914E84C76182A43 /* FoodSearchResultMapper.swift in Sources */,

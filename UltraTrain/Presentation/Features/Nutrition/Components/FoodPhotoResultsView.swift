@@ -15,7 +15,7 @@ struct FoodPhotoResultsView: View {
         NavigationStack {
             Group {
                 if isAnalyzing {
-                    analyzingView
+                    AnalyzingFoodPhotoView(photoData: photoData)
                 } else if items.isEmpty {
                     emptyStateView
                 } else {
@@ -30,44 +30,6 @@ struct FoodPhotoResultsView: View {
                 }
             }
         }
-    }
-
-    // MARK: - Analyzing State
-
-    private var analyzingView: some View {
-        VStack(spacing: Theme.Spacing.lg) {
-            Spacer()
-
-            if let photoData, let uiImage = UIImage(data: photoData) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 220, height: 220)
-                    .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.lg))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
-                            .stroke(Theme.Colors.warmCoral.opacity(0.4), lineWidth: 2)
-                    )
-                    .shadow(color: Theme.Colors.warmCoral.opacity(0.25), radius: 16, y: 6)
-            }
-
-            VStack(spacing: Theme.Spacing.sm) {
-                ProgressView()
-                    .controlSize(.large)
-                    .tint(Theme.Colors.warmCoral)
-
-                Text(String(localized: "Analyzing your food..."))
-                    .font(.headline)
-                    .foregroundStyle(.secondary)
-
-                Text(String(localized: "AI is identifying items and estimating nutrition"))
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
-            }
-
-            Spacer()
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     // MARK: - Empty State
