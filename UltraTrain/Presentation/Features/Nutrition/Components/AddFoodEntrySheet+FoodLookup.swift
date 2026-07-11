@@ -95,10 +95,16 @@ extension AddFoodEntrySheet {
             if let result = try await service.searchByBarcode(barcode) {
                 applySearchResult(result)
             } else {
-                lookupError = "Product not found for barcode \(barcode)"
+                lookupError = String(
+                    format: String(localized: "addFood.barcodeNotFound", defaultValue: "Product not found for barcode %@"),
+                    barcode
+                )
             }
         } catch {
-            lookupError = "Could not look up barcode: \(error.localizedDescription)"
+            lookupError = String(
+                format: String(localized: "addFood.barcodeLookupFailed", defaultValue: "Could not look up barcode: %@"),
+                error.localizedDescription
+            )
         }
     }
 
@@ -133,20 +139,6 @@ extension AddFoodEntrySheet {
     }
 
     // MARK: - Food Photo Analysis
-
-    @MainActor
-    func analyzePhoto(_ photoData: Data) async {
-        guard let service = foodPhotoAnalysisService else { return }
-        isAnalyzing = true
-        showingPhotoResults = true
-        do {
-            analyzedItems = try await service.analyzePhoto(photoData)
-        } catch {
-            lookupError = "Could not analyze photo: \(error.localizedDescription)"
-            showingPhotoResults = false
-        }
-        isAnalyzing = false
-    }
 
     func addAnalyzedItem(_ item: AnalyzedFoodItem) {
         let entry = FoodLogEntry(

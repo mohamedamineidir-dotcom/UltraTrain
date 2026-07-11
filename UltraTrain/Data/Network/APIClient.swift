@@ -183,6 +183,13 @@ actor APIClient {
                 if httpResponse.statusCode == 401, requiresAuth, let interceptor = authInterceptor {
                     let newToken = try await interceptor.handleUnauthorized()
                     urlRequest.setValue("Bearer \(newToken)", forHTTPHeaderField: "Authorization")
+                    // Re-sign: the original X-Signature/X-Timestamp were
+                    // computed before the first attempt, which for a slow
+                    // request (e.g. a photo upload) can be a long time
+                    // before this retry actually goes out. Reusing them
+                    // is unnecessary staleness risk against the backend's
+                    // signature-freshness check for no benefit.
+                    signingInterceptor?.sign(&urlRequest)
                     let (retryData, retryResponse) = try await session.data(for: urlRequest)
                     guard let retryHttp = retryResponse as? HTTPURLResponse else {
                         throw APIError.invalidResponse

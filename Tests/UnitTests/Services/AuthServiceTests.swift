@@ -222,17 +222,19 @@ struct AuthServiceTests {
         #expect(token.isExpired == true)
     }
 
-    @Test("AuthToken isExpired returns true within 30-second buffer")
+    @Test("AuthToken isExpired returns true within the 60-second buffer")
     func tokenExpiredWithinBuffer() {
         let token = AuthToken(
             accessToken: "access",
             refreshToken: "refresh",
-            expiresAt: Date().addingTimeInterval(20),
+            expiresAt: Date().addingTimeInterval(40),
             userId: "user1",
             email: "test@test.com"
         )
 
-        // Token has 20s left, but the 30s buffer means it should be considered expired
+        // Token has 40s left, but the 60s buffer means it should be considered
+        // expired — the buffer must exceed the network layer's request
+        // timeout (30s) so a slow request can't cross real expiry in flight.
         #expect(token.isExpired == true)
     }
 }
