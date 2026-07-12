@@ -7081,9 +7081,6 @@
         }
       }
     },
-    "Con" : {
-
-    },
     "Conditions" : {
       "localizations" : {
         "fr" : {
@@ -7195,6 +7192,7 @@
       }
     },
     "Conservative" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -20933,6 +20931,7 @@
       }
     },
     "Now" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -22231,10 +22230,8 @@
         }
       }
     },
-    "Opt" : {
-
-    },
     "Optimistic" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -35690,6 +35687,9 @@
           }
         }
       }
+    },
+    "Seconds" : {
+
     },
     "Seconds: %lld" : {
       "localizations" : {

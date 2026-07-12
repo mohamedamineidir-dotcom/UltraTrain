@@ -216,13 +216,20 @@ struct FinishTimeEvolutionView: View {
             }
 
             // ── Optimistic bound — green, matching the "Optimistic"
-            // scenario tile elsewhere on this screen ──────────────────
+            // scenario tile elsewhere on this screen. Colored via
+            // `.foregroundStyle(by:)` + `.chartForegroundStyleScale`
+            // below rather than a literal `.foregroundStyle(Color)` —
+            // with three LineMarks sharing the same x/y value labels,
+            // Charts was resolving them all to one style (everything
+            // rendered green) despite each mark's own literal color.
+            // An explicit named scale is the documented, reliable way
+            // to give each series its own color ──────────────────────
             ForEach(points) { p in
                 LineMark(
                     x: .value("Week", p.week),
                     y: .value("Seconds", p.optimisticSeconds)
                 )
-                .foregroundStyle(Theme.Colors.success.opacity(0.85))
+                .foregroundStyle(by: .value("Scenario", ScenarioSeries.optimistic.rawValue))
                 .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
                 .interpolationMethod(.catmullRom)
             }
@@ -233,12 +240,13 @@ struct FinishTimeEvolutionView: View {
                     x: .value("Week", p.week),
                     y: .value("Seconds", p.conservativeSeconds)
                 )
-                .foregroundStyle(Theme.Colors.warning.opacity(0.85))
+                .foregroundStyle(by: .value("Scenario", ScenarioSeries.conservative.rawValue))
                 .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
                 .interpolationMethod(.catmullRom)
             }
 
-            // ── Expected line — tight glow pass ───────────────────────
+            // ── Expected line — tight glow pass (literal color; not
+            // part of the named scenario scale, purely decorative) ───
             ForEach(points) { p in
                 LineMark(
                     x: .value("Week", p.week),
@@ -256,7 +264,7 @@ struct FinishTimeEvolutionView: View {
                     x: .value("Week", p.week),
                     y: .value("Seconds", p.expectedSeconds)
                 )
-                .foregroundStyle(primaryTint)
+                .foregroundStyle(by: .value("Scenario", ScenarioSeries.expected.rawValue))
                 .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
                 .interpolationMethod(.catmullRom)
             }
@@ -350,6 +358,19 @@ struct FinishTimeEvolutionView: View {
                     }
             }
         }
+        .chartForegroundStyleScale(
+            domain: [
+                ScenarioSeries.optimistic.rawValue,
+                ScenarioSeries.expected.rawValue,
+                ScenarioSeries.conservative.rawValue
+            ],
+            range: [
+                Theme.Colors.success.opacity(0.85),
+                primaryTint,
+                Theme.Colors.warning.opacity(0.85)
+            ]
+        )
+        .chartLegend(.hidden)
         .chartYScale(domain: safeDomain)
         .chartXScale(domain: 1...prepWeeks)
         .chartYAxis {
@@ -377,12 +398,17 @@ struct FinishTimeEvolutionView: View {
         }
     }
 
-    /// Put the "Now" annotation above when the dot is in the upper half
-    /// of the plot, below when it's in the lower half, to avoid clipping.
+    /// Put the "Now" annotation below the dot when it's in the upper half
+    /// of the plot (so the card drops into free space instead of pushing
+    /// past the top of the chart/screen), above when it's in the lower
+    /// half. This was previously inverted — a dot near the top of the
+    /// plot got a `.top` annotation, which had nowhere to go but off the
+    /// top edge of the card (and on a real device, off the top of the
+    /// screen).
     private var nowAnnotationPosition: AnnotationPosition {
-        guard let cp = points.first(where: { $0.week == currentWeekIndex }) else { return .top }
+        guard let cp = points.first(where: { $0.week == currentWeekIndex }) else { return .bottom }
         let mid = (safeDomain.lowerBound + safeDomain.upperBound) / 2
-        return cp.expectedSeconds < mid ? .bottom : .top
+        return cp.expectedSeconds < mid ? .top : .bottom
     }
 
     // MARK: - Stat Row
@@ -595,6 +621,16 @@ struct FinishTimeEvolutionView: View {
         if !stops.contains(currentWeekIndex) { stops.append(currentWeekIndex) }
         return stops.sorted()
     }
+}
+
+/// Named series keys for the chart's `.chartForegroundStyleScale` — gives
+/// each scenario line an explicit, stable color mapping instead of relying
+/// on per-mark literal `.foregroundStyle(Color)`, which Charts was
+/// collapsing into a single resolved style across the three LineMarks.
+private enum ScenarioSeries: String {
+    case optimistic = "Optimistic"
+    case expected = "Expected"
+    case conservative = "Conservative"
 }
 
 struct EvolutionPoint: Identifiable {
