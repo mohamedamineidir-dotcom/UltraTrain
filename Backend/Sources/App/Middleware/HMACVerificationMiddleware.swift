@@ -27,8 +27,16 @@ struct HMACVerificationMiddleware: AsyncMiddleware {
             throw Abort(.unauthorized, reason: "Request timestamp expired")
         }
 
-        // Reconstruct payload: timestamp + body (matches iOS RequestSigningInterceptor)
-        let body = request.body.data.map { Data(buffer: $0) } ?? Data()
+        // Reconstruct payload: timestamp + body (matches iOS RequestSigningInterceptor).
+        // Must explicitly collect the body rather than reading `request.body.data`
+        // directly: Vapor only pre-populates `.data` when the whole body arrives in a
+        // single network read matching Content-Length. Any body split across more than
+        // one read (increasingly likely as size grows — a few KB is enough to trigger
+        // this depending on network conditions) is left in `.stream` state, where
+        // `.data` silently returns nil and this would sign an empty body instead of the
+        // real one, never matching the client's signature.
+        let bodyBuffer = try await request.body.collect(max: 10 * 1024 * 1024).get()
+        let body = bodyBuffer.map { Data(buffer: $0) } ?? Data()
         let payload = Data(timestampHeader.utf8) + body
 
         // Compute expected HMAC-SHA256
