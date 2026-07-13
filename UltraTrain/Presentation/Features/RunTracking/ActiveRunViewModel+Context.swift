@@ -62,6 +62,19 @@ extension ActiveRunViewModel {
         }
     }
 
+    /// Runs for the entire run (pause included) so a "Resume" tapped on
+    /// the Lock Screen Live Activity while paused actually gets noticed —
+    /// see the comment on `widgetCommandPollTask`.
+    func startWidgetCommandPolling() {
+        widgetCommandPollTask = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(AppConfiguration.RunTracking.timerInterval))
+                guard !Task.isCancelled, let self else { break }
+                self.processWidgetRunCommands()
+            }
+        }
+    }
+
     // MARK: - Timer
 
     func startTimer() {
@@ -69,7 +82,6 @@ extension ActiveRunViewModel {
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(AppConfiguration.RunTracking.timerInterval))
                 guard !Task.isCancelled, let self else { break }
-                self.processWidgetRunCommands()
                 self.elapsedTime += AppConfiguration.RunTracking.timerInterval
                 self.updateLiveHRZone()
                 let context = self.buildNutritionContext()

@@ -75,6 +75,14 @@ final class ActiveRunViewModel {
     var timerTask: Task<Void, Never>?
     var locationTask: Task<Void, Never>?
     var heartRateTask: Task<Void, Never>?
+    /// Separate from `timerTask` — that one stops on pause (correctly, it
+    /// drives elapsed time/GPS/etc.), but that meant the Lock Screen Live
+    /// Activity's "Resume" button had nothing left running to notice its
+    /// command: `processWidgetRunCommands()` only ran inside `timerTask`,
+    /// so a resume tapped while paused was silently dropped until the
+    /// athlete opened the app and resumed manually. This one runs for the
+    /// whole run, pause included, and only stops when the run ends.
+    var widgetCommandPollTask: Task<Void, Never>?
     var autoPauseTimer: TimeInterval = 0
     var pauseStartTime: Date?
     var runningAveragePace: Double = 0

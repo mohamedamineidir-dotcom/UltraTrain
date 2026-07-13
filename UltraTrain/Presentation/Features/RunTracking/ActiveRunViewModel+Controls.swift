@@ -21,6 +21,7 @@ extension ActiveRunViewModel {
         captureWeatherAtStart()
         hapticService.prepareHaptics()
         startTimer()
+        startWidgetCommandPolling()
         startLocationTracking()
         startHeartRateStreaming()
         connectivityHandler.sendWatchUpdate(snapshot: buildSnapshot())
@@ -70,6 +71,7 @@ extension ActiveRunViewModel {
         }
         runState = .finished
         timerTask?.cancel()
+        widgetCommandPollTask?.cancel()
         locationTask?.cancel()
         heartRateTask?.cancel()
         locationService.stopTracking()
