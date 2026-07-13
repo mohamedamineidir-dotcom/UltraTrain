@@ -11856,6 +11856,22 @@
         }
       }
     },
+    "fph.addMissingFood" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a food the scan missed"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter un aliment manqué par le scan"
+          }
+        }
+      }
+    },
     "fph.addOrEdit" : {
       "localizations" : {
         "en" : {

@@ -7,9 +7,14 @@ struct FoodPhotoResultsView: View {
     let isAnalyzing: Bool
     let onAddItem: (AnalyzedFoodItem) -> Void
     let onAddAll: () -> Void
+    /// Lets the athlete add a food the scan missed (e.g. the chicken next
+    /// to the rice) by searching the same database the manual-entry flow
+    /// uses. Optional since not every call site has it wired up.
+    var foodDatabaseService: (any FoodDatabaseServiceProtocol)? = nil
 
     @State private var showEditDetails = false
     @State private var expandedItemId: UUID?
+    @State private var showingAddFoodSearch = false
 
     var body: some View {
         NavigationStack {
@@ -164,6 +169,22 @@ struct FoodPhotoResultsView: View {
                             }
                         )
                     }
+
+                    if foodDatabaseService != nil {
+                        Button {
+                            showingAddFoodSearch = true
+                        } label: {
+                            Label(
+                                String(localized: "fph.addMissingFood", defaultValue: "Add a food the scan missed"),
+                                systemImage: "plus.circle"
+                            )
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(Theme.Colors.primary)
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.top, Theme.Spacing.xs)
+                        .accessibilityIdentifier("foodPhoto.addMissingFoodButton")
+                    }
                 }
                 .padding(.top, Theme.Spacing.xs)
                 .transition(.opacity.combined(with: .move(edge: .top)))
@@ -171,6 +192,31 @@ struct FoodPhotoResultsView: View {
         }
         .padding(Theme.Spacing.md)
         .appCardStyle()
+        .sheet(isPresented: $showingAddFoodSearch) {
+            if let service = foodDatabaseService {
+                FoodSearchSheet(foodService: service) { result in
+                    items.append(analyzedItem(from: result))
+                }
+            }
+        }
+    }
+
+    /// Converts a database search result (per-100g macros) into a
+    /// portion-scaled `AnalyzedFoodItem`, using its default serving size
+    /// (or 100g when none is given) — same conversion the manual-entry
+    /// flow does via `recalculateForPortion()`.
+    private func analyzedItem(from result: FoodSearchResult) -> AnalyzedFoodItem {
+        let portion = result.servingSizeGrams ?? 100
+        let factor = portion / 100.0
+        return AnalyzedFoodItem(
+            id: UUID(),
+            name: result.name,
+            portionGrams: portion,
+            calories: Int(Double(result.caloriesPer100g ?? 0) * factor),
+            carbsGrams: (result.carbsPer100g ?? 0) * factor,
+            proteinGrams: (result.proteinPer100g ?? 0) * factor,
+            fatGrams: (result.fatPer100g ?? 0) * factor
+        )
     }
 
     // MARK: - Confirm CTA
@@ -255,11 +301,19 @@ private struct FoodItemRow: View {
             // Expanded editor
             if isExpanded {
                 VStack(spacing: Theme.Spacing.xs) {
+                    // Portion and calories both mean "there was more/less
+                    // of this same food than detected" — scale everything
+                    // (the other of the two, plus all three macros)
+                    // proportionally so the composition stays consistent.
                     editStepper(
                         label: String(localized: "fph.portion", defaultValue: "Portion"),
                         value: Binding(
                             get: { Int(item.portionGrams) },
-                            set: { item.portionGrams = Double($0) }
+                            set: { newValue in
+                                let ratio = item.portionGrams > 0 ? Double(newValue) / item.portionGrams : 1.0
+                                item.scale(by: ratio)
+                                item.portionGrams = Double(newValue)
+                            }
                         ),
                         unit: "g",
                         range: 1...2000,
@@ -267,16 +321,31 @@ private struct FoodItemRow: View {
                     )
                     editStepper(
                         label: String(localized: "Calories"),
-                        value: $item.calories,
+                        value: Binding(
+                            get: { item.calories },
+                            set: { newValue in
+                                let ratio = item.calories > 0 ? Double(newValue) / Double(item.calories) : 1.0
+                                item.scale(by: ratio)
+                                item.calories = newValue
+                            }
+                        ),
                         unit: "kcal",
                         range: 0...5000,
                         step: 10
                     )
+                    // Editing a single macro means "the actual composition
+                    // is different from what was detected" — leave portion
+                    // and the other macros alone, and re-derive calories
+                    // from the macros via the standard Atwater factors
+                    // (4 kcal/g carbs & protein, 9 kcal/g fat) instead.
                     editStepper(
                         label: String(localized: "Carbs"),
                         value: Binding(
                             get: { Int(item.carbsGrams) },
-                            set: { item.carbsGrams = Double($0) }
+                            set: { newValue in
+                                item.carbsGrams = Double(newValue)
+                                item.recalculateCaloriesFromMacros()
+                            }
                         ),
                         unit: "g",
                         range: 0...500,
@@ -286,7 +355,10 @@ private struct FoodItemRow: View {
                         label: String(localized: "Protein"),
                         value: Binding(
                             get: { Int(item.proteinGrams) },
-                            set: { item.proteinGrams = Double($0) }
+                            set: { newValue in
+                                item.proteinGrams = Double(newValue)
+                                item.recalculateCaloriesFromMacros()
+                            }
                         ),
                         unit: "g",
                         range: 0...500,
@@ -296,7 +368,10 @@ private struct FoodItemRow: View {
                         label: String(localized: "Fat"),
                         value: Binding(
                             get: { Int(item.fatGrams) },
-                            set: { item.fatGrams = Double($0) }
+                            set: { newValue in
+                                item.fatGrams = Double(newValue)
+                                item.recalculateCaloriesFromMacros()
+                            }
                         ),
                         unit: "g",
                         range: 0...500,

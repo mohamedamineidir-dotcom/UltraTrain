@@ -17,6 +17,8 @@ struct AIController: RouteCollection {
     struct FoodPhotoRequest: Content {
         /// Base64-encoded JPEG (no `data:` prefix). The app resizes before sending.
         let image: String
+        /// BCP-47 language code from the athlete's device locale (e.g. "fr").
+        let languageCode: String
     }
 
     struct AnalyzedItem: Content {
@@ -49,14 +51,16 @@ struct AIController: RouteCollection {
             throw Abort(.badRequest, reason: "Invalid or oversized image.")
         }
 
+        let languageDisplayName = languageName(forCode: input.languageCode)
         let systemPrompt = """
         You are a precise nutrition analysis expert. Analyze the food in the image and return \
         a JSON object with a single key "items" containing an array. Each item must have exactly \
-        these fields: "name" (string, specific food name), "portionGrams" (number, estimated weight \
-        in grams), "calories" (integer, total kcal), "carbsGrams" (number, grams), "proteinGrams" \
-        (number, grams), "fatGrams" (number, grams). \
+        these fields: "name" (string, specific food name, written in \(languageDisplayName)), "portionGrams" \
+        (number, estimated weight in grams), "calories" (integer, total kcal), "carbsGrams" (number, grams), \
+        "proteinGrams" (number, grams), "fatGrams" (number, grams). \
         Estimate portions based on visual cues like plate size, utensils, and food density. \
-        Be specific with food names (e.g. "Grilled Chicken Breast" not just "Chicken"). \
+        Be specific with food names (e.g. the \(languageDisplayName) equivalent of "Grilled Chicken Breast", \
+        not just "Chicken"). \
         Return ONLY the JSON object, no other text.
         """
 
@@ -93,6 +97,18 @@ struct AIController: RouteCollection {
             throw Abort(.unprocessableEntity, reason: "No food detected in the photo.")
         }
         return FoodPhotoResponse(items: items)
+    }
+
+    // MARK: - Language
+
+    /// Maps the app's supported locales to a full language name — the
+    /// vision model follows a plain English instruction like "written in
+    /// French" far more reliably than a bare BCP-47 code such as "fr".
+    private func languageName(forCode code: String) -> String {
+        switch code.lowercased() {
+        case "fr": "French"
+        default: "English"
+        }
     }
 
     // MARK: - Parsing

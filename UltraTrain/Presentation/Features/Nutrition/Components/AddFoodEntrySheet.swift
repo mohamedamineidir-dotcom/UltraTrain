@@ -138,7 +138,8 @@ struct AddFoodEntrySheet: View {
                             addAnalyzedItem(item)
                         }
                         dismiss()
-                    }
+                    },
+                    foodDatabaseService: foodDatabaseService
                 )
             }
             .alert("Lookup Failed", isPresented: .init(

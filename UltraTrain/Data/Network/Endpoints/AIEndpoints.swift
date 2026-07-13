@@ -11,8 +11,8 @@ enum AIEndpoints {
         var path: String { "/ai/food-photo" }
         var method: HTTPMethod { .post }
 
-        init(base64Image: String) {
-            self.body = FoodPhotoRequestDTO(image: base64Image)
+        init(base64Image: String, languageCode: String = Locale.current.language.languageCode?.identifier ?? "en") {
+            self.body = FoodPhotoRequestDTO(image: base64Image, languageCode: languageCode)
         }
     }
 }
