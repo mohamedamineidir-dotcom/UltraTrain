@@ -1198,4 +1198,40 @@ struct FinishTimeEstimatorTests {
         )
         #expect(factor == 1.0, "Course calibration is neutral (1.0) without reference times")
     }
+
+    // MARK: - Training intensity multiplier
+
+    @Test("Performance philosophy projects more improvement than balanced for identical fitness/weeks")
+    func performanceProjectsMoreImprovementThanBalanced() {
+        let optimistic = 9600.0, expected = 10200.0, weeks = 20
+        let balanced = FinishTimeEstimator.projectedRaceDayEstimate(
+            optimisticTime: optimistic, expectedTime: expected, weeksToRace: weeks,
+            intensityMultiplier: FinishTimeEstimator.trainingIntensityMultiplier(philosophy: .balanced, sessionsPerWeek: 5)
+        )
+        let performance = FinishTimeEstimator.projectedRaceDayEstimate(
+            optimisticTime: optimistic, expectedTime: expected, weeksToRace: weeks,
+            intensityMultiplier: FinishTimeEstimator.trainingIntensityMultiplier(philosophy: .performance, sessionsPerWeek: 6)
+        )
+        #expect(performance < balanced, "Higher training intensity should project a faster (more improved) race-day time")
+    }
+
+    @Test("Enjoyment philosophy projects less improvement than balanced for identical fitness/weeks")
+    func enjoymentProjectsLessImprovementThanBalanced() {
+        let optimistic = 9600.0, expected = 10200.0, weeks = 20
+        let balanced = FinishTimeEstimator.projectedRaceDayEstimate(
+            optimisticTime: optimistic, expectedTime: expected, weeksToRace: weeks,
+            intensityMultiplier: FinishTimeEstimator.trainingIntensityMultiplier(philosophy: .balanced, sessionsPerWeek: 5)
+        )
+        let enjoyment = FinishTimeEstimator.projectedRaceDayEstimate(
+            optimisticTime: optimistic, expectedTime: expected, weeksToRace: weeks,
+            intensityMultiplier: FinishTimeEstimator.trainingIntensityMultiplier(philosophy: .enjoyment, sessionsPerWeek: 3)
+        )
+        #expect(enjoyment > balanced, "Lower training intensity should project a slower (less improved) race-day time")
+    }
+
+    @Test("Balanced philosophy at the default session count doesn't change the base projection")
+    func balancedDefaultIsNeutral() {
+        let multiplier = FinishTimeEstimator.trainingIntensityMultiplier(philosophy: .balanced, sessionsPerWeek: 5)
+        #expect(multiplier == 1.0)
+    }
 }

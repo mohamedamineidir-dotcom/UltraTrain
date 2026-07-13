@@ -30,6 +30,12 @@ final class FinishEstimationViewModel {
     /// per the athlete's tier (beginner improves more across a prep
     /// than elite). Falls back to .intermediate when athlete missing.
     var athleteExperience: ExperienceLevel = .intermediate
+    /// Exposed so the evolution graph's race-day projection reflects how
+    /// hard this athlete is actually training, not just weeks remaining —
+    /// two athletes with identical fitness training for enjoyment vs.
+    /// performance shouldn't project the same outcome.
+    var athleteTrainingPhilosophy: TrainingPhilosophy = .balanced
+    var athletePreferredRunsPerWeek: Int = 5
 
     // MARK: - Init
 
@@ -66,6 +72,8 @@ final class FinishEstimationViewModel {
                 return
             }
             athleteExperience = athlete.experienceLevel
+            athleteTrainingPhilosophy = athlete.trainingPhilosophy
+            athletePreferredRunsPerWeek = athlete.preferredRunsPerWeek
 
             // Day-0 prediction: athletes get a credible estimate from
             // their PBs alone before logging any training. The estimator

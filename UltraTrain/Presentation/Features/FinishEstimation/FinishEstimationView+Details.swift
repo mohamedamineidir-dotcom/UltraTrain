@@ -26,7 +26,9 @@ extension FinishEstimationView {
                 FinishTimeEvolutionView(
                     race: race,
                     estimate: estimate,
-                    experience: viewModel.athleteExperience
+                    experience: viewModel.athleteExperience,
+                    trainingPhilosophy: viewModel.athleteTrainingPhilosophy,
+                    preferredRunsPerWeek: viewModel.athletePreferredRunsPerWeek
                 )
             } label: {
                 scenarioCardsBody(estimate, showsChartCue: true)

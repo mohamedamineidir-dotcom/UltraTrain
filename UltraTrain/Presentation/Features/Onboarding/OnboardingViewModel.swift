@@ -696,10 +696,14 @@ final class OnboardingViewModel {
             )
             let secs = race.date.timeIntervalSinceNow
             let weeksToRace = secs > 0 ? max(0, Int((secs / 86400 / 7).rounded())) : 0
+            let intensityMultiplier = FinishTimeEstimator.trainingIntensityMultiplier(
+                philosophy: athlete.trainingPhilosophy, sessionsPerWeek: athlete.preferredRunsPerWeek
+            )
             return FinishTimeEstimator.projectedRaceDayEstimate(
                 optimisticTime: estimate.optimisticTime,
                 expectedTime: estimate.expectedTime,
-                weeksToRace: weeksToRace
+                weeksToRace: weeksToRace,
+                intensityMultiplier: intensityMultiplier
             )
         } catch {
             return nil

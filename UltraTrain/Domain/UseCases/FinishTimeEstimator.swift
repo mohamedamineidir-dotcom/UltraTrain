@@ -203,12 +203,43 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
     /// "realistic target" suggestion is anchored to race-day potential
     /// rather than today's snapshot — the two must use the same formula
     /// or a recommended goal can look wrong later once the plan exists.
+    ///
+    /// `intensityMultiplier` (see `trainingIntensityMultiplier`) lets two
+    /// athletes with identical current fitness and the same weeks to race
+    /// project different outcomes depending on how hard they're actually
+    /// training for THIS race — a higher multiplier pulls the blend
+    /// further toward the optimistic scenario (more of the gap closed), a
+    /// lower one keeps it closer to today's expected.
     static func projectedRaceDayEstimate(
         optimisticTime: TimeInterval,
         expectedTime: TimeInterval,
-        weeksToRace: Int = 12
+        weeksToRace: Int = 12,
+        intensityMultiplier: Double = 1.0
     ) -> TimeInterval {
-        optimisticTime + (expectedTime - optimisticTime) * raceDayBlendFraction(weeksToRace: weeksToRace)
+        let baseBlend = raceDayBlendFraction(weeksToRace: weeksToRace)
+        let adjustedBlend = min(max(baseBlend / intensityMultiplier, 0.05), 0.95)
+        return optimisticTime + (expectedTime - optimisticTime) * adjustedBlend
+    }
+
+    /// Scales how much of the weeks-based improvement potential is
+    /// actually realized, based on how hard the athlete is training for
+    /// this specific race. Two athletes with the same current fitness and
+    /// the same race shouldn't project the same race-day time if one
+    /// trains for enjoyment (reduced volume, more rest) and the other for
+    /// performance (high volume/intensity) — the higher-intensity athlete
+    /// has a genuinely higher adaptation ceiling by race day.
+    static func trainingIntensityMultiplier(philosophy: TrainingPhilosophy, sessionsPerWeek: Int) -> Double {
+        let base: Double
+        switch philosophy {
+        case .enjoyment:   base = 0.65
+        case .balanced:    base = 1.0
+        case .performance: base = 1.30
+        }
+        // Small extra adjustment around a 5-run/week baseline (Athlete's
+        // own default), capped so it can't swing wider than the
+        // philosophy tier itself.
+        let sessionAdjustment = Double(sessionsPerWeek - 5) * 0.03
+        return min(max(base + sessionAdjustment, 0.5), 1.5)
     }
 
     /// The blend fraction interpolates from `blendAtShortWindow` (little

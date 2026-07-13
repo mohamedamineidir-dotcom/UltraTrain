@@ -5,6 +5,8 @@ struct FinishTimeEvolutionView: View {
     let race: Race
     let estimate: FinishEstimate
     let experience: ExperienceLevel
+    var trainingPhilosophy: TrainingPhilosophy = .balanced
+    var preferredRunsPerWeek: Int = 5
 
     @Environment(\.colorScheme) private var colorScheme
 
@@ -548,11 +550,22 @@ struct FinishTimeEvolutionView: View {
         return nil
     }
 
+    /// How hard this athlete is actually training for THIS race — two
+    /// athletes with identical current fitness and the same weeks to race
+    /// shouldn't project the same race-day time otherwise, see
+    /// `FinishTimeEstimator.trainingIntensityMultiplier`.
+    private var trainingIntensityMultiplier: Double {
+        FinishTimeEstimator.trainingIntensityMultiplier(
+            philosophy: trainingPhilosophy, sessionsPerWeek: preferredRunsPerWeek
+        )
+    }
+
     private var raceDayExpected: TimeInterval {
         let optimistic = estimate.optimisticTime
         let expected   = estimate.expectedTime
         let modelProjection = FinishTimeEstimator.projectedRaceDayEstimate(
-            optimisticTime: optimistic, expectedTime: expected, weeksToRace: weeksToRace
+            optimisticTime: optimistic, expectedTime: expected,
+            weeksToRace: weeksToRace, intensityMultiplier: trainingIntensityMultiplier
         )
         guard let goal = goalTime else { return modelProjection }
         if goal >= expected { return optimistic + (expected - optimistic) * 0.10 }
@@ -567,11 +580,27 @@ struct FinishTimeEvolutionView: View {
         return min(goal, modelProjection)
     }
 
+    /// Race-day optimistic/conservative bounds scale by the SAME
+    /// proportion `raceDayExpected` improved by, rather than a small fixed
+    /// offset from it. A fixed offset (e.g. "4 minutes faster than
+    /// race-day expected") looks fine when `raceDayExpected` barely moves,
+    /// but once it improves by an hour on a 14+ hour race, that same
+    /// 4-minute offset collapses the whole band — the optimistic bound
+    /// ends up barely better than today's, while expected improves far
+    /// more, so the optimistic line's head-start over expected shrinks to
+    /// nothing over the course of the chart and visually reads as the
+    /// optimistic scenario getting WORSE during training. Scaling
+    /// proportionally keeps the bands' relative spread consistent as the
+    /// whole projection shifts.
+    private var raceDayImprovementRatio: Double {
+        guard estimate.expectedTime > 0 else { return 1.0 }
+        return raceDayExpected / estimate.expectedTime
+    }
     private var raceDayOptimistic: TimeInterval {
-        max(estimate.optimisticTime * 0.97, raceDayExpected - 4 * 60)
+        estimate.optimisticTime * raceDayImprovementRatio
     }
     private var raceDayConservative: TimeInterval {
-        max(raceDayExpected + 3 * 60, estimate.expectedTime * 0.985)
+        estimate.conservativeTime * raceDayImprovementRatio
     }
 
     private func easedProgress(_ t: Double) -> Double {
