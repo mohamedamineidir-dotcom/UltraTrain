@@ -694,9 +694,12 @@ final class OnboardingViewModel {
                 pastRaceCalibrations: [],
                 weatherImpact: nil
             )
+            let secs = race.date.timeIntervalSinceNow
+            let weeksToRace = secs > 0 ? max(0, Int((secs / 86400 / 7).rounded())) : 0
             return FinishTimeEstimator.projectedRaceDayEstimate(
                 optimisticTime: estimate.optimisticTime,
-                expectedTime: estimate.expectedTime
+                expectedTime: estimate.expectedTime,
+                weeksToRace: weeksToRace
             )
         } catch {
             return nil

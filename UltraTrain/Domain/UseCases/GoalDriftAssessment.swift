@@ -36,6 +36,9 @@ enum GoalDriftAssessment {
         /// Signed gap, `predicted - goal` (sec). Positive => the goal is
         /// faster than the prediction (ambitious side).
         let gapSeconds: TimeInterval
+        /// Weeks between now and race day — feeds the race-day projection's
+        /// training-window scaling, see `FinishTimeEstimator.projectedRaceDayEstimate`.
+        let weeksToRace: Int
 
         /// A realistic target to one-tap adopt. Deliberately NOT just
         /// `predictedTime` rounded — that's what this athlete could do if the
@@ -49,7 +52,8 @@ enum GoalDriftAssessment {
         var suggestedTime: TimeInterval {
             let projected = FinishTimeEstimator.projectedRaceDayEstimate(
                 optimisticTime: optimisticTime,
-                expectedTime: predictedTime
+                expectedTime: predictedTime,
+                weeksToRace: weeksToRace
             )
             return (projected / 30.0).rounded() * 30.0
         }
@@ -73,13 +77,16 @@ enum GoalDriftAssessment {
     static func assess(
         goal: RaceGoal,
         expectedFinish: TimeInterval,
-        optimisticFinish: TimeInterval
+        optimisticFinish: TimeInterval,
+        raceDate: Date = .now
     ) -> Assessment? {
         guard case .targetTime(let goalTime) = goal, goalTime > 0, expectedFinish > 0 else {
             return nil
         }
         let gap = expectedFinish - goalTime          // + => goal faster than predicted
         let fraction = gap / goalTime
+        let secsToRace = raceDate.timeIntervalSinceNow
+        let weeksToRace = secsToRace > 0 ? max(0, Int((secsToRace / 86400 / 7).rounded())) : 0
 
         let level: Level
         if fraction > largeBand {
@@ -99,7 +106,8 @@ enum GoalDriftAssessment {
             goalTime: goalTime,
             predictedTime: expectedFinish,
             optimisticTime: optimisticFinish > 0 ? optimisticFinish : expectedFinish,
-            gapSeconds: gap
+            gapSeconds: gap,
+            weeksToRace: weeksToRace
         )
     }
 }

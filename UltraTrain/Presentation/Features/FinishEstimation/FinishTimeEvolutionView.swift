@@ -551,12 +551,20 @@ struct FinishTimeEvolutionView: View {
     private var raceDayExpected: TimeInterval {
         let optimistic = estimate.optimisticTime
         let expected   = estimate.expectedTime
-        guard let goal = goalTime else {
-            return FinishTimeEstimator.projectedRaceDayEstimate(optimisticTime: optimistic, expectedTime: expected)
-        }
+        let modelProjection = FinishTimeEstimator.projectedRaceDayEstimate(
+            optimisticTime: optimistic, expectedTime: expected, weeksToRace: weeksToRace
+        )
+        guard let goal = goalTime else { return modelProjection }
         if goal >= expected { return optimistic + (expected - optimistic) * 0.10 }
         if goal <= optimistic { return optimistic }
-        return goal
+        // Goal sits realistically between optimistic and expected: the plan
+        // is aimed at it, but never show LESS improvement than the model's
+        // own unprompted projection would — otherwise a goal picked only
+        // slightly faster than today's expected (a very normal choice)
+        // flattens the whole evolution curve into a near-flat line, even
+        // though a full training window should genuinely move the needle
+        // more than that.
+        return min(goal, modelProjection)
     }
 
     private var raceDayOptimistic: TimeInterval {

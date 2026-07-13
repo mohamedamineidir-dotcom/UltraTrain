@@ -191,13 +191,42 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
     /// optimistic scenario, since training between now and race day mostly
     /// closes the gap between current fitness and best-case fitness.
     ///
+    /// The blend fraction scales with `weeksToRace`: a 4-week block barely
+    /// moves the needle, a full 20+ week periodized cycle can close most of
+    /// the gap to today's best-case fitness. Previously this was a flat 15%
+    /// regardless of training window, so a 4-week and a 40-week prep showed
+    /// the exact same projected improvement — which is why a 21-week ultra
+    /// prep was projecting only ~10 minutes of gain on a 14+ hour race.
+    ///
     /// Used both by `FinishTimeEvolutionView`'s no-goal fallback (so the
     /// projected curve and this number agree) and by goal-setting, so a
     /// "realistic target" suggestion is anchored to race-day potential
     /// rather than today's snapshot — the two must use the same formula
     /// or a recommended goal can look wrong later once the plan exists.
-    static func projectedRaceDayEstimate(optimisticTime: TimeInterval, expectedTime: TimeInterval) -> TimeInterval {
-        optimisticTime + (expectedTime - optimisticTime) * 0.15
+    static func projectedRaceDayEstimate(
+        optimisticTime: TimeInterval,
+        expectedTime: TimeInterval,
+        weeksToRace: Int = 12
+    ) -> TimeInterval {
+        optimisticTime + (expectedTime - optimisticTime) * raceDayBlendFraction(weeksToRace: weeksToRace)
+    }
+
+    /// The blend fraction interpolates from `blendAtShortWindow` (little
+    /// time to adapt, stay close to today's `expectedTime`) down to
+    /// `blendAtLongWindow` (a full periodized cycle, close most of the gap
+    /// to `optimisticTime`) — smaller blend = more of the optimistic
+    /// scenario mixed in, since blend 0 returns exactly `optimisticTime`
+    /// and blend 1 returns exactly `expectedTime`. Floors/ceilings keep
+    /// this from producing an absurd "0 weeks = already there" or "1 year
+    /// = instant elite" result; linear in between.
+    private static func raceDayBlendFraction(weeksToRace: Int) -> Double {
+        let minWeeks = 4.0, maxWeeks = 24.0
+        let blendAtShortWindow = 0.60, blendAtLongWindow = 0.10
+        let w = Double(max(0, weeksToRace))
+        guard w > minWeeks else { return blendAtShortWindow }
+        guard w < maxWeeks else { return blendAtLongWindow }
+        let t = (w - minWeeks) / (maxWeeks - minWeeks)
+        return blendAtShortWindow + (blendAtLongWindow - blendAtShortWindow) * t
     }
 
     // MARK: - Quick synchronous estimate

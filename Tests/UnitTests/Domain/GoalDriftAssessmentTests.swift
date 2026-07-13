@@ -34,10 +34,30 @@ struct GoalDriftAssessmentTests {
         #expect(a.isDrifted)
         #expect(a.suggestsAdjustment)
         #expect(a.gapSeconds == 600)
-        // Suggested target is the RACE-DAY projection (optimistic + 15% of
-        // the gap to expected), not the raw today's-fitness prediction —
-        // 9600 + (10200-9600)*0.15 = 9690, already a multiple of 30.
-        #expect(a.suggestedTime == 9690)
+        // Suggested target is the RACE-DAY projection (optimistic + a
+        // training-window-scaled fraction of the gap to expected), not the
+        // raw today's-fitness prediction. No raceDate passed => defaults to
+        // "now" => 0 weeks to race => short-window blend of 0.60 (little
+        // time to adapt, stay close to today's expected):
+        // 9600 + (10200-9600)*0.60 = 9960.
+        #expect(a.suggestedTime == 9960)
+    }
+
+    @Test("Suggested time scales with weeks to race — a longer training window projects more improvement")
+    func suggestedTimeScalesWithTrainingWindow() {
+        // Same optimistic/expected, compared across a near-term vs a
+        // realistic 20-week race date. A longer window should close more
+        // of the gap to optimistic (a FASTER, lower suggested time) than a
+        // near-term one, which barely has room to adapt.
+        let nearRaceDate = Date().addingTimeInterval(2 * 7 * 86400)
+        let farRaceDate = Date().addingTimeInterval(20 * 7 * 86400)
+        let near = GoalDriftAssessment.assess(
+            goal: .targetTime(9600), expectedFinish: 10200, optimisticFinish: 9600, raceDate: nearRaceDate
+        )!
+        let far = GoalDriftAssessment.assess(
+            goal: .targetTime(9600), expectedFinish: 10200, optimisticFinish: 9600, raceDate: farRaceDate
+        )!
+        #expect(far.suggestedTime < near.suggestedTime)
     }
 
     @Test("Goal moderately faster is a stretch, flagged but no forced adjust")
@@ -56,8 +76,8 @@ struct GoalDriftAssessmentTests {
         #expect(a.level == .wellWithinReach)
         #expect(a.isDrifted)
         #expect(a.suggestsAdjustment)
-        // 9600 + (10080-9600)*0.15 = 9672 -> nearest 30s is 9660.
-        #expect(a.suggestedTime == 9660)
+        // 0-week short-window blend 0.60: 9600 + (10080-9600)*0.60 = 9888 -> nearest 30s is 9900.
+        #expect(a.suggestedTime == 9900)
     }
 
     @Test("Goal moderately slower has room to push, flagged but no forced adjust")
@@ -71,10 +91,10 @@ struct GoalDriftAssessmentTests {
 
     @Test("Suggested time is the race-day projection, rounded to the nearest 30 seconds")
     func suggestedRounds() {
-        // optimistic 9600, expected 10214 => projected 9600 + 614*0.15 =
-        // 9692.1, nearest 30s is 9690.
+        // optimistic 9600, expected 10214, default (0-week) short-window
+        // blend 0.60 => projected 9600 + 614*0.60 = 9968.4, nearest 30s is 9960.
         let a = GoalDriftAssessment.assess(goal: .targetTime(9600), expectedFinish: 10214, optimisticFinish: 9600)!
-        #expect(a.suggestedTime == 9690)
+        #expect(a.suggestedTime == 9960)
     }
 
     @Test("Missing optimistic time falls back to the expected prediction")

@@ -115,7 +115,8 @@ struct DashboardFinishEstimateCard: View {
         GoalDriftAssessment.assess(
             goal: race.goalType,
             expectedFinish: estimate.expectedTime,
-            optimisticFinish: estimate.optimisticTime
+            optimisticFinish: estimate.optimisticTime,
+            raceDate: race.date
         )
     }
 
