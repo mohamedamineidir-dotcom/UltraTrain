@@ -210,13 +210,24 @@ enum GoalRealisticnessValidator {
         let beginner: Double
     }
 
+    /// Elite thresholds for `.fiftyK` and up were previously far too slow —
+    /// e.g. `.hundredMiles` called anything under 6.0 min/effective-km
+    /// "world-class professional," but real elite 100-mile pace on
+    /// mountain courses runs closer to 4.0-4.5: Western States 100 course
+    /// record ≈ 14:26 over an effective ~216km (161km + 5500m D+) is 4.0
+    /// min/effkm; UTMB course record ≈ 19:37 over an effective ~270km
+    /// (170km + 10000m D+) is 4.36 min/effkm; CCC winning times ≈ 11:30
+    /// over an effective ~162km (101km + 6100m D+) is 4.26 min/effkm. That
+    /// gap meant solidly-achievable advanced/intermediate targets on longer
+    /// races were misclassified as elite, directly contradicting the
+    /// athlete's own calibrated finish-time projection elsewhere in the app.
     private static func paceThresholds(for category: RaceCategory) -> PaceThresholds {
         switch category {
         case .trail:        PaceThresholds(elite: 4.5, advanced: 5.5, intermediate: 6.5, beginner: 8.0)
-        case .fiftyK:       PaceThresholds(elite: 5.0, advanced: 6.0, intermediate: 7.5, beginner: 9.0)
-        case .hundredK:     PaceThresholds(elite: 5.5, advanced: 7.0, intermediate: 8.5, beginner: 10.5)
-        case .hundredMiles: PaceThresholds(elite: 6.0, advanced: 8.0, intermediate: 10.0, beginner: 13.0)
-        case .ultraLong:    PaceThresholds(elite: 7.0, advanced: 9.0, intermediate: 11.0, beginner: 14.0)
+        case .fiftyK:       PaceThresholds(elite: 4.0, advanced: 6.0, intermediate: 7.5, beginner: 9.0)
+        case .hundredK:     PaceThresholds(elite: 4.0, advanced: 5.5, intermediate: 7.0, beginner: 9.0)
+        case .hundredMiles: PaceThresholds(elite: 4.5, advanced: 6.5, intermediate: 8.5, beginner: 11.0)
+        case .ultraLong:    PaceThresholds(elite: 5.0, advanced: 7.0, intermediate: 9.0, beginner: 12.0)
         }
     }
 
