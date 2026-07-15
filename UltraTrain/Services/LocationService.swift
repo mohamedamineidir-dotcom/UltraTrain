@@ -77,6 +77,13 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
         }
 
         return await withCheckedContinuation { continuation in
+            // A prior call's continuation, if any, would otherwise be
+            // silently abandoned forever the moment this one overwrites
+            // it — resolve it to nil first so nothing is left hanging.
+            if let stale = oneShotLocationContinuation {
+                oneShotLocationContinuation = nil
+                stale.resume(returning: nil)
+            }
             oneShotLocationContinuation = continuation
             locationManager.requestLocation()
             Task { @MainActor [weak self] in

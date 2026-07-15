@@ -141,7 +141,13 @@ final class RaceDayPlanViewModel {
             Logger.training.error("Failed to build race day plan: \(error)")
         }
 
-        await loadRaceDayWeather()
+        // Weather now actively requests a location fix (up to several
+        // seconds — see LocationService.requestOneShotLocation()) instead
+        // of an instant no-op check, so it must not block isLoading: that
+        // would hold this whole screen on a blank loading state for
+        // however long GPS + the weather API take, every time. It updates
+        // raceDayForecast independently whenever it resolves.
+        Task { await loadRaceDayWeather() }
         isLoading = false
     }
 

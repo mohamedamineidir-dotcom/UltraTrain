@@ -90,8 +90,17 @@ final class DashboardViewModel {
         async let estimateTask: () = loadFinishEstimate()
         async let lastRunTask: () = loadLastRun()
         async let racesTask: () = loadUpcomingRaces()
-        async let weatherTask: () = loadWeather()
-        _ = await (fitnessTask, estimateTask, lastRunTask, racesTask, weatherTask)
+        _ = await (fitnessTask, estimateTask, lastRunTask, racesTask)
+
+        // Weather now actively requests a location fix (up to several
+        // seconds — see LocationService.requestOneShotLocation()) instead
+        // of an instant no-op check, so it must NOT sit in the awaited
+        // tuple above: that would hold the entire dashboard on a blank
+        // loading screen for however long GPS + the weather API take,
+        // every single launch. It updates currentWeather independently
+        // whenever it resolves; the dashboard renders immediately with
+        // everything else in the meantime.
+        Task { await loadWeather() }
 
         await loadRecovery()
 
