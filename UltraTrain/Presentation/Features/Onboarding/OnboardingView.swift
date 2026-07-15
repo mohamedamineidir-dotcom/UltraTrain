@@ -13,12 +13,14 @@ struct OnboardingView: View {
         healthKitService: (any HealthKitServiceProtocol)? = nil,
         healthKitImportService: (any HealthKitImportServiceProtocol)? = nil,
         initialFirstName: String? = nil,
+        initialLastName: String? = nil,
         onComplete: @escaping () -> Void
     ) {
         _viewModel = State(initialValue: OnboardingViewModel(
             athleteRepository: athleteRepository,
             raceRepository: raceRepository,
-            initialFirstName: initialFirstName
+            initialFirstName: initialFirstName,
+            initialLastName: initialLastName
         ))
         self.healthKitService = healthKitService
         self.healthKitImportService = healthKitImportService

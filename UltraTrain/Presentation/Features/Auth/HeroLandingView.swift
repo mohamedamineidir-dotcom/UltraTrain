@@ -7,7 +7,7 @@ struct HeroLandingView: View {
 
     let authService: any AuthServiceProtocol
     let referralRepository: any ReferralRepository
-    var onAuthenticated: (Bool, String?) -> Void // (isNewUser, firstName)
+    var onAuthenticated: (Bool, String?, String?) -> Void // (isNewUser, firstName, lastName)
 
     var body: some View {
         NavigationStack {
@@ -25,7 +25,7 @@ struct HeroLandingView: View {
             .navigationDestination(isPresented: $showSignIn) {
                 SignInView(
                     authService: authService,
-                    onAuthenticated: { onAuthenticated(false, nil) }
+                    onAuthenticated: { onAuthenticated(false, nil, nil) }
                 )
             }
         }

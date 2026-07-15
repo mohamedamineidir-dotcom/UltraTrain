@@ -22,6 +22,7 @@ final class SignUpViewModel {
     // Result
     var isNewUser = true
     var authenticatedFirstName: String?
+    var authenticatedLastName: String?
 
     init(authService: any AuthServiceProtocol, referralRepository: any ReferralRepository) {
         self.authService = authService
@@ -64,6 +65,7 @@ final class SignUpViewModel {
             )
             isNewUser = newUser
             authenticatedFirstName = firstName
+            authenticatedLastName = lastName
             isAuthenticated = true
         } catch {
             self.error = error.localizedDescription

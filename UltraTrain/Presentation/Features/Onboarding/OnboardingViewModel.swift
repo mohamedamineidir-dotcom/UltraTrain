@@ -19,6 +19,16 @@ final class OnboardingViewModel {
     var error: String?
     private(set) var savedAthleteId: UUID?
     var initialFirstName: String?
+    var initialLastName: String?
+    /// True when both names came from Sign in with Apple's
+    /// AuthenticationServices credential, not from the user typing them
+    /// in. Apple's Sign in with Apple design guidelines (Guideline 4)
+    /// require not asking the user to provide info the framework already
+    /// gave us — `AboutYouStepView` uses this to skip the name fields
+    /// entirely instead of just pre-filling them.
+    var nameProvidedByAppleSignIn: Bool {
+        !(initialFirstName?.isEmpty ?? true) && !(initialLastName?.isEmpty ?? true)
+    }
 
     // MARK: - Step 1: Experience
 
@@ -205,13 +215,18 @@ final class OnboardingViewModel {
     init(
         athleteRepository: any AthleteRepository,
         raceRepository: any RaceRepository,
-        initialFirstName: String? = nil
+        initialFirstName: String? = nil,
+        initialLastName: String? = nil
     ) {
         self.athleteRepository = athleteRepository
         self.raceRepository = raceRepository
         self.initialFirstName = initialFirstName
+        self.initialLastName = initialLastName
         if let name = initialFirstName, !name.isEmpty {
             self.firstName = name
+        }
+        if let name = initialLastName, !name.isEmpty {
+            self.lastName = name
         }
     }
 

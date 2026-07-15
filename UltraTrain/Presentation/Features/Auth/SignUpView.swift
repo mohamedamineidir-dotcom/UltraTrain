@@ -7,12 +7,12 @@ struct SignUpView: View {
     @State private var showWelcomeClub = false
 
     let referralRepository: any ReferralRepository
-    var onAuthenticated: (Bool, String?) -> Void
+    var onAuthenticated: (Bool, String?, String?) -> Void
 
     init(
         authService: any AuthServiceProtocol,
         referralRepository: any ReferralRepository,
-        onAuthenticated: @escaping (Bool, String?) -> Void
+        onAuthenticated: @escaping (Bool, String?, String?) -> Void
     ) {
         self.referralRepository = referralRepository
         self.onAuthenticated = onAuthenticated
@@ -47,7 +47,7 @@ struct SignUpView: View {
                 if viewModel.isNewUser {
                     showWelcomeClub = true
                 } else {
-                    onAuthenticated(false, nil)
+                    onAuthenticated(false, nil, nil)
                 }
             }
         }
@@ -56,7 +56,7 @@ struct SignUpView: View {
                 firstName: viewModel.authenticatedFirstName ?? "",
                 referralRepository: referralRepository,
                 onContinue: {
-                    onAuthenticated(true, viewModel.authenticatedFirstName)
+                    onAuthenticated(true, viewModel.authenticatedFirstName, viewModel.authenticatedLastName)
                 }
             )
         }

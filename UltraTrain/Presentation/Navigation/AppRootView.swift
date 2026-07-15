@@ -21,6 +21,7 @@ struct AppRootView: View {
     @State private var isDeviceCompromised = false
     @Environment(\.networkMonitor) private var networkMonitor
     @State var pendingFirstName: String?
+    @State var pendingLastName: String?
     @State var hasActiveSubscription: Bool?
     @State var cachedFirstName: String?
     let authService: any AuthServiceProtocol
@@ -229,8 +230,9 @@ struct AppRootView: View {
                     HeroLandingView(
                         authService: authService,
                         referralRepository: referralRepository
-                    ) { isNewUser, firstName in
+                    ) { isNewUser, firstName, lastName in
                         pendingFirstName = firstName
+                        pendingLastName = lastName
                         isAuthenticated = true
                         if isNewUser {
                             hasCompletedOnboarding = false

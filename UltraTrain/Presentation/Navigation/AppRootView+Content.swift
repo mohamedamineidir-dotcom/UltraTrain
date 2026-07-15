@@ -91,6 +91,7 @@ extension AppRootView {
                                 hasActiveSubscription = nil
                                 cachedFirstName = nil
                                 pendingFirstName = nil
+                                pendingLastName = nil
                                 isAuthenticated = false
                             }
                         )
@@ -133,6 +134,7 @@ extension AppRootView {
                         healthKitService: healthKitService,
                         healthKitImportService: healthKitImportService,
                         initialFirstName: pendingFirstName,
+                        initialLastName: pendingLastName,
                         onComplete: {
                             // Present the initial offer in the SAME state change
                             // that reveals the main app, so the paywall covers

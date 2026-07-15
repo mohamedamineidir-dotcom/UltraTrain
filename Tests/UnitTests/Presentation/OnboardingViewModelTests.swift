@@ -350,4 +350,39 @@ struct OnboardingViewModelTests {
         #expect((athlete?.vo2max ?? 0) > 40)
         #expect((athlete?.vo2max ?? 0) < 65)
     }
+
+    // MARK: - Sign in with Apple name pre-fill (Guideline 4)
+
+    @Test("Both names supplied by Sign in with Apple pre-fill the fields and flag the source")
+    @MainActor
+    func appleSuppliedNamesPrefillAndFlag() {
+        let vm = OnboardingViewModel(
+            athleteRepository: MockAthleteRepository(),
+            raceRepository: MockRaceRepository(),
+            initialFirstName: "Momo",
+            initialLastName: "Idir"
+        )
+        #expect(vm.firstName == "Momo")
+        #expect(vm.lastName == "Idir")
+        #expect(vm.nameProvidedByAppleSignIn == true)
+    }
+
+    @Test("No initial name means the app must still collect it, not flagged as Apple-supplied")
+    @MainActor
+    func noInitialNameNotFlagged() {
+        let (vm, _, _) = makeViewModel()
+        #expect(vm.nameProvidedByAppleSignIn == false)
+    }
+
+    @Test("Only a first name (e.g. email sign-up prefilling nothing) is not flagged as Apple-supplied")
+    @MainActor
+    func partialNameNotFlagged() {
+        let vm = OnboardingViewModel(
+            athleteRepository: MockAthleteRepository(),
+            raceRepository: MockRaceRepository(),
+            initialFirstName: "Momo",
+            initialLastName: nil
+        )
+        #expect(vm.nameProvidedByAppleSignIn == false)
+    }
 }
