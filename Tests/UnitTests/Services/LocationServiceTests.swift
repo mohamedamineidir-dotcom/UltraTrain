@@ -1,3 +1,4 @@
+import CoreLocation
 import Foundation
 import Testing
 @testable import UltraTrain
@@ -89,5 +90,29 @@ struct LocationServiceTests {
 
         service.stopTracking()
         #expect(!service.isTracking)
+    }
+
+    // MARK: - One-shot location (pre-run weather / dashboard weather fix)
+
+    @MainActor
+    @Test("requestOneShotLocation returns the already-known location immediately, without needing a fresh fix")
+    func oneShotReturnsCurrentLocationImmediately() async {
+        let service = LocationService()
+        let existing = CLLocation(latitude: 48.8566, longitude: 2.3522)
+        service.currentLocation = existing
+
+        let result = await service.requestOneShotLocation()
+        #expect(result === existing)
+    }
+
+    @MainActor
+    @Test("requestOneShotLocation returns nil without hanging when authorization hasn't been granted")
+    func oneShotReturnsNilWhenNotAuthorized() async {
+        let service = LocationService()
+        // Fresh service, real CLLocationManager reports .notDetermined in
+        // the test environment — never actually calls into CoreLocation.
+        #expect(service.currentLocation == nil)
+        let result = await service.requestOneShotLocation()
+        #expect(result == nil)
     }
 }

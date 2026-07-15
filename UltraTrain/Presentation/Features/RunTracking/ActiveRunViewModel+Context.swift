@@ -130,7 +130,11 @@ extension ActiveRunViewModel {
     func captureWeatherAtStart() {
         guard let weatherService else { return }
         Task { [weak self] in
-            guard let location = self?.locationService.currentLocation else { return }
+            // Actively request a fix rather than passively reading
+            // currentLocation — this runs before startLocationTracking(),
+            // so continuous GPS updates haven't populated it yet and this
+            // silently failed every time.
+            guard let location = await self?.locationService.requestOneShotLocation() else { return }
             do {
                 let weather = try await weatherService.currentWeather(
                     latitude: location.coordinate.latitude, longitude: location.coordinate.longitude

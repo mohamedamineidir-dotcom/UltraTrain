@@ -9,7 +9,11 @@ extension DashboardViewModel {
 
     func loadWeather() async {
         guard let weatherService, let locationService else { return }
-        guard let location = locationService.currentLocation else { return }
+        // Actively request a fix rather than passively reading
+        // currentLocation, which is only populated once continuous GPS
+        // tracking has started during an active run — on the Dashboard
+        // that never happens, so this silently and permanently failed.
+        guard let location = await locationService.requestOneShotLocation() else { return }
         let lat = location.coordinate.latitude
         let lon = location.coordinate.longitude
 

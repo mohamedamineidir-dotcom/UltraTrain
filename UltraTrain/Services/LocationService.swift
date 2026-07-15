@@ -24,6 +24,7 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
 
     private let locationManager = CLLocationManager()
     private var locationContinuation: AsyncStream<CLLocation>.Continuation?
+    private var oneShotLocationContinuation: CheckedContinuation<CLLocation?, Never>?
     // Bumped on every startTracking() call so a stale continuation's
     // onTermination (fired asynchronously, after a NEW stream may already
     // be active) can tell it's no longer current and must not tear down
@@ -55,6 +56,36 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
 
     func requestAlwaysAuthorization() {
         locationManager.requestAlwaysAuthorization()
+    }
+
+    /// A single "roughly where the user is right now" fix, for features
+    /// like pre-run weather that need a location without starting full
+    /// continuous GPS tracking (`startTracking()` is reserved for an
+    /// active run). Previously, pre-run weather only ever checked
+    /// `currentLocation` passively — which is nil until continuous
+    /// tracking has actually started — so it silently and permanently
+    /// failed on the launch screen even with location permission granted.
+    /// Falls back to `currentLocation` if already known (e.g. a run is
+    /// already tracking), resolves to nil rather than throwing on
+    /// failure/timeout so callers can treat "no location yet" the same as
+    /// "weather unavailable" instead of surfacing a location error on a
+    /// screen that isn't about location.
+    func requestOneShotLocation() async -> CLLocation? {
+        if let currentLocation { return currentLocation }
+        guard authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways else {
+            return nil
+        }
+
+        return await withCheckedContinuation { continuation in
+            oneShotLocationContinuation = continuation
+            locationManager.requestLocation()
+            Task { @MainActor [weak self] in
+                try? await Task.sleep(for: .seconds(8))
+                guard let self, let pending = self.oneShotLocationContinuation else { return }
+                self.oneShotLocationContinuation = nil
+                pending.resume(returning: nil)
+            }
+        }
     }
 
     // MARK: - Tracking
@@ -156,6 +187,10 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
                 self.currentLocation = location
                 self.locationContinuation?.yield(location)
             }
+            if let pending = self.oneShotLocationContinuation, let first = validLocations.first {
+                self.oneShotLocationContinuation = nil
+                pending.resume(returning: first)
+            }
         }
     }
 
@@ -175,6 +210,10 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
         Task { @MainActor in
             self.error = error.localizedDescription
             Logger.tracking.error("Location error: \(error)")
+            if let pending = self.oneShotLocationContinuation {
+                self.oneShotLocationContinuation = nil
+                pending.resume(returning: nil)
+            }
         }
     }
 }

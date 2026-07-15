@@ -154,7 +154,11 @@ final class RaceDayPlanViewModel {
 
     private func loadRaceDayWeather() async {
         guard forecastAvailable, let weatherService, let locationService else { return }
-        guard let location = locationService.currentLocation else { return }
+        // Actively request a fix rather than passively reading
+        // currentLocation, which is only populated once continuous GPS
+        // tracking has started during an active run — this screen never
+        // does that, so this silently and permanently failed.
+        guard let location = await locationService.requestOneShotLocation() else { return }
         do {
             let forecasts = try await weatherService.dailyForecast(
                 latitude: location.coordinate.latitude,

@@ -9,7 +9,11 @@ extension RunTrackingLaunchViewModel {
 
     func loadWeather() async {
         guard let weatherService, let locationService else { return }
-        guard let location = locationService.currentLocation else { return }
+        // Actively request a fix rather than passively reading
+        // currentLocation — that's only populated once continuous GPS
+        // tracking has started, which doesn't happen until "Start Run" is
+        // tapped, so this silently and permanently failed here before.
+        guard let location = await locationService.requestOneShotLocation() else { return }
         do {
             preRunWeather = try await weatherService.currentWeather(
                 latitude: location.coordinate.latitude,
