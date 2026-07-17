@@ -71,12 +71,17 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
     /// "weather unavailable" instead of surfacing a location error on a
     /// screen that isn't about location.
     func requestOneShotLocation() async -> CLLocation? {
-        if let currentLocation { return currentLocation }
+        if let currentLocation {
+            Logger.tracking.info("requestOneShotLocation: returning already-known location")
+            return currentLocation
+        }
         guard authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways else {
+            Logger.tracking.info("requestOneShotLocation: not authorized (status: \(String(describing: self.authorizationStatus))), returning nil")
             return nil
         }
 
-        return await withCheckedContinuation { continuation in
+        Logger.tracking.info("requestOneShotLocation: requesting a fresh fix")
+        let result = await withCheckedContinuation { continuation in
             // A prior call's continuation, if any, would otherwise be
             // silently abandoned forever the moment this one overwrites
             // it — resolve it to nil first so nothing is left hanging.
@@ -90,9 +95,12 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
                 try? await Task.sleep(for: .seconds(8))
                 guard let self, let pending = self.oneShotLocationContinuation else { return }
                 self.oneShotLocationContinuation = nil
+                Logger.tracking.info("requestOneShotLocation: timed out after 8s with no delegate callback")
                 pending.resume(returning: nil)
             }
         }
+        Logger.tracking.info("requestOneShotLocation: resolved with \(result == nil ? "nil" : "a location")")
+        return result
     }
 
     // MARK: - Tracking
@@ -194,8 +202,18 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
                 self.currentLocation = location
                 self.locationContinuation?.yield(location)
             }
-            if let pending = self.oneShotLocationContinuation, let first = validLocations.first {
+            // The one-shot request just needs "roughly where you are"
+            // (weather doesn't vary within a few hundred meters) — it must
+            // NOT be gated on the same <=50m accuracy filter validLocations
+            // uses, which exists for active-run GPS quality. A device's
+            // very first fix (especially indoors, or right after GPS wakes
+            // up) is commonly 65-100m+ accuracy and was being silently
+            // discarded here every time, leaving the one-shot request to
+            // fall through to its 8s timeout with nothing to show for it.
+            if let pending = self.oneShotLocationContinuation,
+               let first = locations.first(where: { $0.horizontalAccuracy >= 0 }) {
                 self.oneShotLocationContinuation = nil
+                Logger.tracking.info("requestOneShotLocation: delegate delivered a fix (accuracy \(first.horizontalAccuracy)m)")
                 pending.resume(returning: first)
             }
         }
