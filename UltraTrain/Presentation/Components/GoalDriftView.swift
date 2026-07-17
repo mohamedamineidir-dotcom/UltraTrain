@@ -43,7 +43,11 @@ extension GoalDriftAssessment.Assessment {
     /// One-line caption for the compact dashboard flag.
     func shortMessage(raceDistanceKm: Double) -> String {
         let goal = time(goalTime, raceDistanceKm: raceDistanceKm)
-        let pred = time(predictedTime, raceDistanceKm: raceDistanceKm)
+        // Race-day projection, not today's snapshot — the goal is judged
+        // against what training between now and race day should realistically
+        // unlock, so the displayed number must match what actually drove the
+        // classification (see GoalDriftAssessment.assess).
+        let pred = time(projectedRaceDayTime, raceDistanceKm: raceDistanceKm)
         switch level {
         case .veryAmbitious:   return String(localized: "goalDrift.short.veryAmbitious", defaultValue: "Goal \(goal) is well ahead of your \(pred) prediction")
         case .ambitious:       return String(localized: "goalDrift.short.ambitious", defaultValue: "Goal \(goal) is a stretch vs your \(pred) prediction")
@@ -56,10 +60,11 @@ extension GoalDriftAssessment.Assessment {
     /// Fuller explanation for the actionable card on the detail screen.
     func fullMessage(raceDistanceKm: Double) -> String {
         let goal = time(goalTime, raceDistanceKm: raceDistanceKm)
-        let pred = time(predictedTime, raceDistanceKm: raceDistanceKm)
+        // Race-day projection, not today's snapshot — see shortMessage above.
+        let pred = time(projectedRaceDayTime, raceDistanceKm: raceDistanceKm)
         switch level {
         case .veryAmbitious:
-            return String(localized: "goalDrift.full.veryAmbitious", defaultValue: "Your goal of \(goal) is well ahead of your predicted \(pred). Keep building, or set a target that matches your current fitness.")
+            return String(localized: "goalDrift.full.veryAmbitious", defaultValue: "Your goal of \(goal) is well ahead of your predicted \(pred). Keep building, or set a target that matches your race-day potential.")
         case .ambitious:
             return String(localized: "goalDrift.full.ambitious", defaultValue: "Your goal of \(goal) is a little faster than your predicted \(pred). It is within reach if your training keeps trending up.")
         case .onTrack:

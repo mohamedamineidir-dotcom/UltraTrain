@@ -28,34 +28,35 @@ enum GoalDriftAssessment {
         /// The declared goal time (sec).
         let goalTime: TimeInterval
         /// The live expected finish (sec) — what this athlete could do TODAY.
+        /// Kept for display/reference; NOT what the goal is judged against
+        /// (see `projectedRaceDayTime`).
         let predictedTime: TimeInterval
         /// The live optimistic finish (sec) — used with `predictedTime` to
         /// project what training between now and race day should realistically
         /// unlock. See `suggestedTime`.
         let optimisticTime: TimeInterval
-        /// Signed gap, `predicted - goal` (sec). Positive => the goal is
-        /// faster than the prediction (ambitious side).
+        /// Signed gap, `projectedRaceDayTime - goal` (sec). Positive => the
+        /// goal is faster than what training between now and race day should
+        /// realistically produce (ambitious side).
         let gapSeconds: TimeInterval
         /// Weeks between now and race day — feeds the race-day projection's
         /// training-window scaling, see `FinishTimeEstimator.projectedRaceDayEstimate`.
         let weeksToRace: Int
+        /// What this athlete should realistically be capable of ON RACE DAY,
+        /// after training between now and then — the actual baseline the
+        /// goal is judged against. NOT the same as `predictedTime` (today's
+        /// snapshot): a goal can look "too ambitious" against today's fitness
+        /// while being perfectly realistic (or even unambitious) against
+        /// this projection, which is exactly the confusion this type exists
+        /// to resolve. See `FinishTimeEstimator.projectedRaceDayEstimate`.
+        let projectedRaceDayTime: TimeInterval
 
-        /// A realistic target to one-tap adopt. Deliberately NOT just
-        /// `predictedTime` rounded — that's what this athlete could do if the
-        /// race were today. Suggesting that as their GOAL for a race weeks or
-        /// months out anchors them to today's fitness instead of what
-        /// training between now and race day should realistically unlock,
-        /// which is exactly the confusion this card exists to resolve. Uses
-        /// the same race-day projection as the evolution chart and the
-        /// onboarding goal hint (`FinishTimeEstimator.projectedRaceDayEstimate`)
-        /// so all three stay consistent with each other.
+        /// A realistic target to one-tap adopt — just `projectedRaceDayTime`
+        /// rounded to the nearest 30s. Uses the same race-day projection as
+        /// the evolution chart and the onboarding goal hint so all three
+        /// stay consistent with each other.
         var suggestedTime: TimeInterval {
-            let projected = FinishTimeEstimator.projectedRaceDayEstimate(
-                optimisticTime: optimisticTime,
-                expectedTime: predictedTime,
-                weeksToRace: weeksToRace
-            )
-            return (projected / 30.0).rounded() * 30.0
+            (projectedRaceDayTime / 30.0).rounded() * 30.0
         }
 
         /// Whether the drift is large enough to push an "adjust goal" prompt.
@@ -74,19 +75,38 @@ enum GoalDriftAssessment {
     private static let onTrackBand = 0.02
     private static let largeBand = 0.06
 
+    /// - Parameter intensityMultiplier: how hard this athlete is training
+    ///   for this race — see `FinishTimeEstimator.trainingIntensityMultiplier`.
+    ///   Defaults to neutral (balanced/1.0) when the caller doesn't have the
+    ///   athlete's training philosophy in scope.
     static func assess(
         goal: RaceGoal,
         expectedFinish: TimeInterval,
         optimisticFinish: TimeInterval,
-        raceDate: Date = .now
+        raceDate: Date = .now,
+        intensityMultiplier: Double = 1.0
     ) -> Assessment? {
         guard case .targetTime(let goalTime) = goal, goalTime > 0, expectedFinish > 0 else {
             return nil
         }
-        let gap = expectedFinish - goalTime          // + => goal faster than predicted
-        let fraction = gap / goalTime
+        let optimistic = optimisticFinish > 0 ? optimisticFinish : expectedFinish
         let secsToRace = raceDate.timeIntervalSinceNow
         let weeksToRace = secsToRace > 0 ? max(0, Int((secsToRace / 86400 / 7).rounded())) : 0
+
+        // The goal must be judged against what training between now and
+        // race day should realistically produce, not today's snapshot —
+        // otherwise a goal that's genuinely on track (or even unambitious)
+        // relative to race-day potential can look "too ambitious" purely
+        // because today's fitness hasn't caught up yet.
+        let projectedRaceDay = FinishTimeEstimator.projectedRaceDayEstimate(
+            optimisticTime: optimistic,
+            expectedTime: expectedFinish,
+            weeksToRace: weeksToRace,
+            intensityMultiplier: intensityMultiplier
+        )
+
+        let gap = projectedRaceDay - goalTime          // + => goal faster than race-day projection
+        let fraction = gap / goalTime
 
         let level: Level
         if fraction > largeBand {
@@ -105,9 +125,10 @@ enum GoalDriftAssessment {
             level: level,
             goalTime: goalTime,
             predictedTime: expectedFinish,
-            optimisticTime: optimisticFinish > 0 ? optimisticFinish : expectedFinish,
+            optimisticTime: optimistic,
             gapSeconds: gap,
-            weeksToRace: weeksToRace
+            weeksToRace: weeksToRace,
+            projectedRaceDayTime: projectedRaceDay
         )
     }
 }

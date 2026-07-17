@@ -26,21 +26,39 @@ struct GoalDriftAssessmentTests {
         #expect(!a.suggestsAdjustment)
     }
 
-    @Test("Goal far faster than prediction is very ambitious and prompts adjust")
+    @Test("Goal far faster than the RACE-DAY projection is very ambitious and prompts adjust")
     func veryAmbitious() {
-        // 2:40 goal (9600s), predicted 2:50 (10200s) => +6.25% over goal.
-        let a = GoalDriftAssessment.assess(goal: .targetTime(9600), expectedFinish: 10200, optimisticFinish: 9600)!
+        // Level is judged against the race-day projection, not today's raw
+        // expected finish — goal 2:30 (9000s), optimistic 8500, expected
+        // 11000. No raceDate passed => defaults to "now" => 0 weeks to race
+        // => short-window blend of 0.60 (little time to adapt):
+        // projected = 8500 + (11000-8500)*0.60 = 10000.
+        // gap = 10000 - 9000 = 1000 => +11.1% over goal => veryAmbitious.
+        let a = GoalDriftAssessment.assess(goal: .targetTime(9000), expectedFinish: 11000, optimisticFinish: 8500)!
         #expect(a.level == .veryAmbitious)
         #expect(a.isDrifted)
         #expect(a.suggestsAdjustment)
-        #expect(a.gapSeconds == 600)
-        // Suggested target is the RACE-DAY projection (optimistic + a
-        // training-window-scaled fraction of the gap to expected), not the
-        // raw today's-fitness prediction. No raceDate passed => defaults to
-        // "now" => 0 weeks to race => short-window blend of 0.60 (little
-        // time to adapt, stay close to today's expected):
-        // 9600 + (10200-9600)*0.60 = 9960.
-        #expect(a.suggestedTime == 9960)
+        #expect(a.gapSeconds == 1000)
+        #expect(a.projectedRaceDayTime == 10000)
+        #expect(a.suggestedTime == 9990)
+    }
+
+    @Test("A goal that looks ambitious against today's fitness but not against race-day projection reads on track")
+    func notAmbitiousAgainstRaceDayProjection() {
+        // Real-world regression: Oman by UTMB Jabal Classic 103K, ~21 weeks
+        // out. optimistic 12h33 (45180s), expected (today) 13h52 (49920s),
+        // goal 13h00 (46800s). Naively comparing the goal against today's
+        // expected (49920) makes it look like a huge stretch (+6.7%,
+        // "veryAmbitious") — but the race-day projection is ~12h46 (46010s,
+        // faster than the goal), which is what the goal must actually be
+        // judged against. This must NOT be flagged as ambitious.
+        let raceDate = Date().addingTimeInterval(21 * 7 * 86400)
+        let a = GoalDriftAssessment.assess(
+            goal: .targetTime(46800), expectedFinish: 49920, optimisticFinish: 45180, raceDate: raceDate
+        )!
+        #expect(a.level == .onTrack, "13h00 is realistic against the ~12h46 race-day projection, not ambitious")
+        #expect(!a.isDrifted)
+        #expect(!a.suggestsAdjustment)
     }
 
     @Test("Suggested time scales with weeks to race — a longer training window projects more improvement")
@@ -60,10 +78,12 @@ struct GoalDriftAssessmentTests {
         #expect(far.suggestedTime < near.suggestedTime)
     }
 
-    @Test("Goal moderately faster is a stretch, flagged but no forced adjust")
+    @Test("Goal moderately faster than the race-day projection is a stretch, flagged but no forced adjust")
     func ambitiousStretch() {
-        // 2:30 goal, predicted 2:34:00 => +2.7% (between 2% and 6%).
-        let a = GoalDriftAssessment.assess(goal: .targetTime(9000), expectedFinish: 9240, optimisticFinish: 8800)!
+        // goal 2:30 (9000s), optimistic 8500, expected 9700, 0-week blend
+        // 0.60 => projected = 8500 + (9700-8500)*0.60 = 9220.
+        // gap = 9220 - 9000 = 220 => +2.4% (between 2% and 6%).
+        let a = GoalDriftAssessment.assess(goal: .targetTime(9000), expectedFinish: 9700, optimisticFinish: 8500)!
         #expect(a.level == .ambitious)
         #expect(a.isDrifted)
         #expect(!a.suggestsAdjustment)

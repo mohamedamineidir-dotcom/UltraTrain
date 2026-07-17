@@ -87,7 +87,11 @@ struct FinishEstimationView: View {
                         goal: viewModel.race.goalType,
                         expectedFinish: estimate.expectedTime,
                         optimisticFinish: estimate.optimisticTime,
-                        raceDate: viewModel.race.date
+                        raceDate: viewModel.race.date,
+                        intensityMultiplier: FinishTimeEstimator.trainingIntensityMultiplier(
+                            philosophy: viewModel.athleteTrainingPhilosophy,
+                            sessionsPerWeek: viewModel.athletePreferredRunsPerWeek
+                        )
                     ), drift.isDrifted {
                         GoalDriftCard(
                             assessment: drift,
