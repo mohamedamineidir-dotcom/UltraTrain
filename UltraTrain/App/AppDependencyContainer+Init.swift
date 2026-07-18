@@ -145,7 +145,10 @@ extension AppDependencyContainer {
         planAutoAdjustmentService = DefaultPlanAutoAdjustmentService(
             planGenerator: planGenerator, planRepository: planRepository
         )
-        weatherService = AppleWeatherKitService()
+        // See AppDependencyContainer.weatherService's doc comment: WeatherKit
+        // authentication is rejected by Apple's own infrastructure, so the
+        // feature was removed rather than shipped broken.
+        weatherService = nil
         healthKitImportService = HealthKitImportService(
             healthKitService: healthKitService, runRepository: runRepository, planRepository: planRepository
         )

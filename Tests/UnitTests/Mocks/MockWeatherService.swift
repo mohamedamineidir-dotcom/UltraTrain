@@ -30,17 +30,4 @@ final class MockWeatherService: WeatherServiceProtocol, @unchecked Sendable {
         if shouldThrow { throw DomainError.weatherUnavailable(reason: "Mock error") }
         return dailyForecastResult
     }
-
-    var attributionResult = WeatherAttributionInfo(
-        legalPageURL: URL(string: "https://weatherkit.apple.com/legal-attribution.html")!,
-        combinedMarkLightURL: URL(string: "https://weatherkit.apple.com/attribution/light/mock.svg")!,
-        combinedMarkDarkURL: URL(string: "https://weatherkit.apple.com/attribution/dark/mock.svg")!
-    )
-    var attributionCallCount = 0
-
-    func attribution() async throws -> WeatherAttributionInfo {
-        attributionCallCount += 1
-        if shouldThrow { throw DomainError.weatherUnavailable(reason: "Mock error") }
-        return attributionResult
-    }
 }

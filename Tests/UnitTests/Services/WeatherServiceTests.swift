@@ -5,9 +5,12 @@ import Testing
 @Suite("WeatherService Tests")
 struct WeatherServiceTests {
 
-    // NOTE: AppleWeatherKitService depends on WeatherKit which requires entitlements and
-    // a real network connection. We test the MockWeatherService protocol behavior,
-    // the WeatherSnapshot and DailyWeatherForecast models, and the WeatherCache integration.
+    // NOTE: the real WeatherKit-backed implementation was removed (Apple's
+    // WeatherKit auth service rejects this app's JWT for reasons outside
+    // anything fixable client-side). These tests cover the
+    // MockWeatherService protocol behavior and the WeatherSnapshot /
+    // DailyWeatherForecast models, which are still used elsewhere
+    // (e.g. manually-entered post-race weather).
 
     // MARK: - Helpers
 

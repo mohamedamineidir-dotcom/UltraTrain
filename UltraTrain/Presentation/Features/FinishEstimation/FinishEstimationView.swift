@@ -105,13 +105,6 @@ struct FinishEstimationView: View {
                     if let source = estimate.predictionSource {
                         dataSourceBadge(source: source)
                     }
-                    if let weatherImpact = viewModel.weatherImpact {
-                        WeatherImpactCard(
-                            impact: weatherImpact,
-                            snapshot: viewModel.weatherSnapshot,
-                            forecast: viewModel.dailyForecast
-                        )
-                    }
                     confidenceSection(estimate)
                     if estimate.raceResultsUsed > 0 {
                         raceCalibrationBadge(estimate: estimate)

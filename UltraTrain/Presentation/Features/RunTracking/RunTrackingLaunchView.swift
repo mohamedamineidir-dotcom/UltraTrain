@@ -114,11 +114,6 @@ struct RunTrackingLaunchView: View {
                 VStack(spacing: Theme.Spacing.lg) {
                     locationAuthSection
                     heroSection
-                    PreRunWeatherCard(
-                        weather: viewModel.preRunWeather,
-                        isLoading: viewModel.isLoading
-                    )
-                    .padding(.horizontal, Theme.Spacing.md)
                     if let briefing = viewModel.preRunBriefing {
                         PreRunBriefingCard(briefing: briefing)
                             .padding(.horizontal, Theme.Spacing.md)

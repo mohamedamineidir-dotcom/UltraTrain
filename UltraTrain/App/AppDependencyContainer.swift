@@ -90,7 +90,16 @@ struct AppDependencyContainer {
     let watchRunImportService: WatchRunImportService
     let planAutoAdjustmentService: DefaultPlanAutoAdjustmentService
     let healthKitImportService: HealthKitImportService
-    let weatherService: AppleWeatherKitService
+    /// WeatherKit's native authentication service (WeatherDaemon) rejects
+    /// this app's JWT with WDSJWTAuthenticatorServiceListener.Errors Code=2
+    /// despite the com.apple.developer.weatherkit entitlement being present
+    /// and correctly signed (verified directly against the compiled binary
+    /// and embedded provisioning profile) — an Apple account/infrastructure
+    /// issue outside anything fixable in this app. Weather was removed
+    /// rather than ship a feature that can never load; kept as an always-nil
+    /// optional so every existing (any WeatherServiceProtocol)? call site
+    /// degrades gracefully with no further changes needed.
+    let weatherService: (any WeatherServiceProtocol)?
     let motionService: MotionService
     let foodDatabaseService: FoodDatabaseService
     let foodPhotoAnalysisService: FoodPhotoAnalysisService

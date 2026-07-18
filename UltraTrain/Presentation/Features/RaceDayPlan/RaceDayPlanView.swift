@@ -45,12 +45,6 @@ struct RaceDayPlanView: View {
                         .padding(.top, Theme.Spacing.xl)
                 } else if !viewModel.segments.isEmpty {
                     raceHeader
-                    RaceDayWeatherCard(
-                        forecast: viewModel.raceDayForecast,
-                        raceDate: viewModel.race.date,
-                        isAvailable: viewModel.forecastAvailable,
-                        isLoading: viewModel.isLoading
-                    )
                     if let plan = viewModel.nutritionPlan, let estimate = viewModel.estimate {
                         summaryCard(estimate: estimate, plan: plan)
                     }
