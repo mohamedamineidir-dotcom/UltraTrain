@@ -16,6 +16,12 @@ final class SignInViewModel {
     var isGoogleLoading = false
     var isStravaLoading = false
 
+    // Result, mirrors SignUpViewModel — the name on file for the account,
+    // used to restore onboarding's read-only name confirmation even when
+    // this particular sign-in didn't come with a fresh Apple/Google credential.
+    var authenticatedFirstName: String?
+    var authenticatedLastName: String?
+
     init(authService: any AuthServiceProtocol) {
         self.authService = authService
     }
@@ -45,10 +51,12 @@ final class SignInViewModel {
         error = nil
 
         do {
-            _ = try await authService.signInWithApple(
+            let result = try await authService.signInWithApple(
                 identityToken: identityToken,
                 firstName: firstName, lastName: lastName
             )
+            authenticatedFirstName = result.firstName ?? firstName
+            authenticatedLastName = result.lastName ?? lastName
             isAuthenticated = true
         } catch {
             self.error = error.localizedDescription
@@ -63,7 +71,9 @@ final class SignInViewModel {
         error = nil
 
         do {
-            _ = try await authService.signInWithGoogle(idToken: idToken)
+            let result = try await authService.signInWithGoogle(idToken: idToken)
+            authenticatedFirstName = result.firstName
+            authenticatedLastName = result.lastName
             isAuthenticated = true
         } catch {
             self.error = error.localizedDescription

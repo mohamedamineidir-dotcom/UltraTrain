@@ -35,7 +35,7 @@ final class AuthService: AuthServiceProtocol, @unchecked Sendable {
         Logger.network.info("Auth: registered as \(email)")
     }
 
-    func signInWithApple(identityToken: String, firstName: String?, lastName: String?) async throws -> Bool {
+    func signInWithApple(identityToken: String, firstName: String?, lastName: String?) async throws -> SocialSignInResult {
         let response: SocialAuthResponseDTO = try await apiClient.send(
             AuthEndpoints.AppleSignIn(
                 identityToken: identityToken,
@@ -46,10 +46,10 @@ final class AuthService: AuthServiceProtocol, @unchecked Sendable {
         token = newToken
         try KeychainManager.save(newToken, for: Self.keychainKey)
         Logger.network.info("Auth: signed in with Apple (isNew: \(response.isNewUser))")
-        return response.isNewUser
+        return SocialSignInResult(isNewUser: response.isNewUser, firstName: response.firstName, lastName: response.lastName)
     }
 
-    func signInWithGoogle(idToken: String) async throws -> Bool {
+    func signInWithGoogle(idToken: String) async throws -> SocialSignInResult {
         let response: SocialAuthResponseDTO = try await apiClient.send(
             AuthEndpoints.GoogleSignIn(idToken: idToken)
         )
@@ -57,7 +57,7 @@ final class AuthService: AuthServiceProtocol, @unchecked Sendable {
         token = newToken
         try KeychainManager.save(newToken, for: Self.keychainKey)
         Logger.network.info("Auth: signed in with Google (isNew: \(response.isNewUser))")
-        return response.isNewUser
+        return SocialSignInResult(isNewUser: response.isNewUser, firstName: response.firstName, lastName: response.lastName)
     }
 
     func login(email: String, password: String) async throws {

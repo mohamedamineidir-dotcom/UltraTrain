@@ -25,7 +25,9 @@ struct HeroLandingView: View {
             .navigationDestination(isPresented: $showSignIn) {
                 SignInView(
                     authService: authService,
-                    onAuthenticated: { onAuthenticated(false, nil, nil) }
+                    onAuthenticated: { firstName, lastName in
+                        onAuthenticated(false, firstName, lastName)
+                    }
                 )
             }
         }

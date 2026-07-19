@@ -30,6 +30,8 @@ struct SocialAuthResponseDTO: Decodable, Sendable {
     let expiresIn: Int
     let tokenType: String
     let isNewUser: Bool
+    let firstName: String?
+    let lastName: String?
 }
 
 struct ReferralCodeResponseDTO: Decodable, Sendable {

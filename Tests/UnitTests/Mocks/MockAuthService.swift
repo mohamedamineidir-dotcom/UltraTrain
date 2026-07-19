@@ -32,23 +32,24 @@ final class MockAuthService: AuthServiceProtocol, @unchecked Sendable {
 
     var signInWithAppleCallCount = 0
     var signInWithGoogleCallCount = 0
+    var socialSignInResult = SocialSignInResult(isNewUser: true, firstName: nil, lastName: nil)
 
-    func signInWithApple(identityToken: String, firstName: String?, lastName: String?) async throws -> Bool {
+    func signInWithApple(identityToken: String, firstName: String?, lastName: String?) async throws -> SocialSignInResult {
         signInWithAppleCallCount += 1
         if shouldFail {
             throw DomainError.serverError(message: "Apple sign-in failed")
         }
         isLoggedIn = true
-        return true
+        return socialSignInResult
     }
 
-    func signInWithGoogle(idToken: String) async throws -> Bool {
+    func signInWithGoogle(idToken: String) async throws -> SocialSignInResult {
         signInWithGoogleCallCount += 1
         if shouldFail {
             throw DomainError.serverError(message: "Google sign-in failed")
         }
         isLoggedIn = true
-        return true
+        return socialSignInResult
     }
 
     func login(email: String, password: String) async throws {

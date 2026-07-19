@@ -92,6 +92,7 @@ func configure(_ app: Application) async throws {
     app.migrations.add(AddReferralToUser())
     app.migrations.add(AddReferralRewardToUser())
     app.migrations.add(AddSocialAuthToUser())
+    app.migrations.add(AddNameToUser())
     do {
         try await app.autoMigrate()
         app.logger.notice("Migrations completed successfully")

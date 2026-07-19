@@ -18,13 +18,28 @@ struct SocialAuthResponse: Content {
     let expiresIn: Int
     let tokenType: String
     let isNewUser: Bool
+    /// The name on file for this account, persisted from whichever
+    /// authorization first supplied it. Lets the client restore a
+    /// confirmed name after a reinstall or repeat Sign in with Apple,
+    /// where the OS credential itself no longer includes it.
+    let firstName: String?
+    let lastName: String?
 
-    init(accessToken: String, refreshToken: String, expiresIn: Int = 900, isNewUser: Bool) {
+    init(
+        accessToken: String,
+        refreshToken: String,
+        expiresIn: Int = 900,
+        isNewUser: Bool,
+        firstName: String? = nil,
+        lastName: String? = nil
+    ) {
         self.accessToken = accessToken
         self.refreshToken = refreshToken
         self.expiresIn = expiresIn
         self.tokenType = "Bearer"
         self.isNewUser = isNewUser
+        self.firstName = firstName
+        self.lastName = lastName
     }
 }
 

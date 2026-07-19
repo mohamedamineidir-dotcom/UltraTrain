@@ -38,12 +38,22 @@ extension AuthController {
         if let existingUser = try await UserModel.query(on: req.db)
             .filter(\.$appleUserId == appleUserId)
             .first() {
+            // Apple only includes the name in the credential on the FIRST
+            // authorization. Backfill it here if we somehow don't have it
+            // on file yet but the client just supplied one.
+            if existingUser.firstName == nil, let firstName = body.firstName, !firstName.isEmpty {
+                existingUser.firstName = firstName
+                existingUser.lastName = body.lastName
+                try await existingUser.save(on: req.db)
+            }
             let tokens = try await generateTokenPair(for: existingUser, on: req)
             return SocialAuthResponse(
                 accessToken: tokens.accessToken,
                 refreshToken: tokens.refreshToken,
                 expiresIn: tokens.expiresIn,
-                isNewUser: false
+                isNewUser: false,
+                firstName: existingUser.firstName,
+                lastName: existingUser.lastName
             )
         }
 
@@ -53,13 +63,19 @@ extension AuthController {
             .first() {
             existingUser.appleUserId = appleUserId
             existingUser.isEmailVerified = true
+            if existingUser.firstName == nil, let firstName = body.firstName, !firstName.isEmpty {
+                existingUser.firstName = firstName
+                existingUser.lastName = body.lastName
+            }
             try await existingUser.save(on: req.db)
             let tokens = try await generateTokenPair(for: existingUser, on: req)
             return SocialAuthResponse(
                 accessToken: tokens.accessToken,
                 refreshToken: tokens.refreshToken,
                 expiresIn: tokens.expiresIn,
-                isNewUser: false
+                isNewUser: false,
+                firstName: existingUser.firstName,
+                lastName: existingUser.lastName
             )
         }
 
@@ -71,6 +87,8 @@ extension AuthController {
             isEmailVerified: true
         )
         user.appleUserId = appleUserId
+        user.firstName = body.firstName
+        user.lastName = body.lastName
         user.referralCode = try await generateUniqueReferralCode(on: req.db)
         try await user.save(on: req.db)
 
@@ -79,7 +97,9 @@ extension AuthController {
             accessToken: tokens.accessToken,
             refreshToken: tokens.refreshToken,
             expiresIn: tokens.expiresIn,
-            isNewUser: true
+            isNewUser: true,
+            firstName: user.firstName,
+            lastName: user.lastName
         )
     }
 
@@ -97,12 +117,19 @@ extension AuthController {
         if let existingUser = try await UserModel.query(on: req.db)
             .filter(\.$googleUserId == googleUserId)
             .first() {
+            if existingUser.firstName == nil, let firstName = googlePayload.givenName, !firstName.isEmpty {
+                existingUser.firstName = firstName
+                existingUser.lastName = googlePayload.familyName
+                try await existingUser.save(on: req.db)
+            }
             let tokens = try await generateTokenPair(for: existingUser, on: req)
             return SocialAuthResponse(
                 accessToken: tokens.accessToken,
                 refreshToken: tokens.refreshToken,
                 expiresIn: tokens.expiresIn,
-                isNewUser: false
+                isNewUser: false,
+                firstName: existingUser.firstName,
+                lastName: existingUser.lastName
             )
         }
 
@@ -112,13 +139,19 @@ extension AuthController {
             .first() {
             existingUser.googleUserId = googleUserId
             existingUser.isEmailVerified = true
+            if existingUser.firstName == nil, let firstName = googlePayload.givenName, !firstName.isEmpty {
+                existingUser.firstName = firstName
+                existingUser.lastName = googlePayload.familyName
+            }
             try await existingUser.save(on: req.db)
             let tokens = try await generateTokenPair(for: existingUser, on: req)
             return SocialAuthResponse(
                 accessToken: tokens.accessToken,
                 refreshToken: tokens.refreshToken,
                 expiresIn: tokens.expiresIn,
-                isNewUser: false
+                isNewUser: false,
+                firstName: existingUser.firstName,
+                lastName: existingUser.lastName
             )
         }
 
@@ -130,6 +163,8 @@ extension AuthController {
             isEmailVerified: true
         )
         user.googleUserId = googleUserId
+        user.firstName = googlePayload.givenName
+        user.lastName = googlePayload.familyName
         user.referralCode = try await generateUniqueReferralCode(on: req.db)
         try await user.save(on: req.db)
 
@@ -138,7 +173,9 @@ extension AuthController {
             accessToken: tokens.accessToken,
             refreshToken: tokens.refreshToken,
             expiresIn: tokens.expiresIn,
-            isNewUser: true
+            isNewUser: true,
+            firstName: user.firstName,
+            lastName: user.lastName
         )
     }
 
@@ -211,6 +248,8 @@ struct GoogleTokenPayload: Content {
     let email: String
     let emailVerified: String?
     let aud: String
+    let givenName: String?
+    let familyName: String?
 
     var subject: String { sub }
 }

@@ -661,6 +661,7 @@
       }
     },
     "%@, %lld degrees, feels like %lld degrees" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1883,6 +1884,7 @@
       }
     },
     "%lld°C" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -5730,6 +5732,7 @@
       }
     },
     "Checking conditions..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -7082,6 +7085,7 @@
       }
     },
     "Conditions" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -7286,6 +7290,7 @@
       }
     },
     "Could not load forecast" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -7809,6 +7814,7 @@
       }
     },
     "Debug" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -11190,6 +11196,7 @@
       }
     },
     "Feels like %lld°C" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -11591,6 +11598,7 @@
       }
     },
     "For your next session" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -11601,6 +11609,7 @@
       }
     },
     "Forecast available 10 days before race day" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -14429,6 +14438,7 @@
       }
     },
     "High temperature: %lld degrees Celsius" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -17955,6 +17965,7 @@
       }
     },
     "Location needed for weather data" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -18055,6 +18066,7 @@
       }
     },
     "Locks premium features and shows the free-plan picker, as a non-subscriber would see." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -18220,6 +18232,7 @@
       }
     },
     "Low temperature: %lld degrees Celsius" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -21950,9 +21963,6 @@
           }
         }
       }
-    },
-    "Opens Apple's weather data source information" : {
-
     },
     "Opens challenges view" : {
       "localizations" : {
@@ -26921,6 +26931,7 @@
       }
     },
     "Race Day Weather" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -28657,9 +28668,6 @@
           }
         }
       }
-    },
-    "Reveals every week of the training plan, not just the free preview, so all sessions can be inspected." : {
-
     },
     "rfp.2daysOut" : {
       "localizations" : {
@@ -37090,6 +37098,7 @@
       }
     },
     "Simulate free tier" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -41643,6 +41652,7 @@
       }
     },
     "sv.sync.comingSoon" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -44077,6 +44087,7 @@
       }
     },
     "Total Impact" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -46716,9 +46727,6 @@
         }
       }
     },
-    "Unlock all plan weeks" : {
-
-    },
     "Unskip" : {
       "localizations" : {
         "fr" : {
@@ -49160,6 +49168,7 @@
       }
     },
     "Weather" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -49169,10 +49178,8 @@
         }
       }
     },
-    "Weather data attribution" : {
-
-    },
     "Weather Impact" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {

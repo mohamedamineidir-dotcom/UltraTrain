@@ -64,6 +64,18 @@ final class UserModel: Model, Content, @unchecked Sendable {
     @OptionalField(key: "google_user_id")
     var googleUserId: String?
 
+    /// Only ever populated from a Sign in with Apple / Google credential
+    /// (which only supplies name on the FIRST authorization for a given
+    /// Apple ID). Persisted here so a later reinstall or repeat sign-in
+    /// never needs to ask the user to re-enter it — re-asking for info
+    /// AuthenticationServices already provided is an App Review Guideline
+    /// 4 violation.
+    @OptionalField(key: "first_name")
+    var firstName: String?
+
+    @OptionalField(key: "last_name")
+    var lastName: String?
+
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
 

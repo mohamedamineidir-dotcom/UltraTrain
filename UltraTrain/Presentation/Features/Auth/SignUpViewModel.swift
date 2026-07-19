@@ -59,13 +59,17 @@ final class SignUpViewModel {
         error = nil
 
         do {
-            let newUser = try await authService.signInWithApple(
+            let result = try await authService.signInWithApple(
                 identityToken: identityToken,
                 firstName: firstName, lastName: lastName
             )
-            isNewUser = newUser
-            authenticatedFirstName = firstName
-            authenticatedLastName = lastName
+            isNewUser = result.isNewUser
+            // Prefer the name on file (persisted server-side) over the
+            // credential's own value: on a repeat Sign in with Apple,
+            // the OS credential no longer includes a name, but the
+            // account already has one saved from the first authorization.
+            authenticatedFirstName = result.firstName ?? firstName
+            authenticatedLastName = result.lastName ?? lastName
             isAuthenticated = true
         } catch {
             self.error = error.localizedDescription
@@ -80,8 +84,10 @@ final class SignUpViewModel {
         error = nil
 
         do {
-            let newUser = try await authService.signInWithGoogle(idToken: idToken)
-            isNewUser = newUser
+            let result = try await authService.signInWithGoogle(idToken: idToken)
+            isNewUser = result.isNewUser
+            authenticatedFirstName = result.firstName
+            authenticatedLastName = result.lastName
             isAuthenticated = true
         } catch {
             self.error = error.localizedDescription

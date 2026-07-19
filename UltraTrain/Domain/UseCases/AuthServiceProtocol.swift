@@ -24,8 +24,18 @@ protocol AuthServiceProtocol: Sendable {
     /// Used on fresh install to wipe stale Keychain data.
     func clearLocalSession()
 
-    /// Returns `true` if the user is new (needs onboarding).
-    func signInWithApple(identityToken: String, firstName: String?, lastName: String?) async throws -> Bool
-    /// Returns `true` if the user is new (needs onboarding).
-    func signInWithGoogle(idToken: String) async throws -> Bool
+    /// Returns whether the user is new (needs onboarding), plus the name on
+    /// file for the account. The name is the one persisted server-side from
+    /// whichever authorization first supplied it — present even when this
+    /// particular Apple credential didn't include a fresh one (Apple only
+    /// includes it on the very first authorization for a given Apple ID).
+    func signInWithApple(identityToken: String, firstName: String?, lastName: String?) async throws -> SocialSignInResult
+    /// Returns whether the user is new (needs onboarding), plus the name on file.
+    func signInWithGoogle(idToken: String) async throws -> SocialSignInResult
+}
+
+struct SocialSignInResult: Sendable {
+    let isNewUser: Bool
+    let firstName: String?
+    let lastName: String?
 }

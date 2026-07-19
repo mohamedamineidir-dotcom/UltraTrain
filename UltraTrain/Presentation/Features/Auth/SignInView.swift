@@ -5,9 +5,9 @@ struct SignInView: View {
     @State private var viewModel: SignInViewModel
     @State private var showForgotPassword = false
 
-    var onAuthenticated: () -> Void
+    var onAuthenticated: (String?, String?) -> Void
 
-    init(authService: any AuthServiceProtocol, onAuthenticated: @escaping () -> Void) {
+    init(authService: any AuthServiceProtocol, onAuthenticated: @escaping (String?, String?) -> Void) {
         self.onAuthenticated = onAuthenticated
         _viewModel = State(initialValue: SignInViewModel(authService: authService))
     }
@@ -33,7 +33,7 @@ struct SignInView: View {
             Text(viewModel.error ?? "")
         }
         .onChange(of: viewModel.isAuthenticated) { _, authenticated in
-            if authenticated { onAuthenticated() }
+            if authenticated { onAuthenticated(viewModel.authenticatedFirstName, viewModel.authenticatedLastName) }
         }
         .navigationDestination(isPresented: $showForgotPassword) {
             ForgotPasswordView(authService: viewModel.authService)

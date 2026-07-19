@@ -47,7 +47,7 @@ struct SignUpView: View {
                 if viewModel.isNewUser {
                     showWelcomeClub = true
                 } else {
-                    onAuthenticated(false, nil, nil)
+                    onAuthenticated(false, viewModel.authenticatedFirstName, viewModel.authenticatedLastName)
                 }
             }
         }
