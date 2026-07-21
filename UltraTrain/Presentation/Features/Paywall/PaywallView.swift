@@ -46,8 +46,9 @@ struct PaywallView: View {
                     .tint(Color.primary)
             } else {
                 ScrollView {
-                    VStack(spacing: Theme.Spacing.lg) {
+                    VStack(spacing: Theme.Spacing.md) {
                         PaywallHeaderSection()
+                            .padding(.top, -Theme.Spacing.sm)
                         PaywallFeatureBullets()
                         PaywallPlanSelector(
                             plans: viewModel.plans,

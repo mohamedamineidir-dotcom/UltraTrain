@@ -48,16 +48,24 @@ struct PaywallPlanCard: View {
                     .foregroundStyle(.primary)
                     .lineLimit(1)
 
+                // Reserve the badge row's height on every card, even when
+                // there's no savings badge to show, so the monthly and
+                // yearly cards always measure the same regardless of which
+                // one has more to say.
                 HStack(spacing: 6) {
                     if let savings = plan.savingsPercent {
                         savingsBadge(savings: savings)
+                    } else {
+                        savingsBadge(savings: 0).hidden()
                     }
                 }
             }
 
             Spacer(minLength: Theme.Spacing.sm)
 
-            // Right column: total price hero + small per-week line
+            // Right column: total price hero + small per-week line. The
+            // yearly-only price anchor is reserved (hidden, not omitted)
+            // on every card so both cards measure the same height.
             VStack(alignment: .trailing, spacing: 2) {
                 Text(plan.displayPrice)
                     .font(.title3.bold().monospacedDigit())
@@ -67,19 +75,16 @@ struct PaywallPlanCard: View {
                     .font(.caption2)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
-                // Trail-specific price anchor, yearly only — a concrete,
-                // honest comparison lands better than a bare percentage.
-                if plan.period == .yearly {
-                    Text("paywall.yearlyAnchor")
-                        .font(.caption2.italic())
-                        .foregroundStyle(Theme.Colors.secondaryLabel)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
+                Group {
+                    if plan.period == .yearly {
+                        yearlyAnchorText
+                    } else {
+                        yearlyAnchorText.hidden()
+                    }
                 }
             }
         }
         .padding(Theme.Spacing.md)
-        .frame(minHeight: 72)
         .background(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .fill(.ultraThinMaterial)
@@ -108,6 +113,14 @@ struct PaywallPlanCard: View {
         )
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    private var yearlyAnchorText: some View {
+        Text("paywall.yearlyAnchor")
+            .font(.caption2.italic())
+            .foregroundStyle(Theme.Colors.secondaryLabel)
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
     }
 
     /// Small corner badge notched into the card's top-right border, away
