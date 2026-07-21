@@ -67,6 +67,15 @@ struct PaywallPlanCard: View {
                     .font(.caption2)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
+                // Trail-specific price anchor, yearly only — a concrete,
+                // honest comparison lands better than a bare percentage.
+                if plan.period == .yearly {
+                    Text("paywall.yearlyAnchor")
+                        .font(.caption2.italic())
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                }
             }
         }
         .padding(Theme.Spacing.md)

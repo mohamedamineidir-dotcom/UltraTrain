@@ -90,24 +90,10 @@ struct WelcomeClubView: View {
 
             Spacer()
 
-            // Referral section
-            VStack(spacing: Theme.Spacing.md) {
-                if !showReferralField {
-                    Button {
-                        withAnimation { showReferralField = true }
-                    } label: {
-                        HStack(spacing: Theme.Spacing.sm) {
-                            Image(systemName: "ticket.fill")
-                            Text("Have a referral code?")
-                        }
-                        .font(.subheadline)
-                        .foregroundStyle(Theme.Colors.warmCoral)
-                    }
-                } else {
-                    referralInputSection
-                }
-            }
-            .padding(.horizontal, Theme.Spacing.lg)
+            // The "Have a referral code?" entry is intentionally hidden for
+            // launch (no free trial to anchor the reward to right now).
+            // `referralInputSection` and `applyReferralCode` stay in place —
+            // flip this back on whenever the reward returns.
 
             // Continue button
             PrimaryOnboardingButton(title: "Let's Get Started") {

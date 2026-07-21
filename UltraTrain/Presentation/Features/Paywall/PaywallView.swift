@@ -53,6 +53,7 @@ struct PaywallView: View {
                             plans: viewModel.plans,
                             selectedPlanId: $viewModel.selectedPlanId
                         )
+                        PaywallValueSection()
 
                         if let error = viewModel.error {
                             Text(error)

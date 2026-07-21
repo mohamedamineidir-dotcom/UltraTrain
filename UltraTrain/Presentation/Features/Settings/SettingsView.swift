@@ -78,9 +78,10 @@ struct SettingsView: View {
                 syncQueueSection
                 dataRetentionSection
                 dataManagementSection
-                if referralRepository != nil {
-                    referralSection
-                }
+                // Referrals are intentionally hidden for launch (no free
+                // trial to anchor the "7 days free" reward to right now).
+                // The repository, ReferralSettingsView, and `referralSection`
+                // stay in place — flip back on when the reward returns.
                 if subscriptionService != nil {
                     subscriptionSection
                 }

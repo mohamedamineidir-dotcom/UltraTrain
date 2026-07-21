@@ -7814,7 +7814,6 @@
       }
     },
     "Debug" : {
-      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -18066,7 +18065,6 @@
       }
     },
     "Locks premium features and shows the free-plan picker, as a non-subscriber would see." : {
-      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -23548,6 +23546,124 @@
         }
       }
     },
+    "paywall.value.step.adaptive" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Built around your race"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Construit autour de ta course"
+          }
+        }
+      }
+    },
+    "paywall.value.step.adaptiveDetail" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your plan adapts to your goal, your fitness, and the weeks you have left."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan s'adapte à ton objectif, ta forme et le nombre de semaines restantes."
+          }
+        }
+      }
+    },
+    "paywall.value.step.cancel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel anytime"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annule à tout moment"
+          }
+        }
+      }
+    },
+    "paywall.value.step.cancelDetail" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manage or cancel in two taps from Settings. No calls, no emails."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gère ou annule en deux gestes depuis les Réglages. Aucun appel, aucun e-mail."
+          }
+        }
+      }
+    },
+    "paywall.value.step.instant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Instant access"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accès immédiat"
+          }
+        }
+      }
+    },
+    "paywall.value.step.instantDetail" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Every plan, metric, and workout unlocks the moment you subscribe."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chaque plan, statistique et séance se débloque dès ton abonnement."
+          }
+        }
+      }
+    },
+    "paywall.value.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Why runners upgrade"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pourquoi les coureurs passent premium"
+          }
+        }
+      }
+    },
     "paywall.yearly" : {
       "localizations" : {
         "en" : {
@@ -23560,6 +23676,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Annuel"
+          }
+        }
+      }
+    },
+    "paywall.yearlyAnchor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Less than one gel a week"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moins d'un gel par semaine"
           }
         }
       }
@@ -28501,6 +28634,9 @@
           }
         }
       }
+    },
+    "Reveals every week of the training plan, not just the free preview, so all sessions can be inspected." : {
+
     },
     "rfp.2daysOut" : {
       "localizations" : {
@@ -36931,7 +37067,6 @@
       }
     },
     "Simulate free tier" : {
-      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -41485,7 +41620,6 @@
       }
     },
     "sv.sync.comingSoon" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -46559,6 +46693,9 @@
           }
         }
       }
+    },
+    "Unlock all plan weeks" : {
+
     },
     "Unskip" : {
       "localizations" : {

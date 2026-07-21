@@ -134,7 +134,11 @@ struct ProfileView: View {
                     ProgressView()
                 } else {
                     athleteSection
-                    referralSection
+                    // Referrals are intentionally hidden for launch (no
+                    // free trial to anchor the "7 days free" reward to
+                    // right now). The underlying repository, ReferralRewardView,
+                    // and this `referralSection` stay in place — flip back on
+                    // whenever the reward is reintroduced, no migration needed.
                     personalRecordsSection
                     racesSection
                     gearSection
@@ -281,7 +285,7 @@ struct ProfileView: View {
     /// profile so users immediately see they can earn free access by inviting
     /// a friend.
     @ViewBuilder
-    private var referralSection: some View {
+    var referralSection: some View {
         if let referralRepository {
             Section {
                 NavigationLink {

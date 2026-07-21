@@ -1094,6 +1094,7 @@
 		9985DF2A53B4D9DC9EA43358 /* WatchMessageCoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444B6E3E055B217927E26AD2 /* WatchMessageCoderTests.swift */; };
 		99980F194960E25E6DF79704 /* ChallengesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B402A9C8B66663441F11A0 /* ChallengesViewModel.swift */; };
 		99D2CC8D83C13662596C403D /* EmergencyContactRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F598F18FEA02523B78B3D0A /* EmergencyContactRepository.swift */; };
+		99EAD483C0C5DA1021865019 /* PaywallValueSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB113DF863A10F92A0403FA3 /* PaywallValueSection.swift */; };
 		9A084BDC24FF3E8326E46C28 /* NutritionQuickTapBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290ED427C49E18FB8A2C967C /* NutritionQuickTapBar.swift */; };
 		9A2FF5F52B01DD269E9AA77D /* FatiguePatternType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799AD0674055175FF7F4C995 /* FatiguePatternType.swift */; };
 		9A41BA5E63B7B74E336B6098 /* ActivityFeedItemSwiftDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B7892DDE345ADDB066EC63 /* ActivityFeedItemSwiftDataModel.swift */; };
@@ -3447,6 +3448,7 @@
 		DAE114C7AEABFF9FC51C3F92 /* WidgetDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataTests.swift; sourceTree = "<group>"; };
 		DB0BB9FF755F64A47F5E28A8 /* LocalMorningCheckInRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalMorningCheckInRepository.swift; sourceTree = "<group>"; };
 		DB0E6CFAC9F6D817FDA561F9 /* LocalFoodLogRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalFoodLogRepository.swift; sourceTree = "<group>"; };
+		DB113DF863A10F92A0403FA3 /* PaywallValueSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallValueSection.swift; sourceTree = "<group>"; };
 		DB3B2B32FCDB8FF14772CAB6 /* AddChecklistItemSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddChecklistItemSheet.swift; sourceTree = "<group>"; };
 		DB596B3377402F4A766D7A39 /* ElevationProfileChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevationProfileChart.swift; sourceTree = "<group>"; };
 		DB9B4CE28D004C1FF24045B5 /* UltraTrain.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = UltraTrain.entitlements; sourceTree = "<group>"; };
@@ -5213,6 +5215,7 @@
 				382A40BF29190DD966C2230F /* PaywallFeatureBullets.swift */,
 				5F33259755B3741FC09F7177 /* PaywallHeaderSection.swift */,
 				54E030AA1C99A33F67A60F7E /* PaywallPlanSelector.swift */,
+				DB113DF863A10F92A0403FA3 /* PaywallValueSection.swift */,
 				3967DD22F6693FA6568D0880 /* PaywallView.swift */,
 				243FF9FF0727B6DEF2C6F581 /* PaywallViewModel.swift */,
 			);
@@ -7753,6 +7756,7 @@
 				90D87B99B521F34BBE586A97 /* PaywallFeatureBullets.swift in Sources */,
 				155BE499AFBE8171CB5C2D7A /* PaywallHeaderSection.swift in Sources */,
 				AF938B83E0B8760F592D130B /* PaywallPlanSelector.swift in Sources */,
+				99EAD483C0C5DA1021865019 /* PaywallValueSection.swift in Sources */,
 				CDDDA25AD35AC80E73C8A084 /* PaywallView.swift in Sources */,
 				8BF3691C9B7E058D7148B022 /* PaywallViewModel.swift in Sources */,
 				B7AD93B0C5C03A7009722C6A /* PerceivedFeeling.swift in Sources */,
