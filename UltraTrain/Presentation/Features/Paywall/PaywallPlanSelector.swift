@@ -39,34 +39,31 @@ struct PaywallPlanCard: View {
     let isSelected: Bool
     let isRecommended: Bool
 
+    /// Shared minimum height for both columns, on both cards — sized to
+    /// just fit the yearly card's extra badge/anchor line. Monthly has
+    /// less to show, so its column centers within this same height
+    /// instead of being pinned to the top with dead space below.
+    private let columnMinHeight: CGFloat = 50
+
     var body: some View {
         HStack(alignment: .center, spacing: Theme.Spacing.md) {
             // Left column: plan name + badges
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(plan.period.displayNameLocalized)
                     .font(.headline)
                     .foregroundStyle(.primary)
                     .lineLimit(1)
 
-                // Reserve the badge row's height on every card, even when
-                // there's no savings badge to show, so the monthly and
-                // yearly cards always measure the same regardless of which
-                // one has more to say.
-                HStack(spacing: 6) {
-                    if let savings = plan.savingsPercent {
-                        savingsBadge(savings: savings)
-                    } else {
-                        savingsBadge(savings: 0).hidden()
-                    }
+                if let savings = plan.savingsPercent {
+                    savingsBadge(savings: savings)
                 }
             }
+            .frame(minHeight: columnMinHeight, alignment: .center)
 
             Spacer(minLength: Theme.Spacing.sm)
 
-            // Right column: total price hero + small per-week line. The
-            // yearly-only price anchor is reserved (hidden, not omitted)
-            // on every card so both cards measure the same height.
-            VStack(alignment: .trailing, spacing: 2) {
+            // Right column: total price hero + small per-week line.
+            VStack(alignment: .trailing, spacing: 1) {
                 Text(plan.displayPrice)
                     .font(.title3.bold().monospacedDigit())
                     .foregroundStyle(.primary)
@@ -75,16 +72,14 @@ struct PaywallPlanCard: View {
                     .font(.caption2)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
-                Group {
-                    if plan.period == .yearly {
-                        yearlyAnchorText
-                    } else {
-                        yearlyAnchorText.hidden()
-                    }
+                if plan.period == .yearly {
+                    yearlyAnchorText
                 }
             }
+            .frame(minHeight: columnMinHeight, alignment: .center)
         }
-        .padding(Theme.Spacing.md)
+        .padding(.horizontal, Theme.Spacing.md)
+        .padding(.vertical, Theme.Spacing.sm + 4)
         .background(
             RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
                 .fill(.ultraThinMaterial)

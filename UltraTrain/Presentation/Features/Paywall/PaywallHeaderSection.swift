@@ -29,10 +29,16 @@ struct PaywallHeaderSection: View {
                     .frame(width: 150, height: 150)
                     .blur(radius: 5)
 
+                // Light mode recolors the glyph to the same coral as the
+                // CTA button — it reads as more on-brand for this screen
+                // than the asset's own navy variant. Dark mode keeps the
+                // asset's native white rendering untouched.
                 Image("LaunchIcon")
+                    .renderingMode(isDark ? .original : .template)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 96, height: 96)
+                    .foregroundStyle(Theme.Colors.warmCoral)
                     .shadow(
                         color: isDark
                             ? Theme.Colors.warmCoral.opacity(0.55)
