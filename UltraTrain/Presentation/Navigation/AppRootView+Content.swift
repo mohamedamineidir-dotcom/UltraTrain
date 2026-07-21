@@ -25,8 +25,8 @@ extension AppRootView {
                     case .some:
                         // Freemium: onboarded users always enter the app.
                         // Free users (inactive) get a one-time, dismissable
-                        // trial offer; premium features stay locked in-app
-                        // until they subscribe or start the trial.
+                        // paywall offer; premium features stay locked in-app
+                        // until they subscribe.
                         MainTabView(
                             deepLinkRouter: deepLinkRouter,
                             athleteRepository: athleteRepository,
@@ -120,8 +120,8 @@ extension AppRootView {
                             )
                         }
                         .task(id: hasActiveSubscription) {
-                            // Show the one-time trial offer once a free user
-                            // lands in the app. Premium / trial users skip it.
+                            // Show the one-time paywall offer once a free user
+                            // lands in the app. Premium users skip it.
                             if hasActiveSubscription == false, !hasSeenInitialPaywallOffer {
                                 showInitialOffer = true
                             }

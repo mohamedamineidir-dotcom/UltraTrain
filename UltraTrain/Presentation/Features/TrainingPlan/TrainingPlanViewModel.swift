@@ -561,11 +561,6 @@ final class TrainingPlanViewModel {
         // No subscription service → show all (e.g. debug/dev)
         guard let status = subscriptionStatus else { return plan.weeks }
 
-        // Free trial → show first 3 weeks as a preview
-        if status.isInTrialPeriod {
-            return Array(plan.weeks.prefix(3))
-        }
-
         // Inactive subscription → teaser (first week only)
         guard status.isActive else {
             return Array(plan.weeks.prefix(1))
@@ -578,8 +573,6 @@ final class TrainingPlanViewModel {
             return plan.weeks
         case .monthly:
             return weeksInWindow(plan: plan, futureWeekCount: 4)
-        case .quarterly:
-            return weeksInWindow(plan: plan, futureWeekCount: 12)
         }
     }
 

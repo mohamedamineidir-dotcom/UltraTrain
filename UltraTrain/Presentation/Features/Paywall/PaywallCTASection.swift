@@ -28,12 +28,9 @@ struct PaywallCTASection: View {
                 .padding(.horizontal, Theme.Spacing.lg)
                 .accessibilityIdentifier("paywall.subscribeButton")
 
-                /// Reassurance line directly under the CTA. Two short
-                /// promises ("no charge today, cancel anytime") kill the
-                /// implicit fear that lets users hesitate on the trial.
-                /// Lives outside the trial timeline because by the time
-                /// the thumb is on the button this is the only message
-                /// that matters.
+                /// Reassurance line directly under the CTA — kills the
+                /// implicit fear that lets users hesitate right before
+                /// committing to the purchase.
                 HStack(spacing: 6) {
                     Image(systemName: "lock.shield.fill")
                         .font(.caption2)

@@ -53,7 +53,6 @@ struct PaywallView: View {
                             plans: viewModel.plans,
                             selectedPlanId: $viewModel.selectedPlanId
                         )
-                        PaywallTrialTimeline()
 
                         if let error = viewModel.error {
                             Text(error)

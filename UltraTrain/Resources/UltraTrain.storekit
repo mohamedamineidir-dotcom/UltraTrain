@@ -85,17 +85,10 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "89.99",
+          "displayPrice" : "49.99",
           "familyShareable" : false,
           "groupNumber" : 1,
           "internalID" : "21184920",
-          "introductoryOffer" : {
-            "displayPrice" : "0",
-            "internalID" : "21184923",
-            "numberOfPeriods" : 1,
-            "paymentMode" : "free",
-            "subscriptionPeriod" : "P1W"
-          },
           "localizations" : [
             {
               "description" : "Full access to UltraTrain for one year",
@@ -121,53 +114,10 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "39.99",
+          "displayPrice" : "14.99",
           "familyShareable" : false,
           "groupNumber" : 2,
-          "internalID" : "21184921",
-          "introductoryOffer" : {
-            "displayPrice" : "0",
-            "internalID" : "21184924",
-            "numberOfPeriods" : 1,
-            "paymentMode" : "free",
-            "subscriptionPeriod" : "P1W"
-          },
-          "localizations" : [
-            {
-              "description" : "Full access to UltraTrain for three months",
-              "displayName" : "Quarterly",
-              "locale" : "en_US"
-            },
-            {
-              "description" : "Accès complet à UltraTrain pour trois mois",
-              "displayName" : "Trimestriel",
-              "locale" : "fr"
-            }
-          ],
-          "productID" : "com.ultratrain.app.premium.quarterly",
-          "recurringSubscriptionPeriod" : "P3M",
-          "referenceName" : "Quarterly",
-          "subscriptionGroupID" : "21184919",
-          "type" : "RecurringSubscription"
-        },
-        {
-          "adHocOffers" : [
-
-          ],
-          "codeOffers" : [
-
-          ],
-          "displayPrice" : "19.99",
-          "familyShareable" : false,
-          "groupNumber" : 3,
           "internalID" : "21184922",
-          "introductoryOffer" : {
-            "displayPrice" : "0",
-            "internalID" : "21184925",
-            "numberOfPeriods" : 1,
-            "paymentMode" : "free",
-            "subscriptionPeriod" : "P1W"
-          },
           "localizations" : [
             {
               "description" : "Full access to UltraTrain for one month",

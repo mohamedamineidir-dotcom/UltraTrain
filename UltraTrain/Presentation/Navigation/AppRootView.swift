@@ -11,8 +11,8 @@ struct AppRootView: View {
     @State var needsBiometricLock = false
     @State var showFeatureTour = false
     @AppStorage("hasSeenFeatureTour") var hasSeenFeatureTour = false
-    /// One-time reverse-trial offer shown after onboarding: free users land
-    /// in the app but are offered the 7-day trial once, dismissable to
+    /// One-time paywall offer shown after onboarding: free users land in
+    /// the app but are shown the subscription offer once, dismissable to
     /// continue on the free tier.
     @State var showInitialOffer = false
     @AppStorage("hasSeenInitialPaywallOffer") var hasSeenInitialPaywallOffer = false

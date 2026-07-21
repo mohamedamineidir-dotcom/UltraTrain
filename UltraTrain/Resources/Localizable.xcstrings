@@ -23257,13 +23257,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No charge today. Cancel anytime."
+            "value" : "Secure payment. Cancel anytime."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucun paiement aujourd'hui. Annulez à tout moment."
+            "value" : "Paiement sécurisé. Annulez à tout moment."
           }
         }
       }
@@ -23315,23 +23315,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Synchronisation avec Apple Watch, Strava et HealthKit"
-          }
-        }
-      }
-    },
-    "paywall.freeWeek" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1 week free"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "7 jours gratuits"
           }
         }
       }
@@ -23467,22 +23450,6 @@
         }
       }
     },
-    "paywall.quarterly" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quarterly"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trimestriel"
-          }
-        }
-      }
-    },
     "paywall.restore" : {
       "localizations" : {
         "en" : {
@@ -23527,124 +23494,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Économise %lld%%"
-          }
-        }
-      }
-    },
-    "paywall.startTrial" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Start Free Trial"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Commencer l'essai gratuit"
-          }
-        }
-      }
-    },
-    "paywall.step.cancelAnytime" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel anytime"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Annulez à tout moment"
-          }
-        }
-      }
-    },
-    "paywall.step.cancelAnytimeDetail" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stop in one tap from Settings. No charge if you cancel before the trial ends."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arrêtez en un geste depuis les Réglages. Aucun paiement si vous annulez avant la fin de l'essai."
-          }
-        }
-      }
-    },
-    "paywall.step.reminder" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Day 5. We remind you"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jour 5. On vous prévient"
-          }
-        }
-      }
-    },
-    "paywall.step.reminderDetail" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Two days before the trial ends, we'll send a heads-up so you can decide on your terms."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deux jours avant la fin de l'essai, nous vous enverrons un rappel pour décider en toute liberté."
-          }
-        }
-      }
-    },
-    "paywall.step.today" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Today. Full access"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aujourd'hui. Accès complet"
-          }
-        }
-      }
-    },
-    "paywall.step.todayDetail" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unlock every plan, every metric, every workout the moment you tap."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Débloquez chaque plan, chaque statistique et chaque séance dès que vous touchez."
           }
         }
       }
@@ -23695,22 +23544,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Débloque UltraTrain"
-          }
-        }
-      }
-    },
-    "paywall.trialTitle" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "How your free trial works"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comment fonctionne ton essai gratuit"
           }
         }
       }

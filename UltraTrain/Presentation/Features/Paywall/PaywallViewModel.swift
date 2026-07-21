@@ -111,9 +111,6 @@ final class PaywallViewModel {
     }
 
     var ctaButtonTitle: String {
-        if let plan = selectedPlan, plan.trialDays != nil {
-            return String(localized: "paywall.startTrial")
-        }
-        return String(localized: "paywall.subscribe")
+        String(localized: "paywall.subscribe")
     }
 }

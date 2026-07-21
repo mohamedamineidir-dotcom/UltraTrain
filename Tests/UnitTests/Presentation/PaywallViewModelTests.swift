@@ -9,32 +9,20 @@ struct PaywallViewModelTests {
         SubscriptionPlan(
             id: "com.ultratrain.app.premium.yearly",
             period: .yearly,
-            price: 89.99,
-            pricePerWeek: 1.73,
-            displayPrice: "89,99 €",
-            displayPricePerWeek: "1,73 €",
-            savingsPercent: 62,
-            trialDays: 7
-        ),
-        SubscriptionPlan(
-            id: "com.ultratrain.app.premium.quarterly",
-            period: .quarterly,
-            price: 39.99,
-            pricePerWeek: 3.08,
-            displayPrice: "39,99 €",
-            displayPricePerWeek: "3,08 €",
-            savingsPercent: 33,
-            trialDays: 7
+            price: 49.99,
+            pricePerWeek: 0.96,
+            displayPrice: "49,99 €",
+            displayPricePerWeek: "0,96 €",
+            savingsPercent: 72
         ),
         SubscriptionPlan(
             id: "com.ultratrain.app.premium.monthly",
             period: .monthly,
-            price: 19.99,
-            pricePerWeek: 4.62,
-            displayPrice: "19,99 €",
-            displayPricePerWeek: "4,62 €",
-            savingsPercent: nil,
-            trialDays: 7
+            price: 14.99,
+            pricePerWeek: 3.46,
+            displayPrice: "14,99 €",
+            displayPricePerWeek: "3,46 €",
+            savingsPercent: nil
         )
     ]
 
@@ -62,7 +50,7 @@ struct PaywallViewModelTests {
         service.plansToReturn = Self.samplePlans
         let vm = PaywallViewModel(subscriptionService: service, firstName: "Kilian")
         await vm.loadPlans()
-        #expect(vm.plans.count == 3)
+        #expect(vm.plans.count == 2)
         #expect(vm.selectedPlanId == "com.ultratrain.app.premium.yearly")
         #expect(vm.isLoading == false)
         #expect(vm.error == nil)
@@ -159,27 +147,11 @@ struct PaywallViewModelTests {
 
     // MARK: - CTA Title
 
-    @Test("CTA title shows Start Free Trial when trial available")
+    @Test("CTA title always shows Subscribe Now")
     @MainActor
-    func ctaTitleWithTrial() async {
+    func ctaTitle() async {
         let service = MockSubscriptionService()
         service.plansToReturn = Self.samplePlans
-        let vm = PaywallViewModel(subscriptionService: service, firstName: "Kilian")
-        await vm.loadPlans()
-        #expect(vm.ctaButtonTitle == String(localized: "paywall.startTrial"))
-    }
-
-    @Test("CTA title shows Subscribe Now when no trial")
-    @MainActor
-    func ctaTitleWithoutTrial() async {
-        let service = MockSubscriptionService()
-        service.plansToReturn = [
-            SubscriptionPlan(
-                id: "monthly", period: .monthly, price: 19.99, pricePerWeek: 4.62,
-                displayPrice: "19,99 €", displayPricePerWeek: "4,62 €",
-                savingsPercent: nil, trialDays: nil
-            )
-        ]
         let vm = PaywallViewModel(subscriptionService: service, firstName: "Kilian")
         await vm.loadPlans()
         #expect(vm.ctaButtonTitle == String(localized: "paywall.subscribe"))

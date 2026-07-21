@@ -1495,7 +1495,6 @@
 		D51DD92CB98B6B0062B4C7A6 /* StravaAuthServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5083FAA79C65DCF5B621B22A /* StravaAuthServiceProtocol.swift */; };
 		D538B7CD3C015B26E1E730E3 /* LocalAthleteRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D94862CB265BE1D6B3B254 /* LocalAthleteRepository.swift */; };
 		D54D3EB995291295F642DFFB /* AppSettingsSwiftDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C062CE70759FEC59AE56C420 /* AppSettingsSwiftDataModel.swift */; };
-		D582B023EDEFD3B4987420C3 /* PaywallTrialTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F46C6C255803C59562FB7C8 /* PaywallTrialTimeline.swift */; };
 		D5903B0949790B5C47B28499 /* LocalSharedRunRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2837460132B9825B952313A6 /* LocalSharedRunRepositoryTests.swift */; };
 		D59C6149E4F649246462E606 /* LocalStravaUploadQueueRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 421D918B55BE7BEA03B3264A /* LocalStravaUploadQueueRepository.swift */; };
 		D5BFB4FFC44FBD367494F5A0 /* MorningReadinessViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B8FB5E72E3D3DF0F45C2E1C /* MorningReadinessViewModel.swift */; };
@@ -2350,7 +2349,6 @@
 		3F17E7145CA6798ED7CFB4C4 /* PhaseBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhaseBlock.swift; sourceTree = "<group>"; };
 		3F1F8C8D02371ACC6059A2EB /* SessionActionButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionActionButtonStyle.swift; sourceTree = "<group>"; };
 		3F3AFB709C9941C00A0C38FE /* RaceRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceRowView.swift; sourceTree = "<group>"; };
-		3F46C6C255803C59562FB7C8 /* PaywallTrialTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallTrialTimeline.swift; sourceTree = "<group>"; };
 		3F4821B18F9519684DC75250 /* ActiveRunView+Portrait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ActiveRunView+Portrait.swift"; sourceTree = "<group>"; };
 		3F63AB0E4AEB7A801C28E400 /* PlanAdjustmentBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanAdjustmentBanner.swift; sourceTree = "<group>"; };
 		3FA62203E44D49346E07E389 /* TrailRaceWeekTemplates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrailRaceWeekTemplates.swift; sourceTree = "<group>"; };
@@ -5215,7 +5213,6 @@
 				382A40BF29190DD966C2230F /* PaywallFeatureBullets.swift */,
 				5F33259755B3741FC09F7177 /* PaywallHeaderSection.swift */,
 				54E030AA1C99A33F67A60F7E /* PaywallPlanSelector.swift */,
-				3F46C6C255803C59562FB7C8 /* PaywallTrialTimeline.swift */,
 				3967DD22F6693FA6568D0880 /* PaywallView.swift */,
 				243FF9FF0727B6DEF2C6F581 /* PaywallViewModel.swift */,
 			);
@@ -7756,7 +7753,6 @@
 				90D87B99B521F34BBE586A97 /* PaywallFeatureBullets.swift in Sources */,
 				155BE499AFBE8171CB5C2D7A /* PaywallHeaderSection.swift in Sources */,
 				AF938B83E0B8760F592D130B /* PaywallPlanSelector.swift in Sources */,
-				D582B023EDEFD3B4987420C3 /* PaywallTrialTimeline.swift in Sources */,
 				CDDDA25AD35AC80E73C8A084 /* PaywallView.swift in Sources */,
 				8BF3691C9B7E058D7148B022 /* PaywallViewModel.swift in Sources */,
 				B7AD93B0C5C03A7009722C6A /* PerceivedFeeling.swift in Sources */,

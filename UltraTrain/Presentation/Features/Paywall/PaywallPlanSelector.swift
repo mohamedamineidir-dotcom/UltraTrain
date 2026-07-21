@@ -5,7 +5,7 @@ struct PaywallPlanSelector: View {
     @Binding var selectedPlanId: String?
 
     private var sortedPlans: [SubscriptionPlan] {
-        let order: [SubscriptionPeriod] = [.monthly, .quarterly, .yearly]
+        let order: [SubscriptionPeriod] = [.monthly, .yearly]
         return plans.sorted { a, b in
             let ai = order.firstIndex(of: a.period) ?? 99
             let bi = order.firstIndex(of: b.period) ?? 99
@@ -49,9 +49,6 @@ struct PaywallPlanCard: View {
                     .lineLimit(1)
 
                 HStack(spacing: 6) {
-                    if plan.trialDays != nil {
-                        trialBadge
-                    }
                     if let savings = plan.savingsPercent {
                         savingsBadge(savings: savings)
                     }
@@ -123,25 +120,6 @@ struct PaywallPlanCard: View {
             Capsule().fill(Theme.Gradients.goldPremium)
         )
         .shadow(color: Theme.Colors.goldAccent.opacity(0.4), radius: 4, y: 1)
-    }
-
-    /// "1 week free" pill. Coral-tinted so it differs from the gold
-    /// savings pill and reinforces the brand without competing with the
-    /// BEST VALUE pill on top.
-    private var trialBadge: some View {
-        Text("paywall.freeWeek")
-            .font(.caption2.bold())
-            .lineLimit(1)
-            .fixedSize(horizontal: true, vertical: false)
-            .foregroundStyle(Theme.Colors.warmCoral)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 3)
-            .background(
-                Capsule().fill(Theme.Colors.warmCoral.opacity(0.14))
-            )
-            .overlay(
-                Capsule().stroke(Theme.Colors.warmCoral.opacity(0.45), lineWidth: 0.6)
-            )
     }
 
     /// Gold-gradient savings badge. Loud on purpose because savings %

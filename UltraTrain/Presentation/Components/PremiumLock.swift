@@ -4,10 +4,10 @@ import SwiftUI
 
 /// Shared premium-entitlement state for the authenticated app, injected
 /// into the tab hierarchy so any feature can gate itself and trigger the
-/// upgrade paywall. `isUnlocked` is true for paying subscribers AND athletes
-/// inside the 7-day free trial; false for free-tier users (never subscribed,
-/// cancelled, or trial expired). Defaults to unlocked so previews/tests and
-/// any not-yet-wired context don't accidentally lock content.
+/// upgrade paywall. `isUnlocked` is true for paying subscribers; false for
+/// free-tier users (never subscribed, or subscription lapsed/cancelled).
+/// Defaults to unlocked so previews/tests and any not-yet-wired context
+/// don't accidentally lock content.
 @MainActor
 @Observable
 final class PremiumGate {
@@ -42,8 +42,7 @@ enum DebugEntitlement {
 
     /// DEBUG-only: reveal EVERY week of the plan regardless of subscription
     /// status, so the full training schedule can be inspected on the simulator
-    /// (a StoreKit-test purchase comes through as a trial, which otherwise caps
-    /// the preview to 3 weeks). Toggled from Settings ▸ Debug.
+    /// without needing an active StoreKit purchase. Toggled from Settings ▸ Debug.
     private static let allWeeksKey = "debug_unlockAllWeeks"
     static var unlockAllWeeks: Bool {
         get { UserDefaults.standard.bool(forKey: allWeeksKey) }
@@ -58,8 +57,8 @@ enum DebugEntitlement {
 /// "Unlock with Premium" overlay (soft paywall). The underlying view still
 /// renders (and computes) so the athlete sees what they're missing, which
 /// converts better than hiding it outright; it's blurred and non-interactive
-/// until they upgrade. No effect for unlocked (paying / trial) users, or
-/// when no gate is injected (previews / tests).
+/// until they upgrade. No effect for unlocked (paying) users, or when no
+/// gate is injected (previews / tests).
 struct PremiumLockModifier: ViewModifier {
     @Environment(PremiumGate.self) private var gate: PremiumGate?
 

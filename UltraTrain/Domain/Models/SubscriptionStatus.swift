@@ -16,7 +16,6 @@ struct SubscriptionStatus: Sendable, Equatable {
     var period: SubscriptionPeriod? {
         guard let productId, isActive else { return nil }
         if productId.contains("monthly") { return .monthly }
-        if productId.contains("quarterly") { return .quarterly }
         if productId.contains("yearly") { return .yearly }
         return nil
     }

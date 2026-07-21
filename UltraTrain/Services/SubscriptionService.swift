@@ -12,7 +12,6 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
 
     private static let productIds: Set<String> = [
         "com.ultratrain.app.premium.monthly",
-        "com.ultratrain.app.premium.quarterly",
         "com.ultratrain.app.premium.yearly"
     ]
 
@@ -106,7 +105,7 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
         }
 
         let monthlyPrice = products
-            .first { $0.id.contains("monthly") }?.price ?? Decimal(string: "19.99")!
+            .first { $0.id.contains("monthly") }?.price ?? Decimal(string: "14.99")!
 
         return products
             .sorted { periodOrder($0) < periodOrder($1) }
@@ -114,7 +113,6 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
                 let period = mapPeriod(product.id)
                 let weeksInPeriod: Decimal = switch period {
                 case .monthly: Decimal(string: "4.33")!
-                case .quarterly: 13
                 case .yearly: 52
                 }
                 let pricePerWeek = product.price / weeksInPeriod
@@ -126,7 +124,6 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
                     guard monthlyDouble > 0 else { return nil }
                     let monthsInPeriod: Double = switch period {
                     case .monthly: 1
-                    case .quarterly: 3
                     case .yearly: 12
                     }
                     let totalIfMonthly = monthlyDouble * monthsInPeriod
@@ -135,12 +132,6 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
                     return pct > 0 ? pct : nil
                 }()
 
-                let trialDays: Int? = if product.subscription?.introductoryOffer != nil {
-                    7
-                } else {
-                    nil
-                }
-
                 return SubscriptionPlan(
                     id: product.id,
                     period: period,
@@ -148,8 +139,7 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
                     pricePerWeek: pricePerWeek,
                     displayPrice: product.displayPrice,
                     displayPricePerWeek: formatPrice(pricePerWeek, locale: product.priceFormatStyle.locale),
-                    savingsPercent: savings,
-                    trialDays: trialDays
+                    savingsPercent: savings
                 )
             }
     }
@@ -216,8 +206,8 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
             let debugStatus = Status(
                 isActive: true,
                 tier: .premium,
-                expirationDate: Date().addingTimeInterval(7 * 24 * 60 * 60),
-                isInTrialPeriod: true,
+                expirationDate: Date().addingTimeInterval(30 * 24 * 60 * 60),
+                isInTrialPeriod: false,
                 willAutoRenew: true,
                 productId: productId
             )
@@ -289,15 +279,11 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
     // MARK: - Helpers
 
     private func periodOrder(_ product: Product) -> Int {
-        if product.id.contains("yearly") { return 0 }
-        if product.id.contains("quarterly") { return 1 }
-        return 2
+        product.id.contains("yearly") ? 0 : 1
     }
 
     private func mapPeriod(_ productId: String) -> Period {
-        if productId.contains("monthly") { return .monthly }
-        if productId.contains("quarterly") { return .quarterly }
-        return .yearly
+        productId.contains("monthly") ? .monthly : .yearly
     }
 
     private func formatPrice(_ price: Decimal, locale: Locale) -> String {

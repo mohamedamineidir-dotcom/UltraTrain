@@ -2,13 +2,11 @@ import Foundation
 
 enum SubscriptionPeriod: String, Sendable, Equatable, CaseIterable {
     case monthly
-    case quarterly
     case yearly
 
     var displayName: String {
         switch self {
         case .monthly: "Monthly"
-        case .quarterly: "Quarterly"
         case .yearly: "Yearly"
         }
     }
@@ -16,7 +14,6 @@ enum SubscriptionPeriod: String, Sendable, Equatable, CaseIterable {
     var displayNameLocalized: String {
         switch self {
         case .monthly: String(localized: "paywall.monthly")
-        case .quarterly: String(localized: "paywall.quarterly")
         case .yearly: String(localized: "paywall.yearly")
         }
     }
@@ -30,5 +27,4 @@ struct SubscriptionPlan: Identifiable, Sendable, Equatable {
     let displayPrice: String
     let displayPricePerWeek: String
     let savingsPercent: Int?
-    let trialDays: Int?
 }
