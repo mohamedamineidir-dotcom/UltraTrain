@@ -12,9 +12,16 @@ extension AddFoodEntrySheet {
             Section("Quick Add") {
                 if foodPhotoAnalysisService != nil {
                     Button {
-                        showingFoodPhotoCamera = true
+                        // The AI scan calls a paid vision API on every use —
+                        // free users get the paywall instead of the camera.
+                        if premiumGate?.isUnlocked == false {
+                            premiumGate?.presentPaywall()
+                        } else {
+                            showingFoodPhotoCamera = true
+                        }
                     } label: {
-                        Label("Scan Food with AI", systemImage: "camera.fill")
+                        Label("Scan Food with AI", systemImage: premiumGate?.isUnlocked == false
+                              ? "lock.fill" : "camera.fill")
                     }
                     .accessibilityIdentifier("addFood.scanFoodButton")
                 }

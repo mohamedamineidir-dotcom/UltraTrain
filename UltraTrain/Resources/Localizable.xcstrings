@@ -25909,6 +25909,40 @@
         }
       }
     },
+    "premium.lock.raceDayNutrition.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock your personalized fueling and hydration plan for race day."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Débloque ton plan personnalisé de ravitaillement et d'hydratation pour le jour J."
+          }
+        }
+      }
+    },
+    "premium.lock.raceDayNutrition.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race-day nutrition strategy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stratégie nutritionnelle du jour J"
+          }
+        }
+      }
+    },
     "premium.lock.volumeChart.message" : {
       "localizations" : {
         "en" : {

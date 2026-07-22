@@ -2,6 +2,7 @@ import SwiftUI
 
 struct AddFoodEntrySheet: View {
     @Environment(\.dismiss) var dismiss
+    @Environment(PremiumGate.self) var premiumGate: PremiumGate?
 
     @State var selectedMealType: MealType = .breakfast
     @State var entryDescription: String = ""

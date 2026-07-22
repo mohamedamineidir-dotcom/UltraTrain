@@ -185,6 +185,12 @@ struct NutritionView: View {
                 emptyState
             }
         }
+        .premiumLocked(
+            title: String(localized: "premium.lock.raceDayNutrition.title",
+                          defaultValue: "Race-day nutrition strategy"),
+            message: String(localized: "premium.lock.raceDayNutrition.message",
+                             defaultValue: "Unlock your personalized fueling and hydration plan for race day.")
+        )
     }
 
     private func planContent(_ plan: NutritionPlan) -> some View {
