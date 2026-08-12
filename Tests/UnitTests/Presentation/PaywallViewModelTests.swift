@@ -7,7 +7,7 @@ struct PaywallViewModelTests {
 
     private static let samplePlans: [SubscriptionPlan] = [
         SubscriptionPlan(
-            id: "com.ultratrain.app.premium.yearly",
+            id: "com.ultratrain.app.access.yearly",
             period: .yearly,
             price: 49.99,
             pricePerWeek: 0.96,
@@ -16,7 +16,7 @@ struct PaywallViewModelTests {
             savingsPercent: 72
         ),
         SubscriptionPlan(
-            id: "com.ultratrain.app.premium.monthly",
+            id: "com.ultratrain.app.access.monthly",
             period: .monthly,
             price: 14.99,
             pricePerWeek: 3.46,
@@ -51,7 +51,7 @@ struct PaywallViewModelTests {
         let vm = PaywallViewModel(subscriptionService: service, firstName: "Kilian")
         await vm.loadPlans()
         #expect(vm.plans.count == 2)
-        #expect(vm.selectedPlanId == "com.ultratrain.app.premium.yearly")
+        #expect(vm.selectedPlanId == "com.ultratrain.app.access.yearly")
         #expect(vm.isLoading == false)
         #expect(vm.error == nil)
     }
@@ -77,11 +77,11 @@ struct PaywallViewModelTests {
         service.plansToReturn = Self.samplePlans
         let vm = PaywallViewModel(subscriptionService: service, firstName: "Kilian")
         await vm.loadPlans()
-        vm.selectedPlanId = "com.ultratrain.app.premium.monthly"
+        vm.selectedPlanId = "com.ultratrain.app.access.monthly"
         await vm.purchase()
         #expect(vm.purchaseSucceeded == true)
         #expect(service.purchaseCalled == true)
-        #expect(service.purchasedProductId == "com.ultratrain.app.premium.monthly")
+        #expect(service.purchasedProductId == "com.ultratrain.app.access.monthly")
     }
 
     @Test("purchase shows error on failure")
@@ -92,7 +92,7 @@ struct PaywallViewModelTests {
         service.shouldThrowOnPurchase = true
         let vm = PaywallViewModel(subscriptionService: service, firstName: "Kilian")
         await vm.loadPlans()
-        vm.selectedPlanId = "com.ultratrain.app.premium.monthly"
+        vm.selectedPlanId = "com.ultratrain.app.access.monthly"
         await vm.purchase()
         #expect(vm.purchaseSucceeded == false)
         #expect(vm.error != nil)

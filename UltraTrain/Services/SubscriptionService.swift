@@ -10,9 +10,13 @@ final class SubscriptionService: SubscriptionServiceProtocol, @unchecked Sendabl
 
     // MARK: - Constants
 
+    // The "UltraTrain Premium" group/products (com.ultratrain.app.premium.*)
+    // were abandoned — its App Store Connect state got stuck and could
+    // never complete its first review submission. "UltraTrain Access" is a
+    // fresh group with new product IDs to route around that stuck state.
     private static let productIds: Set<String> = [
-        "com.ultratrain.app.premium.monthly",
-        "com.ultratrain.app.premium.yearly"
+        "com.ultratrain.app.access.monthly",
+        "com.ultratrain.app.access.yearly"
     ]
 
     // MARK: - Cache Keys
