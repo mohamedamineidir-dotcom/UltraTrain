@@ -9,6 +9,7 @@ struct FinishTimeEvolutionView: View {
     var preferredRunsPerWeek: Int = 5
 
     @Environment(\.colorScheme) private var colorScheme
+    @State private var selectedWeek: Int?
 
     var body: some View {
         ScrollView {
@@ -174,6 +175,14 @@ struct FinishTimeEvolutionView: View {
 
                 chart
                     .frame(height: 220)
+
+                HStack(spacing: 4) {
+                    Image(systemName: "hand.draw")
+                        .font(.system(size: 9))
+                    Text(String(localized: "fte.dragHint", defaultValue: "Drag across the chart to explore any week"))
+                        .font(.caption2)
+                }
+                .foregroundStyle(cardSubLabel)
             }
             .padding(Theme.Spacing.md)
         }
@@ -359,6 +368,25 @@ struct FinishTimeEvolutionView: View {
                         )
                     }
             }
+
+            // ── Scrub selection ──────────────────────────────────────
+            if let sp = selectedPoint {
+                RuleMark(x: .value("Selected week", sp.week))
+                    .foregroundStyle(cardLabel.opacity(0.35))
+                    .lineStyle(StrokeStyle(lineWidth: 1))
+                    .annotation(position: .top, alignment: .center, spacing: 6) {
+                        selectionAnnotation(sp)
+                    }
+                PointMark(x: .value("Selected week", sp.week), y: .value("Seconds", sp.optimisticSeconds))
+                    .foregroundStyle(Theme.Colors.success)
+                    .symbolSize(45)
+                PointMark(x: .value("Selected week", sp.week), y: .value("Seconds", sp.expectedSeconds))
+                    .foregroundStyle(primaryTint)
+                    .symbolSize(55)
+                PointMark(x: .value("Selected week", sp.week), y: .value("Seconds", sp.conservativeSeconds))
+                    .foregroundStyle(Theme.Colors.warning)
+                    .symbolSize(45)
+            }
         }
         .chartForegroundStyleScale(
             domain: [
@@ -398,6 +426,67 @@ struct FinishTimeEvolutionView: View {
         .chartPlotStyle { area in
             area.padding(.horizontal, 4)
         }
+        .chartOverlay { proxy in
+            GeometryReader { geometry in
+                Rectangle()
+                    .fill(.clear)
+                    .contentShape(Rectangle())
+                    .gesture(
+                        DragGesture(minimumDistance: 0)
+                            .onChanged { value in handleDrag(value: value, proxy: proxy, geometry: geometry) }
+                            .onEnded { _ in selectedWeek = nil }
+                    )
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(chartAccessibilitySummary)
+    }
+
+    // MARK: - Scrub Selection
+
+    private var selectedPoint: EvolutionPoint? {
+        guard let selectedWeek else { return nil }
+        return points.first { $0.week == selectedWeek }
+    }
+
+    private func handleDrag(value: DragGesture.Value, proxy: ChartProxy, geometry: GeometryProxy) {
+        guard let plotFrame = proxy.plotFrame else { return }
+        let frame = geometry[plotFrame]
+        let xPosition = value.location.x - frame.origin.x
+        guard let week: Int = proxy.value(atX: xPosition) else { return }
+        selectedWeek = min(max(week, 1), prepWeeks)
+    }
+
+    private func selectionAnnotation(_ point: EvolutionPoint) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(String(localized: "chart.week", defaultValue: "W\(point.week)"))
+                .font(.system(size: 8, weight: .bold))
+                .foregroundStyle(cardSubLabel)
+            selectionRow(color: Theme.Colors.success, value: point.optimisticSeconds)
+            selectionRow(color: primaryTint, value: point.expectedSeconds, emphasized: true)
+            selectionRow(color: Theme.Colors.warning, value: point.conservativeSeconds)
+        }
+        .padding(.horizontal, 9)
+        .padding(.vertical, 6)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(.ultraThinMaterial)
+                .shadow(color: .black.opacity(0.15), radius: 6, y: 2)
+        )
+        .accessibilityHidden(true)
+    }
+
+    private func selectionRow(color: Color, value: TimeInterval, emphasized: Bool = false) -> some View {
+        HStack(spacing: 4) {
+            Circle().fill(color).frame(width: 5, height: 5)
+            Text(formatShort(value))
+                .font(.system(size: emphasized ? 11 : 10, weight: emphasized ? .bold : .semibold, design: .monospaced))
+                .foregroundStyle(cardLabel)
+        }
+    }
+
+    private var chartAccessibilitySummary: String {
+        "Projected finish time evolution chart from \(formatShort(points.first?.expectedSeconds ?? estimate.expectedTime)) to \(formatShort(raceDayExpected)) on race day. Drag to explore any week."
     }
 
     /// Put the "Now" annotation below the dot when it's in the upper half

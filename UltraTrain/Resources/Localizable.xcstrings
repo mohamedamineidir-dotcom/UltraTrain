@@ -12065,6 +12065,23 @@
         }
       }
     },
+    "fte.dragHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag across the chart to explore any week"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fais glisser ton doigt sur le graphique pour explorer chaque semaine"
+          }
+        }
+      }
+    },
     "fte.now" : {
       "localizations" : {
         "en" : {
