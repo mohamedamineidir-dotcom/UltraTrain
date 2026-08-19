@@ -1234,4 +1234,73 @@ struct FinishTimeEstimatorTests {
         let multiplier = FinishTimeEstimator.trainingIntensityMultiplier(philosophy: .balanced, sessionsPerWeek: 5)
         #expect(multiplier == 1.0)
     }
+
+    // MARK: - ITRA / UTMB Index
+
+    @Test("No index data leaves the trend multiplier neutral")
+    func indexTrendNeutralWithoutData() {
+        #expect(estimator.indexTrendMultiplier(athlete: athlete) == 1.0)
+    }
+
+    @Test("A single index value with no previous score leaves the trend multiplier neutral")
+    func indexTrendNeutralWithOnlyCurrentValue() {
+        var a = athlete
+        a.itraIndex = 550
+        a.itraIndexUpdatedAt = .now
+        #expect(estimator.indexTrendMultiplier(athlete: a) == 1.0)
+    }
+
+    @Test("An improving ITRA index nudges the pace multiplier below 1 (faster)")
+    func indexTrendImprovingIsFaster() {
+        var a = athlete
+        a.recordITRAIndex(500, at: .now.addingTimeInterval(-200 * 86400))
+        a.recordITRAIndex(550, at: .now)
+        let multiplier = estimator.indexTrendMultiplier(athlete: a)
+        #expect(multiplier < 1.0, "A 10% index improvement should nudge the predicted pace faster")
+        #expect(multiplier >= 0.90, "The nudge must stay within the documented ±10% bound")
+    }
+
+    @Test("A declining UTMB index nudges the pace multiplier above 1 (slower)")
+    func indexTrendDecliningIsSlower() {
+        var a = athlete
+        a.recordUTMBIndex(600, at: .now.addingTimeInterval(-200 * 86400))
+        a.recordUTMBIndex(540, at: .now)
+        let multiplier = estimator.indexTrendMultiplier(athlete: a)
+        #expect(multiplier > 1.0, "A declining index should nudge the predicted pace slower")
+        #expect(multiplier <= 1.10, "The nudge must stay within the documented ±10% bound")
+    }
+
+    @Test("A stale current index (older than 24 months) is ignored")
+    func indexTrendIgnoresStaleCurrentValue() {
+        var a = athlete
+        a.recordITRAIndex(500, at: .now.addingTimeInterval(-900 * 86400))
+        a.recordITRAIndex(550, at: .now.addingTimeInterval(-800 * 86400))
+        #expect(estimator.indexTrendMultiplier(athlete: a) == 1.0)
+    }
+
+    @Test("A fresh index tightens the confidence-interval spread multiplier")
+    func indexPresenceTightensSpread() {
+        var withIndex = athlete
+        withIndex.itraIndex = 550
+        withIndex.itraIndexUpdatedAt = .now
+        #expect(estimator.indexSpreadMultiplier(athlete: withIndex) < estimator.indexSpreadMultiplier(athlete: athlete))
+    }
+
+    @Test("A fresh index boosts confidence via the public estimate")
+    func indexBoostsConfidence() async throws {
+        var withIndex = athlete
+        withIndex.itraIndex = 550
+        withIndex.itraIndexUpdatedAt = .now
+
+        let race = makeRace()
+        let withoutEstimate = try await estimator.execute(
+            athlete: athlete, race: race, recentRuns: [], currentFitness: nil,
+            pastRaceCalibrations: [], weatherImpact: nil
+        )
+        let withEstimate = try await estimator.execute(
+            athlete: withIndex, race: race, recentRuns: [], currentFitness: nil,
+            pastRaceCalibrations: [], weatherImpact: nil
+        )
+        #expect(withEstimate.confidencePercent > withoutEstimate.confidencePercent)
+    }
 }

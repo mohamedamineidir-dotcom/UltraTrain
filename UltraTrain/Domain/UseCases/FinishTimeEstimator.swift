@@ -86,6 +86,20 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
 
         let weather = weatherImpact?.multiplier ?? 1.0
 
+        // ITRA/UTMB index: a small, honest nudge, not a rewrite of the
+        // pace model. Neither service publishes the formula behind its
+        // index (both compare a finish time against a private database of
+        // past results on that exact course), so there's no real "index →
+        // pace" conversion to invert — inventing one would just be a
+        // fake-precise number dressed up as data. What the index DOES
+        // give us honestly: (a) whether the athlete's fitness is trending
+        // up or down since their last self-report, which nudges the
+        // predicted pace a little, and (b) independent third-party
+        // corroboration of their fitness level, which tightens the
+        // confidence interval a little. See `indexTrendMultiplier` /
+        // `indexSpreadMultiplier`.
+        let indexTrend = indexTrendMultiplier(athlete: athlete)
+
         // Course-difficulty calibration from real reference finish times
         // (last edition's winner / typical finisher), when the athlete
         // supplied them. Corrects what the physiological model can't infer
@@ -94,7 +108,7 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
             race: race, raceEffectiveKm: raceEffectiveKm, terrain: terrain, descent: descent
         )
 
-        let algorithmicExpected = effectiveKm * medianPace * terrain * descent * form * ultra * calibration * weather * referenceCal
+        let algorithmicExpected = effectiveKm * medianPace * terrain * descent * form * ultra * calibration * weather * referenceCal * indexTrend
 
         // Source-dependent range. When we have runs, the percentile
         // spread (pace25 / pace75) already captures within-athlete
@@ -105,7 +119,7 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         // uncertainty (how well we know athlete's fitness from the
         // available signal). Asymmetric: things go wrong more often
         // than right, so the conservative side is wider.
-        let experienceMultiplier = experienceSpreadMultiplier(athlete.experienceLevel)
+        let experienceMultiplier = experienceSpreadMultiplier(athlete.experienceLevel) * indexSpreadMultiplier(athlete: athlete)
         let optimisticTime: Double
         let conservativeTime: Double
         switch source {
@@ -116,8 +130,8 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
             // (originally ±3%/±5%) scales with experience.
             let optMargin = 0.03 * experienceMultiplier
             let conMargin = 0.05 * experienceMultiplier
-            optimisticTime = effectiveKm * pace25 * terrain * descent * ultra * (1.0 - optMargin) * calibration * weather * referenceCal
-            conservativeTime = effectiveKm * pace75 * terrain * descent * ultra * (1.0 + conMargin) * calibration * weather * referenceCal
+            optimisticTime = effectiveKm * pace25 * terrain * descent * ultra * (1.0 - optMargin) * calibration * weather * referenceCal * indexTrend
+            conservativeTime = effectiveKm * pace75 * terrain * descent * ultra * (1.0 + conMargin) * calibration * weather * referenceCal * indexTrend
         case .personalBests, .experienceFallback:
             let aleatoryPct = aleatorySpread(race: race)
             let epistemicPct = epistemicSpread(source: source, athlete: athlete, race: race)
@@ -394,6 +408,70 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         case .advanced:     0.85
         case .elite:        0.70
         }
+    }
+
+    // MARK: - ITRA / UTMB Index
+
+    /// An index result is only meaningful while it's within the window
+    /// ITRA/UTMB themselves use to consider a runner's index "valid" (both
+    /// require a result within the past ~24 months) — a two-year-old score
+    /// says little about current fitness, so a stale one is treated as
+    /// absent rather than corroborating anything.
+    private static let indexValidityWindowDays: Double = 730
+
+    private func isFreshIndex(_ value: Double?, _ updatedAt: Date?) -> Bool {
+        guard value != nil, let updatedAt else { return false }
+        return Date.now.timeIntervalSince(updatedAt) / 86400 <= Self.indexValidityWindowDays
+    }
+
+    /// Small, bounded pace nudge from the RELATIVE change between an
+    /// athlete's current and previously self-reported index — not from
+    /// the absolute value, since there's no published formula mapping an
+    /// index score to a pace (see the comment in `execute`). Higher index
+    /// = faster on ITRA/UTMB's own scale, so an improving index nudges
+    /// the predicted pace faster; a declining one nudges it slower.
+    /// Deliberately damped to a fraction of the raw percentage change and
+    /// tightly bounded (±10%) — this is a corroborating signal, not a
+    /// primary one, and both self-reported values could simply be stale
+    /// or mistyped.
+    func indexTrendMultiplier(athlete: Athlete) -> Double {
+        let trends = [
+            relativeIndexChange(
+                current: athlete.itraIndex, previous: athlete.previousItraIndex,
+                currentDate: athlete.itraIndexUpdatedAt, previousDate: athlete.previousItraIndexUpdatedAt
+            ),
+            relativeIndexChange(
+                current: athlete.utmbIndex, previous: athlete.previousUtmbIndex,
+                currentDate: athlete.utmbIndexUpdatedAt, previousDate: athlete.previousUtmbIndexUpdatedAt
+            )
+        ].compactMap { $0 }
+        guard !trends.isEmpty else { return 1.0 }
+        let avgTrend = trends.reduce(0, +) / Double(trends.count)
+        let damped = avgTrend * 0.3
+        return min(max(1.0 - damped, 0.90), 1.10)
+    }
+
+    private func relativeIndexChange(
+        current: Double?, previous: Double?, currentDate: Date?, previousDate: Date?
+    ) -> Double? {
+        guard let current, let previous, previous > 0,
+              isFreshIndex(current, currentDate) else { return nil }
+        // Guard against a "previous" value so old it no longer describes
+        // meaningfully different fitness than not having one at all.
+        guard let previousDate, Date.now.timeIntervalSince(previousDate) / 86400 <= Self.indexValidityWindowDays * 2 else {
+            return nil
+        }
+        return (current - previous) / previous
+    }
+
+    /// Independent, third-party-corroborated racing history (a real,
+    /// externally-validated index, not just self-reported PBs) tightens
+    /// the confidence interval slightly — it's additional evidence about
+    /// the athlete's fitness level from outside this app.
+    func indexSpreadMultiplier(athlete: Athlete) -> Double {
+        let hasFreshIndex = isFreshIndex(athlete.itraIndex, athlete.itraIndexUpdatedAt)
+            || isFreshIndex(athlete.utmbIndex, athlete.utmbIndexUpdatedAt)
+        return hasFreshIndex ? 0.92 : 1.0
     }
 
     /// Race-day aleatory uncertainty as a fraction (e.g., 0.02 = ±2%).
@@ -740,6 +818,13 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
                 let hasVMA = (athlete.vmaKmh ?? 0) > 0
                 if hasPB && hasVMA { confidence += 5 }
             }
+        }
+        // Independent, externally-validated racing history nudges
+        // confidence up regardless of source — it's corroborating
+        // evidence the app didn't derive itself.
+        if let athlete, isFreshIndex(athlete.itraIndex, athlete.itraIndexUpdatedAt)
+            || isFreshIndex(athlete.utmbIndex, athlete.utmbIndexUpdatedAt) {
+            confidence += 10
         }
         return min(confidence, 95)
     }
