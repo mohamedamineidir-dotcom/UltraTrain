@@ -93,6 +93,7 @@ func configure(_ app: Application) async throws {
     app.migrations.add(AddReferralRewardToUser())
     app.migrations.add(AddSocialAuthToUser())
     app.migrations.add(AddNameToUser())
+    app.migrations.add(AddPerformanceIndexToAthlete())
     do {
         try await app.autoMigrate()
         app.logger.notice("Migrations completed successfully")

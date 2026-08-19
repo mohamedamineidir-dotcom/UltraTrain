@@ -46,6 +46,14 @@ final class AthleteSwiftDataModel {
     var treadmillMaxInclineRaw: String? = nil
     var trailPersonalBestsRaw: String? = nil
     var intervalFocusRaw: String = "mixed"
+    var itraIndex: Double? = nil
+    var itraIndexUpdatedAt: Date? = nil
+    var previousItraIndex: Double? = nil
+    var previousItraIndexUpdatedAt: Date? = nil
+    var utmbIndex: Double? = nil
+    var utmbIndexUpdatedAt: Date? = nil
+    var previousUtmbIndex: Double? = nil
+    var previousUtmbIndexUpdatedAt: Date? = nil
 
     init(
         id: UUID = UUID(),
@@ -90,7 +98,15 @@ final class AthleteSwiftDataModel {
         uphillDurationRaw: String? = nil,
         treadmillMaxInclineRaw: String? = nil,
         trailPersonalBestsRaw: String? = nil,
-        intervalFocusRaw: String = "mixed"
+        intervalFocusRaw: String = "mixed",
+        itraIndex: Double? = nil,
+        itraIndexUpdatedAt: Date? = nil,
+        previousItraIndex: Double? = nil,
+        previousItraIndexUpdatedAt: Date? = nil,
+        utmbIndex: Double? = nil,
+        utmbIndexUpdatedAt: Date? = nil,
+        previousUtmbIndex: Double? = nil,
+        previousUtmbIndexUpdatedAt: Date? = nil
     ) {
         self.id = id
         self.firstName = firstName
@@ -135,5 +151,13 @@ final class AthleteSwiftDataModel {
         self.treadmillMaxInclineRaw = treadmillMaxInclineRaw
         self.trailPersonalBestsRaw = trailPersonalBestsRaw
         self.intervalFocusRaw = intervalFocusRaw
+        self.itraIndex = itraIndex
+        self.itraIndexUpdatedAt = itraIndexUpdatedAt
+        self.previousItraIndex = previousItraIndex
+        self.previousItraIndexUpdatedAt = previousItraIndexUpdatedAt
+        self.utmbIndex = utmbIndex
+        self.utmbIndexUpdatedAt = utmbIndexUpdatedAt
+        self.previousUtmbIndex = previousUtmbIndex
+        self.previousUtmbIndexUpdatedAt = previousUtmbIndexUpdatedAt
     }
 }

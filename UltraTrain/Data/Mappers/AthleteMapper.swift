@@ -44,7 +44,15 @@ enum AthleteMapper {
             experienceLevel: level,
             weeklyVolumeKm: dto.weeklyVolumeKm,
             longestRunKm: dto.longestRunKm,
-            preferredUnit: .metric
+            preferredUnit: .metric,
+            itraIndex: dto.itraIndex,
+            itraIndexUpdatedAt: dto.itraIndexUpdatedAt.flatMap { formatter.date(from: $0) },
+            previousItraIndex: dto.previousItraIndex,
+            previousItraIndexUpdatedAt: dto.previousItraIndexUpdatedAt.flatMap { formatter.date(from: $0) },
+            utmbIndex: dto.utmbIndex,
+            utmbIndexUpdatedAt: dto.utmbIndexUpdatedAt.flatMap { formatter.date(from: $0) },
+            previousUtmbIndex: dto.previousUtmbIndex,
+            previousUtmbIndexUpdatedAt: dto.previousUtmbIndexUpdatedAt.flatMap { formatter.date(from: $0) }
         )
     }
 
@@ -61,7 +69,15 @@ enum AthleteMapper {
             maxHeartRate: athlete.maxHeartRate,
             experienceLevel: athlete.experienceLevel.rawValue,
             weeklyVolumeKm: athlete.weeklyVolumeKm,
-            longestRunKm: athlete.longestRunKm
+            longestRunKm: athlete.longestRunKm,
+            itraIndex: athlete.itraIndex,
+            itraIndexUpdatedAt: athlete.itraIndexUpdatedAt.map { formatter.string(from: $0) },
+            previousItraIndex: athlete.previousItraIndex,
+            previousItraIndexUpdatedAt: athlete.previousItraIndexUpdatedAt.map { formatter.string(from: $0) },
+            utmbIndex: athlete.utmbIndex,
+            utmbIndexUpdatedAt: athlete.utmbIndexUpdatedAt.map { formatter.string(from: $0) },
+            previousUtmbIndex: athlete.previousUtmbIndex,
+            previousUtmbIndexUpdatedAt: athlete.previousUtmbIndexUpdatedAt.map { formatter.string(from: $0) }
         )
     }
 }

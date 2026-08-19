@@ -103,4 +103,46 @@ struct Athlete: Identifiable, Equatable, Sendable {
     var age: Int {
         Calendar.current.dateComponents([.year], from: dateOfBirth, to: .now).year ?? 0
     }
+
+    // MARK: - ITRA / UTMB Performance Index
+
+    /// Self-reported — neither ITRA nor UTMB publishes the formula behind
+    /// their index (both compare a finish time against a proprietary
+    /// database of past results on that specific course), so this can
+    /// only ever be a number the athlete already has from their own
+    /// ITRA/UTMB profile, never something we compute ourselves.
+    var itraIndex: Double?
+    var itraIndexUpdatedAt: Date?
+    /// The value just before the most recent update, kept so
+    /// `FinishTimeEstimator` can read a fitness *trend* (improving vs
+    /// declining) rather than only an absolute snapshot.
+    var previousItraIndex: Double?
+    var previousItraIndexUpdatedAt: Date?
+
+    var utmbIndex: Double?
+    var utmbIndexUpdatedAt: Date?
+    var previousUtmbIndex: Double?
+    var previousUtmbIndexUpdatedAt: Date?
+
+    /// Records a new ITRA index, shifting the prior value into
+    /// `previousItraIndex` first so the trend is preserved.
+    mutating func recordITRAIndex(_ value: Double, at date: Date = .now) {
+        if let existing = itraIndex {
+            previousItraIndex = existing
+            previousItraIndexUpdatedAt = itraIndexUpdatedAt
+        }
+        itraIndex = value
+        itraIndexUpdatedAt = date
+    }
+
+    /// Records a new UTMB index, shifting the prior value into
+    /// `previousUtmbIndex` first so the trend is preserved.
+    mutating func recordUTMBIndex(_ value: Double, at date: Date = .now) {
+        if let existing = utmbIndex {
+            previousUtmbIndex = existing
+            previousUtmbIndexUpdatedAt = utmbIndexUpdatedAt
+        }
+        utmbIndex = value
+        utmbIndexUpdatedAt = date
+    }
 }

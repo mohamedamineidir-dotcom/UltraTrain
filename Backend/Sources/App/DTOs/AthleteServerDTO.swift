@@ -12,6 +12,14 @@ struct AthleteResponse: Content {
     let experienceLevel: String
     let weeklyVolumeKm: Double
     let longestRunKm: Double
+    let itraIndex: Double?
+    let itraIndexUpdatedAt: String?
+    let previousItraIndex: Double?
+    let previousItraIndexUpdatedAt: String?
+    let utmbIndex: Double?
+    let utmbIndexUpdatedAt: String?
+    let previousUtmbIndex: Double?
+    let previousUtmbIndexUpdatedAt: String?
     let updatedAt: String?
 
     init(from model: AthleteModel) {
@@ -27,6 +35,14 @@ struct AthleteResponse: Content {
         self.experienceLevel = model.experienceLevel
         self.weeklyVolumeKm = model.weeklyVolumeKm
         self.longestRunKm = model.longestRunKm
+        self.itraIndex = model.itraIndex
+        self.itraIndexUpdatedAt = model.itraIndexUpdatedAt.map { formatter.string(from: $0) }
+        self.previousItraIndex = model.previousItraIndex
+        self.previousItraIndexUpdatedAt = model.previousItraIndexUpdatedAt.map { formatter.string(from: $0) }
+        self.utmbIndex = model.utmbIndex
+        self.utmbIndexUpdatedAt = model.utmbIndexUpdatedAt.map { formatter.string(from: $0) }
+        self.previousUtmbIndex = model.previousUtmbIndex
+        self.previousUtmbIndexUpdatedAt = model.previousUtmbIndexUpdatedAt.map { formatter.string(from: $0) }
         self.updatedAt = model.updatedAt.map { formatter.string(from: $0) }
     }
 }
@@ -42,6 +58,14 @@ struct AthleteUpdateRequest: Content, Validatable {
     let experienceLevel: String
     let weeklyVolumeKm: Double
     let longestRunKm: Double
+    var itraIndex: Double?
+    var itraIndexUpdatedAt: String?
+    var previousItraIndex: Double?
+    var previousItraIndexUpdatedAt: String?
+    var utmbIndex: Double?
+    var utmbIndexUpdatedAt: String?
+    var previousUtmbIndex: Double?
+    var previousUtmbIndexUpdatedAt: String?
 
     static func validations(_ validations: inout Validations) {
         validations.add("firstName", as: String.self, is: !.empty)
@@ -50,5 +74,7 @@ struct AthleteUpdateRequest: Content, Validatable {
         validations.add("heightCm", as: Double.self, is: .range(100...250))
         validations.add("restingHeartRate", as: Int.self, is: .range(30...120))
         validations.add("maxHeartRate", as: Int.self, is: .range(100...230))
+        validations.add("itraIndex", as: Double.self, is: .range(0...1000), required: false)
+        validations.add("utmbIndex", as: Double.self, is: .range(0...1000), required: false)
     }
 }

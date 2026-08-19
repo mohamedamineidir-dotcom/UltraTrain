@@ -64,7 +64,15 @@ enum AthleteSwiftDataMapper {
             adaptiveFitness5KSeconds: model.adaptiveFitness5KSeconds,
             comebackPaceFactor: model.comebackPaceFactor,
             comebackStart: model.comebackStart,
-            comebackUntil: model.comebackUntil
+            comebackUntil: model.comebackUntil,
+            itraIndex: model.itraIndex,
+            itraIndexUpdatedAt: model.itraIndexUpdatedAt,
+            previousItraIndex: model.previousItraIndex,
+            previousItraIndexUpdatedAt: model.previousItraIndexUpdatedAt,
+            utmbIndex: model.utmbIndex,
+            utmbIndexUpdatedAt: model.utmbIndexUpdatedAt,
+            previousUtmbIndex: model.previousUtmbIndex,
+            previousUtmbIndexUpdatedAt: model.previousUtmbIndexUpdatedAt
         )
     }
 
@@ -119,7 +127,15 @@ enum AthleteSwiftDataMapper {
             uphillDurationRaw: athlete.uphillDuration?.rawValue,
             treadmillMaxInclineRaw: athlete.treadmillMaxIncline?.rawValue,
             trailPersonalBestsRaw: trailPbRaw,
-            intervalFocusRaw: athlete.intervalFocus.rawValue
+            intervalFocusRaw: athlete.intervalFocus.rawValue,
+            itraIndex: athlete.itraIndex,
+            itraIndexUpdatedAt: athlete.itraIndexUpdatedAt,
+            previousItraIndex: athlete.previousItraIndex,
+            previousItraIndexUpdatedAt: athlete.previousItraIndexUpdatedAt,
+            utmbIndex: athlete.utmbIndex,
+            utmbIndexUpdatedAt: athlete.utmbIndexUpdatedAt,
+            previousUtmbIndex: athlete.previousUtmbIndex,
+            previousUtmbIndexUpdatedAt: athlete.previousUtmbIndexUpdatedAt
         )
     }
 }

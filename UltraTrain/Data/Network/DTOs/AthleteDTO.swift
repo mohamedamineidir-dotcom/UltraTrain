@@ -12,4 +12,12 @@ struct AthleteDTO: Codable, Sendable {
     let experienceLevel: String
     let weeklyVolumeKm: Double
     let longestRunKm: Double
+    var itraIndex: Double?
+    var itraIndexUpdatedAt: String?
+    var previousItraIndex: Double?
+    var previousItraIndexUpdatedAt: String?
+    var utmbIndex: Double?
+    var utmbIndexUpdatedAt: String?
+    var previousUtmbIndex: Double?
+    var previousUtmbIndexUpdatedAt: String?
 }

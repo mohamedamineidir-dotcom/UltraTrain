@@ -49,6 +49,33 @@ final class AthleteModel: Model, Content, @unchecked Sendable {
     @Field(key: "display_name")
     var displayName: String
 
+    /// Self-reported — neither ITRA nor UTMB expose an API to look these
+    /// up, so this only ever reflects what the athlete entered from their
+    /// own profile.
+    @OptionalField(key: "itra_index")
+    var itraIndex: Double?
+
+    @OptionalField(key: "itra_index_updated_at")
+    var itraIndexUpdatedAt: Date?
+
+    @OptionalField(key: "previous_itra_index")
+    var previousItraIndex: Double?
+
+    @OptionalField(key: "previous_itra_index_updated_at")
+    var previousItraIndexUpdatedAt: Date?
+
+    @OptionalField(key: "utmb_index")
+    var utmbIndex: Double?
+
+    @OptionalField(key: "utmb_index_updated_at")
+    var utmbIndexUpdatedAt: Date?
+
+    @OptionalField(key: "previous_utmb_index")
+    var previousUtmbIndex: Double?
+
+    @OptionalField(key: "previous_utmb_index_updated_at")
+    var previousUtmbIndexUpdatedAt: Date?
+
     @Timestamp(key: "updated_at", on: .update)
     var updatedAt: Date?
 

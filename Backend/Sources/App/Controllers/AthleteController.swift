@@ -53,6 +53,14 @@ struct AthleteController: RouteCollection {
         athlete.experienceLevel = body.experienceLevel
         athlete.weeklyVolumeKm = body.weeklyVolumeKm
         athlete.longestRunKm = body.longestRunKm
+        athlete.itraIndex = body.itraIndex
+        athlete.itraIndexUpdatedAt = body.itraIndexUpdatedAt.flatMap { formatter.date(from: $0) }
+        athlete.previousItraIndex = body.previousItraIndex
+        athlete.previousItraIndexUpdatedAt = body.previousItraIndexUpdatedAt.flatMap { formatter.date(from: $0) }
+        athlete.utmbIndex = body.utmbIndex
+        athlete.utmbIndexUpdatedAt = body.utmbIndexUpdatedAt.flatMap { formatter.date(from: $0) }
+        athlete.previousUtmbIndex = body.previousUtmbIndex
+        athlete.previousUtmbIndexUpdatedAt = body.previousUtmbIndexUpdatedAt.flatMap { formatter.date(from: $0) }
 
         try await athlete.save(on: req.db)
         return AthleteResponse(from: athlete)
