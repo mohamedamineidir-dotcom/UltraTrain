@@ -86,7 +86,7 @@ struct OnboardingView: View {
         }
     }
 
-    // MARK: - Steps 0-11
+    // MARK: - Steps 0-13
 
     @ViewBuilder
     private var stepContent: some View {
@@ -103,7 +103,8 @@ struct OnboardingView: View {
         case 9: GoalTrainingStepView(viewModel: viewModel)
         case 10: UphillDetailsStepView(viewModel: viewModel)
         case 11: VolumePreviewStepView(viewModel: viewModel)
-        case 12: OnboardingCompleteStepView(
+        case 12: PerformanceIndexStepView(viewModel: viewModel)
+        case 13: OnboardingCompleteStepView(
             viewModel: viewModel,
             onComplete: onComplete,
             healthKitService: healthKitService,
@@ -116,6 +117,10 @@ struct OnboardingView: View {
     private var pbStepButtonTitle: String {
         if viewModel.currentStep == 2 {
             return viewModel.hasAnyPB ? "Continue" : "Skip"
+        }
+        if viewModel.currentStep == 12 {
+            let hasIndex = !viewModel.itraIndexInput.isEmpty || !viewModel.utmbIndexInput.isEmpty
+            return hasIndex ? "Continue" : "Skip"
         }
         return "Continue"
     }

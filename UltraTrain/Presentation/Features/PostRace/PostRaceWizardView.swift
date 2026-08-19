@@ -9,7 +9,8 @@ struct PostRaceWizardView: View {
         raceRepository: any RaceRepository,
         raceReflectionRepository: any RaceReflectionRepository,
         runRepository: any RunRepository,
-        finishEstimateRepository: any FinishEstimateRepository
+        finishEstimateRepository: any FinishEstimateRepository,
+        athleteRepository: any AthleteRepository
     ) {
         _viewModel = State(
             initialValue: PostRaceWizardViewModel(
@@ -17,7 +18,8 @@ struct PostRaceWizardView: View {
                 raceRepository: raceRepository,
                 raceReflectionRepository: raceReflectionRepository,
                 runRepository: runRepository,
-                finishEstimateRepository: finishEstimateRepository
+                finishEstimateRepository: finishEstimateRepository,
+                athleteRepository: athleteRepository
             )
         )
     }
@@ -83,6 +85,7 @@ struct PostRaceWizardView: View {
         case .nutrition: "Nutrition"
         case .weather: "Weather"
         case .takeaways: "Takeaways"
+        case .performanceIndex: "Racing Index"
         case .summary: "Summary"
         }
     }
@@ -103,6 +106,8 @@ struct PostRaceWizardView: View {
                     PostRaceWeatherStep(viewModel: viewModel)
                 case .takeaways:
                     PostRaceTakeawaysStep(viewModel: viewModel)
+                case .performanceIndex:
+                    PostRaceIndexUpdateStep(viewModel: viewModel)
                 case .summary:
                     PostRaceSummaryStep(viewModel: viewModel)
                 }

@@ -10,6 +10,7 @@ final class PostRaceWizardViewModel {
         case nutrition
         case weather
         case takeaways
+        case performanceIndex
         case summary
     }
 
@@ -20,6 +21,7 @@ final class PostRaceWizardViewModel {
     private let raceReflectionRepository: any RaceReflectionRepository
     private let runRepository: any RunRepository
     private let finishEstimateRepository: any FinishEstimateRepository
+    private let athleteRepository: any AthleteRepository
 
     // MARK: - State
 
@@ -44,6 +46,12 @@ final class PostRaceWizardViewModel {
     var error: String?
     var didSave = false
 
+    // MARK: - Performance Index (post-race re-report)
+
+    var itraIndexInput: String = ""
+    var utmbIndexInput: String = ""
+    private var athlete: Athlete?
+
     // MARK: - Computed
 
     var raceName: String { race.name }
@@ -62,6 +70,8 @@ final class PostRaceWizardViewModel {
             return true
         case .takeaways:
             return overallSatisfaction >= 1 && overallSatisfaction <= 5
+        case .performanceIndex:
+            return true
         case .summary:
             return true
         }
@@ -83,13 +93,15 @@ final class PostRaceWizardViewModel {
         raceRepository: any RaceRepository,
         raceReflectionRepository: any RaceReflectionRepository,
         runRepository: any RunRepository,
-        finishEstimateRepository: any FinishEstimateRepository
+        finishEstimateRepository: any FinishEstimateRepository,
+        athleteRepository: any AthleteRepository
     ) {
         self.race = race
         self.raceRepository = raceRepository
         self.raceReflectionRepository = raceReflectionRepository
         self.runRepository = runRepository
         self.finishEstimateRepository = finishEstimateRepository
+        self.athleteRepository = athleteRepository
 
         let existingTime = race.actualFinishTime ?? 0
         self.finishTimeHours = Int(existingTime) / 3600
@@ -103,9 +115,16 @@ final class PostRaceWizardViewModel {
         do {
             recentRuns = try await runRepository.getRecentRuns(limit: 20)
             finishEstimate = try await finishEstimateRepository.getEstimate(for: race.id)
+            athlete = try await athleteRepository.getAthlete()
+            itraIndexInput = athlete?.itraIndex.map { Self.formatIndex($0) } ?? ""
+            utmbIndexInput = athlete?.utmbIndex.map { Self.formatIndex($0) } ?? ""
         } catch {
             Logger.persistence.error("Failed to load post-race data: \(error.localizedDescription)")
         }
+    }
+
+    private static func formatIndex(_ value: Double) -> String {
+        value == value.rounded() ? String(Int(value)) : String(value)
     }
 
     func save() async {
@@ -137,6 +156,7 @@ final class PostRaceWizardViewModel {
                 createdAt: Date()
             )
             try await raceReflectionRepository.saveReflection(reflection)
+            try await saveIndexUpdatesIfNeeded()
             didSave = true
             Logger.persistence.info("Post-race reflection saved successfully")
         } catch {
@@ -145,6 +165,32 @@ final class PostRaceWizardViewModel {
         }
 
         isSaving = false
+    }
+
+    /// A race just finished is exactly when an athlete's ITRA/UTMB index
+    /// is most likely to have changed — save it here if they entered a
+    /// new value on the performance-index step. Only writes when the
+    /// value actually changed, so re-saving the wizard without touching
+    /// these fields doesn't spuriously shift "current" into "previous"
+    /// and blur the trend signal `FinishTimeEstimator` reads.
+    private func saveIndexUpdatesIfNeeded() async throws {
+        guard var updatedAthlete = athlete else { return }
+        var changed = false
+
+        let trimmedItra = itraIndexInput.trimmingCharacters(in: .whitespaces)
+        if let itra = Double(trimmedItra), (0...1000).contains(itra), itra != updatedAthlete.itraIndex {
+            updatedAthlete.recordITRAIndex(itra)
+            changed = true
+        }
+        let trimmedUtmb = utmbIndexInput.trimmingCharacters(in: .whitespaces)
+        if let utmb = Double(trimmedUtmb), (0...1000).contains(utmb), utmb != updatedAthlete.utmbIndex {
+            updatedAthlete.recordUTMBIndex(utmb)
+            changed = true
+        }
+
+        guard changed else { return }
+        try await athleteRepository.saveAthlete(updatedAthlete)
+        athlete = updatedAthlete
     }
 
     func nextStep() {

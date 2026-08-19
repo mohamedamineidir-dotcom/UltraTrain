@@ -18,6 +18,8 @@ struct EditAthleteSheet: View {
     @State private var preferredUnit: UnitPreference
     @State private var weightGoal: WeightGoal
     @State private var biologicalSex: BiologicalSex
+    @State private var itraIndexInput: String
+    @State private var utmbIndexInput: String
 
     init(athlete: Athlete, onSave: @escaping (Athlete) -> Void) {
         self.athlete = athlete
@@ -35,6 +37,12 @@ struct EditAthleteSheet: View {
         _preferredUnit = State(initialValue: athlete.preferredUnit)
         _weightGoal = State(initialValue: athlete.weightGoal)
         _biologicalSex = State(initialValue: athlete.biologicalSex)
+        _itraIndexInput = State(initialValue: athlete.itraIndex.map { Self.formatIndex($0) } ?? "")
+        _utmbIndexInput = State(initialValue: athlete.utmbIndex.map { Self.formatIndex($0) } ?? "")
+    }
+
+    private static func formatIndex(_ value: Double) -> String {
+        value == value.rounded() ? String(Int(value)) : String(value)
     }
 
     var body: some View {
@@ -48,6 +56,7 @@ struct EditAthleteSheet: View {
                 heartRateSection
                 experienceSection
                 runningHistorySection
+                performanceIndexSection
                 unitSection
             }
             .navigationTitle("Edit Profile")
@@ -212,6 +221,31 @@ struct EditAthleteSheet: View {
             : $longestRunKm
     }
 
+    private var performanceIndexSection: some View {
+        Section {
+            HStack {
+                Text("ITRA Index")
+                Spacer()
+                TextField("Optional", text: $itraIndexInput)
+                    .keyboardType(.numberPad)
+                    .multilineTextAlignment(.trailing)
+                    .frame(maxWidth: 100)
+            }
+            HStack {
+                Text("UTMB Index")
+                Spacer()
+                TextField("Optional", text: $utmbIndexInput)
+                    .keyboardType(.numberPad)
+                    .multilineTextAlignment(.trailing)
+                    .frame(maxWidth: 100)
+            }
+        } header: {
+            Text("Racing Index")
+        } footer: {
+            Text("Sharpens your finish-time predictions with independent racing history, if you have one.")
+        }
+    }
+
     private var unitSection: some View {
         Section("Units") {
             Picker("Preferred Unit", selection: $preferredUnit) {
@@ -232,22 +266,43 @@ struct EditAthleteSheet: View {
     }
 
     private func save() {
-        let updated = Athlete(
-            id: athlete.id,
-            firstName: firstName.trimmingCharacters(in: .whitespaces),
-            lastName: lastName.trimmingCharacters(in: .whitespaces),
-            dateOfBirth: dateOfBirth,
-            weightKg: weightKg,
-            heightCm: heightCm,
-            restingHeartRate: restingHeartRate,
-            maxHeartRate: maxHeartRate,
-            experienceLevel: experienceLevel,
-            weeklyVolumeKm: weeklyVolumeKm,
-            longestRunKm: longestRunKm,
-            preferredUnit: preferredUnit,
-            weightGoal: weightGoal,
-            biologicalSex: biologicalSex
-        )
+        // Mutate a copy of the ORIGINAL athlete rather than reconstructing
+        // one from only this sheet's own fields — the latter silently
+        // resets everything this sheet doesn't edit (PBs, VMA, injury
+        // data, ITRA/UTMB index, ...) to their struct defaults on every
+        // save, since `Athlete`'s memberwise init fills unlisted
+        // parameters with defaults rather than the athlete's real values.
+        var updated = athlete
+        updated.firstName = firstName.trimmingCharacters(in: .whitespaces)
+        updated.lastName = lastName.trimmingCharacters(in: .whitespaces)
+        updated.dateOfBirth = dateOfBirth
+        updated.weightKg = weightKg
+        updated.heightCm = heightCm
+        updated.restingHeartRate = restingHeartRate
+        updated.maxHeartRate = maxHeartRate
+        updated.experienceLevel = experienceLevel
+        updated.weeklyVolumeKm = weeklyVolumeKm
+        updated.longestRunKm = longestRunKm
+        updated.preferredUnit = preferredUnit
+        updated.weightGoal = weightGoal
+        updated.biologicalSex = biologicalSex
+
+        let trimmedItra = itraIndexInput.trimmingCharacters(in: .whitespaces)
+        if trimmedItra.isEmpty {
+            updated.itraIndex = nil
+            updated.itraIndexUpdatedAt = nil
+        } else if let itra = Double(trimmedItra), (0...1000).contains(itra), itra != athlete.itraIndex {
+            updated.recordITRAIndex(itra)
+        }
+
+        let trimmedUtmb = utmbIndexInput.trimmingCharacters(in: .whitespaces)
+        if trimmedUtmb.isEmpty {
+            updated.utmbIndex = nil
+            updated.utmbIndexUpdatedAt = nil
+        } else if let utmb = Double(trimmedUtmb), (0...1000).contains(utmb), utmb != athlete.utmbIndex {
+            updated.recordUTMBIndex(utmb)
+        }
+
         onSave(updated)
         dismiss()
     }

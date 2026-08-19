@@ -249,7 +249,8 @@ struct ProfileView: View {
                     raceRepository: raceRepository,
                     raceReflectionRepository: raceReflectionRepository,
                     runRepository: runRepository,
-                    finishEstimateRepository: finishEstimateRepository
+                    finishEstimateRepository: finishEstimateRepository,
+                    athleteRepository: athleteRepository
                 )
             }
             .confirmationDialog(

@@ -31,7 +31,8 @@ struct PostRaceWizardViewModelTests {
         raceRepo: MockRaceRepository = MockRaceRepository(),
         reflectionRepo: MockRaceReflectionRepository = MockRaceReflectionRepository(),
         runRepo: MockRunRepository = MockRunRepository(),
-        estimateRepo: MockFinishEstimateRepository = MockFinishEstimateRepository()
+        estimateRepo: MockFinishEstimateRepository = MockFinishEstimateRepository(),
+        athleteRepo: MockAthleteRepository = MockAthleteRepository()
     ) -> PostRaceWizardViewModel {
         let r = race ?? makeRace()
         return PostRaceWizardViewModel(
@@ -39,7 +40,8 @@ struct PostRaceWizardViewModelTests {
             raceRepository: raceRepo,
             raceReflectionRepository: reflectionRepo,
             runRepository: runRepo,
-            finishEstimateRepository: estimateRepo
+            finishEstimateRepository: estimateRepo,
+            athleteRepository: athleteRepo
         )
     }
 
@@ -208,6 +210,9 @@ struct PostRaceWizardViewModelTests {
 
         vm.nextStep()
         #expect(vm.currentStep == .takeaways)
+
+        vm.nextStep()
+        #expect(vm.currentStep == .performanceIndex)
 
         vm.nextStep()
         #expect(vm.currentStep == .summary)
