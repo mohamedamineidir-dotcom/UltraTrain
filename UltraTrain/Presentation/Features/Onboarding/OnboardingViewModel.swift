@@ -13,7 +13,7 @@ final class OnboardingViewModel {
     // MARK: - Navigation State
 
     var currentStep = 0
-    let totalSteps = 14
+    let totalSteps = 13
     var isCompleted = false
     var isSaving = false
     var error: String?
@@ -108,7 +108,9 @@ final class OnboardingViewModel {
         }
     }
 
-    // MARK: - Step 13: ITRA / UTMB Index (Optional)
+    // MARK: - Step 2 (continued): ITRA / UTMB Index (Optional)
+    // Lives on the same step as personal bests rather than its own
+    // step — it's the same "tell us your racing history" moment.
 
     /// String, not Double?, so an empty field just means "not entered"
     /// without SwiftUI's Double?-binding awkwardness — parsed on save.
@@ -276,8 +278,7 @@ final class OnboardingViewModel {
     // MARK: - Validation
     // Steps: 0=Experience, 1=RunningHistory, 2=PersonalBests, 3=AboutYou,
     //        4=BodyMetrics, 5=HeartRate, 6=InjuryStrength, 7=RaceName,
-    //        8=RaceProfile, 9=GoalTraining, 10=UphillDetails, 11=VolumePreview,
-    //        12=PerformanceIndex, 13=Complete
+    //        8=RaceProfile, 9=GoalTraining, 10=UphillDetails, 11=VolumePreview, 12=Complete
 
     /// Whether the uphill details step is relevant (elevation-heavy race or VG training needed).
     var needsUphillDetailsStep: Bool {
@@ -308,7 +309,6 @@ final class OnboardingViewModel {
         case 9: hasNoRace ? true : isGoalTrainingValid
         case 10: isUphillDetailsValid
         case 11: true // Volume preview
-        case 12: true // ITRA/UTMB index optional
         default: true
         }
     }
@@ -375,7 +375,7 @@ final class OnboardingViewModel {
         if hasNoRace && currentStep == 7 {
             currentStep = 9 // Skip race profile (8), go to goal/training
         } else if hasNoRace && currentStep == 9 {
-            currentStep = 12 // No race → skip uphill, volume preview → performance index
+            currentStep = 12 // No race → skip uphill, volume preview → complete
         } else if currentStep == 9 && !needsUphillDetailsStep {
             currentStep = 11 // Skip uphill details (10), go to volume preview
         } else {

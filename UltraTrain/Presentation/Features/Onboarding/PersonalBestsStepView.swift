@@ -60,6 +60,23 @@ struct PersonalBestsStepView: View {
                 }
 
                 suggestionSection
+
+                // MARK: - Racing Index (Optional)
+
+                sectionHeader(title: "Racing Index (Optional)", icon: "chart.line.uptrend.xyaxis")
+
+                indexCard(
+                    title: "ITRA Index",
+                    input: $viewModel.itraIndexInput,
+                    url: URL(string: "https://itra.run/")!,
+                    linkLabel: "Find my ITRA index"
+                )
+                indexCard(
+                    title: "UTMB Index",
+                    input: $viewModel.utmbIndexInput,
+                    url: URL(string: "https://utmb.world/utmb-index")!,
+                    linkLabel: "Find my UTMB index"
+                )
             }
             .padding(.horizontal, Theme.Spacing.lg)
             .padding(.vertical, Theme.Spacing.md)
@@ -175,6 +192,40 @@ struct PersonalBestsStepView: View {
             .onboardingCardStyle()
         }
         .buttonStyle(.plain)
+    }
+
+    // MARK: - Racing Index Card
+
+    private func indexCard(
+        title: String,
+        input: Binding<String>,
+        url: URL,
+        linkLabel: String
+    ) -> some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            Text(LocalizedStringKey(title))
+                .font(.headline)
+                .foregroundStyle(Theme.Colors.label)
+
+            HStack {
+                TextField("e.g. 550", text: input)
+                    .keyboardType(.numberPad)
+                    .font(.body.monospacedDigit())
+                    .textFieldStyle(.roundedBorder)
+                    .frame(maxWidth: 120)
+                Spacer()
+            }
+
+            Link(destination: url) {
+                HStack(spacing: 4) {
+                    Image(systemName: "arrow.up.right.square")
+                    Text(LocalizedStringKey(linkLabel))
+                }
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.warmCoral)
+            }
+        }
+        .onboardingCardStyle()
     }
 
     // MARK: - Helpers

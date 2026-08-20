@@ -7814,7 +7814,6 @@
       }
     },
     "Debug" : {
-      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -8689,6 +8688,9 @@
         }
       }
     },
+    "Did this race update your index?" : {
+
+    },
     "diet.dairyFree" : {
       "localizations" : {
         "en" : {
@@ -9501,6 +9503,9 @@
           }
         }
       }
+    },
+    "e.g. 550" : {
+
     },
     "e.g. 900" : {
       "extractionState" : "stale",
@@ -12033,6 +12038,23 @@
         }
       }
     },
+    "fte.dragHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag across the chart to explore any week"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fais glisser ton doigt sur le graphique pour explorer chaque semaine"
+          }
+        }
+      }
+    },
     "fte.intro" : {
       "localizations" : {
         "en" : {
@@ -12061,23 +12083,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "En direct"
-          }
-        }
-      }
-    },
-    "fte.dragHint" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Drag across the chart to explore any week"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fais glisser ton doigt sur le graphique pour explorer chaque semaine"
           }
         }
       }
@@ -15048,6 +15053,9 @@
         }
       }
     },
+    "If you have an ITRA or UTMB index, add it here — it sharpens your finish-time predictions with independent racing history." : {
+
+    },
     "If you stick with the plan, your projected finish time evolves like this:" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -15058,6 +15066,9 @@
           }
         }
       }
+    },
+    "If your ITRA or UTMB index changed after this race, update it here — it helps sharpen future finish-time predictions. Leave blank if unchanged or unknown." : {
+
     },
     "If your run exceeds this duration without being stopped, an alert is sent to your emergency contacts." : {
       "localizations" : {
@@ -17181,6 +17192,9 @@
         }
       }
     },
+    "ITRA Index" : {
+
+    },
     "iwl.01d" : {
       "localizations" : {
         "en" : {
@@ -18084,7 +18098,6 @@
       }
     },
     "Locks premium features and shows the free-plan picker, as a non-subscriber would see." : {
-      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -22301,6 +22314,12 @@
           }
         }
       }
+    },
+    "Optional" : {
+
+    },
+    "Optional — most runners don't have one yet. Skip and add it later from Settings, or after your race." : {
+
     },
     "Optional notes" : {
       "localizations" : {
@@ -27597,6 +27616,9 @@
         }
       }
     },
+    "Racing Index" : {
+
+    },
     "Range" : {
       "localizations" : {
         "fr" : {
@@ -28688,6 +28710,9 @@
           }
         }
       }
+    },
+    "Reveals every week of the training plan, not just the free preview, so all sessions can be inspected." : {
+
     },
     "rfp.2daysOut" : {
       "localizations" : {
@@ -37036,6 +37061,9 @@
         }
       }
     },
+    "Sharpens your finish-time predictions with independent racing history, if you have one." : {
+
+    },
     "Show less" : {
       "localizations" : {
         "fr" : {
@@ -37118,7 +37146,6 @@
       }
     },
     "Simulate free tier" : {
-      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -41672,7 +41699,6 @@
       }
     },
     "sv.sync.comingSoon" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -46747,6 +46773,9 @@
         }
       }
     },
+    "Unlock all plan weeks" : {
+
+    },
     "Unskip" : {
       "localizations" : {
         "fr" : {
@@ -47131,6 +47160,9 @@
           }
         }
       }
+    },
+    "UTMB Index" : {
+
     },
     "Validate" : {
       "localizations" : {
@@ -54732,6 +54764,9 @@
           }
         }
       }
+    },
+    "Your Racing Index" : {
+
     },
     "Your Referral Code" : {
       "localizations" : {
