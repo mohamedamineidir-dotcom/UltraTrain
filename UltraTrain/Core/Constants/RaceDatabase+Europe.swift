@@ -58,7 +58,8 @@ extension RaceDatabase {
         // MARK: Switzerland
 
         KnownRace(name: "Eiger Ultra Trail E101", shortName: "E101", distanceKm: 101, elevationGainM: 6700,
-                  elevationLossM: 6700, country: "Switzerland", nextEditionDate: _d(2026, 7, 18), terrainDifficulty: .technical),
+                  elevationLossM: 6700, country: "Switzerland", nextEditionDate: _d(2026, 7, 18), terrainDifficulty: .technical,
+                  gpxAssetName: "eiger-e101"),
         KnownRace(name: "Eiger Ultra Trail E51", shortName: "E51", distanceKm: 51, elevationGainM: 3400,
                   elevationLossM: 3400, country: "Switzerland", nextEditionDate: _d(2026, 7, 18), terrainDifficulty: .technical),
         KnownRace(name: "Eiger Ultra Trail E35", shortName: "E35", distanceKm: 35, elevationGainM: 2300,
@@ -74,7 +75,8 @@ extension RaceDatabase {
         KnownRace(name: "Swiss Canyon Trail 111K", shortName: nil, distanceKm: 111, elevationGainM: 6700,
                   elevationLossM: 6700, country: "Switzerland", nextEditionDate: _d(2026, 6, 20), terrainDifficulty: .technical),
         KnownRace(name: "Trail Verbier Saint-Bernard 111K", shortName: "TVSB", distanceKm: 111, elevationGainM: 7100,
-                  elevationLossM: 7100, country: "Switzerland", nextEditionDate: _d(2026, 7, 4), terrainDifficulty: .technical),
+                  elevationLossM: 7100, country: "Switzerland", nextEditionDate: _d(2026, 7, 4), terrainDifficulty: .technical,
+                  gpxAssetName: "verbier-xalpine"),
         KnownRace(name: "Swiss Iron Trail 201K", shortName: nil, distanceKm: 201, elevationGainM: 11200,
                   elevationLossM: 11200, country: "Switzerland", nextEditionDate: _d(2026, 6, 20), terrainDifficulty: .technical),
 
@@ -99,7 +101,8 @@ extension RaceDatabase {
         KnownRace(name: "Cape Wrath Ultra", shortName: nil, distanceKm: 400, elevationGainM: 11000,
                   elevationLossM: 11000, country: "UK", nextEditionDate: _d(2026, 5, 16), terrainDifficulty: .moderate),
         KnownRace(name: "Highland Fling 53M", shortName: nil, distanceKm: 86, elevationGainM: 2700,
-                  elevationLossM: 2700, country: "UK", nextEditionDate: _d(2026, 4, 25), terrainDifficulty: .moderate),
+                  elevationLossM: 2700, country: "UK", nextEditionDate: _d(2026, 4, 25), terrainDifficulty: .moderate,
+                  gpxAssetName: "highland-fling"),
         KnownRace(name: "Ring of Fire 135M", shortName: nil, distanceKm: 217, elevationGainM: 8500,
                   elevationLossM: 8500, country: "UK", nextEditionDate: _d(2026, 8, 28), terrainDifficulty: .moderate),
 
@@ -127,7 +130,8 @@ extension RaceDatabase {
         KnownRace(name: "Rennsteig Supermarathon 73K", shortName: nil, distanceKm: 73, elevationGainM: 1600,
                   elevationLossM: 1600, country: "Germany", nextEditionDate: _d(2026, 5, 16), terrainDifficulty: .easy),
         KnownRace(name: "Transalpine Run (8 stages)", shortName: nil, distanceKm: 260, elevationGainM: 15000,
-                  elevationLossM: 15000, country: "Austria", nextEditionDate: _d(2026, 9, 5), terrainDifficulty: .technical),
+                  elevationLossM: 15000, country: "Austria", nextEditionDate: _d(2026, 9, 5), terrainDifficulty: .technical,
+                  gpxAssetName: "transalpine-run"),
 
         // MARK: Iceland, Greece, Turkey
 

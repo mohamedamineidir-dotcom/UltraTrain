@@ -24,13 +24,16 @@ extension RaceDatabase {
         KnownRace(name: "HURT 100", shortName: nil, distanceKm: 161, elevationGainM: 7500,
                   elevationLossM: 7500, country: "USA", nextEditionDate: _d(2026, 1, 17), terrainDifficulty: .technical),
         KnownRace(name: "Wasatch 100", shortName: nil, distanceKm: 161, elevationGainM: 7315,
-                  elevationLossM: 7102, country: "USA", nextEditionDate: _d(2026, 9, 4), terrainDifficulty: .moderate),
+                  elevationLossM: 7102, country: "USA", nextEditionDate: _d(2026, 9, 4), terrainDifficulty: .moderate,
+                  gpxAssetName: "wasatch-100"),
         KnownRace(name: "Bear 100", shortName: nil, distanceKm: 161, elevationGainM: 6700,
-                  elevationLossM: 6700, country: "USA", nextEditionDate: _d(2026, 9, 25), terrainDifficulty: .moderate),
+                  elevationLossM: 6700, country: "USA", nextEditionDate: _d(2026, 9, 25), terrainDifficulty: .moderate,
+                  gpxAssetName: "bear-100"),
         KnownRace(name: "Superior 100", shortName: nil, distanceKm: 161, elevationGainM: 6000,
                   elevationLossM: 6000, country: "USA", nextEditionDate: _d(2026, 9, 11), terrainDifficulty: .moderate),
         KnownRace(name: "Angeles Crest 100", shortName: nil, distanceKm: 161, elevationGainM: 6400,
-                  elevationLossM: 6400, country: "USA", nextEditionDate: _d(2026, 8, 1), terrainDifficulty: .moderate),
+                  elevationLossM: 6400, country: "USA", nextEditionDate: _d(2026, 8, 1), terrainDifficulty: .moderate,
+                  gpxAssetName: "angeles-crest-100"),
         KnownRace(name: "Run Rabbit Run 100", shortName: nil, distanceKm: 161, elevationGainM: 6000,
                   elevationLossM: 6000, country: "USA", nextEditionDate: _d(2026, 9, 18), terrainDifficulty: .moderate),
         KnownRace(name: "Pine Creek 100", shortName: nil, distanceKm: 161, elevationGainM: 6900,
@@ -52,7 +55,8 @@ extension RaceDatabase {
         KnownRace(name: "Kettle Moraine 100", shortName: nil, distanceKm: 161, elevationGainM: 2800,
                   elevationLossM: 2800, country: "USA", nextEditionDate: _d(2026, 6, 6), terrainDifficulty: .easy),
         KnownRace(name: "San Diego 100", shortName: nil, distanceKm: 161, elevationGainM: 6200,
-                  elevationLossM: 6200, country: "USA", nextEditionDate: _d(2026, 6, 6), terrainDifficulty: .moderate),
+                  elevationLossM: 6200, country: "USA", nextEditionDate: _d(2026, 6, 6), terrainDifficulty: .moderate,
+                  gpxAssetName: "san-diego-100"),
 
         // MARK: USA, 200+ Milers
 
@@ -89,7 +93,8 @@ extension RaceDatabase {
         KnownRace(name: "Georgia Death Race 68M", shortName: nil, distanceKm: 109, elevationGainM: 5100,
                   elevationLossM: 5100, country: "USA", nextEditionDate: _d(2026, 3, 14), terrainDifficulty: .moderate),
         KnownRace(name: "Chuckanut 50K", shortName: nil, distanceKm: 50, elevationGainM: 2000,
-                  elevationLossM: 2000, country: "USA", nextEditionDate: _d(2026, 3, 21), terrainDifficulty: .moderate),
+                  elevationLossM: 2000, country: "USA", nextEditionDate: _d(2026, 3, 21), terrainDifficulty: .moderate,
+                  gpxAssetName: "chuckanut-50k"),
         KnownRace(name: "Lake Sonoma 50M", shortName: nil, distanceKm: 80, elevationGainM: 3000,
                   elevationLossM: 3000, country: "USA", nextEditionDate: _d(2026, 4, 11), terrainDifficulty: .moderate),
         KnownRace(name: "Gorge Waterfalls 100K", shortName: nil, distanceKm: 100, elevationGainM: 4600,
@@ -97,7 +102,8 @@ extension RaceDatabase {
         KnownRace(name: "Broken Arrow Skyrace 52K", shortName: nil, distanceKm: 52, elevationGainM: 3200,
                   elevationLossM: 3200, country: "USA", nextEditionDate: _d(2026, 6, 20), terrainDifficulty: .technical),
         KnownRace(name: "Speedgoat 50K", shortName: nil, distanceKm: 50, elevationGainM: 3400,
-                  elevationLossM: 3400, country: "USA", nextEditionDate: _d(2026, 7, 25), terrainDifficulty: .technical),
+                  elevationLossM: 3400, country: "USA", nextEditionDate: _d(2026, 7, 25), terrainDifficulty: .technical,
+                  gpxAssetName: "speedgoat-50k"),
 
         // MARK: Canada
 

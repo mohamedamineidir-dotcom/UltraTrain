@@ -54,7 +54,8 @@ extension RaceDatabase {
         KnownRace(name: "Western States 100", shortName: "WSER",
                   distanceKm: 161, elevationGainM: 5500, elevationLossM: 7000, country: "USA",
                   nextEditionDate: _d(2026, 6, 27), terrainDifficulty: .moderate,
-                  maxElevationM: 2667, polesAllowed: false),
+                  maxElevationM: 2667, polesAllowed: false,
+                  gpxAssetName: "wser-100"),
 
         // MARK: Ultra-Trail Cape Town (South Africa)
 
@@ -137,13 +138,16 @@ extension RaceDatabase {
 
         KnownRace(name: "Ultra-Trail Australia 100K", shortName: "UTA 100",
                   distanceKm: 100, elevationGainM: 4400, elevationLossM: 4400, country: "Australia",
-                  nextEditionDate: _d(2026, 5, 16), terrainDifficulty: .moderate),
+                  nextEditionDate: _d(2026, 5, 16), terrainDifficulty: .moderate,
+                  gpxAssetName: "uta-100k"),
         KnownRace(name: "Ultra-Trail Australia 50K", shortName: "UTA 50",
                   distanceKm: 50, elevationGainM: 2400, elevationLossM: 2400, country: "Australia",
-                  nextEditionDate: _d(2026, 5, 16), terrainDifficulty: .moderate),
+                  nextEditionDate: _d(2026, 5, 16), terrainDifficulty: .moderate,
+                  gpxAssetName: "uta-50k"),
         KnownRace(name: "Ultra-Trail Australia 22K", shortName: "UTA 22",
                   distanceKm: 22, elevationGainM: 1200, elevationLossM: 1090, country: "Australia",
-                  nextEditionDate: _d(2026, 5, 16), terrainDifficulty: .moderate),
+                  nextEditionDate: _d(2026, 5, 16), terrainDifficulty: .moderate,
+                  gpxAssetName: "uta-22k"),
 
         // MARK: MIUT Madeira (Portugal)
 
@@ -216,14 +220,16 @@ extension RaceDatabase {
         KnownRace(name: "Trail Verbier St-Bernard X-Alpine", shortName: "TVSB X-Alpine",
                   distanceKm: 111, elevationGainM: 8300, elevationLossM: 8300, country: "Switzerland",
                   nextEditionDate: _d(2026, 7, 11), terrainDifficulty: .technical,
-                  polesAllowed: true),
+                  polesAllowed: true,
+                  gpxAssetName: "verbier-xalpine"),
 
         // MARK: Gore-Tex Transalpine Run — Sep 5, 2026
 
         KnownRace(name: "Gore-Tex Transalpine Run", shortName: "Transalpine",
                   distanceKm: 250, elevationGainM: 16000, elevationLossM: 16000, country: "Germany",
                   nextEditionDate: _d(2026, 9, 5), terrainDifficulty: .technical,
-                  polesAllowed: true),
+                  polesAllowed: true,
+                  gpxAssetName: "transalpine-run"),
 
         // MARK: Cortina Trail (Italy) — Jun 26, 2026
 
@@ -259,10 +265,12 @@ extension RaceDatabase {
                   maxElevationM: 3840),
         KnownRace(name: "Wasatch Front 100", shortName: "Wasatch 100",
                   distanceKm: 161, elevationGainM: 7900, elevationLossM: 7900, country: "USA",
-                  nextEditionDate: _d(2026, 9, 11), terrainDifficulty: .technical),
+                  nextEditionDate: _d(2026, 9, 11), terrainDifficulty: .technical,
+                  gpxAssetName: "wasatch-100"),
         KnownRace(name: "Bear 100", shortName: "Bear 100",
                   distanceKm: 161, elevationGainM: 6700, elevationLossM: 7100, country: "USA",
-                  nextEditionDate: _d(2026, 9, 25), terrainDifficulty: .technical),
+                  nextEditionDate: _d(2026, 9, 25), terrainDifficulty: .technical,
+                  gpxAssetName: "bear-100"),
         KnownRace(name: "JFK 50 Mile", shortName: "JFK 50",
                   distanceKm: 80, elevationGainM: 1200, elevationLossM: 1200, country: "USA",
                   nextEditionDate: _d(2026, 11, 21), terrainDifficulty: .easy),
@@ -271,7 +279,8 @@ extension RaceDatabase {
                   nextEditionDate: _d(2026, 1, 10), terrainDifficulty: .moderate),
         KnownRace(name: "Chuckanut 50K", shortName: "Chuckanut",
                   distanceKm: 50, elevationGainM: 1700, elevationLossM: 1700, country: "USA",
-                  nextEditionDate: _d(2026, 3, 21), terrainDifficulty: .moderate),
+                  nextEditionDate: _d(2026, 3, 21), terrainDifficulty: .moderate,
+                  gpxAssetName: "chuckanut-50k"),
 
         // MARK: Asia-Pacific ultras outside the UTMB calendar
 
@@ -284,10 +293,12 @@ extension RaceDatabase {
         KnownRace(name: "Northburn 100 Miler", shortName: "Northburn 100M",
                   distanceKm: 161, elevationGainM: 10000, elevationLossM: 10000, country: "New Zealand",
                   nextEditionDate: _d(2026, 3, 21), terrainDifficulty: .technical,
-                  polesAllowed: true),
+                  polesAllowed: true,
+                  gpxAssetName: "northburn-100m"),
         KnownRace(name: "Northburn 100K", shortName: "Northburn 100K",
                   distanceKm: 100, elevationGainM: 6000, elevationLossM: 6000, country: "New Zealand",
-                  nextEditionDate: _d(2026, 3, 21), terrainDifficulty: .technical),
+                  nextEditionDate: _d(2026, 3, 21), terrainDifficulty: .technical,
+                  gpxAssetName: "northburn-100k"),
         KnownRace(name: "Northburn 50K", shortName: "Northburn 50K",
                   distanceKm: 50, elevationGainM: 2600, elevationLossM: 2600, country: "New Zealand",
                   nextEditionDate: _d(2026, 3, 21), terrainDifficulty: .technical),
