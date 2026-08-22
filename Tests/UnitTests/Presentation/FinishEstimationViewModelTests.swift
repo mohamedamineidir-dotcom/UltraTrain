@@ -174,4 +174,74 @@ struct FinishEstimationViewModelTests {
 
         #expect(vm.isLoading == false)
     }
+
+    // MARK: - Known-race course backfill
+
+    @Test("A race matching a known race with a bundled GPX gets its course backfilled on load")
+    @MainActor
+    func loadBackfillsKnownRaceCourse() async {
+        var race = makeRace()
+        race.name = "Oman by UTMB 50K"
+        race.checkpoints = []
+        // courseRoute defaults to [] — no course on file yet, matching a
+        // race added before this feature shipped, or one whose name
+        // matches a known race without ever going through the
+        // autocomplete selection that would populate it at creation.
+
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let runRepo = MockRunRepository()
+        runRepo.runs = [makeRun()]
+        let raceRepo = MockRaceRepository()
+        raceRepo.races = [race]
+        let estimator = MockEstimateFinishTimeUseCase()
+        estimator.resultEstimate = makeEstimate(raceId: race.id)
+
+        let vm = makeViewModel(race: race, estimator: estimator, athleteRepo: athleteRepo, runRepo: runRepo, raceRepo: raceRepo)
+        await vm.load()
+
+        #expect(vm.race.hasCourseRoute == true)
+        #expect(raceRepo.savedRace?.courseRoute.isEmpty == false)
+    }
+
+    @Test("A race not matching any known race is left without a course")
+    @MainActor
+    func loadDoesNotBackfillUnmatchedRace() async {
+        let race = makeRace() // name: "Test Ultra" — not in RaceDatabase
+
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let runRepo = MockRunRepository()
+        runRepo.runs = [makeRun()]
+        let estimator = MockEstimateFinishTimeUseCase()
+        estimator.resultEstimate = makeEstimate(raceId: race.id)
+
+        let vm = makeViewModel(race: race, estimator: estimator, athleteRepo: athleteRepo, runRepo: runRepo)
+        await vm.load()
+
+        #expect(vm.race.hasCourseRoute == false)
+    }
+
+    @Test("A race that already has a course route is not touched by backfill")
+    @MainActor
+    func loadSkipsBackfillWhenCourseAlreadyExists() async {
+        var race = makeRace()
+        race.name = "Oman by UTMB 50K"
+        let existingPoint = TrackPoint(latitude: 1, longitude: 1, altitudeM: 100, timestamp: .now, heartRate: nil)
+        race.courseRoute = [existingPoint, existingPoint]
+
+        let athleteRepo = MockAthleteRepository()
+        athleteRepo.savedAthlete = makeAthlete()
+        let runRepo = MockRunRepository()
+        runRepo.runs = [makeRun()]
+        let raceRepo = MockRaceRepository()
+        raceRepo.races = [race]
+        let estimator = MockEstimateFinishTimeUseCase()
+        estimator.resultEstimate = makeEstimate(raceId: race.id)
+
+        let vm = makeViewModel(race: race, estimator: estimator, athleteRepo: athleteRepo, runRepo: runRepo, raceRepo: raceRepo)
+        await vm.load()
+
+        #expect(raceRepo.savedRace == nil, "updateRace should never be called when the race already has a course")
+    }
 }

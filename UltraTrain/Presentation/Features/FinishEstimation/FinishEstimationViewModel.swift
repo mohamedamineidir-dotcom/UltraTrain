@@ -75,6 +75,8 @@ final class FinishEstimationViewModel {
             athleteTrainingPhilosophy = athlete.trainingPhilosophy
             athletePreferredRunsPerWeek = athlete.preferredRunsPerWeek
 
+            await backfillKnownCourseIfNeeded()
+
             // Day-0 prediction: athletes get a credible estimate from
             // their PBs alone before logging any training. The estimator
             // builds the pace anchor from runs when available, falls
@@ -108,6 +110,44 @@ final class FinishEstimationViewModel {
         }
 
         isLoading = false
+    }
+
+    // MARK: - Known-race course backfill
+
+    /// Fills in a real course route from the known-race database by
+    /// matching on race NAME — the only path available for a race that
+    /// already exists (created before this feature shipped, added during
+    /// onboarding, or added without going through the autocomplete
+    /// selection that would normally trigger this at creation time). Runs
+    /// on every `load()` but is a no-op once the race already has a
+    /// course, so it only ever does real work once per race.
+    private func backfillKnownCourseIfNeeded() async {
+        guard !race.hasCourseRoute else { return }
+        guard let match = RaceDatabase.races.first(where: { $0.name == race.name && $0.gpxAssetName != nil }),
+              let assetName = match.gpxAssetName,
+              let result = KnownRaceCourseLoader.loadCourse(assetName: assetName) else { return }
+
+        var updated = race
+        updated.distanceKm = result.distanceKm
+        updated.elevationGainM = result.elevationGainM
+        updated.elevationLossM = result.elevationLossM
+        updated.checkpoints = result.checkpoints
+        updated.courseRoute = result.courseRoute
+        do {
+            try await raceRepository.updateRace(updated)
+            race = updated
+        } catch {
+            Logger.training.warning("Failed to persist backfilled known-race course: \(error)")
+        }
+    }
+
+    /// Adopts a race whose course was just (re-)imported from the Course
+    /// tab — the child view already persisted it via `raceRepository`, so
+    /// this just adopts the new distance/elevation locally and re-estimates,
+    /// same as `updateGoal` does after a goal change.
+    func applyCourseUpdate(_ updatedRace: Race) async {
+        race = updatedRace
+        await load()
     }
 
     // MARK: - Goal adjustment

@@ -29,7 +29,10 @@ extension FinishEstimationView {
                     experience: viewModel.athleteExperience,
                     trainingPhilosophy: viewModel.athleteTrainingPhilosophy,
                     preferredRunsPerWeek: viewModel.athletePreferredRunsPerWeek,
-                    raceRepository: raceRepository
+                    raceRepository: raceRepository,
+                    onCourseUpdated: { updatedRace in
+                        Task { await viewModel.applyCourseUpdate(updatedRace) }
+                    }
                 )
             } label: {
                 scenarioCardsBody(estimate, showsChartCue: true)

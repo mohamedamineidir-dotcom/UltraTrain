@@ -8,6 +8,11 @@ struct FinishTimeEvolutionView: View {
     var trainingPhilosophy: TrainingPhilosophy = .balanced
     var preferredRunsPerWeek: Int = 5
     let raceRepository: any RaceRepository
+    /// Notifies the parent screen after a course (re-)import so its
+    /// finish-time estimate is recalculated against the new distance/
+    /// elevation — relevant when an organizer changes a course after the
+    /// athlete already imported or matched one.
+    var onCourseUpdated: ((Race) -> Void)?
 
     @Environment(\.colorScheme) private var colorScheme
     @State private var selectedWeek: Int?
@@ -78,22 +83,57 @@ struct FinishTimeEvolutionView: View {
     @ViewBuilder
     private var courseSection: some View {
         if !effectiveCourseRoute.isEmpty {
-            InteractiveCourseProfileView(
-                viewModel: InteractiveCourseProfileViewModel(
-                    courseRoute: effectiveCourseRoute,
-                    checkpoints: effectiveCheckpoints,
-                    scenarioTimes: (
-                        optimistic: estimate.optimisticTime,
-                        expected: estimate.expectedTime,
-                        conservative: estimate.conservativeTime
+            VStack(spacing: Theme.Spacing.sm) {
+                InteractiveCourseProfileView(
+                    viewModel: InteractiveCourseProfileViewModel(
+                        courseRoute: effectiveCourseRoute,
+                        checkpoints: effectiveCheckpoints,
+                        scenarioTimes: (
+                            optimistic: estimate.optimisticTime,
+                            expected: estimate.expectedTime,
+                            conservative: estimate.conservativeTime
+                        )
                     )
                 )
-            )
+
+                changeGPXButton
+
+                if let importError {
+                    Text(importError)
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.danger)
+                        .multilineTextAlignment(.center)
+                }
+            }
             .padding(Theme.Spacing.md)
             .futuristicGlassStyle(phaseTint: primaryTint)
+            .courseImportSheets(
+                showDocumentPicker: $showDocumentPicker,
+                showImportCourse: $showImportCourse,
+                importedFileURL: $importedFileURL,
+                onImported: applyImportedCourse
+            )
         } else {
             courseEmptyState
         }
+    }
+
+    /// Lets the athlete replace an already-matched or already-imported
+    /// course — organizers sometimes shorten/lengthen a route close to
+    /// race day, and the athlete needs a way to reflect that without
+    /// leaving this screen.
+    private var changeGPXButton: some View {
+        Button {
+            showDocumentPicker = true
+        } label: {
+            Label(
+                String(localized: "fte.course.changeButton", defaultValue: "Change GPX file"),
+                systemImage: "arrow.triangle.2.circlepath"
+            )
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(cardSubLabel)
+        }
+        .accessibilityIdentifier("fte.course.changeButton")
     }
 
     private var courseEmptyState: some View {
@@ -137,33 +177,36 @@ struct FinishTimeEvolutionView: View {
         .frame(maxWidth: .infinity)
         .padding(Theme.Spacing.xl)
         .futuristicGlassStyle(phaseTint: primaryTint)
-        .sheet(isPresented: $showDocumentPicker) {
-            DocumentPicker(contentTypes: [.xml]) { url in
-                importedFileURL = url
-                showDocumentPicker = false
-                showImportCourse = true
-            }
-        }
-        .sheet(isPresented: $showImportCourse) {
-            if let url = importedFileURL {
-                ImportCourseView(fileURL: url) { result in
-                    applyImportedCourse(result)
-                }
-            }
-        }
+        .courseImportSheets(
+            showDocumentPicker: $showDocumentPicker,
+            showImportCourse: $showImportCourse,
+            importedFileURL: $importedFileURL,
+            onImported: applyImportedCourse
+        )
     }
 
+    /// Applies a freshly parsed GPX — whether this is the first course for
+    /// this race or a replacement for one the organizer changed. Distance/
+    /// elevation are synced from the parsed course (not just the route
+    /// polyline) so a shortened/lengthened course also updates the race's
+    /// own stats, which is what feeds the finish-time estimate; the parent
+    /// screen is then notified so it can recalculate against the new
+    /// numbers instead of showing a stale estimate.
     private func applyImportedCourse(_ result: CourseImportResult) {
         importedCourseRoute = result.courseRoute
         importedCheckpoints = result.checkpoints
         importError = nil
 
         var updatedRace = race
+        updatedRace.distanceKm = result.distanceKm
+        updatedRace.elevationGainM = result.elevationGainM
+        updatedRace.elevationLossM = result.elevationLossM
         updatedRace.courseRoute = result.courseRoute
         updatedRace.checkpoints = result.checkpoints
         Task {
             do {
                 try await raceRepository.updateRace(updatedRace)
+                onCourseUpdated?(updatedRace)
             } catch {
                 importError = String(
                     format: String(localized: "fte.course.saveFailed", defaultValue: "Course imported but couldn't be saved: %@"),
@@ -911,4 +954,48 @@ struct EvolutionPoint: Identifiable {
     let optimisticSeconds: TimeInterval
     let conservativeSeconds: TimeInterval
     var id: Int { week }
+}
+
+/// The document-picker → GPX-import sheet flow, shared by the empty state
+/// (first course for this race) and the "Change GPX file" button (organizer
+/// replaced an already-matched or already-imported course).
+private struct CourseImportSheets: ViewModifier {
+    @Binding var showDocumentPicker: Bool
+    @Binding var showImportCourse: Bool
+    @Binding var importedFileURL: URL?
+    let onImported: (CourseImportResult) -> Void
+
+    func body(content: Content) -> some View {
+        content
+            .sheet(isPresented: $showDocumentPicker) {
+                DocumentPicker(contentTypes: [.xml]) { url in
+                    importedFileURL = url
+                    showDocumentPicker = false
+                    showImportCourse = true
+                }
+            }
+            .sheet(isPresented: $showImportCourse) {
+                if let url = importedFileURL {
+                    ImportCourseView(fileURL: url) { result in
+                        onImported(result)
+                    }
+                }
+            }
+    }
+}
+
+private extension View {
+    func courseImportSheets(
+        showDocumentPicker: Binding<Bool>,
+        showImportCourse: Binding<Bool>,
+        importedFileURL: Binding<URL?>,
+        onImported: @escaping (CourseImportResult) -> Void
+    ) -> some View {
+        modifier(CourseImportSheets(
+            showDocumentPicker: showDocumentPicker,
+            showImportCourse: showImportCourse,
+            importedFileURL: importedFileURL,
+            onImported: onImported
+        ))
+    }
 }

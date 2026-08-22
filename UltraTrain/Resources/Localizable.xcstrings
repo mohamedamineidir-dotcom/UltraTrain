@@ -12075,6 +12075,23 @@
         }
       }
     },
+    "fte.course.changeButton" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change GPX file"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changer le fichier GPX"
+          }
+        }
+      }
+    },
     "fte.course.importButton" : {
       "extractionState" : "manual",
       "localizations" : {

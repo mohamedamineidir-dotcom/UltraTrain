@@ -84,9 +84,11 @@ extension RaceDatabase {
         // MARK: Oman
 
         KnownRace(name: "Oman by UTMB Hajar Ultra 154K", shortName: "UTMB Oman", distanceKm: 154, elevationGainM: 8000,
-                  elevationLossM: 8000, country: "Oman", nextEditionDate: _d(2026, 12, 10), terrainDifficulty: .technical),
+                  elevationLossM: 8000, country: "Oman", nextEditionDate: _d(2026, 12, 10), terrainDifficulty: .technical,
+                  gpxAssetName: "oman-by-utmb-hajar-154k"),
         KnownRace(name: "Oman by UTMB Jabal Classic 103K", shortName: nil, distanceKm: 103, elevationGainM: 5000,
-                  elevationLossM: 5000, country: "Oman", nextEditionDate: _d(2026, 12, 10), terrainDifficulty: .moderate),
+                  elevationLossM: 5000, country: "Oman", nextEditionDate: _d(2026, 12, 10), terrainDifficulty: .moderate,
+                  gpxAssetName: "oman-by-utmb-jabal-103k"),
         KnownRace(name: "Oman by UTMB 50K", shortName: nil, distanceKm: 50, elevationGainM: 2500,
                   elevationLossM: 2500, country: "Oman", nextEditionDate: _d(2026, 12, 11), terrainDifficulty: .moderate,
                   gpxAssetName: "oman-by-utmb-50k"),
