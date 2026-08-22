@@ -18,6 +18,12 @@ struct KnownRace: Identifiable, Sendable {
     /// Whether trekking poles are allowed. Optional, when true, the
     /// plan surfaces a pole-training cue. Nil = unknown / unspecified.
     let polesAllowed: Bool?
+    /// Filename (without extension) of a bundled GPX course file in
+    /// `UltraTrain/Resources/RaceCourses/`, for the small set of known
+    /// races we've sourced a real, official course file for. Nil for
+    /// the vast majority of races — the athlete's own GPX upload
+    /// (Course tab / Edit Race) is the primary path.
+    let gpxAssetName: String?
 
     init(
         name: String,
@@ -30,7 +36,8 @@ struct KnownRace: Identifiable, Sendable {
         terrainDifficulty: TerrainDifficulty,
         raceType: RaceType = .trail,
         maxElevationM: Double? = nil,
-        polesAllowed: Bool? = nil
+        polesAllowed: Bool? = nil,
+        gpxAssetName: String? = nil
     ) {
         self.name = name
         self.shortName = shortName
@@ -43,5 +50,6 @@ struct KnownRace: Identifiable, Sendable {
         self.raceType = raceType
         self.maxElevationM = maxElevationM
         self.polesAllowed = polesAllowed
+        self.gpxAssetName = gpxAssetName
     }
 }

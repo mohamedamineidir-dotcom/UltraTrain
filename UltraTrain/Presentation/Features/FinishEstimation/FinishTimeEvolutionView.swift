@@ -7,14 +7,35 @@ struct FinishTimeEvolutionView: View {
     let experience: ExperienceLevel
     var trainingPhilosophy: TrainingPhilosophy = .balanced
     var preferredRunsPerWeek: Int = 5
+    let raceRepository: any RaceRepository
 
     @Environment(\.colorScheme) private var colorScheme
     @State private var selectedWeek: Int?
     @State private var selectedTab: EvolutionTab = .evolution
 
+    // MARK: - Direct course import (Course tab)
+    // A race not already carrying a course route (no known-race GPX match,
+    // athlete hasn't imported one via Edit Race) can import one right here
+    // instead of needing to leave this screen — the whole point of this
+    // tab is to see the course, so that's also where importing one lives.
+    @State private var importedCourseRoute: [TrackPoint] = []
+    @State private var importedCheckpoints: [Checkpoint] = []
+    @State private var showDocumentPicker = false
+    @State private var showImportCourse = false
+    @State private var importedFileURL: URL?
+    @State private var importError: String?
+
     private enum EvolutionTab: String, CaseIterable {
         case evolution = "fte.tab.evolution"
         case course = "fte.tab.course"
+    }
+
+    private var effectiveCourseRoute: [TrackPoint] {
+        importedCourseRoute.isEmpty ? race.courseRoute : importedCourseRoute
+    }
+
+    private var effectiveCheckpoints: [Checkpoint] {
+        importedCourseRoute.isEmpty ? race.checkpoints : importedCheckpoints
     }
 
     var body: some View {
@@ -56,11 +77,11 @@ struct FinishTimeEvolutionView: View {
 
     @ViewBuilder
     private var courseSection: some View {
-        if race.hasCourseRoute {
+        if !effectiveCourseRoute.isEmpty {
             InteractiveCourseProfileView(
                 viewModel: InteractiveCourseProfileViewModel(
-                    courseRoute: race.courseRoute,
-                    checkpoints: race.checkpoints,
+                    courseRoute: effectiveCourseRoute,
+                    checkpoints: effectiveCheckpoints,
                     scenarioTimes: (
                         optimistic: estimate.optimisticTime,
                         expected: estimate.expectedTime,
@@ -76,7 +97,7 @@ struct FinishTimeEvolutionView: View {
     }
 
     private var courseEmptyState: some View {
-        VStack(spacing: Theme.Spacing.sm) {
+        VStack(spacing: Theme.Spacing.md) {
             Image(systemName: "map")
                 .font(.system(size: 32))
                 .foregroundStyle(primaryTint.opacity(0.7))
@@ -84,15 +105,72 @@ struct FinishTimeEvolutionView: View {
                 .font(.headline)
                 .foregroundStyle(cardLabel)
             Text(String(localized: "fte.course.emptyMessage",
-                        defaultValue: "Add this race's GPX file from Edit Race to unlock detailed, scrubbable splits along the exact course."))
+                        defaultValue: "Import this race's GPX file to unlock detailed, scrubbable splits along the exact course."))
                 .font(.subheadline)
                 .foregroundStyle(cardSubLabel)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
+
+            Button {
+                showDocumentPicker = true
+            } label: {
+                Label(
+                    String(localized: "fte.course.importButton", defaultValue: "Import Course GPX"),
+                    systemImage: "arrow.down.doc"
+                )
+                .font(.subheadline.bold())
+                .padding(.horizontal, Theme.Spacing.md)
+                .padding(.vertical, Theme.Spacing.sm)
+                .background(Capsule().fill(primaryTint))
+                .foregroundStyle(.white)
+            }
+            .padding(.top, Theme.Spacing.xs)
+            .accessibilityIdentifier("fte.course.importButton")
+
+            if let importError {
+                Text(importError)
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.danger)
+                    .multilineTextAlignment(.center)
+            }
         }
         .frame(maxWidth: .infinity)
         .padding(Theme.Spacing.xl)
         .futuristicGlassStyle(phaseTint: primaryTint)
+        .sheet(isPresented: $showDocumentPicker) {
+            DocumentPicker(contentTypes: [.xml]) { url in
+                importedFileURL = url
+                showDocumentPicker = false
+                showImportCourse = true
+            }
+        }
+        .sheet(isPresented: $showImportCourse) {
+            if let url = importedFileURL {
+                ImportCourseView(fileURL: url) { result in
+                    applyImportedCourse(result)
+                }
+            }
+        }
+    }
+
+    private func applyImportedCourse(_ result: CourseImportResult) {
+        importedCourseRoute = result.courseRoute
+        importedCheckpoints = result.checkpoints
+        importError = nil
+
+        var updatedRace = race
+        updatedRace.courseRoute = result.courseRoute
+        updatedRace.checkpoints = result.checkpoints
+        Task {
+            do {
+                try await raceRepository.updateRace(updatedRace)
+            } catch {
+                importError = String(
+                    format: String(localized: "fte.course.saveFailed", defaultValue: "Course imported but couldn't be saved: %@"),
+                    error.localizedDescription
+                )
+            }
+        }
     }
 
     // MARK: - Background

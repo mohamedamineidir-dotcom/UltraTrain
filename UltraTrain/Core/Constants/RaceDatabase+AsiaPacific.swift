@@ -88,6 +88,7 @@ extension RaceDatabase {
         KnownRace(name: "Oman by UTMB Jabal Classic 103K", shortName: nil, distanceKm: 103, elevationGainM: 5000,
                   elevationLossM: 5000, country: "Oman", nextEditionDate: _d(2026, 12, 10), terrainDifficulty: .moderate),
         KnownRace(name: "Oman by UTMB 50K", shortName: nil, distanceKm: 50, elevationGainM: 2500,
-                  elevationLossM: 2500, country: "Oman", nextEditionDate: _d(2026, 12, 11), terrainDifficulty: .moderate),
+                  elevationLossM: 2500, country: "Oman", nextEditionDate: _d(2026, 12, 11), terrainDifficulty: .moderate,
+                  gpxAssetName: "oman-by-utmb-50k"),
     ]
 }

@@ -10325,6 +10325,9 @@
         }
       }
     },
+    "Evolution Tab" : {
+
+    },
     "Exact amount" : {
       "localizations" : {
         "fr" : {
@@ -12038,6 +12041,74 @@
         }
       }
     },
+    "fte.course.emptyMessage" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import this race's GPX file to unlock detailed, scrubbable splits along the exact course."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importe le fichier GPX de cette course pour débloquer des allures détaillées, consultables le long du parcours exact."
+          }
+        }
+      }
+    },
+    "fte.course.emptyTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No course profile yet"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas encore de profil de parcours"
+          }
+        }
+      }
+    },
+    "fte.course.importButton" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import Course GPX"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importer le GPX du parcours"
+          }
+        }
+      }
+    },
+    "fte.course.saveFailed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Course imported but couldn't be saved: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parcours importé mais impossible à enregistrer : %@"
+          }
+        }
+      }
+    },
     "fte.dragHint" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -12179,40 +12250,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aujourd'hui"
-          }
-        }
-      }
-    },
-    "fte.course.emptyMessage" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add this race's GPX file from Edit Race to unlock detailed, scrubbable splits along the exact course."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajoute le fichier GPX de cette course depuis Modifier la course pour débloquer des allures détaillées, consultables le long du parcours exact."
-          }
-        }
-      }
-    },
-    "fte.course.emptyTitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No course profile yet"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas encore de profil de parcours"
           }
         }
       }
@@ -15120,9 +15157,6 @@
           }
         }
       }
-    },
-    "If you have an ITRA or UTMB index, add it here — it sharpens your finish-time predictions with independent racing history." : {
-
     },
     "If you stick with the plan, your projected finish time evolves like this:" : {
       "extractionState" : "stale",
@@ -22384,9 +22418,6 @@
       }
     },
     "Optional" : {
-
-    },
-    "Optional — most runners don't have one yet. Skip and add it later from Settings, or after your race." : {
 
     },
     "Optional notes" : {
@@ -54832,9 +54863,6 @@
           }
         }
       }
-    },
-    "Your Racing Index" : {
-
     },
     "Your Referral Code" : {
       "localizations" : {

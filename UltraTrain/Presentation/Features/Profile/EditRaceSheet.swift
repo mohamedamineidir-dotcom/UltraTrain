@@ -303,6 +303,13 @@ struct EditRaceSheet: View {
                     if let raceDate = race.nextEditionDate, raceDate > Date.now {
                         date = raceDate
                     }
+                    // A known race we've sourced a real course file for —
+                    // load it automatically so the athlete doesn't need
+                    // to find and upload their own GPX.
+                    if let assetName = race.gpxAssetName,
+                       let result = KnownRaceCourseLoader.loadCourse(assetName: assetName) {
+                        applyImportedCourse(result)
+                    }
                 }
                 DatePicker(
                     "Race date",
