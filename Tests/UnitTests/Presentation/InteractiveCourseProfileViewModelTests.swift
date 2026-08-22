@@ -151,4 +151,74 @@ struct InteractiveCourseProfileViewModelTests {
             }
         }
     }
+
+    // MARK: - Split-time projection
+
+    @Test("Without scenario times, hasScenarioTimes is false and no split is projected")
+    @MainActor
+    func noScenarioTimes_noSplitProjected() {
+        let vm = InteractiveCourseProfileViewModel(
+            courseRoute: makeRoute(),
+            checkpoints: makeCheckpoints()
+        )
+        #expect(vm.hasScenarioTimes == false)
+        vm.selectPoint(at: 0.5)
+        #expect(vm.selectedExpectedSplitText == nil)
+    }
+
+    @Test("With scenario times, scrubbing to the start projects zero elapsed time")
+    @MainActor
+    func withScenarioTimes_atStart_projectsZero() {
+        let vm = InteractiveCourseProfileViewModel(
+            courseRoute: makeRoute(),
+            checkpoints: makeCheckpoints(),
+            scenarioTimes: (optimistic: 3600, expected: 4000, conservative: 4400)
+        )
+        #expect(vm.hasScenarioTimes == true)
+        vm.selectPoint(at: 0)
+        #expect(vm.selectedExpectedSplitText == "0h00")
+    }
+
+    @Test("With scenario times, scrubbing to the end projects the full finish time")
+    @MainActor
+    func withScenarioTimes_atEnd_projectsFullTime() {
+        let vm = InteractiveCourseProfileViewModel(
+            courseRoute: makeRoute(),
+            checkpoints: makeCheckpoints(),
+            scenarioTimes: (optimistic: 3600, expected: 7200, conservative: 9000)
+        )
+        vm.selectPoint(at: vm.totalDistanceKm)
+        #expect(vm.selectedExpectedSplitText == "2h00")
+    }
+
+    @Test("Projected split time increases monotonically with distance")
+    @MainActor
+    func splitTime_increasesMonotonicallyWithDistance() throws {
+        let vm = InteractiveCourseProfileViewModel(
+            courseRoute: makeRoute(),
+            checkpoints: makeCheckpoints(),
+            scenarioTimes: (optimistic: 3600, expected: 7200, conservative: 9000)
+        )
+        vm.selectPoint(at: vm.totalDistanceKm * 0.25)
+        let earlySplit = try #require(vm.selectedExpectedSplitText)
+        vm.selectPoint(at: vm.totalDistanceKm * 0.75)
+        let lateSplit = try #require(vm.selectedExpectedSplitText)
+        #expect(earlySplit != lateSplit)
+    }
+
+    @Test("Optimistic split is always faster than or equal to conservative at the same point")
+    @MainActor
+    func optimisticSplit_fasterThanConservative() {
+        let vm = InteractiveCourseProfileViewModel(
+            courseRoute: makeRoute(),
+            checkpoints: makeCheckpoints(),
+            scenarioTimes: (optimistic: 3600, expected: 7200, conservative: 9000)
+        )
+        vm.selectPoint(at: vm.totalDistanceKm * 0.5)
+        guard let split = vm.selectedSplitTimes else {
+            Issue.record("Expected split times to be projected")
+            return
+        }
+        #expect(split.optimistic <= split.conservative)
+    }
 }

@@ -10,13 +10,26 @@ struct FinishTimeEvolutionView: View {
 
     @Environment(\.colorScheme) private var colorScheme
     @State private var selectedWeek: Int?
+    @State private var selectedTab: EvolutionTab = .evolution
+
+    private enum EvolutionTab: String, CaseIterable {
+        case evolution = "fte.tab.evolution"
+        case course = "fte.tab.course"
+    }
 
     var body: some View {
         ScrollView {
             VStack(spacing: Theme.Spacing.lg) {
                 headerCard
-                chartCard
-                statRow
+                tabPicker
+
+                switch selectedTab {
+                case .evolution:
+                    chartCard
+                    statRow
+                case .course:
+                    courseSection
+                }
             }
             .padding(.horizontal, Theme.Spacing.md)
             .padding(.top, Theme.Spacing.sm)
@@ -25,6 +38,61 @@ struct FinishTimeEvolutionView: View {
         .navigationTitle(String(localized: "fte.title", defaultValue: "Time evolution"))
         .navigationBarTitleDisplayMode(.inline)
         .background(backgroundGradient.ignoresSafeArea())
+    }
+
+    // MARK: - Tab Picker
+
+    private var tabPicker: some View {
+        Picker("Evolution Tab", selection: $selectedTab) {
+            ForEach(EvolutionTab.allCases, id: \.self) { tab in
+                Text(LocalizedStringKey(tab.rawValue)).tag(tab)
+            }
+        }
+        .pickerStyle(.segmented)
+        .accessibilityIdentifier("fte.tabPicker")
+    }
+
+    // MARK: - Course Section
+
+    @ViewBuilder
+    private var courseSection: some View {
+        if race.hasCourseRoute {
+            InteractiveCourseProfileView(
+                viewModel: InteractiveCourseProfileViewModel(
+                    courseRoute: race.courseRoute,
+                    checkpoints: race.checkpoints,
+                    scenarioTimes: (
+                        optimistic: estimate.optimisticTime,
+                        expected: estimate.expectedTime,
+                        conservative: estimate.conservativeTime
+                    )
+                )
+            )
+            .padding(Theme.Spacing.md)
+            .futuristicGlassStyle(phaseTint: primaryTint)
+        } else {
+            courseEmptyState
+        }
+    }
+
+    private var courseEmptyState: some View {
+        VStack(spacing: Theme.Spacing.sm) {
+            Image(systemName: "map")
+                .font(.system(size: 32))
+                .foregroundStyle(primaryTint.opacity(0.7))
+            Text(String(localized: "fte.course.emptyTitle", defaultValue: "No course profile yet"))
+                .font(.headline)
+                .foregroundStyle(cardLabel)
+            Text(String(localized: "fte.course.emptyMessage",
+                        defaultValue: "Add this race's GPX file from Edit Race to unlock detailed, scrubbable splits along the exact course."))
+                .font(.subheadline)
+                .foregroundStyle(cardSubLabel)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(Theme.Spacing.xl)
+        .futuristicGlassStyle(phaseTint: primaryTint)
     }
 
     // MARK: - Background

@@ -19,6 +19,11 @@ struct GradientSegment: Identifiable, Equatable, Sendable {
     }
 }
 
+struct EffortProfilePoint: Equatable, Sendable {
+    var distanceKm: Double
+    var cumulativeEffortKm: Double
+}
+
 enum CourseGradientCalculator {
 
     private static let sampleIntervalM: Double = 100
@@ -77,6 +82,52 @@ enum CourseGradientCalculator {
 
         let fraction = (distanceKm - segment.distanceKm) / segmentLength
         return segment.altitudeM + fraction * (segment.endAltitudeM - segment.altitudeM)
+    }
+
+    // MARK: - Cumulative Effort Profile (for split-time projection)
+
+    /// Effort-km accumulated at each segment boundary — the same
+    /// "distance + elevation gain / 100" weighting
+    /// `FinishTimeEstimator.calculateCheckpointSplits` already uses to
+    /// allocate a known total time across checkpoints, generalized to
+    /// every 100m sample along the course instead of only at named
+    /// checkpoints, so a split time can be read off at ANY scrubbed
+    /// point, not just at checkpoints.
+    static func buildEffortProfile(from segments: [GradientSegment]) -> [EffortProfilePoint] {
+        guard let first = segments.first else { return [] }
+        var result: [EffortProfilePoint] = [
+            EffortProfilePoint(distanceKm: first.distanceKm, cumulativeEffortKm: 0)
+        ]
+        var cumulative = 0.0
+        for segment in segments {
+            let segmentDistanceKm = segment.endDistanceKm - segment.distanceKm
+            let elevationGain = max(0, segment.endAltitudeM - segment.altitudeM)
+            cumulative += segmentDistanceKm + elevationGain / 100.0
+            result.append(EffortProfilePoint(distanceKm: segment.endDistanceKm, cumulativeEffortKm: cumulative))
+        }
+        return result
+    }
+
+    /// Linearly interpolated cumulative effort-km at an arbitrary
+    /// distance — the effort-side analog of `interpolatedAltitude`.
+    static func interpolatedCumulativeEffort(
+        at distanceKm: Double,
+        in effortProfile: [EffortProfilePoint]
+    ) -> Double? {
+        guard let last = effortProfile.last else { return nil }
+        guard distanceKm > (effortProfile.first?.distanceKm ?? 0) else { return 0 }
+        guard distanceKm < last.distanceKm else { return last.cumulativeEffortKm }
+
+        guard let upperIndex = effortProfile.firstIndex(where: { $0.distanceKm >= distanceKm }),
+              upperIndex > 0 else {
+            return last.cumulativeEffortKm
+        }
+        let prev = effortProfile[upperIndex - 1]
+        let curr = effortProfile[upperIndex]
+        let segmentLength = curr.distanceKm - prev.distanceKm
+        guard segmentLength > 0 else { return prev.cumulativeEffortKm }
+        let fraction = (distanceKm - prev.distanceKm) / segmentLength
+        return prev.cumulativeEffortKm + fraction * (curr.cumulativeEffortKm - prev.cumulativeEffortKm)
     }
 
     // MARK: - Sampling

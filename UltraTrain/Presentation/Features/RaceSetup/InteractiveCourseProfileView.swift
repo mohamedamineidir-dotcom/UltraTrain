@@ -145,11 +145,48 @@ struct InteractiveCourseProfileView: View {
     private var selectionAnnotation: some View {
         if let distText = viewModel.selectedDistanceText,
            let altText = viewModel.selectedAltitudeText {
-            ChartAnnotationCard(
-                title: distText,
-                value: altText,
-                subtitle: viewModel.selectedGradientText
+            VStack(alignment: .leading, spacing: 4) {
+                ChartAnnotationCard(
+                    title: distText,
+                    value: altText,
+                    subtitle: viewModel.selectedGradientText
+                )
+                if viewModel.hasScenarioTimes {
+                    splitTimeAnnotation
+                }
+            }
+        }
+    }
+
+    /// Projected elapsed time at the scrubbed point, one row per
+    /// scenario — same color coding (green/primary/orange) used
+    /// everywhere else optimistic/expected/conservative appear.
+    @ViewBuilder
+    private var splitTimeAnnotation: some View {
+        if let opt = viewModel.selectedOptimisticSplitText,
+           let exp = viewModel.selectedExpectedSplitText,
+           let con = viewModel.selectedConservativeSplitText {
+            VStack(alignment: .leading, spacing: 2) {
+                splitRow(color: Theme.Colors.success, value: opt)
+                splitRow(color: Theme.Colors.primary, value: exp, emphasized: true)
+                splitRow(color: Theme.Colors.warning, value: con)
+            }
+            .padding(.horizontal, Theme.Spacing.sm)
+            .padding(.vertical, Theme.Spacing.xs)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
+                    .fill(.ultraThinMaterial)
+                    .shadow(color: Theme.Colors.shadow, radius: 4, y: 2)
             )
+            .accessibilityHidden(true)
+        }
+    }
+
+    private func splitRow(color: Color, value: String, emphasized: Bool = false) -> some View {
+        HStack(spacing: 4) {
+            Circle().fill(color).frame(width: 5, height: 5)
+            Text(value)
+                .font(.system(size: emphasized ? 11 : 10, weight: emphasized ? .bold : .semibold, design: .monospaced))
         }
     }
 
@@ -168,6 +205,9 @@ struct InteractiveCourseProfileView: View {
             }
             if let segment = viewModel.selectedSegment {
                 infoItem(label: "Terrain", value: categoryLabel(segment.category))
+            }
+            if let expSplit = viewModel.selectedExpectedSplitText {
+                infoItem(label: "Est. Time", value: expSplit)
             }
         }
         .font(.caption2)

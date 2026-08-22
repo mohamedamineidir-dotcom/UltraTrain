@@ -12183,6 +12183,74 @@
         }
       }
     },
+    "fte.course.emptyMessage" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add this race's GPX file from Edit Race to unlock detailed, scrubbable splits along the exact course."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoute le fichier GPX de cette course depuis Modifier la course pour débloquer des allures détaillées, consultables le long du parcours exact."
+          }
+        }
+      }
+    },
+    "fte.course.emptyTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No course profile yet"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas encore de profil de parcours"
+          }
+        }
+      }
+    },
+    "fte.tab.course" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Course"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parcours"
+          }
+        }
+      }
+    },
+    "fte.tab.evolution" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Evolution"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Évolution"
+          }
+        }
+      }
+    },
     "fte.title" : {
       "localizations" : {
         "en" : {

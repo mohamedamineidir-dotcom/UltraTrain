@@ -129,4 +129,64 @@ struct CourseGradientCalculatorTests {
         let result = CourseGradientCalculator.interpolatedAltitude(at: 5.0, in: segments)
         #expect(result == 600)
     }
+
+    // MARK: - buildEffortProfile / interpolatedCumulativeEffort
+
+    @Test("buildEffortProfile with empty segments returns empty")
+    func buildEffortProfile_emptySegments_returnsEmpty() {
+        #expect(CourseGradientCalculator.buildEffortProfile(from: []).isEmpty)
+    }
+
+    @Test("buildEffortProfile on a flat course accumulates distance only")
+    func buildEffortProfile_flatCourse_accumulatesDistanceOnly() {
+        let segments = [
+            GradientSegment(distanceKm: 0, endDistanceKm: 1, altitudeM: 500, endAltitudeM: 500, gradientPercent: 0, category: .flat),
+            GradientSegment(distanceKm: 1, endDistanceKm: 2, altitudeM: 500, endAltitudeM: 500, gradientPercent: 0, category: .flat)
+        ]
+        let profile = CourseGradientCalculator.buildEffortProfile(from: segments)
+        #expect(profile.count == 3)
+        #expect(profile[0].cumulativeEffortKm == 0)
+        #expect(profile[1].cumulativeEffortKm == 1)
+        #expect(profile[2].cumulativeEffortKm == 2)
+    }
+
+    @Test("buildEffortProfile adds elevation gain as extra effort, ignores descent")
+    func buildEffortProfile_climbAndDescent_weightsGainOnly() {
+        let segments = [
+            // 1km, +500m gain → effort = 1 + 500/100 = 6
+            GradientSegment(distanceKm: 0, endDistanceKm: 1, altitudeM: 1000, endAltitudeM: 1500, gradientPercent: 50, category: .steepUp),
+            // 1km, -500m (descent) → effort = 1 + 0 = 1 (no discount for descent either)
+            GradientSegment(distanceKm: 1, endDistanceKm: 2, altitudeM: 1500, endAltitudeM: 1000, gradientPercent: -50, category: .steepDown)
+        ]
+        let profile = CourseGradientCalculator.buildEffortProfile(from: segments)
+        #expect(profile.map(\.cumulativeEffortKm) == [0, 6, 7])
+    }
+
+    @Test("interpolatedCumulativeEffort at the very start is zero")
+    func interpolatedCumulativeEffort_atStart_isZero() {
+        let profile = [
+            EffortProfilePoint(distanceKm: 0, cumulativeEffortKm: 0),
+            EffortProfilePoint(distanceKm: 2, cumulativeEffortKm: 4)
+        ]
+        #expect(CourseGradientCalculator.interpolatedCumulativeEffort(at: 0, in: profile) == 0)
+    }
+
+    @Test("interpolatedCumulativeEffort interpolates linearly mid-segment")
+    func interpolatedCumulativeEffort_midSegment_interpolatesLinearly() throws {
+        let profile = [
+            EffortProfilePoint(distanceKm: 0, cumulativeEffortKm: 0),
+            EffortProfilePoint(distanceKm: 2, cumulativeEffortKm: 4)
+        ]
+        let result = try #require(CourseGradientCalculator.interpolatedCumulativeEffort(at: 1, in: profile))
+        #expect(abs(result - 2) < 0.001)
+    }
+
+    @Test("interpolatedCumulativeEffort past the end returns total effort")
+    func interpolatedCumulativeEffort_pastEnd_returnsTotal() {
+        let profile = [
+            EffortProfilePoint(distanceKm: 0, cumulativeEffortKm: 0),
+            EffortProfilePoint(distanceKm: 2, cumulativeEffortKm: 4)
+        ]
+        #expect(CourseGradientCalculator.interpolatedCumulativeEffort(at: 10, in: profile) == 4)
+    }
 }
