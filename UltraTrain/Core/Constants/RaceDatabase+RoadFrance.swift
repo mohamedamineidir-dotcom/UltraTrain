@@ -73,7 +73,8 @@ extension RaceDatabase {
 
     private static let frenchHalfMarathons: [KnownRace] = [
         KnownRace(name: "Semi de Paris", shortName: "Paris Half Marathon", distanceKm: 21.1, elevationGainM: 80,
-                  elevationLossM: 155, country: "France", nextEditionDate: _d(2026, 3, 8), terrainDifficulty: .easy, raceType: .road),
+                  elevationLossM: 155, country: "France", nextEditionDate: _d(2026, 3, 8), terrainDifficulty: .easy, raceType: .road,
+                  gpxAssetName: "semi-de-paris"),
         KnownRace(name: "Semi de Boulogne-Billancourt", shortName: "Semi de Boulogne", distanceKm: 21.1,
                   elevationGainM: 20, elevationLossM: 20, country: "France", nextEditionDate: _d(2026, 11, 22),
                   terrainDifficulty: .easy, raceType: .road),
