@@ -23,9 +23,11 @@ extension RaceDatabase {
         // MARK: South Africa
 
         KnownRace(name: "Comrades Marathon (Up Run)", shortName: "Comrades", distanceKm: 87, elevationGainM: 1800,
-                  elevationLossM: 870, country: "South Africa", nextEditionDate: _d(2026, 6, 14), terrainDifficulty: .easy, raceType: .road),
+                  elevationLossM: 870, country: "South Africa", nextEditionDate: _d(2026, 6, 14), terrainDifficulty: .easy, raceType: .road,
+                  gpxAssetName: "comrades-marathon"),
         KnownRace(name: "Two Oceans Ultra Marathon", shortName: "Two Oceans", distanceKm: 56, elevationGainM: 600,
-                  elevationLossM: 600, country: "South Africa", nextEditionDate: _d(2026, 4, 4), terrainDifficulty: .easy, raceType: .road),
+                  elevationLossM: 600, country: "South Africa", nextEditionDate: _d(2026, 4, 4), terrainDifficulty: .easy, raceType: .road,
+                  gpxAssetName: "two-oceans"),
         KnownRace(name: "SkyRun 100K", shortName: nil, distanceKm: 100, elevationGainM: 4500,
                   elevationLossM: 4500, country: "South Africa", nextEditionDate: _d(2026, 11, 20), terrainDifficulty: .technical),
         KnownRace(name: "Hout Bay Trail Challenge 33K", shortName: nil, distanceKm: 33, elevationGainM: 1800,
