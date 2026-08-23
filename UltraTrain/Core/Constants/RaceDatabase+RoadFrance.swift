@@ -15,9 +15,11 @@ extension RaceDatabase {
 
     private static let frenchMarathons: [KnownRace] = [
         KnownRace(name: "Marathon de Paris", shortName: "Paris Marathon", distanceKm: 42.195, elevationGainM: 292,
-                  elevationLossM: 289, country: "France", nextEditionDate: _d(2026, 4, 12), terrainDifficulty: .easy, raceType: .road),
+                  elevationLossM: 289, country: "France", nextEditionDate: _d(2026, 4, 12), terrainDifficulty: .easy, raceType: .road,
+                  gpxAssetName: "paris-marathon"),
         KnownRace(name: "Marathon de Lyon", shortName: nil, distanceKm: 42.195, elevationGainM: 50, elevationLossM: 50,
-                  country: "France", nextEditionDate: _d(2026, 10, 4), terrainDifficulty: .easy, raceType: .road),
+                  country: "France", nextEditionDate: _d(2026, 10, 4), terrainDifficulty: .easy, raceType: .road,
+                  gpxAssetName: "lyon-marathon"),
         KnownRace(name: "Marathon de Bordeaux", shortName: nil, distanceKm: 42.195, elevationGainM: 30, elevationLossM: 30,
                   country: "France", nextEditionDate: _d(2026, 11, 8), terrainDifficulty: .easy, raceType: .road),
         KnownRace(name: "Marathon de Toulouse", shortName: nil, distanceKm: 42.195, elevationGainM: 40, elevationLossM: 40,
@@ -54,7 +56,8 @@ extension RaceDatabase {
         KnownRace(name: "Seine-Marathon 76", shortName: "Marathon de Rouen", distanceKm: 42.195, elevationGainM: 30,
                   elevationLossM: 30, country: "France", nextEditionDate: _d(2026, 9, 27), terrainDifficulty: .easy, raceType: .road),
         KnownRace(name: "Marathon de la Liberté", shortName: "Marathon de Caen", distanceKm: 42.195, elevationGainM: 40,
-                  elevationLossM: 40, country: "France", nextEditionDate: _d(2026, 6, 7), terrainDifficulty: .easy, raceType: .road),
+                  elevationLossM: 40, country: "France", nextEditionDate: _d(2026, 6, 7), terrainDifficulty: .easy, raceType: .road,
+                  gpxAssetName: "caen-marathon"),
         KnownRace(name: "Marathon de Le Havre", shortName: nil, distanceKm: 42.195, elevationGainM: 30, elevationLossM: 30,
                   country: "France", nextEditionDate: _d(2026, 6, 7), terrainDifficulty: .easy, raceType: .road),
         KnownRace(name: "Marathon de Grenoble", shortName: nil, distanceKm: 42.195, elevationGainM: 60, elevationLossM: 60,
