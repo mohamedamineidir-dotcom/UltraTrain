@@ -83,7 +83,8 @@ extension RaceDatabase {
         // MARK: UK
 
         KnownRace(name: "Ultra-Trail Snowdonia 100K", shortName: nil, distanceKm: 100, elevationGainM: 5500,
-                  elevationLossM: 5500, country: "UK", nextEditionDate: _d(2026, 5, 9), terrainDifficulty: .moderate),
+                  elevationLossM: 5500, country: "UK", nextEditionDate: _d(2026, 5, 9), terrainDifficulty: .moderate,
+                  gpxAssetName: "snowdonia-100k"),
         KnownRace(name: "Lakeland 100", shortName: nil, distanceKm: 161, elevationGainM: 6300,
                   elevationLossM: 6300, country: "UK", nextEditionDate: _d(2026, 7, 24), terrainDifficulty: .moderate),
         KnownRace(name: "Dragon's Back Race", shortName: nil, distanceKm: 380, elevationGainM: 16600,
