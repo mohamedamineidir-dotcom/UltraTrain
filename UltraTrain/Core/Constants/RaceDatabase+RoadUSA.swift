@@ -134,13 +134,15 @@ extension RaceDatabase {
         KnownRace(name: "LA Half Marathon", shortName: nil, distanceKm: 21.1, elevationGainM: 60, elevationLossM: 60,
                   country: "USA", nextEditionDate: _d(2026, 3, 8), terrainDifficulty: .easy, raceType: .road),
         KnownRace(name: "Seattle Half Marathon", shortName: nil, distanceKm: 21.1, elevationGainM: 80, elevationLossM: 80,
-                  country: "USA", nextEditionDate: _d(2026, 11, 29), terrainDifficulty: .easy, raceType: .road),
+                  country: "USA", nextEditionDate: _d(2026, 11, 29), terrainDifficulty: .easy, raceType: .road,
+                  gpxAssetName: "seattle-half"),
         KnownRace(name: "Denver Half Marathon", shortName: nil, distanceKm: 21.1, elevationGainM: 50, elevationLossM: 50,
                   country: "USA", nextEditionDate: _d(2026, 10, 18), terrainDifficulty: .easy, raceType: .road),
         KnownRace(name: "San Francisco Half Marathon", shortName: "SF Half", distanceKm: 21.1, elevationGainM: 120,
                   elevationLossM: 120, country: "USA", nextEditionDate: _d(2026, 7, 26), terrainDifficulty: .easy, raceType: .road),
         KnownRace(name: "Miami Half Marathon", shortName: nil, distanceKm: 21.1, elevationGainM: 10, elevationLossM: 10,
-                  country: "USA", nextEditionDate: _d(2026, 2, 1), terrainDifficulty: .easy, raceType: .road),
+                  country: "USA", nextEditionDate: _d(2026, 2, 1), terrainDifficulty: .easy, raceType: .road,
+                  gpxAssetName: "miami-half"),
     ]
 
     // MARK: US 10K Races
