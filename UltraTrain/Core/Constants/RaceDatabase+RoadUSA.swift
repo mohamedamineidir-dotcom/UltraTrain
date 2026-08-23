@@ -105,11 +105,13 @@ extension RaceDatabase {
 
     private static let usaHalfMarathons: [KnownRace] = [
         KnownRace(name: "NYC Half Marathon", shortName: "NYC Half", distanceKm: 21.1, elevationGainM: 80, elevationLossM: 80,
-                  country: "USA", nextEditionDate: _d(2026, 3, 15), terrainDifficulty: .easy, raceType: .road),
+                  country: "USA", nextEditionDate: _d(2026, 3, 15), terrainDifficulty: .easy, raceType: .road,
+                  gpxAssetName: "nyc-half"),
         KnownRace(name: "Rock'n'Roll Las Vegas", shortName: nil, distanceKm: 21.1, elevationGainM: 30, elevationLossM: 30,
                   country: "USA", nextEditionDate: _d(2026, 2, 22), terrainDifficulty: .easy, raceType: .road),
         KnownRace(name: "Brooklyn Half Marathon", shortName: nil, distanceKm: 21.1, elevationGainM: 40, elevationLossM: 40,
-                  country: "USA", nextEditionDate: _d(2026, 5, 16), terrainDifficulty: .easy, raceType: .road),
+                  country: "USA", nextEditionDate: _d(2026, 5, 16), terrainDifficulty: .easy, raceType: .road,
+                  gpxAssetName: "brooklyn-half"),
         KnownRace(name: "Disney Princess Half Marathon", shortName: nil, distanceKm: 21.1, elevationGainM: 10,
                   elevationLossM: 10, country: "USA", nextEditionDate: _d(2026, 2, 22), terrainDifficulty: .easy, raceType: .road),
         KnownRace(name: "Disney Wine & Dine Half Marathon", shortName: nil, distanceKm: 21.1, elevationGainM: 10,
