@@ -243,9 +243,11 @@ extension RaceDatabase {
         KnownRace(name: "Course des Héros Paris 10K", shortName: nil, distanceKm: 10.0, elevationGainM: 80, elevationLossM: 80,
                   country: "France", nextEditionDate: _d(2026, 6, 7), terrainDifficulty: .easy, raceType: .road),
         KnownRace(name: "Paris-Versailles", shortName: nil, distanceKm: 16.2, elevationGainM: 200, elevationLossM: 160,
-                  country: "France", nextEditionDate: _d(2026, 9, 27), terrainDifficulty: .easy, raceType: .road),
+                  country: "France", nextEditionDate: _d(2026, 9, 27), terrainDifficulty: .easy, raceType: .road,
+                  gpxAssetName: "paris-versailles"),
         KnownRace(name: "Marseille-Cassis", shortName: nil, distanceKm: 20.0, elevationGainM: 300, elevationLossM: 300,
-                  country: "France", nextEditionDate: _d(2026, 10, 25), terrainDifficulty: .easy, raceType: .road),
+                  country: "France", nextEditionDate: _d(2026, 10, 25), terrainDifficulty: .easy, raceType: .road,
+                  gpxAssetName: "marseille-cassis"),
         KnownRace(name: "20km de Paris", shortName: nil, distanceKm: 20.0, elevationGainM: 100, elevationLossM: 100,
                   country: "France", nextEditionDate: _d(2026, 10, 11), terrainDifficulty: .easy, raceType: .road),
     ]

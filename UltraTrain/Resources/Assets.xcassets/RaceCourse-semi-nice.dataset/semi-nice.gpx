@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="VisuGPX - https://www.visugpx.com">
+  <metadata>
+    <name>semi marathon nice</name>
+  </metadata>
+  <trk><trkseg>
+    <name><![CDATA[13676363-SMIN2021 21.1km DEF]]></name>
+    <desc><![CDATA[Generated from track 13676363-SMIN2021 21.1km DEF]]></desc>
+      <trkpt lat="43.69504" lon="7.26644">
+        <ele>10</ele>
+        <name><![CDATA[RPT001]]></name>
+      </trkpt>
+      <trkpt lat="43.69473" lon="7.2612">
+        <ele>9</ele>
+        <name><![CDATA[RPT002]]></name>
+      </trkpt>
+      <trkpt lat="43.69402" lon="7.25755">
+        <ele>12</ele>
+        <name><![CDATA[RPT003]]></name>
+      </trkpt>
+      <trkpt lat="43.69461" lon="7.26099">
+        <ele>8</ele>
+        <name><![CDATA[RPT004]]></name>
+      </trkpt>
+      <trkpt lat="43.69518" lon="7.2684">
+        <ele>5</ele>
+        <name><![CDATA[RPT005]]></name>
+      </trkpt>
+      <trkpt lat="43.69627" lon="7.26853">
+        <ele>14</ele>
+        <name><![CDATA[RPT006]]></name>
+      </trkpt>
+      <trkpt lat="43.6978" lon="7.27288">
+        <ele>14</ele>
+        <name><![CDATA[RPT007]]></name>
+      </trkpt>
+      <trkpt lat="43.69805" lon="7.27276">
+        <ele>15</ele>
+        <name><![CDATA[RPT008]]></name>
+      </trkpt>
+      <trkpt lat="43.69617" lon="7.26719">
+        <ele>12</ele>
+        <name><![CDATA[RPT009]]></name>
+      </trkpt>
+      <trkpt lat="43.69504" lon="7.26607">
+        <ele>12</ele>
+        <name><![CDATA[RPT010]]></name>
+      </trkpt>
+      <trkpt lat="43.6944" lon="7.25875">
+        <ele>9</ele>
+        <name><![CDATA[RPT011]]></name>
+      </trkpt>
+      <trkpt lat="43.69281" lon="7.25167">
+        <ele>10</ele>
+        <name><![CDATA[RPT012]]></name>
+      </trkpt>
+      <trkpt lat="43.68988" lon="7.24343">
+        <ele>13</ele>
+        <name><![CDATA[RPT013]]></name>
+      </trkpt>
+      <trkpt lat="43.68765" lon="7.23936">
+        <ele>12</ele>
+        <name><![CDATA[RPT014]]></name>
+      </trkpt>
+      <trkpt lat="43.68552" lon="7.23644">
+        <ele>7</ele>
+        <name><![CDATA[RPT015]]></name>
+      </trkpt>
+      <trkpt lat="43.68122" lon="7.23171">
+        <ele>8</ele>
+        <name><![CDATA[RPT016]]></name>
+      </trkpt>
+      <trkpt lat="43.67932" lon="7.23037">
+        <ele>9</ele>
+        <name><![CDATA[RPT017]]></name>
+      </trkpt>
+      <trkpt lat="43.68123" lon="7.23194">
+        <ele>7</ele>
+        <name><![CDATA[RPT018]]></name>
+      </trkpt>
+      <trkpt lat="43.68622" lon="7.23749">
+        <ele>10</ele>
+        <name><![CDATA[RPT019]]></name>
+      </trkpt>
+      <trkpt lat="43.68974" lon="7.24346">
+        <ele>12</ele>
+        <name><![CDATA[RPT020]]></name>
+      </trkpt>
+      <trkpt lat="43.69267" lon="7.25163">
+        <ele>9</ele>
+        <name><![CDATA[RPT021]]></name>
+      </trkpt>
+      <trkpt lat="43.69426" lon="7.2586">
+        <ele>8</ele>
+        <name><![CDATA[RPT022]]></name>
+      </trkpt>
+      <trkpt lat="43.69477" lon="7.26295">
+        <ele>11</ele>
+        <name><![CDATA[RPT023]]></name>
+      </trkpt>
+      <trkpt lat="43.69514" lon="7.27414">
+        <ele>7</ele>
+        <name><![CDATA[RPT024]]></name>
+      </trkpt>
+      <trkpt lat="43.69473" lon="7.27808">
+        <ele>13</ele>
+        <name><![CDATA[RPT025]]></name>
+      </trkpt>
+      <trkpt lat="43.69418" lon="7.27903">
+        <ele>19</ele>
+        <name><![CDATA[RPT026]]></name>
+      </trkpt>
+      <trkpt lat="43.69361" lon="7.27923">
+        <ele>13</ele>
+        <name><![CDATA[RPT027]]></name>
+      </trkpt>
+      <trkpt lat="43.69309" lon="7.28105">
+        <ele>12</ele>
+        <name><![CDATA[RPT028]]></name>
+      </trkpt>
+      <trkpt lat="43.6941" lon="7.28284">
+        <ele>14</ele>
+        <name><![CDATA[RPT029]]></name>
+      </trkpt>
+      <trkpt lat="43.69849" lon="7.28383">
+        <ele>11</ele>
+        <name><![CDATA[RPT030]]></name>
+      </trkpt>
+      <trkpt lat="43.69864" lon="7.28312">
+        <ele>17</ele>
+        <name><![CDATA[RPT031]]></name>
+      </trkpt>
+      <trkpt lat="43.69673" lon="7.28348">
+        <ele>10</ele>
+        <name><![CDATA[RPT032]]></name>
+      </trkpt>
+      <trkpt lat="43.69419" lon="7.28286">
+        <ele>15</ele>
+        <name><![CDATA[RPT033]]></name>
+      </trkpt>
+      <trkpt lat="43.69318" lon="7.28137">
+        <ele>12</ele>
+        <name><![CDATA[RPT034]]></name>
+      </trkpt>
+      <trkpt lat="43.69364" lon="7.27927">
+        <ele>14</ele>
+        <name><![CDATA[RPT035]]></name>
+      </trkpt>
+      <trkpt lat="43.69473" lon="7.27826">
+        <ele>13</ele>
+        <name><![CDATA[RPT036]]></name>
+      </trkpt>
+      <trkpt lat="43.69517" lon="7.27423">
+        <ele>7</ele>
+        <name><![CDATA[RPT037]]></name>
+      </trkpt>
+      <trkpt lat="43.69494" lon="7.26362">
+        <ele>11</ele>
+        <name><![CDATA[RPT038]]></name>
+      </trkpt>
+      <trkpt lat="43.69443" lon="7.25894">
+        <ele>8</ele>
+        <name><![CDATA[RPT039]]></name>
+      </trkpt>
+      <trkpt lat="43.69278" lon="7.25152">
+        <ele>10</ele>
+        <name><![CDATA[RPT040]]></name>
+      </trkpt>
+      <trkpt lat="43.68983" lon="7.2433">
+        <ele>13</ele>
+        <name><![CDATA[RPT041]]></name>
+      </trkpt>
+      <trkpt lat="43.68707" lon="7.23843">
+        <ele>14</ele>
+        <name><![CDATA[RPT042]]></name>
+      </trkpt>
+      <trkpt lat="43.68103" lon="7.23152">
+        <ele>9</ele>
+        <name><![CDATA[RPT043]]></name>
+      </trkpt>
+      <trkpt lat="43.67931" lon="7.23037">
+        <ele>9</ele>
+        <name><![CDATA[RPT044]]></name>
+      </trkpt>
+      <trkpt lat="43.68113" lon="7.23182">
+        <ele>7</ele>
+        <name><![CDATA[RPT045]]></name>
+      </trkpt>
+      <trkpt lat="43.68613" lon="7.23739">
+        <ele>9</ele>
+        <name><![CDATA[RPT046]]></name>
+      </trkpt>
+      <trkpt lat="43.68987" lon="7.24372">
+        <ele>12</ele>
+        <name><![CDATA[RPT047]]></name>
+      </trkpt>
+      <trkpt lat="43.69262" lon="7.25152">
+        <ele>9</ele>
+        <name><![CDATA[RPT048]]></name>
+      </trkpt>
+      <trkpt lat="43.69462" lon="7.26107">
+        <ele>8</ele>
+        <name><![CDATA[RPT049]]></name>
+      </trkpt>
+      <trkpt lat="43.69488" lon="7.26865">
+        <ele>4</ele>
+        <name><![CDATA[RPT050]]></name>
+      </trkpt>
+    </trkseg></trk>
+</gpx>
