@@ -61,7 +61,8 @@ extension RaceDatabase {
 
         KnownRace(name: "Ultra-Trail Cape Town 100 Mile", shortName: "UTCT 100M",
                   distanceKm: 170, elevationGainM: 7516, elevationLossM: 7516, country: "South Africa",
-                  nextEditionDate: _d(2026, 11, 28), terrainDifficulty: .technical),
+                  nextEditionDate: _d(2026, 11, 28), terrainDifficulty: .technical,
+                  gpxAssetName: "ultra-trail-cape-town-100mile"),
         KnownRace(name: "Ultra-Trail Cape Town 100K", shortName: "UTCT 100K",
                   distanceKm: 98, elevationGainM: 4972, elevationLossM: 4972, country: "South Africa",
                   nextEditionDate: _d(2026, 11, 28), terrainDifficulty: .technical),
@@ -91,7 +92,8 @@ extension RaceDatabase {
 
         KnownRace(name: "Ultra Pirineu 100K", shortName: nil,
                   distanceKm: 101, elevationGainM: 6600, elevationLossM: 6600, country: "Spain",
-                  nextEditionDate: _d(2026, 9, 26), terrainDifficulty: .technical),
+                  nextEditionDate: _d(2026, 9, 26), terrainDifficulty: .technical,
+                  gpxAssetName: "ultra-pirineu"),
         KnownRace(name: "Ultra Pirineu 42K", shortName: nil,
                   distanceKm: 42, elevationGainM: 2700, elevationLossM: 2700, country: "Spain",
                   nextEditionDate: _d(2026, 9, 26), terrainDifficulty: .moderate),
@@ -100,16 +102,20 @@ extension RaceDatabase {
 
         KnownRace(name: "TransGranCanaria Classic", shortName: "TGC Classic",
                   distanceKm: 126, elevationGainM: 6764, elevationLossM: 6764, country: "Spain",
-                  nextEditionDate: _d(2026, 3, 6), terrainDifficulty: .technical),
+                  nextEditionDate: _d(2026, 3, 6), terrainDifficulty: .technical,
+                  gpxAssetName: "transgrancanaria-classic"),
         KnownRace(name: "TransGranCanaria Advanced", shortName: "TGC Advanced",
                   distanceKm: 82, elevationGainM: 4314, elevationLossM: 4314, country: "Spain",
-                  nextEditionDate: _d(2026, 3, 6), terrainDifficulty: .technical),
+                  nextEditionDate: _d(2026, 3, 6), terrainDifficulty: .technical,
+                  gpxAssetName: "transgrancanaria-advanced"),
         KnownRace(name: "TransGranCanaria Marathon", shortName: "TGC Marathon",
                   distanceKm: 47, elevationGainM: 1784, elevationLossM: 1784, country: "Spain",
-                  nextEditionDate: _d(2026, 3, 7), terrainDifficulty: .moderate),
+                  nextEditionDate: _d(2026, 3, 7), terrainDifficulty: .moderate,
+                  gpxAssetName: "transgrancanaria-marathon"),
         KnownRace(name: "TransGranCanaria Half", shortName: "TGC Half",
                   distanceKm: 23, elevationGainM: 1817, elevationLossM: 1817, country: "Spain",
-                  nextEditionDate: _d(2026, 3, 7), terrainDifficulty: .moderate),
+                  nextEditionDate: _d(2026, 3, 7), terrainDifficulty: .moderate,
+                  gpxAssetName: "transgrancanaria-half"),
 
         // MARK: Lavaredo Ultra Trail (Italy)
 
@@ -153,16 +159,20 @@ extension RaceDatabase {
 
         KnownRace(name: "Madeira Island Ultra Trail", shortName: "MIUT Ultra",
                   distanceKm: 118, elevationGainM: 6640, elevationLossM: 6640, country: "Portugal",
-                  nextEditionDate: _d(2026, 4, 25), terrainDifficulty: .technical),
+                  nextEditionDate: _d(2026, 4, 25), terrainDifficulty: .technical,
+                  gpxAssetName: "madeira-ultra"),
         KnownRace(name: "MIUT 86K", shortName: nil,
                   distanceKm: 86, elevationGainM: 4873, elevationLossM: 4873, country: "Portugal",
-                  nextEditionDate: _d(2026, 4, 25), terrainDifficulty: .moderate),
+                  nextEditionDate: _d(2026, 4, 25), terrainDifficulty: .moderate,
+                  gpxAssetName: "madeira-86k"),
         KnownRace(name: "MIUT 56K", shortName: nil,
                   distanceKm: 56, elevationGainM: 3315, elevationLossM: 3315, country: "Portugal",
-                  nextEditionDate: _d(2026, 4, 25), terrainDifficulty: .moderate),
+                  nextEditionDate: _d(2026, 4, 25), terrainDifficulty: .moderate,
+                  gpxAssetName: "madeira-56k"),
         KnownRace(name: "MIUT 16K", shortName: nil,
                   distanceKm: 16, elevationGainM: 400, elevationLossM: 400, country: "Portugal",
-                  nextEditionDate: _d(2026, 4, 25), terrainDifficulty: .moderate),
+                  nextEditionDate: _d(2026, 4, 25), terrainDifficulty: .moderate,
+                  gpxAssetName: "madeira-16k"),
 
         // MARK: Trail 100 Andorra
 
@@ -187,14 +197,16 @@ extension RaceDatabase {
         KnownRace(name: "Hardrock 100", shortName: "Hardrock",
                   distanceKm: 161, elevationGainM: 10000, elevationLossM: 10000, country: "USA",
                   nextEditionDate: _d(2026, 7, 10), terrainDifficulty: .technical,
-                  maxElevationM: 4250, polesAllowed: true),
+                  maxElevationM: 4250, polesAllowed: true,
+                  gpxAssetName: "hardrock-100"),
 
         // MARK: Tor des Géants & Tor des Glaciers (Italy) — Sep 2026
 
         KnownRace(name: "Tor des Géants", shortName: "TOR330",
                   distanceKm: 330, elevationGainM: 24000, elevationLossM: 24000, country: "Italy",
                   nextEditionDate: _d(2026, 9, 13), terrainDifficulty: .technical,
-                  maxElevationM: 3300, polesAllowed: true),
+                  maxElevationM: 3300, polesAllowed: true,
+                  gpxAssetName: "tor-des-geants"),
         KnownRace(name: "Tor des Glaciers", shortName: "TOR450",
                   distanceKm: 450, elevationGainM: 32000, elevationLossM: 32000, country: "Italy",
                   nextEditionDate: _d(2026, 9, 6), terrainDifficulty: .technical,

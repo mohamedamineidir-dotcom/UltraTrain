@@ -14,14 +14,16 @@ extension RaceDatabase {
         // MARK: USA, Iconic 100 Milers
 
         KnownRace(name: "Hardrock Hundred", shortName: "Hardrock 100", distanceKm: 161, elevationGainM: 10088,
-                  elevationLossM: 10088, country: "USA", nextEditionDate: _d(2026, 7, 10), terrainDifficulty: .extreme),
+                  elevationLossM: 10088, country: "USA", nextEditionDate: _d(2026, 7, 10), terrainDifficulty: .extreme,
+                  gpxAssetName: "hardrock-100"),
         KnownRace(name: "Leadville Trail 100", shortName: "Leadville 100", distanceKm: 161, elevationGainM: 4800,
                   elevationLossM: 4800, country: "USA", nextEditionDate: _d(2026, 8, 22), terrainDifficulty: .moderate,
                   gpxAssetName: "leadville-100"),
         KnownRace(name: "Barkley Marathons", shortName: "Barkley", distanceKm: 210, elevationGainM: 18000,
                   elevationLossM: 18000, country: "USA", nextEditionDate: _d(2026, 3, 28), terrainDifficulty: .extreme),
         KnownRace(name: "Javelina Jundred", shortName: "Javelina 100", distanceKm: 161, elevationGainM: 1800,
-                  elevationLossM: 1800, country: "USA", nextEditionDate: _d(2026, 10, 31), terrainDifficulty: .easy),
+                  elevationLossM: 1800, country: "USA", nextEditionDate: _d(2026, 10, 31), terrainDifficulty: .easy,
+                  gpxAssetName: "javelina-jundred"),
         KnownRace(name: "HURT 100", shortName: nil, distanceKm: 161, elevationGainM: 7500,
                   elevationLossM: 7500, country: "USA", nextEditionDate: _d(2026, 1, 17), terrainDifficulty: .technical,
                   gpxAssetName: "hurt-100"),

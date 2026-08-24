@@ -17,9 +17,11 @@ extension RaceDatabase {
 
     private static let marathonMajors: [KnownRace] = [
         KnownRace(name: "Boston Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 248, elevationLossM: 388,
-                  country: "USA", nextEditionDate: _d(2026, 4, 20), terrainDifficulty: .easy, raceType: .road),
+                  country: "USA", nextEditionDate: _d(2026, 4, 20), terrainDifficulty: .easy, raceType: .road,
+                  gpxAssetName: "boston-marathon"),
         KnownRace(name: "New York City Marathon", shortName: "NYC Marathon", distanceKm: 42.195, elevationGainM: 247,
-                  elevationLossM: 251, country: "USA", nextEditionDate: _d(2026, 11, 1), terrainDifficulty: .easy, raceType: .road),
+                  elevationLossM: 251, country: "USA", nextEditionDate: _d(2026, 11, 1), terrainDifficulty: .easy, raceType: .road,
+                  gpxAssetName: "nyc-marathon"),
         KnownRace(name: "Chicago Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 74, elevationLossM: 73,
                   country: "USA", nextEditionDate: _d(2026, 10, 11), terrainDifficulty: .easy, raceType: .road,
                   gpxAssetName: "chicago-marathon"),
