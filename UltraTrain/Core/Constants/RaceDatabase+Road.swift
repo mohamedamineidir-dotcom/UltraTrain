@@ -169,7 +169,8 @@ extension RaceDatabase {
                   country: "Australia", nextEditionDate: _d(2026, 7, 4), terrainDifficulty: .easy, raceType: .road,
                   gpxAssetName: "goldcoast-marathon"),
         KnownRace(name: "Queenstown Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 60, elevationLossM: 60,
-                  country: "New Zealand", nextEditionDate: _d(2026, 11, 21), terrainDifficulty: .easy, raceType: .road),
+                  country: "New Zealand", nextEditionDate: _d(2026, 11, 21), terrainDifficulty: .easy, raceType: .road,
+                  gpxAssetName: "queenstown-marathon"),
         // Americas (non-US)
         KnownRace(name: "Toronto Waterfront Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 20,
                   elevationLossM: 20, country: "Canada", nextEditionDate: _d(2026, 10, 18), terrainDifficulty: .easy, raceType: .road),
