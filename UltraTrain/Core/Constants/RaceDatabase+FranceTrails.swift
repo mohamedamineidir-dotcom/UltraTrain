@@ -23,15 +23,19 @@ extension RaceDatabase {
         // MARK: Marathon du Mont-Blanc
 
         KnownRace(name: "90km du Mont-Blanc", shortName: "90K MdMB", distanceKm: 92, elevationGainM: 6330,
-                  elevationLossM: 6330, country: "France", nextEditionDate: _d(2026, 6, 26), terrainDifficulty: .technical),
+                  elevationLossM: 6330, country: "France", nextEditionDate: _d(2026, 6, 26), terrainDifficulty: .technical,
+                  gpxAssetName: "mdmb-90k"),
         KnownRace(name: "Marathon du Mont-Blanc 42K", shortName: "MMB 42K", distanceKm: 42, elevationGainM: 2540,
-                  elevationLossM: 2540, country: "France", nextEditionDate: _d(2026, 6, 28), terrainDifficulty: .technical),
+                  elevationLossM: 2540, country: "France", nextEditionDate: _d(2026, 6, 28), terrainDifficulty: .technical,
+                  gpxAssetName: "mdmb-42k"),
         KnownRace(name: "23K du Mont-Blanc", shortName: "23K MdMB", distanceKm: 23, elevationGainM: 1680,
-                  elevationLossM: 870, country: "France", nextEditionDate: _d(2026, 6, 27), terrainDifficulty: .moderate),
+                  elevationLossM: 870, country: "France", nextEditionDate: _d(2026, 6, 27), terrainDifficulty: .moderate,
+                  gpxAssetName: "mdmb-23k"),
         KnownRace(name: "Kilomètre Vertical du Mont-Blanc", shortName: "KV MdMB", distanceKm: 3.8, elevationGainM: 1000,
                   elevationLossM: 0, country: "France", nextEditionDate: _d(2026, 6, 25), terrainDifficulty: .technical),
         KnownRace(name: "10K du Mont-Blanc", shortName: "10K MdMB", distanceKm: 10, elevationGainM: 500,
-                  elevationLossM: 500, country: "France", nextEditionDate: _d(2026, 6, 25), terrainDifficulty: .easy),
+                  elevationLossM: 500, country: "France", nextEditionDate: _d(2026, 6, 25), terrainDifficulty: .easy,
+                  gpxAssetName: "mdmb-10k"),
 
         // MARK: Iconic French Trails
 

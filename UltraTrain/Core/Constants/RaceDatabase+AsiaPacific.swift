@@ -14,7 +14,8 @@ extension RaceDatabase {
         // MARK: Hong Kong
 
         KnownRace(name: "Hong Kong 100", shortName: "HK100", distanceKm: 103, elevationGainM: 4700,
-                  elevationLossM: 4700, country: "Hong Kong", nextEditionDate: _d(2026, 1, 17), terrainDifficulty: .moderate),
+                  elevationLossM: 4700, country: "Hong Kong", nextEditionDate: _d(2026, 1, 17), terrainDifficulty: .moderate,
+                  gpxAssetName: "hong-kong-100"),
         KnownRace(name: "Ultra-Trail Tai Mo Shan 162K", shortName: "UTTMS", distanceKm: 162, elevationGainM: 8200,
                   elevationLossM: 8200, country: "Hong Kong", nextEditionDate: _d(2026, 3, 7), terrainDifficulty: .moderate),
         KnownRace(name: "Oxfam Trailwalker Hong Kong", shortName: nil, distanceKm: 100, elevationGainM: 4700,

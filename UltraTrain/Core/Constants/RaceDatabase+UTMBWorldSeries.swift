@@ -242,7 +242,8 @@ extension RaceDatabase {
 
         KnownRace(name: "Tarawera Ultramarathon 100M", shortName: "Tarawera 100M",
                   distanceKm: 163, elevationGainM: 3500, elevationLossM: 3500, country: "New Zealand",
-                  nextEditionDate: _d(2027, 2, 13), terrainDifficulty: .moderate),
+                  nextEditionDate: _d(2027, 2, 13), terrainDifficulty: .moderate,
+                  gpxAssetName: "tarawera-100m"),
         KnownRace(name: "Tarawera Ultramarathon 102K", shortName: "Tarawera 102K",
                   distanceKm: 102, elevationGainM: 2300, elevationLossM: 2300, country: "New Zealand",
                   nextEditionDate: _d(2027, 2, 13), terrainDifficulty: .moderate),

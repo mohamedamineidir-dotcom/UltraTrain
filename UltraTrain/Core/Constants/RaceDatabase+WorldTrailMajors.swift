@@ -300,7 +300,8 @@ extension RaceDatabase {
 
         KnownRace(name: "Hong Kong 100", shortName: "HK100",
                   distanceKm: 103, elevationGainM: 5028, elevationLossM: 5028, country: "Hong Kong",
-                  nextEditionDate: _d(2026, 1, 24), terrainDifficulty: .technical),
+                  nextEditionDate: _d(2026, 1, 24), terrainDifficulty: .technical,
+                  gpxAssetName: "hong-kong-100"),
         KnownRace(name: "MSIG Sai Kung 50", shortName: "SK50",
                   distanceKm: 54, elevationGainM: 2800, elevationLossM: 2800, country: "Hong Kong",
                   nextEditionDate: _d(2026, 2, 28), terrainDifficulty: .moderate),
