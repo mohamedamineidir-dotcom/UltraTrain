@@ -173,7 +173,8 @@ extension RaceDatabase {
                   gpxAssetName: "queenstown-marathon"),
         // Americas (non-US)
         KnownRace(name: "Toronto Waterfront Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 20,
-                  elevationLossM: 20, country: "Canada", nextEditionDate: _d(2026, 10, 18), terrainDifficulty: .easy, raceType: .road),
+                  elevationLossM: 20, country: "Canada", nextEditionDate: _d(2026, 10, 18), terrainDifficulty: .easy, raceType: .road,
+                  gpxAssetName: "toronto-waterfront"),
         KnownRace(name: "Buenos Aires Marathon", shortName: nil, distanceKm: 42.195, elevationGainM: 20, elevationLossM: 20,
                   country: "Argentina", nextEditionDate: _d(2026, 10, 11), terrainDifficulty: .easy, raceType: .road,
                   gpxAssetName: "buenosaires-marathon"),

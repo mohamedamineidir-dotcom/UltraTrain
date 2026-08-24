@@ -205,7 +205,8 @@ extension RaceDatabase {
         KnownRace(name: "Ultra Tour Monte Rosa", shortName: "UTMR",
                   distanceKm: 170, elevationGainM: 11300, elevationLossM: 11300, country: "Switzerland",
                   nextEditionDate: _d(2026, 9, 7), terrainDifficulty: .technical,
-                  maxElevationM: 3300, polesAllowed: true),
+                  maxElevationM: 3300, polesAllowed: true,
+                  gpxAssetName: "ultra-tour-monte-rosa"),
 
         // MARK: Eiger Ultra-Trail (Switzerland) — Jul 18, 2026
 
