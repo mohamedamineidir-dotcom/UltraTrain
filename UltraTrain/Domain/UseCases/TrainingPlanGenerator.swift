@@ -137,7 +137,15 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         }
 
         // 4. Calculate volumes (with dynamic caps and anchoring)
-        let raceDuration = targetRace.estimatedDuration(experience: athlete.experienceLevel)
+        // `quickEstimate` uses the athlete's real PBs/VMA/index (via
+        // Riegel + terrain projection) when available, falling back to
+        // the generic experience-level heuristic only when there's no
+        // fitness signal at all — so an athlete who only set a "Finish"
+        // goal (no explicit target time) still gets a race-day duration
+        // close to their actual predicted finish time, not an arbitrary
+        // one, both here (weekly volume anchoring) and on the race-day
+        // session itself (passed down to *RaceWeekTemplates below).
+        let raceDuration = FinishTimeEstimator.quickEstimate(athlete: athlete, race: targetRace)
         let raceEffectiveKm = targetRace.effectiveDistanceKm
 
         // Apply RecentFitnessChange anchor multiplier (asked in the
@@ -328,7 +336,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     experience: athlete.experienceLevel,
                     philosophy: athlete.trainingPhilosophy,
                     weekStartDate: skeleton.startDate,
-                    preferredRunsPerWeek: athlete.preferredRunsPerWeek
+                    preferredRunsPerWeek: athlete.preferredRunsPerWeek,
+                    precomputedRaceDuration: raceDuration
                 )
             } else if let aIdx = aRaceWeekIdx,
                       index > aIdx,
@@ -771,7 +780,11 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
                     experience: athlete.experienceLevel,
                     philosophy: athlete.trainingPhilosophy,
                     weekStartDate: skeleton.startDate,
-                    preferredRunsPerWeek: athlete.preferredRunsPerWeek
+                    preferredRunsPerWeek: athlete.preferredRunsPerWeek,
+                    // Real fitness-derived estimate rather than the
+                    // generic experience heuristic — see the trail path's
+                    // identical `precomputedRaceDuration` above.
+                    precomputedRaceDuration: FinishTimeEstimator.quickEstimate(athlete: athlete, race: targetRace)
                 )
 
                 // B6: same fix as the B-race override path. A-race week

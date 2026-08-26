@@ -297,21 +297,11 @@ extension WeekCardView {
 
 extension WeekCardView {
 
-    /// Position of a session within a back-to-back ("Weekend Choc") weekend.
-    /// Day 2 is the explicit `.backToBack` session; day 1 is the long run on
-    /// the calendar day immediately before it. nil for everything else, so
-    /// only the genuine weekend pair is relabelled "Weekend Choc (1/2)/(2/2)".
+    /// Position of a session within a back-to-back ("Weekend Choc") weekend —
+    /// see `TrainingSession.b2bPosition(for:in:)` for the shared logic (also
+    /// used by `WeekSummarySheet` so both places label the pair the same way).
     private func b2bPosition(for session: TrainingSession) -> Int? {
-        if session.type == .backToBack { return 2 }
-        guard session.type == .longRun else { return nil }
-        let cal = Calendar.current
-        guard let nextDay = cal.date(
-            byAdding: .day, value: 1, to: cal.startOfDay(for: session.date)
-        ) else { return nil }
-        let hasB2BNextDay = week.sessions.contains {
-            $0.type == .backToBack && cal.startOfDay(for: $0.date) == nextDay
-        }
-        return hasB2BNextDay ? 1 : nil
+        TrainingSession.b2bPosition(for: session, in: week.sessions)
     }
 
     /// Groups sessions by calendar day so same-day S&C + run appear together.

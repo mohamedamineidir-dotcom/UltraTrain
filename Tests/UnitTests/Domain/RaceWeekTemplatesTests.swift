@@ -123,7 +123,7 @@ struct RaceWeekTemplatesTests {
 
     // MARK: - Trail
 
-    @Test("Trail: 100K race-day session has duration matching estimatedDuration")
+    @Test("Trail: 100K race-day session has duration matching estimatedDuration when no better estimate is supplied")
     func trailRaceDayDurationMatches() {
         let race = makeTrailRace(distanceKm: 101, elevationGainM: 5000)
         let templates = TrailRaceWeekTemplates.sessions(
@@ -134,6 +134,38 @@ struct RaceWeekTemplatesTests {
         #expect(raceDay != nil)
         let expected = race.estimatedDuration(experience: .intermediate)
         #expect(raceDay?.durationSeconds == expected)
+    }
+
+    @Test("Trail: a precomputed (fitness-derived) race duration overrides the generic experience heuristic")
+    func trailRaceDayDurationUsesPrecomputedValue() {
+        let race = makeTrailRace(distanceKm: 101, elevationGainM: 5000)
+        let genericEstimate = race.estimatedDuration(experience: .intermediate)
+        let betterEstimate = genericEstimate * 0.55 // simulates a much fitter athlete's real prediction
+
+        let templates = TrailRaceWeekTemplates.sessions(
+            targetRace: race, experience: .intermediate,
+            philosophy: .balanced, weekStartDate: makeMondayBaseline(),
+            precomputedRaceDuration: betterEstimate
+        )
+        let raceDay = templates.first { $0.type == .race }
+        #expect(raceDay?.durationSeconds == betterEstimate)
+        #expect(raceDay?.durationSeconds != genericEstimate)
+    }
+
+    @Test("Road: a precomputed (fitness-derived) race duration overrides the generic experience heuristic")
+    func roadRaceDayDurationUsesPrecomputedValue() {
+        let race = makeRoadRace(distanceKm: 42.195)
+        let genericEstimate = race.estimatedDuration(experience: .intermediate)
+        let betterEstimate = genericEstimate * 0.85
+
+        let templates = RoadRaceWeekTemplates.sessions(
+            targetRace: race, experience: .intermediate,
+            philosophy: .balanced, weekStartDate: makeMondayBaseline(),
+            precomputedRaceDuration: betterEstimate
+        )
+        let raceDay = templates.first { $0.type == .race }
+        #expect(raceDay?.durationSeconds == betterEstimate)
+        #expect(raceDay?.durationSeconds != genericEstimate)
     }
 
     @Test("Trail: mountain race (≥40 m/km D+) strips quality on Day -5")

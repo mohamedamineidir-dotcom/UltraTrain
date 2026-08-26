@@ -24,6 +24,11 @@ struct EffortProfilePoint: Equatable, Sendable {
     var cumulativeEffortKm: Double
 }
 
+struct CumulativeGainPoint: Equatable, Sendable {
+    var distanceKm: Double
+    var cumulativeGainM: Double
+}
+
 enum CourseGradientCalculator {
 
     private static let sampleIntervalM: Double = 100
@@ -128,6 +133,47 @@ enum CourseGradientCalculator {
         guard segmentLength > 0 else { return prev.cumulativeEffortKm }
         let fraction = (distanceKm - prev.distanceKm) / segmentLength
         return prev.cumulativeEffortKm + fraction * (curr.cumulativeEffortKm - prev.cumulativeEffortKm)
+    }
+
+    // MARK: - Cumulative Elevation Gain Profile (for "D+ so far" while scrubbing)
+
+    /// D+ accumulated at each segment boundary, so scrubbing the chart can
+    /// show "how much climbing have I done up to this point" rather than
+    /// only the instantaneous altitude at that point.
+    static func buildCumulativeGainProfile(from segments: [GradientSegment]) -> [CumulativeGainPoint] {
+        guard let first = segments.first else { return [] }
+        var result: [CumulativeGainPoint] = [
+            CumulativeGainPoint(distanceKm: first.distanceKm, cumulativeGainM: 0)
+        ]
+        var cumulative = 0.0
+        for segment in segments {
+            let gain = max(0, segment.endAltitudeM - segment.altitudeM)
+            cumulative += gain
+            result.append(CumulativeGainPoint(distanceKm: segment.endDistanceKm, cumulativeGainM: cumulative))
+        }
+        return result
+    }
+
+    /// Linearly interpolated cumulative D+ at an arbitrary distance — the
+    /// elevation-gain analog of `interpolatedAltitude`.
+    static func interpolatedCumulativeGain(
+        at distanceKm: Double,
+        in gainProfile: [CumulativeGainPoint]
+    ) -> Double? {
+        guard let last = gainProfile.last else { return nil }
+        guard distanceKm > (gainProfile.first?.distanceKm ?? 0) else { return 0 }
+        guard distanceKm < last.distanceKm else { return last.cumulativeGainM }
+
+        guard let upperIndex = gainProfile.firstIndex(where: { $0.distanceKm >= distanceKm }),
+              upperIndex > 0 else {
+            return last.cumulativeGainM
+        }
+        let prev = gainProfile[upperIndex - 1]
+        let curr = gainProfile[upperIndex]
+        let segmentLength = curr.distanceKm - prev.distanceKm
+        guard segmentLength > 0 else { return prev.cumulativeGainM }
+        let fraction = (distanceKm - prev.distanceKm) / segmentLength
+        return prev.cumulativeGainM + fraction * (curr.cumulativeGainM - prev.cumulativeGainM)
     }
 
     // MARK: - Sampling

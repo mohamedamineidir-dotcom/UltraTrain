@@ -12,8 +12,9 @@ struct UpcomingRacesCard: View {
     var body: some View {
         if !uniqueRaces.isEmpty {
             VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-                Text("Upcoming Races")
+                Label("Upcoming Races", systemImage: "flag.checkered")
                     .font(.headline)
+                    .foregroundStyle(Theme.Colors.primary)
 
                 ForEach(uniqueRaces) { race in
                     if let onTapRace {
@@ -33,7 +34,7 @@ struct UpcomingRacesCard: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .appCardStyle()
+            .futuristicGlassStyle(phaseTint: Theme.Colors.primary)
             .accessibilityIdentifier("dashboard.upcomingRacesCard")
         }
     }
@@ -99,11 +100,13 @@ struct UpcomingRacesCard: View {
 
     private func daysUntilText(_ date: Date) -> String {
         let days = Calendar.current.dateComponents([.day], from: Date.now.startOfDay, to: date.startOfDay).day ?? 0
-        if days == 0 { return "Today" }
-        if days == 1 { return "Tomorrow" }
-        if days < 7 { return "In \(days) days" }
+        if days == 0 { return String(localized: "Today", defaultValue: "Today") }
+        if days == 1 { return String(localized: "race.daysUntil.tomorrow", defaultValue: "Tomorrow") }
+        if days < 7 {
+            return String(format: String(localized: "race.daysUntil.inDays", defaultValue: "In %lld days"), days)
+        }
         let weeks = days / 7
-        if weeks == 1 { return "In 1 week" }
-        return "In \(weeks) weeks"
+        if weeks == 1 { return String(localized: "race.daysUntil.inOneWeek", defaultValue: "In 1 week") }
+        return String(format: String(localized: "race.daysUntil.inWeeks", defaultValue: "In %lld weeks"), weeks)
     }
 }

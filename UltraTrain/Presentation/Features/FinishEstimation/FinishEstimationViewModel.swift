@@ -67,7 +67,7 @@ final class FinishEstimationViewModel {
 
         do {
             guard let athlete = try await athleteRepository.getAthlete() else {
-                error = "Athlete profile not found"
+                error = String(localized: "fe.error.athleteNotFound", defaultValue: "Athlete profile not found")
                 isLoading = false
                 return
             }

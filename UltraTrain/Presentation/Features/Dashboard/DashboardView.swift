@@ -117,6 +117,15 @@ struct DashboardView: View {
                         InjuryRiskAlertBanner(alerts: viewModel.injuryRiskAlerts)
                     }
 
+                    // Race forecast — the app's key feature, surfaced right
+                    // under the hero card so it's visible without scrolling,
+                    // rather than buried at the bottom of the dashboard.
+                    finishEstimateSection
+                    UpcomingRacesCard(races: viewModel.upcomingRaces) { race in
+                        selectedUpcomingRace = race
+                        showUpcomingRacePredictor = true
+                    }
+
                     // Today
                     SectionHeader(title: "Today")
 
@@ -163,17 +172,6 @@ struct DashboardView: View {
                     // so the race-day forecast card on the finish
                     // estimate page keeps working.
 
-                    // Race forecast (replaces the old Recovery section, only a
-                    // minority of users had Apple-Watch recovery data, whereas
-                    // the finish forecast is meaningful for every athlete and
-                    // tightens as training progresses).
-                    SectionHeader(title: "Race forecast")
-
-                    finishEstimateSection
-                    UpcomingRacesCard(races: viewModel.upcomingRaces) { race in
-                        selectedUpcomingRace = race
-                        showUpcomingRacePredictor = true
-                    }
                 }
                 .padding()
             }

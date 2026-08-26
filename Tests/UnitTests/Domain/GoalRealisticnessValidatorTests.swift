@@ -85,11 +85,12 @@ struct GoalRealisticnessValidatorTests {
 
     @Test("pace faster than elite threshold warns about professional athletes")
     func fasterThanEliteWarns() {
-        // 100km + 5000m D+ = 150 effective km => .hundredMiles category
-        // (140..<220), elite threshold 4.5 min/eff km.
-        // 10h target = 600min / 150km = 4.0 min/eff km → faster than elite
+        // 100km + 5000m D+ = 150 effective km => .hundredK category
+        // (80..<161 — below the 161 km 100-Miles boundary), elite
+        // threshold 4.0 min/eff km.
+        // 9h target = 540min / 150km = 3.6 min/eff km → faster than elite
         let result = GoalRealisticnessValidator.validateTime(
-            targetTimeSeconds: 10 * 3600,
+            targetTimeSeconds: 9 * 3600,
             distanceKm: 100,
             elevationGainM: 5000,
             experienceLevel: .elite
@@ -100,8 +101,8 @@ struct GoalRealisticnessValidatorTests {
 
     @Test("elite with elite pace is realistic")
     func eliteWithElitePace() {
-        // 100km + 5000m D+ = 150 effective km => .hundredMiles category,
-        // elite threshold 4.5 min/eff km => ~11h15.
+        // 100km + 5000m D+ = 150 effective km => .hundredK category,
+        // elite threshold 4.0 min/eff km => ~10h.
         // 15h target = 900min / 150km = 6.0 min/eff km → comfortably realistic for elite
         let result = GoalRealisticnessValidator.validateTime(
             targetTimeSeconds: 15 * 3600,
@@ -115,12 +116,10 @@ struct GoalRealisticnessValidatorTests {
     @Test("intermediate ultra target near real elite pace no longer misflagged as world-class")
     func longUltraTargetNotMisflaggedAsElite() {
         // Oman by UTMB Jabal Classic 103K: 103km + 5000m D+ = 153 effective
-        // km => .hundredMiles category. A 14h05 target is 5.52 min/eff km —
-        // previously flagged "world-class professional" under the old
-        // elite=6.0 threshold, even though real elite 100-mile pace on
-        // mountain courses (Western States, UTMB, CCC course records) runs
-        // ~4.0-4.4 min/eff km. With the corrected elite=4.5 threshold this
-        // pace is merely "requires advanced-or-better," not elite.
+        // km => .hundredK category (below the 161 km 100-Miles boundary).
+        // A 14h05 target is 5.52 min/eff km — above the hundredK advanced
+        // threshold (5.5), so this doesn't even reach "requires advanced,"
+        // let alone "world-class professional."
         let result = GoalRealisticnessValidator.validateTime(
             targetTimeSeconds: 14 * 3600 + 5 * 60,
             distanceKm: 103,

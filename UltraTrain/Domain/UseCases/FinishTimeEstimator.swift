@@ -378,7 +378,86 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
             let derivedDiscount = 0.8
             result.append((pace, proximity * terrainMatch * derivedDiscount))
         }
+
+        // ITRA/UTMB performance index, as a pace sample in its own right —
+        // not just the small trend nudge in `indexTrendMultiplier`. Neither
+        // service publishes an index→pace formula, so this is a rough,
+        // documented approximation (see `indexEquivalentTenKSeconds`), not
+        // measured data — which is why it's discounted harder than VMA
+        // (`indexPaceDiscount` vs. VMA's 0.8). The point is athletes who
+        // arrive with a real index but no logged PBs/runs (common for
+        // experienced trail runners new to this app) get *some* fitness
+        // signal instead of falling all the way to the generic
+        // experience-level fallback with zero pace benefit from an index
+        // that says more about them than "advanced"/"elite" alone does.
+        result.append(contentsOf: indexWeightedPaces(athlete: athlete, race: race, raceEffectiveKm: raceEffectiveKm))
+
         return result
+    }
+
+    /// Discount for index-derived pace samples: harder than VMA's 0.8
+    /// because this is an approximation of an approximation — an
+    /// interpolated community calibration standing in for a private,
+    /// undisclosed scoring formula, not a physiological measurement.
+    private static let indexPaceDiscount = 0.5
+
+    private func indexWeightedPaces(
+        athlete: Athlete,
+        race: Race,
+        raceEffectiveKm: Double
+    ) -> [(pace: Double, weight: Double)] {
+        var result: [(Double, Double)] = []
+        // Both ITRA and UTMB indices are calculated from TRAIL race
+        // results specifically — full weight for a trail target race,
+        // discounted like a road PB would be for a road one.
+        let terrainMatch: Double = race.raceType == .trail ? 1.0 : 0.6
+
+        if isFreshIndex(athlete.itraIndex, athlete.itraIndexUpdatedAt), let itra = athlete.itraIndex {
+            let tenK = indexEquivalentTenKSeconds(forIndex: itra)
+            let predictedTime = projectedTime(timeSeconds: tenK, fromEffectiveKm: 10, toEffectiveKm: raceEffectiveKm)
+            let pace = predictedTime / max(raceEffectiveKm, 1)
+            result.append((pace, terrainMatch * Self.indexPaceDiscount))
+        }
+        if isFreshIndex(athlete.utmbIndex, athlete.utmbIndexUpdatedAt), let utmb = athlete.utmbIndex {
+            let tenK = indexEquivalentTenKSeconds(forIndex: utmb)
+            let predictedTime = projectedTime(timeSeconds: tenK, fromEffectiveKm: 10, toEffectiveKm: raceEffectiveKm)
+            let pace = predictedTime / max(raceEffectiveKm, 1)
+            result.append((pace, terrainMatch * Self.indexPaceDiscount))
+        }
+        return result
+    }
+
+    /// Approximate, community-calibrated mapping from an ITRA/UTMB
+    /// performance index (0-1000 scale, as used throughout this app's
+    /// athlete profile) to an equivalent 10K road time. This is NOT a
+    /// published formula — neither service discloses theirs — it's a
+    /// piecewise-linear interpolation anchored at commonly-referenced
+    /// performance bands (recreational/entry trail racer around 400-450,
+    /// solid intermediate around 550, competitive age-grouper around
+    /// 700-750, elite/regional podium around 850, world-class 900+).
+    /// Deliberately treated as low-confidence data (`indexPaceDiscount`),
+    /// not asserted as precise — it exists to give SOME pace signal
+    /// instead of none, not to replace real race results.
+    private func indexEquivalentTenKSeconds(forIndex index: Double) -> Double {
+        let anchors: [(index: Double, tenKSeconds: Double)] = [
+            (300, 3600),  // 60:00 — below-average / new to indexed racing
+            (450, 3000),  // 50:00 — recreational trail racer
+            (550, 2640),  // 44:00 — solid intermediate
+            (650, 2340),  // 39:00 — strong / advanced
+            (750, 2100),  // 35:00 — very strong / competitive age-grouper
+            (850, 1920),  // 32:00 — elite / regional podium contender
+            (950, 1770)   // 29:30 — world-class
+        ]
+        let clamped = min(max(index, anchors.first!.index), anchors.last!.index)
+        for i in 1..<anchors.count {
+            if clamped <= anchors[i].index {
+                let prev = anchors[i - 1]
+                let curr = anchors[i]
+                let fraction = (clamped - prev.index) / (curr.index - prev.index)
+                return prev.tenKSeconds + fraction * (curr.tenKSeconds - prev.tenKSeconds)
+            }
+        }
+        return anchors.last!.tenKSeconds
     }
 
     private func riegelExponent(toDistanceKm km: Double) -> Double {
@@ -527,6 +606,16 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
             if let vma = athlete.vmaKmh, vma > 0 {
                 allSignals.append(0.8)  // fresh signal but slightly discounted
             }
+            // A fresh index is a real (if indirect) fitness signal too —
+            // see `indexWeightedPaces` — weighted at the same discount
+            // used there so an index-only athlete doesn't fall into the
+            // same "no signal at all" bucket as someone with nothing.
+            if isFreshIndex(athlete.itraIndex, athlete.itraIndexUpdatedAt) {
+                allSignals.append(Self.indexPaceDiscount)
+            }
+            if isFreshIndex(athlete.utmbIndex, athlete.utmbIndexUpdatedAt) {
+                allSignals.append(Self.indexPaceDiscount)
+            }
             // Sum of recency weights → effective sample size. 2.0+ →
             // strong signal; 1.0 → moderate; <0.5 → weak (very old).
             // Bucket boundaries are slightly wider than the integer
@@ -553,7 +642,13 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
                     let hasVMA = (athlete.vmaKmh ?? 0) > 0
                     return hasRoadPB || hasVMA
                 } else {
-                    return athlete.trailPersonalBests.contains { $0.timeSeconds > 0 }
+                    // ITRA/UTMB indices are trail-race-derived, so a
+                    // fresh one counts as a matching-domain signal for a
+                    // trail target race, same as a trail PB would.
+                    let hasTrailPB = athlete.trailPersonalBests.contains { $0.timeSeconds > 0 }
+                    let hasFreshIndex = isFreshIndex(athlete.itraIndex, athlete.itraIndexUpdatedAt)
+                        || isFreshIndex(athlete.utmbIndex, athlete.utmbIndexUpdatedAt)
+                    return hasTrailPB || hasFreshIndex
                 }
             }()
             let typeMatchPenalty: Double = hasMatchingDistanceType ? 0 : 0.05
@@ -671,22 +766,69 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
         guard !race.checkpoints.isEmpty else { return [] }
 
         let sortedCheckpoints = race.checkpoints.sorted { $0.distanceFromStartKm < $1.distanceFromStartKm }
+
+        // When a full GPX course is available, use its fine-grained
+        // elevation profile to sum every real up/down along the actual
+        // track within each segment — not just the net delta between two
+        // sparse checkpoint elevations. A segment that nets "downhill"
+        // checkpoint-to-checkpoint can still contain real intermediate
+        // climbs (a short punchy re-ascent before the final descent, for
+        // example), which the old checkpoint-only delta silently zeroed
+        // out as "0 m D+". Falls back to the checkpoint-delta method
+        // when no course route is imported (many races only ever have
+        // manually-entered checkpoints with estimated elevations).
+        let fineProfile: [ElevationProfilePoint]? = race.courseRoute.count >= 2
+            ? ElevationCalculator.elevationProfile(from: race.courseRoute)
+            : nil
+
         var segments: [(effort: Double, elevationGain: Double, elevationLoss: Double, checkpoint: Checkpoint)] = []
         var previousDistanceKm = 0.0
         var previousElevationM = 0.0
 
         for checkpoint in sortedCheckpoints {
             let segmentDistance = checkpoint.distanceFromStartKm - previousDistanceKm
-            let elevationChange = checkpoint.elevationM - previousElevationM
-            let elevationGain = max(0, elevationChange)
-            let elevationLoss = max(0, -elevationChange)
+            let elevationGain: Double
+            let elevationLoss: Double
+            if let fineProfile {
+                (elevationGain, elevationLoss) = cumulativeElevationChange(
+                    in: fineProfile, fromKm: previousDistanceKm, toKm: checkpoint.distanceFromStartKm
+                )
+            } else {
+                let elevationChange = checkpoint.elevationM - previousElevationM
+                elevationGain = max(0, elevationChange)
+                elevationLoss = max(0, -elevationChange)
+            }
             let effort = segmentDistance + (elevationGain / 100.0)
             segments.append((effort, elevationGain, elevationLoss, checkpoint))
             previousDistanceKm = checkpoint.distanceFromStartKm
             previousElevationM = checkpoint.elevationM
         }
 
-        let totalEffort = segments.reduce(0.0) { $0 + $1.effort }
+        // `segments` only spans 0 km -> the LAST checkpoint's distance —
+        // checkpoints are intermediate markers, not the finish line
+        // itself (the finish is rendered separately by the UI from the
+        // top-level `optimistic`/`expected`/`conservative` fields, not
+        // from a `CheckpointSplit`). Normalizing fractions against just
+        // the checkpoint segments' effort made the LAST checkpoint's
+        // cumulative effort equal the total, so its fraction hit exactly
+        // 1.0 — silently giving it the entire race's finish time instead
+        // of its own, earlier split. Folding in the remaining stretch
+        // from the last checkpoint to the true finish (`race.distanceKm`)
+        // keeps every real checkpoint's fraction properly below 1.0.
+        let finishDistanceKm = max(race.distanceKm, previousDistanceKm)
+        let finishSegmentDistance = max(0, finishDistanceKm - previousDistanceKm)
+        let finishElevationGain: Double
+        if let fineProfile {
+            (finishElevationGain, _) = cumulativeElevationChange(
+                in: fineProfile, fromKm: previousDistanceKm, toKm: finishDistanceKm
+            )
+        } else {
+            let accountedGain = segments.reduce(0.0) { $0 + $1.elevationGain }
+            finishElevationGain = max(0, race.elevationGainM - accountedGain)
+        }
+        let finishEffort = finishSegmentDistance + (finishElevationGain / 100.0)
+
+        let totalEffort = segments.reduce(0.0) { $0 + $1.effort } + finishEffort
         guard totalEffort > 0 else { return [] }
 
         var cumulativeEffort = 0.0
@@ -710,6 +852,31 @@ struct FinishTimeEstimator: EstimateFinishTimeUseCase, Sendable {
                 conservativeTime: conservative * fraction
             )
         }
+    }
+
+    /// Sums every up/down movement in the fine-grained (50m-sampled)
+    /// elevation profile between two distance markers — the TRUE
+    /// cumulative gain/loss for that stretch, not just the net elevation
+    /// delta between its two endpoints (which hides real climbs/descents
+    /// that happen inside a segment that nets the other way).
+    private func cumulativeElevationChange(
+        in profile: [ElevationProfilePoint],
+        fromKm: Double,
+        toKm: Double
+    ) -> (gain: Double, loss: Double) {
+        let pointsInRange = profile.filter { $0.distanceKm >= fromKm && $0.distanceKm <= toKm }
+        guard pointsInRange.count >= 2 else { return (0, 0) }
+        var gain = 0.0
+        var loss = 0.0
+        for i in 1..<pointsInRange.count {
+            let diff = pointsInRange[i].altitudeM - pointsInRange[i - 1].altitudeM
+            if diff > 0 {
+                gain += diff
+            } else {
+                loss += -diff
+            }
+        }
+        return (gain, loss)
     }
 
     // MARK: - Calibration

@@ -141,13 +141,21 @@ extension DashboardViewModel {
 
             guard let athlete = try await athleteRepository.getAthlete() else { return }
             let runs = try await runRepository.getRuns(for: athlete.id)
-            guard !runs.isEmpty else { return }
 
+            // Mirrors FinishEstimationViewModel's day-0 prediction support:
+            // an athlete with zero logged runs still gets an estimate
+            // (PB/experience-fallback sourced), just skips the fitness
+            // snapshot calc that needs run history. Previously this
+            // bailed out entirely on an empty run list, silently hiding
+            // the dashboard's forecast card for every freshly-onboarded
+            // athlete until they logged a first run.
             var fitness: FitnessSnapshot?
-            do {
-                fitness = try await fitnessCalculator.execute(runs: runs, asOf: .now)
-            } catch {
-                Logger.fitness.warning("Could not calculate fitness for dashboard estimate: \(error)")
+            if !runs.isEmpty {
+                do {
+                    fitness = try await fitnessCalculator.execute(runs: runs, asOf: .now)
+                } catch {
+                    Logger.fitness.warning("Could not calculate fitness for dashboard estimate: \(error)")
+                }
             }
 
             let calibrations = await buildCalibrations()

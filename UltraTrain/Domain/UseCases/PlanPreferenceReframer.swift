@@ -101,18 +101,25 @@ struct PlanPreferenceReframer: ReframePlanForPreferencesUseCase {
             // trail) so race day is included as a `.race` session.
             let aRaceWeekTemplates: [SessionTemplateGenerator.SessionTemplate]?
             if isARaceWeek {
+                // Real fitness-derived estimate (PBs/VMA/index), not the
+                // generic experience heuristic — mirrors TrainingPlanGenerator
+                // so a reframed plan doesn't regress the race-day duration
+                // back to an arbitrary value.
+                let precomputedRaceDuration = FinishTimeEstimator.quickEstimate(athlete: updatedAthlete, race: targetRace)
                 aRaceWeekTemplates = isRoadRace
                     ? RoadRaceWeekTemplates.sessions(
                         targetRace: targetRace,
                         experience: updatedAthlete.experienceLevel,
                         philosophy: updatedAthlete.trainingPhilosophy,
-                        weekStartDate: skeleton.startDate
+                        weekStartDate: skeleton.startDate,
+                        precomputedRaceDuration: precomputedRaceDuration
                     )
                     : TrailRaceWeekTemplates.sessions(
                         targetRace: targetRace,
                         experience: updatedAthlete.experienceLevel,
                         philosophy: updatedAthlete.trainingPhilosophy,
-                        weekStartDate: skeleton.startDate
+                        weekStartDate: skeleton.startDate,
+                        precomputedRaceDuration: precomputedRaceDuration
                     )
             } else {
                 aRaceWeekTemplates = nil

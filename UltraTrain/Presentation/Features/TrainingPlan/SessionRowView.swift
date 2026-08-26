@@ -198,6 +198,8 @@ struct SessionRowView: View {
                 Text(session.intensity.displayName)
                     .font(.caption2.weight(.medium))
                     .foregroundStyle(accentColor)
+                    .lineLimit(1)
+                    .fixedSize(horizontal: true, vertical: false)
             }
 
             // Distance is the bottom-line companion stat (approximation
@@ -219,7 +221,7 @@ struct SessionRowView: View {
             }
 
             if session.isGutTrainingRecommended && !session.isSkipped {
-                GutTrainingBadge()
+                GutTrainingBadge(compact: true)
             }
 
             // Same-day strength work rides on this line as a compact chip
@@ -296,6 +298,41 @@ struct SessionRowView: View {
         if session.isCompleted { return "\(titleText), completed" }
         if session.isSkipped { return "\(titleText), skipped" }
         return "Mark \(titleText) as completed"
+    }
+}
+
+// MARK: - Weekend Choc (B2B) Labeling
+// Shared so every place that lists a week's sessions (the main weekly
+// list via `WeekCardView`, and the week-summary sheet) agrees on which
+// sessions are a back-to-back pair and what to call them — previously
+// only `WeekCardView` computed this, so the summary sheet showed the
+// same Saturday/Sunday pair as a plain "Long Run" + "Weekend Choc"
+// instead of "Weekend Choc (1/2)" + "(2/2)".
+extension TrainingSession {
+    /// Position within a back-to-back ("Weekend Choc") weekend. Day 2 is
+    /// the explicit `.backToBack` session; day 1 is the long run on the
+    /// calendar day immediately before it. nil for everything else.
+    static func b2bPosition(for session: TrainingSession, in weekSessions: [TrainingSession]) -> Int? {
+        if session.type == .backToBack { return 2 }
+        guard session.type == .longRun else { return nil }
+        let cal = Calendar.current
+        guard let nextDay = cal.date(
+            byAdding: .day, value: 1, to: cal.startOfDay(for: session.date)
+        ) else { return nil }
+        let hasB2BNextDay = weekSessions.contains {
+            $0.type == .backToBack && cal.startOfDay(for: $0.date) == nextDay
+        }
+        return hasB2BNextDay ? 1 : nil
+    }
+
+    /// Display title accounting for Weekend Choc pairing — "Weekend Choc
+    /// (1/2)" / "(2/2)" when applicable, otherwise the plain session-type
+    /// name. Matches `SessionRowView.titleText`'s logic exactly.
+    static func displayTitle(for session: TrainingSession, in weekSessions: [TrainingSession]) -> String {
+        if let pos = b2bPosition(for: session, in: weekSessions) {
+            return String(localized: "session.b2bPairLabel", defaultValue: "Weekend Choc (\(pos)/2)")
+        }
+        return session.type.displayName
     }
 }
 

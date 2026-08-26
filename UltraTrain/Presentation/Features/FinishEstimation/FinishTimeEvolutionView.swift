@@ -83,6 +83,12 @@ struct FinishTimeEvolutionView: View {
     @ViewBuilder
     private var courseSection: some View {
         if !effectiveCourseRoute.isEmpty {
+            // `InteractiveCourseProfileView` already carries its own
+            // premium card styling — wrapping it in a second glass card
+            // here doubled up padding/borders into a "card within a
+            // card" that also ate into the width available for the
+            // chart, legend and scrub readout. This lets the chart's own
+            // card be the only card, using the full section width.
             VStack(spacing: Theme.Spacing.sm) {
                 InteractiveCourseProfileView(
                     viewModel: InteractiveCourseProfileViewModel(
@@ -105,8 +111,6 @@ struct FinishTimeEvolutionView: View {
                         .multilineTextAlignment(.center)
                 }
             }
-            .padding(Theme.Spacing.md)
-            .futuristicGlassStyle(phaseTint: primaryTint)
             .courseImportSheets(
                 showDocumentPicker: $showDocumentPicker,
                 showImportCourse: $showImportCourse,
@@ -675,7 +679,14 @@ struct FinishTimeEvolutionView: View {
     }
 
     private var chartAccessibilitySummary: String {
-        "Projected finish time evolution chart from \(formatShort(points.first?.expectedSeconds ?? estimate.expectedTime)) to \(formatShort(raceDayExpected)) on race day. Drag to explore any week."
+        String(
+            format: String(
+                localized: "fte.chart.a11ySummary",
+                defaultValue: "Projected finish time evolution chart from %@ to %@ on race day. Drag to explore any week."
+            ),
+            formatShort(points.first?.expectedSeconds ?? estimate.expectedTime),
+            formatShort(raceDayExpected)
+        )
     }
 
     /// Put the "Now" annotation below the dot when it's in the upper half

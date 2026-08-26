@@ -21,14 +21,27 @@ struct RaceCategoryTests {
     func hundredKCategory() {
         #expect(RaceCategory.from(effectiveDistanceKm: 80) == .hundredK)
         #expect(RaceCategory.from(effectiveDistanceKm: 110) == .hundredK)
-        #expect(RaceCategory.from(effectiveDistanceKm: 139) == .hundredK)
+        #expect(RaceCategory.from(effectiveDistanceKm: 160) == .hundredK)
     }
 
     @Test("100 Miles category")
     func hundredMilesCategory() {
-        #expect(RaceCategory.from(effectiveDistanceKm: 140) == .hundredMiles)
+        // The boundary sits at 161 km — the actual distance of a 100-mile
+        // race (160.9 km) — not an arbitrary lower "effective km" figure.
+        #expect(RaceCategory.from(effectiveDistanceKm: 161) == .hundredMiles)
         #expect(RaceCategory.from(effectiveDistanceKm: 200) == .hundredMiles)
         #expect(RaceCategory.from(effectiveDistanceKm: 219) == .hundredMiles)
+    }
+
+    @Test("A hilly 100K stays 100K instead of being pushed into 100 Miles by its elevation")
+    func hillyHundredKStaysHundredK() {
+        // Reported bug: 100 km + 5000 m D+ → effective = 100 + 50 = 150 km,
+        // which used to cross the old 140 km boundary into `.hundredMiles`
+        // — demanding that category's higher minimum prep weeks for what
+        // is still, in real terms, a 100K race with a lot of climbing.
+        let effectiveKm = 100.0 + 5000.0 / 100.0
+        #expect(effectiveKm == 150)
+        #expect(RaceCategory.from(effectiveDistanceKm: effectiveKm) == .hundredK)
     }
 
     @Test("Ultra Long category")

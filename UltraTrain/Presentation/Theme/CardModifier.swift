@@ -29,6 +29,13 @@ extension View {
     func futuristicGlassStyle(phaseTint: Color? = nil) -> some View {
         modifier(FuturisticGlassCardModifier(phaseTint: phaseTint))
     }
+
+    /// Deep navy/indigo (dark) or soft lavender (light) card with a
+    /// tint-colored border and dual glow/depth shadow — the "premium
+    /// sports data" look used for finish-time/course chart surfaces.
+    func premiumChartCardStyle(tint: Color = Theme.Colors.primary) -> some View {
+        modifier(PremiumChartCardModifier(tint: tint))
+    }
 }
 
 struct AppCardModifier: ViewModifier {
@@ -202,6 +209,82 @@ struct FuturisticGlassCardModifier: ViewModifier {
         }
         return LinearGradient(
             colors: [Color.black.opacity(0.03), Color.black.opacity(0.08)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+}
+
+struct PremiumChartCardModifier: ViewModifier {
+    @Environment(\.colorScheme) private var colorScheme
+    var tint: Color
+
+    func body(content: Content) -> some View {
+        content
+            .padding(Theme.Spacing.md)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                    .fill(backgroundGradient)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                            .stroke(borderGradient, lineWidth: 1)
+                    )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
+                    .fill(sheenGradient)
+                    .allowsHitTesting(false)
+            )
+            .shadow(color: tint.opacity(0.12), radius: 20, y: 6)
+            .shadow(color: .black.opacity(colorScheme == .dark ? 0.35 : 0.12), radius: 10, y: 3)
+    }
+
+    private var backgroundGradient: LinearGradient {
+        if colorScheme == .dark {
+            return LinearGradient(
+                colors: [Theme.Colors.premiumBgTop, Theme.Colors.premiumBgMid, Theme.Colors.premiumBgBottom],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
+        return LinearGradient(
+            colors: [
+                Color(red: 0.90, green: 0.88, blue: 0.98),
+                Color(red: 0.93, green: 0.92, blue: 0.99),
+                Color(red: 0.95, green: 0.95, blue: 1.0)
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
+    private var borderGradient: LinearGradient {
+        LinearGradient(
+            colors: [tint.opacity(0.30), tint.opacity(0.06)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
+    /// Diagonal glass sheen — the same reflective highlight signature
+    /// used by `FuturisticGlassCardModifier`.
+    private var sheenGradient: LinearGradient {
+        if colorScheme == .dark {
+            return LinearGradient(
+                stops: [
+                    .init(color: Color.white.opacity(0.07), location: 0.0),
+                    .init(color: Color.white.opacity(0.02), location: 0.25),
+                    .init(color: Color.clear, location: 0.5)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
+        return LinearGradient(
+            stops: [
+                .init(color: Color.white.opacity(0.5), location: 0.0),
+                .init(color: Color.clear, location: 0.35)
+            ],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )

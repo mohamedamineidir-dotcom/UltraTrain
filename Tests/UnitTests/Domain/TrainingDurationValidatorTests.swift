@@ -98,13 +98,34 @@ struct TrainingDurationValidatorTests {
             raceDate: raceDate,
             experienceLevel: .intermediate
         )
-        // 100 + 50 = 150 eff km → hundredMiles → intermediate needs 18 weeks
+        // 100 + 50 = 150 eff km → hundredK (below the 161 km 100-Miles
+        // boundary) → intermediate needs 16 weeks
+        #expect(result.raceCategory == .hundredK)
         #expect(!result.isSufficient)
         guard let message = result.warningMessage else {
             Issue.record("Expected warning message")
             return
         }
-        #expect(message.contains("18"))
+        #expect(message.contains("16"))
         #expect(message.contains("intermediate"))
+    }
+
+    @Test("A hilly 100K isn't blocked by the 100 Miles category's higher minimum")
+    func hillyHundredKUsesHundredKMinimum() {
+        // Reported bug: 100 km + 5000 m D+ (150 eff km) used to be
+        // classified `.hundredMiles` and require 16 weeks for an advanced
+        // runner (needlessly higher than the real 100K minimum of 12) —
+        // blocking athletes who actually had enough time for their race's
+        // real category.
+        let raceDate = Calendar.current.date(byAdding: .weekOfYear, value: 14, to: .now)!
+        let result = TrainingDurationValidator.validate(
+            distanceKm: 100,
+            elevationGainM: 5000,
+            raceDate: raceDate,
+            experienceLevel: .advanced
+        )
+        #expect(result.raceCategory == .hundredK)
+        #expect(result.minimumWeeks == 12)
+        #expect(result.isSufficient)
     }
 }

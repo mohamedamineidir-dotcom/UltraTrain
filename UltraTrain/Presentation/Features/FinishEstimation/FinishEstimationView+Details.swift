@@ -14,8 +14,8 @@ extension FinishEstimationView {
     /// can't show real adaptation, so we hide the chart entirely instead
     /// of drawing a curve the athlete shouldn't trust.
     private var showsEvolutionChart: Bool {
-        if race.priority == .aRace { return true }
-        let weeksToRace = max(0, Int((race.date.timeIntervalSinceNow / 86400 / 7).rounded()))
+        if viewModel.race.priority == .aRace { return true }
+        let weeksToRace = max(0, Int((viewModel.race.date.timeIntervalSinceNow / 86400 / 7).rounded()))
         return weeksToRace >= 4
     }
 
@@ -24,7 +24,12 @@ extension FinishEstimationView {
         if showsEvolutionChart {
             NavigationLink {
                 FinishTimeEvolutionView(
-                    race: race,
+                    // `viewModel.race`, not the view's own stale `let race` —
+                    // after a GPX import updates the view model (see
+                    // `applyCourseUpdate`), re-entering this NavigationLink
+                    // must see the persisted course, not the pre-import copy
+                    // captured at this view's `init`.
+                    race: viewModel.race,
                     estimate: estimate,
                     experience: viewModel.athleteExperience,
                     trainingPhilosophy: viewModel.athleteTrainingPhilosophy,
@@ -44,51 +49,43 @@ extension FinishEstimationView {
     }
 
     private func scenarioCardsBody(_ estimate: FinishEstimate, showsChartCue: Bool) -> some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            HStack(spacing: 6) {
+        VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                 Text("Predicted Finish Time")
                     .font(.headline)
-                Spacer()
-                if showsChartCue {
-                    Image(systemName: "chart.line.downtrend.xyaxis")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(Theme.Colors.primary)
-                    Image(systemName: "chevron.right")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(Theme.Colors.tertiaryLabel)
+
+                HStack(spacing: Theme.Spacing.sm) {
+                    scenarioCard(
+                        title: String(localized: "fe.scn.optimistic", defaultValue: "Optimistic"),
+                        time: estimate.optimisticTime,
+                        color: Theme.Colors.success
+                    )
+                    scenarioCard(
+                        title: String(localized: "fe.scn.expected", defaultValue: "Expected"),
+                        time: estimate.expectedTime,
+                        color: Theme.Colors.primary
+                    )
+                    scenarioCard(
+                        title: String(localized: "fe.scn.conservative", defaultValue: "Conservative"),
+                        time: estimate.conservativeTime,
+                        color: Theme.Colors.warning
+                    )
+                }
+
+                if !showsChartCue {
+                    Text("Race is too close to the start of your plan to project an evolution curve.")
+                        .font(.caption2)
+                        .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
             }
-
-            HStack(spacing: Theme.Spacing.sm) {
-                scenarioCard(
-                    title: String(localized: "fe.scn.optimistic", defaultValue: "Optimistic"),
-                    time: estimate.optimisticTime,
-                    color: Theme.Colors.success
-                )
-                scenarioCard(
-                    title: String(localized: "fe.scn.expected", defaultValue: "Expected"),
-                    time: estimate.expectedTime,
-                    color: Theme.Colors.primary
-                )
-                scenarioCard(
-                    title: String(localized: "fe.scn.conservative", defaultValue: "Conservative"),
-                    time: estimate.conservativeTime,
-                    color: Theme.Colors.warning
-                )
-            }
+            .padding(.bottom, Theme.Spacing.sm)
 
             if showsChartCue {
-                Text("Tap to see how this evolves with your prep →")
-                    .font(.caption2)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-            } else {
-                Text("Race is too close to the start of your plan to project an evolution curve.")
-                    .font(.caption2)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                EvolutionCTAFooter()
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .cardStyle()
+        .premiumChartCardStyle(tint: Theme.Colors.primary)
     }
 
     func scenarioCard(title: String, time: TimeInterval, color: Color) -> some View {
@@ -105,26 +102,51 @@ extension FinishEstimationView {
         .accessibilityLabel("\(title): \(AccessibilityFormatters.duration(time))")
     }
 
-    // MARK: - Confidence
+    // MARK: - Confidence + Data Source
+    // Previously two separate cards (a data-source explainer + a
+    // confidence bar) that said much of the same thing in different
+    // words — both boiling down to "here's why this range is what it is,
+    // and here's a number for how much to trust it." Fused into one
+    // card, same size as either original, keeping the confidence % bar
+    // (the one piece of information that's genuinely its own signal) and
+    // the source-specific explainer (the more actionable of the two
+    // texts — it tells the athlete what to actually DO to tighten the
+    // range, not just restates the percentage in words).
 
-    func confidenceSection(_ estimate: FinishEstimate) -> some View {
+    func confidenceSection(_ estimate: FinishEstimate, source: FinishPredictionSource?) -> some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            HStack {
-                Text("Confidence")
-                    .font(.headline)
+            HStack(spacing: Theme.Spacing.sm) {
+                if let source {
+                    Image(systemName: dataSourceIcon(source))
+                        .foregroundStyle(dataSourceColor(source))
+                        .font(.subheadline)
+                        .accessibilityHidden(true)
+                    Text(source.shortLabel)
+                        .font(.subheadline.bold())
+                        .foregroundStyle(dataSourceColor(source))
+                } else {
+                    Text("Confidence")
+                        .font(.headline)
+                }
                 Spacer()
                 Text(String(format: "%.0f%%", estimate.confidencePercent))
                     .font(.subheadline.bold().monospacedDigit())
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
             }
 
             ProgressView(value: estimate.confidencePercent, total: 100)
                 .tint(confidenceColor(estimate.confidencePercent))
 
-            Text(confidenceLabel(estimate.confidencePercent))
+            Text(source?.explainer ?? confidenceLabel(estimate.confidencePercent))
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
+                .fixedSize(horizontal: false, vertical: true)
         }
-        .cardStyle()
+        .futuristicGlassStyle(phaseTint: source.map(dataSourceColor) ?? confidenceColor(estimate.confidencePercent))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(
+            "\(source?.shortLabel ?? "Confidence"). \(source?.explainer ?? confidenceLabel(estimate.confidencePercent)) \(Int(estimate.confidencePercent)) percent."
+        )
     }
 
     func confidenceColor(_ percent: Double) -> Color {
@@ -141,39 +163,6 @@ extension FinishEstimationView {
             return String(localized: "fe.confidence.moderate", defaultValue: "Moderate prediction, more training data would improve accuracy")
         }
         return String(localized: "fe.confidence.low", defaultValue: "Low confidence, keep training to improve prediction accuracy")
-    }
-
-    // MARK: - Data Source Badge
-
-    /// Inline indicator that explains where the prediction came from
-    /// (PB-based / runs-derived / generic-fallback). The athlete sees
-    /// the range narrow + this badge change as they accumulate data.
-    func dataSourceBadge(source: FinishPredictionSource) -> some View {
-        HStack(alignment: .top, spacing: Theme.Spacing.sm) {
-            Image(systemName: dataSourceIcon(source))
-                .foregroundStyle(dataSourceColor(source))
-                .font(.subheadline)
-                .accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(source.shortLabel)
-                    .font(.caption.bold())
-                    .foregroundStyle(dataSourceColor(source))
-                Text(source.explainer)
-                    .font(.caption2)
-                    .foregroundStyle(Theme.Colors.secondaryLabel)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            Spacer()
-        }
-        .padding(Theme.Spacing.md)
-        .background(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
-                .fill(dataSourceColor(source).opacity(0.08))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: Theme.CornerRadius.sm)
-                .stroke(dataSourceColor(source).opacity(0.3), lineWidth: 1)
-        )
     }
 
     private func dataSourceIcon(_ source: FinishPredictionSource) -> String {
@@ -208,7 +197,10 @@ extension FinishEstimationView {
                     .font(.subheadline)
             }
             if factor != 1.0 {
-                Text(String(format: "Avg. accuracy: %.0f%%", accuracy))
+                Text(String(
+                    format: String(localized: "fe.calibration.avgAccuracy", defaultValue: "Avg. accuracy: %.0f%%"),
+                    accuracy
+                ))
                     .font(.caption.bold())
                     .foregroundStyle(Theme.Colors.secondaryLabel)
                 Text(calibrationDescription(factor))
@@ -226,9 +218,9 @@ extension FinishEstimationView {
 
     func calibrationDescription(_ factor: Double) -> String {
         if factor < 1.0 {
-            return "Model adjusted down, you're faster than predicted"
+            return String(localized: "fe.calibration.adjustedDown", defaultValue: "Model adjusted down, you're faster than predicted")
         }
-        return "Model adjusted up, you're slower than predicted"
+        return String(localized: "fe.calibration.adjustedUp", defaultValue: "Model adjusted up, you're slower than predicted")
     }
 
     // MARK: - Error

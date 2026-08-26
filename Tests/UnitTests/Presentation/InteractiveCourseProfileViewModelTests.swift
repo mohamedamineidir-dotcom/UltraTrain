@@ -109,6 +109,49 @@ struct InteractiveCourseProfileViewModelTests {
         #expect(vm.selectedDistance == nil)
         #expect(vm.selectedSegment == nil)
         #expect(vm.selectedAltitude == nil)
+        #expect(vm.selectedCumulativeGain == nil)
+    }
+
+    // MARK: - Cumulative D+ while scrubbing
+
+    @Test("selectPoint sets cumulative gain to zero at the very start")
+    @MainActor
+    func selectPoint_atStart_cumulativeGainIsZero() {
+        let vm = InteractiveCourseProfileViewModel(
+            courseRoute: makeRoute(),
+            checkpoints: makeCheckpoints()
+        )
+        vm.selectPoint(at: 0)
+        #expect(vm.selectedCumulativeGain == 0)
+    }
+
+    @Test("selectPoint's cumulative gain increases monotonically with distance")
+    @MainActor
+    func selectPoint_cumulativeGain_increasesMonotonically() throws {
+        let vm = InteractiveCourseProfileViewModel(
+            courseRoute: makeRoute(),
+            checkpoints: makeCheckpoints()
+        )
+        vm.selectPoint(at: vm.totalDistanceKm * 0.25)
+        let earlyGain = try #require(vm.selectedCumulativeGain)
+        vm.selectPoint(at: vm.totalDistanceKm * 0.9)
+        let lateGain = try #require(vm.selectedCumulativeGain)
+        #expect(lateGain >= earlyGain)
+    }
+
+    @Test("selectPoint's cumulative gain at the end matches the route's total climb, not net elevation change")
+    @MainActor
+    func selectPoint_cumulativeGain_atEnd_matchesTotalClimb() throws {
+        // Route climbs 500->600 (100m gain), descends 600->500 (0 gain),
+        // then stays flat — net elevation change is 0, but total D+ is ~100m.
+        let vm = InteractiveCourseProfileViewModel(
+            courseRoute: makeRoute(),
+            checkpoints: makeCheckpoints()
+        )
+        vm.selectPoint(at: vm.totalDistanceKm)
+        let finalGain = try #require(vm.selectedCumulativeGain)
+        #expect(finalGain > 50)
+        #expect(finalGain < 150)
     }
 
     // MARK: - Computed Properties
@@ -125,6 +168,104 @@ struct InteractiveCourseProfileViewModelTests {
         // The route has altitudes 500-600
         #expect(vm.minAltitude <= 500)
         #expect(vm.maxAltitude >= 600)
+    }
+
+    // MARK: - Adaptive Axis Domains
+
+    /// A route peaking at roughly `peakAltitudeM`, starting near sea level
+    /// and spanning `totalKm` — used to check that the chart domain scales
+    /// with the actual course rather than a fixed literal.
+    private func makeRoute(peakAltitudeM: Double, totalKm: Double) -> [TrackPoint] {
+        let baseDate = Date(timeIntervalSince1970: 1_000_000)
+        let pointCount = 20
+        // Degrees-per-point tuned so the total haversine distance is
+        // roughly `totalKm` (~111km per degree of latitude).
+        let degreesPerPoint = totalKm / 111.0 / Double(pointCount)
+        return (0..<pointCount).map { index in
+            let progress = Double(index) / Double(pointCount - 1)
+            // Triangular profile: climbs to the peak at the midpoint, then
+            // back down — guarantees maxAltitude ≈ peakAltitudeM.
+            let altitude = progress <= 0.5
+                ? peakAltitudeM * (progress * 2)
+                : peakAltitudeM * (2 - progress * 2)
+            return TrackPoint(
+                latitude: 45.0 + Double(index) * degreesPerPoint,
+                longitude: 6.0,
+                altitudeM: altitude,
+                timestamp: baseDate.addingTimeInterval(Double(index) * 60),
+                heartRate: nil
+            )
+        }
+    }
+
+    @Test("altitudeDomain tops out a modest amount above a low peak, not a fixed literal")
+    @MainActor
+    func altitudeDomain_lowPeak_scalesDown() {
+        let vm = InteractiveCourseProfileViewModel(
+            courseRoute: makeRoute(peakAltitudeM: 900, totalKm: 50),
+            checkpoints: []
+        )
+        let domain = vm.altitudeDomain
+        // Ceiling should sit a modest amount above the real 900m peak —
+        // not a generic 4000m-style constant that's wrong for this course.
+        #expect(domain.upperBound > 900)
+        #expect(domain.upperBound < 1400)
+    }
+
+    @Test("altitudeDomain tops out proportionally higher above a high peak")
+    @MainActor
+    func altitudeDomain_highPeak_scalesUp() {
+        let vm = InteractiveCourseProfileViewModel(
+            courseRoute: makeRoute(peakAltitudeM: 4000, totalKm: 160),
+            checkpoints: []
+        )
+        let domain = vm.altitudeDomain
+        // Still "a bit more than 4000m" — well short of a 900m-course's
+        // padding scaled up, and nowhere near the 15000m regression seen
+        // when the axis was left fully automatic.
+        #expect(domain.upperBound > 4000)
+        #expect(domain.upperBound < 5000)
+    }
+
+    @Test("altitudeDomain ceiling for a high-peak course is well above a low-peak course's")
+    @MainActor
+    func altitudeDomain_scalesWithCourse_notFixed() {
+        let lowVM = InteractiveCourseProfileViewModel(
+            courseRoute: makeRoute(peakAltitudeM: 900, totalKm: 50),
+            checkpoints: []
+        )
+        let highVM = InteractiveCourseProfileViewModel(
+            courseRoute: makeRoute(peakAltitudeM: 4000, totalKm: 160),
+            checkpoints: []
+        )
+        #expect(highVM.altitudeDomain.upperBound > lowVM.altitudeDomain.upperBound * 2)
+    }
+
+    @Test("distanceDomain ends just past the course's actual total distance")
+    @MainActor
+    func distanceDomain_endsJustPastTotalDistance() {
+        let vm = InteractiveCourseProfileViewModel(
+            courseRoute: makeRoute(peakAltitudeM: 900, totalKm: 50),
+            checkpoints: []
+        )
+        let domain = vm.distanceDomain
+        #expect(domain.lowerBound == 0)
+        #expect(domain.upperBound >= vm.totalDistanceKm)
+        // Padding should be small — the chart shouldn't run on for miles
+        // past the course's actual finish.
+        #expect(domain.upperBound - vm.totalDistanceKm < vm.totalDistanceKm * 0.1)
+    }
+
+    @Test("distanceDomain scales with a much longer course (e.g. a 100-miler)")
+    @MainActor
+    func distanceDomain_scalesWithLongCourse() {
+        let vm = InteractiveCourseProfileViewModel(
+            courseRoute: makeRoute(peakAltitudeM: 2000, totalKm: 160),
+            checkpoints: []
+        )
+        let domain = vm.distanceDomain
+        #expect(domain.upperBound > 150)
+        #expect(domain.upperBound < 170)
     }
 
     @Test("selectedGradientText formatting includes sign and percent")

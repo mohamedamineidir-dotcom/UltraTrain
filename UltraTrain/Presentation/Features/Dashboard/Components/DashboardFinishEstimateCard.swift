@@ -12,8 +12,9 @@ struct DashboardFinishEstimateCard: View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Predicted finish")
+                    Label("Predicted finish", systemImage: "flag.checkered")
                         .font(.headline)
+                        .foregroundStyle(Theme.Colors.primary)
                     Text(race.name)
                         .font(.caption)
                         .foregroundStyle(Theme.Colors.secondaryLabel)
@@ -47,7 +48,7 @@ struct DashboardFinishEstimateCard: View {
             HStack(spacing: 0) {
                 scenarioColumn(
                     time: FinishEstimate.formatDuration(estimate.optimisticTime, raceDistanceKm: race.distanceKm),
-                    label: "Best",
+                    label: String(localized: "Best", defaultValue: "Best"),
                     color: Theme.Colors.success
                 )
 
@@ -66,7 +67,7 @@ struct DashboardFinishEstimateCard: View {
 
                 scenarioColumn(
                     time: FinishEstimate.formatDuration(estimate.conservativeTime, raceDistanceKm: race.distanceKm),
-                    label: "Safe",
+                    label: String(localized: "fe.dashboard.safe", defaultValue: "Safe"),
                     color: Theme.Colors.warning
                 )
             }
@@ -94,36 +95,23 @@ struct DashboardFinishEstimateCard: View {
                         .font(.caption2.bold().monospacedDigit())
                         .foregroundStyle(Theme.Colors.secondaryLabel)
                 }
-
-                Text(rangeHint)
-                    .font(.caption2)
-                    .foregroundStyle(Theme.Colors.tertiaryLabel)
-                    .padding(.top, 2)
             }
 
-            if let drift = goalDrift, drift.isDrifted {
-                Divider()
-                GoalDriftFlagRow(assessment: drift, raceDistanceKm: race.distanceKm)
+            // A light-touch hint that there's more inside (evolution
+            // chart, course map, splits) — deliberately just a small
+            // muted line, not a repeat of the bold button-style CTA
+            // used one screen further in, on `FinishEstimationView`
+            // itself.
+            HStack(spacing: 3) {
+                Text("Tap to see the full breakdown")
+                Image(systemName: "chevron.right")
             }
+            .font(.caption2.weight(.medium))
+            .foregroundStyle(Theme.Colors.tertiaryLabel)
         }
-        .appCardStyle()
+        .premiumChartCardStyle(tint: Theme.Colors.primary)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityDescription)
-    }
-
-    private var goalDrift: GoalDriftAssessment.Assessment? {
-        GoalDriftAssessment.assess(
-            goal: race.goalType,
-            expectedFinish: estimate.expectedTime,
-            optimisticFinish: estimate.optimisticTime,
-            raceDate: race.date
-        )
-    }
-
-    private var rangeHint: String {
-        let best = FinishEstimate.formatDuration(estimate.optimisticTime, raceDistanceKm: race.distanceKm)
-        let safe = FinishEstimate.formatDuration(estimate.conservativeTime, raceDistanceKm: race.distanceKm)
-        return "Range \(best)–\(safe). Narrows as you complete sessions."
     }
 
     private var confidenceGradient: LinearGradient {
@@ -138,7 +126,13 @@ struct DashboardFinishEstimateCard: View {
         let best = FinishEstimate.formatDuration(estimate.optimisticTime, raceDistanceKm: race.distanceKm)
         let expected = FinishEstimate.formatDuration(estimate.expectedTime, raceDistanceKm: race.distanceKm)
         let safe = FinishEstimate.formatDuration(estimate.conservativeTime, raceDistanceKm: race.distanceKm)
-        return "Race estimate for \(race.name). Best case \(best). Expected \(expected). Safe case \(safe). Confidence \(Int(estimate.confidencePercent)) percent."
+        return String(
+            format: String(
+                localized: "fe.dashboard.a11yDescription",
+                defaultValue: "Race estimate for %@. Best case %@. Expected %@. Safe case %@. Confidence %d percent."
+            ),
+            race.name, best, expected, safe, Int(estimate.confidencePercent)
+        )
     }
 
     private func scenarioColumn(time: String, label: String, color: Color) -> some View {

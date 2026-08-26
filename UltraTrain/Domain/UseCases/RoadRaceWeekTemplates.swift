@@ -32,10 +32,18 @@ enum RoadRaceWeekTemplates {
         experience: ExperienceLevel,
         philosophy: TrainingPhilosophy,
         weekStartDate: Date,
-        preferredRunsPerWeek: Int = 5
+        preferredRunsPerWeek: Int = 5,
+        // A real fitness-derived estimate (PBs / VMA / index via
+        // `FinishTimeEstimator.quickEstimate`), when the caller has an
+        // `Athlete` to compute one from. Without it, falls back to the
+        // generic experience-level heuristic below — which is only
+        // sensible when there's no fitness signal at all (a brand new
+        // profile), not as the default for every athlete regardless of
+        // what they've logged.
+        precomputedRaceDuration: TimeInterval? = nil
     ) -> [SessionTemplateGenerator.SessionTemplate] {
         let raceDayOffset = max(0, min(6, dayOffset(from: weekStartDate, to: targetRace.date)))
-        let raceDuration = targetRace.estimatedDuration(experience: experience)
+        let raceDuration = precomputedRaceDuration ?? targetRace.estimatedDuration(experience: experience)
         let raceDesc = makeRaceDescription(targetRace: targetRace)
         let distClass = RoadRaceClass.from(distanceKm: targetRace.distanceKm)
 

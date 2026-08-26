@@ -166,9 +166,10 @@ struct WeekSummarySheet: View {
                         .foregroundStyle(session.type == .rest ? Theme.Colors.secondaryLabel : session.intensity.color)
                         .frame(width: 16)
 
-                    Text(session.type.displayName)
+                    Text(TrainingSession.displayTitle(for: session, in: week.sessions))
                         .font(.subheadline)
                         .foregroundStyle(session.type == .rest ? Theme.Colors.secondaryLabel : Theme.Colors.label)
+                        .lineLimit(1)
 
                     Spacer()
 

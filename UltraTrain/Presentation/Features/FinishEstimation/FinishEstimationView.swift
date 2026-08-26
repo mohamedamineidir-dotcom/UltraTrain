@@ -64,24 +64,12 @@ struct FinishEstimationView: View {
                         .padding(.top, Theme.Spacing.xl)
                 } else if let estimate = viewModel.estimate {
                     raceHeader
-                    if viewModel.race.hasCourseRoute {
-                        InteractiveCourseProfileView(
-                            viewModel: InteractiveCourseProfileViewModel(
-                                courseRoute: viewModel.race.courseRoute,
-                                checkpoints: viewModel.race.checkpoints
-                            )
-                        )
-                        .cardStyle()
-                    } else if !viewModel.race.checkpoints.isEmpty {
-                        if !estimate.checkpointSplits.isEmpty {
-                            RaceCoursePaceChart(
-                                checkpoints: viewModel.race.checkpoints,
-                                checkpointSplits: estimate.checkpointSplits
-                            )
-                        } else {
-                            RaceCourseElevationChart(checkpoints: viewModel.race.checkpoints)
-                        }
-                    }
+                    // No course/pace chart on this page by design — the full
+                    // interactive, scrubbable course profile lives on the
+                    // "Parcours" tab of the time-evolution screen (one tap
+                    // away via the "Touchez pour voir l'évolution" link
+                    // below). Showing a chart here too just duplicated it
+                    // across two consecutive screens.
                     scenarioCards(estimate)
                     if let drift = GoalDriftAssessment.assess(
                         goal: viewModel.race.goalType,
@@ -102,10 +90,7 @@ struct FinishEstimationView: View {
                             isAdjusting: viewModel.isAdjustingGoal
                         )
                     }
-                    if let source = estimate.predictionSource {
-                        dataSourceBadge(source: source)
-                    }
-                    confidenceSection(estimate)
+                    confidenceSection(estimate, source: estimate.predictionSource)
                     if estimate.raceResultsUsed > 0 {
                         raceCalibrationBadge(estimate: estimate)
                     }
@@ -160,6 +145,6 @@ struct FinishEstimationView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .cardStyle()
+        .futuristicGlassStyle(phaseTint: Theme.Colors.primary)
     }
 }

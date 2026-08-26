@@ -252,6 +252,68 @@ struct FinishTimeEstimatorTests {
         #expect(estimate.checkpointSplits[2].segmentElevationGainM == 0)
     }
 
+    @Test("Checkpoint splits use the full GPX profile, not just the checkpoint-to-checkpoint delta, when a course route is available")
+    func checkpointSplitsUseFullProfileWhenAvailable() async throws {
+        // Track climbs 500->1000m by km10 (CP1), keeps climbing to 1300m
+        // by km18, then descends to 900m by km25 (CP2). Checkpoint-to-
+        // checkpoint this segment nets DOWNHILL (1000 -> 900m), which the
+        // old delta-only method reported as 0 m of gain — but the real
+        // track climbed ~300m first, and that must not be zeroed out.
+        let pointCount = 50
+        let totalKm = 25.0
+        let degreesPerPoint = totalKm / 111.0 / Double(pointCount)
+        let baseDate = Date(timeIntervalSince1970: 1_000_000)
+        var trackPoints: [TrackPoint] = []
+        for index in 0..<pointCount {
+            let progress = Double(index) / Double(pointCount - 1)
+            let altitude: Double
+            if progress <= 0.40 {
+                altitude = 500 + (progress / 0.40) * 500          // 0 -> 10km: 500 -> 1000m
+            } else if progress <= 0.72 {
+                altitude = 1000 + ((progress - 0.40) / 0.32) * 300 // 10 -> 18km: 1000 -> 1300m
+            } else {
+                altitude = 1300 - ((progress - 0.72) / 0.28) * 400 // 18 -> 25km: 1300 -> 900m
+            }
+            trackPoints.append(TrackPoint(
+                latitude: 45.0 + Double(index) * degreesPerPoint,
+                longitude: 6.0,
+                altitudeM: altitude,
+                timestamp: baseDate.addingTimeInterval(Double(index) * 60),
+                heartRate: nil
+            ))
+        }
+
+        let checkpoints = [
+            Checkpoint(id: UUID(), name: "CP1", distanceFromStartKm: 10, elevationM: 1000, hasAidStation: false),
+            Checkpoint(id: UUID(), name: "CP2", distanceFromStartKm: 25, elevationM: 900, hasAidStation: false)
+        ]
+        var race = makeRace(distanceKm: 25, elevationGainM: 800, checkpoints: checkpoints)
+        race.courseRoute = trackPoints
+
+        let estimate = try await estimator.execute(
+            athlete: athlete, race: race, recentRuns: [makeRun()], currentFitness: nil
+        )
+        #expect(estimate.checkpointSplits.count == 2)
+        #expect(estimate.checkpointSplits[1].segmentElevationGainM > 100,
+                "The real intermediate climb must not be hidden by the segment's net downhill delta")
+    }
+
+    @Test("Without a course route, checkpoint splits still fall back to the checkpoint-delta method")
+    func checkpointSplitsFallBackWithoutCourseRoute() async throws {
+        let checkpoints = [
+            Checkpoint(id: UUID(), name: "CP1", distanceFromStartKm: 10, elevationM: 1000, hasAidStation: false),
+            Checkpoint(id: UUID(), name: "CP2", distanceFromStartKm: 25, elevationM: 900, hasAidStation: false)
+        ]
+        let race = makeRace(distanceKm: 25, elevationGainM: 800, checkpoints: checkpoints)
+        #expect(race.courseRoute.isEmpty)
+
+        let estimate = try await estimator.execute(
+            athlete: athlete, race: race, recentRuns: [makeRun()], currentFitness: nil
+        )
+        // No course route to consult — same net-delta behavior as before.
+        #expect(estimate.checkpointSplits[1].segmentElevationGainM == 0)
+    }
+
     @Test("Checkpoint splits include aid station flag")
     func checkpointSplitsAidStation() async throws {
         let checkpoints = [
@@ -267,6 +329,34 @@ struct FinishTimeEstimatorTests {
         )
         #expect(estimate.checkpointSplits[0].hasAidStation == true)
         #expect(estimate.checkpointSplits[1].hasAidStation == false)
+    }
+
+    @Test("Last checkpoint's split time is strictly before the finish, when the race extends past it")
+    func lastCheckpointSplitPrecedesFinish() async throws {
+        // Mirrors a real reported bug: a 49.6 km race ("Oman by UTMB 50K")
+        // with checkpoints only up to km 40. The last checkpoint must NOT
+        // silently inherit the full race's finish time just because it's
+        // the last entry in `race.checkpoints` — there's still 9.6 km left
+        // to run after it.
+        let checkpoints = [
+            Checkpoint(id: UUID(), name: "KM 10", distanceFromStartKm: 10, elevationM: 400, hasAidStation: true),
+            Checkpoint(id: UUID(), name: "KM 20", distanceFromStartKm: 20, elevationM: 900, hasAidStation: true),
+            Checkpoint(id: UUID(), name: "KM 30", distanceFromStartKm: 30, elevationM: 1300, hasAidStation: true),
+            Checkpoint(id: UUID(), name: "KM 40", distanceFromStartKm: 40, elevationM: 1600, hasAidStation: true)
+        ]
+        let race = makeRace(distanceKm: 49.6, elevationGainM: 2532, checkpoints: checkpoints)
+        let runs = [makeRun()]
+
+        let estimate = try await estimator.execute(
+            athlete: athlete, race: race,
+            recentRuns: runs, currentFitness: nil
+        )
+        let lastSplit = try #require(estimate.checkpointSplits.last)
+        #expect(lastSplit.distanceFromStartKm == 40)
+        #expect(lastSplit.expectedTime < estimate.expectedTime,
+                "KM 40 (9.6 km before the finish) must project an earlier time than the full race finish")
+        #expect(lastSplit.optimisticTime < estimate.optimisticTime)
+        #expect(lastSplit.conservativeTime < estimate.conservativeTime)
     }
 
     @Test("Segment distances sum to total checkpoint distance")
@@ -1302,5 +1392,126 @@ struct FinishTimeEstimatorTests {
             pastRaceCalibrations: [], weatherImpact: nil
         )
         #expect(withEstimate.confidencePercent > withoutEstimate.confidencePercent)
+    }
+
+    // MARK: - ITRA / UTMB Index as a pace signal
+
+    @Test("An index-only athlete (no PBs, no VMA, no runs) still gets a personalBests-sourced estimate, not the generic fallback")
+    func indexOnlyAthlete_usesPersonalBestsSource_notFallback() async throws {
+        var indexOnly = athlete
+        indexOnly.itraIndex = 600
+        indexOnly.itraIndexUpdatedAt = .now
+
+        let race = makeRace()
+        let estimate = try await estimator.execute(
+            athlete: indexOnly, race: race, recentRuns: [], currentFitness: nil,
+            pastRaceCalibrations: [], weatherImpact: nil
+        )
+        #expect(estimate.predictionSource == .personalBests)
+    }
+
+    @Test("Without any index, PBs, VMA or runs, the estimate falls back to the generic experience heuristic")
+    func noSignalsAtAll_usesExperienceFallback() async throws {
+        let race = makeRace()
+        let estimate = try await estimator.execute(
+            athlete: athlete, race: race, recentRuns: [], currentFitness: nil,
+            pastRaceCalibrations: [], weatherImpact: nil
+        )
+        #expect(estimate.predictionSource == .experienceFallback)
+    }
+
+    @Test("A stale index (older than 24 months) does not count as a pace signal — still falls back")
+    func staleIndex_stillFallsBack() async throws {
+        var staleIndex = athlete
+        staleIndex.itraIndex = 600
+        staleIndex.itraIndexUpdatedAt = .now.addingTimeInterval(-900 * 86400)
+
+        let race = makeRace()
+        let estimate = try await estimator.execute(
+            athlete: staleIndex, race: race, recentRuns: [], currentFitness: nil,
+            pastRaceCalibrations: [], weatherImpact: nil
+        )
+        #expect(estimate.predictionSource == .experienceFallback)
+    }
+
+    @Test("indexWeightedPaces is empty when no index is present")
+    func indexWeightedPaces_emptyWithoutData() {
+        let paces = estimator.pbsAsWeightedPaces(athlete: athlete, race: makeRace(), raceEffectiveKm: 80)
+        #expect(paces.isEmpty)
+    }
+
+    @Test("A higher ITRA index produces a faster (lower) predicted pace than a lower index")
+    func higherIndex_producesFasterPace() {
+        var lowIndex = athlete
+        lowIndex.itraIndex = 450
+        lowIndex.itraIndexUpdatedAt = .now
+
+        var highIndex = athlete
+        highIndex.itraIndex = 850
+        highIndex.itraIndexUpdatedAt = .now
+
+        let race = makeRace()
+        let lowPaces = estimator.pbsAsWeightedPaces(athlete: lowIndex, race: race, raceEffectiveKm: 80)
+        let highPaces = estimator.pbsAsWeightedPaces(athlete: highIndex, race: race, raceEffectiveKm: 80)
+
+        let lowPace = try? #require(lowPaces.first?.pace)
+        let highPace = try? #require(highPaces.first?.pace)
+        guard let lowPace, let highPace else {
+            Issue.record("Expected both index levels to produce a pace sample")
+            return
+        }
+        #expect(highPace < lowPace, "A stronger (higher) index should predict a faster per-km pace")
+    }
+
+    @Test("Both a fresh ITRA and a fresh UTMB index each contribute their own pace sample")
+    func bothIndices_eachContributeASample() {
+        var a = athlete
+        a.itraIndex = 600
+        a.itraIndexUpdatedAt = .now
+        a.utmbIndex = 650
+        a.utmbIndexUpdatedAt = .now
+
+        let paces = estimator.pbsAsWeightedPaces(athlete: a, race: makeRace(), raceEffectiveKm: 80)
+        #expect(paces.count == 2)
+    }
+
+    @Test("Index-derived pace samples are weighted lower than a real personal best")
+    func indexSample_weightedLowerThanRealPB() {
+        var a = athlete
+        a.itraIndex = 600
+        a.itraIndexUpdatedAt = .now
+        a.personalBests = [PersonalBest(id: UUID(), distance: .tenK, timeSeconds: 2400, date: .now)]
+
+        let paces = estimator.pbsAsWeightedPaces(athlete: a, race: makeRace(distanceKm: 42, elevationGainM: 0), raceEffectiveKm: 42)
+        guard paces.count == 2 else {
+            Issue.record("Expected exactly one PB sample and one index sample, got \(paces.count)")
+            return
+        }
+        let weights = paces.map(\.weight).sorted()
+        #expect(weights[0] < weights[1], "The index sample's weight should be lower than the real PB's")
+    }
+
+    @Test("An index for a road race is discounted relative to a trail race (indices are trail-derived)")
+    func indexTerrainMatch_discountedForRoadRace() {
+        var a = athlete
+        a.itraIndex = 600
+        a.itraIndexUpdatedAt = .now
+
+        let trailRace = makeRace()
+        let roadRace = Race(
+            id: UUID(), name: "Road Race", date: .now.adding(days: 60),
+            distanceKm: 42.195, elevationGainM: 100, elevationLossM: 100,
+            priority: .aRace, goalType: .finish, checkpoints: [],
+            terrainDifficulty: .easy, raceType: .road
+        )
+
+        let trailPaces = estimator.pbsAsWeightedPaces(athlete: a, race: trailRace, raceEffectiveKm: 80)
+        let roadPaces = estimator.pbsAsWeightedPaces(athlete: a, race: roadRace, raceEffectiveKm: 42)
+
+        guard let trailWeight = trailPaces.first?.weight, let roadWeight = roadPaces.first?.weight else {
+            Issue.record("Expected an index-derived sample for both race types")
+            return
+        }
+        #expect(roadWeight < trailWeight)
     }
 }

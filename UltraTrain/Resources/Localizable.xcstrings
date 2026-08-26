@@ -22,6 +22,7 @@
       }
     },
     "-%@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -272,6 +273,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@ %@  ·  D+ %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@  ·  D+ %3$@ %4$@"
           }
         }
       }
@@ -901,6 +912,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@. %2$@"
+          }
+        }
+      }
+    },
+    "%@. %@ %lld percent." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@. %2$@ %3$lld percent."
           }
         }
       }
@@ -7341,11 +7362,109 @@
       }
     },
     "Course Profile & Predicted Pace" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Profil du parcours et allure prévue"
+          }
+        }
+      }
+    },
+    "course.chart.a11ySummary" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interactive course elevation profile. %@. Altitude %@ to %@. Drag to explore."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil altimétrique interactif du parcours. %@. Altitude %@ à %@. Glissez pour explorer."
+          }
+        }
+      }
+    },
+    "course.gradient.down" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Down"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descente"
+          }
+        }
+      }
+    },
+    "course.gradient.flat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flat"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plat"
+          }
+        }
+      }
+    },
+    "course.gradient.steepDown" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Steep-"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descente+"
+          }
+        }
+      }
+    },
+    "course.gradient.steepUp" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Steep+"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Montée+"
+          }
+        }
+      }
+    },
+    "course.gradient.up" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Up"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Montée"
           }
         }
       }
@@ -7616,12 +7735,32 @@
         }
       }
     },
+    "D- (loss)" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "D- (perte)"
+          }
+        }
+      }
+    },
     "D+" : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "D+"
+          }
+        }
+      }
+    },
+    "D+ (gain)" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "D+ (gain)"
           }
         }
       }
@@ -8942,6 +9081,7 @@
       }
     },
     "Dist" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -9355,6 +9495,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Appuyez deux fois pour voir les détails du jour"
+          }
+        }
+      }
+    },
+    "Drag across the chart to explore" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faites glisser sur le graphique pour explorer"
           }
         }
       }
@@ -10295,6 +10445,17 @@
         }
       }
     },
+    "Est. Time" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temps est."
+          }
+        }
+      }
+    },
     "Estimated Duration" : {
       "localizations" : {
         "fr" : {
@@ -10326,7 +10487,14 @@
       }
     },
     "Evolution Tab" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Onglet Évolution"
+          }
+        }
+      }
     },
     "Exact amount" : {
       "localizations" : {
@@ -11000,6 +11168,57 @@
         }
       }
     },
+    "fe.calibration.adjustedDown" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model adjusted down, you're faster than predicted"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modèle ajusté à la baisse, vous êtes plus rapide que prévu"
+          }
+        }
+      }
+    },
+    "fe.calibration.adjustedUp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model adjusted up, you're slower than predicted"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modèle ajusté à la hausse, vous êtes plus lent que prévu"
+          }
+        }
+      }
+    },
+    "fe.calibration.avgAccuracy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avg. accuracy: %.0f%%"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Précision moyenne : %.0f %%"
+          }
+        }
+      }
+    },
     "fe.confidence.low" : {
       "localizations" : {
         "en" : {
@@ -11044,6 +11263,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prédiction fiable, bonnes données d'entraînement disponibles"
+          }
+        }
+      }
+    },
+    "fe.dashboard.a11yDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race estimate for %@. Best case %@. Expected %@. Safe case %@. Confidence %d percent."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimation de course pour %@. Meilleur cas %@. Attendu %@. Cas prudent %@. Confiance %d pour cent."
+          }
+        }
+      }
+    },
+    "fe.dashboard.rangeHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Range %@–%@. Narrows as you complete sessions."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plage %@–%@. Se resserre au fil de vos séances."
+          }
+        }
+      }
+    },
+    "fe.dashboard.safe" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safe"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sûr"
+          }
+        }
+      }
+    },
+    "fe.error.athleteNotFound" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Athlete profile not found"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil athlète introuvable"
           }
         }
       }
@@ -12041,6 +12328,40 @@
         }
       }
     },
+    "fte.chart.a11ySummary" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Projected finish time evolution chart from %@ to %@ on race day. Drag to explore any week."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Graphique d'évolution du temps d'arrivée projeté de %@ à %@ le jour de la course. Glissez pour explorer n'importe quelle semaine."
+          }
+        }
+      }
+    },
+    "fte.course.changeButton" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change GPX file"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changer le fichier GPX"
+          }
+        }
+      }
+    },
     "fte.course.emptyMessage" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -12071,23 +12392,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pas encore de profil de parcours"
-          }
-        }
-      }
-    },
-    "fte.course.changeButton" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Change GPX file"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Changer le fichier GPX"
           }
         }
       }
@@ -13968,6 +14272,17 @@
         }
       }
     },
+    "Grade" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pente"
+          }
+        }
+      }
+    },
     "Gradient %" : {
       "localizations" : {
         "fr" : {
@@ -15368,6 +15683,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Source d'import"
+          }
+        }
+      }
+    },
+    "import.course.error.accessDenied" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cannot access the selected file."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d'accéder au fichier sélectionné."
           }
         }
       }
@@ -27359,6 +27690,108 @@
         }
       }
     },
+    "race.daysUntil.inDays" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In %lld days"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans %lld jours"
+          }
+        }
+      }
+    },
+    "race.daysUntil.inMonths" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In %lld months"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans %lld mois"
+          }
+        }
+      }
+    },
+    "race.daysUntil.inOneMonth" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In 1 month"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans 1 mois"
+          }
+        }
+      }
+    },
+    "race.daysUntil.inOneWeek" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In 1 week"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans 1 semaine"
+          }
+        }
+      }
+    },
+    "race.daysUntil.inWeeks" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In %lld weeks"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans %lld semaines"
+          }
+        }
+      }
+    },
+    "race.daysUntil.tomorrow" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tomorrow"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demain"
+          }
+        }
+      }
+    },
     "race.distanceLabel" : {
       "localizations" : {
         "en" : {
@@ -35919,6 +36352,17 @@
         }
       }
     },
+    "See full prediction, evolution & course map" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voir la prédiction complète, l'évolution et la carte du parcours"
+          }
+        }
+      }
+    },
     "See trend" : {
       "localizations" : {
         "fr" : {
@@ -35935,6 +36379,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Voir ce que font vos amis"
+          }
+        }
+      }
+    },
+    "See your prediction evolve" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Découvrez comment votre prédiction évolue"
           }
         }
       }
@@ -42344,11 +42798,29 @@
       }
     },
     "Tap to see how this evolves with your prep →" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Touchez pour voir l'évolution avec votre préparation →"
+          }
+        }
+      }
+    },
+    "Tap to see the full breakdown" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap to see the full breakdown"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touchez pour voir le détail complet"
           }
         }
       }
@@ -44090,7 +44562,6 @@
       }
     },
     "Today" : {
-      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -44606,6 +45077,16 @@
         }
       }
     },
+    "Track Points" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Points GPS"
+          }
+        }
+      }
+    },
     "Track your crew's location in real time during a run or race." : {
       "localizations" : {
         "fr" : {
@@ -44760,6 +45241,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Calendrier d'entraînement"
+          }
+        }
+      }
+    },
+    "Training curve & course map" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courbe d'entraînement et carte du parcours"
           }
         }
       }

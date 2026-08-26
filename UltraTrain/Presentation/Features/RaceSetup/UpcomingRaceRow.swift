@@ -37,14 +37,18 @@ struct UpcomingRaceRow: View {
 
     private var relativeDateString: String {
         let days = Calendar.current.dateComponents([.day], from: Date.now.startOfDay, to: race.date.startOfDay).day ?? 0
-        if days == 0 { return "Today" }
-        if days == 1 { return "Tomorrow" }
-        if days < 7 { return "In \(days) days" }
+        if days == 0 { return String(localized: "Today", defaultValue: "Today") }
+        if days == 1 { return String(localized: "race.daysUntil.tomorrow", defaultValue: "Tomorrow") }
+        if days < 7 {
+            return String(format: String(localized: "race.daysUntil.inDays", defaultValue: "In %lld days"), days)
+        }
         let weeks = days / 7
-        if weeks == 1 { return "In 1 week" }
-        if weeks < 8 { return "In \(weeks) weeks" }
+        if weeks == 1 { return String(localized: "race.daysUntil.inOneWeek", defaultValue: "In 1 week") }
+        if weeks < 8 {
+            return String(format: String(localized: "race.daysUntil.inWeeks", defaultValue: "In %lld weeks"), weeks)
+        }
         let months = days / 30
-        if months == 1 { return "In 1 month" }
-        return "In \(months) months"
+        if months == 1 { return String(localized: "race.daysUntil.inOneMonth", defaultValue: "In 1 month") }
+        return String(format: String(localized: "race.daysUntil.inMonths", defaultValue: "In %lld months"), months)
     }
 }
