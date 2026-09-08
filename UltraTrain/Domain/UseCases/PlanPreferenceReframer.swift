@@ -28,10 +28,23 @@ struct PlanPreferenceReframer: ReframePlanForPreferencesUseCase {
 
         // 3. Regenerate future weeks using the standard pipeline
         let taperProfile = TaperProfile.forRace(effectiveKm: targetRace.effectiveDistanceKm)
+        // RR-40: mirror TrainingPlanGenerator's compressed-prep detection so
+        // a reframe (e.g. runs-per-week change) on a short-prep plan keeps
+        // the same bare-minimum phase treatment instead of reverting to a
+        // full 4-phase split it no longer has the weeks for. Road plans
+        // never carry this concept, matches TrainingPlanGenerator's scope.
+        let recommendedMinimumWeeks: Int? = targetRace.raceType == .road ? nil :
+            TrainingDurationValidator.validate(
+                distanceKm: targetRace.distanceKm,
+                elevationGainM: targetRace.elevationGainM,
+                raceDate: raceDate,
+                experienceLevel: updatedAthlete.experienceLevel
+            ).minimumWeeks
         let phases = PhaseDistributor.distribute(
             totalWeeks: futureWeekCount,
             experience: updatedAthlete.experienceLevel,
-            taperProfile: taperProfile
+            taperProfile: taperProfile,
+            recommendedMinimumWeeks: recommendedMinimumWeeks
         )
 
         let skeletons = WeekSkeletonBuilder.build(
@@ -207,6 +220,9 @@ struct PlanPreferenceReframer: ReframePlanForPreferencesUseCase {
         var reframed = currentPlan
         reframed.weeks = pastWeeks + futureWeeks
         reframed.workouts = allWorkouts
+        if let recommendedMinimumWeeks {
+            reframed.isCompressedPrep = futureWeekCount < recommendedMinimumWeeks
+        }
 
         return reframed
     }

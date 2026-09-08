@@ -171,6 +171,59 @@ struct PhaseDistributorTests {
         #expect(taper == 1, "10K should get 1 taper week, got \(taper)")
     }
 
+    // MARK: - RR-40: Compressed Prep (bare-minimum tier)
+
+    @Test("Well below advised minimum skips base and build entirely")
+    func compressedPrepBareMinimumTier() {
+        let profile = TaperProfile.forRace(effectiveKm: 150) // 100K taper profile
+        // 8 weeks available, 16 advised (intermediate 100K) -> 8 < 0.75*16=12, bare-minimum tier
+        let result = PhaseDistributor.distribute(
+            totalWeeks: 8,
+            experience: .intermediate,
+            taperProfile: profile,
+            recommendedMinimumWeeks: 16
+        )
+        let base = result.first { $0.phase == .base }!.weekCount
+        let build = result.first { $0.phase == .build }!.weekCount
+        let peak = result.first { $0.phase == .peak }!.weekCount
+        let taper = result.first { $0.phase == .taper }!.weekCount
+        #expect(base == 0, "Base should be skipped in the bare-minimum tier, got \(base)")
+        #expect(build == 0, "Build should be skipped in the bare-minimum tier, got \(build)")
+        #expect(peak > 0)
+        #expect(taper > 0)
+        #expect(base + build + peak + taper == 8)
+    }
+
+    @Test("Just below advised minimum keeps the standard 4-phase split")
+    func compressedPrepUpperWarningZoneUnaffected() {
+        let profile = TaperProfile.forRace(effectiveKm: 150)
+        // 14 weeks available, 16 advised -> 14 >= 0.75*16=12, NOT bare-minimum tier
+        let result = PhaseDistributor.distribute(
+            totalWeeks: 14,
+            experience: .intermediate,
+            taperProfile: profile,
+            recommendedMinimumWeeks: 16
+        )
+        let base = result.first { $0.phase == .base }!.weekCount
+        let build = result.first { $0.phase == .build }!.weekCount
+        #expect(base >= 1, "Standard split should still floor base at 1 week, got \(base)")
+        #expect(build >= 1, "Standard split should still floor build at 1 week, got \(build)")
+        let sum = result.reduce(0) { $0 + $1.weekCount }
+        #expect(sum == 14)
+    }
+
+    @Test("recommendedMinimumWeeks nil never triggers compression (default preserves existing behavior)")
+    func compressedPrepDefaultUnaffected() {
+        // Same inputs as taperProfile50K, just without the new param, to
+        // confirm omitting it is byte-for-byte identical to before RR-40.
+        let profile = TaperProfile.forRace(effectiveKm: 80)
+        let result = PhaseDistributor.distribute(totalWeeks: 20, experience: .intermediate, taperProfile: profile)
+        let taper = result.first { $0.phase == .taper }!.weekCount
+        #expect(taper == 4)
+        #expect(result.first { $0.phase == .base }!.weekCount >= 1)
+        #expect(result.first { $0.phase == .build }!.weekCount >= 1)
+    }
+
     @Test("Taper profile total weeks still sum correctly across all categories")
     func taperProfileTotals() {
         let cases: [(effKm: Double, weeks: Int, exp: ExperienceLevel)] = [

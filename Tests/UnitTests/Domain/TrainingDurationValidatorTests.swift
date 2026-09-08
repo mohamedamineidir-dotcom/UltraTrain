@@ -110,6 +110,63 @@ struct TrainingDurationValidatorTests {
         #expect(message.contains("intermediate"))
     }
 
+    // MARK: - RR-40: Halved Hard Floor + Warning Zone
+
+    @Test("Hard floor is half the advised minimum, rounded up")
+    func hardFloorIsHalfMinimum() {
+        #expect(TrainingDurationValidator.hardFloorWeeks(from: 12) == 6)
+        #expect(TrainingDurationValidator.hardFloorWeeks(from: 8) == 4)
+        #expect(TrainingDurationValidator.hardFloorWeeks(from: 4) == 2)
+        // Odd minimum rounds up, and the floor never drops below 2.
+        #expect(TrainingDurationValidator.hardFloorWeeks(from: 9) == 5)
+        #expect(TrainingDurationValidator.hardFloorWeeks(from: 3) == 2)
+    }
+
+    @Test("Between the new hard floor and the advised minimum: can generate, still shown a warning")
+    func warningZoneCanGeneratePlan() {
+        // Beginner 50K: advised 12, hard floor 6. 8 weeks sits in the zone.
+        let raceDate = Calendar.current.date(byAdding: .weekOfYear, value: 8, to: .now)!
+        let result = TrainingDurationValidator.validate(
+            distanceKm: 50,
+            elevationGainM: 2000,
+            raceDate: raceDate,
+            experienceLevel: .beginner
+        )
+        #expect(result.hardFloorWeeks == 6)
+        #expect(result.canGeneratePlan, "8 weeks is above the new 6-week floor, should be allowed")
+        #expect(!result.isSufficient, "8 weeks is still below the advised 12-week minimum")
+        #expect(result.warningMessage?.contains("12") == true)
+    }
+
+    @Test("Below the new hard floor: cannot generate a plan at all")
+    func belowHardFloorBlocksGeneration() {
+        // Beginner 50K: advised 12, hard floor 6. 5 weeks sits below the floor.
+        let raceDate = Calendar.current.date(byAdding: .weekOfYear, value: 5, to: .now)!
+        let result = TrainingDurationValidator.validate(
+            distanceKm: 50,
+            elevationGainM: 2000,
+            raceDate: raceDate,
+            experienceLevel: .beginner
+        )
+        #expect(result.hardFloorWeeks == 6)
+        #expect(!result.canGeneratePlan, "5 weeks is below the new 6-week floor")
+        #expect(result.warningMessage?.contains("6-week minimum") == true)
+    }
+
+    @Test("At or above the advised minimum: no warning at all, current behavior untouched")
+    func atOrAboveAdvisedMinimumUnaffected() {
+        let raceDate = Calendar.current.date(byAdding: .weekOfYear, value: 12, to: .now)!
+        let result = TrainingDurationValidator.validate(
+            distanceKm: 50,
+            elevationGainM: 2000,
+            raceDate: raceDate,
+            experienceLevel: .beginner
+        )
+        #expect(result.isSufficient)
+        #expect(result.canGeneratePlan)
+        #expect(result.warningMessage == nil)
+    }
+
     @Test("A hilly 100K isn't blocked by the 100 Miles category's higher minimum")
     func hillyHundredKUsesHundredKMinimum() {
         // Reported bug: 100 km + 5000 m D+ (150 eff km) used to be

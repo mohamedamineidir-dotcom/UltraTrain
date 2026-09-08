@@ -22,12 +22,35 @@ enum PhaseDistributor {
         totalWeeks: Int,
         experience: ExperienceLevel,
         taperProfile: TaperProfile? = nil,
-        raceEffectiveKm: Double = 0
+        raceEffectiveKm: Double = 0,
+        recommendedMinimumWeeks: Int? = nil
     ) -> [PhaseAllocation] {
         guard totalWeeks >= 4 else {
             return [
                 PhaseAllocation(phase: .base, weekCount: max(totalWeeks - 1, 1), phaseFocus: .threshold30),
                 PhaseAllocation(phase: .taper, weekCount: 1, phaseFocus: .sharpening)
+            ]
+        }
+
+        // RR-40: bare-minimum compression tier. Only reachable when the
+        // caller passes the race's advised minimum AND totalWeeks lands in
+        // the lower half of the new (post-halving) warning zone — i.e. a
+        // plan considerably shorter than what we'd normally recommend.
+        // There's no time to progressively build an aerobic base and then
+        // a separate intensity block, so we skip both and put everything
+        // into race-specific peak work plus the full taper. Untouched
+        // (nil) for every plan at or above the advised minimum — existing
+        // behavior below is byte-for-byte identical in that case.
+        if let recommended = recommendedMinimumWeeks,
+           totalWeeks < Int((Double(recommended) * 0.75).rounded()) {
+            let maxTaper = totalWeeks < 8 ? 2 : totalWeeks / 2
+            let sharp = max(min(taperProfile?.totalTaperWeeks ?? 1, maxTaper), 1)
+            let peak = max(totalWeeks - sharp, 1)
+            return [
+                PhaseAllocation(phase: .base, weekCount: 0, phaseFocus: .threshold30),
+                PhaseAllocation(phase: .build, weekCount: 0, phaseFocus: .vo2max),
+                PhaseAllocation(phase: .peak, weekCount: peak, phaseFocus: .threshold60),
+                PhaseAllocation(phase: .taper, weekCount: sharp, phaseFocus: .sharpening)
             ]
         }
 

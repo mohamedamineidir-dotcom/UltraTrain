@@ -996,6 +996,7 @@
 		8E20C0DD778A40AB8D8605FC /* GroupChallengesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDFF70B7B83C92A763DB652F /* GroupChallengesViewModel.swift */; };
 		8E29A963960CD43EAB84B70F /* CourseProgressTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3DDDB998FD615A7DFAC849 /* CourseProgressTrackerTests.swift */; };
 		8E5C7A87ED46DB855981E16D /* NutritionTimerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797F9CBC1A48F715CF054494 /* NutritionTimerViewModel.swift */; };
+		8E8407D5652EE664C0BAC49F /* CompressedPrepBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EADC635D01E1C76AD279A9 /* CompressedPrepBanner.swift */; };
 		8E8533D05BAD30236E21C77C /* WeatherServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E4A894F734AC3C860D6432 /* WeatherServiceProtocol.swift */; };
 		8E9806CE6DFD0A27BCA17492 /* AchievementEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520238A8DE945E8C89DEF275 /* AchievementEvaluator.swift */; };
 		8EA22BEF51796A2654B03737 /* RaceSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5316FB19908DA709CAD4668E /* RaceSnapshot.swift */; };
@@ -2623,6 +2624,7 @@
 		63AF7F61196A28445AE3C095 /* LastRunWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastRunWidgetView.swift; sourceTree = "<group>"; };
 		63B52870A7332174AAB89455 /* MapStyleToggleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyleToggleButton.swift; sourceTree = "<group>"; };
 		63BD176CB90924C65A9F7249 /* GoalSettingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalSettingViewModel.swift; sourceTree = "<group>"; };
+		63EADC635D01E1C76AD279A9 /* CompressedPrepBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompressedPrepBanner.swift; sourceTree = "<group>"; };
 		63F8D115757A95C39C4140E1 /* StravaUploadServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StravaUploadServiceTests.swift; sourceTree = "<group>"; };
 		64007B784C43752592E9ECAD /* StrengthTrainingPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrengthTrainingPreference.swift; sourceTree = "<group>"; };
 		640FBF0906427E97D51D734F /* CloudKitSharingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitSharingService.swift; sourceTree = "<group>"; };
@@ -5284,6 +5286,7 @@
 			children = (
 				C4C20A01440FA0E58E2EE863 /* Components */,
 				96BF9F5C915C8CD9597871BF /* ComebackSheet.swift */,
+				63EADC635D01E1C76AD279A9 /* CompressedPrepBanner.swift */,
 				EF6BAF2605F69BCAEED22CE3 /* ExpiredPlanView.swift */,
 				97A3C54B5370E22E19367BB3 /* FitnessTestResultBanner.swift */,
 				472F6138F4DC23C441A2E6FF /* FitnessTestResultPage.swift */,
@@ -7258,6 +7261,7 @@
 				DEB4AD6DB51A20E0D8926507 /* CompletedRun.swift in Sources */,
 				BD0887AED32B07C9651290EA /* CompletedRunSwiftDataMapper.swift in Sources */,
 				15960C1DCEDE7FBE30615EC1 /* CompletedRunSwiftDataModel.swift in Sources */,
+				8E8407D5652EE664C0BAC49F /* CompressedPrepBanner.swift in Sources */,
 				3C6107CF88AE5D1F3D9BDB30 /* ConnectivityHandler.swift in Sources */,
 				DDA33BFABD30B3510971198C /* ConvertRunToRouteUseCase.swift in Sources */,
 				8CB79F26EEF000E353C01441 /* CorosAuthService.swift in Sources */,

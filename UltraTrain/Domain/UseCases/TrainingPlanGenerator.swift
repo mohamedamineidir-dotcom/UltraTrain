@@ -66,11 +66,24 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         let raceDate = targetRace.date.startOfDay
 
         let totalWeeks = today.weeksBetween(raceDate)
-        guard totalWeeks >= 4 else {
+
+        // RR-40: hard floor is half the advised minimum for this race's
+        // distance category + athlete experience tier (was a flat 4-week
+        // floor for every distance). Below the floor we still refuse to
+        // generate; between the floor and the advised minimum we proceed
+        // but the plan gets flagged compressed (see phases below).
+        let durationValidation = TrainingDurationValidator.validate(
+            distanceKm: targetRace.distanceKm,
+            elevationGainM: targetRace.elevationGainM,
+            raceDate: raceDate,
+            experienceLevel: athlete.experienceLevel
+        )
+        guard totalWeeks >= durationValidation.hardFloorWeeks else {
             throw DomainError.invalidTrainingPlan(
-                reason: "Need at least 4 weeks before race day to generate a plan."
+                reason: "A \(durationValidation.raceCategory.displayName) race needs at least \(durationValidation.hardFloorWeeks) weeks before race day to generate a plan."
             )
         }
+        let isCompressedPrep = totalWeeks < durationValidation.minimumWeeks
 
         // 1. Distribute phases (race-aware taper + race-distance peak shift)
         let taperProfile = TaperProfile.forRace(effectiveKm: targetRace.effectiveDistanceKm)
@@ -78,7 +91,8 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             totalWeeks: totalWeeks,
             experience: athlete.experienceLevel,
             taperProfile: taperProfile,
-            raceEffectiveKm: targetRace.effectiveDistanceKm
+            raceEffectiveKm: targetRace.effectiveDistanceKm,
+            recommendedMinimumWeeks: durationValidation.minimumWeeks
         )
 
         // 2. Build week skeletons (experience-based recovery cycle)
@@ -525,6 +539,7 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         )
         plan.workouts = allWorkouts
         plan.strengthWorkouts = allStrengthWorkouts
+        plan.isCompressedPrep = isCompressedPrep
 
         return plan
     }

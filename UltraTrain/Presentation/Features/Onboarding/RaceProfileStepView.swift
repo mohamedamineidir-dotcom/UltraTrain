@@ -95,11 +95,17 @@ struct RaceProfileStepView: View {
     private var trainingDurationWarning: some View {
         if let validation = viewModel.trainingDurationValidation,
            let message = validation.warningMessage {
+            // RR-40: below the hard floor still blocks (red, matches the
+            // old "insufficient" treatment). Between the hard floor and the
+            // advised minimum is new territory — a plan CAN be generated,
+            // so this is an informational nudge, not a rejection.
+            let isBlocking = !validation.canGeneratePlan
+            let tint = isBlocking ? Theme.Colors.danger : Theme.Colors.warning
             HStack(alignment: .top, spacing: Theme.Spacing.sm) {
-                Image(systemName: "xmark.octagon.fill")
-                    .foregroundStyle(Theme.Colors.danger)
+                Image(systemName: isBlocking ? "xmark.octagon.fill" : "info.circle.fill")
+                    .foregroundStyle(tint)
                 VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-                    Text("Insufficient Preparation Time")
+                    Text(isBlocking ? "Insufficient Preparation Time" : "Shorter Than Recommended")
                         .font(.caption.bold())
                     Text(message)
                         .font(.caption)
@@ -107,7 +113,7 @@ struct RaceProfileStepView: View {
                 }
             }
             .padding(Theme.Spacing.md)
-            .background(Theme.Colors.danger.opacity(0.1))
+            .background(tint.opacity(0.1))
             .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
         }
     }

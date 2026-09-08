@@ -12,18 +12,34 @@ enum TrainingDurationValidator {
         let category = RaceCategory.from(effectiveDistanceKm: effectiveKm)
         let availableWeeks = Date.now.weeksBetween(raceDate)
         let minimumWeeks = self.minimumWeeks(for: category, level: experienceLevel)
+        let hardFloorWeeks = self.hardFloorWeeks(from: minimumWeeks)
         let isSufficient = availableWeeks >= minimumWeeks
+        let canGeneratePlan = availableWeeks >= hardFloorWeeks
 
-        let warningMessage: String? = isSufficient ? nil :
-            "A \(category.displayName) race typically requires at least \(minimumWeeks) weeks of preparation for a \(experienceLevel.rawValue) runner. You only have \(availableWeeks) weeks."
+        let warningMessage: String? = {
+            guard !isSufficient else { return nil }
+            let base = "We recommend at least \(minimumWeeks) weeks to prepare for a \(category.displayName) race as a \(experienceLevel.rawValue) runner. You have \(availableWeeks) weeks."
+            if canGeneratePlan {
+                return base + " We can still build you a plan, just more compressed than usual."
+            }
+            return base + " That's below our \(hardFloorWeeks)-week minimum for this distance. Try a later date or a shorter race."
+        }()
 
         return TrainingDurationValidation(
             isSufficient: isSufficient,
             availableWeeks: availableWeeks,
             minimumWeeks: minimumWeeks,
+            hardFloorWeeks: hardFloorWeeks,
+            canGeneratePlan: canGeneratePlan,
             raceCategory: category,
             warningMessage: warningMessage
         )
+    }
+
+    /// RR-40: the new hard gate is half the advised minimum (rounded up),
+    /// floored at 2 weeks so even elite/short categories keep a real floor.
+    static func hardFloorWeeks(from minimumWeeks: Int) -> Int {
+        max(2, Int((Double(minimumWeeks) / 2.0).rounded(.up)))
     }
 
     // MARK: - Minimum Weeks Matrix

@@ -30,6 +30,13 @@ struct TrainingPlan: Identifiable, Equatable, Sendable, Codable {
     /// re-subscribing restores the custom plan with all its progress intact.
     var isArchived: Bool = false
 
+    /// RR-40: true when this plan was generated with fewer weeks than our
+    /// advised minimum for the race's distance/experience tier (but at or
+    /// above the new hard floor, half the advised minimum). Drives the
+    /// compressed-prep banner on the plan page. Road plans never set this;
+    /// only the trail/ultra generator branch does.
+    var isCompressedPrep: Bool = false
+
     var totalWeeks: Int { weeks.count }
     var currentWeekIndex: Int? {
         weeks.firstIndex { $0.containsToday }

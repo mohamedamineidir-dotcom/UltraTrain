@@ -11,6 +11,12 @@ extension TrainingPlanView {
                     stalePlanBanner
                 }
 
+                // RR-40: informational, not dismissible — the compression
+                // is a fixed fact about this plan, not a transient alert.
+                if plan.isCompressedPrep {
+                    CompressedPrepBanner()
+                }
+
                 if !viewModel.visibleRecommendations.isEmpty {
                     PlanAdjustmentBanner(
                         recommendations: viewModel.visibleRecommendations,

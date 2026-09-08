@@ -305,7 +305,7 @@ final class OnboardingViewModel {
         case 5: true // Heart rate has sane defaults
         case 6: isInjuryStrengthValid
         case 7: hasNoRace || isRaceNameValid
-        case 8: hasNoRace || (isRaceProfileValid && (trainingDurationValidation?.isSufficient ?? true))
+        case 8: hasNoRace || (isRaceProfileValid && (trainingDurationValidation?.canGeneratePlan ?? true))
         case 9: hasNoRace ? true : isGoalTrainingValid
         case 10: isUphillDetailsValid
         case 11: true // Volume preview

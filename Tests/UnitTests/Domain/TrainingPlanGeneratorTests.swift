@@ -187,6 +187,42 @@ struct TrainingPlanGeneratorTests {
         }
     }
 
+    // MARK: - RR-40: Halved Hard Floor + Compressed Prep
+
+    @Test("Below the new hard floor still throws (default race: 100K/intermediate, floor=8)")
+    func belowNewHardFloorThrows() async {
+        let generator = TrainingPlanGenerator()
+        let athlete = makeAthlete() // intermediate
+        let race = makeRace(weeksFromNow: 6) // hundredK category, advised 16, floor 8
+
+        do {
+            _ = try await generator.execute(athlete: athlete, targetRace: race, intermediateRaces: [])
+            #expect(Bool(false), "Should have thrown, 6 weeks is below the 8-week hard floor")
+        } catch {
+            #expect(error is DomainError)
+        }
+    }
+
+    @Test("Between the new floor and the advised minimum now generates a plan, flagged compressed")
+    func warningZoneGeneratesCompressedPlan() async throws {
+        let generator = TrainingPlanGenerator()
+        let athlete = makeAthlete() // intermediate
+        let race = makeRace(weeksFromNow: 10) // hundredK, advised 16, floor 8: 10 is in the zone
+
+        let plan = try await generator.execute(athlete: athlete, targetRace: race, intermediateRaces: [])
+        #expect(plan.isCompressedPrep, "10 weeks is below the 16-week advised minimum, should be flagged")
+    }
+
+    @Test("At or above the advised minimum: plan is not flagged compressed")
+    func atAdvisedMinimumNotCompressed() async throws {
+        let generator = TrainingPlanGenerator()
+        let athlete = makeAthlete() // intermediate
+        let race = makeRace(weeksFromNow: 16) // hundredK advised minimum exactly
+
+        let plan = try await generator.execute(athlete: athlete, targetRace: race, intermediateRaces: [])
+        #expect(!plan.isCompressedPrep)
+    }
+
     @Test("Plan IDs are linked to athlete and race")
     func idsLinked() async throws {
         let generator = TrainingPlanGenerator()
