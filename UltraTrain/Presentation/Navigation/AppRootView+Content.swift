@@ -138,6 +138,7 @@ extension AppRootView {
                         clearAllDataUseCase: clearAllDataUseCase,
                         initialFirstName: pendingFirstName,
                         initialLastName: pendingLastName,
+                        onReachedAboutYouStep: { Task { await registerForPushNotifications() } },
                         onComplete: {
                             // Present the initial offer in the SAME state change
                             // that reveals the main app, so the paywall covers

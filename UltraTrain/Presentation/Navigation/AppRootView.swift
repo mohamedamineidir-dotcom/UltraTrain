@@ -244,6 +244,7 @@ struct AppRootView: View {
                             referralRepository: referralRepository,
                             clearAllDataUseCase: clearAllDataUseCase,
                             onExistingAccountSignedIn: handleExistingUserSignIn,
+                            onReachedAboutYouStep: { Task { await registerForPushNotifications() } },
                             onComplete: {
                                 // Flip auth + onboarding together so the app
                                 // goes straight from the questionnaire to
@@ -322,7 +323,14 @@ struct AppRootView: View {
                 await loadUnitPreference()
                 await widgetDataWriter.writeAll()
                 await performAutoImportIfNeeded()
-                await registerForPushNotifications()
+                // RR-43: only for a fully onboarded returning user. Someone
+                // authenticated but still mid-onboarding (resuming after the
+                // app was killed) gets asked at the "About You" step instead,
+                // same as a brand-new signup — not the instant the app
+                // resolves a stale/existing auth token.
+                if hasCompletedOnboarding == true {
+                    await registerForPushNotifications()
+                }
             }
         }
         .task {

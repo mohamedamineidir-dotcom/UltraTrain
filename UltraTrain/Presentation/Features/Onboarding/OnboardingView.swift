@@ -1,8 +1,20 @@
 import SwiftUI
+import StoreKit
 
 struct OnboardingView: View {
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.requestReview) private var requestReview
     @State private var viewModel: OnboardingViewModel
+    /// RR-43: fired once, the first time the athlete reaches "About You" —
+    /// notification permission used to be requested at app launch/sign-in,
+    /// which could land before onboarding even started. Asking mid-flow,
+    /// once the athlete has invested a few steps, reads as less abrupt.
+    @State private var hasRequestedNotificationPermission = false
+    /// RR-43: fired once, the moment the athlete advances past "Goal and
+    /// Training" (step 9) — far enough from both the notification prompt
+    /// (step 3) and account creation/paywall (step 12-13) that neither
+    /// competes with it for the athlete's goodwill.
+    @State private var hasRequestedReview = false
     var onComplete: () -> Void
     private let healthKitService: (any HealthKitServiceProtocol)?
     private let healthKitImportService: (any HealthKitImportServiceProtocol)?
@@ -18,6 +30,9 @@ struct OnboardingView: View {
     /// through the normal existing-user path instead, same as "I already
     /// have an account" would have.
     var onExistingAccountSignedIn: (String?, String?) -> Void
+    /// RR-43: requests notification permission (APNs registration included)
+    /// once the athlete reaches "About You".
+    var onReachedAboutYouStep: () -> Void
 
     init(
         athleteRepository: any AthleteRepository,
@@ -30,6 +45,7 @@ struct OnboardingView: View {
         initialFirstName: String? = nil,
         initialLastName: String? = nil,
         onExistingAccountSignedIn: @escaping (String?, String?) -> Void = { _, _ in },
+        onReachedAboutYouStep: @escaping () -> Void = {},
         onComplete: @escaping () -> Void
     ) {
         _viewModel = State(initialValue: OnboardingViewModel(
@@ -44,6 +60,7 @@ struct OnboardingView: View {
         self.referralRepository = referralRepository
         self.clearAllDataUseCase = clearAllDataUseCase
         self.onExistingAccountSignedIn = onExistingAccountSignedIn
+        self.onReachedAboutYouStep = onReachedAboutYouStep
         self.onComplete = onComplete
     }
 
@@ -84,6 +101,35 @@ struct OnboardingView: View {
                 }
             }
             .animation(.easeInOut(duration: 0.3), value: viewModel.currentStep)
+            .onChange(of: viewModel.currentStep) { oldValue, newValue in
+                // RR-43: About You is step 3, regardless of race/no-race
+                // branching earlier in the flow.
+                if newValue == 3 && !hasRequestedNotificationPermission {
+                    hasRequestedNotificationPermission = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        onReachedAboutYouStep()
+                    }
+                }
+                // Fires the moment the athlete leaves step 9 (Goal and
+                // Training) in either direction the flow can exit it
+                // (straight to Uphill Details, or skipped ahead to Account
+                // Creation for a no-race plan).
+                //
+                // Apple explicitly warns against calling requestReview()
+                // synchronously in direct response to a UI event: on a real
+                // device (this can't be verified in Simulator, which never
+                // submits real ratings regardless of timing) the system can
+                // silently decline to show the prompt at all if it's asked
+                // for while a transition/animation is still in flight. The
+                // step change above kicks off a 0.3s animated transition,
+                // so wait for it to settle before asking.
+                if oldValue == 9 && newValue != 9 && !hasRequestedReview {
+                    hasRequestedReview = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                        requestReview()
+                    }
+                }
+            }
             .navigationBarBackButtonHidden()
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
