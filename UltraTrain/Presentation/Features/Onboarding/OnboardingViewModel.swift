@@ -13,7 +13,7 @@ final class OnboardingViewModel {
     // MARK: - Navigation State
 
     var currentStep = 0
-    let totalSteps = 13
+    let totalSteps = 14
     var isCompleted = false
     var isSaving = false
     var error: String?
@@ -278,7 +278,8 @@ final class OnboardingViewModel {
     // MARK: - Validation
     // Steps: 0=Experience, 1=RunningHistory, 2=PersonalBests, 3=AboutYou,
     //        4=BodyMetrics, 5=HeartRate, 6=InjuryStrength, 7=RaceName,
-    //        8=RaceProfile, 9=GoalTraining, 10=UphillDetails, 11=VolumePreview, 12=Complete
+    //        8=RaceProfile, 9=GoalTraining, 10=UphillDetails, 11=VolumePreview,
+    //        12=AccountCreation, 13=Complete
 
     /// Whether the uphill details step is relevant (elevation-heavy race or VG training needed).
     var needsUphillDetailsStep: Bool {
@@ -375,7 +376,7 @@ final class OnboardingViewModel {
         if hasNoRace && currentStep == 7 {
             currentStep = 9 // Skip race profile (8), go to goal/training
         } else if hasNoRace && currentStep == 9 {
-            currentStep = 12 // No race → skip uphill, volume preview → complete
+            currentStep = 12 // No race → skip uphill, volume preview → account creation
         } else if currentStep == 9 && !needsUphillDetailsStep {
             currentStep = 11 // Skip uphill details (10), go to volume preview
         } else {

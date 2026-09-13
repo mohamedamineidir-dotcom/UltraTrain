@@ -4,7 +4,6 @@ import AuthenticationServices
 struct SignUpView: View {
     @State private var viewModel: SignUpViewModel
     @State private var showEmailVerification = false
-    @State private var showWelcomeClub = false
 
     let referralRepository: any ReferralRepository
     var onAuthenticated: (Bool, String?, String?) -> Void
@@ -33,10 +32,8 @@ struct SignUpView: View {
                 termsSection
             }
             .padding(.horizontal, Theme.Spacing.lg)
-            .padding(.top, Theme.Spacing.lg)
         }
-        .navigationTitle("Create Account")
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .alert("Error", isPresented: Binding(get: { viewModel.error != nil }, set: { if !$0 { viewModel.error = nil } })) {
             Button("OK") { viewModel.error = nil }
         } message: {
@@ -44,30 +41,29 @@ struct SignUpView: View {
         }
         .onChange(of: viewModel.isAuthenticated) { _, authenticated in
             if authenticated {
-                if viewModel.isNewUser {
-                    showWelcomeClub = true
-                } else {
-                    onAuthenticated(false, viewModel.authenticatedFirstName, viewModel.authenticatedLastName)
-                }
+                onAuthenticated(viewModel.isNewUser, viewModel.authenticatedFirstName, viewModel.authenticatedLastName)
             }
-        }
-        .navigationDestination(isPresented: $showWelcomeClub) {
-            WelcomeClubView(
-                firstName: viewModel.authenticatedFirstName ?? "",
-                referralRepository: referralRepository,
-                onContinue: {
-                    onAuthenticated(true, viewModel.authenticatedFirstName, viewModel.authenticatedLastName)
-                }
-            )
         }
     }
 
     private var headerSection: some View {
         VStack(spacing: Theme.Spacing.sm) {
-            Text("Join the trail community")
+            Image(systemName: "icloud.and.arrow.up.fill")
+                .font(.system(size: 32))
+                .foregroundStyle(.white)
+                .frame(width: 64, height: 64)
+                .background(Circle().fill(Theme.Gradients.warmCoralCTA))
+                .shadow(color: Theme.Colors.warmCoral.opacity(0.3), radius: 8, y: 4)
+
+            Text("Save Your Progress")
+                .font(.title.bold())
+
+            Text("Create your account so everything you just told us is saved to your profile.")
                 .font(.subheadline)
+                .multilineTextAlignment(.center)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
         }
+        .padding(.top, Theme.Spacing.xl)
     }
 
     private var formSection: some View {

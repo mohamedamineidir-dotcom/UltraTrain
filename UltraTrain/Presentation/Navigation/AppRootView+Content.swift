@@ -133,6 +133,9 @@ extension AppRootView {
                         raceRepository: raceRepository,
                         healthKitService: healthKitService,
                         healthKitImportService: healthKitImportService,
+                        authService: authService,
+                        referralRepository: referralRepository,
+                        clearAllDataUseCase: clearAllDataUseCase,
                         initialFirstName: pendingFirstName,
                         initialLastName: pendingLastName,
                         onComplete: {
@@ -153,6 +156,27 @@ extension AppRootView {
     }
 
     // MARK: - Helper Methods
+
+    /// Shared by "I already have an account" sign-in and by the embedded
+    /// account-creation step discovering mid-flow (via Apple/Google) that
+    /// the athlete already has an account. Either way: this is an existing
+    /// account, so any in-progress onboarding answers are abandoned in
+    /// favor of restoring the athlete's real data.
+    func handleExistingUserSignIn(firstName: String?, lastName: String?) {
+        pendingFirstName = firstName
+        pendingLastName = lastName
+        isAuthenticated = true
+        Task {
+            await checkBiometricLockSetting()
+            await checkOnboardingStatus()
+            // Must be called for returning users: hasActiveSubscription
+            // starts as .none and is never set otherwise, leaving the
+            // authenticated view stuck on ProgressView("Loading...").
+            await checkSubscriptionStatus()
+            await loadUnitPreference()
+            await registerForPushNotifications()
+        }
+    }
 
     func checkBiometricLockSetting() async {
         do {

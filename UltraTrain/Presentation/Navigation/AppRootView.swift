@@ -7,6 +7,13 @@ struct AppRootView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State var isAuthenticated: Bool?
     @State var hasCompletedOnboarding: Bool?
+    /// RR-41: true once an unauthenticated user taps "Get Started". Drives
+    /// the questionnaire all the way through account creation (now a step
+    /// near the end of it) without ever flipping `isAuthenticated`, so the
+    /// same OnboardingView/OnboardingViewModel instance survives the whole
+    /// flow — flipping `isAuthenticated` mid-flow would tear it down and
+    /// lose every answer collected so far.
+    @State var startedOnboarding = false
     @State var isUnlocked = false
     @State var needsBiometricLock = false
     @State var showFeatureTour = false
@@ -227,33 +234,52 @@ struct AppRootView: View {
                 case .none:
                     ProgressView("Loading...")
                 case .some(false):
-                    HeroLandingView(
-                        authService: authService,
-                        referralRepository: referralRepository
-                    ) { isNewUser, firstName, lastName in
-                        pendingFirstName = firstName
-                        pendingLastName = lastName
-                        isAuthenticated = true
-                        if isNewUser {
-                            hasCompletedOnboarding = false
-                            hasActiveSubscription = nil
-                        }
-                        Task {
-                            if isNewUser {
-                                // Clear all local data from any previous account
-                                try? await clearAllDataUseCase.execute()
+                    if startedOnboarding {
+                        OnboardingView(
+                            athleteRepository: athleteRepository,
+                            raceRepository: raceRepository,
+                            healthKitService: healthKitService,
+                            healthKitImportService: healthKitImportService,
+                            authService: authService,
+                            referralRepository: referralRepository,
+                            clearAllDataUseCase: clearAllDataUseCase,
+                            onExistingAccountSignedIn: handleExistingUserSignIn,
+                            onComplete: {
+                                // Flip auth + onboarding together so the app
+                                // goes straight from the questionnaire to
+                                // MainTabView in one render pass, matching
+                                // the "paywall covers from the first frame"
+                                // intent below.
+                                if !hasSeenInitialPaywallOffer {
+                                    showInitialOffer = true
+                                }
+                                isAuthenticated = true
+                                hasCompletedOnboarding = true
+                                hasActiveSubscription = false
                             }
-                            await checkBiometricLockSetting()
-                            if !isNewUser {
-                                await checkOnboardingStatus()
-                                // Must be called for returning users: hasActiveSubscription
-                                // starts as .none and is never set otherwise, leaving the
-                                // authenticated view stuck on ProgressView("Loading...").
-                                await checkSubscriptionStatus()
-                            }
-                            await loadUnitPreference()
-                            await registerForPushNotifications()
-                        }
+                        )
+                        // RR-42: matches the slide+fade OnboardingView already
+                        // uses between its own steps, so "Get Started" doesn't
+                        // cut instantly into the questionnaire.
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal: .move(edge: .leading).combined(with: .opacity)
+                        ))
+                    } else {
+                        HeroLandingView(
+                            authService: authService,
+                            referralRepository: referralRepository,
+                            onGetStarted: {
+                                withAnimation(.easeInOut(duration: 0.35)) {
+                                    startedOnboarding = true
+                                }
+                            },
+                            onSignedIn: handleExistingUserSignIn
+                        )
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal: .move(edge: .leading).combined(with: .opacity)
+                        ))
                     }
                 case .some(true):
                     authenticatedContent

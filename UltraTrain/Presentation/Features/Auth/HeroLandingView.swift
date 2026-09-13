@@ -2,12 +2,19 @@ import SwiftUI
 
 struct HeroLandingView: View {
     @Environment(\.colorScheme) private var colorScheme
-    @State private var showSignUp = false
     @State private var showSignIn = false
+    /// RR-42: the smooth fade/scale-in this screen now owns, ported over
+    /// from the removed WelcomeClubView so the very first screen still
+    /// gets that entrance treatment instead of just popping in flat.
+    @State private var showContent = false
 
     let authService: any AuthServiceProtocol
     let referralRepository: any ReferralRepository
-    var onAuthenticated: (Bool, String?, String?) -> Void // (isNewUser, firstName, lastName)
+    /// RR-41: account creation no longer happens here — "Get Started" goes
+    /// straight into the onboarding questionnaire, account creation is a
+    /// step near the end of it (see OnboardingView).
+    var onGetStarted: () -> Void
+    var onSignedIn: (String?, String?) -> Void
 
     var body: some View {
         NavigationStack {
@@ -15,20 +22,16 @@ struct HeroLandingView: View {
                 backgroundGradient
                 content
             }
-            .navigationDestination(isPresented: $showSignUp) {
-                SignUpView(
-                    authService: authService,
-                    referralRepository: referralRepository,
-                    onAuthenticated: onAuthenticated
-                )
-            }
             .navigationDestination(isPresented: $showSignIn) {
                 SignInView(
                     authService: authService,
-                    onAuthenticated: { firstName, lastName in
-                        onAuthenticated(false, firstName, lastName)
-                    }
+                    onAuthenticated: onSignedIn
                 )
+            }
+            .onAppear {
+                withAnimation(.easeOut(duration: 0.6).delay(0.1)) {
+                    showContent = true
+                }
             }
         }
     }
@@ -87,6 +90,8 @@ struct HeroLandingView: View {
                         )
                 }
                 .shadow(color: Theme.Colors.warmCoral.opacity(0.2), radius: 24, y: 8)
+                .scaleEffect(showContent ? 1 : 0.6)
+                .opacity(showContent ? 1 : 0)
 
                 VStack(spacing: Theme.Spacing.sm) {
                     Text("UltraTrain")
@@ -99,6 +104,8 @@ struct HeroLandingView: View {
                         .multilineTextAlignment(.center)
                         .foregroundStyle(.secondary)
                 }
+                .opacity(showContent ? 1 : 0)
+                .offset(y: showContent ? 0 : 12)
             }
 
             Spacer()
@@ -110,17 +117,23 @@ struct HeroLandingView: View {
                 featureRow(icon: "timer", text: "Finish time predictions")
             }
             .padding(.horizontal, Theme.Spacing.xl)
+            .opacity(showContent ? 1 : 0)
+            .offset(y: showContent ? 0 : 12)
 
             Spacer()
 
             // Buttons
-            VStack(spacing: Theme.Spacing.sm) {
+            VStack(spacing: Theme.Spacing.md) {
                 PrimaryOnboardingButton(title: "Get Started") {
-                    showSignUp = true
+                    onGetStarted()
                 }
 
-                SecondaryOnboardingButton(title: "I already have an account") {
+                Button {
                     showSignIn = true
+                } label: {
+                    Text("I already have an account")
+                        .font(.subheadline)
+                        .foregroundStyle(Theme.Colors.warmCoral)
                 }
             }
             .padding(.horizontal, Theme.Spacing.lg)

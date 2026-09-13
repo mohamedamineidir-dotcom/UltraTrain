@@ -16,8 +16,9 @@ struct OnboardingViewModelTests {
 
     // MARK: - Navigation
     // Steps: 0=Experience, 1=RunningHistory, 2=PersonalBests, 3=AboutYou,
-    //        4=BodyMetrics, 5=HeartRate, 6=RaceName, 7=RaceProfile,
-    //        8=GoalTraining, 9=Complete
+    //        4=BodyMetrics, 5=HeartRate, 6=InjuryStrength, 7=RaceName,
+    //        8=RaceProfile, 9=GoalTraining, 10=UphillDetails, 11=VolumePreview,
+    //        12=AccountCreation, 13=Complete
 
     @Test("Initial state is step 0")
     @MainActor
@@ -170,7 +171,7 @@ struct OnboardingViewModelTests {
     @MainActor
     func raceNameRequired() {
         let (vm, _, _) = makeViewModel()
-        vm.currentStep = 7  // race step (step 6 is now injury/strength)
+        vm.currentStep = 7  // race step (step 6 is injury/strength)
         vm.raceName = ""
         #expect(vm.canAdvance == false)
         vm.raceName = "UTMB"

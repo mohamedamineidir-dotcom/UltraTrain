@@ -6,14 +6,30 @@ struct OnboardingView: View {
     var onComplete: () -> Void
     private let healthKitService: (any HealthKitServiceProtocol)?
     private let healthKitImportService: (any HealthKitImportServiceProtocol)?
+    /// RR-41: account creation moved from before onboarding to step 12
+    /// (right before "You're All Set"), so it needs the auth dependencies
+    /// that used to live only on HeroLandingView/SignUpView.
+    private let authService: any AuthServiceProtocol
+    private let referralRepository: any ReferralRepository
+    private let clearAllDataUseCase: any ClearAllDataUseCase
+    /// Fires only in the rare case where the embedded sign-up step
+    /// discovers (e.g. via Apple/Google) that this is actually an existing
+    /// account. We abandon the in-progress onboarding answers and route
+    /// through the normal existing-user path instead, same as "I already
+    /// have an account" would have.
+    var onExistingAccountSignedIn: (String?, String?) -> Void
 
     init(
         athleteRepository: any AthleteRepository,
         raceRepository: any RaceRepository,
         healthKitService: (any HealthKitServiceProtocol)? = nil,
         healthKitImportService: (any HealthKitImportServiceProtocol)? = nil,
+        authService: any AuthServiceProtocol,
+        referralRepository: any ReferralRepository,
+        clearAllDataUseCase: any ClearAllDataUseCase,
         initialFirstName: String? = nil,
         initialLastName: String? = nil,
+        onExistingAccountSignedIn: @escaping (String?, String?) -> Void = { _, _ in },
         onComplete: @escaping () -> Void
     ) {
         _viewModel = State(initialValue: OnboardingViewModel(
@@ -24,6 +40,10 @@ struct OnboardingView: View {
         ))
         self.healthKitService = healthKitService
         self.healthKitImportService = healthKitImportService
+        self.authService = authService
+        self.referralRepository = referralRepository
+        self.clearAllDataUseCase = clearAllDataUseCase
+        self.onExistingAccountSignedIn = onExistingAccountSignedIn
         self.onComplete = onComplete
     }
 
@@ -86,7 +106,7 @@ struct OnboardingView: View {
         }
     }
 
-    // MARK: - Steps 0-12
+    // MARK: - Steps 0-13
 
     @ViewBuilder
     private var stepContent: some View {
@@ -103,13 +123,39 @@ struct OnboardingView: View {
         case 9: GoalTrainingStepView(viewModel: viewModel)
         case 10: UphillDetailsStepView(viewModel: viewModel)
         case 11: VolumePreviewStepView(viewModel: viewModel)
-        case 12: OnboardingCompleteStepView(
+        case 12: accountCreationStep
+        case 13: OnboardingCompleteStepView(
             viewModel: viewModel,
             onComplete: onComplete,
             healthKitService: healthKitService,
             healthKitImportService: healthKitImportService
         )
         default: EmptyView()
+        }
+    }
+
+    /// RR-41: if we're resuming an onboarding session that was killed
+    /// after account creation but before "You're All Set" (rare: app
+    /// backgrounded/crashed mid-flow), the athlete is already
+    /// authenticated — skip straight past this step instead of asking
+    /// them to sign up again.
+    @ViewBuilder
+    private var accountCreationStep: some View {
+        if authService.isAuthenticated() {
+            Color.clear.onAppear { viewModel.advance() }
+        } else {
+            SignUpView(
+                authService: authService,
+                referralRepository: referralRepository,
+                onAuthenticated: { isNewUser, firstName, lastName in
+                    if isNewUser {
+                        Task { try? await clearAllDataUseCase.execute() }
+                        viewModel.advance()
+                    } else {
+                        onExistingAccountSignedIn(firstName, lastName)
+                    }
+                }
+            )
         }
     }
 
@@ -126,8 +172,10 @@ struct OnboardingView: View {
     @ViewBuilder
     private var bottomBar: some View {
         let isLastStep = viewModel.currentStep >= viewModel.totalSteps - 1
+        // Step 12 (account creation) has its own submit/social-auth buttons.
+        let hidesGenericBar = isLastStep || viewModel.currentStep == 12
 
-        if !isLastStep {
+        if !hidesGenericBar {
             VStack(spacing: 0) {
                 Divider()
                 PrimaryOnboardingButton(

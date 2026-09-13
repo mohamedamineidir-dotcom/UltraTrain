@@ -891,6 +891,7 @@
       }
     },
     "%@!" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -6568,6 +6569,7 @@
       }
     },
     "Code applied! Refer a friend yourself to unlock 7 free days." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -7105,6 +7107,9 @@
         }
       }
     },
+    "Compressed Preparation" : {
+
+    },
     "Conditions" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -7529,6 +7534,9 @@
           }
         }
       }
+    },
+    "Create your account so everything you just told us is saved to your profile." : {
+
     },
     "Creates a new crew tracking session" : {
       "localizations" : {
@@ -15388,7 +15396,6 @@
       }
     },
     "I already have an account" : {
-      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -17325,6 +17332,7 @@
       }
     },
     "Invalid or expired code" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -17932,6 +17940,7 @@
       }
     },
     "Join the trail community" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -34962,6 +34971,9 @@
         }
       }
     },
+    "Save Your Progress" : {
+
+    },
     "Saves completed runs as workouts in Apple Health" : {
       "localizations" : {
         "fr" : {
@@ -37632,6 +37644,9 @@
       }
     },
     "Sharpens your finish-time predictions with independent racing history, if you have one." : {
+
+    },
+    "Shorter Than Recommended" : {
 
     },
     "Show less" : {
@@ -50256,6 +50271,7 @@
       }
     },
     "Welcome to the club%@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -55177,7 +55193,11 @@
         }
       }
     },
+    "You have fewer weeks than we'd normally recommend for this race, so this plan prioritizes race-specific work and your taper over a full base-building block." : {
+
+    },
     "You're about to start your trail running journey." : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
