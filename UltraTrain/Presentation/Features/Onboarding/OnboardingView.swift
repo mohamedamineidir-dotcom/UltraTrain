@@ -106,7 +106,7 @@ struct OnboardingView: View {
                 // branching earlier in the flow.
                 if newValue == 3 && !hasRequestedNotificationPermission {
                     hasRequestedNotificationPermission = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                         onReachedAboutYouStep()
                     }
                 }
