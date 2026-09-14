@@ -45,3 +45,4 @@ website/.DS_Store
 
 # Claude Code local session files
 .claude/
+.gstack/
