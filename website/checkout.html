@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscribe — UltraTrain</title>
+    <meta name="theme-color" content="#0D0B2E">
+    <link rel="icon" type="image/png" sizes="64x64" href="assets/app-icon.png">
+    <link rel="apple-touch-icon" href="assets/app-icon-large.png">
+    <meta name="robots" content="noindex">
+    <style>
+        :root {
+            --bg-deep: #0D0B2E;
+            --bg-mid: #1A1145;
+            --bg-navy: #0A1628;
+            --coral: #FF6B6B;
+            --coral-deep: #EE5050;
+            --ink: #F5F6FA;
+            --ink-dim: #ABB0C8;
+            --ink-faint: #767ba0;
+            --danger: #FF9C9C;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(ellipse 900px 500px at 50% -10%, rgba(255,107,107,0.14), transparent 60%),
+                linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-mid) 55%, var(--bg-navy) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.5rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 420px;
+            background: linear-gradient(160deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 2.25rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 800;
+            font-size: 1.0625rem;
+            text-decoration: none;
+            color: var(--ink);
+            margin-bottom: 1.75rem;
+        }
+
+        .logo img { width: 26px; height: 26px; border-radius: 7px; }
+
+        h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.4rem; }
+
+        .plan-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 1rem 1.1rem;
+            margin: 1.25rem 0 1.5rem;
+        }
+
+        .plan-summary .name { font-weight: 700; font-size: 0.9375rem; }
+        .plan-summary .save {
+            font-size: 0.6875rem;
+            font-weight: 700;
+            color: var(--danger);
+            background: rgba(255,107,107,0.15);
+            padding: 0.2rem 0.55rem;
+            border-radius: 100px;
+        }
+        .plan-summary .price { font-weight: 800; font-size: 1.125rem; }
+
+        .plan-toggle {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .plan-toggle button {
+            flex: 1;
+            padding: 0.6rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: transparent;
+            color: var(--ink-dim);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .plan-toggle button.active {
+            background: rgba(255,107,107,0.15);
+            border-color: rgba(255,107,107,0.5);
+            color: var(--ink);
+        }
+
+        label {
+            display: block;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--ink-dim);
+            margin-bottom: 0.4rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem 0.9rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(255,255,255,0.04);
+            color: var(--ink);
+            font-size: 0.9375rem;
+            margin-bottom: 1.1rem;
+        }
+
+        input:focus { outline: none; border-color: var(--coral); }
+
+        .field-hint {
+            font-size: 0.75rem;
+            color: var(--ink-faint);
+            margin-top: -0.85rem;
+            margin-bottom: 1.1rem;
+        }
+
+        button.submit {
+            width: 100%;
+            padding: 0.95rem;
+            border-radius: 14px;
+            border: none;
+            background: linear-gradient(135deg, var(--coral), var(--coral-deep));
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 12px 30px -8px rgba(255,107,107,0.55);
+        }
+
+        button.submit:disabled { opacity: 0.6; cursor: default; }
+
+        .error {
+            display: none;
+            background: rgba(255,107,107,0.12);
+            border: 1px solid rgba(255,107,107,0.35);
+            color: var(--danger);
+            font-size: 0.8438rem;
+            padding: 0.75rem 0.9rem;
+            border-radius: 10px;
+            margin-bottom: 1.1rem;
+        }
+
+        .fine-print {
+            font-size: 0.75rem;
+            color: var(--ink-faint);
+            text-align: center;
+            margin-top: 1.25rem;
+            line-height: 1.5;
+        }
+
+        .fine-print a { color: var(--ink-dim); }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.25rem;
+            font-size: 0.8125rem;
+            color: var(--ink-faint);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <a href="index.html" class="logo"><img src="assets/app-icon.png" alt=""> UltraTrain</a>
+    <h1>Subscribe and save</h1>
+
+    <div class="plan-toggle">
+        <button type="button" id="btn-monthly">Monthly</button>
+        <button type="button" id="btn-yearly">Yearly</button>
+    </div>
+
+    <div class="plan-summary">
+        <div>
+            <div class="name" id="plan-name">Monthly</div>
+        </div>
+        <div style="text-align: right;">
+            <div class="price" id="plan-price">13.49€/mo</div>
+            <span class="save">Save 10%</span>
+        </div>
+    </div>
+
+    <div class="error" id="error-box"></div>
+
+    <form id="checkout-form">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required autocomplete="email" placeholder="you@example.com">
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required autocomplete="new-password" minlength="8" placeholder="8+ characters">
+        <div class="field-hint">This creates your UltraTrain account — use it to sign in from the app after payment.</div>
+
+        <button type="submit" class="submit" id="submit-btn">Continue to payment</button>
+    </form>
+
+    <p class="fine-print">By continuing you agree to our <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a>. You'll be redirected to Stripe's secure checkout.</p>
+    <a href="index.html" class="back-link">&larr; Back to UltraTrain</a>
+</div>
+
+<script>
+    const API_BASE = "https://ultratrain-production.up.railway.app";
+    const PLANS = {
+        monthly: { name: "Monthly", price: "13.49€/mo", priceId: "price_1UFiuv9ZlHThWtB910nB6Zd2" },
+        yearly: { name: "Yearly", price: "44.99€/yr", priceId: "price_1UFj1T9ZlHThWtB9K2DteGTP" }
+    };
+
+    let selectedPlan = new URLSearchParams(window.location.search).get("plan") === "yearly" ? "yearly" : "monthly";
+
+    function renderPlan() {
+        const plan = PLANS[selectedPlan];
+        document.getElementById("plan-name").textContent = plan.name;
+        document.getElementById("plan-price").textContent = plan.price;
+        document.getElementById("btn-monthly").classList.toggle("active", selectedPlan === "monthly");
+        document.getElementById("btn-yearly").classList.toggle("active", selectedPlan === "yearly");
+    }
+
+    document.getElementById("btn-monthly").addEventListener("click", () => { selectedPlan = "monthly"; renderPlan(); });
+    document.getElementById("btn-yearly").addEventListener("click", () => { selectedPlan = "yearly"; renderPlan(); });
+    renderPlan();
+
+    function showError(message) {
+        const box = document.getElementById("error-box");
+        box.textContent = message;
+        box.style.display = "block";
+    }
+
+    function hideError() {
+        document.getElementById("error-box").style.display = "none";
+    }
+
+    document.getElementById("checkout-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        hideError();
+
+        const submitBtn = document.getElementById("submit-btn");
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Please wait...";
+
+        try {
+            const registerResponse = await fetch(`${API_BASE}/v1/web/register`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
+            });
+
+            if (!registerResponse.ok) {
+                const body = await registerResponse.json().catch(() => ({}));
+                if (registerResponse.status === 409) {
+                    throw new Error("You already have an account with this email. Open the UltraTrain app and sign in there instead.");
+                }
+                throw new Error(body.reason || "Could not create your account. Please check your details and try again.");
+            }
+
+            const { accessToken } = await registerResponse.json();
+
+            const sessionResponse = await fetch(`${API_BASE}/v1/billing/create-checkout-session`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${accessToken}`
+                },
+                body: JSON.stringify({ priceId: PLANS[selectedPlan].priceId })
+            });
+
+            if (!sessionResponse.ok) {
+                throw new Error("Could not start checkout. Please try again in a moment.");
+            }
+
+            const { url } = await sessionResponse.json();
+            window.location.href = url;
+        } catch (err) {
+            showError(err.message || "Something went wrong. Please try again.");
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Continue to payment";
+        }
+    });
+</script>
+
+</body>
+</html>

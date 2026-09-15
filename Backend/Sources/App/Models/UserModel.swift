@@ -76,6 +76,19 @@ final class UserModel: Model, Content, @unchecked Sendable {
     @OptionalField(key: "last_name")
     var lastName: String?
 
+    @OptionalField(key: "stripe_customer_id")
+    var stripeCustomerId: String?
+
+    @OptionalField(key: "stripe_subscription_id")
+    var stripeSubscriptionId: String?
+
+    /// Server-granted premium window from a web (Stripe) subscription,
+    /// mirroring `referralBonusUntil`'s shape. The app should unlock premium
+    /// when StoreKit is active OR referralBonusUntil is in the future OR
+    /// this is in the future.
+    @OptionalField(key: "web_premium_until")
+    var webPremiumUntil: Date?
+
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
 

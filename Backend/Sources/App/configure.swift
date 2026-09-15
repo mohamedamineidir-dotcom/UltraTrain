@@ -94,6 +94,7 @@ func configure(_ app: Application) async throws {
     app.migrations.add(AddSocialAuthToUser())
     app.migrations.add(AddNameToUser())
     app.migrations.add(AddPerformanceIndexToAthlete())
+    app.migrations.add(AddStripeFieldsToUser())
     do {
         try await app.autoMigrate()
         app.logger.notice("Migrations completed successfully")

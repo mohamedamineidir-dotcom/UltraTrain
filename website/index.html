@@ -577,11 +577,20 @@
 
         .price-card {
             position: relative;
+            display: block;
             background: linear-gradient(160deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: var(--radius-md);
             padding: 1.75rem 1.25rem;
             text-align: center;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .price-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255,107,107,0.5);
         }
 
         .price-card.yearly {
@@ -958,21 +967,21 @@
     </div>
 
     <div class="price-cards">
-        <div class="price-card">
+        <a href="checkout.html?plan=monthly" class="price-card">
             <div class="price-tag">Monthly</div>
             <div class="price-amount">13.49€<span>/mo</span></div>
             <div class="price-strike">14.99€ on the App Store</div>
             <div class="price-save">Save 10%</div>
-        </div>
-        <div class="price-card yearly">
+        </a>
+        <a href="checkout.html?plan=yearly" class="price-card yearly">
             <div class="price-tag">Yearly</div>
             <div class="price-amount">44.99€<span>/yr</span></div>
             <div class="price-strike">49.99€ on the App Store</div>
             <div class="price-save">Save 10%</div>
-        </div>
+        </a>
     </div>
 
-    <p class="pricing-web-note"><strong>Subscribing through ultratrain.app is coming soon</strong> and unlocks the lower price shown above. For now, get started on the App Store at the standard price.</p>
+    <p class="pricing-web-note">Subscribe on <strong>ultratrain.app</strong> above to get the lower price, then sign in with the same account in the app. Prefer to pay through Apple instead? Download the app and subscribe there at the standard price.</p>
 
     <div class="pricing-card">
         <h3>What's included</h3>

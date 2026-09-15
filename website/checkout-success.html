@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You're in — UltraTrain</title>
+    <meta name="theme-color" content="#0D0B2E">
+    <link rel="icon" type="image/png" sizes="64x64" href="assets/app-icon.png">
+    <link rel="apple-touch-icon" href="assets/app-icon-large.png">
+    <meta name="robots" content="noindex">
+    <style>
+        :root {
+            --bg-deep: #0D0B2E;
+            --bg-mid: #1A1145;
+            --bg-navy: #0A1628;
+            --coral: #FF6B6B;
+            --coral-deep: #EE5050;
+            --ink: #F5F6FA;
+            --ink-dim: #ABB0C8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(ellipse 900px 500px at 50% -10%, rgba(255,107,107,0.14), transparent 60%),
+                linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-mid) 55%, var(--bg-navy) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .card { max-width: 420px; }
+
+        .check {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--coral), var(--coral-deep));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.75rem;
+        }
+
+        h1 { font-size: 1.75rem; font-weight: 800; margin-bottom: 0.75rem; }
+
+        p { color: var(--ink-dim); font-size: 1rem; line-height: 1.6; margin-bottom: 2rem; }
+        p strong { color: var(--ink); }
+
+        .cta-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: linear-gradient(135deg, var(--coral), var(--coral-deep));
+            color: #fff;
+            padding: 0.95rem 1.9rem;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            box-shadow: 0 12px 30px -8px rgba(255,107,107,0.55);
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="check">✓</div>
+    <h1>You're all set</h1>
+    <p>Your subscription is active. Download UltraTrain and <strong>sign in with the email and password you just created</strong> to unlock everything.</p>
+    <a href="https://apps.apple.com/app/ultratrain/id6759983118" class="cta-primary">Download on the App Store</a>
+</div>
+
+</body>
+</html>

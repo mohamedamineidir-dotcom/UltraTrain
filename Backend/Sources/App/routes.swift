@@ -26,6 +26,16 @@ func routes(_ app: Application) throws {
     let publicLimited = app.grouped(RateLimitMiddleware(maxRequests: 30, windowSeconds: 60))
     try publicLimited.register(collection: PrivacyController())
 
+    // Website-facing routes. The marketing site is a static page with no
+    // secure place to hold the app's HMAC request-signing secret, so these
+    // sit under /v1 (rate-limited like everything else) but outside the
+    // HMAC-verified `api` group. WebAuthController.register just calls the
+    // exact same AuthController.register logic the app uses.
+    let webPublic = app.grouped("v1")
+        .grouped(RateLimitMiddleware(maxRequests: 20, windowSeconds: 60))
+    try webPublic.register(collection: WebAuthController())
+    try webPublic.register(collection: BillingController())
+
     try api.register(collection: AuthController())
     try api.register(collection: AthleteController())
     try api.register(collection: RunController())
