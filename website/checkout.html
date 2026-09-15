@@ -276,7 +276,7 @@
                 throw new Error(body.reason || "Could not create your account. Please check your details and try again.");
             }
 
-            const { accessToken } = await registerResponse.json();
+            const { access_token: accessToken } = await registerResponse.json();
 
             const sessionResponse = await fetch(`${API_BASE}/v1/billing/create-checkout-session`, {
                 method: "POST",
