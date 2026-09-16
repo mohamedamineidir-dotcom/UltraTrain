@@ -178,8 +178,10 @@ struct BillingController: RouteCollection {
         user.stripeSubscriptionId = subscriptionId
 
         if status == "active" || status == "trialing" {
-            if let periodEnd = (object["current_period_end"] as? NSNumber)?.doubleValue {
+            if let periodEnd = subscriptionPeriodEnd(from: object) {
                 user.webPremiumUntil = Date(timeIntervalSince1970: periodEnd)
+            } else {
+                req.logger.warning("Billing: could not find current_period_end on subscription \(subscriptionId)")
             }
         } else {
             // past_due, canceled, unpaid, incomplete_expired, etc. — fail closed
@@ -187,6 +189,22 @@ struct BillingController: RouteCollection {
         }
 
         try await user.save(on: req.db)
+    }
+
+    /// Recent Stripe API versions moved `current_period_end` off the
+    /// top-level Subscription object and onto each subscription item
+    /// instead, so the field this webhook needs to read depends on which
+    /// API version sent the event. Check both shapes rather than assume one.
+    private func subscriptionPeriodEnd(from object: [String: Any]) -> Double? {
+        if let topLevel = (object["current_period_end"] as? NSNumber)?.doubleValue {
+            return topLevel
+        }
+        if let items = object["items"] as? [String: Any],
+           let data = items["data"] as? [[String: Any]],
+           let periodEnd = (data.first?["current_period_end"] as? NSNumber)?.doubleValue {
+            return periodEnd
+        }
+        return nil
     }
 
     /// Verifies Stripe's webhook signature scheme: header is
