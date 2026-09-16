@@ -49,7 +49,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.ultratrain.app
         INFOPLIST_FILE: UltraTrain/Resources/Info.plist
-        MARKETING_VERSION: "1.0.2"
+        MARKETING_VERSION: "1.0.3"
         CURRENT_PROJECT_VERSION: 1
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
@@ -102,7 +102,7 @@ targets:
         INFOPLIST_KEY_NSHealthShareUsageDescription: "UltraTrain reads your heart rate, workout, and activity data to track your training progress and fitness."
         INFOPLIST_KEY_NSHealthUpdateUsageDescription: "UltraTrain saves your completed runs as workouts in Apple Health."
         INFOPLIST_KEY_NSMotionUsageDescription: "UltraTrain uses motion data to detect your cadence and running dynamics during tracked runs."
-        MARKETING_VERSION: "1.0.2"
+        MARKETING_VERSION: "1.0.3"
         CURRENT_PROJECT_VERSION: 1
         CODE_SIGN_STYLE: Automatic
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
@@ -132,7 +132,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.ultratrain.app.widgets
         INFOPLIST_FILE: UltraTrainWidgets/Resources/Info.plist
         GENERATE_INFOPLIST_FILE: false
-        MARKETING_VERSION: "1.0.2"
+        MARKETING_VERSION: "1.0.3"
         CURRENT_PROJECT_VERSION: 1
         CODE_SIGN_STYLE: Automatic
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
@@ -161,7 +161,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.ultratrain.app.watchkitapp.widgets
         INFOPLIST_FILE: UltraTrainWatchWidgets/Resources/Info.plist
         GENERATE_INFOPLIST_FILE: false
-        MARKETING_VERSION: "1.0.2"
+        MARKETING_VERSION: "1.0.3"
         CURRENT_PROJECT_VERSION: 1
         CODE_SIGN_STYLE: Automatic
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
@@ -190,7 +190,7 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: "YES"
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
-        MARKETING_VERSION: "1.0.2"
+        MARKETING_VERSION: "1.0.3"
         CURRENT_PROJECT_VERSION: 1
         CODE_SIGN_STYLE: Automatic
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
