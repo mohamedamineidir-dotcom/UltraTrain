@@ -19,6 +19,11 @@ final class PremiumGate {
     /// must never delay the StoreKit entitlement check). `nil` = no bonus.
     var referralBonusUntil: Date?
 
+    /// Server-granted free-access window from an active website (Stripe)
+    /// subscription. Same off-critical-path fetch as `referralBonusUntil`.
+    /// `nil` = no active web subscription.
+    var webPremiumUntil: Date?
+
     init(isUnlocked: Bool = true) {
         self.isUnlocked = isUnlocked
     }

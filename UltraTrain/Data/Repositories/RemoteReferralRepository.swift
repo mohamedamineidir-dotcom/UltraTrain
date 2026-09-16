@@ -17,7 +17,8 @@ final class RemoteReferralRepository: ReferralRepository, Sendable {
             referralCount: dto.referralCount,
             bonusAccessUntil: dto.bonusAccessUntil.map { Date(timeIntervalSince1970: $0) },
             rewardClaimed: dto.rewardClaimed ?? false,
-            wasReferred: dto.wasReferred ?? false
+            wasReferred: dto.wasReferred ?? false,
+            webPremiumUntil: dto.webPremiumUntil.map { Date(timeIntervalSince1970: $0) }
         )
     }
 

@@ -42,6 +42,10 @@ struct ReferralCodeResponseDTO: Decodable, Sendable {
     let bonusAccessUntil: Double?
     let rewardClaimed: Bool?
     let wasReferred: Bool?
+    /// Free-premium window from an active website (Stripe) subscription,
+    /// epoch seconds. Optional for backward-compatibility with an older
+    /// backend.
+    let webPremiumUntil: Double?
 }
 
 struct ApplyReferralRequestDTO: Encodable, Sendable {

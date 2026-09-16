@@ -10,6 +10,9 @@ struct ReferralInfo: Equatable, Sendable {
     /// Whether this user joined via someone else's code (drives the "1/2 done"
     /// progress: joined ✓ → refer a friend to unlock their own 7 days).
     var wasReferred: Bool = false
+    /// Server-granted free-premium window from an active website (Stripe)
+    /// subscription. nil = none.
+    var webPremiumUntil: Date? = nil
 
     /// True when the referral bonus is currently granting free access.
     var hasActiveBonus: Bool {

@@ -33,7 +33,8 @@ struct ReferralController: RouteCollection {
             referralCount: count,
             bonusAccessUntil: user.referralBonusUntil?.timeIntervalSince1970,
             rewardClaimed: user.referralRewardClaimedAt != nil,
-            wasReferred: user.referredByUserId != nil
+            wasReferred: user.referredByUserId != nil,
+            webPremiumUntil: user.webPremiumUntil?.timeIntervalSince1970
         )
     }
 

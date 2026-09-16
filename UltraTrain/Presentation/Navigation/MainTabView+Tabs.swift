@@ -41,6 +41,7 @@ extension MainTabView {
                 #endif
                 if status.isActive { return true }
                 if let until = premiumGate.referralBonusUntil, until > .now { return true }
+                if let until = premiumGate.webPremiumUntil, until > .now { return true }
                 return false
             }
             premiumGate.isUnlocked = unlocked(service.currentStatus)
@@ -49,19 +50,26 @@ extension MainTabView {
             }
         }
         .task {
-            // Referral reward: a server-granted free-premium window that
-            // unlocks premium on TOP of StoreKit. Fetched in its OWN task so a
-            // slow/failed call can never delay the entitlement gate above. A
-            // network failure leaves the bonus nil (never grants false access).
+            // Referral reward + web (Stripe) subscription: server-granted
+            // free-premium windows that unlock premium on TOP of StoreKit.
+            // Fetched in their OWN task so a slow/failed call can never delay
+            // the entitlement gate above. A network failure leaves both nil
+            // (never grants false access).
             guard let referralRepository, let service = subscriptionService else { return }
-            let bonusUntil = (try? await referralRepository.getMyReferralCode())?.bonusAccessUntil
+            let info = try? await referralRepository.getMyReferralCode()
+            let bonusUntil = info?.bonusAccessUntil
+            let webPremiumUntil = info?.webPremiumUntil
             premiumGate.referralBonusUntil = bonusUntil
-            // Re-evaluate now that the bonus is known (StoreKit already set the
+            premiumGate.webPremiumUntil = webPremiumUntil
+            // Re-evaluate now that both are known (StoreKit already set the
             // gate; only widen access, never revoke a live subscription).
             #if DEBUG
             if DebugEntitlement.simulateFreeTier { return }
             #endif
-            if !service.currentStatus.isActive, let bonusUntil, bonusUntil > .now {
+            guard !service.currentStatus.isActive else { return }
+            if let bonusUntil, bonusUntil > .now {
+                premiumGate.isUnlocked = true
+            } else if let webPremiumUntil, webPremiumUntil > .now {
                 premiumGate.isUnlocked = true
             }
         }
