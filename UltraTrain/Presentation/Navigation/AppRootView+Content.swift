@@ -140,15 +140,20 @@ extension AppRootView {
                         initialLastName: pendingLastName,
                         onReachedAboutYouStep: { Task { await registerForPushNotifications() } },
                         onComplete: {
-                            // Present the initial offer in the SAME state change
-                            // that reveals the main app, so the paywall covers
-                            // from the first frame instead of the app flashing
-                            // for an instant before the cover animates in.
-                            if !hasSeenInitialPaywallOffer {
+                            // This is the re-onboarding path for an ALREADY
+                            // signed-in account with no local Athlete profile
+                            // (new device, reinstall, or a website-only
+                            // subscriber's first app sign-in) — unlike a
+                            // brand-new signup, this account may already be
+                            // premium (checkSubscriptionStatus ran during
+                            // sign-in, before onboarding started, and already
+                            // accounts for StoreKit + referral + web premium).
+                            // Never clobber that, and never show the "subscribe"
+                            // offer to someone who's already paying.
+                            if !hasSeenInitialPaywallOffer, hasActiveSubscription != true {
                                 showInitialOffer = true
                             }
                             hasCompletedOnboarding = true
-                            hasActiveSubscription = false
                         }
                     )
                 }
@@ -207,7 +212,19 @@ extension AppRootView {
         }
         // Then verify with StoreKit (updates cache if status changed)
         let status = await subscriptionService.refreshStatus()
-        hasActiveSubscription = status.isActive
+        if status.isActive {
+            hasActiveSubscription = true
+            return
+        }
+        // No StoreKit subscription — an account can still be premium via a
+        // server-granted window (referral bonus, or an active website/Stripe
+        // subscription). Without this, a website-only subscriber signing in
+        // for the first time would be shown the "subscribe" offer below
+        // despite already paying, and could be tempted to pay twice.
+        let info = try? await referralRepository.getMyReferralCode()
+        let now = Date()
+        hasActiveSubscription = (info?.bonusAccessUntil.map { $0 > now } ?? false)
+            || (info?.webPremiumUntil.map { $0 > now } ?? false)
     }
 
     func performAutoImportIfNeeded() async {
