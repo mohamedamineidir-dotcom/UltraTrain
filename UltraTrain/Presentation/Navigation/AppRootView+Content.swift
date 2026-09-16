@@ -180,7 +180,14 @@ extension AppRootView {
             // authenticated view stuck on ProgressView("Loading...").
             await checkSubscriptionStatus()
             await loadUnitPreference()
-            await registerForPushNotifications()
+            // RR-43: only for a fully onboarded returning user. Someone about
+            // to be re-onboarded (no local Athlete profile — new device,
+            // reinstall, or a website-only account's first app sign-in) gets
+            // asked at the "About You" step instead, same as a brand-new
+            // signup — not the instant sign-in resolves.
+            if hasCompletedOnboarding == true {
+                await registerForPushNotifications()
+            }
         }
     }
 
