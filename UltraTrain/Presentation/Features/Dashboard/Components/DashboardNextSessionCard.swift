@@ -32,7 +32,11 @@ struct DashboardNextSessionCard: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .futuristicGlassStyle(phaseTint: currentPhase?.color)
+        // Dashboard cards stay on a fixed accent regardless of training
+        // phase — only the small PhaseBadge above reflects the current
+        // phase's color; cycling the whole card too reads as too busy for
+        // a home screen (matches DashboardHeroCard).
+        .futuristicGlassStyle(phaseTint: TrainingPhase.base.color)
     }
 
     private func sessionContent(_ session: TrainingSession) -> some View {

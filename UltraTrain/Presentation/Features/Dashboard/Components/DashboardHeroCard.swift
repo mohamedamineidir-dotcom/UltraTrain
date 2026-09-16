@@ -32,7 +32,7 @@ struct DashboardHeroCard: View {
             }
         }
         .padding(Theme.Spacing.lg)
-        .futuristicGlassStyle(phaseTint: phaseAccentColor)
+        .futuristicGlassStyle(phaseTint: cardTintColor)
         .overlay(animatedBorder)
         .onAppear {
             withAnimation(.pulseGlow) { borderPulse = true }
@@ -84,13 +84,13 @@ struct DashboardHeroCard: View {
                 .trim(from: 0, to: progressFraction)
                 .stroke(
                     AngularGradient(
-                        colors: [phaseAccentColor.opacity(0.3), phaseAccentColor],
+                        colors: [cardTintColor.opacity(0.3), cardTintColor],
                         center: .center
                     ),
                     style: StrokeStyle(lineWidth: 5, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
-                .shadow(color: phaseAccentColor.opacity(0.4), radius: 4)
+                .shadow(color: cardTintColor.opacity(0.4), radius: 4)
             VStack(spacing: 0) {
                 Text("\(weeklyProgress.completed)/\(weeklyProgress.total)")
                     .font(.system(size: 17, weight: .bold, design: .rounded).monospacedDigit())
@@ -109,7 +109,7 @@ struct DashboardHeroCard: View {
         Rectangle()
             .fill(
                 LinearGradient(
-                    colors: [phaseAccentColor.opacity(0.3), Theme.Colors.secondaryLabel.opacity(0.1)],
+                    colors: [cardTintColor.opacity(0.3), Theme.Colors.secondaryLabel.opacity(0.1)],
                     startPoint: .leading,
                     endPoint: .trailing
                 )
@@ -157,7 +157,7 @@ struct DashboardHeroCard: View {
     private var animatedBorder: some View {
         RoundedRectangle(cornerRadius: Theme.CornerRadius.lg)
             .stroke(
-                Theme.Gradients.glowBorder(color: phaseAccentColor),
+                Theme.Gradients.glowBorder(color: cardTintColor),
                 lineWidth: borderPulse ? 1.0 : 0.5
             )
             .opacity(borderPulse ? 0.8 : 0.3)
@@ -173,6 +173,13 @@ struct DashboardHeroCard: View {
     private var phaseAccentColor: Color {
         currentPhase?.color ?? Theme.Colors.accentColor
     }
+
+    /// Dashboard cards intentionally stay on a fixed accent, unlike the Plan
+    /// tab's per-phase coloring — cycling the whole card through blue/orange/
+    /// purple/green as training phases change read as too busy for a home
+    /// screen. Only the small phase badge (`phaseAccentColor`) still reflects
+    /// the current phase's color.
+    private var cardTintColor: Color { TrainingPhase.base.color }
 
     private var accessibilityDescription: String {
         var desc = ""
