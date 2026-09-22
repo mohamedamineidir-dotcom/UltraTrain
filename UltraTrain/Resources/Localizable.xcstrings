@@ -7961,7 +7961,6 @@
       }
     },
     "Debug" : {
-      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -18558,7 +18557,6 @@
       }
     },
     "Locks premium features and shows the free-plan picker, as a non-subscriber would see." : {
-      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -29271,6 +29269,9 @@
         }
       }
     },
+    "Reveals every week of the training plan, not just the free preview, so all sessions can be inspected." : {
+
+    },
     "rfp.2daysOut" : {
       "localizations" : {
         "en" : {
@@ -37730,7 +37731,6 @@
       }
     },
     "Simulate free tier" : {
-      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -42284,7 +42284,6 @@
       }
     },
     "sv.sync.comingSoon" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -47395,6 +47394,9 @@
           }
         }
       }
+    },
+    "Unlock all plan weeks" : {
+
     },
     "Unskip" : {
       "localizations" : {

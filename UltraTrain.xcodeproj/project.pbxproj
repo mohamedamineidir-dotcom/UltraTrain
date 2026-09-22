@@ -1359,6 +1359,7 @@
 		BE4E6876AD88B6B00DD77122 /* EnvironmentValues+SyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F54DF4D173279082EA799F /* EnvironmentValues+SyncService.swift */; };
 		BE54E7CFE33FE8A605AAE848 /* RunHistorySummaryHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74C402BDC4BCD55911800998 /* RunHistorySummaryHeader.swift */; };
 		BE6324CA97A1912EEDB06946 /* DashboardViewModelEnhancedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4148B2AFDF236383F9B2932F /* DashboardViewModelEnhancedTests.swift */; };
+		BEB2CB75092A989CA867413E /* OwnerModeBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 366CE16C76F0FDE662D9E15A /* OwnerModeBanner.swift */; };
 		BEB6A0B7FB1C1B5409F8F965 /* MockSyncQueueRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93EF4A7B34222E616874D4C /* MockSyncQueueRepository.swift */; };
 		BEC0014E8A53959DB4913792 /* NutritionAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D1F1B4DF5FE426643057283 /* NutritionAnalysis.swift */; };
 		BED7D62CC79E2ACFD0801339 /* MorningReadinessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 822D5867C1716FFA41E47E7B /* MorningReadinessView.swift */; };
@@ -2310,6 +2311,7 @@
 		364360DFC64B238891E74FD7 /* QualitySessionRatioResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QualitySessionRatioResolver.swift; sourceTree = "<group>"; };
 		3657F75A5ACB6DAFA1B7A3DA /* View+DismissKeyboardOnTap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+DismissKeyboardOnTap.swift"; sourceTree = "<group>"; };
 		365F0542FF9BAE9B6723B6C1 /* PerformanceEstimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceEstimator.swift; sourceTree = "<group>"; };
+		366CE16C76F0FDE662D9E15A /* OwnerModeBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnerModeBanner.swift; sourceTree = "<group>"; };
 		36E813F94D4567DE4B5097C0 /* Logger+App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Logger+App.swift"; sourceTree = "<group>"; };
 		3751CFC33A4C618706AB7A60 /* MenstrualAdaptationCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenstrualAdaptationCalculatorTests.swift; sourceTree = "<group>"; };
 		37634083849CDB029D660FB7 /* RaceSwiftDataMapperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceSwiftDataMapperTests.swift; sourceTree = "<group>"; };
@@ -4905,6 +4907,7 @@
 		644FA2F7FE7DC348D146916E /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				366CE16C76F0FDE662D9E15A /* OwnerModeBanner.swift */,
 				EE2121A0E09F88F6B05F8A41 /* OwnerModeSettings.swift */,
 				8F0D3307F2E84E703F93FCF0 /* OwnerNoteCard.swift */,
 				47987D90229AD14BEC493BDE /* OwnerSessionEditSheet.swift */,
@@ -7801,6 +7804,7 @@
 				1FA50BCFD66D5777B3C73A42 /* OrientationLock.swift in Sources */,
 				5706E9E0512F1EA371397EE3 /* OwnerAdviceRegenerator.swift in Sources */,
 				B75EAF5B854CABC76D3CF583 /* OwnerIntervalWorkoutEditor.swift in Sources */,
+				BEB2CB75092A989CA867413E /* OwnerModeBanner.swift in Sources */,
 				FA13D4AF5BF073BBC655B9A0 /* OwnerModeSettings.swift in Sources */,
 				752B85BA26372621352C228F /* OwnerNoteCard.swift in Sources */,
 				554711B4084B9CC6DDC4E610 /* OwnerNoteStore.swift in Sources */,

@@ -222,6 +222,9 @@ struct AppRootView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            #if OWNER_MODE
+            OwnerModeBanner()
+            #endif
             if isDeviceCompromised {
                 JailbreakWarningBanner()
             }
