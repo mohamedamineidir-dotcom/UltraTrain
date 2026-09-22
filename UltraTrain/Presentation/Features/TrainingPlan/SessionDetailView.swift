@@ -152,6 +152,10 @@ struct SessionDetailView: View {
                     }
                 }
 
+                #if OWNER_MODE
+                OwnerNoteCard(sessionId: session.id)
+                #endif
+
                 actionsSection
             }
             .padding()
