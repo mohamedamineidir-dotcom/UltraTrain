@@ -23,6 +23,17 @@ struct PlanGenerationOptions: Sendable, Equatable {
     /// intensity. Set by the comeback flow; 0 means no softening.
     var comebackEasyOnlyWeeks: Int = 0
 
+    /// Owner-mode only: counts today's partial week as week 1 of the
+    /// plan instead of starting the following Monday. The regular app
+    /// UI never sets this; false is the only value any non-owner build
+    /// can produce.
+    var ownerIncludeCurrentWeek: Bool = false
+
+    /// Owner-mode only: bypasses the per-race-distance/experience
+    /// advised minimum duration, down to the app's absolute 2-week
+    /// floor. The regular app UI never sets this.
+    var ownerBypassMinimumDuration: Bool = false
+
     static let standard = PlanGenerationOptions()
 }
 

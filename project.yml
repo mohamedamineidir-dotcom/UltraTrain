@@ -8,9 +8,15 @@ options:
   generateEmptyDirectories: true
   groupSortPosition: top
 
+configs:
+  Debug: debug
+  Release: release
+  Owner: release
+
 configFiles:
   Debug: Configuration/Debug.xcconfig
   Release: Configuration/Release.xcconfig
+  Owner: Configuration/Owner.xcconfig
 
 settings:
   base:
@@ -272,3 +278,21 @@ schemes:
         - variable: _XCAppClipURL
           value: "https://ultratrain.app/race/test-race-id/nutrition"
           isEnabled: true
+
+  # Personal owner-mode build. Builds/runs/archives with the Owner
+  # config (OWNER_MODE compilation condition set), never used by the
+  # regular UltraTrain scheme's Debug/Release configs. Select this
+  # scheme only when building to your own device.
+  UltraTrain-Owner:
+    build:
+      targets:
+        UltraTrain: all
+        UltraTrainWatch: all
+        UltraTrainWidgets: all
+        UltraTrainWatchWidgets: all
+        UltraTrainClip: all
+    run:
+      config: Owner
+      storeKitConfiguration: UltraTrain/Resources/UltraTrain.storekit
+    archive:
+      config: Owner

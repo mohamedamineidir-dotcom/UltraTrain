@@ -31,12 +31,24 @@ struct SessionDetailView: View {
     /// variant-specific results. Variant is auto-detected from the
     /// session's `intervalFocus` field, no extra plumbing required.
     var onCompleteFitnessTest: ((FitnessTestVariant, TestResultInput, PerceivedFeeling?) -> Void)?
+    #if OWNER_MODE
+    var onOwnerEdit: ((OwnerSessionEdit) -> Void)?
+    #endif
 
     @State private var showSkipReasonSheet = false
     @State private var showRescheduleSheet = false
     @State private var showSwapSheet = false
     @State private var showValidateSheet = false
     @State private var showRestSwapSheet = false
+    #if OWNER_MODE
+    @State private var showOwnerEditSheet = false
+    #endif
+
+    /// The linked structured workout, when present and non-empty.
+    private var resolvedWorkout: IntervalWorkout? {
+        guard let id = session.intervalWorkoutId else { return nil }
+        return workouts.first(where: { $0.id == id && !$0.phases.isEmpty })
+    }
 
     var body: some View {
         ScrollView {
@@ -63,11 +75,6 @@ struct SessionDetailView: View {
                     // standalone Description / Session-Structure cards
                     // become redundant and are dropped to keep the
                     // page tight (user feedback: too many cards).
-                    let resolvedWorkout: IntervalWorkout? = {
-                        guard let id = session.intervalWorkoutId else { return nil }
-                        return workouts.first(where: { $0.id == id && !$0.phases.isEmpty })
-                    }()
-
                     // Pace & HR targets card shows a single averaged
                     // pace band for the whole session. That's helpful
                     // for steady sessions (base endurance, long runs
@@ -199,6 +206,15 @@ struct SessionDetailView: View {
                 onCompleteFitnessTest: onCompleteFitnessTest
             )
         }
+        #if OWNER_MODE
+        .sheet(isPresented: $showOwnerEditSheet) {
+            OwnerSessionEditSheet(
+                session: session,
+                workout: resolvedWorkout,
+                onSave: { edit in onOwnerEdit?(edit) }
+            )
+        }
+        #endif
     }
 
     // MARK: - Same-week candidates
@@ -697,6 +713,18 @@ struct SessionDetailView: View {
                 .accessibilityIdentifier("trainingPlan.session.swap")
                 .accessibilityHint("Double-tap to swap this session with another one")
             }
+
+            #if OWNER_MODE
+            if onOwnerEdit != nil {
+                Button {
+                    showOwnerEditSheet = true
+                } label: {
+                    Label("Owner Edit", systemImage: "slider.horizontal.3")
+                }
+                .buttonStyle(.sessionSecondary(tint: Theme.Colors.info))
+                .accessibilityIdentifier("trainingPlan.session.ownerEdit")
+            }
+            #endif
         }
         .padding(.top, Theme.Spacing.sm)
     }

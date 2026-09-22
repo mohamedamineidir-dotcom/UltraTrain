@@ -21,6 +21,7 @@ Package.resolved
 *.xcconfig
 !Configuration/Debug.xcconfig
 !Configuration/Release.xcconfig
+!Configuration/Owner.xcconfig
 Secrets/
 
 # macOS

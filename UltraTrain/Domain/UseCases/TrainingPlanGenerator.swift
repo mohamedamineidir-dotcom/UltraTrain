@@ -65,7 +65,12 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
         let today = Date.now.startOfDay
         let raceDate = targetRace.date.startOfDay
 
-        let totalWeeks = today.weeksBetween(raceDate)
+        // Owner mode only: count today's partial week as week 1 instead
+        // of starting the following Monday. planOptions.ownerIncludeCurrentWeek
+        // is false for every regular-app call site, so totalWeeks is
+        // byte-for-byte identical to before in that case.
+        let baseTotalWeeks = today.weeksBetween(raceDate)
+        let totalWeeks = planOptions.ownerIncludeCurrentWeek ? baseTotalWeeks + 1 : baseTotalWeeks
 
         // RR-40: hard floor is half the advised minimum for this race's
         // distance category + athlete experience tier (was a flat 4-week
@@ -76,9 +81,11 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
             distanceKm: targetRace.distanceKm,
             elevationGainM: targetRace.elevationGainM,
             raceDate: raceDate,
-            experienceLevel: athlete.experienceLevel
+            experienceLevel: athlete.experienceLevel,
+            availableWeeksOverride: totalWeeks,
+            bypassHardFloor: planOptions.ownerBypassMinimumDuration
         )
-        guard totalWeeks >= durationValidation.hardFloorWeeks else {
+        guard durationValidation.canGeneratePlan else {
             throw DomainError.invalidTrainingPlan(
                 reason: "A \(durationValidation.raceCategory.displayName) race needs at least \(durationValidation.hardFloorWeeks) weeks before race day to generate a plan."
             )
@@ -555,11 +562,15 @@ struct TrainingPlanGenerator: GenerateTrainingPlanUseCase {
     ) throws -> TrainingPlan {
         let today = Date.now.startOfDay
         let raceDate = targetRace.date.startOfDay
-        let totalWeeks = today.weeksBetween(raceDate)
+        // See the trail branch above for why this reads planOptions;
+        // false (every regular call site) keeps totalWeeks unchanged.
+        let baseTotalWeeks = today.weeksBetween(raceDate)
+        let totalWeeks = planOptions.ownerIncludeCurrentWeek ? baseTotalWeeks + 1 : baseTotalWeeks
 
-        guard totalWeeks >= 4 else {
+        let minimumRoadWeeks = planOptions.ownerBypassMinimumDuration ? 2 : 4
+        guard totalWeeks >= minimumRoadWeeks else {
             throw DomainError.invalidTrainingPlan(
-                reason: "Need at least 4 weeks before race day to generate a plan."
+                reason: "Need at least \(minimumRoadWeeks) weeks before race day to generate a plan."
             )
         }
 

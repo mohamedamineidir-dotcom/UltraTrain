@@ -6,13 +6,24 @@ enum TrainingDurationValidator {
         distanceKm: Double,
         elevationGainM: Double,
         raceDate: Date,
-        experienceLevel: ExperienceLevel
+        experienceLevel: ExperienceLevel,
+        /// Lets a caller that already computed "weeks until race" (e.g.
+        /// the generator, which may count the current partial week in
+        /// owner mode) pass that exact value in instead of this
+        /// function silently recomputing its own copy and risking an
+        /// off-by-one mismatch. Nil (every existing caller) preserves
+        /// today's behavior exactly.
+        availableWeeksOverride: Int? = nil,
+        /// Owner-mode only: ignore the per-distance/experience advised
+        /// minimum and use the app's absolute 2-week floor instead.
+        /// False (every existing caller) preserves today's behavior.
+        bypassHardFloor: Bool = false
     ) -> TrainingDurationValidation {
         let effectiveKm = distanceKm + elevationGainM / 100.0
         let category = RaceCategory.from(effectiveDistanceKm: effectiveKm)
-        let availableWeeks = Date.now.weeksBetween(raceDate)
+        let availableWeeks = availableWeeksOverride ?? Date.now.weeksBetween(raceDate)
         let minimumWeeks = self.minimumWeeks(for: category, level: experienceLevel)
-        let hardFloorWeeks = self.hardFloorWeeks(from: minimumWeeks)
+        let hardFloorWeeks = bypassHardFloor ? 2 : self.hardFloorWeeks(from: minimumWeeks)
         let isSufficient = availableWeeks >= minimumWeeks
         let canGeneratePlan = availableWeeks >= hardFloorWeeks
 

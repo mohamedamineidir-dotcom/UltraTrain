@@ -36,6 +36,12 @@ struct WeekCardView: View {
     var recentRunsProvider: ((Date) async -> [CompletedRun])?
     var stravaActivitiesProvider: ((Date) async -> [StravaActivity])?
     var onLinkStravaActivity: ((Int, StravaActivity) -> Void)?
+    // Has its own default and is never part of the custom init below
+    // (rather than threading a conditional parameter through it), set
+    // by the caller after construction instead.
+    #if OWNER_MODE
+    var onOwnerEditSession: ((TrainingSession, OwnerSessionEdit) -> Void)? = nil
+    #endif
 
     @State private var isExpanded: Bool
     @State private var contextSkipItem: ContextSheetItem?
@@ -552,7 +558,7 @@ extension WeekCardView {
 
     private func sessionDetailView(for session: TrainingSession, at sessionIndex: Int) -> SessionDetailView {
         let candidates = buildSwapCandidates(excluding: session)
-        return SessionDetailView(
+        var detail = SessionDetailView(
             session: session,
             planStartDate: planStartDate,
             planEndDate: planEndDate,
@@ -585,6 +591,12 @@ extension WeekCardView {
                 onCompleteFitnessTest?(sessionIndex, variant, result, feeling)
             } : nil
         )
+        #if OWNER_MODE
+        detail.onOwnerEdit = onOwnerEditSession != nil ? { edit in
+            onOwnerEditSession?(session, edit)
+        } : nil
+        #endif
+        return detail
     }
 
     private func buildSwapCandidates(excluding session: TrainingSession) -> [SwapCandidate] {

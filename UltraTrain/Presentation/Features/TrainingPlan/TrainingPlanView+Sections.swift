@@ -356,15 +356,16 @@ extension TrainingPlanView {
 
     /// Extracted week-card builder so the phase-pager body stays
     /// readable. Captures the same callbacks the previous flat
-    /// ForEach used.
-    @ViewBuilder
+    /// ForEach used. Always returns exactly one WeekCardView (an
+    /// owner-mode-only callback is set on it afterward when
+    /// applicable), so no result-builder combining is needed here.
     private func weekCard(
         week: TrainingWeek,
         weekIndex: Int,
         plan: TrainingPlan,
         isRoadPlan: Bool
     ) -> some View {
-        WeekCardView(
+        var card = WeekCardView(
             week: week,
             weekIndex: weekIndex,
             isCurrentWeek: week.containsToday,
@@ -496,6 +497,12 @@ extension TrainingPlanView {
                 }
             }
         )
+        #if OWNER_MODE
+        card.onOwnerEditSession = { session, edit in
+            Task { await viewModel.ownerApplyEdit(edit, sessionId: session.id) }
+        }
+        #endif
+        return card
     }
 
     @MainActor

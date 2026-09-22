@@ -347,6 +347,7 @@
 		2FAB641A1FAE67746432DEE1 /* UnitFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52579282540B1CEA2F73C239 /* UnitFormatter.swift */; };
 		2FC7714E006D37AECF39D092 /* RaceDatabase+UTMBWorldSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC74982AE07C39F6FF6FE87 /* RaceDatabase+UTMBWorldSeries.swift */; };
 		2FED60BE21139AAAAF1559DA /* OSMTrailSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96546E5875ECB59F4A96574E /* OSMTrailSearchViewModel.swift */; };
+		2FF152F1E9452336EF740706 /* TrainingPlanViewModel+OwnerMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64FB3A57121EB4BFBAA987AD /* TrainingPlanViewModel+OwnerMode.swift */; };
 		2FF791DA541ABE71AD221CDC /* AthleteMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA1254954491DE420B51F77 /* AthleteMapper.swift */; };
 		30098D4099735F1CA3BDA343 /* PaceCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0580B65B4FD7E4A71662C272 /* PaceCalculator.swift */; };
 		3028BCBAC254D4C8CDB642B6 /* SyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C37D4E40FE7828737F5FB3A7 /* SyncService.swift */; };
@@ -608,6 +609,7 @@
 		566D96315044412B749188FC /* SessionMatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2AE5A75CB3DCD4C2FDA6279 /* SessionMatcherTests.swift */; };
 		568490A24328E3855344EA27 /* RaceCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D241B91353F0FEAD71F67E7 /* RaceCalendarView.swift */; };
 		56C5E5E3CAD85F25186B1827 /* MotionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4352B894ED1173C35AC57E38 /* MotionService.swift */; };
+		5706E9E0512F1EA371397EE3 /* OwnerAdviceRegenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01942FC7E7A79CE7C3A90C0 /* OwnerAdviceRegenerator.swift */; };
 		572EEEEC19EC1E3F6300354C /* CoachingInsightCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2D846834563F694FA45082 /* CoachingInsightCalculator.swift */; };
 		5766CA2BA2BF0EBF11DC8BCA /* NutritionDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DB321BFE33526024A2BE6E9 /* NutritionDTO.swift */; };
 		57BDAE3021DB3B21733DD703 /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE3B98494EDC4477D908AE3 /* AppConfiguration.swift */; };
@@ -1168,6 +1170,7 @@
 		A190A5B3194DC614A705C2A9 /* EditRaceSheet+Sections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A30509F4B3F5693228084B5 /* EditRaceSheet+Sections.swift */; };
 		A1A5BB64321C148E0201E8BB /* GoalHistoryViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75E8E1C1FB7B10E52DD2120B /* GoalHistoryViewModelTests.swift */; };
 		A1B8B7279D9348E7D87D055C /* FoodPhotoCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2ADD075C0E5A985E676CD6D /* FoodPhotoCameraView.swift */; };
+		A243BC988DABF24FF4CE7C8A /* OwnerWeekAggregateRecalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC90D482FC807F59BE2FCF77 /* OwnerWeekAggregateRecalculator.swift */; };
 		A25B6D1D3A38777EE55CCDDA /* RecoveryStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE107D49C1E54C21B6E6AECC /* RecoveryStatus.swift */; };
 		A268243D8DA16616FDA1FB8D /* TrainingCalendarDayStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 107F08F4408E0F2F5BEA0C62 /* TrainingCalendarDayStatus.swift */; };
 		A2D6C37935C432DE3400B83D /* FatiguePattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348604781923E14C674E4F9C /* FatiguePattern.swift */; };
@@ -1299,6 +1302,7 @@
 		B6FB4E51C1178F76EDCCEB94 /* NutritionPlanSwiftDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6099098BECE91C7C39C4153 /* NutritionPlanSwiftDataModel.swift */; };
 		B707FA05676F66F0C8EB78C5 /* NutritionAnalysisCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CB872DF171DEF36940FE3B /* NutritionAnalysisCalculator.swift */; };
 		B7252F57052A9E50C9C53926 /* RestDaySwapSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A75F2105DB769269847F5FB /* RestDaySwapSheet.swift */; };
+		B75EAF5B854CABC76D3CF583 /* OwnerIntervalWorkoutEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB022E25A45B9122172EB58 /* OwnerIntervalWorkoutEditor.swift */; };
 		B76D46689231083B044CFD05 /* LocalSharedRunRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B99B7BCDC0F7AA52BE5C24B8 /* LocalSharedRunRepository.swift */; };
 		B76FA8FEBA0AA01B8F8EEDAD /* BodyMetricsStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7493AFF5C3490EAF6DE6DA9D /* BodyMetricsStepView.swift */; };
 		B770E3BAB18FE6BD4B960A43 /* GroupChallengeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9F131DBED9B61AFC8ED75A /* GroupChallengeCard.swift */; };
@@ -1459,6 +1463,7 @@
 		D07F33C09BF464417FF1CF2E /* DashboardNextSessionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE9CE41D047BF11D603B79F1 /* DashboardNextSessionCard.swift */; };
 		D0998A6A11EBFDFDD1E59E5D /* RaceSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41029E4BAD035F04F730B7C0 /* RaceSyncService.swift */; };
 		D0F6B2D1D72D856CDCEBA16F /* PhaseDistributorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38CB342D9E3727D3A1009997 /* PhaseDistributorTests.swift */; };
+		D117D49BE3FF2F4624F3DDA0 /* OwnerSessionEditSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47987D90229AD14BEC493BDE /* OwnerSessionEditSheet.swift */; };
 		D12B9A37EC174ECB2711A805 /* JailbreakWarningBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0980DC9CB0E7D0697943989C /* JailbreakWarningBanner.swift */; };
 		D134D7E9ADECE848D2BCBE79 /* PacingZone+Display.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D1C2D9013F22BEE4A84A82 /* PacingZone+Display.swift */; };
 		D159C2A8D52F6AA9F7B7B5AA /* WatchComplicationDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20A4E86169CE6423639DE3D /* WatchComplicationDataStore.swift */; };
@@ -1705,6 +1710,7 @@
 		EFD8D21B2C5E8464DAE6216E /* SettingsViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D24E28E3D8E1A650C4A729A /* SettingsViewModelTests.swift */; };
 		EFDCB7EAD5E76D8A2FDF7004 /* RunStatisticsCalculator+Segments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6BFC19B1625C3FAA3E7A00 /* RunStatisticsCalculator+Segments.swift */; };
 		EFE5DF8C49DB44C18D7B83AB /* RecoveryHistoryViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B5F44649E91DF85D930DDC /* RecoveryHistoryViewModelTests.swift */; };
+		F049B551315DF63880621762 /* OwnerSessionEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74539B8AE6A47CE0E2B02043 /* OwnerSessionEditor.swift */; };
 		F0541204933A1F840B411BA8 /* CrewTrackingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9DECBB86524D0D1CA35664 /* CrewTrackingViewModel.swift */; };
 		F06CFB700B2E2EF50AEA6131 /* MapStylePreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D497890728C562AAF80715 /* MapStylePreference.swift */; };
 		F0BC45BDE46C4CCB235AA6A0 /* LocalWorkoutRecipeRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A234079339277F7076752C8 /* LocalWorkoutRecipeRepository.swift */; };
@@ -2427,6 +2433,7 @@
 		4774DE6FF2017FD7C2860CD5 /* SocialProfileSwiftDataMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialProfileSwiftDataMapper.swift; sourceTree = "<group>"; };
 		4793E768E574093CDD604161 /* GearRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GearRowView.swift; sourceTree = "<group>"; };
 		47943D4A7D38BE1D76D0D11F /* SessionNutritionSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionNutritionSection.swift; sourceTree = "<group>"; };
+		47987D90229AD14BEC493BDE /* OwnerSessionEditSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnerSessionEditSheet.swift; sourceTree = "<group>"; };
 		47FAACE2BE70F1B707DD0C4C /* TerrainAdaptivePacingCalculator+Calibration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TerrainAdaptivePacingCalculator+Calibration.swift"; sourceTree = "<group>"; };
 		47FCC2DD999E4B93EFE6352B /* CalendarLegendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarLegendView.swift; sourceTree = "<group>"; };
 		485FEB1CE9CE1CF942BC124F /* GroupChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupChallenge.swift; sourceTree = "<group>"; };
@@ -2633,6 +2640,7 @@
 		648437056D400468A264080A /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		64A5F2DB872B0C5B4ECD12B8 /* PacingSummaryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacingSummaryCard.swift; sourceTree = "<group>"; };
 		64C2B36466FBA09D5382C4D9 /* UltraTrainWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = UltraTrainWatch.entitlements; sourceTree = "<group>"; };
+		64FB3A57121EB4BFBAA987AD /* TrainingPlanViewModel+OwnerMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrainingPlanViewModel+OwnerMode.swift"; sourceTree = "<group>"; };
 		6501BCC672159A87866769B7 /* RacePrepChecklist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RacePrepChecklist.swift; sourceTree = "<group>"; };
 		6519D09FE306FD2EF20483BE /* WeatherImpactLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherImpactLevel.swift; sourceTree = "<group>"; };
 		652360204160446419D79220 /* VolumeAdjustment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeAdjustment.swift; sourceTree = "<group>"; };
@@ -2715,6 +2723,7 @@
 		71049DC827DF1AB525355BDA /* MissedSessionBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissedSessionBanner.swift; sourceTree = "<group>"; };
 		717EE6DCD27FAD8DCCAA8842 /* LocationServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationServiceTests.swift; sourceTree = "<group>"; };
 		71AC880A129B87145163F7E5 /* MockCalculateTrainingLoadUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCalculateTrainingLoadUseCase.swift; sourceTree = "<group>"; };
+		71B87D68C34A8922168AC862 /* Owner.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Owner.xcconfig; sourceTree = "<group>"; };
 		71EC44930B4956499CE449B7 /* EmergencyContactSwiftDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmergencyContactSwiftDataModel.swift; sourceTree = "<group>"; };
 		7210C36F7A2DA762D7BE3E25 /* RaceDatabase+WorldTrailMajors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RaceDatabase+WorldTrailMajors.swift"; sourceTree = "<group>"; };
 		72132FDDD93602E199CC6E01 /* IntervalWorkoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntervalWorkoutTests.swift; sourceTree = "<group>"; };
@@ -2737,6 +2746,7 @@
 		7440C7EAA36189E236E26370 /* RunShareCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunShareCardView.swift; sourceTree = "<group>"; };
 		744EC33B04F3D11D2617B138 /* ReferralSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferralSettingsViewModel.swift; sourceTree = "<group>"; };
 		7453920C58F2C38B83C906F1 /* NutritionReminderType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionReminderType.swift; sourceTree = "<group>"; };
+		74539B8AE6A47CE0E2B02043 /* OwnerSessionEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnerSessionEditor.swift; sourceTree = "<group>"; };
 		747AB9DEBE833AEA2B315CE2 /* SyncQueueMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncQueueMapper.swift; sourceTree = "<group>"; };
 		7493AFF5C3490EAF6DE6DA9D /* BodyMetricsStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyMetricsStepView.swift; sourceTree = "<group>"; };
 		7494901F6409ED240E2EF62E /* BackgroundUploadFileManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundUploadFileManagerTests.swift; sourceTree = "<group>"; };
@@ -3392,6 +3402,7 @@
 		CF785BFFF9913396243EBD99 /* RaceEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceEndpoints.swift; sourceTree = "<group>"; };
 		CF9CD8470E4D4580F587239B /* RaceDatabaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceDatabaseTests.swift; sourceTree = "<group>"; };
 		CFE5F778BB0D8F1322CA8842 /* AddProductSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddProductSheet.swift; sourceTree = "<group>"; };
+		D01942FC7E7A79CE7C3A90C0 /* OwnerAdviceRegenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnerAdviceRegenerator.swift; sourceTree = "<group>"; };
 		D02383199F138FB96A286127 /* ResumeRunIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResumeRunIntent.swift; sourceTree = "<group>"; };
 		D0322B4AA039A02B2DF39603 /* FuturisticGenerationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FuturisticGenerationView.swift; sourceTree = "<group>"; };
 		D05CC044E4759FAC14362D93 /* NotificationDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDelegateTests.swift; sourceTree = "<group>"; };
@@ -3466,6 +3477,7 @@
 		DC557C0274916CAA91323CA5 /* AdjustmentReason.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdjustmentReason.swift; sourceTree = "<group>"; };
 		DC62F82E8FCFF7146FC62CA6 /* VoiceCueBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCueBuilderTests.swift; sourceTree = "<group>"; };
 		DC7FC9240158C4939944559C /* SyncedFitnessRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncedFitnessRepository.swift; sourceTree = "<group>"; };
+		DC90D482FC807F59BE2FCF77 /* OwnerWeekAggregateRecalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnerWeekAggregateRecalculator.swift; sourceTree = "<group>"; };
 		DCCC45B9AD5A92422E8592E7 /* CompletedRun.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletedRun.swift; sourceTree = "<group>"; };
 		DCEC22FCE54FA266F6168AAA /* SyncServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncServiceTests.swift; sourceTree = "<group>"; };
 		DD55948A7FE718A3D2C1F9E0 /* MessageComposeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageComposeView.swift; sourceTree = "<group>"; };
@@ -3562,6 +3574,7 @@
 		EB39932026E64822D86A2B2D /* PlanAdjustmentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanAdjustmentType.swift; sourceTree = "<group>"; };
 		EB4B8A46930AA42446B0DB9E /* DrawRouteUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawRouteUseCase.swift; sourceTree = "<group>"; };
 		EB6AFFD1A25060CCF6CE38DB /* UltraTrainWatchWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UltraTrainWatchWidgets.swift; sourceTree = "<group>"; };
+		EBB022E25A45B9122172EB58 /* OwnerIntervalWorkoutEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnerIntervalWorkoutEditor.swift; sourceTree = "<group>"; };
 		EBBF8647BF4D7567663C12D3 /* PhoneConnectivityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneConnectivityService.swift; sourceTree = "<group>"; };
 		EBC5E34C8F9836B51E12EAA9 /* SessionZoneTargetBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionZoneTargetBadge.swift; sourceTree = "<group>"; };
 		EC31CFD1A92DD8AED6306EE8 /* InjuryRiskCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InjuryRiskCalculatorTests.swift; sourceTree = "<group>"; };
@@ -3923,6 +3936,7 @@
 			isa = PBXGroup;
 			children = (
 				E2C852BC1C0775179EC57B98 /* Debug.xcconfig */,
+				71B87D68C34A8922168AC862 /* Owner.xcconfig */,
 				95EC7575F6D012CAAE4B8392 /* Release.xcconfig */,
 			);
 			path = Configuration;
@@ -4000,6 +4014,15 @@
 				78B402A9C8B66663441F11A0 /* ChallengesViewModel.swift */,
 			);
 			path = Challenges;
+			sourceTree = "<group>";
+		};
+		25FD999BBC13E67646326E07 /* OwnerMode */ = {
+			isa = PBXGroup;
+			children = (
+				D122322E4D0111B91D18C5AB /* Domain */,
+				644FA2F7FE7DC348D146916E /* Presentation */,
+			);
+			path = OwnerMode;
 			sourceTree = "<group>";
 		};
 		2BA12B812307D928F16969F6 /* Components */ = {
@@ -4322,6 +4345,7 @@
 				9CAA113D503B6181F5E24445 /* Core */,
 				E757609E19C8ECC66CB27D35 /* Data */,
 				430F33D26B4CA3CBF27709F7 /* Domain */,
+				25FD999BBC13E67646326E07 /* OwnerMode */,
 				5ED34B66EAA9F9A78069EF4F /* Presentation */,
 				6541B196BAF034E5D002FA93 /* Resources */,
 				530D8F8D042BDD59ED567A4A /* Services */,
@@ -4870,6 +4894,15 @@
 				C723F298B3093E32A18EC0B8 /* Services */,
 			);
 			path = UltraTrainWatch;
+			sourceTree = "<group>";
+		};
+		644FA2F7FE7DC348D146916E /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				47987D90229AD14BEC493BDE /* OwnerSessionEditSheet.swift */,
+				64FB3A57121EB4BFBAA987AD /* TrainingPlanViewModel+OwnerMode.swift */,
+			);
+			path = Presentation;
 			sourceTree = "<group>";
 		};
 		6541B196BAF034E5D002FA93 /* Resources */ = {
@@ -5817,6 +5850,17 @@
 				CA2E74416C75522DFB8CF286 /* SocialAuthButton.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		D122322E4D0111B91D18C5AB /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				D01942FC7E7A79CE7C3A90C0 /* OwnerAdviceRegenerator.swift */,
+				EBB022E25A45B9122172EB58 /* OwnerIntervalWorkoutEditor.swift */,
+				74539B8AE6A47CE0E2B02043 /* OwnerSessionEditor.swift */,
+				DC90D482FC807F59BE2FCF77 /* OwnerWeekAggregateRecalculator.swift */,
+			);
+			path = Domain;
 			sourceTree = "<group>";
 		};
 		D6BA7ED4D8CAB59B73E53561 /* Steps */ = {
@@ -7746,6 +7790,11 @@
 				356C174629627C374843A600 /* OptimalSessionCard.swift in Sources */,
 				180B257E234D2D137188C166 /* OrDividerView.swift in Sources */,
 				1FA50BCFD66D5777B3C73A42 /* OrientationLock.swift in Sources */,
+				5706E9E0512F1EA371397EE3 /* OwnerAdviceRegenerator.swift in Sources */,
+				B75EAF5B854CABC76D3CF583 /* OwnerIntervalWorkoutEditor.swift in Sources */,
+				D117D49BE3FF2F4624F3DDA0 /* OwnerSessionEditSheet.swift in Sources */,
+				F049B551315DF63880621762 /* OwnerSessionEditor.swift in Sources */,
+				A243BC988DABF24FF4CE7C8A /* OwnerWeekAggregateRecalculator.swift in Sources */,
 				30098D4099735F1CA3BDA343 /* PaceCalculator.swift in Sources */,
 				1F0701E088B02292261E6356 /* PaceDistributionCalculator.swift in Sources */,
 				443B6CEBD7E601EE415C8E74 /* PaceDistributionChart.swift in Sources */,
@@ -8233,6 +8282,7 @@
 				08C381CC891F6A588F4E5B19 /* TrainingPlanView.swift in Sources */,
 				EC30359CE9D1FD3A6139BFB8 /* TrainingPlanViewModel+Adjustments.swift in Sources */,
 				DCDD3E3CEC688C4CEF9A1AF5 /* TrainingPlanViewModel+IntervalFeedback.swift in Sources */,
+				2FF152F1E9452336EF740706 /* TrainingPlanViewModel+OwnerMode.swift in Sources */,
 				1091D98587D40CCE65EAE1B8 /* TrainingPlanViewModel+Reminders.swift in Sources */,
 				A43DE6E379338D8C5B84E2AD /* TrainingPlanViewModel+SessionActions.swift in Sources */,
 				D16D9EC3C4E3B050B96B4C50 /* TrainingPlanViewModel.swift in Sources */,
@@ -8487,6 +8537,73 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		0334A749701B368C78028609 /* Owner */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = UltraTrainWidgets/Resources/UltraTrainWidgets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = UltraTrainWidgets/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0.3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ultratrain.app.widgets;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Owner;
+		};
+		1191C80AF601BBB19CB64B7E /* Owner */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = UltraTrain/Resources/UltraTrain.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = UltraTrain/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ultratrain.app;
+				PRODUCT_NAME = UltraTrain;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Owner;
+		};
+		1F0FC24CD318C0B46F84DD7B /* Owner */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = UltraTrainClip/Resources/UltraTrainClip.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "UltraTrain Clip";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ultratrain.app.Clip;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Owner;
+		};
 		22AF9D5DAA69841316C251FA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -8700,6 +8817,25 @@
 			};
 			name = Debug;
 		};
+		6FE83CE3B93CC5C54A5FB329 /* Owner */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = UltraTrainWatchWidgets/Resources/UltraTrainWatchWidgets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = UltraTrainWatchWidgets/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0.3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ultratrain.app.watchkitapp.widgets;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Owner;
+		};
 		79BF9E3D3841E2883C6B6460 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -8721,6 +8857,23 @@
 				TARGETED_DEVICE_FAMILY = 4;
 			};
 			name = Release;
+		};
+		7B19659228EC7EE2F49925A3 /* Owner */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ultratrain.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = UltraTrain;
+			};
+			name = Owner;
 		};
 		7B4F13243AEDFB4C5FE883ED /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -8825,6 +8978,84 @@
 			};
 			name = Release;
 		};
+		880BDE6E1D49B866B0E1F5EA /* Owner */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 71B87D68C34A8922168AC862 /* Owner.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = KF2LJCF3GM;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				KNOWN_REGIONS = "en fr";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Owner;
+		};
+		88D93E5E447BB0D5D71BEC40 /* Owner */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ultratrain.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/UltraTrain.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/UltraTrain";
+			};
+			name = Owner;
+		};
 		C717E36E83B5AA6DC118D50A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -8883,6 +9114,28 @@
 			};
 			name = Debug;
 		};
+		F2C432B2E15F8547C252FC86 /* Owner */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = UltraTrainWatch/Resources/UltraTrainWatch.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "UltraTrain reads your heart rate, workout, and activity data to track your training progress and fitness.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "UltraTrain saves your completed runs as workouts in Apple Health.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "UltraTrain uses motion data to detect your cadence and running dynamics during tracked runs.";
+				INFOPLIST_KEY_WKBackgroundModes = "workout-processing";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.ultratrain.app;
+				MARKETING_VERSION = 1.0.3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ultratrain.app.watchkitapp;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Owner;
+		};
 		F91B86F26F249230CB91D077 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -8907,6 +9160,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				644346568F6BA3BAA0A5FC22 /* Debug */,
+				880BDE6E1D49B866B0E1F5EA /* Owner */,
 				803544D52425DEC90C3E95D5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8916,6 +9170,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7CF82BA828B90EE3D4661EDF /* Debug */,
+				7B19659228EC7EE2F49925A3 /* Owner */,
 				490E7BF79CD35C4BA1AFA65C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8925,6 +9180,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C75A22C5F49CA935CABB78B8 /* Debug */,
+				F2C432B2E15F8547C252FC86 /* Owner */,
 				79BF9E3D3841E2883C6B6460 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8934,6 +9190,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3C3D2CFBE2DF62D2204055A8 /* Debug */,
+				1191C80AF601BBB19CB64B7E /* Owner */,
 				56A983F468957BC6E11D8DE4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8943,6 +9200,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				ED493F70BFA4D8710572F82E /* Debug */,
+				6FE83CE3B93CC5C54A5FB329 /* Owner */,
 				2ABB9CCB92689982B53F04F0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8952,6 +9210,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7B4F13243AEDFB4C5FE883ED /* Debug */,
+				1F0FC24CD318C0B46F84DD7B /* Owner */,
 				22AF9D5DAA69841316C251FA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8961,6 +9220,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F91B86F26F249230CB91D077 /* Debug */,
+				88D93E5E447BB0D5D71BEC40 /* Owner */,
 				C717E36E83B5AA6DC118D50A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8970,6 +9230,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4F8DB4ED92141E1CB318A707 /* Debug */,
+				0334A749701B368C78028609 /* Owner */,
 				2F893CFD53AB8960F5460D74 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;

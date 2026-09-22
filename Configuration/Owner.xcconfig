@@ -1,0 +1,9 @@
+// Owner.xcconfig — Personal owner-mode build (not distributed to users)
+// Same runtime settings as Release; adds the OWNER_MODE compilation
+// condition so code under UltraTrain/OwnerMode/ (and the few #if
+// OWNER_MODE branches in the shared engine) compiles in. Regular
+// Debug/Release builds never define OWNER_MODE, so none of this exists
+// in the App Store binary.
+#include "Release.xcconfig"
+
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) OWNER_MODE
