@@ -288,12 +288,22 @@ final class OnboardingViewModel {
 
     var trainingDurationValidation: TrainingDurationValidation? {
         guard !hasNoRace else { return nil }
+        #if OWNER_MODE
+        return TrainingDurationValidator.validate(
+            distanceKm: raceDistanceKm,
+            elevationGainM: raceElevationGainM,
+            raceDate: raceDate,
+            experienceLevel: experienceLevel ?? .beginner,
+            bypassHardFloor: OwnerModeSettings.bypassMinimumDuration
+        )
+        #else
         return TrainingDurationValidator.validate(
             distanceKm: raceDistanceKm,
             elevationGainM: raceElevationGainM,
             raceDate: raceDate,
             experienceLevel: experienceLevel ?? .beginner
         )
+        #endif
     }
 
     var canAdvance: Bool {

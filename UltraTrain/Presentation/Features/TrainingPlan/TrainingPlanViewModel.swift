@@ -468,8 +468,16 @@ final class TrainingPlanViewModel {
             // Options from the plan-time sheet (fitness test opt-in,
             // recent fitness change). Reset to standard after to avoid
             // leaking state into a future regen.
-            let options = pendingPlanOptions
+            var options = pendingPlanOptions
             pendingPlanOptions = .standard
+            // Owner-mode safety net: applies the owner's persisted
+            // overrides to every generation path (comeback, scenario,
+            // direct regenerate), not just the ones that route through
+            // PlanGenerationOptionsSheet.
+            #if OWNER_MODE
+            options.ownerBypassMinimumDuration = OwnerModeSettings.bypassMinimumDuration
+            options.ownerIncludeCurrentWeek = OwnerModeSettings.includeCurrentWeek
+            #endif
 
             var newPlan: TrainingPlan
             if isGeneralFitness {

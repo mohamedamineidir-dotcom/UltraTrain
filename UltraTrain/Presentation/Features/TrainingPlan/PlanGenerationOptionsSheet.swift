@@ -78,6 +78,9 @@ struct PlanGenerationOptionsSheet: View {
                                     insertion: .move(edge: .trailing).combined(with: .opacity),
                                     removal: .move(edge: .leading).combined(with: .opacity)
                                 ))
+                            #if OWNER_MODE
+                            ownerOverridesSection
+                            #endif
                             Color.clear.frame(height: 80)
                         }
                         .padding(.horizontal, Theme.Spacing.lg)
@@ -472,6 +475,42 @@ struct PlanGenerationOptionsSheet: View {
         .buttonStyle(.plain)
     }
 
+    #if OWNER_MODE
+    // MARK: - Owner overrides
+    // Always visible (every step), so it's reachable no matter which
+    // step the athlete is on. Same `OwnerModeSettings` the onboarding
+    // race-profile step's toggle reads/writes, so a setting flipped
+    // during onboarding already shows correctly here too.
+
+    private var ownerOverridesSection: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            sectionHeader(
+                icon: "wrench.and.screwdriver.fill",
+                tint: Theme.Colors.info,
+                title: "Owner overrides",
+                subtitle: "Only visible on your personal build."
+            )
+
+            Toggle(
+                "Ignore minimum prep length",
+                isOn: Binding(
+                    get: { OwnerModeSettings.bypassMinimumDuration },
+                    set: { OwnerModeSettings.bypassMinimumDuration = $0 }
+                )
+            )
+            Toggle(
+                "Count this week as week 1",
+                isOn: Binding(
+                    get: { OwnerModeSettings.includeCurrentWeek },
+                    set: { OwnerModeSettings.includeCurrentWeek = $0 }
+                )
+            )
+        }
+        .padding(Theme.Spacing.md)
+        .futuristicGlassStyle(phaseTint: Theme.Colors.info)
+    }
+    #endif
+
     // MARK: - Section header
 
     private func sectionHeader(icon: String, tint: Color, title: String, subtitle: String) -> some View {
@@ -560,10 +599,14 @@ struct PlanGenerationOptionsSheet: View {
 
     private func handleAdvance() {
         if isLastStep {
-            let options = PlanGenerationOptions(
+            var options = PlanGenerationOptions(
                 includeFitnessTest: includeFitnessTest,
                 recentFitnessChange: recentFitnessChange == .none ? nil : recentFitnessChange
             )
+            #if OWNER_MODE
+            options.ownerBypassMinimumDuration = OwnerModeSettings.bypassMinimumDuration
+            options.ownerIncludeCurrentWeek = OwnerModeSettings.includeCurrentWeek
+            #endif
             onGenerate(options)
             dismiss()
         } else {

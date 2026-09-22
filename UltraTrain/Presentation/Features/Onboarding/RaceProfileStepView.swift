@@ -85,11 +85,40 @@ struct RaceProfileStepView: View {
                     .onboardingCardStyle()
 
                     trainingDurationWarning
+                    #if OWNER_MODE
+                    ownerBypassMinimumDurationToggle
+                    #endif
                 }
                 .padding(.horizontal, Theme.Spacing.lg)
             }
         }
     }
+
+    #if OWNER_MODE
+    /// Owner-only: lets the owner past this step's minimum-duration gate
+    /// (`canAdvance` case 8) for a race that's too soon for its distance.
+    /// Shares `OwnerModeSettings.bypassMinimumDuration` with the
+    /// post-onboarding "Generate Plan" options sheet, so toggling it here
+    /// carries over there and vice versa.
+    private var ownerBypassMinimumDurationToggle: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+            Toggle(
+                "Owner: ignore minimum prep length",
+                isOn: Binding(
+                    get: { OwnerModeSettings.bypassMinimumDuration },
+                    set: { OwnerModeSettings.bypassMinimumDuration = $0 }
+                )
+            )
+            .font(.subheadline.bold())
+            Text("Lets you continue past this step (and later generate a plan) even if the race is sooner than we'd normally allow for this distance.")
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+        }
+        .padding(Theme.Spacing.md)
+        .background(Theme.Colors.info.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm))
+    }
+    #endif
 
     @ViewBuilder
     private var trainingDurationWarning: some View {
