@@ -20,7 +20,7 @@ struct OwnerModeBanner: View {
         .foregroundStyle(.white)
         .frame(maxWidth: .infinity)
         .padding(.vertical, 4)
-        .background(Color(red: 0.78, green: 0.1, blue: 0.85))
+        .background(OwnerModeTheme.purple)
     }
 }
 #endif

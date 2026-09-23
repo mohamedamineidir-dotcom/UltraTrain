@@ -43,6 +43,12 @@ final class TrainingPlanViewModel {
     var nutritionPreferences: NutritionPreferences = .default
     var isLoading = false
     var isGenerating = false
+    #if OWNER_MODE
+    /// Drives the full-screen purple loading overlay while an owner
+    /// edit is being applied + persisted (see
+    /// `ownerApplyEdit(_:sessionId:)`).
+    var isApplyingOwnerEdit = false
+    #endif
     var error: String?
     var showRegenerateConfirmation = false
     var subscriptionStatus: SubscriptionStatus?

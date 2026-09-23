@@ -67,7 +67,9 @@ struct TrainingPlanView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if viewModel.isGenerating {
+                if isShowingOwnerEditLoadingOverlay {
+                    ownerEditLoadingOverlayContent
+                } else if viewModel.isGenerating {
                     PlanGenerationLoadingView()
                 } else if viewModel.isLoading {
                     ProgressView()
@@ -186,6 +188,29 @@ struct TrainingPlanView: View {
                 )
             }
         }
+    }
+
+    /// Kept outside the `body` if/else-if chain deliberately: `#if` only
+    /// splices safely into a SwiftUI result-builder context when each
+    /// branch is a complete, self-contained statement, not a dangling
+    /// partial if/else-if (that broke the build — see git history).
+    /// These two small helpers isolate the conditional compilation into
+    /// their own complete declarations instead.
+    private var isShowingOwnerEditLoadingOverlay: Bool {
+        #if OWNER_MODE
+        return viewModel.isApplyingOwnerEdit
+        #else
+        return false
+        #endif
+    }
+
+    @ViewBuilder
+    private var ownerEditLoadingOverlayContent: some View {
+        #if OWNER_MODE
+        OwnerEditLoadingView()
+        #else
+        EmptyView()
+        #endif
     }
 
     /// The expired-plan state: the active plan's race/window has passed.

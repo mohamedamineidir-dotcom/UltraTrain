@@ -595,6 +595,8 @@ extension WeekCardView {
         detail.onOwnerEdit = onOwnerEditSession != nil ? { edit in
             onOwnerEditSession?(session, edit)
         } : nil
+        detail.weekStartDate = week.startDate
+        detail.weekEndDate = week.endDate
         #endif
         return detail
     }

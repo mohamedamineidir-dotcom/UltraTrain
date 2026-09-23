@@ -33,6 +33,12 @@ struct SessionDetailView: View {
     var onCompleteFitnessTest: ((FitnessTestVariant, TestResultInput, PerceivedFeeling?) -> Void)?
     #if OWNER_MODE
     var onOwnerEdit: ((OwnerSessionEdit) -> Void)?
+    /// The containing week's 7-day range, for the owner edit sheet's
+    /// day-of-week picker. Defaults are harmless placeholders; the real
+    /// values are set by `WeekCardView.sessionDetailView(for:at:)`
+    /// right after construction.
+    var weekStartDate: Date = .now
+    var weekEndDate: Date = .now
     #endif
 
     @State private var showSkipReasonSheet = false
@@ -215,6 +221,8 @@ struct SessionDetailView: View {
             OwnerSessionEditSheet(
                 session: session,
                 workout: resolvedWorkout,
+                weekStartDate: weekStartDate,
+                weekEndDate: weekEndDate,
                 onSave: { edit in onOwnerEdit?(edit) }
             )
         }

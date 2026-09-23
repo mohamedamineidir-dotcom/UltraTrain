@@ -1,72 +1,77 @@
 #if OWNER_MODE
 import SwiftUI
 
-/// Owner-only sheet for freely editing a generated session's planned
-/// values (distance, elevation, duration, pace) and, when the session
-/// has a structured interval/fractionné workout attached, each block's
-/// target pace. On save, hands an `OwnerSessionEdit` back to the
-/// caller — only the fields the owner actually changed are populated,
-/// everything else is left as generated.
+/// Owner-only sheet for freely editing a generated session: what kind
+/// of session it is, its intensity, which day it falls on, its
+/// volume/duration/pace, and — for a structured interval/fractionné
+/// workout — the blocks themselves (add, remove, reorder, fully
+/// redefine). Diffs every field against the original session/workout
+/// on save, so `onSave` only carries what actually changed.
 struct OwnerSessionEditSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     let session: TrainingSession
     let workout: IntervalWorkout?
+    let weekStartDate: Date
+    let weekEndDate: Date
     let onSave: (OwnerSessionEdit) -> Void
 
     @State private var distanceKmText: String = ""
     @State private var elevationMText: String = ""
     @State private var durationMinutesText: String = ""
     @State private var targetPaceText: String = ""
-    @State private var phasePaceTexts: [UUID: String] = [:]
+    @State private var selectedType: SessionType
+    @State private var selectedIntensity: Intensity
+    @State private var selectedDate: Date
+    @State private var blocks: [OwnerBlockDraft]
+
+    private let backdrop = Color(red: 0.05, green: 0.03, blue: 0.09)
+
+    init(
+        session: TrainingSession,
+        workout: IntervalWorkout?,
+        weekStartDate: Date,
+        weekEndDate: Date,
+        onSave: @escaping (OwnerSessionEdit) -> Void
+    ) {
+        self.session = session
+        self.workout = workout
+        self.weekStartDate = weekStartDate
+        self.weekEndDate = weekEndDate
+        self.onSave = onSave
+        _selectedType = State(initialValue: session.type)
+        _selectedIntensity = State(initialValue: session.intensity)
+        _selectedDate = State(initialValue: session.date)
+        _blocks = State(initialValue: (workout?.phases ?? []).map(OwnerBlockDraft.from))
+    }
+
+    /// The strength-conditioning content model (bullet-point exercise
+    /// list, no IntervalWorkout) is structurally different enough that
+    /// this editor doesn't attempt to touch it — type-swapping and
+    /// block editing are hidden for it, volume/duration still works.
+    private var isStrengthConditioning: Bool { session.type == .strengthConditioning }
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section("Volume") {
-                    LabeledContent("Distance (km)") {
-                        TextField("km", text: $distanceKmText)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                    }
-                    LabeledContent("Elevation gain (m)") {
-                        TextField("m", text: $elevationMText)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                    }
-                    LabeledContent("Duration (min)") {
-                        TextField("min", text: $durationMinutesText)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                    }
-                }
-
-                Section {
-                    LabeledContent("Target pace (min/km)") {
-                        TextField("e.g. 5:30", text: $targetPaceText)
-                            .multilineTextAlignment(.trailing)
-                    }
-                } footer: {
-                    Text("Setting a pace fills in distance or duration automatically from whichever one you leave blank.")
-                }
-
-                if let workout, !workout.phases.isEmpty {
-                    Section("Block paces") {
-                        ForEach(workout.phases) { phase in
-                            LabeledContent(phaseLabel(phase)) {
-                                TextField(
-                                    "min/km",
-                                    text: Binding(
-                                        get: { phasePaceTexts[phase.id, default: ""] },
-                                        set: { phasePaceTexts[phase.id] = $0 }
-                                    )
-                                )
-                                .multilineTextAlignment(.trailing)
-                            }
+            ZStack {
+                backdrop.ignoresSafeArea()
+                ScrollView {
+                    VStack(spacing: Theme.Spacing.lg) {
+                        if !isStrengthConditioning {
+                            identitySection
                         }
+                        volumeSection
+                        if !isStrengthConditioning {
+                            paceSection
+                            blocksSection
+                        }
+                        Color.clear.frame(height: 40)
                     }
+                    .padding(Theme.Spacing.lg)
                 }
             }
+            .environment(\.colorScheme, .dark)
+            .presentationBackground(backdrop)
             .navigationTitle("Owner Edit")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -75,16 +80,166 @@ struct OwnerSessionEditSheet: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { save() }
+                        .bold()
+                        .tint(OwnerModeTheme.purple)
                 }
             }
             .onAppear(perform: populateInitialValues)
         }
     }
 
-    private func phaseLabel(_ phase: IntervalPhase) -> String {
-        let repeatPrefix = phase.repeatCount > 1 ? "\(phase.repeatCount)x " : ""
-        return "\(repeatPrefix)\(phase.phaseType.rawValue.capitalized) (\(phase.trigger.displayText))"
+    // MARK: - Identity (type / intensity / day)
+
+    private var identitySection: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            sectionHeader(icon: "tag.fill", title: "Session")
+
+            HStack {
+                Text("Type")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                Spacer()
+                Menu {
+                    ForEach(SessionType.allCases.filter { $0 != .strengthConditioning }, id: \.self) { type in
+                        Button {
+                            selectedType = type
+                        } label: {
+                            Label(type.displayName, systemImage: type.icon)
+                        }
+                    }
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: selectedType.icon)
+                        Text(selectedType.displayName)
+                        Image(systemName: "chevron.down").font(.caption2)
+                    }
+                    .font(.subheadline.bold())
+                    .foregroundStyle(OwnerModeTheme.purple)
+                }
+            }
+
+            HStack {
+                Text("Intensity")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                Spacer()
+                Picker("", selection: $selectedIntensity) {
+                    ForEach(Intensity.allCases, id: \.self) { intensity in
+                        Text(intensity.displayName).tag(intensity)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .frame(width: 260)
+            }
+
+            VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+                Text("Day this week")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+                OwnerDayPicker(weekStartDate: weekStartDate, selectedDate: $selectedDate)
+            }
+        }
+        .padding(Theme.Spacing.md)
+        .futuristicGlassStyle(phaseTint: OwnerModeTheme.purple)
     }
+
+    // MARK: - Volume
+
+    private var volumeSection: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            sectionHeader(icon: "chart.bar.fill", title: "Volume")
+            fieldRow(label: "Distance", suffix: "km", text: $distanceKmText)
+            fieldRow(label: "Elevation gain", suffix: "m", text: $elevationMText)
+            fieldRow(label: "Duration", suffix: "min", text: $durationMinutesText)
+        }
+        .padding(Theme.Spacing.md)
+        .futuristicGlassStyle(phaseTint: OwnerModeTheme.purple)
+    }
+
+    // MARK: - Pace
+
+    private var paceSection: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+            sectionHeader(icon: "speedometer", title: "Target pace")
+            fieldRow(label: "Pace", suffix: "min/km", text: $targetPaceText, placeholder: "e.g. 5:30")
+            Text("Setting a pace fills in distance or duration automatically from whichever one you leave blank.")
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+        }
+        .padding(Theme.Spacing.md)
+        .futuristicGlassStyle(phaseTint: OwnerModeTheme.purple)
+    }
+
+    // MARK: - Blocks
+
+    private var blocksSection: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            HStack {
+                sectionHeader(icon: "square.stack.3d.up.fill", title: "Blocks")
+                Spacer()
+                Button {
+                    withAnimation { blocks.append(.blank()) }
+                } label: {
+                    Label("Add", systemImage: "plus.circle.fill")
+                        .font(.caption.bold())
+                }
+                .tint(OwnerModeTheme.purple)
+            }
+
+            if blocks.isEmpty {
+                Text("No structured blocks. Add one to build a fractionné/interval structure for this session, or leave empty for a plain run.")
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.secondaryLabel)
+            } else {
+                ForEach(Array(blocks.enumerated()), id: \.element.id) { index, _ in
+                    OwnerBlockRow(
+                        block: $blocks[index],
+                        canMoveUp: index > 0,
+                        canMoveDown: index < blocks.count - 1,
+                        onMoveUp: { withAnimation { blocks.swapAt(index, index - 1) } },
+                        onMoveDown: { withAnimation { blocks.swapAt(index, index + 1) } },
+                        onDelete: { withAnimation { _ = blocks.remove(at: index) } }
+                    )
+                }
+            }
+        }
+        .padding(Theme.Spacing.md)
+        .futuristicGlassStyle(phaseTint: OwnerModeTheme.purple)
+    }
+
+    // MARK: - Shared row builders
+
+    private func sectionHeader(icon: String, title: String) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(.subheadline.bold())
+                .foregroundStyle(.white)
+                .frame(width: 26, height: 26)
+                .background(Circle().fill(OwnerModeTheme.purple))
+            Text(title)
+                .font(.subheadline.bold())
+                .foregroundStyle(OwnerModeTheme.purple)
+        }
+    }
+
+    private func fieldRow(label: String, suffix: String, text: Binding<String>, placeholder: String = "") -> some View {
+        HStack {
+            Text(label)
+                .font(.subheadline)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+            Spacer()
+            TextField(placeholder.isEmpty ? suffix : placeholder, text: text)
+                .keyboardType(.decimalPad)
+                .multilineTextAlignment(.trailing)
+                .frame(width: 100)
+            Text(suffix)
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.tertiaryLabel)
+                .frame(width: 50, alignment: .leading)
+        }
+    }
+
+    // MARK: - Populate / Save
 
     private func populateInitialValues() {
         if session.plannedDistanceKm > 0 { distanceKmText = String(format: "%.2f", session.plannedDistanceKm) }
@@ -101,34 +256,26 @@ struct OwnerSessionEditSheet: View {
         }
         edit.targetPaceSecondsPerKm = OwnerPaceTextParser.secondsPerKm(from: targetPaceText)
 
-        edit.phasePaces = phasePaceTexts.compactMap { phaseId, text in
-            guard let pace = OwnerPaceTextParser.secondsPerKm(from: text) else { return nil }
-            return OwnerPhasePaceEdit(phaseId: phaseId, paceSecondsPerKm: pace)
+        if selectedType != session.type {
+            edit.newType = selectedType
+        }
+        if selectedIntensity != session.intensity {
+            edit.newIntensity = selectedIntensity
+        }
+        if !Calendar.current.isDate(selectedDate, inSameDayAs: session.date) {
+            edit.newDate = selectedDate
+        }
+
+        if !isStrengthConditioning {
+            let newPhases = blocks.map { $0.toPhase() }
+            let originalPhases = workout?.phases ?? []
+            if newPhases != originalPhases {
+                edit.replacementPhases = newPhases
+            }
         }
 
         onSave(edit)
         dismiss()
-    }
-}
-
-/// Parses a "mm:ss" or plain-minutes pace string (e.g. "5:30" or "5.5")
-/// into seconds/km. Returns nil for empty/unparseable input, which the
-/// caller treats as "leave unchanged."
-enum OwnerPaceTextParser {
-    static func secondsPerKm(from text: String) -> Double? {
-        let trimmed = text.trimmingCharacters(in: .whitespaces)
-        guard !trimmed.isEmpty else { return nil }
-
-        if trimmed.contains(":") {
-            let parts = trimmed.split(separator: ":")
-            guard parts.count == 2,
-                  let minutes = Double(parts[0]),
-                  let seconds = Double(parts[1]) else { return nil }
-            return minutes * 60 + seconds
-        }
-
-        guard let minutes = Double(trimmed) else { return nil }
-        return minutes * 60
     }
 }
 #endif
