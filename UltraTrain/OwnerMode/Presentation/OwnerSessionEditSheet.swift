@@ -85,6 +85,24 @@ struct OwnerSessionEditSheet: View {
                 }
             }
             .onAppear(perform: populateInitialValues)
+            .onChange(of: blocks) { _, newBlocks in
+                syncVolumeFromBlocks(newBlocks)
+            }
+        }
+    }
+
+    /// Keeps Volume's Duration/Distance following the blocks' own
+    /// totals as the owner edits them, so adding/removing/retuning a
+    /// block is reflected immediately instead of silently leaving a
+    /// stale total that only the owner's own manual edit would fix.
+    private func syncVolumeFromBlocks(_ blocks: [OwnerBlockDraft]) {
+        guard !blocks.isEmpty else { return }
+        let totals = OwnerWorkoutBuilder.totals(for: blocks.map { $0.toPhase() })
+        if totals.duration > 0 {
+            durationMinutesText = String(format: "%.0f", totals.duration / 60)
+        }
+        if totals.distance > 0 {
+            distanceKmText = String(format: "%.2f", totals.distance)
         }
     }
 

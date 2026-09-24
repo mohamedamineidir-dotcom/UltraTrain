@@ -33,7 +33,8 @@ extension TrainingPlanViewModel {
 
         let session = currentPlan.weeks[weekIndex].sessions[sessionIndex]
         let week = currentPlan.weeks[weekIndex]
-        let workout = session.intervalWorkoutId.flatMap { id in
+        let originalWorkoutId = session.intervalWorkoutId
+        let workout = originalWorkoutId.flatMap { id in
             currentPlan.workouts.first { $0.id == id }
         }
 
@@ -49,6 +50,17 @@ extension TrainingPlanViewModel {
         currentPlan.weeks[weekIndex].sessions[sessionIndex] = result.session
         currentPlan.weeks[weekIndex] = OwnerWeekAggregateRecalculator.recalculate(currentPlan.weeks[weekIndex])
 
+        // Always reconcile against the session's ORIGINAL workout id, not
+        // just whatever `result.removedWorkoutId` reports — if that id
+        // didn't resolve to an actual entry in `currentPlan.workouts`
+        // (a stale/mismatched reference), `workout` above came back nil,
+        // a brand-new workout got built, and the old id would otherwise
+        // never be cleaned up, leaving its phases as a "ghost" entry
+        // that's still technically present in `plan.workouts`.
+        let newWorkoutId = result.session.intervalWorkoutId
+        if let originalWorkoutId, originalWorkoutId != newWorkoutId {
+            currentPlan.workouts.removeAll { $0.id == originalWorkoutId }
+        }
         if let removedId = result.removedWorkoutId {
             currentPlan.workouts.removeAll { $0.id == removedId }
         }
@@ -59,6 +71,12 @@ extension TrainingPlanViewModel {
                 currentPlan.workouts.append(updatedWorkout)
             }
         }
+
+        // Defense in depth: whatever the root cause, never let two
+        // workouts with the same id reach persistence — keep the last
+        // (most recently written) one for each id.
+        var seenWorkoutIds = Set<UUID>()
+        currentPlan.workouts = Array(currentPlan.workouts.reversed().filter { seenWorkoutIds.insert($0.id).inserted }.reversed())
 
         plan = currentPlan
 

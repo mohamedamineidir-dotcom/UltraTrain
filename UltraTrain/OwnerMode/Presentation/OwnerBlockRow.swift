@@ -44,6 +44,11 @@ struct OwnerBlockRow: View {
                 Stepper("", value: $block.repeatCount, in: 1...20).labelsHidden()
             }
 
+            HStack(spacing: Theme.Spacing.sm) {
+                labeledField(label: "Target pace", placeholder: "5:30", text: $block.targetPaceText)
+                labeledField(label: "Target HR", placeholder: "150-160", text: $block.targetHRText)
+            }
+
             TextField("Notes (shown to you on the session page)", text: $block.notes)
                 .font(.caption)
                 .textFieldStyle(.plain)
@@ -121,6 +126,26 @@ struct OwnerBlockRow: View {
             }
             control()
         }
+    }
+
+    /// Label stacked above its field (not beside it) so two of these
+    /// can sit side by side without squeezing — the lesson from the
+    /// earlier overflow bug: side-by-side label+control rows only stay
+    /// safe when there's exactly one per row.
+    private func labeledField(label: String, placeholder: String, text: Binding<String>) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+            TextField(placeholder, text: text)
+                .font(.caption)
+                .padding(6)
+                .background(
+                    RoundedRectangle(cornerRadius: Theme.CornerRadius.xs)
+                        .fill(Color.white.opacity(0.05))
+                )
+        }
+        .frame(maxWidth: .infinity)
     }
 
     private var intensityMenu: some View {
