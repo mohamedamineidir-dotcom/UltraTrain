@@ -1,9 +1,11 @@
 #if OWNER_MODE
 import SwiftUI
 
-/// One editable block (interval phase) card: phase type, duration-or-
-/// distance trigger, intensity, repeat count, notes, plus move/delete
-/// controls. Used inside `OwnerSessionEditSheet`'s block editor list.
+/// One editable block (interval phase) card. Every control gets its
+/// own full-width row with a clear label and a always-visible value
+/// (never crammed side-by-side with other controls, which is what
+/// made an earlier layout confusing — steppers with no room to show
+/// their own value next to several others on one line).
 struct OwnerBlockRow: View {
     @Binding var block: OwnerBlockDraft
     let canMoveUp: Bool
@@ -15,11 +17,33 @@ struct OwnerBlockRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             header
-            triggerRow
-            HStack(spacing: Theme.Spacing.md) {
-                intensityMenu
-                repeatStepper
+
+            Picker("", selection: $block.isDurationTrigger) {
+                Text("Duration").tag(true)
+                Text("Distance").tag(false)
             }
+            .pickerStyle(.segmented)
+
+            if block.isDurationTrigger {
+                valueRow(label: "Minutes", value: "\(block.minutes)") {
+                    Stepper("", value: $block.minutes, in: 0...180).labelsHidden()
+                }
+                valueRow(label: "Seconds", value: "\(block.seconds)") {
+                    Stepper("", value: $block.seconds, in: 0...55, step: 5).labelsHidden()
+                }
+            } else {
+                valueRow(label: "Distance (km)", value: String(format: "%.1f", block.distanceKm)) {
+                    Stepper("", value: $block.distanceKm, in: 0.1...42, step: 0.1).labelsHidden()
+                }
+            }
+
+            valueRow(label: "Intensity", value: nil) {
+                intensityMenu
+            }
+            valueRow(label: "Repeat", value: "\(block.repeatCount)x") {
+                Stepper("", value: $block.repeatCount, in: 1...20).labelsHidden()
+            }
+
             TextField("Notes (shown to you on the session page)", text: $block.notes)
                 .font(.caption)
                 .textFieldStyle(.plain)
@@ -79,30 +103,23 @@ struct OwnerBlockRow: View {
         .foregroundStyle(Theme.Colors.secondaryLabel)
     }
 
-    private var triggerRow: some View {
-        HStack(spacing: Theme.Spacing.sm) {
-            Picker("", selection: $block.isDurationTrigger) {
-                Text("Duration").tag(true)
-                Text("Distance").tag(false)
+    /// A label on the left, an always-visible value (when given) next
+    /// to its control on the right — nothing here ever has to shrink
+    /// to fit, since it's just two short text fragments plus one small
+    /// control per row.
+    @ViewBuilder
+    private func valueRow<Control: View>(label: String, value: String?, @ViewBuilder control: () -> Control) -> some View {
+        HStack {
+            Text(label)
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.secondaryLabel)
+            Spacer()
+            if let value {
+                Text(value)
+                    .font(.subheadline.bold().monospacedDigit())
+                    .frame(minWidth: 30, alignment: .trailing)
             }
-            .pickerStyle(.segmented)
-            .frame(width: 180)
-
-            if block.isDurationTrigger {
-                Stepper(value: $block.minutes, in: 0...180) {
-                    Text("\(block.minutes)m")
-                        .font(.subheadline.monospacedDigit())
-                }
-                Stepper(value: $block.seconds, in: 0...55, step: 5) {
-                    Text("\(block.seconds)s")
-                        .font(.subheadline.monospacedDigit())
-                }
-            } else {
-                Stepper(value: $block.distanceKm, in: 0.1...42, step: 0.1) {
-                    Text(String(format: "%.1f km", block.distanceKm))
-                        .font(.subheadline.monospacedDigit())
-                }
-            }
+            control()
         }
     }
 
@@ -119,13 +136,6 @@ struct OwnerBlockRow: View {
                 Image(systemName: "chevron.down")
                     .font(.caption2)
             }
-        }
-    }
-
-    private var repeatStepper: some View {
-        Stepper(value: $block.repeatCount, in: 1...20) {
-            Text("\(block.repeatCount)x")
-                .font(.caption.bold().monospacedDigit())
         }
     }
 }

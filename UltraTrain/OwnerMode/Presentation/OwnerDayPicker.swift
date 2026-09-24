@@ -15,9 +15,16 @@ struct OwnerDayPicker: View {
     }
 
     var body: some View {
-        HStack(spacing: 6) {
-            ForEach(days, id: \.self) { day in
-                dayChip(day)
+        // Horizontally scrollable rather than a fixed 7-across HStack:
+        // a rigid 7-chip row can be wider than the phone's screen once
+        // day-number/weekday text takes its natural minimum width,
+        // which overflowed off the trailing edge. Scrolling guarantees
+        // it fits at any screen size instead of relying on compression.
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
+                ForEach(days, id: \.self) { day in
+                    dayChip(day)
+                }
             }
         }
     }
@@ -33,7 +40,7 @@ struct OwnerDayPicker: View {
                 Text(day.formatted(.dateTime.day()))
                     .font(.subheadline.bold())
             }
-            .frame(maxWidth: .infinity)
+            .frame(width: 46)
             .padding(.vertical, Theme.Spacing.xs)
             .foregroundStyle(isSelected ? .white : Theme.Colors.secondaryLabel)
             .background(

@@ -98,7 +98,8 @@ struct OwnerSessionEditSheet: View {
                 Text("Type")
                     .font(.subheadline)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
-                Spacer()
+                    .layoutPriority(1)
+                Spacer(minLength: Theme.Spacing.sm)
                 Menu {
                     ForEach(SessionType.allCases.filter { $0 != .strengthConditioning }, id: \.self) { type in
                         Button {
@@ -111,6 +112,8 @@ struct OwnerSessionEditSheet: View {
                     HStack(spacing: 6) {
                         Image(systemName: selectedType.icon)
                         Text(selectedType.displayName)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
                         Image(systemName: "chevron.down").font(.caption2)
                     }
                     .font(.subheadline.bold())
@@ -118,18 +121,16 @@ struct OwnerSessionEditSheet: View {
                 }
             }
 
-            HStack {
+            VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                 Text("Intensity")
                     .font(.subheadline)
                     .foregroundStyle(Theme.Colors.secondaryLabel)
-                Spacer()
                 Picker("", selection: $selectedIntensity) {
                     ForEach(Intensity.allCases, id: \.self) { intensity in
                         Text(intensity.displayName).tag(intensity)
                     }
                 }
                 .pickerStyle(.segmented)
-                .frame(width: 260)
             }
 
             VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
@@ -176,14 +177,15 @@ struct OwnerSessionEditSheet: View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             HStack {
                 sectionHeader(icon: "square.stack.3d.up.fill", title: "Blocks")
-                Spacer()
+                Spacer(minLength: Theme.Spacing.sm)
                 Button {
                     withAnimation { blocks.append(.blank()) }
                 } label: {
-                    Label("Add", systemImage: "plus.circle.fill")
-                        .font(.caption.bold())
+                    Image(systemName: "plus.circle.fill")
+                        .font(.title3)
                 }
                 .tint(OwnerModeTheme.purple)
+                .accessibilityLabel("Add block")
             }
 
             if blocks.isEmpty {
@@ -222,20 +224,20 @@ struct OwnerSessionEditSheet: View {
         }
     }
 
-    private func fieldRow(label: String, suffix: String, text: Binding<String>, placeholder: String = "") -> some View {
+    private func fieldRow(label: String, suffix: String, text: Binding<String>, placeholder: String = "0") -> some View {
         HStack {
             Text(label)
                 .font(.subheadline)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
-            Spacer()
-            TextField(placeholder.isEmpty ? suffix : placeholder, text: text)
+                .lineLimit(1)
+            Spacer(minLength: Theme.Spacing.sm)
+            TextField(placeholder, text: text)
                 .keyboardType(.decimalPad)
                 .multilineTextAlignment(.trailing)
-                .frame(width: 100)
+                .fixedSize(horizontal: true, vertical: false)
             Text(suffix)
                 .font(.caption)
                 .foregroundStyle(Theme.Colors.tertiaryLabel)
-                .frame(width: 50, alignment: .leading)
         }
     }
 

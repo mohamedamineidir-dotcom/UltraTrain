@@ -65,11 +65,31 @@ struct TrainingPlanView: View {
     }
 
     var body: some View {
+        ZStack {
+            trainingPlanNavigationStack
+            // Deliberately OUTSIDE the NavigationStack's own content, not
+            // inside its root Group: a session edit is saved from
+            // SessionDetailView, which is pushed several levels deep in
+            // this same NavigationStack. An overlay swapped in at the
+            // stack's ROOT content is hidden behind whatever's currently
+            // pushed on top of it and only becomes visible once the
+            // athlete navigates back to the root — this ZStack sibling
+            // instead sits above the entire stack, pushed screens
+            // included, so it shows up immediately regardless of where
+            // the edit was made from.
+            if isShowingOwnerEditLoadingOverlay {
+                ownerEditLoadingOverlayContent
+                    .transition(.opacity)
+                    .zIndex(1)
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: isShowingOwnerEditLoadingOverlay)
+    }
+
+    private var trainingPlanNavigationStack: some View {
         NavigationStack {
             Group {
-                if isShowingOwnerEditLoadingOverlay {
-                    ownerEditLoadingOverlayContent
-                } else if viewModel.isGenerating {
+                if viewModel.isGenerating {
                     PlanGenerationLoadingView()
                 } else if viewModel.isLoading {
                     ProgressView()
