@@ -30,15 +30,12 @@ struct WorkoutBlocksSection: View {
                 .font(.subheadline)
                 .foregroundStyle(Theme.Colors.secondaryLabel)
 
-            ForEach(orderedPhases) { phase in
-                if phase.phaseType == .work || phase.phaseType == .recovery {
-                    // Work + recovery grouped visually
-                    if phase.phaseType == .work {
-                        workRecoveryGroup(work: phase)
-                    }
-                    // Skip standalone recovery, it's rendered inside the group
-                } else {
+            ForEach(renderedBlocks) { block in
+                switch block {
+                case .solo(let phase):
                     WorkoutBlockCard(phase: phase, easyPaceLabel: easyPaceLabel(for: phase))
+                case .group(let work, let recovery):
+                    workRecoveryGroup(work: work, recovery: recovery)
                 }
             }
 
@@ -73,68 +70,92 @@ struct WorkoutBlocksSection: View {
         .futuristicGlassStyle(phaseTint: Theme.Colors.accentColor)
     }
 
-    // MARK: - Ordered Phases
+    // MARK: - Rendered Blocks
 
-    /// Reorders phases so work comes right before its matching recovery.
-    private var orderedPhases: [IntervalPhase] {
-        let warmUps = workout.phases.filter { $0.phaseType == .warmUp }
-        let works = workout.phases.filter { $0.phaseType == .work }
-        let coolDowns = workout.phases.filter { $0.phaseType == .coolDown }
-        return warmUps + works + coolDowns
+    /// One unit of rendering: either a single phase card, or a work
+    /// phase grouped visually with the recovery phase that immediately
+    /// follows it.
+    private enum RenderedBlock: Identifiable {
+        case solo(IntervalPhase)
+        case group(work: IntervalPhase, recovery: IntervalPhase)
+
+        var id: UUID {
+            switch self {
+            case .solo(let phase): phase.id
+            case .group(let work, _): work.id
+            }
+        }
     }
 
-    private var recoveryPhase: IntervalPhase? {
-        workout.phases.first { $0.phaseType == .recovery }
+    /// Walks `workout.phases` in their ORIGINAL order (never reorders,
+    /// never assumes "one warmup, one work, one recovery, one cooldown"
+    /// — a freeform, owner-edited workout can have any number of work/
+    /// recovery pairs, or standalone blocks of any type interspersed
+    /// between them) and pairs each repeated work phase with the
+    /// specific recovery phase that follows it, not "the first recovery
+    /// phase anywhere in the array" — the previous bucket-by-type
+    /// approach silently dropped every recovery phase after the first
+    /// and reused that one recovery for every repeat group.
+    private var renderedBlocks: [RenderedBlock] {
+        let phases = workout.phases
+        var result: [RenderedBlock] = []
+        var i = 0
+        while i < phases.count {
+            let phase = phases[i]
+            if phase.phaseType == .work,
+               phase.repeatCount > 1,
+               i + 1 < phases.count,
+               phases[i + 1].phaseType == .recovery {
+                result.append(.group(work: phase, recovery: phases[i + 1]))
+                i += 2
+            } else {
+                result.append(.solo(phase))
+                i += 1
+            }
+        }
+        return result
     }
 
     // MARK: - Work + Recovery Group
 
-    @ViewBuilder
-    private func workRecoveryGroup(work: IntervalPhase) -> some View {
-        if work.repeatCount > 1, let recovery = recoveryPhase {
-            VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-                // Repeat header
-                HStack(spacing: Theme.Spacing.xs) {
-                    Image(systemName: "repeat")
-                        .font(.caption.bold())
-                        .foregroundStyle(.white)
-                        .frame(width: 20, height: 20)
-                        .background(Theme.Colors.secondaryLabel.opacity(0.5))
-                        .clipShape(Circle())
-                    Text(String(localized: "workout.repeatTimes \(work.repeatCount)"))
-                        .font(.subheadline.bold())
-                }
-
-                // Work → Recovery flow
-                VStack(spacing: 0) {
-                    WorkoutBlockCard(phase: work)
-
-                    // Down arrow connector
-                    HStack {
-                        Spacer()
-                        Image(systemName: "arrow.down")
-                            .font(.caption2.bold())
-                            .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.5))
-                        Spacer()
-                    }
-                    .padding(.vertical, 2)
-
-                    WorkoutBlockCard(phase: recovery, easyPaceLabel: easyPaceLabel(for: recovery))
-                }
+    private func workRecoveryGroup(work: IntervalPhase, recovery: IntervalPhase) -> some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            // Repeat header
+            HStack(spacing: Theme.Spacing.xs) {
+                Image(systemName: "repeat")
+                    .font(.caption.bold())
+                    .foregroundStyle(.white)
+                    .frame(width: 20, height: 20)
+                    .background(Theme.Colors.secondaryLabel.opacity(0.5))
+                    .clipShape(Circle())
+                Text(String(localized: "workout.repeatTimes \(work.repeatCount)"))
+                    .font(.subheadline.bold())
             }
-            .padding(Theme.Spacing.sm)
-            .background(Theme.Colors.secondaryLabel.opacity(0.06))
-            .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
-            .overlay(
-                RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
-                    .strokeBorder(Theme.Colors.secondaryLabel.opacity(0.12), lineWidth: 1)
-            )
-        } else {
-            WorkoutBlockCard(phase: work)
-            if let recovery = recoveryPhase {
+
+            // Work → Recovery flow
+            VStack(spacing: 0) {
+                WorkoutBlockCard(phase: work)
+
+                // Down arrow connector
+                HStack {
+                    Spacer()
+                    Image(systemName: "arrow.down")
+                        .font(.caption2.bold())
+                        .foregroundStyle(Theme.Colors.secondaryLabel.opacity(0.5))
+                    Spacer()
+                }
+                .padding(.vertical, 2)
+
                 WorkoutBlockCard(phase: recovery, easyPaceLabel: easyPaceLabel(for: recovery))
             }
         }
+        .padding(Theme.Spacing.sm)
+        .background(Theme.Colors.secondaryLabel.opacity(0.06))
+        .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md)
+                .strokeBorder(Theme.Colors.secondaryLabel.opacity(0.12), lineWidth: 1)
+        )
     }
 
     // MARK: - Helpers

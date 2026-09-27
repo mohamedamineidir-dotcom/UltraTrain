@@ -110,6 +110,27 @@ struct SessionValidationView: View {
         session.type == .intervals || session.type == .tempo
     }
 
+    /// Owner-mode only: `isIntervalOrTempo` above assumes feeling/RPE
+    /// hidden here will be replaced by the per-rep feedback chain
+    /// (`shouldChainFeedback`), but that chain is gated to road plans
+    /// only (see `TrainingPlanViewModel.isRoadPlan`) — on a trail plan,
+    /// hiding them for an intervals/tempo session (including one an
+    /// owner-mode edit swapped into that type) loses that data
+    /// entirely with nothing capturing it instead. Since owner mode
+    /// has no cheap way to know the plan's race type here without
+    /// threading a new parameter through three call sites for a
+    /// personal-only build, the simplest correct fix is to just never
+    /// suppress feeling/RPE under owner mode: if the road chain also
+    /// fires afterward, the athlete sees both, an extra step but never
+    /// silently-lost data.
+    private var shouldSuppressFeelingAndRPE: Bool {
+        #if OWNER_MODE
+        return false
+        #else
+        return isIntervalOrTempo
+        #endif
+    }
+
     /// True when the chain can actually push the feedback page, needs a
     /// resolved context (fitness-derived target pace). When false for an
     /// intervals/tempo session, the basic page still skips feeling+RPE
@@ -154,7 +175,7 @@ struct SessionValidationView: View {
         case .manual:
             ManualValidationPage(
                 session: session,
-                hideFeelingAndRPE: isIntervalOrTempo,
+                hideFeelingAndRPE: shouldSuppressFeelingAndRPE,
                 weekProgress: weekProgress,
                 onComplete: { dist, dur, elev, feeling, rpe in
                     onComplete(dist, dur, elev, feeling, rpe)
