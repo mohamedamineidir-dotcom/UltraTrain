@@ -78,12 +78,72 @@ extension TrainingPlanViewModel {
         var seenWorkoutIds = Set<UUID>()
         currentPlan.workouts = Array(currentPlan.workouts.reversed().filter { seenWorkoutIds.insert($0.id).inserted }.reversed())
 
+        // Protects this session from the regular app's silent "urgent"
+        // auto-adjustment system (see OwnerProtectedSessionStore) — it
+        // has no idea this day was deliberately retyped and can
+        // otherwise pick it as a target the next time ANY session is
+        // toggled/completed/skipped anywhere in the plan.
+        OwnerProtectedSessionStore.markProtected(sessionId)
+
         plan = currentPlan
 
         do {
             try await planRepository.updatePlan(currentPlan)
         } catch {
             Logger.training.error("Owner edit failed to persist: \(error)")
+        }
+
+        let elapsed = ContinuousClock.now - start
+        let minimumDuration = Duration.seconds(2.2)
+        if elapsed < minimumDuration {
+            try? await Task.sleep(for: minimumDuration - elapsed)
+        }
+        isApplyingOwnerEdit = false
+    }
+
+    /// Adds a brand-new session to a week — used for a second training
+    /// on a day that already has one. Finds the target week by date
+    /// range rather than taking a week index, since the creating sheet
+    /// only knows the week's start/end dates.
+    func ownerCreateSession(_ newSession: TrainingSession, workout: IntervalWorkout?) async {
+        guard !isApplyingOwnerEdit else { return }
+        isApplyingOwnerEdit = true
+        let start = ContinuousClock.now
+
+        guard var currentPlan = plan, let athlete else {
+            isApplyingOwnerEdit = false
+            return
+        }
+        guard let weekIndex = currentPlan.weeks.firstIndex(where: { $0.contains(date: newSession.date) }) else {
+            isApplyingOwnerEdit = false
+            return
+        }
+
+        var session = newSession
+        let week = currentPlan.weeks[weekIndex]
+        session.coachAdvice = OwnerAdviceRegenerator.advice(
+            for: session,
+            week: week,
+            athlete: athlete,
+            targetRace: targetRace
+        )
+
+        currentPlan.weeks[weekIndex].sessions.append(session)
+        currentPlan.weeks[weekIndex].sessions.sort { $0.date < $1.date }
+        currentPlan.weeks[weekIndex] = OwnerWeekAggregateRecalculator.recalculate(currentPlan.weeks[weekIndex])
+
+        if let workout {
+            currentPlan.workouts.append(workout)
+        }
+
+        OwnerProtectedSessionStore.markProtected(session.id)
+
+        plan = currentPlan
+
+        do {
+            try await planRepository.updatePlan(currentPlan)
+        } catch {
+            Logger.training.error("Owner create session failed to persist: \(error)")
         }
 
         let elapsed = ContinuousClock.now - start

@@ -120,6 +120,7 @@ extension TrainingPlanViewModel {
             $0.severity == .urgent
                 && autoApplyTypes.contains($0.type)
                 && !dismissedRecommendationIds.contains($0.id)
+                && !isOwnerProtected($0.affectedSessionIds)
         }
         guard !candidates.isEmpty else { return }
         for rec in candidates {
@@ -127,6 +128,18 @@ extension TrainingPlanViewModel {
             // Hide from banner, already applied silently.
             dismissedRecommendationIds.insert(rec.id)
         }
+    }
+
+    /// Owner-mode only: true when any of these sessions was deliberately
+    /// edited via the owner tools (see `OwnerProtectedSessionStore`),
+    /// which this silent auto-apply path should never override. Always
+    /// false for the regular app, so this is a no-op filter there.
+    private func isOwnerProtected(_ sessionIds: [UUID]) -> Bool {
+        #if OWNER_MODE
+        return OwnerProtectedSessionStore.isProtected(anyOf: sessionIds)
+        #else
+        return false
+        #endif
     }
 
     func dismissRecommendation(_ recommendation: PlanAdjustmentRecommendation) {

@@ -501,6 +501,9 @@ extension TrainingPlanView {
         card.onOwnerEditSession = { session, edit in
             Task { await viewModel.ownerApplyEdit(edit, sessionId: session.id) }
         }
+        card.onOwnerCreateSession = { newSession, workout in
+            Task { await viewModel.ownerCreateSession(newSession, workout: workout) }
+        }
         #endif
         return card
     }

@@ -41,9 +41,16 @@ struct WeekCardView: View {
     // by the caller after construction instead.
     #if OWNER_MODE
     var onOwnerEditSession: ((TrainingSession, OwnerSessionEdit) -> Void)? = nil
+    /// Called with the new session (and its linked workout, if any)
+    /// when the owner creates an additional training on a day that
+    /// already has one.
+    var onOwnerCreateSession: ((TrainingSession, IntervalWorkout?) -> Void)? = nil
     #endif
 
     @State private var isExpanded: Bool
+    #if OWNER_MODE
+    @State private var showOwnerCreateSheet = false
+    #endif
     @State private var contextSkipItem: ContextSheetItem?
     @State private var contextRescheduleItem: ContextSheetItem?
     @State private var contextSwapItem: ContextSheetItem?
@@ -324,6 +331,65 @@ extension WeekCardView {
         return groups
     }
 
+    /// Renders one calendar day's sessions. The regular app has never
+    /// needed more than one full row per day (S&C rides along as a
+    /// small inline chip on the main run, never its own row) — owner
+    /// mode's ability to schedule two full trainings the same day means
+    /// that assumption no longer holds there, so it renders every non-
+    /// S&C session as its own row instead of collapsing to "the first
+    /// one." Regular behavior is untouched.
+    @ViewBuilder
+    private func dayGroupContent(
+        _ dayGroup: (day: Date, sessions: [(index: Int, session: TrainingSession)])
+    ) -> some View {
+        #if OWNER_MODE
+        let nonSCSessions = dayGroup.sessions.filter { $0.session.type != .strengthConditioning }
+        let scSessions = dayGroup.sessions.filter { $0.session.type == .strengthConditioning }
+        VStack(spacing: 0) {
+            if nonSCSessions.isEmpty {
+                sessionRow(dayGroup.sessions[0].index, dayGroup.sessions[0].session, scSessions: [])
+            } else {
+                ForEach(Array(nonSCSessions.enumerated()), id: \.element.index) { i, entry in
+                    sessionRow(entry.index, entry.session, scSessions: i == 0 ? scSessions : [])
+                    if i < nonSCSessions.count - 1 {
+                        Rectangle()
+                            .fill(Theme.Colors.tertiaryLabel.opacity(0.08))
+                            .frame(height: 0.5)
+                            .padding(.leading, 48)
+                    }
+                }
+            }
+        }
+        #else
+        let primary = dayGroup.sessions.first(where: { $0.session.type != .strengthConditioning })
+            ?? dayGroup.sessions[0]
+        let scSessions = dayGroup.sessions.filter { $0.session.type == .strengthConditioning }
+        VStack(spacing: 0) {
+            sessionRow(primary.index, primary.session, scSessions: scSessions)
+        }
+        #endif
+    }
+
+    #if OWNER_MODE
+    private var ownerAddSessionRow: some View {
+        Button {
+            showOwnerCreateSheet = true
+        } label: {
+            HStack(spacing: Theme.Spacing.sm) {
+                Image(systemName: "plus.circle.fill")
+                Text("Add session")
+                    .font(.subheadline.bold())
+                Spacer()
+            }
+            .foregroundStyle(OwnerModeTheme.purple)
+            .padding(.vertical, Theme.Spacing.sm)
+            .padding(.horizontal, Theme.Spacing.md)
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("trainingPlan.weekCard.ownerAddSession")
+    }
+    #endif
+
     private var sessionsList: some View {
         VStack(spacing: 0) {
             Divider()
@@ -351,15 +417,12 @@ extension WeekCardView {
                         .padding(.leading, 48)
                 }
 
-                // Primary session for this day (first non-SC, or the only session)
-                let primary = dayGroup.sessions.first(where: { $0.session.type != .strengthConditioning })
-                    ?? dayGroup.sessions[0]
-                let scSessions = dayGroup.sessions.filter { $0.session.type == .strengthConditioning }
-
-                VStack(spacing: 0) {
-                    sessionRow(primary.index, primary.session, scSessions: scSessions)
-                }
+                dayGroupContent(dayGroup)
             }
+
+            #if OWNER_MODE
+            ownerAddSessionRow
+            #endif
         }
         .sheet(item: $contextSkipItem) { item in
             SkipReasonSheet(sessionType: item.session.type) { reason in
@@ -407,6 +470,18 @@ extension WeekCardView {
                 weekProgress: makeWeekProgress(for: item.session)
             )
         }
+        #if OWNER_MODE
+        .sheet(isPresented: $showOwnerCreateSheet) {
+            OwnerSessionCreateSheet(
+                weekStartDate: week.startDate,
+                weekEndDate: week.endDate,
+                defaultDate: week.startDate,
+                onCreate: { newSession, workout in
+                    onOwnerCreateSession?(newSession, workout)
+                }
+            )
+        }
+        #endif
     }
 
     /// Builds the WeekProgress footer context for the validation page. We
